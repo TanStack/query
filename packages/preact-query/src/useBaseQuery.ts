@@ -1,10 +1,4 @@
 import { noop, notifyManager } from '@tanstack/query-core'
-import type {
-  QueryClient,
-  QueryKey,
-  QueryObserver,
-  QueryObserverResult,
-} from '@tanstack/query-core'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 
 import { useIsRestoring } from './IsRestoringProvider'
@@ -20,8 +14,14 @@ import {
   fetchOptimistic,
   shouldSuspend,
 } from './suspense'
-import type { UseBaseQueryOptions } from './types'
 import { useSyncExternalStore } from './utils'
+import type { UseBaseQueryOptions } from './types'
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 
 /**
  * Base implementation shared by `useQuery`, `useInfiniteQuery`, `useSuspenseQuery`, and

@@ -1,15 +1,15 @@
 import { hydrate } from '@tanstack/query-core'
+import { Fragment } from 'preact'
+import { useEffect, useMemo, useRef } from 'preact/hooks'
+
+import { useQueryClient } from './QueryClientProvider'
+import type { ComponentChildren } from 'preact'
 import type {
   DehydratedState,
   HydrateOptions,
   OmitKeyof,
   QueryClient,
 } from '@tanstack/query-core'
-import { Fragment } from 'preact'
-import type { ComponentChildren } from 'preact'
-import { useEffect, useMemo, useRef } from 'preact/hooks'
-
-import { useQueryClient } from './QueryClientProvider'
 
 /**
  * The props accepted by `HydrationBoundary`.

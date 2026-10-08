@@ -4,13 +4,13 @@ import { useEffect, useState } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { MutationCache, QueryCache, QueryClient, useMutation } from '..'
-import type { UseMutationResult } from '../types'
 import { ErrorBoundary } from './ErrorBoundary'
 import {
   mockOnlineManagerIsOnline,
   renderWithClient,
   setActTimeout,
 } from './utils'
+import type { UseMutationResult } from '../types'
 
 describe('useMutation', () => {
   let queryCache: QueryCache

@@ -14,13 +14,13 @@ import {
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '..'
+import { ErrorBoundary } from './ErrorBoundary'
+import { renderWithClient } from './utils'
 import type {
   InfiniteData,
   UseSuspenseInfiniteQueryResult,
   UseSuspenseQueryResult,
 } from '..'
-import { ErrorBoundary } from './ErrorBoundary'
-import { renderWithClient } from './utils'
 
 describe('useSuspenseQuery', () => {
   let queryCache: QueryCache
