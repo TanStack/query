@@ -9,7 +9,7 @@ export default defineConfig([
   pluginSolid,
   {
     rules: {
-      'solid/reactivity': 'off',
+      'solid/reactivity': 'off', // Reads signals outside tracked scopes on purpose (initial snapshots, subscription callbacks)
     },
   },
 ])
