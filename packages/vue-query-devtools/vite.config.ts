@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitest/config'
-import vue from 'unplugin-vue/vite'
+import vue from '@vitejs/plugin-vue'
 
 import packageJson from './package.json'
 
