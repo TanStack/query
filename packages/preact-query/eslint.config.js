@@ -14,7 +14,7 @@ export default defineConfig([
       parser: tsParser,
     },
     rules: {
-      // Disable base rule to prevent overload false positives
+      // Base rules from 'eslint-config-preact' that are already covered by TypeScript and 'import/no-duplicates'
       'no-redeclare': 'off',
       'no-duplicate-imports': 'off',
       'no-unused-vars': 'off',
