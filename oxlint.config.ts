@@ -19,6 +19,8 @@ export default defineConfig({
   jsPlugins: [
     { name: 'import-js', specifier: 'eslint-plugin-import-x' },
     { name: 'jsdoc-js', specifier: 'eslint-plugin-jsdoc' },
+    // Unlike the native rule, also checks `expectTypeOf` calls
+    { name: 'vitest-js', specifier: '@vitest/eslint-plugin' },
     { name: 'cspell', specifier: '@cspell/eslint-plugin' },
     '@stylistic/eslint-plugin',
     // Absolute path so that package configs can extend this config
@@ -298,7 +300,7 @@ export default defineConfig({
         'vitest/prefer-called-exactly-once-with': 'error',
         'vitest/require-local-test-context-for-concurrent-snapshots': 'error',
         'vitest/valid-describe-callback': 'error',
-        'vitest/valid-expect': 'error',
+        'vitest-js/valid-expect': 'error',
         'vitest/valid-expect-in-promise': 'error',
         'vitest/valid-title': 'error',
       },

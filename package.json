@@ -60,6 +60,7 @@
     "@testing-library/jest-dom": "^6.8.0",
     "@types/node": "^22.15.3",
     "@vitest/coverage-istanbul": "4.1.11",
+    "@vitest/eslint-plugin": "^1.6.27",
     "eslint": "catalog:",
     "eslint-plugin-import-x": "^4.17.1",
     "eslint-plugin-jsdoc": "^65.0.1",
