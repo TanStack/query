@@ -1,4 +1,8 @@
 import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
+import { useCallback, useEffect, useRef } from 'preact/hooks'
+
+import { useQueryClient } from './QueryClientProvider'
+import { useSyncExternalStore } from './utils'
 import type {
   Mutation,
   MutationCache,
@@ -6,10 +10,6 @@ import type {
   MutationState,
   QueryClient,
 } from '@tanstack/query-core'
-import { useCallback, useEffect, useRef } from 'preact/hooks'
-
-import { useQueryClient } from './QueryClientProvider'
-import { useSyncExternalStore } from './utils'
 
 /**
  * The `useIsMutating` hook returns the `number` of mutations that your application currently has `pending`
