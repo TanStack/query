@@ -174,8 +174,10 @@ describe('useMutation', () => {
     })
 
     expect(
-      (relevantMutation?.options.mutationKey as Array<MutationKeyTest>)[0]
-        ?.otherObject.name === 'someOtherObjectName',
+      (
+        relevantMutation?.options.mutationKey as
+          Array<MutationKeyTest> | undefined
+      )?.[0]?.otherObject.name === 'someOtherObjectName',
     ).toBe(true)
   })
 

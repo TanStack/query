@@ -29,6 +29,7 @@
     "test:types:ts59": "node -e \"const Module = require('module'); const resolveFilename = Module._resolveFilename; let swapped = false; Module._resolveFilename = function (request, ...args) { if (request === 'typescript' || request.startsWith('typescript/')) { request = request.replace('typescript', 'typescript59'); swapped = true } return resolveFilename.call(this, request, ...args) }; process.on('exit', () => { if (!swapped) { console.error('svelte-check did not load typescript59'); process.exitCode = 1 } }); process.argv.splice(1, 0, ''); require('svelte-check/bin/svelte-check')\" -- --tsconfig ./tsconfig.legacy.json",
     "test:types:tscurrent": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint --concurrency=auto ./src",
+    "test:oxlint": "oxlint ./src",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",

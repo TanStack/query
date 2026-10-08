@@ -5,7 +5,11 @@ export default {
   ignore: ['scripts/*.{j,t}s', '**/ts-fixture/file.ts'],
   treatConfigHintsAsErrors: true,
   treatTagHintsAsErrors: true,
-  ignoreDependencies: ['@oxc-project/runtime'],
+  ignoreDependencies: [
+    '@oxc-project/runtime',
+    // Used by the ESLint configs of the React examples
+    '@tanstack/eslint-config',
+  ],
   ignoreWorkspaces: ['examples/**', 'integrations/**'],
   rules: { duplicates: 'warn' },
   workspaces: {
