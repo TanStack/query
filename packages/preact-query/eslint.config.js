@@ -19,8 +19,6 @@ export default defineConfig([
       'no-duplicate-imports': 'off',
       'no-unused-vars': 'off',
       'no-import-assign': 'off',
-      // TS-aware version handles overloads correctly
-      '@typescript-eslint/no-redeclare': 'error',
     },
   },
   {
