@@ -18,8 +18,6 @@ export default defineConfig([
       'no-redeclare': 'off',
       'no-duplicate-imports': 'off',
       'no-unused-vars': 'off',
-      'import/order': 'off',
-      'sort-imports': 'off',
       'no-import-assign': 'off',
       // TS-aware version handles overloads correctly
       '@typescript-eslint/no-redeclare': 'error',

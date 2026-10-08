@@ -1,7 +1,7 @@
-import { createElement, Component } from 'preact'
+import { Component, createElement } from 'preact'
+import { ErrorBoundaryContext } from './ErrorBoundaryContext'
 import type { ErrorInfo } from 'preact'
 
-import { ErrorBoundaryContext } from './ErrorBoundaryContext'
 import type { ErrorBoundaryProps, FallbackProps } from './types'
 
 type ErrorBoundaryState =
