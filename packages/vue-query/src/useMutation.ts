@@ -22,6 +22,10 @@ import type {
 import type { MaybeRefDeep, MutationOptions } from './types'
 import type { QueryClient } from './queryClient'
 
+/**
+ * The {@link MutationObserverResult} properties without `mutate` and `reset`, which `useMutation` replaces with
+ * its own versions.
+ */
 export type MutationResult<TData, TError, TVariables, TOnMutateResult> =
   DistributiveOmit<
     MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
