@@ -3,7 +3,7 @@ id: QueryClientConfig
 title: QueryClientConfig
 ---
 
-Defined in: [packages/solid-query/src/QueryClient.ts:102](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L102)
+Defined in: [packages/solid-query/src/QueryClient.ts:106](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L106)
 
 The config accepted by `new QueryClient(config)`, with Solid's extended [DefaultOptions](DefaultOptions.md).
 

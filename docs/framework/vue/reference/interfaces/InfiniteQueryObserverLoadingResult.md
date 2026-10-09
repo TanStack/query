@@ -3,7 +3,7 @@ id: InfiniteQueryObserverLoadingResult
 title: InfiniteQueryObserverLoadingResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1502](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1502)
+Defined in: [packages/query-core/src/types.ts:1508](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1508)
 
 An infinite query result in the `pending` state while the first fetch is in flight, so
 `isLoading` is `true`.

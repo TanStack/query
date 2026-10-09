@@ -3,7 +3,7 @@ id: QueryObserverOptions
 title: QueryObserverOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:516](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L516)
+Defined in: [packages/query-core/src/types.ts:519](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L519)
 
 The options of a `QueryObserver`, and of the hooks built on it like `useQuery`: the
 [QueryOptions](../type-aliases/QueryOptions.md) of the query, plus options that control the observer, such as `enabled`,

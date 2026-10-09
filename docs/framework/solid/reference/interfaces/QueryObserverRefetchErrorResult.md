@@ -3,7 +3,7 @@ id: QueryObserverRefetchErrorResult
 title: QueryObserverRefetchErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1233](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1233)
+Defined in: [packages/query-core/src/types.ts:1236](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1236)
 
 A query result in the `error` state when a refetch failed, so the data from before is kept.
 

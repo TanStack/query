@@ -3,7 +3,7 @@ id: MutateOptions
 title: MutateOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:2006](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2006)
+Defined in: [packages/query-core/src/types.ts:2012](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2012)
 
 The callbacks that can be passed to `mutate` for a single call. They run after the callbacks of
 the mutation options.

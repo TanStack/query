@@ -3,7 +3,7 @@ id: InfiniteQueryPageParamsOptions
 title: InfiniteQueryPageParamsOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:482](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L482)
+Defined in: [packages/query-core/src/types.ts:485](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L485)
 
 The page param options of an infinite query: `initialPageParam`, and the `getNextPageParam` and
 `getPreviousPageParam` functions that compute the params of the pages around it.

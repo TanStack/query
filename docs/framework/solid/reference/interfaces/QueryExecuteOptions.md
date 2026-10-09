@@ -3,7 +3,7 @@ id: QueryExecuteOptions
 title: QueryExecuteOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:721](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L721)
+Defined in: [packages/query-core/src/types.ts:724](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L724)
 
 The options of `queryClient.query`: the [QueryOptions](QueryOptions.md) of the query, plus a `staleTime`
 that decides whether cached data is returned instead of fetching, and a `select` that only

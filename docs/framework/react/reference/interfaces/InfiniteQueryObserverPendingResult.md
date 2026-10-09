@@ -3,7 +3,7 @@ id: InfiniteQueryObserverPendingResult
 title: InfiniteQueryObserverPendingResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1448](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1448)
+Defined in: [packages/query-core/src/types.ts:1454](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1454)
 
 An infinite query result in the `pending` state: the query has no data yet.
 

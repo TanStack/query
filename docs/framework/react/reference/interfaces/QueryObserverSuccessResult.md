@@ -3,7 +3,7 @@ id: QueryObserverSuccessResult
 title: QueryObserverSuccessResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1282](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1282)
+Defined in: [packages/query-core/src/types.ts:1285](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1285)
 
 A query result in the `success` state with data from the cache.
 

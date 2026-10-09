@@ -3,7 +3,7 @@ id: QueryObserverLoadingResult
 title: QueryObserverLoadingResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1135](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1135)
+Defined in: [packages/query-core/src/types.ts:1138](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1138)
 
 A query result in the `pending` state while the first fetch is in flight, so `isLoading` is
 `true`.
