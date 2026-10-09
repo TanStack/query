@@ -13,7 +13,7 @@ The recommended way to achieve this is to use the `browser` module from SvelteKi
 
 ```svelte
 <script lang="ts">
-  import { browser } from '$app/environment'
+  import { browser } from '$app/env'
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
 
   const queryClient = new QueryClient({
@@ -84,7 +84,7 @@ Svelte Query supports prefetching queries on the server. Using this setup below,
 **src/routes/+layout.ts**
 
 ```ts
-import { browser } from '$app/environment'
+import { browser } from '$app/env'
 import { QueryClient } from '@tanstack/svelte-query'
 
 export async function load() {
