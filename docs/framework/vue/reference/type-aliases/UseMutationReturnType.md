@@ -52,4 +52,4 @@ reset: MutationObserverResult<TData, TError, TVariables, TOnMutateResult>["reset
 
 ### TResult
 
-`TResult` = `MutationResult`\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
+`TResult` = [`MutationResult`](MutationResult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>

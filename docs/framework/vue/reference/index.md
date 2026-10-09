@@ -110,6 +110,7 @@ title: "@tanstack/vue-query"
 - [MutationMeta](type-aliases/MutationMeta.md)
 - [MutationObserverResult](type-aliases/MutationObserverResult.md)
 - [MutationOptions](type-aliases/MutationOptions.md)
+- [MutationResult](type-aliases/MutationResult.md)
 - [MutationScope](type-aliases/MutationScope.md)
 - [MutationStateOptions](type-aliases/MutationStateOptions.md)
 - [MutationStatus](type-aliases/MutationStatus.md)
