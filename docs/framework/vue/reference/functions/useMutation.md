@@ -9,7 +9,7 @@ redirect_from:
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options: UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, queryClient?: QueryClient): UseMutationReturnType<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/vue-query/src/useMutation.ts:233](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutation.ts#L233)
+Defined in: [packages/vue-query/src/useMutation.ts:237](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutation.ts#L237)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
 `useMutation` is the composable for that.
