@@ -15,7 +15,6 @@ const jsdocRecommendedRules = Object.fromEntries(
 )
 
 export default defineConfig({
-  $schema: './node_modules/oxlint/configuration_schema.json',
   plugins: ['import', 'typescript', 'unicorn', 'vitest'],
   jsPlugins: [
     { name: 'import-js', specifier: 'eslint-plugin-import-x' },
