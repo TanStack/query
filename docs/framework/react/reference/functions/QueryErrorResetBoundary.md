@@ -6,10 +6,10 @@ redirect_from:
 ---
 
 ```ts
-function QueryErrorResetBoundary(__namedParameters: QueryErrorResetBoundaryProps): Element;
+function QueryErrorResetBoundary(props: QueryErrorResetBoundaryProps): Element;
 ```
 
-Defined in: [packages/react-query/src/QueryErrorResetBoundary.tsx:136](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L136)
+Defined in: [packages/react-query/src/QueryErrorResetBoundary.tsx:160](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L160)
 
 When using `suspense` or `throwOnError` in your queries, you need a way to let queries know that you want to
 try again when re-rendering after some error occurred. With the `QueryErrorResetBoundary` component you can
@@ -17,9 +17,19 @@ reset any query errors within the boundaries of the component.
 
 ## Parameters
 
-### \_\_namedParameters
+### props
 
 [`QueryErrorResetBoundaryProps`](../interfaces/QueryErrorResetBoundaryProps.md)
+
+The `children` to render.
+
+<a id="props-properties"></a>
+
+#### `props` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="props-property-children"></a> `children` | \| `ReactNode` \| [`QueryErrorResetBoundaryFunction`](../type-aliases/QueryErrorResetBoundaryFunction.md) | Either a plain node, or a function that receives the boundary's QueryErrorResetBoundaryValue and returns a node. |
 
 ## Returns
 

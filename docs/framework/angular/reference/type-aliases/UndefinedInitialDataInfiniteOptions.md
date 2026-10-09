@@ -7,7 +7,7 @@ title: UndefinedInitialDataInfiniteOptions
 type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:24](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L24)
+Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:23](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L23)
 
 The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
 may be `undefined` while the query is `pending`.
@@ -17,7 +17,7 @@ may be `undefined` while the query is `pending`.
 ### initialData?
 
 ```ts
-optional initialData: 
+optional initialData?: 
   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
 | InitialDataFunction<NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>>;
 ```

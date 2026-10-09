@@ -6,11 +6,11 @@ title: useIsFetching
 ```ts
 function useIsFetching(
    host: ReactiveControllerHost,
-   filters: Accessor<QueryFilters<readonly unknown[]>>,
+   filters?: Accessor<QueryFilters<readonly unknown[]>>,
    queryClient?: QueryClient): IsFetchingAccessor;
 ```
 
-Defined in: [packages/lit-query/src/useIsFetching.ts:143](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsFetching.ts#L143)
+Defined in: [packages/lit-query/src/useIsFetching.ts:141](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsFetching.ts#L141)
 
 Creates a Lit reactive controller that tracks how many matching queries are
 currently fetching.
@@ -28,11 +28,17 @@ resolves the client from the nearest connected `QueryClientProvider`.
 The Lit reactive controller host that owns the cache
 subscription.
 
-### filters
+### filters?
 
 [`Accessor`](../type-aliases/Accessor.md)\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\> = `{}`
 
 Query filters, or a getter that returns query filters.
+
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+Built from [`QueryFilters`](../interfaces/QueryFilters.md#properties). See the type above for what it changes.
 
 ### queryClient?
 

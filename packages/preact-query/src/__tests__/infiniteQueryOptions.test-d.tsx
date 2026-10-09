@@ -1,9 +1,4 @@
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
-import type {
-  DataTag,
-  InfiniteData,
-  InitialDataFunction,
-} from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 
@@ -11,6 +6,11 @@ import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { useQuery } from '../useQuery'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
+import type {
+  DataTag,
+  InfiniteData,
+  InitialDataFunction,
+} from '@tanstack/query-core'
 
 // Regression test for exported infiniteQueryOptions inference under declaration emit.
 // TypeScript should be able to name the return type without expanding the
@@ -250,7 +250,7 @@ describe('infiniteQueryOptions', () => {
     )
   })
 
-  it('allow optional initialData function', () => {
+  it('should allow optional initialData function', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -268,7 +268,7 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
-  it('allow optional initialData object', () => {
+  it('should allow optional initialData object', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
       queryKey: queryKey(),

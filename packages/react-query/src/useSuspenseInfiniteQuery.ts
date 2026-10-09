@@ -20,7 +20,12 @@ import type {
  * `enabled`, and `placeholderData`.
  *
  * Caveat: cancellation does not work.
- *
+ * @param options - The {@link UseSuspenseInfiniteQueryOptions} to use — the same options as `useInfiniteQuery`, minus the ones listed above.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+ * be used.
+ * @returns The same object as `useInfiniteQuery`, except that `data` is guaranteed to be defined,
+ * `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived flags set
+ * accordingly).
  * @remarks Multiple suspenseful query calls in the same component suspend serially, causing a request
  * waterfall — each one blocks rendering until it resolves, so the next doesn't even start fetching until
  * then. There's no way to parallelize multiple infinite queries under Suspense. Also keep in mind that
@@ -28,13 +33,6 @@ import type {
  * resulting in outdated data. Make sure to call these functions only in response to user actions, or add
  * conditions like `hasNextPage && !isFetching`.
  * @see {@link useInfiniteQuery} for the non-Suspense version of this hook.
- * @param options - The {@link UseSuspenseInfiniteQueryOptions} to use — the same options as `useInfiniteQuery`, minus the ones listed above.
- * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
- * be used.
- * @returns The same object as `useInfiniteQuery`, except that `data` is guaranteed to be defined,
- * `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived flags set
- * accordingly).
- *
  * @example
  * The query error is thrown if a fetch fails and no cached data exists yet, so an error boundary is
  * required around `<Suspense>`. A failed background refetch instead continues to render the cached data.

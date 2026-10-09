@@ -7,7 +7,7 @@ title: VueQueryPlugin
 const VueQueryPlugin: object;
 ```
 
-Defined in: [packages/vue-query/src/vueQueryPlugin.ts:74](https://github.com/TanStack/query/blob/main/packages/vue-query/src/vueQueryPlugin.ts#L74)
+Defined in: [packages/vue-query/src/vueQueryPlugin.ts:75](https://github.com/TanStack/query/blob/main/packages/vue-query/src/vueQueryPlugin.ts#L75)
 
 Installs a `QueryClient` on the Vue app, making it available to every descendant component through
 `useQueryClient` — the Vue equivalent of React's `QueryClientProvider`, but wired up as an app-level plugin
@@ -15,7 +15,7 @@ instead of a wrapping component.
 
 ## Type Declaration
 
-### install()
+### install
 
 ```ts
 install: (app: any, options: VueQueryPluginOptions) => void;
@@ -27,7 +27,7 @@ install: (app: any, options: VueQueryPluginOptions) => void;
 
 `any`
 
-##### options
+##### options?
 
 [`VueQueryPluginOptions`](../type-aliases/VueQueryPluginOptions.md) = `{}`
 

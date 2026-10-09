@@ -51,6 +51,7 @@ describe('useMutationState', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const mutationStates = host.mutationStates
@@ -58,7 +59,6 @@ describe('useMutationState', () => {
     try {
       container.append(host)
       await host.updateComplete
-
       await vi.advanceTimersByTimeAsync(0)
       expect(mutationStates()).toEqual([])
 
@@ -68,7 +68,6 @@ describe('useMutationState', () => {
         host.count = i
         await host.updateComplete
       }
-
       expect(host.updatesRequested).toBe(5)
       expect(mutationStates()).toEqual([])
     } finally {
@@ -101,6 +100,7 @@ describe('useMutationState', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const mutationStates = host.mutationStates
@@ -108,7 +108,6 @@ describe('useMutationState', () => {
     try {
       container.append(host)
       await host.updateComplete
-
       await vi.advanceTimersByTimeAsync(0)
       expect(mutationStates()).toEqual(['idle'])
 
@@ -122,7 +121,6 @@ describe('useMutationState', () => {
         })
         await vi.advanceTimersByTimeAsync(0)
       }
-
       expect(host.updatesRequested).toBe(0)
       expect(mutationStates()).toEqual(['idle'])
     } finally {
@@ -146,6 +144,7 @@ describe('useMutationState', () => {
         select: (mutation) => mutation.state.status,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -156,7 +155,6 @@ describe('useMutationState', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -200,10 +198,10 @@ describe('useMutationState', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -227,6 +225,7 @@ describe('useMutationState', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -243,6 +242,7 @@ describe('useMutationState', () => {
         return html`<p>statuses: ${statuses}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const producer = new Producer()
     const host = new Host()
@@ -258,6 +258,48 @@ describe('useMutationState', () => {
     expect(host.shadowRoot).toHaveTextContent('statuses: success')
   })
 
+  it('should return the current mutation states when connected after a mutation started', async () => {
+    class Producer extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (value: number) => sleep(10).then(() => value + 10),
+        },
+        queryClient,
+      )
+    }
+
+    customElements.define(generateElementName(), Producer)
+
+    class Host extends LitElement {
+      readonly mutationStates = useMutationState(
+        this,
+        {
+          filters: { status: 'pending' },
+        },
+        queryClient,
+      )
+
+      override render() {
+        return html`<p>pending: ${this.mutationStates().length}</p>`
+      }
+    }
+
+    customElements.define(generateElementName(), Host)
+    const producer = new Producer()
+    const host = new Host()
+    container.append(producer)
+    const { mutation } = producer
+    await producer.updateComplete
+
+    mutation.mutate(1)
+    container.append(host)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(host.shadowRoot).toHaveTextContent('pending: 1')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.shadowRoot).toHaveTextContent('pending: 0')
+  })
+
   it('should not process mutation cache updates while disconnected', async () => {
     class Producer extends LitElement {
       readonly mutation = createMutationController(
@@ -268,6 +310,7 @@ describe('useMutationState', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -288,6 +331,7 @@ describe('useMutationState', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const producer = new Producer()
     const host = new Host()
@@ -316,6 +360,7 @@ describe('useMutationState', () => {
         mutationFn: () => sleep(10).then(() => 'data2'),
       })
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -328,6 +373,7 @@ describe('useMutationState', () => {
         return html`<p>statuses: ${statuses || 'none'}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const provider = document.createElement(
       providerTagName,
@@ -336,7 +382,6 @@ describe('useMutationState', () => {
     const producer = new Producer()
     const host = new Host()
     provider.append(producer, host)
-
     container.append(provider)
     await provider.updateComplete
 
@@ -391,6 +436,7 @@ describe('useMutationState', () => {
         return html`<p>statuses: ${statuses}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -399,6 +445,7 @@ describe('useMutationState', () => {
     const promiseA = mutationA.mutateAsync(undefined)
     await vi.advanceTimersByTimeAsync(10)
     await expect(promiseA).resolves.toBe('ok')
+
     await Promise.all([
       expect(mutationB.mutateAsync(undefined)).rejects.toThrow(
         'state-b-failure',
@@ -411,7 +458,6 @@ describe('useMutationState', () => {
     activeFilter = { mutationKey: mutationKey2 }
     host.requestUpdate()
     await host.updateComplete
-
     expect(mutationStatuses()).toEqual(['error'])
     expect(host.shadowRoot).toHaveTextContent('statuses: error')
   })
@@ -446,6 +492,7 @@ describe('useMutationState', () => {
         return html`<p>labels: ${labels}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -460,7 +507,6 @@ describe('useMutationState', () => {
     label = 'after'
     host.requestUpdate()
     await host.updateComplete
-
     expect(mutationLabels()).toEqual(['after'])
     expect(host.shadowRoot).toHaveTextContent('labels: after')
 
@@ -479,13 +525,13 @@ describe('useMutationState', () => {
         select: (mutation) => mutation.state.status,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
     expect(consumer.mutationStatuses()).toEqual([])
 
     container.append(consumer)
-
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.mutationStatuses()).toThrow(
       /No QueryClient available/,
@@ -496,7 +542,6 @@ describe('useMutationState', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -520,6 +565,7 @@ describe('useMutationState', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
     const producer = new Producer()
     container.append(producer)
@@ -530,6 +576,7 @@ describe('useMutationState', () => {
     class Host extends LitElement {
       mutationStatuses?: MutationStateAccessor<string>
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -546,7 +593,6 @@ describe('useMutationState', () => {
       queryClient,
     )
     const { mutationStatuses } = host
-
     expect(mutationStatuses()).toContain('pending')
     await vi.advanceTimersByTimeAsync(10)
     expect(mutationStatuses()).toContain('success')

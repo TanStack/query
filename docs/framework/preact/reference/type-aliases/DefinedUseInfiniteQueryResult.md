@@ -7,7 +7,7 @@ title: DefinedUseInfiniteQueryResult
 type DefinedUseInfiniteQueryResult<TData, TError> = DefinedInfiniteQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [packages/preact-query/src/types.ts:377](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L377)
+Defined in: [packages/preact-query/src/types.ts:362](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L362)
 
 The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined` (unless a
 `select` changes `TData` to include `undefined`). Re-exports [DefinedInfiniteQueryObserverResult](DefinedInfiniteQueryObserverResult.md)

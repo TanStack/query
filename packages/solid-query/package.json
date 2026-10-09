@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "5.104.0",
+  "version": "5.104.1",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -68,6 +68,7 @@
   "devDependencies": {
     "@solidjs/testing-library": "catalog:",
     "@tanstack/query-test-utils": "workspace:*",
+    "eslint-plugin-solid": "catalog:",
     "solid-js": "catalog:",
     "typescript": "catalog:",
     "unplugin-solid": "catalog:",

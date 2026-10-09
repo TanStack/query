@@ -223,7 +223,7 @@ describe('infiniteQueryOptions', () => {
     )
   })
 
-  it('allow optional initialData function', () => {
+  it('should allow optional initialData function', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -241,7 +241,7 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
-  it('allow optional initialData object', () => {
+  it('should allow optional initialData object', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
       queryKey: queryKey(),

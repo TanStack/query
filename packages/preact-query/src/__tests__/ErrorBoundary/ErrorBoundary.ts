@@ -1,7 +1,7 @@
-import { createElement, Component } from 'preact'
+import { Component, createElement } from 'preact'
+import { ErrorBoundaryContext } from './ErrorBoundaryContext'
 import type { ErrorInfo } from 'preact'
 
-import { ErrorBoundaryContext } from './ErrorBoundaryContext'
 import type { ErrorBoundaryProps, FallbackProps } from './types'
 
 type ErrorBoundaryState =
@@ -30,11 +30,11 @@ export class ErrorBoundary extends Component<
     this.state = initialState
   }
 
-  static getDerivedStateFromError(error: Error) {
+  static override getDerivedStateFromError(error: Error) {
     return { didCatch: true, error }
   }
 
-  resetErrorBoundary(...args: any[]) {
+  resetErrorBoundary(...args: Array<any>) {
     const { error } = this.state
 
     if (error !== null) {
@@ -47,7 +47,7 @@ export class ErrorBoundary extends Component<
     }
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
+  override componentDidCatch(error: Error, info: ErrorInfo) {
     /**
      * To emulate the react behavior of console.error
      * we add one here to show that the errors bubble up
@@ -57,7 +57,7 @@ export class ErrorBoundary extends Component<
     this.props.onError?.(error, info)
   }
 
-  componentDidUpdate(
+  override componentDidUpdate(
     prevProps: ErrorBoundaryProps,
     prevState: ErrorBoundaryState,
   ) {
@@ -126,7 +126,7 @@ export class ErrorBoundary extends Component<
   }
 }
 
-function hasArrayChanged(a: any[] = [], b: any[] = []) {
+function hasArrayChanged(a: Array<any> = [], b: Array<any> = []) {
   return (
     a.length !== b.length || a.some((item, index) => !Object.is(item, b[index]))
   )

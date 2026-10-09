@@ -1,9 +1,10 @@
 // @ts-check
 
 import vitest from '@vitest/eslint-plugin'
+import { defineConfig } from 'eslint/config'
 import rootConfig from './root.eslint.config.js'
 
-export default [
+export default defineConfig([
   ...rootConfig,
   {
     plugins: { vitest },
@@ -21,4 +22,4 @@ export default [
       '@typescript-eslint/require-await': 'off',
     },
   },
-]
+])

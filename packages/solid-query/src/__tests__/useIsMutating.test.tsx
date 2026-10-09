@@ -179,7 +179,7 @@ describe('useIsMutating', () => {
       )
     }
 
-    const rendered = render(() => <Page></Page>)
+    const rendered = render(() => <Page />)
 
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -240,7 +240,7 @@ describe('useIsMutating', () => {
     // We have to mock the MutationCache to not unsubscribe
     // the listener when the component is unmounted
     class MutationCacheMock extends QueryCore.MutationCache {
-      subscribe(listener: any) {
+      override subscribe(listener: any) {
         super.subscribe(listener)
         return () => void 0
       }

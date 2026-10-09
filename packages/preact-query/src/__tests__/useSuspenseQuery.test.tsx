@@ -14,13 +14,13 @@ import {
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '..'
+import { ErrorBoundary } from './ErrorBoundary'
+import { renderWithClient } from './utils'
 import type {
   InfiniteData,
   UseSuspenseInfiniteQueryResult,
   UseSuspenseQueryResult,
 } from '..'
-import { ErrorBoundary } from './ErrorBoundary'
-import { renderWithClient } from './utils'
 
 describe('useSuspenseQuery', () => {
   let queryCache: QueryCache
@@ -1153,9 +1153,7 @@ describe('useSuspenseQuery', () => {
     function Page() {
       return (
         <div>
-          <button
-            onClick={() => queryClient.setQueryData(key, undefined as any)}
-          >
+          <button onClick={() => queryClient.setQueryData(key, undefined)}>
             set undefined
           </button>
           <Suspense fallback="loading">

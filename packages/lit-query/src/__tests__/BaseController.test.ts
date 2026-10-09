@@ -60,7 +60,6 @@ describe('BaseController', () => {
     customElements.define(generateElementName(), Host)
     const host = new Host()
     provider.append(host)
-
     container.append(provider)
     await provider.updateComplete
     await host.updateComplete
@@ -74,5 +73,28 @@ describe('BaseController', () => {
 
     controller.destroy()
     provider.remove()
+  })
+
+  it('should resolve to a missing client without throwing when the host cannot dispatch events', async () => {
+    const host: ReactiveControllerHost = {
+      addController: () => {},
+      removeController: () => {},
+      requestUpdate: () => {},
+      updateComplete: Promise.resolve(true),
+    }
+
+    const controller = new RecordingController(host)
+    controller.hostConnected()
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(controller.lifecycle).toEqual([
+      'connected:missing',
+      'changed:missing',
+    ])
+    expect(() => controller.current).toThrow(
+      'No QueryClient available. Pass one explicitly or render within QueryClientProvider.',
+    )
+
+    controller.destroy()
   })
 })

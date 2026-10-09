@@ -4,10 +4,10 @@ title: Updater
 ---
 
 ```ts
-type Updater<TInput, TOutput> = TOutput | (input: TInput) => TOutput;
+type Updater<TInput, TOutput> = TOutput | ((input: TInput) => TOutput);
 ```
 
-Defined in: [packages/query-core/src/utils.ts:105](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L105)
+Defined in: [packages/query-core/src/utils.ts:103](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L103)
 
 Either a plain value of type `TOutput`, or a function that receives `TInput` and returns `TOutput`.
 Used for example by `setQueryData`-style updaters, which accept either the new data directly or a

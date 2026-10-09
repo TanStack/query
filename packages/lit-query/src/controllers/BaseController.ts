@@ -9,6 +9,12 @@ import type { ReactiveController, ReactiveControllerHost } from 'lit'
 type QueryClientResolutionState =
   'pre-connect' | 'awaiting-context' | 'bound' | 'missing'
 
+/**
+ * Base class of the query controllers. It resolves the `QueryClient`, either
+ * passed explicitly or provided through context by a `QueryClientProvider`,
+ * follows the host's lifecycle, and requests a host update when the result
+ * changes.
+ */
 export abstract class BaseController<TResult> implements ReactiveController {
   protected result: TResult
 
@@ -36,6 +42,11 @@ export abstract class BaseController<TResult> implements ReactiveController {
     host.addController(this)
   }
 
+  /**
+   * Starts resolving the `QueryClient` from context, unless one was passed
+   * explicitly, and calls `onConnected` in a microtask so subclass fields are
+   * initialized first.
+   */
   hostConnected(): void {
     if (this.connected || this.destroyed) {
       return
@@ -69,6 +80,10 @@ export abstract class BaseController<TResult> implements ReactiveController {
     }
   }
 
+  /**
+   * Releases the context `QueryClient`, unless one was passed explicitly, and
+   * calls `onDisconnected`.
+   */
   hostDisconnected(): void {
     if (!this.connected) {
       return
@@ -85,6 +100,10 @@ export abstract class BaseController<TResult> implements ReactiveController {
     this.onDisconnected()
   }
 
+  /**
+   * Calls `onHostUpdate` before the host renders. Results set during this call
+   * don't request another update.
+   */
   hostUpdate(): void {
     if (this.destroyed) {
       return
@@ -98,6 +117,11 @@ export abstract class BaseController<TResult> implements ReactiveController {
     }
   }
 
+  /**
+   * Permanently disconnects the controller and removes it from its host, if
+   * the host supports `removeController`. The controller ignores later
+   * lifecycle callbacks.
+   */
   destroy(): void {
     if (this.destroyed) {
       return
@@ -117,10 +141,20 @@ export abstract class BaseController<TResult> implements ReactiveController {
     }
   }
 
+  /**
+   * Returns the `QueryClient` without throwing when none is available.
+   * @returns The explicitly passed client, otherwise the client from context,
+   * or `undefined` if neither is available.
+   */
   protected tryGetQueryClient(): QueryClient | undefined {
     return this.explicitClient ?? this.contextClient
   }
 
+  /**
+   * Returns the `QueryClient`, throwing when none is available.
+   * @returns The explicitly passed client, otherwise the client from context.
+   * @throws {Error} If no `QueryClient` is available.
+   */
   protected getQueryClient(): QueryClient {
     const client = this.tryGetQueryClient()
     if (!client) {
@@ -130,6 +164,11 @@ export abstract class BaseController<TResult> implements ReactiveController {
     return client
   }
 
+  /**
+   * Stores a new result and requests a host update, unless it is the same
+   * result or the host is already updating.
+   * @param next - The new result.
+   */
   protected setResult(next: TResult): void {
     if (Object.is(this.result, next)) {
       return
@@ -141,6 +180,11 @@ export abstract class BaseController<TResult> implements ReactiveController {
     }
   }
 
+  /**
+   * The latest result of the controller.
+   * @returns The latest result.
+   * @throws {Error} If no `QueryClient` could be resolved from context.
+   */
   get current(): TResult {
     if (this.queryClientResolutionState === 'missing') {
       throw createMissingQueryClientError()
@@ -149,10 +193,17 @@ export abstract class BaseController<TResult> implements ReactiveController {
     return this.result
   }
 
+  /**
+   * Whether the controller's host is connected.
+   * @returns `true` while the host is connected.
+   */
   protected get connectedState(): boolean {
     return this.connected
   }
 
+  /**
+   * Requests a host update in a microtask, batching multiple calls into one.
+   */
   protected queueUpdate(): void {
     if (this.updateQueued) {
       return
@@ -283,8 +334,26 @@ export abstract class BaseController<TResult> implements ReactiveController {
     return true
   }
 
+  /**
+   * Called in a microtask after the host connects, once the subclass fields
+   * are initialized. Subclasses subscribe to the `QueryClient` here, if one is
+   * available.
+   */
   protected abstract onConnected(): void
+  /**
+   * Called when the host disconnects or the controller is destroyed.
+   * Subclasses unsubscribe here.
+   */
   protected abstract onDisconnected(): void
+  /**
+   * Called before each host update. Subclasses refresh their options here.
+   */
   protected abstract onHostUpdate(): void
+  /**
+   * Called in a microtask when the `QueryClient` from context changes, or when
+   * resolving it finishes without finding one (`tryGetQueryClient` then returns
+   * `undefined`). Subclasses resubscribe to the new client here, if there is
+   * one.
+   */
   protected abstract onQueryClientChanged(): void
 }

@@ -19,9 +19,9 @@ import {
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import type { UseSuspenseQueryOptions } from '..'
 import { ErrorBoundary } from './ErrorBoundary'
 import { renderWithClient } from './utils'
+import type { UseSuspenseQueryOptions } from '..'
 
 describe('useSuspenseQueries', () => {
   let queryClient: QueryClient
@@ -399,7 +399,7 @@ describe('useSuspenseQueries', () => {
     expect(results).toEqual(['loading', '1', '2'])
   })
 
-  it("shouldn't unmount before all promises fetched", async () => {
+  it('should not unmount before all promises fetched', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const results: Array<string> = []

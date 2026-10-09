@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import { onlineManager, useQueryClient } from '@tanstack/preact-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import type {
@@ -10,6 +10,10 @@ import type {
 import type { QueryClient } from '@tanstack/preact-query'
 import type { VNode } from 'preact'
 
+/**
+ * The props of `PreactQueryDevtools`, which renders the devtools with a toggle button that opens
+ * them.
+ */
 export interface DevtoolsOptions {
   /**
    * Set this true if you want the dev tools to default to being open
@@ -18,14 +22,12 @@ export interface DevtoolsOptions {
   /**
    * The position of the TanStack logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
-   *
    * @defaultValue bottom-right
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
    * The position of the Preact Query devtools panel.
    * 'top' | 'bottom' | 'left' | 'right'
-   *
    * @defaultValue bottom
    */
   position?: DevtoolsPosition
@@ -45,7 +47,8 @@ export interface DevtoolsOptions {
    */
   styleNonce?: string
   /**
-   * Use this to render the devtools inside a Shadow DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
+   * within the shadow DOM instead of within the head tag in the light DOM.
    */
   shadowDOMTarget?: ShadowRoot
   /**
@@ -54,12 +57,17 @@ export interface DevtoolsOptions {
   hideDisabledQueries?: boolean
   /**
    * Use this to set the theme of the devtools panel.
-   *
    * @defaultValue system
    */
   theme?: Theme
 }
 
+/**
+ * Renders the TanStack Query devtools, with a toggle button that opens them, for the given or
+ * nearest `QueryClient`.
+ * @param props - The devtools options.
+ * @returns The element the devtools are mounted in.
+ */
 export function PreactQueryDevtools(props: DevtoolsOptions): VNode | null {
   const queryClient = useQueryClient(props.client)
   const ref = useRef<HTMLDivElement>(null)

@@ -3,9 +3,10 @@
 // @ts-ignore: no types for eslint-config-preact
 import preact from 'eslint-config-preact'
 import tsParser from '@typescript-eslint/parser'
+import { defineConfig } from 'eslint/config'
 import rootConfig from './root.eslint.config.js'
 
-export default [
+export default defineConfig([
   ...rootConfig,
   ...preact,
   {
@@ -13,18 +14,11 @@ export default [
       parser: tsParser,
     },
     rules: {
-      // Disable base rule to prevent overload false positives
+      // Base rules from 'eslint-config-preact' that are already covered by TypeScript and 'import/no-duplicates'
       'no-redeclare': 'off',
       'no-duplicate-imports': 'off',
       'no-unused-vars': 'off',
-      'import/order': 'off',
-      'sort-imports': 'off',
       'no-import-assign': 'off',
-      // TS-aware version handles overloads correctly
-      '@typescript-eslint/no-redeclare': 'error',
-      '@typescript-eslint/array-type': 'off',
-      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
-      '@typescript-eslint/no-unnecessary-condition': 'off',
     },
   },
-]
+])

@@ -1,4 +1,6 @@
 import { skipToken } from '@tanstack/query-core'
+import { defaultThrowOnError } from './suspense'
+import { useQueries } from './useQueries'
 import type {
   DefaultError,
   QueryClient,
@@ -6,9 +8,7 @@ import type {
   ThrowOnError,
 } from '@tanstack/query-core'
 
-import { defaultThrowOnError } from './suspense'
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
-import { useQueries } from './useQueries'
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -113,7 +113,6 @@ type GetUseSuspenseQueryResult<T> =
  * matches a query options object is mapped per-element instead, still inferring each entry individually; any
  * other non-tuple array — one whose element type doesn't match the expected options shape — falls back to
  * that same homogeneous options type too.
- *
  * @template T - The type of the `queries` array as written at the call site.
  * @template TResults - The internal accumulator that this type builds during recursion. It is not meant
  * to be set explicitly.
@@ -159,7 +158,6 @@ export type SuspenseQueriesOptions<
  * {@link SuspenseQueriesOptions}: each tuple element's result type is inferred individually, up to 20 elements.
  * A non-tuple array is mapped per-element instead, still inferring each entry individually; only past 20
  * elements does this fall back to a single homogeneous {@link UseSuspenseQueryResult} type.
- *
  * @template T - The type of the `queries` array, as inferred by {@link SuspenseQueriesOptions}.
  * @template TResults - The internal accumulator that this type builds during recursion. It is not meant
  * to be set explicitly.
@@ -187,7 +185,6 @@ export type SuspenseQueriesResults<
 /**
  * The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
  * option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
- *
  * @param options - The `queries` array to run in Suspense, and an optional `combine` function.
  * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
@@ -198,7 +195,6 @@ export type SuspenseQueriesResults<
  * Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
  * stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
  * this, make sure to set a high enough `staleTime`. Cancellation does not work.
- *
  * @example
  * The query error is thrown if a fetch fails and no cached data exists yet, so an error boundary is
  * required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
@@ -271,7 +267,6 @@ export type SuspenseQueriesResults<
  *   return children
  * }
  * ```
- *
  * @example
  * Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
  * they fetch in parallel rather than suspending one after another:
@@ -343,7 +338,6 @@ export type SuspenseQueriesResults<
  *   return children
  * }
  * ```
- *
  * @example
  * `combine`s the results into a single boolean, so `Refresh` only re-renders when that boolean changes,
  * not on every individual query update. This overload is the only one that accepts `combine`:
@@ -433,7 +427,6 @@ export function useSuspenseQueries<
 /**
  * The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
  * option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
- *
  * @param options - The `queries` array to run in Suspense, and an optional `combine` function.
  * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
@@ -444,7 +437,6 @@ export function useSuspenseQueries<
  * Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
  * stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
  * this, make sure to set a high enough `staleTime`. Cancellation does not work.
- *
  * @example
  * The query error is thrown if a fetch fails and no cached data exists yet, so an error boundary is
  * required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
@@ -517,7 +509,6 @@ export function useSuspenseQueries<
  *   return children
  * }
  * ```
- *
  * @example
  * Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
  * they fetch in parallel rather than suspending one after another:

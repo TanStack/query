@@ -10,7 +10,7 @@ function hydrate(
    options?: HydrateOptions): void;
 ```
 
-Defined in: [packages/query-core/src/hydration.ts:265](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L265)
+Defined in: [packages/query-core/src/hydration.ts:306](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L306)
 
 Restores a `DehydratedState` (as produced by `dehydrate`) into a `QueryClient`'s cache, typically to seed the
 client with data already fetched on the server. `mutations` and `queries` are each optional on `dehydratedState`.
@@ -26,13 +26,37 @@ promise, it is resumed via `query.fetch()` (reusing that promise as `initialProm
 
 `QueryClient`
 
+The client whose cache is restored into.
+
 ### dehydratedState
 
 `Partial`\<[`DehydratedState`](../interfaces/DehydratedState.md)\>
 
+The dehydrated state, e.g. produced by `dehydrate` on the server.
+
+<a id="dehydratedState-properties"></a>
+
+#### `dehydratedState` properties
+
+Built from [`DehydratedState`](../interfaces/DehydratedState.md#properties). See the type above for what it changes.
+
 ### options?
 
 [`HydrateOptions`](../interfaces/HydrateOptions.md)
+
+`defaultOptions` merged into every restored query and mutation (on top of the
+client's `defaultOptions.hydrate`), and `deserializeData` to reverse `serializeData`.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="options-property-defaultoptions"></a> `defaultOptions?` | `object` | Options applied to the queries and mutations restored from the dehydrated state. |
+| `defaultOptions.deserializeData?` | `TransformerFn` | Transforms a query's `data` after it is read from the dehydrated state, reversing `serializeData`. |
+| `defaultOptions.mutations?` | `MutationOptions`\<`unknown`, `Error`, `unknown`, `unknown`\> | Default options merged into every mutation restored from the dehydrated state. |
+| `defaultOptions.queries?` | `QueryOptions`\<`unknown`, `Error`, `unknown`, readonly `unknown`[], `never`\> | Default options merged into every query restored from the dehydrated state. |
 
 ## Returns
 

@@ -1,13 +1,13 @@
 import { QueryClient } from '@tanstack/query-core'
-import type { InfiniteData } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 
-import type { UseInfiniteQueryOptions } from '../types'
 import { useInfiniteQuery } from '../useInfiniteQuery'
+import type { UseInfiniteQueryOptions } from '../types'
+import type { InfiniteData } from '@tanstack/query-core'
 
 describe('pageParam', () => {
-  it('initialPageParam should define type of param passed to queryFunctionContext', () => {
+  it('should define type of param passed to queryFunctionContext with initialPageParam', () => {
     useInfiniteQuery({
       queryKey: queryKey(),
       queryFn: ({ pageParam }) => {
@@ -18,7 +18,7 @@ describe('pageParam', () => {
     })
   })
 
-  it('direction should be passed to queryFn of useInfiniteQuery', () => {
+  it('should pass direction to queryFn of useInfiniteQuery', () => {
     useInfiniteQuery({
       queryKey: queryKey(),
       queryFn: ({ direction }) => {
@@ -29,7 +29,7 @@ describe('pageParam', () => {
     })
   })
 
-  it('initialPageParam should define type of param passed to queryFunctionContext for fetchInfiniteQuery', () => {
+  it('should define type of param passed to queryFunctionContext with initialPageParam for fetchInfiniteQuery', () => {
     const queryClient = new QueryClient()
     // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     queryClient.fetchInfiniteQuery({
@@ -41,7 +41,7 @@ describe('pageParam', () => {
     })
   })
 
-  it('initialPageParam should define type of param passed to queryFunctionContext for infiniteQuery', () => {
+  it('should define type of param passed to queryFunctionContext with initialPageParam for infiniteQuery', () => {
     const queryClient = new QueryClient()
     queryClient.infiniteQuery({
       queryKey: ['key'],
@@ -53,7 +53,7 @@ describe('pageParam', () => {
     })
   })
 
-  it('initialPageParam should define type of param passed to queryFunctionContext for prefetchInfiniteQuery', () => {
+  it('should define type of param passed to queryFunctionContext with initialPageParam for prefetchInfiniteQuery', () => {
     const queryClient = new QueryClient()
     // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     queryClient.prefetchInfiniteQuery({

@@ -79,7 +79,7 @@ describe('useQueries', () => {
     // We have to mock the QueriesObserver to not unsubscribe
     // the listener when the component is unmounted
     class QueriesObserverMock extends QueriesObserver {
-      subscribe(listener: any) {
+      override subscribe(listener: any) {
         super.subscribe(listener)
         return () => void 0
       }

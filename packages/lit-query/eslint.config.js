@@ -1,8 +1,9 @@
 // @ts-check
 
+import { defineConfig } from 'eslint/config'
 import rootConfig from './root.eslint.config.js'
 
-export default [
+export default defineConfig([
   ...rootConfig,
   {
     files: ['**/__tests__/**'],
@@ -10,4 +11,4 @@ export default [
       '@typescript-eslint/no-unnecessary-condition': 'off',
     },
   },
-]
+])

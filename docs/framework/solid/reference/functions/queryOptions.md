@@ -5,13 +5,27 @@ redirect_from:
   - framework/solid/reference/queryOptions
 ---
 
+## Overview
+
+```ts
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+```
+
+- [`ReturnType<DefinedInitialDataOptions>` → `ReturnType<DefinedInitialDataOptions> & QueryKeyWithDataTag`](#call-signature-1): You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+- [`ReturnType<UndefinedInitialDataOptions>` → `ReturnType<UndefinedInitialDataOptions> & QueryKeyWithDataTag`](#call-signature-2): You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/queryOptions.ts:90](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L90)
+Defined in: [packages/solid-query/src/queryOptions.ts:86](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L86)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -48,7 +62,7 @@ The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to
 
 ### Returns
 
-[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
+`ReturnType`\<[`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\> & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
 
 The same options object, typed so that `queryKey` carries the inferred data type.
 
@@ -84,13 +98,15 @@ function Posts() {
 }
 ```
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/queryOptions.ts:140](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L140)
+Defined in: [packages/solid-query/src/queryOptions.ts:134](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L134)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -124,7 +140,7 @@ The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md
 
 ### Returns
 
-[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
+`ReturnType`\<[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\> & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
 
 The same options object, typed so that `queryKey` carries the inferred data type.
 
@@ -159,3 +175,33 @@ function Post(props: { id: string }) {
   )
 }
 ```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object`
+
+The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`QueryOptions`](../interfaces/QueryOptions.md#properties). See the type above for what it changes.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+`ReturnType`\<[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\> & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
+
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`QueryOptions`](../interfaces/QueryOptions.md#properties), [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md#properties). See the type above for what it changes.

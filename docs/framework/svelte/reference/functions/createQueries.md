@@ -5,13 +5,13 @@ title: createQueries
 
 ```ts
 function createQueries<T, TCombinedResult>(createQueriesOptions: Accessor<{
-  combine?: (result: T extends [] ? [] : T extends [Head] ? [GetCreateQueryResult<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetCreateQueryResult<...>, GetCreateQueryResult<...>] : [...(...)[]] extends [..., ...(...)[]] ? ... extends ... ? ... : ... : [...(...)[]] : { [K in string | number | symbol]: GetCreateQueryResult<T[K<(...)>]> }) => TCombinedResult;
+  combine?: (result: T extends [] ? [] : T extends [Head] ? [GetCreateQueryResult<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetCreateQueryResult<...>, GetCreateQueryResult<...>] : [...(...)[]] extends [..., ...(...)[]] ? ... extends ... ? ... : ... : [...(...)[]] : { [K in string | number | symbol]: GetCreateQueryResult<T[K]> }) => TCombinedResult;
   queries:   | readonly [T extends [] ? [] : T extends [Head] ? [GetCreateQueryOptionsForCreateQueries<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetCreateQueryOptionsForCreateQueries<...>, GetCreateQueryOptionsForCreateQueries<...>] : [...(...)[]] extends [..., ...(...)[]] ? ... extends ... ? ... : ... : ... extends ... ? ... : ... : readonly unknown[] extends T ? T : T extends CreateQueryOptionsForCreateQueries<..., ..., ..., ...>[] ? CreateQueryOptionsForCreateQueries<..., ..., ..., ...>[] : CreateQueryOptionsForCreateQueries<..., ..., ..., ...>[]]
-     | readonly [{ [K in string | number | symbol]: GetCreateQueryOptionsForCreateQueries<T[K<K>]> }];
+     | readonly [{ [K in string | number | symbol]: GetCreateQueryOptionsForCreateQueries<T[K]> }];
 }>, queryClient?: Accessor<QueryClient>): TCombinedResult;
 ```
 
-Defined in: [packages/svelte-query/src/createQueries.svelte.ts:262](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQueries.svelte.ts#L262)
+Defined in: [packages/svelte-query/src/createQueries.svelte.ts:259](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQueries.svelte.ts#L259)
 
 The `createQueries` function can be used to fetch a variable number of queries.
 
@@ -23,16 +23,16 @@ The `createQueries` function can be used to fetch a variable number of queries.
 
 ### TCombinedResult
 
-`TCombinedResult` = `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetCreateQueryResult`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetCreateQueryResult`\<`Head`\>, `GetCreateQueryResult`\<`Head`\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetCreateQueryResult`\<`Head`\>, `GetCreateQueryResult`\<`Head`\>, `GetCreateQueryResult`\<`Head`\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...(...)[]`\] *extends* \[\] ? \[\] : ... *extends* ... ? ... : ... : \[`...{ [K in (...)]: (...) }[]`\] : \[...\{ \[K in string \| number \| symbol\]: GetCreateQueryResult\<Tails\[K\<(...)\>\]\> \}\[\]\] : \{ \[K in string \| number \| symbol\]: GetCreateQueryResult\<T\[K\<K\>\]\> \}
+`TCombinedResult` = `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetCreateQueryResult`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetCreateQueryResult`\<`Head`\>, `GetCreateQueryResult`\<`Head`\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetCreateQueryResult`\<`Head`\>, `GetCreateQueryResult`\<`Head`\>, `GetCreateQueryResult`\<`Head`\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...(...)[]`\] *extends* \[\] ? \[\] : ... *extends* ... ? ... : ... : \[`...{ [K in (...)]: (...) }[]`\] : \[...\{ \[K in string \| number \| symbol\]: GetCreateQueryResult\<Tails\[K\]\> \}\[\]\] : \{ \[K in string \| number \| symbol\]: GetCreateQueryResult\<T\[K\]\> \}
 
 ## Parameters
 
 ### createQueriesOptions
 
 [`Accessor`](../type-aliases/Accessor.md)\<\{
-  `combine?`: (`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetCreateQueryResult`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetCreateQueryResult`\<...\>, `GetCreateQueryResult`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : \[`...(...)[]`\] : \{ \[K in string \| number \| symbol\]: GetCreateQueryResult\<T\[K\<(...)\>\]\> \}) => `TCombinedResult`;
+  `combine?`: (`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetCreateQueryResult`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetCreateQueryResult`\<...\>, `GetCreateQueryResult`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : \[`...(...)[]`\] : \{ \[K in string \| number \| symbol\]: GetCreateQueryResult\<T\[K\]\> \}) => `TCombinedResult`;
   `queries`:   \| readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetCreateQueryOptionsForCreateQueries`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetCreateQueryOptionsForCreateQueries`\<...\>, `GetCreateQueryOptionsForCreateQueries`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : ... *extends* ... ? ... : ... : readonly `unknown`[] *extends* `T` ? `T` : `T` *extends* `CreateQueryOptionsForCreateQueries`\<..., ..., ..., ...\>[] ? `CreateQueryOptionsForCreateQueries`\<..., ..., ..., ...\>[] : `CreateQueryOptionsForCreateQueries`\<..., ..., ..., ...\>[]\]
-     \| readonly \[\{ \[K in string \| number \| symbol\]: GetCreateQueryOptionsForCreateQueries\<T\[K\<K\>\]\> \}\];
+     \| readonly \[\{ \[K in string \| number \| symbol\]: GetCreateQueryOptionsForCreateQueries\<T\[K\]\> \}\];
 \}\>
 
 The `queries` array to run, and an optional `combine` function, wrapped in an

@@ -7,7 +7,7 @@ title: usePrefetchQuery
 function usePrefetchQuery<TQueryFnData, TError, TData, TQueryData, TQueryKey>(options: UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>, queryClient?: QueryClient): void;
 ```
 
-Defined in: [packages/preact-query/src/usePrefetchQuery.tsx:42](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchQuery.tsx#L42)
+Defined in: [packages/preact-query/src/usePrefetchQuery.tsx:39](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchQuery.tsx#L39)
 
 `usePrefetchQuery` does not return anything, it should be used just to fire a prefetch during render, before
 a suspense boundary that wraps a component that uses `useSuspenseQuery`. You can pass everything to
@@ -48,6 +48,12 @@ already there or already in flight.
 
 The [UsePrefetchQueryOptions](../type-aliases/UsePrefetchQueryOptions.md) to use — everything you can pass to `queryClient.query`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`QueryExecuteOptions`](../interfaces/QueryExecuteOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 [`QueryClient`](../classes/QueryClient.md)
@@ -58,8 +64,6 @@ be used.
 ## Returns
 
 `void`
-
-`void` — nothing is returned.
 
 ## Example
 
