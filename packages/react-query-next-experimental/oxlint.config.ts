@@ -5,6 +5,7 @@ import rootConfig from './root.oxlint.config.ts'
 
 export default defineConfig({
   extends: [rootConfig],
+  settings: rootConfig.settings,
   jsPlugins: [
     // 'react-hooks' is reserved for Oxlint's native plugin, which lacks the React Compiler rules
     { name: 'react-hooks-js', specifier: 'eslint-plugin-react-hooks' },
