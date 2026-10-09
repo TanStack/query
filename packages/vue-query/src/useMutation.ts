@@ -22,6 +22,10 @@ import type {
 import type { MaybeRefDeep, MutationOptions } from './types'
 import type { QueryClient } from './queryClient'
 
+/**
+ * The plain (non-`Ref`) state of a mutation that `useMutation` exposes: {@link MutationObserverResult}
+ * without `mutate` and `reset`
+ */
 export type MutationResult<TData, TError, TVariables, TOnMutateResult> =
   DistributiveOmit<
     MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
