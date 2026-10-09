@@ -89,6 +89,6 @@
   },
   "peerDependencies": {
     "@tanstack/preact-query": "workspace:^",
-    "preact": "^10.0.0"
+    "preact": "^10.0.0 || ^11.0.0-0"
   }
 }
