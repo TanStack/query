@@ -298,7 +298,8 @@ describe('createQueryController', () => {
 
       it('should preserve discriminated-union narrowing', () => {
         type Result =
-          { type: 'first'; first: string } | { type: 'second'; second: string }
+          | { type: 'first'; first: string }
+          | { type: 'second'; second: string }
 
         const query = createQueryController(
           new Host(),
