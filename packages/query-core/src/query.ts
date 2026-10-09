@@ -359,7 +359,7 @@ export class Query<
 
     this.updateGcTime(this.options.gcTime)
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    // oxlint-disable-next-line typescript/no-unnecessary-condition
     if (this.state && this.state.data === undefined) {
       const defaultState = getDefaultState(this.options)
       if (defaultState.data !== undefined) {
@@ -867,7 +867,6 @@ export class Query<
     try {
       const data = await retryer.start()
       // this is more of a runtime guard
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (data === undefined) {
         if (process.env.NODE_ENV !== 'production') {
           console.error(

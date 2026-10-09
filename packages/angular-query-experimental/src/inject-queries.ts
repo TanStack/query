@@ -405,7 +405,7 @@ export function injectQueries<
           ? 'isRestoring'
           : 'optimistic'
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         return defaultedOptions as QueryObserverOptions
       })
     })

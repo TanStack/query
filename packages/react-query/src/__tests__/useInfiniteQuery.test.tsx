@@ -1205,7 +1205,7 @@ describe('useInfiniteQuery', () => {
     const renderStream =
       createRenderStream<UseInfiniteQueryResult<InfiniteData<number>>>()
 
-    // eslint-disable-next-line @eslint-react/no-nested-component-definitions
+    // oxlint-disable-next-line @eslint-react/no-nested-component-definitions
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,

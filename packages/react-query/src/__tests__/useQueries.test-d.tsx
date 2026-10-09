@@ -805,7 +805,7 @@ describe('useQueries', () => {
                 queryFn:
                   fn && fn !== skipToken
                     ? (ctx: QueryFunctionContext<TQueryKey>) => {
-                        // eslint-disable-next-line vitest/valid-expect
+                        // oxlint-disable-next-line vitest-js/valid-expect
                         expectTypeOf<TQueryKey>(ctx.queryKey)
                         return fn.call({}, ctx)
                       }
