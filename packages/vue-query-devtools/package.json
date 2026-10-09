@@ -55,9 +55,9 @@
   },
   "devDependencies": {
     "@tanstack/vue-query": "workspace:*",
+    "@vitejs/plugin-vue": "catalog:",
     "eslint-plugin-vue": "catalog:",
     "typescript": "catalog:",
-    "unplugin-vue": "catalog:",
     "vue": "catalog:",
     "vue-tsc": "^2.2.8"
   },

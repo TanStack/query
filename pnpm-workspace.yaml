@@ -50,8 +50,8 @@ catalog:
   svelte-check: ^4.4.5
 
   # vue
+  '@vitejs/plugin-vue': ^6.0.9
   eslint-plugin-vue: ^10.11.1
-  unplugin-vue: ^8.0.0
   vue: ^3.5.43
 
   # angular

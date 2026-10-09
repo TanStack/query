@@ -65,10 +65,10 @@
   },
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
+    "@vitejs/plugin-vue": "catalog:",
     "@vue/composition-api": "1.7.2",
     "eslint-plugin-vue": "catalog:",
     "typescript": "catalog:",
-    "unplugin-vue": "catalog:",
     "vue": "catalog:",
     "vue2": "npm:vue@2.6",
     "vue2.7": "npm:vue@2.7"
