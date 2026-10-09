@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url'
+import pluginVitest from '@vitest/eslint-plugin'
 import pluginJsdoc from 'eslint-plugin-jsdoc'
 import { defineConfig } from 'oxlint'
 
@@ -279,30 +280,17 @@ export default defineConfig({
     {
       files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
       rules: {
+        ...pluginVitest.configs.recommended.rules,
         'vitest/consistent-test-it': [
           'error',
           { fn: 'it', withinDescribe: 'it' },
         ],
-        'vitest/expect-expect': 'error',
-        'vitest/no-commented-out-tests': 'error',
-        'vitest/no-conditional-expect': 'error',
-        'vitest/no-disabled-tests': 'warn',
-        'vitest/no-focused-tests': 'error',
-        'vitest/no-identical-title': 'error',
-        'vitest/no-import-node-test': 'error',
-        'vitest/no-interpolation-in-snapshots': 'error',
-        'vitest/no-mocks-import': 'error',
         'vitest/no-standalone-expect': [
           'error',
           { additionalTestBlockFunctions: ['itIf'] },
         ],
-        'vitest/no-unneeded-async-expect-function': 'error',
-        'vitest/prefer-called-exactly-once-with': 'error',
-        'vitest/require-local-test-context-for-concurrent-snapshots': 'error',
-        'vitest/valid-describe-callback': 'error',
+        'vitest/valid-expect': 'off',
         'vitest-js/valid-expect': 'error',
-        'vitest/valid-expect-in-promise': 'error',
-        'vitest/valid-title': 'error',
       },
     },
   ],
