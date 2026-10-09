@@ -23,7 +23,7 @@ import type { MaybeRefDeep, MutationOptions } from './types'
 import type { QueryClient } from './queryClient'
 
 /**
- * The plain (non-`Ref`) state of a mutation that `useMutation` exposes: {@link MutationObserverResult}
+ * The plain mutation result shape that `useMutation` wraps in `Ref`s: {@link MutationObserverResult}
  * without `mutate` and `reset`
  */
 export type MutationResult<TData, TError, TVariables, TOnMutateResult> =

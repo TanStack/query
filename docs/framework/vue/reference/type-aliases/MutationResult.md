@@ -9,7 +9,7 @@ type MutationResult<TData, TError, TVariables, TOnMutateResult> = DistributiveOm
 
 Defined in: [packages/vue-query/src/useMutation.ts:29](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutation.ts#L29)
 
-The plain (non-`Ref`) state of a mutation that `useMutation` exposes: [MutationObserverResult](MutationObserverResult.md)
+The plain mutation result shape that `useMutation` wraps in `Ref`s: [MutationObserverResult](MutationObserverResult.md)
 without `mutate` and `reset`
 
 ## Type Parameters
