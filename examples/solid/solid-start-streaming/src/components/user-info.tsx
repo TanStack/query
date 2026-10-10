@@ -14,8 +14,9 @@ export interface UserInfoProps {
 }
 
 export const userInfoQueryOpts = (props?: UserInfoProps) => ({
-  queryKey: ['user'],
-  queryFn: () => fetchUser(props),
+  queryKey: ['user', props?.sleep, props?.simulateError],
+  queryFn: () =>
+    fetchUser({ sleep: props?.sleep, simulateError: props?.simulateError }),
   deferStream: props?.deferStream,
   staleTime: props?.staleTime,
   gcTime: props?.gcTime,
