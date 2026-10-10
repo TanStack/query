@@ -17,7 +17,7 @@
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",
     "compile": "tsc --project tsconfig.json",
-    "test:eslint": "eslint --concurrency=auto ./src",
+    "test:oxlint": "oxlint ./src",
     "test:types": "npm-run-all --serial test:types:*",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts56 --tsBuildInfoFile .cache/test-types/ts56.tsbuildinfo",
     "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts57 --tsBuildInfoFile .cache/test-types/ts57.tsbuildinfo",
@@ -66,6 +66,7 @@
   "devDependencies": {
     "@solidjs/testing-library": "catalog:",
     "@tanstack/solid-query": "workspace:*",
+    "eslint-plugin-solid": "catalog:",
     "solid-js": "catalog:",
     "typescript": "catalog:",
     "unplugin-solid": "catalog:",

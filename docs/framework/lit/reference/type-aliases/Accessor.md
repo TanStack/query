@@ -4,7 +4,7 @@ title: Accessor
 ---
 
 ```ts
-type Accessor<T> = T | () => T;
+type Accessor<T> = T | (() => T);
 ```
 
 Defined in: [packages/lit-query/src/accessor.ts:12](https://github.com/TanStack/query/blob/main/packages/lit-query/src/accessor.ts#L12)

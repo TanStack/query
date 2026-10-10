@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'preact/hooks'
-import type { VNode } from 'preact'
 
 import {
   persistQueryClientRestore,
@@ -9,6 +8,7 @@ import {
   IsRestoringProvider,
   QueryClientProvider,
 } from '@tanstack/preact-query'
+import type { VNode } from 'preact'
 import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
 import type {
   OmitKeyof,

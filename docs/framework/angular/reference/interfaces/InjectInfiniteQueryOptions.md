@@ -12,4 +12,4 @@ query options.
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="injector"></a> `injector?` | `Injector` | The `Injector` in which to create the infinite query. If this is not provided, the current injection context will be used instead (via `inject`). |
+| <a id="property-injector"></a> `injector?` | `Injector` | The `Injector` in which to create the infinite query. If this is not provided, the current injection context will be used instead (via `inject`). |

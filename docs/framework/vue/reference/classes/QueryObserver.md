@@ -257,7 +257,7 @@ Subscribable.hasListeners
 ### refetch()
 
 ```ts
-refetch(options: RefetchOptions): Promise<QueryObserverResult<TData, TError>>;
+refetch(options?: RefetchOptions): Promise<QueryObserverResult<TData, TError>>;
 ```
 
 Defined in: [packages/query-core/src/queryObserver.ts:387](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L387)
@@ -267,7 +267,7 @@ the resulting `QueryObserverResult`.
 
 #### Parameters
 
-##### options
+##### options?
 
 [`RefetchOptions`](../interfaces/RefetchOptions.md) = `{}`
 
@@ -393,13 +393,7 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 A function that removes the listener.
 
-```ts
-(): void;
-```
-
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 
@@ -461,9 +455,33 @@ access themselves (e.g. through their own reactivity system) instead of via the 
 
 ##### key
 
-The name of the property that was read.
+  \| `"error"`
+  \| `"data"`
+  \| `"isError"`
+  \| `"isPending"`
+  \| `"isLoading"`
+  \| `"isLoadingError"`
+  \| `"isRefetchError"`
+  \| `"isSuccess"`
+  \| `"isPlaceholderData"`
+  \| `"status"`
+  \| `"dataUpdatedAt"`
+  \| `"errorUpdatedAt"`
+  \| `"failureCount"`
+  \| `"failureReason"`
+  \| `"errorUpdateCount"`
+  \| `"isFetched"`
+  \| `"isFetchedAfterMount"`
+  \| `"isFetching"`
+  \| `"isInitialLoading"`
+  \| `"isPaused"`
+  \| `"isRefetching"`
+  \| `"isStale"`
+  \| `"isEnabled"`
+  \| `"refetch"`
+  \| `"fetchStatus"`
 
-`"error"` | `"data"` | `"isError"` | `"isPending"` | `"isLoading"` | `"isLoadingError"` | `"isRefetchError"` | `"isSuccess"` | `"isPlaceholderData"` | `"status"` | `"dataUpdatedAt"` | `"errorUpdatedAt"` | `"failureCount"` | `"failureReason"` | `"errorUpdateCount"` | `"isFetched"` | `"isFetchedAfterMount"` | `"isFetching"` | `"isInitialLoading"` | `"isPaused"` | `"isRefetching"` | `"isStale"` | `"isEnabled"` | `"refetch"` | `"fetchStatus"`
+The name of the property that was read.
 
 #### Returns
 
@@ -562,7 +580,7 @@ A proxy of `result` that tracks property reads.
 updateResult(): void;
 ```
 
-Defined in: [packages/query-core/src/queryObserver.ts:763](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L763)
+Defined in: [packages/query-core/src/queryObserver.ts:765](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L765)
 
 Recomputes and stores the current result from the current query/options, notifying listeners
 if it changed. Framework adapters call this right after subscribing to make sure no query

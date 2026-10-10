@@ -1,9 +1,9 @@
 import { queryKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 
-import type { OmitKeyof, QueryFunction, UseQueryOptions } from '..'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
+import type { OmitKeyof, QueryFunction, UseQueryOptions } from '..'
 
 describe('useQuery', () => {
   const key = queryKey()
@@ -281,7 +281,8 @@ describe('useQuery', () => {
 
     it('should preserve discriminated-union narrowing', () => {
       type Result =
-        { type: 'first'; first: string } | { type: 'second'; second: string }
+        | { type: 'first'; first: string }
+        | { type: 'second'; second: string }
 
       const query = useQuery({
         queryKey: queryKey(),

@@ -19,7 +19,7 @@ never `undefined` (unless a `select` changes `TData` to include `undefined`).
 ```ts
 initialData: 
   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-  | () => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+  | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
   | undefined;
 ```
 

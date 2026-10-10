@@ -42,13 +42,14 @@ export type QueryOptions<
       TQueryKey
     >
   ]: Property extends 'enabled'
-    ? | MaybeRefOrGetter<boolean | undefined>
-      | (() => QueryBooleanOption<
-          TQueryFnData,
-          TError,
-          TQueryData,
-          DeepUnwrapRef<TQueryKey>
-        >)
+    ?
+        | MaybeRefOrGetter<boolean | undefined>
+        | (() => QueryBooleanOption<
+            TQueryFnData,
+            TError,
+            TQueryData,
+            DeepUnwrapRef<TQueryKey>
+          >)
     : Property extends 'queryKey'
       ? MaybeRefOrGetter<TQueryKey>
       : QueryObserverOptions<
@@ -157,7 +158,8 @@ type WithDefinedInitialData<TQueryFnData> = {
    * cache. Unlike `queryKey`/`enabled`, this is not reactive — it isn't re-evaluated on `ref` changes.
    */
   initialData:
-    NonUndefinedGuard<TQueryFnData> | (() => NonUndefinedGuard<TQueryFnData>)
+    | NonUndefinedGuard<TQueryFnData>
+    | (() => NonUndefinedGuard<TQueryFnData>)
 }
 
 /**

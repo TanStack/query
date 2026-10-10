@@ -21,6 +21,14 @@ reset any query errors within the boundaries of the component.
 
 The `children` to render.
 
+<a id="props-properties"></a>
+
+#### `props` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="props-property-children"></a> `children` | \| `ComponentChildren` \| [`QueryErrorResetBoundaryFunction`](../type-aliases/QueryErrorResetBoundaryFunction.md) | Either a plain node, or a function that receives the boundary's QueryErrorResetBoundaryValue and returns a node. |
+
 ## Returns
 
 `Element`

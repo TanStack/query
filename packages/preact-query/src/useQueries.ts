@@ -4,17 +4,6 @@ import {
   noop,
   notifyManager,
 } from '@tanstack/query-core'
-import type {
-  DefaultError,
-  OmitKeyof,
-  QueriesObserverOptions,
-  QueriesPlaceholderDataFunction,
-  QueryClient,
-  QueryFunction,
-  QueryKey,
-  QueryObserverOptions,
-  ThrowOnError,
-} from '@tanstack/query-core'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 
 import { useIsRestoring } from './IsRestoringProvider'
@@ -30,12 +19,23 @@ import {
   fetchOptimistic,
   shouldSuspend,
 } from './suspense'
+import { useSyncExternalStore } from './utils'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
   UseQueryResult,
 } from './types'
-import { useSyncExternalStore } from './utils'
+import type {
+  DefaultError,
+  OmitKeyof,
+  QueriesObserverOptions,
+  QueriesPlaceholderDataFunction,
+  QueryClient,
+  QueryFunction,
+  QueryKey,
+  QueryObserverOptions,
+  ThrowOnError,
+} from '@tanstack/query-core'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function always gets undefined passed
