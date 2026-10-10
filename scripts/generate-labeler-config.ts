@@ -1,6 +1,7 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { format } from 'oxfmt'
+import oxfmtConfig from '../oxfmt.config.ts'
 
 /** Pairs of package labels and their corresponding paths */
 type LabelerPair = [string, string]
@@ -52,16 +53,7 @@ async function generateLabelerYaml(pairs: Array<LabelerPair>): Promise<string> {
     })
     .join('\n')
 
-  // Read the oxfmt config. `format()` does not discover config files itself.
-  const oxfmtConfigPath = path.resolve('.oxfmtrc.json')
-  if (!fs.existsSync(oxfmtConfigPath)) {
-    throw new Error(
-      'No oxfmt config file found. Please ensure `.oxfmtrc.json` exists in the project root.',
-    )
-  }
-  console.info('using oxfmt config file at:', oxfmtConfigPath)
-
-  const oxfmtConfig = JSON.parse(fs.readFileSync(oxfmtConfigPath, 'utf-8'))
+  // `format()` does not discover config files itself, so pass the config explicitly.
   console.info('using resolved oxfmt config:', oxfmtConfig)
 
   // Format the YAML string using oxfmt
