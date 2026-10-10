@@ -893,6 +893,9 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.104.1
+        version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -912,6 +915,9 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.104.1
+        version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -937,6 +943,9 @@ importers:
       '@lit-labs/ssr-client':
         specifier: ^1.1.7
         version: 1.1.8
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.104.1
+        version: link:../../../packages/eslint-plugin-query
       tsx:
         specifier: ^4.19.0
         version: 4.21.0
