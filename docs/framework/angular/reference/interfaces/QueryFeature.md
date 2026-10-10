@@ -17,5 +17,5 @@ Helper type to represent a Query feature.
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="ɵkind"></a> `ɵkind` | `TFeatureKind` | The kind of the feature, e.g. `'Devtools'` or `'PersistQueryClient'`. |
-| <a id="ɵproviders"></a> `ɵproviders` | `Provider`[] | The providers that `provideTanStackQuery` registers for the feature. |
+| <a id="property-ɵkind"></a> `ɵkind` | `TFeatureKind` | The kind of the feature, e.g. `'Devtools'` or `'PersistQueryClient'`. |
+| <a id="property-ɵproviders"></a> `ɵproviders` | `Provider`[] | The providers that `provideTanStackQuery` registers for the feature. |

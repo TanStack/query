@@ -109,7 +109,8 @@ class MutationController<
     CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>
   >
   private observer:
-    MutationObserver<TData, TError, TVariables, TOnMutateResult> | undefined
+    | MutationObserver<TData, TError, TVariables, TOnMutateResult>
+    | undefined
   private unsubscribe: (() => void) | undefined
   private queryClient: QueryClient | undefined
 
@@ -140,7 +141,7 @@ class MutationController<
     this.result = observer.getCurrentResult()
   }
 
-  protected onConnected(): void {
+  protected override onConnected(): void {
     if (!this.syncClient()) {
       return
     }
@@ -152,12 +153,12 @@ class MutationController<
     }
   }
 
-  protected onDisconnected(): void {
+  protected override onDisconnected(): void {
     this.unsubscribeObserver()
     this.syncClient()
   }
 
-  protected onHostUpdate(): void {
+  protected override onHostUpdate(): void {
     if (typeof this.options !== 'function') {
       return
     }
@@ -165,7 +166,7 @@ class MutationController<
     this.refreshOptions()
   }
 
-  protected onQueryClientChanged(): void {
+  protected override onQueryClientChanged(): void {
     if (!this.syncClient() || !this.connectedState) {
       return
     }

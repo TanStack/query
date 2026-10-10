@@ -11,4 +11,4 @@ Options for `injectMutation`, passed after the function that returns the mutatio
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="injector"></a> `injector?` | `Injector` | The `Injector` in which to create the mutation. If this is not provided, the current injection context will be used instead (via `inject`). |
+| <a id="property-injector"></a> `injector?` | `Injector` | The `Injector` in which to create the mutation. If this is not provided, the current injection context will be used instead (via `inject`). |

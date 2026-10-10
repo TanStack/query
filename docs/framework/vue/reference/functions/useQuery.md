@@ -5,6 +5,22 @@ redirect_from:
   - framework/vue/reference/useQuery
 ---
 
+## Overview
+
+```ts
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryDefinedReturnType<TData, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: MaybeRefOrGetter<UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
+```
+
+- [`DefinedInitialQueryOptions` → `UseQueryDefinedReturnType`](#call-signature-1): This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+- [`UndefinedInitialQueryOptions` → `UseQueryReturnType`](#call-signature-2): `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual entries. Other options are read once when passed as a plain value, and stay reactive when passed as a `ref` or a `computed`.
+- [`MaybeRefOrGetter` → `UseQueryReturnType`](#call-signature-3): Fallback overload for options whose `initialData` presence isn't statically known — for example, a `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
+
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
@@ -85,6 +101,8 @@ const { data, isError, error } = useQuery({
   </ul>
 </template>
 ```
+
+<a id="call-signature-2"></a>
 
 ## Call Signature
 
@@ -259,6 +277,8 @@ const { data, isPlaceholderData, isError, error } = useQuery({
 </template>
 ```
 
+<a id="call-signature-3"></a>
+
 ## Call Signature
 
 ```ts
@@ -365,3 +385,28 @@ const { data, isLoading, isError, error } = useQuery(() => {
   <h1 v-else>{{ data?.title }}</h1>
 </template>
 ```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+`MaybeRefOrGetter`\<[`UseQueryOptions`](../type-aliases/UseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`\>\>
+
+A `ref`, plain value, or reactive getter resolving to the [UseQueryOptions](../type-aliases/UseQueryOptions.md) to use.
+
+### queryClient?
+
+[`QueryClient`](../classes/QueryClient.md)
+
+Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+will be used.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+[`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
+
+The current query result, with `data` typed as possibly `undefined`.

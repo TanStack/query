@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function useMutationState<TResult, TMutation>(options: MutationStateOptions<TResult, TMutation>, queryClient?: QueryClient): TResult[];
+function useMutationState<TResult, TMutation>(options?: MutationStateOptions<TResult, TMutation>, queryClient?: QueryClient): TResult[];
 ```
 
 Defined in: [packages/react-query/src/useMutationState.ts:158](https://github.com/TanStack/query/blob/main/packages/react-query/src/useMutationState.ts#L158)
@@ -27,7 +27,7 @@ state.
 
 ## Parameters
 
-### options
+### options?
 
 `MutationStateOptions`\<`TResult`, `TMutation`\> = `{}`
 

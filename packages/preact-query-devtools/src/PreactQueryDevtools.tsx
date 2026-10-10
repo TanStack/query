@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import { onlineManager, useQueryClient } from '@tanstack/preact-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import type {

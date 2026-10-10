@@ -7,7 +7,10 @@ import type { QueryClient } from '@tanstack/query-core'
 import type { ReactiveController, ReactiveControllerHost } from 'lit'
 
 type QueryClientResolutionState =
-  'pre-connect' | 'awaiting-context' | 'bound' | 'missing'
+  | 'pre-connect'
+  | 'awaiting-context'
+  | 'bound'
+  | 'missing'
 
 /**
  * Base class of the query controllers. It resolves the `QueryClient`, either
@@ -281,7 +284,7 @@ export abstract class BaseController<TResult> implements ReactiveController {
           }
 
           const resolutionChanged = this.updateQueryClientResolutionState(
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            // oxlint-disable-next-line typescript/no-unnecessary-condition
             value === undefined ? 'missing' : 'bound',
           )
           const clientChanged = this.contextClient !== value
@@ -334,8 +337,26 @@ export abstract class BaseController<TResult> implements ReactiveController {
     return true
   }
 
+  /**
+   * Called in a microtask after the host connects, once the subclass fields
+   * are initialized. Subclasses subscribe to the `QueryClient` here, if one is
+   * available.
+   */
   protected abstract onConnected(): void
+  /**
+   * Called when the host disconnects or the controller is destroyed.
+   * Subclasses unsubscribe here.
+   */
   protected abstract onDisconnected(): void
+  /**
+   * Called before each host update. Subclasses refresh their options here.
+   */
   protected abstract onHostUpdate(): void
+  /**
+   * Called in a microtask when the `QueryClient` from context changes, or when
+   * resolving it finishes without finding one (`tryGetQueryClient` then returns
+   * `undefined`). Subclasses resubscribe to the new client here, if there is
+   * one.
+   */
   protected abstract onQueryClientChanged(): void
 }

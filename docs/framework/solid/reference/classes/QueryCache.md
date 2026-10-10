@@ -31,14 +31,14 @@ const unsubscribe = queryCache.subscribe((event) => {
 ### Constructor
 
 ```ts
-new QueryCache(config: QueryCacheConfig): QueryCache;
+new QueryCache(config?: QueryCacheConfig): QueryCache;
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:143](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L143)
 
 #### Parameters
 
-##### config
+##### config?
 
 [`QueryCacheConfig`](../interfaces/QueryCacheConfig.md) = `{}`
 
@@ -171,7 +171,7 @@ find<TQueryFnData, TError, TData>(filters: WithRequired<QueryFilters<readonly un
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:323](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L323)
+Defined in: [packages/query-core/src/queryCache.ts:324](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L324)
 
 A slightly more advanced method that can be used to get an existing query instance from the
 cache. This instance not only contains all the state for the query, but all of the instances,
@@ -229,10 +229,10 @@ const query = queryCache.find({ queryKey: ['posts'] })
 ### findAll()
 
 ```ts
-findAll(filters: QueryFilters<any>): Query<unknown, Error, unknown, readonly unknown[]>[];
+findAll(filters?: QueryFilters<any>): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:349](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L349)
+Defined in: [packages/query-core/src/queryCache.ts:350](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L350)
 
 An even more advanced method that can be used to get existing query instances from the cache
 that partially match a query key. If no queries match, an empty array is returned.
@@ -242,7 +242,7 @@ information about queries in rare scenarios.
 
 #### Parameters
 
-##### filters
+##### filters?
 
 [`QueryFilters`](../interfaces/QueryFilters.md)\<`any`\> = `{}`
 
@@ -333,7 +333,7 @@ const query = queryCache.get(queryHash)
 getAll(): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:299](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L299)
+Defined in: [packages/query-core/src/queryCache.ts:300](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L300)
 
 Returns all queries within the cache.
 
@@ -439,13 +439,7 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 A function that removes the listener.
 
-```ts
-(): void;
-```
-
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 

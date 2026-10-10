@@ -59,7 +59,7 @@ Error.constructor
 ### revert?
 
 ```ts
-optional revert: boolean;
+optional revert?: boolean;
 ```
 
 Defined in: [packages/query-core/src/retryer.ts:121](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L121)
@@ -69,7 +69,7 @@ Defined in: [packages/query-core/src/retryer.ts:121](https://github.com/TanStack
 ### silent?
 
 ```ts
-optional silent: boolean;
+optional silent?: boolean;
 ```
 
 Defined in: [packages/query-core/src/retryer.ts:122](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L122)

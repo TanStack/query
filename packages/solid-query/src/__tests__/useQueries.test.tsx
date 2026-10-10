@@ -72,7 +72,7 @@ describe('useQueries', () => {
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
-  // eslint-disable-next-line vitest/expect-expect
+  // oxlint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
     const key1 = queryKey()
 
