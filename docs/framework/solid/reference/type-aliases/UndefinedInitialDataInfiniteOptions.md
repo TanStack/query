@@ -4,7 +4,9 @@ title: UndefinedInitialDataInfiniteOptions
 ---
 
 ```ts
-type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = Accessor<InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object>;
+type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = Accessor<InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
+  initialData?: undefined;
+}>;
 ```
 
 Defined in: [packages/solid-query/src/infiniteQueryOptions.ts:24](https://github.com/TanStack/query/blob/main/packages/solid-query/src/infiniteQueryOptions.ts#L24)

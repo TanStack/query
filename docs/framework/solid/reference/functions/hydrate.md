@@ -53,7 +53,7 @@ client's `defaultOptions.hydrate`), and `deserializeData` to reverse `serializeD
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="options-property-defaultoptions"></a> `defaultOptions?` | `object` | Options applied to the queries and mutations restored from the dehydrated state. |
+| <a id="options-property-defaultoptions"></a> `defaultOptions?` | \{ `deserializeData?`: `TransformerFn`; `mutations?`: `MutationOptions`\<`unknown`, `Error`, `unknown`, `unknown`\>; `queries?`: `QueryOptions`\<`unknown`, `Error`, `unknown`, readonly `unknown`[], `never`\>; \} | Options applied to the queries and mutations restored from the dehydrated state. |
 | `defaultOptions.deserializeData?` | `TransformerFn` | Transforms a query's `data` after it is read from the dehydrated state, reversing `serializeData`. |
 | `defaultOptions.mutations?` | `MutationOptions`\<`unknown`, `Error`, `unknown`, `unknown`\> | Default options merged into every mutation restored from the dehydrated state. |
 | `defaultOptions.queries?` | `QueryOptions`\<`unknown`, `Error`, `unknown`, readonly `unknown`[], `never`\> | Default options merged into every query restored from the dehydrated state. |

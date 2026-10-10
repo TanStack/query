@@ -31,7 +31,7 @@ The dehydrated `state` to hydrate, the hydrate `options`, an optional custom
 | Property | Type | Description |
 | ------ | ------ | ------ |
 | <a id="props-property-children"></a> `children?` | `ReactNode` | The components to render — always rendered unconditionally, not gated on hydration. New queries are hydrated into the cache during render; for queries that already exist in the cache, only newer dehydrated data is hydrated, and that happens in an effect after commit, so `children` may render briefly before it lands. |
-| <a id="props-property-options"></a> `options?` | [`OmitKeyof`](../type-aliases/OmitKeyof.md)\<[`HydrateOptions`](../interfaces/HydrateOptions.md), `"defaultOptions"`\> & `object` | Optional. Note: unlike `hydrate`, `mutations` cannot be set here. |
+| <a id="props-property-options"></a> `options?` | [`OmitKeyof`](../type-aliases/OmitKeyof.md)\<[`HydrateOptions`](../interfaces/HydrateOptions.md), `"defaultOptions"`\> & \{ `defaultOptions?`: [`OmitKeyof`](../type-aliases/OmitKeyof.md)\<\{ `deserializeData?`: `TransformerFn`; `mutations?`: [`MutationOptions`](../interfaces/MutationOptions.md)\<`unknown`, `Error`, `unknown`, `unknown`\>; `queries?`: [`QueryOptions`](../interfaces/QueryOptions.md)\<`unknown`, `Error`, `unknown`, readonly `unknown`[], `never`\>; \}, `"mutations"`\>; \} | Optional. Note: unlike `hydrate`, `mutations` cannot be set here. |
 | <a id="props-property-queryclient"></a> `queryClient?` | [`QueryClient`](../classes/QueryClient.md) | Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will be used. |
 | <a id="props-property-state"></a> `state` | [`DehydratedState`](../interfaces/DehydratedState.md) \| `null` \| `undefined` | The state to hydrate. |
 

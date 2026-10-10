@@ -6,8 +6,15 @@ title: useSuspenseQueries
 ## Overview
 
 ```ts
-function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
-function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
+function useSuspenseQueries<T, TCombinedResult>(options: {
+  combine?: (result: T extends [] ? [] : T extends [Head] ? [GetUseSuspenseQueryResult<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseSuspenseQueryResult<Head>, GetUseSuspenseQueryResult<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : ... extends ... ? ... : ... : [...{ [K in (...)]: (...) }[]] : { [K in string | number | symbol]: GetUseSuspenseQueryResult<T[K]> }) => TCombinedResult;
+  queries:   | readonly [T extends [] ? [] : T extends [Head] ? [GetUseSuspenseQueryOptions<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseSuspenseQueryOptions<Head>, GetUseSuspenseQueryOptions<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : ... extends ... ? ... : ... : ...[] extends [...(...)[]] ? [...(...)[]] : ... extends ... ? ... : ... : unknown[] extends T ? T : T extends UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[] ? UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[] : UseSuspenseQueryOptions<unknown, Error, unknown, readonly ...[]>[]]
+     | readonly [{ [K in string | number | symbol]: GetUseSuspenseQueryOptions<T[K]> }];
+}, queryClient?: QueryClient): TCombinedResult;
+function useSuspenseQueries<T, TCombinedResult>(options: {
+  combine?: (result: T extends [] ? [] : T extends [Head] ? [GetUseSuspenseQueryResult<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseSuspenseQueryResult<Head>, GetUseSuspenseQueryResult<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : ... extends ... ? ... : ... : [...{ [K in (...)]: (...) }[]] : { [K in string | number | symbol]: GetUseSuspenseQueryResult<T[K]> }) => TCombinedResult;
+  queries: readonly [T extends [] ? [] : T extends [Head] ? [GetUseSuspenseQueryOptions<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseSuspenseQueryOptions<Head>, GetUseSuspenseQueryOptions<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...(...)[]] extends [...] ? [..., ..., ...] : ... extends ... ? ... : ... : unknown[] extends [...Tails[]] ? [...Tails[]] : [...(...)[]] extends ...[] ? ...[] : ...[] : unknown[] extends T ? T : T extends UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[] ? UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[] : UseSuspenseQueryOptions<unknown, Error, unknown, readonly unknown[]>[]];
+}, queryClient?: QueryClient): TCombinedResult;
 ```
 
 - [`{ queries, combine }` → `TCombinedResult`](#call-signature-1): The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed` option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
@@ -20,7 +27,11 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 ## Call Signature
 
 ```ts
-function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
+function useSuspenseQueries<T, TCombinedResult>(options: {
+  combine?: (result: T extends [] ? [] : T extends [Head] ? [GetUseSuspenseQueryResult<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseSuspenseQueryResult<Head>, GetUseSuspenseQueryResult<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : ... extends ... ? ... : ... : [...{ [K in (...)]: (...) }[]] : { [K in string | number | symbol]: GetUseSuspenseQueryResult<T[K]> }) => TCombinedResult;
+  queries:   | readonly [T extends [] ? [] : T extends [Head] ? [GetUseSuspenseQueryOptions<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseSuspenseQueryOptions<Head>, GetUseSuspenseQueryOptions<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : ... extends ... ? ... : ... : ...[] extends [...(...)[]] ? [...(...)[]] : ... extends ... ? ... : ... : unknown[] extends T ? T : T extends UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[] ? UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[] : UseSuspenseQueryOptions<unknown, Error, unknown, readonly ...[]>[]]
+     | readonly [{ [K in string | number | symbol]: GetUseSuspenseQueryOptions<T[K]> }];
+}, queryClient?: QueryClient): TCombinedResult;
 ```
 
 Defined in: [packages/preact-query/src/useSuspenseQueries.ts:407](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L407)
@@ -292,7 +303,10 @@ function ErrorBoundary({
 ## Call Signature
 
 ```ts
-function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
+function useSuspenseQueries<T, TCombinedResult>(options: {
+  combine?: (result: T extends [] ? [] : T extends [Head] ? [GetUseSuspenseQueryResult<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseSuspenseQueryResult<Head>, GetUseSuspenseQueryResult<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : ... extends ... ? ... : ... : [...{ [K in (...)]: (...) }[]] : { [K in string | number | symbol]: GetUseSuspenseQueryResult<T[K]> }) => TCombinedResult;
+  queries: readonly [T extends [] ? [] : T extends [Head] ? [GetUseSuspenseQueryOptions<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseSuspenseQueryOptions<Head>, GetUseSuspenseQueryOptions<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...(...)[]] extends [...] ? [..., ..., ...] : ... extends ... ? ... : ... : unknown[] extends [...Tails[]] ? [...Tails[]] : [...(...)[]] extends ...[] ? ...[] : ...[] : unknown[] extends T ? T : T extends UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[] ? UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[] : UseSuspenseQueryOptions<unknown, Error, unknown, readonly unknown[]>[]];
+}, queryClient?: QueryClient): TCombinedResult;
 ```
 
 Defined in: [packages/preact-query/src/useSuspenseQueries.ts:584](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L584)

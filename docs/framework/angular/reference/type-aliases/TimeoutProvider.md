@@ -4,7 +4,12 @@ title: TimeoutProvider
 ---
 
 ```ts
-type TimeoutProvider<TTimerId> = object;
+type TimeoutProvider<TTimerId> = {
+  clearInterval: (intervalId: TTimerId | undefined) => void;
+  clearTimeout: (timeoutId: TTimerId | undefined) => void;
+  setInterval: (callback: TimeoutCallback, delay: number) => TTimerId;
+  setTimeout: (callback: TimeoutCallback, delay: number) => TTimerId;
+};
 ```
 
 Defined in: [packages/query-core/src/timeoutManager.ts:28](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L28)

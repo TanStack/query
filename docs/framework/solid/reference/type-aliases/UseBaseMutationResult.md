@@ -6,7 +6,9 @@ title: UseBaseMutationResult
 ```ts
 type UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Override<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>, {
   mutate: UseMutateFunction<TData, TError, TVariables, TOnMutateResult>;
-}> & object;
+}> & {
+  mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult>;
+};
 ```
 
 Defined in: [packages/solid-query/src/types.ts:312](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L312)

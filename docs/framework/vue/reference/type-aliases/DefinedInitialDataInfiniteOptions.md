@@ -4,7 +4,10 @@ title: DefinedInitialDataInfiniteOptions
 ---
 
 ```ts
-type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
+type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
+  initialData:   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>);
+};
 ```
 
 Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:46](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L46)

@@ -4,7 +4,9 @@ title: injectQueryClient
 ---
 
 ```ts
-function injectQueryClient(injectOptions?: InjectOptions & object): QueryClient;
+function injectQueryClient(injectOptions?: InjectOptions & {
+  injector?: Injector;
+}): QueryClient;
 ```
 
 Defined in: [packages/angular-query-experimental/src/inject-query-client.ts:18](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query-client.ts#L18)
@@ -15,7 +17,9 @@ Injects a `QueryClient` instance and allows passing a custom injector.
 
 ### injectOptions?
 
-`InjectOptions` & `object` = `{}`
+`InjectOptions` & \{
+  `injector?`: `Injector`;
+\} = `{}`
 
 Type of the options argument to inject and optionally a custom injector.
 

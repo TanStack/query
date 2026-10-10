@@ -6,7 +6,9 @@ title: UseBaseMutationResult
 ```ts
 type UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Override<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>, {
   mutate: UseMutateFunction<TData, TError, TVariables, TOnMutateResult>;
-}> & object;
+}> & {
+  mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult>;
+};
 ```
 
 Defined in: [packages/react-query/src/types.ts:453](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L453)

@@ -6,7 +6,12 @@ redirect_from:
 ---
 
 ```ts
-function useQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
+function useQueries<T, TCombinedResult>(options: {
+  combine?: (result: T extends [] ? [] : T extends [Head] ? [GetUseQueryResult<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseQueryResult<Head>, GetUseQueryResult<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : ... extends ... ? ... : ... : [...{ [K in (...)]: (...) }[]] : { [K in string | number | symbol]: GetUseQueryResult<T[K]> }) => TCombinedResult;
+  queries:   | readonly [T extends [] ? [] : T extends [Head] ? [GetUseQueryOptionsForUseQueries<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseQueryOptionsForUseQueries<Head>, GetUseQueryOptionsForUseQueries<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : ... extends ... ? ... : ... : readonly ...[] extends [...(...)[]] ? [...(...)[]] : ... extends ... ? ... : ... : readonly unknown[] extends T ? T : T extends UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>[] ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>[] : UseQueryOptionsForUseQueries<unknown, Error, unknown, readonly ...[]>[]]
+     | readonly [{ [K in string | number | symbol]: GetUseQueryOptionsForUseQueries<T[K]> }];
+  subscribed?: boolean;
+}, queryClient?: QueryClient): TCombinedResult;
 ```
 
 Defined in: [packages/react-query/src/useQueries.ts:356](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L356)

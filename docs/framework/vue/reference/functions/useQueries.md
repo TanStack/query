@@ -6,7 +6,12 @@ redirect_from:
 ---
 
 ```ts
-function useQueries<T, TCombinedResult>(options: ShallowOption & object, queryClient?: QueryClient): Readonly<Ref<TCombinedResult>>;
+function useQueries<T, TCombinedResult>(options: ShallowOption & {
+  combine?: (result: UseQueriesResults<T>) => TCombinedResult;
+  queries:   | (() => MaybeRefDeep<UseQueriesOptionsArg<T>>)
+     | MaybeRefDeep<UseQueriesOptionsArg<T>>
+     | MaybeRefDeep<readonly [...{ [K in keyof T]: GetUseQueryOptionsForUseQueries<T[K]> }]>;
+}, queryClient?: QueryClient): Readonly<Ref<TCombinedResult>>;
 ```
 
 Defined in: [packages/vue-query/src/useQueries.ts:354](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQueries.ts#L354)
@@ -41,7 +46,12 @@ previously rendered queries, because the number of queries can differ between re
 
 ### options
 
-`ShallowOption` & `object`
+`ShallowOption` & \{
+  `combine?`: (`result`: [`UseQueriesResults`](../type-aliases/UseQueriesResults.md)\<`T`\>) => `TCombinedResult`;
+  `queries`:   \| (() => `MaybeRefDeep`\<`UseQueriesOptionsArg`\<`T`\>\>)
+     \| `MaybeRefDeep`\<`UseQueriesOptionsArg`\<`T`\>\>
+     \| `MaybeRefDeep`\<readonly \[`...{ [K in keyof T]: GetUseQueryOptionsForUseQueries<T[K]> }`\]\>;
+\}
 
 The `queries` array to run, and the optional `combine` and `shallow` options.
 

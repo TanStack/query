@@ -4,7 +4,9 @@ title: VueQueryPlugin
 ---
 
 ```ts
-const VueQueryPlugin: object;
+const VueQueryPlugin: {
+  install: (app: any, options: VueQueryPluginOptions) => void;
+};
 ```
 
 Defined in: [packages/vue-query/src/vueQueryPlugin.ts:75](https://github.com/TanStack/query/blob/main/packages/vue-query/src/vueQueryPlugin.ts#L75)

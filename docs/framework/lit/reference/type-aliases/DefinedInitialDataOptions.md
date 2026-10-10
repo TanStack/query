@@ -4,7 +4,11 @@ title: DefinedInitialDataOptions
 ---
 
 ```ts
-type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>, "queryFn"> & object;
+type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>, "queryFn"> & {
+  initialData:   | NonUndefinedGuard<TQueryFnData>
+     | (() => NonUndefinedGuard<TQueryFnData>);
+  queryFn?: QueryFunction<TQueryFnData, TQueryKey>;
+};
 ```
 
 Defined in: [packages/lit-query/src/queryOptions.ts:16](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L16)

@@ -4,7 +4,12 @@ title: CreateQueriesControllerOptions
 ---
 
 ```ts
-type CreateQueriesControllerOptions<TQueryOptions, TCombinedResult> = object;
+type CreateQueriesControllerOptions<TQueryOptions, TCombinedResult> = {
+  combine?: (result: CreateQueriesResults<TQueryOptions>) => TCombinedResult;
+  queries: Accessor<
+     | readonly [...CreateQueriesOptions<TQueryOptions>]
+    | readonly [...{ [K in keyof TQueryOptions]: GetCreateQueriesInput<TQueryOptions[K]> }]>;
+};
 ```
 
 Defined in: [packages/lit-query/src/createQueriesController.ts:190](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L190)

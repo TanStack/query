@@ -4,7 +4,10 @@ title: QueryClientProviderProps
 ---
 
 ```ts
-type QueryClientProviderProps = object;
+type QueryClientProviderProps = {
+  children: Snippet;
+  client: QueryClient;
+};
 ```
 
 Defined in: [packages/svelte-query/src/types.ts:198](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L198)

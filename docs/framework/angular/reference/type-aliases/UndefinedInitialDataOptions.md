@@ -4,7 +4,10 @@ title: UndefinedInitialDataOptions
 ---
 
 ```ts
-type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object;
+type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData?:   | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+     | NonUndefinedGuard<TQueryFnData>;
+};
 ```
 
 Defined in: [packages/angular-query-experimental/src/query-options.ts:21](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L21)

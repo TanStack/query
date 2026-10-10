@@ -6,7 +6,10 @@ redirect_from:
 ---
 
 ```ts
-const environmentManager: object;
+const environmentManager: {
+  isServer: () => boolean;
+  setIsServer: void;
+};
 ```
 
 Defined in: [packages/query-core/src/environmentManager.ts:32](https://github.com/TanStack/query/blob/main/packages/query-core/src/environmentManager.ts#L32)

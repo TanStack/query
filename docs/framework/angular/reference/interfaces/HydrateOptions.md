@@ -12,7 +12,7 @@ Options for `hydrate`, controlling the default options applied to queries/mutati
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="property-defaultoptions"></a> `defaultOptions?` | `object` | Options applied to the queries and mutations restored from the dehydrated state. |
+| <a id="property-defaultoptions"></a> `defaultOptions?` | \{ `deserializeData?`: `TransformerFn`; `mutations?`: [`MutationOptions`](MutationOptions.md)\<`unknown`, `Error`, `unknown`, `unknown`\>; `queries?`: [`QueryOptions`](QueryOptions.md)\<`unknown`, `Error`, `unknown`, readonly `unknown`[], `never`\>; \} | Options applied to the queries and mutations restored from the dehydrated state. |
 | `defaultOptions.deserializeData?` | `TransformerFn` | Transforms a query's `data` after it is read from the dehydrated state, reversing `serializeData`. |
 | `defaultOptions.mutations?` | [`MutationOptions`](MutationOptions.md)\<`unknown`, `Error`, `unknown`, `unknown`\> | Default options merged into every mutation restored from the dehydrated state. |
 | `defaultOptions.queries?` | [`QueryOptions`](QueryOptions.md)\<`unknown`, `Error`, `unknown`, readonly `unknown`[], `never`\> | Default options merged into every query restored from the dehydrated state. |

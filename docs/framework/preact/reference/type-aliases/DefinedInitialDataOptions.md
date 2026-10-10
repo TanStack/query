@@ -4,7 +4,11 @@ title: DefinedInitialDataOptions
 ---
 
 ```ts
-type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object;
+type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & {
+  initialData:   | NonUndefinedGuard<TQueryFnData>
+     | (() => NonUndefinedGuard<TQueryFnData>);
+  queryFn?: QueryFunction<TQueryFnData, TQueryKey>;
+};
 ```
 
 Defined in: [packages/preact-query/src/queryOptions.ts:78](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L78)

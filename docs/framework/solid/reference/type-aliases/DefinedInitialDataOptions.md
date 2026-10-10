@@ -4,7 +4,9 @@ title: DefinedInitialDataOptions
 ---
 
 ```ts
-type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Accessor<QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object>;
+type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Accessor<QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData: TQueryFnData | (() => TQueryFnData);
+}>;
 ```
 
 Defined in: [packages/solid-query/src/queryOptions.ts:38](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L38)

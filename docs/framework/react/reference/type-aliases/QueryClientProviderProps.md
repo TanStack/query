@@ -4,7 +4,10 @@ title: QueryClientProviderProps
 ---
 
 ```ts
-type QueryClientProviderProps = object;
+type QueryClientProviderProps = {
+  children?: React.ReactNode;
+  client: QueryClient;
+};
 ```
 
 Defined in: [packages/react-query/src/QueryClientProvider.tsx:38](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryClientProvider.tsx#L38)

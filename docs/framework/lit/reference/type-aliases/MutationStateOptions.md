@@ -4,7 +4,10 @@ title: MutationStateOptions
 ---
 
 ```ts
-type MutationStateOptions<TResult> = object;
+type MutationStateOptions<TResult> = {
+  filters?: Accessor<MutationFilters>;
+  select?: (mutation: Mutation) => TResult;
+};
 ```
 
 Defined in: [packages/lit-query/src/useMutationState.ts:16](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L16)

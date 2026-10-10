@@ -4,7 +4,9 @@ title: DefaultError
 ---
 
 ```ts
-type DefaultError = Register extends object ? TError : Error;
+type DefaultError = Register extends {
+  defaultError: infer TError;
+} ? TError : Error;
 ```
 
 Defined in: [packages/query-core/src/types.ts:83](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L83)

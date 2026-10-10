@@ -4,7 +4,9 @@ title: MutationMeta
 ---
 
 ```ts
-type MutationMeta = Register extends object ? TMutationMeta extends Record<string, unknown> ? TMutationMeta : Record<string, unknown> : Record<string, unknown>;
+type MutationMeta = Register extends {
+  mutationMeta: infer TMutationMeta;
+} ? TMutationMeta extends Record<string, unknown> ? TMutationMeta : Record<string, unknown> : Record<string, unknown>;
 ```
 
 Defined in: [packages/query-core/src/types.ts:1843](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1843)

@@ -4,7 +4,10 @@ title: UndefinedInitialDataOptions
 ---
 
 ```ts
-type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object;
+type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData?:   | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+     | NonUndefinedGuard<TQueryFnData>;
+};
 ```
 
 Defined in: [packages/react-query/src/queryOptions.ts:21](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L21)

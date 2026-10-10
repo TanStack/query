@@ -4,7 +4,9 @@ title: UsePrefetchInfiniteQueryOptions
 ---
 
 ```ts
-type UsePrefetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = DistributiveOmit<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object;
+type UsePrefetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = DistributiveOmit<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & {
+  queryFn?: Exclude<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken>;
+};
 ```
 
 Defined in: [packages/preact-query/src/types.ts:113](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L113)

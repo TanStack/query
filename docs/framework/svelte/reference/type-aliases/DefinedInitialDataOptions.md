@@ -4,7 +4,10 @@ title: DefinedInitialDataOptions
 ---
 
 ```ts
-type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object;
+type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData:   | NonUndefinedGuard<TQueryFnData>
+     | (() => NonUndefinedGuard<TQueryFnData>);
+};
 ```
 
 Defined in: [packages/svelte-query/src/queryOptions.ts:30](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/queryOptions.ts#L30)
