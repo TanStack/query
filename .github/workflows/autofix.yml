@@ -21,9 +21,11 @@ permissions:
 
 jobs:
   autofix:
-    # Skip pushes of this workflow's own commit; matches the `commit-message` below. A manual
-    # `workflow_dispatch` carries no `head_commit`, so it always runs — the way to force a rerun.
-    if: ${{ !contains(github.event.head_commit.message, 'apply automated fixes') }}
+    # Skip pushes of this workflow's own commit; matches the `commit-message` below. Only the
+    # subject is checked: a squash merge lists the branch's commits in the body, so `contains`
+    # would also skip any pull request autofix had touched. A manual `workflow_dispatch` carries
+    # no `head_commit`, so it always runs — the way to force a rerun.
+    if: "${{ !startsWith(github.event.head_commit.message, 'ci: apply automated fixes') }}"
     name: autofix
     runs-on: ubuntu-latest
     steps:

@@ -86,7 +86,6 @@ describe('injectQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('status: success')).toBeInTheDocument()
     expect(rendered.getByText('data: result2')).toBeInTheDocument()
     expect(rendered.getByText('isPending: false')).toBeInTheDocument()
@@ -123,7 +122,6 @@ describe('injectQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('status: error')).toBeInTheDocument()
     expect(rendered.getByText('data: none')).toBeInTheDocument()
     expect(rendered.getByText('error: Some error')).toBeInTheDocument()
@@ -151,10 +149,8 @@ describe('injectQuery', () => {
     const rendered = await render(Page)
 
     expect(rendered.getByText('data: none')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('data: test')).toBeInTheDocument()
   })
 
@@ -181,10 +177,8 @@ describe('injectQuery', () => {
     expect(rendered.getByText('data: placeholder')).toBeInTheDocument()
     expect(rendered.getByText('isPlaceholderData: true')).toBeInTheDocument()
     expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('data: real-data')).toBeInTheDocument()
     expect(rendered.getByText('isPlaceholderData: false')).toBeInTheDocument()
     expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()
@@ -194,27 +188,25 @@ describe('injectQuery', () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key = signal(key1)
-    const spy = vi.fn(() => sleep(10).then(() => 'Some data'))
+    const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
 
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         queryKey: key(),
-        queryFn: spy,
+        queryFn,
       }))
     })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(spy).toHaveBeenCalledTimes(1)
-
+    expect(queryFn).toHaveBeenCalledTimes(1)
     await vi.advanceTimersByTimeAsync(10)
     expect(query.status()).toBe('success')
 
     key.set(key2)
     TestBed.tick()
-
-    expect(spy).toHaveBeenCalledTimes(2)
+    expect(queryFn).toHaveBeenCalledTimes(2)
     // should call queryFn with context containing the new queryKey
-    expect(spy).toHaveBeenNthCalledWith(2, {
+    expect(queryFn).toHaveBeenNthCalledWith(2, {
       client: queryClient,
       meta: undefined,
       queryKey: key2,
@@ -224,54 +216,51 @@ describe('injectQuery', () => {
 
   it('should only run query once enabled signal is set to true', async () => {
     const key = queryKey()
-    const spy = vi.fn(() => sleep(10).then(() => 'Some data'))
+    const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
     const enabled = signal(false)
 
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         queryKey: key,
-        queryFn: spy,
+        queryFn,
         enabled: enabled(),
       }))
     })
 
-    expect(spy).not.toHaveBeenCalled()
+    expect(queryFn).not.toHaveBeenCalled()
     expect(query.status()).toBe('pending')
 
     enabled.set(true)
-
     await vi.advanceTimersByTimeAsync(10)
-    expect(spy).toHaveBeenCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query.status()).toBe('success')
   })
 
   it('should not fetch while the enabled signal is false, and fetch again once it is truthy', async () => {
     const key = queryKey()
-    const spy = vi.fn(() => sleep(10).then(() => 'Some data'))
+    const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
     const filter = signal('a')
 
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         queryKey: [...key, filter()],
-        queryFn: spy,
+        queryFn,
         enabled: !!filter(),
       }))
     })
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(spy).toHaveBeenCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query.status()).toBe('success')
 
     filter.set('')
-
     await vi.advanceTimersByTimeAsync(10)
-    expect(spy).toHaveBeenCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query.isFetching()).toBe(false)
 
     filter.set('b')
-
     await vi.advanceTimersByTimeAsync(10)
-    expect(spy).toHaveBeenCalledTimes(2)
+    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
   it('should properly execute dependent queries', async () => {
@@ -302,14 +291,10 @@ describe('injectQuery', () => {
     expect(query1.data()).toStrictEqual(undefined)
     expect(query2.fetchStatus()).toStrictEqual('idle')
     expect(dependentQueryFn).not.toHaveBeenCalled()
-
     await vi.advanceTimersByTimeAsync(11)
-
     expect(query1.data()).toStrictEqual('Some data')
     expect(query2.fetchStatus()).toStrictEqual('fetching')
-
     await vi.advanceTimersByTimeAsync(1002)
-
     expect(query2.fetchStatus()).toStrictEqual('idle')
     expect(query2.status()).toStrictEqual('success')
     expect(dependentQueryFn).toHaveBeenCalledTimes(1)
@@ -320,24 +305,23 @@ describe('injectQuery', () => {
 
   it('should use the current value for the queryKey when refetch is called', async () => {
     const key = queryKey()
-    const fetchFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+    const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
     const keySignal = signal('key11')
 
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         queryKey: [...key, keySignal()],
-        queryFn: fetchFn,
+        queryFn,
         enabled: false,
       }))
     })
 
-    expect(fetchFn).not.toHaveBeenCalled()
+    expect(queryFn).not.toHaveBeenCalled()
 
     void query.refetch()
     await vi.advanceTimersByTimeAsync(10)
-
-    expect(fetchFn).toHaveBeenCalledTimes(1)
-    expect(fetchFn).toHaveBeenNthCalledWith(
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryFn).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({
         queryKey: [...key, 'key11'],
@@ -348,9 +332,8 @@ describe('injectQuery', () => {
 
     void query.refetch()
     await vi.advanceTimersByTimeAsync(10)
-
-    expect(fetchFn).toHaveBeenCalledTimes(2)
-    expect(fetchFn).toHaveBeenNthCalledWith(
+    expect(queryFn).toHaveBeenCalledTimes(2)
+    expect(queryFn).toHaveBeenNthCalledWith(
       2,
       expect.objectContaining({
         queryKey: [...key, 'key12'],
@@ -382,7 +365,6 @@ describe('injectQuery', () => {
 
     expect(rendered.getByText('data: initial')).toBeInTheDocument()
     expect(rendered.getByText('isError: false')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('data: initial')).toBeInTheDocument()
@@ -392,20 +374,20 @@ describe('injectQuery', () => {
   describe('throwOnError', () => {
     it('should evaluate throwOnError when query is expected to throw', async () => {
       const key = queryKey()
-      const boundaryFn = vi.fn()
+      const throwOnError = vi.fn()
       TestBed.runInInjectionContext(() => {
         return injectQuery(() => ({
           queryKey: key,
           queryFn: () =>
             sleep(10).then(() => Promise.reject(new Error('Some error'))),
           retry: false,
-          throwOnError: boundaryFn,
+          throwOnError,
         }))
       })
 
       await vi.advanceTimersByTimeAsync(11)
-      expect(boundaryFn).toHaveBeenCalledTimes(1)
-      expect(boundaryFn).toHaveBeenCalledWith(
+      expect(throwOnError).toHaveBeenCalledTimes(1)
+      expect(throwOnError).toHaveBeenCalledWith(
         Error('Some error'),
         expect.objectContaining({
           state: expect.objectContaining({ status: 'error' }),
@@ -463,7 +445,6 @@ describe('injectQuery', () => {
 
     fixture.detectChanges()
     await vi.advanceTimersByTimeAsync(0)
-
     expect(fixture.componentInstance.query.data()).toEqual(
       'signal-input-required-test',
     )
@@ -492,7 +473,6 @@ describe('injectQuery', () => {
       expect(query.fetchStatus()).toBe('idle')
       expect(query.data()).toBeUndefined()
       expect(queryFn).toHaveBeenCalledTimes(0)
-
       await vi.advanceTimersByTimeAsync(10)
       expect(query.status()).toBe('pending')
       expect(query.fetchStatus()).toBe('idle')
@@ -544,7 +524,6 @@ describe('injectQuery', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(60)
       await stablePromise
-
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('test data')
     })
@@ -610,7 +589,6 @@ describe('injectQuery', () => {
 
       const stablePromise = app.whenStable()
       await stablePromise
-
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-1')
       expect(callCount).toBe(1)
@@ -619,7 +597,6 @@ describe('injectQuery', () => {
       await Promise.resolve()
       await vi.runAllTimersAsync()
       await app.whenStable()
-
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-2')
       expect(callCount).toBe(2)
@@ -652,7 +629,6 @@ describe('injectQuery', () => {
       // Enable the query
       enabledSignal.set(true)
       TestBed.tick()
-
       await app.whenStable()
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-1')
@@ -676,7 +652,6 @@ describe('injectQuery', () => {
 
       // Synchronize pending effects
       TestBed.tick()
-
       await app.whenStable()
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-1')
@@ -690,7 +665,6 @@ describe('injectQuery', () => {
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
       TestBed.tick()
-
       await app.whenStable()
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-2')

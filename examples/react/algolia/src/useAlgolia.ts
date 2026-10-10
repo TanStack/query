@@ -16,7 +16,7 @@ export default function useAlgolia<TData>({
   staleTime,
   gcTime,
 }: UseAlgoliaOptions) {
-  const queryInfo = useInfiniteQuery({
+  return useInfiniteQuery({
     queryKey: ['algolia', indexName, query, hitsPerPage],
     queryFn: query
       ? ({ pageParam }) =>
@@ -24,11 +24,8 @@ export default function useAlgolia<TData>({
       : skipToken,
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextPage,
+    select: (data) => data.pages.flatMap((page) => page.hits),
     staleTime,
     gcTime,
   })
-
-  const hits = queryInfo.data?.pages.map((page) => page.hits).flat()
-
-  return { ...queryInfo, hits }
 }

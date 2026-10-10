@@ -7,7 +7,7 @@ title: CreateInfiniteQueryResult
 type CreateInfiniteQueryResult<TData, TError> = BaseQueryNarrowing<TData, TError> & MapToSignals<InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/types.ts:191](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L191)
+Defined in: [packages/angular-query-experimental/src/types.ts:192](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L192)
 
 The result of `injectInfiniteQuery` when `initialData` isn't set — `data` may be `undefined` while the
 query is `pending`. Same shape as [InfiniteQueryObserverResult](InfiniteQueryObserverResult.md) from `@tanstack/query-core`, but

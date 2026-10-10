@@ -7,7 +7,10 @@ title: UseMutationReturnType
 type UseMutationReturnType<TData, TError, TVariables, TOnMutateResult, TResult> = ToRefs<Readonly<TResult>> & object;
 ```
 
-Defined in: [packages/vue-query/src/useMutation.ts:53](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutation.ts#L53)
+Defined in: [packages/vue-query/src/useMutation.ts:65](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutation.ts#L65)
+
+The result of `useMutation`: the [MutationObserverResult](MutationObserverResult.md) properties wrapped in `Ref`s, plus the
+fire-and-forget `mutate`, the awaitable `mutateAsync`, and `reset`.
 
 ## Type Declaration
 
@@ -49,4 +52,4 @@ reset: MutationObserverResult<TData, TError, TVariables, TOnMutateResult>["reset
 
 ### TResult
 
-`TResult` = `MutationResult`\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
+`TResult` = [`MutationResult`](MutationResult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>

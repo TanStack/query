@@ -77,7 +77,6 @@ describe('createPersister', () => {
     })
 
     await persister.persisterFn(queryFn, context, query)
-
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
@@ -88,7 +87,6 @@ describe('createPersister', () => {
     })
 
     await persister.persisterFn(queryFn, context, query)
-
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
@@ -126,7 +124,6 @@ describe('createPersister', () => {
     query.state.data = 'baz'
 
     await persister.persisterFn(queryFn, context, query)
-
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
@@ -142,7 +139,6 @@ describe('createPersister', () => {
     await storage.setItem(storageKey, '{invalid[item')
 
     await persister.persisterFn(queryFn, context, query)
-
     expect(await storage.getItem(storageKey)).toBeUndefined()
 
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
@@ -166,7 +162,6 @@ describe('createPersister', () => {
     )
 
     await persister.persisterFn(queryFn, context, query)
-
     expect(await storage.getItem(storageKey)).toBeUndefined()
 
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
@@ -191,7 +186,6 @@ describe('createPersister', () => {
     )
 
     await persister.persisterFn(queryFn, context, query)
-
     expect(await storage.getItem(storageKey)).toBeUndefined()
 
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
@@ -215,7 +209,6 @@ describe('createPersister', () => {
     )
 
     await persister.persisterFn(queryFn, context, query)
-
     expect(await storage.getItem(storageKey)).toBeUndefined()
 
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
@@ -243,10 +236,9 @@ describe('createPersister', () => {
     await persister.persisterFn(queryFn, context, query)
     query.state.data = 'data0'
     query.fetch = vi.fn()
+
     expect(query.state.dataUpdatedAt).toEqual(0)
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(query.fetch).toHaveBeenCalledTimes(0)
     expect(query.state.dataUpdatedAt).toEqual(dataUpdatedAt)
@@ -274,7 +266,6 @@ describe('createPersister', () => {
     query.fetch = vi.fn()
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(query.fetch).toHaveBeenCalledTimes(1)
   })
@@ -302,7 +293,6 @@ describe('createPersister', () => {
     query.fetch = vi.fn()
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(query.fetch).toHaveBeenCalledTimes(1)
   })
@@ -330,7 +320,6 @@ describe('createPersister', () => {
     query.fetch = vi.fn()
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(query.fetch).toHaveBeenCalledTimes(0)
   })
@@ -351,9 +340,7 @@ describe('createPersister', () => {
 
     await persister.persisterFn(queryFn, context, query)
     query.setData('baz')
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
 
     expect(JSON.parse(await storage.getItem(storageKey))).toMatchObject({
@@ -394,7 +381,6 @@ describe('createPersister', () => {
     query.fetch = vi.fn()
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query.fetch).toHaveBeenCalledTimes(0)
   })
@@ -423,7 +409,6 @@ describe('createPersister', () => {
     query.fetch = vi.fn()
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(query.fetch).toHaveBeenCalledTimes(1)
   })
@@ -446,9 +431,7 @@ describe('createPersister', () => {
 
     await persister.persisterFn(queryFn, context, query)
     query.setData('baz')
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
 
     expect(JSON.parse(await storage.getItem(storageKey))).toMatchObject({
@@ -471,7 +454,6 @@ describe('createPersister', () => {
 
       query.setData('baz')
       await persister.persistQuery(query)
-
       expect(JSON.parse(await storage.getItem(storageKey))).toMatchObject({
         buster: '',
         queryHash,
@@ -493,7 +475,6 @@ describe('createPersister', () => {
 
       query.setData('baz')
       await persister.persistQuery(query)
-
       expect(serializeMock).toHaveBeenCalledTimes(0)
     })
   })
@@ -508,7 +489,6 @@ describe('createPersister', () => {
 
       client.setQueryData(queryKey, 'baz')
       await persister.persistQueryByKey(queryKey, client)
-
       expect(serializeMock).toHaveBeenCalledTimes(0)
     })
 
@@ -522,7 +502,6 @@ describe('createPersister', () => {
 
       client.setQueryData(queryKey, 'baz')
       await persister.persistQueryByKey(['foo2'], client)
-
       expect(serializeMock).toHaveBeenCalledTimes(0)
     })
 
@@ -535,7 +514,6 @@ describe('createPersister', () => {
 
       client.setQueryData(queryKey, 'baz')
       await persister.persistQueryByKey(queryKey, client)
-
       expect(JSON.parse(await storage.getItem(storageKey))).toMatchObject({
         buster: '',
         queryHash,
@@ -579,7 +557,6 @@ describe('createPersister', () => {
       client.getQueryCache().add(query)
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
 
       await persister.persisterGc()
@@ -609,7 +586,6 @@ describe('createPersister', () => {
       client.getQueryCache().add(query)
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
 
       await persister.persisterGc()
@@ -630,7 +606,6 @@ describe('createPersister', () => {
       client.getQueryCache().add(query)
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
 
       await persister.restoreQueries(client)
@@ -645,7 +620,6 @@ describe('createPersister', () => {
       client.setQueryData(queryKey, 'foo')
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
       client.clear()
       expect(client.getQueryCache().getAll()).toHaveLength(0)
@@ -664,7 +638,6 @@ describe('createPersister', () => {
       client.setQueryData(queryKey, 'foo')
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
       client.clear()
       expect(client.getQueryCache().getAll()).toHaveLength(0)
@@ -683,7 +656,6 @@ describe('createPersister', () => {
       client.setQueryData(queryKey, 'foo')
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
       client.clear()
       expect(client.getQueryCache().getAll()).toHaveLength(0)
@@ -700,7 +672,6 @@ describe('createPersister', () => {
       client.setQueryData(queryKey, 'foo')
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
       client.clear()
       expect(client.getQueryCache().getAll()).toHaveLength(0)
@@ -719,7 +690,6 @@ describe('createPersister', () => {
       client.setQueryData(queryKey, 'foo')
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
       client.clear()
       expect(client.getQueryCache().getAll()).toHaveLength(0)
@@ -736,7 +706,6 @@ describe('createPersister', () => {
       client.setQueryData(queryKey, 'foo')
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
       client.clear()
       expect(client.getQueryCache().getAll()).toHaveLength(0)
@@ -756,7 +725,6 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(1)
 
       await persister.restoreQueries(client)
-
       expect(await storage.entries()).toHaveLength(0)
       expect(client.getQueryCache().getAll()).toHaveLength(0)
     })
@@ -771,8 +739,8 @@ describe('createPersister', () => {
       client.setQueryData(queryKey, 'foo')
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
+
       await persister.removeQueries()
       expect(await storage.entries()).toHaveLength(0)
     })
@@ -785,8 +753,8 @@ describe('createPersister', () => {
       client.setQueryData(queryKey, 'foo')
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
+
       await persister.removeQueries({ queryKey })
       expect(await storage.entries()).toHaveLength(0)
     })
@@ -799,8 +767,8 @@ describe('createPersister', () => {
       client.setQueryData(queryKey, 'foo')
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
+
       await persister.removeQueries({ queryKey: ['bar'] })
       expect(await storage.entries()).toHaveLength(1)
     })
@@ -813,8 +781,8 @@ describe('createPersister', () => {
       client.setQueryData(queryKey, 'foo')
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
+
       await persister.removeQueries({ queryKey: ['foo'] })
       expect(await storage.entries()).toHaveLength(0)
     })
@@ -827,8 +795,8 @@ describe('createPersister', () => {
       client.setQueryData(queryKey, 'foo')
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
+
       await persister.removeQueries({ queryKey: ['foo'], exact: true })
       expect(await storage.entries()).toHaveLength(1)
     })
@@ -841,8 +809,8 @@ describe('createPersister', () => {
       client.setQueryData(queryKey, 'foo')
 
       await persister.persistQueryByKey(queryKey, client)
-
       expect(await storage.entries()).toHaveLength(1)
+
       await persister.removeQueries({
         queryKey: queryKey,
         exact: true,
@@ -858,7 +826,6 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(1)
 
       await persister.removeQueries({ queryKey: ['foo'] })
-
       expect(await storage.entries()).toHaveLength(0)
     })
   })

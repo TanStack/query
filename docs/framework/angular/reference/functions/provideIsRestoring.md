@@ -4,7 +4,7 @@ title: provideIsRestoring
 ---
 
 ```ts
-function provideIsRestoring(isRestoring): Provider;
+function provideIsRestoring(isRestoring: Signal<boolean>): Provider;
 ```
 
 Defined in: [packages/angular-query-experimental/src/inject-is-restoring.ts:48](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-restoring.ts#L48)

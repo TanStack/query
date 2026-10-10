@@ -5,11 +5,11 @@ redirect_from:
   - reference/timeoutManager
 ---
 
-Defined in: [packages/query-core/src/timeoutManager.ts:70](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L70)
+Defined in: [packages/query-core/src/timeoutManager.ts:82](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L82)
 
 Allows customization of how timeouts are created.
 
-@tanstack/query-core makes liberal use of timeouts to implement `staleTime`
+`@tanstack/query-core` makes liberal use of timeouts to implement `staleTime`
 and `gcTime`. The default TimeoutManager provider uses the platform's global
 `setTimeout` implementation, which is known to have scalability issues with
 thousands of timeouts on the event loop.
@@ -26,10 +26,10 @@ coalesces timeouts.
 ### clearInterval()
 
 ```ts
-clearInterval(intervalId): void;
+clearInterval(intervalId: ManagedTimerId | undefined): void;
 ```
 
-Defined in: [packages/query-core/src/timeoutManager.ts:224](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L224)
+Defined in: [packages/query-core/src/timeoutManager.ts:240](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L240)
 
 `clearInterval` can be used to cancel an interval, like the global
 `clearInterval` function. It should be called with an interval ID
@@ -39,7 +39,9 @@ returned by `setInterval`.
 
 ##### intervalId
 
-[`ManagedTimerId`](../type-aliases/ManagedTimerId.md) | `undefined`
+[`ManagedTimerId`](../type-aliases/ManagedTimerId.md) \| `undefined`
+
+The timer ID returned by `setInterval`, or `undefined`.
 
 #### Returns
 
@@ -60,17 +62,19 @@ timeoutManager.clearInterval(intervalId)
 
 #### Implementation of
 
-[`TimeoutProvider`](../type-aliases/TimeoutProvider.md).[`clearInterval`](../type-aliases/TimeoutProvider.md#clearinterval)
+```ts
+Omit.clearInterval
+```
 
 ***
 
 ### clearTimeout()
 
 ```ts
-clearTimeout(timeoutId): void;
+clearTimeout(timeoutId: ManagedTimerId | undefined): void;
 ```
 
-Defined in: [packages/query-core/src/timeoutManager.ts:179](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L179)
+Defined in: [packages/query-core/src/timeoutManager.ts:193](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L193)
 
 `clearTimeout` cancels a timeout callback scheduled with `setTimeout`,
 like the global `clearTimeout` function. It should be called with a
@@ -80,7 +84,9 @@ timer ID returned by `setTimeout`.
 
 ##### timeoutId
 
-[`ManagedTimerId`](../type-aliases/ManagedTimerId.md) | `undefined`
+[`ManagedTimerId`](../type-aliases/ManagedTimerId.md) \| `undefined`
+
+The timer ID returned by `setTimeout`, or `undefined`.
 
 #### Returns
 
@@ -101,17 +107,19 @@ timeoutManager.clearTimeout(timeoutId)
 
 #### Implementation of
 
-[`TimeoutProvider`](../type-aliases/TimeoutProvider.md).[`clearTimeout`](../type-aliases/TimeoutProvider.md#cleartimeout)
+```ts
+Omit.clearTimeout
+```
 
 ***
 
 ### setInterval()
 
 ```ts
-setInterval(callback, delay): ManagedTimerId;
+setInterval(callback: TimeoutCallback, delay: number): ManagedTimerId;
 ```
 
-Defined in: [packages/query-core/src/timeoutManager.ts:200](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L200)
+Defined in: [packages/query-core/src/timeoutManager.ts:216](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L216)
 
 `setInterval` schedules a callback to be called approximately every
 `delay` milliseconds, like the global `setInterval` function.
@@ -125,13 +133,19 @@ object that can be coerced to a number via `Symbol.toPrimitive`.
 
 [`TimeoutCallback`](../type-aliases/TimeoutCallback.md)
 
+The function to call on every interval.
+
 ##### delay
 
 `number`
 
+The time between calls, in milliseconds.
+
 #### Returns
 
 [`ManagedTimerId`](../type-aliases/ManagedTimerId.md)
+
+The timer ID, to pass to [TimeoutManager#clearInterval](#clearinterval).
 
 #### Example
 
@@ -146,17 +160,19 @@ const intervalId = timeoutManager.setInterval(
 
 #### Implementation of
 
-[`TimeoutProvider`](../type-aliases/TimeoutProvider.md).[`setInterval`](../type-aliases/TimeoutProvider.md#setinterval)
+```ts
+Omit.setInterval
+```
 
 ***
 
 ### setTimeout()
 
 ```ts
-setTimeout(callback, delay): ManagedTimerId;
+setTimeout(callback: TimeoutCallback, delay: number): ManagedTimerId;
 ```
 
-Defined in: [packages/query-core/src/timeoutManager.ts:155](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L155)
+Defined in: [packages/query-core/src/timeoutManager.ts:169](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L169)
 
 `setTimeout` schedules a callback to run after approximately `delay`
 milliseconds, like the global `setTimeout` function. The callback can be
@@ -171,13 +187,19 @@ coerced to a number via `Symbol.toPrimitive`.
 
 [`TimeoutCallback`](../type-aliases/TimeoutCallback.md)
 
+The function to call when the timeout elapses.
+
 ##### delay
 
 `number`
 
+The time to wait before calling `callback`, in milliseconds.
+
 #### Returns
 
 [`ManagedTimerId`](../type-aliases/ManagedTimerId.md)
+
+The timer ID, to pass to [TimeoutManager#clearTimeout](#cleartimeout).
 
 #### Example
 
@@ -194,17 +216,19 @@ const timeoutIdNumber: number = Number(timeoutId)
 
 #### Implementation of
 
-[`TimeoutProvider`](../type-aliases/TimeoutProvider.md).[`setTimeout`](../type-aliases/TimeoutProvider.md#settimeout)
+```ts
+Omit.setTimeout
+```
 
 ***
 
 ### setTimeoutProvider()
 
 ```ts
-setTimeoutProvider<TTimerId>(provider): void;
+setTimeoutProvider<TTimerId>(provider: TimeoutProvider<TTimerId>): void;
 ```
 
-Defined in: [packages/query-core/src/timeoutManager.ts:106](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L106)
+Defined in: [packages/query-core/src/timeoutManager.ts:118](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L118)
 
 `setTimeoutProvider` can be used to set a custom implementation of the
 `setTimeout`, `clearTimeout`, `setInterval`, `clearInterval` functions,
@@ -231,6 +255,8 @@ cannot cancel each others' timers.
 ##### provider
 
 [`TimeoutProvider`](../type-aliases/TimeoutProvider.md)\<`TTimerId`\>
+
+The `TimeoutProvider` to use for all timers from now on.
 
 #### Returns
 

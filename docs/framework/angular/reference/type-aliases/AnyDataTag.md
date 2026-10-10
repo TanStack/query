@@ -7,24 +7,13 @@ title: AnyDataTag
 type AnyDataTag = object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:67](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L67)
+Defined in: [packages/query-core/src/types.ts:122](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L122)
+
+Matches any type that has been tagged with [DataTag](DataTag.md), whatever its data and error types.
 
 ## Properties
 
-### \[dataTagErrorSymbol\]
-
-```ts
-[dataTagErrorSymbol]: any;
-```
-
-Defined in: [packages/query-core/src/types.ts:69](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L69)
-
-***
-
-### \[dataTagSymbol\]
-
-```ts
-[dataTagSymbol]: any;
-```
-
-Defined in: [packages/query-core/src/types.ts:68](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L68)
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-datatagerrorsymbol"></a> `[dataTagErrorSymbol]` | `any` | The error type the key was tagged with. |
+| <a id="property-datatagsymbol"></a> `[dataTagSymbol]` | `any` | The data type the key was tagged with. |

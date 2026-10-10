@@ -1,19 +1,43 @@
 ---
 id: mutationOptions
 title: mutationOptions
+redirect_from:
+  - framework/vue/reference/mutationOptions
 ---
+
+## Overview
+
+```ts
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: () => WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): () => WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: () => Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): () => Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+```
+
+- [`WithRequired<MutationOptions>` → `WithRequired<MutationOptions>`](#call-signature-1): You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. A `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with `useMutationState`.
+- [`() => WithRequired<MutationOptions>` → `() => WithRequired<MutationOptions>`](#call-signature-2): Same as the plain-object overload with a required `mutationKey`, but for options that close over reactive state (`ref`s read inside the function body). Wrap them in a getter so `useMutation` and the other consumers always read the current values instead of the ones captured when the options were created.
+- [`Omit<MutationOptions>` → `Omit<MutationOptions>`](#call-signature-3): You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No `mutationKey` is required on this overload — use this when you don't need to target the mutation via a `mutationKey` filter later (e.g. with `useMutationState`); it can still be observed through other filters, such as `status`.
+- [`() => Omit<MutationOptions>` → `() => Omit<MutationOptions>`](#call-signature-4): Same as the plain-object overload without a `mutationKey`, but for options that close over reactive state (`ref`s read inside the function body). Wrap them in a getter so `useMutation` and the other consumers always read the current values instead of the ones captured when the options were created.
+
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
 
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/vue-query/src/mutationOptions.ts:34](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L34)
+Defined in: [packages/vue-query/src/mutationOptions.ts:36](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L36)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. A
 `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
 `useMutationState`.
+
+Unlike a `queryKey` property on a query's options (e.g. `queryOptions({ queryKey: [...] })`), `mutationKey`
+entries that are reactive getters (`() => id.value`) are never unwrapped — the getter function itself is
+stored as the entry, rather than its current value. `ref` entries are still unwrapped normally.
 
 ### Type Parameters
 
@@ -73,10 +97,12 @@ const isCreatingPost = computed(() => creatingPosts.value.length > 0)
 </script>
 ```
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): () => WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: () => WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): () => WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
 Defined in: [packages/vue-query/src/mutationOptions.ts:80](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L80)
@@ -116,13 +142,7 @@ re-evaluated on demand.
 
 A function that returns the same options object, unchanged.
 
-```ts
-(): WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
-```
-
-#### Returns
-
-[`WithRequired`](../type-aliases/WithRequired.md)\<[`MutationOptions`](../type-aliases/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+() => [`WithRequired`](../type-aliases/WithRequired.md)\<[`MutationOptions`](../type-aliases/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 ### See
 
@@ -150,13 +170,15 @@ const mutation = useMutation(createPostOptions)
 </template>
 ```
 
+<a id="call-signature-3"></a>
+
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/vue-query/src/mutationOptions.ts:124](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L124)
+Defined in: [packages/vue-query/src/mutationOptions.ts:122](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L122)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No
 `mutationKey` is required on this overload — use this when you don't need to target the mutation via a
@@ -196,13 +218,13 @@ The mutation options to use, identical to what you'd pass to `useMutation`, with
 
 The same options object, unchanged.
 
-### See
-
-[useMutation](useMutation.md) to run the mutation these options describe.
-
 ### Remarks
 
 See the other overload's example for looking a mutation up via `useMutationState`.
+
+### See
+
+[useMutation](useMutation.md) to run the mutation these options describe.
 
 ### Example
 
@@ -222,13 +244,15 @@ const mutation = useMutation(createPostOptions)
 </template>
 ```
 
+<a id="call-signature-4"></a>
+
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): () => Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: () => Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): () => Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/vue-query/src/mutationOptions.ts:169](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L169)
+Defined in: [packages/vue-query/src/mutationOptions.ts:165](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L165)
 
 Same as the plain-object overload without a `mutationKey`, but for options that close over reactive state
 (`ref`s read inside the function body). Wrap them in a getter so `useMutation` and the other consumers
@@ -265,13 +289,7 @@ demand.
 
 A function that returns the same options object, unchanged.
 
-```ts
-(): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
-```
-
-#### Returns
-
-`Omit`\<[`MutationOptions`](../type-aliases/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+() => `Omit`\<[`MutationOptions`](../type-aliases/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 ### See
 
@@ -297,3 +315,22 @@ const mutation = useMutation(createPostOptions)
   <button @click="mutation.mutate('Hello')">Create</button>
 </template>
 ```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+() => `Omit`\<[`MutationOptions`](../type-aliases/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+
+A function returning the mutation options to use, without a `mutationKey`, re-evaluated on
+demand.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+A function that returns the same options object, unchanged.
+
+() => `Omit`\<[`MutationOptions`](../type-aliases/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>

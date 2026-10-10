@@ -3,6 +3,7 @@
   "defaultBase": "main",
   "nxCloudId": "6412c827e6da5d7b4a0b1fe3",
   "useInferencePlugins": false,
+  "analytics": false,
   "parallel": 5,
   "namedInputs": {
     "sharedGlobals": [
@@ -10,7 +11,7 @@
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/scripts/*.js",
       "{workspaceRoot}/tsconfig.json",
-      "{workspaceRoot}/eslint.config.js",
+      "{workspaceRoot}/oxlint.config.ts",
       "{workspaceRoot}/pnpm-workspace.yaml"
     ],
     "default": [
@@ -21,7 +22,8 @@
     "production": [
       "default",
       "!{projectRoot}/tests/**/*",
-      "!{projectRoot}/eslint.config.js"
+      "!{projectRoot}/eslint.config.js",
+      "!{projectRoot}/oxlint.config.ts"
     ]
   },
   "targetDefaults": {
@@ -58,8 +60,18 @@
     },
     "test:eslint": {
       "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^production"]
+    },
+    "test:oxlint": {
+      "cache": true,
       "dependsOn": ["^compile"],
-      "inputs": ["default", "^production", "{workspaceRoot}/eslint.config.js"]
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/oxlint.config.ts",
+        "{workspaceRoot}/scripts/oxlint/*"
+      ]
     },
     "test:lib": {
       "cache": true,

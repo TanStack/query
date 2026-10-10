@@ -4,10 +4,10 @@ title: QueryClientProvider
 ---
 
 ```ts
-function QueryClientProvider(__namedParameters): VNode;
+function QueryClientProvider(props: QueryClientProviderProps): VNode;
 ```
 
-Defined in: [packages/preact-query/src/QueryClientProvider.tsx:70](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L70)
+Defined in: [packages/preact-query/src/QueryClientProvider.tsx:69](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L69)
 
 Use the `QueryClientProvider` component to connect and provide a `QueryClient` to your application. Also
 calls `client.mount()`/`client.unmount()` as this component mounts/unmounts, which subscribes the client to
@@ -16,9 +16,20 @@ comes back online).
 
 ## Parameters
 
-### \_\_namedParameters
+### props
 
 [`QueryClientProviderProps`](../type-aliases/QueryClientProviderProps.md)
+
+The `client` to provide, and the `children` that get access to it.
+
+<a id="props-properties"></a>
+
+#### `props` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="props-property-children"></a> `children?` | `ComponentChildren` | The components that get access to the provided `QueryClient`. |
+| <a id="props-property-client"></a> `client` | [`QueryClient`](../classes/QueryClient.md) | **Required** The `QueryClient` instance to provide. |
 
 ## Returns
 

@@ -98,7 +98,6 @@ describe('createQueries', () => {
 
       // Trigger refetch
       result[0].refetch()
-
       await vi.advanceTimersByTimeAsync(0)
       expect(result[0].data).toBe(2)
 
@@ -132,7 +131,6 @@ describe('createQueries', () => {
       queries.value = [
         { queryKey: key1, queryFn: () => sleep(10).then(() => 'data1') },
       ]
-
       await vi.advanceTimersByTimeAsync(10)
       expect(result[0]?.data).toBe('data1')
       expect(results.at(-1)).toMatchObject([
@@ -283,7 +281,6 @@ describe('createQueries', () => {
       // Resolve the refetched queries
       resolve3('first result ' + count)
       resolve4('second result ' + count)
-
       await vi.advanceTimersByTimeAsync(0)
       expect(queries.res).toBe('first result 1,second result 1')
 
@@ -311,7 +308,6 @@ describe('createQueries', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -320,9 +316,7 @@ describe('createQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -342,7 +336,6 @@ describe('createQueries', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -351,9 +344,7 @@ describe('createQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -362,9 +353,7 @@ describe('createQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')

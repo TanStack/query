@@ -3,13 +3,27 @@ id: mutationOptions
 title: mutationOptions
 ---
 
+## Overview
+
+```ts
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+```
+
+- [`WithRequired<CreateMutationOptions>` → `WithRequired<CreateMutationOptions>`](#call-signature-1): You can generally pass everything to `mutationOptions` that you can also pass to `createMutation`. This overload requires `mutationKey`, so the resulting options can be looked up elsewhere (e.g. with `useMutationState`).
+- [`Omit<CreateMutationOptions>` → `Omit<CreateMutationOptions>`](#call-signature-2): You can generally pass everything to `mutationOptions` that you can also pass to `createMutation`.
+
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/svelte-query/src/mutationOptions.ts:34](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/mutationOptions.ts#L34)
+Defined in: [packages/svelte-query/src/mutationOptions.ts:32](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/mutationOptions.ts#L32)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `createMutation`. This
 overload requires `mutationKey`, so the resulting options can be looked up elsewhere (e.g. with
@@ -73,13 +87,15 @@ Looking the mutation up elsewhere via its `mutationKey`, e.g. for a global "savi
 {/if}
 ```
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/svelte-query/src/mutationOptions.ts:71](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/mutationOptions.ts#L71)
+Defined in: [packages/svelte-query/src/mutationOptions.ts:67](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/mutationOptions.ts#L67)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `createMutation`.
 
@@ -134,3 +150,33 @@ The same options object.
 
 <button onclick={() => mutation.mutate({ title: 'Hello' })}>Create</button>
 ```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+`Omit`\<[`CreateMutationOptions`](../type-aliases/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+
+The options to use — everything you can pass to `createMutation`.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`MutationObserverOptions`](../interfaces/MutationObserverOptions.md#properties). See the type above for what it changes.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+`Omit`\<[`CreateMutationOptions`](../type-aliases/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+
+The same options object.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`MutationObserverOptions`](../interfaces/MutationObserverOptions.md#properties). See the type above for what it changes.

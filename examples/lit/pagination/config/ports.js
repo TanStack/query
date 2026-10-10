@@ -8,7 +8,7 @@ function readPortFromEnv(name, fallback) {
   }
 
   const parsed = Number.parseInt(rawValue, 10)
-  const valid = Number.isInteger(parsed) && parsed >= 1 && parsed <= 65_535
+  const valid = Number.isInteger(parsed) && parsed >= 1 && parsed <= 65535
 
   if (!valid) {
     throw new Error(

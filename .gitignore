@@ -41,6 +41,9 @@ stats.html
 .cache
 .idea
 .nx/cache
+.nx/migrate-runs
+.nx/polygraph
+.nx/self-healing
 .nx/workspace-data
 .pnpm-store
 .svelte-kit

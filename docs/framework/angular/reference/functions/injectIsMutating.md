@@ -4,10 +4,10 @@ title: injectIsMutating
 ---
 
 ```ts
-function injectIsMutating(filters?, options?): Signal<number>;
+function injectIsMutating(filters?: MutationFilters<unknown, Error, unknown, unknown>, options?: InjectIsMutatingOptions): Signal<number>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-is-mutating.ts:46](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-mutating.ts#L46)
+Defined in: [packages/angular-query-experimental/src/inject-is-mutating.ts:47](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-mutating.ts#L47)
 
 Injects a signal that tracks the number of mutations that your application currently has `pending`
 (useful for app-wide loading indicators).
@@ -20,11 +20,30 @@ Injects a signal that tracks the number of mutations that your application curre
 
 The [MutationFilters](../interfaces/MutationFilters.md) to narrow down the matched mutations.
 
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="filters-property-exact"></a> `exact?` | `boolean` | Match mutation key exactly |
+| <a id="filters-property-mutationkey"></a> `mutationKey?` | readonly `unknown`[] | Include mutations matching this mutation key |
+| <a id="filters-property-predicate"></a> `predicate?` | (`mutation`: [`Mutation`](../classes/Mutation.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>) => `boolean` | Include mutations matching this predicate function |
+| <a id="filters-property-status"></a> `status?` | `"error"` \| `"pending"` \| `"success"` \| `"idle"` | Filter by mutation status |
+
 ### options?
 
 [`InjectIsMutatingOptions`](../interfaces/InjectIsMutatingOptions.md)
 
 Additional configuration
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="options-property-injector"></a> `injector?` | `Injector` | The `Injector` in which to create the isMutating signal. If this is not provided, the current injection context will be used instead (via `inject`). |
 
 ## Returns
 

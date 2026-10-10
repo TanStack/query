@@ -7,7 +7,7 @@ title: skipToken
 const skipToken: typeof skipToken;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:528](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L528)
+Defined in: [packages/query-core/src/utils.ts:628](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L628)
 
 Sentinel value that can be passed as a query's `queryFn` to conditionally disable the query (equivalent
 to `enabled: false`) while preserving full type inference for the query's data. Unlike `enabled: false`,

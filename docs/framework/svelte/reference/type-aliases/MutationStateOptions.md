@@ -7,7 +7,7 @@ title: MutationStateOptions
 type MutationStateOptions<TResult, TMutation> = object;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:158](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L158)
+Defined in: [packages/svelte-query/src/types.ts:180](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L180)
 
 Options for useMutationState
 
@@ -23,30 +23,7 @@ Options for useMutationState
 
 ## Properties
 
-### filters?
-
-```ts
-optional filters: MutationFilters;
-```
-
-Defined in: [packages/svelte-query/src/types.ts:163](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L163)
-
-***
-
-### select()?
-
-```ts
-optional select: (mutation) => TResult;
-```
-
-Defined in: [packages/svelte-query/src/types.ts:164](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L164)
-
-#### Parameters
-
-##### mutation
-
-`TMutation`
-
-#### Returns
-
-`TResult`
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) | The filters that select the mutations to return the state of. |
+| <a id="property-select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` | Maps each matching mutation to the value returned for it. Defaults to the mutation's `state`. |

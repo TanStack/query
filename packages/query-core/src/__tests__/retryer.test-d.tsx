@@ -9,7 +9,7 @@ import type { RetryDelayValue, RetryValue, Retryer } from '../retryer'
 import type { CancelOptions, DefaultError, NetworkMode } from '..'
 
 class CustomError extends Error {
-  name = 'CustomError' as const
+  override name = 'CustomError' as const
 }
 
 describe('retryer', () => {
@@ -37,6 +37,7 @@ describe('retryer', () => {
     it('should default TData to unknown', () => {
       expectTypeOf(
         createRetryer({
+          // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
           fn: () => ({}) as unknown,
           networkMode: undefined,
           canRun: () => true,

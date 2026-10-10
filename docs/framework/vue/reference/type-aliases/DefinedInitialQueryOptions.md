@@ -10,7 +10,7 @@ type DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> = UseQue
 Defined in: [packages/vue-query/src/queryOptions.ts:189](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L189)
 
 The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
-`undefined`.
+`undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ## Type Parameters
 

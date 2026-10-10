@@ -4,12 +4,16 @@ title: createQueries
 ---
 
 ```ts
-const createQueries: <T, TCombinedResult>(queriesOptions, queryClient?) => TCombinedResult = useQueries;
+const createQueries: <T, TCombinedResult>(queriesOptions: Accessor<{
+  combine?: (result: T extends [] ? [] : T extends [Head] ? [GetResults<Head>] : T extends [Head, ...Tail[]] ? [...Tail[]] extends [] ? [] : [...(...)[]] extends [...] ? [..., ...] : ... extends ... ? ... : ... : { [K in string | number | symbol]: GetResults<(...)[(...)]> }) => TCombinedResult;
+  queries:   | readonly [T extends [] ? [] : T extends [Head] ? [GetOptions<Head>] : T extends [Head, ...Tail[]] ? [...Tail[]] extends [] ? [] : [...(...)[]] extends [...] ? [..., ...] : ... extends ... ? ... : ... : readonly unknown[] extends T ? T : T extends ...[] ? ...[] : ...[]]
+     | readonly [{ [K in string | number | symbol]: GetOptions<T[K]> }];
+}>, queryClient?: Accessor<QueryClient>) => TCombinedResult = useQueries;
 ```
 
 Defined in: [packages/solid-query/src/index.ts:86](https://github.com/TanStack/query/blob/main/packages/solid-query/src/index.ts#L86)
 
-The `useQueries` hook can be used to fetch a variable number of queries.
+The `useQueries` primitive can be used to fetch a variable number of queries.
 
 The `queries` key accepts an array with query option objects mostly identical to `useQuery` — see
 `placeholderData` below for the one difference. A custom `QueryClient` is supplied once, as `useQueries`'
@@ -60,16 +64,16 @@ previously rendered queries, because the number of queries can differ between re
   \| [`QueryObserverLoadingErrorResult`](../interfaces/QueryObserverLoadingErrorResult.md)\<`unknown`, `unknown`\>
   \| [`QueryObserverLoadingResult`](../interfaces/QueryObserverLoadingResult.md)\<`unknown`, `unknown`\>
   \| [`QueryObserverPendingResult`](../interfaces/QueryObserverPendingResult.md)\<`unknown`, `unknown`\>
-  \| [`QueryObserverPlaceholderResult`](../interfaces/QueryObserverPlaceholderResult.md)\<`unknown`, `unknown`\>)[] = `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>, `GetResults`\<`Head`\>\] : \[`...Tail[]`\] *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<...\>, `GetResults`\<...\>, `GetResults`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : \[`...(...)[]`\] : \[...\{ \[K in string \| number \| symbol\]: GetResults\<(...)\[(...)\]\> \}\[\]\] : \{ \[K in string \| number \| symbol\]: GetResults\<T\[K\<K\>\]\> \}
+  \| [`QueryObserverPlaceholderResult`](../interfaces/QueryObserverPlaceholderResult.md)\<`unknown`, `unknown`\>)[] = `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>, `GetResults`\<`Head`\>\] : \[`...Tail[]`\] *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<...\>, `GetResults`\<...\>, `GetResults`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : \[`...(...)[]`\] : \[...\{ \[K in string \| number \| symbol\]: GetResults\<(...)\[(...)\]\> \}\[\]\] : \{ \[K in string \| number \| symbol\]: GetResults\<T\[K\]\> \}
 
 ## Parameters
 
 ### queriesOptions
 
 `Accessor`\<\{
-  `combine?`: (`result`) => `TCombinedResult`;
+  `combine?`: (`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...(...)[]`\] *extends* \[...\] ? \[..., ...\] : ... *extends* ... ? ... : ... : \{ \[K in string \| number \| symbol\]: GetResults\<(...)\[(...)\]\> \}) => `TCombinedResult`;
   `queries`:   \| readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetOptions`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...(...)[]`\] *extends* \[...\] ? \[..., ...\] : ... *extends* ... ? ... : ... : readonly `unknown`[] *extends* `T` ? `T` : `T` *extends* ...[] ? ...[] : ...[]\]
-     \| readonly \[\{ \[K in string \| number \| symbol\]: GetOptions\<T\[K\<K\>\]\> \}\];
+     \| readonly \[\{ \[K in string \| number \| symbol\]: GetOptions\<T\[K\]\> \}\];
 \}\>
 
 An accessor returning the `queries` array to run, and an optional `combine`

@@ -7,7 +7,10 @@ title: QueryKeyWithDataTag
 type QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError> = object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:82](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L82)
+Defined in: [packages/query-core/src/types.ts:152](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L152)
+
+An object whose `queryKey` is tagged with [DataTag](DataTag.md), like the options returned by
+`queryOptions`.
 
 ## Type Parameters
 
@@ -25,10 +28,6 @@ Defined in: [packages/query-core/src/types.ts:82](https://github.com/TanStack/qu
 
 ## Properties
 
-### queryKey
-
-```ts
-queryKey: DataTag<TQueryKey, TQueryFnData, TError>;
-```
-
-Defined in: [packages/query-core/src/types.ts:87](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L87)
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-querykey"></a> `queryKey` | [`DataTag`](DataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\> | The query key, tagged with the query's data and error types. |

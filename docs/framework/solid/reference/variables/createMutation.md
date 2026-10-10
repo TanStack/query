@@ -4,10 +4,13 @@ title: createMutation
 ---
 
 ```ts
-const createMutation: <TData, TError, TVariables, TOnMutateResult>(options, queryClient?) => UseMutationResult<TData, TError, TVariables, TOnMutateResult> = useMutation;
+const createMutation: <TData, TError, TVariables, TOnMutateResult>(options: UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, queryClient?: Accessor<QueryClient>) => UseMutationResult<TData, TError, TVariables, TOnMutateResult> = useMutation;
 ```
 
 Defined in: [packages/solid-query/src/index.ts:80](https://github.com/TanStack/query/blob/main/packages/solid-query/src/index.ts#L80)
+
+Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
+`useMutation` is the primitive for that.
 
 ## Type Parameters
 

@@ -4,18 +4,20 @@
   "type": "module",
   "scripts": {
     "dev": "node ./scripts/dev.mjs",
-    "build": "tsc --noEmit && vite build"
+    "build": "tsc --noEmit && vite build",
+    "test:eslint": "eslint ./src"
   },
   "dependencies": {
     "@lit-labs/ssr": "^3.3.0",
-    "@tanstack/lit-query": "^0.2.22",
-    "@tanstack/query-core": "^5.103.1",
-    "lit": "^3.3.1"
+    "@tanstack/lit-query": "^0.2.26",
+    "@tanstack/query-core": "^5.104.1",
+    "lit": "^3.3.3"
   },
   "devDependencies": {
     "@lit-labs/ssr-client": "^1.1.7",
+    "@tanstack/eslint-plugin-query": "^5.104.1",
     "tsx": "^4.19.0",
     "typescript": "5.8.3",
-    "vite": "^6.4.1"
+    "vite": "^8.3.1"
   }
 }

@@ -4,10 +4,10 @@ title: injectMutationState
 ---
 
 ```ts
-function injectMutationState<TResult>(injectMutationStateFn, options?): Signal<TResult[]>;
+function injectMutationState<TResult>(injectMutationStateFn?: () => MutationStateOptions<TResult>, options?: InjectMutationStateOptions): Signal<TResult[]>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-mutation-state.ts:106](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L106)
+Defined in: [packages/angular-query-experimental/src/inject-mutation-state.ts:114](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L114)
 
 Injects a signal that gives you access to all mutations in the `MutationCache`. You can pass `filters`
 ([MutationFilters](../interfaces/MutationFilters.md)) to narrow down your mutations, and `select` to transform the mutation state.
@@ -20,7 +20,7 @@ Injects a signal that gives you access to all mutations in the `MutationCache`. 
 
 ## Parameters
 
-### injectMutationStateFn
+### injectMutationStateFn?
 
 () => `MutationStateOptions`\<`TResult`\>
 
@@ -33,6 +33,14 @@ in the reactive context, so signals read inside it re-narrow the matched mutatio
 [`InjectMutationStateOptions`](../interfaces/InjectMutationStateOptions.md)
 
 Additional configuration
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="options-property-injector"></a> `injector?` | `Injector` | The `Injector` in which to create the mutation state signal. If this is not provided, the current injection context will be used instead (via `inject`). |
 
 ## Returns
 

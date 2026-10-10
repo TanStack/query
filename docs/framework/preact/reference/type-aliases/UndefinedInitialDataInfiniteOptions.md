@@ -7,7 +7,7 @@ title: UndefinedInitialDataInfiniteOptions
 type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [packages/preact-query/src/infiniteQueryOptions.ts:25](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L25)
+Defined in: [packages/preact-query/src/infiniteQueryOptions.ts:24](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L24)
 
 The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
 may be `undefined` while the query is `pending`.
@@ -17,7 +17,7 @@ may be `undefined` while the query is `pending`.
 ### initialData?
 
 ```ts
-optional initialData: 
+optional initialData?: 
   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
 | InitialDataFunction<NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>>;
 ```

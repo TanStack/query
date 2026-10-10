@@ -4,10 +4,10 @@ title: QueryErrorResetBoundaryFunction
 ---
 
 ```ts
-type QueryErrorResetBoundaryFunction = (value) => React.ReactNode;
+type QueryErrorResetBoundaryFunction = (value: QueryErrorResetBoundaryValue) => React.ReactNode;
 ```
 
-Defined in: [packages/react-query/src/QueryErrorResetBoundary.tsx:87](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L87)
+Defined in: [packages/react-query/src/QueryErrorResetBoundary.tsx:112](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L112)
 
 A render-prop function usable as `children` on `QueryErrorResetBoundary`.
 

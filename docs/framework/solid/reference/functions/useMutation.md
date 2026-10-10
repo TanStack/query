@@ -6,10 +6,13 @@ redirect_from:
 ---
 
 ```ts
-function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
+function useMutation<TData, TError, TVariables, TOnMutateResult>(options: UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, queryClient?: Accessor<QueryClient>): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/solid-query/src/useMutation.ts:173](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useMutation.ts#L173)
+Defined in: [packages/solid-query/src/useMutation.ts:170](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useMutation.ts#L170)
+
+Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
+`useMutation` is the primitive for that.
 
 ## Type Parameters
 
@@ -37,6 +40,12 @@ Defined in: [packages/solid-query/src/useMutation.ts:173](https://github.com/Tan
 
 An accessor returning the [UseMutationOptions](../type-aliases/UseMutationOptions.md) to use.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`MutationOptions`](../interfaces/MutationOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 `Accessor`\<[`QueryClient`](../classes/QueryClient.md)\>
@@ -53,6 +62,12 @@ argument, useful for triggering call-site side effects (e.g. navigation) without
 mutation definition. Hook-level callbacks (passed to `options`) fire for every mutation; per-call callbacks
 fire only for the latest call you've made, and only while the component is still mounted — unmounting before
 the mutation settles removes the subscription and prevents them from firing.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`MutationObserverBaseResult`](../interfaces/MutationObserverBaseResult.md#properties). See the type above for what it changes.
 
 ## Examples
 

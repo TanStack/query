@@ -4,10 +4,15 @@ title: UseMutateFunction
 ---
 
 ```ts
-type UseMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args) => void;
+type UseMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args: Parameters<MutateFunction<TData, TError, TVariables, TOnMutateResult>>) => void;
 ```
 
-Defined in: [packages/solid-query/src/types.ts:267](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L267)
+Defined in: [packages/solid-query/src/types.ts:276](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L276)
+
+The type of `mutate`, as returned by `useMutation`. Forwards the variables (and an optional per-call
+`onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced
+through the mutation result instead of being thrown by `mutate`, unless `throwOnError` makes `useMutation`
+rethrow them.
 
 ## Type Parameters
 
@@ -15,17 +20,26 @@ Defined in: [packages/solid-query/src/types.ts:267](https://github.com/TanStack/
 
 `TData` = `unknown`
 
+The type your mutation function resolves to.
+
 ### TError
 
 `TError` = [`DefaultError`](DefaultError.md)
+
+The type of errors your mutation function may throw.
 
 ### TVariables
 
 `TVariables` = `void`
 
+The type of the variable passed to `mutate`.
+
 ### TOnMutateResult
 
 `TOnMutateResult` = `unknown`
+
+The type returned by `onMutate`, passed to `onSuccess`/`onError`/`onSettled` as
+their `onMutateResult` parameter — useful for optimistic-update rollback data.
 
 ## Parameters
 

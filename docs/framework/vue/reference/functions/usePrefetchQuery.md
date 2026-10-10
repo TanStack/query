@@ -1,13 +1,15 @@
 ---
 id: usePrefetchQuery
 title: usePrefetchQuery
+redirect_from:
+  - framework/vue/reference/usePrefetchQuery
 ---
 
 ```ts
-function usePrefetchQuery<TQueryFnData, TError, TData, TQueryData, TQueryKey>(options, queryClient?): void;
+function usePrefetchQuery<TQueryFnData, TError, TData, TQueryData, TQueryKey>(options: MaybeRefOrGetter<MaybeRefDeep<UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>>>, queryClient?: QueryClient): void;
 ```
 
-Defined in: [packages/vue-query/src/usePrefetchQuery.ts:86](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchQuery.ts#L86)
+Defined in: [packages/vue-query/src/usePrefetchQuery.ts:92](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchQuery.ts#L92)
 
 `usePrefetchQuery` does not return anything — it fires a prefetch as a reactive side effect, useful for
 kicking off a fetch ahead of the component that will actually render the data with `useQuery`. You can pass
@@ -52,6 +54,12 @@ Fire this during render, before a suspense boundary that wraps a component using
 A `ref`, plain value, or reactive getter resolving to the [UsePrefetchQueryOptions](../type-aliases/UsePrefetchQueryOptions.md) to
 use — everything you can pass to `queryClient.query`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`QueryExecuteOptions`](../interfaces/QueryExecuteOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 [`QueryClient`](../classes/QueryClient.md)
@@ -62,8 +70,6 @@ will be used.
 ## Returns
 
 `void`
-
-`void` — nothing is returned.
 
 ## Example
 

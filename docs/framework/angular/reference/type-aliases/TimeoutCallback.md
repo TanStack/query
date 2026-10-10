@@ -4,7 +4,7 @@ title: TimeoutCallback
 ---
 
 ```ts
-type TimeoutCallback = (_) => void;
+type TimeoutCallback = (_: void) => void;
 ```
 
 Defined in: [packages/query-core/src/timeoutManager.ts:9](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L9)

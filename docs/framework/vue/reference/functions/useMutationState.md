@@ -1,13 +1,17 @@
 ---
 id: useMutationState
 title: useMutationState
+redirect_from:
+  - framework/vue/reference/useMutationState
 ---
 
 ```ts
-function useMutationState<TResult, TMutation>(options, queryClient?): Readonly<Ref<TResult[]>>;
+function useMutationState<TResult, TMutation>(options?: 
+  | MutationStateOptions<TResult, TMutation>
+| (() => MutationStateOptions<TResult, TMutation>), queryClient?: QueryClient): Readonly<Ref<TResult[]>>;
 ```
 
-Defined in: [packages/vue-query/src/useMutationState.ts:196](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L196)
+Defined in: [packages/vue-query/src/useMutationState.ts:211](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L211)
 
 `useMutationState` is a composable that gives you access to all mutations in the `MutationCache`. You can
 pass `filters` ([MutationFilters](../interfaces/MutationFilters.md)) to narrow down your mutations, and `select` to transform the
@@ -28,12 +32,19 @@ themselves depend on other reactive state.
 
 ## Parameters
 
-### options
+### options?
+
+  \| [`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\>
+  \| (() => [`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\>)
 
 The `filters` to narrow down matched mutations, and an optional `select` to transform the
 mutation state.
 
-[`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\> | () => [`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\>
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`MutationStateOptions`](../type-aliases/MutationStateOptions.md#properties). See the type above for what it changes.
 
 ### queryClient?
 

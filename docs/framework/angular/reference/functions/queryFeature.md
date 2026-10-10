@@ -4,7 +4,7 @@ title: queryFeature
 ---
 
 ```ts
-function queryFeature<TFeatureKind>(kind, providers): QueryFeature<TFeatureKind>;
+function queryFeature<TFeatureKind>(kind: TFeatureKind, providers: Provider[]): QueryFeature<TFeatureKind>;
 ```
 
 Defined in: [packages/angular-query-experimental/src/providers.ts:143](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L143)
@@ -36,3 +36,12 @@ The Angular providers this feature contributes to `provideTanStackQuery`.
 [`QueryFeature`](../interfaces/QueryFeature.md)\<`TFeatureKind`\>
 
 A Query feature.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="result-property-ɵkind"></a> `ɵkind` | `TFeatureKind` | The kind of the feature, e.g. `'Devtools'` or `'PersistQueryClient'`. |
+| <a id="result-property-ɵproviders"></a> `ɵproviders` | `Provider`[] | The providers that `provideTanStackQuery` registers for the feature. |
