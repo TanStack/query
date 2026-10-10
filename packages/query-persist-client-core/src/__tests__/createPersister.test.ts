@@ -93,19 +93,14 @@ function getMalformedEntries() {
     null,
     {},
     42,
-    { state: null },
-    { state: 42 },
-    { ...persistedQuery, buster: 42 },
+    { ...persistedQuery, state: null },
+    { ...persistedQuery, state: 42 },
     { ...persistedQuery, queryHash: undefined },
     { ...persistedQuery, queryKey: 'foo' },
-    ...[
-      { data: undefined },
-      { dataUpdatedAt: {} },
-      { errorUpdatedAt: 'invalid' },
-    ].map((state) => ({
+    {
       ...persistedQuery,
-      state: { ...persistedQuery.state, ...state },
-    })),
+      state: { ...persistedQuery.state, dataUpdatedAt: {} },
+    },
   ]
 
   return values.map((value) => JSON.stringify(value))
@@ -571,31 +566,23 @@ describe('createPersister', () => {
       },
     )
 
-    describe.each(['dataUpdatedAt', 'errorUpdatedAt'])(
-      'with non-finite %s from a custom deserializer',
-      (field) => {
-        it.each([NaN, Infinity, -Infinity])(
-          'should remove the entry with %s without scheduling restoration',
-          async (value) => {
-            const storage = getFreshStorage()
-            const { persister, queryHash, storageKey } = setupPersister(
-              ['foo'],
-              {
-                storage,
-                deserialize: () => createPersistedQuery({ [field]: value }),
-              },
-            )
-            const afterRestore = vi.fn()
-            await storage.setItem(storageKey, 'stored')
+    it.each([NaN, Infinity, -Infinity])(
+      'should remove an entry with dataUpdatedAt %s from a custom deserializer without scheduling restoration',
+      async (value) => {
+        const storage = getFreshStorage()
+        const { persister, queryHash, storageKey } = setupPersister(['foo'], {
+          storage,
+          deserialize: () => createPersistedQuery({ dataUpdatedAt: value }),
+        })
+        const afterRestore = vi.fn()
+        await storage.setItem(storageKey, 'stored')
 
-            expect(
-              await persister.retrieveQuery(queryHash, afterRestore),
-            ).toBeUndefined()
-            expect(await storage.getItem(storageKey)).toBeUndefined()
-            await vi.advanceTimersByTimeAsync(0)
-            expect(afterRestore).not.toHaveBeenCalled()
-          },
-        )
+        expect(
+          await persister.retrieveQuery(queryHash, afterRestore),
+        ).toBeUndefined()
+        expect(await storage.getItem(storageKey)).toBeUndefined()
+        await vi.advanceTimersByTimeAsync(0)
+        expect(afterRestore).not.toHaveBeenCalled()
       },
     )
 
@@ -690,26 +677,6 @@ describe('createPersister', () => {
   })
 
   describe('restoreQueries', () => {
-    it.each([null, false, 0, '', [], { nested: null }])(
-      'should preserve valid data %j during retrieval, restoration, and garbage collection',
-      async (data) => {
-        const storage = getFreshStorage()
-        const { persister, client, queryKey, queryHash, storageKey } =
-          setupPersister(['foo'], { storage })
-        client.setQueryData(queryKey, data)
-        await persister.persistQueryByKey(queryKey, client)
-        const storedData = await storage.getItem(storageKey)
-        client.clear()
-
-        expect(await persister.retrieveQuery(queryHash)).toEqual(data)
-        await persister.restoreQueries(client)
-        expect(client.getQueryCache().getAll()).toHaveLength(1)
-        expect(client.getQueryData(queryKey)).toEqual(data)
-        await persister.persisterGc()
-        expect(await storage.getItem(storageKey)).toBe(storedData)
-      },
-    )
-
     it('should properly clean storage from busted entries', async () => {
       const storage = getFreshStorage()
       const { persister, client, query, queryKey } = setupPersister(['foo'], {

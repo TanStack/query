@@ -101,7 +101,7 @@ useMutation({
 This function would attempt to retrieve persisted query by `queryHash`.  
 If `query` is `expired`, `busted` or `malformed` it would be removed from the storage instead, and `undefined` would be returned.
 
-Persisted entries must have a string `buster` and `queryHash`, an array `queryKey`, and a `state` object with defined `data` and finite numeric `dataUpdatedAt` and `errorUpdatedAt` values. `null` is valid query data. Entries that do not meet these requirements are removed during retrieval, garbage collection, restoration, and filtered removal, without interrupting processing of other entries.
+Persisted entries must have a string `queryHash`, an array `queryKey`, and a `state` object with a finite numeric `dataUpdatedAt`. Entries that do not meet these requirements are removed during retrieval, garbage collection, restoration, and filtered removal, without interrupting processing of other entries. `null` remains valid query data.
 
 ### `persisterGc(): Promise<void>`
 

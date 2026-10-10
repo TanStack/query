@@ -164,15 +164,12 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     const state = persistedQuery.state
 
     return (
-      typeof persistedQuery.buster === 'string' &&
       typeof persistedQuery.queryHash === 'string' &&
       Array.isArray(persistedQuery.queryKey) &&
       typeof state === 'object' &&
       state !== null &&
       !Array.isArray(state) &&
-      state.data !== undefined &&
-      Number.isFinite(state.dataUpdatedAt) &&
-      Number.isFinite(state.errorUpdatedAt)
+      Number.isFinite(state.dataUpdatedAt)
     )
   }
 
