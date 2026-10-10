@@ -17,14 +17,16 @@ export const PostViewer: Component<PostViewerProps> = (props) => {
   const [simulateError, setSimulateError] = createSignal(props.simulateError)
   const [postId, setPostId] = createSignal(1)
 
+  const shouldSimulateError = () =>
+    simulateError() || (simulateError() !== false && postId() === 5)
+
   const query = useQuery(() => ({
-    queryKey: ['posts', postId()],
+    queryKey: ['posts', postId(), props.sleep, shouldSimulateError()],
     queryFn: () =>
       fetchPost({
         postId: postId(),
         sleep: props.sleep,
-        simulateError:
-          simulateError() || (simulateError() !== false && postId() === 5),
+        simulateError: shouldSimulateError(),
       }),
     deferStream: props.deferStream,
     throwOnError: true,
