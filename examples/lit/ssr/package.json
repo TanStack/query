@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "node ./scripts/dev.mjs",
-    "build": "tsc --noEmit && vite build"
+    "build": "tsc --noEmit && vite build",
+    "test:eslint": "eslint ./src"
   },
   "dependencies": {
     "@lit-labs/ssr": "^3.3.0",
@@ -14,6 +15,7 @@
   },
   "devDependencies": {
     "@lit-labs/ssr-client": "^1.1.7",
+    "@tanstack/eslint-plugin-query": "^5.104.1",
     "tsx": "^4.19.0",
     "typescript": "5.8.3",
     "vite": "^8.3.1"
