@@ -3,55 +3,36 @@ id: queryOptions
 title: queryOptions
 ---
 
-# Function: queryOptions()
-
-Allows to share and re-use query options in a type-safe way.
-
-The `queryKey` will be tagged with the type from `queryFn`.
-
-**Example**
+## Overview
 
 ```ts
- const { queryKey } = queryOptions({
-    queryKey: ['key'],
-    queryFn: () => Promise.resolve(5),
-    //  ^?  Promise<number>
-  })
-
-  const queryClient = new QueryClient()
-  const data = queryClient.getQueryData(queryKey)
-  //    ^?  number | undefined
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-## Param
+- [`DefinedInitialDataOptions` → `DefinedInitialDataOptions & QueryKeyWithDataTag`](#call-signature-1): You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is required and is the query key to generate options for.
+- [`UnusedSkipTokenOptions` → `UnusedSkipTokenOptions & QueryKeyWithDataTag`](#call-signature-2): You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is required and is the query key to generate options for.
+- [`UndefinedInitialDataOptions` → `UndefinedInitialDataOptions & QueryKeyWithDataTag`](#call-signature-3): You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is required and is the query key to generate options for.
 
-The query options to tag with the type from `queryFn`.
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
 
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & object;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [query-options.ts:76](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L76)
+Defined in: [packages/angular-query-experimental/src/query-options.ts:145](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L145)
 
-Allows to share and re-use query options in a type-safe way.
+You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options
+can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is
+required and is the query key to generate options for.
 
-The `queryKey` will be tagged with the type from `queryFn`.
-
-**Example**
-
-```ts
- const { queryKey } = queryOptions({
-    queryKey: ['key'],
-    queryFn: () => Promise.resolve(5),
-    //  ^?  Promise<number>
-  })
-
-  const queryClient = new QueryClient()
-  const data = queryClient.getQueryData(queryKey)
-  //    ^?  number | undefined
-```
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -77,39 +58,64 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 [`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
-The query options to tag with the type from `queryFn`.
+The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `injectQuery`,
+with `initialData` set.
 
 ### Returns
 
-`Omit`\<[`CreateQueryOptions`](../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `object`
+[`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
 
-The tagged query options.
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+### See
+
+ - [injectQuery](injectQuery.md) to run a query with these options.
+ - [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
+
+### Example
+
+```angular-ts
+import { queryOptions, injectQuery } from '@tanstack/angular-query-experimental'
+
+export const postsOptions = queryOptions({
+  queryKey: ['posts'],
+  queryFn: fetchPosts,
+  initialData: [],
+})
+
+@Component({
+  selector: 'posts',
+  template: `
+    <!-- `postsQuery.data()` is never `undefined`, thanks to `initialData` — even if a refetch
+    fails, so the list stays visible alongside the error. -->
+    @if (postsQuery.isError()) {
+      <span>Error: {{ postsQuery.error()?.message }}</span>
+    }
+    <ul>
+      @for (post of postsQuery.data(); track post.id) {
+        <li>{{ post.title }}</li>
+      }
+    </ul>
+  `,
+})
+export class Posts {
+  readonly postsQuery = injectQuery(() => postsOptions)
+}
+```
+
+<a id="call-signature-2"></a>
 
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & object;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [query-options.ts:108](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L108)
+Defined in: [packages/angular-query-experimental/src/query-options.ts:192](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L192)
 
-Allows to share and re-use query options in a type-safe way.
-
-The `queryKey` will be tagged with the type from `queryFn`.
-
-**Example**
-
-```ts
- const { queryKey } = queryOptions({
-    queryKey: ['key'],
-    queryFn: () => Promise.resolve(5),
-    //  ^?  Promise<number>
-  })
-
-  const queryClient = new QueryClient()
-  const data = queryClient.getQueryData(queryKey)
-  //    ^?  number | undefined
-```
+You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options
+can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is
+required and is the query key to generate options for.
 
 ### Type Parameters
 
@@ -135,39 +141,62 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 [`UnusedSkipTokenOptions`](../type-aliases/UnusedSkipTokenOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
-The query options to tag with the type from `queryFn`.
+The [UnusedSkipTokenOptions](../type-aliases/UnusedSkipTokenOptions.md) to use — everything you can pass to `injectQuery`.
 
 ### Returns
 
-`OmitKeyof`\<[`CreateQueryOptions`](../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `object`
+[`UnusedSkipTokenOptions`](../type-aliases/UnusedSkipTokenOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
 
-The tagged query options.
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+### See
+
+ - [injectQuery](injectQuery.md) to run a query with these options.
+ - [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
+
+### Example
+
+A parameterized factory, so the same options object can be reused per `id`:
+```angular-ts
+import { queryOptions, injectQuery } from '@tanstack/angular-query-experimental'
+
+export const postOptions = (id: string) =>
+  queryOptions({
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id),
+  })
+
+@Component({
+  selector: 'post',
+  template: `
+    @if (postQuery.isPending()) {
+      Loading...
+    } @else if (postQuery.isError()) {
+      <span>Error: {{ postQuery.error()?.message }}</span>
+    } @else {
+      <h1>{{ postQuery.data().title }}</h1>
+    }
+  `,
+})
+export class Post {
+  readonly id = signal('1')
+  readonly postQuery = injectQuery(() => postOptions(this.id()))
+}
+```
+
+<a id="call-signature-3"></a>
 
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & object;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [query-options.ts:140](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L140)
+Defined in: [packages/angular-query-experimental/src/query-options.ts:270](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L270)
 
-Allows to share and re-use query options in a type-safe way.
-
-The `queryKey` will be tagged with the type from `queryFn`.
-
-**Example**
-
-```ts
- const { queryKey } = queryOptions({
-    queryKey: ['key'],
-    queryFn: () => Promise.resolve(5),
-    //  ^?  Promise<number>
-  })
-
-  const queryClient = new QueryClient()
-  const data = queryClient.getQueryData(queryKey)
-  //    ^?  number | undefined
-```
+You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options
+can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is
+required and is the query key to generate options for.
 
 ### Type Parameters
 
@@ -193,10 +222,109 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 [`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
-The query options to tag with the type from `queryFn`.
+The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `injectQuery`.
 
 ### Returns
 
-[`CreateQueryOptions`](../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `object`
+[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
 
-The tagged query options.
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+### Remarks
+
+This is the only overload that accepts `queryFn: skipToken`, shown below.
+
+### See
+
+ - [injectQuery](injectQuery.md) to run a query with these options.
+ - [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
+
+### Examples
+
+A parameterized factory, so the same options object can be reused per `id`:
+```angular-ts
+import { queryOptions, injectQuery } from '@tanstack/angular-query-experimental'
+
+export const postOptions = (id: string) =>
+  queryOptions({
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id),
+  })
+
+@Component({
+  selector: 'post',
+  template: `
+    @if (postQuery.isPending()) {
+      Loading...
+    } @else if (postQuery.isError()) {
+      <span>Error: {{ postQuery.error()?.message }}</span>
+    } @else {
+      <h1>{{ postQuery.data().title }}</h1>
+    }
+  `,
+})
+export class Post {
+  readonly id = signal('1')
+  readonly postQuery = injectQuery(() => postOptions(this.id()))
+}
+```
+
+A factory that disables the query, type safe, until `postId` is set:
+```angular-ts
+import { queryOptions, skipToken, injectQuery } from '@tanstack/angular-query-experimental'
+
+export const postOptions = (postId: number | undefined) =>
+  queryOptions({
+    queryKey: ['post', postId],
+    queryFn: postId != null ? () => fetchPost(postId) : skipToken,
+  })
+
+@Component({
+  selector: 'post',
+  template: `
+    @if (postId() == null) {
+      Select a post
+    } @else if (postQuery.isPending()) {
+      Loading...
+    } @else if (postQuery.isError()) {
+      <span>Error: {{ postQuery.error()?.message }}</span>
+    } @else {
+      <h1>{{ postQuery.data().title }}</h1>
+    }
+  `,
+})
+export class Post {
+  readonly postId = signal<number | undefined>(undefined)
+  readonly postQuery = injectQuery(() => postOptions(this.postId()))
+}
+```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+
+The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `injectQuery`.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`CreateQueryOptions`](../interfaces/CreateQueryOptions.md#properties). See the type above for what it changes.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
+
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`CreateQueryOptions`](../interfaces/CreateQueryOptions.md#properties), [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md#properties). See the type above for what it changes.

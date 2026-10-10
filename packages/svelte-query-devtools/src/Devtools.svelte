@@ -8,6 +8,7 @@
     DevtoolsErrorType,
     DevtoolsPosition,
     TanstackQueryDevtools,
+    Theme,
   } from '@tanstack/query-devtools'
 
   interface DevtoolsOptions {
@@ -16,15 +17,17 @@
      */
     initialIsOpen?: boolean
     /**
-     * The position of the TanStack Query logo to open and close the devtools panel.
-     * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-     * Defaults to 'bottom-right'.
+     * The position of the TanStack logo to open and close the devtools panel.
+     * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
+     *
+     * @defaultValue bottom-right
      */
     buttonPosition?: DevtoolsButtonPosition
     /**
-     * The position of the TanStack Query devtools panel.
+     * The position of the Svelte Query devtools panel.
      * 'top' | 'bottom' | 'left' | 'right'
-     * Defaults to 'bottom'.
+     *
+     * @defaultValue bottom
      */
     position?: DevtoolsPosition
     /**
@@ -40,13 +43,19 @@
      */
     styleNonce?: string
     /**
-     * Use this so you can attach the devtool's styles to specific element in the DOM.
+     * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
+     * within the shadow DOM instead of within the head tag in the light DOM.
      */
     shadowDOMTarget?: ShadowRoot
     /**
      * Set this to true to hide disabled queries from the devtools panel.
      */
     hideDisabledQueries?: boolean
+    /**
+     * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+     * Defaults to 'system'.
+     */
+    theme?: Theme
   }
 
   let {
@@ -58,10 +67,11 @@
     styleNonce = undefined,
     shadowDOMTarget = undefined,
     hideDisabledQueries = false,
+    theme = 'system',
   }: DevtoolsOptions = $props()
 
   let ref: HTMLDivElement
-  let devtools: TanstackQueryDevtools | undefined
+  let devtools = $state<TanstackQueryDevtools | undefined>(undefined)
 
   if (DEV && BROWSER) {
     onMount(() => {
@@ -80,6 +90,7 @@
           styleNonce,
           shadowDOMTarget,
           hideDisabledQueries,
+          theme,
         })
 
         devtools.mount(ref)
@@ -101,6 +112,10 @@
 
     $effect(() => {
       devtools?.setErrorTypes(errorTypes)
+    })
+
+    $effect(() => {
+      devtools?.setTheme(theme)
     })
   }
 </script>

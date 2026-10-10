@@ -1,0 +1,28 @@
+---
+id: useQueryClient
+title: useQueryClient
+---
+
+```ts
+function useQueryClient(): QueryClient;
+```
+
+Defined in: [packages/lit-query/src/context.ts:105](https://github.com/TanStack/query/blob/main/packages/lit-query/src/context.ts#L105)
+
+Resolves the current default `QueryClient` registered by a connected
+`QueryClientProvider`.
+
+This helper is useful outside a Lit reactive controller when a single
+provider is mounted. It throws if no client is registered or if multiple
+clients are mounted and the default would be ambiguous.
+
+## Returns
+
+[`QueryClient`](../classes/QueryClient.md)
+
+The single registered query client.
+
+## Throws
+
+If no `QueryClient` is registered, or if multiple are
+mounted and the default is ambiguous.

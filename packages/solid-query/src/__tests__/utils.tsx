@@ -1,8 +1,20 @@
 import { vi } from 'vitest'
 import { Show, createEffect, createSignal, onCleanup } from 'solid-js'
 import { onlineManager } from '@tanstack/query-core'
-import type { ParentProps } from 'solid-js'
+import { render } from '@solidjs/testing-library'
+import { QueryClientProvider } from '..'
+import type { JSX, ParentProps } from 'solid-js'
 import type { MockInstance } from 'vitest'
+import type { QueryClient } from '..'
+
+export function renderWithClient(
+  client: QueryClient,
+  ui: () => JSX.Element,
+): ReturnType<typeof render> {
+  return render(() => (
+    <QueryClientProvider client={client}>{ui()}</QueryClientProvider>
+  ))
+}
 
 export function Blink(
   props: {

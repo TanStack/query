@@ -19,8 +19,8 @@ describe('fine grained persister', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should restore query state from persister and not refetch', async () => {
@@ -55,7 +55,7 @@ describe('fine grained persister', () => {
     )
 
     function Test() {
-      const [_, setRef] = React.useState<HTMLDivElement | null>()
+      const [_ref, setRef] = React.useState<HTMLDivElement | null>()
 
       const { data } = useQuery({
         queryKey: key,
@@ -79,11 +79,7 @@ describe('fine grained persister', () => {
   it('should restore query state from persister and refetch', async () => {
     const key = queryKey()
     const hash = hashKey(key)
-    const spy = vi.fn(async () => {
-      await sleep(5)
-
-      return 'Works from queryFn'
-    })
+    const spy = vi.fn(() => sleep(5).then(() => 'Works from queryFn'))
 
     const mapStorage = new Map()
     const storage = {
@@ -112,7 +108,7 @@ describe('fine grained persister', () => {
     )
 
     function Test() {
-      const [_, setRef] = React.useState<HTMLDivElement | null>()
+      const [_ref, setRef] = React.useState<HTMLDivElement | null>()
 
       const { data } = useQuery({
         queryKey: key,
@@ -153,7 +149,7 @@ describe('fine grained persister', () => {
     }
 
     function Test() {
-      const [_, setRef] = React.useState<HTMLDivElement | null>()
+      const [_ref, setRef] = React.useState<HTMLDivElement | null>()
 
       const { data } = useQuery({
         queryKey: key,

@@ -3,7 +3,7 @@ export type {
   DevtoolsErrorType,
   DevtoolsPosition,
   Theme,
-} from './contexts'
+} from './contexts/types'
 export {
   TanstackQueryDevtools,
   type TanstackQueryDevtoolsConfig,

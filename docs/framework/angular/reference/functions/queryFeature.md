@@ -3,13 +3,11 @@ id: queryFeature
 title: queryFeature
 ---
 
-# Function: queryFeature()
-
 ```ts
-function queryFeature<TFeatureKind>(kind, providers): QueryFeature<TFeatureKind>;
+function queryFeature<TFeatureKind>(kind: TFeatureKind, providers: Provider[]): QueryFeature<TFeatureKind>;
 ```
 
-Defined in: [providers.ts:146](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L146)
+Defined in: [packages/angular-query-experimental/src/providers.ts:143](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L143)
 
 Helper function to create an object that represents a Query feature.
 
@@ -25,12 +23,25 @@ Helper function to create an object that represents a Query feature.
 
 `TFeatureKind`
 
+The kind of feature, e.g. `'Devtools'`.
+
 ### providers
 
 `Provider`[]
+
+The Angular providers this feature contributes to `provideTanStackQuery`.
 
 ## Returns
 
 [`QueryFeature`](../interfaces/QueryFeature.md)\<`TFeatureKind`\>
 
 A Query feature.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="result-property-ɵkind"></a> `ɵkind` | `TFeatureKind` | The kind of the feature, e.g. `'Devtools'` or `'PersistQueryClient'`. |
+| <a id="result-property-ɵproviders"></a> `ɵproviders` | `Provider`[] | The providers that `provideTanStackQuery` registers for the feature. |

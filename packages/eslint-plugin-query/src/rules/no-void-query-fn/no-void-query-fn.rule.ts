@@ -5,11 +5,6 @@ import { getDocsUrl } from '../../utils/get-docs-url'
 import type { ParserServicesWithTypeInformation } from '@typescript-eslint/utils'
 import type { ExtraRuleDocs } from '../../types'
 
-const TypeFlags = {
-  Void: 16384,
-  Undefined: 32768,
-} as const
-
 export const name = 'no-void-query-fn'
 
 const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
@@ -78,6 +73,13 @@ type Program = ParserServicesWithTypeInformation['program']
 type TypeChecker = ReturnType<Program['getTypeChecker']>
 type Type = ReturnType<TypeChecker['getTypeAtLocation']>
 
+/**
+ * Checks whether a query function's return type resolves to `void` or `undefined`, including in any
+ * member of a union.
+ * @param checker - The TypeScript type checker.
+ * @param type - The return type of the query function.
+ * @returns `true` if the awaited type, or a member of it, is `void` or `undefined`.
+ */
 function isIllegalReturn(checker: TypeChecker, type: Type): boolean {
   const awaited = checker.getAwaitedType(type)
 
@@ -87,5 +89,6 @@ function isIllegalReturn(checker: TypeChecker, type: Type): boolean {
     return awaited.types.some((t) => isIllegalReturn(checker, t))
   }
 
-  return awaited.flags & (TypeFlags.Void | TypeFlags.Undefined) ? true : false
+  const typeString = checker.typeToString(awaited)
+  return typeString === 'void' || typeString === 'undefined'
 }

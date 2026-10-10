@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { sortDataByOrder } from '../utils/sort-data-by-order'
 
 describe('create-route-property-order utils', () => {
@@ -68,8 +68,8 @@ describe('create-route-property-order utils', () => {
         expected: [{ key: 'd' }, { key: 'a' }, { key: 'b' }, { key: 'c' }],
       },
     ] as const
-    test.each(testCases)(
-      '$data $orderArray $key $expected',
+    it.each(testCases)(
+      'should sort $data by $orderArray using $key',
       ({ data, orderArray, key, expected }) => {
         const sortedData = sortDataByOrder(data, orderArray, key)
         expect(sortedData).toEqual(expected)

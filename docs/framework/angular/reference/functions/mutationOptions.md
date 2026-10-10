@@ -3,83 +3,31 @@ id: mutationOptions
 title: mutationOptions
 ---
 
-# Function: mutationOptions()
-
-Allows to share and re-use mutation options in a type-safe way.
-
-**Example**
+## Overview
 
 ```ts
-export class QueriesService {
-  private http = inject(HttpClient)
-  private queryClient = inject(QueryClient)
-
-  updatePost(id: number) {
-    return mutationOptions({
-      mutationFn: (post: Post) => Promise.resolve(post),
-      mutationKey: ["updatePost", id],
-      onSuccess: (newPost) => {
-        //           ^? newPost: Post
-        this.queryClient.setQueryData(["posts", id], newPost)
-      },
-    });
-  }
-}
-
-class ComponentOrService {
-  queries = inject(QueriesService)
-  id = signal(0)
-  mutation = injectMutation(() => this.queries.updatePost(this.id()))
-
-  save() {
-    this.mutation.mutate({ title: 'New Title' })
-  }
-}
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-## Param
+- [`WithRequired<CreateMutationOptions>` → `WithRequired<CreateMutationOptions>`](#call-signature-1): You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. A `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with `injectMutationState`.
+- [`Omit<CreateMutationOptions>` → `Omit<CreateMutationOptions>`](#call-signature-2): You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. No `mutationKey` is required on this overload — use this when you don't need to target the mutation via a `mutationKey` filter later (e.g. with `injectMutationState`); it can still be observed through other filters, such as `status`.
 
-The mutation options.
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
 
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [mutation-options.ts:39](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L39)
+Defined in: [packages/angular-query-experimental/src/mutation-options.ts:38](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L38)
 
-Allows to share and re-use mutation options in a type-safe way.
-
-**Example**
-
-```ts
-export class QueriesService {
-  private http = inject(HttpClient)
-  private queryClient = inject(QueryClient)
-
-  updatePost(id: number) {
-    return mutationOptions({
-      mutationFn: (post: Post) => Promise.resolve(post),
-      mutationKey: ["updatePost", id],
-      onSuccess: (newPost) => {
-        //           ^? newPost: Post
-        this.queryClient.setQueryData(["posts", id], newPost)
-      },
-    });
-  }
-}
-
-class ComponentOrService {
-  queries = inject(QueriesService)
-  id = signal(0)
-  mutation = injectMutation(() => this.queries.updatePost(this.id()))
-
-  save() {
-    this.mutation.mutate({ title: 'New Title' })
-  }
-}
-```
+You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. A
+`mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
+`injectMutationState`.
 
 ### Type Parameters
 
@@ -103,55 +51,62 @@ class ComponentOrService {
 
 #### options
 
-`WithRequired`\<[`CreateMutationOptions`](../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+[`WithRequired`](../type-aliases/WithRequired.md)\<[`CreateMutationOptions`](../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
-The mutation options.
+The mutation options to use, identical to what you'd pass to `injectMutation`, with a
+required `mutationKey`.
 
 ### Returns
 
-`WithRequired`\<[`CreateMutationOptions`](../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+[`WithRequired`](../type-aliases/WithRequired.md)\<[`CreateMutationOptions`](../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
-Mutation options.
+The same options object, unchanged.
+
+### See
+
+[injectMutation](injectMutation.md) to run the mutation these options describe.
+
+### Example
+
+Looking the mutation up elsewhere via its `mutationKey`, e.g. for a global "saving…" indicator:
+```angular-ts
+import { mutationOptions, injectMutationState } from '@tanstack/angular-query-experimental'
+
+const createPostOptions = mutationOptions({
+  mutationKey: ['posts', 'create'],
+  mutationFn: createPost,
+})
+
+@Component({
+  selector: 'saving-indicator',
+  template: `
+    @if (isCreatingPost()) {
+      <span>Saving…</span>
+    }
+  `,
+})
+export class SavingIndicator {
+  readonly #pendingCreates = injectMutationState(() => ({
+    filters: { mutationKey: createPostOptions.mutationKey, status: 'pending' },
+  }))
+  readonly isCreatingPost = computed(() => this.#pendingCreates().length > 0)
+}
+```
+
+<a id="call-signature-2"></a>
 
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [mutation-options.ts:53](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L53)
+Defined in: [packages/angular-query-experimental/src/mutation-options.ts:94](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L94)
 
-Allows to share and re-use mutation options in a type-safe way.
-
-**Example**
-
-```ts
-export class QueriesService {
-  private http = inject(HttpClient)
-  private queryClient = inject(QueryClient)
-
-  updatePost(id: number) {
-    return mutationOptions({
-      mutationFn: (post: Post) => Promise.resolve(post),
-      mutationKey: ["updatePost", id],
-      onSuccess: (newPost) => {
-        //           ^? newPost: Post
-        this.queryClient.setQueryData(["posts", id], newPost)
-      },
-    });
-  }
-}
-
-class ComponentOrService {
-  queries = inject(QueriesService)
-  id = signal(0)
-  mutation = injectMutation(() => this.queries.updatePost(this.id()))
-
-  save() {
-    this.mutation.mutate({ title: 'New Title' })
-  }
-}
-```
+You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. No
+`mutationKey` is required on this overload — use this when you don't need to target the mutation via a
+`mutationKey` filter later (e.g. with `injectMutationState`); it can still be observed through other
+filters, such as `status`.
 
 ### Type Parameters
 
@@ -177,10 +132,83 @@ class ComponentOrService {
 
 `Omit`\<[`CreateMutationOptions`](../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
-The mutation options.
+The mutation options to use, identical to what you'd pass to `injectMutation`, without a
+`mutationKey`.
 
 ### Returns
 
 `Omit`\<[`CreateMutationOptions`](../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
-Mutation options.
+The same options object, unchanged.
+
+### Remarks
+
+See the other overload's example for looking a mutation up via `injectMutationState`.
+
+### See
+
+[injectMutation](injectMutation.md) to run the mutation these options describe.
+
+### Example
+
+Sharing options across services, so `QueriesService` stays the single place a mutation is defined:
+```angular-ts
+import { mutationOptions, injectMutation } from '@tanstack/angular-query-experimental'
+
+@Injectable({ providedIn: 'root' })
+export class QueriesService {
+  readonly #queryClient = inject(QueryClient)
+
+  updatePost(id: number) {
+    return mutationOptions({
+      mutationFn: (post: Partial<Post>) => putPost(id, post),
+      onSuccess: (newPost) => this.#queryClient.setQueryData(['posts', id], newPost),
+    })
+  }
+}
+
+@Component({
+  selector: 'post',
+  template: `<button (click)="save()">Save</button>`,
+})
+export class Post {
+  readonly queries = inject(QueriesService)
+  readonly id = signal(0)
+  readonly updatePostMutation = injectMutation(() => this.queries.updatePost(this.id()))
+
+  save() {
+    this.updatePostMutation.mutate({ title: 'New Title' })
+  }
+}
+```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+`Omit`\<[`CreateMutationOptions`](../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+
+The mutation options to use, identical to what you'd pass to `injectMutation`, without a
+`mutationKey`.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`CreateMutationOptions`](../interfaces/CreateMutationOptions.md#properties). See the type above for what it changes.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+`Omit`\<[`CreateMutationOptions`](../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+
+The same options object, unchanged.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`CreateMutationOptions`](../interfaces/CreateMutationOptions.md#properties). See the type above for what it changes.

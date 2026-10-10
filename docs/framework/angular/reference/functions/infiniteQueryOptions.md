@@ -3,27 +3,36 @@ id: infiniteQueryOptions
 title: infiniteQueryOptions
 ---
 
-# Function: infiniteQueryOptions()
+## Overview
 
-Allows to share and re-use infinite query options in a type-safe way.
+```ts
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
+```
 
-The `queryKey` will be tagged with the type from `queryFn`.
+- [`DefinedInitialDataInfiniteOptions` → `DefinedInitialDataInfiniteOptions & QueryKeyWithDataTag`](#call-signature-1): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+- [`UnusedSkipTokenInfiniteOptions` → `UnusedSkipTokenInfiniteOptions & QueryKeyWithDataTag`](#call-signature-2): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+- [`UndefinedInitialDataInfiniteOptions` → `UndefinedInitialDataInfiniteOptions & QueryKeyWithDataTag`](#call-signature-3): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
 
-## Param
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 
-The infinite query options to tag with the type from `queryFn`.
+<a id="call-signature-1"></a>
 
 ## Call Signature
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & object;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
-Defined in: [infinite-query-options.ts:88](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L88)
+Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:176](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L176)
 
-Allows to share and re-use infinite query options in a type-safe way.
+You can generally pass everything to `infiniteQueryOptions` that you can also pass to
+`injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as
+`queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options
+for.
 
-The `queryKey` will be tagged with the type from `queryFn`.
+This overload is selected when `initialData` is set.
 
 ### Type Parameters
 
@@ -37,7 +46,7 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -53,25 +62,70 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 [`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
-The infinite query options to tag with the type from `queryFn`.
+The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
+`injectInfiniteQuery`, with `initialData` set.
 
 ### Returns
 
-[`CreateInfiniteQueryOptions`](../interfaces/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & `object` & `object`
+[`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`\>, `TError`\>
 
-The tagged infinite query options.
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+### Remarks
+
+See [injectInfiniteQuery](injectInfiniteQuery.md) for examples that fetch further pages, from a button click or
+automatically as the user scrolls.
+
+### See
+
+[injectInfiniteQuery](injectInfiniteQuery.md) to run an infinite query with these options.
+
+### Example
+
+```angular-ts
+import { infiniteQueryOptions, injectInfiniteQuery } from '@tanstack/angular-query-experimental'
+
+export const projectsOptions = infiniteQueryOptions({
+  queryKey: ['projects'],
+  queryFn: ({ pageParam }) => fetchProjects(pageParam),
+  initialPageParam: 0,
+  getNextPageParam: (lastPage) => lastPage.nextId,
+  initialData: { pages: [], pageParams: [] },
+})
+
+@Component({
+  selector: 'projects',
+  template: `
+    <!-- `projectsQuery.data()` is never `undefined`, thanks to `initialData` — even if a
+    refetch fails, so the list stays visible alongside the error. -->
+    <ul>
+      @for (page of projectsQuery.data().pages; track $index) {
+        @for (project of page.projects; track project.id) {
+          <li>{{ project.name }}</li>
+        }
+      }
+    </ul>
+  `,
+})
+export class Projects {
+  readonly projectsQuery = injectInfiniteQuery(() => projectsOptions)
+}
+```
+
+<a id="call-signature-2"></a>
 
 ## Call Signature
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): OmitKeyof<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & object;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
-Defined in: [infinite-query-options.ts:119](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L119)
+Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:247](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L247)
 
-Allows to share and re-use infinite query options in a type-safe way.
-
-The `queryKey` will be tagged with the type from `queryFn`.
+You can generally pass everything to `infiniteQueryOptions` that you can also pass to
+`injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as
+`queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options
+for.
 
 ### Type Parameters
 
@@ -85,7 +139,7 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -101,25 +155,76 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 [`UnusedSkipTokenInfiniteOptions`](../type-aliases/UnusedSkipTokenInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
-The infinite query options to tag with the type from `queryFn`.
+The [UnusedSkipTokenInfiniteOptions](../type-aliases/UnusedSkipTokenInfiniteOptions.md) to use — everything you can pass to
+`injectInfiniteQuery`.
 
 ### Returns
 
-`OmitKeyof`\<[`CreateInfiniteQueryOptions`](../interfaces/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>, `"queryFn"`\> & `object` & `object`
+[`UnusedSkipTokenInfiniteOptions`](../type-aliases/UnusedSkipTokenInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`\>, `TError`\>
 
-The tagged infinite query options.
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+### Remarks
+
+See [injectInfiniteQuery](injectInfiniteQuery.md) for examples that fetch further pages, from a button click or
+automatically as the user scrolls.
+
+### See
+
+[injectInfiniteQuery](injectInfiniteQuery.md) to run an infinite query with these options.
+
+### Example
+
+A parameterized factory, so the same options object can be reused per `postId`:
+```angular-ts
+import { infiniteQueryOptions, injectInfiniteQuery } from '@tanstack/angular-query-experimental'
+
+export const commentsOptions = (postId: string) =>
+  infiniteQueryOptions({
+    queryKey: ['post', postId, 'comments'],
+    queryFn: ({ pageParam }) => fetchComments(postId, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextId,
+  })
+
+@Component({
+  selector: 'comments',
+  template: `
+    @if (commentsQuery.isPending()) {
+      Loading...
+    } @else if (commentsQuery.isError()) {
+      <span>Error: {{ commentsQuery.error()?.message }}</span>
+    } @else {
+      <ul>
+        @for (page of commentsQuery.data().pages; track $index) {
+          @for (comment of page.comments; track comment.id) {
+            <li>{{ comment.text }}</li>
+          }
+        }
+      </ul>
+    }
+  `,
+})
+export class Comments {
+  readonly postId = signal('1')
+  readonly commentsQuery = injectInfiniteQuery(() => commentsOptions(this.postId()))
+}
+```
+
+<a id="call-signature-3"></a>
 
 ## Call Signature
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & object;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
-Defined in: [infinite-query-options.ts:150](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L150)
+Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:318](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L318)
 
-Allows to share and re-use infinite query options in a type-safe way.
-
-The `queryKey` will be tagged with the type from `queryFn`.
+You can generally pass everything to `infiniteQueryOptions` that you can also pass to
+`injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as
+`queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options
+for.
 
 ### Type Parameters
 
@@ -133,7 +238,7 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -149,10 +254,89 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 [`UndefinedInitialDataInfiniteOptions`](../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
-The infinite query options to tag with the type from `queryFn`.
+The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
+`injectInfiniteQuery`.
 
 ### Returns
 
-[`CreateInfiniteQueryOptions`](../interfaces/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & `object` & `object`
+[`UndefinedInitialDataInfiniteOptions`](../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`\>, `TError`\>
 
-The tagged infinite query options.
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+### Remarks
+
+See [injectInfiniteQuery](injectInfiniteQuery.md) for examples that fetch further pages (from a button click or
+automatically as the user scrolls) and that use `skipToken` to disable the query until `postId` is set.
+
+### See
+
+[injectInfiniteQuery](injectInfiniteQuery.md) to run an infinite query with these options.
+
+### Example
+
+A parameterized factory, so the same options object can be reused per `postId`:
+```angular-ts
+import { infiniteQueryOptions, injectInfiniteQuery } from '@tanstack/angular-query-experimental'
+
+export const commentsOptions = (postId: string) =>
+  infiniteQueryOptions({
+    queryKey: ['post', postId, 'comments'],
+    queryFn: ({ pageParam }) => fetchComments(postId, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextId,
+  })
+
+@Component({
+  selector: 'comments',
+  template: `
+    @if (commentsQuery.isPending()) {
+      Loading...
+    } @else if (commentsQuery.isError()) {
+      <span>Error: {{ commentsQuery.error()?.message }}</span>
+    } @else {
+      <ul>
+        @for (page of commentsQuery.data().pages; track $index) {
+          @for (comment of page.comments; track comment.id) {
+            <li>{{ comment.text }}</li>
+          }
+        }
+      </ul>
+    }
+  `,
+})
+export class Comments {
+  readonly postId = signal('1')
+  readonly commentsQuery = injectInfiniteQuery(() => commentsOptions(this.postId()))
+}
+```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+[`UndefinedInitialDataInfiniteOptions`](../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+
+The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
+`injectInfiniteQuery`.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`CreateInfiniteQueryOptions`](../interfaces/CreateInfiniteQueryOptions.md#properties). See the type above for what it changes.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+[`UndefinedInitialDataInfiniteOptions`](../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`\>, `TError`\>
+
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`CreateInfiniteQueryOptions`](../interfaces/CreateInfiniteQueryOptions.md#properties), [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md#properties). See the type above for what it changes.

@@ -4,6 +4,13 @@ on:
   pull_request:
   push:
     branches: [main, 'v[0-9]', '*-pre', '*-maint']
+  workflow_dispatch:
+    inputs:
+      generate-docs:
+        description: 'Generate docs'
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -14,13 +21,24 @@ permissions:
 
 jobs:
   autofix:
+    # Skip pushes of this workflow's own commit; matches the `commit-message` below. Only the
+    # subject is checked: a squash merge lists the branch's commits in the body, so `contains`
+    # would also skip any pull request autofix had touched. A manual `workflow_dispatch` carries
+    # no `head_commit`, so it always runs — the way to force a rerun.
+    if: "${{ !startsWith(github.event.head_commit.message, 'ci: apply automated fixes') }}"
     name: autofix
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: Setup Tools
-        uses: TanStack/config/.github/setup@main
+        uses: TanStack/config/.github/setup@e4b48f16568324f76f467aa4c2aac2f05db632c3
+      # Only on pushes: regenerating on every pull request would add large, unrelated diffs.
+      - name: Generate reference docs
+        if: ${{ github.event_name == 'push' || github.event.inputs.generate-docs == true }}
+        run: pnpm run generate-docs
       - name: Fix formatting
         run: pnpm run format
       - name: Apply fixes

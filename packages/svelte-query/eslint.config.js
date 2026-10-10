@@ -2,10 +2,11 @@
 
 import tsParser from '@typescript-eslint/parser'
 import pluginSvelte from 'eslint-plugin-svelte'
+import { defineConfig } from 'eslint/config'
 import rootConfig from './root.eslint.config.js'
 import svelteConfig from './svelte.config.js'
 
-export default [
+export default defineConfig([
   ...rootConfig,
   ...pluginSvelte.configs['recommended'],
   {
@@ -17,6 +18,10 @@ export default [
         svelteConfig,
       },
     },
+    rules: {
+      // Svelte runes and proxy state produce false positives for this rule.
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+    },
   },
   {
     rules: {
@@ -25,4 +30,4 @@ export default [
       'svelte/valid-compile': 'off',
     },
   },
-]
+])

@@ -13,6 +13,12 @@ type InternalStore = {
 type StoreRef = {
   _instance: InternalStore
 }
+/**
+ * Subscribes to an external store and returns its current snapshot, re-rendering when it changes.
+ * @param subscribe - Subscribes to the store, and returns a function that unsubscribes.
+ * @param getSnapshot - Returns the current snapshot of the store.
+ * @returns The current snapshot.
+ */
 export function useSyncExternalStore(
   subscribe: (onStoreChange: () => void) => () => void,
   getSnapshot: () => any,
@@ -47,6 +53,11 @@ export function useSyncExternalStore(
   return value
 }
 
+/**
+ * Checks whether the store's snapshot changed since it was last read.
+ * @param inst - The stored snapshot and the function that reads the current one.
+ * @returns `true` if the current snapshot differs, or if reading it throws.
+ */
 function didSnapshotChange(inst: {
   _getSnapshot: () => any
   _value: any
@@ -56,12 +67,20 @@ function didSnapshotChange(inst: {
   try {
     const nextValue = latestGetSnapshot()
     return !Object.is(prevValue, nextValue)
-    // eslint-disable-next-line no-unused-vars
   } catch (_error) {
     return true
   }
 }
 
+/**
+ * Like {@link useSyncExternalStore}, but returns a selected part of the snapshot, only updating it
+ * when `isEqual` reports a change.
+ * @param subscribe - Subscribes to the store, and returns a function that unsubscribes.
+ * @param getSnapshot - Returns the current snapshot of the store.
+ * @param selector - Selects the part of the snapshot to return.
+ * @param isEqual - Compares the previous and the new selection.
+ * @returns The selected part of the current snapshot.
+ */
 export function useSyncExternalStoreWithSelector<TSnapshot, TSelected>(
   subscribe: (onStoreChange: () => void) => () => void,
   getSnapshot: () => TSnapshot,

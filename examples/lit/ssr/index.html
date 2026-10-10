@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lit Query SSR Example</title>
+  </head>
+  <body>
+    __SSR_APP_HTML__
+    <script id="__QUERY_STATE__" type="application/json">
+      __QUERY_STATE_JSON__
+    </script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

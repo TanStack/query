@@ -18,10 +18,10 @@ describe('timeoutManager', () => {
     }
   }
 
-  let consoleErrorSpy: MockInstance<typeof console.error>
+  let consoleErrorMock: MockInstance<typeof console.error>
 
   beforeEach(() => {
-    consoleErrorSpy = vi.spyOn(console, 'error')
+    consoleErrorMock = vi.spyOn(console, 'error')
   })
 
   afterEach(() => {
@@ -35,7 +35,7 @@ describe('timeoutManager', () => {
       manager = new TimeoutManager()
     })
 
-    it('by default proxies calls to globalThis setTimeout/clearTimeout', () => {
+    it('should proxy calls to globalThis setTimeout/clearTimeout by default', () => {
       const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout')
       const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout')
       const setIntervalSpy = vi.spyOn(globalThis, 'setInterval')
@@ -58,7 +58,7 @@ describe('timeoutManager', () => {
     })
 
     describe('setTimeoutProvider', () => {
-      it('proxies calls to the configured timeout provider', () => {
+      it('should proxy calls to the configured timeout provider', () => {
         const customProvider = createMockProvider()
         manager.setTimeoutProvider(customProvider)
 
@@ -77,11 +77,11 @@ describe('timeoutManager', () => {
         expect(customProvider.clearInterval).toHaveBeenCalledWith(888)
       })
 
-      it('warns when switching providers after making call', () => {
+      it('should warn when switching providers after making call', () => {
         // 1. switching before making any calls does not warn
         const customProvider = createMockProvider()
         manager.setTimeoutProvider(customProvider)
-        expect(consoleErrorSpy).not.toHaveBeenCalled()
+        expect(consoleErrorMock).not.toHaveBeenCalled()
 
         // Make a call. The next switch should warn
         manager.setTimeout(vi.fn(), 100)
@@ -89,18 +89,18 @@ describe('timeoutManager', () => {
         // 2. switching after making a call should warn
         const customProvider2 = createMockProvider('custom2')
         manager.setTimeoutProvider(customProvider2)
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(consoleErrorMock).toHaveBeenCalledWith(
           expect.stringMatching(
             /\[timeoutManager\]: Switching .* might result in unexpected behavior\..*/,
           ),
-          expect.anything(),
+          { previous: customProvider, provider: customProvider2 },
         )
 
         // 3. Switching again with no intermediate calls should not warn
-        vi.mocked(consoleErrorSpy).mockClear()
+        consoleErrorMock.mockClear()
         const customProvider3 = createMockProvider('custom3')
         manager.setTimeoutProvider(customProvider3)
-        expect(consoleErrorSpy).not.toHaveBeenCalled()
+        expect(consoleErrorMock).not.toHaveBeenCalled()
       })
     })
   })

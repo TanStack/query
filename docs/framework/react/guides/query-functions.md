@@ -5,6 +5,8 @@ title: Query Functions
 
 A query function can be literally any function that **returns a promise**. The promise that is returned should either **resolve the data** or **throw an error**.
 
+On success, the resolved value may be anything **except `undefined`**. Queries that resolve to `undefined` will be [treated as failed](https://tanstack.com/query/latest/docs/framework/react/guides/migrating-to-react-query-4#undefined-is-an-illegal-cache-value-for-successful-queries). To store "nothing" as a successful result in the query cache, resolve `null` instead.
+
 All of the following are valid query function configurations:
 
 [//]: # 'Example'
@@ -100,7 +102,7 @@ function fetchTodoList({ queryKey }) {
 The `QueryFunctionContext` is the object passed to each query function. It consists of:
 
 - `queryKey: QueryKey`: [Query Keys](./query-keys.md)
-- `client: QueryClient`: [QueryClient](../../../reference/QueryClient.md)
+- `client: QueryClient`: [QueryClient](../reference/classes/QueryClient.md)
 - `signal?: AbortSignal`
   - [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) instance provided by TanStack Query
   - Can be used for [Query Cancellation](./query-cancellation.md)

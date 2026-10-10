@@ -38,19 +38,42 @@ export const rule = createRule({
 
     return {
       CallExpression: (node) => {
-        if (
-          !ASTUtils.isIdentifierWithOneOfNames(node.callee, queryHooks) ||
-          node.parent.type !== AST_NODE_TYPES.VariableDeclarator ||
-          !helpers.isTanstackQueryImport(node.callee)
-        ) {
+        if (node.parent.type !== AST_NODE_TYPES.VariableDeclarator) {
           return
         }
 
         const returnValue = node.parent.id
 
+        const isDirectHook =
+          ASTUtils.isIdentifierWithOneOfNames(node.callee, queryHooks) &&
+          helpers.isTanstackQueryImport(node.callee)
+
+        if (!isDirectHook) {
+          // The type-aware path can only report when the result is rest
+          // destructured or assigned to an identifier that may later be
+          // spread. Skip the expensive type lookup for any other binding.
+          const canReportQueryResult =
+            returnValue.type === AST_NODE_TYPES.Identifier ||
+            NoRestDestructuringUtils.isObjectRestDestructuring(returnValue)
+
+          if (
+            !canReportQueryResult ||
+            !NoRestDestructuringUtils.isQueryResultCall(
+              node,
+              context.sourceCode.parserServices,
+            )
+          ) {
+            return
+          }
+        }
+
+        const calleeName = ASTUtils.isIdentifier(node.callee)
+          ? node.callee.name
+          : null
+
         if (
-          node.callee.name !== 'useQueries' &&
-          node.callee.name !== 'useSuspenseQueries'
+          calleeName !== 'useQueries' &&
+          calleeName !== 'useSuspenseQueries'
         ) {
           if (NoRestDestructuringUtils.isObjectRestDestructuring(returnValue)) {
             return context.report({

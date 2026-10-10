@@ -37,7 +37,7 @@ Then call any function (e.g. createQuery) from any component:
 </script>
 
 <div>
-  {#if query.isLoading}
+  {#if query.isPending}
     <p>Loading...</p>
   {:else if query.isError}
     <p>Error: {query.error.message}</p>

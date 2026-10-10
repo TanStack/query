@@ -1,0 +1,29 @@
+---
+id: RefetchQueryFilters
+title: RefetchQueryFilters
+---
+
+Defined in: [packages/query-core/src/types.ts:907](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L907)
+
+The filters of `queryClient.refetchQueries`, which select the queries to refetch.
+
+## Extends
+
+- [`QueryFilters`](QueryFilters.md)\<`TQueryKey`\>
+
+## Type Parameters
+
+### TQueryKey
+
+`TQueryKey` *extends* [`QueryKey`](../type-aliases/QueryKey.md) = [`QueryKey`](../type-aliases/QueryKey.md)
+
+## Properties
+
+| Property | Type | Default value | Description |
+| ------ | ------ | ------ | ------ |
+| <a id="property-exact"></a> `exact?` | `boolean` | `undefined` | Match query key exactly |
+| <a id="property-fetchstatus"></a> `fetchStatus?` | `"fetching"` \| `"paused"` \| `"idle"` | `undefined` | Include queries matching their fetchStatus |
+| <a id="property-predicate"></a> `predicate?` | (`query`: [`Query`](../classes/Query.md)) => `boolean` | `undefined` | Include queries matching this predicate function |
+| <a id="property-querykey"></a> `queryKey?` | `TQueryKey` \| `TuplePrefixes`\<`TQueryKey`\> | `undefined` | Include queries matching this query key |
+| <a id="property-stale"></a> `stale?` | `boolean` | `undefined` | Include or exclude stale queries |
+| <a id="property-type"></a> `type?` | `QueryTypeFilter` | `'all'` | Filter to active queries, inactive queries or all queries |

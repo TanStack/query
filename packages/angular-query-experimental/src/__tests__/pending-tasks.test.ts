@@ -9,8 +9,8 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { sleep } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
 import {
   QueryClient,
@@ -47,17 +47,18 @@ describe('PendingTasks Integration', () => {
 
   afterEach(() => {
     onlineManager.setOnline(true)
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   describe('Synchronous Resolution', () => {
-    test('should handle synchronous queryFn with whenStable()', async () => {
+    it('should handle synchronous queryFn with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
 
+      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['sync'],
+          queryKey: key,
           queryFn: () => 'instant-data', // Resolves synchronously
         })),
       )
@@ -77,12 +78,13 @@ describe('PendingTasks Integration', () => {
       expect(query.data()).toBe('instant-data')
     })
 
-    test('should handle synchronous error with whenStable()', async () => {
+    it('should handle synchronous error with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
 
+      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['sync-error'],
+          queryKey: key,
           queryFn: () => {
             throw new Error('instant-error')
           }, // Throws synchronously
@@ -94,12 +96,11 @@ describe('PendingTasks Integration', () => {
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
-
       expect(query.status()).toBe('error')
       expect(query.error()).toEqual(new Error('instant-error'))
     })
 
-    test('should handle synchronous mutationFn with whenStable()', async () => {
+    it('should handle synchronous mutationFn with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
       let mutationFnCalled = false
 
@@ -114,20 +115,18 @@ describe('PendingTasks Integration', () => {
       )
 
       mutation.mutate('test')
-
       TestBed.tick()
 
       const stablePromise = app.whenStable()
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
-
       expect(mutationFnCalled).toBe(true)
       expect(mutation.isSuccess()).toBe(true)
       expect(mutation.data()).toBe('processed: test')
     })
 
-    test('should handle synchronous mutation error with whenStable()', async () => {
+    it('should handle synchronous mutation error with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
 
       const mutation = TestBed.runInInjectionContext(() =>
@@ -140,21 +139,20 @@ describe('PendingTasks Integration', () => {
       )
 
       mutation.mutate()
-
       TestBed.tick()
 
       const stablePromise = app.whenStable()
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
-
       expect(mutation.isError()).toBe(true)
       expect(mutation.error()).toEqual(new Error('sync-mutation-error'))
     })
   })
 
   describe('Race Conditions', () => {
-    test('should handle query that completes during initial subscription', async () => {
+    it('should handle query that completes during initial subscription', async () => {
+      const key = queryKey()
       const app = TestBed.inject(ApplicationRef)
       let resolveQuery: (value: string) => void
 
@@ -164,7 +162,7 @@ describe('PendingTasks Integration', () => {
 
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['race-condition'],
+          queryKey: key,
           queryFn: () => queryPromise,
         })),
       )
@@ -176,18 +174,18 @@ describe('PendingTasks Integration', () => {
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
-
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('race-data')
     })
 
-    test('should handle rapid refetches without task leaks', async () => {
+    it('should handle rapid refetches without task leaks', async () => {
       const app = TestBed.inject(ApplicationRef)
       let callCount = 0
 
+      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['rapid-refetch'],
+          queryKey: key,
           queryFn: async () => {
             callCount++
             await sleep(10)
@@ -204,18 +202,18 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(20)
       await stablePromise
-
       expect(query.status()).toBe('success')
       expect(query.data()).toMatch(/^data-\d+$/)
     })
 
-    test('should keep PendingTasks active while query retry is paused offline', async () => {
+    it('should keep PendingTasks active while query retry is paused offline', async () => {
       const app = TestBed.inject(ApplicationRef)
       let attempt = 0
 
+      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['paused-offline'],
+          queryKey: key,
           retry: 1,
           retryDelay: 50, // Longer delay to ensure we can go offline before retry
           queryFn: async () => {
@@ -236,7 +234,6 @@ describe('PendingTasks Integration', () => {
       // Wait for the first attempt to complete and start retry delay
       await vi.advanceTimersByTimeAsync(10)
       await Promise.resolve()
-
       expect(query.status()).toBe('pending')
       expect(query.fetchStatus()).toBe('fetching')
 
@@ -246,7 +243,6 @@ describe('PendingTasks Integration', () => {
       // Advance past the retry delay to trigger the pause
       await vi.advanceTimersByTimeAsync(50)
       await Promise.resolve()
-
       expect(query.fetchStatus()).toBe('paused')
 
       const stablePromise = app.whenStable()
@@ -267,9 +263,7 @@ describe('PendingTasks Integration', () => {
       // Give time for the retry to resume and complete
       await vi.advanceTimersByTimeAsync(20)
       await Promise.resolve()
-
       await stablePromise
-
       expect(stableResolved).toBe(true)
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('final-data')
@@ -283,21 +277,16 @@ describe('PendingTasks Integration', () => {
     class TestComponent {
       query = injectQuery(() => ({
         queryKey: ['component-query'],
-        queryFn: async () => {
-          await sleep(100)
-          return 'component-data'
-        },
+        queryFn: () => sleep(100).then(() => 'component-data'),
       }))
 
       mutation = injectMutation(() => ({
-        mutationFn: async (data: string) => {
-          await sleep(100)
-          return `processed: ${data}`
-        },
+        mutationFn: (data: string) =>
+          sleep(100).then(() => `processed: ${data}`),
       }))
     }
 
-    test('should cleanup pending tasks when component with active query is destroyed', async () => {
+    it('should cleanup pending tasks when component with active query is destroyed', async () => {
       const app = TestBed.inject(ApplicationRef)
       const fixture = TestBed.createComponent(TestComponent)
 
@@ -310,11 +299,10 @@ describe('PendingTasks Integration', () => {
       // Angular should become stable even though component was destroyed
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(150)
-
       await expect(stablePromise).resolves.toEqual(undefined)
     })
 
-    test('should cleanup pending tasks when component with active mutation is destroyed', async () => {
+    it('should cleanup pending tasks when component with active mutation is destroyed', async () => {
       const app = TestBed.inject(ApplicationRef)
       const fixture = TestBed.createComponent(TestComponent)
 
@@ -326,38 +314,34 @@ describe('PendingTasks Integration', () => {
       // Angular should become stable even though component was destroyed
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(150)
-
       await expect(stablePromise).resolves.toEqual(undefined)
     })
   })
 
   describe('Concurrent Operations', () => {
-    test('should handle multiple queries running simultaneously', async () => {
+    it('should handle multiple queries running simultaneously', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+      const key3 = queryKey()
       const app = TestBed.inject(ApplicationRef)
 
       const query1 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['concurrent-1'],
-          queryFn: async () => {
-            await sleep(30)
-            return 'data-1'
-          },
+          queryKey: key1,
+          queryFn: () => sleep(30).then(() => 'data-1'),
         })),
       )
 
       const query2 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['concurrent-2'],
-          queryFn: async () => {
-            await sleep(50)
-            return 'data-2'
-          },
+          queryKey: key2,
+          queryFn: () => sleep(50).then(() => 'data-2'),
         })),
       )
 
       const query3 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['concurrent-3'],
+          queryKey: key3,
           queryFn: () => 'instant-data', // Synchronous
         })),
       )
@@ -380,24 +364,20 @@ describe('PendingTasks Integration', () => {
       expect(query3.data()).toBe('instant-data')
     })
 
-    test('should handle multiple mutations running simultaneously', async () => {
+    it('should handle multiple mutations running simultaneously', async () => {
       const app = TestBed.inject(ApplicationRef)
 
       const mutation1 = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: async (data: string) => {
-            await sleep(30)
-            return `processed-1: ${data}`
-          },
+          mutationFn: (data: string) =>
+            sleep(30).then(() => `processed-1: ${data}`),
         })),
       )
 
       const mutation2 = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: async (data: string) => {
-            await sleep(50)
-            return `processed-2: ${data}`
-          },
+          mutationFn: (data: string) =>
+            sleep(50).then(() => `processed-2: ${data}`),
         })),
       )
 
@@ -414,7 +394,6 @@ describe('PendingTasks Integration', () => {
       mutation1.mutate('test1')
       mutation2.mutate('test2')
       mutation3.mutate('test3')
-
       TestBed.tick()
 
       const stablePromise = app.whenStable()
@@ -430,25 +409,21 @@ describe('PendingTasks Integration', () => {
       expect(mutation3.data()).toBe('processed-3: test3')
     })
 
-    test('should handle mixed queries and mutations', async () => {
+    it('should handle mixed queries and mutations', async () => {
       const app = TestBed.inject(ApplicationRef)
 
+      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['mixed-query'],
-          queryFn: async () => {
-            await sleep(40)
-            return 'query-data'
-          },
+          queryKey: key,
+          queryFn: () => sleep(40).then(() => 'query-data'),
         })),
       )
 
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: async (data: string) => {
-            await sleep(60)
-            return `mutation: ${data}`
-          },
+          mutationFn: (data: string) =>
+            sleep(60).then(() => `mutation: ${data}`),
         })),
       )
 
@@ -469,25 +444,22 @@ describe('PendingTasks Integration', () => {
 
   describe('HttpClient Integration', () => {
     beforeEach(() => {
-      TestBed.resetTestingModule()
       TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-          provideHttpClient(),
-          provideHttpClientTesting(),
-        ],
+        providers: [provideHttpClient(), provideHttpClientTesting()],
       })
     })
 
-    test('should handle multiple HttpClient requests with lastValueFrom', async () => {
+    it('should handle multiple HttpClient requests with lastValueFrom', async () => {
       const app = TestBed.inject(ApplicationRef)
       const httpClient = TestBed.inject(HttpClient)
       const httpTestingController = TestBed.inject(HttpTestingController)
 
+      const key1 = queryKey()
+      const key2 = queryKey()
+
       const query1 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['http-1'],
+          queryKey: key1,
           queryFn: () =>
             lastValueFrom(httpClient.get<{ id: number }>('/api/1')),
         })),
@@ -495,7 +467,7 @@ describe('PendingTasks Integration', () => {
 
       const query2 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['http-2'],
+          queryKey: key2,
           queryFn: () =>
             lastValueFrom(httpClient.get<{ id: number }>('/api/2')),
         })),
@@ -513,7 +485,6 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(20)
       await stablePromise
-
       expect(query1.status()).toBe('success')
       expect(query1.data()).toEqual({ id: 1 })
       expect(query2.status()).toBe('success')
@@ -522,14 +493,15 @@ describe('PendingTasks Integration', () => {
       httpTestingController.verify()
     })
 
-    test('should handle HttpClient request cancellation', async () => {
+    it('should handle HttpClient request cancellation', async () => {
       const app = TestBed.inject(ApplicationRef)
       const httpClient = TestBed.inject(HttpClient)
       const httpTestingController = TestBed.inject(HttpTestingController)
 
+      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['http-cancel'],
+          queryKey: key,
           queryFn: () =>
             lastValueFrom(httpClient.get<{ data: string }>('/api/cancel')),
         })),
@@ -547,7 +519,6 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(20)
       await stablePromise
-
       expect(query.status()).toBe('error')
 
       httpTestingController.verify()
@@ -555,27 +526,24 @@ describe('PendingTasks Integration', () => {
   })
 
   describe('Edge Cases', () => {
-    test('should handle query cancellation mid-flight', async () => {
+    it('should handle query cancellation mid-flight', async () => {
+      const key = queryKey()
       const app = TestBed.inject(ApplicationRef)
 
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['cancel-test'],
-          queryFn: async () => {
-            await sleep(100)
-            return 'data'
-          },
+          queryKey: key,
+          queryFn: () => sleep(100).then(() => 'data'),
         })),
       )
 
       // Cancel the query after a short delay
       setTimeout(() => {
-        queryClient.cancelQueries({ queryKey: ['cancel-test'] })
+        queryClient.cancelQueries({ queryKey: key })
       }, 20)
 
       // Advance to the cancellation point
       await vi.advanceTimersByTimeAsync(20)
-
       TestBed.tick()
 
       const stablePromise = app.whenStable()
@@ -587,13 +555,14 @@ describe('PendingTasks Integration', () => {
       expect(query.fetchStatus()).toBe('idle')
     })
 
-    test('should handle query retry and pending task tracking', async () => {
+    it('should handle query retry and pending task tracking', async () => {
       const app = TestBed.inject(ApplicationRef)
       let attemptCount = 0
 
+      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['retry-test'],
+          queryKey: key,
           retry: 2,
           retryDelay: 10,
           queryFn: async () => {
@@ -609,24 +578,20 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(50)
       await stablePromise
-
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('success-data')
       expect(attemptCount).toBe(3) // Initial + 2 retries
     })
 
-    test('should handle mutation with optimistic updates', async () => {
+    it('should handle mutation with optimistic updates', async () => {
       const app = TestBed.inject(ApplicationRef)
-      const testQueryKey = ['optimistic-test']
+      const testQueryKey = queryKey()
 
       queryClient.setQueryData(testQueryKey, 'initial-data')
 
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: async (newData: string) => {
-            await sleep(50)
-            return newData
-          },
+          mutationFn: (newData: string) => sleep(50).then(() => newData),
           onMutate: async (newData) => {
             // Optimistic update
             const previousData = queryClient.getQueryData(testQueryKey)
@@ -643,7 +608,6 @@ describe('PendingTasks Integration', () => {
       )
 
       mutation.mutate('optimistic-data')
-
       await Promise.resolve()
 
       // Data should be optimistically updated immediately
@@ -652,7 +616,6 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(60)
       await stablePromise
-
       expect(mutation.isSuccess()).toBe(true)
       expect(mutation.data()).toBe('optimistic-data')
       expect(queryClient.getQueryData(testQueryKey)).toBe('optimistic-data')

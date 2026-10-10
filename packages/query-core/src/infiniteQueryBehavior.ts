@@ -14,6 +14,14 @@ import type {
 } from './types'
 import type { QueryBehavior } from './query'
 
+/**
+ * Creates the behavior that fetches the pages of an infinite query: the next or previous page for
+ * `fetchNextPage`/`fetchPreviousPage`, or all pages again from the start on a refetch.
+ * @param pages - The number of pages to fetch from the start when all pages are fetched again,
+ * e.g. from the `pages` option of `queryClient.infiniteQuery`. Defaults to the number of cached
+ * pages.
+ * @returns The query behavior to set on an infinite query.
+ */
 export function infiniteQueryBehavior<
   TQueryFnData,
   TError,
@@ -55,7 +63,7 @@ export function infiniteQueryBehavior<
           previous?: boolean,
         ): Promise<InfiniteData<unknown>> => {
           if (cancelled) {
-            return Promise.reject()
+            return Promise.reject(context.signal.reason)
           }
 
           if (param == null && data.pages.length) {
@@ -143,6 +151,12 @@ export function infiniteQueryBehavior<
   }
 }
 
+/**
+ * Computes the page param of the page after the last one, with the `getNextPageParam` option.
+ * @param options - The infinite query options.
+ * @param data - The current pages and page params.
+ * @returns The next page param, or `undefined` if there are no pages yet.
+ */
 function getNextPageParam(
   options: InfiniteQueryPageParamsOptions<any, any, any>,
   { pages, pageParams }: InfiniteData<unknown>,
@@ -158,6 +172,14 @@ function getNextPageParam(
     : undefined
 }
 
+/**
+ * Computes the page param of the page before the first one, with the `getPreviousPageParam`
+ * option.
+ * @param options - The infinite query options.
+ * @param data - The current pages and page params.
+ * @returns The previous page param, or `undefined` if there are no pages yet or no
+ * `getPreviousPageParam` option.
+ */
 function getPreviousPageParam(
   options: InfiniteQueryPageParamsOptions<any, any, any>,
   { pages, pageParams }: InfiniteData<unknown>,
@@ -169,6 +191,9 @@ function getPreviousPageParam(
 
 /**
  * Checks if there is a next page.
+ * @param options - The infinite query options with `getNextPageParam`.
+ * @param data - The current pages and page params.
+ * @returns `true` if `getNextPageParam` returns a value other than `null` or `undefined`.
  */
 export function hasNextPage(
   options: InfiniteQueryPageParamsOptions<any, any, any>,
@@ -180,6 +205,10 @@ export function hasNextPage(
 
 /**
  * Checks if there is a previous page.
+ * @param options - The infinite query options with `getPreviousPageParam`.
+ * @param data - The current pages and page params.
+ * @returns `true` if `getPreviousPageParam` is set and returns a value other than `null` or
+ * `undefined`.
  */
 export function hasPreviousPage(
   options: InfiniteQueryPageParamsOptions<any, any, any>,
