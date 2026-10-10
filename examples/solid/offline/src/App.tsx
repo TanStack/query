@@ -140,7 +140,7 @@ function List(props: { onSelectMovie: (movieId: string) => void }) {
 
 function Detail(props: { movieId: string; onBack: () => void }) {
   const { comment, setComment, updateMovie, movieQuery } = useMovie(
-    props.movieId,
+    () => props.movieId,
   )
 
   function submitForm(event: SubmitEvent) {
