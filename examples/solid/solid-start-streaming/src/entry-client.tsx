@@ -1,5 +1,5 @@
 // @refresh reload
-import { mount, StartClient } from '@solidjs/start/client'
+import { StartClient, mount } from '@solidjs/start/client'
 
 const app = document.getElementById('app')
 if (!app) throw new Error('Missing #app element')
