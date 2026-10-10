@@ -67,5 +67,10 @@
     "@types/react": "^18 || ^19",
     "next": "^13 || ^14 || ^15 || ^16",
     "react": "^18 || ^19"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    }
   }
 }
