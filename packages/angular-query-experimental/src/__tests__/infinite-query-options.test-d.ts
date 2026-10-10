@@ -267,32 +267,37 @@ describe('infiniteQueryOptions', () => {
   })
 
   it('should reject missing mode / getNextPageParam and reject getters in manual mode', () => {
-    // @ts-expect-error getNextPageParam is required unless mode is manual
-    infiniteQueryOptions({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve('string'),
-      initialPageParam: 1,
-    })
+    assertType(
+      // @ts-expect-error invalid declaration of manual mode
+      infiniteQueryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        initialPageParam: 1,
+      }),
+    )
 
-    // @ts-expect-error getNextPageParam is not allowed in manual mode
-    infiniteQueryOptions({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve('string'),
-      initialPageParam: 1,
-      mode: 'manual',
-      getNextPageParam: () => 1,
-    })
+    assertType(
+      // @ts-expect-error invalid declaration of manual mode
+      infiniteQueryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        initialPageParam: 1,
+        mode: 'manual',
+        getNextPageParam: () => 1,
+      }),
+    )
 
-    // @ts-expect-error getPreviousPageParam is not allowed in manual mode
-    infiniteQueryOptions({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve('string'),
-      initialPageParam: 1,
-      mode: 'manual',
-      getPreviousPageParam: () => 0,
-    })
+    assertType(
+      // @ts-expect-error invalid declaration of manual mode
+      infiniteQueryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        initialPageParam: 1,
+        mode: 'manual',
+        getPreviousPageParam: () => 0,
+      }),
+    )
   })
-
   it('should allow optional initialData function', () => {
     const key = queryKey()
     const initialData: { example: boolean } | undefined = { example: true }

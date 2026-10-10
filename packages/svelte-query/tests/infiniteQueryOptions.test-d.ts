@@ -11,9 +11,9 @@ describe('infiniteQueryOptions', () => {
       infiniteQueryOptions({
         queryKey: key,
         queryFn: () => Promise.resolve('data'),
+        // @ts-expect-error excess properties are rejected by the overloads
         getNextPageParam: () => 1,
         initialPageParam: 1,
-        // @ts-expect-error this is a good error, because stallTime does not exist!
         stallTime: 1000,
       }),
     )

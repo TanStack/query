@@ -7,6 +7,7 @@ import type {
   DistributiveOmit,
   InfiniteData,
   InfiniteQueryExecuteOptions,
+  InfiniteQueryMode,
   QueryKey,
   SkipToken,
 } from '@tanstack/query-core'
@@ -23,13 +24,15 @@ export type UsePrefetchInfiniteQueryOptions<
   TData,
   TQueryKey extends QueryKey,
   TPageParam,
+  TMode extends InfiniteQueryMode | undefined = undefined,
 > = DistributiveOmit<
   InfiniteQueryExecuteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    TMode
   >,
   'queryFn'
 > & {
@@ -39,7 +42,8 @@ export type UsePrefetchInfiniteQueryOptions<
       TError,
       TData,
       TQueryKey,
-      TPageParam
+      TPageParam,
+      TMode
     >['queryFn'],
     SkipToken
   >
@@ -111,7 +115,51 @@ export function usePrefetchInfiniteQuery<
         TError,
         TData,
         TQueryKey,
-        TPageParam
+        TPageParam,
+        undefined
+      >
+    >
+  >,
+  queryClient?: QueryClient,
+): void
+export function usePrefetchInfiniteQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: MaybeRefOrGetter<
+    MaybeRefDeep<
+      UsePrefetchInfiniteQueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam,
+        InfiniteQueryMode
+      >
+    >
+  >,
+  queryClient?: QueryClient,
+): void
+export function usePrefetchInfiniteQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
+>(
+  options: MaybeRefOrGetter<
+    MaybeRefDeep<
+      UsePrefetchInfiniteQueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam,
+        TMode
       >
     >
   >,
@@ -135,7 +183,8 @@ export function usePrefetchInfiniteQuery<
       TError,
       TData,
       TQueryKey,
-      TPageParam
+      TPageParam,
+      TMode
     > = cloneDeepUnref(resolvedOptions)
 
     if (!client.getQueryState(clonedOptions.queryKey)) {

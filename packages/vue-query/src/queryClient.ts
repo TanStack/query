@@ -16,8 +16,8 @@ import type {
   FetchQueryOptions,
   InferDataFromTag,
   InfiniteData,
-  InfiniteQueryMode,
   InfiniteQueryExecuteOptions,
+  InfiniteQueryMode,
   InvalidateOptions,
   InvalidateQueryFilters,
   MutationFilters,
@@ -492,7 +492,7 @@ export class QueryClient extends QC {
       undefined
     >,
   ): Promise<InfiniteData<TData, TPageParam>>
-  fetchInfiniteQuery<
+  override fetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
     TData = TQueryFnData,
@@ -544,7 +544,7 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<InfiniteData<TData, TPageParam>>
-  fetchInfiniteQuery<
+  override fetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
@@ -562,9 +562,9 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<InfiniteData<TData, TPageParam>>
-  fetchInfiniteQuery(options: any): Promise<any> {
+  override fetchInfiniteQuery(options: any): Promise<any> {
     // eslint-disable-next-line no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.fetchInfiniteQuery(cloneDeepUnref(options) as any)
+    return super.fetchInfiniteQuery(cloneDeepUnref(options))
   }
 
   /**
@@ -586,7 +586,7 @@ export class QueryClient extends QC {
       undefined
     >,
   ): Promise<void>
-  prefetchInfiniteQuery<
+  override prefetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
@@ -638,7 +638,7 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<void>
-  prefetchInfiniteQuery<
+  override prefetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
@@ -656,9 +656,9 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<void>
-  prefetchInfiniteQuery(options: any): Promise<any> {
+  override prefetchInfiniteQuery(options: any): Promise<any> {
     // eslint-disable-next-line no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.prefetchInfiniteQuery(cloneDeepUnref(options) as any)
+    return super.prefetchInfiniteQuery(cloneDeepUnref(options))
   }
 
   override setDefaultOptions(options: MaybeRefDeep<DefaultOptions>): void {

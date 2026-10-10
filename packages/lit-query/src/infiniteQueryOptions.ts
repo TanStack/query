@@ -2,6 +2,7 @@ import type {
   DataTag,
   DefaultError,
   InfiniteData,
+  InfiniteQueryMode,
   InfiniteQueryObserverOptions,
   QueryKey,
 } from '@tanstack/query-core'
@@ -35,14 +36,41 @@ export function infiniteQueryOptions<
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
   >,
 ): InfiniteQueryObserverOptions<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
+  TPageParam,
+  undefined
+> & {
+  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+}
+export function infiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: InfiniteQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam,
+    InfiniteQueryMode
+  >,
+): InfiniteQueryObserverOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+  InfiniteQueryMode
 > & {
   queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 }

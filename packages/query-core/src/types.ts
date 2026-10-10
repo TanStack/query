@@ -468,7 +468,8 @@ export interface InitialPageParam<TPageParam = unknown> {
   /**
    * The page param to start from when an infinite query has no pages yet.
    * It is passed to `queryFn` as `pageParam` for the first page; every page after that gets the
-   * value returned by `getNextPageParam` or `getPreviousPageParam`.
+   * value returned by `getNextPageParam` or `getPreviousPageParam`, or the parameter passed
+   * to `fetchNextPage` or `fetchPreviousPage` in manual mode.
    * It only applies while the query has no pages: once a first page exists, refetching starts from
    * that page's own param instead.
    */
@@ -476,15 +477,17 @@ export interface InitialPageParam<TPageParam = unknown> {
 }
 
 /**
- * The page param options of an infinite query: `initialPageParam`, and the `getNextPageParam` and
- * `getPreviousPageParam` functions that compute the params of the pages around it.
+ * Set `mode` to `manual` when page fetches must use a caller-supplied parameter.
+ * Omit `mode` to compute page parameters with `getNextPageParam` and `getPreviousPageParam`.
  */
 export type InfiniteQueryMode = 'manual'
 
+/** Page parameters computed from next and previous page getters. */
 export interface InfiniteQueryPageParamsDeclarativeOptions<
   TQueryFnData = unknown,
   TPageParam = unknown,
 > extends InitialPageParam<TPageParam> {
+  /** Omit the mode to compute page parameters from the getters. */
   mode?: never
   /**
    * This function can be set to automatically get the previous cursor for infinite queries.
@@ -498,11 +501,19 @@ export interface InfiniteQueryPageParamsDeclarativeOptions<
   getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>
 }
 
+/** Page parameters supplied by the caller of each page fetch. */
 export interface InfiniteQueryPageParamsManualOptions<
   TPageParam = unknown,
 > extends InitialPageParam<TPageParam> {
+  /**
+   * Requires a `pageParam` for every next or previous page fetch. Refetches reuse cached
+   * parameters in order. Manual queries do not use page parameter getters, so
+   * `hasNextPage` and `hasPreviousPage` are always `false`.
+   */
   mode: InfiniteQueryMode
+  /** Manual queries do not use a previous page parameter getter. */
   getPreviousPageParam?: never
+  /** Manual queries do not use a next page parameter getter. */
   getNextPageParam?: never
 }
 
@@ -520,8 +531,10 @@ export type InfiniteQueryPageParamsOptions<
     : InfiniteQueryPageParamsDeclarativeOptions<TQueryFnData, TPageParam>
   : never
 
+/** The declared pagination mode: manual, or automatic when omitted. */
 export type FetchPageDirectionMode = InfiniteQueryMode | undefined
 
+/** The required parameter of a manual page fetch. */
 export interface ManualFetchPageOptions<TPageParam> {
   /**
    * The page param to pass to the query function for this manual fetch.
@@ -723,7 +736,9 @@ export type InfiniteQueryObserverOptionsBase<
   TQueryKey,
   TPageParam
 > &
-  InfiniteQueryPageParamsOptions<TQueryFnData, TPageParam, TMode>
+  InitialPageParam<TPageParam> & {
+    mode?: TMode
+  } & InfiniteQueryPageParamsOptions<TQueryFnData, TPageParam, TMode>
 
 /**
  * The options of an `InfiniteQueryObserver`: {@link QueryObserverOptions} whose query data is
@@ -747,6 +762,7 @@ export type InfiniteQueryObserverOptions<
     >
   : never
 
+/** Defaulted infinite query observer options for one declared pagination mode. */
 export type DefaultedInfiniteQueryObserverOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -862,6 +878,10 @@ export interface EnsureQueryDataOptions<
   revalidateIfStale?: boolean
 }
 
+/**
+ * Options of the deprecated ensure API, for one pagination mode.
+ * @deprecated
+ */
 export type EnsureInfiniteQueryDataOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -951,6 +971,7 @@ export type InfiniteQueryExecuteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends FetchPageDirectionMode = FetchPageDirectionMode,
 > = Omit<
   QueryExecuteOptions<
     TQueryFnData,
@@ -963,7 +984,10 @@ export type InfiniteQueryExecuteOptions<
   'initialPageParam'
 > &
   InitialPageParam<TPageParam> &
-  InfiniteQueryPages<TQueryFnData, TPageParam>
+  (TMode extends InfiniteQueryMode
+    ? InfiniteQueryPageParamsManualOptions<TPageParam> & { pages?: never }
+    : FetchInfiniteQueryPageParamsDeclarativeOptions<TQueryFnData, TPageParam> &
+        InfiniteQueryPages<TQueryFnData, TPageParam>)
 
 /** @deprecated */
 export type FetchInfiniteQueryOptionsBase<
@@ -1095,6 +1119,7 @@ export interface FetchPreviousPageOptions extends ResultOptions {
   cancelRefetch?: boolean
 }
 
+/** Next page fetch options for the declared pagination mode. */
 export type InfiniteQueryFetchNextPageOptions<
   TPageParam = unknown,
   TMode extends FetchPageDirectionMode = undefined,
@@ -1102,6 +1127,7 @@ export type InfiniteQueryFetchNextPageOptions<
   ? ManualFetchPageOptions<TPageParam> & FetchNextPageOptions
   : FetchNextPageOptions
 
+/** Previous page fetch options for the declared pagination mode. */
 export type InfiniteQueryFetchPreviousPageOptions<
   TPageParam = unknown,
   TMode extends FetchPageDirectionMode = undefined,
@@ -1109,6 +1135,7 @@ export type InfiniteQueryFetchPreviousPageOptions<
   ? ManualFetchPageOptions<TPageParam> & FetchPreviousPageOptions
   : FetchPreviousPageOptions
 
+/** Arguments of a next page fetch. Manual mode requires options. */
 export type InfiniteQueryFetchNextPageArgs<
   TPageParam = unknown,
   TMode extends FetchPageDirectionMode = undefined,
@@ -1116,6 +1143,7 @@ export type InfiniteQueryFetchNextPageArgs<
   ? [options: InfiniteQueryFetchNextPageOptions<TPageParam, TMode>]
   : [options?: InfiniteQueryFetchNextPageOptions<TPageParam, TMode>]
 
+/** Arguments of a previous page fetch. Manual mode requires options. */
 export type InfiniteQueryFetchPreviousPageArgs<
   TPageParam = unknown,
   TMode extends FetchPageDirectionMode = undefined,
@@ -1583,24 +1611,32 @@ export interface InfiniteQueryObserverBaseResult<
   TPageParam = unknown,
   TMode extends FetchPageDirectionMode = undefined,
 > extends QueryObserverBaseResult<TData, TError> {
+  /** Refetches the cached pages and retains the page fetching methods. */
+  refetch: (
+    options?: RefetchOptions,
+  ) => Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>>
   /**
    * This function allows you to fetch the next "page" of results.
+   * In manual mode, pass `{ pageParam }` with the same type as `initialPageParam`.
    */
   fetchNextPage: (
     ...args: InfiniteQueryFetchNextPageArgs<TPageParam, TMode>
   ) => Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>>
   /**
    * This function allows you to fetch the previous "page" of results.
+   * In manual mode, pass `{ pageParam }` with the same type as `initialPageParam`.
    */
   fetchPreviousPage: (
     ...args: InfiniteQueryFetchPreviousPageArgs<TPageParam, TMode>
   ) => Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>>
   /**
    * Will be `true` if there is a next page to be fetched (known via the `getNextPageParam` option).
+   * Always `false` in manual mode.
    */
   hasNextPage: boolean
   /**
    * Will be `true` if there is a previous page to be fetched (known via the `getPreviousPageParam` option).
+   * Always `false` in manual mode.
    */
   hasPreviousPage: boolean
   /**

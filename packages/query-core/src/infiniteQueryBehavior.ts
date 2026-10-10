@@ -39,6 +39,7 @@ export function infiniteQueryBehavior<
         TMode
       >
       const fetchMore = context.fetchOptions?.meta?.fetchMore
+      const manual = options.mode === 'manual'
       const oldPages = context.state.data?.pages || []
       const oldPageParams = context.state.data?.pageParams || []
       let result: InfiniteData<unknown> = { pages: [], pageParams: [] }
@@ -66,7 +67,7 @@ export function infiniteQueryBehavior<
             return Promise.reject(context.signal.reason)
           }
 
-          if (param == null && data.pages.length) {
+          if (!manual && param == null && data.pages.length) {
             return Promise.resolve(data)
           }
 
@@ -99,29 +100,33 @@ export function infiniteQueryBehavior<
         }
 
         // fetch next / previous page?
-        if (fetchMore && oldPages.length) {
+        if (fetchMore && (oldPages.length || manual)) {
           const previous = fetchMore.direction === 'backward'
           const pageParamFn = previous ? getPreviousPageParam : getNextPageParam
           const oldData = {
             pages: oldPages,
             pageParams: oldPageParams,
           }
-          const param =
-            fetchMore.pageParam === undefined
-              ? pageParamFn(options, oldData)
-              : fetchMore.pageParam
+          const param = manual
+            ? fetchMore.pageParam
+            : pageParamFn(options, oldData)
 
           result = await fetchPage(oldData, param, previous)
         } else {
-          const remainingPages = pages ?? oldPages.length
+          const remainingPages = manual
+            ? oldPages.length
+            : (pages ?? oldPages.length)
 
           // Fetch all pages
           do {
-            const param =
-              currentPage === 0 || !options.getNextPageParam
-                ? (oldPageParams[currentPage] ?? options.initialPageParam)
+            const param = manual
+              ? currentPage < oldPageParams.length
+                ? oldPageParams[currentPage]
+                : options.initialPageParam
+              : currentPage === 0
+                ? (oldPageParams[0] ?? options.initialPageParam)
                 : getNextPageParam(options, result)
-            if (currentPage > 0 && param == null) {
+            if (!manual && currentPage > 0 && param == null) {
               break
             }
             result = await fetchPage(result, param)
@@ -199,7 +204,7 @@ export function hasNextPage(
   options: InfiniteQueryPageParamsOptions<any, any, any>,
   data?: InfiniteData<unknown>,
 ): boolean {
-  if (!data) return false
+  if (!data || options.mode === 'manual') return false
   return getNextPageParam(options, data) != null
 }
 
@@ -214,7 +219,7 @@ export function hasPreviousPage(
   options: InfiniteQueryPageParamsOptions<any, any, any>,
   data?: InfiniteData<unknown>,
 ): boolean {
-  if (!data) {
+  if (!data || options.mode === 'manual') {
     return false
   }
   return getPreviousPageParam(options, data) != null

@@ -6,6 +6,7 @@ import type {
 } from './infiniteQueryOptions'
 import type {
   DefaultError,
+  DefinedInfiniteQueryObserverResult,
   InfiniteData,
   InfiniteQueryMode,
   InfiniteQueryObserverOptionsBase,
@@ -152,7 +153,11 @@ export function useInfiniteQuery<
     >
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryReturnType<TData, TError, TPageParam, undefined>
+): UseBaseQueryReturnType<
+  TData,
+  TError,
+  DefinedInfiniteQueryObserverResult<TData, TError, TPageParam, undefined>
+>
 export function useInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
@@ -171,7 +176,16 @@ export function useInfiniteQuery<
     >
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryReturnType<TData, TError, TPageParam, InfiniteQueryMode>
+): UseBaseQueryReturnType<
+  TData,
+  TError,
+  DefinedInfiniteQueryObserverResult<
+    TData,
+    TError,
+    TPageParam,
+    InfiniteQueryMode
+  >
+>
 
 /**
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of

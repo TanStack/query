@@ -5,9 +5,9 @@ import type {
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   DistributiveOmit,
-  InfiniteQueryMode,
   InfiniteData,
   InfiniteQueryExecuteOptions,
+  InfiniteQueryMode,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
@@ -292,68 +292,39 @@ export type UseInfiniteQueryOptions<
 export type UseSuspenseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> =
-  | (DistributiveOmit<
-      UseInfiniteQueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey,
-        TPageParam,
-        undefined
-      >,
-      'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
-    > & {
-      /**
-       * Set this to `false` to unsubscribe this observer from updates to the query cache.
-       * Defaults to `true`.
-       */
-      queryFn?: Exclude<
-        UseInfiniteQueryOptions<
-          TQueryFnData,
-          TError,
-          TData,
-          TQueryKey,
-          TPageParam,
-          undefined
-        >['queryFn'],
-        SkipToken
-      >
-    })
-  | (DistributiveOmit<
-      UseInfiniteQueryOptionsBase<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey,
-        TPageParam,
-        InfiniteQueryMode
-      >,
-      'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
-    > & {
-      /**
-       * Set this to `false` to unsubscribe this observer from updates to the query cache.
-       * Defaults to `true`.
-       */
-      queryFn?: Exclude<
-        UseInfiniteQueryOptionsBase<
-          TQueryFnData,
-          TError,
-          TData,
-          TQueryKey,
-          TPageParam,
-          InfiniteQueryMode
-        >['queryFn'],
-        SkipToken
-      >
-    })
+  TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
+> = DistributiveOmit<
+  UseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam,
+    TMode
+  >,
+  'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+> & {
+  /**
+   * The query function for Suspense. Cannot be skipToken.
+   */
+  queryFn?: Exclude<
+    UseInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      TMode
+    >['queryFn'],
+    SkipToken
+  >
+}
 
 /**
- * {@link UseSuspenseInfiniteQueryOptions} with all type parameters set to `any`, useful when the specific types
- * aren't relevant, e.g. when accepting options for any query in a helper function.
+ * Suspense infinite query options with all type parameters set to any.
  */
 export type AnyUseSuspenseInfiniteQueryOptions =
   UseSuspenseInfiniteQueryOptions<any, any, any, any, any>

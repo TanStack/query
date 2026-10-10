@@ -84,7 +84,9 @@ export type CreateInfiniteQueryResult<
 export type DefinedCreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = DefinedInfiniteQueryObserverResult<TData, TError>
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
+> = DefinedInfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
 
 /** Options for createBaseQuery with initialData */
 export type DefinedCreateBaseQueryResult<

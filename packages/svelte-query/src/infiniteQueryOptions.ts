@@ -25,7 +25,8 @@ export type UndefinedInitialDataInfiniteOptions<
   TError,
   TData,
   TQueryKey,
-  TPageParam
+  TPageParam,
+  TMode
 > & {
   initialData?:
     | undefined
@@ -51,7 +52,8 @@ export type DefinedInitialDataInfiniteOptions<
   TError,
   TData,
   TQueryKey,
-  TPageParam
+  TPageParam,
+  TMode
 > & {
   initialData:
     | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
@@ -120,6 +122,31 @@ export function infiniteQueryOptions<
   TQueryKey,
   TPageParam,
   undefined
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+
+export function infiniteQueryOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: DefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam,
+    InfiniteQueryMode
+  >,
+): DefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+  InfiniteQueryMode
 > &
   QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
@@ -201,14 +228,41 @@ export function infiniteQueryOptions<
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
   >,
 ): UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
+  TPageParam,
+  undefined
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+
+export function infiniteQueryOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: UndefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam,
+    InfiniteQueryMode
+  >,
+): UndefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+  InfiniteQueryMode
 > &
   QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 

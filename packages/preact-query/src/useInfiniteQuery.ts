@@ -1,22 +1,24 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
+import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   InfiniteData,
+  InfiniteQueryMode,
   QueryClient,
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
-
-import type {
-  DefinedInitialDataInfiniteOptions,
-  UndefinedInitialDataInfiniteOptions,
-} from './infiniteQueryOptions'
 import type {
   DefinedUseInfiniteQueryResult,
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
 } from './types'
-import { useBaseQuery } from './useBaseQuery'
+import type {
+  DefinedInitialDataInfiniteOptions,
+  ManualDefinedInitialDataInfiniteOptions,
+  ManualUndefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infiniteQueryOptions'
 
 /**
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
@@ -72,10 +74,28 @@ export function useInfiniteQuery<
     TError,
     TData,
     TQueryKey,
+    TPageParam,
+    undefined
+  >,
+  queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError, TPageParam, undefined>
+
+export function useInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: ManualDefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
     TPageParam
   >,
   queryClient?: QueryClient,
-): DefinedUseInfiniteQueryResult<TData, TError>
+): DefinedUseInfiniteQueryResult<TData, TError, TPageParam, InfiniteQueryMode>
 
 /**
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
@@ -134,7 +154,7 @@ export function useInfiniteQuery<
  * sentinel element after the list:
  * ```tsx
  * import { useInfiniteQuery } from '@tanstack/preact-query'
- * import { useEffect, useRef } from 'preact/hooks'
+ * import { useEffect, useRef } from 'react'
  *
  * function Projects() {
  *   const {
@@ -195,10 +215,11 @@ export function useInfiniteQuery<
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError>
+): UseInfiniteQueryResult<TData, TError, TPageParam, undefined>
 
 /**
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
@@ -257,7 +278,7 @@ export function useInfiniteQuery<
  * sentinel element after the list:
  * ```tsx
  * import { useInfiniteQuery } from '@tanstack/preact-query'
- * import { useEffect, useRef } from 'preact/hooks'
+ * import { useEffect, useRef } from 'react'
  *
  * function Projects() {
  *   const {
@@ -342,7 +363,7 @@ export function useInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: UseInfiniteQueryOptions<
+  options: ManualUndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
@@ -350,7 +371,7 @@ export function useInfiniteQuery<
     TPageParam
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError>
+): UseInfiniteQueryResult<TData, TError, TPageParam, InfiniteQueryMode>
 
 export function useInfiniteQuery(
   options: UseInfiniteQueryOptions,

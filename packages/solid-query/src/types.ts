@@ -11,8 +11,10 @@ import type {
   MutationObserverResult,
   OmitKeyof,
   Override,
+  QueryFunction,
   QueryKey,
   QueryObserverResult,
+  SkipToken,
 } from '@tanstack/query-core'
 import type {
   InfiniteQueryObserverOptions,
@@ -167,6 +169,7 @@ export type InfiniteQueryOptions<
   >,
   'queryKey' | 'suspense'
 > & {
+  queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam> | SkipToken
   /**
    * The query key to use for this query. Required here, unlike on the options this type extends.
    *

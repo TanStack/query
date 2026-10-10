@@ -1,6 +1,7 @@
 import type {
   DefaultError,
   InfiniteData,
+  InfiniteQueryMode,
   MutationObserverResult,
   QueryKey,
   QueryObserverResult,
@@ -44,8 +45,16 @@ export type InfiniteQueryControllerOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
 > = Accessor<
-  CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+  CreateInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam,
+    TMode
+  >
 >
 
 /**

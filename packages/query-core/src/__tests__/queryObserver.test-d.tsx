@@ -1714,7 +1714,7 @@ describe('queryObserver', () => {
       expectTypeOf(observer.getCurrentQuery().queryHash).toEqualTypeOf<string>()
       expectTypeOf(state.isInvalidated).toEqualTypeOf<boolean>()
       expectTypeOf(state.fetchMeta).toEqualTypeOf<{
-        fetchMore?: { direction: 'forward' | 'backward' }
+        fetchMore?: { direction: 'forward' | 'backward'; pageParam?: unknown }
       } | null>()
       expectTypeOf(state.status).toEqualTypeOf<
         'pending' | 'error' | 'success'

@@ -1,10 +1,10 @@
 import { skipToken } from '@tanstack/query-core'
-import type { InfiniteData } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 
-import type { UseSuspenseInfiniteQueryOptions } from '../types'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
+import type { UseSuspenseInfiniteQueryOptions } from '../types'
+import type { InfiniteData } from '@tanstack/query-core'
 
 describe('useSuspenseInfiniteQuery', () => {
   it('should always have data defined', () => {
@@ -49,35 +49,35 @@ describe('useSuspenseInfiniteQuery', () => {
 
   it('should not allow placeholderData, enabled or throwOnError props', () => {
     assertType(
+      // @ts-expect-error forbidden suspense options
       useSuspenseInfiniteQuery({
         queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
-        // @ts-expect-error TS2345
         placeholderData: 5,
         enabled: true,
       }),
     )
 
     assertType(
+      // @ts-expect-error forbidden suspense options
       useSuspenseInfiniteQuery({
         queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
-        // @ts-expect-error TS2345
         enabled: true,
       }),
     )
 
     assertType(
+      // @ts-expect-error forbidden suspense options
       useSuspenseInfiniteQuery({
         queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
-        // @ts-expect-error TS2345
         throwOnError: true,
       }),
     )

@@ -1,6 +1,7 @@
 import type {
   DefaultError,
   InfiniteData,
+  InfiniteQueryMode,
   InitialDataFunction,
   NonUndefinedGuard,
   OmitKeyof,
@@ -8,8 +9,38 @@ import type {
   QueryKeyWithDataTag,
   SkipToken,
 } from '@tanstack/query-core'
+import type {
+  UseInfiniteQueryOptions,
+  UseInfiniteQueryOptionsBase,
+} from './types'
 
-import type { UseInfiniteQueryOptions } from './types'
+type OptionalInitialData<TQueryFnData, TPageParam> = {
+  /**
+   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
+   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
+   * query initialization, and be expected to synchronously return the initial data. Initial data is
+   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
+   * cache.
+   */
+  initialData?:
+    | undefined
+    | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+    | InitialDataFunction<
+        NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+      >
+}
+
+type RequiredInitialData<TQueryFnData, TPageParam> = {
+  initialData:
+    | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+    | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
+    | undefined
+}
+
+type WithoutSkipTokenQueryFn<TOptions extends { queryFn?: unknown }> =
+  OmitKeyof<TOptions, 'queryFn'> & {
+    queryFn?: Exclude<TOptions['queryFn'], SkipToken | undefined>
+  }
 
 /**
  * The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
@@ -27,27 +58,51 @@ export type UndefinedInitialDataInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
 > = UseInfiniteQueryOptions<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
-> & {
-  /**
-   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
-   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
-   * query initialization, and be expected to synchronously return the initial data. Initial data is
-   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
-   * cache.
-   */
-  initialData?:
-    | undefined
-    | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-    | InitialDataFunction<
-        NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-      >
-}
+  TPageParam,
+  TMode
+> &
+  OptionalInitialData<TQueryFnData, TPageParam>
+
+/** Manual query options with optional initial data. */
+export type ManualUndefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = UseInfiniteQueryOptionsBase<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+  InfiniteQueryMode
+> &
+  OptionalInitialData<TQueryFnData, TPageParam>
+
+/** Manual query options with a callable query function. */
+export type UnusedSkipTokenManualInfiniteOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = WithoutSkipTokenQueryFn<
+  UseInfiniteQueryOptionsBase<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam,
+    InfiniteQueryMode
+  >
+>
 
 /**
  * The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set and
@@ -66,27 +121,17 @@ export type UnusedSkipTokenInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = OmitKeyof<
-  UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
-  'queryFn'
-> & {
-  /**
-   * `skipToken` is not allowed as a value here — this overload is selected when no `initialData` is set. If
-   * you don't intend to run the query yet, set `enabled: false` — omitting `queryFn` alone still triggers a
-   * fetch that fails with "Missing queryFn" unless `enabled` is `false` or a default query function has been
-   * defined. A default query function only supplies `queryFn`; it doesn't defer the fetch on its own.
-   */
-  queryFn?: Exclude<
-    UseInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >['queryFn'],
-    SkipToken | undefined
+  TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
+> = WithoutSkipTokenQueryFn<
+  UseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam,
+    TMode
   >
-}
+>
 
 /**
  * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
@@ -104,25 +149,33 @@ export type DefinedInitialDataInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
 > = UseInfiniteQueryOptions<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
-> & {
-  /**
-   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
-   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
-   * query initialization, and be expected to synchronously return the initial data. Initial data is
-   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
-   * cache.
-   */
-  initialData:
-    | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-    | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
-    | undefined
-}
+  TPageParam,
+  TMode
+> &
+  RequiredInitialData<TQueryFnData, TPageParam>
+
+/** Manual query options with defined initial data. */
+export type ManualDefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = UseInfiniteQueryOptionsBase<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+  InfiniteQueryMode
+> &
+  RequiredInitialData<TQueryFnData, TPageParam>
 
 /**
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
@@ -175,9 +228,34 @@ export function infiniteQueryOptions<
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
   >,
 ): DefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+  undefined
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+
+export function infiniteQueryOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: ManualDefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+): ManualDefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
@@ -234,9 +312,180 @@ export function infiniteQueryOptions<
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
   >,
 ): UnusedSkipTokenInfiniteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+  undefined
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+
+export function infiniteQueryOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: UnusedSkipTokenManualInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+): UnusedSkipTokenManualInfiniteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+
+/**
+ * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
+ * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
+ * `options.queryKey` is required and is the query key to generate options for.
+ * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
+ * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ * @remarks See {@link useInfiniteQuery} for examples that fetch further pages (from a button click or
+ * automatically as the user scrolls) and that use `skipToken` to disable the query until `postId` is set.
+ * @see {@link useInfiniteQuery} to run an infinite query with these options.
+ * @example
+ * A parameterized factory, so the same options object can be reused per `postId`:
+ * ```tsx
+ * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
+ *
+ * export const commentsOptions = (postId: string) =>
+ *   infiniteQueryOptions({
+ *     queryKey: ['post', postId, 'comments'],
+ *     queryFn: ({ pageParam }) => fetchComments(postId, pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
+ *
+ * function Comments({ postId }: { postId: string }) {
+ *   const { data, isPending, isError, error } = useInfiniteQuery(commentsOptions(postId))
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
+ *   return (
+ *     <ul>
+ *       {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+ *     </ul>
+ *   )
+ * }
+ * ```
+ */
+export function infiniteQueryOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: UndefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam,
+    undefined
+  >,
+): UndefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+  undefined
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+
+export function infiniteQueryOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: ManualUndefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+): ManualUndefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+
+/**
+ * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
+ * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
+ * `options.queryKey` is required and is the query key to generate options for.
+ *
+ * This overload is selected when `initialData` is set.
+ * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
+ * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ * @remarks See {@link useInfiniteQuery} for examples that fetch further pages, from a button click or
+ * automatically as the user scrolls.
+ * @see {@link useInfiniteQuery} to run an infinite query with these options.
+ * @example
+ * ```tsx
+ * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
+ *
+ * export const projectsOptions = infiniteQueryOptions({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ *   initialData: { pages: [], pageParams: [] },
+ * })
+ *
+ * function Projects() {
+ *   // `data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
+ *   // list stays visible alongside the error.
+ *   const { data, isError, error } = useInfiniteQuery(projectsOptions)
+ *
+ *   return (
+ *     <div>
+ *       {isError ? <span>Error: {error.message}</span> : null}
+ *       <ul>
+ *         {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+ *       </ul>
+ *     </div>
+ *   )
+ * }
+ * ```
+ */
+export function infiniteQueryOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: DefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+): DefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,

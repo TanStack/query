@@ -141,6 +141,7 @@ export type CreateInfiniteQueryOptions<
   TMode
 >
 
+/** Infinite query options for one declared pagination mode. */
 export type CreateInfiniteQueryOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,

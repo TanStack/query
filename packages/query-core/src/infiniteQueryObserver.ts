@@ -3,12 +3,12 @@ import { hasNextPage, hasPreviousPage } from './infiniteQueryBehavior'
 import type { Subscribable } from './subscribable'
 import type {
   DefaultError,
+  DefaultedInfiniteQueryObserverOptionsBase,
   DefaultedQueryObserverOptions,
   FetchPageDirectionMode,
   InfiniteData,
   InfiniteQueryFetchNextPageArgs,
   InfiniteQueryFetchPreviousPageArgs,
-  InfiniteQueryMode,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverOptionsBase,
   InfiniteQueryObserverResult,
@@ -77,6 +77,30 @@ export class InfiniteQueryObserver<
   >
 
   // Type override
+  override trackResult!: ReplaceReturnType<
+    QueryObserver<
+      TQueryFnData,
+      TError,
+      TData,
+      InfiniteData<TQueryFnData, TPageParam>,
+      TQueryKey
+    >['trackResult'],
+    InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
+  >
+
+  // Type override
+  override refetch!: ReplaceReturnType<
+    QueryObserver<
+      TQueryFnData,
+      TError,
+      TData,
+      InfiniteData<TQueryFnData, TPageParam>,
+      TQueryKey
+    >['refetch'],
+    Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>>
+  >
+
+  // Type override
   protected override fetch!: ReplaceReturnType<
     QueryObserver<
       TQueryFnData,
@@ -90,25 +114,14 @@ export class InfiniteQueryObserver<
 
   constructor(
     client: QueryClient,
-    options: InfiniteQueryObserverOptions<
+    options: InfiniteQueryObserverOptionsBase<
       TQueryFnData,
       TError,
       TData,
       TQueryKey,
       TPageParam,
       undefined
-    >,
-  )
-  constructor(
-    client: QueryClient,
-    options: InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam,
-      InfiniteQueryMode
-    >,
+    > & { mode?: TMode },
   )
   constructor(
     client: QueryClient,
@@ -118,7 +131,28 @@ export class InfiniteQueryObserver<
       TData,
       TQueryKey,
       TPageParam,
+      'manual'
+    > & { mode: TMode },
+  )
+  constructor(
+    client: QueryClient,
+    options: InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
       TMode
+    >,
+  )
+  constructor(
+    client: QueryClient,
+    options: InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
     >,
   ) {
     super(client, options)
@@ -138,6 +172,16 @@ export class InfiniteQueryObserver<
    * @param options - The new infinite query observer options.
    */
   override setOptions(
+    options: InfiniteQueryObserverOptionsBase<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      TMode
+    >,
+  ): void
+  override setOptions(
     options: QueryObserverOptions<
       TQueryFnData,
       TError,
@@ -145,6 +189,24 @@ export class InfiniteQueryObserver<
       InfiniteData<TQueryFnData, TPageParam>,
       TQueryKey
     >,
+  ): void
+  override setOptions(
+    options:
+      | QueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          InfiniteData<TQueryFnData, TPageParam>,
+          TQueryKey
+        >
+      | InfiniteQueryObserverOptionsBase<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryKey,
+          TPageParam,
+          TMode
+        >,
   ): void {
     options._type = 'infinite'
     super.setOptions(options)
@@ -159,6 +221,16 @@ export class InfiniteQueryObserver<
    * @returns The result for the given options.
    */
   override getOptimisticResult(
+    options: DefaultedInfiniteQueryObserverOptionsBase<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      TMode
+    >,
+  ): InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
+  override getOptimisticResult(
     options: DefaultedQueryObserverOptions<
       TQueryFnData,
       TError,
@@ -166,6 +238,24 @@ export class InfiniteQueryObserver<
       InfiniteData<TQueryFnData, TPageParam>,
       TQueryKey
     >,
+  ): InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
+  override getOptimisticResult(
+    options:
+      | DefaultedQueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          InfiniteData<TQueryFnData, TPageParam>,
+          TQueryKey
+        >
+      | DefaultedInfiniteQueryObserverOptionsBase<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryKey,
+          TPageParam,
+          TMode
+        >,
   ): InfiniteQueryObserverResult<TData, TError, TPageParam, TMode> {
     options._type = 'infinite'
     return super.getOptimisticResult(options) as InfiniteQueryObserverResult<
@@ -181,8 +271,8 @@ export class InfiniteQueryObserver<
    * resolves with the resulting `InfiniteQueryObserverResult`. The page
    * param used for the fetch is determined by `getNextPageParam`, which
    * receives the current pages/page params and whose result also determines
-   * `hasNextPage`.
-   * @param options - Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
+   * `hasNextPage`. In manual mode, pass the parameter in `args[0].pageParam`.
+   * @param args - Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
    * and `throwOnError` to `true` to reject when the fetch fails.
    * @returns A promise that resolves with the result after the next page is fetched. With
    * `cancelRefetch: false`, a running fetch is reused instead, so the next page may not be fetched.
@@ -213,8 +303,8 @@ export class InfiniteQueryObserver<
    * that resolves with the resulting `InfiniteQueryObserverResult`. The page
    * param used for the fetch is determined by `getPreviousPageParam`, which
    * receives the current pages/page params and whose result also determines
-   * `hasPreviousPage`.
-   * @param options - Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
+   * `hasPreviousPage`. In manual mode, pass the parameter in `args[0].pageParam`.
+   * @param args - Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
    * and `throwOnError` to `true` to reject when the fetch fails.
    * @returns A promise that resolves with the result after the previous page is fetched. With
    * `cancelRefetch: false`, a running fetch is reused instead, so the previous page may not be fetched.

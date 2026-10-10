@@ -1473,6 +1473,7 @@ describe('queryClient', () => {
   })
 })
 
+/* eslint-disable no-restricted-syntax -- test the deprecated manual API */
 describe('fetchInfiniteQuery manual mode', () => {
   it('should allow manual mode without page param getters', () => {
     void new QueryClient().fetchInfiniteQuery({
@@ -1499,6 +1500,43 @@ describe('fetchInfiniteQuery manual mode', () => {
       queryFn: () => Promise.resolve('string'),
       mode: 'manual',
       initialPageParam: 1,
+      pages: 2,
+    })
+  })
+})
+/* eslint-enable no-restricted-syntax */
+
+describe('infiniteQuery manual mode', () => {
+  it('should infer manual page and selected data types', async () => {
+    const data = await new QueryClient().infiniteQuery({
+      queryKey: ['manual'],
+      mode: 'manual',
+      initialPageParam: 0,
+      queryFn: ({ pageParam }) => {
+        expectTypeOf(pageParam).toEqualTypeOf<number>()
+        return String(pageParam)
+      },
+      select: (data) => {
+        expectTypeOf(data.pageParams).toEqualTypeOf<Array<number>>()
+        return data.pages
+      },
+    })
+    expectTypeOf(data).toEqualTypeOf<Array<string>>()
+  })
+
+  it('should reject page getters and a page count in manual mode', () => {
+    // @ts-expect-error manual queries do not compute page parameters
+    new QueryClient().infiniteQuery({
+      queryKey: ['manual'],
+      mode: 'manual',
+      initialPageParam: 0,
+      getNextPageParam: () => 1,
+    })
+    // @ts-expect-error manual queries need a separate parameter for each new page
+    new QueryClient().infiniteQuery({
+      queryKey: ['manual'],
+      mode: 'manual',
+      initialPageParam: 0,
       pages: 2,
     })
   })

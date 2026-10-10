@@ -142,7 +142,7 @@ describe('fetchInfiniteQuery', () => {
   it('should not allow passing pages without getNextPageParam', () => {
     const key = queryKey()
     assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
-      // @ts-expect-error Property 'getNextPageParam' is missing
+      // @ts-expect-error getNextPageParam is required when pages is set
       {
         queryKey: key,
         queryFn: () => Promise.resolve('string'),
@@ -234,11 +234,11 @@ describe('infiniteQuery', () => {
 
   it('should not allow passing pages without getNextPageParam', () => {
     assertType<Parameters<QueryClient['infiniteQuery']>>([
-      // @ts-expect-error Property 'getNextPageParam' is missing
       {
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
         initialPageParam: 1,
+        // @ts-expect-error pages requires getNextPageParam
         pages: 5,
       },
     ])

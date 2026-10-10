@@ -45,6 +45,57 @@ describe('useInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
+  it('should use manual page params from buttons and reuse them on refetch', async () => {
+    const params: Array<number> = []
+    function Page() {
+      const query = useInfiniteQuery({
+        queryKey: queryKeyValue,
+        mode: 'manual',
+        initialPageParam: 0,
+        queryFn: ({ pageParam }) => {
+          params.push(pageParam)
+          return sleep(10).then(() => pageParam)
+        },
+      })
+      return (
+        <div>
+          <span>pages: {query.data?.pages.join(',')}</span>
+          <span>next: {String(query.isFetchingNextPage)}</span>
+          <span>previous: {String(query.isFetchingPreviousPage)}</span>
+          <button onClick={() => query.fetchNextPage({ pageParam: 10 })}>
+            next
+          </button>
+          <button onClick={() => query.fetchPreviousPage({ pageParam: -5 })}>
+            previous
+          </button>
+          <button onClick={() => query.refetch()}>refetch</button>
+        </div>
+      )
+    }
+    const queryKeyValue = queryKey()
+    const rendered = renderWithClient(queryClient, <Page />)
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('pages: 0')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'next' }))
+    await vi.advanceTimersByTimeAsync(1)
+    expect(rendered.getByText('next: true')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('pages: 0,10')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'previous' }))
+    await vi.advanceTimersByTimeAsync(1)
+    expect(rendered.getByText('previous: true')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('pages: -5,0,10')).toBeInTheDocument()
+
+    params.length = 0
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+    await vi.advanceTimersByTimeAsync(31)
+    expect(rendered.getByText('pages: -5,0,10')).toBeInTheDocument()
+    expect(params).toEqual([-5, 0, 10])
+  })
+
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
     const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []

@@ -21,7 +21,6 @@ import type {
   InfiniteQueryObserverSuccessResult,
   QueryFunctionContext,
   QueryObserverBaseResult,
-  QueryObserverResult,
   QueryPersister,
 } from '..'
 import type { QueryBehavior } from '../query'
@@ -49,10 +48,11 @@ describe('infiniteQueryObserver', () => {
         CustomError,
         InfiniteData<{ value: string }, number>,
         ReadonlyArray<unknown>,
-        number
+        number,
+        undefined
       >
 
-      expectTypeOf<Options>().toEqualTypeOf<{
+      expectTypeOf<Options>().branded.toEqualTypeOf<{
         -readonly [K in keyof Options]: Options[K]
       }>()
     })
@@ -90,10 +90,9 @@ describe('infiniteQueryObserver', () => {
           getNextPageParam: () => 1,
         })
 
-        expectTypeOf(observer.setOptions)
-          .parameter(0)
-          .toHaveProperty('initialPageParam')
-          .toEqualTypeOf<number>()
+        expectTypeOf(observer.getCurrentQuery().state.data).toEqualTypeOf<
+          InfiniteData<string, number> | undefined
+        >()
       })
     })
 
@@ -1191,7 +1190,7 @@ describe('infiniteQueryObserver', () => {
       })
 
       expectTypeOf(observer.getCurrentQuery().state.fetchMeta).toEqualTypeOf<{
-        fetchMore?: { direction: 'forward' | 'backward' }
+        fetchMore?: { direction: 'forward' | 'backward'; pageParam?: unknown }
       } | null>()
     })
   })
@@ -1265,7 +1264,7 @@ describe('infiniteQueryObserver', () => {
   })
 
   describe('refetch', () => {
-    it('should resolve with the base result rather than the infinite one', () => {
+    it('should resolve with the infinite result', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
         queryKey: queryKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
@@ -1274,9 +1273,10 @@ describe('infiniteQueryObserver', () => {
       })
 
       expectTypeOf(observer.refetch()).resolves.toEqualTypeOf<
-        QueryObserverResult<
+        InfiniteQueryObserverResult<
           InfiniteData<{ value: string }, unknown>,
-          DefaultError
+          DefaultError,
+          number
         >
       >()
     })
@@ -1325,15 +1325,16 @@ describe('infiniteQueryObserver', () => {
       expectTypeOf(
         observer.trackResult(observer.getCurrentResult()),
       ).toEqualTypeOf<
-        QueryObserverResult<
+        InfiniteQueryObserverResult<
           InfiniteData<{ value: string }, unknown>,
-          DefaultError
+          DefaultError,
+          number
         >
       >()
     })
   })
 
-  it('should not allow pageParam on fetchNextPage / fetchPreviousPage if getNextPageParam is defined', async () => {
+  it('should not allow pageParam on fetchNextPage / fetchPreviousPage if getNextPageParam is defined', () => {
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: queryKey(),
       queryFn: ({ pageParam }) => String(pageParam),
@@ -1351,15 +1352,8 @@ describe('infiniteQueryObserver', () => {
     observer.fetchPreviousPage({ pageParam: 0 })
   })
 
-  it('should require pageParam on fetchNextPage / fetchPreviousPage if getNextPageParam is missing', async () => {
-    const observer = new InfiniteQueryObserver<
-      string,
-      Error,
-      InfiniteData<string>,
-      ReturnType<typeof queryKey>,
-      number,
-      'manual'
-    >(queryClient, {
+  it('should require pageParam on fetchNextPage / fetchPreviousPage if getNextPageParam is missing', () => {
+    const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: queryKey(),
       queryFn: ({ pageParam }) => String(pageParam),
       mode: 'manual',
@@ -1387,14 +1381,7 @@ describe('infiniteQueryObserver', () => {
 
   it('should reject page param getters in manual mode', () => {
     // @ts-expect-error getNextPageParam is not allowed in manual mode
-    new InfiniteQueryObserver<
-      string,
-      Error,
-      InfiniteData<string>,
-      ReturnType<typeof queryKey>,
-      number,
-      'manual'
-    >(queryClient, {
+    new InfiniteQueryObserver(queryClient, {
       queryKey: queryKey(),
       queryFn: ({ pageParam }) => String(pageParam),
       mode: 'manual',
@@ -1403,14 +1390,7 @@ describe('infiniteQueryObserver', () => {
     })
 
     // @ts-expect-error getPreviousPageParam is not allowed in manual mode
-    new InfiniteQueryObserver<
-      string,
-      Error,
-      InfiniteData<string>,
-      ReturnType<typeof queryKey>,
-      number,
-      'manual'
-    >(queryClient, {
+    new InfiniteQueryObserver(queryClient, {
       queryKey: queryKey(),
       queryFn: ({ pageParam }) => String(pageParam),
       mode: 'manual',

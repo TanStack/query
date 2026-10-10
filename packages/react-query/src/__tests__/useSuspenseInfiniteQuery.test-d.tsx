@@ -48,35 +48,35 @@ describe('useSuspenseInfiniteQuery', () => {
 
   it('should not allow placeholderData, enabled or throwOnError props', () => {
     assertType(
+      // @ts-expect-error forbidden suspense options
       useSuspenseInfiniteQuery({
         queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
-        // @ts-expect-error TS2345
         placeholderData: 5,
         enabled: true,
       }),
     )
 
     assertType(
+      // @ts-expect-error forbidden suspense options
       useSuspenseInfiniteQuery({
         queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
-        // @ts-expect-error TS2345
         enabled: true,
       }),
     )
 
     assertType(
+      // @ts-expect-error forbidden suspense options
       useSuspenseInfiniteQuery({
         queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
-        // @ts-expect-error TS2345
         throwOnError: true,
       }),
     )

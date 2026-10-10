@@ -20,12 +20,12 @@ class Host extends LitElement {}
 describe('infiniteQueryOptions', () => {
   it('should not allow excess properties', () => {
     assertType(
+      // @ts-expect-error stallTime does not exist
       infiniteQueryOptions({
         queryKey: queryKey(),
         queryFn: () => Promise.resolve('data'),
         getNextPageParam: () => 1,
         initialPageParam: 1,
-        // @ts-expect-error this is a good error, because stallTime does not exist!
         stallTime: 1000,
       }),
     )
@@ -224,10 +224,10 @@ describe('infiniteQueryOptions', () => {
   })
 
   it('should allow optional initialData function', () => {
-    const initialData: { example: boolean } | undefined = { example: true }
+    const initialData = Math.random() > 0.5 ? { example: true } : undefined
     const queryOptions = infiniteQueryOptions({
       queryKey: queryKey(),
-      queryFn: () => initialData,
+      queryFn: () => ({ example: true }),
       initialData: initialData
         ? () => ({ pages: [initialData], pageParams: [] })
         : undefined,
@@ -242,10 +242,10 @@ describe('infiniteQueryOptions', () => {
   })
 
   it('should allow optional initialData object', () => {
-    const initialData: { example: boolean } | undefined = { example: true }
+    const initialData = Math.random() > 0.5 ? { example: true } : undefined
     const queryOptions = infiniteQueryOptions({
       queryKey: queryKey(),
-      queryFn: () => initialData,
+      queryFn: () => ({ example: true }),
       initialData: initialData
         ? { pages: [initialData], pageParams: [] }
         : undefined,

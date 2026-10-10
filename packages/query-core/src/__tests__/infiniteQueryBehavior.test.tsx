@@ -189,7 +189,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  it('InfiniteQueryBehavior should apply pageParam', async () => {
+  it('should apply manual page params and reuse them on refetch', async () => {
     const key = queryKey()
 
     const queryFn = vi.fn().mockImplementation(({ pageParam }) => {
@@ -304,6 +304,137 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     unsubscribe()
+  })
+
+  it('should ignore page overrides in declarative mode', async () => {
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: queryKey(),
+      queryFn: ({ pageParam }) => pageParam,
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => lastPage + 1,
+      getPreviousPageParam: (firstPage) => firstPage - 1,
+    })
+
+    await observer.refetch()
+    // @ts-expect-error page overrides require manual mode
+    await observer.fetchNextPage({ pageParam: 100 })
+    // @ts-expect-error page overrides require manual mode
+    await observer.fetchPreviousPage({ pageParam: -100 })
+
+    expect(observer.getCurrentResult().data).toEqual({
+      pages: [-1, 0, 1],
+      pageParams: [-1, 0, 1],
+    })
+  })
+
+  it.each(['forward', 'backward'] as const)(
+    'should use a manual page param on the first %s fetch',
+    async (direction) => {
+      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) => pageParam)
+      const observer = new InfiniteQueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn,
+        initialPageParam: 0,
+        mode: 'manual',
+        enabled: false,
+      })
+
+      const result =
+        direction === 'forward'
+          ? await observer.fetchNextPage({ pageParam: 5 })
+          : await observer.fetchPreviousPage({ pageParam: 5 })
+
+      expect(result.data).toEqual({ pages: [5], pageParams: [5] })
+      expect(queryFn).toHaveBeenCalledWith(
+        expect.objectContaining({ pageParam: 5, direction }),
+      )
+    },
+  )
+
+  it('should preserve null and undefined manual page params on refetch', async () => {
+    const getInitialPageParam = (): number | null | undefined => 0
+    const queryFn = vi.fn(
+      ({ pageParam }: { pageParam: number | null | undefined }) => ({
+        pageParam,
+      }),
+    )
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: queryKey(),
+      queryFn,
+      initialPageParam: getInitialPageParam(),
+      mode: 'manual',
+    })
+
+    await observer.refetch()
+    await observer.fetchNextPage({ pageParam: null })
+    await observer.fetchNextPage({ pageParam: undefined })
+    await observer.fetchPreviousPage({ pageParam: -1 })
+    queryFn.mockClear()
+    const result = await observer.refetch()
+
+    expect(result.data).toEqual({
+      pages: [-1, 0, null, undefined].map((pageParam) => ({ pageParam })),
+      pageParams: [-1, 0, null, undefined],
+    })
+    expect(queryFn.mock.calls.map(([context]) => context.pageParam)).toEqual([
+      -1,
+      0,
+      null,
+      undefined,
+    ])
+    expect(result.hasNextPage).toBe(false)
+    expect(result.hasPreviousPage).toBe(false)
+  })
+
+  it('should limit manual pages and refetch only the retained pages', async () => {
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: queryKey(),
+      queryFn: ({ pageParam }) => pageParam,
+      initialPageParam: 0,
+      mode: 'manual',
+      maxPages: 2,
+    })
+
+    await observer.refetch()
+    await observer.fetchNextPage({ pageParam: 10 })
+    await observer.fetchNextPage({ pageParam: 20 })
+    expect(observer.getCurrentResult().data).toEqual({
+      pages: [10, 20],
+      pageParams: [10, 20],
+    })
+    await observer.fetchPreviousPage({ pageParam: 5 })
+    const result = await observer.refetch()
+    expect(result.data).toEqual({ pages: [5, 10], pageParams: [5, 10] })
+  })
+
+  it('should retry a manual refetch with the cached page params', async () => {
+    const params: Array<number> = []
+    let fail = false
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: queryKey(),
+      mode: 'manual',
+      initialPageParam: 0,
+      retry: 1,
+      retryDelay: 0,
+      queryFn: ({ pageParam }) => {
+        params.push(pageParam)
+        if (fail && pageParam === 10) {
+          fail = false
+          throw new Error('retry this page')
+        }
+        return pageParam
+      },
+    })
+    await observer.refetch()
+    await observer.fetchNextPage({ pageParam: 10 })
+    await observer.fetchNextPage({ pageParam: 20 })
+    fail = true
+    params.length = 0
+    const refetched = observer.refetch()
+    await vi.advanceTimersByTimeAsync(1)
+    const result = await refetched
+    expect(params).toEqual([0, 10, 10, 20])
+    expect(result.data).toEqual({ pages: [0, 10, 20], pageParams: [0, 10, 20] })
   })
 
   it('should support query cancellation', async () => {

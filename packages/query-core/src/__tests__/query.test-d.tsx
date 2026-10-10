@@ -78,7 +78,7 @@ describe('query', () => {
   describe('FetchMeta', () => {
     it('should carry an optional fetchMore direction', () => {
       expectTypeOf<FetchMeta>().toEqualTypeOf<{
-        fetchMore?: { direction: 'forward' | 'backward' }
+        fetchMore?: { direction: 'forward' | 'backward'; pageParam?: unknown }
       }>()
     })
   })

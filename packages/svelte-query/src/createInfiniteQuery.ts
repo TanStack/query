@@ -47,11 +47,37 @@ export function createInfiniteQuery<
       TError,
       TData,
       TQueryKey,
-      TPageParam
+      TPageParam,
+      undefined
     >
   >,
   queryClient?: Accessor<QueryClient>,
-): DefinedCreateInfiniteQueryResult<TData, TError>
+): DefinedCreateInfiniteQueryResult<TData, TError, TPageParam, undefined>
+
+export function createInfiniteQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: Accessor<
+    DefinedInitialDataInfiniteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      InfiniteQueryMode
+    >
+  >,
+  queryClient?: Accessor<QueryClient>,
+): DefinedCreateInfiniteQueryResult<
+  TData,
+  TError,
+  TPageParam,
+  InfiniteQueryMode
+>
 
 /**
  * The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
@@ -80,11 +106,32 @@ export function createInfiniteQuery<
       TError,
       TData,
       TQueryKey,
-      TPageParam
+      TPageParam,
+      undefined
     >
   >,
   queryClient?: Accessor<QueryClient>,
-): CreateInfiniteQueryResult<TData, TError>
+): CreateInfiniteQueryResult<TData, TError, TPageParam, undefined>
+
+export function createInfiniteQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: Accessor<
+    UndefinedInitialDataInfiniteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      InfiniteQueryMode
+    >
+  >,
+  queryClient?: Accessor<QueryClient>,
+): CreateInfiniteQueryResult<TData, TError, TPageParam, InfiniteQueryMode>
 
 /**
  * The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of

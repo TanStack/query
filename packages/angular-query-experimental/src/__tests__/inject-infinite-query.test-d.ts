@@ -56,6 +56,10 @@ describe('injectInfiniteQuery', () => {
       }))
     })
 
+    expectTypeOf(query.fetchNextPage)
+      .parameter(0)
+      .toMatchTypeOf<{ pageParam: number }>()
+
     query.fetchNextPage({ pageParam: 1 })
     query.fetchPreviousPage({ pageParam: 0 })
 

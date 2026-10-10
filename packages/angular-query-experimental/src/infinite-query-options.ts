@@ -69,6 +69,7 @@ export type UndefinedInitialDataInfiniteOptions<
 > &
   OptionalInitialData<TQueryFnData, TPageParam>
 
+/** Manual query options with optional initial data. */
 export type ManualUndefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -85,6 +86,7 @@ export type ManualUndefinedInitialDataInfiniteOptions<
 > &
   OptionalInitialData<TQueryFnData, TPageParam>
 
+/** Manual query options with a callable query function. */
 export type UnusedSkipTokenManualInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -131,6 +133,7 @@ export type UnusedSkipTokenInfiniteOptions<
   >
 >
 
+/** Manual query options with defined initial data. */
 export type ManualDefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,

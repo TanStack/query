@@ -1,19 +1,20 @@
 import { InfiniteQueryObserver, skipToken } from '@tanstack/query-core'
+import { defaultThrowOnError } from './suspense'
+import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   InfiniteData,
+  InfiniteQueryMode,
   InfiniteQueryObserverSuccessResult,
   QueryClient,
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
 
-import { defaultThrowOnError } from './suspense'
 import type {
   UseSuspenseInfiniteQueryOptions,
   UseSuspenseInfiniteQueryResult,
 } from './types'
-import { useBaseQuery } from './useBaseQuery'
 
 /**
  * The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`,
@@ -131,10 +132,32 @@ export function useSuspenseInfiniteQuery<
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
   >,
   queryClient?: QueryClient,
-): UseSuspenseInfiniteQueryResult<TData, TError> {
+): UseSuspenseInfiniteQueryResult<TData, TError, TPageParam, undefined>
+export function useSuspenseInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: UseSuspenseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam,
+    InfiniteQueryMode
+  >,
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError, TPageParam, InfiniteQueryMode>
+export function useSuspenseInfiniteQuery(
+  options: UseSuspenseInfiniteQueryOptions<any, any, any, any, any>,
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<any, any, any, any> {
   if (process.env.NODE_ENV !== 'production') {
     if ((options.queryFn as any) === skipToken) {
       console.error('skipToken is not allowed for useSuspenseInfiniteQuery')
@@ -151,5 +174,5 @@ export function useSuspenseInfiniteQuery<
     },
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
-  ) as InfiniteQueryObserverSuccessResult<TData, TError>
+  ) as InfiniteQueryObserverSuccessResult<any, any, any, any>
 }

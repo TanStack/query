@@ -6,7 +6,6 @@ import { createInfiniteQueryController } from '../createInfiniteQueryController.
 import type {
   InfiniteData,
   InfiniteQueryObserverResult,
-  QueryObserverResult,
 } from '@tanstack/query-core'
 import type { CreateInfiniteQueryOptions } from '../createInfiniteQueryController.js'
 
@@ -195,7 +194,13 @@ describe('refetch / fetchNextPage / fetchPreviousPage', () => {
     )
 
     expectTypeOf(infiniteQuery.refetch()).toEqualTypeOf<
-      Promise<QueryObserverResult<InfiniteData<number, unknown>, Error>>
+      Promise<
+        InfiniteQueryObserverResult<
+          InfiniteData<number, unknown>,
+          Error,
+          number
+        >
+      >
     >()
   })
 
@@ -213,7 +218,13 @@ describe('refetch / fetchNextPage / fetchPreviousPage', () => {
     )
 
     expectTypeOf(infiniteQuery.fetchNextPage()).toEqualTypeOf<
-      Promise<InfiniteQueryObserverResult<InfiniteData<number, unknown>, Error>>
+      Promise<
+        InfiniteQueryObserverResult<
+          InfiniteData<number, unknown>,
+          Error,
+          number
+        >
+      >
     >()
   })
 
@@ -231,7 +242,13 @@ describe('refetch / fetchNextPage / fetchPreviousPage', () => {
     )
 
     expectTypeOf(infiniteQuery.fetchPreviousPage()).toEqualTypeOf<
-      Promise<InfiniteQueryObserverResult<InfiniteData<number, unknown>, Error>>
+      Promise<
+        InfiniteQueryObserverResult<
+          InfiniteData<number, unknown>,
+          Error,
+          number
+        >
+      >
     >()
   })
 })

@@ -8,6 +8,7 @@ import type {
   DefaultError,
   DefaultedInfiniteQueryObserverOptions,
   InfiniteData,
+  InfiniteQueryMode,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   QueryClient,
@@ -27,12 +28,14 @@ export type CreateInfiniteQueryOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
 > = InfiniteQueryObserverOptions<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
+  TPageParam,
+  TMode
 >
 
 /**
@@ -42,17 +45,34 @@ export type CreateInfiniteQueryOptions<
  * query result. The attached methods delegate to the active infinite query
  * observer.
  */
-export type InfiniteQueryResultAccessor<TData, TError> = ValueAccessor<
-  InfiniteQueryObserverResult<TData, TError>
+export type InfiniteQueryResultAccessor<
+  TData,
+  TError,
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
+> = ValueAccessor<
+  InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
 > & {
   /** Refetches the current infinite query. */
-  refetch: InfiniteQueryObserverResult<TData, TError>['refetch']
+  refetch: InfiniteQueryObserverResult<
+    TData,
+    TError,
+    TPageParam,
+    TMode
+  >['refetch']
   /** Fetches the next page for the current infinite query. */
-  fetchNextPage: InfiniteQueryObserverResult<TData, TError>['fetchNextPage']
+  fetchNextPage: InfiniteQueryObserverResult<
+    TData,
+    TError,
+    TPageParam,
+    TMode
+  >['fetchNextPage']
   /** Fetches the previous page for the current infinite query. */
   fetchPreviousPage: InfiniteQueryObserverResult<
     TData,
-    TError
+    TError,
+    TPageParam,
+    TMode
   >['fetchPreviousPage']
   /** Removes the controller from its Lit host and unsubscribes observers. */
   destroy: () => void
@@ -66,7 +86,9 @@ export type InfiniteQueryResultAccessor<TData, TError> = ValueAccessor<
 function createPendingInfiniteQueryResult<
   TData,
   TError,
->(): InfiniteQueryObserverResult<TData, TError> {
+  TPageParam,
+  TMode extends InfiniteQueryMode | undefined,
+>(): InfiniteQueryObserverResult<TData, TError, TPageParam, TMode> {
   return {
     data: undefined,
     dataUpdatedAt: 0,
@@ -95,22 +117,37 @@ function createPendingInfiniteQueryResult<
     refetch: (() =>
       Promise.reject(
         createMissingQueryClientError(),
-      )) as InfiniteQueryObserverResult<TData, TError>['refetch'],
+      )) as InfiniteQueryObserverResult<
+      TData,
+      TError,
+      TPageParam,
+      TMode
+    >['refetch'],
     fetchNextPage: (() =>
       Promise.reject(
         createMissingQueryClientError(),
-      )) as InfiniteQueryObserverResult<TData, TError>['fetchNextPage'],
+      )) as InfiniteQueryObserverResult<
+      TData,
+      TError,
+      TPageParam,
+      TMode
+    >['fetchNextPage'],
     fetchPreviousPage: (() =>
       Promise.reject(
         createMissingQueryClientError(),
-      )) as InfiniteQueryObserverResult<TData, TError>['fetchPreviousPage'],
+      )) as InfiniteQueryObserverResult<
+      TData,
+      TError,
+      TPageParam,
+      TMode
+    >['fetchPreviousPage'],
     hasNextPage: false,
     hasPreviousPage: false,
     isFetchNextPageError: false,
     isFetchingNextPage: false,
     isFetchPreviousPageError: false,
     isFetchingPreviousPage: false,
-  } as unknown as InfiniteQueryObserverResult<TData, TError>
+  } as unknown as InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
 }
 
 class InfiniteQueryController<
@@ -119,21 +156,32 @@ class InfiniteQueryController<
   TData,
   TQueryKey extends QueryKey,
   TPageParam,
-> extends BaseController<InfiniteQueryObserverResult<TData, TError>> {
+  TMode extends InfiniteQueryMode | undefined,
+> extends BaseController<
+  InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
+> {
   private readonly options: Accessor<
     CreateInfiniteQueryOptions<
       TQueryFnData,
       TError,
       TData,
       TQueryKey,
-      TPageParam
+      TPageParam,
+      TMode
     >
   >
   private observer:
-    | InfiniteQueryObserver<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+    | InfiniteQueryObserver<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam,
+        TMode
+      >
     | undefined
   private readonly resultTracker = new QueryObserverResultTracker<
-    InfiniteQueryObserverResult<TData, TError>
+    InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
   >()
   private unsubscribe: (() => void) | undefined
   private queryClient: QueryClient | undefined
@@ -146,7 +194,8 @@ class InfiniteQueryController<
         TError,
         TData,
         TQueryKey,
-        TPageParam
+        TPageParam,
+        TMode
       >
     >,
     queryClient?: QueryClient,
@@ -208,9 +257,12 @@ class InfiniteQueryController<
     }
   }
 
-  refetch: InfiniteQueryObserverResult<TData, TError>['refetch'] = (
-    ...args
-  ) => {
+  refetch: InfiniteQueryObserverResult<
+    TData,
+    TError,
+    TPageParam,
+    TMode
+  >['refetch'] = (...args) => {
     if (!this.applyOptions() || !this.observer) {
       return Promise.reject(createMissingQueryClientError())
     }
@@ -218,9 +270,12 @@ class InfiniteQueryController<
     return this.observer.refetch(...args)
   }
 
-  fetchNextPage: InfiniteQueryObserverResult<TData, TError>['fetchNextPage'] = (
-    ...args
-  ) => {
+  fetchNextPage: InfiniteQueryObserverResult<
+    TData,
+    TError,
+    TPageParam,
+    TMode
+  >['fetchNextPage'] = (...args) => {
     if (!this.applyOptions() || !this.observer) {
       return Promise.reject(createMissingQueryClientError())
     }
@@ -230,7 +285,9 @@ class InfiniteQueryController<
 
   fetchPreviousPage: InfiniteQueryObserverResult<
     TData,
-    TError
+    TError,
+    TPageParam,
+    TMode
   >['fetchPreviousPage'] = (...args) => {
     if (!this.applyOptions() || !this.observer) {
       return Promise.reject(createMissingQueryClientError())
@@ -239,7 +296,7 @@ class InfiniteQueryController<
     return this.observer.fetchPreviousPage(...args)
   }
 
-  readCurrent(): InfiniteQueryObserverResult<TData, TError> {
+  readCurrent(): InfiniteQueryObserverResult<TData, TError, TPageParam, TMode> {
     if (this.observer) {
       this.assignObserverResult(this.observer.getCurrentResult())
     }
@@ -309,7 +366,7 @@ class InfiniteQueryController<
   }
 
   private assignObserverResult(
-    result: InfiniteQueryObserverResult<TData, TError>,
+    result: InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>,
   ): void {
     const trackedResult = this.resultTracker.update(this.observer, result)
     if (trackedResult) {
@@ -318,7 +375,7 @@ class InfiniteQueryController<
   }
 
   private setObserverResult(
-    result: InfiniteQueryObserverResult<TData, TError>,
+    result: InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>,
   ): void {
     const trackedResult = this.resultTracker.update(this.observer, result)
     if (trackedResult) {
@@ -333,7 +390,8 @@ class InfiniteQueryController<
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    TMode
   > {
     if (!client) {
       throw createMissingQueryClientError()
@@ -346,7 +404,8 @@ class InfiniteQueryController<
       TError,
       TData,
       TQueryKey,
-      TPageParam
+      TPageParam,
+      TMode
     >
     ;(defaulted as { _optimisticResults?: 'optimistic' })._optimisticResults =
       'optimistic'
@@ -412,11 +471,53 @@ export function createInfiniteQueryController<
       TError,
       TData,
       TQueryKey,
-      TPageParam
+      TPageParam,
+      undefined
     >
   >,
   queryClient?: QueryClient,
-): InfiniteQueryResultAccessor<TData, TError> {
+): InfiniteQueryResultAccessor<TData, TError, TPageParam, undefined>
+export function createInfiniteQueryController<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  host: ReactiveControllerHost,
+  options: Accessor<
+    CreateInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      InfiniteQueryMode
+    >
+  >,
+  queryClient?: QueryClient,
+): InfiniteQueryResultAccessor<TData, TError, TPageParam, InfiniteQueryMode>
+export function createInfiniteQueryController<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
+>(
+  host: ReactiveControllerHost,
+  options: Accessor<
+    CreateInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      TMode
+    >
+  >,
+  queryClient?: QueryClient,
+): InfiniteQueryResultAccessor<TData, TError, TPageParam, TMode> {
   const controller = new InfiniteQueryController(host, options, queryClient)
 
   return Object.assign(

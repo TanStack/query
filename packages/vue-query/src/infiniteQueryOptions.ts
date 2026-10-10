@@ -119,9 +119,8 @@ export function infiniteQueryOptions<
   TQueryKey,
   TPageParam,
   undefined
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -144,9 +143,8 @@ export function infiniteQueryOptions<
   TQueryKey,
   TPageParam,
   InfiniteQueryMode
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -170,9 +168,8 @@ export function infiniteQueryOptions<
   TQueryKey,
   TPageParam,
   undefined
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -196,9 +193,8 @@ export function infiniteQueryOptions<
   TQueryKey,
   TPageParam,
   InfiniteQueryMode
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
 export function infiniteQueryOptions<
   TQueryFnData,

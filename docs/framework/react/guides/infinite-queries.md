@@ -119,6 +119,34 @@ To ensure a seamless querying process without conflicts, it's highly recommended
 
 When an infinite query becomes `stale` and needs to be refetched, each group is fetched `sequentially`, starting from the first one. This ensures that even if the underlying data is mutated, we're not using stale cursors and potentially getting duplicates or skipping records. If an infinite query's results are ever removed from the queryCache, the pagination restarts at the initial state with only the initial group being requested.
 
+## How can I choose the page parameter for each fetch?
+
+Set `mode: 'manual'` when you declare the query. The first automatic fetch uses `initialPageParam`. Each call to `fetchNextPage` or `fetchPreviousPage` must then supply a `pageParam` of the same type:
+
+```tsx
+const query = useInfiniteQuery({
+  queryKey: ['projects'],
+  mode: 'manual',
+  initialPageParam: 0,
+  queryFn: async ({ pageParam }) => {
+    const response = await fetch(`/api/projects?cursor=${pageParam}`)
+    return response.json()
+  },
+})
+
+// Append a page with this cursor.
+query.fetchNextPage({ pageParam: 50 })
+
+// Prepend a page with this cursor.
+query.fetchPreviousPage({ pageParam: -10 })
+```
+
+Manual queries do not accept `getNextPageParam` or `getPreviousPageParam`. The `hasNextPage` and `hasPreviousPage` flags are always `false`, so your application must decide when more pages are available. Manual mode also works with `useSuspenseInfiniteQuery` and `infiniteQueryOptions`.
+
+A refetch requests each cached page in order with its saved parameter, including `null` or `undefined` if those are valid values for your page parameter type. With `maxPages`, only the retained pages are refetched. If you fetch a page before the query has any data, that call uses the supplied `pageParam`.
+
+If you omit `mode`, page parameters come from the getters. Passing a page parameter to a fetch method does not change the query to manual mode. Choose one mode for each query key and use it consistently wherever that query is declared. Manual queries do not accept the `pages` option for fetching several pages through `queryClient.infiniteQuery`, because each new page needs its own parameter.
+
 ## What if I want to implement a bi-directional infinite list?
 
 Bi-directional lists can be implemented by using the `getPreviousPageParam`, `fetchPreviousPage`, `hasPreviousPage` and `isFetchingPreviousPage` properties and functions.

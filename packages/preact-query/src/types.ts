@@ -6,6 +6,7 @@ import type {
   DistributiveOmit,
   InfiniteData,
   InfiniteQueryExecuteOptions,
+  InfiniteQueryMode,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
@@ -227,35 +228,54 @@ export type AnyUseInfiniteQueryOptions = UseInfiniteQueryOptions<
  * @template TQueryKey - The type of your `queryKey`.
  * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
  */
-export type UseInfiniteQueryOptions<
+export type UseInfiniteQueryOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
 > = DistributiveOmit<
   InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    TMode
   >,
   'suspense'
 > & {
-  /**
-   * Set this to `false` to unsubscribe this observer from updates to the query cache.
-   * @defaultValue true
-   */
   subscribed?: boolean
 }
 
 /**
- * {@link UseSuspenseInfiniteQueryOptions} with all type parameters set to `any`, useful when the specific types
- * aren't relevant, e.g. when accepting options for any query in a helper function.
+ * The options accepted by `useInfiniteQuery`. Extends {@link InfiniteQueryObserverOptions} from
+ * `@tanstack/query-core` with the `preact-query`-specific `subscribed` option, minus `suspense` (which
+ * `preact-query` derives from which hook you call rather than exposing as an option).
+ * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
+ * the shape of all fetched pages plus their page params.
+ * @template TQueryKey - The type of your `queryKey`.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
  */
-export type AnyUseSuspenseInfiniteQueryOptions =
-  UseSuspenseInfiniteQueryOptions<any, any, any, any, any>
+export type UseInfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
+> = UseInfiniteQueryOptionsBase<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+  TMode
+>
+
 /**
  * The options accepted by `useSuspenseInfiniteQuery`. Same as {@link UseInfiniteQueryOptions}, minus `enabled`,
  * `throwOnError`, and `placeholderData` — Suspense hooks cannot render a "disabled" or "placeholder" state, so
@@ -273,13 +293,20 @@ export type UseSuspenseInfiniteQueryOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
 > = DistributiveOmit<
-  UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
+  UseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam,
+    TMode
+  >,
   'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
 > & {
   /**
-   * `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
-   * must always be provided, unless a default query function has been defined.
+   * The query function for Suspense. Cannot be skipToken.
    */
   queryFn?: Exclude<
     UseInfiniteQueryOptions<
@@ -287,11 +314,18 @@ export type UseSuspenseInfiniteQueryOptions<
       TError,
       TData,
       TQueryKey,
-      TPageParam
+      TPageParam,
+      TMode
     >['queryFn'],
     SkipToken
   >
 }
+
+/**
+ * Suspense infinite query options with all type parameters set to any.
+ */
+export type AnyUseSuspenseInfiniteQueryOptions =
+  UseSuspenseInfiniteQueryOptions<any, any, any, any, any>
 
 /**
  * The result of `useQuery` when `initialData` isn't set — `data` may be `undefined` while the query is
@@ -350,7 +384,9 @@ export type DefinedUseQueryResult<
 export type UseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = InfiniteQueryObserverResult<TData, TError>
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
+> = InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
 
 /**
  * The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined` (unless a
@@ -362,7 +398,9 @@ export type UseInfiniteQueryResult<
 export type DefinedUseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = DefinedInfiniteQueryObserverResult<TData, TError>
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
+> = DefinedInfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
 
 /**
  * The result of `useSuspenseInfiniteQuery`. Same as {@link DefinedUseInfiniteQueryResult}, minus
@@ -373,8 +411,10 @@ export type DefinedUseInfiniteQueryResult<
 export type UseSuspenseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
 > = OmitKeyof<
-  DefinedInfiniteQueryObserverResult<TData, TError>,
+  DefinedInfiniteQueryObserverResult<TData, TError, TPageParam, TMode>,
   'isPlaceholderData'
 >
 
