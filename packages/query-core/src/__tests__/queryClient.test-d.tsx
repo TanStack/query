@@ -157,6 +157,27 @@ describe('queryClient', () => {
       expectTypeOf(data).toEqualTypeOf<number | undefined>()
     })
 
+    it('should narrow a discriminated union when spreading the updater value', () => {
+      type ProbeData =
+        | { kind: 'a'; value: number; requiredA: number }
+        | { kind: 'b'; value: number; requiredB: number }
+      const key = ['probe'] as DataTag<Array<string>, ProbeData>
+      const queryClient = new QueryClient()
+
+      // Regression test for #11795: this call must compile without an
+      // explicit annotation on `prev`
+      queryClient.setQueryData(key, (prev) => {
+        expectTypeOf(prev).toEqualTypeOf<ProbeData | undefined>()
+        if (!prev || prev.kind !== 'a') return prev
+        expectTypeOf(prev).toEqualTypeOf<{
+          kind: 'a'
+          value: number
+          requiredA: number
+        }>()
+        return { ...prev, value: prev.value + 1 }
+      })
+    })
+
     it('should type the value if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
