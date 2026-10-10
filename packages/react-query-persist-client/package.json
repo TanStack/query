@@ -71,6 +71,12 @@
   },
   "peerDependencies": {
     "@tanstack/react-query": "workspace:^",
+    "@types/react": "^18 || ^19",
     "react": "^18 || ^19"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    }
   }
 }
