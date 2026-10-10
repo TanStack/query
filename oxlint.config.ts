@@ -18,9 +18,6 @@ export default defineConfig({
   plugins: ['import', 'typescript', 'unicorn', 'vitest'],
   jsPlugins: [
     { name: 'import-js', specifier: 'eslint-plugin-import-x' },
-    { name: 'jsdoc-js', specifier: 'eslint-plugin-jsdoc' },
-    // Unlike the native rule, also checks `expectTypeOf` calls
-    { name: 'vitest-js', specifier: '@vitest/eslint-plugin' },
     { name: 'cspell', specifier: '@cspell/eslint-plugin' },
     '@stylistic/eslint-plugin',
     // Absolute path so that package configs can extend this config
@@ -234,6 +231,7 @@ export default defineConfig({
         '**/*.test.{ts,tsx}',
         '**/*.test-d.{ts,tsx}',
       ],
+      jsPlugins: [{ name: 'jsdoc-js', specifier: 'eslint-plugin-jsdoc' }],
       rules: {
         ...jsdocRecommendedRules,
         'jsdoc-js/check-tag-names': [
@@ -278,6 +276,10 @@ export default defineConfig({
     },
     {
       files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
+      jsPlugins: [
+        // Unlike the native rule, also checks `expectTypeOf` calls
+        { name: 'vitest-js', specifier: '@vitest/eslint-plugin' },
+      ],
       rules: {
         ...pluginVitest.configs.recommended.rules,
         'vitest/consistent-test-it': [
