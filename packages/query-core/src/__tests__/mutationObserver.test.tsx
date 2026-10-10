@@ -530,4 +530,41 @@ describe('mutationObserver', () => {
 
     unsubscribe()
   })
+
+  it('should not invoke onSettled with the next mutation options when mutate is called inside onSuccess', async () => {
+    // Regression test for https://github.com/TanStack/query/issues/11451
+    // If mutate() is called inside onSuccess, this.#mutateOptions is overwritten
+    // before onSettled fires. Without snapshotting mutateOptions at the start of
+    // #notify(), onSettled would receive the next mutation's callback but the
+    // current mutation's data/variables.
+    const onSettledFirst = vi.fn()
+    const onSettledSecond = vi.fn()
+
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: (value: number) => Promise.resolve(value),
+    })
+
+    const unsubscribe = mutation.subscribe(() => {})
+
+    mutation.mutate(1, {
+      onSuccess: () => {
+        // Trigger a second mutation from inside onSuccess of the first
+        mutation.mutate(2, { onSettled: onSettledSecond })
+      },
+      onSettled: onSettledFirst,
+    })
+
+    // Let both mutations settle
+    await vi.runAllTimersAsync()
+
+    // onSettled for the first mutation must have been called with data=1
+    expect(onSettledFirst).toHaveBeenCalledTimes(1)
+    expect(onSettledFirst).toHaveBeenCalledWith(1, null, 1, undefined, expect.any(Object))
+
+    // onSettled for the second mutation must have been called with data=2
+    expect(onSettledSecond).toHaveBeenCalledTimes(1)
+    expect(onSettledSecond).toHaveBeenCalledWith(2, null, 2, undefined, expect.any(Object))
+
+    unsubscribe()
+  })
 })
