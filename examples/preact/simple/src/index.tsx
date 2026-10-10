@@ -28,7 +28,7 @@ const Example = () => {
 
   if (isPending) return 'Loading...'
 
-  if (error !== null) return 'An error has occurred: ' + error.message
+  if (error !== null) return `An error has occurred: ${error.message}`
 
   return (
     <div>

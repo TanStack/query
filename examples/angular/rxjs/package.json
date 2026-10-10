@@ -6,7 +6,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development"
+    "watch": "ng build --watch --configuration development",
+    "test:eslint": "eslint ./src"
   },
   "dependencies": {
     "@angular/common": "^20.0.0",
@@ -23,6 +24,7 @@
     "@angular/build": "^20.0.0",
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "^20.0.0",
+    "@tanstack/eslint-plugin-query": "^5.104.1",
     "typescript": "5.8.3"
   }
 }
