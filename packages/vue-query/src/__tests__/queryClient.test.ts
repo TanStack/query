@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref, unref } from 'vue-demi'
 import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
 import { QueryClient } from '../queryClient'
+import { QueryCache } from '../queryCache'
+import { MutationCache } from '../mutationCache'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { queryOptions } from '../queryOptions'
 
@@ -42,6 +44,17 @@ describe('QueryCache', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  describe('constructor', () => {
+    it('should use the queryCache and mutationCache passed in the config', () => {
+      const queryCache = new QueryCache()
+      const mutationCache = new MutationCache()
+      const queryClient = new QueryClient({ queryCache, mutationCache })
+
+      expect(queryClient.getQueryCache()).toBe(queryCache)
+      expect(queryClient.getMutationCache()).toBe(mutationCache)
+    })
   })
 
   describe('isFetching', () => {
@@ -88,7 +101,7 @@ describe('QueryCache', () => {
     it('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.ensureQueryData({
         queryKey: queryKeyRef,
         queryFn: fn,
@@ -276,10 +289,31 @@ describe('QueryCache', () => {
 
       expect(invalidateQueries).toHaveBeenCalled()
       expect(refetchQueries).not.toHaveBeenCalled()
+      await vi.advanceTimersByTimeAsync(0)
+      expect(refetchQueries).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref, type: 'active' },
+        {},
+      )
+    })
+
+    it('should pass refetchType as type and the options to refetchQueries', async () => {
+      const refetchQueries = vi.spyOn(
+        QueryClientOrigin.prototype,
+        'refetchQueries',
+      )
+
+      const queryClient = new QueryClient()
+
+      queryClient.invalidateQueries(
+        { queryKey: queryKeyRef, refetchType: 'all', type: 'inactive' },
+        { cancelRefetch: ref(false) },
+      )
 
       await vi.advanceTimersByTimeAsync(0)
-
-      expect(refetchQueries).toHaveBeenCalled()
+      expect(refetchQueries).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref, refetchType: 'all', type: 'all' },
+        { cancelRefetch: false },
+      )
     })
 
     it('should call invalidateQueries immediately and not call refetchQueries', async () => {
@@ -301,9 +335,7 @@ describe('QueryCache', () => {
 
       expect(invalidateQueries).toHaveBeenCalled()
       expect(refetchQueries).not.toHaveBeenCalled()
-
       await vi.advanceTimersByTimeAsync(0)
-
       expect(refetchQueries).not.toHaveBeenCalled()
     })
   })
@@ -332,7 +364,7 @@ describe('QueryCache', () => {
     it('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.fetchQuery({
         queryKey: queryKeyRef,
       })
@@ -392,7 +424,7 @@ describe('QueryCache', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchQuery({ queryKey: queryKeyRef, queryFn: fn })
 
       expect(QueryClientOrigin.prototype.prefetchQuery).toHaveBeenCalledWith({
@@ -406,7 +438,7 @@ describe('QueryCache', () => {
     it('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.fetchInfiniteQuery({
         queryKey: queryKeyRef,
         initialPageParam: 0,
@@ -430,7 +462,7 @@ describe('QueryCache', () => {
         getNextPageParam: () => 12,
       })
 
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.fetchInfiniteQuery(options)
 
       expect(
@@ -500,7 +532,7 @@ describe('QueryCache', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchInfiniteQuery({
         queryKey: queryKeyRef,
         queryFn: fn,

@@ -6,10 +6,10 @@ redirect_from:
 ---
 
 ```ts
-function useMutationState<TResult, TMutation>(options, queryClient?): TResult[];
+function useMutationState<TResult, TMutation>(options?: MutationStateOptions<TResult, TMutation>, queryClient?: QueryClient): TResult[];
 ```
 
-Defined in: [packages/react-query/src/useMutationState.ts:157](https://github.com/TanStack/query/blob/main/packages/react-query/src/useMutationState.ts#L157)
+Defined in: [packages/react-query/src/useMutationState.ts:158](https://github.com/TanStack/query/blob/main/packages/react-query/src/useMutationState.ts#L158)
 
 `useMutationState` is a hook that gives you access to all mutations in the `MutationCache`. You can pass
 `filters` ([MutationFilters](../interfaces/MutationFilters.md)) to narrow down your mutations, and `select` to transform the mutation
@@ -27,7 +27,7 @@ state.
 
 ## Parameters
 
-### options
+### options?
 
 `MutationStateOptions`\<`TResult`, `TMutation`\> = `{}`
 

@@ -25,88 +25,9 @@ also support delays longer than the ~24-day maximum of the global `setTimeout`.
 
 ## Properties
 
-### clearInterval()
-
-```ts
-readonly clearInterval: (intervalId) => void;
-```
-
-Defined in: [packages/query-core/src/timeoutManager.ts:34](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L34)
-
-#### Parameters
-
-##### intervalId
-
-`TTimerId` | `undefined`
-
-#### Returns
-
-`void`
-
-***
-
-### clearTimeout()
-
-```ts
-readonly clearTimeout: (timeoutId) => void;
-```
-
-Defined in: [packages/query-core/src/timeoutManager.ts:31](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L31)
-
-#### Parameters
-
-##### timeoutId
-
-`TTimerId` | `undefined`
-
-#### Returns
-
-`void`
-
-***
-
-### setInterval()
-
-```ts
-readonly setInterval: (callback, delay) => TTimerId;
-```
-
-Defined in: [packages/query-core/src/timeoutManager.ts:33](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L33)
-
-#### Parameters
-
-##### callback
-
-[`TimeoutCallback`](TimeoutCallback.md)
-
-##### delay
-
-`number`
-
-#### Returns
-
-`TTimerId`
-
-***
-
-### setTimeout()
-
-```ts
-readonly setTimeout: (callback, delay) => TTimerId;
-```
-
-Defined in: [packages/query-core/src/timeoutManager.ts:30](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L30)
-
-#### Parameters
-
-##### callback
-
-[`TimeoutCallback`](TimeoutCallback.md)
-
-##### delay
-
-`number`
-
-#### Returns
-
-`TTimerId`
+| Property | Modifier | Type | Description |
+| ------ | ------ | ------ | ------ |
+| <a id="property-clearinterval"></a> `clearInterval` | `readonly` | (`intervalId`: `TTimerId` \| `undefined`) => `void` | Cancels an interval scheduled with `setInterval`. |
+| <a id="property-cleartimeout"></a> `clearTimeout` | `readonly` | (`timeoutId`: `TTimerId` \| `undefined`) => `void` | Cancels a timeout scheduled with `setTimeout`. |
+| <a id="property-setinterval"></a> `setInterval` | `readonly` | (`callback`: [`TimeoutCallback`](TimeoutCallback.md), `delay`: `number`) => `TTimerId` | Schedules `callback` to run every `delay` milliseconds, like the global `setInterval`. |
+| <a id="property-settimeout"></a> `setTimeout` | `readonly` | (`callback`: [`TimeoutCallback`](TimeoutCallback.md), `delay`: `number`) => `TTimerId` | Schedules `callback` to run once after `delay` milliseconds, like the global `setTimeout`. |

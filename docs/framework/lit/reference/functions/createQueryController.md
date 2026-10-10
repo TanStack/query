@@ -5,12 +5,12 @@ title: createQueryController
 
 ```ts
 function createQueryController<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
-   host,
-   options,
-queryClient?): QueryResultAccessor<TData, TError>;
+   host: ReactiveControllerHost,
+   options: Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>>,
+queryClient?: QueryClient): QueryResultAccessor<TData, TError>;
 ```
 
-Defined in: [packages/lit-query/src/createQueryController.ts:355](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L355)
+Defined in: [packages/lit-query/src/createQueryController.ts:348](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L348)
 
 Creates a Lit reactive controller that subscribes the host to a single query.
 
@@ -57,6 +57,12 @@ subscription.
 [`Accessor`](../type-aliases/Accessor.md)\<[`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`\>\>
 
 Query observer options, or a getter that returns options.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md#properties). See the type above for what it changes.
 
 ### queryClient?
 

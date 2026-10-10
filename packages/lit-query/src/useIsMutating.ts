@@ -1,12 +1,8 @@
+import { createValueAccessor, readAccessor } from './accessor.js'
+import { BaseController } from './controllers/BaseController.js'
+import type { Accessor, ValueAccessor } from './accessor.js'
 import type { MutationFilters, QueryClient } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
-import {
-  createValueAccessor,
-  readAccessor,
-  type Accessor,
-  type ValueAccessor,
-} from './accessor.js'
-import { BaseController } from './controllers/BaseController.js'
 
 /**
  * Accessor returned by `useIsMutating`.
@@ -35,7 +31,7 @@ class IsMutatingController extends BaseController<number> {
     this.result = this.computeValue()
   }
 
-  protected onConnected(): void {
+  protected override onConnected(): void {
     if (!this.syncClient()) {
       this.setResult(0)
       return
@@ -45,13 +41,13 @@ class IsMutatingController extends BaseController<number> {
     this.setResult(this.computeValue())
   }
 
-  protected onDisconnected(): void {
+  protected override onDisconnected(): void {
     this.unsubscribe?.()
     this.unsubscribe = undefined
     this.syncClient()
   }
 
-  protected onHostUpdate(): void {
+  protected override onHostUpdate(): void {
     if (typeof this.filters !== 'function') {
       return
     }
@@ -59,7 +55,7 @@ class IsMutatingController extends BaseController<number> {
     this.setResult(this.syncClient() ? this.computeValue() : 0)
   }
 
-  protected onQueryClientChanged(): void {
+  protected override onQueryClientChanged(): void {
     if (!this.syncClient()) {
       this.setResult(0)
       return
@@ -120,14 +116,12 @@ class IsMutatingController extends BaseController<number> {
  * When `filters` is a function, it is re-read during host updates so the count
  * can follow reactive host state. If `queryClient` is omitted, the controller
  * resolves the client from the nearest connected `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the cache
  * subscription.
  * @param filters - Mutation filters, or a getter that returns mutation filters.
  * @param queryClient - Optional explicit query client. Provide this for
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the current number of matching pending mutations.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'

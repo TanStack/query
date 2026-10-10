@@ -19,7 +19,7 @@ import type {
 } from '..'
 
 class CustomError extends Error {
-  name = 'CustomError' as const
+  override name = 'CustomError' as const
 }
 
 type Variables = { title: string }

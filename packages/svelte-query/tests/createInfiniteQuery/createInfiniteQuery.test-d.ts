@@ -6,7 +6,7 @@ import type { InfiniteData } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
   describe('pageParam', () => {
-    it('initialPageParam should define type of param passed to queryFunctionContext', () => {
+    it('should define type of param passed to queryFunctionContext with initialPageParam', () => {
       createInfiniteQuery(() => ({
         queryKey: queryKey(),
         queryFn: ({ pageParam }) => {
@@ -17,7 +17,7 @@ describe('createInfiniteQuery', () => {
       }))
     })
 
-    it('direction should be passed to queryFn of createInfiniteQuery', () => {
+    it('should pass direction to queryFn of createInfiniteQuery', () => {
       createInfiniteQuery(() => ({
         queryKey: queryKey(),
         queryFn: ({ direction }) => {
@@ -28,9 +28,9 @@ describe('createInfiniteQuery', () => {
       }))
     })
 
-    it('initialPageParam should define type of param passed to queryFunctionContext for fetchInfiniteQuery', () => {
+    it('should define type of param passed to queryFunctionContext with initialPageParam for fetchInfiniteQuery', () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.fetchInfiniteQuery({
         queryKey: queryKey(),
         queryFn: ({ pageParam }) => {
@@ -40,9 +40,9 @@ describe('createInfiniteQuery', () => {
       })
     })
 
-    it('initialPageParam should define type of param passed to queryFunctionContext for prefetchInfiniteQuery', () => {
+    it('should define type of param passed to queryFunctionContext with initialPageParam for prefetchInfiniteQuery', () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchInfiniteQuery({
         queryKey: queryKey(),
         queryFn: ({ pageParam }) => {
@@ -54,7 +54,7 @@ describe('createInfiniteQuery', () => {
   })
 
   describe('initialData', () => {
-    it('TData should always be defined when initialData is provided', () => {
+    it('should always define TData when initialData is provided', () => {
       const { data } = createInfiniteQuery(() => ({
         queryKey: queryKey(),
         queryFn: ({ pageParam }) => {
@@ -69,7 +69,7 @@ describe('createInfiniteQuery', () => {
       expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
     })
 
-    it('TData should always be defined when initialData is provided through infiniteQueryOptions', () => {
+    it('should always define TData when initialData is provided through infiniteQueryOptions', () => {
       const options = infiniteQueryOptions({
         queryKey: queryKey(),
         queryFn: ({ pageParam }: { pageParam: number }) => {
@@ -85,7 +85,7 @@ describe('createInfiniteQuery', () => {
       expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
     })
 
-    it('TData should have undefined in the union when initialData is NOT provided', () => {
+    it('should have undefined in the TData union when initialData is NOT provided', () => {
       const { data } = createInfiniteQuery(() => ({
         queryKey: queryKey(),
         queryFn: ({ pageParam }) => {

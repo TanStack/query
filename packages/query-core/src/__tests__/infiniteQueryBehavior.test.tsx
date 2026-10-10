@@ -37,7 +37,6 @@ describe('InfiniteQueryBehavior', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-
     await vi.advanceTimersByTimeAsync(0)
     const query = queryCache.find({ queryKey: key })!
     expect(observerResult).toMatchObject({
@@ -94,7 +93,6 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the second page
     await observer.fetchNextPage()
-
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
       client: queryClient,
@@ -113,7 +111,6 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the page before the first page
     await observer.fetchPreviousPage()
-
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
       client: queryClient,
@@ -133,7 +130,6 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the page before
     await observer.fetchPreviousPage()
-
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
       client: queryClient,
@@ -152,7 +148,6 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the page after
     await observer.fetchNextPage()
-
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
       client: queryClient,
@@ -284,7 +279,6 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the second page
     await observer.fetchNextPage()
-
     expect(observerResult).toMatchObject({
       isFetching: false,
       data: { pages: [1, 2], pageParams: [1, 2] },
@@ -317,9 +311,7 @@ describe('InfiniteQueryBehavior', () => {
     // Cancel the query
     const query = observer.getCurrentQuery()
     await query.cancel()
-
     vi.advanceTimersByTime(10)
-
     expect(observerResult).toMatchObject({
       isFetching: false,
       isError: true,
@@ -464,7 +456,6 @@ describe('InfiniteQueryBehavior', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-
     await vi.advanceTimersByTimeAsync(0)
     expect(observerResult).toMatchObject({
       isFetching: false,
@@ -491,7 +482,6 @@ describe('InfiniteQueryBehavior', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-
     await vi.advanceTimersByTimeAsync(0)
     expect(observerResult).toMatchObject({
       isFetching: false,
@@ -499,7 +489,6 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     await observer.fetchNextPage()
-
     expect(observerResult).toMatchObject({
       isFetching: false,
       data: { pages: [1], pageParams: [1] },
@@ -524,7 +513,6 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     const unsubscribe = observer.subscribe(() => {})
-
     await vi.advanceTimersByTimeAsync(0)
     expect(persisterSpy).toHaveBeenCalledTimes(1)
 

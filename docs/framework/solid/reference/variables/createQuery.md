@@ -5,8 +5,8 @@ title: createQuery
 
 ```ts
 const createQuery: {
-<TQueryFnData, TError, TData, TQueryKey>  (options, queryClient?): UseQueryResult<TData, TError>;
-<TQueryFnData, TError, TData, TQueryKey>  (options, queryClient?): DefinedUseQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey>  (options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey>  (options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): DefinedUseQueryResult<TData, TError>;
 } = useQuery;
 ```
 
@@ -15,8 +15,11 @@ Defined in: [packages/solid-query/src/index.ts:57](https://github.com/TanStack/q
 ## Call Signature
 
 ```ts
-<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
 ```
+
+Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+The query runs when the options call for it — `enabled: false` skips the initial fetch.
 
 ### Type Parameters
 
@@ -161,7 +164,9 @@ function Post(props: { postId: number | undefined }) {
 }
 ```
 
-Seeding a detail query from an already-cached list, to skip the loading state:
+Seeding a detail query from an already-cached list, to skip the loading state. `initialDataUpdatedAt` carries
+over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
+fetched rather than from now:
 ```tsx
 import { useQuery, useQueryClient } from '@tanstack/solid-query'
 
@@ -175,6 +180,8 @@ function Post(props: { postId: number }) {
       queryClient
         .getQueryData<Array<Post>>(['posts'])
         ?.find((post) => post.id === props.postId),
+    initialDataUpdatedAt: () =>
+      queryClient.getQueryState(['posts'])?.dataUpdatedAt,
   }))
 
   return postQuery.isError ? <span>Error: {postQuery.error.message}</span> : <h1>{postQuery.data?.title}</h1>
@@ -214,10 +221,14 @@ function Posts() {
 ## Call Signature
 
 ```ts
-<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): DefinedUseQueryResult<TData, TError>;
 ```
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+The query runs when the options call for it — `enabled: false` skips the initial fetch.
+
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 

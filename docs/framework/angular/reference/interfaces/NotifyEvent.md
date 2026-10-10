@@ -3,14 +3,12 @@ id: NotifyEvent
 title: NotifyEvent
 ---
 
-Defined in: [packages/query-core/src/types.ts:1539](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1539)
+Defined in: [packages/query-core/src/types.ts:2434](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2434)
+
+The base shape of the events that the query and mutation caches send to their listeners.
 
 ## Properties
 
-### type
-
-```ts
-type: NotifyEventType;
-```
-
-Defined in: [packages/query-core/src/types.ts:1540](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1540)
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-type"></a> `type` | \| `"added"` \| `"removed"` \| `"updated"` \| `"observerAdded"` \| `"observerRemoved"` \| `"observerResultsUpdated"` \| `"observerOptionsUpdated"` | The kind of event, e.g. `'added'`, `'removed'`, or `'updated'`. |

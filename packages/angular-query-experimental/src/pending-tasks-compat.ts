@@ -4,6 +4,10 @@ import { noop } from '@tanstack/query-core'
 
 type PendingTasksCompat = { add: () => PendingTaskRef }
 
+/**
+ * Removes a pending task registered with Angular's `PendingTasks`, so the app can become stable
+ * again. Without `PendingTasks` (Angular < 19), it does nothing.
+ */
 export type PendingTaskRef = () => void
 
 export const PENDING_TASKS = new InjectionToken<PendingTasksCompat>(

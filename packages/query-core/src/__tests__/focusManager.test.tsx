@@ -53,7 +53,7 @@ describe('focusManager', () => {
     globalThis.document = document
   })
 
-  it('cleanup (removeEventListener) should not be called if window is not defined', () => {
+  it('should not call cleanup (removeEventListener) if window is not defined', () => {
     const windowSpy = vi.spyOn(globalThis, 'window', 'get')
     windowSpy.mockImplementation(
       () => undefined as unknown as Window & typeof globalThis,
@@ -76,7 +76,7 @@ describe('focusManager', () => {
     windowSpy.mockRestore()
   })
 
-  it('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', () => {
+  it('should not call cleanup (removeEventListener) if window.addEventListener is not defined', () => {
     const { addEventListener } = globalThis.window
 
     // @ts-expect-error
@@ -87,7 +87,6 @@ describe('focusManager', () => {
     const unsubscribe = focusManager.subscribe(() => undefined)
 
     unsubscribe()
-
     expect(removeEventListenerSpy).not.toHaveBeenCalled()
 
     globalThis.window.addEventListener = addEventListener
@@ -127,6 +126,7 @@ describe('focusManager', () => {
 
     unsubscribe1()
     expect(removeEventListenerSpy).toHaveBeenCalledTimes(0)
+
     unsubscribe2()
     expect(removeEventListenerSpy).toHaveBeenCalledTimes(1) // visibilitychange event
   })
@@ -137,13 +137,11 @@ describe('focusManager', () => {
     focusManager.setEventListener(setupSpy)
 
     const unsubscribe1 = focusManager.subscribe(() => undefined)
-
     expect(setupSpy).toHaveBeenCalledTimes(1)
 
     unsubscribe1()
 
     const unsubscribe2 = focusManager.subscribe(() => undefined)
-
     expect(setupSpy).toHaveBeenCalledTimes(2)
 
     unsubscribe2()
@@ -156,19 +154,16 @@ describe('focusManager', () => {
 
     focusManager.setFocused(true)
     focusManager.setFocused(true)
-
     expect(listener).toHaveBeenCalledTimes(1)
     expect(listener).toHaveBeenNthCalledWith(1, true)
 
     focusManager.setFocused(false)
     focusManager.setFocused(false)
-
     expect(listener).toHaveBeenCalledTimes(2)
     expect(listener).toHaveBeenNthCalledWith(2, false)
 
     focusManager.setFocused(undefined)
     focusManager.setFocused(undefined)
-
     expect(listener).toHaveBeenCalledTimes(3)
     expect(listener).toHaveBeenNthCalledWith(3, true)
   })

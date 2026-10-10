@@ -55,7 +55,7 @@ describe('fine grained persister', () => {
     )
 
     function Test() {
-      const [_, setRef] = React.useState<HTMLDivElement | null>()
+      const [_ref, setRef] = React.useState<HTMLDivElement | null>()
 
       const { data } = useQuery({
         queryKey: key,
@@ -108,7 +108,7 @@ describe('fine grained persister', () => {
     )
 
     function Test() {
-      const [_, setRef] = React.useState<HTMLDivElement | null>()
+      const [_ref, setRef] = React.useState<HTMLDivElement | null>()
 
       const { data } = useQuery({
         queryKey: key,
@@ -149,7 +149,7 @@ describe('fine grained persister', () => {
     }
 
     function Test() {
-      const [_, setRef] = React.useState<HTMLDivElement | null>()
+      const [_ref, setRef] = React.useState<HTMLDivElement | null>()
 
       const { data } = useQuery({
         queryKey: key,

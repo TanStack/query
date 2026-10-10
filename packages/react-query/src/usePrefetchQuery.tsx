@@ -13,12 +13,9 @@ import type { UsePrefetchQueryOptions } from './types'
  * The prefetch is skipped if the query already has any cached state — including a `pending`/`error` state left
  * over from a previous attempt — so calling this on every render is cheap and won't refetch data that's
  * already there or already in flight.
- *
  * @param options - The {@link UsePrefetchQueryOptions} to use — everything you can pass to `queryClient.query`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns `void` — nothing is returned.
- *
  * @example
  * ```tsx
  * import { Suspense } from 'react'

@@ -5,16 +5,19 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^5.103.1",
-    "@tanstack/solid-query-devtools": "^5.103.1",
-    "solid-js": "^1.9.7"
+    "@tanstack/solid-query": "^5.104.1",
+    "@tanstack/solid-query-devtools": "^5.104.1",
+    "solid-js": "^1.9.15"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.104.1",
+    "eslint-plugin-solid": "^0.18.1",
     "typescript": "5.8.3",
-    "vite": "^6.4.1",
-    "vite-plugin-solid": "^2.11.6"
+    "vite": "^8.3.1",
+    "vite-plugin-solid": "^2.11.14"
   }
 }

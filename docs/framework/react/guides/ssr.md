@@ -38,7 +38,7 @@ With a client rendered application, these are the minimum 3 server roundtrips yo
 
 As soon as **1.** is complete, the user can see the content and when **2.** finishes, the page is interactive and clickable. Because the markup also contains the initial data we need, step **3.** does not need to run on the client at all, at least until you want to revalidate the data for some reason.
 
-This is all from the clients perspective. On the server, we need to **prefetch** that data before we generate/render the markup, we need to **dehydrate** that data into a serializable format we can embed in the markup, and on the client we need to **hydrate** that data into a React Query cache so we can avoid doing a new fetch on the client.
+This is all from the client's perspective. On the server, we need to **prefetch** that data before we generate/render the markup, we need to **dehydrate** that data into a serializable format we can embed in the markup, and on the client we need to **hydrate** that data into a React Query cache so we can avoid doing a new fetch on the client.
 
 Read on to learn how to implement these three steps with React Query.
 
@@ -50,7 +50,7 @@ If you do forget to prefetch a query when you are using `useSuspenseQuery`, the 
 
 ## Initial setup
 
-The first steps of using React Query is always to create a `queryClient` and wrap the application in a `<QueryClientProvider>`. When doing server rendering, it's important to create the `queryClient` instance **inside of your app**, in React state (an instance ref works fine too). **This ensures that data is not shared between different users and requests**, while still only creating the `queryClient` once per component lifecycle.
+The first steps of using React Query are always to create a `queryClient` and wrap the application in a `<QueryClientProvider>`. When doing server rendering, it's important to create the `queryClient` instance **inside of your app**, in React state (an instance ref works fine too). **This ensures that data is not shared between different users and requests**, while still only creating the `queryClient` once per component lifecycle.
 
 Next.js pages router:
 
@@ -176,7 +176,7 @@ With just a little more setup, you can use a `queryClient` to prefetch queries d
 - In the framework loader function, create a `const queryClient = new QueryClient(options)`
 - In the loader function, do `await queryClient.query(...)` for each query you want to prefetch
   - You want to use `await Promise.all(...)` to fetch the queries in parallel when possible
-  - It's fine to have queries that aren't prefetched. These wont be server rendered, instead they will be fetched on the client after the application is interactive. This can be great for content that are shown only after user interaction, or is far down on the page to avoid blocking more critical content.
+  - It's fine to have queries that aren't prefetched. These won't be server rendered, instead they will be fetched on the client after the application is interactive. This can be great for content that is shown only after user interaction, or is far down on the page to avoid blocking more critical content.
 - From the loader, return `dehydrate(queryClient)`, note that the exact syntax to return this differs between frameworks
 - Wrap your tree with `<HydrationBoundary state={dehydratedState}>` where `dehydratedState` comes from the framework loader. How you get `dehydratedState` also differs between frameworks.
   - This can be done for each route, or at the top of the application to avoid boilerplate, see examples
@@ -224,6 +224,7 @@ In each route:
 import {
   dehydrate,
   HydrationBoundary,
+  noop,
   QueryClient,
   useQuery,
 } from '@tanstack/react-query'
@@ -309,6 +310,7 @@ import { json } from '@remix-run/node'
 import {
   dehydrate,
   HydrationBoundary,
+  noop,
   QueryClient,
   useQuery,
 } from '@tanstack/react-query'
@@ -432,9 +434,9 @@ export async function getServerSideProps() {
     queryFn: getUserByEmail,
   })
 
-  if (user?.userId) {
+  if (user?.id) {
     await queryClient.query({
-      queryKey: ['projects', userId],
+      queryKey: ['projects', user.id],
       queryFn: getProjectsByUser,
     })
   }
@@ -492,7 +494,7 @@ If you are using a custom SSR setup, you need to take care of this step yourself
 
 ## A note about request waterfalls
 
-In the [Performance & Request Waterfalls guide](./request-waterfalls.md) we mentioned we would revisit how server rendering changes one of the more complex nested waterfalls. Check back for the [specific code example](./request-waterfalls#code-splitting), but as a refresher, we have a code split `<GraphFeedItem>` component inside a `<Feed>` component. This only renders if the feed contains a graph item and both of these components fetches their own data. With client rendering, this leads to the following request waterfall:
+In the [Performance & Request Waterfalls guide](./request-waterfalls.md) we mentioned we would revisit how server rendering changes one of the more complex nested waterfalls. Check back for the [specific code example](./request-waterfalls.md#code-splitting), but as a refresher, we have a code split `<GraphFeedItem>` component inside a `<Feed>` component. This only renders if the feed contains a graph item and both of these components fetch their own data. With client rendering, this leads to the following request waterfall:
 
 ```
 1. |> Markup (without content)

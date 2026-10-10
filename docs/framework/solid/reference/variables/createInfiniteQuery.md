@@ -5,8 +5,8 @@ title: createInfiniteQuery
 
 ```ts
 const createInfiniteQuery: {
-<TQueryFnData, TError, TData, TQueryKey, TPageParam>  (options, queryClient?): DefinedUseInfiniteQueryResult<TData, TError>;
-<TQueryFnData, TError, TData, TQueryKey, TPageParam>  (options, queryClient?): UseInfiniteQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey, TPageParam>  (options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: Accessor<QueryClient>): DefinedUseInfiniteQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey, TPageParam>  (options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: Accessor<QueryClient>): UseInfiniteQueryResult<TData, TError>;
 } = useInfiniteQuery;
 ```
 
@@ -15,7 +15,7 @@ Defined in: [packages/solid-query/src/index.ts:72](https://github.com/TanStack/q
 ## Call Signature
 
 ```ts
-<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): DefinedUseInfiniteQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: Accessor<QueryClient>): DefinedUseInfiniteQueryResult<TData, TError>;
 ```
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
@@ -113,7 +113,7 @@ function Projects() {
 ## Call Signature
 
 ```ts
-<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: Accessor<QueryClient>): UseInfiniteQueryResult<TData, TError>;
 ```
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
