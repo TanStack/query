@@ -60,7 +60,7 @@
     },
     "test:eslint": {
       "cache": true,
-      "dependsOn": ["^compile"],
+      "dependsOn": ["^build"],
       "inputs": ["default", "^production"]
     },
     "test:oxlint": {

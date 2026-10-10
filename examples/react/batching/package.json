@@ -23,14 +23,5 @@
     "@vitejs/plugin-react": "^6.1.1",
     "typescript": "5.8.3",
     "vite": "^8.3.1"
-  },
-  "nx": {
-    "targets": {
-      "test:eslint": {
-        "dependsOn": [
-          "^build"
-        ]
-      }
-    }
   }
 }
