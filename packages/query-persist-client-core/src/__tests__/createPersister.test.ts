@@ -796,6 +796,36 @@ describe('createPersister', () => {
   })
 
   describe('removeQueries', () => {
+    describe.each([false, true])('with exact: %s', (exact) => {
+      it.each(['null', '{}', '{"state":null}', '42', '{"state":42}'])(
+        'should remove malformed entry %s and continue removing matching queries',
+        async (value) => {
+          const storage = getFreshStorage()
+          const { persister, client, queryKey, storageKey } = setupPersister(
+            ['foo'],
+            { storage },
+          )
+          const malformedKey = `${PERSISTER_KEY_PREFIX}-["malformed"]`
+          const unrelatedKey = `${PERSISTER_KEY_PREFIX}-["bar"]`
+
+          await storage.setItem(malformedKey, value)
+          client.setQueryData(queryKey, null)
+          await persister.persistQueryByKey(queryKey, client)
+          client.setQueryData(['bar'], null)
+          await persister.persistQueryByKey(['bar'], client)
+          const unrelatedData = await storage.getItem(unrelatedKey)
+
+          await persister.removeQueries({ queryKey, exact })
+
+          expect(await storage.getItem(malformedKey)).toBeUndefined()
+          expect(await storage.getItem(storageKey)).toBeUndefined()
+          expect(await storage.entries()).toEqual([
+            [unrelatedKey, unrelatedData],
+          ])
+        },
+      )
+    })
+
     it('should remove restore queries from storage without filters', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo'], {

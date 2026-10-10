@@ -2,4 +2,4 @@
 "@tanstack/query-persist-client-core": patch
 ---
 
-Remove persisted entries with missing or null state without interrupting restoreQueries or persisterGc.
+Remove malformed persisted entries during retrieval, restoration, garbage collection, and filtered removal without interrupting subsequent queries.
