@@ -81,20 +81,21 @@ export function ReactQueryDevtools(
     theme,
   } = props
   const [devtools] = React.useState(
-    new TanstackQueryDevtools({
-      client: queryClient,
-      queryFlavor: 'React Query',
-      version: '5',
-      onlineManager,
-      buttonPosition,
-      position,
-      initialIsOpen,
-      errorTypes,
-      styleNonce,
-      shadowDOMTarget,
-      hideDisabledQueries,
-      theme,
-    }),
+    () =>
+      new TanstackQueryDevtools({
+        client: queryClient,
+        queryFlavor: 'React Query',
+        version: '5',
+        onlineManager,
+        buttonPosition,
+        position,
+        initialIsOpen,
+        errorTypes,
+        styleNonce,
+        shadowDOMTarget,
+        hideDisabledQueries,
+        theme,
+      }),
   )
 
   React.useEffect(() => {
