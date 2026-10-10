@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render, renderHook } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -30,6 +30,51 @@ describe('useMutation', () => {
     queryClient.clear()
     vi.useRealTimers()
   })
+
+  it.each([false, true])(
+    'should resume queued mutations after a scope prop changes (StrictMode: %s)',
+    async (strict) => {
+      const calls: Array<string> = []
+      const mutationFn = (value: string) => {
+        calls.push(value)
+        return value === 'first'
+          ? sleep(10).then(() => value)
+          : Promise.resolve(value)
+      }
+      const view = renderHook(
+        ({ scope }) => ({
+          running: useMutation(
+            { scope: { id: scope }, mutationFn },
+            queryClient,
+          ),
+          queued: useMutation(
+            { scope: { id: 'original' }, mutationFn },
+            queryClient,
+          ),
+        }),
+        {
+          initialProps: { scope: 'original' },
+          wrapper: strict ? React.StrictMode : undefined,
+        },
+      )
+      let first: Promise<string> | undefined
+      let second: Promise<string> | undefined
+      await act(async () => {
+        first = view.result.current.running.mutateAsync('first')
+        second = view.result.current.queued.mutateAsync('second')
+        await vi.advanceTimersByTimeAsync(0)
+      })
+      expect(calls).toEqual(['first'])
+      view.rerender({ scope: 'changed' })
+      await act(() => vi.advanceTimersByTimeAsync(11))
+
+      expect(calls).toEqual(['first', 'second'])
+      expect(view.result.current.queued.isPaused).toBe(false)
+      await first
+      await second
+      view.unmount()
+    },
+  )
 
   it('should be able to reset `data`', async () => {
     function Page() {
