@@ -26,7 +26,6 @@ describe('fine grained persister', () => {
 
   it('should restore query state from persister and not refetch', async () => {
     const key = queryKey()
-    const hash = hashKey(key)
     const spy = vi.fn(() => Promise.resolve('Works from queryFn'))
 
     const mapStorage = new Map()
@@ -42,18 +41,12 @@ describe('fine grained persister', () => {
       },
     }
 
-    await storage.setItem(
-      `${PERSISTER_KEY_PREFIX}-${hash}`,
-      JSON.stringify({
-        buster: '',
-        queryHash: hash,
-        queryKey: key,
-        state: {
-          dataUpdatedAt: Date.now(),
-          data: 'Works from persister',
-        },
-      }),
+    queryClient.setQueryData(key, 'Works from persister')
+    await experimental_createQueryPersister({ storage }).persistQueryByKey(
+      key,
+      queryClient,
     )
+    queryClient.clear()
 
     function Test() {
       const [_ref, setRef] = useState<HTMLDivElement | null>()
@@ -79,7 +72,6 @@ describe('fine grained persister', () => {
 
   it('should restore query state from persister and refetch', async () => {
     const key = queryKey()
-    const hash = hashKey(key)
     const spy = vi.fn(() => sleep(5).then(() => 'Works from queryFn'))
 
     const mapStorage = new Map()
@@ -95,18 +87,12 @@ describe('fine grained persister', () => {
       },
     }
 
-    await storage.setItem(
-      `${PERSISTER_KEY_PREFIX}-${hash}`,
-      JSON.stringify({
-        buster: '',
-        queryHash: hash,
-        queryKey: key,
-        state: {
-          dataUpdatedAt: Date.now(),
-          data: 'Works from persister',
-        },
-      }),
+    queryClient.setQueryData(key, 'Works from persister')
+    await experimental_createQueryPersister({ storage }).persistQueryByKey(
+      key,
+      queryClient,
     )
+    queryClient.clear()
 
     function Test() {
       const [_ref, setRef] = useState<HTMLDivElement | null>()

@@ -2,4 +2,4 @@
 "@tanstack/query-persist-client-core": patch
 ---
 
-Remove malformed persisted entries during retrieval, restoration, garbage collection, and filtered removal without interrupting subsequent queries.
+Validate persisted query keys, hashes, busters, data, and timestamps before retrieval, restoration, garbage collection, or filtered removal. Remove malformed entries without interrupting subsequent queries, while preserving valid `null` data.

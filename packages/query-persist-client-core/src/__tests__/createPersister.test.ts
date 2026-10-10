@@ -4,8 +4,15 @@ import {
   PERSISTER_KEY_PREFIX,
   experimental_createQueryPersister,
 } from '../createPersister'
-import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
-import type { StoragePersisterOptions } from '../createPersister'
+import type {
+  QueryFunctionContext,
+  QueryKey,
+  QueryState,
+} from '@tanstack/query-core'
+import type {
+  PersistedQuery,
+  StoragePersisterOptions,
+} from '../createPersister'
 
 function getFreshStorage() {
   const storage = new Map()
@@ -60,6 +67,48 @@ function setupPersister(
     queryKey,
     storageKey,
   }
+}
+
+function createPersistedQuery(state: Partial<QueryState> = {}): PersistedQuery {
+  const { query, queryKey, queryHash } = setupPersister(['foo'], {
+    storage: undefined,
+  })
+
+  return {
+    buster: '',
+    queryKey,
+    queryHash,
+    state: {
+      ...query.state,
+      data: 'cached',
+      dataUpdatedAt: Date.now(),
+      ...state,
+    },
+  }
+}
+
+function getMalformedEntries() {
+  const persistedQuery = createPersistedQuery()
+  const values: Array<unknown> = [
+    null,
+    {},
+    42,
+    { state: null },
+    { state: 42 },
+    { ...persistedQuery, buster: 42 },
+    { ...persistedQuery, queryHash: undefined },
+    { ...persistedQuery, queryKey: 'foo' },
+    ...[
+      { data: undefined },
+      { dataUpdatedAt: {} },
+      { errorUpdatedAt: 'invalid' },
+    ].map((state) => ({
+      ...persistedQuery,
+      state: { ...persistedQuery.state, ...state },
+    })),
+  ]
+
+  return values.map((value) => JSON.stringify(value))
 }
 
 describe('createPersister', () => {
@@ -155,10 +204,7 @@ describe('createPersister', () => {
 
     await storage.setItem(
       storageKey,
-      JSON.stringify({
-        buster: '',
-        state: { dataUpdatedAt: undefined },
-      }),
+      JSON.stringify(createPersistedQuery({ dataUpdatedAt: undefined })),
     )
 
     await persister.persisterFn(queryFn, context, query)
@@ -179,10 +225,7 @@ describe('createPersister', () => {
 
     await storage.setItem(
       storageKey,
-      JSON.stringify({
-        buster: '',
-        state: { dataUpdatedAt: Date.now() - 200 },
-      }),
+      JSON.stringify(createPersistedQuery({ dataUpdatedAt: Date.now() - 200 })),
     )
 
     await persister.persisterFn(queryFn, context, query)
@@ -203,8 +246,8 @@ describe('createPersister', () => {
     await storage.setItem(
       storageKey,
       JSON.stringify({
+        ...createPersistedQuery(),
         buster: 'bust',
-        state: { dataUpdatedAt: Date.now() },
       }),
     )
 
@@ -227,10 +270,7 @@ describe('createPersister', () => {
 
     await storage.setItem(
       storageKey,
-      JSON.stringify({
-        buster: '',
-        state: { dataUpdatedAt, data: '' },
-      }),
+      JSON.stringify(createPersistedQuery({ dataUpdatedAt, data: '' })),
     )
 
     await persister.persisterFn(queryFn, context, query)
@@ -255,10 +295,7 @@ describe('createPersister', () => {
 
     await storage.setItem(
       storageKey,
-      JSON.stringify({
-        buster: '',
-        state: { dataUpdatedAt: Date.now(), data: '' },
-      }),
+      JSON.stringify(createPersistedQuery({ data: '' })),
     )
 
     await persister.persisterFn(queryFn, context, query)
@@ -282,10 +319,9 @@ describe('createPersister', () => {
 
     await storage.setItem(
       storageKey,
-      JSON.stringify({
-        buster: '',
-        state: { dataUpdatedAt: Date.now() + 1000, data: '' },
-      }),
+      JSON.stringify(
+        createPersistedQuery({ dataUpdatedAt: Date.now() + 1000, data: '' }),
+      ),
     )
 
     await persister.persisterFn(queryFn, context, query)
@@ -309,10 +345,7 @@ describe('createPersister', () => {
 
     await storage.setItem(
       storageKey,
-      JSON.stringify({
-        buster: '',
-        state: { dataUpdatedAt: Date.now(), data: '' },
-      }),
+      JSON.stringify(createPersistedQuery({ data: '' })),
     )
 
     await persister.persisterFn(queryFn, context, query)
@@ -371,10 +404,7 @@ describe('createPersister', () => {
 
     await storage.setItem(
       storageKey,
-      JSON.stringify({
-        buster: '',
-        state: { dataUpdatedAt },
-      }),
+      JSON.stringify(createPersistedQuery({ dataUpdatedAt })),
     )
 
     await persister.persisterFn(queryFn, context, query)
@@ -398,10 +428,7 @@ describe('createPersister', () => {
 
     await storage.setItem(
       storageKey,
-      JSON.stringify({
-        buster: '',
-        state: { dataUpdatedAt: Date.now(), data: '' },
-      }),
+      JSON.stringify(createPersistedQuery({ data: '' })),
     )
 
     await persister.persisterFn(queryFn, context, query)
@@ -528,7 +555,7 @@ describe('createPersister', () => {
   })
 
   describe('retrieveQuery', () => {
-    it.each(['null', '{}', '{"state":null}'])(
+    it.each(getMalformedEntries())(
       'should remove malformed entry %s without restoring it',
       async (value) => {
         const storage = getFreshStorage()
@@ -541,6 +568,34 @@ describe('createPersister', () => {
         const restoredData = await persister.retrieveQuery(queryHash)
         expect(restoredData).toBeUndefined()
         expect(await storage.getItem(storageKey)).toBeUndefined()
+      },
+    )
+
+    describe.each(['dataUpdatedAt', 'errorUpdatedAt'])(
+      'with non-finite %s from a custom deserializer',
+      (field) => {
+        it.each([NaN, Infinity, -Infinity])(
+          'should remove the entry with %s without scheduling restoration',
+          async (value) => {
+            const storage = getFreshStorage()
+            const { persister, queryHash, storageKey } = setupPersister(
+              ['foo'],
+              {
+                storage,
+                deserialize: () => createPersistedQuery({ [field]: value }),
+              },
+            )
+            const afterRestore = vi.fn()
+            await storage.setItem(storageKey, 'stored')
+
+            expect(
+              await persister.retrieveQuery(queryHash, afterRestore),
+            ).toBeUndefined()
+            expect(await storage.getItem(storageKey)).toBeUndefined()
+            await vi.advanceTimersByTimeAsync(0)
+            expect(afterRestore).not.toHaveBeenCalled()
+          },
+        )
       },
     )
 
@@ -608,7 +663,7 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(1)
     })
 
-    it.each(['null', '{}', '{"state":null}'])(
+    it.each(getMalformedEntries())(
       'should remove malformed entry %s and continue garbage collection',
       async (value) => {
         const storage = getFreshStorage()
@@ -635,6 +690,26 @@ describe('createPersister', () => {
   })
 
   describe('restoreQueries', () => {
+    it.each([null, false, 0, '', [], { nested: null }])(
+      'should preserve valid data %j during retrieval, restoration, and garbage collection',
+      async (data) => {
+        const storage = getFreshStorage()
+        const { persister, client, queryKey, queryHash, storageKey } =
+          setupPersister(['foo'], { storage })
+        client.setQueryData(queryKey, data)
+        await persister.persistQueryByKey(queryKey, client)
+        const storedData = await storage.getItem(storageKey)
+        client.clear()
+
+        expect(await persister.retrieveQuery(queryHash)).toEqual(data)
+        await persister.restoreQueries(client)
+        expect(client.getQueryCache().getAll()).toHaveLength(1)
+        expect(client.getQueryData(queryKey)).toEqual(data)
+        await persister.persisterGc()
+        expect(await storage.getItem(storageKey)).toBe(storedData)
+      },
+    )
+
     it('should properly clean storage from busted entries', async () => {
       const storage = getFreshStorage()
       const { persister, client, query, queryKey } = setupPersister(['foo'], {
@@ -770,7 +845,7 @@ describe('createPersister', () => {
       expect(client.getQueryCache().getAll()).toHaveLength(0)
     })
 
-    it.each(['null', '{}', '{"state":null}'])(
+    it.each(getMalformedEntries())(
       'should remove malformed entry %s and restore the next query',
       async (value) => {
         const storage = getFreshStorage()
@@ -797,7 +872,7 @@ describe('createPersister', () => {
 
   describe('removeQueries', () => {
     describe.each([false, true])('with exact: %s', (exact) => {
-      it.each(['null', '{}', '{"state":null}', '42', '{"state":42}'])(
+      it.each(getMalformedEntries())(
         'should remove malformed entry %s and continue removing matching queries',
         async (value) => {
           const storage = getFreshStorage()
