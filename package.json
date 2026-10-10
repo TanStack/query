@@ -80,11 +80,11 @@
     "tinyglobby": "^0.2.15",
     "tsdown": "^0.23.0",
     "typescript": "catalog:",
-    "typescript56": "npm:typescript@5.6",
     "typescript57": "npm:typescript@5.7",
     "typescript58": "npm:typescript@5.8",
     "typescript59": "npm:typescript@5.9",
     "typescript70": "npm:typescript@7.0",
+    "typescript71": "npm:typescript@7.1.0-dev.20261010.1",
     "vite": "^8.3.1",
     "vitest": "^4.1.11"
   }
