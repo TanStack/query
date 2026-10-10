@@ -149,6 +149,31 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   filters,
 }: StoragePersisterOptions<TStorageValue>) {
   /**
+   * Checks the fields used to filter, expire, and restore a deserialized query.
+   * @param value - The deserialized value to check.
+   * @returns `true` if the value can be processed as a persisted query.
+   */
+  function isValidPersistedQuery(value: unknown) {
+    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+      return false
+    }
+
+    const persistedQuery = value as Partial<Omit<PersistedQuery, 'state'>> & {
+      state?: Partial<QueryState> | null
+    }
+    const state = persistedQuery.state
+
+    return (
+      typeof persistedQuery.queryHash === 'string' &&
+      Array.isArray(persistedQuery.queryKey) &&
+      typeof state === 'object' &&
+      state !== null &&
+      !Array.isArray(state) &&
+      Number.isFinite(state.dataUpdatedAt)
+    )
+  }
+
+  /**
    * Checks whether a persisted query should be discarded.
    * @param persistedQuery - The persisted query to check.
    * @returns `true` if it has no `dataUpdatedAt`, is older than `maxAge`, or has a different
@@ -190,6 +215,9 @@ export function experimental_createQueryPersister<TStorageValue = string>({
           let persistedQuery: PersistedQuery
           try {
             persistedQuery = await deserialize(storedData)
+            if (!isValidPersistedQuery(persistedQuery)) {
+              throw new Error('Invalid persisted query')
+            }
           } catch {
             await storage.removeItem(storageKey)
             return
@@ -334,6 +362,9 @@ export function experimental_createQueryPersister<TStorageValue = string>({
           let persistedQuery: PersistedQuery
           try {
             persistedQuery = await deserialize(value)
+            if (!isValidPersistedQuery(persistedQuery)) {
+              throw new Error('Invalid persisted query')
+            }
           } catch {
             await storage.removeItem(key)
             continue
@@ -372,6 +403,9 @@ export function experimental_createQueryPersister<TStorageValue = string>({
           let persistedQuery: PersistedQuery
           try {
             persistedQuery = await deserialize(value)
+            if (!isValidPersistedQuery(persistedQuery)) {
+              throw new Error('Invalid persisted query')
+            }
           } catch {
             await storage.removeItem(key)
             continue
@@ -432,6 +466,9 @@ export function experimental_createQueryPersister<TStorageValue = string>({
           let persistedQuery: PersistedQuery
           try {
             persistedQuery = await deserialize(value)
+            if (!isValidPersistedQuery(persistedQuery)) {
+              throw new Error('Invalid persisted query')
+            }
           } catch {
             await storage.removeItem(key)
             continue
