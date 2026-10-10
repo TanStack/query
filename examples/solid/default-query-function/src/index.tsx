@@ -55,7 +55,7 @@ function App() {
 
 function Posts(props: { setPostId: Setter<number> }) {
   // All you have to do now is pass a key!
-  const state = useQuery<any[]>(() => ({ queryKey: ['/posts'] }))
+  const state = useQuery<Array<any>>(() => ({ queryKey: ['/posts'] }))
 
   return (
     <div>

@@ -105,7 +105,7 @@ const PokemonDex = (props: { id: string }) => {
         name: nameMap[stat.stat.name as keyof typeof nameMap],
         value: stat.base_stat,
       }))
-      return stats as { name: string; value: number }[]
+      return stats as Array<{ name: string; value: number }>
     },
     placeholderData: keepPreviousData,
     reconcile: 'name',
@@ -174,7 +174,7 @@ const PokemonDex = (props: { id: string }) => {
                       width: `${(stat.value / 160) * 100}%`,
                       transition: 'width 0.5s',
                     }}
-                  ></div>
+                  />
                   <div class="relative z-20 text-sm mix-blend-darken font-semibold">
                     {stat.value}
                   </div>
@@ -198,7 +198,7 @@ const SideNav = () => {
         `https://pokeapi.co/api/v2/pokemon?limit=${MAX_POKEMONS}`,
       ).then((res) => res.json())
       return res as {
-        results: { name: string; url: string }[]
+        results: Array<{ name: string; url: string }>
       }
     },
     select(data) {

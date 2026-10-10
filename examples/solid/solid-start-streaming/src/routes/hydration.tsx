@@ -58,7 +58,7 @@ export default function Hydration() {
 
             <QueryStateRow
               context="client (initial render)"
-              query={initialQueryState()!}
+              query={initialQueryState()}
             />
 
             <QueryStateRow context="client" query={query} />

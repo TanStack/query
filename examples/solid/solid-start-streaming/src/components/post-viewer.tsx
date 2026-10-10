@@ -1,7 +1,5 @@
 import { useQuery } from '@tanstack/solid-query'
-import { resetErrorBoundaries } from 'solid-js'
-import { createSignal } from 'solid-js'
-import { For } from 'solid-js'
+import { For, createSignal, resetErrorBoundaries } from 'solid-js'
 import { Example } from './example'
 import { QueryBoundary } from './query-boundary'
 import type { Component } from 'solid-js'
