@@ -7,34 +7,15 @@ title: MutationFunctionContext
 type MutationFunctionContext = object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1189](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1189)
+Defined in: [packages/query-core/src/types.ts:1855](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1855)
+
+The object passed to `mutationFn` and the mutation callbacks: the `QueryClient`, the mutation's
+`meta`, and its `mutationKey`.
 
 ## Properties
 
-### client
-
-```ts
-client: QueryClient;
-```
-
-Defined in: [packages/query-core/src/types.ts:1190](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1190)
-
-***
-
-### meta
-
-```ts
-meta: MutationMeta | undefined;
-```
-
-Defined in: [packages/query-core/src/types.ts:1191](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1191)
-
-***
-
-### mutationKey?
-
-```ts
-optional mutationKey: MutationKey;
-```
-
-Defined in: [packages/query-core/src/types.ts:1192](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1192)
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-client"></a> `client` | [`QueryClient`](../classes/QueryClient.md) | The `QueryClient` the mutation runs in. |
+| <a id="property-meta"></a> `meta` | [`MutationMeta`](MutationMeta.md) \| `undefined` | The `meta` of the mutation options. |
+| <a id="property-mutationkey"></a> `mutationKey?` | [`MutationKey`](MutationKey.md) | The `mutationKey` of the mutation options, if set. |

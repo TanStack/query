@@ -1,5 +1,46 @@
 # @tanstack/svelte-query
 
+## 6.3.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.104.1
+
+## 6.3.0
+
+### Minor Changes
+
+- [#11650](https://github.com/TanStack/query/pull/11650) [`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e) - Build projects with Vite 8
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/query-core@5.104.0
+
+## 6.2.5
+
+### Patch Changes
+
+- [#11592](https://github.com/TanStack/query/pull/11592) [`d038065`](https://github.com/TanStack/query/commit/d03806572aea427e34acc4cf53779942962874cb) - fix(svelte-query/{createQuery,queryOptions}): correct the overload selected for 'initialData'
+- Updated dependencies []:
+  - @tanstack/query-core@5.103.3
+
+## 6.2.4
+
+## 6.2.3
+
+### Patch Changes
+
+- [#9810](https://github.com/TanStack/query/pull/9810) [`1490a4b`](https://github.com/TanStack/query/commit/1490a4b2aef372bff00af88c31ab896646ce1e99) - fix: support async Svelte
+
+## 6.2.2
+
+### Patch Changes
+
+- Updated dependencies [[`8a28904`](https://github.com/TanStack/query/commit/8a28904aaccb6bc26398b751400a181c0f6d7f0e)]:
+  - @tanstack/query-core@5.103.2
+
 ## 6.2.1
 
 ### Patch Changes

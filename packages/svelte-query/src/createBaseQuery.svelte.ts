@@ -1,3 +1,4 @@
+import { onDestroy } from 'svelte'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
 import { createRawRef } from './containers.svelte.js'
@@ -14,6 +15,7 @@ import type {
  * @param options - A function that returns query options
  * @param Observer - The observer from query-core
  * @param queryClient - Custom query client which overrides provider
+ * @returns The reactive query result.
  */
 export function createBaseQuery<
   TQueryFnData,
@@ -60,6 +62,11 @@ export function createBaseQuery<
     },
   )
 
+  /**
+   * Computes the observer's current result for the resolved options, tracking property access unless
+   * `notifyOnChangeProps` is set.
+   * @returns The current query result.
+   */
   function createResult() {
     const result = observer.getOptimisticResult(resolvedOptions)
     return !resolvedOptions.notifyOnChangeProps
@@ -71,13 +78,34 @@ export function createBaseQuery<
     createResult(),
   )
 
-  $effect(() => {
-    const unsubscribe = isRestoring.current
+  // The following is convoluted but necessary:
+  // Call eagerly so subscription happens on the server and on suspended branches in the client...
+  let unsubscribe =
+    isRestoring.current && typeof window !== 'undefined'
       ? () => undefined
       : observer.subscribe(() => update(createResult()))
-    observer.updateResult()
-    return unsubscribe
-  })
+  // ...but also watch for state changes to resubscribe, and because Svelte right now doesn't
+  // run onDestroy on components with pending work that are destroyed again before they are resolved...
+  watchChanges(
+    () => [isRestoring.current, observer] as const,
+    'pre',
+    () => {
+      unsubscribe()
+      unsubscribe = isRestoring.current
+        ? () => undefined
+        : observer.subscribe(() => update(createResult()))
+      observer.updateResult()
+      return unsubscribe
+    },
+  )
+  // ...and finally also cleanup via onDestroy because that one runs on the server whereas $effect.pre does not.
+  // (in a try-catch because it theoretically can be called in a non-component context - that should not happen
+  // but it would be a breaking change technically to error out here. SSR-safe because this wouldn't be called during SSR if it was not in a component)
+  try {
+    onDestroy(() => {
+      unsubscribe()
+    })
+  } catch (e) {}
 
   watchChanges(
     () => resolvedOptions,

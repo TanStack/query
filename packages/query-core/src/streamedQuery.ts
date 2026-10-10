@@ -54,14 +54,9 @@ type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
  * Data will be an Array of all the chunks received.
  * The query will be in a 'pending' state until the first chunk of data is received, but will go to 'success' after that.
  * The query will stay in fetchStatus 'fetching' until the stream ends.
- * @param streamFn - The function that returns an AsyncIterable to stream data from.
- * @param refetchMode - Defines how re-fetches are handled.
- * Defaults to `'reset'`, erases all data and puts the query back into `pending` state.
- * Set to `'append'` to append new data to the existing data.
- * Set to `'replace'` to write all data to the cache once the stream ends.
- * @param reducer - A function to reduce the streamed chunks into the final data.
- * Defaults to a function that appends chunks to the end of the array.
- * @param initialValue - Initial value to be used while the first chunk is being fetched, and returned if the stream yields no values.
+ * @param options - The `streamFn` that returns an AsyncIterable to stream data from, and the optional
+ * `refetchMode`, `reducer`, and `initialValue` options.
+ * @returns A query function to pass as `queryFn`.
  * @example
  * ```ts
  * await queryClient.query({
@@ -100,7 +95,7 @@ export function streamedQuery<
 
     let result = initialValue
 
-    let cancelled: boolean = false as boolean
+    let cancelled = false as boolean
     const streamFnContext = addConsumeAwareSignal<
       OmitKeyof<typeof context, 'signal'>
     >(

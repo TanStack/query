@@ -16,6 +16,13 @@ import type { Mutation, MutationState } from './mutation'
 // TYPES
 type TransformerFn = (data: any) => any
 
+/**
+ * Reads the value of a promise synchronously if it has already resolved, e.g. a thenable that
+ * resolves within its `then` call.
+ * @param promise - The promise to read.
+ * @returns An object with the resolved `data`, or `undefined` if the promise hasn't resolved
+ * synchronously (or resolved with `undefined`).
+ */
 function tryResolveSync(promise: PromiseLike<unknown>) {
   let data: unknown
 
@@ -25,7 +32,7 @@ function tryResolveSync(promise: PromiseLike<unknown>) {
   }, noop) as Promise<unknown> | undefined
 
   // .catch can be unavailable on certain kinds of thenable's
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  // oxlint-disable-next-line typescript/no-unnecessary-condition
   thenResult?.catch?.(noop)
 
   if (data !== undefined) {
@@ -59,6 +66,7 @@ export interface DehydrateOptions {
  * `DehydratedState`, and how to reverse any transformation applied by `DehydrateOptions.serializeData`.
  */
 export interface HydrateOptions {
+  /** Options applied to the queries and mutations restored from the dehydrated state. */
   defaultOptions?: {
     /** Transforms a query's `data` after it is read from the dehydrated state, reversing `serializeData`. */
     deserializeData?: TransformerFn
@@ -92,12 +100,23 @@ interface DehydratedQuery {
  * that has already been fetched, avoiding a redundant fetch on the client.
  */
 export interface DehydratedState {
+  /**
+   * The dehydrated mutations, by default only the paused ones.
+   */
   mutations: Array<DehydratedMutation>
+  /**
+   * The dehydrated queries, by default only the successful ones.
+   */
   queries: Array<DehydratedQuery>
 }
 
 // FUNCTIONS
 
+/**
+ * Dehydrates a single `Mutation` into a serializable snapshot of its key, state, scope, and meta.
+ * @param mutation - The mutation to dehydrate.
+ * @returns The dehydrated mutation.
+ */
 function dehydrateMutation(mutation: Mutation): DehydratedMutation {
   return {
     mutationKey: mutation.options.mutationKey,
@@ -107,6 +126,16 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
   }
 }
 
+/**
+ * Prepares the in-flight promise of a pending query for dehydration: applies `serializeData` to its
+ * result, and redacts its rejection error unless `shouldRedactErrors` returns `false` for it.
+ * @param query - The pending query whose promise is dehydrated.
+ * @param serializeData - Optional transform applied to the resolved data.
+ * @param shouldRedactErrors - Optional predicate; if it returns `false` for the rejection error,
+ * that
+ * error is kept as-is instead of being redacted.
+ * @returns The transformed promise, or `undefined` if the query has no in-flight promise.
+ */
 function dehydratePromise(
   query: Query,
   serializeData?: TransformerFn,
@@ -144,6 +173,7 @@ function dehydratePromise(
  * @param serializeData - Optional transform applied to `query.state.data` before it is included in the snapshot.
  * @param shouldRedactErrors - Optional predicate; if it returns `false` for the promise's rejection error, that
  * error is kept as-is instead of being redacted.
+ * @returns The dehydrated query.
  */
 export function dehydrateQuery(
   query: Query,
@@ -173,6 +203,8 @@ export function dehydrateQuery(
 /**
  * The default `shouldDehydrateMutation` predicate used by `dehydrate`. Only dehydrates mutations that are
  * currently paused (e.g. paused by `networkMode` while offline).
+ * @param mutation - The mutation to check.
+ * @returns `true` if the mutation is paused.
  */
 export function defaultShouldDehydrateMutation(mutation: Mutation) {
   return mutation.state.isPaused
@@ -181,6 +213,8 @@ export function defaultShouldDehydrateMutation(mutation: Mutation) {
 /**
  * The default `shouldDehydrateQuery` predicate used by `dehydrate`. Only dehydrates queries whose status is
  * `'success'`.
+ * @param query - The query to check.
+ * @returns `true` if the query's status is `'success'`.
  */
 export function defaultShouldDehydrateQuery(query: Query) {
   return query.state.status === 'success'
@@ -192,6 +226,10 @@ export function defaultShouldDehydrateQuery(query: Query) {
  * Which queries/mutations are included, and how their data/errors are transformed, is controlled by `options`,
  * falling back to the client's `dehydrate` default options, and finally to `defaultShouldDehydrateQuery` /
  * `defaultShouldDehydrateMutation`.
+ * @param client - The client whose cache is dehydrated.
+ * @param options - Controls which queries and mutations are included and how their data and errors
+ * are transformed. Each option falls back to the client's `defaultOptions.dehydrate`.
+ * @returns The dehydrated state, with the included `queries` and `mutations`.
  * @example
  * ```ts
  * const queryClient = new QueryClient()
@@ -252,6 +290,10 @@ export function dehydrate(
  * to `'idle'` so they don't hydrate stuck in a fetching state. If a dehydrated query still had an in-flight
  * promise, it is resumed via `query.fetch()` (reusing that promise as `initialPromise`) rather than re-invoking
  * `queryFn`.
+ * @param client - The client whose cache is restored into.
+ * @param dehydratedState - The dehydrated state, e.g. produced by `dehydrate` on the server.
+ * @param options - `defaultOptions` merged into every restored query and mutation (on top of the
+ * client's `defaultOptions.hydrate`), and `deserializeData` to reverse `serializeData`.
  * @example
  * ```ts
  * // dehydratedState was produced by `dehydrate` on the server

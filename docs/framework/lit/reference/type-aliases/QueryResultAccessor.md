@@ -7,7 +7,7 @@ title: QueryResultAccessor
 type QueryResultAccessor<TData, TError> = ValueAccessor<QueryObserverResult<TData, TError>> & object;
 ```
 
-Defined in: [packages/lit-query/src/createQueryController.ts:42](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L42)
+Defined in: [packages/lit-query/src/createQueryController.ts:38](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L38)
 
 Accessor returned by `createQueryController`.
 
@@ -16,7 +16,7 @@ result. The attached methods delegate to the active query observer.
 
 ## Type Declaration
 
-### destroy()
+### destroy
 
 ```ts
 destroy: () => void;
@@ -36,7 +36,7 @@ refetch: QueryObserverResult<TData, TError>["refetch"];
 
 Refetches the current query.
 
-### suspense()
+### suspense
 
 ```ts
 suspense: () => Promise<QueryObserverResult<TData, TError>>;

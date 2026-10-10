@@ -7,7 +7,7 @@ import type {
 
 export type FallbackProps = {
   error: any
-  resetErrorBoundary: (...args: any[]) => void
+  resetErrorBoundary: (...args: Array<any>) => void
 }
 
 type PropsWithChildren<TProps = {}> = TProps & {
@@ -18,10 +18,14 @@ type ErrorBoundarySharedProps = PropsWithChildren<{
   onError?: (error: Error, info: ErrorInfo) => void
   onReset?: (
     details:
-      | { reason: 'imperative-api'; args: any[] }
-      | { reason: 'keys'; prev: any[] | undefined; next: any[] | undefined },
+      | { reason: 'imperative-api'; args: Array<any> }
+      | {
+          reason: 'keys'
+          prev: Array<any> | undefined
+          next: Array<any> | undefined
+        },
   ) => void
-  resetKeys?: any[]
+  resetKeys?: Array<any>
 }>
 
 type ErrorBoundaryPropsWithComponent = ErrorBoundarySharedProps & {

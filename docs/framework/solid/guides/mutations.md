@@ -2,7 +2,7 @@
 id: mutations
 title: Mutations
 ref: docs/framework/react/guides/mutations.md
-replace: { 'hook': 'function' }
+replace: { 'hook': 'primitive' }
 ---
 
 [//]: # 'Example'

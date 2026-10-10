@@ -53,7 +53,7 @@ export const worker = setupWorker(
   http.get('/movies/:id', async ({ params }) => {
     const { id } = params
 
-    const movie = movies.find((movie) => movie.id === id)
+    const movie = movies.find((item) => item.id === id)
 
     if (!movie) {
       return new HttpResponse(`Movie with id ${id} not found`, {

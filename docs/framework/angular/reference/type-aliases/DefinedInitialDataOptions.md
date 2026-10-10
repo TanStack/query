@@ -7,7 +7,7 @@ title: DefinedInitialDataOptions
 type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object;
 ```
 
-Defined in: [packages/angular-query-experimental/src/query-options.ts:80](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L80)
+Defined in: [packages/angular-query-experimental/src/query-options.ts:77](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L77)
 
 The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
 `undefined` (unless a `select` changes `TData` to include `undefined`).
@@ -19,7 +19,7 @@ The options accepted by the `queryOptions` overload selected when `initialData` 
 ```ts
 initialData: 
   | NonUndefinedGuard<TQueryFnData>
-| () => NonUndefinedGuard<TQueryFnData>;
+  | (() => NonUndefinedGuard<TQueryFnData>);
 ```
 
 If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
@@ -31,7 +31,7 @@ cache.
 ### queryFn?
 
 ```ts
-optional queryFn: QueryFunction<TQueryFnData, TQueryKey>;
+optional queryFn?: QueryFunction<TQueryFnData, TQueryKey>;
 ```
 
 Optional here, but omitting it is only safe when no fetch will be attempted — for example with

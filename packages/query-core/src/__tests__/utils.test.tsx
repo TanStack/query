@@ -203,6 +203,7 @@ describe('core/utils', () => {
     it('should return the next value when the previous value is a different value', () => {
       const date1 = new Date()
       const date2 = new Date()
+
       expect(replaceEqualDeep(1, 0)).toBe(0)
       expect(replaceEqualDeep(1, 2)).toBe(2)
       expect(replaceEqualDeep('1', '2')).toBe('2')
@@ -479,6 +480,7 @@ describe('core/utils', () => {
         mutationCache: queryClient.getMutationCache(),
         options: {},
       })
+
       expect(matchMutation(filters, mutation)).toBe(false)
     })
   })
@@ -594,7 +596,7 @@ describe('core/utils', () => {
   describe('isValidTimeout', () => {
     it('should accept valid timeout values', () => {
       expect(isValidTimeout(0)).toBe(true)
-      expect(isValidTimeout(1_000)).toBe(true)
+      expect(isValidTimeout(1000)).toBe(true)
     })
 
     it('should reject a negative timeout value', () => {
@@ -645,7 +647,7 @@ describe('core/utils', () => {
     })
 
     it('should return a function that rejects with missing queryFn error when queryFn is set to skipToken', async () => {
-      const consoleErrorSpy = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -654,7 +656,7 @@ describe('core/utils', () => {
         queryHash: '["skip"]',
       })
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect(consoleErrorMock).toHaveBeenCalledWith(
         expect.stringContaining(
           'Attempted to invoke queryFn when set to skipToken',
         ),
@@ -663,7 +665,7 @@ describe('core/utils', () => {
         'Missing queryFn: \'["skip"]\'',
       )
 
-      consoleErrorSpy.mockRestore()
+      consoleErrorMock.mockRestore()
     })
   })
 

@@ -9,7 +9,7 @@ redirect_from:
 const environmentManager: object;
 ```
 
-Defined in: [packages/query-core/src/environmentManager.ts:29](https://github.com/TanStack/query/blob/main/packages/query-core/src/environmentManager.ts#L29)
+Defined in: [packages/query-core/src/environmentManager.ts:32](https://github.com/TanStack/query/blob/main/packages/query-core/src/environmentManager.ts#L32)
 
 Manages how TanStack Query detects whether the current runtime should be treated as
 server-side, which disables scheduling refetch timers and changes the default `retry` count
@@ -22,7 +22,7 @@ behave like a client.
 
 ## Type Declaration
 
-### isServer()
+### isServer
 
 ```ts
 isServer: () => boolean;
@@ -34,10 +34,12 @@ Returns whether the current runtime should be treated as a server environment.
 
 `boolean`
 
+`true` if the runtime is treated as a server.
+
 ### setIsServer()
 
 ```ts
-setIsServer(isServerValue): void;
+setIsServer(isServerValue: IsServerValue): void;
 ```
 
 Overrides the server check globally.
@@ -47,6 +49,9 @@ Overrides the server check globally.
 ##### isServerValue
 
 `IsServerValue`
+
+A function that returns whether the runtime should be treated as a
+server.
 
 #### Returns
 

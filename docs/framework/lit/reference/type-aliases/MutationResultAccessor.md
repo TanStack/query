@@ -7,7 +7,7 @@ title: MutationResultAccessor
 type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> = ValueAccessor<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>> & object;
 ```
 
-Defined in: [packages/lit-query/src/createMutationController.ts:38](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L38)
+Defined in: [packages/lit-query/src/createMutationController.ts:34](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L34)
 
 Accessor returned by `createMutationController`.
 
@@ -16,7 +16,7 @@ result. The attached methods delegate to the active mutation observer.
 
 ## Type Declaration
 
-### destroy()
+### destroy
 
 ```ts
 destroy: () => void;
@@ -28,10 +28,10 @@ Removes the controller from its Lit host and unsubscribes observers.
 
 `void`
 
-### mutate()
+### mutate
 
 ```ts
-mutate: (...args) => void;
+mutate: (...args: Parameters<MutateFunction<TData, TError, TVariables, TOnMutateResult>>) => void;
 ```
 
 Starts the mutation and swallows the returned promise.

@@ -14,7 +14,6 @@ import {
   SSR_PUBLIC_ORIGIN,
 } from '../config/ports.js'
 import {
-  DATA_QUERY_KEY,
   DEFAULT_MESSAGE,
   QUERY_STALE_TIME,
   createDataQueryOptions,
@@ -188,9 +187,12 @@ async function serveAsset(pathname, res) {
 async function renderPage(res) {
   const queryClient = createBrowserQueryClient()
   resetSsrQueryControllerCreationCount(queryClient)
-  await queryClient.prefetchQuery(createDataQueryOptions(SSR_PUBLIC_ORIGIN))
+  const dataQueryOptions = createDataQueryOptions(SSR_PUBLIC_ORIGIN)
+  await queryClient.prefetchQuery(dataQueryOptions)
 
-  const prefetchedQueryState = queryClient.getQueryState(DATA_QUERY_KEY)
+  const prefetchedQueryState = queryClient.getQueryState(
+    dataQueryOptions.queryKey,
+  )
   if (prefetchedQueryState?.status !== 'success') {
     throw new Error(
       'SSR prefetch did not complete successfully. Refusing to render loading HTML.',

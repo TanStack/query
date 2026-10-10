@@ -1,26 +1,21 @@
-import {
-  QueriesObserver,
-  replaceEqualDeep,
-  type DefaultError,
-  type DefinedQueryObserverResult,
-  type OmitKeyof,
-  type QueriesObserverOptions,
-  type QueryFunction,
-  type QueryKey,
-  type QueryObserverOptions,
-  type QueryObserverResult,
-  type ThrowOnError,
-} from '@tanstack/query-core'
-import type { QueryClient } from '@tanstack/query-core'
-import type { ReactiveControllerHost } from 'lit'
-import {
-  createValueAccessor,
-  readAccessor,
-  type Accessor,
-  type ValueAccessor,
-} from './accessor.js'
+import { QueriesObserver, replaceEqualDeep } from '@tanstack/query-core'
+import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
+import type { Accessor, ValueAccessor } from './accessor.js'
+import type {
+  DefaultError,
+  DefinedQueryObserverResult,
+  OmitKeyof,
+  QueriesObserverOptions,
+  QueryClient,
+  QueryFunction,
+  QueryKey,
+  QueryObserverOptions,
+  QueryObserverResult,
+  ThrowOnError,
+} from '@tanstack/query-core'
+import type { ReactiveControllerHost } from 'lit'
 
 /**
  * Options for one query inside `createQueriesController`.
@@ -221,6 +216,11 @@ export type QueriesResultAccessor<TCombinedResult> =
     destroy: () => void
   }
 
+/**
+ * Returns the result used while no `QueryClient` is available: `'pending'` and idle, with methods
+ * that reject with the missing client error.
+ * @returns A new result object in that state.
+ */
 function createPendingQueryObserverResult(): QueryObserverResult {
   return {
     data: undefined,
@@ -254,6 +254,12 @@ function createPendingQueryObserverResult(): QueryObserverResult {
   } as unknown as QueryObserverResult
 }
 
+/**
+ * Returns the result of a query used while no `QueryClient` is available: a `'success'` result with
+ * the query's `initialData` (after `select`), or the pending result if there is no `initialData`.
+ * @param query - The query options.
+ * @returns The `'success'` result with `initialData`, or a pending one.
+ */
 function createPlaceholderQueryObserverResult(
   query: QueryObserverOptions,
 ): QueryObserverResult {
@@ -284,6 +290,12 @@ function createPlaceholderQueryObserverResult(
   } as QueryObserverResult
 }
 
+/**
+ * Reads the controller's options and defaults each query with the client.
+ * @param optionsAccessor - The options, or a getter that returns them.
+ * @param client - The client used to default the query options.
+ * @returns The defaulted query options and the `combine` function.
+ */
 function resolveQueriesOptions<TCombinedResult>(
   optionsAccessor: Accessor<
     CreateQueriesControllerOptions<any, TCombinedResult>
@@ -354,7 +366,7 @@ class QueriesController<
     this.tryInitializeExplicitClient(queryClient)
   }
 
-  protected onConnected(): void {
+  protected override onConnected(): void {
     if (!this.syncClient()) {
       return
     }
@@ -363,12 +375,12 @@ class QueriesController<
     this.subscribe()
   }
 
-  protected onDisconnected(): void {
+  protected override onDisconnected(): void {
     this.unsubscribeObserver()
     this.syncClient()
   }
 
-  protected onHostUpdate(): void {
+  protected override onHostUpdate(): void {
     if (!this.shouldRefreshOnHostUpdate()) {
       return
     }
@@ -378,7 +390,7 @@ class QueriesController<
     }
   }
 
-  protected onQueryClientChanged(): void {
+  protected override onQueryClientChanged(): void {
     if (!this.syncClient() || !this.connectedState) {
       return
     }
@@ -411,7 +423,7 @@ class QueriesController<
       this.combine = combine
       const observer = new QueriesObserver(queryClient, this.queries, {
         combine: this.combine,
-      } as QueriesObserverOptions<TCombinedResult>)
+      })
       this.queryClient = queryClient
       this.observer = observer
       this.assignObserverResult(observer.getCurrentResult(), true)
@@ -471,7 +483,7 @@ class QueriesController<
     this.combine = combine
     this.observer = new QueriesObserver(this.queryClient, this.queries, {
       combine: this.combine,
-    } as QueriesObserverOptions<TCombinedResult>)
+    })
     this.setObserverResult(this.observer.getCurrentResult(), true)
     this.placeholderInitialized = true
     return true
@@ -488,7 +500,7 @@ class QueriesController<
 
     this.observer.setQueries(this.queries, {
       combine: this.combine,
-    } as QueriesObserverOptions<TCombinedResult>)
+    })
 
     this.setObserverResult(this.observer.getCurrentResult(), true)
     return true
@@ -529,7 +541,7 @@ class QueriesController<
     this.combinedResult = replaceEqualDeep(
       this.combinedResult,
       combine(trackedResult),
-    ) as TCombinedResult
+    )
 
     return this.combinedResult
   }
@@ -613,7 +625,7 @@ class QueriesController<
     )
     return (
       resolvedOptions.combine
-        ? resolvedOptions.combine(placeholders as never)
+        ? resolvedOptions.combine(placeholders)
         : placeholders
     ) as TCombinedResult
   }
@@ -664,7 +676,6 @@ class QueriesController<
  *
  * If `queryClient` is omitted, the controller resolves the client from the
  * nearest connected `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the queries
  * subscription.
  * @param options - Queries controller options, or a getter that returns options.
@@ -672,7 +683,6 @@ class QueriesController<
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the latest query results, or the value returned by
  * `combine`.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'

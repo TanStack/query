@@ -30,7 +30,7 @@ export const mockInterceptor: HttpInterceptorFn = (
             sessionStorage.getItem('optimistic-updates-tasks') || '[]',
           ),
         )
-      case 'POST':
+      case 'POST': {
         const tasks = JSON.parse(
           sessionStorage.getItem('optimistic-updates-tasks') || '[]',
         )
@@ -43,6 +43,7 @@ export const mockInterceptor: HttpInterceptorFn = (
           status: 'success',
           task: req.body,
         })
+      }
     }
   }
   if (req.url === '/api/tasks-wrong-url') {

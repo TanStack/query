@@ -7,7 +7,10 @@ title: OmitKeyof
 type OmitKeyof<TObject, TKey, TStrictly> = Omit<TObject, TKey>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:19](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L19)
+Defined in: [packages/query-core/src/types.ts:30](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L30)
+
+Like `Omit`, but by default (`'strictly'`) `TKey` must be a key of `TObject`, so omitting a key
+that doesn't exist is a type error. Pass `'safely'` to allow other keys too.
 
 ## Type Parameters
 

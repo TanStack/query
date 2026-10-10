@@ -187,13 +187,13 @@ export type QueriesResults<
         : { [K in keyof T]: GetCreateQueryResult<T[K]> }
 
 /**
+ * The `createQueries` function can be used to fetch a variable number of queries.
  * @param createQueriesOptions - The `queries` array to run, and an optional `combine` function, wrapped in an
  * {@link Accessor} so options can be reactive.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns An array with one result per query, in the same order as `queries` — or, if `combine` is provided,
  * whatever `combine` returns.
- *
  * @example
  * ```svelte
  * <script lang="ts">
@@ -222,7 +222,6 @@ export type QueriesResults<
  *   {/each}
  * </ul>
  * ```
- *
  * @example
  * Combining results into a single value:
  * ```svelte
@@ -295,6 +294,10 @@ export function createQueries<
     ),
   )
 
+  /**
+   * Computes the combined result of the observer's queries for the resolved options.
+   * @returns The combined result, built from the tracked per-query results.
+   */
   function createResult() {
     const [_, getCombinedResult, trackResult] = observer.getOptimisticResult(
       resolvedQueryOptions,

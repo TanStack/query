@@ -1,7 +1,5 @@
 import { useQuery } from '@tanstack/solid-query'
-import { resetErrorBoundaries } from 'solid-js'
-import { createSignal } from 'solid-js'
-import { For } from 'solid-js'
+import { For, createSignal, resetErrorBoundaries, untrack } from 'solid-js'
 import { Example } from './example'
 import { QueryBoundary } from './query-boundary'
 import type { Component } from 'solid-js'
@@ -14,17 +12,21 @@ export interface PostViewerProps {
 }
 
 export const PostViewer: Component<PostViewerProps> = (props) => {
-  const [simulateError, setSimulateError] = createSignal(props.simulateError)
+  const [simulateError, setSimulateError] = createSignal(
+    untrack(() => props.simulateError),
+  )
   const [postId, setPostId] = createSignal(1)
 
+  const shouldSimulateError = () =>
+    simulateError() || (simulateError() !== false && postId() === 5)
+
   const query = useQuery(() => ({
-    queryKey: ['posts', postId()],
+    queryKey: ['posts', postId(), props.sleep, shouldSimulateError()],
     queryFn: () =>
       fetchPost({
         postId: postId(),
         sleep: props.sleep,
-        simulateError:
-          simulateError() || (simulateError() !== false && postId() === 5),
+        simulateError: shouldSimulateError(),
       }),
     deferStream: props.deferStream,
     throwOnError: true,

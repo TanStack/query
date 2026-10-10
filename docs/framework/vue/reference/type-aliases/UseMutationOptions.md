@@ -6,10 +6,13 @@ title: UseMutationOptions
 ```ts
 type UseMutationOptions<TData, TError, TVariables, TOnMutateResult> = 
   | MaybeRefDeep<MutationOptions<TData, TError, TVariables, TOnMutateResult>>
-| () => MaybeRefDeep<MutationOptions<TData, TError, TVariables, TOnMutateResult>>;
+  | (() => MaybeRefDeep<MutationOptions<TData, TError, TVariables, TOnMutateResult>>);
 ```
 
-Defined in: [packages/vue-query/src/useMutation.ts:31](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutation.ts#L31)
+Defined in: [packages/vue-query/src/useMutation.ts:39](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutation.ts#L39)
+
+The options accepted by `useMutation`: [MutationOptions](MutationOptions.md) as a plain object, a `ref`, or a reactive
+getter.
 
 ## Type Parameters
 

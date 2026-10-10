@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/lit-query",
-  "version": "0.2.22",
+  "version": "0.2.26",
   "description": "Lit adapter for TanStack Query Core",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -17,18 +17,18 @@
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",
     "compile": "tsc --project tsconfig.json",
-    "test:eslint": "eslint --concurrency=auto .",
-    "lint:fix": "eslint --concurrency=auto . --fix",
-    "test:types": "tsc --noEmit --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
+    "test:oxlint": "oxlint ./src",
+    "test:types": "npm-run-all --serial test:types:*",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts57 --tsBuildInfoFile .cache/test-types/ts57.tsbuildinfo",
+    "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts58 --tsBuildInfoFile .cache/test-types/ts58.tsbuildinfo",
+    "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts59 --tsBuildInfoFile .cache/test-types/ts59.tsbuildinfo",
+    "test:types:tscurrent": "tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
+    "test:types:ts70": "node ../../node_modules/typescript70/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts70 --tsBuildInfoFile .cache/test-types/ts70.tsbuildinfo",
+    "test:types:ts71": "node ../../node_modules/typescript71/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts71 --tsBuildInfoFile .cache/test-types/ts71.tsbuildinfo",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:watch": "pnpm run test:lib:dev",
     "test:build": "publint --strict && attw --pack",
-    "build": "tsdown --tsconfig tsconfig.prod.json",
-    "measure:bundle": "pnpm run build && node scripts/measure-bundle.mjs",
-    "measure:bundle:raw": "node scripts/measure-bundle.mjs",
-    "perf:l3": "pnpm run build && node scripts/l3-stress.mjs",
-    "perf:l3:raw": "node scripts/l3-stress.mjs"
+    "build": "tsdown --tsconfig tsconfig.prod.json"
   },
   "type": "module",
   "types": "build/legacy/index.d.ts",
@@ -52,21 +52,20 @@
   "files": [
     "build",
     "src",
-    "!src/tests"
+    "!src/__tests__"
   ],
   "dependencies": {
     "@lit/context": "^1.1.6",
     "@tanstack/query-core": "workspace:*",
-    "lit": "^3.3.1"
-  },
-  "peerDependencies": {
-    "@tanstack/query-core": "^5.0.0",
-    "lit": ">=2.8.0 <4"
+    "lit": "^3.3.3"
   },
   "devDependencies": {
-    "@eslint/js": "^9.36.0",
+    "@lit-labs/ssr": "^3.3.1",
     "@tanstack/query-test-utils": "workspace:*",
-    "globals": "^17.4.0",
-    "typescript-eslint": "^8.54.0"
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@tanstack/query-core": "^5.104.1",
+    "lit": ">=2.8.0 <4"
   }
 }

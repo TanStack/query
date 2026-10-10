@@ -36,7 +36,7 @@ export const fetchPost = async ({
     throw new Error('API request to get post was not OK')
   }
 
-  return [response] as PostData[]
+  return [response] as Array<PostData>
 }
 
 export const fetchUser = async ({

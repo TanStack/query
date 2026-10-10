@@ -5,10 +5,10 @@
 
   type Props = {
     queryClient: QueryClient
-    perCallOnSuccess: (...args: Array<unknown>) => void
+    onSuccessMutate: (...args: Array<unknown>) => void
   }
 
-  const { queryClient, perCallOnSuccess }: Props = $props()
+  const { queryClient, onSuccessMutate }: Props = $props()
 
   setQueryClientContext(queryClient)
 
@@ -17,8 +17,6 @@
   }))
 </script>
 
-<button
-  onclick={() => mutation.mutate('todo', { onSuccess: perCallOnSuccess })}
->
+<button onclick={() => mutation.mutate('todo', { onSuccess: onSuccessMutate })}>
   Mutate
 </button>

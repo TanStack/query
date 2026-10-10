@@ -6,6 +6,10 @@ import type { QueryFilters } from '@tanstack/query-core'
 import type { MaybeRefDeep } from './types'
 import type { QueryClient } from './queryClient'
 
+/**
+ * The filters accepted by `useIsFetching`: {@link QueryFilters} as a plain object, a `ref`, or a reactive
+ * getter.
+ */
 export type UseIsFetchingFilters =
   | MaybeRefDeep<QueryFilters>
   | (() => MaybeRefDeep<QueryFilters>)
@@ -16,13 +20,11 @@ export type UseIsFetchingFilters =
  *
  * `fetchingFilters` may be a plain object, `MaybeRefDeep`, or a reactive getter (`() => ({ ... })`) — pass a
  * getter if the filters themselves depend on other reactive state.
- *
  * @param fetchingFilters - The {@link QueryFilters} to narrow down the matched queries.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns A `ref` to the `number` of the queries that your application is currently loading or fetching in
  * the background.
- *
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -36,7 +38,6 @@ export type UseIsFetchingFilters =
  *   <span v-if="isFetchingPosts">Refreshing posts...</span>
  * </template>
  * ```
- *
  * @example
  * A global loading indicator for any query fetching in the background, not just the ones on screen:
  * ```vue

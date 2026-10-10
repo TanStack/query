@@ -4,12 +4,12 @@ title: useQueryClient
 ---
 
 ```ts
-function useQueryClient(queryClient?): QueryClient;
+function useQueryClient(queryClient?: QueryClient): QueryClient;
 ```
 
 Defined in: [packages/solid-query/src/QueryClientProvider.tsx:28](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClientProvider.tsx#L28)
 
-The `useQueryClient` hook returns the current `QueryClient` instance.
+The `useQueryClient` primitive returns the current `QueryClient` instance.
 
 ## Parameters
 
@@ -28,4 +28,5 @@ The current `QueryClient` instance.
 
 ## Throws
 
-If no `queryClient` argument is passed and no `QueryClientProvider` is found in the component tree.
+If no `queryClient` argument is passed and no `QueryClientProvider` is found in the
+component tree.

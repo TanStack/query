@@ -1,20 +1,39 @@
 ---
 id: useInfiniteQuery
 title: useInfiniteQuery
+redirect_from:
+  - framework/vue/reference/useInfiniteQuery
 ---
+
+## Overview
+
+```ts
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefOrGetter<DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefOrGetter<UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefOrGetter<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
+```
+
+- [`MaybeRefOrGetter` → `UseInfiniteQueryReturnType`](#call-signature-1): The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
+- [`MaybeRefOrGetter` → `UseInfiniteQueryReturnType`](#call-signature-2): The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
+- [`MaybeRefOrGetter` → `UseInfiniteQueryReturnType`](#call-signature-3): Fallback overload for options whose `initialData` presence isn't statically known — for example, a `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
+
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
 
 ## Call Signature
 
 ```ts
-function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefOrGetter<DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:117](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L117)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:127](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L127)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
 
 `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
 (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
@@ -100,13 +119,15 @@ const { data, isError, error } = useInfiniteQuery({
 </template>
 ```
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
-function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefOrGetter<UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:251](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L251)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:258](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L258)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -263,13 +284,15 @@ onUnmounted(() => observer?.disconnect())
 </template>
 ```
 
+<a id="call-signature-3"></a>
+
 ## Call Signature
 
 ```ts
-function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefOrGetter<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:347](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L347)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:351](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L351)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
@@ -384,3 +407,30 @@ const { data, isLoading, isError, error } = useInfiniteQuery(() => {
   </ul>
 </template>
 ```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+`MaybeRefOrGetter`\<[`UseInfiniteQueryOptions`](../type-aliases/UseInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>\>
+
+A `ref`, plain value, or reactive getter resolving to the [UseInfiniteQueryOptions](../type-aliases/UseInfiniteQueryOptions.md) to
+use.
+
+### queryClient?
+
+[`QueryClient`](../classes/QueryClient.md)
+
+Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+will be used.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+[`UseInfiniteQueryReturnType`](../type-aliases/UseInfiniteQueryReturnType.md)\<`TData`, `TError`\>
+
+The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+`hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`.

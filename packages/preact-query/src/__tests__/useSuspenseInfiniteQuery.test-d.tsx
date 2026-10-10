@@ -1,10 +1,10 @@
 import { skipToken } from '@tanstack/query-core'
-import type { InfiniteData } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 
-import type { UseSuspenseInfiniteQueryOptions } from '../types'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
+import type { UseSuspenseInfiniteQueryOptions } from '../types'
+import type { InfiniteData } from '@tanstack/query-core'
 
 describe('useSuspenseInfiniteQuery', () => {
   it('should always have data defined', () => {

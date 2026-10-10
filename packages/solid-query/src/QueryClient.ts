@@ -11,7 +11,6 @@ import type {
 
 /**
  * The core `QueryObserverOptions`, with Solid's `reconcile` option added.
- *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
@@ -52,7 +51,6 @@ export interface QueryObserverOptions<
 
 /**
  * The core `InfiniteQueryObserverOptions`, with Solid's `reconcile` option added.
- *
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
@@ -90,12 +88,15 @@ export interface InfiniteQueryObserverOptions<
 /**
  * The default options a `QueryClient` applies to every query, with Solid's `reconcile` option added to
  * `queries`.
- *
  * @template TError - The default type of errors thrown by queries and mutations using this `QueryClient`.
  */
 export interface DefaultOptions<
   TError = DefaultError,
 > extends CoreDefaultOptions<TError> {
+  /**
+   * Default options applied to every query, unless overridden per-query, including Solid's
+   * `reconcile` option.
+   */
   queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'>
 }
 
@@ -103,6 +104,9 @@ export interface DefaultOptions<
  * The config accepted by `new QueryClient(config)`, with Solid's extended {@link DefaultOptions}.
  */
 export interface QueryClientConfig extends QueryCoreClientConfig {
+  /**
+   * The default options of the queries and mutations of this `QueryClient`.
+   */
   defaultOptions?: DefaultOptions
 }
 

@@ -7,7 +7,7 @@ import {
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { For, Match, Switch, createSignal } from 'solid-js'
 import { render } from 'solid-js/web'
-import type { Component, Setter } from 'solid-js'
+import type { Accessor, Component, Setter } from 'solid-js'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -87,16 +87,16 @@ const getPostById = async (id: number): Promise<Post> => {
   return await response.json()
 }
 
-function createPost(postId: number) {
+function createPost(postId: Accessor<number>) {
   return useQuery(() => ({
-    queryKey: ['post', postId],
-    queryFn: () => getPostById(postId),
-    enabled: !!postId,
+    queryKey: ['post', postId()],
+    queryFn: () => getPostById(postId()),
+    enabled: !!postId(),
   }))
 }
 
 function Post(props: { postId: number; setPostId: Setter<number> }) {
-  const state = createPost(props.postId)
+  const state = createPost(() => props.postId)
 
   return (
     <div>

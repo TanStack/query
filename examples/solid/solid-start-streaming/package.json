@@ -6,18 +6,23 @@
     "dev": "vinxi dev",
     "build": "vinxi build",
     "start": "vinxi start",
-    "version": "vinxi version"
+    "version": "vinxi version",
+    "test:eslint": "eslint ./src"
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.15.3",
     "@solidjs/start": "^1.1.3",
-    "@tanstack/solid-query": "^5.103.1",
-    "@tanstack/solid-query-devtools": "^5.103.1",
-    "solid-js": "^1.9.7",
+    "@tanstack/solid-query": "^5.104.1",
+    "@tanstack/solid-query-devtools": "^5.104.1",
+    "solid-js": "^1.9.15",
     "vinxi": "^0.5.3"
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.104.1",
+    "eslint-plugin-solid": "^0.18.1"
   }
 }

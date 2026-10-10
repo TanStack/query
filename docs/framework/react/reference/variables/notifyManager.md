@@ -10,16 +10,16 @@ redirect_from:
 const notifyManager: object;
 ```
 
-Defined in: [packages/query-core/src/notifyManager.ts:144](https://github.com/TanStack/query/blob/main/packages/query-core/src/notifyManager.ts#L144)
+Defined in: [packages/query-core/src/notifyManager.ts:154](https://github.com/TanStack/query/blob/main/packages/query-core/src/notifyManager.ts#L154)
 
 Handles scheduling and batching callbacks in TanStack Query.
 
 ## Type Declaration
 
-### batch()
+### batch
 
 ```ts
-readonly batch: <T>(callback) => T;
+readonly batch: <T>(callback: () => T) => T;
 ```
 
 Batches all updates scheduled inside the passed callback.
@@ -39,14 +39,18 @@ The return value of `callback` is passed through.
 
 () => `T`
 
+The function to run in the batch.
+
 #### Returns
 
 `T`
 
-### batchCalls()
+The return value of `callback`.
+
+### batchCalls
 
 ```ts
-readonly batchCalls: <T>(callback) => BatchCallsCallback<T>;
+readonly batchCalls: <T>(callback: BatchCallsCallback<T>) => BatchCallsCallback<T>;
 ```
 
 All calls to the wrapped function will be batched.
@@ -63,14 +67,18 @@ All calls to the wrapped function will be batched.
 
 `BatchCallsCallback`\<`T`\>
 
+The function to wrap.
+
 #### Returns
 
 `BatchCallsCallback`\<`T`\>
 
-### schedule()
+A function that schedules a call to `callback` with the given arguments.
+
+### schedule
 
 ```ts
-schedule: (callback) => void;
+schedule: (callback: NotifyCallback) => void;
 ```
 
 Schedules a function to be run on the next batch.
@@ -86,10 +94,10 @@ By default, the batch is run with a `setTimeout`, but this can be configured via
 
 `void`
 
-### setBatchNotifyFunction()
+### setBatchNotifyFunction
 
 ```ts
-readonly setBatchNotifyFunction: (fn) => void;
+readonly setBatchNotifyFunction: (fn: BatchNotifyFunction) => void;
 ```
 
 Use this method to set a custom function to batch notifications together into a single tick.
@@ -101,6 +109,8 @@ update only triggers one re-render instead of one per subscriber.
 ##### fn
 
 `BatchNotifyFunction`
+
+Receives a function that runs a batch of notifications and must call it.
 
 #### Returns
 
@@ -115,10 +125,10 @@ import { batch } from 'solid-js'
 notifyManager.setBatchNotifyFunction(batch)
 ```
 
-### setNotifyFunction()
+### setNotifyFunction
 
 ```ts
-readonly setNotifyFunction: (fn) => void;
+readonly setNotifyFunction: (fn: NotifyFunction) => void;
 ```
 
 Use this method to set a custom notify function.
@@ -130,14 +140,16 @@ This can be used to for example wrap notifications with `React.act` while runnin
 
 `NotifyFunction`
 
+Receives each notification callback and must call it.
+
 #### Returns
 
 `void`
 
-### setScheduler()
+### setScheduler
 
 ```ts
-readonly setScheduler: (fn) => void;
+readonly setScheduler: (fn: ScheduleFunction) => void;
 ```
 
 Configures a custom callback that schedules when the next batch runs.
@@ -148,6 +160,8 @@ The default behavior is `setTimeout(callback, 0)`.
 ##### fn
 
 `ScheduleFunction`
+
+Receives a callback that runs the next batch, and schedules it.
 
 #### Returns
 

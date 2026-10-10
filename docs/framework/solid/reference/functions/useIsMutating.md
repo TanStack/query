@@ -6,12 +6,12 @@ redirect_from:
 ---
 
 ```ts
-function useIsMutating(filters?, queryClient?): Accessor<number>;
+function useIsMutating(filters?: Accessor<MutationFilters<unknown, Error, unknown, unknown>>, queryClient?: Accessor<QueryClient>): Accessor<number>;
 ```
 
-Defined in: [packages/solid-query/src/useIsMutating.ts:28](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsMutating.ts#L28)
+Defined in: [packages/solid-query/src/useIsMutating.ts:26](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsMutating.ts#L26)
 
-The `useIsMutating` hook returns the `number` of mutations that your application currently has `pending`
+The `useIsMutating` primitive returns the `number` of mutations that your application currently has `pending`
 (useful for app-wide loading indicators).
 
 ## Parameters
@@ -21,6 +21,12 @@ The `useIsMutating` hook returns the `number` of mutations that your application
 `Accessor`\<[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>\>
 
 An accessor returning the [MutationFilters](../interfaces/MutationFilters.md) to narrow down the matched mutations.
+
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+Built from [`MutationFilters`](../interfaces/MutationFilters.md#properties). See the type above for what it changes.
 
 ### queryClient?
 
