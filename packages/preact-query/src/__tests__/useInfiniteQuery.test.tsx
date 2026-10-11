@@ -2,8 +2,6 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { Mock } from 'vitest'
-
 import {
   QueryCache,
   QueryClient,
@@ -12,12 +10,14 @@ import {
   skipToken,
   useInfiniteQuery,
 } from '..'
+import { renderWithClient, setActTimeout } from './utils'
+import type { Mock } from 'vitest'
+
 import type {
   InfiniteData,
   QueryFunctionContext,
   UseInfiniteQueryResult,
 } from '..'
-import { renderWithClient, setActTimeout } from './utils'
 
 // import { Suspense } from 'preact/compat'
 
@@ -1431,11 +1431,11 @@ describe('useInfiniteQuery', () => {
             <>
               <div>Data:</div>
               {data.pages.map((page, i) => (
-                <div key={i}>
+                <div key={page.ts}>
                   <div>
                     Page {i}: {page.ts}
                   </div>
-                  <div key={i}>
+                  <div>
                     {page.items.map((item) => (
                       <p key={item}>Item: {item}</p>
                     ))}
@@ -1567,11 +1567,11 @@ describe('useInfiniteQuery', () => {
             <>
               <div>Data:</div>
               {data.pages.map((page, i) => (
-                <div key={i}>
+                <div key={page.ts}>
                   <div>
                     Page {i}: {page.ts}
                   </div>
-                  <div key={i}>
+                  <div>
                     {page.items.map((item) => (
                       <p key={item}>Item: {item}</p>
                     ))}

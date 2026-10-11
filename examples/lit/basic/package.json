@@ -5,14 +5,16 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src"
   },
   "dependencies": {
-    "@tanstack/lit-query": "^0.2.25",
-    "@tanstack/query-core": "^5.104.0",
+    "@tanstack/lit-query": "^0.2.26",
+    "@tanstack/query-core": "^5.104.1",
     "lit": "^3.3.3"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.104.1",
     "typescript": "5.8.3",
     "vite": "^8.3.1"
   }

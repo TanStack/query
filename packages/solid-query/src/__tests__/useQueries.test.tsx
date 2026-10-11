@@ -72,14 +72,14 @@ describe('useQueries', () => {
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
-  // eslint-disable-next-line vitest/expect-expect
+  // oxlint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
     const key1 = queryKey()
 
     // We have to mock the QueriesObserver to not unsubscribe
     // the listener when the component is unmounted
     class QueriesObserverMock extends QueriesObserver {
-      subscribe(listener: any) {
+      override subscribe(listener: any) {
         super.subscribe(listener)
         return () => void 0
       }

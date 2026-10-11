@@ -4,13 +4,13 @@ import { useEffect, useState } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { MutationCache, QueryCache, QueryClient, useMutation } from '..'
-import type { UseMutationResult } from '../types'
 import { ErrorBoundary } from './ErrorBoundary'
 import {
   mockOnlineManagerIsOnline,
   renderWithClient,
   setActTimeout,
 } from './utils'
+import type { UseMutationResult } from '../types'
 
 describe('useMutation', () => {
   let queryCache: QueryCache
@@ -1268,7 +1268,7 @@ describe('useMutation', () => {
     onlineMock.mockRestore()
   })
 
-  // eslint-disable-next-line vitest/expect-expect
+  // oxlint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', () => {
     function Mutates() {
       const { mutate } = useMutation({ mutationFn: () => sleep(10) })

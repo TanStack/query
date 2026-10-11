@@ -11,6 +11,7 @@ import {
   Suspense,
   createContext,
   createSignal,
+  untrack,
   useContext,
 } from 'solid-js'
 import { isServer } from 'solid-js/web'
@@ -30,7 +31,7 @@ const MAX_POKEMONS = 100
 export const SolidApp = (props: { pokemon?: string }) => {
   const client = new QueryClient()
 
-  const search = getSearchParams(props.pokemon || '')
+  const search = getSearchParams(untrack(() => props.pokemon) || '')
 
   return (
     <QueryClientProvider client={client}>
@@ -77,7 +78,7 @@ const PokemonDex = (props: { id: string }) => {
     queryFn: async () => {
       const res = await fetch(
         `https://pokeapi.co/api/v2/pokemon/${props.id}`,
-      ).then((res) => res.json())
+      ).then((response) => response.json())
       return res
     },
     placeholderData: keepPreviousData,
@@ -88,7 +89,7 @@ const PokemonDex = (props: { id: string }) => {
     queryFn: async () => {
       const res = await fetch(
         `https://pokeapi.co/api/v2/pokemon/${props.id}`,
-      ).then((res) => res.json())
+      ).then((response) => response.json())
 
       return res
     },
@@ -105,7 +106,7 @@ const PokemonDex = (props: { id: string }) => {
         name: nameMap[stat.stat.name as keyof typeof nameMap],
         value: stat.base_stat,
       }))
-      return stats as { name: string; value: number }[]
+      return stats as Array<{ name: string; value: number }>
     },
     placeholderData: keepPreviousData,
     reconcile: 'name',
@@ -174,7 +175,7 @@ const PokemonDex = (props: { id: string }) => {
                       width: `${(stat.value / 160) * 100}%`,
                       transition: 'width 0.5s',
                     }}
-                  ></div>
+                  />
                   <div class="relative z-20 text-sm mix-blend-darken font-semibold">
                     {stat.value}
                   </div>
@@ -196,20 +197,20 @@ const SideNav = () => {
     queryFn: async () => {
       const res = await fetch(
         `https://pokeapi.co/api/v2/pokemon?limit=${MAX_POKEMONS}`,
-      ).then((res) => res.json())
+      ).then((response) => response.json())
       return res as {
-        results: { name: string; url: string }[]
+        results: Array<{ name: string; url: string }>
       }
     },
     select(data) {
       return data.results.map((p) => {
         const regex = /\/pokemon\/(\d+)\/$/
         const match = p.url.match(regex)
-        const id = match ? match[1] : ''
+        const pokemonId = match ? match[1] : ''
         return {
           name: properCase(p.name),
-          id,
-          avatar: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+          id: pokemonId,
+          avatar: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`,
         }
       })
     },

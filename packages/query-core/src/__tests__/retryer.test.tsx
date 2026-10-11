@@ -43,7 +43,7 @@ describe('createRetryer', () => {
     })
 
     const promise = retryer.start()
-    await vi.advanceTimersByTimeAsync(10_000)
+    await vi.advanceTimersByTimeAsync(10000)
     await expect(promise).rejects.toBe(error)
     expect(fn).toHaveBeenCalledTimes(3)
     expect(onFail).toHaveBeenNthCalledWith(1, 1, error)
@@ -68,7 +68,7 @@ describe('createRetryer', () => {
     })
 
     const promise = retryer.start()
-    await vi.advanceTimersByTimeAsync(5_000)
+    await vi.advanceTimersByTimeAsync(5000)
     await expect(promise).resolves.toBe('success')
     expect(fn).toHaveBeenCalledTimes(2)
   })
@@ -90,7 +90,7 @@ describe('createRetryer', () => {
     })
 
     const promise = retryer.start()
-    await vi.advanceTimersByTimeAsync(100_000)
+    await vi.advanceTimersByTimeAsync(100000)
     await expect(promise).resolves.toBe('success')
     const delays = setTimeoutSpy.mock.calls
       .filter((call) => typeof call[1] === 'number')
@@ -156,7 +156,7 @@ describe('createRetryer', () => {
     expect(fn).toHaveBeenCalledTimes(1)
 
     retryer.cancelRetry()
-    await vi.advanceTimersByTimeAsync(5_000)
+    await vi.advanceTimersByTimeAsync(5000)
     await expect(promise).rejects.toBe(error)
     expect(fn).toHaveBeenCalledTimes(1)
     expect(retryer.status()).toBe('rejected')
@@ -181,7 +181,7 @@ describe('createRetryer', () => {
     await vi.advanceTimersByTimeAsync(0)
     retryer.cancelRetry()
     retryer.continueRetry()
-    await vi.advanceTimersByTimeAsync(5_000)
+    await vi.advanceTimersByTimeAsync(5000)
     await expect(promise).resolves.toBe('success')
     expect(fn).toHaveBeenCalledTimes(2)
   })
@@ -207,7 +207,7 @@ describe('createRetryer', () => {
 
     const promise = retryer.start()
     onlineManager.setOnline(false)
-    await vi.advanceTimersByTimeAsync(5_000)
+    await vi.advanceTimersByTimeAsync(5000)
     expect(onPause).toHaveBeenCalledTimes(1)
     expect(fn).toHaveBeenCalledTimes(1)
     expect(retryer.status()).toBe('pending')
@@ -254,7 +254,7 @@ describe('createRetryer', () => {
     })
 
     void retryer.start()
-    await vi.advanceTimersByTimeAsync(5_000)
+    await vi.advanceTimersByTimeAsync(5000)
     expect(fn).toHaveBeenCalledTimes(1)
     expect(onPause).toHaveBeenCalledTimes(1)
     expect(retryer.status()).toBe('pending')
@@ -295,7 +295,7 @@ describe('createRetryer', () => {
     })
 
     const promise = retryer.start()
-    await vi.advanceTimersByTimeAsync(5_000)
+    await vi.advanceTimersByTimeAsync(5000)
     await expect(promise).resolves.toBe('from fn')
     expect(fn).toHaveBeenCalledTimes(1)
   })

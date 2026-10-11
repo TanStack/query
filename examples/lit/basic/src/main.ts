@@ -120,7 +120,7 @@ class TanstackLitQueryDemo extends LitElement {
     this.cacheSeedCount += 1
 
     const seedTodo: Todo = {
-      id: 10_000 + this.cacheSeedCount,
+      id: 10000 + this.cacheSeedCount,
       title: `Seeded cache todo ${this.cacheSeedCount}`,
     }
 

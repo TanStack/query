@@ -16,7 +16,7 @@ result. The attached methods delegate to the active query observer.
 
 ## Type Declaration
 
-### destroy()
+### destroy
 
 ```ts
 destroy: () => void;
@@ -36,7 +36,7 @@ refetch: QueryObserverResult<TData, TError>["refetch"];
 
 Refetches the current query.
 
-### suspense()
+### suspense
 
 ```ts
 suspense: () => Promise<QueryObserverResult<TData, TError>>;

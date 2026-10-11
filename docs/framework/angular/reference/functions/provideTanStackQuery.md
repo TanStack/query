@@ -9,7 +9,7 @@ function provideTanStackQuery(queryClient:
   | InjectionToken<QueryClient>, ...features: QueryFeatures[]): Provider[];
 ```
 
-Defined in: [packages/angular-query-experimental/src/providers.ts:102](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L102)
+Defined in: [packages/angular-query-experimental/src/providers.ts:96](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L96)
 
 Sets up providers necessary to enable TanStack Query functionality for Angular applications. Allows
 configuring a `QueryClient` and optional features such as developer tools.
@@ -18,9 +18,10 @@ configuring a `QueryClient` and optional features such as developer tools.
 
 ### queryClient
 
-A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
+  \| [`QueryClient`](../classes/QueryClient.md)
+  \| `InjectionToken`\<[`QueryClient`](../classes/QueryClient.md)\>
 
-[`QueryClient`](../classes/QueryClient.md) | `InjectionToken`\<[`QueryClient`](../classes/QueryClient.md)\>
+A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
 
 ### features
 

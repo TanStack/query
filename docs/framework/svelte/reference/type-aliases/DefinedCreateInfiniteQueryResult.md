@@ -7,7 +7,7 @@ title: DefinedCreateInfiniteQueryResult
 type DefinedCreateInfiniteQueryResult<TData, TError> = DefinedInfiniteQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:75](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L75)
+Defined in: [packages/svelte-query/src/types.ts:79](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L79)
 
 Result from createInfiniteQuery with initialData
 

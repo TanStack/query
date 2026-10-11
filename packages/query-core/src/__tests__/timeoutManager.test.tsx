@@ -35,7 +35,7 @@ describe('timeoutManager', () => {
       manager = new TimeoutManager()
     })
 
-    it('by default proxies calls to globalThis setTimeout/clearTimeout', () => {
+    it('should proxy calls to globalThis setTimeout/clearTimeout by default', () => {
       const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout')
       const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout')
       const setIntervalSpy = vi.spyOn(globalThis, 'setInterval')
@@ -58,7 +58,7 @@ describe('timeoutManager', () => {
     })
 
     describe('setTimeoutProvider', () => {
-      it('proxies calls to the configured timeout provider', () => {
+      it('should proxy calls to the configured timeout provider', () => {
         const customProvider = createMockProvider()
         manager.setTimeoutProvider(customProvider)
 
@@ -77,7 +77,7 @@ describe('timeoutManager', () => {
         expect(customProvider.clearInterval).toHaveBeenCalledWith(888)
       })
 
-      it('warns when switching providers after making call', () => {
+      it('should warn when switching providers after making call', () => {
         // 1. switching before making any calls does not warn
         const customProvider = createMockProvider()
         manager.setTimeoutProvider(customProvider)

@@ -880,7 +880,6 @@ describe('useSuspenseQuery', () => {
       useSuspenseQuery({
         queryKey: key,
         // @ts-expect-error
-        // eslint-disable-next-line react-hooks/purity
         queryFn: Math.random() >= 0 ? skipToken : () => Promise.resolve(5),
       })
 

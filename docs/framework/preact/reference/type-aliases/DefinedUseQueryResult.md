@@ -7,7 +7,7 @@ title: DefinedUseQueryResult
 type DefinedUseQueryResult<TData, TError> = DefinedQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [packages/preact-query/src/types.ts:352](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L352)
+Defined in: [packages/preact-query/src/types.ts:339](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L339)
 
 The result of `useQuery` when `initialData` is set, or of `useSuspenseQuery` before the `isPlaceholderData`
 omission — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).

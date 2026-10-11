@@ -7,12 +7,10 @@ import type { Accessor } from 'solid-js'
 /**
  * The `useIsMutating` primitive returns the `number` of mutations that your application currently has `pending`
  * (useful for app-wide loading indicators).
- *
  * @param filters - An accessor returning the {@link MutationFilters} to narrow down the matched mutations.
  * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns An accessor for the `number` of the mutations that your application currently has `pending`.
- *
  * @example
  * ```tsx
  * import { useIsMutating } from '@tanstack/solid-query'

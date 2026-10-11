@@ -247,7 +247,7 @@ describe('mutationCache', () => {
       expect(states).toEqual([1, 2, 3, 4])
     })
 
-    it('options.onMutate should run synchronously when mutationCache.config.onMutate is not defined', () => {
+    it('should run options.onMutate synchronously when mutationCache.config.onMutate is not defined', () => {
       const key = queryKey()
       const states: Array<string> = []
 

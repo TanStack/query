@@ -10,7 +10,7 @@ function createInfiniteQueryController<TQueryFnData, TError, TData, TQueryKey, T
 queryClient?: QueryClient): InfiniteQueryResultAccessor<TData, TError>;
 ```
 
-Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:398](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L398)
+Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:401](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L401)
 
 Creates a Lit reactive controller that subscribes the host to an infinite
 query.
@@ -60,6 +60,12 @@ subscription.
 
 Infinite query observer options, or a getter that returns
 options.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`InfiniteQueryObserverOptions`](../interfaces/InfiniteQueryObserverOptions.md#properties). See the type above for what it changes.
 
 ### queryClient?
 

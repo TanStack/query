@@ -2,11 +2,11 @@
 
 import tsParser from '@typescript-eslint/parser'
 import pluginSvelte from 'eslint-plugin-svelte'
-import rootConfig from './root.eslint.config.js'
+import { defineConfig } from 'eslint/config'
 import svelteConfig from './svelte.config.js'
 
-export default [
-  ...rootConfig,
+// Only the Svelte rules, which need the component template; everything else is linted by Oxlint
+export default defineConfig([
   ...pluginSvelte.configs['recommended'],
   {
     files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
@@ -17,10 +17,6 @@ export default [
         svelteConfig,
       },
     },
-    rules: {
-      // Svelte runes and proxy state produce false positives for this rule.
-      '@typescript-eslint/no-unnecessary-condition': 'off',
-    },
   },
   {
     rules: {
@@ -29,4 +25,4 @@ export default [
       'svelte/valid-compile': 'off',
     },
   },
-]
+])

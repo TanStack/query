@@ -3,13 +3,27 @@ id: mutationOptions
 title: mutationOptions
 ---
 
+## Overview
+
+```ts
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+```
+
+- [`WithRequired<CreateMutationOptions>` → `WithRequired<CreateMutationOptions>`](#call-signature-1): You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. A `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with `injectMutationState`.
+- [`Omit<CreateMutationOptions>` → `Omit<CreateMutationOptions>`](#call-signature-2): You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. No `mutationKey` is required on this overload — use this when you don't need to target the mutation via a `mutationKey` filter later (e.g. with `injectMutationState`); it can still be observed through other filters, such as `status`.
+
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/angular-query-experimental/src/mutation-options.ts:40](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L40)
+Defined in: [packages/angular-query-experimental/src/mutation-options.ts:38](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L38)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. A
 `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
@@ -79,13 +93,15 @@ export class SavingIndicator {
 }
 ```
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/angular-query-experimental/src/mutation-options.ts:98](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L98)
+Defined in: [packages/angular-query-experimental/src/mutation-options.ts:94](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L94)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. No
 `mutationKey` is required on this overload — use this when you don't need to target the mutation via a
@@ -125,13 +141,13 @@ The mutation options to use, identical to what you'd pass to `injectMutation`, w
 
 The same options object, unchanged.
 
-### See
-
-[injectMutation](injectMutation.md) to run the mutation these options describe.
-
 ### Remarks
 
 See the other overload's example for looking a mutation up via `injectMutationState`.
+
+### See
+
+[injectMutation](injectMutation.md) to run the mutation these options describe.
 
 ### Example
 
@@ -165,3 +181,34 @@ export class Post {
   }
 }
 ```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+`Omit`\<[`CreateMutationOptions`](../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+
+The mutation options to use, identical to what you'd pass to `injectMutation`, without a
+`mutationKey`.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`CreateMutationOptions`](../interfaces/CreateMutationOptions.md#properties). See the type above for what it changes.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+`Omit`\<[`CreateMutationOptions`](../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+
+The same options object, unchanged.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`CreateMutationOptions`](../interfaces/CreateMutationOptions.md#properties). See the type above for what it changes.

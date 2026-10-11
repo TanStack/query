@@ -7,7 +7,7 @@ title: GetPreviousPageParamFunction
 type GetPreviousPageParamFunction<TPageParam, TQueryFnData> = (firstPage: TQueryFnData, allPages: TQueryFnData[], firstPageParam: TPageParam, allPageParams: TPageParam[]) => TPageParam | undefined | null;
 ```
 
-Defined in: [packages/query-core/src/types.ts:230](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L230)
+Defined in: [packages/query-core/src/types.ts:296](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L296)
 
 ## Type Parameters
 

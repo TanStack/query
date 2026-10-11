@@ -7,7 +7,7 @@ title: QueryClientProvider
 function QueryClientProvider(props: QueryClientProviderProps): Element;
 ```
 
-Defined in: [packages/solid-query/src/QueryClientProvider.tsx:95](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClientProvider.tsx#L95)
+Defined in: [packages/solid-query/src/QueryClientProvider.tsx:100](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClientProvider.tsx#L100)
 
 Use the `QueryClientProvider` component to connect and provide a `QueryClient` to your application. Also
 calls `client.mount()`/`client.unmount()` as this component mounts/unmounts, which subscribes the client to
@@ -19,6 +19,17 @@ comes back online).
 ### props
 
 [`QueryClientProviderProps`](../type-aliases/QueryClientProviderProps.md)
+
+The `client` to provide, and the `children` that get access to it.
+
+<a id="props-properties"></a>
+
+#### `props` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="props-property-children"></a> `children?` | `JSX.Element` | The components that get access to the provided `QueryClient`. |
+| <a id="props-property-client"></a> `client` | [`QueryClient`](../classes/QueryClient.md) | **Required** The `QueryClient` instance to provide. |
 
 ## Returns
 

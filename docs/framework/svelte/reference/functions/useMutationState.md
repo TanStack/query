@@ -4,10 +4,10 @@ title: useMutationState
 ---
 
 ```ts
-function useMutationState<TResult, TMutation>(options: MutationStateOptions<TResult, TMutation>, queryClient?: QueryClient): TResult[];
+function useMutationState<TResult, TMutation>(options?: MutationStateOptions<TResult, TMutation>, queryClient?: QueryClient): TResult[];
 ```
 
-Defined in: [packages/svelte-query/src/useMutationState.svelte.ts:100](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useMutationState.svelte.ts#L100)
+Defined in: [packages/svelte-query/src/useMutationState.svelte.ts:103](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useMutationState.svelte.ts#L103)
 
 `useMutationState` is a function that gives you access to all mutations in the `MutationCache`. You can pass
 `filters` ([MutationFilters](../interfaces/MutationFilters.md)) to narrow down your mutations, and `select` to transform the mutation
@@ -25,12 +25,21 @@ state.
 
 ## Parameters
 
-### options
+### options?
 
 [`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\> = `{}`
 
 The `filters` to narrow down matched mutations, and an optional `select` to transform the
 mutation state.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="options-property-filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) | The filters that select the mutations to return the state of. |
+| <a id="options-property-select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` | Maps each matching mutation to the value returned for it. Defaults to the mutation's `state`. |
 
 ### queryClient?
 
