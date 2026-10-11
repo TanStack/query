@@ -9,14 +9,14 @@
     "test:eslint": "eslint ./src"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.104.1",
-    "@tanstack/react-query-devtools": "^5.104.1",
+    "@tanstack/react-query": "^5.104.2",
+    "@tanstack/react-query-devtools": "^5.104.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint-react/eslint-plugin": "^5.21.0",
-    "@tanstack/eslint-plugin-query": "^5.104.1",
+    "@tanstack/eslint-plugin-query": "^5.104.2",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^6.1.1",
