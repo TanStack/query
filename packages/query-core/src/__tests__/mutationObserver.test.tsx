@@ -559,11 +559,23 @@ describe('mutationObserver', () => {
 
     // onSettled for the first mutation must have been called with data=1
     expect(onSettledFirst).toHaveBeenCalledTimes(1)
-    expect(onSettledFirst).toHaveBeenCalledWith(1, null, 1, undefined, expect.any(Object))
+    expect(onSettledFirst).toHaveBeenCalledWith(
+      1,
+      null,
+      1,
+      undefined,
+      expect.any(Object),
+    )
 
     // onSettled for the second mutation must have been called with data=2
     expect(onSettledSecond).toHaveBeenCalledTimes(1)
-    expect(onSettledSecond).toHaveBeenCalledWith(2, null, 2, undefined, expect.any(Object))
+    expect(onSettledSecond).toHaveBeenCalledWith(
+      2,
+      null,
+      2,
+      undefined,
+      expect.any(Object),
+    )
 
     unsubscribe()
   })
