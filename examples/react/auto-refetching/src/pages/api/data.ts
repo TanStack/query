@@ -7,11 +7,13 @@ export default async (
   req: NextApiRequest,
   res: NextApiResponse<typeof list>,
 ) => {
-  if (req.query.add) {
-    if (!list.includes(req.query.add)) {
-      list.push(req.query.add)
+  const { add, clear } = req.query
+
+  if (typeof add === 'string' && add) {
+    if (!list.includes(add)) {
+      list.push(add)
     }
-  } else if (req.query.clear) {
+  } else if (clear) {
     list = []
   }
 
