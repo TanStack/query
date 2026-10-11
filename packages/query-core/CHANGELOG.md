@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.104.2
+
+### Patch Changes
+
+- [#11679](https://github.com/TanStack/query/pull/11679) [`03e8c39`](https://github.com/TanStack/query/commit/03e8c3955ddbf20f0a07b79982b52dfad8df5323) - fix(query-core): start queued scoped mutations when the window is not focused
+
 ## 5.104.1
 
 No changes in this release.
