@@ -298,11 +298,12 @@ export class Query<
   #client: QueryClient
   #retryer?: Retryer<TData>
   // Retryers that were silently cancelled because `fetch()` superseded them
-  // with a replacement fetch (`cancelRefetch`). Their callers piggyback onto
-  // the replacement instead of observing the cancellation. A silent
-  // cancellation from anywhere else (e.g. `invalidateQueries`) is not tracked
-  // here, so its callers observe the `CancelledError`.
-  #supersededRetryers = new Set<Retryer<TData>>()
+  // with a replacement fetch (`cancelRefetch`), mapped to that replacement.
+  // Their callers piggyback onto the recorded replacement instead of
+  // observing the cancellation. A silent cancellation from anywhere else
+  // (e.g. `invalidateQueries`) is not tracked here, so its callers observe
+  // the `CancelledError`.
+  #supersededRetryers = new Map<Retryer<TData>, Retryer<TData>>()
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
@@ -710,6 +711,11 @@ export class Query<
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     fetchOptions?: FetchOptions<TQueryFnData>,
   ): Promise<TData> {
+    // Retryer superseded by the replacement fetch started below, if any.
+    // Recorded once the replacement exists so superseded callers piggyback
+    // onto that specific fetch, not whatever is current when their
+    // cancellation handler runs.
+    let supersededRetryer: Retryer<TData> | undefined
     if (
       this.state.fetchStatus !== 'idle' &&
       // If the promise in the retryer is already rejected, we have to definitely
@@ -721,9 +727,7 @@ export class Query<
         // Silently cancel the current fetch: the replacement fetch started
         // below supersedes it, so its callers piggyback onto the replacement
         // instead of observing the cancellation.
-        if (this.#retryer) {
-          this.#supersededRetryers.add(this.#retryer)
-        }
+        supersededRetryer = this.#retryer
         this.cancel({ silent: true })
       } else if (this.#retryer) {
         // make sure that retries that were potentially cancelled due to unmounts can continue
@@ -875,6 +879,11 @@ export class Query<
       networkMode: context.options.networkMode,
       canRun: () => true,
     }))
+    if (supersededRetryer) {
+      // Record the replacement for the superseded fetch: its callers
+      // piggyback onto this specific fetch's promise in the catch below.
+      this.#supersededRetryers.set(supersededRetryer, retryer)
+    }
 
     try {
       const data = await retryer.start()
@@ -901,12 +910,14 @@ export class Query<
     } catch (error) {
       if (error instanceof CancelledError) {
         if (error.silent) {
-          if (this.#supersededRetryers.delete(retryer)) {
-            // This fetch was superseded by the replacement fetch started
-            // above, so piggyback onto that promise. A silent cancellation
-            // from anywhere else (e.g. `invalidateQueries`) is rethrown so
-            // that callers consistently observe the cancellation.
-            return this.#retryer.promise
+          const replacement = this.#supersededRetryers.get(retryer)
+          if (replacement) {
+            // This fetch was superseded by a specific replacement fetch, so
+            // piggyback onto that promise. A silent cancellation from
+            // anywhere else (e.g. `invalidateQueries`) is rethrown so that
+            // callers consistently observe the cancellation.
+            this.#supersededRetryers.delete(retryer)
+            return replacement.promise
           }
           if (this.#retryer === retryer) {
             // This fetch is still the current one, so no replacement fetch
