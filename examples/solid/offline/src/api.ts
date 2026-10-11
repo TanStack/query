@@ -26,13 +26,16 @@ export const fetchMovie = async (
 
 export const fetchMovies = async (): Promise<{
   ts: number
-  movies: typeof movies
+  movies: Array<{ id: string; title: string }>
 }> => {
   const response = await fetch('/movies')
   return await response.json()
 }
 
-export const updateMovie = async (id: string, comment: string) => {
+export const updateMovie = async (
+  id: string,
+  comment: string,
+): Promise<{ message: string }> => {
   const response = await fetch(`/movies/${id}`, {
     method: 'POST',
     body: JSON.stringify({ comment }),
@@ -65,20 +68,23 @@ export const worker = setupWorker(
     return HttpResponse.json({ ts: Date.now(), movie })
   }),
 
-  http.post('/movies/:id', async ({ request, params }) => {
-    const { id } = params
-    const body = (await request.json()) as { comment: string }
-    const { comment } = body
+  http.post<{ id: string }, { comment: string }>(
+    '/movies/:id',
+    async ({ request, params }) => {
+      const { id } = params
+      const body = await request.json()
+      const { comment } = body
 
-    movies.forEach((movie) => {
-      if (movie.id === id) {
-        movie.comment = comment.toUpperCase()
-      }
-    })
+      movies.forEach((movie) => {
+        if (movie.id === id) {
+          movie.comment = comment.toUpperCase()
+        }
+      })
 
-    await delay(500)
-    return HttpResponse.json({ message: `Successfully updated movie ${id}` })
-  }),
+      await delay(500)
+      return HttpResponse.json({ message: `Successfully updated movie ${id}` })
+    },
+  ),
   http.get('*.js', () => passthrough()),
   http.get('*.svg', () => passthrough()),
 )
