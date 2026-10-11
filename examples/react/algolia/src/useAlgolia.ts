@@ -23,7 +23,8 @@ export default function useAlgolia<TData>({
           search<TData>({ indexName, query, pageParam, hitsPerPage })
       : skipToken,
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
+    getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+      lastPageParam + 1 < lastPage.nbPages ? lastPageParam + 1 : undefined,
     select: (data) => data.pages.flatMap((page) => page.hits),
     staleTime,
     gcTime,
