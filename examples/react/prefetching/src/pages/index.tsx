@@ -18,9 +18,52 @@ const getCharacter = async (selectedChar: number) => {
   return await response.json()
 }
 
-export default function Example() {
+function CharacterItem({
+  char,
+  onSelect,
+}: {
+  char: { id: number; name: string }
+  onSelect: (id: number) => void
+}) {
   const queryClient = useQueryClient()
-  const rerender = React.useState(0)[1]
+
+  const { data } = useQuery({
+    queryKey: ['character', char.id],
+    queryFn: () => getCharacter(char.id),
+    enabled: false,
+  })
+
+  return (
+    <li
+      onClick={() => {
+        onSelect(char.id)
+      }}
+      onMouseEnter={() => {
+        queryClient
+          .query({
+            queryKey: ['character', char.id],
+            queryFn: () => getCharacter(char.id),
+            staleTime: 10 * 1000, // only prefetch if older than 10 seconds
+          })
+          .catch(noop)
+      }}
+    >
+      <div
+        style={
+          data
+            ? {
+                fontWeight: 'bold',
+              }
+            : {}
+        }
+      >
+        {char.id} - {char.name}
+      </div>
+    </li>
+  )
+}
+
+export default function Example() {
   const [selectedChar, setSelectedChar] = React.useState(1)
 
   const charactersQuery = useQuery({
@@ -47,37 +90,11 @@ export default function Example() {
         <>
           <ul>
             {charactersQuery.data?.results.map((char) => (
-              <li
+              <CharacterItem
                 key={char.id}
-                onClick={() => {
-                  setSelectedChar(char.id)
-                }}
-                onMouseEnter={async () => {
-                  await queryClient
-                    .query({
-                      queryKey: ['character', char.id],
-                      queryFn: () => getCharacter(char.id),
-                      staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-                    })
-                    .catch(noop)
-
-                  setTimeout(() => {
-                    rerender({})
-                  }, 1)
-                }}
-              >
-                <div
-                  style={
-                    queryClient.getQueryData(['character', char.id])
-                      ? {
-                          fontWeight: 'bold',
-                        }
-                      : {}
-                  }
-                >
-                  {char.id} - {char.name}
-                </div>
-              </li>
+                char={char}
+                onSelect={setSelectedChar}
+              />
             ))}
           </ul>
 
