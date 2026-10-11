@@ -1042,6 +1042,9 @@ importers:
         specifier: ^19.2.1
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.19.15
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.14
@@ -1354,6 +1357,9 @@ importers:
         specifier: ^19.2.1
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.19.15
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.14
@@ -1385,6 +1391,9 @@ importers:
         specifier: ^11.0.1
         version: 11.0.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
     devDependencies:
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.19.15
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.14
@@ -1413,6 +1422,9 @@ importers:
         specifier: ^19.2.1
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.19.15
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.14
@@ -1472,6 +1484,9 @@ importers:
         specifier: ^19.2.1
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.19.15
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.14
@@ -1503,6 +1518,9 @@ importers:
         specifier: ^19.2.1
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.19.15
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.14
@@ -1577,6 +1595,9 @@ importers:
         specifier: ^19.2.1
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.19.15
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.14
@@ -1636,6 +1657,9 @@ importers:
         specifier: ^19.2.1
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.19.15
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.14
