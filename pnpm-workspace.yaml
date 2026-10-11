@@ -77,7 +77,7 @@ overrides:
   'chokidar': '5.0.0'
   '@types/react': 'catalog:'
   '@types/react-dom': 'catalog:'
-  '@types/node': '^22.15.3'
+  '@types/node': '^24.19.2'
   esbuild: '^0.28.2'
 
 allowBuilds:
