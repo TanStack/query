@@ -297,6 +297,12 @@ export class Query<
   #cache: QueryCache
   #client: QueryClient
   #retryer?: Retryer<TData>
+  // Retryers that were silently cancelled because `fetch()` superseded them
+  // with a replacement fetch (`cancelRefetch`). Their callers piggyback onto
+  // the replacement instead of observing the cancellation. A silent
+  // cancellation from anywhere else (e.g. `invalidateQueries`) is not tracked
+  // here, so its callers observe the `CancelledError`.
+  #supersededRetryers = new Set<Retryer<TData>>()
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
@@ -712,7 +718,12 @@ export class Query<
       this.#retryer?.status() !== 'rejected'
     ) {
       if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
-        // Silently cancel current fetch if the user wants to cancel refetch
+        // Silently cancel the current fetch: the replacement fetch started
+        // below supersedes it, so its callers piggyback onto the replacement
+        // instead of observing the cancellation.
+        if (this.#retryer) {
+          this.#supersededRetryers.add(this.#retryer)
+        }
         this.cancel({ silent: true })
       } else if (this.#retryer) {
         // make sure that retries that were potentially cancelled due to unmounts can continue
@@ -890,9 +901,25 @@ export class Query<
     } catch (error) {
       if (error instanceof CancelledError) {
         if (error.silent) {
-          // silent cancellation implies a new fetch is going to be started,
-          // so we piggyback onto that promise
-          return this.#retryer.promise
+          if (this.#supersededRetryers.delete(retryer)) {
+            // This fetch was superseded by the replacement fetch started
+            // above, so piggyback onto that promise. A silent cancellation
+            // from anywhere else (e.g. `invalidateQueries`) is rethrown so
+            // that callers consistently observe the cancellation.
+            return this.#retryer.promise
+          }
+          if (this.#retryer === retryer) {
+            // This fetch is still the current one, so no replacement fetch
+            // has started (e.g. `invalidateQueries` with `refetchType:
+            // 'none'`, or the default `'active'` refetch type on an inactive
+            // query). Reset the fetch status without surfacing the error:
+            // the error itself stays silent and is rethrown to the caller
+            // below, but observers must see `fetchStatus: 'idle'` once the
+            // fetch has settled, otherwise fetching indicators
+            // (`useIsFetching`, `queryClient.isFetching`) stay stuck.
+            this.#dispatch({ type: 'setState', state: { fetchStatus: 'idle' } })
+          }
+          throw error
         } else if (error.revert) {
           // transform error into reverted state data
           // if the initial fetch was cancelled, we have no data, so we have
