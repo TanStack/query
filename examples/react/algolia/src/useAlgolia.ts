@@ -16,19 +16,17 @@ export default function useAlgolia<TData>({
   staleTime,
   gcTime,
 }: UseAlgoliaOptions) {
-  const queryInfo = useInfiniteQuery({
+  return useInfiniteQuery({
     queryKey: ['algolia', indexName, query, hitsPerPage],
     queryFn: query
       ? ({ pageParam }) =>
           search<TData>({ indexName, query, pageParam, hitsPerPage })
       : skipToken,
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
+    getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+      lastPageParam + 1 < lastPage.nbPages ? lastPageParam + 1 : undefined,
+    select: (data) => data.pages.flatMap((page) => page.hits),
     staleTime,
     gcTime,
   })
-
-  const hits = queryInfo.data?.pages.map((page) => page.hits).flat()
-
-  return { ...queryInfo, hits }
 }

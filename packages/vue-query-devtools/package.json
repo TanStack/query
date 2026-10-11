@@ -19,7 +19,6 @@
     "compile": "vue-tsc --project tsconfig.json",
     "test:oxlint": "oxlint ./src",
     "test:types": "npm-run-all --serial test:types:*",
-    "test:types:ts56": "node -e \"process.argv.splice(1, 0, ''); require('vue-tsc').run(require.resolve('typescript56/lib/tsc'))\" -- --project tsconfig.legacy.json --outDir .cache/test-types/ts56 --tsBuildInfoFile .cache/test-types/ts56.tsbuildinfo",
     "test:types:ts57": "node -e \"process.argv.splice(1, 0, ''); require('vue-tsc').run(require.resolve('typescript57/lib/tsc'))\" -- --project tsconfig.legacy.json --outDir .cache/test-types/ts57 --tsBuildInfoFile .cache/test-types/ts57.tsbuildinfo",
     "test:types:ts58": "node -e \"process.argv.splice(1, 0, ''); require('vue-tsc').run(require.resolve('typescript58/lib/tsc'))\" -- --project tsconfig.legacy.json --outDir .cache/test-types/ts58 --tsBuildInfoFile .cache/test-types/ts58.tsbuildinfo",
     "test:types:ts59": "node -e \"process.argv.splice(1, 0, ''); require('vue-tsc').run(require.resolve('typescript59/lib/tsc'))\" -- --project tsconfig.legacy.json --outDir .cache/test-types/ts59 --tsBuildInfoFile .cache/test-types/ts59.tsbuildinfo",

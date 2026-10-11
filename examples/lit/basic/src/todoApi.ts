@@ -4,12 +4,12 @@ export type Todo = {
 }
 
 export type TodosResponse = {
-  items: Todo[]
+  items: Array<Todo>
   requestCount: number
   source: 'server' | 'cache'
 }
 
-let todos: Todo[] = [
+let todos: Array<Todo> = [
   { id: 1, title: 'Ship lit-query alpha' },
   { id: 2, title: 'Write integration checks' },
 ]

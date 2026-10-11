@@ -7,7 +7,8 @@
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test:eslint": "eslint ./src"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
@@ -20,5 +21,9 @@
     "solid-js": "^1.9.15",
     "tailwindcss": "^3.4.7",
     "typescript": "5.8.3"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.104.1",
+    "eslint-plugin-solid": "^0.18.1"
   }
 }

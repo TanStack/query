@@ -6,7 +6,8 @@
     "dev": "vinxi dev",
     "build": "vinxi build",
     "start": "vinxi start",
-    "version": "vinxi version"
+    "version": "vinxi version",
+    "test:eslint": "eslint ./src"
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.4",
@@ -19,5 +20,9 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.104.1",
+    "eslint-plugin-solid": "^0.18.1"
   }
 }

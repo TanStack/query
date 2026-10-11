@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "node ./scripts/dev.mjs",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src"
   },
   "dependencies": {
     "@tanstack/lit-query": "^0.2.26",
@@ -13,6 +14,7 @@
     "lit": "^3.3.3"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.104.1",
     "typescript": "5.8.3",
     "vite": "^8.3.1"
   }
