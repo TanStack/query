@@ -9,12 +9,12 @@
     "test:eslint": "eslint ./src"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^5.104.1",
-    "@tanstack/solid-query-devtools": "^5.104.1",
+    "@tanstack/solid-query": "^5.104.2",
+    "@tanstack/solid-query-devtools": "^5.104.2",
     "solid-js": "^1.9.15"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.104.1",
+    "@tanstack/eslint-plugin-query": "^5.104.2",
     "eslint-plugin-solid": "^0.18.1",
     "typescript": "5.8.3",
     "vite": "^8.3.1",
