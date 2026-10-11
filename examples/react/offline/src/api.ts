@@ -26,7 +26,7 @@ export const fetchMovie = async (
 
 export const fetchMovies = async (): Promise<{
   ts: number
-  movies: typeof movies
+  movies: Array<{ id: string; title: string }>
 }> => {
   const response = await fetch('/movies')
   return await response.json()
