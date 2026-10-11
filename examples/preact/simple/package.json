@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@tanstack/preact-query": "^5.104.1",
-    "preact": "^10.29.8"
+    "preact": "^11.0.1"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.6",

@@ -69,7 +69,7 @@
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/preact": "catalog:",
     "preact": "catalog:",
-    "preact-render-to-string": "^6.6.4",
+    "preact-render-to-string": "^6.8.0",
     "typescript": "catalog:"
   },
   "peerDependencies": {
