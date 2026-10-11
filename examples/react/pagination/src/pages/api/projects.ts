@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const page = Number(req.query.page) || 0
+  const page =
+    typeof req.query.page === 'string' ? parseInt(req.query.page) || 0 : 0
 
   const pageSize = 10
 

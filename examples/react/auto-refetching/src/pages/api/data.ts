@@ -9,7 +9,7 @@ export default async (
 ) => {
   const { add, clear } = req.query
 
-  if (typeof add === 'string') {
+  if (typeof add === 'string' && add) {
     if (!list.includes(add)) {
       list.push(add)
     }
