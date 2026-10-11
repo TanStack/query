@@ -13,6 +13,7 @@ import {
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
+import { useClearResetErrorBoundary } from '../errorBoundaryUtils'
 import { ErrorBoundary } from './ErrorBoundary'
 import { renderWithClient } from './utils'
 
@@ -32,6 +33,24 @@ describe('QueryErrorResetBoundary', () => {
   })
 
   describe('useQuery', () => {
+    it('should only clear the reset boundary after a reset has happened', () => {
+      const clearReset = vi.fn()
+
+      function TestComponent() {
+        useClearResetErrorBoundary({
+          clearReset,
+          isReset: () => false,
+          reset: vi.fn(),
+        })
+
+        return null
+      }
+
+      renderWithClient(queryClient, <TestComponent />)
+
+      expect(clearReset).not.toHaveBeenCalled()
+    })
+
     it('should retry fetch if the reset error boundary has been reset', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
