@@ -16,6 +16,21 @@ export default function App() {
   )
 }
 
+type ProjectsPage = {
+  data: Array<{ name: string; id: number }>
+  previousId: number | null
+  nextId: number | null
+}
+
+const fetchProjects = async ({
+  pageParam,
+}: {
+  pageParam: number
+}): Promise<ProjectsPage> => {
+  const response = await fetch(`/api/projects?cursor=${pageParam}`)
+  return await response.json()
+}
+
 function Example() {
   const {
     status,
@@ -30,10 +45,7 @@ function Example() {
     hasPreviousPage,
   } = useInfiniteQuery({
     queryKey: ['projects'],
-    queryFn: async ({ pageParam }) => {
-      const response = await fetch(`/api/projects?cursor=${pageParam}`)
-      return await response.json()
-    },
+    queryFn: fetchProjects,
     initialPageParam: 0,
     getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
     getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
