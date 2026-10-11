@@ -16,6 +16,7 @@
     "react-intersection-observer": "^11.0.1"
   },
   "devDependencies": {
+    "@types/node": "^24.19.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "typescript": "5.8.3"
