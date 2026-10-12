@@ -34,7 +34,9 @@
   <hr />
 
   {#if editingIndex.value !== null}
-    <EditTodo />
+    {#key editingIndex.value}
+      <EditTodo id={editingIndex.value} />
+    {/key}
     <hr />
   {/if}
 
