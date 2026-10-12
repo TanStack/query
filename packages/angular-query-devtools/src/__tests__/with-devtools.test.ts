@@ -556,6 +556,33 @@ describe('withDevtools feature', () => {
     expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(1)
   })
 
+  it('should keep devtools mounted when loadDevtools resolves to the same state', async () => {
+    mockIsDevMode.mockReturnValue(true)
+    const loadDevtools = signal<'auto' | boolean>(true)
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          () => new QueryClient(),
+          withDevtools(() => ({ loadDevtools })),
+        ),
+      ],
+    })
+    await TestBed.inject(ApplicationRef).whenStable()
+
+    const container = document.querySelector('.tsqd-parent-container')
+    expect(container).not.toBeNull()
+    expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
+
+    loadDevtools.set('auto')
+    await TestBed.inject(ApplicationRef).whenStable()
+
+    expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.unmount).not.toHaveBeenCalled()
+    expect(document.querySelector('.tsqd-parent-container')).toBe(container)
+  })
+
   describe('injection context', () => {
     it('should inject dependencies directly in the callback', async () => {
       const firstService = { value: 'first' }

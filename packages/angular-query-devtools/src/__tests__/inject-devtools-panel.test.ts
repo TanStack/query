@@ -232,11 +232,11 @@ describe('injectDevtoolsPanel', () => {
     expect(mockDevtoolsPanelInstance.setErrorTypes).toHaveBeenCalledTimes(1)
   })
 
-  it('should update onclose', async () => {
-    const functionA = () => {}
-    const functionB = () => {}
+  it('should update onClose and clear it when removed', async () => {
+    const functionA = vi.fn()
+    const functionB = vi.fn()
 
-    const onClose = signal(functionA)
+    const onClose = signal<typeof functionA | undefined>(functionA)
 
     TestBed.runInInjectionContext(() => {
       return injectDevtoolsPanel(() => ({
@@ -256,5 +256,18 @@ describe('injectDevtoolsPanel', () => {
     await TestBed.inject(ApplicationRef).whenStable()
 
     expect(mockDevtoolsPanelInstance.setOnClose).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsPanelInstance.setOnClose).toHaveBeenLastCalledWith(
+      functionB,
+    )
+
+    onClose.set(undefined)
+    await TestBed.inject(ApplicationRef).whenStable()
+
+    expect(mockDevtoolsPanelInstance.setOnClose).toHaveBeenCalledTimes(2)
+    const resetOnClose = mockDevtoolsPanelInstance.setOnClose.mock.lastCall?.[0]
+    expect(resetOnClose).toBeTypeOf('function')
+    resetOnClose?.()
+    expect(functionA).not.toHaveBeenCalled()
+    expect(functionB).not.toHaveBeenCalled()
   })
 })
