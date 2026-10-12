@@ -1,14 +1,10 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import { api } from './api'
-  import type { Post } from './types'
+  import { postQueryOptions } from './queries'
 
   const { postId }: { postId: number } = $props()
 
-  const post = createQuery<Post>(() => ({
-    queryKey: ['post', postId],
-    queryFn: () => api().getPostById(postId),
-  }))
+  const post = createQuery(() => postQueryOptions(postId))
 </script>
 
 <div>
