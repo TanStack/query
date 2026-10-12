@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, assert, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/angular'
 import {
   ApplicationRef,
@@ -20,6 +20,7 @@ import {
   provideAngularQueryChangeDetection,
   setupTanStackQueryTestBed,
 } from './test-utils'
+import type { OnDestroy, Signal } from '@angular/core'
 
 // cspell:ignore ZONEFUL
 
@@ -38,6 +39,115 @@ afterEach(() => {
 })
 
 describe('injectQueries', () => {
+  it('keeps a removed row field readable during child destruction', () => {
+    vi.useRealTimers()
+    const reads: Array<string | undefined> = []
+    @Component({ selector: 'query-row', template: '{{ data()() }}' })
+    class Row implements OnDestroy {
+      readonly data = input.required<Signal<string | undefined>>()
+
+      ngOnDestroy() {
+        reads.push(this.data()())
+      }
+    }
+    @Component({
+      imports: [Row],
+      template: `
+        @for (query of queries(); track $index) {
+          <query-row [data]="query.data" />
+        }
+      `,
+    })
+    class Page {
+      readonly ids = signal(['a', 'b'])
+      readonly queries = injectQueries(() => ({
+        queries: this.ids().map((id) => ({
+          queryKey: ['row-cleanup', id],
+          queryFn: () => Promise.resolve(id),
+          initialData: id,
+          enabled: false,
+        })),
+      }))
+    }
+    const fixture = TestBed.createComponent(Page)
+    fixture.detectChanges()
+    expect(fixture.nativeElement.textContent).toContain('b')
+
+    fixture.componentInstance.ids.set(['a'])
+    expect(() => fixture.detectChanges()).not.toThrow()
+
+    expect(reads).toEqual(['b'])
+    expect(fixture.componentInstance.queries()).toHaveLength(1)
+    fixture.destroy()
+  })
+
+  it.each([false, true])(
+    'retains a removed slot snapshot and preserves slot semantics (read=%s)',
+    async (readBeforeRemoval) => {
+      vi.useRealTimers()
+      const ids = signal(['a', 'b'])
+      const queries = TestBed.runInInjectionContext(() =>
+        injectQueries(() => ({
+          queries: ids().map((id) => ({
+            queryKey: ['retained-slot', id],
+            queryFn: () => Promise.resolve(id),
+            initialData: id,
+            enabled: false,
+          })),
+        })),
+      )
+      const removed = queries()[1]
+      assert(removed)
+      await TestBed.inject(ApplicationRef).whenStable()
+      const reads: Array<string | undefined> = []
+      if (readBeforeRemoval) {
+        reads.push(removed.data())
+        queryClient.setQueryData(['retained-slot', 'b'], 'updated-b')
+        reads.push(removed.data())
+      }
+      expect(reads).toEqual(readBeforeRemoval ? ['b', 'updated-b'] : [])
+
+      ids.set(['a'])
+      expect(queries()).toHaveLength(1)
+
+      expect(removed.data()).toBe(readBeforeRemoval ? 'updated-b' : 'b')
+      expect(removed.status()).toBe('success')
+      await expect(removed.refetch()).rejects.toThrow(
+        'removed query at index 1',
+      )
+
+      ids.set(['a', 'c'])
+      const replacement = queries()[1]
+      assert(replacement)
+      expect(replacement).not.toBe(removed)
+      expect(replacement.data()).toBe('c')
+      expect(removed.data()).toBe('c')
+    },
+  )
+
+  it('keeps unread pending fields defined after removing every query', () => {
+    const ids = signal(['a'])
+    const queries = TestBed.runInInjectionContext(() =>
+      injectQueries(() => ({
+        queries: ids().map((id) => ({
+          queryKey: ['unread-slot', id],
+          queryFn: () => Promise.resolve(id),
+          enabled: false,
+        })),
+      })),
+    )
+    const removed = queries()[0]
+    assert(removed)
+
+    ids.set([])
+    expect(queries()).toHaveLength(0)
+
+    expect(removed.data()).toBeUndefined()
+    expect(removed.status()).toBe('pending')
+    expect(removed.isPending()).toBe(true)
+    expect(removed.error()).toBeNull()
+  })
+
   it.each([false, true])(
     'uses current options and slot identity for multi-query refetch (combine=%s)',
     async (combine) => {

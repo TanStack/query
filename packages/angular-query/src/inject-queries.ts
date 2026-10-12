@@ -29,6 +29,10 @@ import type { Signal } from '@angular/core'
  * @param optionsFn - A function that returns the queries' options. Similar to `computed` from Angular,
  * this function runs in the reactive context, so signals read inside it drive the queries.
  * @returns A signal containing the query results in the same order as the input queries.
+ * @remarks Result fields follow their current array index. While that index is absent,
+ * previously obtained field signals retain their last observed result, or their initial
+ * result if not read yet. They follow the index again if it reappears. `refetch` still
+ * targets the current index and rejects while it is absent.
  *
  * @example
  * ```angular-ts
@@ -170,8 +174,15 @@ export function injectQueries<
     onCleanup(() => lifecycle.setPending(false))
   })
 
-  const createResultProxy = (index: number) => {
-    const resultAtIndexSignal = computed(() => resultSignal()[index]!)
+  const createResultProxy = (
+    index: number,
+    initialResult: QueryObserverResult,
+  ) => {
+    let lastResult = initialResult
+    const resultAtIndexSignal = computed(() => {
+      lastResult = resultSignal()[index] ?? lastResult
+      return lastResult
+    })
     return Object.assign(signalProxy(resultAtIndexSignal, queryResultFields), {
       refetch: getRefetch(index),
     })
@@ -182,8 +193,8 @@ export function injectQueries<
     const results = resultSignal()
     resultProxies.length = results.length
 
-    return results.map((_, index) => {
-      return (resultProxies[index] ??= createResultProxy(index))
+    return results.map((result, index) => {
+      return (resultProxies[index] ??= createResultProxy(index, result))
     })
   })
 
