@@ -27,11 +27,30 @@ let errorRate = 0.05
 let queryTimeMin = 1000
 let queryTimeMax = 2000
 
-const queryClient = new QueryClient()
+const initialStaleTime = 1000
+const initialGcTime = 3000
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: initialStaleTime,
+      gcTime: initialGcTime,
+    },
+  },
+})
+
+function onNumberChange(setValue: (value: number) => void) {
+  return (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.valueAsNumber
+    if (!Number.isNaN(value)) {
+      setValue(value)
+    }
+  }
+}
 
 function Root() {
-  const [staleTime, setStaleTime] = React.useState(1000)
-  const [gcTime, setGcTime] = React.useState(3000)
+  const [staleTime, setStaleTime] = React.useState(initialStaleTime)
+  const [gcTime, setGcTime] = React.useState(initialGcTime)
   const [localErrorRate, setErrorRate] = React.useState(errorRate)
   const [localFetchTimeMin, setLocalFetchTimeMin] = React.useState(queryTimeMin)
   const [localFetchTimeMax, setLocalFetchTimeMax] = React.useState(queryTimeMax)
@@ -64,7 +83,7 @@ function Root() {
           min="0"
           step="1000"
           value={staleTime}
-          onChange={(e) => setStaleTime(parseFloat(e.target.value))}
+          onChange={onNumberChange(setStaleTime)}
           style={{ width: '100px' }}
         />
       </div>
@@ -75,7 +94,7 @@ function Root() {
           min="0"
           step="1000"
           value={gcTime}
-          onChange={(e) => setGcTime(parseFloat(e.target.value))}
+          onChange={onNumberChange(setGcTime)}
           style={{ width: '100px' }}
         />
       </div>
@@ -88,7 +107,7 @@ function Root() {
           max="1"
           step=".05"
           value={localErrorRate}
-          onChange={(e) => setErrorRate(parseFloat(e.target.value))}
+          onChange={onNumberChange(setErrorRate)}
           style={{ width: '100px' }}
         />
       </div>
@@ -99,7 +118,7 @@ function Root() {
           min="1"
           step="500"
           value={localFetchTimeMin}
-          onChange={(e) => setLocalFetchTimeMin(parseFloat(e.target.value))}
+          onChange={onNumberChange(setLocalFetchTimeMin)}
           style={{ width: '60px' }}
         />{' '}
       </div>
@@ -110,7 +129,7 @@ function Root() {
           min="1"
           step="500"
           value={localFetchTimeMax}
-          onChange={(e) => setLocalFetchTimeMax(parseFloat(e.target.value))}
+          onChange={onNumberChange(setLocalFetchTimeMax)}
           style={{ width: '60px' }}
         />
       </div>
@@ -126,7 +145,6 @@ function App() {
   const queryClient = useQueryClient()
   const [editingIndex, setEditingIndex] = React.useState<number | null>(null)
   const [views, setViews] = React.useState(['', 'fruit', 'grape'])
-  // const [views, setViews] = React.useState([""]);
 
   return (
     <div className="App">
@@ -139,13 +157,7 @@ function App() {
       <hr />
       {views.map((view, index) => (
         <div key={index}>
-          <Todos
-            initialFilter={view}
-            setEditingIndex={setEditingIndex}
-            onRemove={() => {
-              setViews((old) => [...old, ''])
-            }}
-          />
+          <Todos initialFilter={view} setEditingIndex={setEditingIndex} />
           <br />
         </div>
       ))}
@@ -160,6 +172,7 @@ function App() {
       {editingIndex !== null ? (
         <>
           <EditTodo
+            key={editingIndex}
             editingIndex={editingIndex}
             setEditingIndex={setEditingIndex}
           />
@@ -182,7 +195,7 @@ function Todos({
 
   const { status, data, isFetching, error, failureCount, refetch } = useQuery({
     queryKey: ['todos', { filter }],
-    queryFn: fetchTodos,
+    queryFn: ({ signal }) => fetchTodos({ filter, signal }),
   })
 
   return (
@@ -239,21 +252,12 @@ function EditTodo({
 }) {
   const queryClient = useQueryClient()
 
-  // Don't attempt to query until editingIndex is truthy
-  const { status, data, isFetching, error, failureCount, refetch } = useQuery({
+  const { status, data, isFetching, failureCount, refetch } = useQuery({
     queryKey: ['todo', { id: editingIndex }],
     queryFn: () => fetchTodoById({ id: editingIndex }),
   })
 
-  const [todo, setTodo] = React.useState(data || {})
-
-  React.useEffect(() => {
-    if (editingIndex !== null && data) {
-      setTodo(data)
-    } else {
-      setTodo({})
-    }
-  }, [data, editingIndex])
+  const [draft, setDraft] = React.useState<Partial<Omit<Todo, 'id'>>>({})
 
   const saveMutation = useMutation({
     mutationFn: patchTodo,
@@ -261,12 +265,9 @@ function EditTodo({
       // Update `todos` and the individual todo queries when this mutation succeeds
       queryClient.invalidateQueries({ queryKey: ['todos'] })
       queryClient.setQueryData(['todo', { id: editingIndex }], data)
+      setDraft({})
     },
   })
-
-  const onSave = () => {
-    saveMutation.mutate(todo)
-  }
 
   const disableEditSave =
     status === 'pending' || saveMutation.status === 'pending'
@@ -284,7 +285,7 @@ function EditTodo({
       </div>
       {status === 'pending' ? (
         <span>Loading... (Attempt: {failureCount + 1})</span>
-      ) : error ? (
+      ) : status === 'error' ? (
         <span>
           Error! <button onClick={() => refetch()}>Retry</button>
         </span>
@@ -293,10 +294,9 @@ function EditTodo({
           <label>
             Name:{' '}
             <input
-              value={todo.name}
+              value={draft.name ?? data.name}
               onChange={(e) =>
-                e.persist() ||
-                setTodo((old) => ({ ...old, name: e.target.value }))
+                setDraft((old) => ({ ...old, name: e.target.value }))
               }
               disabled={disableEditSave}
             />
@@ -304,16 +304,18 @@ function EditTodo({
           <label>
             Notes:{' '}
             <input
-              value={todo.notes}
+              value={draft.notes ?? data.notes}
               onChange={(e) =>
-                e.persist() ||
-                setTodo((old) => ({ ...old, notes: e.target.value }))
+                setDraft((old) => ({ ...old, notes: e.target.value }))
               }
               disabled={disableEditSave}
             />
           </label>
           <div>
-            <button onClick={onSave} disabled={disableEditSave}>
+            <button
+              onClick={() => saveMutation.mutate({ ...data, ...draft })}
+              disabled={disableEditSave}
+            >
               Save
             </button>
           </div>
@@ -376,14 +378,18 @@ function AddTodo() {
   )
 }
 
-function fetchTodos({ signal, queryKey: [, { filter }] }): Promise<Todos> {
+function fetchTodos({
+  filter,
+  signal,
+}: {
+  filter: string
+  signal: AbortSignal
+}): Promise<Todos> {
   console.info('fetchTodos', { filter })
 
-  if (signal) {
-    signal.addEventListener('abort', () => {
-      console.info('cancelled', filter)
-    })
-  }
+  signal.addEventListener('abort', () => {
+    console.info('cancelled', filter)
+  })
 
   return new Promise((resolve, reject) => {
     setTimeout(
@@ -410,14 +416,18 @@ function fetchTodoById({ id }: { id: number }): Promise<Todo> {
             new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
           )
         }
-        resolve(list.find((d) => d.id === id))
+        const todo = list.find((d) => d.id === id)
+        if (!todo) {
+          return reject(new Error(`Todo with id ${id} not found`))
+        }
+        resolve(todo)
       },
       queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin),
     )
   })
 }
 
-function postTodo({ name, notes }: Omit<Todo, 'id'>) {
+function postTodo({ name, notes }: Omit<Todo, 'id'>): Promise<Todo> {
   console.info('postTodo', { name, notes })
   return new Promise((resolve, reject) => {
     setTimeout(
@@ -436,7 +446,7 @@ function postTodo({ name, notes }: Omit<Todo, 'id'>) {
   })
 }
 
-function patchTodo(todo?: Todo): Promise<Todo> {
+function patchTodo(todo: Todo): Promise<Todo> {
   console.info('patchTodo', todo)
   return new Promise((resolve, reject) => {
     setTimeout(
