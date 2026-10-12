@@ -75,6 +75,10 @@ export const withDevtools: WithDevtools = (withDevtoolsFn) =>
         devtoolsProvided.isProvided = true
 
         const destroyRef = inject(DestroyRef)
+        destroyRef.onDestroy(() => {
+          devtoolsProvided.isProvided = false
+        })
+
         const injectedClient = inject(QueryClient, { optional: true })
         const options = inject(DEVTOOLS_OPTIONS)
         const client = resolveOption(options.client) ?? injectedClient
