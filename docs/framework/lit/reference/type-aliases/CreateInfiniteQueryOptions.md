@@ -7,7 +7,7 @@ title: CreateInfiniteQueryOptions
 type CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>;
 ```
 
-Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:28](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L28)
+Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:24](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L24)
 
 Options accepted by `createInfiniteQueryController`.
 
@@ -22,15 +22,15 @@ directly or through an `Accessor` when the options depend on Lit host state.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`\>
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
 
 ### TPageParam
 

@@ -5,17 +5,17 @@ title: createInfiniteQuery
 
 ```ts
 const createInfiniteQuery: {
-<TQueryFnData, TError, TData, TQueryKey, TPageParam>  (options, queryClient?): DefinedUseInfiniteQueryResult<TData, TError>;
-<TQueryFnData, TError, TData, TQueryKey, TPageParam>  (options, queryClient?): UseInfiniteQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey, TPageParam>  (options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: Accessor<QueryClient>): DefinedUseInfiniteQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey, TPageParam>  (options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: Accessor<QueryClient>): UseInfiniteQueryResult<TData, TError>;
 } = useInfiniteQuery;
 ```
 
-Defined in: [index.ts:72](https://github.com/TanStack/query/blob/main/packages/solid-query/src/index.ts#L72)
+Defined in: [packages/solid-query/src/index.ts:72](https://github.com/TanStack/query/blob/main/packages/solid-query/src/index.ts#L72)
 
 ## Call Signature
 
 ```ts
-<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): DefinedUseInfiniteQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: Accessor<QueryClient>): DefinedUseInfiniteQueryResult<TData, TError>;
 ```
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
@@ -35,7 +35,7 @@ This overload is selected when `initialData` is set.
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -113,7 +113,7 @@ function Projects() {
 ## Call Signature
 
 ```ts
-<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: Accessor<QueryClient>): UseInfiniteQueryResult<TData, TError>;
 ```
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
@@ -131,7 +131,7 @@ The options for `useInfiniteQuery` are identical to `useQuery`, with the additio
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 

@@ -7,7 +7,7 @@ title: UnusedSkipTokenInfiniteOptions
 type UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object;
 ```
 
-Defined in: [react-query/src/infiniteQueryOptions.ts:64](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L64)
+Defined in: [packages/react-query/src/infiniteQueryOptions.ts:62](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L62)
 
 The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set and
 `queryFn` is not `skipToken` — same as [UndefinedInitialDataInfiniteOptions](UndefinedInitialDataInfiniteOptions.md), but `queryFn` may not be
@@ -18,7 +18,7 @@ The options accepted by the `infiniteQueryOptions` overload selected when no `in
 ### queryFn?
 
 ```ts
-optional queryFn: Exclude<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken | undefined>;
+optional queryFn?: Exclude<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken | undefined>;
 ```
 
 `skipToken` is not allowed as a value here — this overload is selected when no `initialData` is set. If
@@ -36,20 +36,20 @@ The type of a single page, as your `queryFn` resolves it.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your `queryFn` may throw.
 
 ### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`\>
 
 The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
 the shape of all fetched pages plus their page params.
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
 
 The type of your `queryKey`.
 

@@ -6,10 +6,13 @@ redirect_from:
 ---
 
 ```ts
-function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
+function useMutation<TData, TError, TVariables, TOnMutateResult>(options: UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, queryClient?: Accessor<QueryClient>): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [useMutation.ts:46](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useMutation.ts#L46)
+Defined in: [packages/solid-query/src/useMutation.ts:170](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useMutation.ts#L170)
+
+Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
+`useMutation` is the primitive for that.
 
 ## Type Parameters
 
@@ -37,6 +40,12 @@ Defined in: [useMutation.ts:46](https://github.com/TanStack/query/blob/main/pack
 
 An accessor returning the [UseMutationOptions](../type-aliases/UseMutationOptions.md) to use.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`MutationOptions`](../interfaces/MutationOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 `Accessor`\<[`QueryClient`](../classes/QueryClient.md)\>
@@ -54,7 +63,13 @@ mutation definition. Hook-level callbacks (passed to `options`) fire for every m
 fire only for the latest call you've made, and only while the component is still mounted — unmounting before
 the mutation settles removes the subscription and prevents them from firing.
 
-## Example
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`MutationObserverBaseResult`](../interfaces/MutationObserverBaseResult.md#properties). See the type above for what it changes.
+
+## Examples
 
 ```tsx
 import { useMutation, useQueryClient } from '@tanstack/solid-query'
@@ -72,6 +87,129 @@ function TodoItem(props: { id: number }) {
   return (
     <button onClick={() => deleteTodoMutation.mutate({ id: props.id })} disabled={deleteTodoMutation.isPending}>
       Delete
+    </button>
+  )
+}
+```
+
+Rendering the mutation's own state, rather than just firing it off:
+```tsx
+import { Match, Switch } from 'solid-js'
+import { useMutation, useQueryClient } from '@tanstack/solid-query'
+
+function AddTodo() {
+  const queryClient = useQueryClient()
+
+  const addMutation = useMutation(() => ({
+    mutationFn: addTodo,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  }))
+
+  return (
+    <Switch fallback={<button onClick={() => addMutation.mutate('Item')}>Add</button>}>
+      <Match when={addMutation.isPending}>Adding todo...</Match>
+      <Match when={addMutation.isError}>
+        <div>An error occurred: {addMutation.error?.message}</div>
+        <button onClick={() => addMutation.mutate('Item')}>Add</button>
+      </Match>
+    </Switch>
+  )
+}
+```
+
+Optimistic update via `onMutate`, rolling back on `onError`:
+```tsx
+import { useMutation, useQueryClient } from '@tanstack/solid-query'
+
+function AddTodo() {
+  const queryClient = useQueryClient()
+
+  const addMutation = useMutation(() => ({
+    mutationFn: addTodo,
+    onMutate: async (newTodo) => {
+      await queryClient.cancelQueries({ queryKey: ['todos'] })
+      const previousTodos = queryClient.getQueryData<Array<string>>(['todos'])
+
+      queryClient.setQueryData<Array<string>>(['todos'], (old) => [
+        ...(old ?? []),
+        newTodo,
+      ])
+
+      // Passed to `onError` as `onMutateResult` if the mutation fails.
+      return { previousTodos }
+    },
+    onError: (_err, _newTodo, onMutateResult) => {
+      queryClient.setQueryData(['todos'], onMutateResult?.previousTodos)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['todos'] })
+    },
+  }))
+
+  return (
+    <button onClick={() => addMutation.mutate('Item')}>Add</button>
+  )
+}
+```
+
+Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
+promise per call instead, so you can wait for all of them when they succeed:
+```tsx
+import { useMutation, useQueryClient } from '@tanstack/solid-query'
+
+function AddTodos() {
+  const queryClient = useQueryClient()
+
+  const addMutation = useMutation(() => ({
+    mutationFn: addTodo,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  }))
+
+  async function handleAddAll(todos: Array<string>) {
+    try {
+      await Promise.all(todos.map((todo) => addMutation.mutateAsync(todo)))
+    } catch (error) {
+      console.error('Failed to add todos:', error)
+    }
+  }
+
+  return (
+    <button onClick={() => handleAddAll(['Todo 1', 'Todo 2', 'Todo 3'])}>
+      Add all
+    </button>
+  )
+}
+```
+
+If some of the mutations above can fail independently of the others, and you want to know which ones
+did — rather than losing that information the moment the first one rejects — swap `Promise.all` for
+`Promise.allSettled`:
+```tsx
+import { useMutation, useQueryClient } from '@tanstack/solid-query'
+
+function AddTodos() {
+  const queryClient = useQueryClient()
+
+  const addMutation = useMutation(() => ({
+    mutationFn: addTodo,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  }))
+
+  async function handleAddAll(todos: Array<string>) {
+    const addResults = await Promise.allSettled(
+      todos.map((todo) => addMutation.mutateAsync(todo)),
+    )
+
+    addResults.forEach((addResult, index) => {
+      if (addResult.status === 'rejected') {
+        console.error(`Failed to add "${todos[index]}":`, addResult.reason)
+      }
+    })
+  }
+
+  return (
+    <button onClick={() => handleAddAll(['Todo 1', 'Todo 2', 'Todo 3'])}>
+      Add all
     </button>
   )
 }

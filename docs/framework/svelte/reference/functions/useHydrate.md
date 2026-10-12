@@ -5,12 +5,12 @@ title: useHydrate
 
 ```ts
 function useHydrate(
-   state?, 
-   options?, 
-   queryClient?): void;
+   state?: unknown, 
+   options?: HydrateOptions, 
+   queryClient?: QueryClient): void;
 ```
 
-Defined in: [packages/svelte-query/src/useHydrate.ts:33](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useHydrate.ts#L33)
+Defined in: [packages/svelte-query/src/useHydrate.ts:31](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useHydrate.ts#L31)
 
 Adds a previously dehydrated `state` into the `queryClient` (from the nearest context, or the one
 passed explicitly). If the client already contains data, the new queries will be intelligently merged based
@@ -27,13 +27,24 @@ The dehydrated state to hydrate into the cache, as produced by `dehydrate`.
 
 ### options?
 
-`HydrateOptions`
+[`HydrateOptions`](../interfaces/HydrateOptions.md)
 
-HydrateOptions to control the hydration.
+[HydrateOptions](../interfaces/HydrateOptions.md) to control the hydration.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="options-property-defaultoptions"></a> `defaultOptions?` | `object` | Options applied to the queries and mutations restored from the dehydrated state. |
+| `defaultOptions.deserializeData?` | `TransformerFn` | Transforms a query's `data` after it is read from the dehydrated state, reversing `serializeData`. |
+| `defaultOptions.mutations?` | [`MutationOptions`](../interfaces/MutationOptions.md)\<`unknown`, `Error`, `unknown`, `unknown`\> | Default options merged into every mutation restored from the dehydrated state. |
+| `defaultOptions.queries?` | [`QueryOptions`](../interfaces/QueryOptions.md)\<`unknown`, `Error`, `unknown`, readonly `unknown`[], `never`\> | Default options merged into every query restored from the dehydrated state. |
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

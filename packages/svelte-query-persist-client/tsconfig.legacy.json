@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-ts/legacy"
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../query-persist-client-core" },
+    { "path": "../svelte-query" }
+  ]
+}

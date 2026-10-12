@@ -1,9 +1,8 @@
 import * as coreModule from '@tanstack/query-core'
-import type { hydrate } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/preact'
 import { Suspense, startTransition } from 'preact/compat'
-import { afterEach, beforeEach, describe, expect, vi, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
   HydrationBoundary,
@@ -13,6 +12,7 @@ import {
   noop,
   useQuery,
 } from '..'
+import type { hydrate } from '@tanstack/query-core'
 
 describe('Preact hydration', () => {
   const stringKey = queryKey()
@@ -165,7 +165,6 @@ describe('Preact hydration', () => {
       expect(rendered.getByText(stringKey[0]!)).toBeInTheDocument()
       // New query data should be available immediately
       expect(rendered.getByText(addedKey[0]!)).toBeInTheDocument()
-
       await vi.advanceTimersByTimeAsync(0)
       // After effects phase has had time to run, the observer should have updated
       expect(rendered.queryByText(stringKey[0]!)).not.toBeInTheDocument()

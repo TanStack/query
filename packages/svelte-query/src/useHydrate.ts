@@ -7,12 +7,10 @@ import type { HydrateOptions, QueryClient } from '@tanstack/query-core'
  * passed explicitly). If the client already contains data, the new queries will be intelligently merged based
  * on update timestamp. `HydrationBoundary` wraps this — use it directly only if you need to hydrate from your
  * own component instead.
- *
  * @param state - The dehydrated state to hydrate into the cache, as produced by `dehydrate`.
  * @param options - {@link HydrateOptions} to control the hydration.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- *
  * @example
  * Server-side prefetch handed off to the client via `dehydrate` — `dehydratedState` would typically come
  * from a server load function that prefetched with `queryClient.query` and called `dehydrate(queryClient)`:

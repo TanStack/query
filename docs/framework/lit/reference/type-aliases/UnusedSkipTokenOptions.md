@@ -16,7 +16,7 @@ Query options where `queryFn` is present and not a `skipToken`.
 ### queryFn?
 
 ```ts
-optional queryFn: Exclude<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>["queryFn"], SkipToken | undefined>;
+optional queryFn?: Exclude<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>["queryFn"], SkipToken | undefined>;
 ```
 
 ## Type Parameters
@@ -27,7 +27,7 @@ optional queryFn: Exclude<QueryObserverOptions<TQueryFnData, TError, TData, TQue
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -35,4 +35,4 @@ optional queryFn: Exclude<QueryObserverOptions<TQueryFnData, TError, TData, TQue
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
