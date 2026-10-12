@@ -4,8 +4,13 @@ import {
   removePackageJsonDependency,
 } from '@schematics/angular/utility/dependencies'
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks'
-import { OLD_PACKAGE, migrateSource } from './source'
-import { migrationWorkspace, sourceManifest } from './workspace'
+import { CORE_PACKAGE, OLD_PACKAGE, migrateSource } from './source'
+import {
+  migrationWorkspace,
+  packageReferenceFiles,
+  sourceManifest,
+} from './workspace'
+import type { Schema } from './schema'
 import type { Rule, Tree } from '@angular-devkit/schematics'
 
 const PACKAGE_NAME = '__ANGULAR_QUERY_PACKAGE_NAME__'
@@ -21,8 +26,11 @@ const dependencyTypes = [
   NodeDependencyType.Peer,
 ]
 
+// TODO: Ideally remove migrate-from-experimental one year after Angular Query's
+// first stable release, along with its collection entry, tests, and packaging references.
+
 /** Migrates syntactically unambiguous uses; reports cases requiring human review. */
-export function migrate(options: { skipInstall?: boolean }): Rule {
+export function migrate(options: Schema): Rule {
   return async (tree, context) => {
     const workspace = await migrationWorkspace(tree)
     const devtoolsManifests = new Set<string>()
@@ -34,13 +42,19 @@ export function migrate(options: { skipInstall?: boolean }): Rule {
     }
     for (const path of workspace.files) {
       const text = tree.readText(path)
-      if (!text.includes(OLD_PACKAGE) && !text.includes(PACKAGE_NAME)) continue
+      if (
+        !text.includes(OLD_PACKAGE) &&
+        !text.includes(PACKAGE_NAME) &&
+        !(options.migrateQueryCoreImports && text.includes(CORE_PACKAGE))
+      )
+        continue
       const result = migrateSource(
         text,
         path,
         PACKAGE_NAME,
         DEVTOOLS_PACKAGE_NAME,
         report,
+        options,
       )
       if (result.needsDevtools) {
         const manifest = sourceManifest(path, workspace.manifests)
@@ -55,6 +69,13 @@ export function migrate(options: { skipInstall?: boolean }): Rule {
         changedFiles++
       }
     }
+    const remainingCoreReferences = new Map<string, string>()
+    if (options.migrateQueryCoreImports)
+      for (const path of packageReferenceFiles(tree, CORE_PACKAGE)) {
+        for (const manifest of workspace.manifests)
+          if (sourceManifest(path, [manifest]))
+            remainingCoreReferences.set(manifest, path)
+      }
     let packageChanges = 0
     for (const manifest of workspace.manifests)
       packageChanges += migrateDependencies(
@@ -62,6 +83,8 @@ export function migrate(options: { skipInstall?: boolean }): Rule {
         manifest,
         devtoolsManifests.has(manifest),
         report,
+        options.migrateQueryCoreImports ?? false,
+        remainingCoreReferences.get(manifest),
       )
     if (packageChanges && !options.skipInstall)
       context.addTask(new NodePackageInstallTask())
@@ -88,6 +111,8 @@ function migrateDependencies(
   manifest: string,
   needsDevtools: boolean,
   report: (message: string) => void,
+  migrateCore: boolean,
+  remainingCoreReference?: string,
 ) {
   const pkg = tree.readJson(manifest) as Partial<
     Record<NodeDependencyType, Record<string, string | undefined>>
@@ -95,8 +120,12 @@ function migrateDependencies(
   let changes = 0
   for (const type of dependencyTypes) {
     const dependencies = pkg[type]
-    if (!dependencies?.[OLD_PACKAGE]) continue
-    changes++
+    if (!dependencies) continue
+    const experimental = dependencies[OLD_PACKAGE]
+    const core = migrateCore && dependencies[CORE_PACKAGE]
+    if (!experimental && !core) continue
+    if (experimental) changes++
+    if (core && !remainingCoreReference) changes++
     if (!dependencies[PACKAGE_NAME]) {
       addPackageJsonDependency(
         tree,
@@ -111,16 +140,26 @@ function migrateDependencies(
       changes++
     }
   }
-  if (changes) removePackageJsonDependency(tree, OLD_PACKAGE, manifest)
+  if (dependencyTypes.some((type) => pkg[type]?.[OLD_PACKAGE]))
+    removePackageJsonDependency(tree, OLD_PACKAGE, manifest)
+  const hasCoreDependency = dependencyTypes.some(
+    (type) => pkg[type]?.[CORE_PACKAGE],
+  )
+  if (migrateCore && hasCoreDependency) {
+    if (remainingCoreReference)
+      report(
+        `${manifest}: Keeping ${CORE_PACKAGE} because ${remainingCoreReference} still references it. Migrate remaining imports or references manually before removing the dependency.`,
+      )
+    else removePackageJsonDependency(tree, CORE_PACKAGE, manifest)
+  }
+  const current = tree.readJson(manifest) as typeof pkg
   if (
     needsDevtools &&
     !dependencyTypes.some((type) => pkg[type]?.[DEVTOOLS_PACKAGE_NAME])
   ) {
-    const type =
-      pkg.peerDependencies?.[OLD_PACKAGE] ||
-      pkg.peerDependencies?.[PACKAGE_NAME]
-        ? NodeDependencyType.Peer
-        : NodeDependencyType.Default
+    const type = current.peerDependencies?.[PACKAGE_NAME]
+      ? NodeDependencyType.Peer
+      : NodeDependencyType.Default
     addPackageJsonDependency(
       tree,
       {
@@ -136,9 +175,13 @@ function migrateDependencies(
   const metadata = tree.readJson(manifest) as {
     peerDependenciesMeta?: Record<string, unknown>
   }
-  if (metadata.peerDependenciesMeta?.[OLD_PACKAGE])
-    report(
-      `${manifest}: Rename peerDependenciesMeta["${OLD_PACKAGE}"] to "${PACKAGE_NAME}" and review the optional peer configuration.`,
-    )
+  for (const name of [
+    OLD_PACKAGE,
+    ...(migrateCore && !remainingCoreReference ? [CORE_PACKAGE] : []),
+  ])
+    if (metadata.peerDependenciesMeta?.[name])
+      report(
+        `${manifest}: Rename peerDependenciesMeta["${name}"] to "${PACKAGE_NAME}" and review the optional peer configuration.`,
+      )
   return changes
 }

@@ -201,6 +201,174 @@ query.refetch({ throwOnError: true });
     expect(warnings.join('\n')).toContain('activity filter')
   })
 
+  it.each([false, true])(
+    'wraps ambiguous client references only when unsafe wrapping is %s and warns about each conversion',
+    async (unsafeWrapClientReferences) => {
+      const { runner, tree, warnings } =
+        setup(`import { provideAngularQuery as provide, QueryClient } from '@tanstack/angular-query-experimental';
+import * as query from '@tanstack/angular-query-experimental';
+provide(client);
+query.provideTanStackQuery(clients.current);
+provide(CLIENT_TOKEN);
+provide(createClient);
+provide((() => client));
+provide(new QueryClient());
+function other(provide: any) { provide(client); }`)
+      const result = await runner.runSchematic(
+        'migrate-from-experimental',
+        { unsafeWrapClientReferences, skipInstall: true },
+        tree,
+      )
+      const output = result.readContent('/src/app.ts')
+      for (const argument of [
+        'client',
+        'clients.current',
+        'CLIENT_TOKEN',
+        'createClient',
+      ])
+        expect(output).toContain(
+          `(${unsafeWrapClientReferences ? '() => ' : ''}${argument})`,
+        )
+      expect(output).toContain('provide((() => client))')
+      expect(output).toContain('provide(() => new QueryClient())')
+      expect(output).toContain(
+        'function other(provide: any) { provide(client); }',
+      )
+      expect(
+        warnings.filter((message) => message.includes('Unsafe conversion')),
+      ).toHaveLength(unsafeWrapClientReferences ? 4 : 0)
+      expect(
+        warnings
+          .filter((message) => message.includes('Unsafe conversion'))
+          .every((message) => message.includes('injection tokens need')),
+      ).toBe(true)
+      const again = await runner.runSchematic(
+        'migrate-from-experimental',
+        { unsafeWrapClientReferences, skipInstall: true },
+        result,
+      )
+      expect(again.readContent('/src/app.ts')).toBe(output)
+    },
+  )
+
+  it.each([false, true])(
+    'consolidates core imports and dependencies only when requested: %s',
+    async (migrateQueryCoreImports) => {
+      const { runner, tree } =
+        setup(`import { QueryClient as Client, type QueryKey } from '@tanstack/query-core';
+import * as core from '@tanstack/query-core';
+export { QueryCache } from '@tanstack/query-core';
+import { provideTanStackQuery } from '@tanstack/angular-query';
+provideTanStackQuery(new Client());
+provideTanStackQuery(new core.QueryClient());
+// @tanstack/query-core is re-exported by the Angular package.`)
+      tree.overwrite(
+        '/package.json',
+        JSON.stringify({
+          dependencies: {
+            '@tanstack/query-core': '^5',
+            [packageJson.name]: '^5.1.0',
+          },
+          devDependencies: { '@tanstack/query-core': '^5' },
+        }),
+      )
+      const result = await runner.runSchematic(
+        'migrate-from-experimental',
+        { migrateQueryCoreImports },
+        tree,
+      )
+      const output = result.readContent('/src/app.ts')
+      const target = migrateQueryCoreImports
+        ? packageJson.name
+        : '@tanstack/query-core'
+      const quote = migrateQueryCoreImports ? '"' : "'"
+      expect(output).toContain(
+        `import { QueryClient as Client, type QueryKey } from ${quote}${target}${quote}`,
+      )
+      expect(output).toContain(
+        `import * as core from ${quote}${target}${quote}`,
+      )
+      expect(output).toContain(
+        `export { QueryCache } from ${quote}${target}${quote}`,
+      )
+      expect(output).toContain(
+        `${migrateQueryCoreImports ? '() => ' : ''}new Client()`,
+      )
+      const manifest = JSON.parse(result.readContent('/package.json'))
+      expect(manifest.dependencies[packageJson.name]).toBe('^5.1.0')
+      expect(manifest.dependencies['@tanstack/query-core']).toBe(
+        migrateQueryCoreImports ? undefined : '^5',
+      )
+      expect(manifest.devDependencies?.['@tanstack/query-core']).toBe(
+        migrateQueryCoreImports ? undefined : '^5',
+      )
+      expect(runner.tasks).toHaveLength(migrateQueryCoreImports ? 1 : 0)
+      const again = await runner.runSchematic(
+        'migrate-from-experimental',
+        { migrateQueryCoreImports },
+        result,
+      )
+      expect(again.readContent('/src/app.ts')).toBe(output)
+      expect(runner.tasks).toHaveLength(0)
+    },
+  )
+
+  it('adds Angular Query when replacing a dependency used only through core imports', async () => {
+    const { runner, tree } = setup(
+      `import type { QueryKey } from '@tanstack/query-core';`,
+    )
+    tree.overwrite(
+      '/package.json',
+      JSON.stringify({ dependencies: { '@tanstack/query-core': '^5' } }),
+    )
+    const result = await runner.runSchematic(
+      'migrate-from-experimental',
+      { migrateQueryCoreImports: true },
+      tree,
+    )
+    expect(
+      JSON.parse(result.readContent('/package.json')).dependencies,
+    ).toEqual({ [packageJson.name]: `^${packageJson.version}` })
+  })
+
+  it.each([
+    ['src/legacy.ts', `const core = import('@tanstack/query-core')`],
+    ['src/runtime.cjs', `const core = require('@tanstack/query-core')`],
+    [
+      'src/wrapper.d.ts',
+      `export type { QueryKey } from '@tanstack/query-core'`,
+    ],
+    ['src/subpath.ts', `import '@tanstack/query-core/unsupported'`],
+    ['src/dynamic.ts', 'const core = import(`@tanstack/query-core/${entry}`)'],
+  ])(
+    'retains core dependencies for remaining references in %s',
+    async (path, source) => {
+      const { runner, tree, warnings } = setup(
+        `import { QueryClient } from '@tanstack/query-core';`,
+      )
+      tree.create(`/${path}`, source)
+      tree.overwrite(
+        '/package.json',
+        JSON.stringify({ dependencies: { '@tanstack/query-core': '^5' } }),
+      )
+      const result = await runner.runSchematic(
+        'migrate-from-experimental',
+        { migrateQueryCoreImports: true },
+        tree,
+      )
+      expect(result.readContent('/src/app.ts')).toContain(packageJson.name)
+      expect(result.readContent(`/${path}`)).toBe(source)
+      expect(
+        JSON.parse(result.readContent('/package.json')).dependencies,
+      ).toEqual({
+        '@tanstack/query-core': '^5',
+        [packageJson.name]: `^${packageJson.version}`,
+      })
+      expect(warnings.join('\n')).toContain(`Keeping @tanstack/query-core`)
+      expect(warnings.join('\n')).toContain(`/${path}`)
+    },
+  )
+
   describe('removed injector arguments', () => {
     const helpers = [
       'injectQuery',
@@ -695,6 +863,174 @@ injectMutation(() => condition ? { throwOnError: true } : ({ throwOnError: true 
       result.readContent('/projects/lib/src/lib.ts'),
     )
     expect(runner.tasks).toHaveLength(0)
+  })
+
+  it.each([false, true])(
+    'discovers Nx libraries from project.json alongside an Angular workspace: %s',
+    async (angularWorkspace) => {
+      const legacy = `import { QueryClient } from '@tanstack/angular-query-experimental';`
+      const { runner, tree, warnings } = setup(legacy)
+      tree.create('/nx.json', '{}')
+      if (angularWorkspace)
+        tree.create(
+          '/angular.json',
+          JSON.stringify({
+            version: 1,
+            projects: {
+              app: { projectType: 'application', root: '', sourceRoot: 'src' },
+            },
+          }),
+        )
+      else
+        tree.create('/src/project.json', JSON.stringify({ sourceRoot: 'src' }))
+      tree.create(
+        '/libs/data/project.json',
+        JSON.stringify({
+          sourceRoot: 'libs/data/src',
+          targets: {
+            build: {
+              executor: '@nx/angular:ng-packagr-lite',
+              options: { tsConfig: 'libs/data/tsconfig.lib.json' },
+            },
+          },
+        }),
+      )
+      tree.create(
+        '/libs/data/tsconfig.lib.json',
+        JSON.stringify({
+          include: ['src/**/*.ts'],
+          exclude: ['src/ignored.ts'],
+        }),
+      )
+      tree.create(
+        '/libs/data/src/index.ts',
+        `export { injectDevtoolsPanel } from '@tanstack/angular-query-experimental/devtools-panel';
+export type { QueryKey } from '@tanstack/query-core';`,
+      )
+      tree.create('/libs/data/src/ignored.ts', legacy)
+      tree.create(
+        '/libs/data/package.json',
+        JSON.stringify({
+          peerDependencies: {
+            '@tanstack/angular-query-experimental': '^5',
+            '@tanstack/query-core': '^5',
+            [packageJson.name]: '^5.1.0',
+          },
+          peerDependenciesMeta: { '@tanstack/query-core': { optional: true } },
+        }),
+      )
+      tree.create('/node_modules/ignored/project.json', 'invalid')
+      tree.create('/dist/ignored/project.json', 'invalid')
+      const result = await runner.runSchematic(
+        'migrate-from-experimental',
+        { migrateQueryCoreImports: true },
+        tree,
+      )
+      expect(result.readContent('/src/app.ts')).toContain(packageJson.name)
+      expect(result.readContent('/libs/data/src/index.ts')).toContain(
+        `${devtoolsPackage.name}/devtools-panel`,
+      )
+      expect(result.readContent('/libs/data/src/index.ts')).not.toContain(
+        '@tanstack/query-core',
+      )
+      expect(result.readContent('/libs/data/src/ignored.ts')).toBe(legacy)
+      expect(
+        JSON.parse(result.readContent('/libs/data/package.json'))
+          .peerDependencies,
+      ).toEqual({
+        [packageJson.name]: '^5.1.0',
+        [devtoolsPackage.name]: `^${devtoolsPackage.version}`,
+      })
+      expect(warnings.join('\n')).toContain(
+        'peerDependenciesMeta["@tanstack/query-core"]',
+      )
+      const again = await runner.runSchematic(
+        'migrate-from-experimental',
+        { migrateQueryCoreImports: true },
+        result,
+      )
+      expect(again.readContent('/libs/data/src/index.ts')).toBe(
+        result.readContent('/libs/data/src/index.ts'),
+      )
+      expect(runner.tasks).toHaveLength(0)
+    },
+  )
+
+  it('discovers package-based Nx libraries and respects their tsconfigs', async () => {
+    const legacy = `import { QueryClient } from '@tanstack/angular-query-experimental';`
+    const { runner, tree } = setup(legacy)
+    tree.create('/nx.json', '{}')
+    tree.create('/src/project.json', JSON.stringify({ sourceRoot: 'src' }))
+    tree.create(
+      '/packages/shared/package.json',
+      JSON.stringify({
+        name: 'shared',
+        nx: {
+          targets: {
+            build: {
+              options: { tsConfig: 'packages/shared/tsconfig.lib.json' },
+            },
+          },
+        },
+        peerDependencies: { '@tanstack/angular-query-experimental': '^5' },
+      }),
+    )
+    tree.create(
+      '/packages/shared/tsconfig.lib.json',
+      JSON.stringify({ include: ['src/**/*.ts'], exclude: ['src/ignored.ts'] }),
+    )
+    tree.create('/packages/shared/src/index.ts', legacy)
+    tree.create('/packages/shared/src/ignored.ts', legacy)
+    const result = await runner.runSchematic(
+      'migrate-from-experimental',
+      {},
+      tree,
+    )
+    expect(result.readContent('/packages/shared/src/index.ts')).toContain(
+      packageJson.name,
+    )
+    expect(result.readContent('/packages/shared/src/ignored.ts')).toBe(legacy)
+    expect(
+      JSON.parse(result.readContent('/packages/shared/package.json'))
+        .peerDependencies,
+    ).toEqual({ [packageJson.name]: `^${packageJson.version}` })
+  })
+
+  it('keeps a root core dependency used by an excluded nested library source', async () => {
+    const { runner, tree, warnings } = setup(
+      `import { QueryClient } from '@tanstack/query-core';`,
+    )
+    tree.overwrite(
+      '/package.json',
+      JSON.stringify({
+        nx: { sourceRoot: 'src' },
+        dependencies: { '@tanstack/query-core': '^5' },
+      }),
+    )
+    tree.create('/nx.json', '{}')
+    tree.create(
+      '/libs/shared/project.json',
+      JSON.stringify({ sourceRoot: 'libs/shared/src' }),
+    )
+    tree.create('/libs/shared/package.json', JSON.stringify({ name: 'shared' }))
+    tree.create(
+      '/libs/shared/src/legacy.cjs',
+      `const core = require('@tanstack/query-core');`,
+    )
+    const result = await runner.runSchematic(
+      'migrate-from-experimental',
+      { migrateQueryCoreImports: true },
+      tree,
+    )
+    expect(
+      JSON.parse(result.readContent('/package.json')).dependencies,
+    ).toEqual({
+      '@tanstack/query-core': '^5',
+      [packageJson.name]: `^${packageJson.version}`,
+    })
+    expect(warnings.join('\n')).toContain(
+      '/package.json: Keeping @tanstack/query-core',
+    )
   })
 
   it('summarizes prepared changes, links to the guide, and explains skipped installation', async () => {

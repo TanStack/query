@@ -1,7 +1,9 @@
 import ts from 'typescript'
 import { MigrationImports } from './imports'
+import type { Schema } from './schema'
 
 export const OLD_PACKAGE = '@tanstack/angular-query-experimental'
+export const CORE_PACKAGE = '@tanstack/query-core'
 
 // The experimental helpers used two different injector argument shapes.
 const injectorArguments: Record<
@@ -45,6 +47,7 @@ export function migrateSource(
   packageName: string,
   devtoolsPackageName: string,
   report: (message: string) => void,
+  options: Schema = {},
 ) {
   const result = { needsDevtools: false }
   const source = ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true)
@@ -76,7 +79,8 @@ export function migrateSource(
   }
   const imports = new MigrationImports(source, checker, (module) =>
     module === OLD_PACKAGE ||
-    module === `${OLD_PACKAGE}/inject-queries-experimental`
+    module === `${OLD_PACKAGE}/inject-queries-experimental` ||
+    (options.migrateQueryCoreImports && module === CORE_PACKAGE)
       ? packageName
       : module,
   )
@@ -91,6 +95,7 @@ export function migrateSource(
       )
         continue
       const module = statement.moduleSpecifier.text
+      const isCore = options.migrateQueryCoreImports && module === CORE_PACKAGE
       const targets: Record<string, string | undefined> = {
         [OLD_PACKAGE]: packageName,
         [`${OLD_PACKAGE}/inject-queries-experimental`]: packageName,
@@ -99,6 +104,7 @@ export function migrateSource(
         [`${OLD_PACKAGE}/devtools-panel`]: `${devtoolsPackageName}/devtools-panel`,
         [`${OLD_PACKAGE}/devtools-panel/production`]: `${devtoolsPackageName}/devtools-panel/production`,
       }
+      if (isCore) targets[CORE_PACKAGE] = packageName
       const target = targets[module]
       const isDevtools =
         target?.startsWith(devtoolsPackageName) ||
@@ -115,6 +121,7 @@ export function migrateSource(
         module !== OLD_PACKAGE &&
         module !== packageName &&
         module !== `${OLD_PACKAGE}/inject-queries-experimental` &&
+        !isCore &&
         !isDevtools
       )
         continue
@@ -279,10 +286,12 @@ export function migrateSource(
 
   function migrateProvider(node: ts.CallExpression) {
     const first = node.arguments[0]
+    const expression = first && unwrap(first)
     if (
       first &&
-      ts.isNewExpression(first) &&
-      apiName(first.expression) === 'QueryClient'
+      expression &&
+      ts.isNewExpression(expression) &&
+      apiName(expression.expression) === 'QueryClient'
     ) {
       edits.push({
         start: first.getStart(source),
@@ -291,13 +300,31 @@ export function migrateSource(
       })
     } else if (
       first &&
-      !ts.isArrowFunction(first) &&
-      !ts.isFunctionExpression(first)
-    )
-      warn(
-        first,
-        'Client reference may be an instance, token, or factory; provide a client factory manually.',
-      )
+      expression &&
+      !ts.isArrowFunction(expression) &&
+      !ts.isFunctionExpression(expression)
+    ) {
+      if (
+        options.unsafeWrapClientReferences &&
+        (ts.isIdentifier(expression) ||
+          ts.isPropertyAccessExpression(expression) ||
+          ts.isElementAccessExpression(expression))
+      ) {
+        edits.push({
+          start: first.getStart(source),
+          end: first.getStart(source),
+          text: '() => ',
+        })
+        warn(
+          first,
+          'Unsafe conversion: wrapped this client reference in a factory. Verify it returns a QueryClient; existing factories must not be wrapped, and injection tokens need () => inject(token).',
+        )
+      } else
+        warn(
+          first,
+          'Client reference may be an instance, token, or factory; provide a client factory manually. Use --unsafe-wrap-client-references only after checking the argument is a QueryClient instance.',
+        )
+    }
     if (ts.isSpreadElement(node.parent))
       edits.push({
         start: node.parent.getStart(source),
@@ -425,7 +452,9 @@ export function migrateSource(
   function visit(node: ts.Node) {
     if (
       ts.isStringLiteral(node) &&
-      node.text.startsWith(OLD_PACKAGE) &&
+      (node.text.startsWith(OLD_PACKAGE) ||
+        (options.migrateQueryCoreImports &&
+          node.text.startsWith(CORE_PACKAGE))) &&
       !ts.isImportDeclaration(node.parent) &&
       !ts.isExportDeclaration(node.parent)
     ) {

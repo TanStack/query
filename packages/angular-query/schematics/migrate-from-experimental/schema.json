@@ -3,6 +3,16 @@
   "title": "Migrate experimental Angular Query",
   "type": "object",
   "properties": {
+    "unsafeWrapClientReferences": {
+      "type": "boolean",
+      "default": false,
+      "description": "Unsafe: wrap client references in factories. References may be injection tokens or existing factories; review every conversion."
+    },
+    "migrateQueryCoreImports": {
+      "type": "boolean",
+      "default": false,
+      "description": "Replace @tanstack/query-core imports with @tanstack/angular-query and remove direct core dependencies when no references remain."
+    },
     "skipInstall": {
       "type": "boolean",
       "default": false,

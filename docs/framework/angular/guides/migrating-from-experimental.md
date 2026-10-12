@@ -24,6 +24,17 @@ ng generate @tanstack/angular-query:migrate-from-experimental
 The schematic handles common migration steps.
 Review the remaining sections for changes that require manual updates.
 
+Two additional migrations are opt-in:
+
+- `--unsafe-wrap-client-references` wraps references such as `provideTanStackQuery(client)`
+  in a factory. Review every warning: injection tokens and existing factories need different handling.
+- `--migrate-query-core-imports` moves `@tanstack/query-core` imports to `@tanstack/angular-query`
+  and removes direct core dependencies. Dependencies are kept when unmigrated references remain.
+
+In Nx workspaces, run `nx generate @tanstack/angular-query:migrate-from-experimental`.
+The schematic also discovers `project.json` and `package.json` `nx` configurations.
+Projects configured entirely through inferred plugin settings may need manual review.
+
 ## Replace the experimental package
 
 ```bash
