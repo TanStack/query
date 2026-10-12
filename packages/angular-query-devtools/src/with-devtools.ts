@@ -120,13 +120,17 @@ export const withDevtools: WithDevtools = (withDevtoolsFn) =>
           element = null
         }
 
+        destroyRef.onDestroy(() => {
+          unmount()
+          devtoolsProvided.isProvided = false
+        })
+
         afterNextRender({
           write: () => {
             if (destroyRef.destroyed) return
 
             renderCompleted = true
             mount()
-            destroyRef.onDestroy(unmount)
           },
         })
 
