@@ -188,16 +188,12 @@ async function renderPage(res) {
   const queryClient = createBrowserQueryClient()
   resetSsrQueryControllerCreationCount(queryClient)
   const dataQueryOptions = createDataQueryOptions(SSR_PUBLIC_ORIGIN)
-  await queryClient.prefetchQuery(dataQueryOptions)
-
-  const prefetchedQueryState = queryClient.getQueryState(
-    dataQueryOptions.queryKey,
-  )
-  if (prefetchedQueryState?.status !== 'success') {
+  await queryClient.query(dataQueryOptions).catch((error) => {
     throw new Error(
       'SSR prefetch did not complete successfully. Refusing to render loading HTML.',
+      { cause: error },
     )
-  }
+  })
 
   const appHtml = await collectResult(
     render(
