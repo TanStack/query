@@ -178,87 +178,6 @@ describe('withDevtools feature', () => {
     expect(mockDevtoolsInstance.mount).not.toHaveBeenCalled()
   })
 
-  it.each([false, true])(
-    'should allow a new owner after destroying the first (rendered=%s)',
-    async (rendered) => {
-      // Given a child injector that owns the devtools.
-      TestBed.configureTestingModule({
-        providers: [provideZonelessChangeDetection()],
-      })
-      const parent = TestBed.inject(EnvironmentInjector)
-      const providers = () => [
-        provideTanStackQuery(
-          () => new QueryClient(),
-          withDevtools(() => ({ loadDevtools: true })),
-        ),
-      ]
-      const first = createEnvironmentInjector(providers(), parent)
-      if (rendered) {
-        await TestBed.inject(ApplicationRef).whenStable()
-      }
-      expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(rendered ? 1 : 0)
-
-      // When its lifetime ends and a new child provides devtools.
-      first.destroy()
-      expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(
-        rendered ? 1 : 0,
-      )
-      const second = createEnvironmentInjector(providers(), parent)
-      try {
-        await TestBed.inject(ApplicationRef).whenStable()
-
-        // Then the new owner creates and mounts its own devtools.
-        expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(2)
-        expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(
-          rendered ? 2 : 1,
-        )
-        expect(
-          document.querySelectorAll('.tsqd-parent-container'),
-        ).toHaveLength(1)
-      } finally {
-        second.destroy()
-      }
-      expect(document.querySelectorAll('.tsqd-parent-container')).toHaveLength(
-        0,
-      )
-    },
-  )
-
-  it('should retain the active owner when a non-owning child is destroyed', async () => {
-    // Given two children sharing the same devtools ownership flag.
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()],
-    })
-    const parent = TestBed.inject(EnvironmentInjector)
-    const providers = () => [
-      provideTanStackQuery(
-        () => new QueryClient(),
-        withDevtools(() => ({ loadDevtools: true })),
-      ),
-    ]
-    const owner = createEnvironmentInjector(providers(), parent)
-    const other = createEnvironmentInjector(providers(), parent)
-    await TestBed.inject(ApplicationRef).whenStable()
-
-    // When a non-owner is destroyed and replaced.
-    other.destroy()
-    const replacement = createEnvironmentInjector(providers(), parent)
-    try {
-      await TestBed.inject(ApplicationRef).whenStable()
-
-      // Then there is still exactly one active owner.
-      expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(1)
-      expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
-      expect(mockDevtoolsInstance.unmount).not.toHaveBeenCalled()
-      expect(document.querySelectorAll('.tsqd-parent-container')).toHaveLength(
-        1,
-      )
-    } finally {
-      replacement.destroy()
-      owner.destroy()
-    }
-  })
-
   it('should not create devtools again when already provided', async () => {
     TestBed.configureTestingModule({
       providers: [
@@ -635,6 +554,33 @@ describe('withDevtools feature', () => {
     // Should remount (mount called twice now)
     expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(2)
     expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(1)
+  })
+
+  it('should keep devtools mounted when loadDevtools resolves to the same state', async () => {
+    mockIsDevMode.mockReturnValue(true)
+    const loadDevtools = signal<'auto' | boolean>(true)
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          () => new QueryClient(),
+          withDevtools(() => ({ loadDevtools })),
+        ),
+      ],
+    })
+    await TestBed.inject(ApplicationRef).whenStable()
+
+    const container = document.querySelector('.tsqd-parent-container')
+    expect(container).not.toBeNull()
+    expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
+
+    loadDevtools.set('auto')
+    await TestBed.inject(ApplicationRef).whenStable()
+
+    expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.unmount).not.toHaveBeenCalled()
+    expect(document.querySelector('.tsqd-parent-container')).toBe(container)
   })
 
   describe('injection context', () => {

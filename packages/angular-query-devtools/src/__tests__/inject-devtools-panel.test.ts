@@ -11,7 +11,7 @@ const mockDevtoolsPanelInstance = {
   unmount: vi.fn(),
   setClient: vi.fn(),
   setErrorTypes: vi.fn(),
-  setOnClose: vi.fn<(callback: () => unknown) => void>(),
+  setOnClose: vi.fn(),
   setTheme: vi.fn(),
 }
 
@@ -233,11 +233,10 @@ describe('injectDevtoolsPanel', () => {
   })
 
   it('should update onClose and clear it when removed', async () => {
-    // Given a panel with an optional callback.
     const functionA = vi.fn()
     const functionB = vi.fn()
 
-    const onClose = signal<(() => unknown) | undefined>(functionA)
+    const onClose = signal<typeof functionA | undefined>(functionA)
 
     TestBed.runInInjectionContext(() => {
       return injectDevtoolsPanel(() => ({
@@ -252,7 +251,6 @@ describe('injectDevtoolsPanel', () => {
 
     expect(mockDevtoolsPanelInstance.setOnClose).toHaveBeenCalledTimes(0)
 
-    // When the callback is replaced, then the panel uses the replacement.
     onClose.set(functionB)
 
     await TestBed.inject(ApplicationRef).whenStable()
@@ -262,7 +260,6 @@ describe('injectDevtoolsPanel', () => {
       functionB,
     )
 
-    // When the callback is removed, then closing invokes neither old callback.
     onClose.set(undefined)
     await TestBed.inject(ApplicationRef).whenStable()
 

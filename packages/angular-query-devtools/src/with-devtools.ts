@@ -3,13 +3,14 @@ import {
   DestroyRef,
   InjectionToken,
   PLATFORM_ID,
-  afterNextRender,
   afterRenderEffect,
+  computed,
   inject,
   isDevMode,
   isSignal,
   makeEnvironmentProviders,
   provideEnvironmentInitializer,
+  untracked,
 } from '@angular/core'
 import { queryFeature } from '@tanstack/angular-query/internal'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
@@ -72,16 +73,16 @@ export const withDevtools: WithDevtools = (withDevtoolsFn) =>
         )
           return
 
-        devtoolsProvided.isProvided = true
-
+        const injectedClient = inject(QueryClient, { optional: true })
+        const options = inject(DEVTOOLS_OPTIONS)
         const destroyRef = inject(DestroyRef)
+
+        const client = resolveOption(options.client) ?? injectedClient
+
+        devtoolsProvided.isProvided = true
         destroyRef.onDestroy(() => {
           devtoolsProvided.isProvided = false
         })
-
-        const injectedClient = inject(QueryClient, { optional: true })
-        const options = inject(DEVTOOLS_OPTIONS)
-        const client = resolveOption(options.client) ?? injectedClient
 
         if (!client) throw new Error('No QueryClient found')
 
@@ -100,44 +101,27 @@ export const withDevtools: WithDevtools = (withDevtoolsFn) =>
           theme: resolveOption(options.theme),
         })
 
-        let renderCompleted = false
-        let element: HTMLElement | null = null
-
-        const shouldMount = () => {
+        const shouldMount = computed(() => {
           const loadDevtools = resolveOption(options.loadDevtools)
           return typeof loadDevtools === 'boolean' ? loadDevtools : isDevMode()
-        }
-
-        const mount = () => {
-          if (element || !renderCompleted || !shouldMount()) return
-
-          element = document.body.appendChild(document.createElement('div'))
-          element.classList.add('tsqd-parent-container')
-          devtools.mount(element)
-        }
-
-        const unmount = () => {
-          if (!element) return
-
-          devtools.unmount()
-          element.remove()
-          element = null
-        }
-
-        afterNextRender({
-          write: () => {
-            if (destroyRef.destroyed) return
-
-            renderCompleted = true
-            mount()
-            destroyRef.onDestroy(unmount)
-          },
         })
 
+        const mount = () => {
+          const element = document.body.appendChild(
+            document.createElement('div'),
+          )
+          element.classList.add('tsqd-parent-container')
+          devtools.mount(element)
+
+          return () => {
+            devtools.unmount()
+            element.remove()
+          }
+        }
+
         afterRenderEffect({
-          write: () => {
-            if (!renderCompleted) return
-            shouldMount() ? mount() : unmount()
+          write: (onCleanup) => {
+            if (shouldMount()) onCleanup(untracked(mount))
           },
         })
 
