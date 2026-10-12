@@ -104,7 +104,7 @@ export const injectDevtoolsPanel: InjectDevtoolsPanel = (
         devtools.setClient(client)
         devtools.setErrorTypes(errorTypes)
         devtools.setTheme(theme)
-        onClose && devtools.setOnClose(onClose)
+        devtools.setOnClose(onClose ?? (() => {}))
       } else if (devtools && !hostElement) {
         unmount()
       }
