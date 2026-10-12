@@ -1,5 +1,14 @@
 # @tanstack/angular-query-devtools
 
+## 5.0.0-rc.2
+
+### Patch Changes
+
+- [#11999](https://github.com/TanStack/query/pull/11999) [`9e9dfb7`](https://github.com/TanStack/query/commit/9e9dfb7e752334c90378546635e87b03852e39bc) - Clear removed panel close callbacks and release devtools ownership when the injector is destroyed.
+
+- Updated dependencies []:
+  - @tanstack/angular-query@5.0.0-rc.2
+
 ## 5.0.0-rc.1
 
 ### Patch Changes
