@@ -1,16 +1,20 @@
 ---
 id: useMutationState
 title: useMutationState
+redirect_from:
+  - framework/vue/reference/useMutationState
 ---
 
 ```ts
-function useMutationState<TResult, TMutation>(options, queryClient?): Readonly<Ref<TResult[]>>;
+function useMutationState<TResult, TMutation>(options?: 
+  | MutationStateOptions<TResult, TMutation>
+| (() => MutationStateOptions<TResult, TMutation>), queryClient?: QueryClient): Readonly<Ref<TResult[]>>;
 ```
 
-Defined in: [vue-query/src/useMutationState.ts:192](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L192)
+Defined in: [packages/vue-query/src/useMutationState.ts:211](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L211)
 
 `useMutationState` is a composable that gives you access to all mutations in the `MutationCache`. You can
-pass `filters` ([MutationFilters](../type-aliases/MutationFilters.md)) to narrow down your mutations, and `select` to transform the
+pass `filters` ([MutationFilters](../interfaces/MutationFilters.md)) to narrow down your mutations, and `select` to transform the
 mutation state.
 
 `options` may be a plain object or a reactive getter (`() => ({ ... })`) — pass a getter if the filters
@@ -20,20 +24,27 @@ themselves depend on other reactive state.
 
 ### TResult
 
-`TResult` = `MutationState`\<`unknown`, `Error`, `unknown`, `unknown`\>
+`TResult` = [`MutationState`](../interfaces/MutationState.md)\<`unknown`, `Error`, `unknown`, `unknown`\>
 
 ### TMutation
 
-`TMutation` *extends* `Mutation`\<`any`, `any`, `any`, `any`\> = `MutationTypeFromResult`\<`TResult`\>
+`TMutation` *extends* [`Mutation`](../classes/Mutation.md)\<`any`, `any`, `any`, `any`\> = `MutationTypeFromResult`\<`TResult`\>
 
 ## Parameters
 
-### options
+### options?
+
+  \| [`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\>
+  \| (() => [`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\>)
 
 The `filters` to narrow down matched mutations, and an optional `select` to transform the
 mutation state.
 
-[`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\> | () => [`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\>
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`MutationStateOptions`](../type-aliases/MutationStateOptions.md#properties). See the type above for what it changes.
 
 ### queryClient?
 

@@ -24,6 +24,15 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 
+/**
+ * Applies the `reconcile` option when writing a new observer result into the store.
+ * @param store - The current result in the store.
+ * @param result - The new observer result.
+ * @param reconcileOption - `false` to replace the data, a function that merges the old and new
+ * data, or the key used by Solid's `reconcile` to match array items.
+ * @param queryHash - The query hash, used in the warning if the data can't be cloned.
+ * @returns The result to store, with its data reconciled.
+ */
 function reconcileFn<TData, TError>(
   store: QueryObserverResult<TData, TError>,
   result: QueryObserverResult<TData, TError>,
@@ -62,6 +71,10 @@ function reconcileFn<TData, TError>(
 /**
  * Solid's `onHydrated` functionality will silently "fail" (hydrate with an empty object)
  * if the resource data is not serializable.
+ * @param query - The query the result belongs to.
+ * @param result - The observer result to make serializable.
+ * @returns On the server, a copy of the result without its functions and with the query's
+ * dehydrated state attached as `hydrationData`. On the client, the result as is.
  */
 const hydratableObserverResult = <
   TQueryFnData,
@@ -99,7 +112,15 @@ const hydratableObserverResult = <
   return obj
 }
 
-// Base Query Function that is used to create the query.
+/**
+ * Base Query Function that is used to create the query.
+ * @param options - A function that returns the query options.
+ * @param Observer - The observer class from query-core (`QueryObserver` or
+ * `InfiniteQueryObserver`).
+ * @param queryClient - A function that returns a custom `QueryClient`. Otherwise, the one from the
+ * nearest context is used.
+ * @returns The reactive query result.
+ */
 export function useBaseQuery<
   TQueryFnData,
   TError,
@@ -187,6 +208,10 @@ export function useBaseQuery<
     })
   }
 
+  /**
+   * Writes an observer result into the store, applying the query's `reconcile` option.
+   * @param res - The observer result to write.
+   */
   function setStateWithReconciliation(res: typeof observerResult) {
     const opts = observer().options
     // @ts-expect-error - Reconcile option is not correctly typed internally
@@ -202,6 +227,11 @@ export function useBaseQuery<
     })
   }
 
+  /**
+   * Creates the signal used as the resource's storage, backed by the query store. Hydration data is
+   * removed from values written to it.
+   * @returns A getter and setter for the store.
+   */
   function createDeepSignal<T>(): Signal<T> {
     return [
       () => state,
@@ -282,6 +312,8 @@ export function useBaseQuery<
        * Leveraging onHydrated allows us to plug into the async and streaming support that solidjs resources already support.
        *
        * Note that this is only invoked on the client, for queries that were originally run on the server.
+       * @param _k - The resource source, unused.
+       * @param info - The hydrated resource value, which carries the query's `hydrationData`.
        */
       onHydrated(_k, info) {
         if (info.value && 'hydrationData' in info.value) {
@@ -342,7 +374,7 @@ export function useBaseQuery<
   )
 
   onCleanup(() => {
-    if (isServer && queryResource.loading) {
+    if (isServer && queryResource.state === 'pending') {
       unsubscribeQueued = true
       return
     }

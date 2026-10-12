@@ -2,11 +2,17 @@ import { getCurrentScope, onScopeDispose, ref, watchEffect } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type { Ref } from 'vue-demi'
-import type { QueryFilters as QF } from '@tanstack/query-core'
+import type { QueryFilters } from '@tanstack/query-core'
 import type { MaybeRefDeep } from './types'
 import type { QueryClient } from './queryClient'
 
-export type QueryFilters = MaybeRefDeep<QF> | (() => MaybeRefDeep<QF>)
+/**
+ * The filters accepted by `useIsFetching`: {@link QueryFilters} as a plain object, a `ref`, or a reactive
+ * getter.
+ */
+export type UseIsFetchingFilters =
+  | MaybeRefDeep<QueryFilters>
+  | (() => MaybeRefDeep<QueryFilters>)
 
 /**
  * The `useIsFetching` composable returns a `ref` to the `number` of the queries that your application is
@@ -14,13 +20,11 @@ export type QueryFilters = MaybeRefDeep<QF> | (() => MaybeRefDeep<QF>)
  *
  * `fetchingFilters` may be a plain object, `MaybeRefDeep`, or a reactive getter (`() => ({ ... })`) — pass a
  * getter if the filters themselves depend on other reactive state.
- *
  * @param fetchingFilters - The {@link QueryFilters} to narrow down the matched queries.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns A `ref` to the `number` of the queries that your application is currently loading or fetching in
  * the background.
- *
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -34,7 +38,6 @@ export type QueryFilters = MaybeRefDeep<QF> | (() => MaybeRefDeep<QF>)
  *   <span v-if="isFetchingPosts">Refreshing posts...</span>
  * </template>
  * ```
- *
  * @example
  * A global loading indicator for any query fetching in the background, not just the ones on screen:
  * ```vue
@@ -50,7 +53,7 @@ export type QueryFilters = MaybeRefDeep<QF> | (() => MaybeRefDeep<QF>)
  * ```
  */
 export function useIsFetching(
-  fetchingFilters: QueryFilters = {},
+  fetchingFilters: UseIsFetchingFilters = {},
   queryClient?: QueryClient,
 ): Ref<number> {
   if (process.env.NODE_ENV === 'development') {

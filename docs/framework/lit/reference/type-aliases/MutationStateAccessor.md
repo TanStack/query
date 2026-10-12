@@ -7,7 +7,7 @@ title: MutationStateAccessor
 type MutationStateAccessor<TResult> = ValueAccessor<TResult[]> & object;
 ```
 
-Defined in: [packages/lit-query/src/useMutationState.ts:33](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L33)
+Defined in: [packages/lit-query/src/useMutationState.ts:29](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L29)
 
 Accessor returned by `useMutationState`.
 
@@ -16,7 +16,7 @@ matching mutations.
 
 ## Type Declaration
 
-### destroy()
+### destroy
 
 ```ts
 destroy: () => void;

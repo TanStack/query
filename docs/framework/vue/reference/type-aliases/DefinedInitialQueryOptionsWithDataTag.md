@@ -4,10 +4,13 @@ title: DefinedInitialQueryOptionsWithDataTag
 ---
 
 ```ts
-type DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey> = DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+type DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey> = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & WithDefinedInitialData<TQueryFnData> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [vue-query/src/queryOptions.ts:131](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L131)
+Defined in: [packages/vue-query/src/queryOptions.ts:214](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L214)
+
+The options returned by the `queryOptions` overload selected when `initialData` is set, with the
+`queryKey` tagged with the query's data and error types.
 
 ## Type Parameters
 
@@ -17,7 +20,7 @@ Defined in: [vue-query/src/queryOptions.ts:131](https://github.com/TanStack/quer
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -25,4 +28,4 @@ Defined in: [vue-query/src/queryOptions.ts:131](https://github.com/TanStack/quer
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)

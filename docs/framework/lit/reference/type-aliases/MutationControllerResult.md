@@ -19,7 +19,7 @@ Result object produced by a Lit mutation controller.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TVariables
 

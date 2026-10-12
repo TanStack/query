@@ -1,6 +1,13 @@
 import { createSignal } from 'solid-js'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/solid-query'
+import {
+  mutationOptions,
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/solid-query'
 import * as api from './api'
+import type { Accessor } from 'solid-js'
 
 export const movieKeys = {
   all: () => ['movies'],
@@ -9,42 +16,64 @@ export const movieKeys = {
   detail: (id: string) => [...movieKeys.details(), id],
 }
 
-export const useMovie = (movieId: string) => {
-  const queryClient = useQueryClient()
-
-  const movieQuery = useQuery(() => ({
+export const movieQueryOptions = (movieId: string) =>
+  queryOptions({
     queryKey: movieKeys.detail(movieId),
     queryFn: () => api.fetchMovie(movieId),
-  }))
+  })
+
+export const updateMovieMutationOptions = () =>
+  mutationOptions({
+    mutationFn: async (
+      { id, comment }: { id: string; comment: string },
+      context,
+    ) => {
+      // to avoid clashes with our optimistic update when an offline mutation continues
+      await context.client.cancelQueries({ queryKey: movieKeys.detail(id) })
+      return api.updateMovie(id, comment)
+    },
+  })
+
+export const useMovie = (movieId: Accessor<string>) => {
+  const queryClient = useQueryClient()
+
+  const movieQuery = useQuery(() => movieQueryOptions(movieId()))
 
   const [comment, setComment] = createSignal<string | undefined>()
 
   const updateMovie = useMutation(() => ({
-    mutationKey: movieKeys.detail(movieId),
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: movieKeys.detail(movieId) })
-      const previousData = queryClient.getQueryData<
-        Awaited<ReturnType<typeof api.fetchMovie>>
-      >(movieKeys.detail(movieId))
+    ...updateMovieMutationOptions(),
+    mutationKey: movieKeys.detail(movieId()),
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({ queryKey: movieKeys.detail(movieId()) })
+      const { queryKey } = movieQueryOptions(movieId())
+      const previousData = queryClient.getQueryData(queryKey)
 
       // remove local state so that server state is taken instead
       setComment(undefined)
 
-      queryClient.setQueryData(movieKeys.detail(movieId), {
-        ...previousData,
-        movie: {
-          ...previousData?.movie,
-          comment: comment(),
-        },
-      })
+      queryClient.setQueryData(
+        queryKey,
+        (old) =>
+          old && {
+            ...old,
+            movie: {
+              ...old.movie,
+              comment: variables.comment,
+            },
+          },
+      )
 
       return { previousData }
     },
-    onError: (_: any, __: any, context: any) => {
-      queryClient.setQueryData(movieKeys.detail(movieId), context.previousData)
+    onError: (_, __, onMutateResult) => {
+      queryClient.setQueryData(
+        movieQueryOptions(movieId()).queryKey,
+        onMutateResult?.previousData,
+      )
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: movieKeys.detail(movieId) })
+      queryClient.invalidateQueries({ queryKey: movieKeys.detail(movieId()) })
     },
   }))
 

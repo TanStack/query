@@ -1,6 +1,8 @@
 ---
 id: ssr
 title: SSR
+redirect_from:
+  - framework/vue/reference/hydration
 ---
 
 Vue Query supports prefetching multiple queries on the server and then _dehydrating_ those queries to the queryClient. This means the server can prerender markup that is immediately available on page load and as soon as JS is available, Vue Query can upgrade or _hydrate_ those queries with the full functionality of the library. This includes refetching those queries on the client if they have become stale since the time they were rendered on the server.
@@ -42,7 +44,7 @@ export default defineNuxtPlugin((nuxt) => {
     })
   }
 
-  if (import.meta.client) {
+  if (import.meta.client && vueQueryState.value !== null) {
     hydrate(queryClient, vueQueryState.value)
   }
 })
@@ -55,8 +57,7 @@ Now you are ready to prefetch some data in your pages with `onServerPrefetch`.
 ```ts
 export default defineComponent({
   setup() {
-    const queryClient = useQueryClient()
-    const { data } = useQuery({
+    const { data, suspense } = useQuery({
       queryKey: ['test'],
       queryFn: fetcher,
     })
@@ -148,7 +149,7 @@ export default defineComponent({
       queryClient,
     )
     // This won't be prefetched, it will start fetching on client side
-    const { data2 } = useQuery(
+    const { data: data2 } = useQuery(
       {
         queryKey: ['todos2'],
         queryFn: getTodos,
@@ -209,7 +210,7 @@ export default viteSSR(App, { routes: [] }, ({ app, initialState }) => {
 
 Then, call VueQuery from any component using Vue's `onServerPrefetch`:
 
-```html
+```vue
 <!-- MyComponent.vue -->
 <template>
   <div>
@@ -219,16 +220,16 @@ Then, call VueQuery from any component using Vue's `onServerPrefetch`:
 </template>
 
 <script setup>
-  import { useQuery } from '@tanstack/vue-query'
-  import { onServerPrefetch } from 'vue'
+import { useQuery } from '@tanstack/vue-query'
+import { onServerPrefetch } from 'vue'
 
-  // This will be prefetched and sent from the server
-  const { refetch, data, suspense } = useQuery({
-    queryKey: ['todos'],
-    queryFn: getTodos,
-  })
+// This will be prefetched and sent from the server
+const { refetch, data, suspense } = useQuery({
+  queryKey: ['todos'],
+  queryFn: getTodos,
+})
 
-  onServerPrefetch(suspense)
+onServerPrefetch(suspense)
 </script>
 ```
 
@@ -248,13 +249,44 @@ Because `staleTime` defaults to `0`, queries will be refetched in the background
 
 This refetching of stale queries is a perfect match when caching markup in a CDN! You can set the cache time of the page itself decently high to avoid having to re-render pages on the server, but configure the `staleTime` of the queries lower to make sure data is refetched in the background as soon as a user visits the page. Maybe you want to cache the pages for a week, but refetch the data automatically on page load if it's older than a day?
 
+### `suspense()` of a query that stays disabled blocks the render on the server
+
+`suspense()` waits until the query is enabled, so it never resolves for a query that stays disabled. On the server, awaiting it in `onServerPrefetch` for such a query (for example, a dependent query whose dependency failed) blocks the render. Skip it when the query is disabled:
+
+```vue
+<script setup>
+import { computed, onServerPrefetch } from 'vue'
+import { useQuery } from '@tanstack/vue-query'
+
+const { data: user, suspense: userSuspense } = useQuery({
+  queryKey: ['user'],
+  queryFn: getUser,
+})
+
+const userId = computed(() => user.value?.id)
+const enabled = computed(() => !!user.value?.id)
+const { data: projects, suspense: projectsSuspense } = useQuery({
+  queryKey: ['projects', userId],
+  queryFn: () => getProjectsByUser(userId.value),
+  enabled,
+})
+
+onServerPrefetch(async () => {
+  await userSuspense()
+  if (enabled.value) {
+    await projectsSuspense()
+  }
+})
+</script>
+```
+
 ### High memory consumption on server
 
 In case you are creating the `QueryClient` for every request, Vue Query creates the isolated cache for this client, which is preserved in memory for the `gcTime` period. That may lead to high memory consumption on server in case of high number of requests during that period.
 
 On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../reference/QueryClient/#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
+To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client.
 
 ## `dehydrate`/`hydrate` options
 

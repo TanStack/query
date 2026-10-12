@@ -19,4 +19,4 @@ Result object produced by a Lit query controller.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)

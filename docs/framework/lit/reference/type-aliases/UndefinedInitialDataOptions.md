@@ -16,7 +16,7 @@ Query options where `initialData` can be omitted or undefined.
 ### initialData?
 
 ```ts
-optional initialData:
+optional initialData?:
   | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
 | NonUndefinedGuard<TQueryFnData>;
 ```
@@ -29,7 +29,7 @@ optional initialData:
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -37,4 +37,4 @@ optional initialData:
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)

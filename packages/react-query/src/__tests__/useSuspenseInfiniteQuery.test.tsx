@@ -81,7 +81,7 @@ describe('useSuspenseInfiniteQuery', () => {
   })
 
   it('should log an error when skipToken is passed as queryFn', () => {
-    const consoleErrorSpy = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
     const key = queryKey()
@@ -92,7 +92,6 @@ describe('useSuspenseInfiniteQuery', () => {
         initialPageParam: 1,
         getNextPageParam: () => 1,
         // @ts-expect-error
-        // eslint-disable-next-line react-hooks/purity
         queryFn: Math.random() >= 0 ? skipToken : () => Promise.resolve(5),
       })
 
@@ -109,17 +108,17 @@ describe('useSuspenseInfiniteQuery', () => {
 
     renderWithClient(queryClient, <App />)
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseInfiniteQuery',
     )
-    consoleErrorSpy.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should log an error when skipToken is used in development environment', () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
 
-    const consoleErrorSpy = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -142,11 +141,11 @@ describe('useSuspenseInfiniteQuery', () => {
       </React.Suspense>,
     )
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseInfiniteQuery',
     )
 
-    consoleErrorSpy.mockRestore()
+    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 
@@ -154,7 +153,7 @@ describe('useSuspenseInfiniteQuery', () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'production'
 
-    const consoleErrorSpy = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -177,9 +176,9 @@ describe('useSuspenseInfiniteQuery', () => {
       </React.Suspense>,
     )
 
-    expect(consoleErrorSpy).not.toHaveBeenCalled()
+    expect(consoleErrorMock).not.toHaveBeenCalled()
 
-    consoleErrorSpy.mockRestore()
+    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 

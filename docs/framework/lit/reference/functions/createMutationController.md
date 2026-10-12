@@ -5,12 +5,12 @@ title: createMutationController
 
 ```ts
 function createMutationController<TData, TError, TVariables, TOnMutateResult>(
-   host,
-   options,
-queryClient?): MutationResultAccessor<TData, TError, TVariables, TOnMutateResult>;
+   host: ReactiveControllerHost,
+   options: Accessor<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>>,
+queryClient?: QueryClient): MutationResultAccessor<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/lit-query/src/createMutationController.ts:340](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L340)
+Defined in: [packages/lit-query/src/createMutationController.ts:326](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L326)
 
 Creates a Lit reactive controller that subscribes the host to a mutation.
 
@@ -55,9 +55,15 @@ subscription.
 
 Mutation observer options, or a getter that returns options.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`MutationObserverOptions`](../interfaces/MutationObserverOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Optional explicit query client. Provide this for
 controllers that should not resolve a client from Lit context.

@@ -7,7 +7,7 @@ title: InfiniteQueryResultAccessor
 type InfiniteQueryResultAccessor<TData, TError> = ValueAccessor<InfiniteQueryObserverResult<TData, TError>> & object;
 ```
 
-Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:49](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L49)
+Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:45](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L45)
 
 Accessor returned by `createInfiniteQueryController`.
 
@@ -17,7 +17,7 @@ observer.
 
 ## Type Declaration
 
-### destroy()
+### destroy
 
 ```ts
 destroy: () => void;

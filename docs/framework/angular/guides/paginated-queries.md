@@ -13,7 +13,7 @@ replace:
 [//]: # 'Example'
 
 ```ts
-const result = injectQuery(() => ({
+const projectsQuery = injectQuery(() => ({
   queryKey: ['projects', page()],
   queryFn: fetchProjects,
 }))
@@ -35,15 +35,15 @@ const result = injectQuery(() => ({
         instantaneously while they are also re-fetched invisibly in the
         background.
       </p>
-      @if (query.status() === 'pending') {
+      @if (projectsQuery.status() === 'pending') {
         <div>Loading...</div>
-      } @else if (query.status() === 'error') {
-        <div>Error: {{ query.error().message }}</div>
+      } @else if (projectsQuery.status() === 'error') {
+        <div>Error: {{ projectsQuery.error().message }}</div>
       } @else {
         <!-- 'data' will either resolve to the latest page's data -->
         <!-- or if fetching a new page, the last successful page's data -->
         <div>
-          @for (project of query.data().projects; track project.id) {
+          @for (project of projectsQuery.data().projects; track project.id) {
             <p>{{ project.name }}</p>
           }
         </div>
@@ -55,14 +55,16 @@ const result = injectQuery(() => ({
       </button>
       <button
         (click)="nextPage()"
-        [disabled]="query.isPlaceholderData() || !query.data()?.hasMore"
+        [disabled]="
+          projectsQuery.isPlaceholderData() || !projectsQuery.data()?.hasMore
+        "
       >
         Next Page
       </button>
       <!-- Since the last page's data potentially sticks around between page requests, -->
       <!-- we can use 'isFetching' to show a background loading -->
       <!-- indicator since our status === 'pending' state won't be triggered -->
-      @if (query.isFetching()) {
+      @if (projectsQuery.isFetching()) {
         <span> Loading...</span>
       }
     </div>
@@ -70,9 +72,9 @@ const result = injectQuery(() => ({
 })
 export class PaginationExampleComponent {
   page = signal(0)
-  #queryClient = inject(QueryClient)
+  readonly #queryClient = inject(QueryClient)
 
-  query = injectQuery(() => ({
+  readonly projectsQuery = injectQuery(() => ({
     queryKey: ['projects', this.page()],
     queryFn: () => lastValueFrom(fetchProjects(this.page())),
     placeholderData: keepPreviousData,
@@ -82,7 +84,10 @@ export class PaginationExampleComponent {
   constructor() {
     effect(() => {
       // Prefetch the next page!
-      if (!this.query.isPlaceholderData() && this.query.data()?.hasMore) {
+      if (
+        !this.projectsQuery.isPlaceholderData() &&
+        this.projectsQuery.data()?.hasMore
+      ) {
         void this.#queryClient
           .query({
             queryKey: ['projects', this.page() + 1],
@@ -98,7 +103,9 @@ export class PaginationExampleComponent {
   }
 
   nextPage() {
-    this.page.update((old) => (this.query.data()?.hasMore ? old + 1 : old))
+    this.page.update((old) =>
+      this.projectsQuery.data()?.hasMore ? old + 1 : old,
+    )
   }
 }
 ```

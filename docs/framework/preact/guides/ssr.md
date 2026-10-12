@@ -28,7 +28,7 @@ With a client rendered application, these are the minimum 3 server roundtrips yo
 
 As soon as **1.** is complete, the user can see the content and when **2.** finishes, the page is interactive and clickable. Because the markup also contains the initial data we need, step **3.** does not need to run on the client at all, at least until you want to revalidate the data for some reason.
 
-This is all from the clients perspective. On the server, we need to **prefetch** that data before we generate/render the markup, we need to **dehydrate** that data into a serializable format we can embed in the markup, and on the client we need to **hydrate** that data into a Preact Query cache so we can avoid doing a new fetch on the client.
+This is all from the client's perspective. On the server, we need to **prefetch** that data before we generate/render the markup, we need to **dehydrate** that data into a serializable format we can embed in the markup, and on the client we need to **hydrate** that data into a Preact Query cache so we can avoid doing a new fetch on the client.
 
 Read on to learn how to implement these three steps with Preact Query.
 
@@ -107,7 +107,7 @@ With just a little more setup, you can use a `queryClient` to prefetch queries d
 - On the server, create a `const queryClient = new QueryClient(options)`
 - Do `await queryClient.query(...)` for each query you want to prefetch
   - You want to use `await Promise.all(...)` to fetch the queries in parallel when possible
-  - It's fine to have queries that aren't prefetched. These wont be server rendered, instead they will be fetched on the client after the application is interactive. This can be great for content that are shown only after user interaction, or is far down on the page to avoid blocking more critical content.
+  - It's fine to have queries that aren't prefetched. These won't be server rendered, instead they will be fetched on the client after the application is interactive. This can be great for content that is shown only after user interaction, or is far down on the page to avoid blocking more critical content.
 - Call `dehydrate(queryClient)` and embed the result in the markup you send to the client, alongside the html produced by `renderToString`
 - On the client, wrap your tree with `<HydrationBoundary state={dehydratedState}>`, where `dehydratedState` is parsed back out of the embedded markup
 
@@ -360,6 +360,6 @@ On the server, `gcTime` defaults to `Infinity` which disables manual garbage col
 
 Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you require a shorter `gcTime`, we recommend setting it to `2 * 1000` to allow sufficient time for the app to reference the data.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../reference/QueryClient.md#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
+To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client.
 
 Alternatively, you can set a smaller `gcTime`.
