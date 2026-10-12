@@ -72,9 +72,25 @@ Angular Query caching, request deduplication, cancellation, retries, and stale-t
 The example below validates a username. The query is disabled while the field has no value, and the
 factory returns `toResource(query)`.
 
+> In Angular 21, `validateAsync`'s `factory` requires a return type of `ResourceRef` while
+> the implementation works with the read-only `Resource` interface returned by `toResource`.
+> To use the integration, cast the result of `toResource` as
+> `toResource(query) as unknown as ResourceRef<T | undefined>` where `T` is the query's data type.
+
+> The `debounce` option on `validateAsync` does not work with `toResource(query)` due to
+> an [upstream Angular issue](https://github.com/angular/angular/issues/70884). Use
+> [`debounce`](https://angular.dev/api/forms/signals/debounce) from `@angular/forms/signals`
+> on the field instead. This delays updates from the input to the form model by 300 ms;
+> blurring the field or submitting the form flushes the pending update immediately.
+
 ```ts
 import { Component, inject, signal } from '@angular/core'
-import { form, validateAsync } from '@angular/forms/signals'
+import {
+  FormField,
+  debounce,
+  form,
+  validateAsync,
+} from '@angular/forms/signals'
 import { injectQuery, toResource } from '@tanstack/angular-query'
 
 type UsernameValidation = {
@@ -83,15 +99,17 @@ type UsernameValidation = {
 
 @Component({
   selector: 'registration-form',
-  template: '',
+  imports: [FormField],
+  template: `<input [formField]="registrationForm.username" />`,
 })
 export class RegistrationForm {
   private readonly users = inject(UserService)
   readonly model = signal({ username: '' })
 
   readonly registrationForm = form(this.model, (path) => {
+    debounce(path.username, 300)
+
     validateAsync(path.username, {
-      debounce: 300,
       params: ({ value }) => value().trim() || undefined,
       factory: (username) =>
         toResource(
@@ -135,7 +153,6 @@ both APIs for the needs of your application.
 Feature/Capability Key:
 
 - ✅ 1st-class, built-in, and ready to use with no added configuration or code
-- 🟡 Partial support
 - 🟠 Supported through an additional package
 - 🔶 Possible, but requires custom application code
 - 🛑 Not built in

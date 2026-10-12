@@ -7,6 +7,7 @@ import {
 import {
   FormField,
   applyEach,
+  debounce,
   form,
   minLength,
   required,
@@ -135,13 +136,13 @@ export class AppComponent {
   )
 
   readonly registrationForm = form(this.model, (path) => {
+    debounce(path.username, 300)
     required(path.username, { message: 'Username is required' })
     minLength(path.username, 3, {
       message: 'Username must be at least 3 characters',
     })
 
     validateAsync(path.username, {
-      debounce: 300,
       params: ({ value }) => value().trim() || undefined,
       factory: (username) => {
         const query = injectQuery(() => {
@@ -168,13 +169,13 @@ export class AppComponent {
     })
 
     applyEach(path.inviteCodes, (inviteCode) => {
+      debounce(inviteCode, 300)
       required(inviteCode, { message: 'Invite code is required' })
       minLength(inviteCode, 3, {
         message: 'Invite code must be at least 3 characters',
       })
 
       validateAsync(inviteCode, {
-        debounce: 300,
         params: ({ value }) => value().trim() || undefined,
         factory: (code) => {
           const query = injectQuery(() => {
