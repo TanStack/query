@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { fetchProject } from '../queries'
+import { projectQueryOptions } from '../queries'
 import Button from './Button'
 import Spinner from './Spinner'
 
@@ -11,10 +11,9 @@ export default function Project({
   activeProject: string
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>
 }) {
-  const { data, isFetching } = useSuspenseQuery({
-    queryKey: ['project', activeProject],
-    queryFn: () => fetchProject(activeProject),
-  })
+  const { data, isFetching } = useSuspenseQuery(
+    projectQueryOptions(activeProject),
+  )
 
   return (
     <div>

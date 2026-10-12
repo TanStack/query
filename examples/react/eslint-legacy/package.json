@@ -20,7 +20,10 @@
     "@tanstack/eslint-plugin-query": "^5.104.2",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
+    "@typescript-eslint/eslint-plugin": "^8.71.1",
+    "@typescript-eslint/parser": "^8.71.1",
     "@vitejs/plugin-react": "^6.1.1",
+    "eslint": "^9.36.0",
     "typescript": "5.8.3",
     "vite": "^8.3.1"
   }
