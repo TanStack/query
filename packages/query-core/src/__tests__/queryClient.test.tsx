@@ -429,6 +429,23 @@ describe('queryClient', () => {
       await vi.advanceTimersByTimeAsync(5)
       expect(queryClient.isFetching()).toEqual(0)
     })
+
+    it('should honour a fetchStatus filter instead of only counting fetching queries', async () => {
+      const onlineMock = mockOnlineManagerIsOnline(false)
+
+      void queryClient
+        .query({
+          queryKey: queryKey(),
+          queryFn: () => sleep(10).then(() => 'data'),
+        })
+        .catch(noop)
+
+      expect(queryClient.isFetching()).toBe(0)
+      expect(queryClient.isFetching({ fetchStatus: 'paused' })).toBe(1)
+      expect(queryClient.isFetching({ fetchStatus: 'idle' })).toBe(0)
+
+      onlineMock.mockRestore()
+    })
   })
 
   describe('isMutating', () => {
