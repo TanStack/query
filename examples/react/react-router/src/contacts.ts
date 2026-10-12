@@ -28,7 +28,7 @@ const initialData = [
 export type Contact = (typeof initialData)[number]
 
 const seed = async () => {
-  const contacts = await localforage.getItem<Contact[]>('contacts')
+  const contacts = await localforage.getItem<Array<Contact>>('contacts')
   if (!contacts) {
     set(initialData)
   }
@@ -38,7 +38,7 @@ seed()
 
 export async function getContacts(query?: string) {
   await fakeNetwork()
-  let contacts = await localforage.getItem<Contact[]>('contacts')
+  let contacts = await localforage.getItem<Array<Contact>>('contacts')
   if (!contacts) contacts = []
   if (query) {
     contacts = matchSorter(contacts, query, { keys: ['first', 'last'] })
@@ -50,9 +50,9 @@ export async function createContact(
   data: Pick<Contact, 'first' | 'last' | 'twitter' | 'avatar' | 'notes'>,
 ) {
   await fakeNetwork()
-  let id = Math.random().toString(36).substring(2, 9)
-  let contact = { ...data, id, createdAt: Date.now(), favorite: false }
-  let contacts = await getContacts()
+  const id = Math.random().toString(36).substring(2, 9)
+  const contact = { ...data, id, createdAt: Date.now(), favorite: false }
+  const contacts = await getContacts()
   contacts.unshift(contact)
   await set(contacts)
   return contact
@@ -60,17 +60,17 @@ export async function createContact(
 
 export async function getContact(id: string) {
   await fakeNetwork()
-  let contacts = await localforage.getItem<Contact[]>('contacts')
+  const contacts = await localforage.getItem<Array<Contact>>('contacts')
   if (!contacts) return null
-  let contact = contacts.find((contact) => contact.id === id)
+  const contact = contacts.find((item) => item.id === id)
   return contact ?? null
 }
 
 export async function updateContact(id: string, updates: Partial<Contact>) {
   await fakeNetwork()
-  let contacts = await localforage.getItem<Contact[]>('contacts')
+  const contacts = await localforage.getItem<Array<Contact>>('contacts')
   if (!contacts) return false
-  let contact = contacts.find((contact) => contact.id === id)
+  const contact = contacts.find((item) => item.id === id)
   if (!contact) throw new Error(`No contact found for ${id}`)
   Object.assign(contact, updates)
   await set(contacts)
@@ -78,9 +78,9 @@ export async function updateContact(id: string, updates: Partial<Contact>) {
 }
 
 export async function deleteContact(id: string) {
-  let contacts = await localforage.getItem<Contact[]>('contacts')
+  const contacts = await localforage.getItem<Array<Contact>>('contacts')
   if (!contacts) return false
-  let index = contacts.findIndex((contact) => contact.id === id)
+  const index = contacts.findIndex((contact) => contact.id === id)
   if (index > -1) {
     contacts.splice(index, 1)
     await set(contacts)
@@ -89,7 +89,7 @@ export async function deleteContact(id: string) {
   return false
 }
 
-function set(contacts: Contact[]) {
+function set(contacts: Array<Contact>) {
   return localforage.setItem('contacts', contacts)
 }
 
