@@ -1,20 +1,6 @@
 import React from 'react'
-import {
-  QueryClient,
-  QueryClientProvider,
-  useInfiniteQuery,
-} from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-
-const queryClient = new QueryClient()
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Example />
-    </QueryClientProvider>
-  )
-}
 
 type ProjectsPage = {
   data: Array<{ name: string; id: number }>
@@ -31,7 +17,7 @@ const fetchProjects = async ({
   return await response.json()
 }
 
-function Example() {
+export default function Example() {
   const {
     status,
     data,
