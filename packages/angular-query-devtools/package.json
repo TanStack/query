@@ -42,7 +42,12 @@
       "test:lib": {
         "dependsOn": [
           "^compile",
-          { "target": "build", "projects": ["@tanstack/angular-query"] }
+          {
+            "target": "build",
+            "projects": [
+              "@tanstack/angular-query"
+            ]
+          }
         ]
       }
     }
