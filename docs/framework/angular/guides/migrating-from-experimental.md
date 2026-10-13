@@ -13,11 +13,13 @@ running the migration.
 
 ## Run the migration schematic
 
-Before migrating an active codebase:
+Before migrating an active codebase, it is recommended that you:
 
 - Block imports of the removed `provideQueryClient` in favor of `provideTanStackQuery`.
-- Create a `provideTestTanStackQuery` or a `createTestQueryClient` to be passed to `provideTanStackQuery`, to avoid breaking new tests due to the change of the `provideTanStackQuery` signature.
-- Prepare any import rewrite if needed.
+- Create a `provideTestTanStackQuery` helper or a `createTestQueryClient` factory to pass to `provideTanStackQuery`, so new tests use a shared provider setup.
+- If you migrate imports gradually, prepare temporary import rewrites or aliases to keep old imports
+  working or let new `@tanstack/angular-query` imports resolve to `@tanstack/angular-query-experimental`.
+  Remove these aliases when switching to the stable package.
 
 Install the stable package, then preview the bundled migration:
 
@@ -32,8 +34,10 @@ ng generate @tanstack/angular-query:migrate-from-experimental
 nx g @tanstack/angular-query:migrate-from-experimental --skipInstall
 ```
 
-The schematic handles common migration steps.
-Review the remaining sections for changes that require manual updates.
+The schematic handles common migration steps like updating package and devtools imports,
+updating dependencies, renaming providers, and converting direct `new QueryClient()` provider
+arguments to factories. Review its warnings and the remaining sections for changes that require
+manual updates.
 
 Two additional migrations are opt-in:
 
@@ -42,7 +46,6 @@ Two additional migrations are opt-in:
 - `--migrate-query-core-imports` moves `@tanstack/query-core` imports to `@tanstack/angular-query`
   and removes direct core dependencies. Dependencies are kept when unmigrated references remain.
 
-In Nx workspaces, run `nx generate @tanstack/angular-query:migrate-from-experimental`.
 The schematic also discovers `project.json` and `package.json` `nx` configurations.
 Projects configured entirely through inferred plugin settings may need manual review.
 
@@ -78,14 +81,28 @@ providers: [...provideTanStackQuery(() => new QueryClient())] // [!code --]
 providers: [provideTanStackQuery(() => new QueryClient())] // [!code ++]
 ```
 
-## Remove deprecated provider and injection helpers
+If another provider already owns the client, resolve it inside the factory:
 
-`provideAngularQuery` and `injectQueryClient` have been removed.
+```ts
+provideTanStackQuery(() => inject(MY_QUERY_CLIENT))
+```
+
+Replace direct token arguments with this form.
+
+`provideAngularQuery` and `provideQueryClient` have been removed. Use `provideTanStackQuery`,
+which handles mounting, unmounting, and default hydration. Replacing it with a bare Angular
+`useFactory` provider would omit that setup.
 
 ```ts
 provideAngularQuery(new QueryClient()) // [!code --]
 provideTanStackQuery(() => new QueryClient()) // [!code ++]
 ```
+
+For `provideQueryClient`, rename it to `provideTanStackQuery` and keep the existing client factory.
+
+## Replace `injectQueryClient`
+
+`injectQueryClient` has been removed. Inject `QueryClient` directly instead:
 
 ```ts
 const queryClient = injectQueryClient() // [!code --]
@@ -221,8 +238,8 @@ See the [SSR guide](./ssr.md) for request-scoped client setup and the interactio
 
 ## Update tests that wait for stability
 
-Observed queries, parallel queries, and mutations started through the adapter register with Angular's `PendingTasks`. As a result, `ApplicationRef.whenStable()` and `fixture.whenStable()` wait until
-that work settles.
+Observed queries, parallel queries, and mutations started through the adapter register with Angular's `PendingTasks`.
+As a result, `ApplicationRef.whenStable()` and `fixture.whenStable()` wait until that work settles.
 
 This can change existing tests that expected `whenStable()` to resolve while a request was still in
 progress. Make sure mocked requests and mutations resolve or reject before awaiting stability. When
@@ -231,18 +248,6 @@ queries do not start fetching automatically; a manual refetch still registers pe
 
 See [Testing](./testing.md) for query, mutation, `HttpClientTestingController`, and fake-timer
 examples.
-
-## New behavior that needs no migration
-
-The stable package also includes the following compatible improvements:
-
-- Query results can be converted into an Angular Resource with `toResource`. See the
-  [Resource API](../resource-api.md).
-- `injectQueries` is supported from the main package with reactive options and field-level signals.
-- Result field signals are evaluated lazily, so options can safely read required input signals without
-  being evaluated during class construction.
-- Persistence options may be supplied as a browser-only factory, making references such as
-  `localStorage` safe in SSR applications.
 
 ## Error handling
 
@@ -268,17 +273,6 @@ such as `query.refetch({ throwOnError: true })` retain their promise-rejection b
 To report cache failures to Angular, use the [ErrorHandler guide](./error-handling.md).
 `toResource(query).value()` throws when the Resource is in its error state; guard the read with
 `hasValue()` or inspect `error()` first.
-
-## Use one client provider
-
-```ts
-provideQueryClient(() => new QueryClient()) // [!code --]
-provideTanStackQuery(() => new QueryClient()) // [!code ++]
-```
-
-`provideQueryClient` has been removed. Use `provideTanStackQuery`, which handles mounting,
-unmounting, and default hydration. Replacing it with a bare Angular `useFactory` provider would
-omit that setup.
 
 ## Make activity filters reactive
 
@@ -329,14 +323,16 @@ withPersistQueryClient(() => ({
 The factory runs once per injector, in an injection context, only in the browser.
 Create persisters that access `localStorage` inside this factory.
 
-## QueryClient factories
+Persistence manages its restoration state automatically through `withPersistQueryClient`.
 
-`provideTanStackQuery` accepts a factory. If another provider already owns the client,
-resolve it inside that factory:
+## New behavior that needs no migration
 
-```ts
-provideTanStackQuery(() => inject(MY_QUERY_CLIENT))
-```
+The stable package also includes the following compatible improvements:
 
-Replace direct token arguments with this form. Persistence manages its restoration
-state automatically through `withPersistQueryClient`.
+- Query results can be converted into an Angular Resource with `toResource`. See the
+  [Resource API](../resource-api.md).
+- `injectQueries` is supported from the main package with reactive options and field-level signals.
+- Result field signals are evaluated lazily, so options can safely read required input signals without
+  being evaluated during class construction.
+- Persistence options may be supplied as a browser-only factory, making references such as
+  `localStorage` safe in SSR applications.
