@@ -31,7 +31,7 @@
   <p><strong>Mass</strong>: {query.data.mass}</p>
   <p><strong>Homeworld</strong>: <Homeworld {homeworldId} /></p>
   <h4 class="text-2xl pt-4">Films</h4>
-  {#each query.data.films as film}
+  {#each query.data.films as film (film)}
     {@const filmUrlParts = film.split('/').filter(Boolean)}
     {@const filmId = filmUrlParts[filmUrlParts.length - 1]}
     <Film {filmId} />
