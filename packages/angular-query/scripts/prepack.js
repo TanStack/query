@@ -24,6 +24,7 @@ const FILES_TO_COPY = [
   'schematics/collection.json',
   'schematics/package.json',
   'schematics/ng-add/schema.json',
+  'schematics/migrate-from-experimental/schema.json',
 ]
 
 /**

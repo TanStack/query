@@ -5,6 +5,11 @@
       "description": "Configure TanStack Query in an Angular application.",
       "factory": "./ng-add/index#ngAdd",
       "schema": "./ng-add/schema.json"
+    },
+    "migrate-from-experimental": {
+      "description": "Migrate Angular Query experimental imports and unambiguous API calls to the stable package.",
+      "factory": "./migrate-from-experimental/index#migrate",
+      "schema": "./migrate-from-experimental/schema.json"
     }
   }
 }

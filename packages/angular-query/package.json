@@ -99,7 +99,21 @@
   },
   "peerDependencies": {
     "@angular/common": ">=20.1.0",
-    "@angular/core": ">=20.1.0"
+    "@angular/core": ">=20.1.0",
+    "@angular-devkit/schematics": ">=20.1.0",
+    "@schematics/angular": ">=20.1.0",
+    "typescript": "^5.8.0 || ^6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@angular-devkit/schematics": {
+      "optional": true
+    },
+    "@schematics/angular": {
+      "optional": true
+    },
+    "typescript": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "directory": "dist",
