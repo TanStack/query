@@ -24,7 +24,7 @@
     <p>{query.data.opening_crawl}</p>
     <br />
     <h4 class="text-2xl">Characters</h4>
-    {#each query.data.characters as character}
+    {#each query.data.characters as character (character)}
       {@const characterUrlParts = character.split('/').filter(Boolean)}
       {@const characterId = characterUrlParts[characterUrlParts.length - 1]}
       <Character {characterId} />

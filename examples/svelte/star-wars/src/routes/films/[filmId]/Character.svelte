@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths'
   import { getCharacter } from '$lib/api'
   import { createQuery } from '@tanstack/svelte-query'
 
@@ -14,7 +15,7 @@
   <article>
     <a
       class="text-blue-500 hover:underline"
-      href={`/characters/${characterId}`}
+      href={resolve('/characters/[characterId]', { characterId })}
     >
       <h6 class="text-lg">{query.data.name}</h6>
     </a>
