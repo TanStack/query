@@ -441,6 +441,7 @@ describe('queryClient', () => {
         .catch(noop)
 
       expect(queryClient.isFetching()).toBe(0)
+      expect(queryClient.isFetching({ fetchStatus: undefined })).toBe(0)
       expect(queryClient.isFetching({ fetchStatus: 'paused' })).toBe(1)
       expect(queryClient.isFetching({ fetchStatus: 'idle' })).toBe(0)
 

@@ -154,8 +154,8 @@ export class QueryClient {
     filters?: TQueryFilters,
   ): number {
     return this.#queryCache.findAll({
-      fetchStatus: 'fetching',
       ...filters,
+      fetchStatus: filters?.fetchStatus ?? 'fetching',
     }).length
   }
 
