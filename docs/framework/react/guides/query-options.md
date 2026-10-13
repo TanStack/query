@@ -5,6 +5,8 @@ title: Query Options
 
 One of the best ways to share `queryKey` and `queryFn` between multiple places, yet keep them co-located to one another, is to use the `queryOptions` helper. At runtime, this helper just returns whatever you pass into it, but it has a lot of advantages when using it [with TypeScript](../typescript.md#typing-query-options). You can define all possible options for a query in one place, and you'll also get type inference and type safety for all of them.
 
+For server-side or framework-agnostic code, `@tanstack/query-core` also exports `queryOptions` and `mutationOptions`. These helpers infer the query data or mutation variables without depending on a framework. Use the adapter's helpers when you need framework-specific options.
+
 [//]: # 'Example1'
 
 ```ts
