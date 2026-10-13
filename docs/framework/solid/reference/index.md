@@ -84,6 +84,7 @@ title: "@tanstack/solid-query"
 ## Type Aliases
 
 - [AnyDataTag](type-aliases/AnyDataTag.md)
+- [CoreInfiniteQueryOptions](type-aliases/CoreInfiniteQueryOptions.md)
 - [CoreMutationOptions](type-aliases/CoreMutationOptions.md)
 - [CoreQueryOptions](type-aliases/CoreQueryOptions.md)
 - [DataTag](type-aliases/DataTag.md)
