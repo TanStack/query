@@ -1,4 +1,7 @@
-import { QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  mutationOptions as coreMutationOptions,
+} from '@tanstack/query-core'
 import { LitElement } from 'lit'
 import { describe, expectTypeOf, it } from 'vitest'
 import { createMutationController } from '../createMutationController.js'
@@ -12,6 +15,21 @@ import type { MutationResultAccessor } from '../createMutationController.js'
 class Host extends LitElement {}
 
 describe('createMutationController', () => {
+  it('should infer types from core mutationOptions', () => {
+    const mutation = createMutationController(
+      new Host(),
+      () =>
+        coreMutationOptions({
+          mutationFn: async (input: { id: string }) => input.id,
+        }),
+      new QueryClient(),
+    )
+    expectTypeOf(mutation().data).toEqualTypeOf<string | undefined>()
+    expectTypeOf(mutation().variables).toEqualTypeOf<
+      { id: string } | undefined
+    >()
+  })
+
   it('should infer TData from mutationFn return type', () => {
     const mutation = createMutationController(
       new Host(),
