@@ -1,4 +1,7 @@
-import { QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  queryOptions as coreQueryOptions,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
@@ -14,6 +17,21 @@ import type { CreateQueryOptions } from '../createQueryController.js'
 class Host extends LitElement {}
 
 describe('createQueryController', () => {
+  it('should infer types from core queryOptions', () => {
+    const query = createQueryController(
+      new Host(),
+      () =>
+        coreQueryOptions({
+          queryKey: createKey(),
+          queryFn: async () => ({ id: '1', title: 'Do Laundry' }),
+        }),
+      new QueryClient(),
+    )
+    expectTypeOf(query().data).toEqualTypeOf<
+      { id: string; title: string } | undefined
+    >()
+  })
+
   it('should default data to unknown when the query function is not specified', () => {
     const query = createQueryController(
       new Host(),
