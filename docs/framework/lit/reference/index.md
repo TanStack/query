@@ -84,6 +84,7 @@ title: "@tanstack/lit-query"
 
 - [Accessor](type-aliases/Accessor.md)
 - [AnyDataTag](type-aliases/AnyDataTag.md)
+- [CoreInfiniteQueryOptions](type-aliases/CoreInfiniteQueryOptions.md)
 - [CoreMutationOptions](type-aliases/CoreMutationOptions.md)
 - [CoreQueryOptions](type-aliases/CoreQueryOptions.md)
 - [CreateInfiniteQueryOptions](type-aliases/CreateInfiniteQueryOptions.md)

@@ -96,6 +96,7 @@ title: "@tanstack/preact-query"
 - [AnyUseQueryOptions](type-aliases/AnyUseQueryOptions.md)
 - [AnyUseSuspenseInfiniteQueryOptions](type-aliases/AnyUseSuspenseInfiniteQueryOptions.md)
 - [AnyUseSuspenseQueryOptions](type-aliases/AnyUseSuspenseQueryOptions.md)
+- [CoreInfiniteQueryOptions](type-aliases/CoreInfiniteQueryOptions.md)
 - [CoreMutationOptions](type-aliases/CoreMutationOptions.md)
 - [CoreQueryOptions](type-aliases/CoreQueryOptions.md)
 - [DataTag](type-aliases/DataTag.md)

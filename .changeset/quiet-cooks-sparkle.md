@@ -2,4 +2,4 @@
 '@tanstack/query-core': minor
 ---
 
-Add framework-agnostic `queryOptions` and `mutationOptions` helpers.
+Add framework-agnostic `queryOptions`, `infiniteQueryOptions`, and `mutationOptions` helpers.
