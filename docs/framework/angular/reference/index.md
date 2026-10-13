@@ -92,8 +92,6 @@ title: "@tanstack/angular-query"
 ## Type Aliases
 
 - [AnyDataTag](type-aliases/AnyDataTag.md)
-- [CoreMutationOptions](type-aliases/CoreMutationOptions.md)
-- [CoreQueryOptions](type-aliases/CoreQueryOptions.md)
 - [CreateBaseMutationResult](type-aliases/CreateBaseMutationResult.md)
 - [CreateBaseQueryResult](type-aliases/CreateBaseQueryResult.md)
 - [CreateInfiniteQueryResult](type-aliases/CreateInfiniteQueryResult.md)

@@ -62,6 +62,7 @@ describe('queryOptions', () => {
     const { data } = useQuery(options)
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
+
   it('should work when core queryOptions are passed to useQuery', () => {
     const options = coreQueryOptions({
       queryKey: createKey(),
@@ -73,6 +74,7 @@ describe('queryOptions', () => {
       { id: string; title: string } | undefined
     >()
   })
+
   it('should work when passed to useSuspenseQuery', () => {
     const options = queryOptions({
       queryKey: createKey(),

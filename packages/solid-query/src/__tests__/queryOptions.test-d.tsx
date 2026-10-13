@@ -92,6 +92,7 @@ describe('queryOptions', () => {
     const data = await new QueryClient().query(options)
     expectTypeOf(data).toEqualTypeOf<unknown>()
   })
+
   it('should work when core queryOptions are passed to useQuery', () => {
     const options = coreQueryOptions({
       queryKey: createKey(),
@@ -103,6 +104,7 @@ describe('queryOptions', () => {
       { id: string; title: string } | undefined
     >()
   })
+
   it('should work when passed to fetchQuery', async () => {
     const options = queryOptions({
       queryKey: createKey(),

@@ -1,4 +1,3 @@
-import { assertType, describe, expectTypeOf, it } from 'vitest'
 import {
   QueryClient,
   queryOptions as coreQueryOptions,
@@ -6,6 +5,7 @@ import {
   skipToken,
 } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { queryOptions } from '../queryOptions'
 import { useQueries } from '../useQueries'
 import { useQuery } from '../useQuery'
@@ -66,6 +66,7 @@ describe('queryOptions', () => {
     const { data } = useQuery(options)
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
+
   it('should work when core queryOptions are passed to useQuery', () => {
     const options = coreQueryOptions({
       queryKey: createKey(),
@@ -77,6 +78,7 @@ describe('queryOptions', () => {
       { id: string; title: string } | undefined
     >()
   })
+
   it('should work when passed to useSuspenseQuery', () => {
     const options = queryOptions({
       queryKey: createKey(),
