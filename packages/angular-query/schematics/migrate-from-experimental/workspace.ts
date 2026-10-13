@@ -42,12 +42,14 @@ function sourcesUnder(tree: Tree, root: string) {
   return filesUnder(tree, root).filter(isSource)
 }
 
-/** Include declarations and JavaScript when checking whether a dependency is still needed. */
+/** Include declarations, JavaScript, and component files when checking dependency references. */
 export function packageReferenceFiles(tree: Tree, packageName: string) {
   return filesUnder(tree, '/').filter((path) => {
-    if (!/\.[cm]?[jt]sx?$/.test(path)) return false
+    const isComponent = /\.(vue|svelte|astro)$/.test(path)
+    if (!isComponent && !/\.[cm]?[jt]sx?$/.test(path)) return false
     const text = tree.readText(path)
     if (!text.includes(packageName)) return false
+    if (isComponent) return true
     const containsReference = (node: ts.Node): boolean => {
       if (ts.isStringLiteralLike(node) || ts.isTemplateHead(node))
         return (
