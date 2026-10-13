@@ -15,6 +15,12 @@ and displays the variables passed to the mutation.
 This example intentionally uses Angular 22 because Signal Forms' `validateAsync`
 API is stable starting in Angular 22.
 
+The `debounce` option on `validateAsync` does not work with `toResource(query)`
+due to an [upstream Angular issue](https://github.com/angular/angular/issues/70884).
+Instead, the example uses `debounce(fieldPath, 300)` from `@angular/forms/signals`
+for the username and invite-code fields. This delays input updates to the form
+model; blurring a field or submitting the form flushes its pending update immediately.
+
 To run this example:
 
 - `pnpm install`
