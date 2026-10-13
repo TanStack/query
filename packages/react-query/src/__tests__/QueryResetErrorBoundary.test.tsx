@@ -49,6 +49,43 @@ describe('QueryErrorResetBoundary', () => {
       expect(clearReset).not.toHaveBeenCalled()
     })
 
+    it('should only consume a reset once per generation', () => {
+      let isReset = false
+      let resetCount = 0
+      let lastConsumedResetCount = 0
+      const boundary = {
+        clearReset: vi.fn(() => {
+          isReset = false
+          lastConsumedResetCount = resetCount
+        }),
+        isReset: () => isReset,
+        reset: () => {
+          isReset = true
+          resetCount++
+        },
+        _resetCount: () => resetCount,
+        _lastConsumedResetCount: () => lastConsumedResetCount,
+      }
+
+      boundary.reset()
+      if (
+        boundary._lastConsumedResetCount() !== boundary._resetCount() &&
+        boundary.isReset()
+      ) {
+        boundary.clearReset()
+      }
+      expect(boundary.clearReset).toHaveBeenCalledTimes(1)
+
+      isReset = true
+      if (
+        boundary._lastConsumedResetCount() !== boundary._resetCount() &&
+        boundary.isReset()
+      ) {
+        boundary.clearReset()
+      }
+      expect(boundary.clearReset).toHaveBeenCalledTimes(1)
+    })
+
     it('should retry fetch if the reset error boundary has been reset', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')

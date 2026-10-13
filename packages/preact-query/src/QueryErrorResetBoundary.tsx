@@ -43,17 +43,31 @@ export interface QueryErrorResetBoundaryValue {
  * requested.
  * @returns The `clearReset`, `isReset`, and `reset` functions of the boundary.
  */
-function createValue(): QueryErrorResetBoundaryValue {
+function createValue(): QueryErrorResetBoundaryValue & {
+  _resetCount: () => number
+  _lastConsumedResetCount: () => number
+} {
   let isReset = false
+  let resetCount = 0
+  let lastConsumedResetCount = 0
+
   return {
     clearReset: () => {
       isReset = false
+      lastConsumedResetCount = resetCount
     },
     reset: () => {
       isReset = true
+      resetCount++
     },
     isReset: () => {
       return isReset
+    },
+    _resetCount: () => {
+      return resetCount
+    },
+    _lastConsumedResetCount: () => {
+      return lastConsumedResetCount
     },
   }
 }

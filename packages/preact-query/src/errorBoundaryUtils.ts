@@ -57,7 +57,16 @@ export const useClearResetErrorBoundary = (
   errorResetBoundary: QueryErrorResetBoundaryValue,
 ) => {
   useEffect(() => {
-    if (errorResetBoundary.isReset()) {
+    const resetBoundary = errorResetBoundary as QueryErrorResetBoundaryValue & {
+      _resetCount?: () => number
+      _lastConsumedResetCount?: () => number
+    }
+
+    if (
+      resetBoundary._lastConsumedResetCount?.() !==
+        resetBoundary._resetCount?.() &&
+      errorResetBoundary.isReset()
+    ) {
       errorResetBoundary.clearReset()
     }
   }, [errorResetBoundary])

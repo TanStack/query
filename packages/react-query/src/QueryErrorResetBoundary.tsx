@@ -42,20 +42,28 @@ export interface QueryErrorResetBoundaryValue {
  * requested.
  * @returns The `clearReset`, `isReset`, and `reset` functions of the boundary.
  */
-function createValue(): QueryErrorResetBoundaryValue {
+function createValue(): QueryErrorResetBoundaryValue & {
+  _resetCount: () => number
+  _lastConsumedResetCount: () => number
+} {
   let isReset = false
+  let resetCount = 0
+  let lastConsumedResetCount = 0
+
   return {
     /**
      * Clears the reset state, so queries know not to try again until the boundary is reset again.
      */
     clearReset: () => {
       isReset = false
+      lastConsumedResetCount = resetCount
     },
     /**
      * Resets any query errors within the boundary, so queries know they can try again.
      */
     reset: () => {
       isReset = true
+      resetCount++
     },
     /**
      * Returns whether the boundary has been reset and not yet cleared.
@@ -63,6 +71,19 @@ function createValue(): QueryErrorResetBoundaryValue {
      */
     isReset: () => {
       return isReset
+    },
+    /**
+     * Tracks the current reset generation so a remount can consume only the
+     * most recent pending reset.
+     */
+    _resetCount: () => {
+      return resetCount
+    },
+    /**
+     * Tracks the latest reset generation that has already been consumed.
+     */
+    _lastConsumedResetCount: () => {
+      return lastConsumedResetCount
     },
   }
 }
