@@ -37,6 +37,16 @@
     "build": "vite build",
     "prepack": "node scripts/prepack.js"
   },
+  "nx": {
+    "targets": {
+      "test:lib": {
+        "dependsOn": [
+          "^compile",
+          { "target": "build", "projects": ["@tanstack/angular-query"] }
+        ]
+      }
+    }
+  },
   "type": "module",
   "types": "dist/index.d.ts",
   "module": "dist/index.mjs",
