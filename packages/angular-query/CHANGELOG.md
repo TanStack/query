@@ -1,5 +1,11 @@
 # @tanstack/angular-query
 
+## 5.0.0-rc.3
+
+### Minor Changes
+
+- [#11787](https://github.com/TanStack/query/pull/11787) [`d83eef6`](https://github.com/TanStack/query/commit/d83eef68ae3484ec8254a9c28582ed41af30035b) - Bundle an Angular 20.1-compatible migrate-from-experimental schematic that updates imports, migrates Angular and Nx workspace dependencies, and reports remaining API changes. Include opt-in migrations for ambiguous client references and query-core imports, with optional peer dependencies for schematic tooling.
+
 ## 5.0.0-rc.2
 
 ## 5.0.0-rc.1
