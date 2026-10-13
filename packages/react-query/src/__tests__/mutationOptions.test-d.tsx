@@ -172,9 +172,7 @@ describe('mutationOptions', () => {
     )
 
     expectTypeOf(mutation.data).toEqualTypeOf<string | undefined>()
-    expectTypeOf(mutation.variables).toEqualTypeOf<
-      { id: string } | undefined
-    >()
+    expectTypeOf(mutation.variables).toEqualTypeOf<{ id: string } | undefined>()
     expectTypeOf(mutation.mutate).toBeCallableWith({ id: '1' })
   })
 
