@@ -13,12 +13,23 @@ running the migration.
 
 ## Run the migration schematic
 
+Before migrating an active codebase:
+
+- Block imports of the removed `provideQueryClient` in favor of `provideTanStackQuery`.
+- Create a `provideTestTanStackQuery` or a `createTestQueryClient` to be passed to `provideTanStackQuery`, to avoid breaking new tests due to the change of the `provideTanStackQuery` signature.
+- Prepare any import rewrite if needed.
+
 Install the stable package, then preview the bundled migration:
 
 ```bash
 npm install @tanstack/angular-query
+
+# With the Angular CLI
 ng generate @tanstack/angular-query:migrate-from-experimental --dry-run
 ng generate @tanstack/angular-query:migrate-from-experimental
+
+# With Nx
+nx g @tanstack/angular-query:migrate-from-experimental --skipInstall
 ```
 
 The schematic handles common migration steps.
