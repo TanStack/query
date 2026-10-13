@@ -34,6 +34,7 @@
   "changesets": [
     "angular-devtools-lifecycle",
     "angular-devtools-panel-theme",
+    "angular-migration-schematic",
     "angular-stable-release"
   ]
 }
