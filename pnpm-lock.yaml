@@ -2652,6 +2652,9 @@ importers:
         specifier: ^3.5.43
         version: 3.5.43(typescript@5.8.3)
     devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.104.2
+        version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.9(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(vue@3.5.43(typescript@5.8.3))
@@ -2671,6 +2674,9 @@ importers:
         specifier: ^3.5.43
         version: 3.5.43(typescript@5.8.3)
     devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.104.2
+        version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.9(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(vue@3.5.43(typescript@5.8.3))
@@ -2702,6 +2708,9 @@ importers:
         specifier: ^3.5.43
         version: 3.5.43(typescript@5.8.3)
     devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.104.2
+        version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.9(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(vue@3.5.43(typescript@5.8.3))
@@ -2724,6 +2733,9 @@ importers:
         specifier: ^3.5.43
         version: 3.5.43(typescript@5.8.3)
     devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.104.2
+        version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.9(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(vue@3.5.43(typescript@5.8.3))
