@@ -47,6 +47,8 @@ export type { MutationFilters, QueryFilters, SkipToken, Updater } from './utils'
 export { streamedQuery as experimental_streamedQuery } from './streamedQuery'
 export { queryOptions } from './queryOptions'
 export type { CoreQueryOptions } from './queryOptions'
+export { infiniteQueryOptions } from './infiniteQueryOptions'
+export type { CoreInfiniteQueryOptions } from './infiniteQueryOptions'
 export { mutationOptions } from './mutationOptions'
 export type { CoreMutationOptions } from './mutationOptions'
 

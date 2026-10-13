@@ -52,7 +52,7 @@ export function mutationOptions<
   options: Omit<
     CoreMutationOptions<TData, TError, TVariables, TOnMutateResult>,
     'mutationKey'
-  >,
+  > & { mutationKey?: never },
 ): Omit<
   CoreMutationOptions<TData, TError, TVariables, TOnMutateResult>,
   'mutationKey'
@@ -70,6 +70,8 @@ export function mutationOptions<
   TOnMutateResult = unknown,
 >(
   options: CoreMutationOptions<TData, TError, TVariables, TOnMutateResult>,
-): CoreMutationOptions<TData, TError, TVariables, TOnMutateResult> {
+): CoreMutationOptions<TData, TError, TVariables, TOnMutateResult>
+
+export function mutationOptions(options: unknown) {
   return options
 }

@@ -3,8 +3,30 @@ import { QueryClient } from '../queryClient'
 import { MutationObserver } from '../mutationObserver'
 import { queryOptions } from '../queryOptions'
 import { mutationOptions } from '../mutationOptions'
+import { infiniteQueryOptions } from '../infiniteQueryOptions'
 
 describe('core options helpers', () => {
+  it('returns infinite options unchanged and fetches pages with the query client', async () => {
+    const options = {
+      queryKey: ['core-infinite-options'],
+      initialPageParam: 0,
+      queryFn: ({ pageParam }: { pageParam: number }) =>
+        Promise.resolve(pageParam),
+      getNextPageParam: (lastPage: number) => lastPage + 1,
+    }
+    expect(infiniteQueryOptions(options)).toBe(options)
+    const client = new QueryClient()
+    expect(
+      await client.infiniteQuery({
+        ...infiniteQueryOptions(options),
+        pages: 2,
+      }),
+    ).toEqual({
+      pages: [0, 1],
+      pageParams: [0, 1],
+    })
+    client.clear()
+  })
   it('returns query options unchanged and works with the query client', async () => {
     const options = {
       queryKey: ['core-options'],
