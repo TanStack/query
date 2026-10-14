@@ -1502,6 +1502,154 @@ it('custom behavior records queryFn invocation without claiming data source', as
   client.clear()
 })
 
+// A behavior may obtain queryFn through an own-property descriptor, including
+// after sealing writable options. Its invocation starts the tracked source.
+it.each(['plain', 'sealed'] as const)(
+  'custom behavior attributes queryFn read through its %s descriptor',
+  async (optionForm) => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    })
+    const cache = client.getQueryCache()
+    const key = ['descriptor-query-fn']
+    const events: Array<QueryCacheNotifyEvent> = []
+    const stop = cache.subscribe((event) => events.push(event))
+    let functionSourceSequence: number | undefined
+
+    assert.equal(
+      await client.fetchQuery({
+        queryKey: key,
+        queryFn: (context) => {
+          functionSourceSequence = context.sourceSequence
+          return 'remote'
+        },
+        behavior: {
+          onFetch: (context) => {
+            if (optionForm === 'sealed') Object.seal(context.options)
+            const queryFn = Object.getOwnPropertyDescriptor(
+              context.options,
+              'queryFn',
+            )?.value as QueryFunction<string, typeof key> | undefined
+            assert.ok(queryFn)
+            context.fetchFn = () =>
+              queryFn({
+                client: context.client,
+                queryKey: context.queryKey,
+                meta: context.options.meta,
+                signal: context.signal,
+              })
+          },
+        },
+      }),
+      'remote',
+    )
+    const source = events.find((event) => event.type === 'fetchSourceStarted')
+    assert.ok(source)
+    assert.equal(functionSourceSequence, source.sourceSequence)
+    stop()
+    client.clear()
+  },
+)
+
+// A configurable accessor descriptor can also return queryFn. Calling that
+// descriptor getter must preserve the same source attribution as a property read.
+it('custom behavior attributes queryFn from an accessor descriptor', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['accessor-descriptor-query-fn']
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let functionSourceSequence: number | undefined
+  const queryFn: QueryFunction<string, typeof key> = (context) => {
+    functionSourceSequence = context.sourceSequence
+    return 'remote'
+  }
+
+  assert.equal(
+    await client.fetchQuery({
+      queryKey: key,
+      queryFn,
+      behavior: {
+        onFetch: (context) => {
+          Object.defineProperty(context.options, 'queryFn', {
+            get: () => queryFn,
+            configurable: true,
+            enumerable: true,
+          })
+          const descriptor = Object.getOwnPropertyDescriptor(
+            context.options,
+            'queryFn',
+          )
+          assert.ok(descriptor?.get)
+          const fromDescriptor = descriptor.get.call(
+            context.options,
+          ) as QueryFunction<string, typeof key>
+          context.fetchFn = () =>
+            fromDescriptor({
+              client: context.client,
+              queryKey: context.queryKey,
+              meta: context.options.meta,
+              signal: context.signal,
+            })
+        },
+      },
+    }),
+    'remote',
+  )
+  const source = events.find((event) => event.type === 'fetchSourceStarted')
+  assert.ok(source)
+  assert.equal(functionSourceSequence, source.sourceSequence)
+  stop()
+  client.clear()
+})
+
+// A sealed accessor still permits a property read to return a tracked function.
+// Its descriptor getter is fixed by Proxy invariants and remains unwrapped.
+it('custom behavior attributes queryFn read from a sealed accessor', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['sealed-accessor-query-fn']
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let functionSourceSequence: number | undefined
+  const queryFn: QueryFunction<string, typeof key> = (context) => {
+    functionSourceSequence = context.sourceSequence
+    return 'remote'
+  }
+
+  assert.equal(
+    await client.fetchQuery({
+      queryKey: key,
+      queryFn,
+      behavior: {
+        onFetch: (context) => {
+          Object.defineProperty(context.options, 'queryFn', {
+            get: () => queryFn,
+            configurable: true,
+            enumerable: true,
+          })
+          Object.seal(context.options)
+          const fromProperty = context.options.queryFn
+          assert.ok(typeof fromProperty === 'function')
+          context.fetchFn = () =>
+            fromProperty({
+              client: context.client,
+              queryKey: context.queryKey,
+              meta: context.options.meta,
+              signal: context.signal,
+            })
+        },
+      },
+    }),
+    'remote',
+  )
+  const source = events.find((event) => event.type === 'fetchSourceStarted')
+  assert.ok(source)
+  assert.equal(functionSourceSequence, source.sourceSequence)
+  stop()
+  client.clear()
+})
+
 // A behavior can forward the fetch context's own signal getter with its
 // original or a copied query key while omitting fetchSequence. Inspection must
 // identify the fetch without consuming the getter. When user code ignores
@@ -1754,6 +1902,114 @@ it('copying behavior options does not retain queryFn wrappers', async () => {
   assert.equal(sources, calls)
   assert.equal(query.options.queryFn, queryFn)
   stop()
+  client.clear()
+})
+
+// Defining queryFn on the behavior's options is another legal write path.
+// It must not persist the fetch-local tracked function across later fetches.
+it('defining behavior queryFn does not retain its tracked wrapper', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const key = ['defined-behavior-query-fn']
+  const queryFn = () => 'remote'
+  const query = client.getQueryCache().build(client, {
+    queryKey: key,
+    queryFn,
+    behavior: {
+      onFetch: (context) => {
+        Object.defineProperty(context.options, 'queryFn', {
+          value: context.options.queryFn,
+          writable: true,
+          configurable: true,
+          enumerable: true,
+        })
+      },
+    },
+  })
+
+  assert.equal(await query.fetch(), 'remote')
+  assert.equal(query.options.queryFn, queryFn)
+  for (let i = 0; i < 16_000; i++) {
+    assert.equal(await query.fetch(), 'remote')
+  }
+  assert.equal(query.options.queryFn, queryFn)
+  client.clear()
+})
+
+// An accessor can return a captured tracked queryFn, or a behavior can copy
+// the Proxy's accessor descriptor back to its options. Neither path may add
+// a wrapper layer on every fetch.
+it.each(['captured function', 'copied descriptor'] as const)(
+  'accessor with %s does not accumulate queryFn wrappers',
+  async (path) => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    })
+    const key = ['accessor-wrapper-retention', path]
+    const queryFn = () => 'remote'
+    let installedAccessor = false
+    const query = client.getQueryCache().build(client, {
+      queryKey: key,
+      queryFn,
+      behavior: {
+        onFetch: (context) => {
+          if (path === 'captured function') {
+            const captured = context.options.queryFn
+            Object.defineProperty(context.options, 'queryFn', {
+              get: () => captured,
+              configurable: true,
+              enumerable: true,
+            })
+            return
+          }
+          if (!installedAccessor) {
+            Object.defineProperty(context.options, 'queryFn', {
+              get: () => queryFn,
+              configurable: true,
+              enumerable: true,
+            })
+            installedAccessor = true
+          }
+          const descriptor = Object.getOwnPropertyDescriptor(
+            context.options,
+            'queryFn',
+          )
+          assert.ok(descriptor)
+          Object.defineProperty(context.options, 'queryFn', descriptor)
+        },
+      },
+    })
+
+    for (let i = 0; i < 16_000; i++) {
+      assert.equal(await query.fetch(), 'remote')
+    }
+    client.clear()
+  },
+)
+
+// Freezing the behavior's options leaves queryFn readable. A Proxy must
+// report the target's exact value for a frozen data property.
+it('freezing behavior options keeps queryFn readable', async () => {
+  const client = new QueryClient()
+  const key = ['frozen-behavior-options']
+  const queryFn = () => 'remote'
+  const query = client.getQueryCache().build(client, {
+    queryKey: key,
+    queryFn,
+    behavior: {
+      onFetch: (context) => {
+        Object.freeze(context.options)
+        assert.equal(context.options.queryFn, queryFn)
+        assert.equal(
+          Object.getOwnPropertyDescriptor(context.options, 'queryFn')?.value,
+          queryFn,
+        )
+      },
+    },
+  })
+  assert.equal(await query.fetch(), 'remote')
+  assert.equal(await query.fetch(), 'remote')
   client.clear()
 })
 
@@ -2312,19 +2568,28 @@ it('retained queryFn wrapper from failed behavior setup is inert', async () => {
   client.clear()
 })
 
-// A behavior can invoke the exposed queryFn while configuring fetchFn, before
-// Query.fetch installs its retryer. The invocation remains observable.
+// A behavior can invoke queryFn while configuring fetchFn, before Query.fetch
+// installs its retryer. The source position precedes user code and its writes;
+// the one delayed source event carries the installed retryer's live promise.
 it('eager custom behavior records queryFn invocation', async () => {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   })
+  const cache = client.getQueryCache()
   const key = ['eager-custom-behavior']
+  const response = deferred<string>()
+  let functionSourceSequence: number | undefined
+  let writeSequence: number | undefined
   const events: Array<QueryCacheNotifyEvent> = []
-  const stop = client.getQueryCache().subscribe((event) => events.push(event))
+  const stop = cache.subscribe((event) => events.push(event))
   const observer = new QueryObserver(client, {
     queryKey: key,
     enabled: false,
-    queryFn: () => 'remote',
+    queryFn: (context) => {
+      functionSourceSequence = context.sourceSequence
+      writeSequence = cache.reserveSequence()
+      return response.promise
+    },
     behavior: {
       onFetch: (context) => {
         const queryFn = context.options.queryFn
@@ -2341,12 +2606,28 @@ it('eager custom behavior records queryFn invocation', async () => {
   })
   const stopObserver = observer.subscribe(() => {})
 
-  assert.equal((await observer.refetch()).data, 'remote')
-  const source = events.find((event) => event.type === 'fetchSourceStarted')
+  const pending = observer.refetch()
+  const query = cache.find({ queryKey: key })
+  const start = events.find((event) => event.type === 'fetchStarted')
+  const sources = events.filter((event) => event.type === 'fetchSourceStarted')
+  assert.ok(query)
+  assert.ok(start)
+  assert.equal(sources.length, 1)
+  const source = sources[0]!
+  assert.equal(source.fetchSequence, start.fetchSequence)
+  assert.equal(source.sourceSequence, functionSourceSequence)
+  assert.ok(writeSequence)
+  assert.ok(source.sourceSequence < writeSequence)
+  assert.ok(events.indexOf(start) < events.indexOf(source))
+  assert.equal(source.promise, query.promise)
+  assert.equal(query.state.fetchStatus, 'fetching')
+  response.resolve('remote')
+  assert.equal(await source.promise, 'remote')
+  assert.equal((await pending).data, 'remote')
   const success = findSuccess(events, false)
-  assert.ok(source)
   assert.ok(success)
   assert.equal(success.sourceSequence, undefined)
+  assert.equal(query.state.fetchStatus, 'idle')
   stopObserver()
   stop()
   client.clear()

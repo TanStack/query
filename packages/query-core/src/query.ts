@@ -315,6 +315,10 @@ export class Query<
     QueryFunction<TQueryFnData, TQueryKey>,
     QueryFunction<TQueryFnData, TQueryKey>
   >()
+  #originalBehaviorQueryFnGetters = new WeakMap<
+    NonNullable<PropertyDescriptor['get']>,
+    NonNullable<PropertyDescriptor['get']>
+  >()
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
@@ -886,6 +890,7 @@ export class Query<
       QueryFunction<TQueryFnData, TQueryKey>
     >()
     const originalBehaviorQueryFns = this.#originalBehaviorQueryFns
+    const originalBehaviorQueryFnGetters = this.#originalBehaviorQueryFnGetters
     const belongsToThisFetch = (
       queryFnContext: QueryFunctionContext<TQueryKey>,
     ) => {
@@ -907,39 +912,108 @@ export class Query<
         return false
       }
     }
+    const trackBehaviorQueryFn = (value: unknown): unknown => {
+      if (typeof value !== 'function') return value
+      const queryFn =
+        originalBehaviorQueryFns.get(
+          value as QueryFunction<TQueryFnData, TQueryKey>,
+        ) ?? (value as QueryFunction<TQueryFnData, TQueryKey>)
+      let trackedQueryFn = trackedBehaviorQueryFns.get(queryFn)
+      if (!trackedQueryFn) {
+        trackedQueryFn = (queryFnContext) => {
+          if (!belongsToThisFetch(queryFnContext)) {
+            return queryFn(queryFnContext)
+          }
+          return invokeQueryFn(() => {
+            stampSourceSequence(queryFnContext)
+            return queryFn(queryFnContext)
+          })
+        }
+        trackedBehaviorQueryFns.set(queryFn, trackedQueryFn)
+        originalBehaviorQueryFns.set(
+          trackedQueryFn,
+          originalBehaviorQueryFns.get(queryFn) ?? queryFn,
+        )
+      }
+      return trackedQueryFn
+    }
+    const originalBehaviorQueryFn = (value: unknown): unknown =>
+      typeof value === 'function'
+        ? (originalBehaviorQueryFns.get(
+            value as QueryFunction<TQueryFnData, TQueryKey>,
+          ) ?? value)
+        : value
     const behaviorOptions = new Proxy(this.options, {
       get(target, property, receiver): unknown {
         const value: unknown = Reflect.get(target, property, receiver)
-        if (property !== 'queryFn' || typeof value !== 'function') {
+        if (property !== 'queryFn') return value
+        const descriptor = Reflect.getOwnPropertyDescriptor(target, property)
+        if (
+          descriptor &&
+          !descriptor.configurable &&
+          'value' in descriptor &&
+          !descriptor.writable
+        ) {
           return value
         }
-        const queryFn = value as QueryFunction<TQueryFnData, TQueryKey>
-        let trackedQueryFn = trackedBehaviorQueryFns.get(queryFn)
-        if (!trackedQueryFn) {
-          trackedQueryFn = (queryFnContext) => {
-            if (!belongsToThisFetch(queryFnContext)) {
-              return queryFn(queryFnContext)
-            }
-            return invokeQueryFn(() => {
-              stampSourceSequence(queryFnContext)
-              return queryFn(queryFnContext)
-            })
-          }
-          trackedBehaviorQueryFns.set(queryFn, trackedQueryFn)
-          originalBehaviorQueryFns.set(
-            trackedQueryFn,
-            originalBehaviorQueryFns.get(queryFn) ?? queryFn,
-          )
+        return trackBehaviorQueryFn(value)
+      },
+      getOwnPropertyDescriptor(
+        target,
+        property,
+      ): PropertyDescriptor | undefined {
+        const descriptor = Reflect.getOwnPropertyDescriptor(target, property)
+        if (
+          property !== 'queryFn' ||
+          !descriptor ||
+          (!descriptor.configurable &&
+            (!('value' in descriptor) || !descriptor.writable))
+        ) {
+          return descriptor
         }
-        return trackedQueryFn
+        if ('value' in descriptor) {
+          return {
+            ...descriptor,
+            value: trackBehaviorQueryFn(descriptor.value),
+          }
+        }
+        if (descriptor.get) {
+          const originalGet =
+            originalBehaviorQueryFnGetters.get(descriptor.get) ?? descriptor.get
+          const trackedGet = function (this: unknown) {
+            return trackBehaviorQueryFn(Reflect.apply(originalGet, this, []))
+          }
+          originalBehaviorQueryFnGetters.set(trackedGet, originalGet)
+          return {
+            ...descriptor,
+            get: trackedGet,
+          }
+        }
+        return descriptor
+      },
+      defineProperty(target, property, descriptor): boolean {
+        if (property !== 'queryFn') {
+          return Reflect.defineProperty(target, property, descriptor)
+        }
+        if ('value' in descriptor) {
+          return Reflect.defineProperty(target, property, {
+            ...descriptor,
+            value: originalBehaviorQueryFn(descriptor.value),
+          })
+        }
+        if (descriptor.get) {
+          return Reflect.defineProperty(target, property, {
+            ...descriptor,
+            get:
+              originalBehaviorQueryFnGetters.get(descriptor.get) ??
+              descriptor.get,
+          })
+        }
+        return Reflect.defineProperty(target, property, descriptor)
       },
       set(target, property, value: unknown, receiver): boolean {
         const queryFn =
-          property === 'queryFn' && typeof value === 'function'
-            ? (originalBehaviorQueryFns.get(
-                value as QueryFunction<TQueryFnData, TQueryKey>,
-              ) ?? value)
-            : value
+          property === 'queryFn' ? originalBehaviorQueryFn(value) : value
         return Reflect.set(target, property, queryFn, receiver)
       },
     })
