@@ -23,9 +23,9 @@ describe('injectInfiniteQuery', () => {
       getNextPageParam: () => 12,
     }))
 
-    expectTypeOf(query.isSuccess).toMatchTypeOf<Signal<boolean>>()
-    expectTypeOf(query.isError).toMatchTypeOf<Signal<boolean>>()
-    expectTypeOf(query.isPending).toMatchTypeOf<Signal<boolean>>()
+    expectTypeOf(query.isSuccess).toExtend<Signal<boolean>>()
+    expectTypeOf(query.isError).toExtend<Signal<boolean>>()
+    expectTypeOf(query.isPending).toExtend<Signal<boolean>>()
   })
 
   describe('initialData', () => {

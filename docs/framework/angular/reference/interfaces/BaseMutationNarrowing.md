@@ -3,7 +3,7 @@ id: BaseMutationNarrowing
 title: BaseMutationNarrowing
 ---
 
-Defined in: [packages/angular-query/src/types.ts:386](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L386)
+Defined in: [packages/angular-query/src/types.ts:374](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L374)
 
 ## Type Parameters
 

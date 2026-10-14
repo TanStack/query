@@ -3,7 +3,7 @@ id: CreateInfiniteQueryOptions
 title: CreateInfiniteQueryOptions
 ---
 
-Defined in: [packages/angular-query/src/types.ts:179](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L179)
+Defined in: [packages/angular-query/src/types.ts:167](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L167)
 
 ## Extends
 

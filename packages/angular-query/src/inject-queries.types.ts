@@ -69,19 +69,23 @@ type GetCreateQueryOptionsForCreateQueries<T> = T extends {
                 >
               : QueryObserverOptionsForCreateQueries
 
+type IsDefinedInitialData<T, TData> = T extends TData
+  ? true
+  : T extends () => infer TValue
+    ? unknown extends TValue
+      ? false
+      : TValue extends TData
+        ? true
+        : false
+    : false
+
 type GenericGetDefinedOrUndefinedQueryResult<T, TData, TUndefined, TDefined> =
   T extends { initialData?: infer TInitialData }
     ? unknown extends TInitialData
       ? TUndefined
-      : TInitialData extends TData
+      : IsDefinedInitialData<TInitialData, TData> extends true
         ? TDefined
-        : TInitialData extends () => infer TInitialDataResult
-          ? unknown extends TInitialDataResult
-            ? TUndefined
-            : TInitialDataResult extends TData
-              ? TDefined
-              : TUndefined
-          : TUndefined
+        : TUndefined
     : TUndefined
 
 type InferDataAndError<T> = T extends {
