@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test:eslint": "eslint ./src"
+    "test:eslint": "eslint ./src",
+    "test:types": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/vue-query": "^5.104.2",
@@ -17,6 +18,7 @@
     "@tanstack/eslint-plugin-query": "^5.104.2",
     "@vitejs/plugin-vue": "^6.0.9",
     "typescript": "5.8.3",
-    "vite": "^8.3.1"
+    "vite": "^8.3.1",
+    "vue-tsc": "^3.3.13"
   }
 }
