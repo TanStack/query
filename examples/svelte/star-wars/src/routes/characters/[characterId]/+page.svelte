@@ -3,11 +3,13 @@
   import Homeworld from './Homeworld.svelte'
   import Film from './Film.svelte'
   import { getCharacter } from '$lib/api'
-  import { page } from '$app/state'
+  import type { PageProps } from './$types'
+
+  let { params }: PageProps = $props()
 
   const query = createQuery(() => ({
-    queryKey: ['character', page.params.characterId],
-    queryFn: () => getCharacter(page.params.characterId),
+    queryKey: ['character', params.characterId],
+    queryFn: () => getCharacter(params.characterId),
   }))
 </script>
 
