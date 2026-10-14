@@ -208,9 +208,11 @@ describe('injectQuery', () => {
     // should call queryFn with context containing the new queryKey
     expect(queryFn).toHaveBeenNthCalledWith(2, {
       client: queryClient,
+      fetchSequence: expect.any(Number),
       meta: undefined,
       queryKey: key2,
       signal: expect.anything(),
+      sourceSequence: expect.any(Number),
     })
   })
 

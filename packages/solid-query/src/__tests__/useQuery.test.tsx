@@ -110,6 +110,9 @@ describe('useQuery', () => {
     expect(states[0]).toEqual({
       data: undefined,
       dataUpdatedAt: 0,
+      dataUpdateCount: 0,
+      dataFetchSequence: undefined,
+      dataSourceSequence: undefined,
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
@@ -138,6 +141,9 @@ describe('useQuery', () => {
     expect(states[1]).toEqual({
       data: 'test',
       dataUpdatedAt: expect.any(Number),
+      dataUpdateCount: 1,
+      dataFetchSequence: expect.any(Number),
+      dataSourceSequence: expect.any(Number),
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
@@ -199,6 +205,9 @@ describe('useQuery', () => {
     expect(states[0]).toEqual({
       data: undefined,
       dataUpdatedAt: 0,
+      dataUpdateCount: 0,
+      dataFetchSequence: undefined,
+      dataSourceSequence: undefined,
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
@@ -227,6 +236,9 @@ describe('useQuery', () => {
     expect(states[1]).toEqual({
       data: undefined,
       dataUpdatedAt: 0,
+      dataUpdateCount: 0,
+      dataFetchSequence: undefined,
+      dataSourceSequence: undefined,
       error: null,
       errorUpdatedAt: 0,
       failureCount: 1,
@@ -255,6 +267,9 @@ describe('useQuery', () => {
     expect(states[2]).toEqual({
       data: undefined,
       dataUpdatedAt: 0,
+      dataUpdateCount: 0,
+      dataFetchSequence: undefined,
+      dataSourceSequence: undefined,
       error: new Error('rejected'),
       errorUpdatedAt: expect.any(Number),
       failureCount: 2,

@@ -69,6 +69,9 @@ describe('useInfiniteQuery', () => {
     expect(states[0]).toEqual({
       data: undefined,
       dataUpdatedAt: 0,
+      dataUpdateCount: 0,
+      dataFetchSequence: undefined,
+      dataSourceSequence: undefined,
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
@@ -104,6 +107,9 @@ describe('useInfiniteQuery', () => {
     expect(states[1]).toEqual({
       data: { pages: [0], pageParams: [0] },
       dataUpdatedAt: expect.any(Number),
+      dataUpdateCount: 1,
+      dataFetchSequence: expect.any(Number),
+      dataSourceSequence: expect.any(Number),
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
