@@ -11,6 +11,8 @@ const config = mergeConfig(
   defineConfig({
     test: {
       setupFiles: ['./test-setup.zoneful.ts'],
+      coverage: { reportsDirectory: './coverage/zoneful' },
+      typecheck: { enabled: false },
     },
   }),
 )

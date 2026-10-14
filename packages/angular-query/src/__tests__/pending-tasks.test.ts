@@ -97,7 +97,7 @@ describe('PendingTasks Integration', () => {
       }
 
       const fixture = TestBed.createComponent(TestComponent)
-      fixture.detectChanges()
+      fixture.autoDetectChanges()
       const query = fixture.componentInstance.query
 
       // Should start as pending even with synchronous data
@@ -323,7 +323,7 @@ describe('PendingTasks Integration', () => {
       }
 
       const fixture = TestBed.createComponent(TestComponent)
-      fixture.detectChanges()
+      fixture.autoDetectChanges()
       const query = fixture.componentInstance.query
 
       // Trigger multiple rapid refetches
@@ -543,7 +543,7 @@ describe('PendingTasks Integration', () => {
       }
 
       const fixture = TestBed.createComponent(TestComponent)
-      fixture.detectChanges()
+      fixture.autoDetectChanges()
       const { query1, query2, query3 } = fixture.componentInstance
 
       expect(query1.status()).toBe('pending')
@@ -746,8 +746,6 @@ describe('PendingTasks Integration', () => {
 
       // Advance to the cancellation point
       await vi.advanceTimersByTimeAsync(20)
-
-      TestBed.tick()
 
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(130)
