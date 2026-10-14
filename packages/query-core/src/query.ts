@@ -825,6 +825,9 @@ export class Query<
     let retryer: Retryer<TData> | undefined
     let sourceEventPending = false
     let fetchRetired = false
+    const retireFetch = () => {
+      fetchRetired = true
+    }
     let resultProvenanceUnknown = false
     const notifySourceStarted = () => {
       if (!retryer) {
@@ -856,6 +859,15 @@ export class Query<
           // calling it, even when reentry delays this notification.
           notifySourceStarted()
         }
+      }
+    }
+    const stampSourceSequence = (
+      queryFnContext: QueryFunctionContext<TQueryKey>,
+    ): void => {
+      try {
+        Reflect.set(queryFnContext, 'sourceSequence', sourceSequence)
+      } catch {
+        // A read-only Proxy can reject this optional context metadata.
       }
     }
     // A behavior can mutate context.options before the default fetchFn reads
@@ -900,7 +912,7 @@ export class Query<
               return queryFn(queryFnContext)
             }
             return invokeQueryFn(() => {
-              Reflect.set(queryFnContext, 'sourceSequence', sourceSequence)
+              stampSourceSequence(queryFnContext)
               return queryFn(queryFnContext)
             })
           }
@@ -947,7 +959,7 @@ export class Query<
           return queryFn(invocationContext)
         }
         return invokeQueryFn(() => {
-          Reflect.set(invocationContext, 'sourceSequence', sourceSequence)
+          stampSourceSequence(invocationContext)
           return queryFn(invocationContext)
         })
       }
@@ -1001,7 +1013,7 @@ export class Query<
     try {
       behavior?.onFetch(context, this as unknown as Query)
     } catch (error) {
-      fetchRetired = true
+      retireFetch()
       throw error
     }
     resultProvenanceUnknown ||= isCoreInfiniteBehavior
@@ -1035,7 +1047,7 @@ export class Query<
         | undefined,
       fn: context.fetchFn as () => Promise<TData>,
       onCancel: (error) => {
-        fetchRetired = true
+        retireFetch()
         if (error instanceof CancelledError && error.revert) {
           this.#dispatch(
             {
@@ -1075,6 +1087,9 @@ export class Query<
       networkMode: context.options.networkMode,
       canRun: () => true,
     })
+    // Subscribe before user code can see the retryer promise. A persister's
+    // continuation must not add a source after the result has settled.
+    void retryer.promise.then(retireFetch, retireFetch)
     // Observer reentry during the fetch notification may have installed a
     // nested retryer. The operation installed above now owns this Query.
     this.#fetchSequence = fetchSequence
@@ -1089,7 +1104,7 @@ export class Query<
 
     try {
       const data = await retryer.start()
-      fetchRetired = true
+      retireFetch()
       // this is more of a runtime guard
       if (data === undefined) {
         if (process.env.NODE_ENV !== 'production') {
@@ -1116,7 +1131,7 @@ export class Query<
       )
       return data
     } catch (error) {
-      fetchRetired = true
+      retireFetch()
       if (error instanceof CancelledError) {
         if (error.silent) {
           // silent cancellation implies a new fetch is going to be started,

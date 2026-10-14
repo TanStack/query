@@ -162,8 +162,8 @@ it('late attachment can read the installed fetch and source positions', async ()
   client.clear()
 })
 
-// A source event carries the installed retryer's promise. A dependent can
-// await that same attempt and observe its cancellation before using its rows.
+// A source event carries the installed retryer's promise. It reports attempt
+// settlement and cancellation; applying its rows is a separate boundary.
 it('source event promise tracks the active fetch through cancellation', async () => {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -1582,6 +1582,55 @@ it('custom behavior accepts a frozen query function context', async () => {
   client.clear()
 })
 
+// A read-only Proxy may reject assignment to optional attribution metadata.
+// The instrumentation must still call the user's query function.
+it('custom behavior accepts a read-only proxy query function context', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let queryFnCalls = 0
+
+  assert.equal(
+    await client.fetchQuery({
+      queryKey: ['proxy-context'],
+      queryFn: () => {
+        queryFnCalls++
+        return 'remote'
+      },
+      behavior: {
+        onFetch: (context) => {
+          const queryFn = context.options.queryFn
+          assert.ok(typeof queryFn === 'function')
+          const proxyContext = new Proxy(
+            {
+              client: context.client,
+              queryKey: context.queryKey,
+              meta: context.options.meta,
+              signal: context.signal,
+              fetchSequence: context.fetchSequence,
+            },
+            {
+              set: () => {
+                throw new TypeError('read-only context')
+              },
+            },
+          )
+          context.fetchFn = () => queryFn(proxyContext)
+        },
+      },
+    }),
+    'remote',
+  )
+  assert.equal(queryFnCalls, 1)
+  assert.equal(
+    events.filter((event) => event.type === 'fetchSourceStarted').length,
+    1,
+  )
+  stop()
+  client.clear()
+})
+
 // A retained wrapper can be called after its fetch has settled. That call may
 // run the original function but must not add a source to the completed fetch.
 it('retained queryFn wrapper does not attribute a settled fetch', async () => {
@@ -1887,6 +1936,82 @@ it('retained persister queryFn is inert after fetch settlement', async () => {
   const query = cache.find({ queryKey: key })
   assert.ok(query)
   assert.equal(query.dataSourceSequence, undefined)
+  stop()
+  client.clear()
+})
+
+// A persister can subscribe to the installed retryer's promise before
+// Query.fetch awaits it. Its continuation runs after the result is fixed but
+// before Query.fetch resumes, so a retained queryFn must already be retired.
+it('persister promise continuation cannot add a source after result settlement', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['persister-settlement-continuation']
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let lateCall: Promise<unknown> | undefined
+
+  assert.equal(
+    await client.query({
+      queryKey: key,
+      queryFn: () => 'remote',
+      persister: (queryFn, context, query) => {
+        const installed = query.promise
+        assert.ok(installed)
+        lateCall = installed.then(() => queryFn(context))
+        return 'cached'
+      },
+    }),
+    'cached',
+  )
+  assert.ok(lateCall)
+  assert.equal(await lateCall, 'remote')
+  const query = cache.find({ queryKey: key })
+  assert.ok(query)
+  assert.equal(query.sourceSequence, undefined)
+  assert.equal(
+    events.some((event) => event.type === 'fetchSourceStarted'),
+    false,
+  )
+  stop()
+  client.clear()
+})
+
+// The same retirement boundary applies when the persister rejects. Its error
+// continuation can call the retained function before Query.fetch catches it.
+it('persister error continuation cannot add a source after rejection', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const cache = client.getQueryCache()
+  const key = ['persister-error-continuation']
+  const failure = new Error('persister failure')
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let lateCall: Promise<unknown> | undefined
+
+  await assert.rejects(
+    client.query({
+      queryKey: key,
+      queryFn: () => 'remote',
+      persister: (queryFn, context, query) => {
+        const installed = query.promise
+        assert.ok(installed)
+        lateCall = installed.catch(() => queryFn(context))
+        return Promise.reject(failure)
+      },
+    }),
+    failure,
+  )
+  assert.ok(lateCall)
+  assert.equal(await lateCall, 'remote')
+  const query = cache.find({ queryKey: key })
+  assert.ok(query)
+  assert.equal(query.sourceSequence, undefined)
+  assert.equal(
+    events.some((event) => event.type === 'fetchSourceStarted'),
+    false,
+  )
   stop()
   client.clear()
 })
