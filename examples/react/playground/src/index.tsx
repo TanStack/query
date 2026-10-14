@@ -10,7 +10,7 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import './styles.css'
 
-let id = 0
+let nextId = 0
 let list = [
   'apple',
   'banana',
@@ -18,7 +18,7 @@ let list = [
   'grapefruit',
   'dragonfruit',
   'grapes',
-].map((d) => ({ id: id++, name: d, notes: 'These are some notes' }))
+].map((d) => ({ id: nextId++, name: d, notes: 'These are some notes' }))
 
 type Todos = typeof list
 type Todo = Todos[0]
@@ -51,7 +51,7 @@ function onNumberChange(setValue: (value: number) => void) {
 function Root() {
   const [staleTime, setStaleTime] = React.useState(initialStaleTime)
   const [gcTime, setGcTime] = React.useState(initialGcTime)
-  const [localErrorRate, setErrorRate] = React.useState(errorRate)
+  const [localErrorRate, setLocalErrorRate] = React.useState(errorRate)
   const [localFetchTimeMin, setLocalFetchTimeMin] = React.useState(queryTimeMin)
   const [localFetchTimeMax, setLocalFetchTimeMax] = React.useState(queryTimeMax)
 
@@ -107,7 +107,7 @@ function Root() {
           max="1"
           step=".05"
           defaultValue={localErrorRate}
-          onChange={onNumberChange(setErrorRate)}
+          onChange={onNumberChange(setLocalErrorRate)}
           style={{ width: '100px' }}
         />
       </div>
@@ -217,16 +217,12 @@ function Todos({
       ) : (
         <>
           <ul>
-            {data
-              ? data.map((todo) => (
-                  <li key={todo.id}>
-                    {todo.name}{' '}
-                    <button onClick={() => setEditingIndex(todo.id)}>
-                      Edit
-                    </button>
-                  </li>
-                ))
-              : null}
+            {data.map((todo) => (
+              <li key={todo.id}>
+                {todo.name}{' '}
+                <button onClick={() => setEditingIndex(todo.id)}>Edit</button>
+              </li>
+            ))}
           </ul>
           <div>
             {isFetching ? (
@@ -261,10 +257,10 @@ function EditTodo({
 
   const saveMutation = useMutation({
     mutationFn: patchTodo,
-    onSuccess: (data) => {
+    onSuccess: (todo) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
       queryClient.invalidateQueries({ queryKey: ['todos'] })
-      queryClient.setQueryData(['todo', { id: editingIndex }], data)
+      queryClient.setQueryData(['todo', { id: editingIndex }], todo)
       setDraft({})
     },
   })
@@ -437,7 +433,7 @@ function postTodo({ name, notes }: Omit<Todo, 'id'>): Promise<Todo> {
             new Error(JSON.stringify({ postTodo: { name, notes } }, null, 2)),
           )
         }
-        const todo = { name, notes, id: id++ }
+        const todo = { name, notes, id: nextId++ }
         list = [...list, todo]
         resolve(todo)
       },
