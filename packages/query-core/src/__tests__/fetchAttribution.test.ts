@@ -8,7 +8,11 @@ import {
   QueryObserver,
   onlineManager,
 } from '..'
-import type { QueryCacheNotifyEvent, QueryFunctionContext } from '..'
+import type {
+  QueryCacheNotifyEvent,
+  QueryFunction,
+  QueryFunctionContext,
+} from '..'
 
 type UpdatedEvent = Extract<QueryCacheNotifyEvent, { type: 'updated' }>
 type SuccessEvent = UpdatedEvent & {
@@ -847,6 +851,157 @@ it('recursive fetches keep accepted and source order separate', async () => {
   client.clear()
 })
 
+// Reentrant fetches can overlap in one Query. A stale fetch's signal read
+// cannot make the installed fetch cancellable when its own signal was ignored.
+it('stale nested fetch signal consumption does not cancel the current fetch', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const cache = client.getQueryCache()
+  const key = ['nested-signal-consumption']
+  client.setQueryData(key, 'seed')
+  const query = cache.find<string>({ queryKey: key })
+  assert.ok(query)
+  const nestedSource = deferred<string>()
+  const outerSource = deferred<string>()
+  let nestedContext: QueryFunctionContext | undefined
+  let nested: Promise<string> | undefined
+  let calls = 0
+  let armed = true
+  const queryFn = (context: QueryFunctionContext) => {
+    if (++calls === 1) {
+      nestedContext = context
+      return nestedSource.promise
+    }
+    return outerSource.promise
+  }
+  const observer = new QueryObserver(client, {
+    queryKey: key,
+    enabled: false,
+    queryFn,
+  })
+  const stopObserver = observer.subscribe(() => {})
+  const stopCache = cache.subscribe((event) => {
+    if (event.type === 'updated' && event.action.type === 'fetch' && armed) {
+      armed = false
+      nested = query.fetch({ queryKey: key, queryFn }, { cancelRefetch: true })
+    }
+  })
+
+  const outer = query.fetch({ queryKey: key, queryFn }, { cancelRefetch: true })
+  assert.ok(nestedContext)
+  assert.ok(nested)
+  assert.equal(query.state.fetchStatus, 'fetching')
+  void nestedContext.signal
+  stopObserver()
+  assert.equal(query.state.fetchStatus, 'fetching')
+  outerSource.resolve('outer')
+  assert.equal(await outer, 'outer')
+  nestedSource.resolve('nested')
+  assert.equal(await nested, 'nested')
+  stopCache()
+  client.clear()
+})
+
+// A delayed stale fetchFn cannot erase consumption by the installed fetch.
+// Removing the last observer must still abort the installed fetch's signal.
+it('deferred stale fetch does not clear current signal consumption', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const cache = client.getQueryCache()
+  const key = ['nested-deferred-signal-consumption']
+  client.setQueryData(key, 'seed')
+  const query = cache.find<string>({ queryKey: key })
+  assert.ok(query)
+  const nestedSource = deferred<string>()
+  const outerSource = deferred<string>()
+  let outerSignal: AbortSignal | undefined
+  let nested: Promise<string> | undefined
+  let calls = 0
+  let armed = true
+  const queryFn = (context: QueryFunctionContext) => {
+    if (++calls === 1) {
+      outerSignal = context.signal
+      return outerSource.promise
+    }
+    return nestedSource.promise
+  }
+  const observer = new QueryObserver(client, {
+    queryKey: key,
+    enabled: false,
+    queryFn,
+  })
+  const stopObserver = observer.subscribe(() => {})
+  const stopCache = cache.subscribe((event) => {
+    if (event.type === 'updated' && event.action.type === 'fetch' && armed) {
+      armed = false
+      nested = query.fetch(
+        {
+          queryKey: key,
+          queryFn,
+          behavior: {
+            onFetch: (context) => {
+              const fetchFn = context.fetchFn
+              context.fetchFn = () => Promise.resolve().then(fetchFn)
+            },
+          },
+        },
+        { cancelRefetch: true },
+      )
+    }
+  })
+
+  const outer = query.fetch({ queryKey: key, queryFn }, { cancelRefetch: true })
+  assert.ok(outerSignal)
+  assert.ok(nested)
+  await Promise.resolve()
+  assert.equal(calls, 2)
+  stopObserver()
+  assert.equal(outerSignal.aborted, true)
+  assert.equal(query.state.fetchStatus, 'idle')
+  outerSource.resolve('ignored')
+  nestedSource.resolve('ignored')
+  await Promise.allSettled([outer, nested])
+  stopCache()
+  client.clear()
+})
+
+// A behavior can consume its fetch signal before the default fetchFn runs.
+// The same signal spans retries, so its consumption lasts until settlement.
+it('behavior signal consumption survives the default fetchFn', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const key = ['behavior-signal-before-fetch-fn']
+  client.setQueryData(key, 'seed')
+  const response = deferred<string>()
+  let behaviorSignal: AbortSignal | undefined
+  let abortCalls = 0
+  const observer = new QueryObserver(client, {
+    queryKey: key,
+    enabled: false,
+    queryFn: () => response.promise,
+    behavior: {
+      onFetch: (context) => {
+        behaviorSignal = context.signal
+        behaviorSignal.addEventListener('abort', () => abortCalls++)
+      },
+    },
+  })
+  const stopObserver = observer.subscribe(() => {})
+  const pending = observer.refetch()
+  assert.ok(behaviorSignal)
+  stopObserver()
+  const aborted = behaviorSignal.aborted
+  const observedAbortCalls = abortCalls
+  response.resolve('remote')
+  await pending
+  assert.equal(aborted, true)
+  assert.equal(observedAbortCalls, 1)
+  client.clear()
+})
+
 // A query function can replace its own fetch before its source notification
 // runs. The event must carry the old operation's retryer promise even though
 // Query.promise now points at the replacement.
@@ -1310,74 +1465,78 @@ it('custom behavior records queryFn invocation without claiming data source', as
   client.clear()
 })
 
-// A behavior can forward the fetch context's own signal getter while omitting
-// the optional fetchSequence. Ownership inspection must identify the fetch
-// without consuming that getter: when user code ignores signal, removing the
-// last observer leaves the source running so its result can still be cached.
-it('custom behavior attributes a getter-backed context without fetchSequence', async () => {
-  const client = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  })
-  const cache = client.getQueryCache()
-  const key = ['getter-backed-behavior-context']
-  const events: Array<QueryCacheNotifyEvent> = []
-  const stop = cache.subscribe((event) => events.push(event))
-  const response = deferred<string>()
-  let functionSourceSequence: number | undefined
-  let sequenceAtFunction: number | undefined
-  let forwardedContext: QueryFunctionContext<typeof key> | undefined
+// A behavior can forward the fetch context's own signal getter with its
+// original or a copied query key while omitting fetchSequence. Inspection must
+// identify the fetch without consuming the getter. When user code ignores
+// signal, removing the last observer leaves the source running for caching.
+it.each(['original', 'copied'] as const)(
+  'custom behavior attributes a getter-backed context with %s query key',
+  async (keyForm) => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    })
+    const cache = client.getQueryCache()
+    const key = ['getter-backed-behavior-context']
+    const events: Array<QueryCacheNotifyEvent> = []
+    const stop = cache.subscribe((event) => events.push(event))
+    const response = deferred<string>()
+    let functionSourceSequence: number | undefined
+    let sequenceAtFunction: number | undefined
+    let forwardedContext: QueryFunctionContext<typeof key> | undefined
 
-  const observer = new QueryObserver(client, {
-    queryKey: key,
-    enabled: false,
-    queryFn: (context) => {
-      functionSourceSequence = context.sourceSequence
-      sequenceAtFunction = cache.currentSequence
-      return response.promise
-    },
-    behavior: {
-      onFetch: (context) => {
-        const queryFn = context.options.queryFn
-        assert.ok(typeof queryFn === 'function')
-        const signal = Object.getOwnPropertyDescriptor(context, 'signal')
-        assert.ok(signal?.get)
-        forwardedContext = Object.defineProperty(
-          {
-            client: context.client,
-            queryKey: context.queryKey,
-            meta: context.options.meta,
-          },
-          'signal',
-          signal,
-        ) as QueryFunctionContext<typeof key>
-        context.fetchFn = () => queryFn(forwardedContext!)
+    const observer = new QueryObserver(client, {
+      queryKey: key,
+      enabled: false,
+      queryFn: (context) => {
+        functionSourceSequence = context.sourceSequence
+        sequenceAtFunction = cache.currentSequence
+        return response.promise
       },
-    },
-  })
-  const stopObserver = observer.subscribe(() => {})
-  const pending = observer.refetch()
-  const query = cache.find({ queryKey: key })
-  assert.ok(query)
-  assert.equal(query.state.fetchStatus, 'fetching')
-  stopObserver()
-  assert.ok(forwardedContext)
-  assert.equal(forwardedContext.signal.aborted, false)
-  assert.equal(query.state.fetchStatus, 'fetching')
-  response.resolve('remote')
-  assert.equal((await pending).data, 'remote')
-  const start = events.find((event) => event.type === 'fetchStarted')
-  const source = events.find((event) => event.type === 'fetchSourceStarted')
-  const success = findSuccess(events, false)
-  assert.ok(start)
-  assert.ok(source)
-  assert.ok(success)
-  assert.equal(source.fetchSequence, start.fetchSequence)
-  assert.equal(functionSourceSequence, source.sourceSequence)
-  assert.equal(sequenceAtFunction, source.sourceSequence)
-  assert.equal(success.sourceSequence, undefined)
-  stop()
-  client.clear()
-})
+      behavior: {
+        onFetch: (context) => {
+          const queryFn = context.options.queryFn
+          assert.ok(typeof queryFn === 'function')
+          const signal = Object.getOwnPropertyDescriptor(context, 'signal')
+          assert.ok(signal?.get)
+          forwardedContext = Object.defineProperty(
+            {
+              client: context.client,
+              queryKey:
+                keyForm === 'copied' ? [...context.queryKey] : context.queryKey,
+              meta: context.options.meta,
+            },
+            'signal',
+            signal,
+          ) as QueryFunctionContext<typeof key>
+          context.fetchFn = () => queryFn(forwardedContext!)
+        },
+      },
+    })
+    const stopObserver = observer.subscribe(() => {})
+    const pending = observer.refetch()
+    const query = cache.find({ queryKey: key })
+    assert.ok(query)
+    assert.equal(query.state.fetchStatus, 'fetching')
+    stopObserver()
+    assert.ok(forwardedContext)
+    assert.equal(forwardedContext.signal.aborted, false)
+    assert.equal(query.state.fetchStatus, 'fetching')
+    response.resolve('remote')
+    assert.equal((await pending).data, 'remote')
+    const start = events.find((event) => event.type === 'fetchStarted')
+    const source = events.find((event) => event.type === 'fetchSourceStarted')
+    const success = findSuccess(events, false)
+    assert.ok(start)
+    assert.ok(source)
+    assert.ok(success)
+    assert.equal(source.fetchSequence, start.fetchSequence)
+    assert.equal(functionSourceSequence, source.sourceSequence)
+    assert.equal(sequenceAtFunction, source.sourceSequence)
+    assert.equal(success.sourceSequence, undefined)
+    stop()
+    client.clear()
+  },
+)
 
 // The signal belongs to one fetch even when a behavior copies the query key
 // into a fresh array. Key identity does not establish source ownership.
@@ -1510,6 +1669,53 @@ it('custom behavior queryFn self-assignment keeps each fetch source', async () =
     [successes[0]!.fetchSequence, successes[0]!.sourceSequence],
     [successes[1]!.fetchSequence, successes[1]!.sourceSequence],
   ])
+  stop()
+  client.clear()
+})
+
+// A behavior may copy its options back into Query. The tracked queryFn is
+// fetch-local, so the stored options must keep the user function across
+// consecutive and long histories of fetches.
+it('copying behavior options does not retain queryFn wrappers', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const cache = client.getQueryCache()
+  const key = ['copied-behavior-options']
+  let calls = 0
+  let sources = 0
+  const queryFn = () => ++calls
+  let retainedQueryFn: QueryFunction<number, typeof key> | undefined
+  const stop = cache.subscribe((event) => {
+    if (event.type === 'fetchSourceStarted') sources++
+  })
+  const query = cache.build(client, {
+    queryKey: key,
+    queryFn,
+    behavior: {
+      onFetch: (context) => {
+        const trackedQueryFn = context.options.queryFn
+        assert.ok(typeof trackedQueryFn === 'function')
+        retainedQueryFn ??= trackedQueryFn
+        query.setOptions({ ...context.options })
+      },
+    },
+  })
+
+  assert.equal(await query.fetch(), 1)
+  assert.equal(query.options.queryFn, queryFn)
+  assert.ok(retainedQueryFn)
+  // A later write may reuse a wrapper captured by the first fetch.
+  query.setOptions({ ...query.options, queryFn: retainedQueryFn })
+  assert.equal(query.options.queryFn, queryFn)
+  assert.equal(await query.fetch(), 2)
+  assert.equal(query.options.queryFn, queryFn)
+  assert.equal(sources, 2)
+  for (let expected = 3; expected <= 16_000; expected++) {
+    assert.equal(await query.fetch(), expected)
+  }
+  assert.equal(sources, calls)
+  assert.equal(query.options.queryFn, queryFn)
   stop()
   client.clear()
 })

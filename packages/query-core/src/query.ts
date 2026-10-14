@@ -310,12 +310,15 @@ export class Query<
   #dataSourceSequence?: number
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  #abortSignalConsumed: boolean
+  #activeSignalConsumption?: { consumed: boolean }
+  #originalBehaviorQueryFns = new WeakMap<
+    QueryFunction<TQueryFnData, TQueryKey>,
+    QueryFunction<TQueryFnData, TQueryKey>
+  >()
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
 
-    this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
@@ -398,6 +401,11 @@ export class Query<
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
     this.options = { ...this.#defaultOptions, ...options }
+    const queryFn = this.options.queryFn
+    if (typeof queryFn === 'function') {
+      this.options.queryFn =
+        this.#originalBehaviorQueryFns.get(queryFn) ?? queryFn
+    }
 
     if (options?._type) {
       this.#queryType = options._type
@@ -696,7 +704,7 @@ export class Query<
         // we'll let the query continue so the result can be cached
         if (this.#retryer) {
           if (
-            this.#abortSignalConsumed ||
+            this.#activeSignalConsumption?.consumed ||
             (this.state.fetchStatus === 'paused' &&
               this.state.status === 'pending')
           ) {
@@ -808,11 +816,13 @@ export class Query<
     this.#sourceSequence = undefined
     let sourceSequence: number | undefined
     const abortController = new AbortController()
+    let retryer: Retryer<TData> | undefined
+    const signalConsumption = { consumed: false }
 
     // Sharing one getter lets a behavior forward the fetch's own signal
     // without reading it or losing source attribution.
     const getSignal = () => {
-      this.#abortSignalConsumed = true
+      signalConsumption.consumed = true
       return abortController.signal
     }
     const addSignalProperty = (object: unknown) => {
@@ -822,7 +832,6 @@ export class Query<
       })
     }
 
-    let retryer: Retryer<TData> | undefined
     let sourceEventPending = false
     let fetchRetired = false
     const retireFetch = () => {
@@ -876,10 +885,7 @@ export class Query<
       QueryFunction<TQueryFnData, TQueryKey>,
       QueryFunction<TQueryFnData, TQueryKey>
     >()
-    const originalBehaviorQueryFns = new WeakMap<
-      QueryFunction<TQueryFnData, TQueryKey>,
-      QueryFunction<TQueryFnData, TQueryKey>
-    >()
+    const originalBehaviorQueryFns = this.#originalBehaviorQueryFns
     const belongsToThisFetch = (
       queryFnContext: QueryFunctionContext<TQueryKey>,
     ) => {
@@ -920,7 +926,10 @@ export class Query<
             })
           }
           trackedBehaviorQueryFns.set(queryFn, trackedQueryFn)
-          originalBehaviorQueryFns.set(trackedQueryFn, queryFn)
+          originalBehaviorQueryFns.set(
+            trackedQueryFn,
+            originalBehaviorQueryFns.get(queryFn) ?? queryFn,
+          )
         }
         return trackedQueryFn
       },
@@ -967,7 +976,6 @@ export class Query<
         })
       }
 
-      this.#abortSignalConsumed = false
       if (this.options.persister) {
         resultProvenanceUnknown = true
         return this.options.persister(
@@ -1090,6 +1098,7 @@ export class Query<
       networkMode: context.options.networkMode,
       canRun: () => true,
     })
+    this.#activeSignalConsumption = signalConsumption
     // Subscribe before user code can see the retryer promise. A persister's
     // continuation must not add a source after the result has settled.
     void retryer.promise.then(retireFetch, retireFetch)
