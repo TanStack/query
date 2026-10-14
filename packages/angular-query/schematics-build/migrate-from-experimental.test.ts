@@ -7,7 +7,7 @@ import {
   queryCollection,
 } from './test-utils'
 
-// cspell:ignore packagr
+// cspell:ignore packagr analogjs
 
 function setup(source: string) {
   const runner = new SchematicTestRunner(packageJson.name, queryCollection)
@@ -1304,5 +1304,310 @@ provideAngularQuery(new QueryClient());`,
       [packageJson.name]: '~99.0.0',
       [devtoolsPackage.name]: '99.0.0',
     })
+  })
+})
+
+describe('project-local test configurations', () => {
+  it.each(['', 'projects/app'])(
+    'discovers the default spec config under %s',
+    async (root) => {
+      const { runner, tree } = setup(
+        `import { QueryClient } from '@tanstack/angular-query-experimental';`,
+      )
+      const prefix = root ? `/${root}` : ''
+      const legacy = `import { QueryClient } from '@tanstack/angular-query-experimental';`
+      tree.create(
+        '/angular.json',
+        JSON.stringify({
+          version: 1,
+          projects: {
+            app: {
+              projectType: 'application',
+              root,
+              sourceRoot: `${root ? `${root}/` : ''}src`,
+              architect: {
+                build: {
+                  builder: '@angular/build:application',
+                  options: {
+                    tsConfig: `${root ? `${root}/` : ''}tsconfig.app.json`,
+                  },
+                },
+                test: { builder: '@angular/build:unit-test' },
+              },
+            },
+          },
+        }),
+      )
+      tree.create(
+        `${prefix}/tsconfig.app.json`,
+        JSON.stringify({ files: ['src/main.ts'] }),
+      )
+      tree.create(`${prefix}/src/main.ts`, '')
+      tree.create(`${prefix}/src/app.spec.ts`, legacy)
+      tree.create(`${prefix}/src/excluded.spec.ts`, legacy)
+      tree.create(
+        `${prefix}/tsconfig.spec.json`,
+        JSON.stringify({
+          include: ['src/**/*.spec.ts'],
+          exclude: ['src/excluded.spec.ts'],
+        }),
+      )
+      const result = await runner.runSchematic(
+        'migrate-from-experimental',
+        {},
+        tree,
+      )
+      expect(result.readContent(`${prefix}/src/app.spec.ts`)).toContain(
+        packageJson.name,
+      )
+      expect(result.readContent(`${prefix}/src/excluded.spec.ts`)).toBe(legacy)
+    },
+  )
+
+  it.each([
+    ['Analog', { executor: '@analogjs/vitest-angular:test' }],
+    ['manual Vitest', { command: 'vitest run' }],
+    ['package script', undefined],
+  ])(
+    'discovers test configs for %s alongside a library build',
+    async (_runner, test) => {
+      const { runner, tree } = setup(
+        "import { QueryClient } from '@tanstack/angular-query-experimental';",
+      )
+      const legacy = tree.readText('/src/app.ts')
+      tree.create('/nx.json', '{}')
+      tree.overwrite(
+        '/package.json',
+        JSON.stringify({
+          dependencies: { '@tanstack/angular-query-experimental': '5.90.25' },
+          scripts: { test: 'vitest run' },
+          nx: {
+            targets: {
+              build: { options: { tsConfig: 'tsconfig.lib.json' } },
+              ...(test ? { test } : {}),
+            },
+          },
+        }),
+      )
+      tree.create(
+        '/tsconfig.lib.json',
+        JSON.stringify({ files: ['src/app.ts'] }),
+      )
+      tree.create(
+        '/tsconfig.test.json',
+        JSON.stringify({
+          include: ['src/**/*.spec.ts'],
+          exclude: ['src/excluded.spec.ts'],
+        }),
+      )
+      tree.create('/src/app.spec.ts', legacy)
+      tree.create('/src/excluded.spec.ts', legacy)
+      const result = await runner.runSchematic(
+        'migrate-from-experimental',
+        {},
+        tree,
+      )
+      expect(result.readContent('/src/app.ts')).not.toContain(
+        'angular-query-experimental',
+      )
+      expect(result.readContent('/src/app.spec.ts')).not.toContain(
+        'angular-query-experimental',
+      )
+      expect(result.readContent('/src/excluded.spec.ts')).toBe(legacy)
+    },
+  )
+
+  it('respects library and test configs in a standalone package without targets', async () => {
+    const { runner, tree } = setup(
+      "import { QueryClient } from '@tanstack/angular-query-experimental';",
+    )
+    const legacy = tree.readText('/src/app.ts')
+    tree.create('/tsconfig.lib.json', JSON.stringify({ files: ['src/app.ts'] }))
+    tree.create(
+      '/tsconfig.spec.json',
+      JSON.stringify({
+        include: ['src/**/*.spec.ts'],
+        exclude: ['src/excluded.spec.ts'],
+      }),
+    )
+    tree.create('/src/app.spec.ts', legacy)
+    tree.create('/src/excluded.spec.ts', legacy)
+    tree.create('/src/outside.ts', legacy)
+    const result = await runner.runSchematic(
+      'migrate-from-experimental',
+      {},
+      tree,
+    )
+    expect(result.readContent('/src/app.ts')).not.toContain(
+      'angular-query-experimental',
+    )
+    expect(result.readContent('/src/app.spec.ts')).not.toContain(
+      'angular-query-experimental',
+    )
+    expect(result.readContent('/src/excluded.spec.ts')).toBe(legacy)
+    expect(result.readContent('/src/outside.ts')).toBe(legacy)
+  })
+
+  it.each([false, true])(
+    'keeps application sources with a standalone spec config (solution=%s)',
+    async (solution) => {
+      const { runner, tree } = setup(
+        "import { QueryClient } from '@tanstack/angular-query-experimental';",
+      )
+      const legacy = tree.readText('/src/app.ts')
+      tree.create(
+        '/tsconfig.spec.json',
+        JSON.stringify({
+          include: ['src/**/*.spec.ts'],
+          exclude: ['src/excluded.spec.ts'],
+        }),
+      )
+      if (solution) {
+        tree.create(
+          '/tsconfig.json',
+          JSON.stringify({
+            files: [],
+            references: [
+              { path: './tsconfig.build.json' },
+              { path: './tsconfig.spec.json' },
+            ],
+          }),
+        )
+        tree.create(
+          '/tsconfig.build.json',
+          JSON.stringify({ files: ['src/app.ts'] }),
+        )
+      }
+      tree.create('/src/app.spec.ts', legacy)
+      tree.create('/src/excluded.spec.ts', legacy)
+      const result = await runner.runSchematic(
+        'migrate-from-experimental',
+        {},
+        tree,
+      )
+      expect(result.readContent('/src/app.ts')).not.toContain(
+        'angular-query-experimental',
+      )
+      expect(result.readContent('/src/app.spec.ts')).not.toContain(
+        'angular-query-experimental',
+      )
+      expect(result.readContent('/src/excluded.spec.ts')).toBe(legacy)
+    },
+  )
+
+  it.each([false, true])(
+    'keeps an explicit test config across merged Nx declarations (metadata first=%s)',
+    async (metadataFirst) => {
+      const { runner, tree } = setup(
+        "import { QueryClient } from '@tanstack/angular-query-experimental';",
+      )
+      const legacy = tree.readText('/src/app.ts')
+      tree.create('/nx.json', '{}')
+      // Put metadata at the root or nested root to exercise both traversal orders.
+      const root = metadataFirst ? '' : 'projects/lib'
+      const prefix = root ? `/${root}` : ''
+      const manifest = JSON.stringify({ nx: { tags: ['scope:lib'] } })
+      if (metadataFirst) tree.overwrite('/package.json', manifest)
+      tree.create(
+        `${prefix}/project.json`,
+        JSON.stringify({
+          root,
+          targets: {
+            build: {
+              options: {
+                tsConfig: `${root ? root + '/' : ''}tsconfig.lib.json`,
+              },
+            },
+            test: {
+              options: {
+                tsConfig: `${root ? root + '/' : ''}tsconfig.custom.json`,
+              },
+            },
+          },
+        }),
+      )
+      if (!metadataFirst) tree.create(`${prefix}/package.json`, manifest)
+      tree.create(
+        `${prefix}/tsconfig.lib.json`,
+        JSON.stringify({ files: ['src/main.ts'] }),
+      )
+      tree.create(
+        `${prefix}/tsconfig.custom.json`,
+        JSON.stringify({ files: ['src/custom.spec.ts'] }),
+      )
+      tree.create(
+        `${prefix}/tsconfig.spec.json`,
+        JSON.stringify({ files: ['src/default.spec.ts'] }),
+      )
+      tree.create(`${prefix}/src/main.ts`, legacy)
+      tree.create(`${prefix}/src/custom.spec.ts`, legacy)
+      tree.create(`${prefix}/src/default.spec.ts`, legacy)
+      const result = await runner.runSchematic(
+        'migrate-from-experimental',
+        {},
+        tree,
+      )
+      expect(result.readContent(`${prefix}/src/main.ts`)).not.toContain(
+        'angular-query-experimental',
+      )
+      expect(result.readContent(`${prefix}/src/custom.spec.ts`)).not.toContain(
+        'angular-query-experimental',
+      )
+      expect(result.readContent(`${prefix}/src/default.spec.ts`)).toBe(legacy)
+    },
+  )
+
+  it('uses an explicit test config instead of the default spec config', async () => {
+    const { runner, tree } = setup(
+      `import { QueryClient } from '@tanstack/angular-query-experimental';`,
+    )
+    const legacy = tree.readText('/src/app.ts')
+    tree.create(
+      '/angular.json',
+      JSON.stringify({
+        version: 1,
+        projects: {
+          app: {
+            projectType: 'application',
+            root: '',
+            architect: {
+              build: {
+                builder: '@angular/build:application',
+                options: { tsConfig: 'tsconfig.app.json' },
+              },
+              test: {
+                builder: '@angular/build:unit-test',
+                options: { tsConfig: 'tsconfig.custom.json' },
+                configurations: { ci: {} },
+              },
+            },
+          },
+        },
+      }),
+    )
+    tree.create(
+      '/tsconfig.app.json',
+      JSON.stringify({ files: ['src/main.ts'] }),
+    )
+    tree.create('/src/main.ts', '')
+    tree.create(
+      '/tsconfig.spec.json',
+      JSON.stringify({ files: ['src/default.spec.ts'] }),
+    )
+    tree.create(
+      '/tsconfig.custom.json',
+      JSON.stringify({ files: ['src/custom.spec.ts'] }),
+    )
+    tree.create('/src/default.spec.ts', legacy)
+    tree.create('/src/custom.spec.ts', legacy)
+    const result = await runner.runSchematic(
+      'migrate-from-experimental',
+      {},
+      tree,
+    )
+    expect(result.readContent('/src/default.spec.ts')).toBe(legacy)
+    expect(result.readContent('/src/custom.spec.ts')).toContain(
+      packageJson.name,
+    )
   })
 })
