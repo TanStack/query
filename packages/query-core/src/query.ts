@@ -809,16 +809,16 @@ export class Query<
     let sourceSequence: number | undefined
     const abortController = new AbortController()
 
-    // Adds an enumerable signal property to the object that
-    // which sets abortSignalConsumed to true when the signal
-    // is read.
+    // Sharing one getter lets a behavior forward the fetch's own signal
+    // without reading it or losing source attribution.
+    const getSignal = () => {
+      this.#abortSignalConsumed = true
+      return abortController.signal
+    }
     const addSignalProperty = (object: unknown) => {
       Object.defineProperty(object, 'signal', {
         enumerable: true,
-        get: () => {
-          this.#abortSignalConsumed = true
-          return abortController.signal
-        },
+        get: getSignal,
       })
     }
 
@@ -890,15 +890,11 @@ export class Query<
         if (contextFetchSequence !== undefined) {
           return contextFetchSequence === fetchSequence
         }
-        // Older behaviors omit the optional sequence. Their original signal
-        // and query key identify this fetch without consuming an accessor.
-        const signal = Object.getOwnPropertyDescriptor(
-          queryFnContext,
-          'signal',
-        )?.value
+        // Older behaviors omit the optional sequence. This fetch's signal
+        // value or getter identifies it without reading the getter.
+        const signal = Object.getOwnPropertyDescriptor(queryFnContext, 'signal')
         return (
-          signal === abortController.signal &&
-          queryFnContext.queryKey === this.queryKey
+          signal?.value === abortController.signal || signal?.get === getSignal
         )
       } catch {
         // Attribution is unknown if a Proxy rejects optional inspection.

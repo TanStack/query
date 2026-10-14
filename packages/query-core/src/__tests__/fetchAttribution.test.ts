@@ -1310,6 +1310,115 @@ it('custom behavior records queryFn invocation without claiming data source', as
   client.clear()
 })
 
+// A behavior can forward the fetch context's own signal getter while omitting
+// the optional fetchSequence. Ownership inspection must identify the fetch
+// without consuming that getter: when user code ignores signal, removing the
+// last observer leaves the source running so its result can still be cached.
+it('custom behavior attributes a getter-backed context without fetchSequence', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const cache = client.getQueryCache()
+  const key = ['getter-backed-behavior-context']
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  const response = deferred<string>()
+  let functionSourceSequence: number | undefined
+  let sequenceAtFunction: number | undefined
+  let forwardedContext: QueryFunctionContext<typeof key> | undefined
+
+  const observer = new QueryObserver(client, {
+    queryKey: key,
+    enabled: false,
+    queryFn: (context) => {
+      functionSourceSequence = context.sourceSequence
+      sequenceAtFunction = cache.currentSequence
+      return response.promise
+    },
+    behavior: {
+      onFetch: (context) => {
+        const queryFn = context.options.queryFn
+        assert.ok(typeof queryFn === 'function')
+        const signal = Object.getOwnPropertyDescriptor(context, 'signal')
+        assert.ok(signal?.get)
+        forwardedContext = Object.defineProperty(
+          {
+            client: context.client,
+            queryKey: context.queryKey,
+            meta: context.options.meta,
+          },
+          'signal',
+          signal,
+        ) as QueryFunctionContext<typeof key>
+        context.fetchFn = () => queryFn(forwardedContext!)
+      },
+    },
+  })
+  const stopObserver = observer.subscribe(() => {})
+  const pending = observer.refetch()
+  const query = cache.find({ queryKey: key })
+  assert.ok(query)
+  assert.equal(query.state.fetchStatus, 'fetching')
+  stopObserver()
+  assert.ok(forwardedContext)
+  assert.equal(forwardedContext.signal.aborted, false)
+  assert.equal(query.state.fetchStatus, 'fetching')
+  response.resolve('remote')
+  assert.equal((await pending).data, 'remote')
+  const start = events.find((event) => event.type === 'fetchStarted')
+  const source = events.find((event) => event.type === 'fetchSourceStarted')
+  const success = findSuccess(events, false)
+  assert.ok(start)
+  assert.ok(source)
+  assert.ok(success)
+  assert.equal(source.fetchSequence, start.fetchSequence)
+  assert.equal(functionSourceSequence, source.sourceSequence)
+  assert.equal(sequenceAtFunction, source.sourceSequence)
+  assert.equal(success.sourceSequence, undefined)
+  stop()
+  client.clear()
+})
+
+// The signal belongs to one fetch even when a behavior copies the query key
+// into a fresh array. Key identity does not establish source ownership.
+it('custom behavior attributes its signal with a copied query key', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['copied-behavior-key']
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let functionSourceSequence: number | undefined
+
+  assert.equal(
+    await client.fetchQuery({
+      queryKey: key,
+      queryFn: (context) => {
+        functionSourceSequence = context.sourceSequence
+        return 'remote'
+      },
+      behavior: {
+        onFetch: (context) => {
+          const queryFn = context.options.queryFn
+          assert.ok(typeof queryFn === 'function')
+          context.fetchFn = () =>
+            queryFn({
+              client: context.client,
+              queryKey: [...context.queryKey],
+              meta: context.options.meta,
+              signal: context.signal,
+            })
+        },
+      },
+    }),
+    'remote',
+  )
+  const source = events.find((event) => event.type === 'fetchSourceStarted')
+  assert.ok(source)
+  assert.equal(functionSourceSequence, source.sourceSequence)
+  stop()
+  client.clear()
+})
+
 // FetchContext.options used to be the Query's options object. A behavior may
 // replace its queryFn before the default fetchFn reads it.
 it('custom behavior queryFn replacement preserves option mutation', async () => {
@@ -1585,8 +1694,8 @@ it('retained queryFn wrapper does not attribute a second cache with the same seq
 })
 
 // Two Queries in one cache share a clock and can use the same query key with
-// different hash functions. A context rebuilt from the other Query without
-// fetchSequence cannot establish ownership of the paused Query's fetch.
+// different hash functions. A context rebuilt from the other Query, whether
+// its signal is a value or that Query's getter, cannot claim the paused fetch.
 it('retained queryFn wrapper does not attribute another Query when its context omits fetchSequence', async () => {
   const client = new QueryClient()
   const cache = client.getQueryCache()
@@ -1624,12 +1733,27 @@ it('retained queryFn wrapper does not attribute another Query when its context o
       queryFn: (context) => {
         assert.ok(captured)
         assert.equal(context.queryKey, paused.queryKey)
-        return captured({
-          client: context.client,
-          queryKey: context.queryKey,
-          meta: context.meta,
-          signal: context.signal,
-        }) as string
+        assert.equal(
+          captured({
+            client: context.client,
+            queryKey: context.queryKey,
+            meta: context.meta,
+            signal: context.signal,
+          }),
+          'first-remote',
+        )
+        const signal = Object.getOwnPropertyDescriptor(context, 'signal')
+        assert.ok(signal?.get)
+        const getterContext = Object.defineProperty(
+          {
+            client: context.client,
+            queryKey: context.queryKey,
+            meta: context.meta,
+          },
+          'signal',
+          signal,
+        ) as QueryFunctionContext<typeof key>
+        return captured(getterContext) as string
       },
     }),
     'first-remote',
