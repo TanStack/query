@@ -46,6 +46,8 @@ interface NotifyEventQueryAdded extends NotifyEvent {
 interface NotifyEventQueryRemoved extends NotifyEvent {
   type: 'removed'
   query: Query<any, any, any, any>
+  /** Whether this query had an observer when removal began, before listener reentry. */
+  observedAtRemoval: boolean
 }
 
 interface NotifyEventQueryUpdated extends NotifyEvent {
@@ -295,11 +297,12 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     const queryInMap = this.#queries.get(query.queryHash)
 
     if (queryInMap === query) {
+      const observedAtRemoval = query.observers.length > 0
       this.#queries.delete(query.queryHash)
       // Announce removal before cancellation can create a same-key query.
       // Consumers that replay events by key must remove the old query first.
       try {
-        this.notify({ type: 'removed', query })
+        this.notify({ type: 'removed', query, observedAtRemoval })
       } finally {
         query.destroy()
       }

@@ -1,6 +1,6 @@
 import { BroadcastChannel } from 'broadcast-channel'
 import type { BroadcastChannelOptions } from 'broadcast-channel'
-import type { QueryClient, QueryKey } from '@tanstack/query-core'
+import type { Query, QueryClient, QueryKey } from '@tanstack/query-core'
 
 /**
  * Metadata describing a broadcast that failed to be delivered to other tabs.
@@ -69,18 +69,17 @@ export function broadcastQueryClient({
   options,
   onBroadcastError,
 }: BroadcastQueryClientOptions): () => void {
-  let transaction = false
-  const tx = (cb: () => void) => {
-    transaction = true
+  let transaction: true | Query | false = false
+  const tx = (cb: () => void, removedQuery?: Query) => {
+    const previous = transaction
+    transaction = removedQuery ?? true
     try {
       cb()
     } finally {
-      // Guard against `cb` throwing (e.g. `query.setState`/`queryCache.build`
-      // triggering a listener that throws while applying an incoming
-      // cross-tab message). Without this, `transaction` would stay `true`
-      // forever, silently disabling this tab's own broadcasts to other tabs
-      // for the rest of the session.
-      transaction = false
+      // Restore the prior suppression even when an incoming cache operation
+      // triggers a listener that throws. Otherwise later local changes would
+      // stop broadcasting.
+      transaction = previous
     }
   }
 
@@ -127,12 +126,17 @@ export function broadcastQueryClient({
   }
 
   const unsubscribe = queryCache.subscribe((queryEvent) => {
-    if (transaction) {
+    if (
+      transaction === true ||
+      (transaction &&
+        queryEvent.type === 'removed' &&
+        queryEvent.query === transaction)
+    ) {
       return
     }
 
     const {
-      query: { queryHash, queryKey, state, observers },
+      query: { queryHash, queryKey, state },
     } = queryEvent
 
     if (queryEvent.type === 'updated' && queryEvent.action.type === 'success') {
@@ -144,7 +148,12 @@ export function broadcastQueryClient({
       })
     }
 
-    if (queryEvent.type === 'removed' && observers.length > 0) {
+    const replacement =
+      queryEvent.type === 'removed' ? queryCache.get(queryHash) : undefined
+    if (
+      queryEvent.type === 'removed' &&
+      (queryEvent.observedAtRemoval || replacement)
+    ) {
       safePost({
         type: 'removed',
         queryHash,
@@ -153,7 +162,6 @@ export function broadcastQueryClient({
       // An earlier cache listener may have added a same-key replacement
       // before this removal reached us. Re-send its current state after the
       // removal so a peer does not discard the replacement it heard first.
-      const replacement = queryCache.get(queryHash)
       if (replacement && replacement !== queryEvent.query) {
         safePost({
           type: 'added',
@@ -179,46 +187,47 @@ export function broadcastQueryClient({
       return
     }
 
-    tx(() => {
-      const { type, queryHash, queryKey, state } = action
-
-      const query = queryCache.get(queryHash)
-
-      if (type === 'updated') {
-        if (query) {
-          query.setState(state)
-          return
-        }
-
-        queryCache.build(
-          queryClient,
-          {
-            queryKey,
-            queryHash,
-          },
-          state,
-        )
-      } else if (type === 'removed') {
-        if (query) {
-          queryCache.remove(query)
-        }
-      } else if (type === 'added') {
-        if (query) {
-          if (query.state.data === undefined) {
+    const { type, queryHash, queryKey, state } = action
+    const query = queryCache.get(queryHash)
+    tx(
+      () => {
+        if (type === 'updated') {
+          if (query) {
             query.setState(state)
+            return
           }
-          return
+
+          queryCache.build(
+            queryClient,
+            {
+              queryKey,
+              queryHash,
+            },
+            state,
+          )
+        } else if (type === 'removed') {
+          if (query) {
+            queryCache.remove(query)
+          }
+        } else if (type === 'added') {
+          if (query) {
+            if (query.state.data === undefined) {
+              query.setState(state)
+            }
+            return
+          }
+          queryCache.build(
+            queryClient,
+            {
+              queryKey,
+              queryHash,
+            },
+            state,
+          )
         }
-        queryCache.build(
-          queryClient,
-          {
-            queryKey,
-            queryHash,
-          },
-          state,
-        )
-      }
-    })
+      },
+      type === 'removed' ? query : undefined,
+    )
   }
   return () => {
     unsubscribe()

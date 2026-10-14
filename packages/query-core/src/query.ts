@@ -780,13 +780,13 @@ export class Query<
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     fetchOptions?: FetchOptions<TQueryFnData>,
   ): Promise<TData> {
+    const retryer = this.#retryer
     if (
       this.state.fetchStatus !== 'idle' &&
       // A rejected retryer may still leave the Query pending until its
       // settlement callback runs. Start a fresh attempt in that case.
-      this.#retryer?.status() !== 'rejected'
+      retryer?.status() !== 'rejected'
     ) {
-      const retryer = this.#retryer
       if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
         this.cancel({ silent: true })
         const replacement = this.#fetch(options, fetchOptions)
@@ -798,13 +798,24 @@ export class Query<
         return retryer.promise
       }
     }
-    return this.#fetch(options, fetchOptions)
+    const replacement = this.#fetch(options, fetchOptions)
+    // A reset may have rejected the old retryer before starting this fetch.
+    // Link its silent cancellation even if behavior setup fails pre-install.
+    if (retryer?.status() === 'rejected') {
+      this.#replacementFetches.set(retryer, replacement)
+    }
+    return replacement
   }
 
   async #fetch(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     fetchOptions?: FetchOptions<TQueryFnData>,
   ): Promise<TData> {
+    const setupResetVersion = this.#resetVersion
+    const wasCached =
+      this.#cache.get<TQueryFnData, TError, TData, TQueryKey>(
+        this.queryHash,
+      ) === this
     // Update config if passed, otherwise the config from the last execution is used
     if (options) {
       this.setOptions(options)
@@ -828,10 +839,6 @@ export class Query<
     }
 
     const fetchSequence = this.#cache.reserveSequence()
-    const wasCached =
-      this.#cache.get<TQueryFnData, TError, TData, TQueryKey>(
-        this.queryHash,
-      ) === this
     this.#fetchSequence = fetchSequence
     this.#sourceSequence = undefined
     let sourceSequence: number | undefined
@@ -1123,7 +1130,6 @@ export class Query<
           (this.options as { pages?: number }).pages,
         ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>)
       : this.options.behavior
-    const setupResetVersion = this.#resetVersion
     const wasRetired = () =>
       this.#resetVersion !== setupResetVersion ||
       (wasCached &&
@@ -1155,6 +1161,7 @@ export class Query<
       })
       throw error
     }
+    if (wasRetired()) cancelUninstalledFetch()
     try {
       behavior?.onFetch(context, this as unknown as Query)
     } catch (error) {
@@ -1317,12 +1324,7 @@ export class Query<
           // Follow the attempt that directly caused this cancellation. It
           // may fail during setup without installing a retryer, or start a
           // third fetch before this cancelled attempt settles.
-          const activeRetryer: Retryer<TData> | undefined = this.#retryer
-          // oxlint-disable typescript/no-unnecessary-condition -- reentry may clear the retryer before this catch resumes
-          const fallback =
-            activeRetryer !== retryer ? activeRetryer?.promise : undefined
-          // oxlint-enable typescript/no-unnecessary-condition
-          const replacement = this.#replacementFetches.get(retryer) ?? fallback
+          const replacement = this.#replacementFetches.get(retryer)
           if (replacement) return replacement
           throw error
         } else if (error.revert) {

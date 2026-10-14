@@ -215,10 +215,10 @@ describe('queryCache', () => {
       >().toEqualTypeOf<'type' | 'query'>()
     })
 
-    it('should declare only a query on the removed event', () => {
+    it('should carry the pre-notification observation state on the removed event', () => {
       expectTypeOf<
         keyof Extract<QueryCacheNotifyEvent, { type: 'removed' }>
-      >().toEqualTypeOf<'type' | 'query'>()
+      >().toEqualTypeOf<'type' | 'query' | 'observedAtRemoval'>()
     })
 
     it('should carry an observer on the observerAdded event', () => {

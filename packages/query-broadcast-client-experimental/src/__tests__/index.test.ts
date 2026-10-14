@@ -118,9 +118,66 @@ describe('broadcastQueryClient', () => {
   // A cache listener registered before broadcasting can add a replacement
   // while the old removal is still being delivered. The remote cache must
   // converge to the source even when it hears that addition first.
-  it('replays the current replacement after a removal listener adds it', () => {
+  it.each(['kept', 'detached'] as const)(
+    'replays the current replacement after a removal listener adds it with old observer %s',
+    (observerState) => {
+      const otherClient = new QueryClient()
+      const key = ['broadcast-removed-listener-reentry']
+      queryClient.setQueryData(key, 'old source data')
+      otherClient.setQueryData(key, 'old peer data')
+      const oldSourceQuery = queryCache.find({ queryKey: key })
+      const oldPeerQuery = otherClient.getQueryCache().find({ queryKey: key })
+      expect(oldSourceQuery).toBeDefined()
+      expect(oldPeerQuery).toBeDefined()
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: () => 'unused',
+        enabled: false,
+      })
+      const stopObserver = observer.subscribe(() => {})
+      const stopReplacement = queryCache.subscribe((event) => {
+        if (event.type === 'removed' && event.query === oldSourceQuery) {
+          if (observerState === 'detached') stopObserver()
+          queryCache.build(queryClient, {
+            queryKey: key,
+            queryFn: () => 'new source data',
+          })
+        }
+      })
+      const stopFirst = broadcastQueryClient({ queryClient })
+      const stopOther = broadcastQueryClient({ queryClient: otherClient })
+      mockPostMessage.mockClear()
+
+      queryCache.remove(oldSourceQuery!)
+      const sourceReplacement = queryCache.find({ queryKey: key })
+      expect(sourceReplacement).toBeDefined()
+      expect(sourceReplacement).not.toBe(oldSourceQuery)
+      const messages = mockPostMessage.mock.calls.map(([message]) => message)
+      for (const message of messages) {
+        createdChannels[1]?.onmessage?.(message)
+      }
+      const peerReplacement = otherClient
+        .getQueryCache()
+        .find({ queryKey: key })
+      expect(peerReplacement).toBeDefined()
+      expect(peerReplacement).not.toBe(oldPeerQuery)
+      expect(peerReplacement?.state.data).toBe(sourceReplacement?.state.data)
+
+      stopReplacement()
+      stopFirst()
+      stopOther()
+      stopObserver()
+      queryClient.clear()
+      otherClient.clear()
+    },
+  )
+
+  // Broadcast uses the observer state at the start of removal. A cache
+  // listener can detach the final observer before broadcast receives the
+  // event, but the peer must still retire its old query.
+  it('broadcasts an observed removal when an earlier listener detaches its observer', () => {
     const otherClient = new QueryClient()
-    const key = ['broadcast-removed-listener-reentry']
+    const key = ['broadcast-removal-observer-detach']
     queryClient.setQueryData(key, 'old source data')
     otherClient.setQueryData(key, 'old peer data')
     const oldSourceQuery = queryCache.find({ queryKey: key })
@@ -133,33 +190,77 @@ describe('broadcastQueryClient', () => {
       enabled: false,
     })
     const stopObserver = observer.subscribe(() => {})
-    const stopReplacement = queryCache.subscribe((event) => {
+    const stopDetachingListener = queryCache.subscribe((event) => {
       if (event.type === 'removed' && event.query === oldSourceQuery) {
-        queryCache.build(queryClient, {
-          queryKey: key,
-          queryFn: () => 'new source data',
-        })
+        stopObserver()
       }
     })
-    const stopFirst = broadcastQueryClient({ queryClient })
+    const stopSource = broadcastQueryClient({ queryClient })
     const stopOther = broadcastQueryClient({ queryClient: otherClient })
     mockPostMessage.mockClear()
 
     queryCache.remove(oldSourceQuery!)
-    const sourceReplacement = queryCache.find({ queryKey: key })
-    expect(sourceReplacement).toBeDefined()
-    expect(sourceReplacement).not.toBe(oldSourceQuery)
     const messages = mockPostMessage.mock.calls.map(([message]) => message)
+    expect(messages.map((message) => message.type)).toEqual(['removed'])
     for (const message of messages) {
       createdChannels[1]?.onmessage?.(message)
     }
-    const peerReplacement = otherClient.getQueryCache().find({ queryKey: key })
+    expect(otherClient.getQueryCache().find({ queryKey: key })).toBeUndefined()
+
+    stopDetachingListener()
+    stopSource()
+    stopOther()
+    stopObserver()
+    queryClient.clear()
+    otherClient.clear()
+  })
+
+  // A received removal can also trigger a local cache listener. That local
+  // replacement must travel back to the sender after the incoming removal is
+  // applied, while the incoming removal itself is not echoed.
+  it('broadcasts a local replacement created while receiving a removal', () => {
+    const otherClient = new QueryClient()
+    const otherCache = otherClient.getQueryCache()
+    const key = ['broadcast-receiver-removal-reentry']
+    queryClient.setQueryData(key, 'old source data')
+    otherClient.setQueryData(key, 'old peer data')
+    const oldSourceQuery = queryCache.find({ queryKey: key })
+    const oldPeerQuery = otherCache.find({ queryKey: key })
+    expect(oldSourceQuery).toBeDefined()
+    expect(oldPeerQuery).toBeDefined()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'unused',
+      enabled: false,
+    })
+    const stopObserver = observer.subscribe(() => {})
+    const stopSource = broadcastQueryClient({ queryClient })
+    const stopReplacement = otherCache.subscribe((event) => {
+      if (event.type === 'removed' && event.query === oldPeerQuery) {
+        otherCache.build(otherClient, {
+          queryKey: key,
+          queryFn: () => 'new peer data',
+        })
+      }
+    })
+    const stopOther = broadcastQueryClient({ queryClient: otherClient })
+    mockPostMessage.mockClear()
+
+    queryCache.remove(oldSourceQuery!)
+    const removal = mockPostMessage.mock.calls.map(([message]) => message)
+    expect(removal.map((message) => message.type)).toEqual(['removed'])
+    mockPostMessage.mockClear()
+    createdChannels[1]?.onmessage?.(removal[0])
+    const peerReplacement = otherCache.find({ queryKey: key })
     expect(peerReplacement).toBeDefined()
     expect(peerReplacement).not.toBe(oldPeerQuery)
-    expect(peerReplacement?.state.data).toBe(sourceReplacement?.state.data)
+    const outgoing = mockPostMessage.mock.calls.map(([message]) => message)
+    expect(outgoing.map((message) => message.type)).toEqual(['added'])
+    createdChannels[0]?.onmessage?.(outgoing[0])
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
 
+    stopSource()
     stopReplacement()
-    stopFirst()
     stopOther()
     stopObserver()
     queryClient.clear()

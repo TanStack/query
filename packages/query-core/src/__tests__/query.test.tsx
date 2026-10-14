@@ -1055,7 +1055,11 @@ describe('query', () => {
     const query = queryClient.getQueryCache().find({ queryKey: key })
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(fn).toHaveBeenLastCalledWith({ type: 'removed', query })
+    expect(fn).toHaveBeenLastCalledWith({
+      type: 'removed',
+      query,
+      observedAtRemoval: false,
+    })
 
     expect(queryClient.getQueryCache().findAll()).toHaveLength(0)
 

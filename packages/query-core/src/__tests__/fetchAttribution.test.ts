@@ -3207,6 +3207,75 @@ it('silent reset cancellation follows the subsequent same-Query refetch', async 
   client.clear()
 })
 
+// A reset-triggered replacement can fail in behavior setup before it installs
+// a retryer. The cancelled fetch still follows that replacement's promise.
+it('silent reset cancellation follows a replacement setup failure', async () => {
+  const client = new QueryClient()
+  const key = ['reset-silent-setup-failure']
+  const failure = new Error('replacement setup failed')
+  let setups = 0
+  const observer = new QueryObserver(client, {
+    queryKey: key,
+    initialData: 'seed',
+    staleTime: Infinity,
+    retry: false,
+    queryFn: () => new Promise<string>(() => {}),
+    behavior: {
+      onFetch: () => {
+        if (++setups === 2) throw failure
+      },
+    },
+  })
+  const stop = observer.subscribe(() => {})
+  const query = client.getQueryCache().find<string>({ queryKey: key })
+  assert.ok(query)
+  const first = query.fetch()
+  const firstOutcome = first.then(
+    (value) => value,
+    (error: unknown) => error,
+  )
+
+  await client.resetQueries({ queryKey: key })
+  assert.equal(await firstOutcome, failure)
+  assert.equal(setups, 2)
+  stop()
+  client.clear()
+})
+
+// The old fetch follows the replacement's full result, including validation
+// that rejects undefined data after the replacement retryer resolves.
+it('silent reset cancellation follows replacement result validation', async () => {
+  const client = new QueryClient()
+  const key = ['reset-silent-invalid-result']
+  let calls = 0
+  const observer = new QueryObserver(client, {
+    queryKey: key,
+    initialData: 'seed',
+    staleTime: Infinity,
+    retry: false,
+    queryFn: () =>
+      ++calls === 1
+        ? new Promise<string>(() => {})
+        : (undefined as unknown as string),
+  })
+  const stop = observer.subscribe(() => {})
+  const query = client.getQueryCache().find<string>({ queryKey: key })
+  assert.ok(query)
+  const first = query.fetch()
+  const firstOutcome = first.then(
+    (value) => value,
+    (error: unknown) => error,
+  )
+
+  await client.resetQueries({ queryKey: key })
+  const outcome = await firstOutcome
+  assert.ok(outcome instanceof Error)
+  assert.match(outcome.message, /data is undefined/)
+  assert.equal(calls, 2)
+  stop()
+  client.clear()
+})
+
 // Query.fetch is a Promise API even when a cache listener throws while an
 // active fetch is being cancelled for replacement.
 it('replacement cancellation listener failure rejects observer.refetch asynchronously', async () => {
@@ -3835,6 +3904,63 @@ it('removed Query gets no terminal update after failed setup source event', asyn
 // Behavior setup and fetchStarted both run before a retryer is installed.
 // Reset or removal at either boundary retires that attempt. An eager source
 // already invoked by the behavior remains observable and rejects as cancelled.
+it.each(['reset', 'remove'] as const)(
+  '%s during option initial-data publication retires the fetch before behavior setup',
+  async (action) => {
+    const client = new QueryClient()
+    const cache = client.getQueryCache()
+    const key = ['retire-during-options', action]
+    const query = cache.build(client, {
+      queryKey: key,
+      queryFn: () => 'unused',
+    })
+    let setups = 0
+    let calls = 0
+    const events: Array<QueryCacheNotifyEvent> = []
+    const stop = cache.subscribe((event) => {
+      events.push(event)
+      if (
+        event.type === 'updated' &&
+        event.query === query &&
+        event.action.type === 'setState' &&
+        event.state.data === 'seed'
+      ) {
+        if (action === 'reset') query.reset()
+        else cache.remove(query)
+      }
+    })
+
+    await assert.rejects(
+      query.fetch({
+        queryKey: key,
+        initialData: 'seed',
+        queryFn: () => {
+          calls++
+          return 'remote'
+        },
+        behavior: { onFetch: () => setups++ },
+      }),
+      CancelledError,
+    )
+    assert.equal(setups, 0)
+    assert.equal(calls, 0)
+    assert.equal(
+      cache.get(query.queryHash),
+      action === 'reset' ? query : undefined,
+    )
+    assert.equal(
+      events.filter((event) => event.type === 'fetchStarted').length,
+      0,
+    )
+    assert.equal(
+      events.filter((event) => event.type === 'fetchCancelled').length,
+      1,
+    )
+    stop()
+    client.clear()
+  },
+)
+
 it.each(
   (['onFetch', 'fetchStarted'] as const).flatMap((phase) =>
     (['reset', 'remove'] as const).flatMap((action) =>
@@ -3854,6 +3980,7 @@ it.each(
     assert.ok(query)
     let calls = 0
     let fetchSequence: number | undefined
+    let signal: AbortSignal | undefined
     const events: Array<QueryCacheNotifyEvent> = []
     const stop = cache.subscribe((event) => {
       events.push(event)
@@ -3877,6 +4004,7 @@ it.each(
         behavior: {
           onFetch: (context) => {
             fetchSequence = context.fetchSequence
+            signal = context.signal
             if (source === 'eager') void context.fetchFn()
             if (phase === 'onFetch') {
               if (action === 'reset') query.reset()
@@ -3905,6 +4033,7 @@ it.each(
     assert.ok(cancelled)
     assert.equal(cancelled.fetchSequence, fetchSequence)
     assert.equal(cancelled.sourceSequence, sources[0]?.sourceSequence)
+    assert.equal(signal?.aborted, true)
     if (sources[0]) {
       assert.equal(sources[0].fetchSequence, fetchSequence)
       await assert.rejects(sources[0].promise, CancelledError)
