@@ -56,7 +56,10 @@ interface NotifyEventQueryUpdated extends NotifyEvent {
   state: QueryState<any, any>
   /** Accepted fetch that caused this action, if any. */
   fetchSequence?: number
-  /** First tracked query-function invocation for this fetch, when known. */
+  /**
+   * First tracked invocation for this fetch. On success, present only when Query Core knows the
+   * fetch's query-function result supplied the data. A retry may supply the actual value later.
+   */
   sourceSequence?: number
 }
 
@@ -107,7 +110,8 @@ interface NotifyEventQueryObserverOptionsUpdated extends NotifyEvent {
 /**
  * The event passed to a `QueryCache` subscriber. Fired whenever a query is added or removed from
  * the cache, its state is updated (e.g. via `query.setState` or `queryClient.removeQueries`), or
- * one of its observers is added, removed, or has its results or options updated.
+ * one of its observers is added, removed, or has its results or options updated. Reentrant listeners
+ * can deliver events after a later sequence position; compare positions rather than delivery order.
  */
 export type QueryCacheNotifyEvent =
   | NotifyEventQueryAdded

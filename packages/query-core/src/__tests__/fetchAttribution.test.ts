@@ -7,7 +7,7 @@ import {
   QueryObserver,
   onlineManager,
 } from '..'
-import type { QueryCacheNotifyEvent } from '..'
+import type { QueryCacheNotifyEvent, QueryFunctionContext } from '..'
 
 type UpdatedEvent = Extract<QueryCacheNotifyEvent, { type: 'updated' }>
 type SuccessEvent = UpdatedEvent & {
@@ -251,6 +251,43 @@ it('cancelled paused fetch has no source position', async () => {
   client.clear()
 })
 
+// Revert restores the last fetched data version, including the source that
+// supplied it. The cancelled fetch's later source cannot replace that owner.
+it('cancel with revert restores fetched data provenance', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const key = ['revert-fetched-source']
+  const observer = new QueryObserver(client, {
+    queryKey: key,
+    enabled: false,
+    queryFn: () => 'first',
+  })
+  const stop = observer.subscribe(() => {})
+  await observer.refetch()
+  const before = observer.getCurrentResult()
+  assert.equal(before.data, 'first')
+  assert.ok(before.dataFetchSequence)
+  assert.ok(before.dataSourceSequence)
+
+  const query = client.getQueryCache().find<string>({ queryKey: key })
+  assert.ok(query)
+  const later = deferred<string>()
+  const pending = query.fetch({ queryKey: key, queryFn: () => later.promise })
+  assert.equal(query.state.fetchStatus, 'fetching')
+  await query.cancel({ revert: true })
+  assert.equal(await pending, 'first')
+  const restored = observer.getCurrentResult()
+  assert.equal(restored.data, 'first')
+  assert.equal(restored.dataFetchSequence, before.dataFetchSequence)
+  assert.equal(restored.dataSourceSequence, before.dataSourceSequence)
+  assert.equal(query.dataFetchSequence, before.dataFetchSequence)
+  assert.equal(query.dataSourceSequence, before.dataSourceSequence)
+  later.resolve('later')
+  stop()
+  client.clear()
+})
+
 // A second fetch call can join an in-flight retryer instead of starting a new
 // operation. Both callers then observe one accepted and one source position.
 it('coalesced fetch callers share one operation', async () => {
@@ -441,6 +478,60 @@ it('setState data replacement clears source without changing update count', () =
   client.clear()
 })
 
+// Explicit setState({ data }) is a new data version even if the value is the
+// same object. Its provenance cannot be inherited from the earlier fetch.
+it('setState with the same data reference clears fetched provenance', async () => {
+  const client = new QueryClient()
+  const key = ['same-reference-set-state']
+  const shared = [{ id: 1 }]
+  await client.query({ queryKey: key, queryFn: () => shared })
+  const query = client.getQueryCache().find({ queryKey: key })
+  assert.ok(query)
+  assert.ok(query.dataFetchSequence)
+  assert.ok(query.dataSourceSequence)
+
+  query.setState({ data: shared })
+  assert.equal(query.state.data, shared)
+  assert.equal(query.dataFetchSequence, undefined)
+  assert.equal(query.dataSourceSequence, undefined)
+  client.clear()
+})
+
+// A query-function failure has a source invocation even though it supplies no
+// data. The terminal error event must identify the same accepted fetch and
+// source that listeners saw start.
+it('terminal fetch error keeps its source position', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = client.getQueryCache().subscribe((event) => events.push(event))
+  const failure = new Error('remote failed')
+  await assert.rejects(
+    client.query({
+      queryKey: ['failed-source'],
+      queryFn: () => {
+        throw failure
+      },
+    }),
+    failure,
+  )
+  const start = events.find((event) => event.type === 'fetchStarted')
+  const source = events.find((event) => event.type === 'fetchSourceStarted')
+  const terminal = events.find(
+    (event): event is UpdatedEvent =>
+      event.type === 'updated' && event.action.type === 'error',
+  )
+  assert.ok(start)
+  assert.ok(source)
+  assert.ok(terminal)
+  assert.equal(source.fetchSequence, start.fetchSequence)
+  assert.equal(terminal.fetchSequence, start.fetchSequence)
+  assert.equal(terminal.sourceSequence, source.sourceSequence)
+  stop()
+  client.clear()
+})
+
 // A paused operation is accepted before a later direct write, even though its
 // source is not invoked until after that write.
 it('paused fetch keeps its accepted position after a write', async () => {
@@ -483,7 +574,8 @@ it('paused fetch keeps its accepted position after a write', async () => {
   client.clear()
 })
 
-// Retry is another attempt of the same accepted operation and same source.
+// Retries remain in one accepted operation. Its first source position is a
+// conservative start bound, even when a later attempt supplies the value.
 it('retry retains positions across an intervening write', async () => {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: 1, retryDelay: 0 } },
@@ -936,8 +1028,8 @@ it('multi-page refetch keeps one source position across page calls', async () =>
 })
 
 // A public behavior may replace fetchFn and invoke context.options.queryFn
-// itself. The exposed queryFn still records its actual invocation.
-it('custom behavior queryFn invocation is attributed', async () => {
+// itself. The invocation is observed, but the replacement controls the result.
+it('custom behavior records queryFn invocation without claiming data source', async () => {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   })
@@ -978,7 +1070,7 @@ it('custom behavior queryFn invocation is attributed', async () => {
   assert.ok(success)
   assert.equal(source.fetchSequence, start.fetchSequence)
   assert.equal(functionSourceSequence, source.sourceSequence)
-  assert.equal(success.sourceSequence, source.sourceSequence)
+  assert.equal(success.sourceSequence, undefined)
   stopObserver()
   stop()
   client.clear()
@@ -1135,9 +1227,276 @@ it('custom behavior retained queryFn wrapper keeps later source', async () => {
   client.clear()
 })
 
+// A custom behavior may rebuild the query function's context and omit the
+// optional fetchSequence. A wrapper retained from an earlier fetch must leave
+// the current fetch's source position on that context.
+it('retained queryFn wrapper accepts a later context without fetchSequence', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const cache = client.getQueryCache()
+  const key = ['behavior-omitted-fetch-sequence']
+  const events: Array<QueryCacheNotifyEvent> = []
+  const contexts: Array<[number | undefined, number | undefined]> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let wrapped = false
+  let calls = 0
+  const queryFn = (context: QueryFunctionContext) => {
+    contexts.push([context.fetchSequence, context.sourceSequence])
+    return `remote-${++calls}`
+  }
+  assert.equal(
+    await client.fetchQuery({
+      queryKey: key,
+      queryFn,
+      behavior: {
+        onFetch: (context) => {
+          if (wrapped) return
+          wrapped = true
+          const captured = context.options.queryFn
+          assert.ok(typeof captured === 'function')
+          context.options.queryFn = (queryFnContext) =>
+            captured({
+              client: queryFnContext.client,
+              queryKey: queryFnContext.queryKey,
+              meta: queryFnContext.meta,
+              signal: queryFnContext.signal,
+              sourceSequence: queryFnContext.sourceSequence,
+            })
+        },
+      },
+    }),
+    'remote-1',
+  )
+  const query = cache.find<string>({ queryKey: key })
+  assert.ok(query)
+  assert.equal(await query.fetch(), 'remote-2')
+  const successes = events.filter(
+    (event): event is SuccessEvent =>
+      event.type === 'updated' &&
+      event.action.type === 'success' &&
+      !event.action.manual,
+  )
+  assert.equal(successes.length, 2)
+  assert.deepEqual(contexts, [
+    [undefined, successes[0]!.sourceSequence],
+    [undefined, successes[1]!.sourceSequence],
+  ])
+  stop()
+  client.clear()
+})
+
+// Cache sequences start independently. A wrapper captured by one client must
+// not emit a source event when another client invokes it during the first fetch.
+it('retained queryFn wrapper does not attribute a second cache with the same sequence', async () => {
+  const firstClient = new QueryClient()
+  const releaseFirst = deferred<string>()
+  const firstEvents: Array<QueryCacheNotifyEvent> = []
+  const stopFirst = firstClient
+    .getQueryCache()
+    .subscribe((event) => firstEvents.push(event))
+  let invokeCaptured: ((context: QueryFunctionContext) => unknown) | undefined
+
+  const first = firstClient.fetchQuery({
+    queryKey: ['first-cache'],
+    queryFn: () => 'remote',
+    behavior: {
+      onFetch: (context) => {
+        const captured = context.options.queryFn
+        assert.ok(typeof captured === 'function')
+        invokeCaptured = (queryFnContext) => captured(queryFnContext)
+        context.fetchFn = () => releaseFirst.promise
+      },
+    },
+  })
+  const firstQuery = firstClient
+    .getQueryCache()
+    .find({ queryKey: ['first-cache'] })
+  assert.ok(firstQuery)
+  assert.equal(firstQuery.state.fetchStatus, 'fetching')
+
+  const secondClient = new QueryClient()
+  const secondEvents: Array<QueryCacheNotifyEvent> = []
+  const stopSecond = secondClient
+    .getQueryCache()
+    .subscribe((event) => secondEvents.push(event))
+  assert.equal(
+    await secondClient.fetchQuery({
+      queryKey: ['second-cache'],
+      queryFn: (context) => {
+        assert.ok(invokeCaptured)
+        return invokeCaptured(context) as string
+      },
+    }),
+    'remote',
+  )
+  const firstStart = firstEvents.find((event) => event.type === 'fetchStarted')
+  const secondStart = secondEvents.find(
+    (event) => event.type === 'fetchStarted',
+  )
+  assert.ok(firstStart)
+  assert.ok(secondStart)
+  assert.equal(firstStart.fetchSequence, secondStart.fetchSequence)
+  assert.equal(
+    firstEvents.some((event) => event.type === 'fetchSourceStarted'),
+    false,
+  )
+  releaseFirst.resolve('cached')
+  assert.equal(await first, 'cached')
+  assert.equal(firstQuery.dataSourceSequence, undefined)
+  stopFirst()
+  stopSecond()
+  firstClient.clear()
+  secondClient.clear()
+})
+
+// A retained wrapper can be called after its fetch has settled. That call may
+// run the original function but must not add a source to the completed fetch.
+it('retained queryFn wrapper does not attribute a settled fetch', async () => {
+  const client = new QueryClient()
+  const key = ['settled-retained-wrapper']
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = client.getQueryCache().subscribe((event) => events.push(event))
+  let invokeCaptured: ((context: QueryFunctionContext) => unknown) | undefined
+
+  assert.equal(
+    await client.fetchQuery({
+      queryKey: key,
+      queryFn: () => 'remote',
+      behavior: {
+        onFetch: (context) => {
+          const captured = context.options.queryFn
+          assert.ok(typeof captured === 'function')
+          invokeCaptured = (queryFnContext) => captured(queryFnContext)
+          context.fetchFn = () => 'cached'
+        },
+      },
+    }),
+    'cached',
+  )
+  const start = events.find((event) => event.type === 'fetchStarted')
+  const query = client.getQueryCache().find({ queryKey: key })
+  assert.ok(start)
+  assert.ok(query)
+  assert.ok(invokeCaptured)
+  assert.equal(
+    invokeCaptured({
+      client,
+      queryKey: key,
+      meta: undefined,
+      signal: new AbortController().signal,
+      fetchSequence: start.fetchSequence,
+    }),
+    'remote',
+  )
+  assert.equal(
+    events.some((event) => event.type === 'fetchSourceStarted'),
+    false,
+  )
+  assert.equal(query.dataSourceSequence, undefined)
+  stop()
+  client.clear()
+})
+
+// A cache success callback runs after the result is applied but before
+// Query.fetch returns. A retained wrapper called there cannot be the source
+// of the result that has already been published.
+it('retained queryFn wrapper is inert during success publication', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['success-callback-wrapper']
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let invokeCaptured: ((context: QueryFunctionContext) => unknown) | undefined
+  let callbackContext: QueryFunctionContext | undefined
+  cache.config.onSuccess = (_, query) => {
+    assert.ok(invokeCaptured)
+    callbackContext = {
+      client,
+      queryKey: key,
+      meta: undefined,
+      signal: new AbortController().signal,
+      fetchSequence: query.fetchSequence,
+    }
+    assert.equal(invokeCaptured(callbackContext), 'remote')
+  }
+
+  assert.equal(
+    await client.query({
+      queryKey: key,
+      queryFn: () => 'remote',
+      behavior: {
+        onFetch: (context) => {
+          const captured = context.options.queryFn
+          assert.ok(typeof captured === 'function')
+          invokeCaptured = (queryFnContext) => captured(queryFnContext)
+          context.fetchFn = () => 'cached'
+        },
+      },
+    }),
+    'cached',
+  )
+  assert.ok(callbackContext)
+  assert.equal(callbackContext.sourceSequence, undefined)
+  assert.equal(
+    events.some((event) => event.type === 'fetchSourceStarted'),
+    false,
+  )
+  stop()
+  client.clear()
+})
+
+// A behavior can fail during setup, before Query.fetch installs a retryer.
+// A wrapper retained from that failed setup must not later report a source
+// for a fetch that never started.
+it('retained queryFn wrapper from failed behavior setup is inert', async () => {
+  const client = new QueryClient()
+  const key = ['failed-behavior-setup']
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = client.getQueryCache().subscribe((event) => events.push(event))
+  let invokeCaptured: ((context: QueryFunctionContext) => unknown) | undefined
+  const failure = new Error('behavior setup failed')
+
+  await assert.rejects(
+    client.query({
+      queryKey: key,
+      queryFn: () => 'remote',
+      behavior: {
+        onFetch: (context) => {
+          const captured = context.options.queryFn
+          assert.ok(typeof captured === 'function')
+          invokeCaptured = (queryFnContext) => captured(queryFnContext)
+          throw failure
+        },
+      },
+    }),
+    failure,
+  )
+  const query = client.getQueryCache().find({ queryKey: key })
+  assert.ok(query)
+  assert.ok(invokeCaptured)
+  const beforeLateCall = client.getQueryCache().currentSequence
+  const lateContext: QueryFunctionContext = {
+    client,
+    queryKey: key,
+    meta: undefined,
+    signal: new AbortController().signal,
+    fetchSequence: query.fetchSequence,
+  }
+  assert.equal(invokeCaptured(lateContext), 'remote')
+  assert.equal(lateContext.sourceSequence, undefined)
+  assert.equal(client.getQueryCache().currentSequence, beforeLateCall)
+  assert.equal(
+    events.some((event) => event.type === 'fetchSourceStarted'),
+    false,
+  )
+  stop()
+  client.clear()
+})
+
 // A behavior can invoke the exposed queryFn while configuring fetchFn, before
-// Query.fetch installs its retryer. Attribution must survive that ordering.
-it('eager custom behavior queryFn invocation is attributed', async () => {
+// Query.fetch installs its retryer. The invocation remains observable.
+it('eager custom behavior records queryFn invocation', async () => {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   })
@@ -1169,15 +1528,16 @@ it('eager custom behavior queryFn invocation is attributed', async () => {
   const success = findSuccess(events, false)
   assert.ok(source)
   assert.ok(success)
-  assert.equal(success.sourceSequence, source.sourceSequence)
+  assert.equal(success.sourceSequence, undefined)
   stopObserver()
   stop()
   client.clear()
 })
 
 // A persister can defer invocation until after the Query's options change.
-// Attribution follows the query function captured for the accepted fetch.
-it('deferred persister retains source attribution after options change', async () => {
+// The captured function's invocation remains observable even when the
+// persister controls which value wins.
+it('deferred persister records invocation after options change', async () => {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   })
@@ -1209,8 +1569,8 @@ it('deferred persister retains source attribution after options change', async (
   assert.ok(success)
   assert.equal(source.fetchSequence, start.fetchSequence)
   assert.equal(success.fetchSequence, start.fetchSequence)
-  assert.equal(success.sourceSequence, source.sourceSequence)
-  assert.equal(query.dataSourceSequence, source.sourceSequence)
+  assert.equal(success.sourceSequence, undefined)
+  assert.equal(query.dataSourceSequence, undefined)
   stop()
   client.clear()
 })
@@ -1252,6 +1612,76 @@ it('persister cache hit has no source invocation position', async () => {
     events.some((event) => event.type === 'fetchSourceStarted'),
     false,
   )
+  stop()
+  client.clear()
+})
+
+// A persister may start the supplied query function but choose another value.
+// The invocation is observable, while the winning cached value has no proven
+// source invocation.
+it('persister speculative query function does not own cached data', async () => {
+  const client = new QueryClient()
+  const remote = deferred<string>()
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = client.getQueryCache().subscribe((event) => events.push(event))
+  const key = ['speculative-persister']
+  assert.equal(
+    await client.query({
+      queryKey: key,
+      queryFn: () => remote.promise,
+      persister: (queryFn, context) =>
+        Promise.race([queryFn(context), Promise.resolve('cached')]),
+    }),
+    'cached',
+  )
+  const source = events.find((event) => event.type === 'fetchSourceStarted')
+  const success = findSuccess(events, false)
+  const query = client.getQueryCache().find({ queryKey: key })
+  assert.ok(source)
+  assert.ok(success)
+  assert.ok(query)
+  assert.equal(success.fetchSequence, source.fetchSequence)
+  assert.equal(success.sourceSequence, undefined)
+  assert.equal(query.dataFetchSequence, success.fetchSequence)
+  assert.equal(query.dataSourceSequence, undefined)
+  remote.resolve('remote')
+  stop()
+  client.clear()
+})
+
+// A custom behavior can replace fetchFn and ignore its default result. A
+// query-function invocation then remains activity, not provenance for data.
+it('custom behavior speculative query function does not own cached data', async () => {
+  const client = new QueryClient()
+  const remote = deferred<string>()
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = client.getQueryCache().subscribe((event) => events.push(event))
+  const key = ['speculative-behavior']
+  assert.equal(
+    await client.query({
+      queryKey: key,
+      queryFn: () => remote.promise,
+      behavior: {
+        onFetch: (context) => {
+          const fetchDefault = context.fetchFn
+          context.fetchFn = () =>
+            Promise.race([fetchDefault(), Promise.resolve('cached')])
+        },
+      },
+    }),
+    'cached',
+  )
+  const source = events.find((event) => event.type === 'fetchSourceStarted')
+  const success = findSuccess(events, false)
+  const query = client.getQueryCache().find({ queryKey: key })
+  assert.ok(source)
+  assert.ok(success)
+  assert.ok(query)
+  assert.equal(success.fetchSequence, source.fetchSequence)
+  assert.equal(success.sourceSequence, undefined)
+  assert.equal(query.dataFetchSequence, success.fetchSequence)
+  assert.equal(query.dataSourceSequence, undefined)
+  remote.resolve('remote')
   stop()
   client.clear()
 })

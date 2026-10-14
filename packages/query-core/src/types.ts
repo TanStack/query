@@ -978,7 +978,11 @@ export interface QueryObserverBaseResult<
   dataUpdateCount?: number
   /** Fetch that supplied `data`, when Query Core knows its source. */
   dataFetchSequence?: number
-  /** First tracked query-function invocation that supplied `data`, when known. */
+  /**
+   * First tracked query-function invocation in the fetch that supplied `data`, when Query Core
+   * knows the path from function to result. Retries can make this earlier than the successful
+   * attempt. Opaque custom persisters and behaviors leave this undefined.
+   */
   dataSourceSequence?: number
   /**
    * The timestamp for when the query most recently returned the `status` as `"success"`.

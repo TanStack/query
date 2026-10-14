@@ -378,8 +378,10 @@ export class Query<
   }
 
   /**
-   * First tracked query-function invocation that supplied cached data.
-   * @returns The cached data's source sequence, when known.
+   * First tracked query-function invocation in the fetch that supplied cached data. Retries can
+   * make this earlier than the successful attempt. This is unknown for an opaque custom persister
+   * or behavior, even if it invoked the query function.
+   * @returns The cached data's earliest source sequence, when known.
    */
   get dataSourceSequence(): number | undefined {
     return this.#dataSourceSequence
@@ -821,6 +823,8 @@ export class Query<
 
     let retryer: Retryer<TData> | undefined
     let sourceEventPending = false
+    let fetchRetired = false
+    let resultProvenanceUnknown = false
     const notifySourceStarted = () => {
       if (!retryer) {
         sourceEventPending = true
@@ -863,6 +867,12 @@ export class Query<
       QueryFunction<TQueryFnData, TQueryKey>,
       QueryFunction<TQueryFnData, TQueryKey>
     >()
+    const belongsToThisFetch = (
+      queryFnContext: QueryFunctionContext<TQueryKey>,
+    ) =>
+      !fetchRetired &&
+      queryFnContext.client === this.#client &&
+      (queryFnContext.fetchSequence ?? this.#fetchSequence) === fetchSequence
     const behaviorOptions = new Proxy(this.options, {
       get(target, property, receiver): unknown {
         const value: unknown = Reflect.get(target, property, receiver)
@@ -873,10 +883,7 @@ export class Query<
         let trackedQueryFn = trackedBehaviorQueryFns.get(queryFn)
         if (!trackedQueryFn) {
           trackedQueryFn = (queryFnContext) => {
-            if (
-              queryFnContext.fetchSequence !== undefined &&
-              queryFnContext.fetchSequence !== fetchSequence
-            ) {
+            if (!belongsToThisFetch(queryFnContext)) {
               return queryFn(queryFnContext)
             }
             return invokeQueryFn(() => {
@@ -934,6 +941,7 @@ export class Query<
 
       this.#abortSignalConsumed = false
       if (this.options.persister) {
+        resultProvenanceUnknown = true
         return this.options.persister(
           trackedQueryFn,
           queryFnContext,
@@ -971,13 +979,21 @@ export class Query<
 
     const context = createFetchContext()
 
-    const behavior =
-      this.#queryType === 'infinite'
-        ? (infiniteQueryBehavior(
-            (this.options as { pages?: number }).pages,
-          ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>)
-        : this.options.behavior
-    behavior?.onFetch(context, this as unknown as Query)
+    const isCoreInfiniteBehavior = this.#queryType === 'infinite'
+    const behavior = isCoreInfiniteBehavior
+      ? (infiniteQueryBehavior(
+          (this.options as { pages?: number }).pages,
+        ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>)
+      : this.options.behavior
+    try {
+      behavior?.onFetch(context, this as unknown as Query)
+    } catch (error) {
+      fetchRetired = true
+      throw error
+    }
+    resultProvenanceUnknown ||= isCoreInfiniteBehavior
+      ? Boolean(context.options.persister)
+      : context.fetchFn !== fetchFn
 
     // Store state in case the current fetch needs to be reverted
     this.#revertState = this.state
@@ -1059,6 +1075,7 @@ export class Query<
 
     try {
       const data = await retryer.start()
+      fetchRetired = true
       // this is more of a runtime guard
       if (data === undefined) {
         if (process.env.NODE_ENV !== 'production') {
@@ -1069,7 +1086,12 @@ export class Query<
         throw new Error(`${this.queryHash} data is undefined`)
       }
 
-      this.#setData(data, undefined, fetchSequence, sourceSequence)
+      this.#setData(
+        data,
+        undefined,
+        fetchSequence,
+        resultProvenanceUnknown ? undefined : sourceSequence,
+      )
 
       // Notify cache callback
       this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
@@ -1080,6 +1102,7 @@ export class Query<
       )
       return data
     } catch (error) {
+      fetchRetired = true
       if (error instanceof CancelledError) {
         if (error.silent) {
           // silent cancellation implies a new fetch is going to be started,
