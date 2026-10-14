@@ -82,7 +82,7 @@ function Root() {
           type="number"
           min="0"
           step="1000"
-          value={staleTime}
+          defaultValue={staleTime}
           onChange={onNumberChange(setStaleTime)}
           style={{ width: '100px' }}
         />
@@ -93,7 +93,7 @@ function Root() {
           type="number"
           min="0"
           step="1000"
-          value={gcTime}
+          defaultValue={gcTime}
           onChange={onNumberChange(setGcTime)}
           style={{ width: '100px' }}
         />
@@ -106,7 +106,7 @@ function Root() {
           min="0"
           max="1"
           step=".05"
-          value={localErrorRate}
+          defaultValue={localErrorRate}
           onChange={onNumberChange(setErrorRate)}
           style={{ width: '100px' }}
         />
@@ -117,7 +117,7 @@ function Root() {
           type="number"
           min="1"
           step="500"
-          value={localFetchTimeMin}
+          defaultValue={localFetchTimeMin}
           onChange={onNumberChange(setLocalFetchTimeMin)}
           style={{ width: '60px' }}
         />{' '}
@@ -128,7 +128,7 @@ function Root() {
           type="number"
           min="1"
           step="500"
-          value={localFetchTimeMax}
+          defaultValue={localFetchTimeMax}
           onChange={onNumberChange(setLocalFetchTimeMax)}
           style={{ width: '60px' }}
         />
