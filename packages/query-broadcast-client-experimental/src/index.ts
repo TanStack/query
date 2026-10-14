@@ -150,6 +150,18 @@ export function broadcastQueryClient({
         queryHash,
         queryKey,
       })
+      // An earlier cache listener may have added a same-key replacement
+      // before this removal reached us. Re-send its current state after the
+      // removal so a peer does not discard the replacement it heard first.
+      const replacement = queryCache.get(queryHash)
+      if (replacement && replacement !== queryEvent.query) {
+        safePost({
+          type: 'added',
+          queryHash,
+          queryKey: replacement.queryKey,
+          state: replacement.state,
+        })
+      }
     }
 
     if (queryEvent.type === 'added') {

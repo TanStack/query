@@ -776,7 +776,7 @@ export class Query<
    * fetch is cancelled with `revert` while the query has data, it resolves with the restored data
    * instead.
    */
-  fetch(
+  async fetch(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     fetchOptions?: FetchOptions<TQueryFnData>,
   ): Promise<TData> {
@@ -828,6 +828,10 @@ export class Query<
     }
 
     const fetchSequence = this.#cache.reserveSequence()
+    const wasCached =
+      this.#cache.get<TQueryFnData, TError, TData, TQueryKey>(
+        this.queryHash,
+      ) === this
     this.#fetchSequence = fetchSequence
     this.#sourceSequence = undefined
     let sourceSequence: number | undefined
@@ -1120,24 +1124,42 @@ export class Query<
         ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>)
       : this.options.behavior
     const setupResetVersion = this.#resetVersion
-    try {
-      behavior?.onFetch(context, this as unknown as Query)
-    } catch (error) {
+    const wasRetired = () =>
+      this.#resetVersion !== setupResetVersion ||
+      (wasCached &&
+        this.#cache.get<TQueryFnData, TError, TData, TQueryKey>(
+          this.queryHash,
+        ) !== this)
+    const retireUninstalledFetch = (error: unknown): void => {
       retireFetch()
-      const cancellation = error instanceof CancelledError ? error : undefined
-      // The behavior may have discarded eager queryFn promises. Observe each
+      // A behavior may have discarded eager queryFn promises. Observe each
       // one before aborting its signal, which can reject it synchronously.
       for (const result of eagerResults) {
         void Promise.resolve(result).catch(() => {})
       }
       abortController.abort()
       if (sourceEvent.pending) {
-        // The function ran, but setup failed before an installed fetch could
-        // emit fetchStarted. Its source event settles with the setup failure.
-        const setupFailure = Promise.reject(error)
-        void setupFailure.catch(() => {})
-        notifySourceStarted(setupFailure)
+        const failure = Promise.reject(error)
+        void failure.catch(() => {})
+        notifySourceStarted(failure)
       }
+    }
+    const cancelUninstalledFetch = (): never => {
+      const error = new CancelledError()
+      retireUninstalledFetch(error)
+      this.#cache.notify({
+        type: 'fetchCancelled',
+        query: this,
+        fetchSequence,
+        sourceSequence,
+      })
+      throw error
+    }
+    try {
+      behavior?.onFetch(context, this as unknown as Query)
+    } catch (error) {
+      const cancellation = error instanceof CancelledError ? error : undefined
+      retireUninstalledFetch(error)
       if (
         this.#fetchSequence === fetchSequence &&
         this.#cache.get<TQueryFnData, TError, TData, TQueryKey>(
@@ -1176,6 +1198,7 @@ export class Query<
       }
       throw error
     }
+    if (wasRetired()) cancelUninstalledFetch()
     resultProvenanceUnknown ||= isCoreInfiniteBehavior
       ? Boolean(context.options.persister)
       : context.fetchFn !== fetchFn
@@ -1199,6 +1222,7 @@ export class Query<
         notifyFetchStarted,
       )
     }
+    if (wasRetired()) cancelUninstalledFetch()
 
     // Try to fetch the data
     retryer = this.#retryer = createRetryer({
@@ -1293,7 +1317,12 @@ export class Query<
           // Follow the attempt that directly caused this cancellation. It
           // may fail during setup without installing a retryer, or start a
           // third fetch before this cancelled attempt settles.
-          const replacement = this.#replacementFetches.get(retryer)
+          const activeRetryer: Retryer<TData> | undefined = this.#retryer
+          // oxlint-disable typescript/no-unnecessary-condition -- reentry may clear the retryer before this catch resumes
+          const fallback =
+            activeRetryer !== retryer ? activeRetryer?.promise : undefined
+          // oxlint-enable typescript/no-unnecessary-condition
+          const replacement = this.#replacementFetches.get(retryer) ?? fallback
           if (replacement) return replacement
           throw error
         } else if (error.revert) {

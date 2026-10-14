@@ -81,7 +81,7 @@ interface NotifyEventQueryFetchSourceStarted extends NotifyEvent {
   query: Query<any, any, any, any>
   fetchSequence: number
   sourceSequence: number
-  /** The retryer's promise, or a rejected setup-failure promise when no retryer was installed. */
+  /** The retryer's promise, or a rejected pre-install promise when no retryer was installed. */
   promise: Promise<unknown>
 }
 

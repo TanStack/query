@@ -3175,6 +3175,73 @@ it('silently cancelled fetch follows its direct replacement through nested setup
   client.clear()
 })
 
+// resetQueries cancels the old retryer and starts a new fetch on the same
+// Query. Its silent cancellation follows that new fetch even though the
+// replacement came from reset rather than fetch({ cancelRefetch: true }).
+it('silent reset cancellation follows the subsequent same-Query refetch', async () => {
+  const client = new QueryClient()
+  const key = ['reset-silent-refetch']
+  let calls = 0
+  const observer = new QueryObserver(client, {
+    queryKey: key,
+    initialData: 'seed',
+    staleTime: Infinity,
+    queryFn: () =>
+      ++calls === 1 ? new Promise<string>(() => {}) : 'after-reset',
+  })
+  const stop = observer.subscribe(() => {})
+  const query = client.getQueryCache().find<string>({ queryKey: key })
+  assert.ok(query)
+  const first = query.fetch()
+  const firstOutcome = first.then(
+    (value) => value,
+    (error: unknown) => error,
+  )
+  const reset = client.resetQueries({ queryKey: key })
+
+  await reset
+  assert.equal(await firstOutcome, 'after-reset')
+  assert.equal(query.state.data, 'after-reset')
+  assert.equal(calls, 2)
+  stop()
+  client.clear()
+})
+
+// Query.fetch is a Promise API even when a cache listener throws while an
+// active fetch is being cancelled for replacement.
+it('replacement cancellation listener failure rejects observer.refetch asynchronously', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['replacement-listener-throw']
+  client.setQueryData(key, 'seed')
+  const query = cache.find<string>({ queryKey: key })
+  assert.ok(query)
+  const pending = query.fetch({
+    queryKey: key,
+    queryFn: () => new Promise<string>(() => {}),
+  })
+  void pending.catch(() => {})
+  const observer = new QueryObserver(client, {
+    queryKey: key,
+    queryFn: () => 'replacement',
+    enabled: false,
+  })
+  const stopObserver = observer.subscribe(() => {})
+  const failure = new Error('subscriber failed')
+  const stopCache = cache.subscribe((event) => {
+    if (event.type === 'fetchCancelled' && event.query === query) throw failure
+  })
+  let result: Promise<unknown> | undefined
+
+  assert.doesNotThrow(() => {
+    result = observer.refetch({ throwOnError: true })
+  })
+  await assert.rejects(result!, (error) => error === failure)
+  stopCache()
+  stopObserver()
+  client.clear()
+})
+
 // Without a silent or revert instruction, CancelledError follows the same
 // failure path as it does after the retryer starts.
 it('unmarked behavior setup cancellation reports a terminal error', async () => {
@@ -3764,6 +3831,103 @@ it('removed Query gets no terminal update after failed setup source event', asyn
   stop()
   client.clear()
 })
+
+// Behavior setup and fetchStarted both run before a retryer is installed.
+// Reset or removal at either boundary retires that attempt. An eager source
+// already invoked by the behavior remains observable and rejects as cancelled.
+it.each(
+  (['onFetch', 'fetchStarted'] as const).flatMap((phase) =>
+    (['reset', 'remove'] as const).flatMap((action) =>
+      (['absent', 'eager'] as const).map(
+        (source) => [phase, action, source] as const,
+      ),
+    ),
+  ),
+)(
+  '%s %s retires an uninstalled fetch with %s source',
+  async (phase, action, source) => {
+    const client = new QueryClient()
+    const cache = client.getQueryCache()
+    const key = ['retire-before-retryer', phase, action, source]
+    client.setQueryData(key, 'seed')
+    const query = cache.find<string>({ queryKey: key })
+    assert.ok(query)
+    let calls = 0
+    let fetchSequence: number | undefined
+    const events: Array<QueryCacheNotifyEvent> = []
+    const stop = cache.subscribe((event) => {
+      events.push(event)
+      if (
+        phase === 'fetchStarted' &&
+        event.type === 'fetchStarted' &&
+        event.query === query
+      ) {
+        if (action === 'reset') query.reset()
+        else cache.remove(query)
+      }
+    })
+
+    await assert.rejects(
+      query.fetch({
+        queryKey: key,
+        queryFn: () => {
+          calls++
+          return Promise.resolve('remote')
+        },
+        behavior: {
+          onFetch: (context) => {
+            fetchSequence = context.fetchSequence
+            if (source === 'eager') void context.fetchFn()
+            if (phase === 'onFetch') {
+              if (action === 'reset') query.reset()
+              else cache.remove(query)
+            }
+          },
+        },
+      }),
+      CancelledError,
+    )
+    const starts = events.filter(
+      (event) => event.type === 'fetchStarted' && event.query === query,
+    )
+    const sources = events.filter(
+      (event): event is SourceEvent =>
+        event.type === 'fetchSourceStarted' && event.query === query,
+    )
+    const cancelled = events.find(
+      (
+        event,
+      ): event is Extract<QueryCacheNotifyEvent, { type: 'fetchCancelled' }> =>
+        event.type === 'fetchCancelled' && event.query === query,
+    )
+    assert.equal(starts.length, phase === 'fetchStarted' ? 1 : 0)
+    assert.equal(sources.length, source === 'eager' ? 1 : 0)
+    assert.ok(cancelled)
+    assert.equal(cancelled.fetchSequence, fetchSequence)
+    assert.equal(cancelled.sourceSequence, sources[0]?.sourceSequence)
+    if (sources[0]) {
+      assert.equal(sources[0].fetchSequence, fetchSequence)
+      await assert.rejects(sources[0].promise, CancelledError)
+    }
+    assert.equal(calls, source === 'eager' ? 1 : 0)
+    assert.equal(query.state.data, action === 'reset' ? undefined : 'seed')
+    assert.equal(
+      cache.get(query.queryHash),
+      action === 'reset' ? query : undefined,
+    )
+    assert.equal(
+      events.filter(
+        (event) =>
+          event.type === 'updated' &&
+          event.action.type === 'success' &&
+          event.fetchSequence === fetchSequence,
+      ).length,
+      0,
+    )
+    stop()
+    client.clear()
+  },
+)
 
 // Removal frees the key and announces the old Query before cancellation can
 // start a replacement. Consumers that replay events by key then see the old
