@@ -1002,6 +1002,43 @@ it('behavior signal consumption survives the default fetchFn', async () => {
   client.clear()
 })
 
+// A retry shares one fetch signal. Reading it in an earlier attempt keeps
+// that fetch cancellable even if the current attempt ignores signal.
+it('signal consumption survives a retry whose queryFn ignores signal', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: 1, retryDelay: 0 } },
+  })
+  const key = ['signal-consumption-across-retry']
+  client.setQueryData(key, 'seed')
+  const secondStarted = deferred<void>()
+  const response = deferred<string>()
+  let firstSignal: AbortSignal | undefined
+  let attempts = 0
+  const observer = new QueryObserver(client, {
+    queryKey: key,
+    enabled: false,
+    queryFn: (context) => {
+      if (++attempts === 1) {
+        firstSignal = context.signal
+        throw new Error('retry')
+      }
+      secondStarted.resolve()
+      return response.promise
+    },
+  })
+  const stopObserver = observer.subscribe(() => {})
+  const pending = observer.refetch()
+  await secondStarted.promise
+  assert.ok(firstSignal)
+  stopObserver()
+  const aborted = firstSignal.aborted
+  response.resolve('remote')
+  await pending
+  assert.equal(attempts, 2)
+  assert.equal(aborted, true)
+  client.clear()
+})
+
 // A query function can replace its own fetch before its source notification
 // runs. The event must carry the old operation's retryer promise even though
 // Query.promise now points at the replacement.
