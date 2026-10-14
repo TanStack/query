@@ -61,17 +61,19 @@ describe('queryCache', () => {
 
       const unsubScribeObserver = observer.subscribe(vi.fn())
       await vi.advanceTimersByTimeAsync(11)
-      expect(events.length).toBe(8)
+      expect(events.length).toBe(10)
 
       expect(events).toEqual([
         'added', // 1. Query added -> loading
         'observerResultsUpdated', // 2. Observer result updated -> loading
         'observerAdded', // 3. Observer added
-        'observerResultsUpdated', // 4. Observer result updated -> fetching
-        'updated', // 5. Query updated -> fetching
-        'observerResultsUpdated', // 6. Observer result updated -> success
-        'updated', // 7. Query updated -> success
-        'observerResultsUpdated', // 8. Observer result updated -> stale
+        'fetchStarted', // 4. Fetch accepted
+        'observerResultsUpdated', // 5. Observer result updated -> fetching
+        'updated', // 6. Query updated -> fetching
+        'fetchSourceStarted', // 7. Query function invoked
+        'observerResultsUpdated', // 8. Observer result updated -> success
+        'updated', // 9. Query updated -> success
+        'observerResultsUpdated', // 10. Observer result updated -> stale
       ])
 
       const cachedQuery = queryCache.find({ queryKey: key })

@@ -83,6 +83,8 @@ describe('InfiniteQueryBehavior', () => {
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
       client: queryClient,
+      fetchSequence: expect.any(Number),
+      sourceSequence: expect.any(Number),
       pageParam: 1,
       meta: undefined,
       direction: 'forward',
@@ -96,6 +98,8 @@ describe('InfiniteQueryBehavior', () => {
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
       client: queryClient,
+      fetchSequence: expect.any(Number),
+      sourceSequence: expect.any(Number),
       pageParam: 2,
       direction: 'forward',
       meta: undefined,
@@ -114,6 +118,8 @@ describe('InfiniteQueryBehavior', () => {
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
       client: queryClient,
+      fetchSequence: expect.any(Number),
+      sourceSequence: expect.any(Number),
       pageParam: 0,
       direction: 'backward',
       meta: undefined,
@@ -133,6 +139,8 @@ describe('InfiniteQueryBehavior', () => {
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
       client: queryClient,
+      fetchSequence: expect.any(Number),
+      sourceSequence: expect.any(Number),
       pageParam: -1,
       meta: undefined,
       direction: 'backward',
@@ -151,6 +159,8 @@ describe('InfiniteQueryBehavior', () => {
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
       client: queryClient,
+      fetchSequence: expect.any(Number),
+      sourceSequence: expect.any(Number),
       pageParam: 1,
       meta: undefined,
       direction: 'forward',
@@ -173,6 +183,8 @@ describe('InfiniteQueryBehavior', () => {
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
       client: queryClient,
+      fetchSequence: expect.any(Number),
+      sourceSequence: expect.any(Number),
       pageParam: 0,
       meta: undefined,
       direction: 'forward',
@@ -182,6 +194,8 @@ describe('InfiniteQueryBehavior', () => {
     expect(queryFnSpy).toHaveBeenNthCalledWith(2, {
       queryKey: key,
       client: queryClient,
+      fetchSequence: expect.any(Number),
+      sourceSequence: expect.any(Number),
       pageParam: 1,
       meta: undefined,
       direction: 'forward',
@@ -234,6 +248,8 @@ describe('InfiniteQueryBehavior', () => {
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
       client: queryClient,
+      fetchSequence: expect.any(Number),
+      sourceSequence: expect.any(Number),
       pageParam: 1,
       meta: undefined,
       direction: 'forward',
@@ -289,6 +305,8 @@ describe('InfiniteQueryBehavior', () => {
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
       client: queryClient,
+      fetchSequence: expect.any(Number),
+      sourceSequence: expect.any(Number),
       pageParam: 2,
       meta: undefined,
       direction: 'forward',

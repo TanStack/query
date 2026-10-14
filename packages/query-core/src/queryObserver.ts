@@ -75,6 +75,11 @@ export class QueryObserver<
   #selectError: TError | null
   #selectFn?: (data: TQueryData) => TData
   #selectResult?: TData
+  #selectResultAttribution?: {
+    dataUpdateCount: number | undefined
+    dataFetchSequence: number | undefined
+    dataSourceSequence: number | undefined
+  }
   // This property keeps track of the last query with defined data.
   // It will be used to pass the previous data and query to the placeholder function between renders.
   #lastQueryWithDefinedData?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
@@ -609,6 +614,8 @@ export class QueryObserver<
       : this.#currentQueryInitialState
 
     const { state } = query
+    const dataFetchSequence = query.dataFetchSequence
+    const dataSourceSequence = query.dataSourceSequence
     let newState = { ...state }
     let isPlaceholderData = false
     let data: TData | undefined
@@ -680,6 +687,12 @@ export class QueryObserver<
       }
     }
 
+    let resultAttribution = {
+      dataUpdateCount: isPlaceholderData ? undefined : newState.dataUpdateCount,
+      dataFetchSequence: isPlaceholderData ? undefined : dataFetchSequence,
+      dataSourceSequence: isPlaceholderData ? undefined : dataSourceSequence,
+    }
+
     // Select data if needed
     // this also runs placeholderData through the select function
     if (options.select && data !== undefined && !skipSelect) {
@@ -690,12 +703,16 @@ export class QueryObserver<
         options.select === this.#selectFn
       ) {
         data = this.#selectResult
+        if (!this.#selectError) {
+          this.#selectResultAttribution = resultAttribution
+        }
       } else {
         try {
           this.#selectFn = options.select
           data = options.select(data as any)
           data = replaceData(prevResult?.data, data, options)
           this.#selectResult = data
+          this.#selectResultAttribution = resultAttribution
           this.#selectError = null
         } catch (selectError) {
           this.#selectError = selectError as TError
@@ -710,6 +727,11 @@ export class QueryObserver<
     if (this.#selectError) {
       error = this.#selectError
       data = this.#selectResult
+      resultAttribution = this.#selectResultAttribution ?? {
+        dataUpdateCount: undefined,
+        dataFetchSequence: undefined,
+        dataSourceSequence: undefined,
+      }
       errorUpdatedAt = Date.now()
       status = 'error'
       isPlaceholderData = false
@@ -731,6 +753,9 @@ export class QueryObserver<
       isInitialLoading: isLoading,
       isLoading,
       data,
+      dataUpdateCount: resultAttribution.dataUpdateCount,
+      dataFetchSequence: resultAttribution.dataFetchSequence,
+      dataSourceSequence: resultAttribution.dataSourceSequence,
       dataUpdatedAt: newState.dataUpdatedAt,
       error,
       errorUpdatedAt,

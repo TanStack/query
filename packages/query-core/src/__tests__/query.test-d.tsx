@@ -174,6 +174,8 @@ describe('query', () => {
         | 'client'
         | 'queryKey'
         | 'state'
+        | 'fetchSequence'
+        | 'sourceSequence'
       >()
     })
 
@@ -949,6 +951,10 @@ describe('query', () => {
         | 'meta'
         | 'promise'
         | 'queryType'
+        | 'fetchSequence'
+        | 'sourceSequence'
+        | 'dataFetchSequence'
+        | 'dataSourceSequence'
         | 'resetState'
         | 'gcTime'
         | 'setOptions'

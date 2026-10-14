@@ -18,6 +18,7 @@ import type {
   FetchStatus,
   InitialDataFunction,
   OmitKeyof,
+  QueryFunction,
   QueryFunctionContext,
   QueryKey,
   QueryMeta,
@@ -150,6 +151,10 @@ export interface FetchContext<
    * The state of the query when the fetch starts.
    */
   state: QueryState<TData, TError>
+  /** Fetch accepted for this context, when known. */
+  fetchSequence?: number
+  /** First tracked query-function invocation for this fetch, when known. */
+  sourceSequence?: number
 }
 
 /**
@@ -294,9 +299,15 @@ export class Query<
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
+  #revertDataFetchSequence?: number
+  #revertDataSourceSequence?: number
   #cache: QueryCache
   #client: QueryClient
   #retryer?: Retryer<TData>
+  #fetchSequence?: number
+  #sourceSequence?: number
+  #dataFetchSequence?: number
+  #dataSourceSequence?: number
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
@@ -340,6 +351,38 @@ export class Query<
    */
   get promise(): Promise<TData> | undefined {
     return this.#retryer?.promise
+  }
+
+  /**
+   * Fetch installed on this Query. Check fetchStatus before treating it as active.
+   * @returns The installed fetch's sequence, when known.
+   */
+  get fetchSequence(): number | undefined {
+    return this.#fetchSequence
+  }
+
+  /**
+   * First tracked query-function invocation of the installed fetch, when known.
+   * @returns The installed fetch's source sequence, when known.
+   */
+  get sourceSequence(): number | undefined {
+    return this.#sourceSequence
+  }
+
+  /**
+   * Fetch that supplied the current cached data, when known.
+   * @returns The cached data's fetch sequence, when known.
+   */
+  get dataFetchSequence(): number | undefined {
+    return this.#dataFetchSequence
+  }
+
+  /**
+   * First tracked query-function invocation that supplied cached data.
+   * @returns The cached data's source sequence, when known.
+   */
+  get dataSourceSequence(): number | undefined {
+    return this.#dataSourceSequence
   }
 
   /**
@@ -389,15 +432,28 @@ export class Query<
     newData: TData,
     options?: SetDataOptions & { manual: boolean },
   ): TData {
+    return this.#setData(newData, options)
+  }
+
+  #setData(
+    newData: TData,
+    options?: SetDataOptions & { manual: boolean },
+    fetchSequence?: number,
+    sourceSequence?: number,
+  ): TData {
     const data = replaceData(this.state.data, newData, this.options)
 
     // Set data and mark it as cached
-    this.#dispatch({
-      data,
-      type: 'success',
-      dataUpdatedAt: options?.updatedAt,
-      manual: options?.manual,
-    })
+    this.#dispatch(
+      {
+        data,
+        type: 'success',
+        dataUpdatedAt: options?.updatedAt,
+        manual: options?.manual,
+      },
+      fetchSequence,
+      sourceSequence,
+    )
 
     return data
   }
@@ -744,6 +800,10 @@ export class Query<
       }
     }
 
+    const fetchSequence = this.#cache.reserveSequence()
+    this.#fetchSequence = fetchSequence
+    this.#sourceSequence = undefined
+    let sourceSequence: number | undefined
     const abortController = new AbortController()
 
     // Adds an enumerable signal property to the object that
@@ -759,9 +819,91 @@ export class Query<
       })
     }
 
+    let retryer: Retryer<TData> | undefined
+    let sourceEventPending = false
+    const notifySourceStarted = () => {
+      if (!retryer) {
+        sourceEventPending = true
+        return
+      }
+      this.#cache.notify({
+        type: 'fetchSourceStarted',
+        query: this,
+        fetchSequence,
+        sourceSequence: sourceSequence!,
+        promise: retryer.promise,
+      })
+    }
+    const invokeQueryFn = <T>(invoke: () => T): T => {
+      const firstInvocation = sourceSequence === undefined
+      if (firstInvocation) {
+        sourceSequence = this.#cache.reserveSequence()
+        context.sourceSequence = sourceSequence
+        if (retryer && this.#retryer === retryer) {
+          this.#sourceSequence = sourceSequence
+        }
+      }
+      try {
+        return invoke()
+      } finally {
+        if (firstInvocation) {
+          // User code can write synchronously. The clock was advanced before
+          // calling it, even when reentry delays this notification.
+          notifySourceStarted()
+        }
+      }
+    }
+    // A behavior can mutate context.options before the default fetchFn reads
+    // it. Forward its writes to the Query's options and track queryFn reads.
+    const trackedBehaviorQueryFns = new WeakMap<
+      QueryFunction<TQueryFnData, TQueryKey>,
+      QueryFunction<TQueryFnData, TQueryKey>
+    >()
+    const originalBehaviorQueryFns = new WeakMap<
+      QueryFunction<TQueryFnData, TQueryKey>,
+      QueryFunction<TQueryFnData, TQueryKey>
+    >()
+    const behaviorOptions = new Proxy(this.options, {
+      get(target, property, receiver): unknown {
+        const value: unknown = Reflect.get(target, property, receiver)
+        if (property !== 'queryFn' || typeof value !== 'function') {
+          return value
+        }
+        const queryFn = value as QueryFunction<TQueryFnData, TQueryKey>
+        let trackedQueryFn = trackedBehaviorQueryFns.get(queryFn)
+        if (!trackedQueryFn) {
+          trackedQueryFn = (queryFnContext) => {
+            if (
+              queryFnContext.fetchSequence !== undefined &&
+              queryFnContext.fetchSequence !== fetchSequence
+            ) {
+              return queryFn(queryFnContext)
+            }
+            return invokeQueryFn(() => {
+              queryFnContext.sourceSequence = sourceSequence
+              return queryFn(queryFnContext)
+            })
+          }
+          trackedBehaviorQueryFns.set(queryFn, trackedQueryFn)
+          originalBehaviorQueryFns.set(trackedQueryFn, queryFn)
+        }
+        return trackedQueryFn
+      },
+      set(target, property, value: unknown, receiver): boolean {
+        const queryFn =
+          property === 'queryFn' && typeof value === 'function'
+            ? (originalBehaviorQueryFns.get(
+                value as QueryFunction<TQueryFnData, TQueryKey>,
+              ) ?? value)
+            : value
+        return Reflect.set(target, property, queryFn, receiver)
+      },
+    })
+
     // Create fetch function
     const fetchFn = () => {
       const queryFn = ensureQueryFn(this.options, fetchOptions)
+      const hasUserQueryFn = typeof this.options.queryFn === 'function'
 
       // Create query function context
       const createQueryFnContext = (): QueryFunctionContext<TQueryKey> => {
@@ -772,23 +914,34 @@ export class Query<
           client: this.#client,
           queryKey: this.queryKey,
           meta: this.meta,
+          fetchSequence,
+          sourceSequence,
         }
         addSignalProperty(queryFnContext)
         return queryFnContext as QueryFunctionContext<TQueryKey>
       }
 
       const queryFnContext = createQueryFnContext()
+      const trackedQueryFn: typeof queryFn = (invocationContext) => {
+        if (!hasUserQueryFn) {
+          return queryFn(invocationContext)
+        }
+        return invokeQueryFn(() => {
+          invocationContext.sourceSequence = sourceSequence
+          return queryFn(invocationContext)
+        })
+      }
 
       this.#abortSignalConsumed = false
       if (this.options.persister) {
         return this.options.persister(
-          queryFn,
+          trackedQueryFn,
           queryFnContext,
           this as unknown as Query,
         )
       }
 
-      return queryFn(queryFnContext)
+      return trackedQueryFn(queryFnContext)
     }
 
     // Trigger behavior hook
@@ -803,11 +956,13 @@ export class Query<
         'signal'
       > = {
         fetchOptions,
-        options: this.options,
+        options: behaviorOptions,
         queryKey: this.queryKey,
         client: this.#client,
         state: this.state,
         fetchFn,
+        fetchSequence,
+        sourceSequence,
       }
 
       addSignalProperty(context)
@@ -826,44 +981,81 @@ export class Query<
 
     // Store state in case the current fetch needs to be reverted
     this.#revertState = this.state
+    this.#revertDataFetchSequence = this.#dataFetchSequence
+    this.#revertDataSourceSequence = this.#dataSourceSequence
 
-    // Set to fetching state if not already in it
-    if (
+    const notifyFetchStarted = () => {
+      this.#cache.notify({ type: 'fetchStarted', query: this, fetchSequence })
+    }
+    const dispatchFetch =
       this.state.fetchStatus === 'idle' ||
       this.state.fetchMeta !== context.fetchOptions?.meta
-    ) {
-      this.#dispatch({ type: 'fetch', meta: context.fetchOptions?.meta })
+    if (dispatchFetch) {
+      this.#dispatch(
+        { type: 'fetch', meta: context.fetchOptions?.meta },
+        fetchSequence,
+        undefined,
+        notifyFetchStarted,
+      )
     }
 
     // Try to fetch the data
-    const retryer = (this.#retryer = createRetryer({
+    retryer = this.#retryer = createRetryer({
       initialPromise: fetchOptions?.initialPromise as
         | Promise<TData>
         | undefined,
       fn: context.fetchFn as () => Promise<TData>,
       onCancel: (error) => {
         if (error instanceof CancelledError && error.revert) {
-          this.setState({
-            ...this.#revertState,
-            fetchStatus: 'idle' as const,
-          })
+          this.#dispatch(
+            {
+              type: 'setState',
+              state: {
+                ...this.#revertState,
+                fetchStatus: 'idle' as const,
+              },
+            },
+            fetchSequence,
+            sourceSequence,
+          )
         }
         abortController.abort()
+        this.#cache.notify({
+          type: 'fetchCancelled',
+          query: this,
+          fetchSequence,
+          sourceSequence,
+        })
       },
       onFail: (failureCount, error) => {
-        this.#dispatch({ type: 'failed', failureCount, error })
+        this.#dispatch(
+          { type: 'failed', failureCount, error },
+          fetchSequence,
+          sourceSequence,
+        )
       },
       onPause: () => {
-        this.#dispatch({ type: 'pause' })
+        this.#dispatch({ type: 'pause' }, fetchSequence, sourceSequence)
       },
       onContinue: () => {
-        this.#dispatch({ type: 'continue' })
+        this.#dispatch({ type: 'continue' }, fetchSequence, sourceSequence)
       },
       retry: context.options.retry,
       retryDelay: context.options.retryDelay,
       networkMode: context.options.networkMode,
       canRun: () => true,
-    }))
+    })
+    // Observer reentry during the fetch notification may have installed a
+    // nested retryer. The operation installed above now owns this Query.
+    this.#fetchSequence = fetchSequence
+    this.#sourceSequence = sourceSequence
+
+    // A same-meta replacement has no fetch reducer action but still has a
+    // distinct accepted position before its query function starts.
+    if (!dispatchFetch) notifyFetchStarted()
+    // A behavior can invoke the query function before the retryer exists.
+    // oxlint-disable-next-line typescript/no-unnecessary-condition -- the behavior hook may update this captured variable
+    if (sourceEventPending) notifySourceStarted()
 
     try {
       const data = await retryer.start()
@@ -877,7 +1069,7 @@ export class Query<
         throw new Error(`${this.queryHash} data is undefined`)
       }
 
-      this.setData(data)
+      this.#setData(data, undefined, fetchSequence, sourceSequence)
 
       // Notify cache callback
       this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
@@ -903,10 +1095,14 @@ export class Query<
           return this.state.data
         }
       }
-      this.#dispatch({
-        type: 'error',
-        error: error as TError,
-      })
+      this.#dispatch(
+        {
+          type: 'error',
+          error: error as TError,
+        },
+        fetchSequence,
+        sourceSequence,
+      )
 
       // Notify cache callback
       this.#cache.config.onError?.(
@@ -931,7 +1127,12 @@ export class Query<
     }
   }
 
-  #dispatch(action: Action<TData, TError>): void {
+  #dispatch(
+    action: Action<TData, TError>,
+    fetchSequence?: number,
+    sourceSequence?: number,
+    beforeObservers?: () => void,
+  ): void {
     const reducer = (
       state: QueryState<TData, TError>,
     ): QueryState<TData, TError> => {
@@ -1003,15 +1204,40 @@ export class Query<
     }
 
     this.state = reducer(this.state)
+    const actionState = this.state
+    if (action.type === 'success') {
+      this.#dataFetchSequence = fetchSequence
+      this.#dataSourceSequence = sourceSequence
+      if (action.manual) {
+        this.#revertDataFetchSequence = this.#dataFetchSequence
+        this.#revertDataSourceSequence = this.#dataSourceSequence
+      }
+    } else if (
+      action.type === 'setState' &&
+      Object.prototype.hasOwnProperty.call(action.state, 'data')
+    ) {
+      this.#dataFetchSequence =
+        fetchSequence === undefined ? undefined : this.#revertDataFetchSequence
+      this.#dataSourceSequence =
+        fetchSequence === undefined ? undefined : this.#revertDataSourceSequence
+    }
 
     notifyManager.batch(() => {
+      beforeObservers?.()
       // Keep the current iteration stable if an observer unsubscribes
       // synchronously while it is being notified.
       this.observers.slice().forEach((observer) => {
         observer.onQueryUpdate()
       })
 
-      this.#cache.notify({ query: this, type: 'updated', action })
+      this.#cache.notify({
+        query: this,
+        type: 'updated',
+        action,
+        state: actionState,
+        fetchSequence,
+        sourceSequence,
+      })
     })
   }
 }

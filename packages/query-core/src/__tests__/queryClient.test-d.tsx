@@ -1315,6 +1315,8 @@ describe('queryClient', () => {
                   queryKey: QueryKey
                   meta: Record<string, unknown> | undefined
                   signal: AbortSignal
+                  fetchSequence?: number
+                  sourceSequence?: number
                   pageParam?: unknown
                   direction?: unknown
                 }>()

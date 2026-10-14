@@ -69,14 +69,14 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
               pageParam: param,
               direction: previous ? 'backward' : 'forward',
               meta: context.options.meta,
+              fetchSequence: context.fetchSequence,
+              sourceSequence: context.sourceSequence,
             }
             addSignalProperty(queryFnContext)
             return queryFnContext as QueryFunctionContext<QueryKey, unknown>
           }
 
-          const queryFnContext = createQueryFnContext()
-
-          const page = await queryFn(queryFnContext)
+          const page = await queryFn(createQueryFnContext())
 
           const { maxPages } = context.options
           const addTo = previous ? addToStart : addToEnd
@@ -125,6 +125,8 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
               client: context.client,
               queryKey: context.queryKey,
               meta: context.options.meta,
+              fetchSequence: context.fetchSequence,
+              sourceSequence: context.sourceSequence,
               signal: context.signal,
             },
             query,

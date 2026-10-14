@@ -52,6 +52,33 @@ interface NotifyEventQueryUpdated extends NotifyEvent {
   type: 'updated'
   query: Query<any, any, any, any>
   action: Action<any, any>
+  /** State immediately after this action, before observer reentry. */
+  state: QueryState<any, any>
+  /** Accepted fetch that caused this action, if any. */
+  fetchSequence?: number
+  /** First tracked query-function invocation for this fetch, when known. */
+  sourceSequence?: number
+}
+
+interface NotifyEventQueryFetchStarted extends NotifyEvent {
+  type: 'fetchStarted'
+  query: Query<any, any, any, any>
+  fetchSequence: number
+}
+
+interface NotifyEventQueryFetchSourceStarted extends NotifyEvent {
+  type: 'fetchSourceStarted'
+  query: Query<any, any, any, any>
+  fetchSequence: number
+  sourceSequence: number
+  promise: Promise<unknown>
+}
+
+interface NotifyEventQueryFetchCancelled extends NotifyEvent {
+  type: 'fetchCancelled'
+  query: Query<any, any, any, any>
+  fetchSequence: number
+  sourceSequence?: number
 }
 
 interface NotifyEventQueryObserverAdded extends NotifyEvent {
@@ -86,6 +113,9 @@ export type QueryCacheNotifyEvent =
   | NotifyEventQueryAdded
   | NotifyEventQueryRemoved
   | NotifyEventQueryUpdated
+  | NotifyEventQueryFetchStarted
+  | NotifyEventQueryFetchSourceStarted
+  | NotifyEventQueryFetchCancelled
   | NotifyEventQueryObserverAdded
   | NotifyEventQueryObserverRemoved
   | NotifyEventQueryObserverResultsUpdated
@@ -139,10 +169,27 @@ export interface QueryStore {
  */
 export class QueryCache extends Subscribable<QueryCacheListener> {
   #queries: QueryStore
+  #sequence = 0
 
   constructor(public config: QueryCacheConfig = {}) {
     super()
     this.#queries = new Map<string, Query>()
+  }
+
+  /**
+   * Last reserved ordering position.
+   * @returns The last position reserved by this cache.
+   */
+  get currentSequence(): number {
+    return this.#sequence
+  }
+
+  /**
+   * Reserve an ordering position for an external write.
+   * @returns The reserved sequence.
+   */
+  reserveSequence(): number {
+    return ++this.#sequence
   }
 
   /**

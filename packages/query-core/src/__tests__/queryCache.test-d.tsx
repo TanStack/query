@@ -40,6 +40,8 @@ describe('queryCache', () => {
         | 'subscribe'
         | 'hasListeners'
         | 'config'
+        | 'currentSequence'
+        | 'reserveSequence'
         | 'build'
         | 'add'
         | 'remove'
@@ -149,13 +151,16 @@ describe('queryCache', () => {
   })
 
   describe('NotifyEventType', () => {
-    it('should union exactly the seven event type literals', () => {
+    it('should union exactly the ten event type literals', () => {
       // Every `QueryCacheNotifyEvent` variant redeclares `type` with its own
       // literal, so the base union is only observable through this alias.
       expectTypeOf<NotifyEventType>().toEqualTypeOf<
         | 'added'
         | 'removed'
         | 'updated'
+        | 'fetchStarted'
+        | 'fetchSourceStarted'
+        | 'fetchCancelled'
         | 'observerAdded'
         | 'observerRemoved'
         | 'observerResultsUpdated'
@@ -172,11 +177,14 @@ describe('queryCache', () => {
   })
 
   describe('QueryCacheNotifyEvent', () => {
-    it('should union exactly the seven event type literals', () => {
+    it('should union exactly the ten event type literals', () => {
       expectTypeOf<QueryCacheNotifyEvent['type']>().toEqualTypeOf<
         | 'added'
         | 'removed'
         | 'updated'
+        | 'fetchStarted'
+        | 'fetchSourceStarted'
+        | 'fetchCancelled'
         | 'observerAdded'
         | 'observerRemoved'
         | 'observerResultsUpdated'
@@ -187,7 +195,14 @@ describe('queryCache', () => {
     it('should carry an action only on the updated event', () => {
       type Updated = Extract<QueryCacheNotifyEvent, { type: 'updated' }>
 
-      expectTypeOf<keyof Updated>().toEqualTypeOf<'type' | 'query' | 'action'>()
+      expectTypeOf<keyof Updated>().toEqualTypeOf<
+        | 'type'
+        | 'query'
+        | 'action'
+        | 'state'
+        | 'fetchSequence'
+        | 'sourceSequence'
+      >()
       expectTypeOf<Updated['query']>().toEqualTypeOf<
         Query<any, any, any, any>
       >()

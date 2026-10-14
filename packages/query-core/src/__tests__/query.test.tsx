@@ -910,7 +910,9 @@ describe('query', () => {
     })
     await vi.advanceTimersByTimeAsync(10)
     expect(updates).toEqual([
+      'fetchStarted',
       'updated', // type: 'fetch'
+      'fetchSourceStarted',
       'updated', // type: 'success'
     ])
 

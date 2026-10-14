@@ -241,6 +241,10 @@ export type QueryFunctionContext<
       queryKey: TQueryKey
       signal: AbortSignal
       meta: QueryMeta | undefined
+      /** Accepted Query.fetch operation that invoked this query function. */
+      fetchSequence?: number
+      /** First tracked query-function invocation for that operation, when known. */
+      sourceSequence?: number
       pageParam?: unknown
       /**
        * @deprecated
@@ -259,6 +263,10 @@ export type QueryFunctionContext<
        */
       direction: FetchDirection
       meta: QueryMeta | undefined
+      /** Accepted Query.fetch operation that invoked this query function. */
+      fetchSequence?: number
+      /** First tracked query-function invocation for that operation, when known. */
+      sourceSequence?: number
     }
 
 /** @inline */
@@ -966,6 +974,12 @@ export interface QueryObserverBaseResult<
    * The last successfully resolved data for the query.
    */
   data: TData | undefined
+  /** Query state version that supplied this result. */
+  dataUpdateCount?: number
+  /** Fetch that supplied `data`, when Query Core knows its source. */
+  dataFetchSequence?: number
+  /** First tracked query-function invocation that supplied `data`, when known. */
+  dataSourceSequence?: number
   /**
    * The timestamp for when the query most recently returned the `status` as `"success"`.
    */
@@ -2423,6 +2437,9 @@ export type NotifyEventType =
   | 'added'
   | 'removed'
   | 'updated'
+  | 'fetchStarted'
+  | 'fetchSourceStarted'
+  | 'fetchCancelled'
   | 'observerAdded'
   | 'observerRemoved'
   | 'observerResultsUpdated'
