@@ -55,6 +55,10 @@ describe('QueryErrorResetBoundary', () => {
       let lastConsumedResetCount = 0
       const boundary = {
         clearReset: vi.fn(() => {
+          if (lastConsumedResetCount === resetCount) {
+            return
+          }
+
           isReset = false
           lastConsumedResetCount = resetCount
         }),
@@ -84,6 +88,37 @@ describe('QueryErrorResetBoundary', () => {
         boundary.clearReset()
       }
       expect(boundary.clearReset).toHaveBeenCalledTimes(1)
+    })
+
+    it('should ignore repeated clearReset calls for the same generation', () => {
+      let isReset = true
+      let resetCount = 1
+      let lastConsumedResetCount = 0
+
+      const boundary = {
+        clearReset: vi.fn(() => {
+          if (lastConsumedResetCount === resetCount) {
+            return
+          }
+
+          isReset = false
+          lastConsumedResetCount = resetCount
+        }),
+        isReset: () => isReset,
+        reset: () => {
+          isReset = true
+          resetCount += 1
+        },
+        _resetCount: () => resetCount,
+        _lastConsumedResetCount: () => lastConsumedResetCount,
+      }
+
+      boundary.clearReset()
+      expect(isReset).toBe(false)
+      expect(lastConsumedResetCount).toBe(1)
+
+      boundary.clearReset()
+      expect(lastConsumedResetCount).toBe(1)
     })
 
     it('should retry fetch if the reset error boundary has been reset', async () => {

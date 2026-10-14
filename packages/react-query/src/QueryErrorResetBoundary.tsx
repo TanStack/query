@@ -55,6 +55,10 @@ function createValue(): QueryErrorResetBoundaryValue & {
      * Clears the reset state, so queries know not to try again until the boundary is reset again.
      */
     clearReset: () => {
+      if (lastConsumedResetCount === resetCount) {
+        return
+      }
+
       isReset = false
       lastConsumedResetCount = resetCount
     },

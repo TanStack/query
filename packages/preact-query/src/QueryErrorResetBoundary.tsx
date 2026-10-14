@@ -53,6 +53,10 @@ function createValue(): QueryErrorResetBoundaryValue & {
 
   return {
     clearReset: () => {
+      if (lastConsumedResetCount === resetCount) {
+        return
+      }
+
       isReset = false
       lastConsumedResetCount = resetCount
     },
