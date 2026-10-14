@@ -59,6 +59,7 @@ interface NotifyEventQueryUpdated extends NotifyEvent {
   /**
    * First tracked invocation for this fetch. On success, present only when Query Core knows the
    * fetch's query-function result supplied the data. A retry may supply the actual value later.
+   * This bounds the fetch operation, not each row or infinite-query page.
    */
   sourceSequence?: number
 }
@@ -74,6 +75,7 @@ interface NotifyEventQueryFetchSourceStarted extends NotifyEvent {
   query: Query<any, any, any, any>
   fetchSequence: number
   sourceSequence: number
+  /** The installed retryer's promise, which settles or rejects with this fetch. */
   promise: Promise<unknown>
 }
 

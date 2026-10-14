@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict'
 import { afterEach, it } from 'vitest'
 import {
+  CancelledError,
   InfiniteQueryObserver,
   QueryClient,
   QueryObserver,
@@ -161,6 +162,47 @@ it('late attachment can read the installed fetch and source positions', async ()
   client.clear()
 })
 
+// A source event carries the installed retryer's promise. A dependent can
+// await that same attempt and observe its cancellation before using its rows.
+it('source event promise tracks the active fetch through cancellation', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const cache = client.getQueryCache()
+  const response = deferred<string>()
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  const pending = client.fetchQuery({
+    queryKey: ['source-promise'],
+    queryFn: () => response.promise,
+  })
+  const pendingError = pending.catch((error: unknown) => error)
+  const query = cache.find({ queryKey: ['source-promise'] })
+  const source = events.find((event) => event.type === 'fetchSourceStarted')
+  assert.ok(query)
+  assert.ok(source)
+  assert.equal(source.promise, query.promise)
+  let settled = false
+  const sourceResult = source.promise.then(
+    (value) => ({ value, error: undefined }),
+    (error: unknown) => ({ value: undefined, error }),
+  )
+  void sourceResult.then(() => {
+    settled = true
+  })
+  await Promise.resolve()
+  assert.equal(settled, false)
+
+  await query.cancel()
+  const result = await sourceResult
+  assert.ok(result.error instanceof CancelledError)
+  assert.equal(result.error, await pendingError)
+  assert.equal(settled, true)
+  response.resolve('late')
+  stop()
+  client.clear()
+})
+
 // A same-meta replacement skips the ordinary fetch action. It still starts a
 // distinct operation and cancels the old one with its own accepted position.
 it('silent replacement has a distinct start and cancellation', async () => {
@@ -284,6 +326,62 @@ it('cancel with revert restores fetched data provenance', async () => {
   assert.equal(query.dataFetchSequence, before.dataFetchSequence)
   assert.equal(query.dataSourceSequence, before.dataSourceSequence)
   later.resolve('later')
+  stop()
+  client.clear()
+})
+
+// Abort listeners run synchronously during cancellation. A behavior can call
+// a retained query function from one, but that call is outside the cancelled
+// fetch and must not reserve or publish a new source position.
+it('abort reentry cannot start a source for the cancelled fetch', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const cache = client.getQueryCache()
+  const key = ['abort-reentry']
+  client.setQueryData(key, 'seed')
+  const query = cache.find<string>({ queryKey: key })
+  assert.ok(query)
+  const held = deferred<string>()
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let abortCalls = 0
+
+  const pending = query.fetch({
+    queryKey: key,
+    queryFn: () => 'remote',
+    behavior: {
+      onFetch: (context) => {
+        const captured = context.options.queryFn
+        assert.ok(typeof captured === 'function')
+        const signal = context.signal
+        signal.addEventListener('abort', () => {
+          abortCalls++
+          captured({
+            client: context.client,
+            queryKey: context.queryKey,
+            meta: context.options.meta,
+            signal,
+            fetchSequence: context.fetchSequence,
+          })
+        })
+        context.fetchFn = () => held.promise
+      },
+    },
+  })
+  const beforeCancel = cache.currentSequence
+  await query.cancel({ revert: true })
+  assert.equal(await pending, 'seed')
+  assert.equal(abortCalls, 1)
+  assert.equal(cache.currentSequence, beforeCancel)
+  assert.equal(
+    events.some((event) => event.type === 'fetchSourceStarted'),
+    false,
+  )
+  const cancelled = events.find((event) => event.type === 'fetchCancelled')
+  assert.ok(cancelled)
+  assert.equal(cancelled.sourceSequence, undefined)
+  held.resolve('ignored')
   stop()
   client.clear()
 })
@@ -976,6 +1074,37 @@ it('no-next-page replay has no source invocation position', async () => {
   client.clear()
 })
 
+// An infinite result can combine a directly written earlier page with a new
+// page. Its source sequence bounds the fetch operation; it is not provenance
+// for every page in the combined result.
+it('infinite page append reports an operation source for mixed-page data', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const cache = client.getQueryCache()
+  const key = ['mixed-infinite-pages']
+  const observer = new InfiniteQueryObserver<string>(client, {
+    queryKey: key,
+    enabled: false,
+    initialPageParam: 1,
+    getNextPageParam: (_lastPage, pages) =>
+      pages.length < 2 ? pages.length + 1 : undefined,
+    queryFn: (context) => `remote-${context.pageParam}`,
+  })
+  const stopObserver = observer.subscribe(() => {})
+  await observer.refetch()
+  const writeSequence = cache.reserveSequence()
+  client.setQueryData(key, { pages: ['manual-1'], pageParams: [1] })
+  assert.equal(observer.getCurrentResult().dataSourceSequence, undefined)
+
+  const next = await observer.fetchNextPage()
+  assert.deepEqual(next.data?.pages, ['manual-1', 'remote-2'])
+  assert.ok(next.dataSourceSequence)
+  assert.ok(writeSequence < next.dataSourceSequence)
+  stopObserver()
+  client.clear()
+})
+
 // A multi-page refetch invokes the user queryFn more than once but belongs to
 // one accepted operation and one first source invocation.
 it('multi-page refetch keeps one source position across page calls', async () => {
@@ -1350,6 +1479,109 @@ it('retained queryFn wrapper does not attribute a second cache with the same seq
   secondClient.clear()
 })
 
+// Two Queries in one cache share a clock and can use the same query key with
+// different hash functions. A context rebuilt from the other Query without
+// fetchSequence cannot establish ownership of the paused Query's fetch.
+it('retained queryFn wrapper does not attribute another Query when its context omits fetchSequence', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['shared-key']
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let captured:
+    | ((context: QueryFunctionContext<typeof key>) => unknown)
+    | undefined
+  onlineManager.setOnline(false)
+
+  const first = client.fetchQuery({
+    queryKey: key,
+    queryKeyHashFn: () => 'paused-query-hash',
+    queryFn: () => 'first-remote',
+    behavior: {
+      onFetch: (context) => {
+        const queryFn = context.options.queryFn
+        assert.ok(typeof queryFn === 'function')
+        captured = queryFn
+      },
+    },
+  })
+  const firstResult = first.catch((error: unknown) => error)
+  const paused = cache.get('paused-query-hash')
+  assert.ok(paused)
+  assert.equal(paused.state.fetchStatus, 'paused')
+  assert.equal(paused.sourceSequence, undefined)
+
+  assert.equal(
+    await client.fetchQuery({
+      queryKey: key,
+      queryKeyHashFn: () => 'active-query-hash',
+      networkMode: 'always',
+      queryFn: (context) => {
+        assert.ok(captured)
+        assert.equal(context.queryKey, paused.queryKey)
+        return captured({
+          client: context.client,
+          queryKey: context.queryKey,
+          meta: context.meta,
+          signal: context.signal,
+        }) as string
+      },
+    }),
+    'first-remote',
+  )
+  assert.equal(paused.sourceSequence, undefined)
+  assert.equal(
+    events.some(
+      (event) => event.type === 'fetchSourceStarted' && event.query === paused,
+    ),
+    false,
+  )
+  await paused.cancel({ revert: true })
+  assert.ok(await firstResult)
+  stop()
+  client.clear()
+})
+
+// Custom behaviors may pass immutable QueryFunctionContext values. Recording
+// provenance must not prevent their query functions from running.
+it('custom behavior accepts a frozen query function context', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let frozenContext: QueryFunctionContext | undefined
+
+  assert.equal(
+    await client.fetchQuery({
+      queryKey: ['frozen-context'],
+      queryFn: () => 'remote',
+      behavior: {
+        onFetch: (context) => {
+          const queryFn = context.options.queryFn
+          assert.ok(typeof queryFn === 'function')
+          frozenContext = Object.freeze({
+            client: context.client,
+            queryKey: context.queryKey,
+            meta: context.options.meta,
+            signal: context.signal,
+            fetchSequence: context.fetchSequence,
+          })
+          context.fetchFn = () => queryFn(frozenContext!)
+        },
+      },
+    }),
+    'remote',
+  )
+  assert.ok(frozenContext)
+  assert.equal(frozenContext.sourceSequence, undefined)
+  assert.equal(
+    events.filter((event) => event.type === 'fetchSourceStarted').length,
+    1,
+  )
+  stop()
+  client.clear()
+})
+
 // A retained wrapper can be called after its fetch has settled. That call may
 // run the original function but must not add a source to the completed fetch.
 it('retained queryFn wrapper does not attribute a settled fetch', async () => {
@@ -1612,6 +1844,49 @@ it('persister cache hit has no source invocation position', async () => {
     events.some((event) => event.type === 'fetchSourceStarted'),
     false,
   )
+  stop()
+  client.clear()
+})
+
+// A persister may retain its supplied query function while returning a cached
+// value. Calling that function after settlement runs it outside the fetch, so
+// it cannot create a late source position for the completed operation.
+it('retained persister queryFn is inert after fetch settlement', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['retained-persister-queryFn']
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let invokeRetained:
+    | ((context: QueryFunctionContext<typeof key>) => unknown)
+    | undefined
+  let retainedContext: QueryFunctionContext<typeof key> | undefined
+
+  assert.equal(
+    await client.query({
+      queryKey: key,
+      queryFn: () => 'remote',
+      persister: (queryFn, context) => {
+        invokeRetained = (laterContext) => queryFn(laterContext)
+        retainedContext = context
+        return 'cached'
+      },
+    }),
+    'cached',
+  )
+  assert.ok(invokeRetained)
+  assert.ok(retainedContext)
+  const beforeLateCall = cache.currentSequence
+  assert.equal(invokeRetained(retainedContext), 'remote')
+  assert.equal(cache.currentSequence, beforeLateCall)
+  assert.equal(retainedContext.sourceSequence, undefined)
+  assert.equal(
+    events.some((event) => event.type === 'fetchSourceStarted'),
+    false,
+  )
+  const query = cache.find({ queryKey: key })
+  assert.ok(query)
+  assert.equal(query.dataSourceSequence, undefined)
   stop()
   client.clear()
 })

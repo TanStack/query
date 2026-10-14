@@ -981,7 +981,8 @@ export interface QueryObserverBaseResult<
   /**
    * First tracked query-function invocation in the fetch that supplied `data`, when Query Core
    * knows the path from function to result. Retries can make this earlier than the successful
-   * attempt. Opaque custom persisters and behaviors leave this undefined.
+   * attempt. Opaque custom persisters and behaviors leave this undefined. This bounds the
+   * operation, not each row or page of an infinite query result.
    */
   dataSourceSequence?: number
   /**

@@ -345,25 +345,25 @@ export class Query<
   }
 
   /**
-   * The promise for the currently in-flight fetch, if the query is fetching.
-   * `undefined` when the query is not fetching.
-   * @returns The promise of the in-flight fetch, or `undefined`.
+   * The installed retryer's promise while Query.fetch is settling.
+   * @returns The installed retryer's promise, or `undefined` if none is installed.
    */
   get promise(): Promise<TData> | undefined {
     return this.#retryer?.promise
   }
 
   /**
-   * Fetch installed on this Query. Check fetchStatus before treating it as active.
-   * @returns The installed fetch's sequence, when known.
+   * Most recent sequence reserved by Query.fetch. Behavior setup can fail
+   * before installing a retryer; check `promise` for an installed fetch.
+   * @returns The most recent fetch attempt's sequence, when known.
    */
   get fetchSequence(): number | undefined {
     return this.#fetchSequence
   }
 
   /**
-   * First tracked query-function invocation of the installed fetch, when known.
-   * @returns The installed fetch's source sequence, when known.
+   * First tracked query-function invocation of the most recent fetch attempt.
+   * @returns That attempt's source sequence, when known.
    */
   get sourceSequence(): number | undefined {
     return this.#sourceSequence
@@ -380,7 +380,8 @@ export class Query<
   /**
    * First tracked query-function invocation in the fetch that supplied cached data. Retries can
    * make this earlier than the successful attempt. This is unknown for an opaque custom persister
-   * or behavior, even if it invoked the query function.
+   * or behavior, even if it invoked the query function. This is an operation-level lower bound:
+   * infinite query pages can include earlier cached or directly written data.
    * @returns The cached data's earliest source sequence, when known.
    */
   get dataSourceSequence(): number | undefined {
@@ -869,10 +870,22 @@ export class Query<
     >()
     const belongsToThisFetch = (
       queryFnContext: QueryFunctionContext<TQueryKey>,
-    ) =>
-      !fetchRetired &&
-      queryFnContext.client === this.#client &&
-      (queryFnContext.fetchSequence ?? this.#fetchSequence) === fetchSequence
+    ) => {
+      if (fetchRetired || queryFnContext.client !== this.#client) return false
+      if (queryFnContext.fetchSequence !== undefined) {
+        return queryFnContext.fetchSequence === fetchSequence
+      }
+      // Older behaviors omit the optional sequence. Their original signal and
+      // query key identify this fetch without consuming an accessor signal.
+      const signal = Object.getOwnPropertyDescriptor(
+        queryFnContext,
+        'signal',
+      )?.value
+      return (
+        signal === abortController.signal &&
+        queryFnContext.queryKey === this.queryKey
+      )
+    }
     const behaviorOptions = new Proxy(this.options, {
       get(target, property, receiver): unknown {
         const value: unknown = Reflect.get(target, property, receiver)
@@ -887,7 +900,7 @@ export class Query<
               return queryFn(queryFnContext)
             }
             return invokeQueryFn(() => {
-              queryFnContext.sourceSequence = sourceSequence
+              Reflect.set(queryFnContext, 'sourceSequence', sourceSequence)
               return queryFn(queryFnContext)
             })
           }
@@ -930,11 +943,11 @@ export class Query<
 
       const queryFnContext = createQueryFnContext()
       const trackedQueryFn: typeof queryFn = (invocationContext) => {
-        if (!hasUserQueryFn) {
+        if (!hasUserQueryFn || !belongsToThisFetch(invocationContext)) {
           return queryFn(invocationContext)
         }
         return invokeQueryFn(() => {
-          invocationContext.sourceSequence = sourceSequence
+          Reflect.set(invocationContext, 'sourceSequence', sourceSequence)
           return queryFn(invocationContext)
         })
       }
@@ -1022,6 +1035,7 @@ export class Query<
         | undefined,
       fn: context.fetchFn as () => Promise<TData>,
       onCancel: (error) => {
+        fetchRetired = true
         if (error instanceof CancelledError && error.revert) {
           this.#dispatch(
             {
