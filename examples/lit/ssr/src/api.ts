@@ -1,4 +1,4 @@
-import type { CreateQueryOptions } from '@tanstack/lit-query'
+import { queryOptions } from '@tanstack/lit-query'
 
 export const DATA_QUERY_KEY = ['ssr-example-data'] as const
 export const DEFAULT_MESSAGE = 'Hello from SSR!'
@@ -49,7 +49,7 @@ async function readJson<TResponse>(response: Response): Promise<TResponse> {
 }
 
 export function createDataQueryOptions(apiBaseUrl = '') {
-  return {
+  return queryOptions({
     queryKey: [...DATA_QUERY_KEY, apiBaseUrl] as const,
     queryFn: async ({ signal }) => {
       const response = await fetch(resolveApiUrl('/api/data', apiBaseUrl), {
@@ -59,11 +59,5 @@ export function createDataQueryOptions(apiBaseUrl = '') {
     },
     retry: false,
     staleTime: QUERY_STALE_TIME,
-  } satisfies CreateQueryOptions<
-    DataResponse,
-    Error,
-    DataResponse,
-    DataResponse,
-    readonly [...typeof DATA_QUERY_KEY, string]
-  >
+  })
 }
