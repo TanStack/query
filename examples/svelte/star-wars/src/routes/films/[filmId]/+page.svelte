@@ -2,11 +2,13 @@
   import { createQuery } from '@tanstack/svelte-query'
   import Character from './Character.svelte'
   import { getFilm } from '$lib/api'
-  import { page } from '$app/state'
+  import type { PageProps } from './$types'
+
+  let { params }: PageProps = $props()
 
   const query = createQuery(() => ({
-    queryKey: ['film', page.params.filmId],
-    queryFn: () => getFilm(page.params.filmId),
+    queryKey: ['film', params.filmId],
+    queryFn: () => getFilm(params.filmId),
   }))
 </script>
 
