@@ -11,15 +11,38 @@ Angular 20.1 or newer is required by the stable package. Upgrade Angular first i
 application is on an older version. Save your work and confirm the application builds before
 running the migration.
 
-## Run the migration schematic
+## Active codebase recommendations
 
 Before migrating an active codebase, it is recommended that you:
 
 - Block imports of the removed `provideQueryClient` in favor of `provideTanStackQuery`.
 - Create a `provideTestTanStackQuery` helper or a `createTestQueryClient` factory to pass to `provideTanStackQuery`, so new tests use a shared provider setup.
-- If you migrate imports gradually, prepare temporary import rewrites or aliases to keep old imports
-  working or let new `@tanstack/angular-query` imports resolve to `@tanstack/angular-query-experimental`.
-  Remove these aliases when switching to the stable package.
+
+Use ESLint's [`no-restricted-imports`](https://eslint.org/docs/latest/rules/no-restricted-imports)
+to restrict experimental package imports while new code adopts `@tanstack/angular-query`.
+Suppress existing imports with [ESLint suppressions](https://eslint.org/docs/latest/use/suppressions)
+or a [rule-specific disable comment](https://eslint.org/docs/latest/use/configure/rules#using-configuration-comments-1),
+and remove each suppression as its import is migrated.
+
+For a gradual import migration, a package-manager alias can let new imports use the experimental
+adapter before you switch packages. For example, with pnpm:
+
+```json
+{
+  "dependencies": {
+    "@tanstack/angular-query": "npm:@tanstack/angular-query-experimental@5.90.25",
+    "@tanstack/angular-query-experimental": "5.90.25"
+  }
+}
+```
+
+Keep both names on the same resolved version and peer dependency configuration, and verify they
+resolve to the same adapter instance. The alias still exposes the experimental API; it does not
+make the stable provider signatures available. Leave devtools and `inject-queries-experimental`
+imports on their original experimental paths until the package switch so the schematic can
+recognize them. Replace the alias with the real stable package before running the schematic.
+
+## Run the migration schematic
 
 Install the stable package, then preview the bundled migration:
 
@@ -34,6 +57,9 @@ ng generate @tanstack/angular-query:migrate-from-experimental
 nx g @tanstack/angular-query:migrate-from-experimental --skipInstall
 ```
 
+With `--skipInstall`, run your package manager's install command after applying the migration
+to synchronize the dependencies and lockfile.
+
 The schematic handles common migration steps like updating package and devtools imports,
 updating dependencies, renaming providers, and converting direct `new QueryClient()` provider
 arguments to factories. Review its warnings and the remaining sections for changes that require
@@ -47,7 +73,10 @@ Two additional migrations are opt-in:
   and removes direct core dependencies. Dependencies are kept when unmigrated references remain.
 
 The schematic also discovers `project.json` and `package.json` `nx` configurations.
-Projects configured entirely through inferred plugin settings may need manual review.
+It checks project-local `tsconfig.spec.json` and `tsconfig.test.json` for manually configured
+test runners, unless a test target supplies an explicit `tsConfig`. Configured includes and
+exclusions determine which files are migrated. Projects configured entirely through inferred
+plugin settings may need manual review.
 
 ## Replace the experimental package
 
@@ -241,13 +270,18 @@ See the [SSR guide](./ssr.md) for request-scoped client setup and the interactio
 Observed queries, parallel queries, and mutations started through the adapter register with Angular's `PendingTasks`.
 As a result, `ApplicationRef.whenStable()` and `fixture.whenStable()` wait until that work settles.
 
-This can change existing tests that expected `whenStable()` to resolve while a request was still in
-progress. Make sure mocked requests and mutations resolve or reject before awaiting stability. When
-using fake timers, advance the timers and queued microtasks before awaiting `whenStable()`. Disabled
-queries do not start fetching automatically; a manual refetch still registers pending work.
+In zone-based component tests, call `fixture.autoDetectChanges()` before awaiting stability.
+Resolve controlled operations before `whenStable()`; assert pending state while they remain
+unresolved. HTTP mutations can start asynchronously, so wait for the request itself before flushing
+it. `isPending()` does not prove that a mocked API has been called.
 
-See [Testing](./testing.md) for query, mutation, `HttpClientTestingController`, and fake-timer
-examples.
+With fake timers, advance timers and queued microtasks before awaiting stability. Disabled queries
+do not fetch automatically; a manual refetch still registers pending work.
+See [Testing](./testing.md) for query, mutation, HTTP, and fake-timer examples.
+
+After a query-key signal changes, `data()` can immediately return cached data for the new key,
+before another change-detection pass. Assert the state the test intends to observe rather than
+requiring an empty intermediate value.
 
 ## Error handling
 

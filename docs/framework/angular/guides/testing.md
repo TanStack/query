@@ -75,6 +75,13 @@ await fixture.whenStable()
 expect(fixture.componentInstance.query.data()).toEqual({ value: 42 })
 ```
 
+In zone-based tests, enable `fixture.autoDetectChanges()` so component effects can run again
+as the query settles. Zoneless fixtures enable automatic detection by default.
+
+When using Angular Testing Library, its `autoDetectChanges` option runs change detection around
+library operations; it does not call `fixture.autoDetectChanges()`. Enable the fixture's automatic
+detection explicitly when awaiting stability in a zone-based component test.
+
 ## Handling retries
 
 Retries slow failing tests because the default backoff runs three times. Set `retry: false` (or a specific number) through `defaultOptions` or per query to keep tests fast. If a query intentionally retries, assert on the final state rather than intermediate counts.
@@ -111,8 +118,34 @@ expect(query.data()).toEqual([{ id: 1 }])
 httpCtrl.verify()
 ```
 
+Mutations can start their HTTP request asynchronously, after their `onMutate` callbacks finish.
+Wait for the request itself before flushing it. This Vitest example uses `vi.waitFor`:
+
+```ts
+const http = TestBed.inject(HttpClient)
+const mutation = TestBed.runInInjectionContext(() =>
+  injectMutation(() => ({
+    mutationFn: (input: { email: string }) =>
+      lastValueFrom(http.post('/api/reset', input)),
+  })),
+)
+
+TestBed.tick()
+mutation.mutate({ email: 'person@example.com' })
+
+const request = await vi.waitFor(() => httpCtrl.expectOne('/api/reset'))
+request.flush({ ok: true })
+await TestBed.inject(ApplicationRef).whenStable()
+
+expect(mutation.isSuccess()).toBe(true)
+httpCtrl.verify()
+```
+
+Do not await stability before flushing a request controlled by the test: the unanswered request
+keeps the query or mutation stuck on pending.
+
 Test observable results after normal Angular initialization and updates. For components, render
-with `fixture.detectChanges()` and await `fixture.whenStable()` when the operation should finish.
+with `fixture.autoDetectChanges()` and await `fixture.whenStable()` when the operation should finish.
 For injection-context-only tests, synchronize the test application as shown above. When using
 HTTP mocks or fake timers, flush the request or advance time before awaiting stability.
 
@@ -176,5 +209,5 @@ does not finish a request. Queries paused offline also keep stability open until
 - Disable or control retries to avoid timeouts
 - Advance timers + microtasks before `whenStable()` when using fake timers
 - Use `provideHttpClientTesting` or your preferred mock to assert network calls
-- Await `whenStable()` after every `refetch`, `fetchNextPage`, or mutation
+- Resolve controlled requests, then await `whenStable()` for settled-state assertions
 - Prefer `TestBed.runInInjectionContext` for service tests and `fixture.whenStable()` for component tests
