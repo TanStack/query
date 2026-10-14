@@ -883,20 +883,27 @@ export class Query<
     const belongsToThisFetch = (
       queryFnContext: QueryFunctionContext<TQueryKey>,
     ) => {
-      if (fetchRetired || queryFnContext.client !== this.#client) return false
-      if (queryFnContext.fetchSequence !== undefined) {
-        return queryFnContext.fetchSequence === fetchSequence
+      if (fetchRetired) return false
+      try {
+        if (queryFnContext.client !== this.#client) return false
+        const contextFetchSequence = queryFnContext.fetchSequence
+        if (contextFetchSequence !== undefined) {
+          return contextFetchSequence === fetchSequence
+        }
+        // Older behaviors omit the optional sequence. Their original signal
+        // and query key identify this fetch without consuming an accessor.
+        const signal = Object.getOwnPropertyDescriptor(
+          queryFnContext,
+          'signal',
+        )?.value
+        return (
+          signal === abortController.signal &&
+          queryFnContext.queryKey === this.queryKey
+        )
+      } catch {
+        // Attribution is unknown if a Proxy rejects optional inspection.
+        return false
       }
-      // Older behaviors omit the optional sequence. Their original signal and
-      // query key identify this fetch without consuming an accessor signal.
-      const signal = Object.getOwnPropertyDescriptor(
-        queryFnContext,
-        'signal',
-      )?.value
-      return (
-        signal === abortController.signal &&
-        queryFnContext.queryKey === this.queryKey
-      )
     }
     const behaviorOptions = new Proxy(this.options, {
       get(target, property, receiver): unknown {

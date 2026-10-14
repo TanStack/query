@@ -799,6 +799,63 @@ it('recursive fetches keep accepted and source order separate', async () => {
   client.clear()
 })
 
+// A query function can replace its own fetch before its source notification
+// runs. The event must carry the old operation's retryer promise even though
+// Query.promise now points at the replacement.
+it('reentrant source event keeps its own fetch promise', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const cache = client.getQueryCache()
+  const key = ['reentrant-source-promise']
+  client.setQueryData(key, 'seed')
+  const query = cache.find<string>({ queryKey: key })
+  assert.ok(query)
+  const firstSource = deferred<string>()
+  const replacementSource = deferred<string>()
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let firstSequence: number | undefined
+  let firstPromise: Promise<string> | undefined
+  let replacement: Promise<string> | undefined
+
+  const first = query.fetch({
+    queryKey: key,
+    queryFn: (context) => {
+      firstSequence = context.fetchSequence
+      firstPromise = query.promise
+      replacement = query.fetch(
+        { queryKey: key, queryFn: () => replacementSource.promise },
+        { cancelRefetch: true },
+      )
+      return firstSource.promise
+    },
+  })
+  const firstEvent = events.find(
+    (
+      event,
+    ): event is Extract<
+      QueryCacheNotifyEvent,
+      { type: 'fetchSourceStarted' }
+    > =>
+      event.type === 'fetchSourceStarted' &&
+      event.fetchSequence === firstSequence,
+  )
+  assert.ok(firstPromise)
+  assert.ok(firstEvent)
+  assert.notEqual(query.promise, firstPromise)
+  assert.equal(firstEvent.promise, firstPromise)
+  await assert.rejects(firstPromise, CancelledError)
+
+  replacementSource.resolve('replacement')
+  assert.ok(replacement)
+  assert.equal(await replacement, 'replacement')
+  assert.equal(await first, 'replacement')
+  firstSource.resolve('ignored')
+  stop()
+  client.clear()
+})
+
 // An observer callback can reenter Query Core before the cache listener sees
 // the fetched action. That cache event must retain its own state snapshot.
 it('fetched event keeps its data version under a same-reference reentrant write', async () => {
@@ -1626,6 +1683,71 @@ it('custom behavior accepts a read-only proxy query function context', async () 
   assert.equal(
     events.filter((event) => event.type === 'fetchSourceStarted').length,
     1,
+  )
+  stop()
+  client.clear()
+})
+
+// Optional attribution fields can be inaccessible on an otherwise usable
+// Proxy context. Inspection failure means unknown provenance, not query failure.
+it('custom behavior runs queryFn when proxy attribution fields throw on inspection', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let queryFnCalls = 0
+
+  for (const inaccessible of ['fetchSequence', 'signalDescriptor'] as const) {
+    assert.equal(
+      await client.fetchQuery({
+        queryKey: ['inaccessible-context', inaccessible],
+        queryFn: () => {
+          queryFnCalls++
+          return 'remote'
+        },
+        behavior: {
+          onFetch: (context) => {
+            const queryFn = context.options.queryFn
+            assert.ok(typeof queryFn === 'function')
+            const proxyContext = new Proxy(
+              {
+                client: context.client,
+                queryKey: context.queryKey,
+                meta: context.options.meta,
+                signal: context.signal,
+              },
+              {
+                get: (target, property, receiver) => {
+                  if (
+                    inaccessible === 'fetchSequence' &&
+                    property === 'fetchSequence'
+                  ) {
+                    throw new TypeError('sequence unavailable')
+                  }
+                  return Reflect.get(target, property, receiver)
+                },
+                getOwnPropertyDescriptor: (target, property) => {
+                  if (
+                    inaccessible === 'signalDescriptor' &&
+                    property === 'signal'
+                  ) {
+                    throw new TypeError('signal descriptor unavailable')
+                  }
+                  return Reflect.getOwnPropertyDescriptor(target, property)
+                },
+              },
+            )
+            context.fetchFn = () => queryFn(proxyContext)
+          },
+        },
+      }),
+      'remote',
+    )
+  }
+  assert.equal(queryFnCalls, 2)
+  assert.equal(
+    events.some((event) => event.type === 'fetchSourceStarted'),
+    false,
   )
   stop()
   client.clear()
