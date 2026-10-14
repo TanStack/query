@@ -64,18 +64,20 @@ interface NotifyEventQueryUpdated extends NotifyEvent {
   sourceSequence?: number
 }
 
+/** An installed fetch entered its fetching lifecycle. */
 interface NotifyEventQueryFetchStarted extends NotifyEvent {
   type: 'fetchStarted'
   query: Query<any, any, any, any>
   fetchSequence: number
 }
 
+/** A tracked query function ran. Setup failure can emit this without fetchStarted. */
 interface NotifyEventQueryFetchSourceStarted extends NotifyEvent {
   type: 'fetchSourceStarted'
   query: Query<any, any, any, any>
   fetchSequence: number
   sourceSequence: number
-  /** The installed retryer's promise, which settles or rejects with this fetch. */
+  /** The retryer's promise, or a rejected setup-failure promise when no retryer was installed. */
   promise: Promise<unknown>
 }
 

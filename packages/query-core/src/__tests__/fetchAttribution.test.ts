@@ -15,6 +15,10 @@ import type {
 } from '..'
 
 type UpdatedEvent = Extract<QueryCacheNotifyEvent, { type: 'updated' }>
+type SourceEvent = Extract<
+  QueryCacheNotifyEvent,
+  { type: 'fetchSourceStarted' }
+>
 type SuccessEvent = UpdatedEvent & {
   action: Extract<UpdatedEvent['action'], { type: 'success' }>
 }
@@ -752,7 +756,9 @@ it('retry retains positions across an intervening write', async () => {
     },
   })
   const start = events.find((event) => event.type === 'fetchStarted')
-  const source = events.find((event) => event.type === 'fetchSourceStarted')
+  const sources = events.filter((event) => event.type === 'fetchSourceStarted')
+  assert.equal(sources.length, 1)
+  const source = sources[0]!
   const success = findSuccess(events, false)
   assert.ok(start)
   assert.ok(source)
@@ -1453,6 +1459,51 @@ it('multi-page refetch keeps one source position across page calls', async () =>
   client.clear()
 })
 
+// A behavior may supply a receiver when invoking queryFn. Tracking its
+// invocation must keep that receiver and the function's result.
+it('custom behavior queryFn call preserves its receiver', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['behavior-query-fn-receiver']
+  const owner = { value: 'remote' }
+  let functionSourceSequence: number | undefined
+  const queryFn: QueryFunction<string, typeof key> = function (
+    this: typeof owner,
+    context,
+  ) {
+    functionSourceSequence = context.sourceSequence
+    return this.value
+  }
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+
+  assert.equal(
+    await client.fetchQuery({
+      queryKey: key,
+      queryFn,
+      behavior: {
+        onFetch: (context) => {
+          const tracked = context.options.queryFn
+          assert.ok(typeof tracked === 'function')
+          context.fetchFn = () =>
+            tracked.call(owner, {
+              client: context.client,
+              queryKey: context.queryKey,
+              meta: context.options.meta,
+              signal: context.signal,
+            })
+        },
+      },
+    }),
+    owner.value,
+  )
+  const source = events.find((event) => event.type === 'fetchSourceStarted')
+  assert.ok(source)
+  assert.equal(source.sourceSequence, functionSourceSequence)
+  stop()
+  client.clear()
+})
+
 // A public behavior may replace fetchFn and invoke context.options.queryFn
 // itself. The invocation is observed, but the replacement controls the result.
 it('custom behavior records queryFn invocation without claiming data source', async () => {
@@ -1600,6 +1651,54 @@ it('custom behavior attributes queryFn from an accessor descriptor', async () =>
   assert.ok(source)
   assert.equal(functionSourceSequence, source.sourceSequence)
   stop()
+  client.clear()
+})
+
+// Unrelated option writes cannot make a stable queryFn accessor appear to
+// change identity during the same behavior setup.
+it('custom behavior keeps a stable queryFn descriptor getter identity', async () => {
+  const client = new QueryClient()
+  const key = ['stable-query-fn-getter']
+  const queryFn: QueryFunction<string, typeof key> = () => 'remote'
+
+  assert.equal(
+    await client.fetchQuery({
+      queryKey: key,
+      queryFn,
+      behavior: {
+        onFetch: (context) => {
+          Object.defineProperty(context.options, 'queryFn', {
+            get: () => queryFn,
+            configurable: true,
+            enumerable: true,
+          })
+          const first = Object.getOwnPropertyDescriptor(
+            context.options,
+            'queryFn',
+          )?.get
+          context.options.meta = { changed: true }
+          const second = Object.getOwnPropertyDescriptor(
+            context.options,
+            'queryFn',
+          )?.get
+          assert.ok(first)
+          assert.equal(second, first)
+          const tracked = first.call(context.options) as QueryFunction<
+            string,
+            typeof key
+          >
+          context.fetchFn = () =>
+            tracked({
+              client: context.client,
+              queryKey: context.queryKey,
+              meta: context.options.meta,
+              signal: context.signal,
+            })
+        },
+      },
+    }),
+    'remote',
+  )
   client.clear()
 })
 
@@ -2608,14 +2707,16 @@ it('eager custom behavior records queryFn invocation', async () => {
 
   const pending = observer.refetch()
   const query = cache.find({ queryKey: key })
-  const start = events.find((event) => event.type === 'fetchStarted')
+  const starts = events.filter((event) => event.type === 'fetchStarted')
   const sources = events.filter((event) => event.type === 'fetchSourceStarted')
   assert.ok(query)
-  assert.ok(start)
+  assert.equal(starts.length, 1)
+  const start = starts[0]!
   assert.equal(sources.length, 1)
   const source = sources[0]!
   assert.equal(source.fetchSequence, start.fetchSequence)
   assert.equal(source.sourceSequence, functionSourceSequence)
+  assert.equal(query.sourceSequence, source.sourceSequence)
   assert.ok(writeSequence)
   assert.ok(source.sourceSequence < writeSequence)
   assert.ok(events.indexOf(start) < events.indexOf(source))
@@ -2629,6 +2730,166 @@ it('eager custom behavior records queryFn invocation', async () => {
   assert.equal(success.sourceSequence, undefined)
   assert.equal(query.state.fetchStatus, 'idle')
   stopObserver()
+  stop()
+  client.clear()
+})
+
+// A behavior can invoke queryFn and then fail before a retryer is installed.
+// The invocation still has a source position, and its source event settles
+// with the setup failure so listeners can release dependent work.
+it('eager queryFn invocation reports its source when behavior setup throws', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let invocations = 0
+  let functionSourceSequence: number | undefined
+  let functionSignal: AbortSignal | undefined
+  const failure = new Error('behavior setup failed')
+
+  const failedFetch = client.fetchQuery({
+    queryKey: ['eager-then-throw'],
+    queryFn: (context) => {
+      invocations++
+      functionSourceSequence = context.sourceSequence
+      functionSignal = context.signal
+      return 'remote'
+    },
+    behavior: {
+      onFetch: (context) => {
+        const queryFn = context.options.queryFn
+        assert.ok(typeof queryFn === 'function')
+        queryFn({
+          client: context.client,
+          queryKey: context.queryKey,
+          meta: context.options.meta,
+          signal: context.signal,
+        })
+        throw failure
+      },
+    },
+  })
+  assert.equal(
+    await failedFetch.then(
+      () => undefined,
+      (error: unknown) => error,
+    ),
+    failure,
+  )
+  assert.equal(invocations, 1)
+  assert.equal(functionSignal?.aborted, true)
+  assert.equal(
+    events.filter((event) => event.type === 'fetchStarted').length,
+    0,
+  )
+  const sources = events.filter((event) => event.type === 'fetchSourceStarted')
+  assert.equal(sources.length, 1)
+  assert.equal(sources[0]!.sourceSequence, functionSourceSequence)
+  assert.equal(
+    await sources[0]!.promise.then(
+      () => undefined,
+      (error: unknown) => error,
+    ),
+    failure,
+  )
+  const query = cache.find({ queryKey: ['eager-then-throw'] })
+  assert.ok(query)
+  assert.equal(query.sourceSequence, sources[0]!.sourceSequence)
+  assert.equal(query.promise, undefined)
+  stop()
+  client.clear()
+})
+
+// Aborting a failed setup can synchronously start another fetch on the same
+// Query. The earlier source event keeps its own positions and rejected promise
+// even when the later fetch installs a retryer before that event is delivered.
+it('eager setup failure keeps source attribution through abort reentry', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['eager-throw-abort-reentry']
+  const failure = new Error('outer setup failed')
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let outerFetchSequence: number | undefined
+  let outerSourceSequence: number | undefined
+  let innerSourceSequence: number | undefined
+  let nested: Promise<unknown> | undefined
+  let signal: AbortSignal | undefined
+  const query = cache.build(client, {
+    queryKey: key,
+    queryFn: (context) => {
+      outerSourceSequence = context.sourceSequence
+      return 'outer'
+    },
+    behavior: {
+      onFetch: (context, currentQuery) => {
+        outerFetchSequence = context.fetchSequence
+        signal = context.signal
+        signal.addEventListener(
+          'abort',
+          () => {
+            nested = currentQuery.fetch({
+              queryKey: key,
+              queryFn: (innerContext) => {
+                innerSourceSequence = innerContext.sourceSequence
+                return 'inner'
+              },
+            })
+          },
+          { once: true },
+        )
+        const queryFn = context.options.queryFn
+        assert.ok(typeof queryFn === 'function')
+        queryFn({
+          client: context.client,
+          queryKey: context.queryKey,
+          meta: context.options.meta,
+          signal,
+        })
+        throw failure
+      },
+    },
+  })
+
+  assert.equal(
+    await query.fetch().then(
+      () => undefined,
+      (error: unknown) => error,
+    ),
+    failure,
+  )
+  assert.equal(signal?.aborted, true)
+  assert.ok(nested)
+  assert.equal(await nested, 'inner')
+  const sources = events.filter(
+    (event): event is SourceEvent => event.type === 'fetchSourceStarted',
+  )
+  assert.equal(sources.length, 2)
+  const outerSource = sources.find(
+    (event) => event.fetchSequence === outerFetchSequence,
+  )
+  const innerSource = sources.find(
+    (event) => event.fetchSequence !== outerFetchSequence,
+  )
+  const starts = events.filter((event) => event.type === 'fetchStarted')
+  assert.ok(outerSource)
+  assert.ok(innerSource)
+  assert.equal(starts.length, 1)
+  assert.equal(starts[0]!.fetchSequence, innerSource.fetchSequence)
+  assert.equal(outerSource.sourceSequence, outerSourceSequence)
+  assert.equal(innerSource.sourceSequence, innerSourceSequence)
+  assert.ok(outerSource.sourceSequence < innerSource.sourceSequence)
+  assert.ok(events.indexOf(innerSource) < events.indexOf(outerSource))
+  assert.equal(query.fetchSequence, innerSource.fetchSequence)
+  assert.equal(query.sourceSequence, innerSource.sourceSequence)
+  assert.equal(
+    await outerSource.promise.then(
+      () => undefined,
+      (error: unknown) => error,
+    ),
+    failure,
+  )
+  assert.equal(await innerSource.promise, 'inner')
   stop()
   client.clear()
 })

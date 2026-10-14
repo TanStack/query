@@ -836,15 +836,16 @@ export class Query<
       })
     }
 
-    let sourceEventPending = false
+    const sourceEvent = { pending: false }
     let fetchRetired = false
     const retireFetch = () => {
       fetchRetired = true
     }
     let resultProvenanceUnknown = false
-    const notifySourceStarted = () => {
-      if (!retryer) {
-        sourceEventPending = true
+    const notifySourceStarted = (setupFailure?: Promise<never>) => {
+      const promise = setupFailure ?? retryer?.promise
+      if (!promise) {
+        sourceEvent.pending = true
         return
       }
       this.#cache.notify({
@@ -852,7 +853,7 @@ export class Query<
         query: this,
         fetchSequence,
         sourceSequence: sourceSequence!,
-        promise: retryer.promise,
+        promise,
       })
     }
     const invokeQueryFn = <T>(invoke: () => T): T => {
@@ -889,6 +890,10 @@ export class Query<
       QueryFunction<TQueryFnData, TQueryKey>,
       QueryFunction<TQueryFnData, TQueryKey>
     >()
+    const trackedBehaviorQueryFnGetters = new WeakMap<
+      NonNullable<PropertyDescriptor['get']>,
+      NonNullable<PropertyDescriptor['get']>
+    >()
     const originalBehaviorQueryFns = this.#originalBehaviorQueryFns
     const originalBehaviorQueryFnGetters = this.#originalBehaviorQueryFnGetters
     const belongsToThisFetch = (
@@ -920,13 +925,15 @@ export class Query<
         ) ?? (value as QueryFunction<TQueryFnData, TQueryKey>)
       let trackedQueryFn = trackedBehaviorQueryFns.get(queryFn)
       if (!trackedQueryFn) {
-        trackedQueryFn = (queryFnContext) => {
+        trackedQueryFn = function (this: unknown, queryFnContext) {
+          const callQueryFn = () =>
+            Reflect.apply(queryFn, this, [queryFnContext])
           if (!belongsToThisFetch(queryFnContext)) {
-            return queryFn(queryFnContext)
+            return callQueryFn()
           }
           return invokeQueryFn(() => {
             stampSourceSequence(queryFnContext)
-            return queryFn(queryFnContext)
+            return callQueryFn()
           })
         }
         trackedBehaviorQueryFns.set(queryFn, trackedQueryFn)
@@ -980,10 +987,14 @@ export class Query<
         if (descriptor.get) {
           const originalGet =
             originalBehaviorQueryFnGetters.get(descriptor.get) ?? descriptor.get
-          const trackedGet = function (this: unknown) {
-            return trackBehaviorQueryFn(Reflect.apply(originalGet, this, []))
+          let trackedGet = trackedBehaviorQueryFnGetters.get(originalGet)
+          if (!trackedGet) {
+            trackedGet = function (this: unknown) {
+              return trackBehaviorQueryFn(Reflect.apply(originalGet, this, []))
+            }
+            trackedBehaviorQueryFnGetters.set(originalGet, trackedGet)
+            originalBehaviorQueryFnGetters.set(trackedGet, originalGet)
           }
-          originalBehaviorQueryFnGetters.set(trackedGet, originalGet)
           return {
             ...descriptor,
             get: trackedGet,
@@ -1099,6 +1110,17 @@ export class Query<
       behavior?.onFetch(context, this as unknown as Query)
     } catch (error) {
       retireFetch()
+      if (sourceEvent.pending && this.#fetchSequence === fetchSequence) {
+        this.#sourceSequence = sourceSequence
+      }
+      abortController.abort()
+      if (sourceEvent.pending) {
+        // The function ran, but setup failed before an installed fetch could
+        // emit fetchStarted. Its source event settles with the setup failure.
+        const setupFailure = Promise.reject(error)
+        void setupFailure.catch(() => {})
+        notifySourceStarted(setupFailure)
+      }
       throw error
     }
     resultProvenanceUnknown ||= isCoreInfiniteBehavior
@@ -1186,7 +1208,7 @@ export class Query<
     if (!dispatchFetch) notifyFetchStarted()
     // A behavior can invoke the query function before the retryer exists.
     // oxlint-disable-next-line typescript/no-unnecessary-condition -- the behavior hook may update this captured variable
-    if (sourceEventPending) notifySourceStarted()
+    if (sourceEvent.pending) notifySourceStarted()
 
     try {
       const data = await retryer.start()
