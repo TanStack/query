@@ -3024,18 +3024,20 @@ it.each([
     const events: Array<QueryCacheNotifyEvent> = []
     const stop = cache.subscribe((event) => events.push(event))
 
-    await assert.rejects(
-      query.fetch({
-        queryKey: key,
-        queryFn: () => 'remote',
-        behavior: {
-          onFetch: () => {
-            throw new CancelledError(options)
-          },
+    const fetch = query.fetch({
+      queryKey: key,
+      queryFn: () => 'remote',
+      behavior: {
+        onFetch: () => {
+          throw new CancelledError(options)
         },
-      }),
-      CancelledError,
-    )
+      },
+    })
+    if (kind === 'revert') {
+      assert.equal(await fetch, 'seed')
+    } else {
+      await assert.rejects(fetch, CancelledError)
+    }
 
     assert.equal(query.state.data, 'seed')
     assert.equal(query.state.status, 'success')
@@ -3052,6 +3054,126 @@ it.each([
     client.clear()
   },
 )
+
+// Replacing an active fetch cancels its retryer before the new behavior runs.
+// If setup then cancels, no retryer remains to settle the fetching state.
+// Revert returns the restored data under Query.fetch's promise contract.
+it.each(['silent', 'revert'] as const)(
+  'behavior setup %s cancellation settles an active fetch replacement',
+  async (kind) => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    })
+    const cache = client.getQueryCache()
+    const key = ['replacement-setup-cancel', kind]
+    client.setQueryData(key, 'seed')
+    const query = cache.find<string>({ queryKey: key })
+    assert.ok(query)
+    const first = query.fetch({
+      queryKey: key,
+      queryFn: () => new Promise<string>(() => {}),
+    })
+    const firstSettled = first.catch(() => {})
+    assert.equal(query.state.fetchStatus, 'fetching')
+
+    const replacement = query.fetch(
+      {
+        queryKey: key,
+        queryFn: () => 'new',
+        behavior: {
+          onFetch: () => {
+            throw new CancelledError({
+              silent: kind === 'silent',
+              revert: kind === 'revert',
+            })
+          },
+        },
+      },
+      { cancelRefetch: true },
+    )
+
+    if (kind === 'revert') {
+      assert.equal(await replacement, 'seed')
+    } else {
+      await assert.rejects(replacement, CancelledError)
+    }
+    await firstSettled
+    assert.equal(query.state.fetchStatus, 'idle')
+    assert.equal(query.state.data, 'seed')
+    assert.equal(query.state.status, 'success')
+    client.clear()
+  },
+)
+
+// Silent cancellation makes the old fetch follow the attempt that caused it.
+// A setup failure belongs to that direct replacement even though it never
+// installs a retryer.
+it('silently cancelled fetch adopts its replacement setup failure', async () => {
+  const client = new QueryClient()
+  const key = ['replacement-setup-failure-adoption']
+  const failure = new Error('replacement setup failed')
+  client.setQueryData(key, 'seed')
+  const query = client.getQueryCache().find<string>({ queryKey: key })
+  assert.ok(query)
+  const first = query.fetch({
+    queryKey: key,
+    queryFn: () => new Promise<string>(() => {}),
+  })
+  const replacement = query.fetch(
+    {
+      queryKey: key,
+      queryFn: () => 'unused',
+      behavior: {
+        onFetch: () => {
+          throw failure
+        },
+      },
+    },
+    { cancelRefetch: true },
+  )
+
+  await assert.rejects(replacement, (error) => error === failure)
+  await assert.rejects(first, (error) => error === failure)
+  client.clear()
+})
+
+// Reentry can start a third fetch during the replacement's setup. The first
+// promise still follows the attempt that directly cancelled it.
+it('silently cancelled fetch follows its direct replacement through nested setup', async () => {
+  const client = new QueryClient()
+  const key = ['nested-replacement-adoption']
+  const failure = new Error('direct replacement failed')
+  client.setQueryData(key, 'seed')
+  const query = client.getQueryCache().find<string>({ queryKey: key })
+  assert.ok(query)
+  const first = query.fetch({
+    queryKey: key,
+    queryFn: () => new Promise<string>(() => {}),
+  })
+  let nested!: Promise<string>
+  const replacement = query.fetch(
+    {
+      queryKey: key,
+      queryFn: () => 'unused',
+      behavior: {
+        onFetch: () => {
+          nested = query.fetch(
+            { queryKey: key, queryFn: () => 'nested' },
+            { cancelRefetch: true },
+          )
+          throw failure
+        },
+      },
+    },
+    { cancelRefetch: true },
+  )
+
+  await assert.rejects(replacement, (error) => error === failure)
+  assert.equal(await nested, 'nested')
+  await assert.rejects(first, (error) => error === failure)
+  assert.equal(query.state.data, 'nested')
+  client.clear()
+})
 
 // Without a silent or revert instruction, CancelledError follows the same
 // failure path as it does after the retryer starts.
@@ -3364,36 +3486,50 @@ it('eager setup failure keeps source attribution through abort reentry', async (
   client.clear()
 })
 
-// Reset is a later public state action. Whether a failed setup's signal or
-// source event causes the reset, its terminal error cannot overwrite it.
-it.each(['abort', 'source event'] as const)(
-  'reset during failed setup %s keeps the reset state',
-  async (resetAt) => {
+// Invalidation only marks cached data stale, so a failed setup still reports
+// its error. Reset replaces the Query state and supersedes the setup failure,
+// even when a later invalidation obscures the final state shape.
+it.each([
+  ['abort', 'reset', 'eager'],
+  ['source event', 'reset', 'eager'],
+  ['abort', 'invalidate', 'eager'],
+  ['source event', 'invalidate', 'eager'],
+  ['abort', 'reset then invalidate', 'eager'],
+  ['source event', 'reset then invalidate', 'eager'],
+  ['abort', 'reset', 'none'],
+  ['abort', 'invalidate', 'none'],
+] as const)(
+  '%s during failed setup applies %s with %s source',
+  async (actionAt, action, sourceKind) => {
     const client = new QueryClient()
     const cache = client.getQueryCache()
-    const key = ['setup-failure-reset', resetAt]
+    const key = ['setup-failure-reentry', actionAt, action, sourceKind]
     const failure = new Error('setup failed')
     const events: Array<QueryCacheNotifyEvent> = []
+    const applyAction = () => {
+      if (action !== 'invalidate') query.reset()
+      if (action !== 'reset') query.invalidate()
+    }
     const query = cache.build(client, {
       queryKey: key,
-      queryFn: (context) => {
-        if (resetAt === 'abort') {
-          context.signal.addEventListener('abort', () => query.reset(), {
-            once: true,
-          })
-        }
-        return 'source'
-      },
+      queryFn: () => 'source',
       behavior: {
         onFetch: (context) => {
-          const queryFn = context.options.queryFn
-          assert.ok(typeof queryFn === 'function')
-          queryFn({
-            client: context.client,
-            queryKey: context.queryKey,
-            meta: context.options.meta,
-            signal: context.signal,
-          })
+          if (actionAt === 'abort') {
+            context.signal.addEventListener('abort', applyAction, {
+              once: true,
+            })
+          }
+          if (sourceKind === 'eager') {
+            const queryFn = context.options.queryFn
+            assert.ok(typeof queryFn === 'function')
+            queryFn({
+              client: context.client,
+              queryKey: context.queryKey,
+              meta: context.options.meta,
+              signal: context.signal,
+            })
+          }
           throw failure
         },
       },
@@ -3401,11 +3537,11 @@ it.each(['abort', 'source event'] as const)(
     const stop = cache.subscribe((event) => {
       events.push(event)
       if (
-        resetAt === 'source event' &&
+        actionAt === 'source event' &&
         event.type === 'fetchSourceStarted' &&
         event.query === query
       ) {
-        query.reset()
+        applyAction()
       }
     })
 
@@ -3418,19 +3554,161 @@ it.each(['abort', 'source event'] as const)(
     )
     assert.equal(
       events.filter((event) => event.type === 'fetchSourceStarted').length,
-      1,
+      sourceKind === 'eager' ? 1 : 0,
     )
-    assert.equal(query.state.status, 'pending')
+    const wasReset = action !== 'invalidate'
+    assert.equal(query.state.status, wasReset ? 'pending' : 'error')
     assert.equal(query.state.fetchStatus, 'idle')
-    assert.equal(query.state.error, null)
+    assert.equal(query.state.error, wasReset ? null : failure)
+    assert.equal(query.state.isInvalidated, action !== 'reset')
     const actions = events
       .filter((event) => event.type === 'updated')
       .map((event) => event.action.type)
-    assert.equal(actions.at(-1), 'setState')
+    assert.equal(
+      actions.at(-1),
+      wasReset ? (action === 'reset' ? 'setState' : 'invalidate') : 'error',
+    )
     stop()
     client.clear()
   },
 )
+
+// A state snapshot can change cached data during a fetch. A later failure
+// retains that data and settles the fetch as an installed retryer would.
+it('state snapshot write during failed setup retains data and reports the error', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['setup-failure-state-write']
+  const failure = new Error('setup failed')
+  const query = cache.build(client, {
+    queryKey: key,
+    queryFn: () => 'source',
+    behavior: {
+      onFetch: (context) => {
+        const queryFn = context.options.queryFn
+        assert.ok(typeof queryFn === 'function')
+        queryFn({
+          client: context.client,
+          queryKey: context.queryKey,
+          meta: context.options.meta,
+          signal: context.signal,
+        })
+        throw failure
+      },
+    },
+  })
+  const stop = cache.subscribe((event) => {
+    if (event.type === 'fetchSourceStarted' && event.query === query) {
+      query.setState({
+        data: 'manual',
+        status: 'success',
+        fetchStatus: 'fetching',
+      })
+    }
+  })
+
+  await assert.rejects(query.fetch(), (error) => error === failure)
+  assert.equal(query.state.data, 'manual')
+  assert.equal(query.state.status, 'error')
+  assert.equal(query.state.fetchStatus, 'idle')
+  assert.equal(query.state.error, failure)
+  stop()
+  client.clear()
+})
+
+// A manual cache write during an active fetch keeps its data when the fetch
+// fails. The failed replacement must still settle the fetching state and
+// report its error, just as an installed fetch does after a manual write.
+it.each(['onFetch', 'source event'] as const)(
+  'manual cache write from %s during failed replacement setup retains data and settles the fetch',
+  async (writeAt) => {
+    const callbacks: Array<string> = []
+    const cache = new QueryCache({
+      onError: () => callbacks.push('error'),
+      onSettled: () => callbacks.push('settled'),
+    })
+    const client = new QueryClient({ queryCache: cache })
+    const key = ['setup-failure-manual-write', writeAt]
+    const failure = new Error('replacement setup failed')
+    client.setQueryData(key, 'seed')
+    const query = cache.find<string>({ queryKey: key })
+    assert.ok(query)
+    const first = query.fetch({
+      queryKey: key,
+      queryFn: () => new Promise<string>(() => {}),
+    })
+    const firstSettled = first.catch(() => {})
+    const stop = cache.subscribe((event) => {
+      if (
+        writeAt === 'source event' &&
+        event.type === 'fetchSourceStarted' &&
+        event.query === query
+      ) {
+        client.setQueryData(key, 'manual')
+      }
+    })
+
+    const replacement = query.fetch(
+      {
+        queryKey: key,
+        queryFn: () => 'unused',
+        behavior: {
+          onFetch: (context) => {
+            if (writeAt === 'onFetch') {
+              client.setQueryData(key, 'manual')
+            } else {
+              const queryFn = context.options.queryFn
+              assert.ok(typeof queryFn === 'function')
+              queryFn({
+                client: context.client,
+                queryKey: context.queryKey,
+                meta: context.options.meta,
+                signal: context.signal,
+              })
+            }
+            throw failure
+          },
+        },
+      },
+      { cancelRefetch: true },
+    )
+
+    await assert.rejects(replacement, (error) => error === failure)
+    await firstSettled
+    assert.equal(query.state.data, 'manual')
+    assert.equal(query.state.error, failure)
+    assert.equal(query.state.status, 'error')
+    assert.equal(query.state.fetchStatus, 'idle')
+    assert.equal(query.promise, undefined)
+    assert.deepEqual(callbacks, ['error', 'settled'])
+    stop()
+    client.clear()
+  },
+)
+
+// A patch to unrelated state does not retire an active fetch. Its setup
+// failure still reports a terminal error while preserving the patch.
+it('partial state patch during failed setup does not suppress the error', async () => {
+  const client = new QueryClient()
+  const failure = new Error('setup failed')
+  const query = client.getQueryCache().build(client, {
+    queryKey: ['setup-failure-partial-patch'],
+    queryFn: () => 'unused',
+    behavior: {
+      onFetch: () => {
+        query.setState({ isInvalidated: true })
+        throw failure
+      },
+    },
+  })
+
+  await assert.rejects(query.fetch(), (error) => error === failure)
+  assert.equal(query.state.isInvalidated, true)
+  assert.equal(query.state.status, 'error')
+  assert.equal(query.state.error, failure)
+  assert.equal(query.state.fetchStatus, 'idle')
+  client.clear()
+})
 
 // Removing a Query from its cache during the source notification retires the
 // object. A setup failure cannot publish a later state update on that object.
@@ -3483,6 +3761,89 @@ it('removed Query gets no terminal update after failed setup source event', asyn
     ).length,
     0,
   )
+  stop()
+  client.clear()
+})
+
+// Removal frees the key and announces the old Query before cancellation can
+// start a replacement. Consumers that replay events by key then see the old
+// removal before the replacement's addition.
+it('fetchCancelled reentry during removal retains the replacement Query', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const cache = client.getQueryCache()
+  const key = ['remove-cancel-reentry']
+  client.setQueryData(key, 'seed')
+  const oldQuery = cache.find<string>({ queryKey: key })
+  assert.ok(oldQuery)
+  const oldFetch = oldQuery.fetch({
+    queryKey: key,
+    queryFn: () => new Promise<string>(() => {}),
+  })
+  const oldSettled = oldFetch.catch(() => {})
+  let replacement: Promise<string> | undefined
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => {
+    events.push(event)
+    if (event.type === 'fetchCancelled' && event.query === oldQuery) {
+      replacement = client.fetchQuery({
+        queryKey: key,
+        queryFn: () => 'new',
+      })
+    }
+  })
+
+  cache.remove(oldQuery)
+  assert.ok(replacement)
+  assert.equal(await replacement, 'new')
+  await oldSettled
+  const newQuery = cache.find<string>({ queryKey: key })
+  assert.ok(newQuery)
+  assert.notEqual(newQuery, oldQuery)
+  assert.equal(newQuery.state.data, 'new')
+  const removedIndex = events.findIndex(
+    (event) => event.type === 'removed' && event.query === oldQuery,
+  )
+  const addedIndex = events.findIndex(
+    (event) => event.type === 'added' && event.query === newQuery,
+  )
+  assert.ok(removedIndex >= 0 && addedIndex > removedIndex)
+  stop()
+  client.clear()
+})
+
+// A removal listener can throw while the cache announces removal. The old
+// Query still has to be destroyed so its transport is not left running.
+it('removed listener failure still aborts the removed Query', () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['removed-listener-failure']
+  const failure = new Error('subscriber failed')
+  client.setQueryData(key, 'seed')
+  const query = cache.find<string>({ queryKey: key })
+  assert.ok(query)
+  let signal: AbortSignal | undefined
+  const fetch = query.fetch({
+    queryKey: key,
+    queryFn: (context) => {
+      signal = context.signal
+      return new Promise<string>(() => {})
+    },
+  })
+  void fetch.catch(() => {})
+  assert.ok(signal)
+  assert.equal(signal.aborted, false)
+  const stop = cache.subscribe((event) => {
+    if (event.type === 'removed' && event.query === query) throw failure
+  })
+
+  assert.throws(
+    () => cache.remove(query),
+    (error) => error === failure,
+  )
+  assert.equal(cache.get(query.queryHash), undefined)
+  assert.equal(signal.aborted, true)
   stop()
   client.clear()
 })

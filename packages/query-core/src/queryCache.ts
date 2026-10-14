@@ -64,7 +64,11 @@ interface NotifyEventQueryUpdated extends NotifyEvent {
   sourceSequence?: number
 }
 
-/** An installed fetch entered its fetching lifecycle. */
+/**
+ * A fetch passed behavior setup. When the fetch reducer action fires this
+ * event, the new retryer is not installed yet; `query.promise` refers to any
+ * earlier retryer or is undefined.
+ */
 interface NotifyEventQueryFetchStarted extends NotifyEvent {
   type: 'fetchStarted'
   query: Query<any, any, any, any>
@@ -291,9 +295,14 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     const queryInMap = this.#queries.get(query.queryHash)
 
     if (queryInMap === query) {
-      query.destroy()
       this.#queries.delete(query.queryHash)
-      this.notify({ type: 'removed', query })
+      // Announce removal before cancellation can create a same-key query.
+      // Consumers that replay events by key must remove the old query first.
+      try {
+        this.notify({ type: 'removed', query })
+      } finally {
+        query.destroy()
+      }
     }
   }
 

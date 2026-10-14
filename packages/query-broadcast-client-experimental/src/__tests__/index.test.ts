@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, QueryObserver } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { broadcastQueryClient } from '..'
@@ -8,6 +8,7 @@ import type { QueryCache } from '@tanstack/query-core'
 const mockPostMessage = vi.fn().mockResolvedValue(undefined)
 const mockClose = vi.fn()
 let lastCreatedChannel: { onmessage: ((action: any) => void) | null }
+const createdChannels: Array<{ onmessage: ((action: any) => void) | null }> = []
 
 vi.mock('broadcast-channel', async (importOriginal) => {
   const actual = await importOriginal()
@@ -19,6 +20,7 @@ vi.mock('broadcast-channel', async (importOriginal) => {
       close = mockClose
       constructor() {
         lastCreatedChannel = this
+        createdChannels.push(this)
       }
     },
   }
@@ -31,6 +33,7 @@ describe('broadcastQueryClient', () => {
   beforeEach(() => {
     queryClient = new QueryClient()
     queryCache = queryClient.getQueryCache()
+    createdChannels.length = 0
     mockPostMessage.mockResolvedValue(undefined)
     mockClose.mockReset()
   })
@@ -50,6 +53,60 @@ describe('broadcastQueryClient', () => {
     })
     unsubscribe()
     expect(queryCache.hasListeners()).toBe(false)
+  })
+
+  // A removal cancellation listener may create a new Query with the same
+  // key. Broadcast recipients replay by hash, so they must see the old
+  // removal before the replacement addition.
+  it('keeps a same-key replacement on another client after removal reentry', () => {
+    const otherClient = new QueryClient()
+    const key = ['broadcast-removal-reentry']
+    queryClient.setQueryData(key, 'seed')
+    const oldQuery = queryCache.find<string>({ queryKey: key })
+    expect(oldQuery).toBeDefined()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'unused',
+      enabled: false,
+    })
+    const stopObserver = observer.subscribe(() => {})
+    const oldFetch = oldQuery!.fetch({
+      queryKey: key,
+      queryFn: () => new Promise<string>(() => {}),
+    })
+    void oldFetch.catch(() => {})
+    const stopFirst = broadcastQueryClient({ queryClient })
+    const stopOther = broadcastQueryClient({ queryClient: otherClient })
+    const stopReplacement = queryCache.subscribe((event) => {
+      if (event.type === 'fetchCancelled' && event.query === oldQuery) {
+        void queryClient
+          .query({
+            queryKey: key,
+            queryFn: () => new Promise<string>(() => {}),
+          })
+          .catch(() => {})
+      }
+    })
+    mockPostMessage.mockClear()
+
+    queryCache.remove(oldQuery!)
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    const messages = mockPostMessage.mock.calls.map(([message]) => message)
+    for (const message of messages) {
+      createdChannels[1]?.onmessage?.(message)
+    }
+    expect(otherClient.getQueryCache().find({ queryKey: key })).toBeDefined()
+    expect(messages.map((message) => message.type)).toEqual([
+      'removed',
+      'added',
+    ])
+
+    stopReplacement()
+    stopFirst()
+    stopOther()
+    stopObserver()
+    queryClient.clear()
+    otherClient.clear()
   })
 
   describe('incoming message handling', () => {

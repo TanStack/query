@@ -304,10 +304,12 @@ export class Query<
   #cache: QueryCache
   #client: QueryClient
   #retryer?: Retryer<TData>
+  #replacementFetches = new WeakMap<Retryer<TData>, Promise<TData>>()
   #fetchSequence?: number
   #sourceSequence?: number
   #dataFetchSequence?: number
   #dataSourceSequence?: number
+  #resetVersion = 0
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #activeSignalConsumption?: { consumed: boolean }
@@ -530,6 +532,7 @@ export class Query<
    * in-flight fetch.
    */
   reset(): void {
+    this.#resetVersion++
     this.destroy()
     this.setState(this.resetState)
   }
@@ -773,28 +776,35 @@ export class Query<
    * fetch is cancelled with `revert` while the query has data, it resolves with the restored data
    * instead.
    */
-  async fetch(
+  fetch(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     fetchOptions?: FetchOptions<TQueryFnData>,
   ): Promise<TData> {
     if (
       this.state.fetchStatus !== 'idle' &&
-      // If the promise in the retryer is already rejected, we have to definitely
-      // re-start the fetch; there is a chance that the query is still in a
-      // pending state when that happens
+      // A rejected retryer may still leave the Query pending until its
+      // settlement callback runs. Start a fresh attempt in that case.
       this.#retryer?.status() !== 'rejected'
     ) {
+      const retryer = this.#retryer
       if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
-        // Silently cancel current fetch if the user wants to cancel refetch
         this.cancel({ silent: true })
-      } else if (this.#retryer) {
-        // make sure that retries that were potentially cancelled due to unmounts can continue
-        this.#retryer.continueRetry()
-        // Return current promise if we are already fetching
-        return this.#retryer.promise
+        const replacement = this.#fetch(options, fetchOptions)
+        if (retryer) this.#replacementFetches.set(retryer, replacement)
+        return replacement
+      }
+      if (retryer) {
+        retryer.continueRetry()
+        return retryer.promise
       }
     }
+    return this.#fetch(options, fetchOptions)
+  }
 
+  async #fetch(
+    options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    fetchOptions?: FetchOptions<TQueryFnData>,
+  ): Promise<TData> {
     // Update config if passed, otherwise the config from the last execution is used
     if (options) {
       this.setOptions(options)
@@ -1109,11 +1119,12 @@ export class Query<
           (this.options as { pages?: number }).pages,
         ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>)
       : this.options.behavior
+    const setupResetVersion = this.#resetVersion
     try {
       behavior?.onFetch(context, this as unknown as Query)
     } catch (error) {
       retireFetch()
-      const stateBeforeCallbacks = this.state
+      const cancellation = error instanceof CancelledError ? error : undefined
       // The behavior may have discarded eager queryFn promises. Observe each
       // one before aborting its signal, which can reject it synchronously.
       for (const result of eagerResults) {
@@ -1128,27 +1139,40 @@ export class Query<
         notifySourceStarted(setupFailure)
       }
       if (
-        !(error instanceof CancelledError && (error.silent || error.revert)) &&
         this.#fetchSequence === fetchSequence &&
-        this.state === stateBeforeCallbacks &&
         this.#cache.get<TQueryFnData, TError, TData, TQueryKey>(
           this.queryHash,
         ) === this
       ) {
-        this.#dispatch(
-          { type: 'error', error: error as TError },
-          fetchSequence,
-          sourceSequence,
-        )
-        this.#cache.config.onError?.(
-          error as any,
-          this as Query<any, any, any, any>,
-        )
-        this.#cache.config.onSettled?.(
-          this.state.data,
-          error as any,
-          this as Query<any, any, any, any>,
-        )
+        if (this.#resetVersion === setupResetVersion) {
+          if (cancellation?.silent || cancellation?.revert) {
+            if (this.state.fetchStatus !== 'idle') {
+              this.#dispatch(
+                { type: 'setState', state: { fetchStatus: 'idle' } },
+                fetchSequence,
+                sourceSequence,
+              )
+            }
+          } else {
+            this.#dispatch(
+              { type: 'error', error: error as TError },
+              fetchSequence,
+              sourceSequence,
+            )
+            this.#cache.config.onError?.(
+              error as any,
+              this as Query<any, any, any, any>,
+            )
+            this.#cache.config.onSettled?.(
+              this.state.data,
+              error as any,
+              this as Query<any, any, any, any>,
+            )
+          }
+        }
+      }
+      if (cancellation?.revert && this.state.data !== undefined) {
+        return this.state.data
       }
       throw error
     }
@@ -1266,9 +1290,12 @@ export class Query<
       retireFetch()
       if (error instanceof CancelledError) {
         if (error.silent) {
-          // silent cancellation implies a new fetch is going to be started,
-          // so we piggyback onto that promise
-          return this.#retryer.promise
+          // Follow the attempt that directly caused this cancellation. It
+          // may fail during setup without installing a retryer, or start a
+          // third fetch before this cancelled attempt settles.
+          const replacement = this.#replacementFetches.get(retryer)
+          if (replacement) return replacement
+          throw error
         } else if (error.revert) {
           // transform error into reverted state data
           // if the initial fetch was cancelled, we have no data, so we have
@@ -1280,10 +1307,7 @@ export class Query<
         }
       }
       this.#dispatch(
-        {
-          type: 'error',
-          error: error as TError,
-        },
+        { type: 'error', error: error as TError },
         fetchSequence,
         sourceSequence,
       )
