@@ -1704,6 +1704,12 @@ importers:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@eslint-react/eslint-plugin':
+        specifier: ^5.21.0
+        version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.104.2
+        version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.14
