@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths'
   import { createQuery } from '@tanstack/svelte-query'
   import { postQueryOptions } from './queries'
 
@@ -9,7 +10,7 @@
 
 <div>
   <div>
-    <a class="button" href="/"> Back </a>
+    <a class="button" href={resolve('/')}> Back </a>
   </div>
   {#if !postId || post.isPending}
     <span>Loading...</span>

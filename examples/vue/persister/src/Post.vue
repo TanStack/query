@@ -1,10 +1,10 @@
 <script lang="ts">
-import { get, set, del, entries } from 'idb-keyval'
+import { del, entries, get, set } from 'idb-keyval'
 import { defineComponent } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 
-import { Post } from './types'
 import { experimental_createQueryPersister } from '@tanstack/query-persist-client-core'
+import type { Post } from './types'
 
 const fetcher = async (id: number): Promise<Post> =>
   await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(
