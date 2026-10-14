@@ -128,6 +128,54 @@ it('accepted fetch precedes a reentrant cache-listener write', async () => {
   client.clear()
 })
 
+// Observers run before the cache's updated event for a fetch. Either callback
+// can admit a direct write after the fetch has reserved its position.
+it('accepted fetch precedes observer and cache-listener writes', async () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const cache = client.getQueryCache()
+  const key = ['write-in-observer']
+  client.setQueryData(key, 'seed')
+  let observerWriteSequence: number | undefined
+  let cacheWriteSequence: number | undefined
+  const observer = new QueryObserver(client, {
+    queryKey: key,
+    enabled: false,
+    queryFn: () => 'remote',
+  })
+  const stopObserver = observer.subscribe((result) => {
+    if (result.isFetching && observerWriteSequence === undefined) {
+      observerWriteSequence = cache.reserveSequence()
+      client.setQueryData(key, 'observer-local')
+    }
+  })
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stopCache = cache.subscribe((event) => {
+    events.push(event)
+    if (
+      event.type === 'updated' &&
+      event.action.type === 'fetch' &&
+      cacheWriteSequence === undefined
+    ) {
+      cacheWriteSequence = cache.reserveSequence()
+      client.setQueryData(key, 'cache-local')
+    }
+  })
+
+  assert.equal((await observer.refetch()).data, 'remote')
+  const start = events.find((event) => event.type === 'fetchStarted')
+  assert.ok(start)
+  assert.ok(observerWriteSequence)
+  assert.ok(cacheWriteSequence)
+  assert.ok(start.fetchSequence < observerWriteSequence)
+  assert.ok(observerWriteSequence < cacheWriteSequence)
+  assert.equal(observer.getCurrentResult().data, 'remote')
+  stopCache()
+  stopObserver()
+  client.clear()
+})
+
 // A Collection may attach after the fetch and its source invocation started.
 // The installed Query exposes both positions without replaying cache events.
 it('late attachment can read the installed fetch and source positions', async () => {
