@@ -1,9 +1,9 @@
-import { useParams, Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getCharacter, getFilm, getPlanet } from './api'
 
 export default function Character() {
-  let params = useParams()
+  const params = useParams()
   const characterId = params.characterId!
 
   const { status, data } = useQuery({

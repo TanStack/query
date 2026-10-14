@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src"
   },
   "dependencies": {
     "@tanstack/query-async-storage-persister": "^5.104.2",
@@ -19,6 +20,8 @@
     "react-hot-toast": "^2.6.1"
   },
   "devDependencies": {
+    "@eslint-react/eslint-plugin": "^5.21.0",
+    "@tanstack/eslint-plugin-query": "^5.104.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.1.1",

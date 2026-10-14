@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:eslint": "svelte-kit sync && eslint ./src"
   },
   "dependencies": {
     "@tanstack/svelte-query": "^6.3.2",
@@ -15,6 +16,9 @@
     "@sveltejs/adapter-auto": "^7.0.1",
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@tanstack/eslint-plugin-query": "^5.104.2",
+    "@typescript-eslint/parser": "^8.71.1",
+    "eslint-plugin-svelte": "^3.23.0",
     "svelte": "^5.57.1",
     "svelte-check": "^4.7.6",
     "typescript": "5.8.3",
