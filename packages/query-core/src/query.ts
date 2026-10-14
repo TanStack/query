@@ -362,6 +362,8 @@ export class Query<
   /**
    * Most recent sequence reserved by Query.fetch. Behavior setup can fail
    * before installing a retryer; check `promise` for an installed fetch.
+   * Reentry can leave an earlier attempt's retryer installed after a later
+   * attempt reserved this position.
    * @returns The most recent fetch attempt's sequence, when known.
    */
   get fetchSequence(): number | undefined {
@@ -821,6 +823,7 @@ export class Query<
     let sourceSequence: number | undefined
     const abortController = new AbortController()
     let retryer: Retryer<TData> | undefined
+    const eagerResults: Array<unknown> = []
     const signalConsumption = { consumed: false }
 
     // Sharing one getter lets a behavior forward the fetch's own signal
@@ -856,32 +859,32 @@ export class Query<
         promise,
       })
     }
+    const stampSourceSequence = (target: object): void => {
+      try {
+        Reflect.set(target, 'sourceSequence', sourceSequence)
+      } catch {
+        // A read-only context or Proxy can reject optional metadata.
+      }
+    }
     const invokeQueryFn = <T>(invoke: () => T): T => {
       const firstInvocation = sourceSequence === undefined
       if (firstInvocation) {
         sourceSequence = this.#cache.reserveSequence()
-        context.sourceSequence = sourceSequence
-        if (retryer && this.#retryer === retryer) {
+        stampSourceSequence(context)
+        if (this.#fetchSequence === fetchSequence) {
           this.#sourceSequence = sourceSequence
         }
       }
       try {
-        return invoke()
+        const result = invoke()
+        if (!retryer) eagerResults.push(result)
+        return result
       } finally {
         if (firstInvocation) {
           // User code can write synchronously. The clock was advanced before
           // calling it, even when reentry delays this notification.
           notifySourceStarted()
         }
-      }
-    }
-    const stampSourceSequence = (
-      queryFnContext: QueryFunctionContext<TQueryKey>,
-    ): void => {
-      try {
-        Reflect.set(queryFnContext, 'sourceSequence', sourceSequence)
-      } catch {
-        // A read-only Proxy can reject this optional context metadata.
       }
     }
     // A behavior can mutate context.options before the default fetchFn reads
@@ -1110,8 +1113,11 @@ export class Query<
       behavior?.onFetch(context, this as unknown as Query)
     } catch (error) {
       retireFetch()
-      if (sourceEvent.pending && this.#fetchSequence === fetchSequence) {
-        this.#sourceSequence = sourceSequence
+      const stateBeforeCallbacks = this.state
+      // The behavior may have discarded eager queryFn promises. Observe each
+      // one before aborting its signal, which can reject it synchronously.
+      for (const result of eagerResults) {
+        void Promise.resolve(result).catch(() => {})
       }
       abortController.abort()
       if (sourceEvent.pending) {
@@ -1120,6 +1126,29 @@ export class Query<
         const setupFailure = Promise.reject(error)
         void setupFailure.catch(() => {})
         notifySourceStarted(setupFailure)
+      }
+      if (
+        !(error instanceof CancelledError && (error.silent || error.revert)) &&
+        this.#fetchSequence === fetchSequence &&
+        this.state === stateBeforeCallbacks &&
+        this.#cache.get<TQueryFnData, TError, TData, TQueryKey>(
+          this.queryHash,
+        ) === this
+      ) {
+        this.#dispatch(
+          { type: 'error', error: error as TError },
+          fetchSequence,
+          sourceSequence,
+        )
+        this.#cache.config.onError?.(
+          error as any,
+          this as Query<any, any, any, any>,
+        )
+        this.#cache.config.onSettled?.(
+          this.state.data,
+          error as any,
+          this as Query<any, any, any, any>,
+        )
       }
       throw error
     }
@@ -1198,11 +1227,6 @@ export class Query<
     // Subscribe before user code can see the retryer promise. A persister's
     // continuation must not add a source after the result has settled.
     void retryer.promise.then(retireFetch, retireFetch)
-    // Observer reentry during the fetch notification may have installed a
-    // nested retryer. The operation installed above now owns this Query.
-    this.#fetchSequence = fetchSequence
-    this.#sourceSequence = sourceSequence
-
     // A same-meta replacement has no fetch reducer action but still has a
     // distinct accepted position before its query function starts.
     if (!dispatchFetch) notifyFetchStarted()

@@ -4,6 +4,7 @@ import { afterEach, it } from 'vitest'
 import {
   CancelledError,
   InfiniteQueryObserver,
+  QueryCache,
   QueryClient,
   QueryObserver,
   onlineManager,
@@ -21,6 +22,9 @@ type SourceEvent = Extract<
 >
 type SuccessEvent = UpdatedEvent & {
   action: Extract<UpdatedEvent['action'], { type: 'success' }>
+}
+type ErrorEvent = UpdatedEvent & {
+  action: Extract<UpdatedEvent['action'], { type: 'error' }>
 }
 
 function findSuccess(
@@ -819,8 +823,8 @@ it('recursive fetches keep accepted and source order separate', async () => {
   assert.ok(sources[0]!.sourceSequence < sources[1]!.sourceSequence)
   assert.equal(sources[0]!.fetchSequence, starts[1]!.fetchSequence)
   assert.equal(sources[1]!.fetchSequence, starts[0]!.fetchSequence)
-  assert.equal(query.fetchSequence, starts[0]!.fetchSequence)
-  assert.equal(query.sourceSequence, sources[1]!.sourceSequence)
+  assert.equal(query.fetchSequence, starts[1]!.fetchSequence)
+  assert.equal(query.sourceSequence, sources[0]!.sourceSequence)
   firstSource.resolve('B')
   assert.ok(nested)
   assert.equal(await nested, 'B')
@@ -1647,8 +1651,9 @@ it('custom behavior attributes queryFn from an accessor descriptor', async () =>
     }),
     'remote',
   )
-  const source = events.find((event) => event.type === 'fetchSourceStarted')
-  assert.ok(source)
+  const sources = events.filter((event) => event.type === 'fetchSourceStarted')
+  assert.equal(sources.length, 1)
+  const source = sources[0]!
   assert.equal(functionSourceSequence, source.sourceSequence)
   stop()
   client.clear()
@@ -1658,7 +1663,10 @@ it('custom behavior attributes queryFn from an accessor descriptor', async () =>
 // change identity during the same behavior setup.
 it('custom behavior keeps a stable queryFn descriptor getter identity', async () => {
   const client = new QueryClient()
+  const cache = client.getQueryCache()
   const key = ['stable-query-fn-getter']
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
   const queryFn: QueryFunction<string, typeof key> = () => 'remote'
 
   assert.equal(
@@ -1699,6 +1707,11 @@ it('custom behavior keeps a stable queryFn descriptor getter identity', async ()
     }),
     'remote',
   )
+  assert.equal(
+    events.filter((event) => event.type === 'fetchSourceStarted').length,
+    1,
+  )
+  stop()
   client.clear()
 })
 
@@ -2734,6 +2747,143 @@ it('eager custom behavior records queryFn invocation', async () => {
   client.clear()
 })
 
+// A source position is reserved before user queryFn runs. Reading the Query
+// during an eager behavior invocation must expose the same position as its
+// query-function context, even though no retryer has been installed yet.
+it('eager queryFn exposes its source position during invocation', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['eager-query-source-read']
+  let contextSourceSequence: number | undefined
+  let querySourceSequence: number | undefined
+  const query = cache.build(client, {
+    queryKey: key,
+    queryFn: (context) => {
+      contextSourceSequence = context.sourceSequence
+      querySourceSequence = query.sourceSequence
+      return 'remote'
+    },
+    behavior: {
+      onFetch: (context) => {
+        const queryFn = context.options.queryFn
+        assert.ok(typeof queryFn === 'function')
+        queryFn({
+          client: context.client,
+          queryKey: context.queryKey,
+          meta: context.options.meta,
+          signal: context.signal,
+        })
+        context.fetchFn = () => Promise.resolve('remote')
+      },
+    },
+  })
+
+  assert.equal(await query.fetch(), 'remote')
+  assert.ok(contextSourceSequence)
+  assert.equal(querySourceSequence, contextSourceSequence)
+  assert.equal(query.sourceSequence, contextSourceSequence)
+  client.clear()
+})
+
+// A behavior may freeze its setup context before invoking queryFn. The
+// optional context metadata write cannot prevent the source from running.
+it('eager queryFn runs when behavior freezes its fetch context', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['frozen-eager-fetch-context']
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let calls = 0
+  let functionSourceSequence: number | undefined
+  const query = cache.build(client, {
+    queryKey: key,
+    queryFn: (context) => {
+      calls++
+      functionSourceSequence = context.sourceSequence
+      return 'remote'
+    },
+    behavior: {
+      onFetch: (context) => {
+        context.fetchFn = () => Promise.resolve('remote')
+        Object.freeze(context)
+        const queryFn = context.options.queryFn
+        assert.ok(typeof queryFn === 'function')
+        queryFn({
+          client: context.client,
+          queryKey: context.queryKey,
+          meta: context.options.meta,
+          signal: context.signal,
+        })
+      },
+    },
+  })
+
+  assert.equal(await query.fetch(), 'remote')
+  assert.equal(calls, 1)
+  const sources = events.filter((event) => event.type === 'fetchSourceStarted')
+  assert.equal(sources.length, 1)
+  assert.equal(sources[0]!.sourceSequence, functionSourceSequence)
+  assert.equal(query.sourceSequence, functionSourceSequence)
+  stop()
+  client.clear()
+})
+
+// A nested fetch can reserve a later attempt while the outer behavior is
+// still setting up. Query getters describe the latest reserved attempt, so
+// installing the outer retryer cannot move those positions backward.
+it('eager nested fetch keeps the latest Query positions', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['eager-nested-query-positions']
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  let nested: Promise<string> | undefined
+  let nestedSourceSequence: number | undefined
+  const query = cache.build(client, {
+    queryKey: key,
+    queryFn: () => {
+      nested = query.fetch({
+        queryKey: key,
+        queryFn: (context) => {
+          nestedSourceSequence = context.sourceSequence
+          return 'inner'
+        },
+      })
+      return 'outer'
+    },
+    behavior: {
+      onFetch: (context) => {
+        const queryFn = context.options.queryFn
+        assert.ok(typeof queryFn === 'function')
+        queryFn({
+          client: context.client,
+          queryKey: context.queryKey,
+          meta: context.options.meta,
+          signal: context.signal,
+        })
+        context.fetchFn = () => Promise.resolve('outer')
+      },
+    },
+  })
+
+  const outer = query.fetch()
+  assert.ok(nested)
+  const starts = events.filter((event) => event.type === 'fetchStarted')
+  const sources = events.filter((event) => event.type === 'fetchSourceStarted')
+  assert.equal(starts.length, 2)
+  assert.equal(sources.length, 2)
+  const latest = Math.max(...starts.map((event) => event.fetchSequence))
+  assert.equal(query.fetchSequence, latest)
+  assert.equal(
+    query.sourceSequence,
+    sources.find((event) => event.fetchSequence === latest)?.sourceSequence,
+  )
+  assert.equal(query.sourceSequence, nestedSourceSequence)
+  assert.deepEqual(await Promise.all([outer, nested]), ['outer', 'inner'])
+  stop()
+  client.clear()
+})
+
 // A behavior can invoke queryFn and then fail before a retryer is installed.
 // The invocation still has a source position, and its source event settles
 // with the setup failure so listeners can release dependent work.
@@ -2796,9 +2946,320 @@ it('eager queryFn invocation reports its source when behavior setup throws', asy
   assert.ok(query)
   assert.equal(query.sourceSequence, sources[0]!.sourceSequence)
   assert.equal(query.promise, undefined)
+  assert.equal(query.state.fetchStatus, 'idle')
+  assert.equal(query.state.error, failure)
   stop()
   client.clear()
 })
+
+// A behavior may discard eager queryFn promises before its setup throws. The
+// setup failure aborts those requests, so Query Core must observe their
+// rejections before aborting while still rejecting the fetch with setup error.
+it('failed behavior setup handles every abandoned eager queryFn rejection', async () => {
+  const client = new QueryClient()
+  const setupError = new Error('behavior setup failed')
+  const providerErrors = [
+    new Error('first provider aborted'),
+    new Error('second provider aborted'),
+  ]
+  let invocations = 0
+
+  const fetch = client.fetchQuery({
+    queryKey: ['abandoned-eager-promises'],
+    queryFn: ({ signal }) => {
+      const error = providerErrors[invocations++]!
+      return new Promise<string>((_resolve, reject) => {
+        signal.addEventListener('abort', () => reject(error), { once: true })
+      })
+    },
+    behavior: {
+      onFetch: (context) => {
+        const queryFn = context.options.queryFn
+        assert.ok(typeof queryFn === 'function')
+        const invoke = () =>
+          queryFn({
+            client: context.client,
+            queryKey: context.queryKey,
+            meta: context.options.meta,
+            signal: context.signal,
+          })
+        invoke()
+        invoke()
+        throw setupError
+      },
+    },
+  })
+
+  assert.equal(
+    await fetch.then(
+      () => undefined,
+      (error: unknown) => error,
+    ),
+    setupError,
+  )
+  assert.equal(invocations, providerErrors.length)
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  client.clear()
+})
+
+// A behavior can cancel before Query.fetch installs a retryer. Silent and
+// revert cancellations preserve the prior state and do not report a fetch
+// failure through QueryCache callbacks.
+it.each([
+  ['silent', { silent: true }],
+  ['revert', { revert: true }],
+] as const)(
+  'behavior setup %s cancellation preserves prior state',
+  async (kind, options) => {
+    const callbacks: Array<string> = []
+    const cache = new QueryCache({
+      onError: () => callbacks.push('error'),
+      onSettled: () => callbacks.push('settled'),
+    })
+    const client = new QueryClient({ queryCache: cache })
+    const key = ['setup-cancel', kind]
+    client.setQueryData(key, 'seed')
+    const query = cache.find<string>({ queryKey: key })
+    assert.ok(query)
+    const events: Array<QueryCacheNotifyEvent> = []
+    const stop = cache.subscribe((event) => events.push(event))
+
+    await assert.rejects(
+      query.fetch({
+        queryKey: key,
+        queryFn: () => 'remote',
+        behavior: {
+          onFetch: () => {
+            throw new CancelledError(options)
+          },
+        },
+      }),
+      CancelledError,
+    )
+
+    assert.equal(query.state.data, 'seed')
+    assert.equal(query.state.status, 'success')
+    assert.equal(query.state.fetchStatus, 'idle')
+    assert.equal(query.state.error, null)
+    assert.deepEqual(callbacks, [])
+    assert.equal(
+      events.some(
+        (event) => event.type === 'updated' && event.action.type === 'error',
+      ),
+      false,
+    )
+    stop()
+    client.clear()
+  },
+)
+
+// Without a silent or revert instruction, CancelledError follows the same
+// failure path as it does after the retryer starts.
+it('unmarked behavior setup cancellation reports a terminal error', async () => {
+  const callbacks: Array<string> = []
+  const cache = new QueryCache({
+    onError: () => callbacks.push('error'),
+    onSettled: () => callbacks.push('settled'),
+  })
+  const client = new QueryClient({ queryCache: cache })
+  const failure = new CancelledError()
+  const key = ['unmarked-setup-cancel']
+
+  await assert.rejects(
+    client.fetchQuery({
+      queryKey: key,
+      queryFn: () => 'remote',
+      behavior: {
+        onFetch: () => {
+          throw failure
+        },
+      },
+    }),
+    CancelledError,
+  )
+
+  const query = cache.find({ queryKey: key })
+  assert.ok(query)
+  assert.equal(query.state.status, 'error')
+  assert.equal(query.state.error, failure)
+  assert.deepEqual(callbacks, ['error', 'settled'])
+  client.clear()
+})
+
+// A behavior can reject setup before queryFn runs. There is no source or
+// installed fetch, but observers still need a terminal error result.
+it('behavior setup failure without a source reaches observers', async () => {
+  const callbacks: Array<{
+    kind: 'error' | 'settled'
+    error: unknown
+    data?: unknown
+    query: unknown
+  }> = []
+  const cache = new QueryCache({
+    onError: (error, query) => callbacks.push({ kind: 'error', error, query }),
+    onSettled: (data, error, query) =>
+      callbacks.push({ kind: 'settled', data, error, query }),
+  })
+  const client = new QueryClient({ queryCache: cache })
+  const key = ['behavior-setup-failure-without-source']
+  const failure = new Error('behavior setup failed before source')
+  const events: Array<QueryCacheNotifyEvent> = []
+  const stop = cache.subscribe((event) => events.push(event))
+  const observer = new QueryObserver(client, {
+    queryKey: key,
+    enabled: false,
+    queryFn: () => 'remote',
+    behavior: {
+      onFetch: () => {
+        throw failure
+      },
+    },
+  })
+  const results: Array<ReturnType<typeof observer.getCurrentResult>> = []
+  const stopObserver = observer.subscribe((result) => results.push(result))
+
+  const result = await observer.refetch()
+  const query = cache.find({ queryKey: key })
+  assert.ok(query)
+  assert.equal(result.error, failure)
+  assert.equal(result.fetchStatus, 'idle')
+  assert.equal(result.status, 'error')
+  assert.ok(results.some((observed) => observed.error === failure))
+  assert.equal(query.state.fetchStatus, 'idle')
+  assert.equal(query.state.error, failure)
+  assert.equal(
+    events.filter((event) => event.type === 'fetchStarted').length,
+    0,
+  )
+  assert.equal(
+    events.filter((event) => event.type === 'fetchSourceStarted').length,
+    0,
+  )
+  const errors = events.filter(
+    (event): event is ErrorEvent =>
+      event.type === 'updated' && event.action.type === 'error',
+  )
+  assert.equal(errors.length, 1)
+  assert.equal(errors[0]!.action.error, failure)
+  assert.ok(query.fetchSequence)
+  assert.equal(errors[0]!.fetchSequence, query.fetchSequence)
+  assert.equal(errors[0]!.sourceSequence, undefined)
+  assert.deepEqual(
+    callbacks.map((callback) => callback.kind),
+    ['error', 'settled'],
+  )
+  assert.ok(callbacks.every((callback) => callback.error === failure))
+  assert.ok(callbacks.every((callback) => callback.query === query))
+  assert.equal(callbacks[1]!.data, undefined)
+  stopObserver()
+  stop()
+  client.clear()
+})
+
+// A failed replacement follows a cancelled active fetch. Its setup error
+// must finish the Query's fetching state with or without a source invocation.
+it.each(['before', 'after'] as const)(
+  'behavior setup failure %s source settles a cancelled fetch replacement',
+  async (sourcePhase) => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    })
+    const cache = client.getQueryCache()
+    const key = ['behavior-setup-failure-replacement']
+    client.setQueryData(key, 'seed')
+    const query = cache.find<string>({ queryKey: key })
+    assert.ok(query)
+    const observer = new QueryObserver(client, {
+      queryKey: key,
+      enabled: false,
+      queryFn: () => 'remote',
+    })
+    const results: Array<ReturnType<typeof observer.getCurrentResult>> = []
+    const stopObserver = observer.subscribe((result) => results.push(result))
+    const events: Array<QueryCacheNotifyEvent> = []
+    const stop = cache.subscribe((event) => events.push(event))
+    const pending = query.fetch({
+      queryKey: key,
+      queryFn: () => new Promise<string>(() => {}),
+    })
+    assert.equal(query.state.fetchStatus, 'fetching')
+    const failure = new Error('replacement setup failed')
+    const replacement = query.fetch(
+      {
+        queryKey: key,
+        queryFn: () => 'replacement',
+        behavior: {
+          onFetch: (context) => {
+            if (sourcePhase === 'after') {
+              const queryFn = context.options.queryFn
+              assert.ok(typeof queryFn === 'function')
+              queryFn({
+                client: context.client,
+                queryKey: context.queryKey,
+                meta: context.options.meta,
+                signal: context.signal,
+              })
+            }
+            throw failure
+          },
+        },
+      },
+      { cancelRefetch: true },
+    )
+
+    assert.equal(
+      await replacement.then(
+        () => undefined,
+        (error: unknown) => error,
+      ),
+      failure,
+    )
+    await pending.catch(() => {})
+    assert.equal(query.state.fetchStatus, 'idle')
+    assert.equal(query.state.error, failure)
+    assert.equal(observer.getCurrentResult().error, failure)
+    assert.ok(results.some((result) => result.error === failure))
+    const replacementSequence = query.fetchSequence
+    const sources = events.filter(
+      (event): event is SourceEvent =>
+        event.type === 'fetchSourceStarted' &&
+        event.fetchSequence === replacementSequence,
+    )
+    assert.equal(sources.length, sourcePhase === 'after' ? 1 : 0)
+    if (sourcePhase === 'after') {
+      assert.equal(
+        await sources[0]!.promise.then(
+          () => undefined,
+          (error: unknown) => error,
+        ),
+        failure,
+      )
+    }
+    assert.equal(
+      events.filter(
+        (event) =>
+          event.type === 'fetchStarted' &&
+          event.fetchSequence === replacementSequence,
+      ).length,
+      0,
+    )
+    const errors = events.filter(
+      (event): event is ErrorEvent =>
+        event.type === 'updated' &&
+        event.action.type === 'error' &&
+        event.fetchSequence === replacementSequence,
+    )
+    assert.equal(errors.length, 1)
+    assert.equal(errors[0]!.action.error, failure)
+    assert.equal(
+      errors[0]!.sourceSequence,
+      sourcePhase === 'after' ? sources[0]!.sourceSequence : undefined,
+    )
+    stopObserver()
+    stop()
+    client.clear()
+  },
+)
 
 // Aborting a failed setup can synchronously start another fetch on the same
 // Query. The earlier source event keeps its own positions and rejected promise
@@ -2883,6 +3344,15 @@ it('eager setup failure keeps source attribution through abort reentry', async (
   assert.equal(query.fetchSequence, innerSource.fetchSequence)
   assert.equal(query.sourceSequence, innerSource.sourceSequence)
   assert.equal(
+    events.filter(
+      (event) =>
+        event.type === 'updated' &&
+        event.action.type === 'error' &&
+        event.fetchSequence === outerFetchSequence,
+    ).length,
+    0,
+  )
+  assert.equal(
     await outerSource.promise.then(
       () => undefined,
       (error: unknown) => error,
@@ -2890,6 +3360,129 @@ it('eager setup failure keeps source attribution through abort reentry', async (
     failure,
   )
   assert.equal(await innerSource.promise, 'inner')
+  stop()
+  client.clear()
+})
+
+// Reset is a later public state action. Whether a failed setup's signal or
+// source event causes the reset, its terminal error cannot overwrite it.
+it.each(['abort', 'source event'] as const)(
+  'reset during failed setup %s keeps the reset state',
+  async (resetAt) => {
+    const client = new QueryClient()
+    const cache = client.getQueryCache()
+    const key = ['setup-failure-reset', resetAt]
+    const failure = new Error('setup failed')
+    const events: Array<QueryCacheNotifyEvent> = []
+    const query = cache.build(client, {
+      queryKey: key,
+      queryFn: (context) => {
+        if (resetAt === 'abort') {
+          context.signal.addEventListener('abort', () => query.reset(), {
+            once: true,
+          })
+        }
+        return 'source'
+      },
+      behavior: {
+        onFetch: (context) => {
+          const queryFn = context.options.queryFn
+          assert.ok(typeof queryFn === 'function')
+          queryFn({
+            client: context.client,
+            queryKey: context.queryKey,
+            meta: context.options.meta,
+            signal: context.signal,
+          })
+          throw failure
+        },
+      },
+    })
+    const stop = cache.subscribe((event) => {
+      events.push(event)
+      if (
+        resetAt === 'source event' &&
+        event.type === 'fetchSourceStarted' &&
+        event.query === query
+      ) {
+        query.reset()
+      }
+    })
+
+    assert.equal(
+      await query.fetch().then(
+        () => undefined,
+        (error: unknown) => error,
+      ),
+      failure,
+    )
+    assert.equal(
+      events.filter((event) => event.type === 'fetchSourceStarted').length,
+      1,
+    )
+    assert.equal(query.state.status, 'pending')
+    assert.equal(query.state.fetchStatus, 'idle')
+    assert.equal(query.state.error, null)
+    const actions = events
+      .filter((event) => event.type === 'updated')
+      .map((event) => event.action.type)
+    assert.equal(actions.at(-1), 'setState')
+    stop()
+    client.clear()
+  },
+)
+
+// Removing a Query from its cache during the source notification retires the
+// object. A setup failure cannot publish a later state update on that object.
+it('removed Query gets no terminal update after failed setup source event', async () => {
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
+  const key = ['setup-failure-remove']
+  const failure = new Error('setup failed')
+  const events: Array<QueryCacheNotifyEvent> = []
+  const query = cache.build(client, {
+    queryKey: key,
+    queryFn: () => 'source',
+    behavior: {
+      onFetch: (context) => {
+        const queryFn = context.options.queryFn
+        assert.ok(typeof queryFn === 'function')
+        queryFn({
+          client: context.client,
+          queryKey: context.queryKey,
+          meta: context.options.meta,
+          signal: context.signal,
+        })
+        throw failure
+      },
+    },
+  })
+  const stop = cache.subscribe((event) => {
+    events.push(event)
+    if (event.type === 'fetchSourceStarted' && event.query === query) {
+      cache.remove(query)
+    }
+  })
+
+  assert.equal(
+    await query.fetch().then(
+      () => undefined,
+      (error: unknown) => error,
+    ),
+    failure,
+  )
+  assert.equal(cache.get(query.queryHash), undefined)
+  const source = events.find((event) => event.type === 'fetchSourceStarted')
+  const removed = events.find((event) => event.type === 'removed')
+  assert.ok(source)
+  assert.ok(removed)
+  assert.ok(events.indexOf(source) < events.indexOf(removed))
+  assert.equal(
+    events.filter(
+      (event) => event.type === 'updated' && event.action.type === 'error',
+    ).length,
+    0,
+  )
   stop()
   client.clear()
 })
