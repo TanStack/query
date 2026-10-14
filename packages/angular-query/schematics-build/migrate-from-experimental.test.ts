@@ -1068,3 +1068,241 @@ panel(() => ({}), { injector });`)
     expect(warnings.join('\n')).toContain('old options.injector')
   })
 })
+
+describe('migration dependency specifiers', () => {
+  it.each(
+    [
+      'dependencies',
+      'devDependencies',
+      'optionalDependencies',
+      'peerDependencies',
+    ].flatMap((type) =>
+      [true, false].map((versioned) => ({ type, versioned })),
+    ),
+  )(
+    'replaces experimental aliases in $type (versioned=$versioned) and remains idempotent',
+    async ({ type, versioned }) => {
+      const { runner, tree } = setup(
+        `import { provideAngularQuery, QueryClient } from '@tanstack/angular-query';
+provideAngularQuery(new QueryClient());`,
+      )
+      tree.overwrite(
+        '/package.json',
+        JSON.stringify({
+          [type]: {
+            [packageJson.name]: `npm:@tanstack/angular-query-experimental${versioned ? '@~5.90.25' : ''}`,
+            [devtoolsPackage.name]: `npm:@tanstack/angular-query-experimental${versioned ? '@5.90.25' : ''}`,
+          },
+        }),
+      )
+      const result = await runner.runSchematic(
+        'migrate-from-experimental',
+        {},
+        tree,
+      )
+      expect(JSON.parse(result.readContent('/package.json'))[type]).toEqual({
+        [packageJson.name]: `^${packageJson.version}`,
+        [devtoolsPackage.name]: `${versioned ? '' : '^'}${devtoolsPackage.version}`,
+      })
+      expect(result.readContent('/src/app.ts')).toContain(
+        'provideTanStackQuery as provideAngularQuery',
+      )
+      expect(result.readContent('/src/app.ts')).toContain(
+        'provideAngularQuery(() => new QueryClient())',
+      )
+      expect(runner.tasks).toHaveLength(1)
+      const again = await runner.runSchematic(
+        'migrate-from-experimental',
+        {},
+        result,
+      )
+      expect(again.readContent('/package.json')).toBe(
+        result.readContent('/package.json'),
+      )
+      expect(runner.tasks).toHaveLength(0)
+    },
+  )
+
+  it('replaces an alias alongside the original dependency and respects skipInstall', async () => {
+    const { runner, tree } = setup(
+      `import { QueryClient } from '@tanstack/angular-query-experimental';`,
+    )
+    tree.overwrite(
+      '/package.json',
+      JSON.stringify({
+        dependencies: {
+          '@tanstack/angular-query-experimental': '^5.90.25',
+          [packageJson.name]:
+            'npm:@tanstack/angular-query-experimental@5.90.25',
+        },
+      }),
+    )
+    const result = await runner.runSchematic(
+      'migrate-from-experimental',
+      { skipInstall: true },
+      tree,
+    )
+    expect(
+      JSON.parse(result.readContent('/package.json')).dependencies,
+    ).toEqual({ [packageJson.name]: packageJson.version })
+    expect(runner.tasks).toHaveLength(0)
+  })
+
+  it('preserves unrelated npm aliases', async () => {
+    const { runner, tree } = setup(
+      `import { QueryClient } from '@tanstack/angular-query';`,
+    )
+    tree.overwrite(
+      '/package.json',
+      JSON.stringify({
+        dependencies: {
+          [packageJson.name]: 'npm:another-query-adapter@1.2.3',
+          [devtoolsPackage.name]: 'npm:another-query-devtools@1.2.3',
+        },
+      }),
+    )
+    const result = await runner.runSchematic(
+      'migrate-from-experimental',
+      {},
+      tree,
+    )
+    expect(result.readContent('/package.json')).toBe(
+      tree.readText('/package.json'),
+    )
+    expect(runner.tasks).toHaveLength(0)
+  })
+
+  it.each([
+    ['5.90.25', true],
+    ['v5.90.25', true],
+    ['=5.90.25', true],
+    [' 5.90.25 ', true],
+    ['= v5.90.25', true],
+    ['5.90.25-beta.1', true],
+    ['5.90.25+build.1', true],
+    ['^5.90.25', false],
+    ['~5.90.25', false],
+    ['>=5.90.25', false],
+    ['*', false],
+    ['latest', false],
+  ])('preserves pin policy when replacing %s', async (previous, exact) => {
+    const { runner, tree } = setup(
+      `import { withDevtools } from '@tanstack/angular-query-experimental/devtools';`,
+    )
+    tree.overwrite(
+      '/package.json',
+      JSON.stringify({
+        dependencies: { '@tanstack/angular-query-experimental': previous },
+      }),
+    )
+    const result = await runner.runSchematic(
+      'migrate-from-experimental',
+      {},
+      tree,
+    )
+    expect(
+      JSON.parse(result.readContent('/package.json')).dependencies,
+    ).toEqual({
+      [packageJson.name]: `${exact ? '' : '^'}${packageJson.version}`,
+      [devtoolsPackage.name]: `${exact ? '' : '^'}${devtoolsPackage.version}`,
+    })
+  })
+
+  it.each(['v5.90.25', '=5.90.25', ' 5.90.25 ', '= v5.90.25'])(
+    'preserves an exact alias pin written as %s',
+    async (previous) => {
+      const { runner, tree } = setup(
+        "import { QueryClient } from '@tanstack/angular-query';",
+      )
+      tree.overwrite(
+        '/package.json',
+        JSON.stringify({
+          dependencies: {
+            [packageJson.name]: `npm:@tanstack/angular-query-experimental@${previous}`,
+            [devtoolsPackage.name]: `npm:@tanstack/angular-query-experimental@${previous}`,
+          },
+        }),
+      )
+      const result = await runner.runSchematic(
+        'migrate-from-experimental',
+        {},
+        tree,
+      )
+      expect(
+        JSON.parse(result.readContent('/package.json')).dependencies,
+      ).toEqual({
+        [packageJson.name]: packageJson.version,
+        [devtoolsPackage.name]: devtoolsPackage.version,
+      })
+    },
+  )
+
+  it('preserves a development dependency pin when adding devtools', async () => {
+    const { runner, tree } = setup(
+      "import { withDevtools } from '@tanstack/angular-query-experimental/devtools'",
+    )
+    tree.overwrite(
+      '/package.json',
+      JSON.stringify({
+        devDependencies: { '@tanstack/angular-query-experimental': '5.90.25' },
+      }),
+    )
+    const result = await runner.runSchematic(
+      'migrate-from-experimental',
+      { skipInstall: true },
+      tree,
+    )
+    const manifest = JSON.parse(result.readContent('/package.json'))
+    expect(manifest.devDependencies[packageJson.name]).toBe(packageJson.version)
+    expect(manifest.dependencies[devtoolsPackage.name]).toBe(
+      devtoolsPackage.version,
+    )
+  })
+
+  it('preserves exact core pins when opting into core migration', async () => {
+    const { runner, tree } = setup(
+      `import { QueryClient } from '@tanstack/query-core';`,
+    )
+    tree.overwrite(
+      '/package.json',
+      JSON.stringify({
+        devDependencies: { '@tanstack/query-core': '5.90.25' },
+      }),
+    )
+    const result = await runner.runSchematic(
+      'migrate-from-experimental',
+      { migrateQueryCoreImports: true },
+      tree,
+    )
+    expect(
+      JSON.parse(result.readContent('/package.json')).devDependencies,
+    ).toEqual({ [packageJson.name]: packageJson.version })
+  })
+
+  it('keeps existing stable and devtools version specifiers', async () => {
+    const { runner, tree } = setup(
+      `import { withDevtools } from '@tanstack/angular-query-experimental/devtools';`,
+    )
+    tree.overwrite(
+      '/package.json',
+      JSON.stringify({
+        dependencies: {
+          '@tanstack/angular-query-experimental': '5.90.25',
+          [packageJson.name]: '~99.0.0',
+          [devtoolsPackage.name]: '99.0.0',
+        },
+      }),
+    )
+    const result = await runner.runSchematic(
+      'migrate-from-experimental',
+      {},
+      tree,
+    )
+    expect(
+      JSON.parse(result.readContent('/package.json')).dependencies,
+    ).toEqual({
+      [packageJson.name]: '~99.0.0',
+      [devtoolsPackage.name]: '99.0.0',
+    })
+  })
+})
