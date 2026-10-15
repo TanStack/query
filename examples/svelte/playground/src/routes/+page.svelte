@@ -11,12 +11,20 @@
 
   const queryClient = useQueryClient()
 
-  queryClient.setDefaultOptions({
-    queries: {
-      staleTime: staleTime.value,
-      gcTime: gcTime.value,
-    },
-  })
+  function applyQueryDefaults() {
+    queryClient.setDefaultOptions({
+      ...queryClient.getDefaultOptions(),
+      queries: {
+        ...queryClient.getDefaultOptions().queries,
+        staleTime: staleTime.value,
+        gcTime: gcTime.value,
+      },
+    })
+  }
+
+  applyQueryDefaults()
+
+  $effect(applyQueryDefaults)
 </script>
 
 <p>
