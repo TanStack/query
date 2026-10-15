@@ -1678,7 +1678,9 @@ QueryCoreClient.setQueriesData
 ```ts
 setQueryData<TQueryFnData, TTaggedQueryKey, TInferredQueryFnData>(
    queryKey: TTaggedQueryKey, 
-   updater: Updater<NoInfer<TInferredQueryFnData> | undefined, NoInfer<TInferredQueryFnData> | undefined>, 
+   updater: Updater<
+  | InferDataFromTag<NoInfer<TQueryFnData>, TTaggedQueryKey>
+  | undefined, NoInfer<TInferredQueryFnData> | undefined>, 
    options?: SetDataOptions): NoInfer<TInferredQueryFnData> | undefined;
 ```
 
@@ -1716,7 +1718,9 @@ The query key to set data for.
 
 ##### updater
 
-[`Updater`](../type-aliases/Updater.md)\<`NoInfer`\<`TInferredQueryFnData`\> \| `undefined`, `NoInfer`\<`TInferredQueryFnData`\> \| `undefined`\>
+[`Updater`](../type-aliases/Updater.md)\<
+  \| [`InferDataFromTag`](../type-aliases/InferDataFromTag.md)\<`NoInfer`\<`TQueryFnData`\>, `TTaggedQueryKey`\>
+  \| `undefined`, `NoInfer`\<`TInferredQueryFnData`\> \| `undefined`\>
 
 Either the new data, or a function that receives the current data (which
 may be `undefined`) and returns the new data.
