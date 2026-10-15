@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-eslint-legacy",
+  "name": "@tanstack/query-example-react-eslint-legacy",
   "private": true,
   "type": "module",
   "scripts": {
