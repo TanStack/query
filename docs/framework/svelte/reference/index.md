@@ -111,7 +111,6 @@ title: "@tanstack/svelte-query"
 - [FetchStatus](type-aliases/FetchStatus.md)
 - [GetNextPageParamFunction](type-aliases/GetNextPageParamFunction.md)
 - [GetPreviousPageParamFunction](type-aliases/GetPreviousPageParamFunction.md)
-- [HydrationBoundary](type-aliases/HydrationBoundary.md)
 - [InferDataFromTag](type-aliases/InferDataFromTag.md)
 - [InferErrorFromTag](type-aliases/InferErrorFromTag.md)
 - [InfiniteQueryExecuteOptions](type-aliases/InfiniteQueryExecuteOptions.md)
@@ -171,7 +170,6 @@ title: "@tanstack/svelte-query"
 - [defaultScheduler](variables/defaultScheduler.md)
 - [environmentManager](variables/environmentManager.md)
 - [focusManager](variables/focusManager.md)
-- [HydrationBoundary](variables/HydrationBoundary.md)
 - [~~isServer~~](variables/isServer.md)
 - [notifyManager](variables/notifyManager.md)
 - [onlineManager](variables/onlineManager.md)
@@ -213,9 +211,3 @@ title: "@tanstack/svelte-query"
 - [useIsRestoring](functions/useIsRestoring.md)
 - [useMutationState](functions/useMutationState.md)
 - [useQueryClient](functions/useQueryClient.md)
-
-## References
-
-### QueryClientProvider
-
-Renames and re-exports [HydrationBoundary](variables/HydrationBoundary.md)

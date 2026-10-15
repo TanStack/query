@@ -1,12 +1,13 @@
 {
-  "name": "@tanstack/query-example-nextjs-suspense-streaming",
+  "name": "@tanstack/query-example-react-nextjs-suspense-streaming",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "test:eslint": "eslint ./src"
+    "test:eslint": "eslint ./src",
+    "test:types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.104.2",

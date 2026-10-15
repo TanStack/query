@@ -8,7 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "type:check": "tsc --noEmit"
+    "test:types": "tsc --noEmit"
   },
   "dependencies": {
     "@react-native-community/netinfo": "^12.0.1",

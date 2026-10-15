@@ -1,12 +1,13 @@
 {
-  "name": "@tanstack/query-example-chat",
+  "name": "@tanstack/query-example-react-chat",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test:eslint": "eslint ./src"
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.104.2",
