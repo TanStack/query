@@ -3,7 +3,7 @@ id: RefetchQueryFilters
 title: RefetchQueryFilters
 ---
 
-Defined in: [packages/query-core/src/types.ts:907](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L907)
+Defined in: [packages/query-core/src/types.ts:910](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L910)
 
 The filters of `queryClient.refetchQueries`, which select the queries to refetch.
 

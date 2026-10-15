@@ -80,7 +80,7 @@ export class ErrorBoundary extends Component<
         reason: 'keys',
       })
 
-      // eslint-disable-next-line
+      // oxlint-disable-next-line
       this.setState(initialState)
     }
   }

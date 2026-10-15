@@ -111,7 +111,7 @@ describe('Utils tests', () => {
           ['fr', 'bonjour'],
         ])
 
-        /* eslint-disable cspell/spellchecker */
+        /* oxlint-disable cspell/spellchecker */
         const newData = updateNestedDataByPath(oldData, ['fr'], 'salut')
         expect(newData).not.toBe(oldData) // should not be the same reference
 
@@ -128,7 +128,7 @@ describe('Utils tests', () => {
           }
         `)
       })
-      /* eslint-enable */
+      /* oxlint-enable cspell/spellchecker */
     })
 
     describe('empty path', () => {
@@ -177,7 +177,7 @@ describe('Utils tests', () => {
 
     describe('nested data', () => {
       it('should update data correctly', () => {
-        /* eslint-disable cspell/spellchecker */
+        /* oxlint-disable cspell/spellchecker */
         const oldData = new Map([
           [
             'pumpkin-pie',
@@ -433,7 +433,7 @@ describe('Utils tests', () => {
             },
           }
         `)
-        /* eslint-enable */
+        /* oxlint-enable cspell/spellchecker */
       })
     })
   })
@@ -562,7 +562,7 @@ describe('Utils tests', () => {
 
     describe('nested data', () => {
       it('should delete nested items correctly', () => {
-        /* eslint-disable cspell/spellchecker */
+        /* oxlint-disable cspell/spellchecker */
         const oldData = new Map([
           [
             'pumpkin-pie',
@@ -813,7 +813,7 @@ describe('Utils tests', () => {
             },
           }
         `)
-        /* eslint-enable */
+        /* oxlint-enable cspell/spellchecker */
       })
     })
   })

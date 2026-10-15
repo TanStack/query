@@ -3,7 +3,7 @@ id: FetchPreviousPageOptions
 title: FetchPreviousPageOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:938](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L938)
+Defined in: [packages/query-core/src/types.ts:941](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L941)
 
 Options of `fetchPreviousPage` on an infinite query result.
 

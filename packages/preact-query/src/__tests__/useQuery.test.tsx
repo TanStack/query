@@ -3966,7 +3966,9 @@ describe('useQuery', () => {
     rendered.getByText('fetched data')
     const setTimeoutSpy = vi.spyOn(globalThis.window, 'setTimeout')
 
-    rendered.unmount()
+    act(() => {
+      rendered.unmount()
+    })
 
     expect(setTimeoutSpy).not.toHaveBeenCalled()
   })
@@ -3990,7 +3992,9 @@ describe('useQuery', () => {
 
     const setTimeoutSpy = vi.spyOn(globalThis.window, 'setTimeout')
 
-    rendered.unmount()
+    act(() => {
+      rendered.unmount()
+    })
 
     expect(setTimeoutSpy).toHaveBeenLastCalledWith(
       expect.any(Function),

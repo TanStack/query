@@ -235,7 +235,7 @@ describe('useIsMutating', () => {
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
-  // eslint-disable-next-line vitest/expect-expect
+  // oxlint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
     // We have to mock the MutationCache to not unsubscribe
     // the listener when the component is unmounted

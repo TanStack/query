@@ -11,7 +11,7 @@ export type ProjectsPageResponse = {
   totalPages: number
   totalProjects: number
   hasMore: boolean
-  projects: Project[]
+  projects: Array<Project>
   requestMeta: {
     totalRequestCount: number
     pageRequestCount: number

@@ -1,8 +1,8 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue'
-import { useQuery } from '@tanstack/vue-query'
+import { skipToken, useQuery } from '@tanstack/vue-query'
 
-import { Author, Post } from './types'
+import type { Author, Post } from './types'
 
 const fetchPost = async (id: number): Promise<Post> =>
   await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(
@@ -39,8 +39,10 @@ export default defineComponent({
 
     const { data: author } = useQuery({
       queryKey: ['author', authorId],
-      queryFn: ({ queryKey: [, id] }) => fetchAuthor(id),
-      enabled: computed(() => !!authorId.value),
+      queryFn: computed(() => {
+        const id = authorId.value
+        return id === undefined ? skipToken : () => fetchAuthor(id)
+      }),
     })
 
     return { isPending, isError, isFetching, post, error, author }

@@ -3,7 +3,7 @@ id: MutationObserverOptions
 title: MutationObserverOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1986](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1986)
+Defined in: [packages/query-core/src/types.ts:1992](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1992)
 
 The options of a `MutationObserver`, and of the hooks built on it like `useMutation`: the
 [MutationOptions](../type-aliases/MutationOptions.md), plus `throwOnError`.

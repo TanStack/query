@@ -7,7 +7,7 @@ title: MutationScope
 type MutationScope = object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1826](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1826)
+Defined in: [packages/query-core/src/types.ts:1832](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1832)
 
 Groups mutations so they run one after another instead of in parallel.
 Mutations that share the same `id` form a queue: while one is running, the others wait in `isPaused: true`
