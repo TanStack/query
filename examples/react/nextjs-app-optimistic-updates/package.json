@@ -6,7 +6,8 @@
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
-    "test:eslint": "eslint ./app ./components"
+    "test:eslint": "eslint ./app ./components",
+    "test:types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.104.2",

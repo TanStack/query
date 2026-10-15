@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test:eslint": "eslint ./src"
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/solid-query": "^5.104.2",
