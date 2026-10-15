@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:eslint": "eslint ./src"
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.104.2",
