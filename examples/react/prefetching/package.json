@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "test:eslint": "eslint ./src",
-    "test:types": "tsc --noEmit"
+    "test:types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.104.2",
