@@ -160,10 +160,15 @@ export function useBaseQueryLayer<
    * `syncClient` below).
    */
   let observer = untrack(() => new Observer(client(), defaultedOptions()))
+  // Fetching and refetching can advance observer.options during a hold.
+  let lastAppliedHash = observer.options.queryHash
 
   createRenderEffect(
     () => defaultedOptions(),
-    (opts) => observer.setOptions(opts),
+    (opts) => {
+      lastAppliedHash = opts.queryHash
+      observer.setOptions(opts)
+    },
   )
 
   /**
@@ -198,10 +203,10 @@ export function useBaseQueryLayer<
     ownedWrite: true,
   })
   const onCacheEvent = (event: { query: { queryHash: string } }) => {
-    // Match the committed options hash OR the latest computed one (they
-    // diverge during a hold — see `latestHash`).
+    // Match the last hash applied by the render effect OR the latest
+    // computed one without reading a potentially held memo.
     if (
-      event.query.queryHash === untrack(defaultedOptions).queryHash ||
+      event.query.queryHash === lastAppliedHash ||
       event.query.queryHash === latestHash
     ) {
       setVersion((v) => v + 1)
