@@ -84,14 +84,14 @@ function App() {
           placeholder="ids"
           onChange={(event) => {
             const text = event.target.value.replace(' ', '')
-            const ids = text.split(',').map((id) => parseInt(id, 10))
-            const allValid = ids.reduce(
+            const parsedIds = text.split(',').map((id) => parseInt(id, 10))
+            const allValid = parsedIds.reduce(
               (valid, id) => valid && !isNaN(id),
               true,
             )
 
             if (allValid) {
-              setIds(ids)
+              setIds(parsedIds)
               setError('')
             } else {
               setError('Invalid.. only use numbers and comma')

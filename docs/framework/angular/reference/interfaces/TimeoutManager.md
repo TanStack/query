@@ -37,9 +37,9 @@ returned by `setInterval`.
 
 ##### intervalId
 
-The timer ID returned by `setInterval`, or `undefined`.
+[`ManagedTimerId`](../type-aliases/ManagedTimerId.md) \| `undefined`
 
-[`ManagedTimerId`](../type-aliases/ManagedTimerId.md) | `undefined`
+The timer ID returned by `setInterval`, or `undefined`.
 
 #### Returns
 
@@ -60,7 +60,9 @@ timeoutManager.clearInterval(intervalId)
 
 #### Implementation of
 
-[`TimeoutProvider`](../type-aliases/TimeoutProvider.md).[`clearInterval`](../type-aliases/TimeoutProvider.md#clearinterval)
+```ts
+Omit.clearInterval
+```
 
 ***
 
@@ -80,9 +82,9 @@ timer ID returned by `setTimeout`.
 
 ##### timeoutId
 
-The timer ID returned by `setTimeout`, or `undefined`.
+[`ManagedTimerId`](../type-aliases/ManagedTimerId.md) \| `undefined`
 
-[`ManagedTimerId`](../type-aliases/ManagedTimerId.md) | `undefined`
+The timer ID returned by `setTimeout`, or `undefined`.
 
 #### Returns
 
@@ -103,7 +105,9 @@ timeoutManager.clearTimeout(timeoutId)
 
 #### Implementation of
 
-[`TimeoutProvider`](../type-aliases/TimeoutProvider.md).[`clearTimeout`](../type-aliases/TimeoutProvider.md#cleartimeout)
+```ts
+Omit.clearTimeout
+```
 
 ***
 
@@ -154,7 +158,9 @@ const intervalId = timeoutManager.setInterval(
 
 #### Implementation of
 
-[`TimeoutProvider`](../type-aliases/TimeoutProvider.md).[`setInterval`](../type-aliases/TimeoutProvider.md#setinterval)
+```ts
+Omit.setInterval
+```
 
 ***
 
@@ -208,7 +214,9 @@ const timeoutIdNumber: number = Number(timeoutId)
 
 #### Implementation of
 
-[`TimeoutProvider`](../type-aliases/TimeoutProvider.md).[`setTimeout`](../type-aliases/TimeoutProvider.md#settimeout)
+```ts
+Omit.setTimeout
+```
 
 ***
 

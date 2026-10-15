@@ -13,7 +13,7 @@ Handles scheduling and batching callbacks in TanStack Query.
 
 ## Type Declaration
 
-### batch()
+### batch
 
 ```ts
 readonly batch: <T>(callback: () => T) => T;
@@ -44,7 +44,7 @@ The function to run in the batch.
 
 The return value of `callback`.
 
-### batchCalls()
+### batchCalls
 
 ```ts
 readonly batchCalls: <T>(callback: BatchCallsCallback<T>) => BatchCallsCallback<T>;
@@ -72,7 +72,7 @@ The function to wrap.
 
 A function that schedules a call to `callback` with the given arguments.
 
-### schedule()
+### schedule
 
 ```ts
 schedule: (callback: NotifyCallback) => void;
@@ -91,7 +91,7 @@ By default, the batch is run with a `setTimeout`, but this can be configured via
 
 `void`
 
-### setBatchNotifyFunction()
+### setBatchNotifyFunction
 
 ```ts
 readonly setBatchNotifyFunction: (fn: BatchNotifyFunction) => void;
@@ -122,7 +122,7 @@ import { batch } from 'solid-js'
 notifyManager.setBatchNotifyFunction(batch)
 ```
 
-### setNotifyFunction()
+### setNotifyFunction
 
 ```ts
 readonly setNotifyFunction: (fn: NotifyFunction) => void;
@@ -143,7 +143,7 @@ Receives each notification callback and must call it.
 
 `void`
 
-### setScheduler()
+### setScheduler
 
 ```ts
 readonly setScheduler: (fn: ScheduleFunction) => void;

@@ -40,6 +40,12 @@ Unlike queries, mutations are typically used to create/update/delete data or per
 
 An accessor returning the [UseMutationOptions](../type-aliases/UseMutationOptions.md) to use.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`MutationOptions`](../interfaces/MutationOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 `Accessor`\<[`QueryClient`](../classes/QueryClient.md)\>
@@ -56,6 +62,12 @@ argument, useful for triggering call-site side effects (e.g. navigation) without
 mutation definition. Hook-level callbacks (passed to `options`) fire for every mutation; per-call callbacks
 fire only for the latest call you've made, and only while the component is still mounted — unmounting before
 the mutation settles removes the subscription and prevents them from firing.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`MutationObserverBaseResult`](../interfaces/MutationObserverBaseResult.md#properties). See the type above for what it changes.
 
 ## Examples
 

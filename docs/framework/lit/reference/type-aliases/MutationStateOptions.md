@@ -21,5 +21,5 @@ Options accepted by `useMutationState`.
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="filters"></a> `filters?` | [`Accessor`](Accessor.md)\<[`MutationFilters`](../interfaces/MutationFilters.md)\> | Filters used to select mutations from the mutation cache. |
-| <a id="select"></a> `select?` | (`mutation`: [`Mutation`](../classes/Mutation.md)) => `TResult` | Maps each matching mutation to the value returned by the accessor. |
+| <a id="property-filters"></a> `filters?` | [`Accessor`](Accessor.md)\<[`MutationFilters`](../interfaces/MutationFilters.md)\> | Filters used to select mutations from the mutation cache. |
+| <a id="property-select"></a> `select?` | (`mutation`: [`Mutation`](../classes/Mutation.md)) => `TResult` | Maps each matching mutation to the value returned by the accessor. |

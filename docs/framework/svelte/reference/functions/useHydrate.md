@@ -31,6 +31,17 @@ The dehydrated state to hydrate into the cache, as produced by `dehydrate`.
 
 [HydrateOptions](../interfaces/HydrateOptions.md) to control the hydration.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="options-property-defaultoptions"></a> `defaultOptions?` | `object` | Options applied to the queries and mutations restored from the dehydrated state. |
+| `defaultOptions.deserializeData?` | `TransformerFn` | Transforms a query's `data` after it is read from the dehydrated state, reversing `serializeData`. |
+| `defaultOptions.mutations?` | [`MutationOptions`](../interfaces/MutationOptions.md)\<`unknown`, `Error`, `unknown`, `unknown`\> | Default options merged into every mutation restored from the dehydrated state. |
+| `defaultOptions.queries?` | [`QueryOptions`](../interfaces/QueryOptions.md)\<`unknown`, `Error`, `unknown`, readonly `unknown`[], `never`\> | Default options merged into every query restored from the dehydrated state. |
+
 ### queryClient?
 
 [`QueryClient`](../classes/QueryClient.md)

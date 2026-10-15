@@ -94,7 +94,7 @@ describe('Devtools', () => {
                 contentRect: { width: 1000, height: 500 } as DOMRectReadOnly,
               } as ResizeObserverEntry,
             ],
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+            // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
             this as unknown as ResizeObserver,
           )
         })
@@ -808,7 +808,7 @@ describe('Devtools', () => {
                   contentRect: { width: 500, height: 500 } as DOMRectReadOnly,
                 } as ResizeObserverEntry,
               ],
-              // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+              // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
               this as unknown as ResizeObserver,
             )
           })
@@ -845,7 +845,7 @@ describe('Devtools', () => {
                   contentRect: { width: 500, height: 500 } as DOMRectReadOnly,
                 } as ResizeObserverEntry,
               ],
-              // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+              // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
               this as unknown as ResizeObserver,
             )
           })

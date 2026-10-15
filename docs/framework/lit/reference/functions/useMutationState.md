@@ -6,7 +6,7 @@ title: useMutationState
 ```ts
 function useMutationState<TResult>(
    host: ReactiveControllerHost,
-   options: MutationStateOptions<TResult>,
+   options?: MutationStateOptions<TResult>,
 queryClient?: QueryClient): MutationStateAccessor<TResult>;
 ```
 
@@ -35,11 +35,20 @@ the controller resolves the client from the nearest connected
 The Lit reactive controller host that owns the mutation cache
 subscription.
 
-### options
+### options?
 
 [`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`\> = `{}`
 
 Mutation state filters and optional selector.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="options-property-filters"></a> `filters?` | [`Accessor`](../type-aliases/Accessor.md)\<[`MutationFilters`](../interfaces/MutationFilters.md)\> | Filters used to select mutations from the mutation cache. |
+| <a id="options-property-select"></a> `select?` | (`mutation`: [`Mutation`](../classes/Mutation.md)) => `TResult` | Maps each matching mutation to the value returned by the accessor. |
 
 ### queryClient?
 

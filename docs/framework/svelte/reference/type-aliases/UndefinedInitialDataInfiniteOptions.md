@@ -17,7 +17,7 @@ be `undefined` — `data` may be `undefined` while the query is `pending`.
 ### initialData?
 
 ```ts
-optional initialData: 
+optional initialData?: 
   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
 | InitialDataFunction<NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>>;
 ```

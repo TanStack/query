@@ -6,7 +6,7 @@ title: useIsFetching
 ```ts
 function useIsFetching(
    host: ReactiveControllerHost,
-   filters: Accessor<QueryFilters<readonly unknown[]>>,
+   filters?: Accessor<QueryFilters<readonly unknown[]>>,
    queryClient?: QueryClient): IsFetchingAccessor;
 ```
 
@@ -28,11 +28,17 @@ resolves the client from the nearest connected `QueryClientProvider`.
 The Lit reactive controller host that owns the cache
 subscription.
 
-### filters
+### filters?
 
 [`Accessor`](../type-aliases/Accessor.md)\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\> = `{}`
 
 Query filters, or a getter that returns query filters.
+
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+Built from [`QueryFilters`](../interfaces/QueryFilters.md#properties). See the type above for what it changes.
 
 ### queryClient?
 

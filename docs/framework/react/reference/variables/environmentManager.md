@@ -22,7 +22,7 @@ behave like a client.
 
 ## Type Declaration
 
-### isServer()
+### isServer
 
 ```ts
 isServer: () => boolean;

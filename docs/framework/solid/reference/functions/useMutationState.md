@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function useMutationState<TResult, TMutation>(options: Accessor<MutationStateOptions<TResult, TMutation>>, queryClient?: Accessor<QueryClient>): Accessor<TResult[]>;
+function useMutationState<TResult, TMutation>(options?: Accessor<MutationStateOptions<TResult, TMutation>>, queryClient?: Accessor<QueryClient>): Accessor<TResult[]>;
 ```
 
 Defined in: [packages/solid-query/src/useMutationState.ts:127](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useMutationState.ts#L127)
@@ -27,7 +27,7 @@ state.
 
 ## Parameters
 
-### options
+### options?
 
 `Accessor`\<`MutationStateOptions`\<`TResult`, `TMutation`\>\> = `...`
 

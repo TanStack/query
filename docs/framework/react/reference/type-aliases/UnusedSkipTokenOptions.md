@@ -17,7 +17,7 @@ not `skipToken` — same as [UndefinedInitialDataOptions](UndefinedInitialDataOp
 ### queryFn?
 
 ```ts
-optional queryFn: Exclude<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>["queryFn"], SkipToken | undefined>;
+optional queryFn?: Exclude<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>["queryFn"], SkipToken | undefined>;
 ```
 
 `skipToken` is not allowed as a value here — this overload is selected when no `initialData` is set. If

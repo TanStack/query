@@ -164,9 +164,9 @@ The defaulted options of the queries to compute the result for.
 
 ##### combine
 
-The `combine` function used by the returned `combineResult`, if any.
+`CombineFn`\<`TCombinedResult`\> \| `undefined`
 
-`CombineFn`\<`TCombinedResult`\> | `undefined`
+The `combine` function used by the returned `combineResult`, if any.
 
 #### Returns
 
@@ -286,13 +286,7 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 A function that removes the listener.
 
-```ts
-(): void;
-```
-
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 

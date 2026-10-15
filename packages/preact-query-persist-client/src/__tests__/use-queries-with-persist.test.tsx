@@ -2,19 +2,19 @@
 /** @jsxImportSource preact */
 import '@testing-library/jest-dom/vitest'
 
-import type { QueryObserverResult } from '../../../query-core/src'
+import { act, cleanup, render } from '@testing-library/preact'
+import { useCallback } from 'preact/hooks'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { sleep } from '@tanstack/query-test-utils'
+import { QueryClient, useQueries } from '../../../preact-query/src'
 import { notifyManager } from '../../../query-core/src'
+
+import { PersistQueryClientProvider } from './testPersistProvider'
 import type {
   PersistedClient,
   Persister,
 } from '../../../query-persist-client-core/src'
-import { act, cleanup, render } from '@testing-library/preact'
-import { QueryClient, useQueries } from '../../../preact-query/src'
-import { useCallback } from 'preact/hooks'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { sleep } from '@tanstack/query-test-utils'
-
-import { PersistQueryClientProvider } from './testPersistProvider'
+import type { QueryObserverResult } from '../../../query-core/src'
 
 notifyManager.setNotifyFunction((fn) => {
   act(fn)

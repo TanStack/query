@@ -6,10 +6,10 @@ redirect_from:
 ---
 
 ```ts
-function useIsMutating(filters: UseIsMutatingFilters, queryClient?: QueryClient): Ref<number>;
+function useIsMutating(filters?: UseIsMutatingFilters, queryClient?: QueryClient): Ref<number>;
 ```
 
-Defined in: [packages/vue-query/src/useMutationState.ts:54](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L54)
+Defined in: [packages/vue-query/src/useMutationState.ts:55](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L55)
 
 The `useIsMutating` composable returns a `ref` to the `number` of mutations that your application currently
 has `pending` (useful for app-wide loading indicators).
@@ -19,7 +19,7 @@ the filters themselves depend on other reactive state.
 
 ## Parameters
 
-### filters
+### filters?
 
 [`UseIsMutatingFilters`](../type-aliases/UseIsMutatingFilters.md) = `{}`
 

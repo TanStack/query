@@ -7,9 +7,9 @@ redirect_from:
 
 ```ts
 function useQueries<T, TCombinedResult>(queriesOptions: Accessor<{
-  combine?: (result: T extends [] ? [] : T extends [Head] ? [GetResults<Head>] : T extends [Head, ...Tail[]] ? [...Tail[]] extends [] ? [] : [...Tail[]] extends [Head] ? [GetResults<...>, GetResults<...>] : [...(...)[]] extends [..., ...(...)[]] ? ... extends ... ? ... : ... : [...(...)[]] : { [K in string | number | symbol]: GetResults<T[K<(...)>]> }) => TCombinedResult;
+  combine?: (result: T extends [] ? [] : T extends [Head] ? [GetResults<Head>] : T extends [Head, ...Tail[]] ? [...Tail[]] extends [] ? [] : [...Tail[]] extends [Head] ? [GetResults<...>, GetResults<...>] : [...(...)[]] extends [..., ...(...)[]] ? ... extends ... ? ... : ... : [...(...)[]] : { [K in string | number | symbol]: GetResults<T[K]> }) => TCombinedResult;
   queries:   | readonly [T extends [] ? [] : T extends [Head] ? [GetOptions<Head>] : T extends [Head, ...Tail[]] ? [...Tail[]] extends [] ? [] : [...Tail[]] extends [Head] ? [GetOptions<...>, GetOptions<...>] : [...(...)[]] extends [..., ...(...)[]] ? ... extends ... ? ... : ... : ... extends ... ? ... : ... : readonly unknown[] extends T ? T : T extends UseQueryOptionsForUseQueries<..., ..., ..., ...>[] ? UseQueryOptionsForUseQueries<..., ..., ..., ...>[] : UseQueryOptionsForUseQueries<..., ..., ..., ...>[]]
-     | readonly [{ [K in string | number | symbol]: GetOptions<T[K<K>]> }];
+     | readonly [{ [K in string | number | symbol]: GetOptions<T[K]> }];
 }>, queryClient?: Accessor<QueryClient>): TCombinedResult;
 ```
 
@@ -66,16 +66,16 @@ previously rendered queries, because the number of queries can differ between re
   \| [`QueryObserverLoadingErrorResult`](../interfaces/QueryObserverLoadingErrorResult.md)\<`unknown`, `unknown`\>
   \| [`QueryObserverLoadingResult`](../interfaces/QueryObserverLoadingResult.md)\<`unknown`, `unknown`\>
   \| [`QueryObserverPendingResult`](../interfaces/QueryObserverPendingResult.md)\<`unknown`, `unknown`\>
-  \| [`QueryObserverPlaceholderResult`](../interfaces/QueryObserverPlaceholderResult.md)\<`unknown`, `unknown`\>)[] = `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>, `GetResults`\<`Head`\>\] : \[`...Tail[]`\] *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>, `GetResults`\<`Head`\>, `GetResults`\<`Head`\>\] : \[`...Tail[]`\] *extends* \[`Head`, `...Tail[]`\] ? \[`...(...)[]`\] *extends* \[\] ? \[\] : ... *extends* ... ? ... : ... : \[`...{ [K in (...)]: (...) }[]`\] : \[...\{ \[K in string \| number \| symbol\]: GetResults\<Tail\[K\<(...)\>\]\> \}\[\]\] : \{ \[K in string \| number \| symbol\]: GetResults\<T\[K\<K\>\]\> \}
+  \| [`QueryObserverPlaceholderResult`](../interfaces/QueryObserverPlaceholderResult.md)\<`unknown`, `unknown`\>)[] = `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>, `GetResults`\<`Head`\>\] : \[`...Tail[]`\] *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>, `GetResults`\<`Head`\>, `GetResults`\<`Head`\>\] : \[`...Tail[]`\] *extends* \[`Head`, `...Tail[]`\] ? \[`...(...)[]`\] *extends* \[\] ? \[\] : ... *extends* ... ? ... : ... : \[`...{ [K in (...)]: (...) }[]`\] : \[...\{ \[K in string \| number \| symbol\]: GetResults\<Tail\[K\]\> \}\[\]\] : \{ \[K in string \| number \| symbol\]: GetResults\<T\[K\]\> \}
 
 ## Parameters
 
 ### queriesOptions
 
 `Accessor`\<\{
-  `combine?`: (`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<...\>, `GetResults`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : \[`...(...)[]`\] : \{ \[K in string \| number \| symbol\]: GetResults\<T\[K\<(...)\>\]\> \}) => `TCombinedResult`;
+  `combine?`: (`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<...\>, `GetResults`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : \[`...(...)[]`\] : \{ \[K in string \| number \| symbol\]: GetResults\<T\[K\]\> \}) => `TCombinedResult`;
   `queries`:   \| readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetOptions`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetOptions`\<...\>, `GetOptions`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : ... *extends* ... ? ... : ... : readonly `unknown`[] *extends* `T` ? `T` : `T` *extends* `UseQueryOptionsForUseQueries`\<..., ..., ..., ...\>[] ? `UseQueryOptionsForUseQueries`\<..., ..., ..., ...\>[] : `UseQueryOptionsForUseQueries`\<..., ..., ..., ...\>[]\]
-     \| readonly \[\{ \[K in string \| number \| symbol\]: GetOptions\<T\[K\<K\>\]\> \}\];
+     \| readonly \[\{ \[K in string \| number \| symbol\]: GetOptions\<T\[K\]\> \}\];
 \}\>
 
 An accessor returning the `queries` array to run, and an optional `combine`

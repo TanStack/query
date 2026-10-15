@@ -17,7 +17,7 @@ The options accepted by `usePrefetchQuery` — everything you can pass to `query
 ### queryFn?
 
 ```ts
-optional queryFn: Exclude<QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, never>["queryFn"], SkipToken>;
+optional queryFn?: Exclude<QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, never>["queryFn"], SkipToken>;
 ```
 
 ## Type Parameters

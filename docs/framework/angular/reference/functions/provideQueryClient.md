@@ -20,9 +20,10 @@ it calls `provideQueryClient` internally. Use `provideQueryClient` directly to p
 
 ### queryClient
 
-A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
+  \| [`QueryClient`](../classes/QueryClient.md)
+  \| `InjectionToken`\<[`QueryClient`](../classes/QueryClient.md)\>
 
-[`QueryClient`](../classes/QueryClient.md) | `InjectionToken`\<[`QueryClient`](../classes/QueryClient.md)\>
+A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
 
 ## Returns
 

@@ -28,14 +28,14 @@ const unsubscribe = mutationCache.subscribe((event) => {
 ### Constructor
 
 ```ts
-new MutationCache(config: MutationCacheConfig): MutationCache;
+new MutationCache(config?: MutationCacheConfig): MutationCache;
 ```
 
 Defined in: [packages/query-core/src/mutationCache.ts:128](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L128)
 
 #### Parameters
 
-##### config
+##### config?
 
 [`MutationCacheConfig`](../interfaces/MutationCacheConfig.md) = `{}`
 
@@ -151,7 +151,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 ### findAll()
 
 ```ts
-findAll(filters: MutationFilters): Mutation<unknown, Error, unknown, unknown>[];
+findAll(filters?: MutationFilters): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
 Defined in: [packages/query-core/src/mutationCache.ts:336](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L336)
@@ -164,7 +164,7 @@ information about mutations in rare scenarios.
 
 #### Parameters
 
-##### filters
+##### filters?
 
 [`MutationFilters`](../interfaces/MutationFilters.md) = `{}`
 
@@ -267,13 +267,7 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 A function that removes the listener.
 
-```ts
-(): void;
-```
-
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 

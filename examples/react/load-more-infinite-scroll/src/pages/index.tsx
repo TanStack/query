@@ -1,24 +1,10 @@
 import React from 'react'
 import Link from 'next/link'
 import { useInView } from 'react-intersection-observer'
-import {
-  useInfiniteQuery,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
-const queryClient = new QueryClient()
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Example />
-    </QueryClientProvider>
-  )
-}
-
-function Example() {
+export default function Example() {
   const { ref, inView } = useInView()
 
   const {

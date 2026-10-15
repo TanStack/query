@@ -31,14 +31,14 @@ await queryClient.query({ queryKey: ['posts'], queryFn: fetchPosts })
 ### Constructor
 
 ```ts
-new QueryClient(config: QueryClientConfig): QueryClient;
+new QueryClient(config?: QueryClientConfig): QueryClient;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:88](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L88)
 
 #### Parameters
 
-##### config
+##### config?
 
 [`QueryClientConfig`](../interfaces/QueryClientConfig.md) = `{}`
 
@@ -204,9 +204,10 @@ top. A no-op if the options are already defaulted (`_defaulted: true`).
 
 ##### options
 
-The query options passed by the caller.
+  \| [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`, `TPageParam`\>
+  \| [`DefaultedQueryObserverOptions`](../type-aliases/DefaultedQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`\>
 
-[`QueryObserverOptions`](../interfaces/QueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`, `TPageParam`\> | [`DefaultedQueryObserverOptions`](../type-aliases/DefaultedQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`\>
+The query options passed by the caller.
 
 #### Returns
 

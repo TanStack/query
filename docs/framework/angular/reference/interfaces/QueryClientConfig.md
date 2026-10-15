@@ -3,7 +3,7 @@ id: QueryClientConfig
 title: QueryClientConfig
 ---
 
-Defined in: [packages/query-core/src/types.ts:2355](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2355)
+Defined in: [packages/query-core/src/types.ts:2361](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2361)
 
 The options of `new QueryClient()`: the `queryCache` and `mutationCache` to use, and the
 `defaultOptions` for its queries and mutations.
@@ -12,6 +12,6 @@ The options of `new QueryClient()`: the `queryCache` and `mutationCache` to use,
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="defaultoptions"></a> `defaultOptions?` | [`DefaultOptions`](DefaultOptions.md)\<`Error`\> | Default options for all queries and mutations created through this client. |
-| <a id="mutationcache"></a> `mutationCache?` | [`MutationCache`](../classes/MutationCache.md) | The mutation cache this client is connected to. A new `MutationCache` is created if not provided. |
-| <a id="querycache"></a> `queryCache?` | [`QueryCache`](../classes/QueryCache.md) | The query cache this client is connected to. A new `QueryCache` is created if not provided. |
+| <a id="property-defaultoptions"></a> `defaultOptions?` | [`DefaultOptions`](DefaultOptions.md)\<`Error`\> | Default options for all queries and mutations created through this client. |
+| <a id="property-mutationcache"></a> `mutationCache?` | [`MutationCache`](../classes/MutationCache.md) | The mutation cache this client is connected to. A new `MutationCache` is created if not provided. |
+| <a id="property-querycache"></a> `queryCache?` | [`QueryCache`](../classes/QueryCache.md) | The query cache this client is connected to. A new `QueryCache` is created if not provided. |

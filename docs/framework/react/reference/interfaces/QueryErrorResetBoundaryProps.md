@@ -11,4 +11,4 @@ The props accepted by `QueryErrorResetBoundary`.
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="children"></a> `children` | \| `ReactNode` \| [`QueryErrorResetBoundaryFunction`](../type-aliases/QueryErrorResetBoundaryFunction.md) | Either a plain node, or a function that receives the boundary's QueryErrorResetBoundaryValue and returns a node. |
+| <a id="property-children"></a> `children` | \| `ReactNode` \| [`QueryErrorResetBoundaryFunction`](../type-aliases/QueryErrorResetBoundaryFunction.md) | Either a plain node, or a function that receives the boundary's QueryErrorResetBoundaryValue and returns a node. |

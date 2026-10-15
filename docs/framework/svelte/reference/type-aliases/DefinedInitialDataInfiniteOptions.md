@@ -19,7 +19,7 @@ defined — `data` is never `undefined` (unless a `select` changes `TData` to in
 ```ts
 initialData: 
   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-| () => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>;
+  | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>);
 ```
 
 ## Type Parameters

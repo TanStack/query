@@ -15,7 +15,7 @@ instead of a wrapping component.
 
 ## Type Declaration
 
-### install()
+### install
 
 ```ts
 install: (app: any, options: VueQueryPluginOptions) => void;
@@ -27,7 +27,7 @@ install: (app: any, options: VueQueryPluginOptions) => void;
 
 `any`
 
-##### options
+##### options?
 
 [`VueQueryPluginOptions`](../type-aliases/VueQueryPluginOptions.md) = `{}`
 

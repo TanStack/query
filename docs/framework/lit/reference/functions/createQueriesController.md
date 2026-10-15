@@ -47,6 +47,12 @@ subscription.
 
 Queries controller options, or a getter that returns options.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`CreateQueriesControllerOptions`](../type-aliases/CreateQueriesControllerOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 [`QueryClient`](../classes/QueryClient.md)

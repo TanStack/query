@@ -16,7 +16,7 @@ currently pending mutations that match the filters.
 
 ## Type Declaration
 
-### destroy()
+### destroy
 
 ```ts
 destroy: () => void;

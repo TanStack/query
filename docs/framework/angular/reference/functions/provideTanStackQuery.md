@@ -18,9 +18,10 @@ configuring a `QueryClient` and optional features such as developer tools.
 
 ### queryClient
 
-A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
+  \| [`QueryClient`](../classes/QueryClient.md)
+  \| `InjectionToken`\<[`QueryClient`](../classes/QueryClient.md)\>
 
-[`QueryClient`](../classes/QueryClient.md) | `InjectionToken`\<[`QueryClient`](../classes/QueryClient.md)\>
+A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
 
 ### features
 

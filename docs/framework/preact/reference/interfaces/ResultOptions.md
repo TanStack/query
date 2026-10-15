@@ -3,7 +3,7 @@ id: ResultOptions
 title: ResultOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:863](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L863)
+Defined in: [packages/query-core/src/types.ts:866](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L866)
 
 Options shared by the `QueryClient` and observer methods that refetch queries, controlling
 whether a failed refetch makes the returned promise reject.
@@ -18,4 +18,4 @@ whether a failed refetch makes the returned promise reject.
 
 | Property | Type | Default value | Description |
 | ------ | ------ | ------ | ------ |
-| <a id="throwonerror"></a> `throwOnError?` | `boolean` | `false` | If set to `true`, the method throws if any of the underlying query refetch tasks fail. If set to `false`, failed refetches are swallowed and not surfaced to the caller. |
+| <a id="property-throwonerror"></a> `throwOnError?` | `boolean` | `false` | If set to `true`, the method throws if any of the underlying query refetch tasks fail. If set to `false`, failed refetches are swallowed and not surfaced to the caller. |

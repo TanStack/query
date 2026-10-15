@@ -43,45 +43,7 @@ The `streamFn` that returns an AsyncIterable to stream data from, and the option
 
 A query function to pass as `queryFn`.
 
-```ts
-(context: object): TData | Promise<TData>;
-```
-
-### Parameters
-
-#### context
-
-##### client
-
-[`QueryClient`](../classes/QueryClient.md)
-
-##### direction?
-
-`unknown`
-
-**Deprecated**
-
-if you want access to the direction, you can add it to the pageParam
-
-##### meta
-
-`Record`\<`string`, `unknown`\> \| `undefined`
-
-##### pageParam?
-
-`unknown`
-
-##### queryKey
-
-`TQueryKey`
-
-##### signal
-
-`AbortSignal`
-
-### Returns
-
-`TData` \| `Promise`\<`TData`\>
+(`context`: `object`) => `TData` \| `Promise`\<`TData`\>
 
 ## Example
 

@@ -120,7 +120,7 @@ export class QueryClientProvider extends LitElement {
     }
 
     const nextClient = this.client
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    // oxlint-disable-next-line typescript/no-unnecessary-condition
     if (!nextClient) {
       if (this.isConnected) {
         this.unmountClient(this.mountedClient)
@@ -133,7 +133,8 @@ export class QueryClientProvider extends LitElement {
     }
 
     const previousClient = changedProperties.get('client') as
-      QueryClient | undefined
+      | QueryClient
+      | undefined
     if (previousClient && previousClient !== nextClient && this.isConnected) {
       this.unmountClient(previousClient)
     }
@@ -182,7 +183,7 @@ export class QueryClientProvider extends LitElement {
   }
 
   private requireClient(): QueryClient {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    // oxlint-disable-next-line typescript/no-unnecessary-condition
     if (!this.client) {
       throw createMissingQueryClientError()
     }

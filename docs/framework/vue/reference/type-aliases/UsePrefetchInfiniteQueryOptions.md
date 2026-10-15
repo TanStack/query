@@ -17,7 +17,7 @@ except that `queryFn` can't be `skipToken`.
 ### queryFn?
 
 ```ts
-optional queryFn: Exclude<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken>;
+optional queryFn?: Exclude<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken>;
 ```
 
 ## Type Parameters

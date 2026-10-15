@@ -8,7 +8,7 @@ import { ListItem } from '../components/ListItem'
 import { useRefreshByUser } from '../hooks/useRefreshByUser'
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus'
 import { fetchMovies } from '../lib/api'
-import type { Movie, MovieDetails } from '../lib/api'
+import type { Movie } from '../lib/api'
 import type { MoviesStackNavigator } from '../navigation/types'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
@@ -30,7 +30,7 @@ export function MoviesListScreen({ navigation }: Props) {
   useRefreshOnFocus(refetch)
 
   const onListItemPress = React.useCallback(
-    (movie: MovieDetails) => {
+    (movie: Movie) => {
       navigation.navigate('MovieDetails', {
         movie,
       })
@@ -39,7 +39,7 @@ export function MoviesListScreen({ navigation }: Props) {
   )
 
   const renderItem = React.useCallback(
-    ({ item }: { item: MovieDetails }) => {
+    ({ item }: { item: Movie }) => {
       return <ListItem item={item} onPress={onListItemPress} />
     },
     [onListItemPress],

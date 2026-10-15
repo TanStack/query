@@ -22,6 +22,12 @@ in the background (useful for app-wide loading indicators).
 
 An accessor returning the [QueryFilters](../interfaces/QueryFilters.md) to narrow down the matched queries.
 
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+Built from [`QueryFilters`](../interfaces/QueryFilters.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 `Accessor`\<[`QueryClient`](../classes/QueryClient.md)\>

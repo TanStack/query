@@ -18,7 +18,7 @@ The options accepted by the `infiniteQueryOptions` overload selected when no `in
 ### queryFn?
 
 ```ts
-optional queryFn: Exclude<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken | undefined>;
+optional queryFn?: Exclude<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken | undefined>;
 ```
 
 `skipToken` is not allowed as a value here — this overload is selected when no `initialData` is set. If

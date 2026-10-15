@@ -55,7 +55,7 @@ function App() {
 
 function Posts(props: { setPostId: Setter<number> }) {
   // All you have to do now is pass a key!
-  const state = useQuery<any[]>(() => ({ queryKey: ['/posts'] }))
+  const state = useQuery<Array<any>>(() => ({ queryKey: ['/posts'] }))
 
   return (
     <div>
@@ -78,7 +78,7 @@ function Posts(props: { setPostId: Setter<number> }) {
                         style={
                           // We can use the queryCache here to show bold links for
                           // ones that are cached
-                          queryClient.getQueryData(['post', post.id])
+                          queryClient.getQueryData([`/posts/${post.id}`])
                             ? {
                                 'font-weight': 'bold',
                                 color: 'green',

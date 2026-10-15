@@ -6,7 +6,7 @@ title: useIsMutating
 ```ts
 function useIsMutating(
    host: ReactiveControllerHost,
-   filters: Accessor<MutationFilters<unknown, Error, unknown, unknown>>,
+   filters?: Accessor<MutationFilters<unknown, Error, unknown, unknown>>,
    queryClient?: QueryClient): IsMutatingAccessor;
 ```
 
@@ -28,11 +28,17 @@ resolves the client from the nearest connected `QueryClientProvider`.
 The Lit reactive controller host that owns the cache
 subscription.
 
-### filters
+### filters?
 
 [`Accessor`](../type-aliases/Accessor.md)\<[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>\> = `{}`
 
 Mutation filters, or a getter that returns mutation filters.
+
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+Built from [`MutationFilters`](../interfaces/MutationFilters.md#properties). See the type above for what it changes.
 
 ### queryClient?
 
