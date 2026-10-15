@@ -17,7 +17,7 @@
   <br />
   <hr />
 
-  {#each views.value as view}
+  {#each views.value as view, index (index)}
     <div>
       <TodosList initialFilter={view} />
       <br />
