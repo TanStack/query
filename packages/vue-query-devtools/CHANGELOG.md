@@ -1,5 +1,14 @@
 # @tanstack/vue-query-devtools
 
+## 6.3.3
+
+### Patch Changes
+
+- [#11413](https://github.com/TanStack/query/pull/11413) [`67705fd`](https://github.com/TanStack/query/commit/67705fd6ad164dc8ca99d44374206f62dd6a03f2) - Update floating and embedded devtools when the client prop changes, preserving the initially resolved client as the fallback when the override is removed.
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.104.3
+  - @tanstack/vue-query@5.104.3
+
 ## 6.3.2
 
 ### Patch Changes
