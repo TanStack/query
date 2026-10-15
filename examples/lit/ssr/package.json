@@ -4,8 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "node ./scripts/dev.mjs",
-    "build": "tsc --noEmit && vite build",
-    "test:eslint": "eslint ./src"
+    "build": "vite build",
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
   },
   "dependencies": {
     "@lit-labs/ssr": "^3.3.0",
