@@ -102,7 +102,7 @@
   {:else if query.data}
     {@const todo = query.data}
     <label>
-      Name:{' '}
+      Name:
       <input
         value={draft.name ?? todo.name}
         oninput={(e) => (draft.name = e.currentTarget.value)}
@@ -110,7 +110,7 @@
       />
     </label>
     <label>
-      Notes:{' '}
+      Notes:
       <input
         value={draft.notes ?? todo.notes}
         oninput={(e) => (draft.notes = e.currentTarget.value)}
