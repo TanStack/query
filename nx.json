@@ -81,7 +81,7 @@
     },
     "test:types": {
       "cache": true,
-      "dependsOn": ["^compile"],
+      "dependsOn": ["^compile", "^build"],
       "inputs": ["default", "^production"]
     },
     "build": {
