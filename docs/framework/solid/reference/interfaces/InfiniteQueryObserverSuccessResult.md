@@ -3,7 +3,7 @@ id: InfiniteQueryObserverSuccessResult
 title: InfiniteQueryObserverSuccessResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1666](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1666)
+Defined in: [packages/query-core/src/types.ts:1672](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1672)
 
 An infinite query result in the `success` state with data from the cache.
 

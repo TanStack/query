@@ -37,7 +37,7 @@ describe('retryer', () => {
     it('should default TData to unknown', () => {
       expectTypeOf(
         createRetryer({
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+          // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
           fn: () => ({}) as unknown,
           networkMode: undefined,
           canRun: () => true,

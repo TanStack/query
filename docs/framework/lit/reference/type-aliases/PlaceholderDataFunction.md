@@ -9,7 +9,7 @@ type PlaceholderDataFunction<TQueryFnData, TError, TQueryData, TQueryKey> = (pre
   | undefined) => TQueryData | undefined;
 ```
 
-Defined in: [packages/query-core/src/types.ts:268](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L268)
+Defined in: [packages/query-core/src/types.ts:270](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L270)
 
 ## Type Parameters
 

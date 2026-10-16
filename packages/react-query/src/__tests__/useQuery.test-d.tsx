@@ -270,7 +270,8 @@ describe('useQuery', () => {
 
       it('should preserve discriminated-union narrowing', () => {
         type Result =
-          { type: 'first'; first: string } | { type: 'second'; second: string }
+          | { type: 'first'; first: string }
+          | { type: 'second'; second: string }
 
         const query = useQuery({
           queryKey: queryKey(),
@@ -360,7 +361,7 @@ describe('useQuery', () => {
         _data: DataTypeToEntity[TDataType],
       ) => 'test'
 
-      // eslint-disable-next-line @eslint-react/no-nested-component-definitions
+      // oxlint-disable-next-line @eslint-react/no-nested-component-definitions
       function Test<TDataType extends DataType>(props: {
         dataType: TDataType
       }) {

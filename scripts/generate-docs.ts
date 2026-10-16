@@ -16,7 +16,6 @@ type PackageReferenceDocsConfig = {
   tsconfig: string
   outputDir: string
   exclude?: Array<string>
-  excludeExternals?: boolean
   simplifyLitQueriesControllerTypes?: boolean
   trimGeneratedMarkdown?: boolean
   // Maps a generated page's path (relative to outputDir, no extension) to the flat
@@ -172,7 +171,7 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
     excludePrivate: true,
     excludeProtected: true,
     excludeInternal: true,
-    excludeExternals: pkg.excludeExternals,
+    excludeExternals: true,
     sourceLinkTemplate:
       'https://github.com/TanStack/query/blob/{gitRevision}/{path}#L{line}',
     gitRevision: 'main',
@@ -1069,7 +1068,6 @@ const packages: Array<PackageReferenceDocsConfig> = [
     entryPoints: [resolve(__dirname, '../packages/lit-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/lit-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/lit/reference'),
-    excludeExternals: true,
     simplifyLitQueriesControllerTypes: true,
     trimGeneratedMarkdown: true,
   },

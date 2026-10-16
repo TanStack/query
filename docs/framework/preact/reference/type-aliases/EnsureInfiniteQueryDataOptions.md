@@ -9,7 +9,7 @@ type EnsureInfiniteQueryDataOptions<TQueryFnData, TError, TData, TQueryKey, TPag
 };
 ```
 
-Defined in: [packages/query-core/src/types.ts:791](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L791)
+Defined in: [packages/query-core/src/types.ts:794](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L794)
 
 ## Type Declaration
 

@@ -3,7 +3,7 @@ id: InfiniteQueryObserverLoadingErrorResult
 title: InfiniteQueryObserverLoadingErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1559](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1559)
+Defined in: [packages/query-core/src/types.ts:1565](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1565)
 
 An infinite query result in the `error` state when the first fetch failed, so there is no data.
 

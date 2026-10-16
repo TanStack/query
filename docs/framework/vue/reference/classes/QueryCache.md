@@ -356,7 +356,7 @@ QC.get
 getAll(): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:299](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L299)
+Defined in: [packages/query-core/src/queryCache.ts:300](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L300)
 
 Returns all queries within the cache.
 

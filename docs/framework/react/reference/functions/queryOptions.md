@@ -27,7 +27,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/react-query/src/queryOptions.ts:137](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L137)
+Defined in: [packages/react-query/src/queryOptions.ts:138](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L138)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -108,7 +108,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/react-query/src/queryOptions.ts:176](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L176)
+Defined in: [packages/react-query/src/queryOptions.ts:177](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L177)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -181,7 +181,7 @@ function Post({ id }: { id: string }) {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/react-query/src/queryOptions.ts:237](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L237)
+Defined in: [packages/react-query/src/queryOptions.ts:238](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L238)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and

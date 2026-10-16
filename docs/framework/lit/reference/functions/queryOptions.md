@@ -33,7 +33,7 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedIn
 };
 ```
 
-Defined in: [packages/lit-query/src/queryOptions.ts:91](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L91)
+Defined in: [packages/lit-query/src/queryOptions.ts:92](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L92)
 
 Brands query options so the `queryKey` carries the query function data and
 error types across TanStack Query APIs.
@@ -94,7 +94,7 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSki
 };
 ```
 
-Defined in: [packages/lit-query/src/queryOptions.ts:108](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L108)
+Defined in: [packages/lit-query/src/queryOptions.ts:109](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L109)
 
 Brands query options so the `queryKey` carries the query function data and
 error types across TanStack Query APIs.
@@ -143,7 +143,7 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: Undefined
 };
 ```
 
-Defined in: [packages/lit-query/src/queryOptions.ts:125](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L125)
+Defined in: [packages/lit-query/src/queryOptions.ts:126](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L126)
 
 Brands query options so the `queryKey` carries the query function data and
 error types across TanStack Query APIs.

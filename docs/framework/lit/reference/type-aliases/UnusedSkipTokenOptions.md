@@ -9,7 +9,7 @@ type UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> = OmitKeyof<
 };
 ```
 
-Defined in: [packages/lit-query/src/queryOptions.ts:33](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L33)
+Defined in: [packages/lit-query/src/queryOptions.ts:34](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L34)
 
 Query options where `queryFn` is present and not a `skipToken`.
 

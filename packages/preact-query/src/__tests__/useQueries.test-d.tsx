@@ -2,10 +2,10 @@ import { queryKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 
 import { skipToken } from '..'
-import type { OmitKeyof, QueryFunction, QueryKey } from '..'
 import { queryOptions } from '../queryOptions'
-import type { UseQueryOptions, UseQueryResult } from '../types'
 import { useQueries } from '../useQueries'
+import type { OmitKeyof, QueryFunction, QueryKey } from '..'
+import type { UseQueryOptions, UseQueryResult } from '../types'
 import type { QueryFunctionContext } from '@tanstack/query-core'
 
 describe('useQueries', () => {
@@ -806,7 +806,7 @@ describe('useQueries', () => {
                 queryFn:
                   fn && fn !== skipToken
                     ? (ctx: QueryFunctionContext<TQueryKey>) => {
-                        // eslint-disable-next-line vitest/valid-expect
+                        // oxlint-disable-next-line vitest-js/valid-expect
                         expectTypeOf<TQueryKey>(ctx.queryKey)
                         return fn.call({}, ctx)
                       }
