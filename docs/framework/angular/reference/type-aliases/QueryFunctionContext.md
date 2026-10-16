@@ -7,7 +7,11 @@ title: QueryFunctionContext
 type QueryFunctionContext<TQueryKey, TPageParam> = [TPageParam] extends [never] ? object : object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:47
+Defined in: packages/query-core/dist-ts/src/types.d.ts:138
+
+The object passed to `queryFn`: the `QueryClient`, the `queryKey`, an `AbortSignal` that aborts
+when the query is cancelled, the query's `meta`, and for infinite queries the `pageParam` of the
+page being fetched.
 
 ## Type Parameters
 

@@ -7,7 +7,7 @@ title: UseBaseQueryResult
 type UseBaseQueryResult<TData, TError> = QueryObserverResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/types.ts:314](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L314)
+Defined in: [packages/react-query/src/types.ts:304](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L304)
 
 The result of `useQuery` when `initialData` isn't set — `data` may be `undefined` while the query is
 `pending`. Re-exports [QueryObserverResult](QueryObserverResult.md) from `@tanstack/query-core`. `useInfiniteQuery` returns

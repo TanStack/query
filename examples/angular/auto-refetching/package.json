@@ -5,7 +5,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development"
+    "watch": "ng build --watch --configuration development",
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
   },
   "private": true,
   "dependencies": {
@@ -23,6 +25,7 @@
     "@angular/build": "^22.0.0",
     "@angular/cli": "^22.0.0",
     "@angular/compiler-cli": "^22.0.0",
+    "@tanstack/eslint-plugin-query": "^5.104.3",
     "typescript": "6.0.3"
   }
 }

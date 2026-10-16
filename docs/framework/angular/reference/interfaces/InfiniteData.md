@@ -3,7 +3,10 @@ id: InfiniteData
 title: InfiniteData
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:77
+Defined in: packages/query-core/dist-ts/src/types.d.ts:182
+
+The data shape of an infinite query: every page fetched so far, plus the page param each one was fetched with.
+`pages` and `pageParams` are index-aligned — `pageParams[i]` is the param that produced `pages[i]`.
 
 ## Type Parameters
 
@@ -17,7 +20,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:77
 
 ## Properties
 
-| Property | Type |
-| ------ | ------ |
-| <a id="pageparams"></a> `pageParams` | `TPageParam`[] |
-| <a id="pages"></a> `pages` | `TData`[] |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-pageparams"></a> `pageParams` | `TPageParam`[] | The page param each page was fetched with, aligned by index with `pages`. |
+| <a id="property-pages"></a> `pages` | `TData`[] | The data of every page fetched so far, in order. |

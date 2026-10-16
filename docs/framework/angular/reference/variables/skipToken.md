@@ -7,7 +7,7 @@ title: skipToken
 const skipToken: unique symbol;
 ```
 
-Defined in: packages/query-core/dist-ts/src/utils.d.ts:182
+Defined in: packages/query-core/dist-ts/src/utils.d.ts:277
 
 Sentinel value that can be passed as a query's `queryFn` to conditionally disable the query (equivalent
 to `enabled: false`) while preserving full type inference for the query's data. Unlike `enabled: false`,

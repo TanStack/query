@@ -4,10 +4,10 @@ title: injectIsMutating
 ---
 
 ```ts
-function injectIsMutating(filters: () => MutationFilters): Signal<number>;
+function injectIsMutating(filters?: () => MutationFilters): Signal<number>;
 ```
 
-Defined in: [packages/angular-query/src/inject-is-mutating.ts:15](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-is-mutating.ts#L15)
+Defined in: packages/angular-query/src/inject-is-mutating.ts:15
 
 Injects a signal that tracks the number of mutations that your application currently has `pending`
 (useful for app-wide loading indicators).
@@ -16,11 +16,22 @@ Can be used for app-wide loading indicators
 
 ## Parameters
 
-### filters
+### filters?
 
 () => [`MutationFilters`](../interfaces/MutationFilters.md)
 
 A reactive factory for the filters.
+
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="filters-property-exact"></a> `exact?` | `boolean` | Match mutation key exactly |
+| <a id="filters-property-mutationkey"></a> `mutationKey?` | readonly `unknown`[] | Include mutations matching this mutation key |
+| <a id="filters-property-predicate"></a> `predicate?` | (`mutation`: [`Mutation`](../classes/Mutation.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>) => `boolean` | Include mutations matching this predicate function |
+| <a id="filters-property-status"></a> `status?` | `"error"` \| `"success"` \| `"pending"` \| `"idle"` | Filter by mutation status |
 
 ## Returns
 

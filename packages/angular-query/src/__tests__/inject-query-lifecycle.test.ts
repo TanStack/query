@@ -6,7 +6,6 @@ import {
 } from '@angular/core'
 import { describe, expect, it, vi } from 'vitest'
 import { injectPendingTasksLifecycle } from '../utils/inject-pending-tasks-lifecycle'
-import type { Injector } from '@angular/core'
 
 function setupLifecycle() {
   const destroyCallbacks: Array<() => void> = []
@@ -38,7 +37,7 @@ function setupLifecycle() {
       if (token === DestroyRef) return destroyRef
       throw new Error(`Unexpected token: ${String(token)}`)
     },
-  } as Injector
+  }
 
   return {
     lifecycle: runInInjectionContext(injector, () =>

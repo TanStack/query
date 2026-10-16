@@ -4,7 +4,7 @@ title: MutationCacheNotifyEvent
 ---
 
 ```ts
-type MutationCacheNotifyEvent = 
+type MutationCacheNotifyEvent =
   | NotifyEventMutationAdded
   | NotifyEventMutationRemoved
   | NotifyEventMutationObserverAdded

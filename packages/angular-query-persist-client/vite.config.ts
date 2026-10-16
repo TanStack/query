@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitest/config'
-
+import angular from '@analogjs/vite-plugin-angular'
 import packageJson from './package.json'
 
 const packageDir = path.dirname(fileURLToPath(import.meta.url))
@@ -12,6 +12,8 @@ const angularQueryInternalEntry = path.join(
 )
 
 export default defineConfig({
+  plugins: [angular()],
+
   // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {
     conditions: ['@tanstack/custom-condition'],

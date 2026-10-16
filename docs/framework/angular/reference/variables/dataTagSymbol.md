@@ -7,4 +7,4 @@ title: dataTagSymbol
 const dataTagSymbol: unique symbol;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:23
+Defined in: packages/query-core/dist-ts/src/types.d.ts:65

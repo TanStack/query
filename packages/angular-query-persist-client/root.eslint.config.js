@@ -1,1 +1,1 @@
-../../eslint.config.js
+../../eslint.angular.config.js

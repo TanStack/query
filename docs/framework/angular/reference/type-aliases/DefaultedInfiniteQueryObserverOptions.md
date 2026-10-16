@@ -7,7 +7,10 @@ title: DefaultedInfiniteQueryObserverOptions
 type DefaultedInfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = WithRequired<InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "throwOnError" | "refetchOnReconnect" | "queryHash">;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:321
+Defined in: packages/query-core/dist-ts/src/types.d.ts:466
+
+The [InfiniteQueryObserverOptions](../interfaces/InfiniteQueryObserverOptions.md) after `QueryClient#defaultQueryOptions` has applied the
+defaults, so `throwOnError`, `refetchOnReconnect`, and `queryHash` are always set.
 
 ## Type Parameters
 

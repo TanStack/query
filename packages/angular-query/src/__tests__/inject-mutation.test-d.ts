@@ -21,7 +21,7 @@ describe('injectMutation', () => {
   })
 
   describe('Discriminated union return type', () => {
-    it('data should be possibly undefined by default', () => {
+    it('should have possibly undefined data by default', () => {
       const mutation = injectMutation(() => ({
         mutationFn: () => sleep(0).then(() => 'string'),
       }))
@@ -29,7 +29,7 @@ describe('injectMutation', () => {
       expectTypeOf(mutation.data).toEqualTypeOf<Signal<string | undefined>>()
     })
 
-    it('data should be defined when mutation is success', () => {
+    it('should have defined data when mutation is success', () => {
       const mutation = injectMutation(() => ({
         mutationFn: () => sleep(0).then(() => 'string'),
       }))
@@ -39,7 +39,7 @@ describe('injectMutation', () => {
       }
     })
 
-    it('error should be null when mutation is success', () => {
+    it('should have null error when mutation is success', () => {
       const mutation = injectMutation(() => ({
         mutationFn: () => sleep(0).then(() => 'string'),
       }))
@@ -49,7 +49,7 @@ describe('injectMutation', () => {
       }
     })
 
-    it('data should be undefined when mutation is pending', () => {
+    it('should have undefined data when mutation is pending', () => {
       const mutation = injectMutation(() => ({
         mutationFn: () => sleep(0).then(() => 'string'),
       }))
@@ -59,7 +59,7 @@ describe('injectMutation', () => {
       }
     })
 
-    it('error should be defined when mutation is error', () => {
+    it('should have defined error when mutation is error', () => {
       const mutation = injectMutation(() => ({
         mutationFn: () => sleep(0).then(() => 'string'),
       }))

@@ -4,7 +4,7 @@ title: QueryClientContext
 ---
 
 ```ts
-const QueryClientContext: Context<() => QueryClient | undefined>;
+const QueryClientContext: Context<(() => QueryClient) | undefined>;
 ```
 
 Defined in: [packages/solid-query/src/QueryClientProvider.tsx:13](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClientProvider.tsx#L13)

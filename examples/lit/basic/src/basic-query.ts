@@ -53,12 +53,18 @@ class BasicQueryExample extends LitElement {
           Refetch
         </button>
 
-        ${query.isPending
-          ? html`<p data-testid="basic-loading">Loading...</p>`
-          : null}
-        ${query.isError
-          ? html`<p data-testid="basic-error">Error: ${String(query.error)}</p>`
-          : null}
+        ${
+          query.isPending
+            ? html`<p data-testid="basic-loading">Loading...</p>`
+            : null
+        }
+        ${
+          query.isError
+            ? html`<p data-testid="basic-error">
+                Error: ${String(query.error)}
+              </p>`
+            : null
+        }
 
         <ul data-testid="basic-todo-list">
           ${(query.data?.items ?? []).map(

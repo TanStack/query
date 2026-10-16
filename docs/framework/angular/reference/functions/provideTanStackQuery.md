@@ -7,7 +7,7 @@ title: provideTanStackQuery
 function provideTanStackQuery(queryClientFactory: () => QueryClient, ...features: readonly QueryFeature[]): EnvironmentProviders;
 ```
 
-Defined in: [packages/angular-query/src/providers.ts:102](https://github.com/TanStack/query/blob/main/packages/angular-query/src/providers.ts#L102)
+Defined in: packages/angular-query/src/providers.ts:102
 
 Provides a `QueryClient` and optional TanStack Query features.
 The factory runs once per injector in Angular's injection context, so it can

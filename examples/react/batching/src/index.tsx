@@ -53,7 +53,7 @@ function Characters({ ids }: { ids: Array<number> }) {
             {character.data.name} (#{character.data.id})
           </h5>
           <p style={{ marginTop: 0, marginBottom: 2 }}>
-            Status: {character.status}
+            Status: {character.data.status}
           </p>
           <p style={{ marginTop: 0, marginBottom: 2 }}>
             Species: {character.data.species}
@@ -84,14 +84,14 @@ function App() {
           placeholder="ids"
           onChange={(event) => {
             const text = event.target.value.replace(' ', '')
-            const ids = text.split(',').map((id) => parseInt(id, 10))
-            const allValid = ids.reduce(
+            const parsedIds = text.split(',').map((id) => parseInt(id, 10))
+            const allValid = parsedIds.reduce(
               (valid, id) => valid && !isNaN(id),
               true,
             )
 
             if (allValid) {
-              setIds(ids)
+              setIds(parsedIds)
               setError('')
             } else {
               setError('Invalid.. only use numbers and comma')

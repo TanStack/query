@@ -7,7 +7,7 @@ title: MutationStateOptions
 type MutationStateOptions<TResult, TMutation> = object;
 ```
 
-Defined in: [packages/angular-query/src/inject-mutation-state.ts:23](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-mutation-state.ts#L23)
+Defined in: packages/angular-query/src/inject-mutation-state.ts:23
 
 ## Type Parameters
 
@@ -23,5 +23,5 @@ Defined in: [packages/angular-query/src/inject-mutation-state.ts:23](https://git
 
 | Property | Type |
 | ------ | ------ |
-| <a id="filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) |
-| <a id="select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` |
+| <a id="property-filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) |
+| <a id="property-select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` |

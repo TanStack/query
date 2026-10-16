@@ -5,12 +5,12 @@ title: dehydrateQuery
 
 ```ts
 function dehydrateQuery(
-   query: Query, 
-   serializeData?: TransformerFn, 
+   query: Query,
+   serializeData?: TransformerFn,
    shouldRedactErrors?: (error: unknown) => boolean): DehydratedQuery;
 ```
 
-Defined in: packages/query-core/dist-ts/src/hydration.d.ts:72
+Defined in: packages/query-core/dist-ts/src/hydration.d.ts:80
 
 Dehydrates a single `Query` into a serializable `DehydratedQuery` snapshot. Note that most query config (e.g.
 `queryFn`, `staleTime`) is not dehydrated but instead meant to be configured again when consuming the
@@ -41,3 +41,5 @@ error is kept as-is instead of being redacted.
 ## Returns
 
 `DehydratedQuery`
+
+The dehydrated query.

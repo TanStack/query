@@ -3,7 +3,7 @@ id: InfiniteQueryObserver
 title: InfiniteQueryObserver
 ---
 
-Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:26
+Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:25
 
 An `InfiniteQueryObserver` extends `QueryObserver` to observe and switch
 between infinite queries. It augments the base `QueryObserverResult` with
@@ -58,7 +58,7 @@ const unsubscribe = observer.subscribe((result) => console.log(result))
 new InfiniteQueryObserver<TQueryFnData, TError, TData, TQueryKey, TPageParam>(client: QueryClient, options: InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): InfiniteQueryObserver<TQueryFnData, TError, TData, TQueryKey, TPageParam>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:30
+Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:29
 
 #### Parameters
 
@@ -80,34 +80,22 @@ Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:30
 
 ## Properties
 
-### fetch
-
-```ts
-protected fetch: ReplaceReturnType<(fetchOptions: ObserverFetchOptions) => Promise<QueryObserverResult<TData, TError>>, Promise<InfiniteQueryObserverResult<TData, TError>>>;
-```
-
-Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:29
-
-#### Overrides
-
-```ts
-QueryObserver.fetch
-```
-
-***
-
 ### getCurrentResult
 
 ```ts
 getCurrentResult: ReplaceReturnType<() => QueryObserverResult<TData, TError>, InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:28
+Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:27
 
 Returns the most recently computed `QueryObserverResult` for the
 observed query. This is a point-in-time read; to be notified of updates
 as they happen, subscribe to the observer instead (its inherited
 `subscribe` method).
+
+#### Returns
+
+The observer's latest result.
 
 #### Example
 
@@ -124,27 +112,13 @@ QueryObserver.getCurrentResult
 
 ***
 
-### listeners
-
-```ts
-protected listeners: Set<QueryObserverListener<TData, TError>>;
-```
-
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:2
-
-#### Inherited from
-
-[`QueryObserver`](QueryObserver.md).[`listeners`](QueryObserver.md#listeners)
-
-***
-
 ### options
 
 ```ts
 options: QueryObserverOptions<TQueryFnData, TError, TData, InfiniteData<TQueryFnData, TPageParam>, TQueryKey>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:31
+Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:30
 
 #### Inherited from
 
@@ -152,13 +126,13 @@ Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:31
 
 ***
 
-### subscribe()
+### subscribe
 
 ```ts
 subscribe: (listener: InfiniteQueryObserverListener) => () => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:27
+Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:26
 
 Registers a listener to be called on every update this object notifies about. Returns a function
 that removes the listener again — call it to stop listening. The base class never drops a listener
@@ -174,13 +148,9 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
 
-```ts
-(): void;
-```
+A function that removes the listener.
 
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 
@@ -200,59 +170,13 @@ QueryObserver.subscribe
 
 ## Methods
 
-### bindMethods()
-
-```ts
-protected bindMethods(): void;
-```
-
-Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:31
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-[`QueryObserver`](QueryObserver.md).[`bindMethods`](QueryObserver.md#bindmethods)
-
-***
-
-### createResult()
-
-```ts
-protected createResult(query: Query<TQueryFnData, TError, InfiniteData<TQueryFnData, TPageParam>, TQueryKey>, options: InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): InfiniteQueryObserverResult<TData, TError>;
-```
-
-Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:84
-
-#### Parameters
-
-##### query
-
-[`Query`](Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>
-
-##### options
-
-[`InfiniteQueryObserverOptions`](../interfaces/InfiniteQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
-
-#### Returns
-
-[`InfiniteQueryObserverResult`](../type-aliases/InfiniteQueryObserverResult.md)\<`TData`, `TError`\>
-
-#### Overrides
-
-[`QueryObserver`](QueryObserver.md).[`createResult`](QueryObserver.md#createresult)
-
-***
-
 ### destroy()
 
 ```ts
 destroy(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:53
+Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:58
 
 Stops observing the current query: clears all listeners, cancels the
 stale and refetch-interval timers, and removes this observer from the
@@ -274,7 +198,7 @@ query it was observing.
 fetchNextPage(options?: FetchNextPageOptions): Promise<InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:64
+Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:68
 
 Fetches the next page of the infinite query and returns a promise that
 resolves with the resulting `InfiniteQueryObserverResult`. The page
@@ -288,9 +212,19 @@ receives the current pages/page params and whose result also determines
 
 [`FetchNextPageOptions`](../interfaces/FetchNextPageOptions.md)
 
+Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
+and `throwOnError` to `true` to reject when the fetch fails.
+
 #### Returns
 
 `Promise`\<[`InfiniteQueryObserverResult`](../type-aliases/InfiniteQueryObserverResult.md)\<`TData`, `TError`\>\>
+
+A promise that resolves with the result after the next page is fetched. With
+`cancelRefetch: false`, a running fetch is reused instead, so the next page may not be fetched.
+
+#### See
+
+[InfiniteQueryObserver#fetchPreviousPage](#fetchpreviouspage)
 
 #### Example
 
@@ -302,10 +236,6 @@ if (hasNextPage) {
 }
 ```
 
-#### See
-
-[InfiniteQueryObserver#fetchPreviousPage](#fetchpreviouspage)
-
 ***
 
 ### fetchOptimistic()
@@ -314,7 +244,7 @@ if (hasNextPage) {
 fetchOptimistic(options: QueryObserverOptions<TQueryFnData, TError, TData, InfiniteData<TQueryFnData, TPageParam>, TQueryKey>): Promise<QueryObserverResult<TData, TError>>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:134
+Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:151
 
 Fetches a query defined by the given options without affecting this
 observer's own tracked query or result, and returns a promise that
@@ -328,9 +258,13 @@ navigated to) will need, ahead of time.
 
 [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>
 
+The observer options of the query to fetch.
+
 #### Returns
 
 `Promise`\<[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>\>
+
+A promise that resolves with the result for the fetched query.
 
 #### Example
 
@@ -354,7 +288,7 @@ console.log(result.data)
 fetchPreviousPage(options?: FetchPreviousPageOptions): Promise<InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:83
+Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:89
 
 Fetches the previous page of the infinite query and returns a promise
 that resolves with the resulting `InfiniteQueryObserverResult`. The page
@@ -368,9 +302,19 @@ receives the current pages/page params and whose result also determines
 
 [`FetchPreviousPageOptions`](../interfaces/FetchPreviousPageOptions.md)
 
+Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
+and `throwOnError` to `true` to reject when the fetch fails.
+
 #### Returns
 
 `Promise`\<[`InfiniteQueryObserverResult`](../type-aliases/InfiniteQueryObserverResult.md)\<`TData`, `TError`\>\>
+
+A promise that resolves with the result after the previous page is fetched. With
+`cancelRefetch: false`, a running fetch is reused instead, so the previous page may not be fetched.
+
+#### See
+
+[InfiniteQueryObserver#fetchNextPage](#fetchnextpage)
 
 #### Example
 
@@ -382,10 +326,6 @@ if (hasPreviousPage) {
 }
 ```
 
-#### See
-
-[InfiniteQueryObserver#fetchNextPage](#fetchnextpage)
-
 ***
 
 ### getCurrentQuery()
@@ -394,13 +334,15 @@ if (hasPreviousPage) {
 getCurrentQuery(): Query<TQueryFnData, TError, InfiniteData<TQueryFnData, TPageParam>, TQueryKey>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:106
+Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:120
 
 Returns the `Query` instance this observer is currently observing.
 
 #### Returns
 
 [`Query`](Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>
+
+The observed query.
 
 #### Inherited from
 
@@ -414,7 +356,7 @@ Returns the `Query` instance this observer is currently observing.
 getOptimisticResult(options: DefaultedInfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): InfiniteQueryObserverResult<TData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:45
+Defined in: packages/query-core/dist-ts/src/infiniteQueryObserver.d.ts:47
 
 The infinite-query counterpart of [QueryObserver#getOptimisticResult](QueryObserver.md#getoptimisticresult), marking the
 options as an infinite query before delegating to it. Called by framework adapters (e.g.
@@ -427,9 +369,13 @@ synchronously.
 
 [`DefaultedInfiniteQueryObserverOptions`](../type-aliases/DefaultedInfiniteQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
+The defaulted infinite query observer options to compute the result for.
+
 #### Returns
 
 [`InfiniteQueryObserverResult`](../type-aliases/InfiniteQueryObserverResult.md)\<`TData`, `TError`\>
+
+The result for the given options.
 
 #### Overrides
 
@@ -443,11 +389,15 @@ synchronously.
 hasListeners(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:5
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:29
+
+Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Returns
 
 `boolean`
+
+`true` if at least one listener is registered.
 
 #### Inherited from
 
@@ -455,62 +405,31 @@ Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:5
 
 ***
 
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:34
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-[`QueryObserver`](QueryObserver.md).[`onSubscribe`](QueryObserver.md#onsubscribe)
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:35
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-[`QueryObserver`](QueryObserver.md).[`onUnsubscribe`](QueryObserver.md#onunsubscribe)
-
-***
-
 ### refetch()
 
 ```ts
-refetch(__namedParameters?: RefetchOptions): Promise<QueryObserverResult<TData, TError>>;
+refetch(options?: RefetchOptions): Promise<QueryObserverResult<TData, TError>>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:117
+Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:133
 
 Refetches the observed query and returns a promise that resolves with
 the resulting `QueryObserverResult`.
 
 #### Parameters
 
-##### \_\_namedParameters?
+##### options?
 
 [`RefetchOptions`](../interfaces/RefetchOptions.md)
+
+Set `cancelRefetch` to `false` to keep a running fetch instead of cancelling
+it, and `throwOnError` to `true` to reject when the refetch fails.
 
 #### Returns
 
 `Promise`\<[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>\>
+
+A promise that resolves with the result after the refetch.
 
 #### Example
 
@@ -544,6 +463,8 @@ implementation.
 
 [`InfiniteQueryObserverOptions`](../interfaces/InfiniteQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
+The new infinite query observer options.
+
 #### Returns
 
 `void`
@@ -560,7 +481,7 @@ implementation.
 shouldFetchOnReconnect(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:41
+Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:45
 
 Returns whether the observed query is currently stale and configured
 (via the `refetchOnReconnect` option) to refetch when the network
@@ -569,6 +490,8 @@ reconnects.
 #### Returns
 
 `boolean`
+
+`true` if the observer should refetch the query on reconnect.
 
 #### Inherited from
 
@@ -582,7 +505,7 @@ reconnects.
 shouldFetchOnWindowFocus(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:47
+Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:52
 
 Returns whether the observed query is currently stale and configured
 (via the `refetchOnWindowFocus` option) to refetch when the window
@@ -591,6 +514,8 @@ regains focus.
 #### Returns
 
 `boolean`
+
+`true` if the observer should refetch the query on window focus.
 
 #### Inherited from
 
@@ -601,7 +526,7 @@ regains focus.
 ### trackProp()
 
 ```ts
-trackProp(key: 
+trackProp(key:
   | "data"
   | "error"
   | "isError"
@@ -629,7 +554,7 @@ trackProp(key:
   | "fetchStatus"): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:102
+Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:115
 
 Records that the given `QueryObserverResult` property was read, so a subsequent update only
 notifies this observer if a tracked property actually changed. Normally called indirectly via
@@ -640,7 +565,33 @@ access themselves (e.g. through their own reactivity system) instead of via the 
 
 ##### key
 
-`"data"` | `"error"` | `"isError"` | `"isPending"` | `"isLoading"` | `"isLoadingError"` | `"isRefetchError"` | `"isSuccess"` | `"isPlaceholderData"` | `"status"` | `"dataUpdatedAt"` | `"errorUpdatedAt"` | `"failureCount"` | `"failureReason"` | `"errorUpdateCount"` | `"isFetched"` | `"isFetchedAfterMount"` | `"isFetching"` | `"isInitialLoading"` | `"isPaused"` | `"isRefetching"` | `"isStale"` | `"isEnabled"` | `"refetch"` | `"fetchStatus"`
+  \| `"data"`
+  \| `"error"`
+  \| `"isError"`
+  \| `"isPending"`
+  \| `"isLoading"`
+  \| `"isLoadingError"`
+  \| `"isRefetchError"`
+  \| `"isSuccess"`
+  \| `"isPlaceholderData"`
+  \| `"status"`
+  \| `"dataUpdatedAt"`
+  \| `"errorUpdatedAt"`
+  \| `"failureCount"`
+  \| `"failureReason"`
+  \| `"errorUpdateCount"`
+  \| `"isFetched"`
+  \| `"isFetchedAfterMount"`
+  \| `"isFetching"`
+  \| `"isInitialLoading"`
+  \| `"isPaused"`
+  \| `"isRefetching"`
+  \| `"isStale"`
+  \| `"isEnabled"`
+  \| `"refetch"`
+  \| `"fetchStatus"`
+
+The name of the property that was read.
 
 #### Returns
 
@@ -655,7 +606,7 @@ access themselves (e.g. through their own reactivity system) instead of via the 
 ### trackResult()
 
 ```ts
-trackResult(result: QueryObserverResult<TData, TError>, onPropTracked?: (key: 
+trackResult(result: QueryObserverResult<TData, TError>, onPropTracked?: (key:
   | "data"
   | "error"
   | "isError"
@@ -683,7 +634,7 @@ trackResult(result: QueryObserverResult<TData, TError>, onPropTracked?: (key:
 | "fetchStatus") => void): QueryObserverResult<TData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:95
+Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:107
 
 Wraps a `QueryObserverResult` in a `Proxy` that records which properties are read, via
 [QueryObserver#trackProp](QueryObserver.md#trackprop) (and an optional `onPropTracked` callback). Used by framework
@@ -696,9 +647,11 @@ properties you actually read" behavior.
 
 [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>
 
+The result to wrap.
+
 ##### onPropTracked?
 
-(`key`: 
+(`key`:
   \| `"data"`
   \| `"error"`
   \| `"isError"`
@@ -725,9 +678,13 @@ properties you actually read" behavior.
   \| `"refetch"`
   \| `"fetchStatus"`) => `void`
 
+Called with the name of each property that is read.
+
 #### Returns
 
 [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>
+
+A proxy of `result` that tracks property reads.
 
 #### Inherited from
 
@@ -741,7 +698,7 @@ properties you actually read" behavior.
 updateResult(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:142
+Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:172
 
 Recomputes and stores the current result from the current query/options, notifying listeners
 if it changed. Framework adapters call this right after subscribing to make sure no query

@@ -33,6 +33,8 @@ useQuery({
 })
 ```
 
+The rule requires [typed linting](https://typescript-eslint.io/getting-started/typed-linting/) and does not report anything without it.
+
 ## Attributes
 
 - [x] ✅ Recommended

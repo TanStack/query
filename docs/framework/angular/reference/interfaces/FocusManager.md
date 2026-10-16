@@ -13,12 +13,6 @@ It can be used to change the default event listeners or to manually change the f
 
 - `Subscribable`\<`Listener`\>
 
-## Properties
-
-| Property | Modifier | Type |
-| ------ | ------ | ------ |
-| <a id="listeners"></a> `listeners` | `protected` | `Set`\<`Listener`\> |
-
 ## Methods
 
 ### hasListeners()
@@ -27,11 +21,15 @@ It can be used to change the default event listeners or to manually change the f
 hasListeners(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:5
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:29
+
+Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Returns
 
 `boolean`
+
+`true` if at least one listener is registered.
 
 #### Inherited from
 
@@ -47,13 +45,15 @@ Subscribable.hasListeners
 isFocused(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:66
+Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:68
 
 `isFocused` can be used to get the current focus state.
 
 #### Returns
 
 `boolean`
+
+The focus state set with `setFocused`, or otherwise whether the document is visible.
 
 ***
 
@@ -63,7 +63,7 @@ Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:66
 onFocus(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:62
+Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:63
 
 `onFocus` notifies all subscribed listeners with the current focus state.
 
@@ -73,53 +73,13 @@ Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:62
 
 ***
 
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:12
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:13
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onUnsubscribe
-```
-
-***
-
 ### setEventListener()
 
 ```ts
 setEventListener(setup: SetupFn): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:39
+Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:40
 
 `setEventListener` can be used to set a custom event listener that will
 be used to determine the focus state. The provided `setup` function
@@ -132,6 +92,9 @@ focus state and notify subscribers.
 ##### setup
 
 `SetupFn`
+
+Receives the `setFocused` callback, registers the event listener, and may return
+a cleanup function that is called when the listener is replaced or no longer needed.
 
 #### Returns
 
@@ -164,7 +127,7 @@ focusManager.setEventListener((handleFocus) => {
 setFocused(focused?: boolean): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:58
+Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:59
 
 `setFocused` can be used to manually set the focus state. Set `undefined`
 to fall back to the default focus check.
@@ -174,6 +137,8 @@ to fall back to the default focus check.
 ##### focused?
 
 `boolean`
+
+The focus state, or `undefined` to use the default focus check.
 
 #### Returns
 
@@ -202,7 +167,11 @@ focusManager.setFocused(undefined)
 subscribe(listener: Listener): () => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:4
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:24
+
+Registers a listener to be called on every update this object notifies about. Returns a function
+that removes the listener again — call it to stop listening. The base class never drops a listener
+on its own, though some subclasses clear all of theirs in `destroy()`.
 
 #### Parameters
 
@@ -214,13 +183,9 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
 
-```ts
-(): void;
-```
+A function that removes the listener.
 
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 

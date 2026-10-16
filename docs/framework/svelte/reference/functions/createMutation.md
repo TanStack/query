@@ -7,7 +7,7 @@ title: createMutation
 function createMutation<TData, TError, TVariables, TContext>(options: Accessor<CreateMutationOptions<TData, TError, TVariables, TContext>>, queryClient?: Accessor<QueryClient>): CreateMutationResult<TData, TError, TVariables, TContext>;
 ```
 
-Defined in: [packages/svelte-query/src/createMutation.svelte.ts:171](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createMutation.svelte.ts#L171)
+Defined in: [packages/svelte-query/src/createMutation.svelte.ts:165](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createMutation.svelte.ts#L165)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
 `createMutation` is the function for that.
@@ -39,6 +39,12 @@ Unlike queries, mutations are typically used to create/update/delete data or per
 The [CreateMutationOptions](../type-aliases/CreateMutationOptions.md) to use, wrapped in an [Accessor](../type-aliases/Accessor.md) so options can be
 reactive.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`MutationObserverOptions`](../interfaces/MutationObserverOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 [`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
@@ -54,6 +60,12 @@ be used.
 argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to the shared
 mutation definition. If you make multiple requests, `onSuccess` will fire only after the latest call you've
 made.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`MutationObserverBaseResult`](../interfaces/MutationObserverBaseResult.md#properties). See the type above for what it changes.
 
 ## See
 

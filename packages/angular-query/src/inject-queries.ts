@@ -80,7 +80,7 @@ export function injectQueries<
         : 'optimistic'
       defaultedOptions.notifyOnChangeProps = 'all'
 
-      return defaultedOptions as QueryObserverOptions
+      return defaultedOptions
     })
   })
 
@@ -197,5 +197,5 @@ export function injectQueries<
       return combine(result as Parameters<NonNullable<typeof combine>>[0])
 
     return proxiedResultsSignal() as unknown as TCombinedResult
-  }) as unknown as Signal<TCombinedResult>
+  })
 }

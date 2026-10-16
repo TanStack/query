@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-ts/legacy"
+  },
+  "include": ["src"],
+  "exclude": ["src/__tests__", "src/**/__test__"],
+  "references": [
+    {
+      "path": "../angular-query"
+    },
+    {
+      "path": "../query-core"
+    },
+    {
+      "path": "../query-devtools"
+    }
+  ]
+}

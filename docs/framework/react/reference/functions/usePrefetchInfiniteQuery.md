@@ -9,7 +9,7 @@ redirect_from:
 function usePrefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UsePrefetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: QueryClient): void;
 ```
 
-Defined in: [packages/react-query/src/usePrefetchInfiniteQuery.tsx:56](https://github.com/TanStack/query/blob/main/packages/react-query/src/usePrefetchInfiniteQuery.tsx#L56)
+Defined in: [packages/react-query/src/usePrefetchInfiniteQuery.tsx:53](https://github.com/TanStack/query/blob/main/packages/react-query/src/usePrefetchInfiniteQuery.tsx#L53)
 
 `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render,
 before a suspense boundary that wraps a component that uses `useSuspenseInfiniteQuery`. You can pass
@@ -65,8 +65,6 @@ be used.
 ## Returns
 
 `void`
-
-`void` — nothing is returned.
 
 ## Example
 

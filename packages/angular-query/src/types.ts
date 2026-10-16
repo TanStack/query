@@ -188,7 +188,6 @@ export interface CreateInfiniteQueryOptions<
  * while function fields (like `refetch`) are called directly, unchanged. `isSuccess`/`isError`/`isPending`
  * are {@link BaseQueryNarrowing} type-guard methods rather than plain booleans.
  * `injectInfiniteQuery` returns {@link CreateInfiniteQueryResult} instead.
- *
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
@@ -207,7 +206,6 @@ export type CreateBaseQueryResult<
 
 /**
  * The result of `injectQuery`. Same as {@link CreateBaseQueryResult}.
- *
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
@@ -220,7 +218,6 @@ export type CreateQueryResult<
  * The result of `injectQuery` when `initialData` is set — `data` is never `undefined`. Same shape as
  * {@link DefinedQueryObserverResult} from `@tanstack/query-core`, but value fields are exposed as a
  * `Signal` while function fields are called directly, unchanged.
- *
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
@@ -240,7 +237,6 @@ export type DefinedCreateQueryResult<
  * query is `pending`. Same shape as {@link InfiniteQueryObserverResult} from `@tanstack/query-core`, but
  * value fields are exposed as a `Signal` while function fields (like `fetchNextPage`) are called directly,
  * unchanged.
- *
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
@@ -256,7 +252,6 @@ export type CreateInfiniteQueryResult<
  * The result of `injectInfiniteQuery` when `initialData` is set — `data` is never `undefined`. Same shape as
  * {@link DefinedInfiniteQueryObserverResult} from `@tanstack/query-core`, but value fields are exposed as a
  * `Signal` while function fields are called directly, unchanged.
- *
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
@@ -273,7 +268,6 @@ export type DefinedCreateInfiniteQueryResult<
 /**
  * The options accepted by `injectMutation`. Same as {@link MutationObserverOptions} from
  * `@tanstack/query-core`, minus the internal `_defaulted` flag.
- *
  * @template TData - The type your mutation function resolves to.
  * @template TError - The type of errors your mutation function may throw.
  * @template TVariables - The type of the variable passed to `mutate`/`mutateAsync`.
@@ -294,7 +288,6 @@ export interface CreateMutationOptions<
  * The type of `mutate`, as returned by `injectMutation`. Forwards the variables (and an optional per-call
  * `onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced
  * through the mutation result, not thrown.
- *
  * @template TData - The type your mutation function resolves to.
  * @template TError - The type of errors your mutation function may throw.
  * @template TVariables - The type of the variable passed to `mutate`.
@@ -315,7 +308,6 @@ export type CreateMutateFunction<
 /**
  * The type of `mutateAsync`, as returned by `injectMutation`. Similar to {@link CreateMutateFunction}, but
  * returns a promise which can be awaited.
- *
  * @template TData - The type your mutation function resolves to.
  * @template TError - The type of errors your mutation function may throw.
  * @template TVariables - The type of the variable passed to `mutateAsync`.
@@ -333,7 +325,6 @@ export type CreateMutateAsyncFunction<
  * The pre-`Signal` shape {@link CreateMutationResult} is built from — not what `injectMutation` actually
  * returns. Same as {@link MutationObserverResult} from `@tanstack/query-core`, with `mutate` narrowed to the
  * fire-and-forget {@link CreateMutateFunction} signature, plus the added `mutateAsync`.
- *
  * @template TData - The type your mutation function resolves to.
  * @template TError - The type of errors your mutation function may throw.
  * @template TVariables - The type of the variable passed to `mutate`/`mutateAsync`.
@@ -377,6 +368,9 @@ export interface BaseMutationNarrowing<
   TVariables = unknown,
   TOnMutateResult = unknown,
 > {
+  /**
+   * Whether the mutation is in the `success` state. Calling it narrows the result to that state.
+   */
   isSuccess: SignalFunction<
     (
       this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
@@ -394,6 +388,9 @@ export interface BaseMutationNarrowing<
       >
     >
   >
+  /**
+   * Whether the mutation is in the `error` state. Calling it narrows the result to that state.
+   */
   isError: SignalFunction<
     (
       this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
@@ -411,6 +408,9 @@ export interface BaseMutationNarrowing<
       >
     >
   >
+  /**
+   * Whether the mutation is in the `pending` state. Calling it narrows the result to that state.
+   */
   isPending: SignalFunction<
     (
       this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
@@ -428,6 +428,9 @@ export interface BaseMutationNarrowing<
       >
     >
   >
+  /**
+   * Whether the mutation is in the `idle` state. Calling it narrows the result to that state.
+   */
   isIdle: SignalFunction<
     (
       this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
@@ -452,7 +455,6 @@ export interface BaseMutationNarrowing<
  * a `Signal` — read them with `mutation.data()`, not `mutation.data` — while function fields (`mutate`,
  * `mutateAsync`, `reset`) are called directly, unchanged. `isSuccess`/`isError`/`isPending`/`isIdle` are
  * {@link BaseMutationNarrowing} type-guard methods rather than plain booleans.
- *
  * @template TData - The type your mutation function resolves to.
  * @template TError - The type of errors your mutation function may throw.
  * @template TVariables - The type of the variable passed to `mutate`/`mutateAsync`.

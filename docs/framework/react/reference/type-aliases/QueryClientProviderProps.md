@@ -15,5 +15,5 @@ The props accepted by `QueryClientProvider`.
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="children"></a> `children?` | `React.ReactNode` | The components that get access to the provided `QueryClient`. |
-| <a id="client"></a> `client` | [`QueryClient`](../classes/QueryClient.md) | **Required** The `QueryClient` instance to provide. |
+| <a id="property-children"></a> `children?` | `React.ReactNode` | The components that get access to the provided `QueryClient`. |
+| <a id="property-client"></a> `client` | [`QueryClient`](../classes/QueryClient.md) | **Required** The `QueryClient` instance to provide. |

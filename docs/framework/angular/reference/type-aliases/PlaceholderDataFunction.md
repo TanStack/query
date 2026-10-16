@@ -4,12 +4,12 @@ title: PlaceholderDataFunction
 ---
 
 ```ts
-type PlaceholderDataFunction<TQueryFnData, TError, TQueryData, TQueryKey> = (previousData: TQueryData | undefined, previousQuery: 
+type PlaceholderDataFunction<TQueryFnData, TError, TQueryData, TQueryKey> = (previousData: TQueryData | undefined, previousQuery:
   | Query<TQueryFnData, TError, TQueryData, TQueryKey>
   | undefined) => TQueryData | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:72
+Defined in: packages/query-core/dist-ts/src/types.d.ts:165
 
 ## Type Parameters
 
@@ -33,11 +33,12 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:72
 
 ### previousData
 
-`TQueryData` | `undefined`
+`TQueryData` \| `undefined`
 
 ### previousQuery
 
-[`Query`](../classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryData`, `TQueryKey`\> | `undefined`
+  \| [`Query`](../classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryData`, `TQueryKey`\>
+  \| `undefined`
 
 ## Returns
 

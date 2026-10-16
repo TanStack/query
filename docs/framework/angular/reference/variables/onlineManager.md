@@ -7,6 +7,6 @@ title: onlineManager
 const onlineManager: OnlineManager;
 ```
 
-Defined in: packages/query-core/dist-ts/src/onlineManager.d.ts:60
+Defined in: packages/query-core/dist-ts/src/onlineManager.d.ts:62
 
 Singleton instance of [OnlineManager](../interfaces/OnlineManager.md), used to manage and observe the online state within TanStack Query.

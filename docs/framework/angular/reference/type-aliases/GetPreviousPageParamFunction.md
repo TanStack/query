@@ -7,7 +7,7 @@ title: GetPreviousPageParamFunction
 type GetPreviousPageParamFunction<TPageParam, TQueryFnData> = (firstPage: TQueryFnData, allPages: TQueryFnData[], firstPageParam: TPageParam, allPageParams: TPageParam[]) => TPageParam | undefined | null;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:75
+Defined in: packages/query-core/dist-ts/src/types.d.ts:175
 
 ## Type Parameters
 

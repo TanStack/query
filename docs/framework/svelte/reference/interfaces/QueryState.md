@@ -22,15 +22,15 @@ that observer results (e.g. `QueryObserverResult`) are derived from.
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="data"></a> `data` | `TData` \| `undefined` | The last successfully resolved data for the query. |
-| <a id="dataupdatecount"></a> `dataUpdateCount` | `number` | The number of times the query has successfully resolved. |
-| <a id="dataupdatedat"></a> `dataUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"success"`. |
-| <a id="error"></a> `error` | `TError` \| `null` | The error object for the query, if the last attempt resulted in an error. - Defaults to `null`. |
-| <a id="errorupdatecount"></a> `errorUpdateCount` | `number` | The sum of all errors, incremented every time the query resolves with an error. |
-| <a id="errorupdatedat"></a> `errorUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"error"`. |
-| <a id="fetchfailurecount"></a> `fetchFailureCount` | `number` | The failure count for the current fetch. - Incremented every time the fetch fails. - Reset to `0` when the fetch succeeds. |
-| <a id="fetchfailurereason"></a> `fetchFailureReason` | `TError` \| `null` | The reason the current fetch failed, as reported by the retryer. - Reset to `null` when the fetch succeeds. |
-| <a id="fetchmeta"></a> `fetchMeta` | `FetchMeta` \| `null` | Metadata passed to the currently in-flight (or most recent) fetch, e.g. the `fetchMore` direction for infinite queries. |
-| <a id="fetchstatus"></a> `fetchStatus` | `"fetching"` \| `"paused"` \| `"idle"` | The fetch status of the query. - `fetching`: the `queryFn` is currently executing. - `paused`: a fetch wanted to run but has been paused (see network mode). - `idle`: the query is not fetching. |
-| <a id="isinvalidated"></a> `isInvalidated` | `boolean` | Whether the query has been marked as invalidated via `invalidate()`. - Reset to `false` whenever the query resolves successfully. |
-| <a id="status"></a> `status` | `"error"` \| `"pending"` \| `"success"` | The status of the query. - `pending` if there's no cached data and no attempt was finished yet. - `error` if the last attempt resulted in an error. - `success` if the query has data. |
+| <a id="property-data"></a> `data` | `TData` \| `undefined` | The last successfully resolved data for the query. |
+| <a id="property-dataupdatecount"></a> `dataUpdateCount` | `number` | The number of times the query has successfully resolved. |
+| <a id="property-dataupdatedat"></a> `dataUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"success"`. |
+| <a id="property-error"></a> `error` | `TError` \| `null` | The error object for the query, if the last attempt resulted in an error. - Defaults to `null`. |
+| <a id="property-errorupdatecount"></a> `errorUpdateCount` | `number` | The sum of all errors, incremented every time the query resolves with an error. |
+| <a id="property-errorupdatedat"></a> `errorUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"error"`. |
+| <a id="property-fetchfailurecount"></a> `fetchFailureCount` | `number` | The failure count for the current fetch. - Incremented every time the fetch fails. - Reset to `0` when the fetch succeeds. |
+| <a id="property-fetchfailurereason"></a> `fetchFailureReason` | `TError` \| `null` | The reason the current fetch failed, as reported by the retryer. - Reset to `null` when the fetch succeeds. |
+| <a id="property-fetchmeta"></a> `fetchMeta` | `FetchMeta` \| `null` | Metadata passed to the currently in-flight (or most recent) fetch, e.g. the `fetchMore` direction for infinite queries. |
+| <a id="property-fetchstatus"></a> `fetchStatus` | `"fetching"` \| `"paused"` \| `"idle"` | The fetch status of the query. - `fetching`: the `queryFn` is currently executing. - `paused`: a fetch wanted to run but has been paused (see network mode). - `idle`: the query is not fetching. |
+| <a id="property-isinvalidated"></a> `isInvalidated` | `boolean` | Whether the query has been marked as invalidated via `invalidate()`. - Reset to `false` whenever the query resolves successfully. |
+| <a id="property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` | The status of the query. - `pending` if there's no cached data and no attempt was finished yet. - `error` if the last attempt resulted in an error. - `success` if the query has data. |

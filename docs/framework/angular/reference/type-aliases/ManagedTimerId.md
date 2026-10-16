@@ -4,7 +4,7 @@ title: ManagedTimerId
 ---
 
 ```ts
-type ManagedTimerId = 
+type ManagedTimerId =
   | number
   | {
   [toPrimitive]: () => number;

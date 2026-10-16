@@ -4,7 +4,7 @@ title: QueryCacheNotifyEvent
 ---
 
 ```ts
-type QueryCacheNotifyEvent = 
+type QueryCacheNotifyEvent =
   | NotifyEventQueryAdded
   | NotifyEventQueryRemoved
   | NotifyEventQueryUpdated

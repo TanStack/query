@@ -14,6 +14,6 @@ are fire-and-forget: their return value is not awaited before the query settles.
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="onerror"></a> `onError?` | (`error`: `Error`, `query`: [`Query`](../classes/Query.md)\<`unknown`, `unknown`, `unknown`\>) => `void` | Called when any query in the cache encounters an error. |
-| <a id="onsettled"></a> `onSettled?` | (`data`: `unknown`, `error`: `Error` \| `null`, `query`: [`Query`](../classes/Query.md)\<`unknown`, `unknown`, `unknown`\>) => `void` | Called when any query in the cache is settled, either successfully or with an error. |
-| <a id="onsuccess"></a> `onSuccess?` | (`data`: `unknown`, `query`: [`Query`](../classes/Query.md)\<`unknown`, `unknown`, `unknown`\>) => `void` | Called when any query in the cache is successful. |
+| <a id="property-onerror"></a> `onError?` | (`error`: `Error`, `query`: [`Query`](../classes/Query.md)\<`unknown`, `unknown`, `unknown`\>) => `void` | Called when any query in the cache encounters an error. |
+| <a id="property-onsettled"></a> `onSettled?` | (`data`: `unknown`, `error`: `Error` \| `null`, `query`: [`Query`](../classes/Query.md)\<`unknown`, `unknown`, `unknown`\>) => `void` | Called when any query in the cache is settled, either successfully or with an error. |
+| <a id="property-onsuccess"></a> `onSuccess?` | (`data`: `unknown`, `query`: [`Query`](../classes/Query.md)\<`unknown`, `unknown`, `unknown`\>) => `void` | Called when any query in the cache is successful. |

@@ -7,7 +7,7 @@ title: isServer
 const isServer: boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/utils.d.ts:83
+Defined in: packages/query-core/dist-ts/src/utils.d.ts:85
 
 ## Deprecated
 

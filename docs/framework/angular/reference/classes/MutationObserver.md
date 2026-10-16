@@ -3,7 +3,7 @@ id: MutationObserver
 title: MutationObserver
 ---
 
-Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:21
+Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:20
 
 Observes a single mutation and derives a `MutationObserverResult` from it.
 A framework hook like `useMutation` creates one `MutationObserver` per hook
@@ -50,7 +50,7 @@ const observer = new MutationObserver(queryClient, {
 new MutationObserver<TData, TError, TVariables, TOnMutateResult>(client: QueryClient, options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>): MutationObserver<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:24
+Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:23
 
 #### Parameters
 
@@ -74,45 +74,15 @@ Subscribable<MutationObserverListener<TData, TError, TVariables, TOnMutateResult
 
 ## Properties
 
-### listeners
-
-```ts
-protected listeners: Set<MutationObserverListener<TData, TError, TVariables, TOnMutateResult>>;
-```
-
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:2
-
-#### Inherited from
-
-```ts
-Subscribable.listeners
-```
-
-***
-
 ### options
 
 ```ts
 options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:23
+Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:22
 
 ## Methods
-
-### bindMethods()
-
-```ts
-protected bindMethods(): void;
-```
-
-Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:25
-
-#### Returns
-
-`void`
-
-***
 
 ### getCurrentResult()
 
@@ -120,7 +90,7 @@ Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:25
 getCurrentResult(): MutationObserverResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:52
+Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:62
 
 Returns the observer's current result, derived from the observed
 mutation's state (or the default, `idle` state if no mutation has been
@@ -130,6 +100,8 @@ built yet, e.g. before the first `mutate()` call or after `reset()`).
 
 [`MutationObserverResult`](../type-aliases/MutationObserverResult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
+The observer's latest result.
+
 ***
 
 ### hasListeners()
@@ -138,11 +110,15 @@ built yet, e.g. before the first `mutate()` call or after `reset()`).
 hasListeners(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:5
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:29
+
+Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Returns
 
 `boolean`
+
+`true` if at least one listener is registered.
 
 #### Inherited from
 
@@ -158,7 +134,7 @@ Subscribable.hasListeners
 mutate(variables: TVariables, options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>): Promise<TData>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:88
+Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:98
 
 Builds a new `Mutation` in the `MutationCache` using the observer's
 current options, detaches this observer from any previously observed
@@ -175,13 +151,19 @@ on the observer's own options.
 
 `TVariables`
 
+The variables passed to the `mutationFn`.
+
 ##### options?
 
 [`MutateOptions`](../interfaces/MutateOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
+Per-call `onSuccess`, `onError`, and `onSettled` callbacks.
+
 #### Returns
 
 `Promise`\<`TData`\>
+
+A promise that resolves with the mutation's data, or rejects with its error.
 
 #### Example
 
@@ -194,53 +176,13 @@ await observer.mutate(
 
 ***
 
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:43
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:44
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onUnsubscribe
-```
-
-***
-
 ### reset()
 
 ```ts
 reset(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:69
+Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:77
 
 Detaches the observer from the mutation it is currently observing (if
 any) and resets the observed result back to its default, `idle` state.
@@ -254,15 +196,15 @@ will build a brand new mutation.
 
 `void`
 
+#### See
+
+[MutationObserver#mutate](#mutate)
+
 #### Example
 
 ```ts
 observer.reset()
 ```
-
-#### See
-
-[MutationObserver#mutate](#mutate)
 
 ***
 
@@ -272,7 +214,7 @@ observer.reset()
 setOptions(options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:42
+Defined in: packages/query-core/dist-ts/src/mutationObserver.d.ts:46
 
 Updates the observer's options.
 
@@ -286,6 +228,8 @@ observing. Otherwise, if the currently observed mutation is still
 ##### options
 
 [`MutationObserverOptions`](../interfaces/MutationObserverOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
+
+The new mutation observer options. They are defaulted with [QueryClient#defaultMutationOptions](QueryClient.md#defaultmutationoptions) before being applied.
 
 #### Returns
 
@@ -308,7 +252,11 @@ observer.setOptions({
 subscribe(listener: MutationObserverListener): () => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:4
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:24
+
+Registers a listener to be called on every update this object notifies about. Returns a function
+that removes the listener again — call it to stop listening. The base class never drops a listener
+on its own, though some subclasses clear all of theirs in `destroy()`.
 
 #### Parameters
 
@@ -320,13 +268,9 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
 
-```ts
-(): void;
-```
+A function that removes the listener.
 
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 

@@ -53,10 +53,16 @@ export type MaybeRefDeep<T> = MaybeRef<
       : T
 >
 
-/** @internal Rejects `unknown`, collapsing it to `never` — used to keep generic inference from silently widening. */
+/**
+ * Rejects `unknown`, collapsing it to `never` — used to keep generic inference from silently widening.
+ * @internal
+ */
 export type NoUnknown<T> = Equal<unknown, T> extends true ? never : T
 
-/** @internal Type-level equality check between `TTargetA` and `TTargetB`. */
+/**
+ * Type-level equality check between `TTargetA` and `TTargetB`.
+ * @internal
+ */
 export type Equal<TTargetA, TTargetB> =
   (<T>() => T extends TTargetA ? 1 : 2) extends <T>() => T extends TTargetB
     ? 1
@@ -75,6 +81,9 @@ export type DeepUnwrapRef<T> = T extends UnwrapLeaf
         }
       : UnwrapRef<T>
 
+/**
+ * The `vue-query`-specific `shallow` option, accepted by query and mutation options.
+ */
 export type ShallowOption = {
   /**
    * Return data in a shallow ref object (it is `false` by default). It can be set to `true` to return data in a shallow ref object, which can improve performance if your data does not need to be deeply reactive.
@@ -82,6 +91,10 @@ export type ShallowOption = {
   shallow?: boolean
 }
 
+/**
+ * The options of a mutation. Same as {@link MutationObserverOptions} from `@tanstack/query-core`, minus the
+ * internal `_defaulted` flag, plus the `shallow` option.
+ */
 export type MutationOptions<
   TData = unknown,
   TError = DefaultError,
@@ -93,17 +106,49 @@ export type MutationOptions<
 > &
   ShallowOption
 
+/**
+ * The default options of a `QueryClient`, applied to every query (`queries`), mutation
+ * (`mutations`), `hydrate`, and `dehydrate` call unless overridden. Query and mutation defaults also
+ * accept the `shallow` option.
+ */
 export interface DefaultOptions<TError = DefaultError> {
+  /**
+   * Default options applied to every query, unless overridden per-query. Also accepts the
+   * `shallow` option.
+   */
   queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'> &
     ShallowOption
+  /**
+   * Default options applied to every mutation, unless overridden per-mutation. Also accepts the
+   * `shallow` option.
+   */
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown> &
     ShallowOption
+  /**
+   * Default options used when hydrating queries and mutations; see {@link HydrateOptions}.
+   */
   hydrate?: HydrateOptions['defaultOptions']
+  /**
+   * Default options used when dehydrating the client's caches; see {@link DehydrateOptions}.
+   */
   dehydrate?: DehydrateOptions
 }
 
+/**
+ * The options of `new QueryClient()`: the `queryCache` and `mutationCache` to use, and the
+ * `defaultOptions` for its queries and mutations.
+ */
 export interface QueryClientConfig {
+  /**
+   * The `QueryCache` to use. A new one is created if omitted.
+   */
   queryCache?: QueryCache
+  /**
+   * The `MutationCache` to use. A new one is created if omitted.
+   */
   mutationCache?: MutationCache
+  /**
+   * The default options of the queries and mutations of this `QueryClient`.
+   */
   defaultOptions?: DefaultOptions
 }

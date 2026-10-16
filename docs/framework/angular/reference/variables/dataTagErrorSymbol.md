@@ -7,4 +7,4 @@ title: dataTagErrorSymbol
 const dataTagErrorSymbol: unique symbol;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:25
+Defined in: packages/query-core/dist-ts/src/types.d.ts:70

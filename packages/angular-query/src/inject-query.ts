@@ -31,7 +31,6 @@ import type {
  * in the reactive context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive the query.
  * @returns The query result, typed so that `data` is never `undefined` (unless a `select` changes `TData` to
  * include `undefined`).
- *
  * @example
  * ```angular-ts
  * @Component({
@@ -84,7 +83,6 @@ export function injectQuery<
  * @returns The query result. `status()` is `'pending'` if there is no cached data to display, `'error'` if
  * the last fetch attempt failed, or `'success'` if the query has data to display. `isPending`/`isSuccess`/
  * `isError` are type-guard methods for convenience.
- *
  * @example
  * ```angular-ts
  * @Component({
@@ -110,7 +108,6 @@ export function injectQuery<
  *   }))
  * }
  * ```
- *
  * @example
  * Similar to `computed` from Angular, the function passed to `injectQuery` runs in the reactive context. In
  * the example below, the query is automatically enabled and executed when the filter signal changes to a

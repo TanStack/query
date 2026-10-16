@@ -7,10 +7,10 @@ title: DefinedInitialDataInfiniteOptions
 type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:48](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L48)
+Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:46](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L46)
 
 The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
-never `undefined`.
+never `undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ## Type Declaration
 
@@ -19,7 +19,7 @@ never `undefined`.
 ```ts
 initialData: 
   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-| () => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>;
+  | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>);
 ```
 
 If set, this value will be used as the initial data for the query cache (as long as the query hasn't been

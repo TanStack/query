@@ -7,7 +7,7 @@ title: CreateQueriesInput
 type CreateQueriesInput<TQueryFnData, TError, TData, TQueryKey> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>;
 ```
 
-Defined in: [packages/lit-query/src/createQueriesController.ts:31](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L31)
+Defined in: [packages/lit-query/src/createQueriesController.ts:26](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L26)
 
 Options for one query inside `createQueriesController`.
 

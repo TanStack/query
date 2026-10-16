@@ -38,7 +38,7 @@
 
 <div>
   <label>
-    Filter:{' '}
+    Filter:
     <input bind:value={filter} />
   </label>
 </div>
@@ -54,9 +54,9 @@
 {:else}
   <ul>
     {#if query.data}
-      {#each query.data as todo}
+      {#each query.data as todo (todo.id)}
         <li>
-          {todo.name}{' '}
+          {todo.name}
           <button onclick={() => (editingIndex.value = todo.id)}> Edit </button>
         </li>
       {/each}

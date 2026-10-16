@@ -3,7 +3,7 @@ id: DefinedInfiniteQueryNarrowing
 title: DefinedInfiniteQueryNarrowing
 ---
 
-Defined in: [packages/angular-query/src/types.ts:140](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L140)
+Defined in: packages/angular-query/src/types.ts:140
 
 ## Type Parameters
 
@@ -19,6 +19,6 @@ Defined in: [packages/angular-query/src/types.ts:140](https://github.com/TanStac
 
 | Property | Type |
 | ------ | ------ |
-| <a id="iserror"></a> `isError` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is DefinedCreateInfiniteQueryResult<TData, TError, InfiniteQueryObserverRefetchErrorResult<TData, TError>>`\> |
-| <a id="ispending"></a> `isPending` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is never`\> |
-| <a id="issuccess"></a> `isSuccess` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is DefinedCreateInfiniteQueryResult<TData, TError, InfiniteQueryObserverSuccessResult<TData, TError>>`\> |
+| <a id="property-iserror"></a> `isError` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is DefinedCreateInfiniteQueryResult<TData, TError, InfiniteQueryObserverRefetchErrorResult<TData, TError>>`\> |
+| <a id="property-ispending"></a> `isPending` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is never`\> |
+| <a id="property-issuccess"></a> `isSuccess` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is DefinedCreateInfiniteQueryResult<TData, TError, InfiniteQueryObserverSuccessResult<TData, TError>>`\> |

@@ -7,7 +7,7 @@ title: InitialDataFunction
 type InitialDataFunction<T> = () => T | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:70
+Defined in: packages/query-core/dist-ts/src/types.d.ts:162
 
 ## Type Parameters
 

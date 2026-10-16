@@ -15,7 +15,7 @@ describe('QueryClientProvider', () => {
     vi.useRealTimers()
   })
 
-  it('sets a specific cache for all queries to use', async () => {
+  it('should set a specific cache for all queries to use', async () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
@@ -46,7 +46,7 @@ describe('QueryClientProvider', () => {
     expect(queryCache.find({ queryKey: key })?.state.data).toBe('test')
   })
 
-  it('allows multiple caches to be partitioned', async () => {
+  it('should allow multiple caches to be partitioned', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
@@ -102,7 +102,7 @@ describe('QueryClientProvider', () => {
     expect(queryCache2.find({ queryKey: key2 })?.state.data).toBe('test2')
   })
 
-  it("uses defaultOptions for queries when they don't provide their own config", async () => {
+  it("should use defaultOptions for queries when they don't provide their own config", async () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
@@ -142,7 +142,7 @@ describe('QueryClientProvider', () => {
 
   describe('useQueryClient', () => {
     it('should throw an error if no query client has been set', () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -155,12 +155,12 @@ describe('QueryClientProvider', () => {
         'No QueryClient set, use QueryClientProvider to set one',
       )
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
   })
 
   it('should not throw an error if user provides custom query client', () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -171,12 +171,13 @@ describe('QueryClientProvider', () => {
     }
 
     render(() => <Page />)
-    expect(consoleMock).not.toHaveBeenCalled()
 
-    consoleMock.mockRestore()
+    expect(consoleErrorMock).not.toHaveBeenCalled()
+
+    consoleErrorMock.mockRestore()
   })
 
-  it('creates a query client resolver that is safe to call in reactive callbacks', () => {
+  it('should create a query client resolver that is safe to call in reactive callbacks', () => {
     const queryClient = new QueryClient()
     let resolveClient!: () => QueryClient
 
@@ -199,8 +200,8 @@ describe('QueryClientProvider', () => {
     })
   })
 
-  it('defers missing provider errors until a resolver is called', () => {
-    const consoleMock = vi
+  it('should defer missing provider errors until a resolver is called', () => {
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     let resolveClient!: () => QueryClient
@@ -220,6 +221,6 @@ describe('QueryClientProvider', () => {
       }),
     ).toThrow('No QueryClient set, use QueryClientProvider to set one')
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 })

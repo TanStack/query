@@ -27,7 +27,7 @@ import type {
 import type { QueryBehavior } from '../query'
 
 class CustomError extends Error {
-  name = 'CustomError' as const
+  override name = 'CustomError' as const
 }
 
 describe('infiniteQueryObserver', () => {

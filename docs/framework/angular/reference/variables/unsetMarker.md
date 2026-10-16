@@ -7,4 +7,4 @@ title: unsetMarker
 const unsetMarker: unique symbol;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:27
+Defined in: packages/query-core/dist-ts/src/types.d.ts:75

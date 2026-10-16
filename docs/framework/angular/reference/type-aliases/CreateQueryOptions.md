@@ -7,7 +7,7 @@ title: CreateQueryOptions
 type CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> = OmitKeyof<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>, "notifyOnChangeProps" | "suspense" | "throwOnError">;
 ```
 
-Defined in: [packages/angular-query/src/types.ts:28](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L28)
+Defined in: packages/angular-query/src/types.ts:28
 
 ## Type Parameters
 

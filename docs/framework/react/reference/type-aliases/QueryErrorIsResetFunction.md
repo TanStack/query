@@ -7,7 +7,9 @@ title: QueryErrorIsResetFunction
 type QueryErrorIsResetFunction = () => boolean;
 ```
 
-Defined in: [packages/react-query/src/QueryErrorResetBoundary.tsx:6](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L6)
+Defined in: [packages/react-query/src/QueryErrorResetBoundary.tsx:14](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L14)
+
+Returns whether the boundary has been reset and not yet cleared.
 
 ## Returns
 

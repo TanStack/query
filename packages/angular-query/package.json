@@ -28,14 +28,12 @@
   "scripts": {
     "clean": "premove ./dist ./coverage ./dist-ts ./.cache/test-types",
     "compile": "tsc --build",
-    "test:eslint": "eslint --concurrency=auto ./src ./schematics ./schematics-build",
     "test:types": "npm-run-all --serial test:types:*",
-    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --project tsconfig.json --outDir .cache/test-types/ts56 --tsBuildInfoFile .cache/test-types/ts56.tsbuildinfo",
-    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --project tsconfig.json --outDir .cache/test-types/ts57 --tsBuildInfoFile .cache/test-types/ts57.tsbuildinfo",
-    "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --project tsconfig.json --outDir .cache/test-types/ts58 --tsBuildInfoFile .cache/test-types/ts58.tsbuildinfo",
-    "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --project tsconfig.json --outDir .cache/test-types/ts59 --tsBuildInfoFile .cache/test-types/ts59.tsbuildinfo",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts57 --tsBuildInfoFile .cache/test-types/ts57.tsbuildinfo",
+    "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts58 --tsBuildInfoFile .cache/test-types/ts58.tsbuildinfo",
+    "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts59 --tsBuildInfoFile .cache/test-types/ts59.tsbuildinfo",
     "test:types:tscurrent": "tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
-    "test:types:ts70": "node ../../node_modules/typescript70/lib/tsc.js --project tsconfig.json --outDir .cache/test-types/ts70 --tsBuildInfoFile .cache/test-types/ts70.tsbuildinfo",
+    "test:types:ts70": "node ../../node_modules/typescript70/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts70 --tsBuildInfoFile .cache/test-types/ts70.tsbuildinfo",
     "test:lib": "pnpm run test:lib:both",
     "test:lib:zoneless": "vitest run",
     "test:lib:zoneful": "vitest run --config vitest.zoneful.config.ts",
@@ -44,7 +42,9 @@
     "test:build": "pnpm pack && pnpm run test:schematics && publint ./dist/*.tgz --strict && attw ./dist/*.tgz; premove ./dist/*.tgz",
     "test:schematics": "vitest run --config vitest.schematics.config.ts",
     "build": "vite build && tsc -p tsconfig.schematics.json && node scripts/inject-schematic-package-info.js",
-    "prepack": "node scripts/prepack.js"
+    "prepack": "node scripts/prepack.js",
+    "test:types:ts71": "node ../../node_modules/typescript71/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts71 --tsBuildInfoFile .cache/test-types/ts71.tsbuildinfo",
+    "test:eslint": "eslint --concurrency=auto ./src ./schematics ./schematics-build"
   },
   "type": "module",
   "schematics": "./schematics/collection.json",
@@ -89,13 +89,14 @@
     "@schematics/angular": "^22.0.0",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/angular": "^18.1.1",
-    "npm-run-all2": "^5.0.0",
+    "npm-run-all2": "^9.0.3",
     "rxjs": "^7.8.2",
     "typescript": "6.0.3",
     "vite-plugin-dts": "4.2.3",
     "vite-plugin-externalize-deps": "^0.9.0",
     "vite-tsconfig-paths": "^5.1.4",
-    "zone.js": "^0.16.0"
+    "zone.js": "^0.16.0",
+    "vite": "^6.4.1"
   },
   "peerDependencies": {
     "@angular/common": ">=20.1.0",
