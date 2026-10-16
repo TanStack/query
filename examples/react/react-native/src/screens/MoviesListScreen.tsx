@@ -22,12 +22,13 @@ type Props = {
 }
 
 export function MoviesListScreen({ navigation }: Props) {
-  const { isPending, isError, error, data, refetch } = useQuery<Movie[], Error>(
-    {
-      queryKey: ['movies'],
-      queryFn: fetchMovies,
-    },
-  )
+  const { isPending, isError, error, data, refetch } = useQuery<
+    Array<Movie>,
+    Error
+  >({
+    queryKey: ['movies'],
+    queryFn: fetchMovies,
+  })
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
   useRefreshOnFocus(refetch)
 
