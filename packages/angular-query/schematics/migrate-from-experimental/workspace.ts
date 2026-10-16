@@ -138,6 +138,8 @@ function configuredSources(
   host.readFile = readFile
   host.realpath = (path) => path
   host.directoryExists = (path) => {
+    // TypeScript also probes file paths here; `getDir` throws on those.
+    if (tree.exists(path)) return false
     const directory = tree.getDir(path)
     return directory.subfiles.length > 0 || directory.subdirs.length > 0
   }

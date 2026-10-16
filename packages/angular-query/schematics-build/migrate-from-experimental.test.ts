@@ -956,6 +956,57 @@ export type { QueryKey } from '@tanstack/query-core';`,
     },
   )
 
+  it('resolves imports of package subpaths that name a file', async () => {
+    // TypeScript probes `directoryExists` with candidate paths that are files, like
+    // `/node_modules/@noble/hashes/sha3.js`; that must not abort the migration.
+    const { runner, tree } = setup(
+      `import { QueryClient } from '@tanstack/angular-query-experimental';
+import { sha3_256 } from '@noble/hashes/sha3.js';`,
+    )
+    tree.create(
+      '/angular.json',
+      JSON.stringify({
+        version: 1,
+        projects: {
+          app: {
+            root: '',
+            sourceRoot: 'src',
+            architect: { build: { options: { tsConfig: 'tsconfig.json' } } },
+          },
+        },
+      }),
+    )
+    tree.create(
+      '/tsconfig.json',
+      JSON.stringify({
+        compilerOptions: { module: 'ES2022', moduleResolution: 'bundler' },
+        files: ['src/app.ts'],
+      }),
+    )
+    tree.create(
+      '/node_modules/@noble/hashes/package.json',
+      JSON.stringify({
+        name: '@noble/hashes',
+        type: 'module',
+        exports: { './sha3.js': './sha3.js' },
+      }),
+    )
+    tree.create('/node_modules/@noble/hashes/sha3.js', 'export {}')
+    tree.create(
+      '/node_modules/@noble/hashes/sha3.d.ts',
+      'export declare const sha3_256: unknown',
+    )
+    const result = await runner.runSchematic(
+      'migrate-from-experimental',
+      {},
+      tree,
+    )
+    expect(result.readContent('/src/app.ts')).not.toContain(
+      '@tanstack/angular-query-experimental',
+    )
+    expect(result.readContent('/src/app.ts')).toContain(packageJson.name)
+  })
+
   it('discovers package-based Nx libraries and respects their tsconfigs', async () => {
     const legacy = `import { QueryClient } from '@tanstack/angular-query-experimental';`
     const { runner, tree } = setup(legacy)
