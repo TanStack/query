@@ -86,7 +86,13 @@ function configPattern(root: string, pattern: string): RegExp {
   return new RegExp(`^${expression}$`)
 }
 
-function configuredSources(tree: Tree, configPath: string) {
+function configuredSources(
+  tree: Tree,
+  configPath: string,
+  visited = new Set<string>(),
+): Array<string> {
+  if (visited.has(configPath)) return []
+  visited.add(configPath)
   const readFile = (path: string) =>
     tree.exists(path) ? tree.readText(path) : undefined
   const config = ts.getParsedCommandLineOfConfigFile(
@@ -143,11 +149,21 @@ function configuredSources(tree: Tree, configPath: string) {
       ? undefined
       : ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true)
   }
-  return ts
+  const sources = ts
     .createProgram(config.fileNames, config.options, host)
     .getSourceFiles()
     .map((source) => source.fileName)
     .filter(isSource)
+  return [
+    ...sources,
+    ...(config.projectReferences ?? []).flatMap((reference) =>
+      configuredSources(
+        tree,
+        ts.resolveProjectReferencePath(reference),
+        visited,
+      ),
+    ),
+  ]
 }
 
 type Target = {
@@ -166,32 +182,38 @@ export async function migrationWorkspace(tree: Tree) {
   if (tree.exists('/package.json')) manifests.add('/package.json')
   const projects = new Map<
     string,
-    { sourceRoot?: string; configs: Set<string> }
+    {
+      sourceRoot?: string
+      configs: Set<string>
+      hasExplicitTestConfig: boolean
+    }
   >()
   const addProject = (
     root: string,
     sourceRoot: string | undefined,
-    targets: Iterable<Target>,
+    targets: Iterable<[string, Target]>,
   ) => {
     root = posix.resolve('/', root)
     const project = projects.get(root) ?? {
       sourceRoot,
       configs: new Set<string>(),
+      hasExplicitTestConfig: false,
     }
     project.sourceRoot ??= sourceRoot
     projects.set(root, project)
     const manifest = posix.join(root, 'package.json')
     if (tree.exists(manifest)) manifests.add(manifest)
-    for (const target of targets) {
+    for (const [name, target] of targets) {
       for (const options of [
         target.options,
         ...Object.values(target.configurations ?? {}),
       ]) {
-        if (
-          typeof options?.tsConfig === 'string' &&
-          tree.exists(options.tsConfig)
-        )
-          project.configs.add(posix.resolve('/', options.tsConfig))
+        const tsConfig = options?.tsConfig
+        if (typeof tsConfig !== 'string') continue
+        if (name === 'test' || name.startsWith('test:'))
+          project.hasExplicitTestConfig = true
+        const config = posix.resolve('/', tsConfig)
+        if (tree.exists(config)) project.configs.add(config)
       }
     }
   }
@@ -201,7 +223,7 @@ export async function migrationWorkspace(tree: Tree) {
       tree.exists('/angular.json') ? '/angular.json' : '/.angular.json',
     )
     for (const project of workspace.projects.values())
-      addProject(project.root, project.sourceRoot, project.targets.values())
+      addProject(project.root, project.sourceRoot, project.targets.entries())
   }
   if (tree.exists('/nx.json')) {
     for (const path of filesUnder(tree, '/')) {
@@ -210,7 +232,7 @@ export async function migrationWorkspace(tree: Tree) {
         addProject(
           project.root ?? posix.dirname(path),
           project.sourceRoot,
-          Object.values(project.targets ?? {}),
+          Object.entries(project.targets ?? {}),
         )
       } else if (posix.basename(path) === 'package.json') {
         const pkg = tree.readJson(path) as { nx?: ProjectConfig }
@@ -218,19 +240,47 @@ export async function migrationWorkspace(tree: Tree) {
           addProject(
             posix.dirname(path),
             pkg.nx.sourceRoot,
-            Object.values(pkg.nx.targets ?? {}),
+            Object.entries(pkg.nx.targets ?? {}),
           )
       }
     }
   }
-  if (!projects.size)
-    return { files: sourcesUnder(tree, '/'), manifests: [...manifests] }
+  if (!projects.size) addProject('/', undefined, [])
   const files = new Set<string>()
   for (const [root, project] of projects) {
+    // Infer defaults only after Angular and Nx declarations have been merged.
+    if (!project.configs.size) {
+      for (const name of [
+        'tsconfig.json',
+        'tsconfig.app.json',
+        'tsconfig.lib.json',
+      ]) {
+        const config = posix.join(root, name)
+        if (tree.exists(config)) project.configs.add(config)
+      }
+    }
+    const testConfigs = project.hasExplicitTestConfig
+      ? []
+      : ['tsconfig.spec.json', 'tsconfig.test.json']
+          .map((name) => posix.join(root, name))
+          .filter((path) => tree.exists(path))
+
     const sources = project.configs.size
       ? [...project.configs].flatMap((path) => configuredSources(tree, path))
-      : sourcesUnder(tree, posix.resolve('/', project.sourceRoot ?? root))
-    for (const path of sources) files.add(path)
+      : sourcesUnder(
+          tree,
+          posix.resolve('/', project.sourceRoot ?? root),
+        ).filter(
+          (path) =>
+            !testConfigs.length || !/\.(spec|test)\.[cm]?tsx?$/.test(path),
+        )
+    for (const path of [
+      ...sources,
+      ...testConfigs.flatMap((configPath) =>
+        configuredSources(tree, configPath),
+      ),
+    ])
+      files.add(path)
   }
   return { files: [...files], manifests: [...manifests] }
 }

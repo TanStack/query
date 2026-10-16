@@ -122,18 +122,38 @@ function migrateDependencies(
     const dependencies = pkg[type]
     if (!dependencies) continue
     const experimental = dependencies[OLD_PACKAGE]
-    const core = migrateCore && dependencies[CORE_PACKAGE]
-    if (!experimental && !core) continue
+    const core = migrateCore ? dependencies[CORE_PACKAGE] : undefined
+    const queryAlias = experimentalAlias(dependencies[PACKAGE_NAME])
+    const devtoolsAlias = experimentalAlias(dependencies[DEVTOOLS_PACKAGE_NAME])
     if (experimental) changes++
     if (core && !remainingCoreReference) changes++
-    if (!dependencies[PACKAGE_NAME]) {
+    if (
+      queryAlias !== undefined ||
+      ((experimental || core) && !dependencies[PACKAGE_NAME])
+    ) {
       addPackageJsonDependency(
         tree,
         {
           type,
           name: PACKAGE_NAME,
-          version: `^${PACKAGE_VERSION}`,
-          overwrite: false,
+          version: replacementVersion(
+            queryAlias ?? experimental ?? core,
+            PACKAGE_VERSION,
+          ),
+          overwrite: queryAlias !== undefined,
+        },
+        manifest,
+      )
+      changes++
+    }
+    if (devtoolsAlias !== undefined) {
+      addPackageJsonDependency(
+        tree,
+        {
+          type,
+          name: DEVTOOLS_PACKAGE_NAME,
+          version: replacementVersion(devtoolsAlias, DEVTOOLS_PACKAGE_VERSION),
+          overwrite: true,
         },
         manifest,
       )
@@ -165,7 +185,15 @@ function migrateDependencies(
       {
         type,
         name: DEVTOOLS_PACKAGE_NAME,
-        version: `^${DEVTOOLS_PACKAGE_VERSION}`,
+        version: replacementVersion(
+          experimentalAlias(pkg[type]?.[PACKAGE_NAME]) ??
+            pkg[type]?.[OLD_PACKAGE] ??
+            current[type]?.[PACKAGE_NAME] ??
+            dependencyTypes
+              .map((group) => current[group]?.[PACKAGE_NAME])
+              .find(Boolean),
+          DEVTOOLS_PACKAGE_VERSION,
+        ),
         overwrite: false,
       },
       manifest,
@@ -184,4 +212,19 @@ function migrateDependencies(
         `${manifest}: Rename peerDependenciesMeta["${name}"] to "${PACKAGE_NAME}" and review the optional peer configuration.`,
       )
   return changes
+}
+
+function experimentalAlias(version: string | undefined) {
+  if (version === `npm:${OLD_PACKAGE}`) return '*'
+  const prefix = `npm:${OLD_PACKAGE}@`
+  return version?.startsWith(prefix) ? version.slice(prefix.length) : undefined
+}
+
+/** Preserve exact pins; retain the existing caret policy for other specifiers. */
+function replacementVersion(previous: string | undefined, version: string) {
+  const normalized = previous?.trim().replace(/^(?:=\s*)?v?/, '')
+  return normalized &&
+    /^\d+\.\d+\.\d+(?:-[\dA-Za-z.-]+)?(?:\+[\dA-Za-z.-]+)?$/.test(normalized)
+    ? version
+    : `^${version}`
 }

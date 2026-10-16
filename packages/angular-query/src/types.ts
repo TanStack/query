@@ -64,27 +64,21 @@ type CreateStatusBasedDefinedInfiniteQueryResult<
 
 export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
   isSuccess: SignalFunction<
-    (
-      this: CreateBaseQueryResult<TData, TError>,
-    ) => this is CreateBaseQueryResult<
+    () => this is CreateBaseQueryResult<
       TData,
       TError,
       CreateStatusBasedQueryResult<'success', TData, TError>
     >
   >
   isError: SignalFunction<
-    (
-      this: CreateBaseQueryResult<TData, TError>,
-    ) => this is CreateBaseQueryResult<
+    () => this is CreateBaseQueryResult<
       TData,
       TError,
       CreateStatusBasedQueryResult<'error', TData, TError>
     >
   >
   isPending: SignalFunction<
-    (
-      this: CreateBaseQueryResult<TData, TError>,
-    ) => this is CreateBaseQueryResult<
+    () => this is CreateBaseQueryResult<
       TData,
       TError,
       CreateStatusBasedQueryResult<'pending', TData, TError>
@@ -94,26 +88,20 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
 
 export interface DefinedQueryNarrowing<TData = unknown, TError = DefaultError> {
   isSuccess: SignalFunction<
-    (
-      this: DefinedCreateQueryResult<TData, TError>,
-    ) => this is DefinedCreateQueryResult<
+    () => this is DefinedCreateQueryResult<
       TData,
       TError,
       CreateStatusBasedDefinedQueryResult<'success', TData, TError>
     >
   >
   isError: SignalFunction<
-    (
-      this: DefinedCreateQueryResult<TData, TError>,
-    ) => this is DefinedCreateQueryResult<
+    () => this is DefinedCreateQueryResult<
       TData,
       TError,
       CreateStatusBasedDefinedQueryResult<'error', TData, TError>
     >
   >
-  isPending: SignalFunction<
-    (this: DefinedCreateQueryResult<TData, TError>) => this is never
-  >
+  isPending: SignalFunction<() => this is never>
 }
 
 export interface BaseInfiniteQueryNarrowing<

@@ -55,7 +55,7 @@ describe('upstream Angular issue reproductions', () => {
       }))
     }
     const fixture = TestBed.createComponent(App)
-    fixture.detectChanges()
+    fixture.autoDetectChanges()
     await fixture.whenStable()
     fixture.detectChanges()
     expect(fixture.componentInstance.query.isSuccess()).toBe(true)
@@ -73,7 +73,7 @@ describe('upstream Angular issue reproductions', () => {
       data = this.query.data
     }
     const fixture = TestBed.createComponent(App)
-    fixture.detectChanges()
+    fixture.autoDetectChanges()
     await fixture.whenStable()
     fixture.detectChanges()
     expect(fixture.componentInstance.data()).toBe('loaded')
@@ -104,7 +104,7 @@ describe('upstream Angular issue reproductions', () => {
           ? TestBed.createComponent(App)
           : (await (await import('@testing-library/angular')).render(App))
               .fixture
-      fixture.detectChanges()
+      fixture.autoDetectChanges()
       await fixture.whenStable()
       fixture.detectChanges()
       expect(fixture.componentInstance.value).toBe(9999)
@@ -127,7 +127,7 @@ describe('upstream Angular issue reproductions', () => {
     const fixture = TestBed.createComponent(App)
     expect(optionsRead).not.toHaveBeenCalled()
     fixture.componentRef.setInput('name', 'ready')
-    fixture.detectChanges()
+    fixture.autoDetectChanges()
     await fixture.whenStable()
     expect(fixture.componentInstance.data()).toBe('ready')
     expect(optionsRead).toHaveBeenCalledTimes(1)

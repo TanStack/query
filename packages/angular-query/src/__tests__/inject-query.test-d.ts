@@ -177,9 +177,9 @@ describe('Discriminated union return type', () => {
       queryFn: () => sleep(0).then(() => 'Some data'),
     }))
 
-    expectTypeOf(query.isSuccess).toMatchTypeOf<Signal<boolean>>()
-    expectTypeOf(query.isError).toMatchTypeOf<Signal<boolean>>()
-    expectTypeOf(query.isPending).toMatchTypeOf<Signal<boolean>>()
+    expectTypeOf(query.isSuccess).toExtend<Signal<boolean>>()
+    expectTypeOf(query.isError).toExtend<Signal<boolean>>()
+    expectTypeOf(query.isPending).toExtend<Signal<boolean>>()
   })
 
   it('should expose an Angular resource view', () => {
@@ -189,7 +189,7 @@ describe('Discriminated union return type', () => {
     }))
 
     const resource = toResource(query)
-    expectTypeOf(resource).toMatchTypeOf<Resource<string | undefined>>()
+    expectTypeOf(resource).toExtend<Resource<string | undefined>>()
     expectTypeOf(resource.reload).toBeCallableWith()
 
     // @ts-expect-error Resources are created explicitly with toResource.

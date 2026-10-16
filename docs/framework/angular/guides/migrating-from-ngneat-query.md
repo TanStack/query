@@ -7,6 +7,55 @@ Angular Query requires Angular 20.1 or newer.
 
 This guide uses `@ngneat/query` in its examples.
 
+## Active codebase recommendations
+
+For a gradual migration:
+
+- Install `@tanstack/angular-query` alongside the legacy package and share one `QueryClient`,
+  so migrated and existing code use the same cache, defaults, and invalidations.
+- Block `@ngneat/query` imports and its subpaths with ESLint's
+  [`no-restricted-imports`](https://eslint.org/docs/latest/rules/no-restricted-imports) or a
+  similar rule, so new code uses `@tanstack/angular-query`.
+- Share a test-provider helper or client factory so migrated tests keep the same client defaults.
+
+Suppress existing imports and the temporary provider bridge with
+[ESLint suppressions](https://eslint.org/docs/latest/use/suppressions) or a
+[rule-specific disable comment](https://eslint.org/docs/latest/use/configure/rules#using-configuration-comments-1),
+and remove each suppression as its import is migrated.
+
+Keep the existing ngneat client configuration and let the stable adapter resolve that client:
+
+```ts
+import { ApplicationConfig } from '@angular/core'
+import {
+  injectQueryClient as injectLegacyQueryClient,
+  provideQueryClientOptions,
+} from '@ngneat/query'
+import { provideTanStackQuery } from '@tanstack/angular-query'
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideQueryClientOptions({
+      // Keep your existing client options here.
+    }),
+    provideTanStackQuery(() => injectLegacyQueryClient()),
+  ],
+}
+```
+
+This preserves the legacy client's Observable-aware methods while both adapters use the same
+instance. Keep query keys consistent between migrated and legacy code.
+
+Use package versions that support the same Angular and `@tanstack/query-core` versions. If the
+lockfile selects different core versions, align the direct core dependency required by ngneat
+with the stable adapter's dependency. You may need root-level
+[npm overrides](https://docs.npmjs.com/cli/v11/configuring-npm/package-json/#overrides) or
+[pnpm overrides](https://pnpm.io/settings#overrides) to select one version within both supported
+ranges.
+
+After migrating the remaining legacy code, replace the bridge with a `QueryClient` factory from
+`@tanstack/angular-query`, move the client options into that factory, and remove the legacy packages.
+
 ## Replace the packages
 
 Remove whichever legacy package name your application uses, along with its devtools package. The

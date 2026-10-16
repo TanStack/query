@@ -3,7 +3,7 @@ id: InjectQueriesOptions
 title: InjectQueriesOptions
 ---
 
-Defined in: [packages/angular-query/src/inject-queries.types.ts:213](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-queries.types.ts#L213)
+Defined in: [packages/angular-query/src/inject-queries.types.ts:217](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-queries.types.ts#L217)
 
 ## Type Parameters
 

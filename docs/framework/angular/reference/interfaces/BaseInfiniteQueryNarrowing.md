@@ -3,7 +3,7 @@ id: BaseInfiniteQueryNarrowing
 title: BaseInfiniteQueryNarrowing
 ---
 
-Defined in: [packages/angular-query/src/types.ts:119](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L119)
+Defined in: [packages/angular-query/src/types.ts:107](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L107)
 
 ## Type Parameters
 

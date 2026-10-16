@@ -1,10 +1,61 @@
 import { describe, expectTypeOf, it } from 'vitest'
+import { computed } from '@angular/core'
 import { injectQueries, skipToken, toResource } from '..'
 import { queryOptions } from '../query-options'
 import type { CreateQueryOptions, CreateQueryResult, OmitKeyof } from '..'
 import type { Resource, Signal } from '@angular/core'
 
 describe('InjectQueries config object overload', () => {
+  it('keeps optional initial data in service queryOptions results undefined-capable', () => {
+    const service = {
+      options: () => queryOptions({ queryKey: ['service'], queryFn: () => 1 }),
+    }
+    const results = injectQueries(() => ({ queries: [service.options()] }))
+    const result = results()[0]
+
+    expectTypeOf(result).toEqualTypeOf<CreateQueryResult<number, Error>>()
+    expectTypeOf(result.isPending()).toEqualTypeOf<boolean>()
+    expectTypeOf(result.isError()).toEqualTypeOf<boolean>()
+    expectTypeOf(result.isSuccess()).toEqualTypeOf<boolean>()
+    expectTypeOf(result.isSuccess).toExtend<Signal<boolean>>()
+    if (result.isSuccess()) {
+      expectTypeOf(result.data()).toEqualTypeOf<number>()
+    }
+    if (result.isPending()) {
+      expectTypeOf(result.data()).toEqualTypeOf<undefined>()
+    }
+  })
+
+  it('supports status helpers on heterogeneous dynamic results and tuple indices', () => {
+    const numberOptions = () =>
+      queryOptions({ queryKey: ['number'], queryFn: () => 1 })
+    const stringOptions = () =>
+      queryOptions({ queryKey: ['string'], queryFn: () => 'one' })
+    const results = injectQueries(() => ({
+      queries: [numberOptions(), stringOptions()],
+    }))
+    const index = Number(0)
+    const result = results()[index]
+    expectTypeOf(result?.isPending()).toEqualTypeOf<boolean | undefined>()
+    expectTypeOf(result?.isError()).toEqualTypeOf<boolean | undefined>()
+    expectTypeOf(result?.isSuccess()).toEqualTypeOf<boolean | undefined>()
+    if (result?.isSuccess()) {
+      expectTypeOf(result.data()).toEqualTypeOf<number | string>()
+    }
+
+    const dynamic = injectQueries(() => ({
+      queries: [numberOptions(), stringOptions()].map((options) => options),
+    }))
+    const pending = computed(() => dynamic().some((query) => query.isPending()))
+    const failed = computed(() => dynamic().some((query) => query.isError()))
+    const succeeded = computed(() =>
+      dynamic().every((query) => query.isSuccess()),
+    )
+    expectTypeOf(pending()).toEqualTypeOf<boolean>()
+    expectTypeOf(failed()).toEqualTypeOf<boolean>()
+    expectTypeOf(succeeded()).toEqualTypeOf<boolean>()
+  })
+
   it('infers tagged custom errors in parallel queries and combine', () => {
     class CustomError extends Error {
       detail = 'detail'
@@ -50,7 +101,7 @@ describe('InjectQueries config object overload', () => {
       ],
     }))
 
-    expectTypeOf(toResource(queryResults()[0])).toMatchTypeOf<
+    expectTypeOf(toResource(queryResults()[0])).toExtend<
       Resource<string | undefined>
     >()
 
