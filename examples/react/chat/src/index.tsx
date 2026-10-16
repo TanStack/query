@@ -67,20 +67,21 @@ function Example() {
         ))}
       </div>
 
-      <div className="flex items-center space-x-2">
+      <form
+        className="flex items-center space-x-2"
+        onSubmit={(e) => {
+          e.preventDefault()
+          submitMessage()
+        }}
+      >
         <input
           className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100"
           value={currentQuestion}
           onChange={(e) => setCurrentQuestion(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              submitMessage()
-            }
-          }}
           placeholder="Type your message..."
         />
         <button
-          onClick={submitMessage}
+          type="submit"
           disabled={!currentQuestion.trim()}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-2xl shadow-md transition"
         >
@@ -100,7 +101,7 @@ function Example() {
             <path d="m21.854 2.147-10.94 10.939" />
           </svg>
         </button>
-      </div>
+      </form>
     </div>
   )
 }
