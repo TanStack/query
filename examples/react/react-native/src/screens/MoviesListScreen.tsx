@@ -32,7 +32,7 @@ export function MoviesListScreen({ navigation }: Props) {
   const onListItemPress = React.useCallback(
     (movie: Movie) => {
       navigation.navigate('MovieDetails', {
-        movie,
+        title: movie.title,
       })
     },
     [navigation],

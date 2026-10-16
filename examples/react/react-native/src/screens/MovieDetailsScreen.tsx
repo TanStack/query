@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native'
 import { Paragraph, Title } from 'react-native-paper'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import { ErrorMessage } from '../components/ErrorMessage'
 import { useRefreshByUser } from '../hooks/useRefreshByUser'
 import { fetchMovie } from '../lib/api'
-import type { MovieDetails } from '../lib/api'
+import type { Movie, MovieDetails } from '../lib/api'
 import type { MoviesStackNavigator } from '../navigation/types'
 import type { StackNavigationProp } from '@react-navigation/stack'
 import type { RouteProp } from '@react-navigation/native'
@@ -22,17 +22,21 @@ type Props = {
 }
 
 export function MovieDetailsScreen({ route }: Props) {
-  const { isPending, error, data, refetch } = useQuery<MovieDetails, Error>({
-    queryKey: ['movie', route.params.movie.title],
-    queryFn: () => fetchMovie(route.params.movie.title),
-    initialData: route.params.movie as MovieDetails,
+  const { title } = route.params
+  const queryClient = useQueryClient()
+  const { isPending, error, data, refetch } = useQuery<Movie | MovieDetails>({
+    queryKey: ['movie', title],
+    queryFn: () => fetchMovie(title),
+    placeholderData: () =>
+      queryClient
+        .getQueryData<Array<Movie>>(['movies'])
+        ?.find((movie) => movie.title === title),
   })
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
 
   if (isPending) return <LoadingIndicator />
   if (error) return <ErrorMessage message={error.message}></ErrorMessage>
-  if (!data) return null
 
   return (
     <ScrollView
@@ -48,7 +52,7 @@ export function MovieDetailsScreen({ route }: Props) {
           {data.title} ({data.year})
         </Title>
       </View>
-      {data.info ? (
+      {'info' in data ? (
         <>
           <View style={styles.infoRow}>
             <Paragraph>{data.info.plot}</Paragraph>
