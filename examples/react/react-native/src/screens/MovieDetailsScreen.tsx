@@ -24,7 +24,9 @@ type Props = {
 export function MovieDetailsScreen({ route }: Props) {
   const { title } = route.params
   const queryClient = useQueryClient()
-  const { isPending, error, data, refetch } = useQuery<Movie | MovieDetails>({
+  const { isPending, isError, error, data, refetch } = useQuery<
+    Movie | MovieDetails
+  >({
     queryKey: ['movie', title],
     queryFn: () => fetchMovie(title),
     placeholderData: () =>
@@ -36,7 +38,7 @@ export function MovieDetailsScreen({ route }: Props) {
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
 
   if (isPending) return <LoadingIndicator />
-  if (error) return <ErrorMessage message={error.message}></ErrorMessage>
+  if (isError) return <ErrorMessage message={error.message}></ErrorMessage>
 
   return (
     <ScrollView
