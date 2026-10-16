@@ -53,7 +53,7 @@ function Characters({ ids }: { ids: Array<number> }) {
             {character.data.name} (#{character.data.id})
           </h5>
           <p style={{ marginTop: 0, marginBottom: 2 }}>
-            Status: {character.status}
+            Status: {character.data.status}
           </p>
           <p style={{ marginTop: 0, marginBottom: 2 }}>
             Species: {character.data.species}
