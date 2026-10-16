@@ -14,6 +14,7 @@ import type {
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
   InferDataFromTag,
+  InferErrorFromTag,
   InfiniteData,
   InfiniteQueryExecuteOptions,
   InvalidateOptions,
@@ -169,6 +170,18 @@ export class QueryClient extends QC {
     )
   }
 
+  override getQueryState<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
+  >(
+    queryKey: TTaggedQueryKey,
+  ): QueryState<TInferredQueryFnData, TInferredError> | undefined
+  override getQueryState<TData = unknown, TError = DefaultError>(
+    queryKey: MaybeRefDeep<QueryKey>,
+  ): QueryState<TData, TError> | undefined
   override getQueryState<TData = unknown, TError = DefaultError>(
     queryKey: MaybeRefDeep<QueryKey>,
   ): QueryState<TData, TError> | undefined {
