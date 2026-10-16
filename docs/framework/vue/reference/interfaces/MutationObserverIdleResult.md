@@ -3,7 +3,7 @@ id: MutationObserverIdleResult
 title: MutationObserverIdleResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:2147](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2147)
+Defined in: [packages/query-core/src/types.ts:2153](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2153)
 
 A mutation result in the `idle` state: the mutation hasn't run yet, or was reset.
 

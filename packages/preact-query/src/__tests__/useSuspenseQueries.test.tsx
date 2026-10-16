@@ -19,9 +19,9 @@ import {
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import type { UseSuspenseQueryOptions } from '..'
 import { ErrorBoundary } from './ErrorBoundary'
 import { renderWithClient } from './utils'
+import type { UseSuspenseQueryOptions } from '..'
 
 describe('useSuspenseQueries', () => {
   let queryClient: QueryClient

@@ -3,7 +3,7 @@ id: DefaultOptions
 title: DefaultOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:2371](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2371)
+Defined in: [packages/query-core/src/types.ts:2377](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2377)
 
 The default options of a `QueryClient`, applied to every query (`queries`), mutation
 (`mutations`), `hydrate`, and `dehydrate` call unless overridden.

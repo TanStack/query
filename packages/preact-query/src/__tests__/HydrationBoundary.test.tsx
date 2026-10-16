@@ -1,9 +1,8 @@
 import * as coreModule from '@tanstack/query-core'
-import type { hydrate } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/preact'
 import { Suspense, startTransition } from 'preact/compat'
-import { afterEach, beforeEach, describe, expect, vi, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
   HydrationBoundary,
@@ -13,6 +12,7 @@ import {
   noop,
   useQuery,
 } from '..'
+import type { hydrate } from '@tanstack/query-core'
 
 describe('Preact hydration', () => {
   const stringKey = queryKey()

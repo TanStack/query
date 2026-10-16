@@ -25,7 +25,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object;
 ```
 
-Defined in: [packages/lit-query/src/queryOptions.ts:91](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L91)
+Defined in: [packages/lit-query/src/queryOptions.ts:92](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L92)
 
 Brands query options so the `queryKey` carries the query function data and
 error types across TanStack Query APIs.
@@ -82,7 +82,7 @@ const todosOptions = queryOptions({
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> & object;
 ```
 
-Defined in: [packages/lit-query/src/queryOptions.ts:108](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L108)
+Defined in: [packages/lit-query/src/queryOptions.ts:109](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L109)
 
 Brands query options so the `queryKey` carries the query function data and
 error types across TanStack Query APIs.
@@ -127,7 +127,7 @@ The same options object with a typed `queryKey`.
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object;
 ```
 
-Defined in: [packages/lit-query/src/queryOptions.ts:125](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L125)
+Defined in: [packages/lit-query/src/queryOptions.ts:126](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L126)
 
 Brands query options so the `queryKey` carries the query function data and
 error types across TanStack Query APIs.

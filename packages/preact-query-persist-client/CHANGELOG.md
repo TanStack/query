@@ -1,5 +1,22 @@
 # @tanstack/preact-query-persist-client
 
+## 5.104.3
+
+### Patch Changes
+
+- Updated dependencies [[`ed4d849`](https://github.com/TanStack/query/commit/ed4d849731bfe6404be9d40aec84eda54f958d7f)]:
+  - @tanstack/query-persist-client-core@5.104.3
+  - @tanstack/preact-query@5.104.3
+
+## 5.104.2
+
+### Patch Changes
+
+- [#11711](https://github.com/TanStack/query/pull/11711) [`a94c7ca`](https://github.com/TanStack/query/commit/a94c7caeec624d0714ee00be3a703943ec2ddbeb) - Add Preact v11 to peerDependencies
+- Updated dependencies [[`a94c7ca`](https://github.com/TanStack/query/commit/a94c7caeec624d0714ee00be3a703943ec2ddbeb)]:
+  - @tanstack/preact-query@5.104.2
+  - @tanstack/query-persist-client-core@5.104.2
+
 ## 5.104.1
 
 ### Patch Changes

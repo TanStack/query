@@ -31,7 +31,8 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     let observerResult:
-      InfiniteQueryObserverResult<unknown, unknown> | undefined
+      | InfiniteQueryObserverResult<unknown, unknown>
+      | undefined
 
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
@@ -65,7 +66,8 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     let observerResult:
-      InfiniteQueryObserverResult<unknown, unknown> | undefined
+      | InfiniteQueryObserverResult<unknown, unknown>
+      | undefined
 
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
@@ -208,7 +210,8 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     let observerResult:
-      InfiniteQueryObserverResult<unknown, unknown> | undefined
+      | InfiniteQueryObserverResult<unknown, unknown>
+      | undefined
 
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
@@ -258,7 +261,8 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     let observerResult:
-      InfiniteQueryObserverResult<unknown, unknown> | undefined
+      | InfiniteQueryObserverResult<unknown, unknown>
+      | undefined
 
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
@@ -446,7 +450,8 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     let observerResult:
-      InfiniteQueryObserverResult<unknown, unknown> | undefined
+      | InfiniteQueryObserverResult<unknown, unknown>
+      | undefined
 
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result

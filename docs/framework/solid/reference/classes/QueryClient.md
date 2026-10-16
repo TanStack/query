@@ -3,7 +3,7 @@ id: QueryClient
 title: QueryClient
 ---
 
-Defined in: [packages/solid-query/src/QueryClient.ts:113](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L113)
+Defined in: [packages/solid-query/src/QueryClient.ts:117](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L117)
 
 The core `@tanstack/query-core` `QueryClient`, typed so its `defaultOptions.queries` accepts Solid's
 `reconcile` option.
@@ -20,7 +20,7 @@ The core `@tanstack/query-core` `QueryClient`, typed so its `defaultOptions.quer
 new QueryClient(config?: QueryClientConfig): QueryClient;
 ```
 
-Defined in: [packages/solid-query/src/QueryClient.ts:114](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L114)
+Defined in: [packages/solid-query/src/QueryClient.ts:118](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L118)
 
 #### Parameters
 
@@ -1678,7 +1678,9 @@ QueryCoreClient.setQueriesData
 ```ts
 setQueryData<TQueryFnData, TTaggedQueryKey, TInferredQueryFnData>(
    queryKey: TTaggedQueryKey, 
-   updater: Updater<NoInfer<TInferredQueryFnData> | undefined, NoInfer<TInferredQueryFnData> | undefined>, 
+   updater: Updater<
+  | InferDataFromTag<NoInfer<TQueryFnData>, TTaggedQueryKey>
+  | undefined, NoInfer<TInferredQueryFnData> | undefined>, 
    options?: SetDataOptions): NoInfer<TInferredQueryFnData> | undefined;
 ```
 
@@ -1716,7 +1718,9 @@ The query key to set data for.
 
 ##### updater
 
-[`Updater`](../type-aliases/Updater.md)\<`NoInfer`\<`TInferredQueryFnData`\> \| `undefined`, `NoInfer`\<`TInferredQueryFnData`\> \| `undefined`\>
+[`Updater`](../type-aliases/Updater.md)\<
+  \| [`InferDataFromTag`](../type-aliases/InferDataFromTag.md)\<`NoInfer`\<`TQueryFnData`\>, `TTaggedQueryKey`\>
+  \| `undefined`, `NoInfer`\<`TInferredQueryFnData`\> \| `undefined`\>
 
 Either the new data, or a function that receives the current data (which
 may be `undefined`) and returns the new data.

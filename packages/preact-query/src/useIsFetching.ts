@@ -1,9 +1,9 @@
 import { notifyManager } from '@tanstack/query-core'
-import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 import { useCallback } from 'preact/hooks'
 
 import { useQueryClient } from './QueryClientProvider'
 import { useSyncExternalStore } from './utils'
+import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 
 /**
  * The `useIsFetching` hook returns the `number` of the queries that your application is loading or fetching in

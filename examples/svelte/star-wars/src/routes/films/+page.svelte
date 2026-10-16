@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths'
   import { getFilms } from '$lib/api'
   import { createQuery } from '@tanstack/svelte-query'
 
@@ -19,13 +20,16 @@
 {#if query.status === 'success'}
   <div>
     <h2 class="text-4xl">Films</h2>
-    {#each query.data.results as film}
+    {#each query.data.results as film (film.url)}
       {@const filmUrlParts = film.url.split('/').filter(Boolean)}
       {@const filmId = filmUrlParts[filmUrlParts.length - 1]}
       <article>
-        <a class="text-blue-500 hover:underline" href={`/films/${filmId}`}>
+        <a
+          class="text-blue-500 hover:underline"
+          href={resolve('/films/[filmId]', { filmId })}
+        >
           <h6 class="text-xl">
-            {film.episode_id}. {film.title}{' '}
+            {film.episode_id}. {film.title}
             <em>
               ({new Date(Date.parse(film.release_date)).getFullYear()})
             </em>

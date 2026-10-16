@@ -1,5 +1,13 @@
 # @tanstack/eslint-plugin-query
 
+## 5.104.3
+
+No changes in this release.
+
+## 5.104.2
+
+No changes in this release.
+
 ## 5.104.1
 
 No changes in this release.

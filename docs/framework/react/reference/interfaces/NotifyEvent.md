@@ -3,7 +3,7 @@ id: NotifyEvent
 title: NotifyEvent
 ---
 
-Defined in: [packages/query-core/src/types.ts:2428](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2428)
+Defined in: [packages/query-core/src/types.ts:2434](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2434)
 
 The base shape of the events that the query and mutation caches send to their listeners.
 

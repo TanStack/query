@@ -3,9 +3,9 @@ import { defineComponent } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import { experimental_createQueryPersister } from '@tanstack/query-persist-client-core'
 
-import { Post } from './types'
+import type { Post } from './types'
 
-const fetcher = async (): Promise<Post[]> =>
+const fetcher = async (): Promise<Array<Post>> =>
   await fetch('https://jsonplaceholder.typicode.com/posts').then(
     (response) =>
       new Promise((resolve) =>
