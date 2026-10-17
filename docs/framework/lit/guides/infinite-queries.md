@@ -45,11 +45,13 @@ class ProjectsList extends LitElement {
         ?disabled=${!query.hasNextPage || query.isFetching}
         @click=${() => this.projects.fetchNextPage()}
       >
-        ${query.isFetchingNextPage
-          ? 'Loading more...'
-          : query.hasNextPage
-            ? 'Load More'
-            : 'Nothing more to load'}
+        ${
+          query.isFetchingNextPage
+            ? 'Loading more...'
+            : query.hasNextPage
+              ? 'Load More'
+              : 'Nothing more to load'
+        }
       </button>
     `
   }

@@ -5,10 +5,8 @@ import type {
 
 /**
  * Preserves and types mutation options for reuse across Lit Query APIs.
- *
  * @param options - Mutation options to preserve.
  * @returns The same options object.
- *
  * @example
  * ```ts
  * import { mutationOptions } from '@tanstack/lit-query'

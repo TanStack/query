@@ -45,7 +45,7 @@ You can import the devtools like this:
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 ```
 
-By default, Solid Query Devtools are only included in bundles when `isServer === true` ([`isServer`](https://github.com/solidjs/solid/blob/a72d393a07b22f9b7496e5eb93712188ccce0d28/packages/solid/web/src/index.ts#L37) comes from the `solid-js/web` package), so you don't need to worry about excluding them during a production build.
+By default, Solid Query Devtools are only enabled in development mode (`isDev` from `solid-js/web`). In production, the devtools components render nothing. During development, the devtools are loaded only on the client and are not rendered on the server.
 
 ## Floating Mode
 

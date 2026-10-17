@@ -76,10 +76,13 @@ describe('createRawRef', () => {
       })
 
       expect('b' in ref).toBe(true)
+
       delete ref.b
       expect('b' in ref).toBe(false)
+
       update({})
       expect('a' in ref).toBe(false)
+
       update({ a: 1, b: 2 })
       expect('b' in ref).toBe(true)
       expect('a' in ref).toBe(true)
@@ -173,7 +176,6 @@ describe('createRawRef', () => {
         return 3
       },
     })
-
     expect(aAccessed).toBe(false)
     expect(bAccessed).toBe(false)
 

@@ -25,7 +25,7 @@ As TanStack Query is a promise based library, observables from `HttpClient` need
 class ExampleComponent {
   private readonly http = inject(HttpClient)
 
-  readonly query = injectQuery(() => ({
+  readonly repoDataQuery = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(

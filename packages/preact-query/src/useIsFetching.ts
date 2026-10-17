@@ -1,30 +1,29 @@
 import { notifyManager } from '@tanstack/query-core'
-import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 import { useCallback } from 'preact/hooks'
 
 import { useQueryClient } from './QueryClientProvider'
 import { useSyncExternalStore } from './utils'
+import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 
 /**
- * `useIsFetching` is an optional hook that returns the `number` of the queries that your application is loading or
- * fetching in the background (useful for app-wide loading indicators).
- *
+ * The `useIsFetching` hook returns the `number` of the queries that your application is loading or fetching in
+ * the background (useful for app-wide loading indicators).
  * @param filters - The {@link QueryFilters} to narrow down the matched queries.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns Will be the `number` of the queries that your application is currently loading or fetching in the
  * background.
- *
  * @example
  * ```tsx
  * import { useIsFetching } from '@tanstack/preact-query'
  *
- * // How many queries are fetching?
- * const isFetching = useIsFetching()
- * // How many queries matching the posts prefix are fetching?
- * const isFetchingPosts = useIsFetching({ queryKey: ['posts'] })
- * ```
+ * function PostsFetchingIndicator() {
+ *   // How many queries matching the posts prefix are fetching?
+ *   const isFetchingPosts = useIsFetching({ queryKey: ['posts'] })
  *
+ *   return isFetchingPosts ? <span>Refreshing posts...</span> : null
+ * }
+ * ```
  * @example
  * A global loading indicator for any query fetching in the background, not just the ones on screen:
  * ```tsx

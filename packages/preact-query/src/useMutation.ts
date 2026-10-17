@@ -4,32 +4,34 @@ import {
   notifyManager,
   shouldThrowError,
 } from '@tanstack/query-core'
-import type { DefaultError, QueryClient } from '@tanstack/query-core'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 
 import { useQueryClient } from './QueryClientProvider'
+import { useSyncExternalStore } from './utils'
 import type {
   UseMutateFunction,
   UseMutationOptions,
   UseMutationResult,
 } from './types'
-import { useSyncExternalStore } from './utils'
+import type { DefaultError, QueryClient } from '@tanstack/query-core'
 
 // HOOK
 
 /**
  * Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
  * `useMutation` is the hook for that.
- *
- * @see {@link mutationOptions} to share these options across multiple `useMutation` call sites.
  * @param options - The {@link UseMutationOptions} to use — everything you can pass to `useMutation`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns `mutate`/`mutateAsync` also accept per-call `onSuccess`/`onError`/`onSettled` callbacks as a second
  * argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to the shared
- * mutation definition. If you make multiple requests, `onSuccess` will fire only after the latest call you've
- * made.
- *
+ * mutation definition. Hook-level callbacks (passed to `options`) fire for every mutation; per-call callbacks
+ * fire only for the latest call you've made, and only while the component is still mounted — unmounting before
+ * the mutation settles removes the subscription and prevents them from firing.
+ * @throws {Error} The mutation error, when `throwOnError` is `true` or returns `true` for it, so that it is
+ * thrown to the nearest error boundary.
+ * @see {@link mutationOptions} to share these options across multiple `useMutation` call sites, or to look
+ * the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
  * @example
  * ```tsx
  * import { useMutation, useQueryClient } from '@tanstack/preact-query'
@@ -55,7 +57,6 @@ import { useSyncExternalStore } from './utils'
  *   )
  * }
  * ```
- *
  * @example
  * Rendering the mutation's own state, rather than just firing it off:
  * ```tsx
@@ -85,7 +86,6 @@ import { useSyncExternalStore } from './utils'
  *   )
  * }
  * ```
- *
  * @example
  * Optimistic update via `onMutate`, rolling back on `onError`:
  * ```tsx
@@ -105,11 +105,11 @@ import { useSyncExternalStore } from './utils'
  *         newTodo,
  *       ])
  *
- *       // Passed to `onError` as `context` if the mutation fails.
+ *       // Passed to `onError` as `onMutateResult` if the mutation fails.
  *       return { previousTodos }
  *     },
- *     onError: (_err, _newTodo, context) => {
- *       queryClient.setQueryData(['todos'], context?.previousTodos)
+ *     onError: (_err, _newTodo, onMutateResult) => {
+ *       queryClient.setQueryData(['todos'], onMutateResult?.previousTodos)
  *     },
  *     onSettled: () => {
  *       queryClient.invalidateQueries({ queryKey: ['todos'] })
@@ -121,10 +121,9 @@ import { useSyncExternalStore } from './utils'
  *   )
  * }
  * ```
- *
  * @example
  * Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
- * promise per call instead, so you can wait for all of them:
+ * promise per call instead, so you can wait for all of them when they succeed:
  * ```tsx
  * import { useMutation, useQueryClient } from '@tanstack/preact-query'
  *
@@ -151,7 +150,6 @@ import { useSyncExternalStore } from './utils'
  *   )
  * }
  * ```
- *
  * @example
  * If some of the mutations above can fail independently of the others, and you want to know which ones
  * did — rather than losing that information the moment the first one rejects — swap `Promise.all` for
@@ -168,13 +166,13 @@ import { useSyncExternalStore } from './utils'
  *   })
  *
  *   async function handleAddAll(todos: Array<string>) {
- *     const results = await Promise.allSettled(
+ *     const addResults = await Promise.allSettled(
  *       todos.map((todo) => addMutation.mutateAsync(todo)),
  *     )
  *
- *     results.forEach((result, index) => {
- *       if (result.status === 'rejected') {
- *         console.error(`Failed to add "${todos[index]}":`, result.reason)
+ *     addResults.forEach((addResult, index) => {
+ *       if (addResult.status === 'rejected') {
+ *         console.error(`Failed to add "${todos[index]}":`, addResult.reason)
  *       }
  *     })
  *   }

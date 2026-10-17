@@ -70,7 +70,6 @@ describe('injectQueries', () => {
 
     await vi.advanceTimersByTimeAsync(101)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
 
     expect(results.length).toBe(3)
@@ -123,10 +122,8 @@ describe('injectQueries', () => {
       data: [undefined, undefined],
       isPending: true,
     })
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
     expect(rendered.getByText('isPending: false')).toBeInTheDocument()
     expect(results[results.length - 1]).toMatchObject({
@@ -173,7 +170,6 @@ describe('injectQueries', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(
       rendered.getByText('status1: error, error1: Some error'),
     ).toBeInTheDocument()
@@ -224,7 +220,6 @@ describe('injectQueries', () => {
       ).toBeInTheDocument()
       expect(queryFn1).toHaveBeenCalledTimes(0)
       expect(queryFn2).toHaveBeenCalledTimes(0)
-
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
       expect(

@@ -29,7 +29,7 @@ export const mockInterceptor: HttpInterceptorFn = (
           200,
           JSON.parse(localStorage.getItem('tasks') || '[]'),
         )
-      case 'POST':
+      case 'POST': {
         const tasks = JSON.parse(localStorage.getItem('tasks') || '[]')
         tasks.push(req.body)
         localStorage.setItem('tasks', JSON.stringify(tasks))
@@ -37,6 +37,7 @@ export const mockInterceptor: HttpInterceptorFn = (
           status: 'success',
           task: req.body,
         })
+      }
       case 'DELETE':
         localStorage.removeItem('tasks')
         return respondWith(200, { status: 'success' })

@@ -7,6 +7,7 @@ import {
   QueryCache,
   QueryClient,
   QueryClientProvider,
+  noop,
   useInfiniteQuery,
   useMutationState,
   useQuery,
@@ -59,7 +60,7 @@ describe('Server Side Rendering', () => {
   it('should add prefetched data to cache', async () => {
     const key = queryKey()
 
-    const promise = queryClient.fetchQuery({
+    const promise = queryClient.query({
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
     })
@@ -87,7 +88,7 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    void queryClient.query({ queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(
@@ -130,7 +131,7 @@ describe('Server Side Rendering', () => {
     expect(keys).toEqual([[key, 1]])
   })
 
-  it('useMutationState should return empty array', () => {
+  it('should return empty array from useMutationState', () => {
     function Page() {
       const mutationState = useMutationState()
 
@@ -146,7 +147,7 @@ describe('Server Side Rendering', () => {
     expect(markup).toContain('mutationState: 0')
   })
 
-  it('useInfiniteQuery should return the correct state', async () => {
+  it('should return the correct state from useInfiniteQuery', async () => {
     const key = queryKey()
     const queryFn = vi.fn(() => sleep(10).then(() => 'page 1'))
 
@@ -166,11 +167,13 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    queryClient.prefetchInfiniteQuery({
-      queryKey: key,
-      queryFn,
-      initialPageParam: 0,
-    })
+    void queryClient
+      .infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(

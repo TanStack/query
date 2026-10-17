@@ -22,12 +22,27 @@ type UnwrapLeaf =
   | Set<any>
   | WeakSet<any>
 
+/** A plain value or a reactive getter (`() => T`) that returns one. */
 export type MaybeGetter<T> = T | (() => T)
 
+/**
+ * A plain value, a `Ref`, or a `ComputedRef`. Accepting this instead of a bare `T` lets a composable take
+ * either a reactive or a static value for a given option — see the [Reactivity guide](../../reactivity.md).
+ */
 export type MaybeRef<T> = Ref<T> | ComputedRef<T> | T
 
+/**
+ * A {@link MaybeRef}, or a reactive getter (`() => T`). Reactive getters are a lighter-weight alternative to
+ * `computed` for deriving a value from other reactive state — see the
+ * [Reactivity guide](../../reactivity.md#using-derived-state-inside-queries).
+ */
 export type MaybeRefOrGetter<T> = MaybeRef<T> | (() => T)
 
+/**
+ * Like {@link MaybeRef}, but applied recursively to every property of `T` — so each field of an options object
+ * (for example, an entry inside a `queryKey` array) can independently be a plain value or a `ref`, not just the
+ * object as a whole.
+ */
 export type MaybeRefDeep<T> = MaybeRef<
   T extends Function
     ? T
@@ -38,8 +53,16 @@ export type MaybeRefDeep<T> = MaybeRef<
       : T
 >
 
+/**
+ * Rejects `unknown`, collapsing it to `never` — used to keep generic inference from silently widening.
+ * @internal
+ */
 export type NoUnknown<T> = Equal<unknown, T> extends true ? never : T
 
+/**
+ * Type-level equality check between `TTargetA` and `TTargetB`.
+ * @internal
+ */
 export type Equal<TTargetA, TTargetB> =
   (<T>() => T extends TTargetA ? 1 : 2) extends <T>() => T extends TTargetB
     ? 1
@@ -47,6 +70,7 @@ export type Equal<TTargetA, TTargetB> =
     ? true
     : false
 
+/** The inverse of {@link MaybeRefDeep} — recursively unwraps any `Ref`s in `T` back to their plain value types. */
 export type DeepUnwrapRef<T> = T extends UnwrapLeaf
   ? T
   : T extends Ref<infer U>
@@ -57,6 +81,9 @@ export type DeepUnwrapRef<T> = T extends UnwrapLeaf
         }
       : UnwrapRef<T>
 
+/**
+ * The `vue-query`-specific `shallow` option, accepted by query and mutation options.
+ */
 export type ShallowOption = {
   /**
    * Return data in a shallow ref object (it is `false` by default). It can be set to `true` to return data in a shallow ref object, which can improve performance if your data does not need to be deeply reactive.
@@ -64,6 +91,10 @@ export type ShallowOption = {
   shallow?: boolean
 }
 
+/**
+ * The options of a mutation. Same as {@link MutationObserverOptions} from `@tanstack/query-core`, minus the
+ * internal `_defaulted` flag, plus the `shallow` option.
+ */
 export type MutationOptions<
   TData = unknown,
   TError = DefaultError,
@@ -75,17 +106,49 @@ export type MutationOptions<
 > &
   ShallowOption
 
+/**
+ * The default options of a `QueryClient`, applied to every query (`queries`), mutation
+ * (`mutations`), `hydrate`, and `dehydrate` call unless overridden. Query and mutation defaults also
+ * accept the `shallow` option.
+ */
 export interface DefaultOptions<TError = DefaultError> {
+  /**
+   * Default options applied to every query, unless overridden per-query. Also accepts the
+   * `shallow` option.
+   */
   queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'> &
     ShallowOption
+  /**
+   * Default options applied to every mutation, unless overridden per-mutation. Also accepts the
+   * `shallow` option.
+   */
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown> &
     ShallowOption
+  /**
+   * Default options used when hydrating queries and mutations; see {@link HydrateOptions}.
+   */
   hydrate?: HydrateOptions['defaultOptions']
+  /**
+   * Default options used when dehydrating the client's caches; see {@link DehydrateOptions}.
+   */
   dehydrate?: DehydrateOptions
 }
 
+/**
+ * The options of `new QueryClient()`: the `queryCache` and `mutationCache` to use, and the
+ * `defaultOptions` for its queries and mutations.
+ */
 export interface QueryClientConfig {
+  /**
+   * The `QueryCache` to use. A new one is created if omitted.
+   */
   queryCache?: QueryCache
+  /**
+   * The `MutationCache` to use. A new one is created if omitted.
+   */
   mutationCache?: MutationCache
+  /**
+   * The default options of the queries and mutations of this `QueryClient`.
+   */
   defaultOptions?: DefaultOptions
 }

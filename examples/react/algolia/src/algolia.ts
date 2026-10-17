@@ -20,18 +20,16 @@ export async function search<TData>({
   hitsPerPage = 10,
 }: SearchOptions): Promise<{
   hits: Array<Hit<TData>>
-  nextPage: number | undefined
+  nbPages: number
 }> {
   const client = searchClient(ALGOLIA_APP_ID, ALGOLIA_SEARCH_API_KEY)
 
   console.log('algolia:search', { indexName, query, pageParam, hitsPerPage })
 
-  const { hits, page, nbPages } = await client.searchSingleIndex<TData>({
+  const { hits, nbPages = 0 } = await client.searchSingleIndex<TData>({
     indexName,
     searchParams: { query, page: pageParam, hitsPerPage },
   })
 
-  const nextPage = page + 1 < nbPages ? page + 1 : undefined
-
-  return { hits, nextPage }
+  return { hits, nbPages }
 }
