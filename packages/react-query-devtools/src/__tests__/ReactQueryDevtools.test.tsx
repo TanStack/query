@@ -149,6 +149,16 @@ describe('ReactQueryDevtools', () => {
     )
   })
 
+  it('should create the devtools instance only once across re-renders', () => {
+    const { rerender } = render(
+      <ReactQueryDevtools client={queryClient} position="bottom" />,
+    )
+
+    rerender(<ReactQueryDevtools client={queryClient} position="top" />)
+
+    expect(TanstackQueryDevtools).toHaveBeenCalledTimes(1)
+  })
+
   it('should forward a "buttonPosition" change to the devtools instance after mount', () => {
     const { rerender } = render(
       <ReactQueryDevtools client={queryClient} buttonPosition="bottom-right" />,

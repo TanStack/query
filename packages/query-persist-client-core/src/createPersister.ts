@@ -13,25 +13,60 @@ import type {
   QueryState,
 } from '@tanstack/query-core'
 
+/**
+ * A single query as stored by {@link experimental_createQueryPersister}.
+ */
 export interface PersistedQuery {
+  /**
+   * The `buster` the query was saved with. Entries with a different `buster` are discarded.
+   */
   buster: string
+  /**
+   * The hash of the query.
+   */
   queryHash: string
   /** The original public query key. */
   queryKey: QueryKey
+  /**
+   * The state of the query, including its data and when it was last updated.
+   */
   state: QueryState
 }
 
+/**
+ * A value, or a promise that resolves to it.
+ */
 export type MaybePromise<T> = T | Promise<T>
 
+/**
+ * A key-value storage, such as `localStorage` or `AsyncStorage`, whose methods may be synchronous
+ * or return promises.
+ */
 export interface AsyncStorage<TStorageValue = string> {
+  /**
+   * Reads the value stored under `key`, or `null`/`undefined` if there is none.
+   */
   getItem: (key: string) => MaybePromise<TStorageValue | undefined | null>
+  /**
+   * Stores `value` under `key`.
+   */
   setItem: (key: string, value: TStorageValue) => MaybePromise<unknown>
+  /**
+   * Removes the value stored under `key`.
+   */
   removeItem: (key: string) => MaybePromise<void>
+  /**
+   * Returns all stored key-value pairs. Required for removing expired entries in bulk.
+   */
   entries?: () => MaybePromise<Array<[key: string, value: TStorageValue]>>
 }
 
+/**
+ * Options for {@link experimental_createQueryPersister}.
+ */
 export interface StoragePersisterOptions<TStorageValue = string> {
-  /** The storage client used for setting and retrieving items from cache.
+  /**
+   * The storage client used for setting and retrieving items from cache.
    * For SSR pass in `undefined`.
    */
   storage: AsyncStorage<TStorageValue> | undefined | null
@@ -67,7 +102,7 @@ export interface StoragePersisterOptions<TStorageValue = string> {
    * If set to `true`, the query will refetch on successful query restoration if the data is stale.
    * If set to `false`, the query will not refetch on successful query restoration.
    * If set to `'always'`, the query will always refetch on successful query restoration.
-   * Defaults to `true`.
+   * @defaultValue true
    */
   refetchOnRestore?: boolean | 'always'
   /**
@@ -85,13 +120,17 @@ export const PERSISTER_KEY_PREFIX = 'tanstack-query'
  *
  * ```
  * useQuery({
-     queryKey: ['myKey'],
-     queryFn: fetcher,
-     persister: createPersister({
-       storage: localStorage,
-     }),
-   })
-   ```
+ *   queryKey: ['myKey'],
+ *   queryFn: fetcher,
+ *   persister: createPersister({
+ *     storage: localStorage,
+ *   }),
+ * })
+ * ```
+ * @param options - The storage to persist to, and the options for serializing, expiring, and
+ * filtering persisted queries.
+ * @returns The `persisterFn` to pass as a query's `persister`, plus functions to persist, retrieve,
+ * restore, remove, and garbage collect persisted queries manually.
  */
 export function experimental_createQueryPersister<TStorageValue = string>({
   storage,
@@ -107,6 +146,12 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   refetchOnRestore = true,
   filters,
 }: StoragePersisterOptions<TStorageValue>) {
+  /**
+   * Checks whether a persisted query should be discarded.
+   * @param persistedQuery - The persisted query to check.
+   * @returns `true` if it has no `dataUpdatedAt`, is older than `maxAge`, or has a different
+   * `buster`.
+   */
   function isExpiredOrBusted(persistedQuery: PersistedQuery) {
     if (persistedQuery.state.dataUpdatedAt) {
       const queryAge = Date.now() - persistedQuery.state.dataUpdatedAt
@@ -123,6 +168,12 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     return true
   }
 
+  /**
+   * Computes the hash used by exact persistence filters.
+   * @param queryClient - The client that provides the cache key configuration.
+   * @param queryKey - The key to match, if the filter specifies one.
+   * @returns The hash for an exact match, or `undefined` without a key.
+   */
   function getFilterQueryHash(
     queryClient: QueryClient,
     queryKey: QueryKey | undefined,
@@ -132,6 +183,14 @@ export function experimental_createQueryPersister<TStorageValue = string>({
       : undefined
   }
 
+  /**
+   * Reads the persisted data of a query from storage. Expired, busted, or unreadable entries are
+   * removed instead.
+   * @param queryHash - The hash of the query to read.
+   * @param afterRestoreMacroTask - Scheduled with the persisted query after it is restored.
+   * @returns A promise that resolves with the persisted data, or `undefined` if nothing was
+   * restored.
+   */
   async function retrieveQuery<T>(
     queryHash: string,
     afterRestoreMacroTask?: (persistedQuery: PersistedQuery) => void,
@@ -140,7 +199,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
       const storageKey = `${prefix}-${queryHash}`
       try {
         const storedData = await storage.getItem(storageKey)
-        if (storedData) {
+        if (storedData != null) {
           let persistedQuery: PersistedQuery
           try {
             persistedQuery = await deserialize(storedData)
@@ -176,6 +235,12 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     return
   }
 
+  /**
+   * Persists the query with the given key, if it exists in the client's cache.
+   * @param queryKey - The key of the query to persist.
+   * @param queryClient - The client whose cache holds the query.
+   * @returns A promise that resolves once the query is persisted.
+   */
   async function persistQueryByKey(
     queryKey: QueryKey,
     queryClient: QueryClient,
@@ -195,10 +260,15 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     }
   }
 
+  /**
+   * Writes a query's state, key, hash, and `buster` to storage.
+   * @param query - The query to persist.
+   * @returns A promise that resolves once the entry is serialized and written.
+   */
   async function persistQuery(query: Query) {
     if (storage != null) {
       const storageKey = `${prefix}-${query.queryHash}`
-      storage.setItem(
+      await storage.setItem(
         storageKey,
         await serialize({
           state: query.state,
@@ -210,6 +280,14 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     }
   }
 
+  /**
+   * The `persister` of a query: restores its data from storage if the query has none yet, otherwise
+   * runs `queryFn` and persists the result.
+   * @param queryFn - The query's own query function.
+   * @param ctx - The context passed to `queryFn`.
+   * @param query - The query being fetched.
+   * @returns A promise that resolves with the restored or fetched data.
+   */
   async function persisterFn<T, TQueryKey extends QueryKey>(
     queryFn: (context: QueryFunctionContext<TQueryKey>) => T | Promise<T>,
     ctx: QueryFunctionContext<TQueryKey>,
@@ -255,6 +333,11 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     return Promise.resolve(queryFnResult)
   }
 
+  /**
+   * Removes expired, busted, or unreadable entries from storage. Requires the storage to implement
+   * `entries`.
+   * @returns A promise that resolves once every entry is checked.
+   */
   async function persisterGc() {
     if (storage?.entries) {
       const storageKeyPrefix = `${prefix}-`
@@ -280,6 +363,14 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     }
   }
 
+  /**
+   * Restores every persisted query matching `queryFilters` into the client's cache with
+   * `queryClient.setQueryData`. Requires the storage to implement `entries`.
+   * @param queryClient - The client to restore the queries into.
+   * @param queryFilters - The `queryKey` and `exact` filters to match. Without them, every query is
+   * restored.
+   * @returns A promise that resolves once every entry is checked.
+   */
   async function restoreQueries(
     queryClient: QueryClient,
     queryFilters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
@@ -339,6 +430,14 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     }
   }
 
+  /**
+   * Removes every persisted query matching `queryFilters` from storage. Requires the storage to implement
+   * `entries`.
+   * @param queryClient - The client whose cache key configuration is used to match queries.
+   * @param queryFilters - The `queryKey` and `exact` filters to match. Without them, every query is
+   * removed.
+   * @returns A promise that resolves once every entry is checked.
+   */
   async function removeQueries(
     queryClient: QueryClient,
     queryFilters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},

@@ -2,7 +2,7 @@
 id: paginated-queries
 title: Paginated / Lagged Queries
 ref: docs/framework/react/guides/paginated-queries.md
-replace: { 'hook': 'function' }
+replace: { 'hook': 'primitive' }
 ---
 
 [//]: # 'Example'

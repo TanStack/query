@@ -6,6 +6,9 @@ import type {
 } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/vue-query'
 
+/**
+ * The props of `VueQueryDevtools`, which renders the devtools with a toggle button that opens them.
+ */
 export interface DevtoolsOptions {
   /**
    * Set this true if you want the dev tools to default to being open
@@ -14,13 +17,13 @@ export interface DevtoolsOptions {
   /**
    * The position of the TanStack logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
-   * Defaults to 'bottom-right'.
+   * @defaultValue bottom-right
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
    * The position of the Vue Query devtools panel.
    * 'top' | 'bottom' | 'left' | 'right'
-   * Defaults to 'bottom'.
+   * @defaultValue bottom
    */
   position?: DevtoolsPosition
   /**
@@ -36,7 +39,8 @@ export interface DevtoolsOptions {
    */
   styleNonce?: string
   /**
-   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
+   * within the shadow DOM instead of within the head tag in the light DOM.
    */
   shadowDOMTarget?: ShadowRoot
   /**
@@ -45,11 +49,14 @@ export interface DevtoolsOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * Defaults to 'system'.
+   * @defaultValue system
    */
   theme?: Theme
 }
 
+/**
+ * The props of `VueQueryDevtoolsPanel`, which renders the devtools panel inline.
+ */
 export interface DevtoolsPanelOptions {
   /**
    * Custom instance of QueryClient
@@ -64,7 +71,8 @@ export interface DevtoolsPanelOptions {
    */
   styleNonce?: string
   /**
-   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
+   * within the shadow DOM instead of within the head tag in the light DOM.
    */
   shadowDOMTarget?: ShadowRoot
 
@@ -86,7 +94,7 @@ export interface DevtoolsPanelOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * Defaults to 'system'.
+   * @defaultValue system
    */
   theme?: Theme
 }

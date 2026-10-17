@@ -1,10 +1,8 @@
 import { LitElement, css, html } from 'lit'
-import {
-  createQueryController,
-  type QueryClient,
-  type QueryResultAccessor,
-} from '@tanstack/lit-query'
-import { createDataQueryOptions, type DataResponse } from './api.js'
+import { createQueryController } from '@tanstack/lit-query'
+import { createDataQueryOptions } from './api.js'
+import type { QueryClient, QueryResultAccessor } from '@tanstack/lit-query'
+import type { DataResponse } from './api.js'
 
 const ssrQueryControllerCreationCounts = new WeakMap<QueryClient, number>()
 
@@ -40,11 +38,7 @@ export class SsrApp extends LitElement {
       color: #1f2937;
       display: block;
       font-family:
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        'Segoe UI',
+        ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
         sans-serif;
       max-width: 32rem;
       padding: 1.5rem;
@@ -130,7 +124,7 @@ export class SsrApp extends LitElement {
         <article data-testid="content">
           <h1>Lit Query SSR</h1>
           <p data-testid="status">Error</p>
-          <p data-testid="error-message">${query.error?.message}</p>
+          <p data-testid="error-message">${query.error.message}</p>
         </article>
       `
     }

@@ -36,6 +36,12 @@ const baseConfig = {
   format: ['esm', 'cjs'] as ['esm', 'cjs'],
   outDir: 'build',
   fixedExtension: false,
+  // Published source needs these dependencies declared, but the compiled
+  // devtools must still bundle them with the Solid browser runtime.
+  deps: {
+    alwaysBundle: [/./],
+    dts: { alwaysBundle: [] },
+  },
   inputOptions: {
     // Keep package imports in declaration output. Runtime Solid imports are
     // bundled from the browser files by solidBrowserImports above.

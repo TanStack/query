@@ -1,14 +1,11 @@
-import {
-  Form,
-  useLoaderData,
-  redirect,
-  useNavigate,
-  ActionFunctionArgs,
-} from 'react-router-dom'
-
-import { Contact, updateContact } from '../contacts'
-import { QueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { contactDetailQuery, loader } from './contact'
+import { Form, redirect, useLoaderData, useNavigate } from 'react-router-dom'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { updateContact } from '../contacts'
+import { contactDetailQuery } from './contact'
+import type { ActionFunctionArgs } from 'react-router-dom'
+import type { Contact } from '../contacts'
+import type { QueryClient } from '@tanstack/react-query'
+import type { loader } from './contact'
 
 export const action =
   (queryClient: QueryClient) =>

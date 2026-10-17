@@ -1,7 +1,8 @@
 import '@lit-labs/ssr-client/lit-element-hydrate-support.js'
 
-import { QueryClient, hydrate, type DehydratedState } from '@tanstack/lit-query'
+import { QueryClient, hydrate } from '@tanstack/lit-query'
 import { QUERY_STALE_TIME } from './api.js'
+import type { DehydratedState } from '@tanstack/lit-query'
 
 type HydratableSsrApp = HTMLElement & {
   queryClient?: QueryClient
@@ -24,7 +25,7 @@ function readDehydratedState(): DehydratedState {
     throw new Error('Missing dehydrated state script.')
   }
 
-  const stateText = stateElement.textContent?.trim() ?? 'null'
+  const stateText = (stateElement.textContent || 'null').trim()
   return JSON.parse(stateText) as DehydratedState
 }
 

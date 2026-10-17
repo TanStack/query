@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { Todo } from '@/app/api/todos/data'
 
 interface MutationContext {
@@ -70,9 +70,7 @@ export default function TodoListCache() {
         )
       }
     },
-    onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: ['todos'] })
-    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
   function handleSubmit(e: React.FormEvent) {

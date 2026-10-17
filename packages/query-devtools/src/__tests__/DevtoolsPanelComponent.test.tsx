@@ -137,7 +137,6 @@ describe('DevtoolsPanelComponent', () => {
     ))
 
     rendered.getByLabelText('Close Tanstack query devtools').click()
-
     expect(onClose).toHaveBeenCalledTimes(1)
   })
 })
