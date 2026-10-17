@@ -70,9 +70,7 @@ export default function TodoListCache() {
         )
       }
     },
-    onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: ['todos'] })
-    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
   function handleSubmit(e: React.FormEvent) {
