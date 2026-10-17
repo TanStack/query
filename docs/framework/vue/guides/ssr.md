@@ -284,7 +284,7 @@ onServerPrefetch(async () => {
 
 In case you are creating the `QueryClient` for every request, Vue Query creates the isolated cache for this client, which is preserved in memory for the `gcTime` period. That may lead to high memory consumption on server in case of high number of requests during that period.
 
-On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
+On the server, no garbage collection timers are scheduled, whatever the `gcTime`, and `gcTime` defaults to `Infinity`. Memory is cleared automatically once the request has finished and the `QueryClient` is no longer referenced.
 
 To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client.
 
@@ -306,5 +306,3 @@ To clear the cache after it is not needed and to lower memory consumption, you c
 - `defaultOptions.deserializeData?: (data) => any` — transforms (deserializes) data before it's put into the cache.
 
 One caveat with `hydrate`: if a query being hydrated already exists in the cache, it's only overwritten when the incoming data is newer than what's already there — otherwise it's silently skipped.
-
-Alternatively, you can set a smaller `gcTime`.
