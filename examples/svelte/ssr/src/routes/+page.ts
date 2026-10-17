@@ -1,11 +1,9 @@
+import { noop } from '@tanstack/svelte-query'
 import type { PageLoad } from './$types'
-import { api } from '$lib/api'
+import { postsQueryOptions } from '$lib/queries'
 
 export const load: PageLoad = async ({ parent, fetch }) => {
   const { queryClient } = await parent()
 
-  await queryClient.prefetchQuery({
-    queryKey: ['posts', 10],
-    queryFn: () => api(fetch).getPosts(10),
-  })
+  await queryClient.query(postsQueryOptions(10, fetch)).catch(noop)
 }

@@ -1,5 +1,6 @@
 /** @jsxRuntime automatic */
 /** @jsxImportSource preact */
+import { useEffect, useRef, useState } from 'preact/hooks'
 import {
   persistQueryClientRestore,
   persistQueryClientSubscribe,
@@ -9,7 +10,6 @@ import {
   QueryClientProvider,
 } from '../../../preact-query/src'
 import type { ComponentChildren } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
 
 type Props = {
   children?: ComponentChildren

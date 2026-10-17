@@ -1,5 +1,5 @@
 import React from 'react'
-import { HydrationBoundary, dehydrate } from '@tanstack/react-query'
+import { HydrationBoundary, dehydrate, noop } from '@tanstack/react-query'
 import { getQueryClient } from '@/app/get-query-client'
 import { getTodos } from '@/app/api/todos/data'
 import ApproachTabs from '@/components/ApproachTabs'
@@ -7,10 +7,12 @@ import ApproachTabs from '@/components/ApproachTabs'
 export default function Home() {
   const queryClient = getQueryClient()
 
-  void queryClient.prefetchQuery({
-    queryKey: ['todos'],
-    queryFn: getTodos,
-  })
+  void queryClient
+    .query({
+      queryKey: ['todos'],
+      queryFn: getTodos,
+    })
+    .catch(noop)
 
   return (
     <main style={{ maxWidth: 600, margin: '0 auto', padding: '2rem 1rem' }}>

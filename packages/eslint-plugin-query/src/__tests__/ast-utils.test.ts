@@ -9,13 +9,13 @@ function createIdentifier(name: string): TSESTree.Identifier {
 }
 
 describe('ASTUtils', () => {
-  it('stops member traversal when a node has no parent', () => {
+  it('should stop member traversal when a node has no parent', () => {
     const identifier = createIdentifier('value')
 
     expect(ASTUtils.traverseUpMemberExpression(identifier)).toBe(identifier)
   })
 
-  it('handles an external reference without a parent', () => {
+  it('should handle an external reference without a parent', () => {
     const operation = createIdentifier('operation')
     const reference = {
       identifier: operation,
@@ -45,7 +45,7 @@ describe('ASTUtils', () => {
 })
 
 describe('ExhaustiveDepsUtils', () => {
-  it('does not treat a detached identifier as a function call target', () => {
+  it('should not treat a detached identifier as a function call target', () => {
     expect(
       ExhaustiveDepsUtils.isFunctionCallTarget(createIdentifier('fetchTodos')),
     ).toBe(false)

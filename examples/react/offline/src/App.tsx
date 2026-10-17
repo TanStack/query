@@ -1,4 +1,3 @@
-import * as React from 'react'
 import {
   MutationCache,
   QueryClient,
@@ -19,7 +18,12 @@ import {
 } from '@tanstack/react-location'
 
 import * as api from './api'
-import { movieKeys, useMovie } from './movies'
+import {
+  movieKeys,
+  movieQueryOptions,
+  updateMovieMutationOptions,
+  useMovie,
+} from './movies'
 
 const persister = createAsyncStoragePersister({
   storage: window.localStorage,
@@ -35,11 +39,8 @@ const queryClient = new QueryClient({
       retry: 0,
     },
   },
-  // configure global cache callbacks to show toast notifications
+  // configure global cache callbacks to show error toast notifications
   mutationCache: new MutationCache({
-    onSuccess: (data) => {
-      toast.success(data.message)
-    },
     onError: (error) => {
       toast.error(error.message)
     },
@@ -48,10 +49,9 @@ const queryClient = new QueryClient({
 
 // we need a default mutation function so that paused mutations can resume after a page reload
 queryClient.setMutationDefaults(movieKeys.all(), {
-  mutationFn: async ({ id, comment }) => {
-    // to avoid clashes with our optimistic update when an offline mutation continues
-    await queryClient.cancelQueries({ queryKey: movieKeys.detail(id) })
-    return api.updateMovie(id, comment)
+  ...updateMovieMutationOptions(),
+  onSuccess: (data) => {
+    toast.success(data.message)
   },
 })
 
@@ -87,16 +87,13 @@ function Movies() {
           path: ':movieId',
           element: <Detail />,
           errorElement: <MovieError />,
-          loader: ({ params: { movieId } }) =>
-            queryClient.getQueryData(movieKeys.detail(movieId)) ??
+          loader: async ({ params: { movieId } }) =>
+            queryClient.getQueryData(movieQueryOptions(movieId).queryKey) ??
             // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
             // we just let the Detail component handle it
             (onlineManager.isOnline() && !isRestoring
-              ? queryClient.fetchQuery({
-                  queryKey: movieKeys.detail(movieId),
-                  queryFn: () => api.fetchMovie(movieId),
-                })
-              : undefined),
+              ? queryClient.query(movieQueryOptions(movieId))
+              : {}),
         },
       ]}
     >
@@ -128,7 +125,7 @@ function List() {
         <ul>
           {moviesQuery.data.movies.map((movie) => (
             <li key={movie.id}>
-              <Link to={`./${movie.id}`} preload>
+              <Link to={`./${movie.id}`} preload={1}>
                 {movie.title}
               </Link>
             </li>
@@ -153,7 +150,7 @@ function MovieError() {
     <div>
       <Link to="..">Back</Link>
       <h1>Couldn't load movie!</h1>
-      <div>{error.message}</div>
+      {error instanceof Error && <div>{error.message}</div>}
     </div>
   )
 }
@@ -170,6 +167,10 @@ function Detail() {
 
   function submitForm(event: any) {
     event.preventDefault()
+
+    if (comment === undefined) {
+      return
+    }
 
     updateMovie.mutate({
       id: movieId,

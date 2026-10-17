@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/svelte'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, createQueries } from '../../src/index.js'
-import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
+import { promiseWithResolvers, ref, withEffectRoot } from '../utils.svelte.js'
 import IsRestoring from './IsRestoring.svelte'
 import type { CreateQueryResult } from '../../src/index.js'
 
@@ -98,13 +98,44 @@ describe('createQueries', () => {
 
       // Trigger refetch
       result[0].refetch()
-
       await vi.advanceTimersByTimeAsync(0)
       expect(result[0].data).toBe(2)
 
       // Only one render for data update, no render for isFetching transition
       expect(results.length).toBe(3)
       expect(results[2]).toMatchObject([{ data: 2 }])
+    }),
+  )
+
+  it(
+    'should track queries added to an initially empty array',
+    withEffectRoot(async () => {
+      const key1 = queryKey()
+      const queries = ref<
+        Array<{ queryKey: Array<string>; queryFn: () => Promise<string> }>
+      >([])
+      const results: Array<Array<CreateQueryResult>> = []
+
+      const result = createQueries(
+        () => ({ queries: queries.value }),
+        () => queryClient,
+      )
+
+      $effect(() => {
+        results.push(result.map((res) => ({ ...res })))
+      })
+
+      await vi.advanceTimersByTimeAsync(0)
+      expect(results).toMatchObject([[]])
+
+      queries.value = [
+        { queryKey: key1, queryFn: () => sleep(10).then(() => 'data1') },
+      ]
+      await vi.advanceTimersByTimeAsync(10)
+      expect(result[0]?.data).toBe('data1')
+      expect(results.at(-1)).toMatchObject([
+        { status: 'success', data: 'data1' },
+      ])
     }),
   )
 
@@ -250,7 +281,6 @@ describe('createQueries', () => {
       // Resolve the refetched queries
       resolve3('first result ' + count)
       resolve4('second result ' + count)
-
       await vi.advanceTimersByTimeAsync(0)
       expect(queries.res).toBe('first result 1,second result 1')
 
@@ -278,7 +308,6 @@ describe('createQueries', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -287,9 +316,7 @@ describe('createQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -309,7 +336,6 @@ describe('createQueries', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -318,9 +344,7 @@ describe('createQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -329,9 +353,7 @@ describe('createQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')

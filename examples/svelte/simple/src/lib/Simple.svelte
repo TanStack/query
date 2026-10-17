@@ -32,8 +32,8 @@
       <div>
         <h1>{query.data.full_name}</h1>
         <p>{query.data.description}</p>
-        <strong>👀 {query.data.subscribers_count}</strong>{' '}
-        <strong>✨ {query.data.stargazers_count}</strong>{' '}
+        <strong>👀 {query.data.subscribers_count}</strong>
+        <strong>✨ {query.data.stargazers_count}</strong>
         <strong>🍴 {query.data.forks_count}</strong>
       </div>
     {/if}

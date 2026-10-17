@@ -1,20 +1,16 @@
-import {
-  MutationObserver,
-  type DefaultError,
-  type MutateFunction,
-  type MutationObserverOptions,
-  type MutationObserverResult,
-} from '@tanstack/query-core'
-import type { QueryClient } from '@tanstack/query-core'
-import type { ReactiveControllerHost } from 'lit'
-import {
-  createValueAccessor,
-  readAccessor,
-  type Accessor,
-  type ValueAccessor,
-} from './accessor.js'
+import { MutationObserver } from '@tanstack/query-core'
+import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
+import type { Accessor, ValueAccessor } from './accessor.js'
+import type {
+  DefaultError,
+  MutateFunction,
+  MutationObserverOptions,
+  MutationObserverResult,
+  QueryClient,
+} from '@tanstack/query-core'
+import type { ReactiveControllerHost } from 'lit'
 
 /**
  * Options accepted by `createMutationController`.
@@ -71,6 +67,11 @@ export type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> =
     destroy: () => void
   }
 
+/**
+ * Returns the result used while no `QueryClient` is available: `'idle'`, with a `mutate` that
+ * rejects with the missing client error.
+ * @returns A new result object in that state.
+ */
 function createIdleMutationResult<
   TData,
   TError,
@@ -91,22 +92,9 @@ function createIdleMutationResult<
     status: 'idle',
     submittedAt: 0,
     variables: undefined,
-    mutate: (() =>
-      Promise.reject(
-        createMissingQueryClientError(),
-      )) as MutationObserverResult<
-      TData,
-      TError,
-      TVariables,
-      TOnMutateResult
-    >['mutate'],
-    reset: (() => undefined) as MutationObserverResult<
-      TData,
-      TError,
-      TVariables,
-      TOnMutateResult
-    >['reset'],
-  } as MutationObserverResult<TData, TError, TVariables, TOnMutateResult>
+    mutate: () => Promise.reject(createMissingQueryClientError()),
+    reset: () => undefined,
+  }
 }
 
 class MutationController<
@@ -153,7 +141,7 @@ class MutationController<
     this.result = observer.getCurrentResult()
   }
 
-  protected onConnected(): void {
+  protected override onConnected(): void {
     if (!this.syncClient()) {
       return
     }
@@ -165,12 +153,12 @@ class MutationController<
     }
   }
 
-  protected onDisconnected(): void {
+  protected override onDisconnected(): void {
     this.unsubscribeObserver()
     this.syncClient()
   }
 
-  protected onHostUpdate(): void {
+  protected override onHostUpdate(): void {
     if (typeof this.options !== 'function') {
       return
     }
@@ -178,7 +166,7 @@ class MutationController<
     this.refreshOptions()
   }
 
-  protected onQueryClientChanged(): void {
+  protected override onQueryClientChanged(): void {
     if (!this.syncClient() || !this.connectedState) {
       return
     }
@@ -305,7 +293,6 @@ class MutationController<
  *
  * If `queryClient` is omitted, the controller resolves the client from the
  * nearest connected `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the mutation
  * subscription.
  * @param options - Mutation observer options, or a getter that returns options.
@@ -313,7 +300,6 @@ class MutationController<
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the latest mutation result with mutation helper
  * methods.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'

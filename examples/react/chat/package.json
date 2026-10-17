@@ -1,23 +1,29 @@
 {
-  "name": "@tanstack/query-example-chat",
+  "name": "@tanstack/query-example-react-chat",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.102.0",
-    "@tanstack/react-query-devtools": "^5.102.0",
+    "@tanstack/react-query": "^5.104.3",
+    "@tanstack/react-query-devtools": "^5.104.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.0.14",
-    "@vitejs/plugin-react": "^4.3.4",
-    "tailwindcss": "^4.0.14",
+    "@eslint-react/eslint-plugin": "^5.21.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@tanstack/eslint-plugin-query": "^5.104.3",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.1.1",
+    "tailwindcss": "^4.3.3",
     "typescript": "5.8.3",
-    "vite": "^6.4.1"
+    "vite": "^8.3.1"
   }
 }
