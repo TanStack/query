@@ -95,7 +95,7 @@ find<TData = unknown, TError = Error, TVariables = any, TOnMutateResult = unknow
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:305](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L305)
+Defined in: [packages/query-core/src/mutationCache.ts:306](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L306)
 
 A slightly more advanced method that can be used to get an existing mutation instance from
 the cache. If the mutation does not exist, `undefined` is returned.
@@ -156,7 +156,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 findAll(filters?: MutationFilters): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:336](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L336)
+Defined in: [packages/query-core/src/mutationCache.ts:337](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L337)
 
 An even more advanced method that can be used to get existing mutation instances from the
 cache that match the given filters. If no mutations match, an empty array is returned.
@@ -198,7 +198,7 @@ const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
 getAll(): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:285](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L285)
+Defined in: [packages/query-core/src/mutationCache.ts:286](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L286)
 
 Returns all mutations within the cache.
 
