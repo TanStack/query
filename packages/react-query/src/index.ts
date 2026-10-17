@@ -54,3 +54,10 @@ export { useMutation } from './useMutation'
 export { mutationOptions } from './mutationOptions'
 export { useInfiniteQuery } from './useInfiniteQuery'
 export { useIsRestoring, IsRestoringProvider } from './IsRestoringProvider'
+export { QueryStrictMode, QueryStrictModeError } from './QueryStrictMode'
+export type {
+  QueryStrictModeEvent,
+  QueryStrictModeLogger,
+  QueryStrictModeProps,
+  QueryStrictModeThrowOption,
+} from './QueryStrictMode'
