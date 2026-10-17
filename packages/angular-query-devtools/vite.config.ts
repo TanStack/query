@@ -1,10 +1,10 @@
+import { isBuiltin } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { defineConfig, mergeConfig } from 'vite'
-import { externalizeDeps } from 'vite-plugin-externalize-deps'
+import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import dts from 'vite-plugin-dts'
-import type { Options } from '@tanstack/vite-config'
+import packageJson from './package.json' with { type: 'json' }
 
 const packageDir = path.dirname(fileURLToPath(import.meta.url))
 const angularQueryEntry = path.join(
@@ -39,7 +39,12 @@ function ensureImportFileExtension({
   return content
 }
 
-const config = defineConfig({
+const externalDependencies = Object.keys({
+  ...packageJson.dependencies,
+  ...packageJson.peerDependencies,
+})
+
+export default defineConfig({
   resolve: {
     conditions: ['@tanstack/custom-condition'],
     ...(process.env.VITEST === 'true'
@@ -52,75 +57,58 @@ const config = defineConfig({
         }
       : {}),
   },
-})
-
-export const tanstackViteConfig = (options: Options) => {
-  const outDir = options.outDir ?? 'dist'
-  const cjs = options.cjs ?? true
-
-  return defineConfig({
-    plugins: [
-      externalizeDeps({ include: options.externalDeps ?? [] }),
-      tsconfigPaths({
-        projects: options.tsconfigPath ? [options.tsconfigPath] : undefined,
-      }),
-      dts({
-        outDir,
-        entryRoot: options.srcDir,
-        include: options.srcDir,
-        exclude: options.exclude,
-        tsconfigPath: options.tsconfigPath,
-        compilerOptions: {
-          module: 99, // ESNext
-          declarationMap: false,
-        },
-        beforeWriteFile: (filePath, content) => {
-          return {
-            filePath,
-            content: ensureImportFileExtension({ content, extension: 'js' }),
-          }
-        },
-        afterDiagnostic: (diagnostics) => {
-          if (diagnostics.length > 0) {
-            console.error('Please fix the above type errors')
-            process.exit(1)
-          }
-        },
-      }),
-    ],
-    build: {
-      outDir,
-      minify: false,
-      sourcemap: true,
-      lib: {
-        entry: options.entry,
-        formats: cjs ? ['es', 'cjs'] : ['es'],
-        fileName: () => '[name].mjs',
+  plugins: [
+    tsconfigPaths({ projects: ['tsconfig.prod.json'] }),
+    dts({
+      outDir: 'dist',
+      entryRoot: './src',
+      include: './src',
+      exclude: ['src/__tests__'],
+      tsconfigPath: 'tsconfig.prod.json',
+      compilerOptions: {
+        module: 99, // ESNext
+        declarationMap: false,
       },
-      rollupOptions: {
-        output: {
-          preserveModules: true,
-          preserveModulesRoot: 'src',
-        },
+      beforeWriteFile: (filePath, content) => {
+        return {
+          filePath,
+          content: ensureImportFileExtension({ content, extension: 'js' }),
+        }
+      },
+      afterDiagnostic: (diagnostics) => {
+        if (diagnostics.length > 0) {
+          console.error('Please fix the above type errors')
+          process.exit(1)
+        }
+      },
+    }),
+  ],
+  build: {
+    outDir: 'dist',
+    minify: false,
+    sourcemap: true,
+    lib: {
+      entry: [
+        './src/index.ts',
+        './src/stub.ts',
+        './src/production/index.ts',
+        './src/devtools-panel/index.ts',
+        './src/devtools-panel/stub.ts',
+        './src/devtools-panel/production/index.ts',
+      ],
+      formats: ['es'],
+      fileName: () => '[name].mjs',
+    },
+    rolldownOptions: {
+      external: (id) =>
+        isBuiltin(id) ||
+        externalDependencies.some(
+          (dependency) => id === dependency || id.startsWith(`${dependency}/`),
+        ),
+      output: {
+        preserveModules: true,
+        preserveModulesRoot: 'src',
       },
     },
-  })
-}
-
-export default mergeConfig(
-  config,
-  tanstackViteConfig({
-    cjs: false,
-    entry: [
-      './src/index.ts',
-      './src/stub.ts',
-      './src/production/index.ts',
-      './src/devtools-panel/index.ts',
-      './src/devtools-panel/stub.ts',
-      './src/devtools-panel/production/index.ts',
-    ],
-    exclude: ['src/__tests__'],
-    srcDir: './src',
-    tsconfigPath: 'tsconfig.prod.json',
-  }),
-)
+  },
+})
