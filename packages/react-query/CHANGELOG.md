@@ -1,5 +1,15 @@
 # @tanstack/react-query
 
+## 5.104.4
+
+### Patch Changes
+
+- [#11328](https://github.com/TanStack/query/pull/11328) [`c208861`](https://github.com/TanStack/query/commit/c20886163a3759725cceafb421e864e7d213ec26) - Allow queries with falsy errors to retry on mount when `throwOnError` returns false.
+
+- [#11728](https://github.com/TanStack/query/pull/11728) [`a108398`](https://github.com/TanStack/query/commit/a10839824cecec8ea141330191c2e0ad0ae2b53f) - fix(react-query*): declare '@types/react' as an optional peer dependency
+- Updated dependencies [[`1fee044`](https://github.com/TanStack/query/commit/1fee0443dbeb346b8401557ca286a66cdec7ad71), [`fce89dd`](https://github.com/TanStack/query/commit/fce89ddf7a35b14252096ff64a1217efd81b415c)]:
+  - @tanstack/query-core@5.104.4
+
 ## 5.104.3
 
 ### Patch Changes
