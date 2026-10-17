@@ -83,6 +83,7 @@ export function useBaseQuery<
   const subscribed = options.subscribed !== false
 
   // Make sure results are optimistically set in fetching state before subscribing or updating options
+  const subscribed = options.subscribed !== false
   defaultedOptions._optimisticResults = isRestoring
     ? 'isRestoring'
     : subscribed
