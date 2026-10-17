@@ -13,9 +13,6 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
 /**
  * Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
  * `createMutation` is the function for that.
- *
- * @see {@link mutationOptions} to share these options across multiple `createMutation` call sites, or to look
- * the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
  * @param options - The {@link CreateMutationOptions} to use, wrapped in an {@link Accessor} so options can be
  * reactive.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
@@ -24,7 +21,8 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  * argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to the shared
  * mutation definition. If you make multiple requests, `onSuccess` will fire only after the latest call you've
  * made.
- *
+ * @see {@link mutationOptions} to share these options across multiple `createMutation` call sites, or to look
+ * the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
  * @example
  * ```svelte
  * <script lang="ts">
@@ -48,7 +46,6 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  *   Add
  * </button>
  * ```
- *
  * @example
  * Rendering the mutation's own state, rather than just firing it off:
  * ```svelte
@@ -72,7 +69,6 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  *   <button onclick={() => addMutation.mutate('Item')}>Add</button>
  * {/if}
  * ```
- *
  * @example
  * Optimistic update via `onMutate`, rolling back on `onError`:
  * ```svelte
@@ -106,7 +102,6 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  *
  * <button onclick={() => addMutation.mutate('Item')}>Add</button>
  * ```
- *
  * @example
  * Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
  * promise per call instead, so you can wait for all of them when they succeed:
@@ -134,7 +129,6 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  *   Add all
  * </button>
  * ```
- *
  * @example
  * If some of the mutations above can fail independently of the others, and you want to know which ones
  * did — rather than losing that information the moment the first one rejects — swap `Promise.all` for

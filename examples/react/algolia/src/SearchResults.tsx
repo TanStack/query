@@ -12,7 +12,7 @@ type SearchResultsProps = {
 
 export default function SearchResults({ query = '' }: SearchResultsProps) {
   const {
-    hits,
+    data: hits,
     isLoading,
     isFetching,
     status,

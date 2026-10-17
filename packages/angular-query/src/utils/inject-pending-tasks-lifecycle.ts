@@ -1,11 +1,23 @@
 import { DestroyRef, NgZone, PendingTasks, inject } from '@angular/core'
 
+/**
+ * Tracks ownership and pending work for the current Angular injection context.
+ */
 export interface QueryLifecycle {
+  /**
+   * Whether Angular has destroyed the injection context that owns this query.
+   */
   readonly destroyed: boolean
+  /**
+   * Adds or releases the task that keeps Angular unstable while owned work is pending.
+   */
   setPending: (pending: boolean) => void
 }
 
-/** Tracks pending work for the lifetime of the current injection context. */
+/**
+ * Tracks pending work for the lifetime of the current injection context.
+ * @returns The destruction state and pending-task controller for this context.
+ */
 export function injectPendingTasksLifecycle(): QueryLifecycle {
   const destroyRef = inject(DestroyRef)
   const pendingTasks = inject(PendingTasks)

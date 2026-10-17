@@ -7,7 +7,9 @@ title: DistributiveOmit
 type DistributiveOmit<TObject, TKey> = TObject extends any ? Omit<TObject, TKey> : never;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:10
+Defined in: packages/query-core/src/types.ts:21
+
+Like `Omit`, but applied to each member of a union separately, so each member keeps its own keys.
 
 ## Type Parameters
 

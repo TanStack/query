@@ -1,0 +1,21 @@
+{
+  "extends": "../../scripts/angular-types/tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@angular/common": ["./node_modules/@angular/common"],
+      "@angular/core": ["./node_modules/@angular/core"],
+      "@angular/common/*": ["./node_modules/@angular/common/*"],
+      "@angular/core/*": ["./node_modules/@angular/core/*"],
+      "@tanstack/angular-query": ["../../packages/angular-query/src/index.ts"],
+      "@tanstack/angular-query-devtools": [
+        "../../packages/angular-query-devtools/src/index.ts"
+      ],
+      "@tanstack/angular-query-persist-client": [
+        "../../packages/angular-query-persist-client/src/index.ts"
+      ],
+      "@tanstack/angular-query/internal": [
+        "../../packages/angular-query/src/internal.ts"
+      ]
+    }
+  }
+}

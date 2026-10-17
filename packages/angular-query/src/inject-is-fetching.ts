@@ -8,7 +8,7 @@ import type { Signal } from '@angular/core'
  * Injects a signal that tracks the number of queries that your application is loading or fetching in the
  * background (useful for app-wide loading indicators).
  *
- * Can be used for app-wide loading indicators
+ * Can be used for app-wide loading indicators.
  * @param filters - A reactive factory for the filters.
  * @returns signal with number of loading or fetching queries.
  */

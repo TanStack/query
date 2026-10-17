@@ -15,7 +15,7 @@ const angularQueryInternalEntry = path.join(
 )
 
 export default defineConfig({
-  esbuild: {
+  oxc: {
     target: 'es2022',
   },
   plugins: [angular({ tsconfig: './tsconfig.spec.json' })],

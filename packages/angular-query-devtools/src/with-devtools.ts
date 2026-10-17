@@ -30,6 +30,11 @@ const DEVTOOLS_PROVIDED = new InjectionToken('', {
 /** Internal token for providing devtools options. */
 const DEVTOOLS_OPTIONS = new InjectionToken<DevtoolsOptions>('')
 
+/**
+ * Reads a devtools option that may be supplied as an Angular signal.
+ * @param option - A static option value or a signal containing it.
+ * @returns The current option value, or undefined when no value is supplied.
+ */
 function resolveOption<T>(option: T | Signal<T | undefined> | undefined) {
   return isSignal(option) ? option() : option
 }

@@ -8,6 +8,7 @@ import {
   skipToken,
 } from '..'
 import type { Signal } from '@angular/core'
+import type { InitialDataFunction } from '@tanstack/query-core'
 
 // Regression test for exported queryOptions inference under declaration emit.
 // TypeScript should be able to name the return type without expanding the
@@ -56,6 +57,18 @@ describe('queryOptions', () => {
       { id: string; title: string } | undefined
     >()
   })
+
+  it('should allow optional initialData object', () => {
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve('something string'),
+      initialData: Math.random() > 0.5 ? 'initial string' : undefined,
+    })
+
+    expectTypeOf(options.initialData).toExtend<
+      InitialDataFunction<string> | string | undefined
+    >()
+  })
 })
 
 it('should work when passed to injectQuery', () => {
@@ -76,7 +89,7 @@ it('should work when passed to fetchQuery', () => {
     queryFn: () => Promise.resolve(5),
   })
 
-  // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+  // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
   const data = new QueryClient().fetchQuery(options)
   assertType<Promise<number>>(data)
 })
@@ -188,6 +201,35 @@ it('should properly type updaterFn when passed to setQueryData', () => {
   })
 
   expectTypeOf(data).toEqualTypeOf<number | undefined>()
+})
+
+it('should preserve discriminated union narrowing in setQueryData updaterFn', () => {
+  type Data =
+    | { kind: 'a'; value: number; requiredA: number }
+    | { kind: 'b'; value: number; requiredB: number }
+
+  const { queryKey: tagged } = queryOptions({
+    queryKey: queryKey(),
+    queryFn: (): Promise<Data> =>
+      Promise.resolve({
+        kind: 'a',
+        value: 1,
+        requiredA: 1,
+      }),
+  })
+
+  const queryClient = new QueryClient()
+  queryClient.setQueryData(tagged, (prev) => {
+    if (!prev || prev.kind !== 'a') {
+      return prev
+    }
+
+    expectTypeOf(prev).toEqualTypeOf<Extract<Data, { kind: 'a' }>>()
+    return { ...prev, value: prev.value + 1 }
+  })
+
+  // @ts-expect-error updater input should be inferred from the tagged query key
+  queryClient.setQueryData(tagged, (prev: string | undefined) => prev)
 })
 
 it('should properly type value when passed to setQueryData', () => {

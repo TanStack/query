@@ -1,21 +1,38 @@
 import type { KnipConfig } from 'knip'
 
 export default {
-  ignore: ['scripts/*.{j,t}s', '**/ts-fixture/file.ts'],
+  ignore: [
+    'scripts/*.{j,t}s',
+    // Compiled by the Angular version matrix with ngc.
+    'scripts/angular-types/consumer.ts',
+    '**/ts-fixture/file.ts',
+  ],
   treatConfigHintsAsErrors: true,
   treatTagHintsAsErrors: true,
-  ignoreDependencies: ['@types/react', '@types/react-dom'],
+  ignoreDependencies: [
+    '@oxc-project/runtime',
+    // Used by the ESLint configs of the examples.
+    '@tanstack/eslint-config',
+  ],
   ignoreWorkspaces: ['examples/**', 'integrations/**'],
+  rules: { duplicates: 'warn' },
   workspaces: {
-    '.': {
-      ignoreDependencies: ['react', 'react-dom'],
-    },
     'packages/angular-query': {
       entry: ['schematics/*/index.ts', 'src/__tests__/*.test-d.ts'],
     },
     'packages/query-codemods': {
       entry: ['src/v4/**/*.cjs', 'src/v5/**/*.cjs'],
       ignore: ['**/__testfixtures__/**'],
+    },
+    // Built types import 'react', which the consumer's '@types/react' provides.
+    'packages/react-query': {
+      ignoreDependencies: ['@types/react!'],
+    },
+    'packages/react-query-next-experimental': {
+      ignoreDependencies: ['@types/react!'],
+    },
+    'packages/react-query-persist-client': {
+      ignoreDependencies: ['@types/react!'],
     },
     'packages/vue-query': {
       ignoreDependencies: ['vue2', 'vue2.7'],

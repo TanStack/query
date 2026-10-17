@@ -7,7 +7,7 @@ title: useIsFetching
 function useIsFetching(filters?: QueryFilters<readonly unknown[]>, queryClient?: QueryClient): number;
 ```
 
-Defined in: [packages/preact-query/src/useIsFetching.ts:44](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useIsFetching.ts#L44)
+Defined in: [packages/preact-query/src/useIsFetching.ts:41](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useIsFetching.ts#L41)
 
 The `useIsFetching` hook returns the `number` of the queries that your application is loading or fetching in
 the background (useful for app-wide loading indicators).
@@ -19,6 +19,19 @@ the background (useful for app-wide loading indicators).
 [`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>
 
 The [QueryFilters](../interfaces/QueryFilters.md) to narrow down the matched queries.
+
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+| Property | Type | Default value | Description |
+| ------ | ------ | ------ | ------ |
+| <a id="filters-property-exact"></a> `exact?` | `boolean` | `undefined` | Match query key exactly |
+| <a id="filters-property-fetchstatus"></a> `fetchStatus?` | `"fetching"` \| `"paused"` \| `"idle"` | `undefined` | Include queries matching their fetchStatus |
+| <a id="filters-property-predicate"></a> `predicate?` | (`query`: [`Query`](../classes/Query.md)) => `boolean` | `undefined` | Include queries matching this predicate function |
+| <a id="filters-property-querykey"></a> `queryKey?` | `TQueryKey` \| `TuplePrefixes`\<`TQueryKey`\> | `undefined` | Include queries matching this query key |
+| <a id="filters-property-stale"></a> `stale?` | `boolean` | `undefined` | Include or exclude stale queries |
+| <a id="filters-property-type"></a> `type?` | `QueryTypeFilter` | `'all'` | Filter to active queries, inactive queries or all queries |
 
 ### queryClient?
 

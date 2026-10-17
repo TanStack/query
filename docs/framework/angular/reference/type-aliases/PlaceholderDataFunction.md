@@ -9,7 +9,7 @@ type PlaceholderDataFunction<TQueryFnData, TError, TQueryData, TQueryKey> = (pre
   | undefined) => TQueryData | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:72
+Defined in: packages/query-core/src/types.ts:270
 
 ## Type Parameters
 
@@ -33,11 +33,12 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:72
 
 ### previousData
 
-`TQueryData` | `undefined`
+`TQueryData` \| `undefined`
 
 ### previousQuery
 
-[`Query`](../classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryData`, `TQueryKey`\> | `undefined`
+  \| [`Query`](../classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryData`, `TQueryKey`\>
+  \| `undefined`
 
 ## Returns
 

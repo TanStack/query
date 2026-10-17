@@ -7,10 +7,10 @@ title: DefinedInitialDataInfiniteOptions
 type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [packages/react-query/src/infiniteQueryOptions.ts:103](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L103)
+Defined in: [packages/react-query/src/infiniteQueryOptions.ts:100](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L100)
 
 The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
-never `undefined`.
+never `undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ## Type Declaration
 
@@ -19,7 +19,7 @@ never `undefined`.
 ```ts
 initialData: 
   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-  | () => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+  | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
   | undefined;
 ```
 

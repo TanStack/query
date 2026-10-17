@@ -1,5 +1,50 @@
 # @tanstack/vue-query-devtools
 
+## 6.3.3
+
+### Patch Changes
+
+- [#11413](https://github.com/TanStack/query/pull/11413) [`67705fd`](https://github.com/TanStack/query/commit/67705fd6ad164dc8ca99d44374206f62dd6a03f2) - Update floating and embedded devtools when the client prop changes, preserving the initially resolved client as the fallback when the override is removed.
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.104.3
+  - @tanstack/vue-query@5.104.3
+
+## 6.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`69e114a`](https://github.com/TanStack/query/commit/69e114aecfdbd0a05625065aea4e43415fa386b3)]:
+  - @tanstack/vue-query@5.104.2
+  - @tanstack/query-devtools@5.104.2
+
+## 6.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`ec060b6`](https://github.com/TanStack/query/commit/ec060b6f74b2e51f4b0c78932beec656ef6f6878)]:
+  - @tanstack/query-devtools@5.104.1
+  - @tanstack/vue-query@5.104.1
+
+## 6.3.0
+
+### Minor Changes
+
+- [#11650](https://github.com/TanStack/query/pull/11650) [`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e) - Build projects with Vite 8
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/query-devtools@5.104.0
+  - @tanstack/vue-query@5.104.0
+
+## 6.2.5
+
+### Patch Changes
+
+- Updated dependencies [[`d86ac36`](https://github.com/TanStack/query/commit/d86ac36663e3757a0ad35b5ead5f1d25dfb1b15d)]:
+  - @tanstack/query-devtools@5.103.3
+  - @tanstack/vue-query@5.103.3
+
 ## 6.2.4
 
 ## 6.2.3

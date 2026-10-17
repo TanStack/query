@@ -7,7 +7,10 @@ title: OmitKeyof
 type OmitKeyof<TObject, TKey, TStrictly> = Omit<TObject, TKey>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:11
+Defined in: packages/query-core/src/types.ts:30
+
+Like `Omit`, but by default (`'strictly'`) `TKey` must be a key of `TObject`, so omitting a key
+that doesn't exist is a type error. Pass `'safely'` to allow other keys too.
 
 ## Type Parameters
 

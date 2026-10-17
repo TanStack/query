@@ -29,6 +29,8 @@ export function injectIsRestoring() {
  * Supplies injector-scoped restoration state to the Angular Query integrations.
  * The factory runs once in Angular's injection context.
  * @internal
+ * @param isRestoringFactory - Produces the restoration signal for this injector.
+ * @returns The provider that makes the restoration state injectable.
  */
 export function provideIsRestoring(
   isRestoringFactory: () => Signal<boolean>,

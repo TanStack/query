@@ -25,6 +25,10 @@ import type {
 
 type SignalFunction<T extends () => any> = T & Signal<ReturnType<T>>
 
+/**
+ * Options accepted by `injectQuery`, with cache data projected through an optional `select`.
+ * Angular owns result notifications and exposes errors through signals rather than error boundaries.
+ */
 export type CreateQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -62,7 +66,13 @@ type CreateStatusBasedDefinedInfiniteQueryResult<
   { status: TStatus }
 >
 
+/**
+ * Signal-backed guards that narrow a query result and its data and error fields by status.
+ */
 export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
+  /**
+   * Returns whether the result is successful and narrows its data and error signals.
+   */
   isSuccess: SignalFunction<
     () => this is CreateBaseQueryResult<
       TData,
@@ -70,6 +80,9 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
       CreateStatusBasedQueryResult<'success', TData, TError>
     >
   >
+  /**
+   * Returns whether the result failed and narrows its data and error signals.
+   */
   isError: SignalFunction<
     () => this is CreateBaseQueryResult<
       TData,
@@ -77,6 +90,9 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
       CreateStatusBasedQueryResult<'error', TData, TError>
     >
   >
+  /**
+   * Narrows the result to the pending state when that state is possible.
+   */
   isPending: SignalFunction<
     () => this is CreateBaseQueryResult<
       TData,
@@ -86,7 +102,13 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
   >
 }
 
+/**
+ * Signal-backed guards for a query whose initial data excludes the pending state.
+ */
 export interface DefinedQueryNarrowing<TData = unknown, TError = DefaultError> {
+  /**
+   * Returns whether the result is successful and narrows its data and error signals.
+   */
   isSuccess: SignalFunction<
     () => this is DefinedCreateQueryResult<
       TData,
@@ -94,6 +116,9 @@ export interface DefinedQueryNarrowing<TData = unknown, TError = DefaultError> {
       CreateStatusBasedDefinedQueryResult<'success', TData, TError>
     >
   >
+  /**
+   * Returns whether the result failed and narrows its data and error signals.
+   */
   isError: SignalFunction<
     () => this is DefinedCreateQueryResult<
       TData,
@@ -101,13 +126,22 @@ export interface DefinedQueryNarrowing<TData = unknown, TError = DefaultError> {
       CreateStatusBasedDefinedQueryResult<'error', TData, TError>
     >
   >
+  /**
+   * Narrows the result to the pending state when that state is possible.
+   */
   isPending: SignalFunction<() => this is never>
 }
 
+/**
+ * Signal-backed guards that narrow a paginated query result by its current status.
+ */
 export interface BaseInfiniteQueryNarrowing<
   TData = unknown,
   TError = DefaultError,
 > {
+  /**
+   * Returns whether the result is successful and narrows its data and error signals.
+   */
   isSuccess: SignalFunction<
     (
       this: CreateInfiniteQueryResult<TData, TError>,
@@ -117,6 +151,9 @@ export interface BaseInfiniteQueryNarrowing<
       CreateStatusBasedInfiniteQueryResult<'success', TData, TError>
     >
   >
+  /**
+   * Returns whether the result failed and narrows its data and error signals.
+   */
   isError: SignalFunction<
     (
       this: CreateInfiniteQueryResult<TData, TError>,
@@ -126,6 +163,9 @@ export interface BaseInfiniteQueryNarrowing<
       CreateStatusBasedInfiniteQueryResult<'error', TData, TError>
     >
   >
+  /**
+   * Narrows the result to the pending state when that state is possible.
+   */
   isPending: SignalFunction<
     (
       this: CreateInfiniteQueryResult<TData, TError>,
@@ -137,10 +177,16 @@ export interface BaseInfiniteQueryNarrowing<
   >
 }
 
+/**
+ * Signal-backed guards for a paginated query whose initial data excludes the pending state.
+ */
 export interface DefinedInfiniteQueryNarrowing<
   TData = unknown,
   TError = DefaultError,
 > {
+  /**
+   * Returns whether the result is successful and narrows its data and error signals.
+   */
   isSuccess: SignalFunction<
     (
       this: DefinedCreateInfiniteQueryResult<TData, TError>,
@@ -150,6 +196,9 @@ export interface DefinedInfiniteQueryNarrowing<
       CreateStatusBasedDefinedInfiniteQueryResult<'success', TData, TError>
     >
   >
+  /**
+   * Returns whether the result failed and narrows its data and error signals.
+   */
   isError: SignalFunction<
     (
       this: DefinedCreateInfiniteQueryResult<TData, TError>,
@@ -159,11 +208,17 @@ export interface DefinedInfiniteQueryNarrowing<
       CreateStatusBasedDefinedInfiniteQueryResult<'error', TData, TError>
     >
   >
+  /**
+   * Narrows the result to the pending state when that state is possible.
+   */
   isPending: SignalFunction<
     (this: DefinedCreateInfiniteQueryResult<TData, TError>) => this is never
   >
 }
 
+/**
+ * Options accepted by `injectInfiniteQuery`, including page parameters and pagination callbacks.
+ */
 export interface CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -188,7 +243,6 @@ export interface CreateInfiniteQueryOptions<
  * while function fields (like `refetch`) are called directly, unchanged. `isSuccess`/`isError`/`isPending`
  * are {@link BaseQueryNarrowing} type-guard methods rather than plain booleans.
  * `injectInfiniteQuery` returns {@link CreateInfiniteQueryResult} instead.
- *
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
@@ -207,7 +261,6 @@ export type CreateBaseQueryResult<
 
 /**
  * The result of `injectQuery`. Same as {@link CreateBaseQueryResult}.
- *
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
@@ -220,7 +273,6 @@ export type CreateQueryResult<
  * The result of `injectQuery` when `initialData` is set — `data` is never `undefined`. Same shape as
  * {@link DefinedQueryObserverResult} from `@tanstack/query-core`, but value fields are exposed as a
  * `Signal` while function fields are called directly, unchanged.
- *
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
@@ -240,7 +292,6 @@ export type DefinedCreateQueryResult<
  * query is `pending`. Same shape as {@link InfiniteQueryObserverResult} from `@tanstack/query-core`, but
  * value fields are exposed as a `Signal` while function fields (like `fetchNextPage`) are called directly,
  * unchanged.
- *
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
@@ -256,7 +307,6 @@ export type CreateInfiniteQueryResult<
  * The result of `injectInfiniteQuery` when `initialData` is set — `data` is never `undefined`. Same shape as
  * {@link DefinedInfiniteQueryObserverResult} from `@tanstack/query-core`, but value fields are exposed as a
  * `Signal` while function fields are called directly, unchanged.
- *
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
@@ -273,7 +323,6 @@ export type DefinedCreateInfiniteQueryResult<
 /**
  * The options accepted by `injectMutation`. Same as {@link MutationObserverOptions} from
  * `@tanstack/query-core`, minus the internal `_defaulted` flag.
- *
  * @template TData - The type your mutation function resolves to.
  * @template TError - The type of errors your mutation function may throw.
  * @template TVariables - The type of the variable passed to `mutate`/`mutateAsync`.
@@ -294,7 +343,6 @@ export interface CreateMutationOptions<
  * The type of `mutate`, as returned by `injectMutation`. Forwards the variables (and an optional per-call
  * `onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced
  * through the mutation result, not thrown.
- *
  * @template TData - The type your mutation function resolves to.
  * @template TError - The type of errors your mutation function may throw.
  * @template TVariables - The type of the variable passed to `mutate`.
@@ -315,7 +363,6 @@ export type CreateMutateFunction<
 /**
  * The type of `mutateAsync`, as returned by `injectMutation`. Similar to {@link CreateMutateFunction}, but
  * returns a promise which can be awaited.
- *
  * @template TData - The type your mutation function resolves to.
  * @template TError - The type of errors your mutation function may throw.
  * @template TVariables - The type of the variable passed to `mutateAsync`.
@@ -333,7 +380,6 @@ export type CreateMutateAsyncFunction<
  * The pre-`Signal` shape {@link CreateMutationResult} is built from — not what `injectMutation` actually
  * returns. Same as {@link MutationObserverResult} from `@tanstack/query-core`, with `mutate` narrowed to the
  * fire-and-forget {@link CreateMutateFunction} signature, plus the added `mutateAsync`.
- *
  * @template TData - The type your mutation function resolves to.
  * @template TError - The type of errors your mutation function may throw.
  * @template TVariables - The type of the variable passed to `mutate`/`mutateAsync`.
@@ -371,12 +417,18 @@ type CreateStatusBasedMutationResult<
   { status: TStatus }
 >
 
+/**
+ * Signal-backed guards that narrow mutation data, errors, and variables by the current status.
+ */
 export interface BaseMutationNarrowing<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
   TOnMutateResult = unknown,
 > {
+  /**
+   * Whether the mutation is in the `success` state. Calling it narrows the result to that state.
+   */
   isSuccess: SignalFunction<
     (
       this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
@@ -394,6 +446,9 @@ export interface BaseMutationNarrowing<
       >
     >
   >
+  /**
+   * Whether the mutation is in the `error` state. Calling it narrows the result to that state.
+   */
   isError: SignalFunction<
     (
       this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
@@ -411,6 +466,9 @@ export interface BaseMutationNarrowing<
       >
     >
   >
+  /**
+   * Whether the mutation is in the `pending` state. Calling it narrows the result to that state.
+   */
   isPending: SignalFunction<
     (
       this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
@@ -428,6 +486,9 @@ export interface BaseMutationNarrowing<
       >
     >
   >
+  /**
+   * Whether the mutation is in the `idle` state. Calling it narrows the result to that state.
+   */
   isIdle: SignalFunction<
     (
       this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
@@ -452,7 +513,6 @@ export interface BaseMutationNarrowing<
  * a `Signal` — read them with `mutation.data()`, not `mutation.data` — while function fields (`mutate`,
  * `mutateAsync`, `reset`) are called directly, unchanged. `isSuccess`/`isError`/`isPending`/`isIdle` are
  * {@link BaseMutationNarrowing} type-guard methods rather than plain booleans.
- *
  * @template TData - The type your mutation function resolves to.
  * @template TError - The type of errors your mutation function may throw.
  * @template TVariables - The type of the variable passed to `mutate`/`mutateAsync`.

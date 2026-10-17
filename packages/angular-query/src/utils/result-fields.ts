@@ -61,18 +61,27 @@ const mutationFields = {
   isSuccess: true,
 } satisfies Fields<MutationObserverResult>
 
-export const queryResultFields = /* @__PURE__ */ Object.keys(
+export const queryResultFields = /* #__PURE__ */ Object.keys(
   queryFields,
 ) as Array<keyof typeof queryFields>
+/**
+ * The query observer value fields exposed as Angular signals.
+ */
 export type QueryResultFields = (typeof queryResultFields)[number]
 
-export const infiniteQueryResultFields = /* @__PURE__ */ Object.keys(
+export const infiniteQueryResultFields = /* #__PURE__ */ Object.keys(
   infiniteQueryFields,
 ) as Array<keyof typeof infiniteQueryFields>
+/**
+ * The paginated query observer value fields exposed as Angular signals.
+ */
 export type InfiniteQueryResultFields =
   (typeof infiniteQueryResultFields)[number]
 
-export const mutationResultFields = /* @__PURE__ */ Object.keys(
+export const mutationResultFields = /* #__PURE__ */ Object.keys(
   mutationFields,
 ) as Array<keyof typeof mutationFields>
+/**
+ * The mutation observer value fields exposed as Angular signals.
+ */
 export type MutationResultFields = (typeof mutationResultFields)[number]

@@ -11,7 +11,10 @@ type MutationObserverResult<TData, TError, TVariables, TOnMutateResult> =
 | MutationObserverSuccessResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:911
+Defined in: packages/query-core/src/types.ts:2346
+
+The result of a `MutationObserver`, and of the hooks built on it like `useMutation`. Narrow it by
+`status` or the `is*` flags to get the type of each state.
 
 ## Type Parameters
 

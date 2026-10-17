@@ -19,11 +19,11 @@ const queryClientContextError =
 
 /**
  * The `useQueryClient` primitive returns the current `QueryClient` instance.
- *
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current `QueryClient` instance.
- * @throws If no `queryClient` argument is passed and no `QueryClientProvider` is found in the component tree.
+ * @throws {Error} If no `queryClient` argument is passed and no `QueryClientProvider` is found in the
+ * component tree.
  */
 export const useQueryClient = (queryClient?: QueryClient) => {
   if (queryClient) {
@@ -38,6 +38,12 @@ export const useQueryClient = (queryClient?: QueryClient) => {
   return client()
 }
 
+/**
+ * Resolves the `QueryClient` to use: the given one, or else the one from the nearest
+ * `QueryClientProvider`.
+ * @param queryClient - Returns a custom `QueryClient`, if any.
+ * @returns An accessor that returns the resolved client. It throws if neither client is available.
+ */
 export const useQueryClientResolver = (
   queryClient?: Accessor<QueryClient | undefined>,
 ): Accessor<QueryClient> => {
@@ -78,9 +84,8 @@ export type QueryClientProviderProps = {
  * calls `client.mount()`/`client.unmount()` as this component mounts/unmounts, which subscribes the client to
  * focus/online events (resuming any paused mutations and refetching as needed when the app regains focus or
  * comes back online).
- *
+ * @param props - The `client` to provide, and the `children` that get access to it.
  * @returns The provided `children`, wrapped so they can read the `QueryClient` via `useQueryClient`.
- *
  * @example
  * ```tsx
  * import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'

@@ -42,7 +42,6 @@ export type {
  *   },
  * }))
  * ```
- *
  * @param optionsFactory - Creates the persistence options in the browser.
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public

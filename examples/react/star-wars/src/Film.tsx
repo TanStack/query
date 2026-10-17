@@ -1,18 +1,18 @@
-import { useParams, Link as RouterLink } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
-import { getFilm, getCharacter } from './api'
+import { Link as RouterLink, useParams } from 'react-router-dom'
+import { skipToken, useQuery } from '@tanstack/react-query'
+import { getCharacter, getFilm } from './api'
 
 export default function Film() {
   const { filmId } = useParams()
 
+  const { data, status } = useQuery({
+    queryKey: ['film', filmId],
+    queryFn: filmId ? () => getFilm(filmId) : skipToken,
+  })
+
   if (!filmId) {
     return <p>Invalid film ID</p>
   }
-
-  const { data, status } = useQuery({
-    queryKey: ['film', filmId],
-    queryFn: () => getFilm(filmId),
-  })
 
   if (status === 'pending') return <p>Loading...</p>
 

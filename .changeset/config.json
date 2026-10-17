@@ -1,5 +1,5 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@3.1.2/schema.json",
+  "$schema": "https://unpkg.com/@changesets/config@4.0.1/schema.json",
   "changelog": [
     "@changesets/changelog-github",
     { "repo": "TanStack/query", "disableThanks": true }
@@ -42,8 +42,5 @@
     ]
   ],
   "linked": [],
-  "ignore": [],
-  "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
-    "onlyUpdatePeerDependentsWhenOutOfRange": true
-  }
+  "ignore": []
 }

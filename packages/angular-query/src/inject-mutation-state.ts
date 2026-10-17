@@ -20,15 +20,30 @@ type MutationTypeFromResult<TResult> = [TResult] extends [
   ? Mutation<TData, TError, TVariables, TOnMutateResult>
   : Mutation
 
+/**
+ * Filters and optional projection for observing entries in the mutation cache.
+ */
 export type MutationStateOptions<
   TResult = MutationState,
   TMutation extends Mutation<any, any, any, any> =
     MutationTypeFromResult<TResult>,
 > = {
+  /**
+   * Restricts the mutation cache entries included in the result.
+   */
   filters?: MutationFilters
+  /**
+   * Maps each matching mutation to the value exposed in the result signal.
+   */
   select?: (mutation: TMutation) => TResult
 }
 
+/**
+ * Reads and projects the matching entries in a mutation cache.
+ * @param mutationCache - The cache to inspect.
+ * @param options - Filters and an optional projection for each entry.
+ * @returns The selected values, or each matching mutation state.
+ */
 function getResult<
   TResult = MutationState,
   TMutation extends Mutation<any, any, any, any> =

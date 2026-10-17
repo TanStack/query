@@ -24,12 +24,10 @@ import type { Signal } from '@angular/core'
 
 /**
  * Injects multiple queries that run in parallel and react to Angular signals.
- *
- * @see https://tanstack.com/query/latest/docs/framework/angular/guides/parallel-queries
  * @param optionsFn - A function that returns the queries' options. Similar to `computed` from Angular,
  * this function runs in the reactive context, so signals read inside it drive the queries.
  * @returns A signal containing the query results in the same order as the input queries.
- *
+ * @see https://tanstack.com/query/latest/docs/framework/angular/guides/parallel-queries
  * @example
  * ```angular-ts
  * @Component({
@@ -80,7 +78,7 @@ export function injectQueries<
         : 'optimistic'
       defaultedOptions.notifyOnChangeProps = 'all'
 
-      return defaultedOptions as QueryObserverOptions
+      return defaultedOptions
     })
   })
 
@@ -197,5 +195,5 @@ export function injectQueries<
       return combine(result as Parameters<NonNullable<typeof combine>>[0])
 
     return proxiedResultsSignal() as unknown as TCombinedResult
-  }) as unknown as Signal<TCombinedResult>
+  })
 }

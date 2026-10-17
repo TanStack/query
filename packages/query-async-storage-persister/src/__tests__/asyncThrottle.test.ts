@@ -11,7 +11,7 @@ describe('asyncThrottle', () => {
     vi.useRealTimers()
   })
 
-  it('basic', async () => {
+  it('should throttle calls to run at most once per interval with the latest arguments', async () => {
     const interval = 10
     const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
@@ -35,7 +35,6 @@ describe('asyncThrottle', () => {
 
     await vi.advanceTimersToNextTimerAsync()
     await vi.advanceTimersByTimeAsync(interval)
-
     expect(mockFunc).toHaveBeenCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(3)
     expect(execTimeStamps.length).toBe(2)
@@ -44,7 +43,7 @@ describe('asyncThrottle', () => {
     )
   })
 
-  it('Bug #3331 case 1: Special timing', async () => {
+  it('should handle special timing (Bug #3331 case 1)', async () => {
     const interval = 1000
     const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
@@ -67,7 +66,6 @@ describe('asyncThrottle', () => {
 
     await vi.advanceTimersToNextTimerAsync()
     await vi.advanceTimersByTimeAsync(interval)
-
     expect(mockFunc).toHaveBeenCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(4)
     expect(execTimeStamps.length).toBe(2)
@@ -76,7 +74,7 @@ describe('asyncThrottle', () => {
     )
   })
 
-  it('Bug #3331 case 2: "func" execution time is greater than the interval.', async () => {
+  it('should handle "func" execution time greater than the interval (Bug #3331 case 2)', async () => {
     const interval = 1000
     const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
@@ -97,7 +95,6 @@ describe('asyncThrottle', () => {
     await vi.advanceTimersToNextTimerAsync()
     await vi.advanceTimersByTimeAsync(interval + 10)
     await vi.advanceTimersByTimeAsync(interval + 10)
-
     expect(mockFunc).toHaveBeenCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(3)
     expect(execTimeStamps.length).toBe(2)
@@ -106,7 +103,7 @@ describe('asyncThrottle', () => {
     )
   })
 
-  it('"func" throw error not break next invoke', async () => {
+  it('should not break next invoke when "func" throws error', async () => {
     const interval = 10
 
     const mockFunc = vi.fn(
@@ -125,12 +122,11 @@ describe('asyncThrottle', () => {
 
     new Promise((resolve) => testFunc(2, resolve))
     await vi.advanceTimersByTimeAsync(interval)
-
     expect(mockFunc).toHaveBeenCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(2)
   })
 
-  it('"onError" should be called when "func" throw error', () => {
+  it('should call "onError" when "func" throws error', () => {
     const err = new Error('error')
     const handleError = (e: unknown) => {
       expect(e).toBe(err)

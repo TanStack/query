@@ -7,7 +7,9 @@ title: WithRequired
 type WithRequired<TTarget, TKey> = TTarget & { [_ in TKey]: {} };
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:315
+Defined in: packages/query-core/src/types.ts:657
+
+Makes the `TKey` properties of `TTarget` required and non-nullable.
 
 ## Type Parameters
 

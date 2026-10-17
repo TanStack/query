@@ -3,7 +3,7 @@ id: Query
 title: Query
 ---
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:154
+Defined in: packages/query-core/src/query.ts:283
 
 Represents a single cached query. A `Query` holds the query's key, options,
 state (data/error/status), and the observers currently subscribed to it.
@@ -54,7 +54,7 @@ if (query) {
 new Query<TQueryFnData, TError, TData, TQueryKey>(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>): Query<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:161
+Defined in: packages/query-core/src/query.ts:304
 
 #### Parameters
 
@@ -80,7 +80,7 @@ Removable.constructor
 gcTime: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:3
+Defined in: packages/query-core/src/removable.ts:11
 
 #### Inherited from
 
@@ -96,7 +96,7 @@ Removable.gcTime
 observers: QueryObserver<any, any, any, any, any>[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:160
+Defined in: packages/query-core/src/query.ts:300
 
 ***
 
@@ -106,7 +106,7 @@ Defined in: packages/query-core/dist-ts/src/query.d.ts:160
 options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:158
+Defined in: packages/query-core/src/query.ts:291
 
 ***
 
@@ -116,7 +116,7 @@ Defined in: packages/query-core/dist-ts/src/query.d.ts:158
 queryHash: string;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:157
+Defined in: packages/query-core/src/query.ts:290
 
 ***
 
@@ -126,7 +126,7 @@ Defined in: packages/query-core/dist-ts/src/query.d.ts:157
 queryKey: TQueryKey;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:156
+Defined in: packages/query-core/src/query.ts:289
 
 ***
 
@@ -136,7 +136,7 @@ Defined in: packages/query-core/dist-ts/src/query.d.ts:156
 state: QueryState<TData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:159
+Defined in: packages/query-core/src/query.ts:292
 
 ## Accessors
 
@@ -148,13 +148,15 @@ Defined in: packages/query-core/dist-ts/src/query.d.ts:159
 get meta(): Record<string, unknown> | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:165
+Defined in: packages/query-core/src/query.ts:323
 
 The `meta` object passed in the query's options, if any.
 
 ##### Returns
 
 `Record`\<`string`, `unknown`\> \| `undefined`
+
+The query's `meta`, or `undefined` if none was set.
 
 ***
 
@@ -166,7 +168,7 @@ The `meta` object passed in the query's options, if any.
 get promise(): Promise<TData> | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:172
+Defined in: packages/query-core/src/query.ts:341
 
 The promise for the currently in-flight fetch, if the query is fetching.
 `undefined` when the query is not fetching.
@@ -174,6 +176,8 @@ The promise for the currently in-flight fetch, if the query is fetching.
 ##### Returns
 
 `Promise`\<`TData`\> \| `undefined`
+
+The promise of the in-flight fetch, or `undefined`.
 
 ## Methods
 
@@ -183,7 +187,7 @@ The promise for the currently in-flight fetch, if the query is fetching.
 cancel(options?: CancelOptions): Promise<void>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:196
+Defined in: packages/query-core/src/query.ts:427
 
 Cancels the query's currently in-flight fetch, if any.
 - Returns a promise that resolves once the cancellation has settled.
@@ -195,34 +199,19 @@ Cancels the query's currently in-flight fetch, if any.
 
 [`CancelOptions`](../interfaces/CancelOptions.md)
 
+Set `revert` to restore the state from before the fetch started, and `silent`
+to suppress the cancellation error when a new fetch replaces the cancelled one.
+
 #### Returns
 
 `Promise`\<`void`\>
+
+A promise that resolves once the cancellation has settled.
 
 #### Example
 
 ```ts
 await query.cancel()
-```
-
-***
-
-### clearGcTimeout()
-
-```ts
-protected clearGcTimeout(): void;
-```
-
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:7
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.clearGcTimeout
 ```
 
 ***
@@ -233,7 +222,7 @@ Removable.clearGcTimeout
 destroy(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:204
+Defined in: packages/query-core/src/query.ts:439
 
 Clears the query's garbage collection timeout and silently cancels any
 in-flight fetch. Called by `QueryCache` when the query is removed from
@@ -261,7 +250,7 @@ Removable.destroy
 fetch(options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey, never>, fetchOptions?: FetchOptions<TQueryFnData>): Promise<TData>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:309
+Defined in: packages/query-core/src/query.ts:703
 
 Fetches the query, i.e. runs its `queryFn` (through any configured
 retryer/behavior) and updates the query's state with the result.
@@ -278,13 +267,23 @@ retryer/behavior) and updates the query's state with the result.
 
 [`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `never`\>
 
+Query options that replace the query's current options before fetching. They
+are not applied when an in-flight fetch is reused.
+
 ##### fetchOptions?
 
 `FetchOptions`\<`TQueryFnData`\>
 
+Set `cancelRefetch` to cancel an in-flight fetch first (only if the query
+already has data), and `meta` to pass extra information to the query's behavior.
+
 #### Returns
 
 `Promise`\<`TData`\>
+
+A promise that resolves with the fetched data, or rejects with the fetch error. If the
+fetch is cancelled with `revert` while the query has data, it resolves with the restored data
+instead.
 
 ***
 
@@ -294,13 +293,15 @@ retryer/behavior) and updates the query's state with the result.
 getObserversCount(): number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:287
+Defined in: packages/query-core/src/query.ts:667
 
 Returns the number of observers currently subscribed to this query.
 
 #### Returns
 
 `number`
+
+The number of observers.
 
 #### Example
 
@@ -318,7 +319,7 @@ if (query.getObserversCount() === 0) {
 invalidate(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:298
+Defined in: packages/query-core/src/query.ts:680
 
 Marks the query as invalidated, unless it is already invalidated. This
 updates `state.isInvalidated` and notifies observers, but does not by
@@ -342,7 +343,7 @@ query.invalidate()
 isActive(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:217
+Defined in: packages/query-core/src/query.ts:469
 
 Returns `true` if the query has at least one observer for which `enabled`
 does not resolve to `false`.
@@ -350,6 +351,8 @@ does not resolve to `false`.
 #### Returns
 
 `boolean`
+
+`true` if the query has an enabled observer.
 
 ***
 
@@ -359,7 +362,7 @@ does not resolve to `false`.
 isDisabled(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:226
+Defined in: packages/query-core/src/query.ts:484
 
 Returns `true` if the query is disabled, meaning it will not fetch
 automatically.
@@ -372,6 +375,8 @@ automatically.
 
 `boolean`
 
+`true` if the query is disabled.
+
 ***
 
 ### isFetched()
@@ -380,7 +385,7 @@ automatically.
 isFetched(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:231
+Defined in: packages/query-core/src/query.ts:497
 
 Returns `true` if the query has been fetched, i.e. it has resolved with
 either data or an error at least once.
@@ -388,6 +393,8 @@ either data or an error at least once.
 #### Returns
 
 `boolean`
+
+`true` if the query has been fetched.
 
 ***
 
@@ -397,7 +404,7 @@ either data or an error at least once.
 isStale(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:253
+Defined in: packages/query-core/src/query.ts:533
 
 Returns `true` if the query is stale.
 - If the query has observers, defers to whether any observer's current
@@ -409,6 +416,8 @@ Returns `true` if the query is stale.
 #### Returns
 
 `boolean`
+
+`true` if the query is stale.
 
 #### See
 
@@ -427,10 +436,10 @@ if (query.isStale()) {
 ### isStaleByTime()
 
 ```ts
-isStaleByTime(staleTime?: StaleTime): boolean;
+isStaleByTime(staleTime?: number | "static"): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:268
+Defined in: packages/query-core/src/query.ts:561
 
 Returns `true` if the query's data is stale relative to the given
 `staleTime` (defaults to `0`).
@@ -443,11 +452,16 @@ Returns `true` if the query's data is stale relative to the given
 
 ##### staleTime?
 
-[`StaleTime`](../type-aliases/StaleTime.md)
+`number` \| `"static"`
+
+The time, in milliseconds, after which data is considered stale, or
+`'static'` to never treat existing data as stale. A query without data is stale either way.
 
 #### Returns
 
 `boolean`
+
+`true` if the query's data is stale.
 
 #### See
 
@@ -467,7 +481,7 @@ const isStale = query.isStaleByTime(1000 * 60)
 isStatic(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:236
+Defined in: packages/query-core/src/query.ts:506
 
 Returns `true` if the query has at least one observer configured with
 `staleTime: 'static'`, meaning it is treated as never stale.
@@ -476,25 +490,7 @@ Returns `true` if the query has at least one observer configured with
 
 `boolean`
 
-***
-
-### optionalRemove()
-
-```ts
-protected optionalRemove(): void;
-```
-
-Defined in: packages/query-core/dist-ts/src/query.d.ts:175
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Removable.optionalRemove
-```
+`true` if the query is static.
 
 ***
 
@@ -504,7 +500,7 @@ Removable.optionalRemove
 reset(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:212
+Defined in: packages/query-core/src/query.ts:459
 
 Resets the query back to its initial state (the state it had when it was
 first created, e.g. any `initialData`), destroying it first to cancel any
@@ -516,33 +512,13 @@ in-flight fetch.
 
 ***
 
-### scheduleGc()
-
-```ts
-protected scheduleGc(): void;
-```
-
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:5
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.scheduleGc
-```
-
-***
-
 ### setState()
 
 ```ts
 setState(state: Partial<QueryState<TData, TError>>): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:185
+Defined in: packages/query-core/src/query.ts:411
 
 Merges the given partial state directly into this query's state, notifying observers. Used
 by persistence and broadcast plugins to restore a state snapshot, and by devtools to let a
@@ -554,32 +530,8 @@ user manually trigger a loading/error state or edit the cached data.
 
 `Partial`\<[`QueryState`](../interfaces/QueryState.md)\<`TData`, `TError`\>\>
 
-#### Returns
-
-`void`
-
-***
-
-### updateGcTime()
-
-```ts
-protected updateGcTime(newGcTime: number | undefined): void;
-```
-
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:6
-
-#### Parameters
-
-##### newGcTime
-
-`number` | `undefined`
+The partial state to merge into the query's state.
 
 #### Returns
 
 `void`
-
-#### Inherited from
-
-```ts
-Removable.updateGcTime
-```

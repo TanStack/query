@@ -3,6 +3,9 @@ import type { QueryObserverResult } from '@tanstack/query-core'
 import type { ResourceSnapshot } from './utils/resource-types'
 import type { Resource, ResourceStatus, Signal } from '@angular/core'
 
+/**
+ * A query-backed Angular Resource that also exposes an atomic state snapshot.
+ */
 export interface QueryResource<TValue> extends Resource<TValue> {
   /**
    * The current query state as a single snapshot.
@@ -14,7 +17,6 @@ export interface QueryResource<TValue> extends Resource<TValue> {
    *
    * Used for compatibility with Angular APIs that might want to reload a resource,
    * like Signal Forms' validateAsync resource interface.
-   *
    * @returns `true` if a reload was initiated, `false` if a reload was unnecessary or unsupported.
    */
   reload: () => boolean
@@ -33,8 +35,7 @@ type QueryResourceSource<TValue> = {
  * Converts an Angular Query result into Angular's Resource interface.
  *
  * Call this function once and reuse the returned resource.
- *
- * @param query An Angular Query or infinite-query result.
+ * @param query - An Angular Query or infinite-query result.
  * @returns A Resource-compatible view of the query result.
  */
 export function toResource<TValue>(
@@ -118,6 +119,11 @@ export function toResource<TValue>(
   }
 }
 
+/**
+ * Converts an unknown rejection reason to an Error-compatible value.
+ * @param error - The rejected value.
+ * @returns The existing error-like value, or an Error wrapping the rejection.
+ */
 function normalizeError(error: unknown): Error {
   if (isErrorLike(error)) {
     return error
@@ -126,6 +132,11 @@ function normalizeError(error: unknown): Error {
   return new Error(String(error), { cause: error })
 }
 
+/**
+ * Checks whether a value provides the name and message of an Error.
+ * @param error - The value to inspect.
+ * @returns Whether the value can be used as an Error.
+ */
 function isErrorLike(error: unknown): error is Error {
   return (
     error instanceof Error ||

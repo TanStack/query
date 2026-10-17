@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist-ts",
     "rootDir": ".",
+    "experimentalDecorators": true,
     "noFallthroughCasesInSwitch": true,
     "useDefineForClassFields": false,
     "target": "ES2022"
@@ -23,6 +24,5 @@
     "*.config.*",
     "package.json"
   ],
-  "exclude": ["src/**/*.tmp.test.ts"],
-  "references": [{ "path": "../query-core" }]
+  "exclude": ["src/**/*.tmp.test.ts"]
 }

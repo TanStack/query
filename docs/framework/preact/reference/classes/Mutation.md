@@ -3,7 +3,7 @@ id: Mutation
 title: Mutation
 ---
 
-Defined in: [packages/query-core/src/mutation.ts:135](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L135)
+Defined in: [packages/query-core/src/mutation.ts:138](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L138)
 
 Represents a single mutation attempt. A `Mutation` holds the mutation's
 options, state (data/error/status), and the `MutationObserver`s currently
@@ -52,7 +52,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 new Mutation<TData, TError, TVariables, TOnMutateResult>(config: MutationConfig<TData, TError, TVariables, TOnMutateResult>): Mutation<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:152](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L152)
+Defined in: [packages/query-core/src/mutation.ts:155](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L155)
 
 #### Parameters
 
@@ -94,7 +94,7 @@ Removable.gcTime
 readonly mutationId: number;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:143](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L143)
+Defined in: [packages/query-core/src/mutation.ts:146](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L146)
 
 ***
 
@@ -104,7 +104,7 @@ Defined in: [packages/query-core/src/mutation.ts:143](https://github.com/TanStac
 options: MutationOptions<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:142](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L142)
+Defined in: [packages/query-core/src/mutation.ts:145](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L145)
 
 ***
 
@@ -114,7 +114,7 @@ Defined in: [packages/query-core/src/mutation.ts:142](https://github.com/TanStac
 state: MutationState<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:141](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L141)
+Defined in: [packages/query-core/src/mutation.ts:144](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L144)
 
 ## Accessors
 
@@ -126,7 +126,7 @@ Defined in: [packages/query-core/src/mutation.ts:141](https://github.com/TanStac
 get meta(): Record<string, unknown> | undefined;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:179](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L179)
+Defined in: [packages/query-core/src/mutation.ts:187](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L187)
 
 The `meta` object passed in the mutation's options, if any.
 
@@ -134,27 +134,9 @@ The `meta` object passed in the mutation's options, if any.
 
 `Record`\<`string`, `unknown`\> \| `undefined`
 
+The mutation's `meta`, or `undefined` if none was set.
+
 ## Methods
-
-### clearGcTimeout()
-
-```ts
-protected clearGcTimeout(): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L41)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.clearGcTimeout
-```
-
-***
 
 ### continue()
 
@@ -162,7 +144,7 @@ Removable.clearGcTimeout
 continue(): Promise<unknown>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:243](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L243)
+Defined in: [packages/query-core/src/mutation.ts:260](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L260)
 
 Resumes a mutation that is currently paused or was restored from a
 dehydrated, still-`pending` state.
@@ -179,6 +161,13 @@ dehydrated, still-`pending` state.
 
 `Promise`\<`unknown`\>
 
+A promise that settles with the resumed mutation: it rejects if the mutation fails.
+It resolves immediately if the mutation has already settled.
+
+#### See
+
+[Mutation#execute](#execute)
+
 #### Example
 
 ```ts
@@ -186,10 +175,6 @@ dehydrated, still-`pending` state.
 const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 await mutation?.continue()
 ```
-
-#### See
-
-[Mutation#execute](#execute)
 
 ***
 
@@ -223,7 +208,7 @@ Removable.destroy
 execute(variables: TVariables): Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:284](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L284)
+Defined in: [packages/query-core/src/mutation.ts:301](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L301)
 
 Runs the mutation function for the given variables through a retryer, and
 drives the mutation's state and lifecycle callbacks through to settlement.
@@ -251,9 +236,17 @@ the original error is re-thrown.
 
 `TVariables`
 
+The variables passed to the `mutationFn`.
+
 #### Returns
 
 `Promise`\<`TData`\>
+
+A promise that resolves with the mutation's data, or rejects with its error.
+
+#### See
+
+[Mutation#continue](#continue)
 
 #### Example
 
@@ -261,74 +254,4 @@ the original error is re-thrown.
 // Called internally by `MutationObserver.mutate` and `Mutation.continue` —
 // applications normally trigger mutations through those, not this method.
 const data = await mutation.execute(variables)
-```
-
-#### See
-
-[Mutation#continue](#continue)
-
-***
-
-### optionalRemove()
-
-```ts
-protected optionalRemove(): void;
-```
-
-Defined in: [packages/query-core/src/mutation.ts:212](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L212)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Removable.optionalRemove
-```
-
-***
-
-### scheduleGc()
-
-```ts
-protected scheduleGc(): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:23](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L23)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.scheduleGc
-```
-
-***
-
-### updateGcTime()
-
-```ts
-protected updateGcTime(newGcTime: number | undefined): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:33](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L33)
-
-#### Parameters
-
-##### newGcTime
-
-`number` | `undefined`
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.updateGcTime
 ```

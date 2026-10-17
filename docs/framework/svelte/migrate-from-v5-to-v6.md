@@ -63,7 +63,7 @@ If your component has any stores, it might not properly switch to runes mode. Yo
 
 In each `.svelte` file, once you have migrated to runes, add `<svelte:options runes={true} />`. This is better for large applications requiring gradual migration.
 
-### On an project-wide basis
+### On a project-wide basis
 
 In your `svelte.config.js`, add the following to config:
 

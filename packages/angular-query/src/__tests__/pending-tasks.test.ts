@@ -131,7 +131,6 @@ describe('PendingTasks Integration', () => {
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
-
       expect(query.status()).toBe('error')
       expect(query.error()).toEqual(new Error('instant-error'))
     })
@@ -151,14 +150,12 @@ describe('PendingTasks Integration', () => {
       )
 
       mutation.mutate('test')
-
       TestBed.tick()
 
       const stablePromise = app.whenStable()
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
-
       expect(mutationFnCalled).toBe(true)
       expect(mutation.isSuccess()).toBe(true)
       expect(mutation.data()).toBe('processed: test')
@@ -183,7 +180,6 @@ describe('PendingTasks Integration', () => {
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
-
       expect(mutation.isError()).toBe(true)
       expect(mutation.error()).toEqual(new Error('sync-mutation-error'))
     })
@@ -297,7 +293,6 @@ describe('PendingTasks Integration', () => {
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
-
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('race-data')
     })
@@ -334,7 +329,6 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(20)
       await stablePromise
-
       expect(query.status()).toBe('success')
       expect(query.data()).toMatch(/^data-\d+$/)
     })
@@ -414,7 +408,6 @@ describe('PendingTasks Integration', () => {
       // Wait for the first attempt to complete and start retry delay
       await vi.advanceTimersByTimeAsync(10)
       await Promise.resolve()
-
       expect(query.status()).toBe('pending')
       expect(query.fetchStatus()).toBe('fetching')
 
@@ -424,7 +417,6 @@ describe('PendingTasks Integration', () => {
       // Advance past the retry delay to trigger the pause
       await vi.advanceTimersByTimeAsync(50)
       await Promise.resolve()
-
       expect(query.fetchStatus()).toBe('paused')
 
       const stablePromise = app.whenStable()
@@ -445,9 +437,7 @@ describe('PendingTasks Integration', () => {
       // Give time for the retry to resume and complete
       await vi.advanceTimersByTimeAsync(20)
       await Promise.resolve()
-
       await stablePromise
-
       expect(stableResolved).toBe(true)
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('final-data')
@@ -595,7 +585,6 @@ describe('PendingTasks Integration', () => {
       mutation1.mutate('test1')
       mutation2.mutate('test2')
       mutation3.mutate('test3')
-
       TestBed.tick()
 
       const stablePromise = app.whenStable()
@@ -684,7 +673,6 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(20)
       await stablePromise
-
       expect(query1.status()).toBe('success')
       expect(query1.data()).toEqual({ id: 1 })
       expect(query2.status()).toBe('success')
@@ -718,7 +706,6 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(20)
       await stablePromise
-
       expect(query.status()).toBe('error')
 
       httpTestingController.verify()
@@ -778,7 +765,6 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(50)
       await stablePromise
-
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('success-data')
       expect(attemptCount).toBe(3) // Initial + 2 retries
@@ -812,7 +798,6 @@ describe('PendingTasks Integration', () => {
       )
 
       mutation.mutate('optimistic-data')
-
       await Promise.resolve()
 
       // Data should be optimistically updated immediately
@@ -821,7 +806,6 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(60)
       await stablePromise
-
       expect(mutation.isSuccess()).toBe(true)
       expect(mutation.data()).toBe('optimistic-data')
       expect(queryClient.getQueryData(testQueryKey)).toBe('optimistic-data')

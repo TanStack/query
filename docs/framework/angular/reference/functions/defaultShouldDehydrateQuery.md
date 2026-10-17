@@ -7,7 +7,7 @@ title: defaultShouldDehydrateQuery
 function defaultShouldDehydrateQuery(query: Query): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/hydration.d.ts:82
+Defined in: packages/query-core/src/hydration.ts:219
 
 The default `shouldDehydrateQuery` predicate used by `dehydrate`. Only dehydrates queries whose status is
 `'success'`.
@@ -18,6 +18,10 @@ The default `shouldDehydrateQuery` predicate used by `dehydrate`. Only dehydrate
 
 [`Query`](../classes/Query.md)
 
+The query to check.
+
 ## Returns
 
 `boolean`
+
+`true` if the query's status is `'success'`.

@@ -11,5 +11,5 @@
   },
   "files": ["test-setup.ts"],
   "include": ["src/**/*.test.ts", "src/**/*.test-d.ts"],
-  "references": [{ "path": "./tsconfig.prod.json" }]
+  "references": [{ "path": "../query-devtools" }]
 }

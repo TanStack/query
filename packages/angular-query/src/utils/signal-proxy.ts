@@ -1,10 +1,16 @@
 import { computed } from '@angular/core'
 import type { Signal } from '@angular/core'
 
+/**
+ * Names of object properties whose values are callable.
+ */
 export type MethodKeys<T> = {
   [K in keyof T]: T[K] extends (...args: Array<any>) => any ? K : never
 }[keyof T]
 
+/**
+ * Exposes selected object fields as Angular signals and leaves all other fields unchanged.
+ */
 export type MapToSignals<T, TSignalFields extends keyof any = never> = {
   [K in keyof T as K extends TSignalFields ? K : never]: Signal<T[K]>
 } & {

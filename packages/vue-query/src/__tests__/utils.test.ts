@@ -22,13 +22,13 @@ describe('utils', () => {
       expect(origin).toEqual(expected)
     })
 
-    it('should remove non existing keys', () => {
+    it('should set keys missing from the update to undefined', () => {
       const origin = { option1: 'a', option2: 'b', option3: 'c' }
       const update = { option1: 'x', option2: 'y' }
-      const expected = { option1: 'x', option2: 'y' }
+      const expected = { option1: 'x', option2: 'y', option3: undefined }
 
       updateState(origin, update)
-      expect(origin).toEqual(expected)
+      expect(origin).toStrictEqual(expected)
     })
   })
 

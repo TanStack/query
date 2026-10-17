@@ -3,7 +3,7 @@ id: QueriesObserver
 title: QueriesObserver
 ---
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:37
+Defined in: packages/query-core/src/queriesObserver.ts:64
 
 A `QueriesObserver` watches an array of queries at once, exposing them as
 a single array of `QueryObserverResult`s (or, when a `combine` option is
@@ -45,7 +45,7 @@ new QueriesObserver<TCombinedResult>(
 options?: QueriesObserverOptions<TCombinedResult>): QueriesObserver<TCombinedResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:39
+Defined in: packages/query-core/src/queriesObserver.ts:78
 
 #### Parameters
 
@@ -71,22 +71,6 @@ Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:39
 Subscribable<QueriesObserverListener>.constructor
 ```
 
-## Properties
-
-### listeners
-
-```ts
-protected listeners: Set<QueriesObserverListener>;
-```
-
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:2
-
-#### Inherited from
-
-```ts
-Subscribable.listeners
-```
-
 ## Methods
 
 ### destroy()
@@ -95,7 +79,7 @@ Subscribable.listeners
 destroy(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:46
+Defined in: packages/query-core/src/queriesObserver.ts:114
 
 Stops observing all queries: clears all listeners and destroys every
 underlying `QueryObserver` this observer manages.
@@ -112,7 +96,7 @@ underlying `QueryObserver` this observer manages.
 getCurrentResult(): QueryObserverResult[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:73
+Defined in: packages/query-core/src/queriesObserver.ts:219
 
 Returns the most recently computed array of `QueryObserverResult`s, one
 per observed query, in the same order as the queries passed to the
@@ -121,6 +105,8 @@ constructor or `setQueries`.
 #### Returns
 
 [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)[]
+
+The current results.
 
 #### Example
 
@@ -137,7 +123,7 @@ const data = results.map((result) => result.data)
 getObservers(): QueryObserver<unknown, Error, unknown, unknown, readonly unknown[]>[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:84
+Defined in: packages/query-core/src/queriesObserver.ts:238
 
 Returns the underlying `QueryObserver` instances this observer manages,
 in the same order as the queries passed to the constructor or
@@ -147,6 +133,8 @@ in the same order as the queries passed to the constructor or
 
 [`QueryObserver`](QueryObserver.md)\<`unknown`, `Error`, `unknown`, `unknown`, readonly `unknown`[]\>[]
 
+The managed query observers.
+
 ***
 
 ### getOptimisticResult()
@@ -155,7 +143,7 @@ in the same order as the queries passed to the constructor or
 getOptimisticResult(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], combine: CombineFn<TCombinedResult> | undefined): [QueryObserverResult[], (r?: QueryObserverResult[]) => TCombinedResult, () => QueryObserverResult[]];
 ```
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:92
+Defined in: packages/query-core/src/queriesObserver.ts:253
 
 The `QueriesObserver` counterpart of [QueryObserver#getOptimisticResult](QueryObserver.md#getoptimisticresult) — computes
 the result for the given (already-defaulted) queries right now, synchronously. Called by
@@ -169,13 +157,20 @@ wrap the results for property-access tracking.
 
 [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md)\<`unknown`, `Error`, `unknown`, `unknown`, readonly `unknown`[], `never`\>[]
 
+The defaulted options of the queries to compute the result for.
+
 ##### combine
 
-`CombineFn`\<`TCombinedResult`\> | `undefined`
+`CombineFn`\<`TCombinedResult`\> \| `undefined`
+
+The `combine` function used by the returned `combineResult`, if any.
 
 #### Returns
 
 \[[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)[], (`r?`: [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)[]) => `TCombinedResult`, () => [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)[]\]
+
+A tuple of the per-query results, a function that computes the combined result, and a
+function that returns the results wrapped for property-access tracking.
 
 ***
 
@@ -185,7 +180,7 @@ wrap the results for property-access tracking.
 getQueries(): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:78
+Defined in: packages/query-core/src/queriesObserver.ts:228
 
 Returns the underlying `Query` instances currently being observed, in
 the same order as the queries passed to the constructor or `setQueries`.
@@ -193,6 +188,8 @@ the same order as the queries passed to the constructor or `setQueries`.
 #### Returns
 
 [`Query`](Query.md)\<`unknown`, `Error`, `unknown`, readonly `unknown`[]\>[]
+
+The observed queries.
 
 ***
 
@@ -202,56 +199,20 @@ the same order as the queries passed to the constructor or `setQueries`.
 hasListeners(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:5
+Defined in: packages/query-core/src/subscribable.ts:43
+
+Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Returns
 
 `boolean`
 
+`true` if at least one listener is registered.
+
 #### Inherited from
 
 ```ts
 Subscribable.hasListeners
-```
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:40
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:41
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onUnsubscribe
 ```
 
 ***
@@ -262,7 +223,7 @@ Subscribable.onUnsubscribe
 setQueries(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], options?: QueriesObserverOptions<TCombinedResult>): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:61
+Defined in: packages/query-core/src/queriesObserver.ts:136
 
 Replaces the set of queries being observed. Existing `QueryObserver`s
 are reused for queries that match an already-observed query hash;
@@ -275,9 +236,13 @@ observers are created and subscribed to for newly added queries.
 
 [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md)\<`unknown`, `Error`, `unknown`, `unknown`, readonly `unknown`[], `never`\>[]
 
+The options of the queries to observe.
+
 ##### options?
 
 [`QueriesObserverOptions`](../interfaces/QueriesObserverOptions.md)\<`TCombinedResult`\>
+
+Replaces the observer's options, e.g. its `combine` function.
 
 #### Returns
 
@@ -300,7 +265,11 @@ observer.setQueries([
 subscribe(listener: QueriesObserverListener): () => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:4
+Defined in: packages/query-core/src/subscribable.ts:28
+
+Registers a listener to be called on every update this object notifies about. Returns a function
+that removes the listener again — call it to stop listening. The base class never drops a listener
+on its own, though some subclasses clear all of theirs in `destroy()`.
 
 #### Parameters
 
@@ -312,13 +281,9 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
 
-```ts
-(): void;
-```
+A function that removes the listener.
 
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 

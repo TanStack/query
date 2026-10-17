@@ -5,13 +5,11 @@ import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 /**
  * The `useIsFetching` function returns the `number` of the queries that your application is loading or
  * fetching in the background (useful for app-wide loading indicators).
- *
  * @param filters - {@link QueryFilters} to narrow down which queries to count. Omit to count every fetching
  * query.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns A reactive value — read `.current` to get how many matching queries are currently fetching.
- *
  * @example
  * ```svelte
  * <script lang="ts">
@@ -25,7 +23,6 @@ import type { QueryClient, QueryFilters } from '@tanstack/query-core'
  *   <span>Refreshing posts...</span>
  * {/if}
  * ```
- *
  * @example
  * A global loading indicator for any query fetching in the background, not just the ones on screen:
  * ```svelte

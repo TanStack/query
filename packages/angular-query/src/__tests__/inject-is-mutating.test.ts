@@ -49,11 +49,9 @@ describe('injectIsMutating', () => {
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
 
     rendered.fixture.componentInstance.mutation.mutate({ par1: 'par1' })
-
     await vi.advanceTimersByTimeAsync(0)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
@@ -82,11 +80,9 @@ describe('injectIsMutating', () => {
 
     rendered.fixture.componentInstance.mutation1.mutate()
     rendered.fixture.componentInstance.mutation2.mutate()
-
     await vi.advanceTimersByTimeAsync(0)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()

@@ -7,7 +7,7 @@ title: QueryKeyHashFunction
 type QueryKeyHashFunction<TQueryKey> = (queryKey: TQueryKey) => string;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:74
+Defined in: packages/query-core/src/types.ts:291
 
 ## Type Parameters
 

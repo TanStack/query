@@ -6,10 +6,10 @@ title: QueryBooleanOption
 ```ts
 type QueryBooleanOption<TQueryFnData, TError, TData, TQueryKey> = 
   | boolean
-  | (query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean;
+  | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean);
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:45
+Defined in: packages/query-core/src/types.ts:204
 
 ## Type Parameters
 

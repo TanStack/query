@@ -3,13 +3,29 @@ id: injectQuery
 title: injectQuery
 ---
 
+## Overview
+
+```ts
+function injectQuery<TQueryFnData, TError, TData, TQueryKey>(optionsFn: () => DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedCreateQueryResult<TData, TError>;
+function injectQuery<TQueryFnData, TError, TData, TQueryKey>(optionsFn: () => UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryResult<TData, TError>;
+function injectQuery<TQueryFnData, TError, TData, TQueryKey>(optionsFn: () => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryResult<TData, TError>;
+```
+
+- [`DefinedInitialDataOptions` → `DefinedCreateQueryResult`](#call-signature-1): This overload is selected when `initialData` is set on the options returned by `optionsFn`, so the resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+- [`UndefinedInitialDataOptions` → `CreateQueryResult`](#call-signature-2): Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+- [`CreateQueryOptions` → `CreateQueryResult`](#call-signature-3): This overload accepts the general [CreateQueryOptions](../type-aliases/CreateQueryOptions.md) shape rather than the `initialData`-aware overloads above, so whether `data` is defined can't be inferred from the call site — useful when wrapping `injectQuery` in your own helper function that forwards caller-provided options.
+
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
 function injectQuery<TQueryFnData, TError, TData, TQueryKey>(optionsFn: () => DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedCreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query/src/inject-query.ts:61](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-query.ts#L61)
+Defined in: packages/angular-query/src/inject-query.ts:59
 
 This overload is selected when `initialData` is set on the options returned by `optionsFn`, so the
 resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
@@ -82,13 +98,15 @@ export class Posts {
 }
 ```
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
 function injectQuery<TQueryFnData, TError, TData, TQueryKey>(optionsFn: () => UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query/src/inject-query.ts:147](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-query.ts#L147)
+Defined in: packages/angular-query/src/inject-query.ts:142
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
@@ -193,13 +211,15 @@ export class Posts {
 }
 ```
 
+<a id="call-signature-3"></a>
+
 ## Call Signature
 
 ```ts
 function injectQuery<TQueryFnData, TError, TData, TQueryKey>(optionsFn: () => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query/src/inject-query.ts:171](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-query.ts#L171)
+Defined in: packages/angular-query/src/inject-query.ts:165
 
 This overload accepts the general [CreateQueryOptions](../type-aliases/CreateQueryOptions.md) shape rather than the `initialData`-aware
 overloads above, so whether `data` is defined can't be inferred from the call site — useful when wrapping
@@ -241,3 +261,28 @@ The query result.
 ### See
 
 https://tanstack.com/query/latest/docs/framework/angular/guides/queries
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### optionsFn
+
+() => [`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+
+A function that returns query options. Similar to `computed` from Angular, this
+function runs in the reactive context, so signals read inside it drive the query.
+
+<a id="optionsFn-properties"></a>
+
+#### `optionsFn` properties
+
+Built from [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md#properties). See the type above for what it changes.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+[`CreateQueryResult`](../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
+
+The query result.

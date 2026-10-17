@@ -9,7 +9,9 @@ type DefinedQueryObserverResult<TData, TError> =
 | QueryObserverSuccessResult<TData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:611
+Defined in: packages/query-core/src/types.ts:1386
+
+A query result that always has `data`: the success and refetch error states.
 
 ## Type Parameters
 

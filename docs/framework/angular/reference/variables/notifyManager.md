@@ -7,13 +7,13 @@ title: notifyManager
 const notifyManager: object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/notifyManager.d.ts:70
+Defined in: packages/query-core/src/notifyManager.ts:154
 
 Handles scheduling and batching callbacks in TanStack Query.
 
 ## Type Declaration
 
-### batch()
+### batch
 
 ```ts
 readonly batch: <T>(callback: () => T) => T;
@@ -36,11 +36,15 @@ The return value of `callback` is passed through.
 
 () => `T`
 
+The function to run in the batch.
+
 #### Returns
 
 `T`
 
-### batchCalls()
+The return value of `callback`.
+
+### batchCalls
 
 ```ts
 readonly batchCalls: <T>(callback: BatchCallsCallback<T>) => BatchCallsCallback<T>;
@@ -60,14 +64,18 @@ All calls to the wrapped function will be batched.
 
 `BatchCallsCallback`\<`T`\>
 
+The function to wrap.
+
 #### Returns
 
 `BatchCallsCallback`\<`T`\>
 
-### schedule()
+A function that schedules a call to `callback` with the given arguments.
+
+### schedule
 
 ```ts
-readonly schedule: (callback: NotifyCallback) => void;
+schedule: (callback: NotifyCallback) => void;
 ```
 
 Schedules a function to be run on the next batch.
@@ -83,7 +91,7 @@ By default, the batch is run with a `setTimeout`, but this can be configured via
 
 `void`
 
-### setBatchNotifyFunction()
+### setBatchNotifyFunction
 
 ```ts
 readonly setBatchNotifyFunction: (fn: BatchNotifyFunction) => void;
@@ -99,6 +107,8 @@ update only triggers one re-render instead of one per subscriber.
 
 `BatchNotifyFunction`
 
+Receives a function that runs a batch of notifications and must call it.
+
 #### Returns
 
 `void`
@@ -112,7 +122,7 @@ import { batch } from 'solid-js'
 notifyManager.setBatchNotifyFunction(batch)
 ```
 
-### setNotifyFunction()
+### setNotifyFunction
 
 ```ts
 readonly setNotifyFunction: (fn: NotifyFunction) => void;
@@ -127,11 +137,13 @@ This can be used to for example wrap notifications with `React.act` while runnin
 
 `NotifyFunction`
 
+Receives each notification callback and must call it.
+
 #### Returns
 
 `void`
 
-### setScheduler()
+### setScheduler
 
 ```ts
 readonly setScheduler: (fn: ScheduleFunction) => void;
@@ -145,6 +157,8 @@ The default behavior is `setTimeout(callback, 0)`.
 ##### fn
 
 `ScheduleFunction`
+
+Receives a callback that runs the next batch, and schedules it.
 
 #### Returns
 

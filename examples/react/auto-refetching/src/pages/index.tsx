@@ -1,25 +1,9 @@
 import React from 'react'
 
-import {
-  QueryClient,
-  QueryClientProvider,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
-const queryClient = new QueryClient()
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Example />
-    </QueryClientProvider>
-  )
-}
-
-function Example() {
+export default function Example() {
   const queryClient = useQueryClient()
   const [intervalMs, setIntervalMs] = React.useState(1000)
   const [value, setValue] = React.useState('')
@@ -49,7 +33,7 @@ function Example() {
 
   return (
     <div>
-      <h1>Auto Refetch with stale-time set to {intervalMs}ms</h1>
+      <h1>Auto Refetch with refetchInterval set to {intervalMs}ms</h1>
       <p>
         This example is best experienced on your own machine, where you can open
         multiple tabs to the same localhost server and see your changes

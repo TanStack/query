@@ -89,4 +89,7 @@ export interface DevtoolsOptions {
  */
 export type WithDevtoolsFn = () => DevtoolsOptions
 
+/**
+ * Creates a Query feature from an optional factory of developer-tools options.
+ */
 export type WithDevtools = (withDevtoolsFn?: WithDevtoolsFn) => QueryFeature

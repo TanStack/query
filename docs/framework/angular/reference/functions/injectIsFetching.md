@@ -4,23 +4,36 @@ title: injectIsFetching
 ---
 
 ```ts
-function injectIsFetching(filters: () => QueryFilters): Signal<number>;
+function injectIsFetching(filters?: () => QueryFilters): Signal<number>;
 ```
 
-Defined in: [packages/angular-query/src/inject-is-fetching.ts:15](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-is-fetching.ts#L15)
+Defined in: packages/angular-query/src/inject-is-fetching.ts:15
 
 Injects a signal that tracks the number of queries that your application is loading or fetching in the
 background (useful for app-wide loading indicators).
 
-Can be used for app-wide loading indicators
+Can be used for app-wide loading indicators.
 
 ## Parameters
 
-### filters
+### filters?
 
 () => [`QueryFilters`](../interfaces/QueryFilters.md)
 
 A reactive factory for the filters.
+
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+| Property | Type | Default value | Description |
+| ------ | ------ | ------ | ------ |
+| <a id="filters-property-exact"></a> `exact?` | `boolean` | `undefined` | Match query key exactly |
+| <a id="filters-property-fetchstatus"></a> `fetchStatus?` | `"fetching"` \| `"paused"` \| `"idle"` | `undefined` | Include queries matching their fetchStatus |
+| <a id="filters-property-predicate"></a> `predicate?` | (`query`: [`Query`](../classes/Query.md)) => `boolean` | `undefined` | Include queries matching this predicate function |
+| <a id="filters-property-querykey"></a> `queryKey?` | `TQueryKey` \| `TuplePrefixes`\<`TQueryKey`\> | `undefined` | Include queries matching this query key |
+| <a id="filters-property-stale"></a> `stale?` | `boolean` | `undefined` | Include or exclude stale queries |
+| <a id="filters-property-type"></a> `type?` | `QueryTypeFilter` | `'all'` | Filter to active queries, inactive queries or all queries |
 
 ## Returns
 

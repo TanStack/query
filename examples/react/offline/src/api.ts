@@ -21,23 +21,35 @@ export const fetchMovie = async (
   movie: { comment: string; id: string; title: string }
 }> => {
   const response = await fetch(`/movies/${id}`)
+  if (!response.ok) {
+    throw new Error(await response.text())
+  }
   return await response.json()
 }
 
 export const fetchMovies = async (): Promise<{
   ts: number
-  movies: typeof movies
+  movies: Array<{ id: string; title: string }>
 }> => {
   const response = await fetch('/movies')
+  if (!response.ok) {
+    throw new Error(await response.text())
+  }
   return await response.json()
 }
 
-export const updateMovie = async (id: string, comment: string) => {
+export const updateMovie = async (
+  id: string,
+  comment: string,
+): Promise<{ message: string }> => {
   const response = await fetch(`/movies/${id}`, {
     method: 'POST',
     body: JSON.stringify({ comment }),
     headers: { 'Content-Type': 'application/json' },
   })
+  if (!response.ok) {
+    throw new Error(await response.text())
+  }
   return await response.json()
 }
 
@@ -53,7 +65,7 @@ export const worker = setupWorker(
   http.get('/movies/:id', async ({ params }) => {
     const { id } = params
 
-    const movie = movies.find((movie) => movie.id === id)
+    const movie = movies.find((item) => item.id === id)
 
     if (!movie) {
       return new HttpResponse(`Movie with id ${id} not found`, {
@@ -65,20 +77,23 @@ export const worker = setupWorker(
     return HttpResponse.json({ ts: Date.now(), movie })
   }),
 
-  http.post('/movies/:id', async ({ request, params }) => {
-    const { id } = params
-    const body = await request.json()
-    const { comment } = body
+  http.post<{ id: string }, { comment: string }>(
+    '/movies/:id',
+    async ({ request, params }) => {
+      const { id } = params
+      const body = await request.json()
+      const { comment } = body
 
-    movies.forEach((movie) => {
-      if (movie.id === id) {
-        movie.comment = comment.toUpperCase()
-      }
-    })
+      movies.forEach((movie) => {
+        if (movie.id === id) {
+          movie.comment = comment.toUpperCase()
+        }
+      })
 
-    await delay(500)
-    return HttpResponse.json({ message: `Successfully updated movie ${id}` })
-  }),
+      await delay(500)
+      return HttpResponse.json({ message: `Successfully updated movie ${id}` })
+    },
+  ),
   http.get('*.js', () => passthrough()),
   http.get('*.svg', () => passthrough()),
 )

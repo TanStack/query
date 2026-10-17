@@ -142,6 +142,9 @@ type GetQueryObserverResult<T> = GenericGetDefinedOrUndefinedQueryResult<
   >
 >
 
+/**
+ * Maps a tuple of query descriptions to the options accepted by `injectQueries`.
+ */
 export type QueriesOptions<
   T extends Array<any>,
   TResults extends Array<any> = [],
@@ -178,6 +181,9 @@ export type QueriesOptions<
               >
             : Array<QueryObserverOptionsForCreateQueries>
 
+/**
+ * Maps a tuple of query descriptions to their individual signal-backed results.
+ */
 export type QueriesResults<
   T extends Array<any>,
   TResults extends Array<any> = [],
@@ -214,14 +220,23 @@ type RawQueriesResults<
           >
         : { [K in keyof T]: GetQueryObserverResult<T[K]> }
 
+/**
+ * A reactive group of query options and an optional projection of their combined results.
+ */
 export interface InjectQueriesOptions<
   T extends Array<any>,
   TCombinedResult = QueriesResults<T>,
 > {
+  /**
+   * The ordered query options to observe; entries can be added, removed, or replaced reactively.
+   */
   queries:
     | readonly [...QueriesOptions<T>]
     | readonly [
         ...{ [K in keyof T]: GetCreateQueryOptionsForCreateQueries<T[K]> },
       ]
+  /**
+   * Projects the current plain observer results into a single reactively computed value.
+   */
   combine?: (result: RawQueriesResults<T>) => TCombinedResult
 }

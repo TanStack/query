@@ -8,7 +8,7 @@ import type { Signal } from '@angular/core'
  * Injects a signal that tracks the number of mutations that your application currently has `pending`
  * (useful for app-wide loading indicators).
  *
- * Can be used for app-wide loading indicators
+ * Can be used for app-wide loading indicators.
  * @param filters - A reactive factory for the filters.
  * @returns A read-only signal with the number of fetching mutations.
  */
