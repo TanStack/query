@@ -35,7 +35,7 @@
     "test:lib:zoneful": "vitest run --config vitest.zoneful.config.ts",
     "test:lib:both": "pnpm run test:lib:zoneless && pnpm run test:lib:zoneful",
     "test:lib:dev": "vitest --watch",
-    "test:build": "pnpm pack && pnpm run test:schematics && publint ./dist/*.tgz --strict && attw ./dist/*.tgz; premove ./dist/*.tgz",
+    "test:build": "pnpm run prepack && pnpm run test:schematics && publint --strict && attw ./dist --pack",
     "test:schematics": "vitest run --config vitest.schematics.config.ts",
     "build": "vite build && tsc -p tsconfig.schematics.json && node scripts/inject-schematic-package-info.js",
     "prepack": "node scripts/prepack.js",

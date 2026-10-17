@@ -27,7 +27,7 @@
     "test:types:tscurrent": "tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "trap 'premove ./dist/*.tgz' EXIT; pnpm pack && publint ./dist/*.tgz --strict && attw ./dist/*.tgz --ignore-rules cjs-resolves-to-esm",
+    "test:build": "pnpm run prepack && publint --strict && attw ./dist --pack --ignore-rules cjs-resolves-to-esm",
     "build": "vite build",
     "prepack": "node scripts/prepack.js",
     "test:oxlint": "oxlint ./src"
