@@ -21,6 +21,9 @@ export const fetchMovie = async (
   movie: { comment: string; id: string; title: string }
 }> => {
   const response = await fetch(`/movies/${id}`)
+  if (!response.ok) {
+    throw new Error(await response.text())
+  }
   return await response.json()
 }
 
@@ -29,6 +32,9 @@ export const fetchMovies = async (): Promise<{
   movies: Array<{ id: string; title: string }>
 }> => {
   const response = await fetch('/movies')
+  if (!response.ok) {
+    throw new Error(await response.text())
+  }
   return await response.json()
 }
 
@@ -41,6 +47,9 @@ export const updateMovie = async (
     body: JSON.stringify({ comment }),
     headers: { 'Content-Type': 'application/json' },
   })
+  if (!response.ok) {
+    throw new Error(await response.text())
+  }
   return await response.json()
 }
 
@@ -56,7 +65,7 @@ export const worker = setupWorker(
   http.get('/movies/:id', async ({ params }) => {
     const { id } = params
 
-    const movie = movies.find((movie) => movie.id === id)
+    const movie = movies.find((item) => item.id === id)
 
     if (!movie) {
       return new HttpResponse(`Movie with id ${id} not found`, {

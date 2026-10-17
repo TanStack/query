@@ -1,8 +1,9 @@
-import { redirect, ActionFunctionArgs } from 'react-router-dom'
+import { redirect } from 'react-router-dom'
 
 import { createContact } from '../contacts'
-import { QueryClient } from '@tanstack/react-query'
 import { ContactForm } from './edit'
+import type { QueryClient } from '@tanstack/react-query'
+import type { ActionFunctionArgs } from 'react-router-dom'
 
 export const action =
   (queryClient: QueryClient) =>

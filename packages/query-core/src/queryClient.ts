@@ -289,7 +289,7 @@ export class QueryClient {
   >(
     queryKey: TTaggedQueryKey,
     updater: Updater<
-      NoInfer<TInferredQueryFnData> | undefined,
+      InferDataFromTag<NoInfer<TQueryFnData>, TTaggedQueryKey> | undefined,
       NoInfer<TInferredQueryFnData> | undefined
     >,
     options?: SetDataOptions,
@@ -302,9 +302,9 @@ export class QueryClient {
       QueryKey
     >({ queryKey })
 
-    const query = this.#queryCache.get<TInferredQueryFnData>(
-      defaultedOptions.queryHash,
-    )
+    const query = this.#queryCache.get<
+      InferDataFromTag<NoInfer<TQueryFnData>, TTaggedQueryKey>
+    >(defaultedOptions.queryHash)
     const prevData = query?.state.data
     const data = functionalUpdate(updater, prevData)
 

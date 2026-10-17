@@ -21,11 +21,11 @@ function useWaitQuery(props: { wait: number }) {
       const path = `/api/wait?wait=${props.wait}`
       const url = baseUrl + path
 
-      const res: string = await (
-        await fetch(url, {
-          cache: 'no-store',
-        })
-      ).json()
+      const response = await fetch(url, {
+        cache: 'no-store',
+      })
+      if (!response.ok) throw new Error('Failed to fetch data')
+      const res: string = await response.json()
       return res
     },
   })

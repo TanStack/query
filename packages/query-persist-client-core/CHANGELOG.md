@@ -1,5 +1,13 @@
 # @tanstack/query-persist-client-core
 
+## 5.104.3
+
+### Patch Changes
+
+- [#11410](https://github.com/TanStack/query/pull/11410) [`ed4d849`](https://github.com/TanStack/query/commit/ed4d849731bfe6404be9d40aec84eda54f958d7f) - fix(query-persist-client-core/createPersister): await the storage write in `persistQuery`, so `persistQueryByKey` resolves only once the entry has actually been written and rejects when the write fails instead of leaving an unhandled rejection
+- Updated dependencies [[`0f15bc9`](https://github.com/TanStack/query/commit/0f15bc925db5813be6a17527988ec7d7b3c8cfc0)]:
+  - @tanstack/query-core@5.104.3
+
 ## 5.104.2
 
 ### Patch Changes

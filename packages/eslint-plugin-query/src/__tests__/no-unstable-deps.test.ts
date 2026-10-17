@@ -420,17 +420,17 @@ const baseTestCases = {
 
 const testCases = (reactHookName: string) => [
   {
-    reactHookImport: 'import * as React from "React";',
+    reactHookImport: 'import * as React from "react";',
     reactHookInvocation: `React.${reactHookName}`,
     reactHookAlias: reactHookName,
   },
   {
-    reactHookImport: `import { ${reactHookName} } from "React";`,
+    reactHookImport: `import { ${reactHookName} } from "react";`,
     reactHookInvocation: reactHookName,
     reactHookAlias: reactHookName,
   },
   {
-    reactHookImport: `import { ${reactHookName} as useAlias } from "React";`,
+    reactHookImport: `import { ${reactHookName} as useAlias } from "react";`,
     reactHookInvocation: 'useAlias',
     reactHookAlias: 'useAlias',
   },
