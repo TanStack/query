@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
-  const cursor = parseInt(req.query.cursor) || 0
+  const cursor =
+    typeof req.query.cursor === 'string' ? parseInt(req.query.cursor) || 0 : 0
   const pageSize = 5
 
   const data = Array(pageSize)

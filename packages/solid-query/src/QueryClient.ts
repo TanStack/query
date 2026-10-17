@@ -44,7 +44,9 @@ export interface QueryObserverOptions<
    * Defaults reconciliation to false.
    */
   reconcile?:
-    string | false | ((oldData: TData | undefined, newData: TData) => TData)
+    | string
+    | false
+    | ((oldData: TData | undefined, newData: TData) => TData)
 }
 
 /**
@@ -78,7 +80,9 @@ export interface InfiniteQueryObserverOptions<
    * Defaults reconciliation to false.
    */
   reconcile?:
-    string | false | ((oldData: TData | undefined, newData: TData) => TData)
+    | string
+    | false
+    | ((oldData: TData | undefined, newData: TData) => TData)
 }
 
 /**
@@ -89,6 +93,10 @@ export interface InfiniteQueryObserverOptions<
 export interface DefaultOptions<
   TError = DefaultError,
 > extends CoreDefaultOptions<TError> {
+  /**
+   * Default options applied to every query, unless overridden per-query, including Solid's
+   * `reconcile` option.
+   */
   queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'>
 }
 
@@ -96,6 +104,9 @@ export interface DefaultOptions<
  * The config accepted by `new QueryClient(config)`, with Solid's extended {@link DefaultOptions}.
  */
 export interface QueryClientConfig extends QueryCoreClientConfig {
+  /**
+   * The default options of the queries and mutations of this `QueryClient`.
+   */
   defaultOptions?: DefaultOptions
 }
 

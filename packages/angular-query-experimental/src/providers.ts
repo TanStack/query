@@ -124,7 +124,13 @@ type QueryFeatureKind = (typeof queryFeatures)[number]
  * Helper type to represent a Query feature.
  */
 export interface QueryFeature<TFeatureKind extends QueryFeatureKind> {
+  /**
+   * The kind of the feature, e.g. `'Devtools'` or `'PersistQueryClient'`.
+   */
   ɵkind: TFeatureKind
+  /**
+   * The providers that `provideTanStackQuery` registers for the feature.
+   */
   ɵproviders: Array<Provider>
 }
 

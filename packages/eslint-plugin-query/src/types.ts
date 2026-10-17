@@ -3,5 +3,9 @@
  * configs, or `'strict'` if it is only enabled in the strict ones.
  */
 export type ExtraRuleDocs = {
+  /**
+   * The rule's severity in the recommended configs, or `'strict'` if it is only enabled in the
+   * strict ones.
+   */
   recommended: 'strict' | 'error' | 'warn'
 }

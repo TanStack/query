@@ -25,7 +25,7 @@ export default function Episodes() {
             to={`/episodes/${episode.id}`}
           >
             <h6 className="text-xl">
-              {episode.episode} - {episode.name} <em>{episode.airDate}</em>
+              {episode.episode} - {episode.name} <em>{episode.air_date}</em>
             </h6>
           </RouterLink>
         </article>

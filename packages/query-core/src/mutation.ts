@@ -226,7 +226,7 @@ export class Mutation<
     })
   }
 
-  protected optionalRemove() {
+  protected override optionalRemove() {
     if (!this.#observers.length) {
       if (this.state.status === 'pending') {
         this.scheduleGc()

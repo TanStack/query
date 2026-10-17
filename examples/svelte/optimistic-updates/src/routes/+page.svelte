@@ -111,7 +111,7 @@
     Updated At: {new Date(todos.data.ts).toLocaleTimeString()}
   </div>
   <ul>
-    {#each todos.data.items as todo}
+    {#each todos.data.items as todo (todo.id)}
       <li>{todo.text}</li>
     {/each}
   </ul>

@@ -22,7 +22,7 @@ export class OnlineManager extends Subscribable<Listener> {
     super()
     this.#setup = (onOnline) => {
       // addEventListener does not exist in React Native, but window does
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
       if (typeof window !== 'undefined' && window.addEventListener) {
         const onlineListener = () => onOnline(true)
         const offlineListener = () => onOnline(false)
@@ -41,13 +41,13 @@ export class OnlineManager extends Subscribable<Listener> {
     }
   }
 
-  protected onSubscribe(): void {
+  protected override onSubscribe(): void {
     if (!this.#cleanup) {
       this.setEventListener(this.#setup)
     }
   }
 
-  protected onUnsubscribe() {
+  protected override onUnsubscribe() {
     if (!this.hasListeners()) {
       this.#cleanup?.()
       this.#cleanup = undefined

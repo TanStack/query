@@ -932,7 +932,7 @@ describe('createMutationController', () => {
       )
 
       readonly firstRead = this.mutation()
-      readonly id = 'alpha'
+      override readonly id = 'alpha'
       readonly offset = 1
     }
 

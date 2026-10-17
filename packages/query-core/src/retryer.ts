@@ -24,13 +24,38 @@ interface RetryerConfig<TData = unknown, TError = DefaultError> {
  * one for each fetch or execution.
  */
 export interface Retryer<TData = unknown> {
+  /**
+   * The promise that resolves with the data, or rejects once retries are exhausted or it is
+   * cancelled.
+   */
   promise: Promise<TData>
+  /**
+   * Cancels the run, rejecting `promise` with a `CancelledError`.
+   */
   cancel: (cancelOptions?: CancelOptions) => void
+  /**
+   * Resumes a paused run, and returns `promise`.
+   */
   continue: () => Promise<unknown>
+  /**
+   * Stops further retries. The current attempt still finishes.
+   */
   cancelRetry: () => void
+  /**
+   * Allows retries again after `cancelRetry`.
+   */
   continueRetry: () => void
+  /**
+   * Returns whether the run can start now, based on the network mode and `canRun`.
+   */
   canStart: () => boolean
+  /**
+   * Starts the run, or waits until it can start, and returns `promise`.
+   */
   start: () => Promise<TData>
+  /**
+   * Returns whether `promise` is still pending, resolved, or rejected.
+   */
   status: () => 'pending' | 'resolved' | 'rejected'
 }
 

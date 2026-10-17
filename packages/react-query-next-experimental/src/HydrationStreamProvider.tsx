@@ -37,6 +37,9 @@ interface HydrationStreamContext<TShape> {
  * The props of the `Provider` returned by `createHydrationStreamProvider`.
  */
 export interface HydrationStreamProviderProps<TShape> {
+  /**
+   * The children to render inside the stream provider.
+   */
   children: React.ReactNode
   /**
    * Optional transformer to serialize/deserialize the data

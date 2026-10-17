@@ -182,7 +182,13 @@ export type MutationStateOptions<
   TMutation extends Mutation<any, any, any, any> =
     MutationTypeFromResult<TResult>,
 > = {
+  /**
+   * The filters that select the mutations to return the state of.
+   */
   filters?: MutationFilters
+  /**
+   * Maps each matching mutation to the value returned for it. Defaults to the mutation's `state`.
+   */
   select?: (mutation: TMutation) => TResult
 }
 
@@ -190,6 +196,12 @@ export type MutationStateOptions<
  * The props accepted by `QueryClientProvider`.
  */
 export type QueryClientProviderProps = {
+  /**
+   * The `QueryClient` to provide to the children.
+   */
   client: QueryClient
+  /**
+   * The children that can use the provided `QueryClient`.
+   */
   children: Snippet
 }

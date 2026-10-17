@@ -4,9 +4,9 @@ import { useCallback, useEffect, useState } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { IsRestoringProvider, QueryCache, QueryClient, useQueries } from '..'
-import type { QueryObserverResult, UseQueryResult } from '..'
 import { ErrorBoundary } from './ErrorBoundary'
 import { renderWithClient } from './utils'
+import type { QueryObserverResult, UseQueryResult } from '..'
 
 describe('useQueries', () => {
   let queryCache: QueryCache

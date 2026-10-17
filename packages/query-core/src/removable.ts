@@ -57,5 +57,9 @@ export abstract class Removable {
     }
   }
 
+  /**
+   * Called when the garbage collection timeout fires. Subclasses remove the entry from its cache
+   * unless it is still in use, e.g. because it has observers.
+   */
   protected abstract optionalRemove(): void
 }

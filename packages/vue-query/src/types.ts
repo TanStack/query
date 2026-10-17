@@ -112,11 +112,25 @@ export type MutationOptions<
  * accept the `shallow` option.
  */
 export interface DefaultOptions<TError = DefaultError> {
+  /**
+   * Default options applied to every query, unless overridden per-query. Also accepts the
+   * `shallow` option.
+   */
   queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'> &
     ShallowOption
+  /**
+   * Default options applied to every mutation, unless overridden per-mutation. Also accepts the
+   * `shallow` option.
+   */
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown> &
     ShallowOption
+  /**
+   * Default options used when hydrating queries and mutations; see {@link HydrateOptions}.
+   */
   hydrate?: HydrateOptions['defaultOptions']
+  /**
+   * Default options used when dehydrating the client's caches; see {@link DehydrateOptions}.
+   */
   dehydrate?: DehydrateOptions
 }
 
@@ -125,7 +139,16 @@ export interface DefaultOptions<TError = DefaultError> {
  * `defaultOptions` for its queries and mutations.
  */
 export interface QueryClientConfig {
+  /**
+   * The `QueryCache` to use. A new one is created if omitted.
+   */
   queryCache?: QueryCache
+  /**
+   * The `MutationCache` to use. A new one is created if omitted.
+   */
   mutationCache?: MutationCache
+  /**
+   * The default options of the queries and mutations of this `QueryClient`.
+   */
   defaultOptions?: DefaultOptions
 }

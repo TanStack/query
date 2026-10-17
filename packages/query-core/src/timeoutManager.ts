@@ -27,10 +27,22 @@ export type ManagedTimerId = number | { [Symbol.toPrimitive]: () => number }
  */
 export type TimeoutProvider<TTimerId extends ManagedTimerId = ManagedTimerId> =
   {
+    /**
+     * Schedules `callback` to run once after `delay` milliseconds, like the global `setTimeout`.
+     */
     readonly setTimeout: (callback: TimeoutCallback, delay: number) => TTimerId
+    /**
+     * Cancels a timeout scheduled with `setTimeout`.
+     */
     readonly clearTimeout: (timeoutId: TTimerId | undefined) => void
 
+    /**
+     * Schedules `callback` to run every `delay` milliseconds, like the global `setInterval`.
+     */
     readonly setInterval: (callback: TimeoutCallback, delay: number) => TTimerId
+    /**
+     * Cancels an interval scheduled with `setInterval`.
+     */
     readonly clearInterval: (intervalId: TTimerId | undefined) => void
   }
 

@@ -91,7 +91,7 @@ export class QueriesObserver<
     this.setQueries(queries)
   }
 
-  protected onSubscribe(): void {
+  protected override onSubscribe(): void {
     if (this.listeners.size === 1) {
       this.#observers.forEach((observer) => {
         observer.subscribe((result) => {
@@ -101,7 +101,7 @@ export class QueriesObserver<
     }
   }
 
-  protected onUnsubscribe(): void {
+  protected override onUnsubscribe(): void {
     if (!this.listeners.size) {
       this.destroy()
     }

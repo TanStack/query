@@ -22,7 +22,8 @@ export interface DevtoolsPanelOptions {
    */
   styleNonce?: string
   /**
-   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
+   * within the shadow DOM instead of within the head tag in the light DOM.
    */
   shadowDOMTarget?: ShadowRoot
 
@@ -67,21 +68,22 @@ export function ReactQueryDevtoolsPanel(
     theme,
   } = props
   const [devtools] = React.useState(
-    new TanstackQueryDevtoolsPanel({
-      client: queryClient,
-      queryFlavor: 'React Query',
-      version: '5',
-      onlineManager,
-      buttonPosition: 'bottom-left',
-      position: 'bottom',
-      initialIsOpen: true,
-      errorTypes,
-      styleNonce,
-      shadowDOMTarget,
-      onClose: props.onClose,
-      hideDisabledQueries,
-      theme,
-    }),
+    () =>
+      new TanstackQueryDevtoolsPanel({
+        client: queryClient,
+        queryFlavor: 'React Query',
+        version: '5',
+        onlineManager,
+        buttonPosition: 'bottom-left',
+        position: 'bottom',
+        initialIsOpen: true,
+        errorTypes,
+        styleNonce,
+        shadowDOMTarget,
+        onClose: props.onClose,
+        hideDisabledQueries,
+        theme,
+      }),
   )
 
   React.useEffect(() => {

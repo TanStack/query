@@ -21,7 +21,7 @@ export class FocusManager extends Subscribable<Listener> {
     super()
     this.#setup = (onFocus) => {
       // addEventListener does not exist in React Native, but window does
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
       if (typeof window !== 'undefined' && window.addEventListener) {
         const listener = () => onFocus()
         // Listen to visibilitychange
@@ -36,13 +36,13 @@ export class FocusManager extends Subscribable<Listener> {
     }
   }
 
-  protected onSubscribe(): void {
+  protected override onSubscribe(): void {
     if (!this.#cleanup) {
       this.setEventListener(this.#setup)
     }
   }
 
-  protected onUnsubscribe() {
+  protected override onUnsubscribe() {
     if (!this.hasListeners()) {
       this.#cleanup?.()
       this.#cleanup = undefined
@@ -133,7 +133,7 @@ export class FocusManager extends Subscribable<Listener> {
     }
 
     // document global can be unavailable in react native
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    // oxlint-disable-next-line typescript/no-unnecessary-condition
     return globalThis.document?.visibilityState !== 'hidden'
   }
 }

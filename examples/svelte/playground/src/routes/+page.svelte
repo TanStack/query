@@ -11,12 +11,20 @@
 
   const queryClient = useQueryClient()
 
-  queryClient.setDefaultOptions({
-    queries: {
-      staleTime: staleTime.value,
-      gcTime: gcTime.value,
-    },
-  })
+  function applyQueryDefaults() {
+    queryClient.setDefaultOptions({
+      ...queryClient.getDefaultOptions(),
+      queries: {
+        ...queryClient.getDefaultOptions().queries,
+        staleTime: staleTime.value,
+        gcTime: gcTime.value,
+      },
+    })
+  }
+
+  applyQueryDefaults()
+
+  $effect(applyQueryDefaults)
 </script>
 
 <p>
@@ -24,7 +32,7 @@
   show how query stale-ness and query caching work on a granular level
 </p>
 <div>
-  Stale Time:{' '}
+  Stale Time:
   <input
     type="number"
     min="0"
@@ -34,7 +42,7 @@
   />
 </div>
 <div>
-  GcTime:{' '}
+  GcTime:
   <input
     type="number"
     min="0"
@@ -45,7 +53,7 @@
 </div>
 <br />
 <div>
-  Error Rate:{' '}
+  Error Rate:
   <input
     type="number"
     min="0"
@@ -56,17 +64,17 @@
   />
 </div>
 <div>
-  Fetch Time Min:{' '}
+  Fetch Time Min:
   <input
     type="number"
     min="1"
     step="500"
     bind:value={queryTimeMin.value}
     style="width: 100px"
-  />{' '}
+  />
 </div>
 <div>
-  Fetch Time Max:{' '}
+  Fetch Time Max:
   <input
     type="number"
     min="1"

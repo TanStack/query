@@ -1018,7 +1018,7 @@ describe('useMutation', () => {
     })
   })
 
-  // eslint-disable-next-line vitest/expect-expect
+  // oxlint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', () => {
     function Mutates() {
       const mutation = useMutation(() => ({ mutationFn: () => sleep(10) }))
@@ -1499,7 +1499,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => <Page></Page>)
+    const rendered = render(() => <Page />)
 
     expect(rendered.getByText('data: null, status: idle')).toBeInTheDocument()
 

@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import { onlineManager, useQueryClient } from '@tanstack/preact-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
@@ -25,7 +25,8 @@ export interface DevtoolsPanelOptions {
    */
   styleNonce?: string
   /**
-   * Use this to render the devtools inside a Shadow DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
+   * within the shadow DOM instead of within the head tag in the light DOM.
    */
   shadowDOMTarget?: ShadowRoot
   /**

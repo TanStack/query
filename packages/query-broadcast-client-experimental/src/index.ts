@@ -8,8 +8,17 @@ import type { QueryClient, QueryKey } from '@tanstack/query-core'
  * can correlate failures with the originating query.
  */
 export interface BroadcastErrorEvent {
+  /**
+   * The kind of cache event that was being broadcast.
+   */
   type: 'updated' | 'removed' | 'added'
+  /**
+   * The hash of the query the broadcast was about.
+   */
   queryHash: string
+  /**
+   * The key of the query the broadcast was about.
+   */
   queryKey: QueryKey
 }
 

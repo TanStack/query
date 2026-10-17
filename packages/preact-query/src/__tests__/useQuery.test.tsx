@@ -13,7 +13,6 @@ import {
   useState,
 } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { Mock } from 'vitest'
 
 import {
   IsRestoringProvider,
@@ -26,7 +25,6 @@ import {
   skipToken,
   useQuery,
 } from '..'
-import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
 import { ErrorBoundary } from './ErrorBoundary'
 import {
   Blink,
@@ -34,6 +32,8 @@ import {
   renderWithClient,
   setActTimeout,
 } from './utils'
+import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
+import type { Mock } from 'vitest'
 
 describe('useQuery', () => {
   let queryCache: QueryCache
@@ -3966,7 +3966,9 @@ describe('useQuery', () => {
     rendered.getByText('fetched data')
     const setTimeoutSpy = vi.spyOn(globalThis.window, 'setTimeout')
 
-    rendered.unmount()
+    act(() => {
+      rendered.unmount()
+    })
 
     expect(setTimeoutSpy).not.toHaveBeenCalled()
   })
@@ -3990,7 +3992,9 @@ describe('useQuery', () => {
 
     const setTimeoutSpy = vi.spyOn(globalThis.window, 'setTimeout')
 
-    rendered.unmount()
+    act(() => {
+      rendered.unmount()
+    })
 
     expect(setTimeoutSpy).toHaveBeenLastCalledWith(
       expect.any(Function),
@@ -5928,6 +5932,35 @@ describe('useQuery', () => {
       expect(
         queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
       ).toBe(1)
+    })
+
+    it('should not optimistically show fetching when subscribed is false', () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      function Page() {
+        const query = useQuery({
+          queryKey: key,
+          queryFn,
+          subscribed: false,
+        })
+
+        return (
+          <div>
+            <span>isFetching: {String(query.isFetching)}</span>
+            <span>fetchStatus: {query.fetchStatus}</span>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      expect(queryFn).not.toHaveBeenCalled()
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+      ).toBe(0)
+      rendered.getByText('isFetching: false')
+      rendered.getByText('fetchStatus: idle')
     })
 
     it('should not be attached to the query when subscribed is false', async () => {
