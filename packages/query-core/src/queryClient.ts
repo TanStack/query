@@ -139,8 +139,10 @@ export class QueryClient {
    * matching a set of filters. This includes background-fetching, loading new pages, and
    * loading more infinite query results.
    * @param filters - Narrows down which fetching queries are counted. Without filters, every
-   * fetching query is counted.
-   * @returns The number of matching queries whose `fetchStatus` is `'fetching'`.
+   * fetching query is counted. Passing a `fetchStatus` overrides the default of `'fetching'`,
+   * for example to count `'paused'` queries instead.
+   * @returns The number of matching queries, filtered to `fetchStatus: 'fetching'` unless
+   * `filters.fetchStatus` says otherwise.
    * @example
    * ```ts
    * if (queryClient.isFetching()) {
@@ -151,8 +153,10 @@ export class QueryClient {
   isFetching<TQueryFilters extends QueryFilters<any> = QueryFilters>(
     filters?: TQueryFilters,
   ): number {
-    return this.#queryCache.findAll({ ...filters, fetchStatus: 'fetching' })
-      .length
+    return this.#queryCache.findAll({
+      ...filters,
+      fetchStatus: filters?.fetchStatus ?? 'fetching',
+    }).length
   }
 
   /**
