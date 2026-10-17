@@ -10,7 +10,7 @@ redirect_from:
 ```ts
 const environmentManager: {
   isServer: () => boolean;
-  setIsServer: void;
+  setIsServer(isServerValue: IsServerValue): void;
 };
 ```
 
