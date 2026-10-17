@@ -339,6 +339,29 @@ describe('Explorer', () => {
       expect(queryClient.getQueryData(['data'])).toEqual({ flag: false })
     })
 
+    it.each([true, false])(
+      'should expose "aria-pressed" on the toggle button when the value is %s',
+      (value) => {
+        queryClient.setQueryData(['data'], { flag: value })
+
+        const rendered = renderExplorer({
+          label: 'flag',
+          value,
+          editable: true,
+          // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+          activeQuery: queryClient
+            .getQueryCache()
+            .find({ queryKey: ['data'] }) as Query,
+          dataPath: ['flag'],
+        })
+
+        expect(rendered.getByLabelText('Toggle value')).toHaveAttribute(
+          'aria-pressed',
+          String(value),
+        )
+      },
+    )
+
     it('should not render action buttons when "editable" is false', () => {
       queryClient.setQueryData(['data'], ['a'])
 
