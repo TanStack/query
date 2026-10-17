@@ -7,7 +7,7 @@ title: injectMutationState
 function injectMutationState<TResult, TMutation>(options?: () => MutationStateOptions<TResult, TMutation>): Signal<TResult[]>;
 ```
 
-Defined in: packages/angular-query/src/inject-mutation-state.ts:55
+Defined in: packages/angular-query/src/inject-mutation-state.ts:70
 
 Injects a signal that tracks the state of all mutations.
 
@@ -33,10 +33,10 @@ A function that returns mutation state options.
 
 #### `options` properties
 
-| Property | Type |
-| ------ | ------ |
-| <a id="options-property-filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) |
-| <a id="options-property-select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="options-property-filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) | Restricts the mutation cache entries included in the result. |
+| <a id="options-property-select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` | Maps each matching mutation to the value exposed in the result signal. |
 
 ## Returns
 

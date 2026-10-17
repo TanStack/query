@@ -21,6 +21,9 @@ const INTERNAL_QUERY_CLIENT_SHOULD_HYDRATE = new InjectionToken<boolean>('', {
   factory: () => true,
 })
 
+/**
+ * Mounts the injected client, configures server defaults, and connects TransferState hydration.
+ */
 function configureQueryClient() {
   const queryClient = inject(QueryClient)
   const destroyRef = inject(DestroyRef)
@@ -63,9 +66,12 @@ function configureQueryClient() {
  * Provides a `QueryClient` and optional TanStack Query features.
  * The factory runs once per injector in Angular's injection context, so it can
  * call `inject()` and each SSR request can receive an independent cache.
- *
- * **Example - standalone**
- *
+ * @param queryClientFactory - Creates or resolves a `QueryClient` in the injection context.
+ * @param features - Optional features to configure additional Query functionality.
+ * @returns A single {@link EnvironmentProviders} value (do not spread into `providers`).
+ * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
+ * @see https://tanstack.com/query/v5/docs/framework/angular/devtools
+ * @see https://tanstack.com/query/latest/docs/framework/angular/guides/ssr
  * @example
  * ```ts
  * import {
@@ -91,13 +97,6 @@ function configureQueryClient() {
  *   ],
  * })
  * ```
- *
- * @param queryClientFactory - Creates or resolves a `QueryClient` in the injection context.
- * @param features - Optional features to configure additional Query functionality.
- * @returns A single {@link EnvironmentProviders} value (do not spread into `providers`).
- * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
- * @see https://tanstack.com/query/v5/docs/framework/angular/devtools
- * @see https://tanstack.com/query/latest/docs/framework/angular/guides/ssr
  */
 export function provideTanStackQuery(
   queryClientFactory: () => QueryClient,
@@ -131,8 +130,8 @@ interface InternalQueryFeature extends QueryFeature {
 /**
  * Creates a feature shared by Angular Query integration packages.
  * @internal
- * @param providers -
- * @returns A Query feature.
+ * @param providers - Providers owned by this Query feature.
+ * @returns An opaque feature that installs the supplied environment providers.
  */
 export function queryFeature(providers: EnvironmentProviders): QueryFeature {
   const feature: InternalQueryFeature = {
@@ -143,7 +142,12 @@ export function queryFeature(providers: EnvironmentProviders): QueryFeature {
   return feature
 }
 
-/** @internal */
+/**
+ * Gets the environment providers owned by an opaque Query feature.
+ * @internal
+ * @param feature - The feature to unwrap.
+ * @returns The environment providers to install.
+ */
 export function getQueryFeatureProviders(
   feature: QueryFeature,
 ): EnvironmentProviders {
@@ -163,8 +167,8 @@ export function getQueryFeatureProviders(
  *   ),
  * ]
  * ```
- *
  * @param key - A unique string for this client's `TransferState` entry.
+ * @returns A feature that stores this client's cache under the supplied key.
  */
 export function withHydrationKey(key: string): QueryFeature {
   return queryFeature(
@@ -179,6 +183,7 @@ export function withHydrationKey(key: string): QueryFeature {
 
 /**
  * Disables `TransferState` hydration and dehydration for the current environment injector.
+ * @returns A feature that prevents automatic cache transfer for this injector.
  */
 export function withNoQueryHydration(): QueryFeature {
   return queryFeature(

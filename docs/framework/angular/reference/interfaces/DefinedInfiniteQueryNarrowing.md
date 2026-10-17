@@ -3,7 +3,9 @@ id: DefinedInfiniteQueryNarrowing
 title: DefinedInfiniteQueryNarrowing
 ---
 
-Defined in: packages/angular-query/src/types.ts:140
+Defined in: packages/angular-query/src/types.ts:183
+
+Signal-backed guards for a paginated query whose initial data excludes the pending state.
 
 ## Type Parameters
 
@@ -17,8 +19,8 @@ Defined in: packages/angular-query/src/types.ts:140
 
 ## Properties
 
-| Property | Type |
-| ------ | ------ |
-| <a id="property-iserror"></a> `isError` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is DefinedCreateInfiniteQueryResult<TData, TError, InfiniteQueryObserverRefetchErrorResult<TData, TError>>`\> |
-| <a id="property-ispending"></a> `isPending` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is never`\> |
-| <a id="property-issuccess"></a> `isSuccess` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is DefinedCreateInfiniteQueryResult<TData, TError, InfiniteQueryObserverSuccessResult<TData, TError>>`\> |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-iserror"></a> `isError` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is DefinedCreateInfiniteQueryResult<TData, TError, InfiniteQueryObserverRefetchErrorResult<TData, TError>>`\> | Returns whether the result failed and narrows its data and error signals. |
+| <a id="property-ispending"></a> `isPending` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is never`\> | Narrows the result to the pending state when that state is possible. |
+| <a id="property-issuccess"></a> `isSuccess` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is DefinedCreateInfiniteQueryResult<TData, TError, InfiniteQueryObserverSuccessResult<TData, TError>>`\> | Returns whether the result is successful and narrows its data and error signals. |

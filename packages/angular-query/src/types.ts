@@ -25,6 +25,10 @@ import type {
 
 type SignalFunction<T extends () => any> = T & Signal<ReturnType<T>>
 
+/**
+ * Options accepted by `injectQuery`, with cache data projected through an optional `select`.
+ * Angular owns result notifications and exposes errors through signals rather than error boundaries.
+ */
 export type CreateQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -62,7 +66,13 @@ type CreateStatusBasedDefinedInfiniteQueryResult<
   { status: TStatus }
 >
 
+/**
+ * Signal-backed guards that narrow a query result and its data and error fields by status.
+ */
 export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
+  /**
+   * Returns whether the result is successful and narrows its data and error signals.
+   */
   isSuccess: SignalFunction<
     () => this is CreateBaseQueryResult<
       TData,
@@ -70,6 +80,9 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
       CreateStatusBasedQueryResult<'success', TData, TError>
     >
   >
+  /**
+   * Returns whether the result failed and narrows its data and error signals.
+   */
   isError: SignalFunction<
     () => this is CreateBaseQueryResult<
       TData,
@@ -77,6 +90,9 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
       CreateStatusBasedQueryResult<'error', TData, TError>
     >
   >
+  /**
+   * Narrows the result to the pending state when that state is possible.
+   */
   isPending: SignalFunction<
     () => this is CreateBaseQueryResult<
       TData,
@@ -86,7 +102,13 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
   >
 }
 
+/**
+ * Signal-backed guards for a query whose initial data excludes the pending state.
+ */
 export interface DefinedQueryNarrowing<TData = unknown, TError = DefaultError> {
+  /**
+   * Returns whether the result is successful and narrows its data and error signals.
+   */
   isSuccess: SignalFunction<
     () => this is DefinedCreateQueryResult<
       TData,
@@ -94,6 +116,9 @@ export interface DefinedQueryNarrowing<TData = unknown, TError = DefaultError> {
       CreateStatusBasedDefinedQueryResult<'success', TData, TError>
     >
   >
+  /**
+   * Returns whether the result failed and narrows its data and error signals.
+   */
   isError: SignalFunction<
     () => this is DefinedCreateQueryResult<
       TData,
@@ -101,13 +126,22 @@ export interface DefinedQueryNarrowing<TData = unknown, TError = DefaultError> {
       CreateStatusBasedDefinedQueryResult<'error', TData, TError>
     >
   >
+  /**
+   * Narrows the result to the pending state when that state is possible.
+   */
   isPending: SignalFunction<() => this is never>
 }
 
+/**
+ * Signal-backed guards that narrow a paginated query result by its current status.
+ */
 export interface BaseInfiniteQueryNarrowing<
   TData = unknown,
   TError = DefaultError,
 > {
+  /**
+   * Returns whether the result is successful and narrows its data and error signals.
+   */
   isSuccess: SignalFunction<
     (
       this: CreateInfiniteQueryResult<TData, TError>,
@@ -117,6 +151,9 @@ export interface BaseInfiniteQueryNarrowing<
       CreateStatusBasedInfiniteQueryResult<'success', TData, TError>
     >
   >
+  /**
+   * Returns whether the result failed and narrows its data and error signals.
+   */
   isError: SignalFunction<
     (
       this: CreateInfiniteQueryResult<TData, TError>,
@@ -126,6 +163,9 @@ export interface BaseInfiniteQueryNarrowing<
       CreateStatusBasedInfiniteQueryResult<'error', TData, TError>
     >
   >
+  /**
+   * Narrows the result to the pending state when that state is possible.
+   */
   isPending: SignalFunction<
     (
       this: CreateInfiniteQueryResult<TData, TError>,
@@ -137,10 +177,16 @@ export interface BaseInfiniteQueryNarrowing<
   >
 }
 
+/**
+ * Signal-backed guards for a paginated query whose initial data excludes the pending state.
+ */
 export interface DefinedInfiniteQueryNarrowing<
   TData = unknown,
   TError = DefaultError,
 > {
+  /**
+   * Returns whether the result is successful and narrows its data and error signals.
+   */
   isSuccess: SignalFunction<
     (
       this: DefinedCreateInfiniteQueryResult<TData, TError>,
@@ -150,6 +196,9 @@ export interface DefinedInfiniteQueryNarrowing<
       CreateStatusBasedDefinedInfiniteQueryResult<'success', TData, TError>
     >
   >
+  /**
+   * Returns whether the result failed and narrows its data and error signals.
+   */
   isError: SignalFunction<
     (
       this: DefinedCreateInfiniteQueryResult<TData, TError>,
@@ -159,11 +208,17 @@ export interface DefinedInfiniteQueryNarrowing<
       CreateStatusBasedDefinedInfiniteQueryResult<'error', TData, TError>
     >
   >
+  /**
+   * Narrows the result to the pending state when that state is possible.
+   */
   isPending: SignalFunction<
     (this: DefinedCreateInfiniteQueryResult<TData, TError>) => this is never
   >
 }
 
+/**
+ * Options accepted by `injectInfiniteQuery`, including page parameters and pagination callbacks.
+ */
 export interface CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -362,6 +417,9 @@ type CreateStatusBasedMutationResult<
   { status: TStatus }
 >
 
+/**
+ * Signal-backed guards that narrow mutation data, errors, and variables by the current status.
+ */
 export interface BaseMutationNarrowing<
   TData = unknown,
   TError = DefaultError,

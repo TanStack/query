@@ -7,7 +7,7 @@ title: injectMutation
 function injectMutation<TData, TError, TVariables, TOnMutateResult>(optionsFn: () => CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>): CreateMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/angular-query/src/inject-mutation.ts:51
+Defined in: packages/angular-query/src/inject-mutation.ts:49
 
 Injects a mutation: an imperative function that can be invoked which typically performs server side effects.
 Unlike queries, mutations are not run automatically.

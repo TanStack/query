@@ -7,7 +7,7 @@ title: CreateQueryResult
 type CreateQueryResult<TData, TError> = CreateBaseQueryResult<TData, TError>;
 ```
 
-Defined in: packages/angular-query/src/types.ts:212
+Defined in: packages/angular-query/src/types.ts:267
 
 The result of `injectQuery`. Same as [CreateBaseQueryResult](CreateBaseQueryResult.md).
 

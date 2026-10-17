@@ -3,7 +3,7 @@ id: CreateMutationOptions
 title: CreateMutationOptions
 ---
 
-Defined in: packages/angular-query/src/types.ts:277
+Defined in: packages/angular-query/src/types.ts:332
 
 The options accepted by `injectMutation`. Same as [MutationObserverOptions](MutationObserverOptions.md) from
 `@tanstack/query-core`, minus the internal `_defaulted` flag.

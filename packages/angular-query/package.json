@@ -39,7 +39,7 @@
     "test:schematics": "vitest run --config vitest.schematics.config.ts",
     "build": "vite build && tsc -p tsconfig.schematics.json && node scripts/inject-schematic-package-info.js",
     "prepack": "node scripts/prepack.js",
-    "test:eslint": "eslint --concurrency=auto ./src ./schematics ./schematics-build"
+    "test:oxlint": "oxlint ./src ./schematics ./schematics-build"
   },
   "type": "module",
   "schematics": "./schematics/collection.json",

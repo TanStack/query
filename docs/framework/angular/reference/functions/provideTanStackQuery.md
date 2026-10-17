@@ -7,13 +7,11 @@ title: provideTanStackQuery
 function provideTanStackQuery(queryClientFactory: () => QueryClient, ...features: readonly QueryFeature[]): EnvironmentProviders;
 ```
 
-Defined in: packages/angular-query/src/providers.ts:102
+Defined in: packages/angular-query/src/providers.ts:101
 
 Provides a `QueryClient` and optional TanStack Query features.
 The factory runs once per injector in Angular's injection context, so it can
 call `inject()` and each SSR request can receive an independent cache.
-
-**Example - standalone**
 
 ## Parameters
 
@@ -34,6 +32,12 @@ Optional features to configure additional Query functionality.
 `EnvironmentProviders`
 
 A single EnvironmentProviders value (do not spread into `providers`).
+
+## See
+
+ - https://tanstack.com/query/v5/docs/framework/angular/quick-start
+ - https://tanstack.com/query/v5/docs/framework/angular/devtools
+ - https://tanstack.com/query/latest/docs/framework/angular/guides/ssr
 
 ## Example
 
@@ -61,9 +65,3 @@ bootstrapApplication(AppComponent, {
   ],
 })
 ```
-
-## See
-
- - https://tanstack.com/query/v5/docs/framework/angular/quick-start
- - https://tanstack.com/query/v5/docs/framework/angular/devtools
- - https://tanstack.com/query/latest/docs/framework/angular/guides/ssr

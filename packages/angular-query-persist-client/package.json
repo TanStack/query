@@ -24,7 +24,7 @@
     "test:build": "publint --strict && attw --pack",
     "build": "pnpm build:tsdown",
     "build:tsdown": "tsdown --tsconfig tsconfig.prod.json",
-    "test:eslint": "eslint --concurrency=auto ./src"
+    "test:oxlint": "oxlint ./src"
   },
   "type": "module",
   "types": "build/index.d.ts",

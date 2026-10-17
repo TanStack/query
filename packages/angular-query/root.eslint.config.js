@@ -1,1 +1,0 @@
-../../eslint.angular.config.js

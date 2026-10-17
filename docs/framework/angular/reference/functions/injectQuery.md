@@ -25,7 +25,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function injectQuery<TQueryFnData, TError, TData, TQueryKey>(optionsFn: () => DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedCreateQueryResult<TData, TError>;
 ```
 
-Defined in: packages/angular-query/src/inject-query.ts:60
+Defined in: packages/angular-query/src/inject-query.ts:59
 
 This overload is selected when `initialData` is set on the options returned by `optionsFn`, so the
 resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
@@ -106,7 +106,7 @@ export class Posts {
 function injectQuery<TQueryFnData, TError, TData, TQueryKey>(optionsFn: () => UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: packages/angular-query/src/inject-query.ts:144
+Defined in: packages/angular-query/src/inject-query.ts:142
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
@@ -219,7 +219,7 @@ export class Posts {
 function injectQuery<TQueryFnData, TError, TData, TQueryKey>(optionsFn: () => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: packages/angular-query/src/inject-query.ts:168
+Defined in: packages/angular-query/src/inject-query.ts:165
 
 This overload accepts the general [CreateQueryOptions](../type-aliases/CreateQueryOptions.md) shape rather than the `initialData`-aware
 overloads above, so whether `data` is defined can't be inferred from the call site — useful when wrapping

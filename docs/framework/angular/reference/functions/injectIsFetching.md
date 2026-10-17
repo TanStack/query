@@ -12,7 +12,7 @@ Defined in: packages/angular-query/src/inject-is-fetching.ts:15
 Injects a signal that tracks the number of queries that your application is loading or fetching in the
 background (useful for app-wide loading indicators).
 
-Can be used for app-wide loading indicators
+Can be used for app-wide loading indicators.
 
 ## Parameters
 

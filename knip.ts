@@ -1,10 +1,19 @@
 import type { KnipConfig } from 'knip'
 
 export default {
-  ignore: ['scripts/*.{j,t}s', '**/ts-fixture/file.ts'],
+  ignore: [
+    'scripts/*.{j,t}s',
+    // Compiled by the Angular version matrix with ngc.
+    'scripts/angular-types/consumer.ts',
+    '**/ts-fixture/file.ts',
+  ],
   treatConfigHintsAsErrors: true,
   treatTagHintsAsErrors: true,
-  ignoreDependencies: ['@oxc-project/runtime'],
+  ignoreDependencies: [
+    '@oxc-project/runtime',
+    // Used by the ESLint configs of the examples.
+    '@tanstack/eslint-config',
+  ],
   ignoreWorkspaces: ['examples/**', 'integrations/**'],
   rules: { duplicates: 'warn' },
   workspaces: {

@@ -41,6 +41,9 @@ interface ExternalStoreOptions<T> {
  * errors follow Angular's normal effect error handling; the helper does not store
  * them or implement retries. Destruction stops observation without changing the
  * cached snapshot.
+ * @param binding - Produces the current snapshot reader and optional subscription.
+ * @param options - Optional equality comparison for snapshots.
+ * @returns A readonly signal containing the latest external snapshot.
  */
 export function injectExternalStore<T>(
   binding: () => ExternalBinding<T>,

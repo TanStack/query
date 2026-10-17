@@ -3,7 +3,9 @@ id: BaseMutationNarrowing
 title: BaseMutationNarrowing
 ---
 
-Defined in: packages/angular-query/src/types.ts:365
+Defined in: packages/angular-query/src/types.ts:423
+
+Signal-backed guards that narrow mutation data, errors, and variables by the current status.
 
 ## Type Parameters
 

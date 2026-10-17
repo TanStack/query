@@ -3,10 +3,9 @@ id: CreateInfiniteQueryOptions
 title: CreateInfiniteQueryOptions
 ---
 
-Defined in: packages/angular-query/src/types.ts:167
+Defined in: packages/angular-query/src/types.ts:222
 
-Like `Omit`, but by default (`'strictly'`) `TKey` must be a key of `TObject`, so omitting a key
-that doesn't exist is a type error. Pass `'safely'` to allow other keys too.
+Options accepted by `injectInfiniteQuery`, including page parameters and pagination callbacks.
 
 ## Extends
 

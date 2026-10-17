@@ -3,7 +3,9 @@ id: QueryResource
 title: QueryResource
 ---
 
-Defined in: packages/angular-query/src/query-resource.ts:6
+Defined in: packages/angular-query/src/query-resource.ts:9
+
+A query-backed Angular Resource that also exposes an atomic state snapshot.
 
 ## Extends
 

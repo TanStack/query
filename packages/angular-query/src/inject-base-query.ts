@@ -13,6 +13,9 @@ import type {
 
 /**
  * Base implementation for `injectQuery` and `injectInfiniteQuery`.
+ * @param optionsFn - Produces the reactive query options.
+ * @param Observer - The core observer constructor for this query kind.
+ * @returns The current result signal and a function that reads its active observer.
  */
 export function injectBaseQuery<
   TQueryFnData,

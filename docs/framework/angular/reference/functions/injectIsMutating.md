@@ -12,7 +12,7 @@ Defined in: packages/angular-query/src/inject-is-mutating.ts:15
 Injects a signal that tracks the number of mutations that your application currently has `pending`
 (useful for app-wide loading indicators).
 
-Can be used for app-wide loading indicators
+Can be used for app-wide loading indicators.
 
 ## Parameters
 

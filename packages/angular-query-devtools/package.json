@@ -30,7 +30,7 @@
     "test:build": "trap 'premove ./dist/*.tgz' EXIT; pnpm pack && publint ./dist/*.tgz --strict && attw ./dist/*.tgz --ignore-rules cjs-resolves-to-esm",
     "build": "vite build",
     "prepack": "node scripts/prepack.js",
-    "test:eslint": "eslint --concurrency=auto ./src"
+    "test:oxlint": "oxlint ./src"
   },
   "nx": {
     "targets": {

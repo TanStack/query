@@ -28,13 +28,12 @@ import type {
 /**
  * This overload is selected when `initialData` is set, so the resulting `data` signal is never `undefined`
  * (unless a `select` changes `TData` to include `undefined`).
- *
- * @see https://tanstack.com/query/latest/docs/framework/angular/guides/infinite-queries
- * @see {@link infiniteQueryOptions} to share these options between `injectInfiniteQuery` and
- * `queryClient.infiniteQuery`.
  * @param optionsFn - A function returning infinite-query options with `initialData` set. Similar to
  * `computed` from Angular, this function runs in the reactive context.
  * @returns The infinite query result, typed so that `data` is never `undefined`.
+ * @see https://tanstack.com/query/latest/docs/framework/angular/guides/infinite-queries
+ * @see {@link infiniteQueryOptions} to share these options between `injectInfiniteQuery` and
+ * `queryClient.infiniteQuery`.
  */
 export function injectInfiniteQuery<
   TQueryFnData,
@@ -55,14 +54,12 @@ export function injectInfiniteQuery<
 /**
  * Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
  * Infinite queries can additively "load more" data onto an existing set of data or support infinite scroll.
- *
- * @see https://tanstack.com/query/latest/docs/framework/angular/guides/infinite-queries
- * @see {@link infiniteQueryOptions} to share these options between `injectInfiniteQuery` and
- * `queryClient.infiniteQuery`.
  * @param optionsFn - A function that returns infinite query options. Similar to `computed` from Angular,
  * this function runs in the reactive context, so signals read inside it drive the query.
  * @returns The infinite query result.
- *
+ * @see https://tanstack.com/query/latest/docs/framework/angular/guides/infinite-queries
+ * @see {@link infiniteQueryOptions} to share these options between `injectInfiniteQuery` and
+ * `queryClient.infiniteQuery`.
  * @example
  * ```angular-ts
  * @Component({
@@ -112,11 +109,10 @@ export function injectInfiniteQuery<
  * This overload accepts the general {@link CreateInfiniteQueryOptions} shape rather than the
  * `initialData`-aware overloads above, so whether `data` is defined can't be inferred from the call
  * site — useful when wrapping `injectInfiniteQuery` in your own helper.
- *
- * @see https://tanstack.com/query/latest/docs/framework/angular/guides/infinite-queries
  * @param optionsFn - A function that returns infinite query options. Similar to `computed` from Angular,
  * this function runs in the reactive context, so signals read inside it drive the query.
  * @returns The infinite query result.
+ * @see https://tanstack.com/query/latest/docs/framework/angular/guides/infinite-queries
  */
 export function injectInfiniteQuery<
   TQueryFnData,

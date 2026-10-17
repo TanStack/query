@@ -2,6 +2,9 @@ import type { ResourceStatus } from '@angular/core'
 
 // Angular 20 does not expose ResourceSnapshot. Remove this local type when the
 // minimum supported Angular version provides it.
+/**
+ * A discriminated snapshot containing either a resource value or its current error.
+ */
 export type ResourceSnapshot<T> =
   | { readonly status: 'error'; readonly error: Error }
   | {
