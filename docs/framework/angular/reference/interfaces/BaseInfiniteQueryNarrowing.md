@@ -3,7 +3,7 @@ id: BaseInfiniteQueryNarrowing
 title: BaseInfiniteQueryNarrowing
 ---
 
-Defined in: packages/angular-query/src/types.ts:138
+Defined in: [packages/angular-query/src/types.ts:138](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L138)
 
 Signal-backed guards that narrow a paginated query result by its current status.
 

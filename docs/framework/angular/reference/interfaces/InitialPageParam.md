@@ -3,7 +3,7 @@ id: InitialPageParam
 title: InitialPageParam
 ---
 
-Defined in: packages/query-core/src/types.ts:470
+Defined in: [packages/query-core/src/types.ts:470](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L470)
 
 Holds the `initialPageParam` option that every infinite query requires.
 

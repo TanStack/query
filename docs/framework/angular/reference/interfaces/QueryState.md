@@ -3,7 +3,7 @@ id: QueryState
 title: QueryState
 ---
 
-Defined in: packages/query-core/src/query.ts:52
+Defined in: [packages/query-core/src/query.ts:52](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L52)
 
 The raw state stored on a `Query` instance. This is the underlying state
 that observer results (e.g. `QueryObserverResult`) are derived from.

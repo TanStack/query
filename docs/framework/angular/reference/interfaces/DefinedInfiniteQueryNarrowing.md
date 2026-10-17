@@ -3,7 +3,7 @@ id: DefinedInfiniteQueryNarrowing
 title: DefinedInfiniteQueryNarrowing
 ---
 
-Defined in: packages/angular-query/src/types.ts:183
+Defined in: [packages/angular-query/src/types.ts:183](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L183)
 
 Signal-backed guards for a paginated query whose initial data excludes the pending state.
 

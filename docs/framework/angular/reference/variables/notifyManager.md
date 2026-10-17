@@ -7,7 +7,7 @@ title: notifyManager
 const notifyManager: object;
 ```
 
-Defined in: packages/query-core/src/notifyManager.ts:154
+Defined in: [packages/query-core/src/notifyManager.ts:154](https://github.com/TanStack/query/blob/main/packages/query-core/src/notifyManager.ts#L154)
 
 Handles scheduling and batching callbacks in TanStack Query.
 

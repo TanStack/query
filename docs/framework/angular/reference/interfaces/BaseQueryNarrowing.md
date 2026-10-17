@@ -3,7 +3,7 @@ id: BaseQueryNarrowing
 title: BaseQueryNarrowing
 ---
 
-Defined in: packages/angular-query/src/types.ts:72
+Defined in: [packages/angular-query/src/types.ts:72](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L72)
 
 Signal-backed guards that narrow a query result and its data and error fields by status.
 

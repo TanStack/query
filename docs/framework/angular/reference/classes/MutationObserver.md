@@ -3,7 +3,7 @@ id: MutationObserver
 title: MutationObserver
 ---
 
-Defined in: packages/query-core/src/mutationObserver.ts:37
+Defined in: [packages/query-core/src/mutationObserver.ts:37](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L37)
 
 Observes a single mutation and derives a `MutationObserverResult` from it.
 A framework hook like `useMutation` creates one `MutationObserver` per hook
@@ -50,7 +50,7 @@ const observer = new MutationObserver(queryClient, {
 new MutationObserver<TData, TError, TVariables, TOnMutateResult>(client: QueryClient, options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>): MutationObserver<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/src/mutationObserver.ts:57
+Defined in: [packages/query-core/src/mutationObserver.ts:57](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L57)
 
 #### Parameters
 
@@ -82,7 +82,7 @@ Subscribable<
 options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/src/mutationObserver.ts:45
+Defined in: [packages/query-core/src/mutationObserver.ts:45](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L45)
 
 ## Methods
 
@@ -92,7 +92,7 @@ Defined in: packages/query-core/src/mutationObserver.ts:45
 getCurrentResult(): MutationObserverResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/src/mutationObserver.ts:165
+Defined in: [packages/query-core/src/mutationObserver.ts:165](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L165)
 
 Returns the observer's current result, derived from the observed
 mutation's state (or the default, `idle` state if no mutation has been
@@ -112,7 +112,7 @@ The observer's latest result.
 hasListeners(): boolean;
 ```
 
-Defined in: packages/query-core/src/subscribable.ts:43
+Defined in: [packages/query-core/src/subscribable.ts:43](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L43)
 
 Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
@@ -136,7 +136,7 @@ Subscribable.hasListeners
 mutate(variables: TVariables, options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>): Promise<TData>;
 ```
 
-Defined in: packages/query-core/src/mutationObserver.ts:217
+Defined in: [packages/query-core/src/mutationObserver.ts:217](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L217)
 
 Builds a new `Mutation` in the `MutationCache` using the observer's
 current options, detaches this observer from any previously observed
@@ -184,7 +184,7 @@ await observer.mutate(
 reset(): void;
 ```
 
-Defined in: packages/query-core/src/mutationObserver.ts:188
+Defined in: [packages/query-core/src/mutationObserver.ts:188](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L188)
 
 Detaches the observer from the mutation it is currently observing (if
 any) and resets the observed result back to its default, `idle` state.
@@ -216,7 +216,7 @@ observer.reset()
 setOptions(options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>): void;
 ```
 
-Defined in: packages/query-core/src/mutationObserver.ts:100
+Defined in: [packages/query-core/src/mutationObserver.ts:100](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L100)
 
 Updates the observer's options.
 
@@ -254,7 +254,7 @@ observer.setOptions({
 subscribe(listener: MutationObserverListener): () => void;
 ```
 
-Defined in: packages/query-core/src/subscribable.ts:28
+Defined in: [packages/query-core/src/subscribable.ts:28](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L28)
 
 Registers a listener to be called on every update this object notifies about. Returns a function
 that removes the listener again — call it to stop listening. The base class never drops a listener

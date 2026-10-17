@@ -10,8 +10,8 @@ function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Wi
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-- [`WithRequired` → `WithRequired`](#call-signature-1): You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. A `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with `injectMutationState`.
-- [`Omit` → `Omit`](#call-signature-2): You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. No `mutationKey` is required on this overload — use this when you don't need to target the mutation via a `mutationKey` filter later (e.g. with `injectMutationState`); it can still be observed through other filters, such as `status`.
+- [`WithRequired<CreateMutationOptions>` → `WithRequired<CreateMutationOptions>`](#call-signature-1): You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. A `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with `injectMutationState`.
+- [`Omit<CreateMutationOptions>` → `Omit<CreateMutationOptions>`](#call-signature-2): You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. No `mutationKey` is required on this overload — use this when you don't need to target the mutation via a `mutationKey` filter later (e.g. with `injectMutationState`); it can still be observed through other filters, such as `status`.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 
@@ -23,7 +23,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: packages/angular-query/src/mutation-options.ts:38
+Defined in: [packages/angular-query/src/mutation-options.ts:38](https://github.com/TanStack/query/blob/main/packages/angular-query/src/mutation-options.ts#L38)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. A
 `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
@@ -101,7 +101,7 @@ export class SavingIndicator {
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: packages/angular-query/src/mutation-options.ts:94
+Defined in: [packages/angular-query/src/mutation-options.ts:94](https://github.com/TanStack/query/blob/main/packages/angular-query/src/mutation-options.ts#L94)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. No
 `mutationKey` is required on this overload — use this when you don't need to target the mutation via a

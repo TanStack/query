@@ -3,7 +3,7 @@ id: MutationState
 title: MutationState
 ---
 
-Defined in: packages/query-core/src/mutation.ts:30
+Defined in: [packages/query-core/src/mutation.ts:30](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L30)
 
 The raw state stored on a `Mutation` instance. This is the underlying state
 that observer results (e.g. `MutationObserverResult`) are derived from.

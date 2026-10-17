@@ -3,7 +3,7 @@ id: InfiniteQueryObserver
 title: InfiniteQueryObserver
 ---
 
-Defined in: packages/query-core/src/infiniteQueryObserver.ts:40
+Defined in: [packages/query-core/src/infiniteQueryObserver.ts:40](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L40)
 
 An `InfiniteQueryObserver` extends `QueryObserver` to observe and switch
 between infinite queries. It augments the base `QueryObserverResult` with
@@ -58,7 +58,7 @@ const unsubscribe = observer.subscribe((result) => console.log(result))
 new InfiniteQueryObserver<TQueryFnData, TError, TData, TQueryKey, TPageParam>(client: QueryClient, options: InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): InfiniteQueryObserver<TQueryFnData, TError, TData, TQueryKey, TPageParam>;
 ```
 
-Defined in: packages/query-core/src/infiniteQueryObserver.ts:82
+Defined in: [packages/query-core/src/infiniteQueryObserver.ts:82](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L82)
 
 #### Parameters
 
@@ -86,7 +86,7 @@ Defined in: packages/query-core/src/infiniteQueryObserver.ts:82
 getCurrentResult: ReplaceReturnType<() => QueryObserverResult<TData, TError>, InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: packages/query-core/src/infiniteQueryObserver.ts:59
+Defined in: [packages/query-core/src/infiniteQueryObserver.ts:59](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L59)
 
 Returns the most recently computed `QueryObserverResult` for the
 observed query. This is a point-in-time read; to be notified of updates
@@ -118,7 +118,7 @@ QueryObserver.getCurrentResult
 options: QueryObserverOptions<TQueryFnData, TError, TData, InfiniteData<TQueryFnData, TPageParam>, TQueryKey>;
 ```
 
-Defined in: packages/query-core/src/queryObserver.ts:88
+Defined in: [packages/query-core/src/queryObserver.ts:88](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L88)
 
 #### Inherited from
 
@@ -132,7 +132,7 @@ Defined in: packages/query-core/src/queryObserver.ts:88
 subscribe: (listener: InfiniteQueryObserverListener) => () => void;
 ```
 
-Defined in: packages/query-core/src/infiniteQueryObserver.ts:54
+Defined in: [packages/query-core/src/infiniteQueryObserver.ts:54](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L54)
 
 Registers a listener to be called on every update this object notifies about. Returns a function
 that removes the listener again — call it to stop listening. The base class never drops a listener
@@ -176,7 +176,7 @@ QueryObserver.subscribe
 destroy(): void;
 ```
 
-Defined in: packages/query-core/src/queryObserver.ts:166
+Defined in: [packages/query-core/src/queryObserver.ts:166](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L166)
 
 Stops observing the current query: clears all listeners, cancels the
 stale and refetch-interval timers, and removes this observer from the
@@ -198,7 +198,7 @@ query it was observing.
 fetchNextPage(options?: FetchNextPageOptions): Promise<InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: packages/query-core/src/infiniteQueryObserver.ts:165
+Defined in: [packages/query-core/src/infiniteQueryObserver.ts:165](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L165)
 
 Fetches the next page of the infinite query and returns a promise that
 resolves with the resulting `InfiniteQueryObserverResult`. The page
@@ -244,7 +244,7 @@ if (hasNextPage) {
 fetchOptimistic(options: QueryObserverOptions<TQueryFnData, TError, TData, InfiniteData<TQueryFnData, TPageParam>, TQueryKey>): Promise<QueryObserverResult<TData, TError>>;
 ```
 
-Defined in: packages/query-core/src/queryObserver.ts:412
+Defined in: [packages/query-core/src/queryObserver.ts:412](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L412)
 
 Fetches a query defined by the given options without affecting this
 observer's own tracked query or result, and returns a promise that
@@ -288,7 +288,7 @@ console.log(result.data)
 fetchPreviousPage(options?: FetchPreviousPageOptions): Promise<InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: packages/query-core/src/infiniteQueryObserver.ts:196
+Defined in: [packages/query-core/src/infiniteQueryObserver.ts:196](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L196)
 
 Fetches the previous page of the infinite query and returns a promise
 that resolves with the resulting `InfiniteQueryObserverResult`. The page
@@ -334,7 +334,7 @@ if (hasPreviousPage) {
 getCurrentQuery(): Query<TQueryFnData, TError, InfiniteData<TQueryFnData, TPageParam>, TQueryKey>;
 ```
 
-Defined in: packages/query-core/src/queryObserver.ts:371
+Defined in: [packages/query-core/src/queryObserver.ts:371](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L371)
 
 Returns the `Query` instance this observer is currently observing.
 
@@ -356,7 +356,7 @@ The observed query.
 getOptimisticResult(options: DefaultedInfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): InfiniteQueryObserverResult<TData, TError>;
 ```
 
-Defined in: packages/query-core/src/infiniteQueryObserver.ts:129
+Defined in: [packages/query-core/src/infiniteQueryObserver.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L129)
 
 The infinite-query counterpart of [QueryObserver#getOptimisticResult](QueryObserver.md#getoptimisticresult), marking the
 options as an infinite query before delegating to it. Called by framework adapters (e.g.
@@ -389,7 +389,7 @@ The result for the given options.
 hasListeners(): boolean;
 ```
 
-Defined in: packages/query-core/src/subscribable.ts:43
+Defined in: [packages/query-core/src/subscribable.ts:43](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L43)
 
 Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
@@ -411,7 +411,7 @@ Returns `true` while at least one listener is registered, `false` once they have
 refetch(options?: RefetchOptions): Promise<QueryObserverResult<TData, TError>>;
 ```
 
-Defined in: packages/query-core/src/queryObserver.ts:387
+Defined in: [packages/query-core/src/queryObserver.ts:387](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L387)
 
 Refetches the observed query and returns a promise that resolves with
 the resulting `QueryObserverResult`.
@@ -450,7 +450,7 @@ console.log(result.data)
 setOptions(options: InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): void;
 ```
 
-Defined in: packages/query-core/src/infiniteQueryObserver.ts:108
+Defined in: [packages/query-core/src/infiniteQueryObserver.ts:108](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L108)
 
 Updates the observer's options. Behaves the same as
 `QueryObserver.setOptions`, additionally marking the options as
@@ -481,7 +481,7 @@ The new infinite query observer options.
 shouldFetchOnReconnect(): boolean;
 ```
 
-Defined in: packages/query-core/src/queryObserver.ts:139
+Defined in: [packages/query-core/src/queryObserver.ts:139](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L139)
 
 Returns whether the observed query is currently stale and configured
 (via the `refetchOnReconnect` option) to refetch when the network
@@ -505,7 +505,7 @@ reconnects.
 shouldFetchOnWindowFocus(): boolean;
 ```
 
-Defined in: packages/query-core/src/queryObserver.ts:153
+Defined in: [packages/query-core/src/queryObserver.ts:153](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L153)
 
 Returns whether the observed query is currently stale and configured
 (via the `refetchOnWindowFocus` option) to refetch when the window
@@ -554,7 +554,7 @@ trackProp(key:
   | "fetchStatus"): void;
 ```
 
-Defined in: packages/query-core/src/queryObserver.ts:363
+Defined in: [packages/query-core/src/queryObserver.ts:363](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L363)
 
 Records that the given `QueryObserverResult` property was read, so a subsequent update only
 notifies this observer if a tracked property actually changed. Normally called indirectly via
@@ -634,7 +634,7 @@ trackResult(result: QueryObserverResult<TData, TError>, onPropTracked?: (key:
 | "fetchStatus") => void): QueryObserverResult<TData, TError>;
 ```
 
-Defined in: packages/query-core/src/queryObserver.ts:343
+Defined in: [packages/query-core/src/queryObserver.ts:343](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L343)
 
 Wraps a `QueryObserverResult` in a `Proxy` that records which properties are read, via
 [QueryObserver#trackProp](QueryObserver.md#trackprop) (and an optional `onPropTracked` callback). Used by framework
@@ -698,7 +698,7 @@ A proxy of `result` that tracks property reads.
 updateResult(): void;
 ```
 
-Defined in: packages/query-core/src/queryObserver.ts:765
+Defined in: [packages/query-core/src/queryObserver.ts:765](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L765)
 
 Recomputes and stores the current result from the current query/options, notifying listeners
 if it changed. Framework adapters call this right after subscribing to make sure no query

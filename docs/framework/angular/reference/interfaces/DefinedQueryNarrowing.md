@@ -3,7 +3,7 @@ id: DefinedQueryNarrowing
 title: DefinedQueryNarrowing
 ---
 
-Defined in: packages/angular-query/src/types.ts:108
+Defined in: [packages/angular-query/src/types.ts:108](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L108)
 
 Signal-backed guards for a query whose initial data excludes the pending state.
 

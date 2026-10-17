@@ -3,7 +3,7 @@ id: InjectQueriesOptions
 title: InjectQueriesOptions
 ---
 
-Defined in: packages/angular-query/src/inject-queries.types.ts:226
+Defined in: [packages/angular-query/src/inject-queries.types.ts:226](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-queries.types.ts#L226)
 
 A reactive group of query options and an optional projection of their combined results.
 

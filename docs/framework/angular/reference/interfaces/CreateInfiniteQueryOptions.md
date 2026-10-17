@@ -3,7 +3,7 @@ id: CreateInfiniteQueryOptions
 title: CreateInfiniteQueryOptions
 ---
 
-Defined in: packages/angular-query/src/types.ts:222
+Defined in: [packages/angular-query/src/types.ts:222](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L222)
 
 Options accepted by `injectInfiniteQuery`, including page parameters and pagination callbacks.
 

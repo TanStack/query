@@ -7,7 +7,7 @@ title: injectQueries
 function injectQueries<T, TCombinedResult>(optionsFn: () => InjectQueriesOptions<T, TCombinedResult>): Signal<TCombinedResult>;
 ```
 
-Defined in: packages/angular-query/src/inject-queries.ts:55
+Defined in: [packages/angular-query/src/inject-queries.ts:55](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-queries.ts#L55)
 
 Injects multiple queries that run in parallel and react to Angular signals.
 

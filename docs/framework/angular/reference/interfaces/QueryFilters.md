@@ -3,7 +3,7 @@ id: QueryFilters
 title: QueryFilters
 ---
 
-Defined in: packages/query-core/src/utils.ts:31
+Defined in: [packages/query-core/src/utils.ts:31](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L31)
 
 Filters used to select queries, for example in `queryClient.getQueriesData` or `queryClient.invalidateQueries`.
 All provided filters must match; filters that are left unspecified are ignored.

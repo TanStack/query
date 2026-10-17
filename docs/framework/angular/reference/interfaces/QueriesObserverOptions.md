@@ -3,7 +3,7 @@ id: QueriesObserverOptions
 title: QueriesObserverOptions
 ---
 
-Defined in: packages/query-core/src/queriesObserver.ts:32
+Defined in: [packages/query-core/src/queriesObserver.ts:32](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L32)
 
 Options for a `QueriesObserver` that apply to all of its queries at once.
 
