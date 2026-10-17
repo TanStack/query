@@ -13,7 +13,7 @@
 
   let name = $state('')
 
-  const postTodo = async ({ name, notes }: Omit<Todo, 'id'>) => {
+  const postTodo = async ({ name, notes }: Omit<Todo, 'id'>): Promise<Todo> => {
     return new Promise((resolve, reject) => {
       setTimeout(
         () => {

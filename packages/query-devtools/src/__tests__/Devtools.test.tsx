@@ -94,7 +94,7 @@ describe('Devtools', () => {
                 contentRect: { width: 1000, height: 500 } as DOMRectReadOnly,
               } as ResizeObserverEntry,
             ],
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+            // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
             this as unknown as ResizeObserver,
           )
         })
@@ -808,7 +808,7 @@ describe('Devtools', () => {
                   contentRect: { width: 500, height: 500 } as DOMRectReadOnly,
                 } as ResizeObserverEntry,
               ],
-              // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+              // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
               this as unknown as ResizeObserver,
             )
           })
@@ -845,7 +845,7 @@ describe('Devtools', () => {
                   contentRect: { width: 500, height: 500 } as DOMRectReadOnly,
                 } as ResizeObserverEntry,
               ],
-              // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+              // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
               this as unknown as ResizeObserver,
             )
           })
@@ -1225,6 +1225,55 @@ describe('Devtools', () => {
         ).not.toBeInTheDocument()
         expect(
           rendered.getByLabelText(/Query key \["hide-test-active"\]/),
+        ).toBeInTheDocument()
+      } finally {
+        unsubscribe()
+      }
+    })
+    it('should hide disabled queries when the "hideDisabledQueries" prop is true', () => {
+      const disabled = new QueryObserver(queryClient, {
+        queryKey: ['hide-prop-disabled'],
+        queryFn: () => 'x',
+        enabled: false,
+      })
+      const unsubscribe = disabled.subscribe(() => {})
+      queryClient.setQueryData(['hide-prop-disabled'], 'x')
+      queryClient.setQueryData(['hide-prop-active'], 'y')
+
+      try {
+        const rendered = renderDevtools({
+          initialIsOpen: true,
+          hideDisabledQueries: true,
+        })
+
+        expect(
+          rendered.queryByLabelText(/Query key \["hide-prop-disabled"\]/),
+        ).not.toBeInTheDocument()
+        expect(
+          rendered.getByLabelText(/Query key \["hide-prop-active"\]/),
+        ).toBeInTheDocument()
+      } finally {
+        unsubscribe()
+      }
+    })
+
+    it('should prefer the "hideDisabledQueries" setting in localStorage over the prop', () => {
+      const disabled = new QueryObserver(queryClient, {
+        queryKey: ['hide-override-disabled'],
+        queryFn: () => 'x',
+        enabled: false,
+      })
+      const unsubscribe = disabled.subscribe(() => {})
+      queryClient.setQueryData(['hide-override-disabled'], 'x')
+
+      try {
+        const rendered = renderDevtools(
+          { initialIsOpen: true, hideDisabledQueries: true },
+          { 'TanstackQueryDevtools.hideDisabledQueries': 'false' },
+        )
+
+        expect(
+          rendered.getByLabelText(/Query key \["hide-override-disabled"\]/),
         ).toBeInTheDocument()
       } finally {
         unsubscribe()

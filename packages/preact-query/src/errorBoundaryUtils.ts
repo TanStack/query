@@ -1,4 +1,5 @@
 import { shouldThrowError } from '@tanstack/query-core'
+import { useEffect } from 'preact/hooks'
 import type {
   DefaultedQueryObserverOptions,
   Query,
@@ -6,7 +7,6 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
-import { useEffect } from 'preact/hooks'
 
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 

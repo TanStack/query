@@ -471,10 +471,10 @@ describe('useQuery', () => {
       )
     }
 
-    function Component({ value }: { value: string }) {
+    function Component(props: { value: string }) {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: () => sleep(10).then(() => 'data: ' + value),
+        queryFn: () => sleep(10).then(() => 'data: ' + props.value),
         gcTime: 0,
       }))
       createRenderEffect(() => {
@@ -2685,7 +2685,7 @@ describe('useQuery', () => {
         setActTimeout(() => {
           setCount(1)
         }, 10)
-      }, [])
+      })
 
       return null
     }
@@ -4177,7 +4177,7 @@ describe('useQuery', () => {
       readonly [typeof key, number]
     > = async (ctx) => {
       const [, limit] = ctx.queryKey
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
       const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
       await sleep(25)
       return value

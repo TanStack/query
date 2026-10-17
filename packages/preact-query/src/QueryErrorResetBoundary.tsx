@@ -1,6 +1,6 @@
 import { createContext } from 'preact'
-import type { ComponentChildren } from 'preact'
 import { useContext, useState } from 'preact/hooks'
+import type { ComponentChildren } from 'preact'
 
 // CONTEXT
 

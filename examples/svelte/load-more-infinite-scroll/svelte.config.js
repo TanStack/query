@@ -6,6 +6,11 @@ const config = {
   preprocess: vitePreprocess(),
   kit: {
     adapter: adapter(),
+    typescript: {
+      config: (tsconfig) => {
+        tsconfig.include.push('../eslint.config.js', '../svelte.config.js')
+      },
+    },
   },
   compilerOptions: {
     runes: true,
