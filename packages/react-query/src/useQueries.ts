@@ -15,6 +15,7 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
+import { checkQueryStrictMode, useQueryStrictMode } from './QueryStrictMode'
 import {
   ensureSuspenseTimers,
   fetchOptimistic,
@@ -386,6 +387,7 @@ export function useQueries<
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
+  const strictMode = useQueryStrictMode()
   const subscribed = options.subscribed !== false
 
   const defaultedQueries = React.useMemo(
@@ -450,6 +452,20 @@ export function useQueries<
       options as QueriesObserverOptions<TCombinedResult>,
     )
   }, [defaultedQueries, options, observer])
+
+  if (!isRestoring) {
+    optimisticResult.forEach((result, index) => {
+      const opts = defaultedQueries[index]
+      if (opts) {
+        checkQueryStrictMode(
+          strictMode,
+          client.getQueryCache().get(opts.queryHash),
+          result,
+          !!opts.suspense,
+        )
+      }
+    })
+  }
 
   const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result),
