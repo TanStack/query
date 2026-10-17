@@ -15,9 +15,8 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { useQueryStrictMode } from './QueryStrictMode'
+import { checkQueryStrictMode, useQueryStrictMode } from './QueryStrictMode'
 import {
-  checkQueryStrictMode,
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
@@ -461,7 +460,8 @@ export function useQueries<
         checkQueryStrictMode(
           strictMode,
           client.getQueryCache().get(opts.queryHash),
-          !!shouldSuspend(opts, result),
+          result,
+          !!opts.suspense,
         )
       }
     })

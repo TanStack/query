@@ -3,17 +3,27 @@ import * as React from 'react'
 
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './IsRestoringProvider'
-import type { Query, QueryClient } from '@tanstack/query-core'
+import type {
+  Query,
+  QueryClient,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 
 /**
  * A problem reported by `QueryStrictMode`.
  */
 export interface QueryStrictModeEvent {
   /**
-   * `'missing-prefetch'` when a suspense hook starts a fetch during render, and `'unused-prefetch'`
+   * `'missing-prefetch'` when a hook starts the initial fetch of its query, and `'unused-prefetch'`
    * when nothing used a prefetched query within `unusedPrefetchTimeout`.
    */
   type: 'missing-prefetch' | 'unused-prefetch'
+  /**
+   * For a `'missing-prefetch'`, whether the hook suspends on the fetch. A suspending hook can't
+   * render until the fetch finishes, which causes request waterfalls. Use it to only report suspense
+   * hooks, for example.
+   */
+  suspense?: boolean
   /**
    * A readable description of the problem.
    */
@@ -28,7 +38,7 @@ export interface QueryStrictModeEvent {
  * Thrown instead of logging a problem when `throwOnMissingPrefetch` or `throwOnUnusedPrefetch`
  * applies to it:
  *
- * - `'missing-prefetch'`: thrown by the suspense hook, instead of starting the fetch.
+ * - `'missing-prefetch'`: thrown by the hook, instead of starting the fetch.
  * - `'unused-prefetch'`: thrown by the outermost `QueryStrictMode`, to the error boundary above
  * it.
  * @example
@@ -88,7 +98,7 @@ export type QueryStrictModeThrowOption =
  * @param event - The problem that was found.
  * @returns Whether to throw `event`.
  */
-export const shouldThrowQueryStrictModeEvent = (
+const shouldThrowQueryStrictModeEvent = (
   option: QueryStrictModeThrowOption,
   event: QueryStrictModeEvent,
 ) => (typeof option === 'function' ? option(event) : option)
@@ -103,7 +113,7 @@ export interface QueryStrictModeProps {
   children?: React.ReactNode
   /**
    * Receives every problem that is found. Use it to filter out known or intentional waterfalls, for
-   * example by `queryKey` or `meta`.
+   * example by `queryKey`, `meta`, or `suspense`.
    * @defaultValue Logs `event.message` with `console.error`.
    */
   logger?: QueryStrictModeLogger
@@ -174,9 +184,10 @@ const defaultLogger: QueryStrictModeLogger = (event) => {
 /**
  * Warns about prefetching problems during development:
  *
- * - `'missing-prefetch'`: `useSuspenseQuery`, `useSuspenseInfiniteQuery`, or `useSuspenseQueries`
- * starts a fetch during render because the query wasn't prefetched, which causes request
- * waterfalls. Only reported for hooks inside `QueryStrictMode`.
+ * - `'missing-prefetch'`: a query hook, like `useQuery` or `useSuspenseQuery`, starts the initial
+ * fetch of its query because it wasn't prefetched. Suspense hooks start it during render, which
+ * causes request waterfalls; `event.suspense` tells them apart. Only reported for hooks inside
+ * `QueryStrictMode`.
  * - `'unused-prefetch'`: a query was prefetched, but nothing used it within
  * `unusedPrefetchTimeout`. A query counts as used once a hook inside a `QueryStrictMode` reads it,
  * or while anything observes it. A query only read outside of `QueryStrictMode`, by a component
@@ -327,4 +338,69 @@ const DevQueryStrictMode = ({
       {children}
     </QueryStrictModeContext.Provider>
   )
+}
+
+// The query states a `'missing-prefetch'` was logged for. A component can render more than once
+// before it starts the fetch, for example in `React.StrictMode`, but each state is only logged once
+const loggedMissingPrefetches = new WeakSet<
+  Query<any, any, any, any>['state']
+>()
+
+/**
+ * Inside a `QueryStrictMode`, marks a query read by a hook as used, and reports a
+ * `'missing-prefetch'` if the hook is about to start the initial fetch of the query. Does nothing
+ * in production.
+ * @param strictMode - The value of the nearest `QueryStrictMode`, if any.
+ * @param query - The query the hook reads.
+ * @param result - The optimistic result of the hook.
+ * @param suspense - Whether the hook suspends while the query is pending.
+ * @throws {QueryStrictModeError} When `throwOnMissingPrefetch` applies to the `'missing-prefetch'`.
+ */
+export const checkQueryStrictMode = (
+  strictMode: QueryStrictModeValue | null,
+  query: Query<any, any, any, any> | undefined,
+  result: QueryObserverResult<any, any>,
+  suspense: boolean,
+) => {
+  if (process.env.NODE_ENV !== 'production') {
+    if (!strictMode || !query) {
+      return
+    }
+    strictMode.markUsed(query)
+    // A suspending hook starts the fetch during render. Otherwise, the optimistic result reports
+    // `'fetching'` when the hook starts the fetch on mount, or after its options change.
+    const startsInitialFetch = suspense
+      ? result.isPending
+      : result.fetchStatus === 'fetching' && query.state.data === undefined
+    // Check the query's own state: the fetch hasn't started yet if it's still `'idle'`. A query
+    // that errored is refetched after an error boundary reset, which isn't a missing prefetch.
+    if (
+      startsInitialFetch &&
+      query.state.fetchStatus === 'idle' &&
+      query.state.status !== 'error'
+    ) {
+      const event: QueryStrictModeEvent = {
+        type: 'missing-prefetch',
+        suspense,
+        message: suspense
+          ? `[${query.queryHash}]: A suspense query started its fetch during render. Prefetch it higher up (in a route loader, with usePrefetchQuery, or on the server) to avoid request waterfalls.`
+          : `[${query.queryHash}]: A query started its fetch after rendering. Prefetch it higher up (in a route loader, with usePrefetchQuery, or on the server) to start the fetch earlier.`,
+        query,
+      }
+      // Throw before the hook starts its fetch, so the query stays idle and throws again after
+      // an error boundary reset
+      if (
+        shouldThrowQueryStrictModeEvent(
+          strictMode.throwOnMissingPrefetch,
+          event,
+        )
+      ) {
+        throw new QueryStrictModeError(event)
+      }
+      if (!loggedMissingPrefetches.has(query.state)) {
+        loggedMissingPrefetches.add(query.state)
+        strictMode.logger(event)
+      }
+    }
+  }
 }

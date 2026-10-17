@@ -13,6 +13,7 @@ import {
   hydrate,
   noop,
   usePrefetchQuery,
+  useQueries,
   useQuery,
   useSuspenseInfiniteQuery,
   useSuspenseQueries,
@@ -68,6 +69,7 @@ describe('QueryStrictMode', () => {
       expect(logger).toHaveBeenCalledTimes(1)
       expect(logger).toHaveBeenCalledWith({
         type: 'missing-prefetch',
+        suspense: true,
         message: expect.stringContaining(getQuery(key)!.queryHash),
         query: getQuery(key),
       })
@@ -206,6 +208,182 @@ describe('QueryStrictMode', () => {
       expect(logger).toHaveBeenCalledTimes(1)
       expect(logger.mock.calls[0]![0]).toMatchObject({
         type: 'missing-prefetch',
+        query: getQuery(key2),
+      })
+    })
+
+    it('should log once when useQuery starts a fetch after rendering', async () => {
+      const key = queryKey()
+
+      function Page() {
+        const { data } = useQuery({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'data'),
+        })
+        return <div>{data ?? 'pending'}</div>
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <React.StrictMode>
+          <QueryStrictMode logger={logger}>
+            <Page />
+          </QueryStrictMode>
+        </React.StrictMode>,
+      )
+
+      expect(rendered.getByText('pending')).toBeInTheDocument()
+      expect(logger).toHaveBeenCalledTimes(1)
+      expect(logger).toHaveBeenCalledWith({
+        type: 'missing-prefetch',
+        suspense: false,
+        message: expect.stringContaining(getQuery(key)!.queryHash),
+        query: getQuery(key),
+      })
+
+      await act(() => vi.advanceTimersByTimeAsync(11))
+      expect(rendered.getByText('data')).toBeInTheDocument()
+
+      await act(() => vi.advanceTimersByTimeAsync(10_000))
+      expect(logger).toHaveBeenCalledTimes(1)
+    })
+
+    it('should not log when useQuery reads a prefetched query', async () => {
+      const inFlight = queryKey()
+      const cached = queryKey()
+      const queryFn = () => sleep(10).then(() => 'data')
+
+      queryClient.setQueryData(cached, 'data')
+      void queryClient.query({ queryKey: inFlight, queryFn }).catch(noop)
+
+      function Page() {
+        const first = useQuery({ queryKey: inFlight, queryFn })
+        const second = useQuery({ queryKey: cached, queryFn })
+        return (
+          <div>
+            {first.data ?? 'pending'},{second.data}
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryStrictMode logger={logger}>
+          <Page />
+        </QueryStrictMode>,
+      )
+
+      await act(() => vi.advanceTimersByTimeAsync(11))
+      expect(rendered.getByText('data,data')).toBeInTheDocument()
+
+      await act(() => vi.advanceTimersByTimeAsync(10_000))
+      expect(logger).not.toHaveBeenCalled()
+    })
+
+    it('should not log for a disabled useQuery, but log once it is enabled', async () => {
+      const key = queryKey()
+
+      function Page({ enabled }: { enabled: boolean }) {
+        const { data } = useQuery({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'data'),
+          enabled,
+        })
+        return <div>{data ?? 'pending'}</div>
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryStrictMode logger={logger}>
+          <Page enabled={false} />
+        </QueryStrictMode>,
+      )
+
+      await act(() => vi.advanceTimersByTimeAsync(11))
+      expect(rendered.getByText('pending')).toBeInTheDocument()
+      expect(logger).not.toHaveBeenCalled()
+
+      rendered.rerender(
+        <QueryStrictMode logger={logger}>
+          <Page enabled />
+        </QueryStrictMode>,
+      )
+      await act(() => vi.advanceTimersByTimeAsync(11))
+      expect(rendered.getByText('data')).toBeInTheDocument()
+      expect(logger).toHaveBeenCalledTimes(1)
+      expect(logger.mock.calls[0]![0]).toMatchObject({
+        type: 'missing-prefetch',
+        suspense: false,
+        query: getQuery(key),
+      })
+    })
+
+    it('should not log for a refetch of a query that has data', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, 'cached')
+
+      function Page() {
+        const { data } = useQuery({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'data'),
+          refetchOnMount: 'always',
+        })
+        return <div>{data}</div>
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryStrictMode logger={logger}>
+          <Page />
+        </QueryStrictMode>,
+      )
+
+      await act(() => vi.advanceTimersByTimeAsync(11))
+      expect(rendered.getByText('data')).toBeInTheDocument()
+      expect(logger).not.toHaveBeenCalled()
+    })
+
+    it('should only log the queries of useQueries that were not prefetched', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+
+      void queryClient
+        .query({
+          queryKey: key1,
+          queryFn: () => sleep(10).then(() => 1),
+        })
+        .catch(noop)
+
+      function Page() {
+        const [result1, result2] = useQueries({
+          queries: [
+            { queryKey: key1, queryFn: () => sleep(10).then(() => 1) },
+            { queryKey: key2, queryFn: () => sleep(10).then(() => 2) },
+          ],
+        })
+        return (
+          <div>
+            data: {result1.data},{result2.data}
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryStrictMode logger={logger}>
+          <Page />
+        </QueryStrictMode>,
+      )
+
+      await act(() => vi.advanceTimersByTimeAsync(11))
+      expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
+
+      await act(() => vi.advanceTimersByTimeAsync(10_000))
+      expect(logger).toHaveBeenCalledTimes(1)
+      expect(logger.mock.calls[0]![0]).toMatchObject({
+        type: 'missing-prefetch',
+        suspense: false,
         query: getQuery(key2),
       })
     })
@@ -415,6 +593,44 @@ describe('QueryStrictMode', () => {
           type: 'missing-prefetch',
           query: getQuery(logged),
         })
+        consoleMock.mockRestore()
+      })
+
+      it('should throw from useQuery instead of fetching', async () => {
+        const consoleMock = vi
+          .spyOn(console, 'error')
+          .mockImplementation(() => undefined)
+        const key = queryKey()
+        const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+
+        function Page() {
+          const { data } = useQuery({ queryKey: key, queryFn })
+          return <div>{data ?? 'pending'}</div>
+        }
+
+        const rendered = renderWithClient(
+          queryClient,
+          <QueryStrictMode logger={logger} throwOnMissingPrefetch>
+            <ErrorBoundary
+              fallbackRender={({ error }) => (
+                <div>
+                  {error instanceof QueryStrictModeError
+                    ? `strict: ${error.type}`
+                    : 'other'}
+                </div>
+              )}
+            >
+              <Page />
+            </ErrorBoundary>
+          </QueryStrictMode>,
+        )
+
+        expect(
+          rendered.getByText('strict: missing-prefetch'),
+        ).toBeInTheDocument()
+        await act(() => vi.advanceTimersByTimeAsync(10))
+        expect(queryFn).not.toHaveBeenCalled()
+        expect(logger).not.toHaveBeenCalled()
         consoleMock.mockRestore()
       })
 
@@ -707,7 +923,8 @@ describe('QueryStrictMode', () => {
       void queryClient.invalidateQueries({ queryKey: key, refetchType: 'all' })
 
       await act(() => vi.advanceTimersByTimeAsync(10 + 10_000))
-      expect(logger).not.toHaveBeenCalled()
+      // Only the initial fetch of `Page` is reported
+      expect(loggedTypes()).toEqual(['missing-prefetch'])
     })
 
     it('should clear its timers on unmount', async () => {
@@ -875,7 +1092,8 @@ describe('QueryStrictMode', () => {
         await act(() => vi.advanceTimersByTimeAsync(10 + 10_000))
         expect(rendered.getByText('content')).toBeInTheDocument()
         expect(rendered.getByText('data')).toBeInTheDocument()
-        expect(logger).not.toHaveBeenCalled()
+        // `Reader` mounts before the prefetch, so it starts the fetch itself
+        expect(loggedTypes()).toEqual(['missing-prefetch'])
       })
 
       it('should ignore throwOnUnusedPrefetch of a nested QueryStrictMode', async () => {
