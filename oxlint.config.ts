@@ -37,6 +37,8 @@ export default defineConfig({
     vitest: { typecheck: true },
   },
   ignorePatterns: [
+    'examples/**',
+    'integrations/**',
     '**/.nx/**',
     '**/.svelte-kit/**',
     '**/build/**',

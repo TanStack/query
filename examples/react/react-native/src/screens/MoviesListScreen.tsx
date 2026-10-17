@@ -22,7 +22,10 @@ type Props = {
 }
 
 export function MoviesListScreen({ navigation }: Props) {
-  const { isPending, error, data, refetch } = useQuery<Movie[], Error>({
+  const { isPending, isError, error, data, refetch } = useQuery<
+    Array<Movie>,
+    Error
+  >({
     queryKey: ['movies'],
     queryFn: fetchMovies,
   })
@@ -32,7 +35,7 @@ export function MoviesListScreen({ navigation }: Props) {
   const onListItemPress = React.useCallback(
     (movie: Movie) => {
       navigation.navigate('MovieDetails', {
-        movie,
+        title: movie.title,
       })
     },
     [navigation],
@@ -47,7 +50,7 @@ export function MoviesListScreen({ navigation }: Props) {
 
   if (isPending) return <LoadingIndicator />
 
-  if (error) return <ErrorMessage message={error.message}></ErrorMessage>
+  if (isError) return <ErrorMessage message={error.message}></ErrorMessage>
   return (
     <FlatList
       data={data}
