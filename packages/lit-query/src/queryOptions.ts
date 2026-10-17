@@ -23,7 +23,8 @@ export type DefinedInitialDataOptions<
   'queryFn'
 > & {
   initialData:
-    NonUndefinedGuard<TQueryFnData> | (() => NonUndefinedGuard<TQueryFnData>)
+    | NonUndefinedGuard<TQueryFnData>
+    | (() => NonUndefinedGuard<TQueryFnData>)
   queryFn?: QueryFunction<TQueryFnData, TQueryKey>
 }
 
@@ -75,10 +76,8 @@ export type UndefinedInitialDataOptions<
 /**
  * Brands query options so the `queryKey` carries the query function data and
  * error types across TanStack Query APIs.
- *
  * @param options - Query options to preserve and brand.
  * @returns The same options object with a typed `queryKey`.
- *
  * @example
  * ```ts
  * import { queryOptions } from '@tanstack/lit-query'
@@ -104,7 +103,6 @@ export function queryOptions<
 /**
  * Brands query options so the `queryKey` carries the query function data and
  * error types across TanStack Query APIs.
- *
  * @param options - Query options to preserve and brand.
  * @returns The same options object with a typed `queryKey`.
  */
@@ -122,7 +120,6 @@ export function queryOptions<
 /**
  * Brands query options so the `queryKey` carries the query function data and
  * error types across TanStack Query APIs.
- *
  * @param options - Query options to preserve and brand.
  * @returns The same options object with a typed `queryKey`.
  */

@@ -131,7 +131,7 @@ describe('Server Side Rendering', () => {
     expect(keys).toEqual([[key, 1]])
   })
 
-  it('useMutationState should return empty array', () => {
+  it('should return empty array from useMutationState', () => {
     function Page() {
       const mutationState = useMutationState()
 
@@ -147,7 +147,7 @@ describe('Server Side Rendering', () => {
     expect(markup).toContain('mutationState: 0')
   })
 
-  it('useInfiniteQuery should return the correct state', async () => {
+  it('should return the correct state from useInfiniteQuery', async () => {
     const key = queryKey()
     const queryFn = vi.fn(() => sleep(10).then(() => 'page 1'))
 

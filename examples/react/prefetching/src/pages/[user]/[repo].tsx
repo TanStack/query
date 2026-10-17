@@ -11,6 +11,7 @@ async function fetchProject(id: string): Promise<{
   console.info('Fetching project:', id)
 
   const response = await fetch(`https://api.github.com/repos/${id}`)
+  if (!response.ok) throw new Error('Failed to fetch repo')
   await new Promise((r) => setTimeout(r, 1000))
   return await response.json()
 }

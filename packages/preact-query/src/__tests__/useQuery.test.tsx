@@ -13,7 +13,6 @@ import {
   useState,
 } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { Mock } from 'vitest'
 
 import {
   IsRestoringProvider,
@@ -26,7 +25,6 @@ import {
   skipToken,
   useQuery,
 } from '..'
-import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
 import { ErrorBoundary } from './ErrorBoundary'
 import {
   Blink,
@@ -34,6 +32,8 @@ import {
   renderWithClient,
   setActTimeout,
 } from './utils'
+import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
+import type { Mock } from 'vitest'
 
 describe('useQuery', () => {
   let queryCache: QueryCache
@@ -3905,7 +3905,7 @@ describe('useQuery', () => {
   })
 
   // // See https://github.com/tannerlinsley/react-query/issues/214
-  it('data should persist when enabled is changed to false', async () => {
+  it('should persist data when enabled is changed to false', async () => {
     const key = queryKey()
     const results: Array<DefinedUseQueryResult<string>> = []
 
@@ -4019,7 +4019,9 @@ describe('useQuery', () => {
     rendered.getByText('fetched data')
     const setTimeoutSpy = vi.spyOn(globalThis.window, 'setTimeout')
 
-    rendered.unmount()
+    act(() => {
+      rendered.unmount()
+    })
 
     expect(setTimeoutSpy).not.toHaveBeenCalled()
   })
@@ -4043,7 +4045,9 @@ describe('useQuery', () => {
 
     const setTimeoutSpy = vi.spyOn(globalThis.window, 'setTimeout')
 
-    rendered.unmount()
+    act(() => {
+      rendered.unmount()
+    })
 
     expect(setTimeoutSpy).toHaveBeenLastCalledWith(
       expect.any(Function),
@@ -4388,7 +4392,7 @@ describe('useQuery', () => {
     ])
   })
 
-  it('placeholder data should run through select', async () => {
+  it('should run placeholder data through select', async () => {
     const key1 = queryKey()
 
     const states: Array<UseQueryResult<string>> = []
@@ -4430,7 +4434,7 @@ describe('useQuery', () => {
     ])
   })
 
-  it('placeholder data function result should run through select', async () => {
+  it('should run placeholder data function result through select', async () => {
     const key1 = queryKey()
 
     const states: Array<UseQueryResult<string>> = []
@@ -4485,7 +4489,7 @@ describe('useQuery', () => {
     expect(placeholderFunctionRunCount).toEqual(1)
   })
 
-  it('select should only run when dependencies change if memoized', async () => {
+  it('should only run select when dependencies change if memoized', async () => {
     const key1 = queryKey()
 
     let selectRun = 0
@@ -4528,7 +4532,7 @@ describe('useQuery', () => {
     expect(selectRun).toBe(3)
   })
 
-  it('select should always return the correct state', async () => {
+  it('should always return the correct state from select', async () => {
     const key1 = queryKey()
 
     function Page() {
@@ -4575,7 +4579,7 @@ describe('useQuery', () => {
     expect(rendered.getByText('Data: selected 3')).toBeInTheDocument()
   })
 
-  it('select should structurally share data', async () => {
+  it('should structurally share data in select', async () => {
     const key1 = queryKey()
     const states: Array<Array<number>> = []
 
@@ -5215,7 +5219,7 @@ describe('useQuery', () => {
   })
 
   describe('networkMode online', () => {
-    it('online queries should not start fetching if you are offline', async () => {
+    it('should not start fetching online queries if you are offline', async () => {
       const onlineMock = mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
@@ -5256,7 +5260,7 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('online queries should not refetch if you are offline', async () => {
+    it('should not refetch online queries if you are offline', async () => {
       const key = queryKey()
       let count = 0
 
@@ -5318,7 +5322,7 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('online queries should not refetch if you are offline and refocus', async () => {
+    it('should not refetch online queries if you are offline and refocus', async () => {
       const key = queryKey()
       let count = 0
 
@@ -5365,7 +5369,7 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('online queries should not refetch while already paused', async () => {
+    it('should not refetch online queries while already paused', async () => {
       const key = queryKey()
       let count = 0
 
@@ -5410,7 +5414,7 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('online queries should not refetch while already paused if data is in the cache', async () => {
+    it('should not refetch online queries while already paused if data is in the cache', async () => {
       const key = queryKey()
       let count = 0
 
@@ -5457,7 +5461,7 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('online queries should not get stuck in fetching state when pausing multiple times', async () => {
+    it('should not get online queries stuck in fetching state when pausing multiple times', async () => {
       const key = queryKey()
       let count = 0
 
@@ -5516,7 +5520,7 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('online queries should pause retries if you are offline', async () => {
+    it('should pause retries of online queries if you are offline', async () => {
       const key = queryKey()
       let count = 0
 
@@ -5569,7 +5573,7 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('online queries should not fetch if paused initial load and we go online after unmount', async () => {
+    it('should not fetch online queries if paused initial load and we go online after unmount', async () => {
       const key = queryKey()
       let count = 0
 
@@ -5626,7 +5630,7 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('online queries should re-fetch if paused and we go online even if already unmounted (because not cancelled)', async () => {
+    it('should re-fetch online queries if paused and we go online even if already unmounted (because not cancelled)', async () => {
       const key = queryKey()
       let count = 0
 
@@ -5685,7 +5689,7 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('online queries should not fetch if paused and we go online when cancelled and no refetchOnReconnect', async () => {
+    it('should not fetch online queries if paused and we go online when cancelled and no refetchOnReconnect', async () => {
       const key = queryKey()
       let count = 0
 
@@ -5738,7 +5742,7 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('online queries should fetch if paused and we go online even if already unmounted when refetch was not cancelled', async () => {
+    it('should fetch online queries if paused and we go online even if already unmounted when refetch was not cancelled', async () => {
       const key = queryKey()
       let count = 0
 
@@ -5806,7 +5810,7 @@ describe('useQuery', () => {
   })
 
   describe('networkMode always', () => {
-    it('always queries should start fetching even if you are offline', async () => {
+    it('should start fetching always queries even if you are offline', async () => {
       const onlineMock = mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
@@ -5842,7 +5846,7 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('always queries should not pause retries', async () => {
+    it('should not pause retries of always queries', async () => {
       const onlineMock = mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
@@ -5886,7 +5890,7 @@ describe('useQuery', () => {
   })
 
   describe('networkMode offlineFirst', () => {
-    it('offlineFirst queries should start fetching if you are offline, but pause retries', async () => {
+    it('should start fetching offlineFirst queries if you are offline, but pause retries', async () => {
       const onlineMock = mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
@@ -5981,6 +5985,35 @@ describe('useQuery', () => {
       expect(
         queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
       ).toBe(1)
+    })
+
+    it('should not optimistically show fetching when subscribed is false', () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      function Page() {
+        const query = useQuery({
+          queryKey: key,
+          queryFn,
+          subscribed: false,
+        })
+
+        return (
+          <div>
+            <span>isFetching: {String(query.isFetching)}</span>
+            <span>fetchStatus: {query.fetchStatus}</span>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      expect(queryFn).not.toHaveBeenCalled()
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+      ).toBe(0)
+      rendered.getByText('isFetching: false')
+      rendered.getByText('fetchStatus: idle')
     })
 
     it('should not be attached to the query when subscribed is false', async () => {
@@ -6080,7 +6113,7 @@ describe('useQuery', () => {
     })
   })
 
-  it('setQueryData - should respect updatedAt', async () => {
+  it('should respect updatedAt in setQueryData', async () => {
     const key = queryKey()
 
     function Page() {
@@ -6113,7 +6146,7 @@ describe('useQuery', () => {
     expect(rendered.getByText('dataUpdatedAt: 100')).toBeInTheDocument()
   })
 
-  it('errorUpdateCount should increased on each fetch failure', async () => {
+  it('should increase errorUpdateCount on each fetch failure', async () => {
     const key = queryKey()
     const error = new Error('oops')
 

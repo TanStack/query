@@ -23,9 +23,9 @@ function chatAnswer(_question: string) {
   }
 }
 
-export const chatQueryOptions = (question: string) =>
+export const chatQueryOptions = (id: string, question: string) =>
   queryOptions({
-    queryKey: ['chat', question],
+    queryKey: ['chat', id, question],
     queryFn: streamedQuery({
       streamFn: () => chatAnswer(question),
     }),

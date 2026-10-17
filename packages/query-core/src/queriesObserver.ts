@@ -10,11 +10,23 @@ import type {
 import type { QueryClient } from './queryClient'
 import type { QueryObserverResultReader } from './queryObserver'
 
+/**
+ * Returns the items of `array1` that are not in `array2`.
+ * @param array1 - The items to filter.
+ * @param array2 - The items to exclude.
+ * @returns A new array with the items of `array1` that are not in `array2`.
+ */
 function difference<T>(array1: Array<T>, array2: Array<T>): Array<T> {
   const excludeSet = new Set(array2)
   return array1.filter((x) => !excludeSet.has(x))
 }
 
+/**
+ * Compares the fields of each result with the result at the same position.
+ * @param result - The current array of observer results.
+ * @param previous - The array from the previous computation, if any.
+ * @returns `true` if the arrays have the same length and equal result fields.
+ */
 function equalResults(
   result: Array<QueryObserverResult>,
   previous: Array<QueryObserverResult> | undefined,
@@ -32,6 +44,7 @@ type CombineFn<TCombinedResult> = (
   result: Array<QueryObserverResult>,
 ) => TCombinedResult
 
+/** A cached reader for multiple query results and their combined value. */
 export interface QueriesObserverResultReader<
   TCombinedResult,
 > extends QueryObserverResultReader<Array<QueryObserverResult>> {
@@ -46,6 +59,9 @@ type CombineContext<TCombinedResult> = {
   queryHashes?: Array<string>
 }
 
+/**
+ * Options for a `QueriesObserver` that apply to all of its queries at once.
+ */
 export interface QueriesObserverOptions<
   TCombinedResult = Array<QueryObserverResult>,
 > {
@@ -66,7 +82,6 @@ export interface QueriesObserverOptions<
  * given, as a combined value derived from that array). It manages one
  * internal `QueryObserver` per query, and is the primitive that framework
  * adapters (e.g. `useQueries`) build their hooks on top of.
- *
  * @example
  * ```ts
  * const observer = new QueriesObserver(queryClient, [
@@ -106,7 +121,7 @@ export class QueriesObserver<
     this.setQueries(queries)
   }
 
-  protected onSubscribe(): void {
+  protected override onSubscribe(): void {
     if (this.listeners.size === 1) {
       this.#observers.forEach((observer) => {
         observer.subscribe((result) => {
@@ -116,7 +131,7 @@ export class QueriesObserver<
     }
   }
 
-  protected onUnsubscribe(): void {
+  protected override onUnsubscribe(): void {
     if (!this.listeners.size) {
       this.destroy()
     }
@@ -138,7 +153,8 @@ export class QueriesObserver<
    * are reused for queries that match an already-observed query hash;
    * observers for queries that are no longer present are destroyed, and new
    * observers are created and subscribed to for newly added queries.
-   *
+   * @param queries - The options of the queries to observe.
+   * @param options - Replaces the observer's options, e.g. its `combine` function.
    * @example
    * ```ts
    * observer.setQueries([
@@ -241,7 +257,7 @@ export class QueriesObserver<
    * Returns the most recently computed array of `QueryObserverResult`s, one
    * per observed query, in the same order as the queries passed to the
    * constructor or `setQueries`.
-   *
+   * @returns The current results.
    * @example
    * ```ts
    * const results = observer.getCurrentResult()
@@ -255,6 +271,7 @@ export class QueriesObserver<
   /**
    * Returns the underlying `Query` instances currently being observed, in
    * the same order as the queries passed to the constructor or `setQueries`.
+   * @returns The observed queries.
    */
   getQueries() {
     return this.#observers.map((observer) => observer.getCurrentQuery())
@@ -264,6 +281,7 @@ export class QueriesObserver<
    * Returns the underlying `QueryObserver` instances this observer manages,
    * in the same order as the queries passed to the constructor or
    * `setQueries`.
+   * @returns The managed query observers.
    */
   getObservers() {
     return this.#observers
@@ -273,6 +291,9 @@ export class QueriesObserver<
    * Creates a reader for the supplied queries and combine function. Reads keep
    * result and combine caches local until commit applies the queries and reuses
    * their computation state. Abandoned readers do not change active observers.
+   * @param queries - The options of the queries to read and commit.
+   * @param options - The combine function used for this reader.
+   * @returns A reader with local snapshot and combine caches.
    */
   createResultReader(
     queries: Array<QueryObserverOptions<any, any, any, any, any>>,
@@ -336,6 +357,10 @@ export class QueriesObserver<
    * framework adapters (e.g. `useQueries`) ahead of subscribing, returning a tuple of the raw
    * per-query results, a function to compute the combined result from them, and a function to
    * wrap the results for property-access tracking.
+   * @param queries - The defaulted options of the queries to compute the result for.
+   * @param combine - The `combine` function used by the returned `combineResult`, if any.
+   * @returns A tuple of the per-query results, a function that computes the combined result, and a
+   * function that returns the results wrapped for property-access tracking.
    * @deprecated Use `createResultReader` instead.
    */
   getOptimisticResult(

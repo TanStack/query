@@ -20,6 +20,10 @@ export abstract class Removable {
     this.clearGcTimeout()
   }
 
+  /**
+   * Schedules the entry to be removed from its cache after `gcTime`, replacing any timeout scheduled
+   * before. Nothing is scheduled if `gcTime` is `Infinity`.
+   */
   protected scheduleGc(): void {
     this.clearGcTimeout()
 
@@ -30,6 +34,11 @@ export abstract class Removable {
     }
   }
 
+  /**
+   * Updates `gcTime`, keeping the longest one seen so far. Without a value, it defaults to 5 minutes
+   * on the client and `Infinity` on the server.
+   * @param newGcTime - The `gcTime` from the latest options, if any.
+   */
   protected updateGcTime(newGcTime: number | undefined): void {
     // Default to 5 minutes (Infinity for server-side) if no gcTime is set
     this.gcTime = Math.max(
@@ -38,6 +47,9 @@ export abstract class Removable {
     )
   }
 
+  /**
+   * Cancels the scheduled removal, if there is one.
+   */
   protected clearGcTimeout() {
     if (this.#gcTimeout !== undefined) {
       timeoutManager.clearTimeout(this.#gcTimeout)
@@ -45,5 +57,9 @@ export abstract class Removable {
     }
   }
 
+  /**
+   * Called when the garbage collection timeout fires. Subclasses remove the entry from its cache
+   * unless it is still in use, e.g. because it has observers.
+   */
   protected abstract optionalRemove(): void
 }

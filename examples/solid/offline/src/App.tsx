@@ -5,7 +5,7 @@ import { PersistQueryClientProvider } from '@tanstack/solid-query-persist-client
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 
 import * as api from './api'
-import { movieKeys, useMovie } from './movies'
+import { movieKeys, updateMovieMutationOptions, useMovie } from './movies'
 
 const persister = createAsyncStoragePersister({
   storage: window.localStorage,
@@ -19,11 +19,8 @@ const queryClient = new QueryClient({
       retry: 0,
     },
   },
-  // configure global cache callbacks to show notifications
+  // configure global cache callbacks to show error notifications
   mutationCache: new MutationCache({
-    onSuccess: (data: any) => {
-      showNotification(data.message, 'success')
-    },
     onError: (error) => {
       showNotification(error.message, 'error')
     },
@@ -32,10 +29,9 @@ const queryClient = new QueryClient({
 
 // we need a default mutation function so that paused mutations can resume after a page reload
 queryClient.setMutationDefaults(movieKeys.all(), {
-  mutationFn: async ({ id, comment }: { id: string; comment: string }) => {
-    // to avoid clashes with our optimistic update when an offline mutation continues
-    await queryClient.cancelQueries({ queryKey: movieKeys.detail(id) })
-    return api.updateMovie(id, comment)
+  ...updateMovieMutationOptions(),
+  onSuccess: (data) => {
+    showNotification(data.message, 'success')
   },
 })
 
@@ -140,15 +136,20 @@ function List(props: { onSelectMovie: (movieId: string) => void }) {
 
 function Detail(props: { movieId: string; onBack: () => void }) {
   const { comment, setComment, updateMovie, movieQuery } = useMovie(
-    props.movieId,
+    () => props.movieId,
   )
 
   function submitForm(event: SubmitEvent) {
     event.preventDefault()
 
+    const currentComment = comment()
+    if (currentComment === undefined) {
+      return
+    }
+
     updateMovie.mutate({
       id: props.movieId,
-      comment: comment(),
+      comment: currentComment,
     })
   }
 

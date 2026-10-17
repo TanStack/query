@@ -189,7 +189,7 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -215,7 +215,7 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -241,7 +241,7 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -268,7 +268,7 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -292,7 +292,7 @@ describe('Explorer', () => {
         label: 'list',
         value: ['a', 'b', 'c'],
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -310,7 +310,7 @@ describe('Explorer', () => {
         value: ['a', 'b', 'c'],
         editable: true,
         itemsDeletable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -328,7 +328,7 @@ describe('Explorer', () => {
         label: 'flag',
         value: true,
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -339,6 +339,29 @@ describe('Explorer', () => {
       expect(queryClient.getQueryData(['data'])).toEqual({ flag: false })
     })
 
+    it.each([true, false])(
+      'should expose "aria-pressed" on the toggle button when the value is %s',
+      (value) => {
+        queryClient.setQueryData(['data'], { flag: value })
+
+        const rendered = renderExplorer({
+          label: 'flag',
+          value,
+          editable: true,
+          // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+          activeQuery: queryClient
+            .getQueryCache()
+            .find({ queryKey: ['data'] }) as Query,
+          dataPath: ['flag'],
+        })
+
+        expect(rendered.getByLabelText('Toggle value')).toHaveAttribute(
+          'aria-pressed',
+          String(value),
+        )
+      },
+    )
+
     it('should not render action buttons when "editable" is false', () => {
       queryClient.setQueryData(['data'], ['a'])
 
@@ -346,7 +369,7 @@ describe('Explorer', () => {
         label: 'list',
         value: ['a'],
         editable: false,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -363,7 +386,7 @@ describe('Explorer', () => {
         label: 'user',
         value: { name: 'Anna' },
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -439,7 +462,7 @@ describe('Explorer', () => {
         value,
         defaultExpanded: ['Data'],
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -460,7 +483,7 @@ describe('Explorer', () => {
         label: 'name',
         value: 'Anna',
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -481,7 +504,7 @@ describe('Explorer', () => {
         label: 'count',
         value: 1,
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -504,7 +527,7 @@ describe('Explorer', () => {
         label: 'flag',
         value: false,
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -522,7 +545,7 @@ describe('Explorer', () => {
         value: 'Anna',
         editable: true,
         itemsDeletable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -541,7 +564,7 @@ describe('Explorer', () => {
         value,
         defaultExpanded: ['Data'],
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -569,7 +592,7 @@ describe('Explorer', () => {
             value,
             defaultExpanded: ['Data'],
             editable: true,
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+            // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
             activeQuery: queryClient
               .getQueryCache()
               .find({ queryKey: ['data'] }) as Query,
@@ -607,7 +630,7 @@ describe('Explorer', () => {
                   defaultExpanded={['Data']}
                   editable={true}
                   activeQuery={
-                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+                    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
                     queryClient
                       .getQueryCache()
                       .find({ queryKey: ['data'] }) as Query

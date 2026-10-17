@@ -30,7 +30,6 @@ type InfiniteQueryObserverListener<TData, TError> = (
  * infinite-query-specific fields and methods, such as `hasNextPage` and
  * `fetchNextPage`, and is the primitive that framework adapters (e.g.
  * `useInfiniteQuery`) build their hooks on top of.
- *
  * @example
  * ```ts
  * const observer = new InfiniteQueryObserver(queryClient, {
@@ -57,12 +56,12 @@ export class InfiniteQueryObserver<
   TQueryKey
 > {
   // Type override
-  subscribe!: Subscribable<
+  override subscribe!: Subscribable<
     InfiniteQueryObserverListener<TData, TError>
   >['subscribe']
 
   // Type override
-  getCurrentResult!: ReplaceReturnType<
+  override getCurrentResult!: ReplaceReturnType<
     QueryObserver<
       TQueryFnData,
       TError,
@@ -74,7 +73,7 @@ export class InfiniteQueryObserver<
   >
 
   // Type override
-  protected fetch!: ReplaceReturnType<
+  protected override fetch!: ReplaceReturnType<
     QueryObserver<
       TQueryFnData,
       TError,
@@ -98,7 +97,7 @@ export class InfiniteQueryObserver<
     super(client, options)
   }
 
-  protected bindMethods(): void {
+  protected override bindMethods(): void {
     super.bindMethods()
     this.fetchNextPage = this.fetchNextPage.bind(this)
     this.fetchPreviousPage = this.fetchPreviousPage.bind(this)
@@ -109,8 +108,9 @@ export class InfiniteQueryObserver<
    * `QueryObserver.setOptions`, additionally marking the options as
    * belonging to an infinite query before delegating to the base
    * implementation.
+   * @param options - The new infinite query observer options.
    */
-  setOptions(
+  override setOptions(
     options: InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
@@ -127,9 +127,11 @@ export class InfiniteQueryObserver<
    * The infinite-query counterpart of {@link QueryObserver#getOptimisticResult}.
    * Computes the result through a separate result reader without changing the
    * observer's committed result, options, or selection state.
+   * @param options - The defaulted infinite query observer options to compute the result for.
+   * @returns The result for the given options.
    * @deprecated Use `createResultReader(options).getSnapshot()` instead.
    */
-  getOptimisticResult(
+  override getOptimisticResult(
     options: DefaultedInfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
@@ -141,8 +143,12 @@ export class InfiniteQueryObserver<
     return this.createResultReader(options).getSnapshot()
   }
 
-  /** Creates a cached snapshot reader for an infinite query. */
-  createResultReader(
+  /**
+   * Creates a cached snapshot reader for an infinite query.
+   * @param options - The defaulted options used to read and commit the query result.
+   * @returns A reader that keeps its result and computation state until commit.
+   */
+  override createResultReader(
     options: DefaultedInfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
@@ -163,7 +169,11 @@ export class InfiniteQueryObserver<
    * param used for the fetch is determined by `getNextPageParam`, which
    * receives the current pages/page params and whose result also determines
    * `hasNextPage`.
-   *
+   * @param options - Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
+   * and `throwOnError` to `true` to reject when the fetch fails.
+   * @returns A promise that resolves with the result after the next page is fetched. With
+   * `cancelRefetch: false`, a running fetch is reused instead, so the next page may not be fetched.
+   * @see {@link InfiniteQueryObserver#fetchPreviousPage}
    * @example
    * ```ts
    * const { hasNextPage } = observer.getCurrentResult()
@@ -172,8 +182,6 @@ export class InfiniteQueryObserver<
    *   await observer.fetchNextPage()
    * }
    * ```
-   *
-   * @see {@link InfiniteQueryObserver#fetchPreviousPage}
    */
   fetchNextPage(
     options?: FetchNextPageOptions,
@@ -192,7 +200,11 @@ export class InfiniteQueryObserver<
    * param used for the fetch is determined by `getPreviousPageParam`, which
    * receives the current pages/page params and whose result also determines
    * `hasPreviousPage`.
-   *
+   * @param options - Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
+   * and `throwOnError` to `true` to reject when the fetch fails.
+   * @returns A promise that resolves with the result after the previous page is fetched. With
+   * `cancelRefetch: false`, a running fetch is reused instead, so the previous page may not be fetched.
+   * @see {@link InfiniteQueryObserver#fetchNextPage}
    * @example
    * ```ts
    * const { hasPreviousPage } = observer.getCurrentResult()
@@ -201,8 +213,6 @@ export class InfiniteQueryObserver<
    *   await observer.fetchPreviousPage()
    * }
    * ```
-   *
-   * @see {@link InfiniteQueryObserver#fetchNextPage}
    */
   fetchPreviousPage(
     options?: FetchPreviousPageOptions,
@@ -215,7 +225,7 @@ export class InfiniteQueryObserver<
     })
   }
 
-  protected createResult(
+  protected override createResult(
     query: Query<
       TQueryFnData,
       TError,

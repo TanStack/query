@@ -17,7 +17,7 @@ import type { Action } from '../query'
 import type { QueryStore } from '../queryCache'
 
 class CustomError extends Error {
-  name = 'CustomError' as const
+  override name = 'CustomError' as const
 }
 
 describe('queryCache', () => {

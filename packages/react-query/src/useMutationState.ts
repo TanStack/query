@@ -14,12 +14,10 @@ import type {
 /**
  * The `useIsMutating` hook returns the `number` of mutations that your application currently has `pending`
  * (useful for app-wide loading indicators).
- *
  * @param filters - The {@link MutationFilters} to narrow down the matched mutations.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns Will be the `number` of the mutations that your application currently has `pending`.
- *
  * @example
  * ```tsx
  * import { useIsMutating } from '@tanstack/react-query'
@@ -63,6 +61,13 @@ type MutationStateOptions<
   select?: (mutation: TMutation) => TResult
 }
 
+/**
+ * Collects the mutations in the cache that match `options.filters`, mapped with `options.select`
+ * (or to their state, by default).
+ * @param mutationCache - The mutation cache to read.
+ * @param options - The `filters` to match and the `select` function to map each mutation with.
+ * @returns The selected value of every matching mutation.
+ */
 function getResult<
   TResult = MutationState,
   TMutation extends Mutation<any, any, any, any> =
@@ -85,13 +90,11 @@ function getResult<
  * `useMutationState` is a hook that gives you access to all mutations in the `MutationCache`. You can pass
  * `filters` ({@link MutationFilters}) to narrow down your mutations, and `select` to transform the mutation
  * state.
- *
  * @param options - The `filters` to narrow down matched mutations, and an optional `select` to transform the
  * mutation state.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns Will be an Array of whatever `select` returns for each matching mutation.
- *
  * @example
  * Get all variables of all running mutations:
  * ```tsx
@@ -106,7 +109,6 @@ function getResult<
  *   return <>{pendingVariables.length} posts saving...</>
  * }
  * ```
- *
  * @example
  * Get all data for specific mutations via the `mutationKey`:
  * ```tsx
@@ -134,7 +136,6 @@ function getResult<
  *   )
  * }
  * ```
- *
  * @example
  * Access the latest successful mutation data via the `mutationKey`. Each invocation of `mutate` adds a new
  * entry to the mutation cache for `gcTime` milliseconds — with the `status: 'success'` filter below, check the

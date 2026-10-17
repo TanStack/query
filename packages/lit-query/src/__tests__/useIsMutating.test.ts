@@ -43,6 +43,7 @@ describe('useIsMutating', () => {
         mutationKey: this.mutationKey,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -53,7 +54,6 @@ describe('useIsMutating', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -95,10 +95,10 @@ describe('useIsMutating', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -133,6 +133,7 @@ describe('useIsMutating', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -142,6 +143,7 @@ describe('useIsMutating', () => {
         return html`<p>mutating: ${this.isMutating()}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const producer = new Producer()
     const host = new Host()
@@ -169,6 +171,7 @@ describe('useIsMutating', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -183,6 +186,7 @@ describe('useIsMutating', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const producer = new Producer()
     const host = new Host()
@@ -211,6 +215,7 @@ describe('useIsMutating', () => {
         mutationFn: () => sleep(10).then(() => 'data2'),
       })
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -220,6 +225,7 @@ describe('useIsMutating', () => {
         return html`<p>mutating: ${this.isMutating()}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const provider = document.createElement(
       providerTagName,
@@ -228,7 +234,6 @@ describe('useIsMutating', () => {
     const producer = new Producer()
     const host = new Host()
     provider.append(producer, host)
-
     container.append(provider)
     await provider.updateComplete
 
@@ -278,6 +283,7 @@ describe('useIsMutating', () => {
         return html`<p>all: ${all}, filtered: ${filtered}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -336,6 +342,7 @@ describe('useIsMutating', () => {
         return html`<p>filtered: ${this.isMutatingFiltered()}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -350,14 +357,12 @@ describe('useIsMutating', () => {
     activeFilter = { mutationKey: unmatchedMutationKey }
     host.requestUpdate()
     await host.updateComplete
-
     expect(isMutatingFiltered()).toBe(0)
     expect(host.shadowRoot).toHaveTextContent('filtered: 0')
 
     activeFilter = { mutationKey: mutationKey2 }
     host.requestUpdate()
     await host.updateComplete
-
     expect(isMutatingFiltered()).toBe(1)
     expect(host.shadowRoot).toHaveTextContent('filtered: 1')
     await vi.advanceTimersByTimeAsync(10)
@@ -378,13 +383,13 @@ describe('useIsMutating', () => {
         mutationKey: this.mutationKey,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
     expect(consumer.isMutating()).toBe(0)
 
     container.append(consumer)
-
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.isMutating()).toThrow(/No QueryClient available/)
 
@@ -393,7 +398,6 @@ describe('useIsMutating', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -417,6 +421,7 @@ describe('useIsMutating', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
     const producer = new Producer()
     container.append(producer)
@@ -428,6 +433,7 @@ describe('useIsMutating', () => {
     class Host extends LitElement {
       isMutating?: IsMutatingAccessor
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -437,7 +443,6 @@ describe('useIsMutating', () => {
     // already-connected host
     host.isMutating = useIsMutating(host, {}, queryClient)
     const { isMutating } = host
-
     expect(isMutating()).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
     expect(isMutating()).toBe(0)

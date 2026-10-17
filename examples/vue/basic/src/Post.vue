@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 
-import { Post } from './types'
+import type { Post } from './types'
 
 const fetcher = async (id: number): Promise<Post> =>
   await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(

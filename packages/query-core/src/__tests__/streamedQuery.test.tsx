@@ -287,7 +287,7 @@ describe('streamedQuery', () => {
       queryFn: streamedQuery({
         streamFn: (context) => {
           // just consume the signal
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          // oxlint-disable-next-line typescript/no-unnecessary-condition
           const numbers = context.signal ? 3 : 0
           return createAsyncNumberGenerator(numbers)
         },
@@ -338,7 +338,7 @@ describe('streamedQuery', () => {
       queryFn: streamedQuery({
         streamFn: (context) => {
           // just consume the signal
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          // oxlint-disable-next-line typescript/no-unnecessary-condition
           const numbers = context.signal ? 3 : 0
           return createAsyncNumberGenerator(numbers)
         },
@@ -409,7 +409,7 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         initialValue: {} as Record<number, boolean>,
       }),
     })
@@ -443,7 +443,7 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         initialValue: {
           10: true,
           11: true,
@@ -479,7 +479,7 @@ describe('streamedQuery', () => {
       queryFn: streamedQuery<number, string | null>({
         initialValue: 'initial',
         reducer: () => null,
-        // eslint-disable-next-line @typescript-eslint/require-await
+        // oxlint-disable-next-line typescript/require-await
         streamFn: async function* () {
           yield 1
         },
@@ -500,7 +500,7 @@ describe('streamedQuery', () => {
       retry: false,
       queryFn: streamedQuery({
         refetchMode: 'reset',
-        // eslint-disable-next-line @typescript-eslint/require-await
+        // oxlint-disable-next-line typescript/require-await
         streamFn: async function* () {
           if (shouldError) {
             throw error
@@ -647,7 +647,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        // eslint-disable-next-line @typescript-eslint/require-await
+        // oxlint-disable-next-line typescript/require-await
         streamFn: async function* () {
           const v = [1, 2, 3]
           yield* v

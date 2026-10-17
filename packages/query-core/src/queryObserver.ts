@@ -42,7 +42,10 @@ export interface QueryObserverResultReader<TResult> {
   commit: () => void
 }
 
-/** @internal */
+/**
+ * Selection and placeholder computation state shared by reads of the same result.
+ * @internal
+ */
 export interface QueryObserverResultContext<
   TQueryFnData,
   TError,
@@ -50,6 +53,7 @@ export interface QueryObserverResultContext<
   TQueryData,
   TQueryKey extends QueryKey,
 > {
+  /** The options used for the most recent computation. */
   options?: QueryObserverOptions<
     TQueryFnData,
     TError,
@@ -57,12 +61,19 @@ export interface QueryObserverResultContext<
     TQueryData,
     TQueryKey
   >
+  /** The selector used for the cached data. */
   selectFn?: (data: TQueryData) => TData
+  /** The unselected data passed to the cached selector. */
   selectData?: TQueryData
+  /** The cached value returned by the selector. */
   selectResult?: TData
+  /** The error from the most recent selector call, if any. */
   selectError: TError | null
+  /** The time of the most recent selector error. */
   selectErrorUpdatedAt?: number
+  /** The cached placeholder and the inputs used to compute it. */
   placeholder?: {
+    /** The options used to compute the placeholder. */
     options: QueryObserverOptions<
       TQueryFnData,
       TError,
@@ -70,9 +81,13 @@ export interface QueryObserverResultContext<
       TQueryData,
       TQueryKey
     >
+    /** The last query with defined data. */
     previousQuery:
-      Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined
+      | Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      | undefined
+    /** The data from that previous query. */
     previousData: TQueryData | undefined
+    /** The placeholder after structural sharing. */
     data: TData | undefined
   }
 }
@@ -84,7 +99,6 @@ export interface QueryObserverResultContext<
  * the primitive that framework adapters (e.g. `useQuery`) build their hooks
  * on top of, but it can also be used directly to observe and switch between
  * queries outside of any framework.
- *
  * @example
  * ```ts
  * const observer = new QueryObserver(queryClient, {
@@ -141,11 +155,15 @@ export class QueryObserver<
     this.setOptions(options)
   }
 
+  /**
+   * Binds the methods of the result (`refetch`) to the observer, so they keep working when destructured
+   * from it. Subclasses override it to bind their own result methods as well.
+   */
   protected bindMethods(): void {
     this.refetch = this.refetch.bind(this)
   }
 
-  protected onSubscribe(): void {
+  protected override onSubscribe(): void {
     if (this.listeners.size === 1) {
       this.#currentQuery.addObserver(this)
 
@@ -159,7 +177,7 @@ export class QueryObserver<
     }
   }
 
-  protected onUnsubscribe(): void {
+  protected override onUnsubscribe(): void {
     if (!this.hasListeners()) {
       this.destroy()
     }
@@ -169,6 +187,7 @@ export class QueryObserver<
    * Returns whether the observed query is currently stale and configured
    * (via the `refetchOnReconnect` option) to refetch when the network
    * reconnects.
+   * @returns `true` if the observer should refetch the query on reconnect.
    */
   shouldFetchOnReconnect(): boolean {
     return shouldFetchOn(
@@ -182,6 +201,7 @@ export class QueryObserver<
    * Returns whether the observed query is currently stale and configured
    * (via the `refetchOnWindowFocus` option) to refetch when the window
    * regains focus.
+   * @returns `true` if the observer should refetch the query on window focus.
    */
   shouldFetchOnWindowFocus(): boolean {
     return shouldFetchOn(
@@ -209,7 +229,9 @@ export class QueryObserver<
    * trigger a fetch if the new options require one and the observer has
    * subscribers, recompute the current result, and reschedule the stale and
    * refetch-interval timers as needed.
-   *
+   * @param options - The new observer options. They are defaulted with {@link
+   * QueryClient#defaultQueryOptions} before being applied.
+   * @throws {Error} If `enabled` is neither a boolean nor a function.
    * @example
    * ```ts
    * observer.setOptions({ queryKey: ['posts', 1], queryFn: () => fetchPost(1) })
@@ -306,6 +328,8 @@ export class QueryObserver<
    * right now, building the underlying `Query` if it doesn't exist yet, without waiting for a
    * subscription callback. Uses a separate result reader, so reading does not change the
    * observer's committed result, options, or selection state.
+   * @param options - The defaulted observer options to compute the result for.
+   * @returns The result for the given options.
    * @deprecated Use `createResultReader(options).getSnapshot()` instead.
    */
   getOptimisticResult(
@@ -327,6 +351,8 @@ export class QueryObserver<
    * options, or selection state. Missing queries are built in the query cache.
    * Call `commit` after the render commits to apply the options and reuse the
    * reader's computation. An abandoned reader needs no cleanup.
+   * @param options - The defaulted options used to read and commit the query result.
+   * @returns A reader with local snapshot and computation caches.
    */
   createResultReader(
     options: DefaultedQueryObserverOptions<
@@ -388,7 +414,7 @@ export class QueryObserver<
    * observed query. This is a point-in-time read; to be notified of updates
    * as they happen, subscribe to the observer instead (its inherited
    * `subscribe` method).
-   *
+   * @returns The observer's latest result.
    * @example
    * ```ts
    * const result = observer.getCurrentResult()
@@ -404,6 +430,9 @@ export class QueryObserver<
    * {@link QueryObserver#trackProp} (and an optional `onPropTracked` callback). Used by framework
    * adapters when `notifyOnChangeProps` is not set, to implement its default "only re-render on
    * properties you actually read" behavior.
+   * @param result - The result to wrap.
+   * @param onPropTracked - Called with the name of each property that is read.
+   * @returns A proxy of `result` that tracks property reads.
    */
   trackResult(
     result: QueryObserverResult<TData, TError>,
@@ -423,6 +452,7 @@ export class QueryObserver<
    * notifies this observer if a tracked property actually changed. Normally called indirectly via
    * {@link QueryObserver#trackResult}'s proxy; exposed directly for adapters that track property
    * access themselves (e.g. through their own reactivity system) instead of via the proxy.
+   * @param key - The name of the property that was read.
    */
   trackProp(key: keyof QueryObserverResult) {
     this.#trackedProps.add(key)
@@ -430,6 +460,7 @@ export class QueryObserver<
 
   /**
    * Returns the `Query` instance this observer is currently observing.
+   * @returns The observed query.
    */
   getCurrentQuery(): Query<TQueryFnData, TError, TQueryData, TQueryKey> {
     return this.#currentQuery
@@ -438,7 +469,9 @@ export class QueryObserver<
   /**
    * Refetches the observed query and returns a promise that resolves with
    * the resulting `QueryObserverResult`.
-   *
+   * @param options - Set `cancelRefetch` to `false` to keep a running fetch instead of cancelling
+   * it, and `throwOnError` to `true` to reject when the refetch fails.
+   * @returns A promise that resolves with the result after the refetch.
    * @example
    * ```ts
    * const result = await observer.refetch({ cancelRefetch: false })
@@ -459,7 +492,8 @@ export class QueryObserver<
    * resolves with the `QueryObserverResult` for that fetch. This is useful
    * for prefetching data that another observer (e.g. a query about to be
    * navigated to) will need, ahead of time.
-   *
+   * @param options - The observer options of the query to fetch.
+   * @returns A promise that resolves with the result for the fetched query.
    * @example
    * ```ts
    * const result = await observer.fetchOptimistic({
@@ -486,7 +520,8 @@ export class QueryObserver<
 
     let unsubscribe = () => {}
     let resolveEarly:
-      ((result: QueryObserverResult<TData, TError>) => void) | undefined
+      | ((result: QueryObserverResult<TData, TError>) => void)
+      | undefined
 
     const cachePromise = new Promise<QueryObserverResult<TData, TError>>(
       (resolve) => {
@@ -521,6 +556,12 @@ export class QueryObserver<
     ])
   }
 
+  /**
+   * Fetches the observed query and updates the result once the fetch settles. Used by `refetch` and,
+   * in `InfiniteQueryObserver`, to fetch more pages.
+   * @param fetchOptions - Options for this fetch. `cancelRefetch` defaults to `true`.
+   * @returns A promise that resolves with the updated result.
+   */
   protected fetch(
     fetchOptions: ObserverFetchOptions,
   ): Promise<QueryObserverResult<TData, TError>> {
@@ -632,6 +673,15 @@ export class QueryObserver<
     }
   }
 
+  /**
+   * Computes the result for a query and options from the query's state, applying `select`,
+   * `placeholderData`, and the derived flags. Subclasses override it to add their own fields.
+   * @param query - The query to compute the result for.
+   * @param options - The observer options to compute the result with.
+   * @param context - The selection and placeholder state reused between computations.
+   * @param prevResult - The previous result used for structural sharing.
+   * @returns The computed result.
+   */
   protected createResult(
     query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
     options: QueryObserverOptions<
@@ -643,7 +693,8 @@ export class QueryObserver<
     >,
     context = this.#resultContext,
     prevResult = this.#currentResult as
-      QueryObserverResult<TData, TError> | undefined,
+      | QueryObserverResult<TData, TError>
+      | undefined,
   ): QueryObserverResult<TData, TError> {
     const prevQuery = this.#currentQuery
     const prevOptions = this.options
@@ -821,7 +872,8 @@ export class QueryObserver<
    */
   updateResult(): void {
     const prevResult = this.#currentResult as
-      QueryObserverResult<TData, TError> | undefined
+      | QueryObserverResult<TData, TError>
+      | undefined
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
 
@@ -898,7 +950,8 @@ export class QueryObserver<
     }
 
     const prevQuery = this.#currentQuery as
-      Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined
+      | Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      | undefined
     this.#currentQuery = query
     this.#currentQueryInitialState = query.state
 
@@ -908,7 +961,11 @@ export class QueryObserver<
     }
   }
 
-  /** @internal */
+  /**
+   * Updates the observer's result when the observed query changes, and reschedules its timers if it
+   * has listeners.
+   * @internal
+   */
   onQueryUpdate(): void {
     this.updateResult()
 
@@ -918,6 +975,13 @@ export class QueryObserver<
   }
 }
 
+/**
+ * Checks whether a query has no data yet and should do its initial load when an observer mounts.
+ * @param query - The query to check.
+ * @param options - The observer options.
+ * @returns `true` if the query is enabled, has no data, and isn't in an error state with
+ * `retryOnMount: false`.
+ */
 function shouldLoadOnMount(
   query: Query<any, any, any, any>,
   options: QueryObserverOptions<any, any, any, any>,
@@ -932,6 +996,13 @@ function shouldLoadOnMount(
   )
 }
 
+/**
+ * Checks whether a query should fetch when an observer mounts: either for its initial load, or
+ * because it has data and `refetchOnMount` asks for a refetch.
+ * @param query - The query to check.
+ * @param options - The observer options.
+ * @returns `true` if the query should fetch on mount.
+ */
 function shouldFetchOnMount(
   query: Query<any, any, any, any>,
   options: QueryObserverOptions<any, any, any, any, any>,
@@ -943,6 +1014,15 @@ function shouldFetchOnMount(
   )
 }
 
+/**
+ * Checks whether a query should fetch for a `refetchOnMount`, `refetchOnWindowFocus`, or
+ * `refetchOnReconnect` option.
+ * @param query - The query to check.
+ * @param options - The observer options.
+ * @param field - The value of the option to check.
+ * @returns `true` if the query is enabled, not static, and the option is `'always'`, or is not
+ * `false` and the query is stale.
+ */
 function shouldFetchOn(
   query: Query<any, any, any, any>,
   options: QueryObserverOptions<any, any, any, any, any>,
@@ -961,6 +1041,15 @@ function shouldFetchOn(
   return false
 }
 
+/**
+ * Checks whether a query should fetch after the observer's options change.
+ * @param query - The query observed with the new options.
+ * @param prevQuery - The query observed with the previous options.
+ * @param options - The new observer options.
+ * @param prevOptions - The previous observer options.
+ * @returns `true` if the query changed or was disabled before, it isn't a suspense query in an
+ * error state, and it is stale.
+ */
 function shouldFetchOptionally(
   query: Query<any, any, any, any>,
   prevQuery: Query<any, any, any, any>,
@@ -975,6 +1064,12 @@ function shouldFetchOptionally(
   )
 }
 
+/**
+ * Checks whether a query is stale for the given observer options.
+ * @param query - The query to check.
+ * @param options - The observer options, whose `enabled` and `staleTime` are used.
+ * @returns `true` if the query is enabled and its data is stale for `staleTime`.
+ */
 function isStale(
   query: Query<any, any, any, any>,
   options: QueryObserverOptions<any, any, any, any, any>,

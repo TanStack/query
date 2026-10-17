@@ -1,11 +1,11 @@
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Paragraph, TouchableRipple } from 'react-native-paper'
-import type { MovieDetails } from '../lib/api'
+import type { Movie } from '../lib/api'
 
 type Props = {
-  item: MovieDetails
-  onPress: (item: MovieDetails) => void
+  item: Movie
+  onPress: (item: Movie) => void
 }
 
 export function ListItem({ item, onPress }: Props) {
