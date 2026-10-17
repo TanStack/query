@@ -3,7 +3,7 @@ id: DehydrateOptions
 title: DehydrateOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/hydration.d.ts:10
+Defined in: packages/query-core/src/hydration.ts:49
 
 Options for `dehydrate`, controlling which queries/mutations are included in the resulting `DehydratedState` and
 how their data/errors are transformed before being serialized (e.g. for embedding in server-rendered markup).

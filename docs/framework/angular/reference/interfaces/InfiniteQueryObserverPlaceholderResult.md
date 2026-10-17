@@ -3,7 +3,7 @@ id: InfiniteQueryObserverPlaceholderResult
 title: InfiniteQueryObserverPlaceholderResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1315
+Defined in: packages/query-core/src/types.ts:1731
 
 An infinite query result in the `success` state that shows `placeholderData` while the query has
 no data yet.

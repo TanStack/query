@@ -17,7 +17,7 @@ The options accepted by the `queryOptions` overload selected when `initialData` 
 ### initialData
 
 ```ts
-initialData:
+initialData: 
   | NonUndefinedGuard<TQueryFnData>
   | (() => NonUndefinedGuard<TQueryFnData>);
 ```

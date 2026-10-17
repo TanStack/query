@@ -3,7 +3,7 @@ id: CancelledError
 title: CancelledError
 ---
 
-Defined in: packages/query-core/dist-ts/src/retryer.d.ts:85
+Defined in: packages/query-core/src/retryer.ts:120
 
 The error thrown by a `Retryer` (and surfaced to `query.promise`/`mutation`) when a fetch is cancelled, e.g. via
 `query.cancel()`. `revert`, if `true`, tells the caller to restore the state the query was in before the fetch
@@ -36,7 +36,7 @@ try {
 new CancelledError(options?: CancelOptions): CancelledError;
 ```
 
-Defined in: packages/query-core/dist-ts/src/retryer.d.ts:88
+Defined in: packages/query-core/src/retryer.ts:123
 
 #### Parameters
 
@@ -62,7 +62,7 @@ Error.constructor
 optional revert?: boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/retryer.d.ts:86
+Defined in: packages/query-core/src/retryer.ts:121
 
 ***
 
@@ -72,4 +72,4 @@ Defined in: packages/query-core/dist-ts/src/retryer.d.ts:86
 optional silent?: boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/retryer.d.ts:87
+Defined in: packages/query-core/src/retryer.ts:122

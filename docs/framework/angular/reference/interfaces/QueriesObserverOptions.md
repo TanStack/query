@@ -3,7 +3,7 @@ id: QueriesObserverOptions
 title: QueriesObserverOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:10
+Defined in: packages/query-core/src/queriesObserver.ts:32
 
 Options for a `QueriesObserver` that apply to all of its queries at once.
 

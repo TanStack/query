@@ -3,7 +3,7 @@ id: TimeoutManager
 title: TimeoutManager
 ---
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:58
+Defined in: packages/query-core/src/timeoutManager.ts:82
 
 Allows customization of how timeouts are created.
 
@@ -27,7 +27,7 @@ coalesces timeouts.
 clearInterval(intervalId: ManagedTimerId | undefined): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:164
+Defined in: packages/query-core/src/timeoutManager.ts:240
 
 `clearInterval` can be used to cancel an interval, like the global
 `clearInterval` function. It should be called with an interval ID
@@ -72,7 +72,7 @@ Omit.clearInterval
 clearTimeout(timeoutId: ManagedTimerId | undefined): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:126
+Defined in: packages/query-core/src/timeoutManager.ts:193
 
 `clearTimeout` cancels a timeout callback scheduled with `setTimeout`,
 like the global `clearTimeout` function. It should be called with a
@@ -117,7 +117,7 @@ Omit.clearTimeout
 setInterval(callback: TimeoutCallback, delay: number): ManagedTimerId;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:146
+Defined in: packages/query-core/src/timeoutManager.ts:216
 
 `setInterval` schedules a callback to be called approximately every
 `delay` milliseconds, like the global `setInterval` function.
@@ -170,7 +170,7 @@ Omit.setInterval
 setTimeout(callback: TimeoutCallback, delay: number): ManagedTimerId;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:108
+Defined in: packages/query-core/src/timeoutManager.ts:169
 
 `setTimeout` schedules a callback to run after approximately `delay`
 milliseconds, like the global `setTimeout` function. The callback can be
@@ -226,7 +226,7 @@ Omit.setTimeout
 setTimeoutProvider<TTimerId>(provider: TimeoutProvider<TTimerId>): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:85
+Defined in: packages/query-core/src/timeoutManager.ts:118
 
 `setTimeoutProvider` can be used to set a custom implementation of the
 `setTimeout`, `clearTimeout`, `setInterval`, `clearInterval` functions,

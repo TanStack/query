@@ -3,7 +3,7 @@ id: FetchNextPageOptions
 title: FetchNextPageOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:584
+Defined in: packages/query-core/src/types.ts:927
 
 Options of `fetchNextPage` on an infinite query result.
 

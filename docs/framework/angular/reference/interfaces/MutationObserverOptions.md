@@ -3,7 +3,7 @@ id: MutationObserverOptions
 title: MutationObserverOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1513
+Defined in: packages/query-core/src/types.ts:1992
 
 The options of a `MutationObserver`, and of the hooks built on it like `useMutation`: the
 [MutationOptions](MutationOptions.md), plus `throwOnError`.

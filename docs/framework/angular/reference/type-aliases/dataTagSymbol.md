@@ -7,6 +7,6 @@ title: dataTagSymbol
 type dataTagSymbol = typeof dataTagSymbol;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:65
+Defined in: packages/query-core/src/types.ts:103
 
 The type of the `dataTagSymbol` key, under which a [DataTag](DataTag.md) stores its data type.

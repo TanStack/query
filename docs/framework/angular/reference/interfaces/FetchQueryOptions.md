@@ -3,7 +3,7 @@ id: FetchQueryOptions
 title: FetchQueryOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:489
+Defined in: packages/query-core/src/types.ts:752
 
 ## Deprecated
 

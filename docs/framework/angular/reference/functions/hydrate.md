@@ -5,12 +5,12 @@ title: hydrate
 
 ```ts
 function hydrate(
-   client: QueryClient,
-   dehydratedState: Partial<DehydratedState>,
+   client: QueryClient, 
+   dehydratedState: Partial<DehydratedState>, 
    options?: HydrateOptions): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/hydration.d.ts:139
+Defined in: packages/query-core/src/hydration.ts:306
 
 Restores a `DehydratedState` (as produced by `dehydrate`) into a `QueryClient`'s cache, typically to seed the
 client with data already fetched on the server. `mutations` and `queries` are each optional on `dehydratedState`.

@@ -3,7 +3,7 @@ id: InvalidateOptions
 title: InvalidateOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:573
+Defined in: packages/query-core/src/types.ts:917
 
 Options of `queryClient.invalidateQueries`, applied to the refetch that follows the invalidation.
 

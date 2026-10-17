@@ -4,7 +4,7 @@ title: QueryObserverResult
 ---
 
 ```ts
-type QueryObserverResult<TData, TError> =
+type QueryObserverResult<TData, TError> = 
   | DefinedQueryObserverResult<TData, TError>
   | QueryObserverLoadingErrorResult<TData, TError>
   | QueryObserverLoadingResult<TData, TError>
@@ -12,7 +12,7 @@ type QueryObserverResult<TData, TError> =
 | QueryObserverPlaceholderResult<TData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1015
+Defined in: packages/query-core/src/types.ts:1397
 
 The result of a `QueryObserver`, and of the hooks built on it like `useQuery`. Narrow it by
 `status` or the `is*` flags to get the type of each state.

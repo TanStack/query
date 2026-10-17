@@ -7,7 +7,7 @@ title: notifyManager
 const notifyManager: object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/notifyManager.d.ts:80
+Defined in: packages/query-core/src/notifyManager.ts:154
 
 Handles scheduling and batching callbacks in TanStack Query.
 
@@ -75,7 +75,7 @@ A function that schedules a call to `callback` with the given arguments.
 ### schedule
 
 ```ts
-readonly schedule: (callback: NotifyCallback) => void;
+schedule: (callback: NotifyCallback) => void;
 ```
 
 Schedules a function to be run on the next batch.

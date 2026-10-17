@@ -3,7 +3,7 @@ id: InfiniteQueryObserverLoadingResult
 title: InfiniteQueryObserverLoadingResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1108
+Defined in: packages/query-core/src/types.ts:1508
 
 An infinite query result in the `pending` state while the first fetch is in flight, so
 `isLoading` is `true`.

@@ -3,7 +3,7 @@ id: Mutation
 title: Mutation
 ---
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:104
+Defined in: packages/query-core/src/mutation.ts:138
 
 Represents a single mutation attempt. A `Mutation` holds the mutation's
 options, state (data/error/status), and the `MutationObserver`s currently
@@ -52,7 +52,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 new Mutation<TData, TError, TVariables, TOnMutateResult>(config: MutationConfig<TData, TError, TVariables, TOnMutateResult>): Mutation<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:109
+Defined in: packages/query-core/src/mutation.ts:155
 
 #### Parameters
 
@@ -78,7 +78,7 @@ Removable.constructor
 gcTime: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:7
+Defined in: packages/query-core/src/removable.ts:11
 
 #### Inherited from
 
@@ -94,7 +94,7 @@ Removable.gcTime
 readonly mutationId: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:108
+Defined in: packages/query-core/src/mutation.ts:146
 
 ***
 
@@ -104,7 +104,7 @@ Defined in: packages/query-core/dist-ts/src/mutation.d.ts:108
 options: MutationOptions<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:107
+Defined in: packages/query-core/src/mutation.ts:145
 
 ***
 
@@ -114,7 +114,7 @@ Defined in: packages/query-core/dist-ts/src/mutation.d.ts:107
 state: MutationState<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:106
+Defined in: packages/query-core/src/mutation.ts:144
 
 ## Accessors
 
@@ -126,7 +126,7 @@ Defined in: packages/query-core/dist-ts/src/mutation.d.ts:106
 get meta(): Record<string, unknown> | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:120
+Defined in: packages/query-core/src/mutation.ts:187
 
 The `meta` object passed in the mutation's options, if any.
 
@@ -144,7 +144,7 @@ The mutation's `meta`, or `undefined` if none was set.
 continue(): Promise<unknown>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:156
+Defined in: packages/query-core/src/mutation.ts:260
 
 Resumes a mutation that is currently paused or was restored from a
 dehydrated, still-`pending` state.
@@ -184,7 +184,7 @@ await mutation?.continue()
 destroy(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:13
+Defined in: packages/query-core/src/removable.ts:19
 
 Clears the pending garbage collection timeout, so the entry is no longer scheduled for removal.
 A subclass may override this to release what it holds on to as well — `Query` also cancels any
@@ -208,7 +208,7 @@ Removable.destroy
 execute(variables: TVariables): Promise<TData>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:187
+Defined in: packages/query-core/src/mutation.ts:301
 
 Runs the mutation function for the given variables through a retryer, and
 drives the mutation's state and lifecycle callbacks through to settlement.

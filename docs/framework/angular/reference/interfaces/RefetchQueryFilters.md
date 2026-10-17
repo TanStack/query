@@ -3,7 +3,7 @@ id: RefetchQueryFilters
 title: RefetchQueryFilters
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:568
+Defined in: packages/query-core/src/types.ts:910
 
 The filters of `queryClient.refetchQueries`, which select the queries to refetch.
 

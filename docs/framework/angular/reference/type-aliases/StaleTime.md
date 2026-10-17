@@ -7,4 +7,4 @@ title: StaleTime
 type StaleTime = number | "static";
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:126
+Defined in: packages/query-core/src/types.ts:191

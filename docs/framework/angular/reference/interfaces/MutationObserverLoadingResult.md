@@ -3,7 +3,7 @@ id: MutationObserverLoadingResult
 title: MutationObserverLoadingResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1661
+Defined in: packages/query-core/src/types.ts:2201
 
 A mutation result in the `pending` state while the mutation runs.
 

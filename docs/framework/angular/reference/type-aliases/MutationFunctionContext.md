@@ -7,7 +7,7 @@ title: MutationFunctionContext
 type MutationFunctionContext = object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1406
+Defined in: packages/query-core/src/types.ts:1855
 
 The object passed to `mutationFn` and the mutation callbacks: the `QueryClient`, the mutation's
 `meta`, and its `mutationKey`.

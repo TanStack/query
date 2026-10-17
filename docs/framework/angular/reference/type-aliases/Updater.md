@@ -7,7 +7,7 @@ title: Updater
 type Updater<TInput, TOutput> = TOutput | ((input: TInput) => TOutput);
 ```
 
-Defined in: packages/query-core/dist-ts/src/utils.d.ts:76
+Defined in: packages/query-core/src/utils.ts:103
 
 Either a plain value of type `TOutput`, or a function that receives `TInput` and returns `TOutput`.
 Used for example by `setQueryData`-style updaters, which accept either the new data directly or a

@@ -3,7 +3,7 @@ id: InitialPageParam
 title: InitialPageParam
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:316
+Defined in: packages/query-core/src/types.ts:470
 
 Holds the `initialPageParam` option that every infinite query requires.
 

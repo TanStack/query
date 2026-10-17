@@ -3,7 +3,7 @@ id: QueryObserverPlaceholderResult
 title: QueryObserverPlaceholderResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:964
+Defined in: packages/query-core/src/types.ts:1336
 
 A query result in the `success` state that shows `placeholderData` while the query has no data
 yet.

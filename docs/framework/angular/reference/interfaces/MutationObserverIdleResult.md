@@ -3,7 +3,7 @@ id: MutationObserverIdleResult
 title: MutationObserverIdleResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1624
+Defined in: packages/query-core/src/types.ts:2153
 
 A mutation result in the `idle` state: the mutation hasn't run yet, or was reset.
 

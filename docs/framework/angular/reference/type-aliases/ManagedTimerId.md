@@ -4,14 +4,14 @@ title: ManagedTimerId
 ---
 
 ```ts
-type ManagedTimerId =
+type ManagedTimerId = 
   | number
   | {
   [toPrimitive]: () => number;
 };
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:16
+Defined in: packages/query-core/src/timeoutManager.ts:17
 
 Wrapping `setTimeout` is awkward from a typing perspective because platform
 typings may extend the return type of `setTimeout`. For example, NodeJS

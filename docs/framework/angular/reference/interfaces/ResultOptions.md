@@ -3,7 +3,7 @@ id: ResultOptions
 title: ResultOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:529
+Defined in: packages/query-core/src/types.ts:866
 
 Options shared by the `QueryClient` and observer methods that refetch queries, controlling
 whether a failed refetch makes the returned promise reject.

@@ -3,7 +3,7 @@ id: ResetOptions
 title: ResetOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:579
+Defined in: packages/query-core/src/types.ts:922
 
 Options of `queryClient.resetQueries`, applied to the refetch of the active queries after the
 reset.

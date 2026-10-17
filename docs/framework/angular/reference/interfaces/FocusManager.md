@@ -3,7 +3,7 @@ id: FocusManager
 title: FocusManager
 ---
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:9
+Defined in: packages/query-core/src/focusManager.ts:14
 
 The `FocusManager` manages the focus state within TanStack Query.
 
@@ -21,7 +21,7 @@ It can be used to change the default event listeners or to manually change the f
 hasListeners(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:29
+Defined in: packages/query-core/src/subscribable.ts:43
 
 Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
@@ -45,7 +45,7 @@ Subscribable.hasListeners
 isFocused(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:68
+Defined in: packages/query-core/src/focusManager.ts:130
 
 `isFocused` can be used to get the current focus state.
 
@@ -63,7 +63,7 @@ The focus state set with `setFocused`, or otherwise whether the document is visi
 onFocus(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:63
+Defined in: packages/query-core/src/focusManager.ts:119
 
 `onFocus` notifies all subscribed listeners with the current focus state.
 
@@ -79,7 +79,7 @@ Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:63
 setEventListener(setup: SetupFn): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:40
+Defined in: packages/query-core/src/focusManager.ts:78
 
 `setEventListener` can be used to set a custom event listener that will
 be used to determine the focus state. The provided `setup` function
@@ -127,7 +127,7 @@ focusManager.setEventListener((handleFocus) => {
 setFocused(focused?: boolean): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:59
+Defined in: packages/query-core/src/focusManager.ts:108
 
 `setFocused` can be used to manually set the focus state. Set `undefined`
 to fall back to the default focus check.
@@ -167,7 +167,7 @@ focusManager.setFocused(undefined)
 subscribe(listener: Listener): () => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:24
+Defined in: packages/query-core/src/subscribable.ts:28
 
 Registers a listener to be called on every update this object notifies about. Returns a function
 that removes the listener again — call it to stop listening. The base class never drops a listener

@@ -7,7 +7,7 @@ title: matchMutation
 function matchMutation(filters: MutationFilters, mutation: Mutation<any, any>): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/utils.d.ts:153
+Defined in: packages/query-core/src/utils.ts:269
 
 Checks whether a mutation matches the given [MutationFilters](../interfaces/MutationFilters.md).
 Every filter that is specified must match; filters that are left unspecified are ignored.
@@ -30,7 +30,7 @@ The filters to check the mutation against.
 | <a id="filters-property-exact"></a> `exact?` | `boolean` | Match mutation key exactly |
 | <a id="filters-property-mutationkey"></a> `mutationKey?` | readonly `unknown`[] | Include mutations matching this mutation key |
 | <a id="filters-property-predicate"></a> `predicate?` | (`mutation`: [`Mutation`](../classes/Mutation.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>) => `boolean` | Include mutations matching this predicate function |
-| <a id="filters-property-status"></a> `status?` | `"error"` \| `"success"` \| `"pending"` \| `"idle"` | Filter by mutation status |
+| <a id="filters-property-status"></a> `status?` | `"error"` \| `"pending"` \| `"success"` \| `"idle"` | Filter by mutation status |
 
 ### mutation
 

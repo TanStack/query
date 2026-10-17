@@ -3,7 +3,7 @@ id: MutationObserverErrorResult
 title: MutationObserverErrorResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1698
+Defined in: packages/query-core/src/types.ts:2249
 
 A mutation result in the `error` state after the mutation failed.
 

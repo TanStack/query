@@ -3,7 +3,7 @@ id: FetchPreviousPageOptions
 title: FetchPreviousPageOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:597
+Defined in: packages/query-core/src/types.ts:941
 
 Options of `fetchPreviousPage` on an infinite query result.
 

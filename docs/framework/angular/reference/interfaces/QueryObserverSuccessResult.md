@@ -3,7 +3,7 @@ id: QueryObserverSuccessResult
 title: QueryObserverSuccessResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:917
+Defined in: packages/query-core/src/types.ts:1285
 
 A query result in the `success` state with data from the cache.
 

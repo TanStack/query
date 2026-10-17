@@ -3,7 +3,7 @@ id: QueryState
 title: QueryState
 ---
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:17
+Defined in: packages/query-core/src/query.ts:52
 
 The raw state stored on a `Query` instance. This is the underlying state
 that observer results (e.g. `QueryObserverResult`) are derived from.
@@ -33,4 +33,4 @@ that observer results (e.g. `QueryObserverResult`) are derived from.
 | <a id="property-fetchmeta"></a> `fetchMeta` | `FetchMeta` \| `null` | Metadata passed to the currently in-flight (or most recent) fetch, e.g. the `fetchMore` direction for infinite queries. |
 | <a id="property-fetchstatus"></a> `fetchStatus` | `"fetching"` \| `"paused"` \| `"idle"` | The fetch status of the query. - `fetching`: the `queryFn` is currently executing. - `paused`: a fetch wanted to run but has been paused (see network mode). - `idle`: the query is not fetching. |
 | <a id="property-isinvalidated"></a> `isInvalidated` | `boolean` | Whether the query has been marked as invalidated via `invalidate()`. - Reset to `false` whenever the query resolves successfully. |
-| <a id="property-status"></a> `status` | `"error"` \| `"success"` \| `"pending"` | The status of the query. - `pending` if there's no cached data and no attempt was finished yet. - `error` if the last attempt resulted in an error. - `success` if the query has data. |
+| <a id="property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` | The status of the query. - `pending` if there's no cached data and no attempt was finished yet. - `error` if the last attempt resulted in an error. - `success` if the query has data. |

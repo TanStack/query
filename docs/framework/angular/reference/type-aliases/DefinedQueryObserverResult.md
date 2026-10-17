@@ -4,12 +4,12 @@ title: DefinedQueryObserverResult
 ---
 
 ```ts
-type DefinedQueryObserverResult<TData, TError> =
+type DefinedQueryObserverResult<TData, TError> = 
   | QueryObserverRefetchErrorResult<TData, TError>
 | QueryObserverSuccessResult<TData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1010
+Defined in: packages/query-core/src/types.ts:1386
 
 A query result that always has `data`: the success and refetch error states.
 

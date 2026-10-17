@@ -3,7 +3,7 @@ id: QueryObserverBaseResult
 title: QueryObserverBaseResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:615
+Defined in: packages/query-core/src/types.ts:961
 
 The properties shared by every state of a query result, like `data`, `error`, `status`, the
 `is*` flags, and `refetch`. Each `QueryObserver*Result` narrows them for one state.
@@ -56,4 +56,4 @@ The properties shared by every state of a query result, like `data`, `error`, `s
 | <a id="property-isstale"></a> `isStale` | `boolean` | Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`. |
 | <a id="property-issuccess"></a> `isSuccess` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has received a response with no errors and is ready to display its data. |
 | <a id="property-refetch"></a> `refetch` | (`options?`: [`RefetchOptions`](RefetchOptions.md)) => `Promise`\<[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>\> | A function to manually refetch the query. |
-| <a id="property-status"></a> `status` | `"error"` \| `"success"` \| `"pending"` | The status of the query. - Will be: - `pending` if there's no cached data and no query attempt was finished yet. - `error` if the query attempt resulted in an error. - `success` if the query has received a response with no errors and is ready to display its data. |
+| <a id="property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` | The status of the query. - Will be: - `pending` if there's no cached data and no query attempt was finished yet. - `error` if the query attempt resulted in an error. - `success` if the query has received a response with no errors and is ready to display its data. |

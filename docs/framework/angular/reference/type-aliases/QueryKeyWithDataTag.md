@@ -7,7 +7,7 @@ title: QueryKeyWithDataTag
 type QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError> = object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:107
+Defined in: packages/query-core/src/types.ts:152
 
 An object whose `queryKey` is tagged with [DataTag](DataTag.md), like the options returned by
 `queryOptions`.

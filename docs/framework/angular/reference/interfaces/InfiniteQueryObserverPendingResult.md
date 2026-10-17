@@ -3,7 +3,7 @@ id: InfiniteQueryObserverPendingResult
 title: InfiniteQueryObserverPendingResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1058
+Defined in: packages/query-core/src/types.ts:1454
 
 An infinite query result in the `pending` state: the query has no data yet.
 

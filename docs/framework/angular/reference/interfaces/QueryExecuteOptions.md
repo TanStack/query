@@ -3,7 +3,7 @@ id: QueryExecuteOptions
 title: QueryExecuteOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:472
+Defined in: packages/query-core/src/types.ts:724
 
 The options of `queryClient.query`: the [QueryOptions](QueryOptions.md) of the query, plus a `staleTime`
 that decides whether cached data is returned instead of fetching, and a `select` that only

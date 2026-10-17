@@ -7,7 +7,7 @@ title: TimeoutProvider
 type TimeoutProvider<TTimerId> = object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:28
+Defined in: packages/query-core/src/timeoutManager.ts:28
 
 Backend for timer functions.
 

@@ -3,7 +3,7 @@ id: MutationObserverBaseResult
 title: MutationObserverBaseResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1562
+Defined in: packages/query-core/src/types.ts:2085
 
 The properties shared by every state of a mutation result, like `data`, `error`, `variables`,
 `status`, the `is*` flags, `mutate`, and `reset`.
@@ -53,6 +53,6 @@ The properties shared by every state of a mutation result, like `data`, `error`,
 | <a id="property-issuccess"></a> `isSuccess` | `boolean` | A boolean variable derived from `status`. - `true` if the last mutation attempt was successful. | - |
 | <a id="property-mutate"></a> `mutate` | [`MutateFunction`](../type-aliases/MutateFunction.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\> | The mutation function you can call with variables to trigger the mutation and optionally hooks on additional callback options. **Param** **variables** The variables object to pass to the `mutationFn`. **Param** **options.onSuccess** This function will fire when the mutation is successful and will be passed the mutation's result. **Param** **options.onError** This function will fire if the mutation encounters an error and will be passed the error. **Param** **options.onSettled** This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error. **Remarks** - If you make multiple requests, `onSuccess` will fire only after the latest call you've made. - All the callback functions (`onSuccess`, `onError`, `onSettled`) are void functions, and the returned value will be ignored. | - |
 | <a id="property-reset"></a> `reset` | () => `void` | A function to clean the mutation internal state (i.e., it resets the mutation to its initial state). | - |
-| <a id="property-status"></a> `status` | `"error"` \| `"success"` \| `"pending"` \| `"idle"` | The status of the mutation. - Will be: - `idle` initial status prior to the mutation function executing. - `pending` if the mutation is currently executing. - `error` if the last mutation attempt resulted in an error. - `success` if the last mutation attempt was successful. | [`MutationState`](MutationState.md).[`status`](MutationState.md#property-status) |
+| <a id="property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` \| `"idle"` | The status of the mutation. - Will be: - `idle` initial status prior to the mutation function executing. - `pending` if the mutation is currently executing. - `error` if the last mutation attempt resulted in an error. - `success` if the last mutation attempt was successful. | [`MutationState`](MutationState.md).[`status`](MutationState.md#property-status) |
 | <a id="property-submittedat"></a> `submittedAt` | `number` | The timestamp for when the mutation was submitted. | - |
 | <a id="property-variables"></a> `variables` | `TVariables` \| `undefined` | The variables object passed to the `mutationFn`. | [`MutationState`](MutationState.md).[`variables`](MutationState.md#property-variables) |

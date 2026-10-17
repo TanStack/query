@@ -4,7 +4,7 @@ title: InfiniteQueryObserverResult
 ---
 
 ```ts
-type InfiniteQueryObserverResult<TData, TError> =
+type InfiniteQueryObserverResult<TData, TError> = 
   | DefinedInfiniteQueryObserverResult<TData, TError>
   | InfiniteQueryObserverLoadingErrorResult<TData, TError>
   | InfiniteQueryObserverLoadingResult<TData, TError>
@@ -12,7 +12,7 @@ type InfiniteQueryObserverResult<TData, TError> =
 | InfiniteQueryObserverPlaceholderResult<TData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1374
+Defined in: packages/query-core/src/types.ts:1800
 
 The result of an `InfiniteQueryObserver`, and of the hooks built on it like `useInfiniteQuery`.
 Narrow it by `status` or the `is*` flags to get the type of each state.

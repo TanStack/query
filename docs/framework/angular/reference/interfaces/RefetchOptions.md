@@ -3,7 +3,7 @@ id: RefetchOptions
 title: RefetchOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:540
+Defined in: packages/query-core/src/types.ts:878
 
 Options of the methods that refetch queries, like `refetch` and `queryClient.refetchQueries`.
 

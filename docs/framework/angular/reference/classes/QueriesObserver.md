@@ -3,7 +3,7 @@ id: QueriesObserver
 title: QueriesObserver
 ---
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:39
+Defined in: packages/query-core/src/queriesObserver.ts:64
 
 A `QueriesObserver` watches an array of queries at once, exposing them as
 a single array of `QueryObserverResult`s (or, when a `combine` option is
@@ -40,12 +40,12 @@ const unsubscribe = observer.subscribe((result) => {
 
 ```ts
 new QueriesObserver<TCombinedResult>(
-   client: QueryClient,
-   queries: QueryObserverOptions<any, any, any, any, any, never>[],
+   client: QueryClient, 
+   queries: QueryObserverOptions<any, any, any, any, any, never>[], 
 options?: QueriesObserverOptions<TCombinedResult>): QueriesObserver<TCombinedResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:41
+Defined in: packages/query-core/src/queriesObserver.ts:78
 
 #### Parameters
 
@@ -79,7 +79,7 @@ Subscribable<QueriesObserverListener>.constructor
 destroy(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:48
+Defined in: packages/query-core/src/queriesObserver.ts:114
 
 Stops observing all queries: clears all listeners and destroys every
 underlying `QueryObserver` this observer manages.
@@ -96,7 +96,7 @@ underlying `QueryObserver` this observer manages.
 getCurrentResult(): QueryObserverResult[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:76
+Defined in: packages/query-core/src/queriesObserver.ts:219
 
 Returns the most recently computed array of `QueryObserverResult`s, one
 per observed query, in the same order as the queries passed to the
@@ -123,7 +123,7 @@ const data = results.map((result) => result.data)
 getObservers(): QueryObserver<unknown, Error, unknown, unknown, readonly unknown[]>[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:89
+Defined in: packages/query-core/src/queriesObserver.ts:238
 
 Returns the underlying `QueryObserver` instances this observer manages,
 in the same order as the queries passed to the constructor or
@@ -143,7 +143,7 @@ The managed query observers.
 getOptimisticResult(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], combine: CombineFn<TCombinedResult> | undefined): [QueryObserverResult[], (r?: QueryObserverResult[]) => TCombinedResult, () => QueryObserverResult[]];
 ```
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:101
+Defined in: packages/query-core/src/queriesObserver.ts:253
 
 The `QueriesObserver` counterpart of [QueryObserver#getOptimisticResult](QueryObserver.md#getoptimisticresult) — computes
 the result for the given (already-defaulted) queries right now, synchronously. Called by
@@ -180,7 +180,7 @@ function that returns the results wrapped for property-access tracking.
 getQueries(): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:82
+Defined in: packages/query-core/src/queriesObserver.ts:228
 
 Returns the underlying `Query` instances currently being observed, in
 the same order as the queries passed to the constructor or `setQueries`.
@@ -199,7 +199,7 @@ The observed queries.
 hasListeners(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:29
+Defined in: packages/query-core/src/subscribable.ts:43
 
 Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
@@ -223,7 +223,7 @@ Subscribable.hasListeners
 setQueries(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], options?: QueriesObserverOptions<TCombinedResult>): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queriesObserver.d.ts:64
+Defined in: packages/query-core/src/queriesObserver.ts:136
 
 Replaces the set of queries being observed. Existing `QueryObserver`s
 are reused for queries that match an already-observed query hash;
@@ -265,7 +265,7 @@ observer.setQueries([
 subscribe(listener: QueriesObserverListener): () => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:24
+Defined in: packages/query-core/src/subscribable.ts:28
 
 Registers a listener to be called on every update this object notifies about. Returns a function
 that removes the listener again — call it to stop listening. The base class never drops a listener

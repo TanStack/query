@@ -4,7 +4,7 @@ title: NotifyEventType
 ---
 
 ```ts
-type NotifyEventType =
+type NotifyEventType = 
   | "added"
   | "removed"
   | "updated"
@@ -14,4 +14,4 @@ type NotifyEventType =
   | "observerOptionsUpdated";
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1832
+Defined in: packages/query-core/src/types.ts:2422

@@ -3,7 +3,7 @@ id: QueryCache
 title: QueryCache
 ---
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:102
+Defined in: packages/query-core/src/queryCache.ts:140
 
 The `QueryCache` is the storage mechanism for TanStack Query. It stores all the data, meta
 information, and state of the queries it contains.
@@ -34,13 +34,13 @@ const unsubscribe = queryCache.subscribe((event) => {
 new QueryCache(config?: QueryCacheConfig): QueryCache;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:105
+Defined in: packages/query-core/src/queryCache.ts:143
 
 #### Parameters
 
 ##### config?
 
-[`QueryCacheConfig`](../interfaces/QueryCacheConfig.md)
+[`QueryCacheConfig`](../interfaces/QueryCacheConfig.md) = `{}`
 
 #### Returns
 
@@ -57,10 +57,10 @@ Subscribable<QueryCacheListener>.constructor
 ### config
 
 ```ts
-config: QueryCacheConfig;
+config: QueryCacheConfig = {};
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:104
+Defined in: packages/query-core/src/queryCache.ts:143
 
 ## Methods
 
@@ -68,12 +68,12 @@ Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:104
 
 ```ts
 build<TQueryFnData, TError, TData, TQueryKey>(
-   client: QueryClient,
-   options: WithRequired<QueryOptions<TQueryFnData, TError, TData, TQueryKey, never>, "queryKey">,
+   client: QueryClient, 
+   options: WithRequired<QueryOptions<TQueryFnData, TError, TData, TQueryKey, never>, "queryKey">, 
 state?: QueryState<TData, TError>): Query<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:127
+Defined in: packages/query-core/src/queryCache.ts:169
 
 Returns the existing `Query` instance for the given options' `queryKey`/`queryHash`, or
 builds and adds a new one to the cache if none exists yet. Used by framework adapters and
@@ -145,7 +145,7 @@ const query = queryCache.build(queryClient, {
 clear(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:161
+Defined in: packages/query-core/src/queryCache.ts:254
 
 Removes all queries from the cache.
 
@@ -166,12 +166,12 @@ queryCache.clear()
 ### find()
 
 ```ts
-find<TQueryFnData, TError, TData>(filters: WithRequired<QueryFilters<readonly unknown[]>, "queryKey">):
+find<TQueryFnData, TError, TData>(filters: WithRequired<QueryFilters<readonly unknown[]>, "queryKey">): 
   | Query<TQueryFnData, TError, TData, readonly unknown[]>
   | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:209
+Defined in: packages/query-core/src/queryCache.ts:324
 
 A slightly more advanced method that can be used to get an existing query instance from the
 cache. This instance not only contains all the state for the query, but all of the instances,
@@ -232,7 +232,7 @@ const query = queryCache.find({ queryKey: ['posts'] })
 findAll(filters?: QueryFilters<any>): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:226
+Defined in: packages/query-core/src/queryCache.ts:350
 
 An even more advanced method that can be used to get existing query instances from the cache
 that partially match a query key. If no queries match, an empty array is returned.
@@ -244,7 +244,7 @@ information about queries in rare scenarios.
 
 ##### filters?
 
-[`QueryFilters`](../interfaces/QueryFilters.md)\<`any`\>
+[`QueryFilters`](../interfaces/QueryFilters.md)\<`any`\> = `{}`
 
 The filters to match. Without filters, every query is returned.
 
@@ -271,12 +271,12 @@ const queries = queryCache.findAll({ queryKey: ['posts'] })
 ### get()
 
 ```ts
-get<TQueryFnData, TError, TData, TQueryKey>(queryHash: string):
+get<TQueryFnData, TError, TData, TQueryKey>(queryHash: string): 
   | Query<TQueryFnData, TError, TData, TQueryKey>
   | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:177
+Defined in: packages/query-core/src/queryCache.ts:277
 
 Returns the `Query` instance stored under the given `queryHash`, or `undefined` if none
 exists. Unlike [QueryCache#find](#find), this looks up by the already-computed hash rather
@@ -333,7 +333,7 @@ const query = queryCache.get(queryHash)
 getAll(): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:188
+Defined in: packages/query-core/src/queryCache.ts:300
 
 Returns all queries within the cache.
 
@@ -359,7 +359,7 @@ const queries = queryCache.getAll()
 hasListeners(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:29
+Defined in: packages/query-core/src/subscribable.ts:43
 
 Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
@@ -383,7 +383,7 @@ Subscribable.hasListeners
 remove(query: Query<any, any, any, any>): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:151
+Defined in: packages/query-core/src/queryCache.ts:235
 
 Destroys the given `Query` and removes it from the cache, notifying subscribers with a
 `'removed'` event. A no-op if the query is no longer the one currently stored under its hash
@@ -421,7 +421,7 @@ if (query) {
 subscribe(listener: QueryCacheListener): () => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:24
+Defined in: packages/query-core/src/subscribable.ts:28
 
 Registers a listener to be called on every update this object notifies about. Returns a function
 that removes the listener again — call it to stop listening. The base class never drops a listener

@@ -23,7 +23,7 @@ See also: [Returns](#returns-summary)
 function noop(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/utils.d.ts:89
+Defined in: packages/query-core/src/utils.ts:121
 
 A function that does nothing.
 
@@ -39,7 +39,7 @@ A function that does nothing.
 function noop(): undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/utils.d.ts:90
+Defined in: packages/query-core/src/utils.ts:122
 
 A function that does nothing.
 

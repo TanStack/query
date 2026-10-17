@@ -5,12 +5,12 @@ title: dehydrateQuery
 
 ```ts
 function dehydrateQuery(
-   query: Query,
-   serializeData?: TransformerFn,
+   query: Query, 
+   serializeData?: TransformerFn, 
    shouldRedactErrors?: (error: unknown) => boolean): DehydratedQuery;
 ```
 
-Defined in: packages/query-core/dist-ts/src/hydration.d.ts:80
+Defined in: packages/query-core/src/hydration.ts:178
 
 Dehydrates a single `Query` into a serializable `DehydratedQuery` snapshot. Note that most query config (e.g.
 `queryFn`, `staleTime`) is not dehydrated but instead meant to be configured again when consuming the

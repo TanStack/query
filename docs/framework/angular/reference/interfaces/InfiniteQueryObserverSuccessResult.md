@@ -3,7 +3,7 @@ id: InfiniteQueryObserverSuccessResult
 title: InfiniteQueryObserverSuccessResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1260
+Defined in: packages/query-core/src/types.ts:1672
 
 An infinite query result in the `success` state with data from the cache.
 

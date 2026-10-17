@@ -3,7 +3,7 @@ id: MutationOptions
 title: MutationOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1426
+Defined in: packages/query-core/src/types.ts:1880
 
 The options of a mutation: its `mutationFn`, `mutationKey`, callbacks, retries, `scope`, and so
 on.

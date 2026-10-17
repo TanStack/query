@@ -3,7 +3,7 @@ id: InvalidateQueryFilters
 title: InvalidateQueryFilters
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:553
+Defined in: packages/query-core/src/types.ts:892
 
 The filters of `queryClient.invalidateQueries`: the [QueryFilters](QueryFilters.md) that select the queries
 to invalidate, plus `refetchType` to choose which of them are refetched.

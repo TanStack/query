@@ -3,7 +3,7 @@ id: QueryClientConfig
 title: QueryClientConfig
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1778
+Defined in: packages/query-core/src/types.ts:2361
 
 The options of `new QueryClient()`: the `queryCache` and `mutationCache` to use, and the
 `defaultOptions` for its queries and mutations.

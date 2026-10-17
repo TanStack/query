@@ -3,7 +3,7 @@ id: QueryObserver
 title: QueryObserver
 ---
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:28
+Defined in: packages/query-core/src/queryObserver.ts:56
 
 A `QueryObserver` watches a single query in the `QueryCache` and computes a
 `QueryObserverResult` from its state, recomputing and notifying subscribers
@@ -63,7 +63,7 @@ const unsubscribe = observer.subscribe((result) => {
 new QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>(client: QueryClient, options: QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>): QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:31
+Defined in: packages/query-core/src/queryObserver.ts:86
 
 #### Parameters
 
@@ -93,7 +93,7 @@ Subscribable<QueryObserverListener<TData, TError>>.constructor
 options: QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:30
+Defined in: packages/query-core/src/queryObserver.ts:88
 
 ## Methods
 
@@ -103,7 +103,7 @@ Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:30
 destroy(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:58
+Defined in: packages/query-core/src/queryObserver.ts:166
 
 Stops observing the current query: clears all listeners, cancels the
 stale and refetch-interval timers, and removes this observer from the
@@ -121,7 +121,7 @@ query it was observing.
 fetchOptimistic(options: QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>): Promise<QueryObserverResult<TData, TError>>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:151
+Defined in: packages/query-core/src/queryObserver.ts:412
 
 Fetches a query defined by the given options without affecting this
 observer's own tracked query or result, and returns a promise that
@@ -161,7 +161,7 @@ console.log(result.data)
 getCurrentQuery(): Query<TQueryFnData, TError, TQueryData, TQueryKey>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:120
+Defined in: packages/query-core/src/queryObserver.ts:371
 
 Returns the `Query` instance this observer is currently observing.
 
@@ -179,7 +179,7 @@ The observed query.
 getCurrentResult(): QueryObserverResult<TData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:97
+Defined in: packages/query-core/src/queryObserver.ts:330
 
 Returns the most recently computed `QueryObserverResult` for the
 observed query. This is a point-in-time read; to be notified of updates
@@ -207,7 +207,7 @@ console.log(result.status, result.data)
 getOptimisticResult(options: DefaultedQueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>): QueryObserverResult<TData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:84
+Defined in: packages/query-core/src/queryObserver.ts:281
 
 Computes the result the observer would produce for the given (already-defaulted) options
 right now, building the underlying `Query` if it doesn't exist yet, without waiting for a
@@ -236,7 +236,7 @@ The result for the given options.
 hasListeners(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:29
+Defined in: packages/query-core/src/subscribable.ts:43
 
 Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
@@ -260,7 +260,7 @@ Subscribable.hasListeners
 refetch(options?: RefetchOptions): Promise<QueryObserverResult<TData, TError>>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:133
+Defined in: packages/query-core/src/queryObserver.ts:387
 
 Refetches the observed query and returns a promise that resolves with
 the resulting `QueryObserverResult`.
@@ -269,7 +269,7 @@ the resulting `QueryObserverResult`.
 
 ##### options?
 
-[`RefetchOptions`](../interfaces/RefetchOptions.md)
+[`RefetchOptions`](../interfaces/RefetchOptions.md) = `{}`
 
 Set `cancelRefetch` to `false` to keep a running fetch instead of cancelling
 it, and `throwOnError` to `true` to reject when the refetch fails.
@@ -295,7 +295,7 @@ console.log(result.data)
 setOptions(options: QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:75
+Defined in: packages/query-core/src/queryObserver.ts:189
 
 Updates the observer's options. This will re-resolve the query being
 observed (switching to a different query if the `queryKey` changed),
@@ -335,7 +335,7 @@ observer.setOptions({ queryKey: ['posts', 2], queryFn: () => fetchPost(2) })
 shouldFetchOnReconnect(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:45
+Defined in: packages/query-core/src/queryObserver.ts:139
 
 Returns whether the observed query is currently stale and configured
 (via the `refetchOnReconnect` option) to refetch when the network
@@ -355,7 +355,7 @@ reconnects.
 shouldFetchOnWindowFocus(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:52
+Defined in: packages/query-core/src/queryObserver.ts:153
 
 Returns whether the observed query is currently stale and configured
 (via the `refetchOnWindowFocus` option) to refetch when the window
@@ -375,7 +375,7 @@ regains focus.
 subscribe(listener: QueryObserverListener): () => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:24
+Defined in: packages/query-core/src/subscribable.ts:28
 
 Registers a listener to be called on every update this object notifies about. Returns a function
 that removes the listener again — call it to stop listening. The base class never drops a listener
@@ -416,9 +416,9 @@ Subscribable.subscribe
 ### trackProp()
 
 ```ts
-trackProp(key:
-  | "data"
+trackProp(key: 
   | "error"
+  | "data"
   | "isError"
   | "isPending"
   | "isLoading"
@@ -444,7 +444,7 @@ trackProp(key:
   | "fetchStatus"): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:115
+Defined in: packages/query-core/src/queryObserver.ts:363
 
 Records that the given `QueryObserverResult` property was read, so a subsequent update only
 notifies this observer if a tracked property actually changed. Normally called indirectly via
@@ -455,8 +455,8 @@ access themselves (e.g. through their own reactivity system) instead of via the 
 
 ##### key
 
-  \| `"data"`
   \| `"error"`
+  \| `"data"`
   \| `"isError"`
   \| `"isPending"`
   \| `"isLoading"`
@@ -492,9 +492,9 @@ The name of the property that was read.
 ### trackResult()
 
 ```ts
-trackResult(result: QueryObserverResult<TData, TError>, onPropTracked?: (key:
-  | "data"
+trackResult(result: QueryObserverResult<TData, TError>, onPropTracked?: (key: 
   | "error"
+  | "data"
   | "isError"
   | "isPending"
   | "isLoading"
@@ -520,7 +520,7 @@ trackResult(result: QueryObserverResult<TData, TError>, onPropTracked?: (key:
 | "fetchStatus") => void): QueryObserverResult<TData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:107
+Defined in: packages/query-core/src/queryObserver.ts:343
 
 Wraps a `QueryObserverResult` in a `Proxy` that records which properties are read, via
 [QueryObserver#trackProp](#trackprop) (and an optional `onPropTracked` callback). Used by framework
@@ -537,9 +537,9 @@ The result to wrap.
 
 ##### onPropTracked?
 
-(`key`:
-  \| `"data"`
+(`key`: 
   \| `"error"`
+  \| `"data"`
   \| `"isError"`
   \| `"isPending"`
   \| `"isLoading"`
@@ -580,7 +580,7 @@ A proxy of `result` that tracks property reads.
 updateResult(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryObserver.d.ts:172
+Defined in: packages/query-core/src/queryObserver.ts:765
 
 Recomputes and stores the current result from the current query/options, notifying listeners
 if it changed. Framework adapters call this right after subscribing to make sure no query

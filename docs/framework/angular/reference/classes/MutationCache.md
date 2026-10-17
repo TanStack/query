@@ -3,7 +3,7 @@ id: MutationCache
 title: MutationCache
 ---
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:74
+Defined in: packages/query-core/src/mutationCache.ts:123
 
 The `MutationCache` is the storage for mutations.
 
@@ -31,13 +31,13 @@ const unsubscribe = mutationCache.subscribe((event) => {
 new MutationCache(config?: MutationCacheConfig): MutationCache;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:77
+Defined in: packages/query-core/src/mutationCache.ts:128
 
 #### Parameters
 
 ##### config?
 
-[`MutationCacheConfig`](../interfaces/MutationCacheConfig.md)
+[`MutationCacheConfig`](../interfaces/MutationCacheConfig.md) = `{}`
 
 #### Returns
 
@@ -54,10 +54,10 @@ Subscribable<MutationCacheListener>.constructor
 ### config
 
 ```ts
-config: MutationCacheConfig;
+config: MutationCacheConfig = {};
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:76
+Defined in: packages/query-core/src/mutationCache.ts:128
 
 ## Methods
 
@@ -67,7 +67,7 @@ Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:76
 clear(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:125
+Defined in: packages/query-core/src/mutationCache.ts:262
 
 Removes all mutations from the cache.
 
@@ -88,12 +88,12 @@ mutationCache.clear()
 ### find()
 
 ```ts
-find<TData, TError, TVariables, TOnMutateResult>(filters: MutationFilters):
+find<TData, TError, TVariables, TOnMutateResult>(filters: MutationFilters): 
   | Mutation<TData, TError, TVariables, TOnMutateResult>
   | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:156
+Defined in: packages/query-core/src/mutationCache.ts:305
 
 A slightly more advanced method that can be used to get an existing mutation instance from
 the cache. If the mutation does not exist, `undefined` is returned.
@@ -151,10 +151,10 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 ### findAll()
 
 ```ts
-findAll(filters?: MutationFilters<unknown, Error, unknown, unknown>): Mutation<unknown, Error, unknown, unknown>[];
+findAll(filters?: MutationFilters): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:173
+Defined in: packages/query-core/src/mutationCache.ts:336
 
 An even more advanced method that can be used to get existing mutation instances from the
 cache that match the given filters. If no mutations match, an empty array is returned.
@@ -166,7 +166,7 @@ information about mutations in rare scenarios.
 
 ##### filters?
 
-[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>
+[`MutationFilters`](../interfaces/MutationFilters.md) = `{}`
 
 The filters to match. Without filters, every mutation is returned.
 
@@ -196,7 +196,7 @@ const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
 getAll(): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:139
+Defined in: packages/query-core/src/mutationCache.ts:285
 
 Returns all mutations within the cache.
 
@@ -225,7 +225,7 @@ const mutations = mutationCache.getAll()
 hasListeners(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:29
+Defined in: packages/query-core/src/subscribable.ts:43
 
 Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
@@ -249,7 +249,7 @@ Subscribable.hasListeners
 subscribe(listener: MutationCacheListener): () => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:24
+Defined in: packages/query-core/src/subscribable.ts:28
 
 Registers a listener to be called on every update this object notifies about. Returns a function
 that removes the listener again — call it to stop listening. The base class never drops a listener

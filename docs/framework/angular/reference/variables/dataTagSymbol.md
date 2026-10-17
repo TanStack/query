@@ -4,7 +4,7 @@ title: dataTagSymbol
 ---
 
 ```ts
-const dataTagSymbol: unique symbol;
+const dataTagSymbol: typeof dataTagSymbol;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:65
+Defined in: packages/query-core/src/types.ts:103

@@ -3,7 +3,7 @@ id: InfiniteQueryObserverRefetchErrorResult
 title: InfiniteQueryObserverRefetchErrorResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1215
+Defined in: packages/query-core/src/types.ts:1623
 
 An infinite query result in the `error` state when a refetch failed, so the data from before is
 kept.

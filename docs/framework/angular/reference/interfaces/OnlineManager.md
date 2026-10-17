@@ -3,7 +3,7 @@ id: OnlineManager
 title: OnlineManager
 ---
 
-Defined in: packages/query-core/dist-ts/src/onlineManager.d.ts:13
+Defined in: packages/query-core/src/onlineManager.ts:15
 
 The `OnlineManager` manages the online state within TanStack Query. It can
 be used to change the default event listeners or to manually change the
@@ -25,7 +25,7 @@ detect changes.
 hasListeners(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:29
+Defined in: packages/query-core/src/subscribable.ts:43
 
 Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
@@ -49,7 +49,7 @@ Subscribable.hasListeners
 isOnline(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/onlineManager.d.ts:57
+Defined in: packages/query-core/src/onlineManager.ts:111
 
 `isOnline` can be used to get the current online state.
 
@@ -67,7 +67,7 @@ Defined in: packages/query-core/dist-ts/src/onlineManager.d.ts:57
 setEventListener(setup: SetupFn): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/onlineManager.d.ts:37
+Defined in: packages/query-core/src/onlineManager.ts:76
 
 `setEventListener` can be used to set a custom event listener that will
 be used to determine the online state. The provided `setup` function
@@ -108,7 +108,7 @@ onlineManager.setEventListener((setOnline) => {
 setOnline(online: boolean): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/onlineManager.d.ts:52
+Defined in: packages/query-core/src/onlineManager.ts:96
 
 `setOnline` can be used to manually set the online state.
 
@@ -144,7 +144,7 @@ onlineManager.setOnline(false)
 subscribe(listener: Listener): () => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:24
+Defined in: packages/query-core/src/subscribable.ts:28
 
 Registers a listener to be called on every update this object notifies about. Returns a function
 that removes the listener again — call it to stop listening. The base class never drops a listener

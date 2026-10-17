@@ -3,7 +3,7 @@ id: QueryObserverLoadingResult
 title: QueryObserverLoadingResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:782
+Defined in: packages/query-core/src/types.ts:1138
 
 A query result in the `pending` state while the first fetch is in flight, so `isLoading` is
 `true`.

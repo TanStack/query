@@ -3,7 +3,7 @@ id: Register
 title: Register
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:49
+Defined in: packages/query-core/src/types.ts:71
 
 The interface to augment via declaration merging to override Query's default types repository-wide.
 Each field it declares replaces the default of the matching type: `defaultError` for [DefaultError](../type-aliases/DefaultError.md),

@@ -7,7 +7,7 @@ title: dehydrate
 function dehydrate(client: QueryClient, options?: DehydrateOptions): DehydratedState;
 ```
 
-Defined in: packages/query-core/dist-ts/src/hydration.d.ts:117
+Defined in: packages/query-core/src/hydration.ts:245
 
 Dehydrates a `QueryClient`'s cache (queries and mutations) into a plain, serializable `DehydratedState`,
 typically to embed in server-rendered markup and later restore into a client-side `QueryClient` via `hydrate`.
@@ -25,7 +25,7 @@ The client whose cache is dehydrated.
 
 ### options?
 
-[`DehydrateOptions`](../interfaces/DehydrateOptions.md)
+[`DehydrateOptions`](../interfaces/DehydrateOptions.md) = `{}`
 
 Controls which queries and mutations are included and how their data and errors
 are transformed. Each option falls back to the client's `defaultOptions.dehydrate`.

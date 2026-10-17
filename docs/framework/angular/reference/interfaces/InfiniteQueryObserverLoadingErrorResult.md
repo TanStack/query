@@ -3,7 +3,7 @@ id: InfiniteQueryObserverLoadingErrorResult
 title: InfiniteQueryObserverLoadingErrorResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1161
+Defined in: packages/query-core/src/types.ts:1565
 
 An infinite query result in the `error` state when the first fetch failed, so there is no data.
 

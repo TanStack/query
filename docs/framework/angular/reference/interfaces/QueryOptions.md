@@ -3,7 +3,7 @@ id: QueryOptions
 title: QueryOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:207
+Defined in: packages/query-core/src/types.ts:352
 
 The options of a query itself — its `queryKey`, `queryFn`, retries, `gcTime`, `initialData`,
 `meta`, and so on — shared by observers and the `QueryClient` methods that fetch queries.

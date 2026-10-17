@@ -3,7 +3,7 @@ id: DehydratedState
 title: DehydratedState
 ---
 
-Defined in: packages/query-core/dist-ts/src/hydration.d.ts:59
+Defined in: packages/query-core/src/hydration.ts:102
 
 A serializable snapshot of a `QueryClient`'s cache, as produced by `dehydrate` and consumed by `hydrate`. Typically
 transported from server to client (e.g. embedded in server-rendered markup) to seed the client's cache with data

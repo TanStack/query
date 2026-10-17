@@ -3,7 +3,7 @@ id: MutationObserverSuccessResult
 title: MutationObserverSuccessResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1735
+Defined in: packages/query-core/src/types.ts:2297
 
 A mutation result in the `success` state after the mutation succeeded.
 

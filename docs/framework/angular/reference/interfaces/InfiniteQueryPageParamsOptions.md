@@ -3,7 +3,7 @@ id: InfiniteQueryPageParamsOptions
 title: InfiniteQueryPageParamsOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:330
+Defined in: packages/query-core/src/types.ts:485
 
 The page param options of an infinite query: `initialPageParam`, and the `getNextPageParam` and
 `getPreviousPageParam` functions that compute the params of the pages around it.

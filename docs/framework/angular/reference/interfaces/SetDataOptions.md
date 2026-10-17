@@ -3,7 +3,7 @@ id: SetDataOptions
 title: SetDataOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:1824
+Defined in: packages/query-core/src/types.ts:2413
 
 Options for writing data into the cache, e.g. via `queryClient.setQueryData()`.
 `updatedAt` overrides the timestamp the data is recorded with, which is what staleness is measured from;

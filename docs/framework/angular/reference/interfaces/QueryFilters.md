@@ -3,7 +3,7 @@ id: QueryFilters
 title: QueryFilters
 ---
 
-Defined in: packages/query-core/dist-ts/src/utils.d.ts:13
+Defined in: packages/query-core/src/utils.ts:31
 
 Filters used to select queries, for example in `queryClient.getQueriesData` or `queryClient.invalidateQueries`.
 All provided filters must match; filters that are left unspecified are ignored.
