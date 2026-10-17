@@ -21,8 +21,8 @@ export default defineConfig({
     angular({
       tsconfig: './tsconfig.spec.json',
       // Vitest sets VITEST; Analog defaults jit: true, which skips ngtsc transforms for
-      // signal inputs so inputBinding() fails (NG0315). jit: false needs compiler-cli on
-      // the same TypeScript 5.9 version as the plugin to avoid mixed compiler ASTs.
+      // signal inputs so inputBinding() fails (NG0315). Keep the plugin and compiler-cli
+      // on the same supported TypeScript version to avoid mixed compiler ASTs.
       jit: false,
     }),
   ],

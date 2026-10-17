@@ -1,0 +1,35 @@
+{
+  "name": "angular-types-20",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:types": "ngc --project tsconfig.json"
+  },
+  "devDependencies": {
+    "@angular/common": "~20.1.0",
+    "@angular/compiler": "~20.1.0",
+    "@angular/compiler-cli": "~20.1.0",
+    "@angular/core": "~20.1.0",
+    "@tanstack/angular-query": "workspace:*",
+    "@tanstack/angular-query-devtools": "workspace:*",
+    "@tanstack/angular-query-persist-client": "workspace:*",
+    "typescript": "5.8.3"
+  },
+  "nx": {
+    "targets": {
+      "test:types": {
+        "dependsOn": [
+          "^build"
+        ],
+        "inputs": [
+          "default",
+          "^production",
+          "{workspaceRoot}/scripts/angular-types/**/*",
+          "{workspaceRoot}/packages/angular-query/src/**/*",
+          "{workspaceRoot}/packages/angular-query-devtools/src/**/*",
+          "{workspaceRoot}/packages/angular-query-persist-client/src/**/*"
+        ]
+      }
+    }
+  }
+}
