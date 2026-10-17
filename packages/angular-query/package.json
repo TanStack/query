@@ -27,7 +27,7 @@
   ],
   "scripts": {
     "clean": "premove ./dist ./coverage ./dist-ts ./.cache/test-types",
-    "compile": "tsc --build",
+    "compile": "tsc --project tsconfig.json",
     "test:types": "npm-run-all --serial test:types:*",
     "test:types:tscurrent": "tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
     "test:lib": "pnpm run test:lib:both",
