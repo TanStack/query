@@ -9,16 +9,15 @@ title: replaceEqualDeep
 function replaceEqualDeep<T>(
    a: unknown, 
    b: T, 
-   equalityFn?: (a: unknown, b: unknown) => boolean
+   depth?: number
 ): T;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:428](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L428)
+Defined in: [packages/query-core/src/utils.ts:388](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L388)
 
 This function returns `a` if `b` is deeply equal.
 If not, it will replace any deeply equal children of `b` with those of `a`.
 This can be used for structural sharing between JSON values for example.
-An optional equality function can be used for custom value types.
 
 ## Type Parameters
 
@@ -40,11 +39,11 @@ The previous value, whose deeply equal parts are reused.
 
 The new value.
 
-### equalityFn?
+### depth?
 
-(`a`: `unknown`, `b`: `unknown`) => `boolean`
+`number`
 
-Compares values for structural sharing. Defaults to strict equality.
+The current recursion depth. Past a depth of `500`, `b` is returned as is.
 
 ## Returns
 

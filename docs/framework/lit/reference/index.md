@@ -21,7 +21,6 @@ title: "@tanstack/lit-query"
 
 ## Interfaces
 
-- [CacheKeyConfig](interfaces/CacheKeyConfig.md)
 - [CancelOptions](interfaces/CancelOptions.md)
 - [DefaultOptions](interfaces/DefaultOptions.md)
 - [DehydratedState](interfaces/DehydratedState.md)
@@ -85,7 +84,6 @@ title: "@tanstack/lit-query"
 
 - [Accessor](type-aliases/Accessor.md)
 - [AnyDataTag](type-aliases/AnyDataTag.md)
-- [CacheKeyHashFunction](type-aliases/CacheKeyHashFunction.md)
 - [CreateInfiniteQueryOptions](type-aliases/CreateInfiniteQueryOptions.md)
 - [CreateMutationOptions](type-aliases/CreateMutationOptions.md)
 - [CreateQueriesControllerOptions](type-aliases/CreateQueriesControllerOptions.md)
@@ -102,7 +100,6 @@ title: "@tanstack/lit-query"
 - [DefinedQueryObserverResult](type-aliases/DefinedQueryObserverResult.md)
 - [DistributiveOmit](type-aliases/DistributiveOmit.md)
 - [~~EnsureInfiniteQueryDataOptions~~](type-aliases/EnsureInfiniteQueryDataOptions.md)
-- [EqualityFn](type-aliases/EqualityFn.md)
 - [~~FetchInfiniteQueryOptions~~](type-aliases/FetchInfiniteQueryOptions.md)
 - [FetchStatus](type-aliases/FetchStatus.md)
 - [GetNextPageParamFunction](type-aliases/GetNextPageParamFunction.md)

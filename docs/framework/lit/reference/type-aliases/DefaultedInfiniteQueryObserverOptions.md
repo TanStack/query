@@ -9,7 +9,7 @@ title: DefaultedInfiniteQueryObserverOptions
 type DefaultedInfiniteQueryObserverOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown> = WithRequired<InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "throwOnError" | "refetchOnReconnect" | "queryHash">;
 ```
 
-Defined in: [packages/query-core/src/types.ts:726](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L726)
+Defined in: [packages/query-core/src/types.ts:702](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L702)
 
 The [InfiniteQueryObserverOptions](../interfaces/InfiniteQueryObserverOptions.md) after `QueryClient#defaultQueryOptions` has applied the
 defaults, so `throwOnError`, `refetchOnReconnect`, and `queryHash` are always set.

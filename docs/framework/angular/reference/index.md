@@ -22,7 +22,6 @@ title: "@tanstack/angular-query-experimental"
 
 - [BaseMutationNarrowing](interfaces/BaseMutationNarrowing.md)
 - [BaseQueryNarrowing](interfaces/BaseQueryNarrowing.md)
-- [CacheKeyConfig](interfaces/CacheKeyConfig.md)
 - [CancelOptions](interfaces/CancelOptions.md)
 - [CreateBaseQueryOptions](interfaces/CreateBaseQueryOptions.md)
 - [CreateInfiniteQueryOptions](interfaces/CreateInfiniteQueryOptions.md)
@@ -96,7 +95,6 @@ title: "@tanstack/angular-query-experimental"
 ## Type Aliases
 
 - [AnyDataTag](type-aliases/AnyDataTag.md)
-- [CacheKeyHashFunction](type-aliases/CacheKeyHashFunction.md)
 - [CreateBaseMutationResult](type-aliases/CreateBaseMutationResult.md)
 - [CreateBaseQueryResult](type-aliases/CreateBaseQueryResult.md)
 - [CreateInfiniteQueryResult](type-aliases/CreateInfiniteQueryResult.md)
@@ -119,7 +117,6 @@ title: "@tanstack/angular-query-experimental"
 - [DevtoolsFeature](type-aliases/DevtoolsFeature.md)
 - [DistributiveOmit](type-aliases/DistributiveOmit.md)
 - [~~EnsureInfiniteQueryDataOptions~~](type-aliases/EnsureInfiniteQueryDataOptions.md)
-- [EqualityFn](type-aliases/EqualityFn.md)
 - [~~FetchInfiniteQueryOptions~~](type-aliases/FetchInfiniteQueryOptions.md)
 - [FetchStatus](type-aliases/FetchStatus.md)
 - [GetNextPageParamFunction](type-aliases/GetNextPageParamFunction.md)

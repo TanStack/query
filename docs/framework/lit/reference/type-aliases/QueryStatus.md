@@ -9,4 +9,4 @@ title: QueryStatus
 type QueryStatus = "pending" | "error" | "success";
 ```
 
-Defined in: [packages/query-core/src/types.ts:977](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L977)
+Defined in: [packages/query-core/src/types.ts:953](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L953)

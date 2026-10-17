@@ -9,4 +9,4 @@ title: FetchStatus
 type FetchStatus = "fetching" | "paused" | "idle";
 ```
 
-Defined in: [packages/query-core/src/types.ts:979](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L979)
+Defined in: [packages/query-core/src/types.ts:955](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L955)

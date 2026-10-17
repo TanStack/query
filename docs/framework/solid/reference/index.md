@@ -20,7 +20,6 @@ title: "@tanstack/solid-query"
 
 ## Interfaces
 
-- [CacheKeyConfig](interfaces/CacheKeyConfig.md)
 - [CancelOptions](interfaces/CancelOptions.md)
 - [DefaultOptions](interfaces/DefaultOptions.md)
 - [DehydratedState](interfaces/DehydratedState.md)
@@ -85,7 +84,6 @@ title: "@tanstack/solid-query"
 ## Type Aliases
 
 - [AnyDataTag](type-aliases/AnyDataTag.md)
-- [CacheKeyHashFunction](type-aliases/CacheKeyHashFunction.md)
 - [DataTag](type-aliases/DataTag.md)
 - [dataTagErrorSymbol](type-aliases/dataTagErrorSymbol.md)
 - [dataTagSymbol](type-aliases/dataTagSymbol.md)
@@ -101,7 +99,6 @@ title: "@tanstack/solid-query"
 - [DefinedUseQueryResult](type-aliases/DefinedUseQueryResult.md)
 - [DistributiveOmit](type-aliases/DistributiveOmit.md)
 - [~~EnsureInfiniteQueryDataOptions~~](type-aliases/EnsureInfiniteQueryDataOptions.md)
-- [EqualityFn](type-aliases/EqualityFn.md)
 - [~~FetchInfiniteQueryOptions~~](type-aliases/FetchInfiniteQueryOptions.md)
 - [FetchStatus](type-aliases/FetchStatus.md)
 - [GetNextPageParamFunction](type-aliases/GetNextPageParamFunction.md)

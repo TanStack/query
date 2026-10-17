@@ -14,7 +14,7 @@ type InfiniteQueryObserverResult<TData = unknown, TError = DefaultError> =
 | InfiniteQueryObserverPlaceholderResult<TData, TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1824](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1824)
+Defined in: [packages/query-core/src/types.ts:1800](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1800)
 
 The result of an `InfiniteQueryObserver`, and of the hooks built on it like `useInfiniteQuery`.
 Narrow it by `status` or the `is*` flags to get the type of each state.

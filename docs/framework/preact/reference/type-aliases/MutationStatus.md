@@ -9,4 +9,4 @@ title: MutationStatus
 type MutationStatus = "idle" | "pending" | "success" | "error";
 ```
 
-Defined in: [packages/query-core/src/types.ts:1849](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1849)
+Defined in: [packages/query-core/src/types.ts:1825](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1825)

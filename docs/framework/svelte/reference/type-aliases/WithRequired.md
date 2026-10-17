@@ -9,7 +9,7 @@ title: WithRequired
 type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & { [_ in TKey]: {} };
 ```
 
-Defined in: [packages/query-core/src/types.ts:681](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L681)
+Defined in: [packages/query-core/src/types.ts:657](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L657)
 
 Makes the `TKey` properties of `TTarget` required and non-nullable.
 
