@@ -27,7 +27,7 @@ export const loader =
   async ({ request }: LoaderFunctionArgs) => {
     const url = new URL(request.url)
     const q = url.searchParams.get('q') ?? ''
-    await queryClient.ensureQueryData(contactListQuery(q))
+    await queryClient.query({ ...contactListQuery(q), staleTime: 'static' })
     return { q }
   }
 

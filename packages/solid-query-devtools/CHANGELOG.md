@@ -1,5 +1,29 @@
 # @tanstack/solid-query-devtools
 
+## 5.104.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.104.3
+  - @tanstack/solid-query@5.104.3
+
+## 5.104.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.104.2
+  - @tanstack/solid-query@5.104.2
+
+## 5.104.1
+
+### Patch Changes
+
+- Updated dependencies [[`ec060b6`](https://github.com/TanStack/query/commit/ec060b6f74b2e51f4b0c78932beec656ef6f6878)]:
+  - @tanstack/query-devtools@5.104.1
+  - @tanstack/solid-query@5.104.1
+
 ## 5.104.0
 
 ### Patch Changes

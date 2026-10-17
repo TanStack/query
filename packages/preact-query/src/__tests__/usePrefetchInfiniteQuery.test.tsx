@@ -1,6 +1,5 @@
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent } from '@testing-library/preact'
-import type { VNode } from 'preact'
 import { Suspense } from 'preact/compat'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -12,6 +11,7 @@ import {
   useSuspenseInfiniteQuery,
 } from '..'
 import { renderWithClient } from './utils'
+import type { VNode } from 'preact'
 
 describe('usePrefetchInfiniteQuery', () => {
   let queryCache: QueryCache
@@ -55,8 +55,8 @@ describe('usePrefetchInfiniteQuery', () => {
 
       return (
         <div>
-          {state.data.pages.map((page, index) => (
-            <div key={index}>data: {page}</div>
+          {state.data.pages.map((page) => (
+            <div key={page}>data: {page}</div>
           ))}
           <button onClick={() => state.fetchNextPage()}>Next Page</button>
         </div>
@@ -119,8 +119,8 @@ describe('usePrefetchInfiniteQuery', () => {
 
       return (
         <div>
-          {state.data.pages.map((page, index) => (
-            <div key={index}>data: {page}</div>
+          {state.data.pages.map((page) => (
+            <div key={page}>data: {page}</div>
           ))}
           <button onClick={() => state.fetchNextPage()}>Next Page</button>
         </div>
@@ -177,8 +177,8 @@ describe('usePrefetchInfiniteQuery', () => {
 
       return (
         <div>
-          {state.data.pages.map((page, index) => (
-            <div key={index}>data: {page}</div>
+          {state.data.pages.map((page) => (
+            <div key={page}>data: {page}</div>
           ))}
           <button onClick={() => state.fetchNextPage()}>Next Page</button>
         </div>

@@ -645,7 +645,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('data')).toHaveTextContent('2')
   })
 
-  it('keeps up-to-date with query key changes', async () => {
+  it('should keep up-to-date with query key changes', async () => {
     const key = queryKey()
 
     const rendered = render(Counter, {

@@ -8,7 +8,7 @@ export type Movie = {
 export type MovieDetails = Movie & {
   info: {
     plot: string
-    actors: string[]
+    actors: Array<string>
   }
 }
 
@@ -18,7 +18,7 @@ function delay(t: number) {
   })
 }
 
-export async function fetchMovies(): Promise<Movie[]> {
+export async function fetchMovies(): Promise<Array<Movie>> {
   console.log('fetchMovies')
 
   await delay(200 + Math.floor(Math.random() * 2000))

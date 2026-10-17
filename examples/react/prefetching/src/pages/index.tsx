@@ -7,6 +7,7 @@ const getCharacters = async (): Promise<{
 }> => {
   await new Promise((r) => setTimeout(r, 500))
   const response = await fetch('https://rickandmortyapi.com/api/character/')
+  if (!response.ok) throw new Error('Failed to fetch characters')
   return await response.json()
 }
 
@@ -15,12 +16,56 @@ const getCharacter = async (selectedChar: number) => {
   const response = await fetch(
     `https://rickandmortyapi.com/api/character/${selectedChar}`,
   )
+  if (!response.ok) throw new Error('Failed to fetch character')
   return await response.json()
 }
 
-export default function Example() {
+function CharacterItem({
+  char,
+  onSelect,
+}: {
+  char: { id: number; name: string }
+  onSelect: (id: number) => void
+}) {
   const queryClient = useQueryClient()
-  const rerender = React.useState(0)[1]
+
+  const { data } = useQuery({
+    queryKey: ['character', char.id],
+    queryFn: () => getCharacter(char.id),
+    enabled: false,
+  })
+
+  return (
+    <li
+      onClick={() => {
+        onSelect(char.id)
+      }}
+      onMouseEnter={() => {
+        queryClient
+          .query({
+            queryKey: ['character', char.id],
+            queryFn: () => getCharacter(char.id),
+            staleTime: 10 * 1000, // only prefetch if older than 10 seconds
+          })
+          .catch(noop)
+      }}
+    >
+      <div
+        style={
+          data
+            ? {
+                fontWeight: 'bold',
+              }
+            : {}
+        }
+      >
+        {char.id} - {char.name}
+      </div>
+    </li>
+  )
+}
+
+export default function Example() {
   const [selectedChar, setSelectedChar] = React.useState(1)
 
   const charactersQuery = useQuery({
@@ -47,37 +92,11 @@ export default function Example() {
         <>
           <ul>
             {charactersQuery.data?.results.map((char) => (
-              <li
+              <CharacterItem
                 key={char.id}
-                onClick={() => {
-                  setSelectedChar(char.id)
-                }}
-                onMouseEnter={async () => {
-                  await queryClient
-                    .query({
-                      queryKey: ['character', char.id],
-                      queryFn: () => getCharacter(char.id),
-                      staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-                    })
-                    .catch(noop)
-
-                  setTimeout(() => {
-                    rerender({})
-                  }, 1)
-                }}
-              >
-                <div
-                  style={
-                    queryClient.getQueryData(['character', char.id])
-                      ? {
-                          fontWeight: 'bold',
-                        }
-                      : {}
-                  }
-                >
-                  {char.id} - {char.name}
-                </div>
-              </li>
+                char={char}
+                onSelect={setSelectedChar}
+              />
             ))}
           </ul>
 

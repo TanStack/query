@@ -21,7 +21,6 @@ import type { TemplateResult } from 'lit'
  * This class is not registered as a custom element by the package. Applications
  * must register either a subclass or the class itself with
  * `customElements.define`.
- *
  * @example
  * ```ts
  * import { html, LitElement } from 'lit'
@@ -44,7 +43,6 @@ import type { TemplateResult } from 'lit'
  *   }
  * }
  * ```
- *
  * @example
  * ```ts
  * import { html } from 'lit'
@@ -63,7 +61,7 @@ import type { TemplateResult } from 'lit'
  */
 export class QueryClientProvider extends LitElement {
   /** @internal */
-  static properties = {
+  static override properties = {
     client: { attribute: false },
   }
 
@@ -86,28 +84,43 @@ export class QueryClientProvider extends LitElement {
     })
   }
 
-  /** @internal */
-  connectedCallback(): void {
+  /**
+   * Provides the client to descendants and mounts it when the element is
+   * connected.
+   * @internal
+   */
+  override connectedCallback(): void {
     super.connectedCallback()
     const client = this.requireClient()
     this.contextProvider.setValue(client)
     this.mountClient(client)
   }
 
-  /** @internal */
-  disconnectedCallback(): void {
+  /**
+   * Unmounts the client when the element is disconnected.
+   * @internal
+   */
+  override disconnectedCallback(): void {
     this.unmountClient(this.mountedClient)
     super.disconnectedCallback()
   }
 
-  /** @internal */
-  protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
+  /**
+   * Swaps the provided and mounted client when `client` changes.
+   * @internal
+   * @param changedProperties - The properties that changed. When `client` changes, the previous
+   * client is unmounted and the new one is provided and mounted.
+   * @throws {Error} If `client` is unset while the provider is connected.
+   */
+  protected override willUpdate(
+    changedProperties: Map<PropertyKey, unknown>,
+  ): void {
     if (!changedProperties.has('client')) {
       return
     }
 
     const nextClient = this.client
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    // oxlint-disable-next-line typescript/no-unnecessary-condition
     if (!nextClient) {
       if (this.isConnected) {
         this.unmountClient(this.mountedClient)
@@ -120,7 +133,8 @@ export class QueryClientProvider extends LitElement {
     }
 
     const previousClient = changedProperties.get('client') as
-      QueryClient | undefined
+      | QueryClient
+      | undefined
     if (previousClient && previousClient !== nextClient && this.isConnected) {
       this.unmountClient(previousClient)
     }
@@ -132,8 +146,12 @@ export class QueryClientProvider extends LitElement {
     }
   }
 
-  /** @internal */
-  render(): TemplateResult {
+  /**
+   * Renders the provider's children.
+   * @internal
+   * @returns A `<slot>` that renders the provider's children.
+   */
+  override render(): TemplateResult {
     return html`<slot></slot>`
   }
 
@@ -165,7 +183,7 @@ export class QueryClientProvider extends LitElement {
   }
 
   private requireClient(): QueryClient {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    // oxlint-disable-next-line typescript/no-unnecessary-condition
     if (!this.client) {
       throw createMissingQueryClientError()
     }

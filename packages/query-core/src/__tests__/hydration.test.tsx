@@ -1265,7 +1265,7 @@ describe('dehydration and rehydration', () => {
 
     // --- client ---
 
-    await vi.advanceTimersByTimeAsync(10_000) // Arbitrary time in the future
+    await vi.advanceTimersByTimeAsync(10000) // Arbitrary time in the future
 
     const clientQueryClient = new QueryClient()
 

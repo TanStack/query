@@ -47,14 +47,12 @@ export interface DevtoolsOptions {
   /**
    * The position of the TanStack logo to open and close the devtools panel.
    * `top-left` | `top-right` | `bottom-left` | `bottom-right` | `relative`
-   *
    * @defaultValue bottom-right
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
    * The position of the Angular Query devtools panel.
    * `top` | `bottom` | `left` | `right`
-   *
    * @defaultValue bottom
    */
   position?: DevtoolsPosition
@@ -71,7 +69,8 @@ export interface DevtoolsOptions {
    */
   styleNonce?: string
   /**
-   * Use this so you can attach the devtool's styles to a specific element in the DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
+   * within the shadow DOM instead of within the head tag in the light DOM.
    */
   shadowDOMTarget?: ShadowRoot
   /**
@@ -80,7 +79,6 @@ export interface DevtoolsOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   *
    * @defaultValue system
    */
   theme?: Theme
@@ -108,8 +106,16 @@ export interface DevtoolsOptions {
   loadDevtools?: 'auto' | boolean
 }
 
+/**
+ * A function that returns the devtools options. It receives the `deps` of
+ * {@link WithDevtoolsOptions} and runs inside a `computed`, so the devtools update when the signals
+ * it reads change.
+ */
 export type WithDevtoolsFn = (...deps: Array<any>) => DevtoolsOptions
 
+/**
+ * The signature of `withDevtools`, which creates the devtools feature for `provideTanStackQuery`.
+ */
 export type WithDevtools = (
   withDevtoolsFn?: WithDevtoolsFn,
   options?: WithDevtoolsOptions,

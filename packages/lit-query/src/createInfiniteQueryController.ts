@@ -58,6 +58,11 @@ export type InfiniteQueryResultAccessor<TData, TError> = ValueAccessor<
   destroy: () => void
 }
 
+/**
+ * Returns the result used while no `QueryClient` is available: `'pending'` and idle, with methods
+ * that reject with the missing client error.
+ * @returns A new result object in that state.
+ */
 function createPendingInfiniteQueryResult<
   TData,
   TError,
@@ -164,7 +169,7 @@ class InfiniteQueryController<
     this.assignObserverResult(observer.getOptimisticResult(defaulted))
   }
 
-  protected onConnected(): void {
+  protected override onConnected(): void {
     if (!this.syncClient()) {
       return
     }
@@ -177,12 +182,12 @@ class InfiniteQueryController<
     }
   }
 
-  protected onDisconnected(): void {
+  protected override onDisconnected(): void {
     this.unsubscribeObserver()
     this.syncClient()
   }
 
-  protected onHostUpdate(): void {
+  protected override onHostUpdate(): void {
     if (typeof this.options !== 'function') {
       return
     }
@@ -190,7 +195,7 @@ class InfiniteQueryController<
     this.refreshOptions()
   }
 
-  protected onQueryClientChanged(): void {
+  protected override onQueryClientChanged(): void {
     if (!this.syncClient() || !this.connectedState) {
       return
     }
@@ -360,7 +365,6 @@ class InfiniteQueryController<
  *
  * If `queryClient` is omitted, the controller resolves the client from the
  * nearest connected `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the infinite query
  * subscription.
  * @param options - Infinite query observer options, or a getter that returns
@@ -369,7 +373,6 @@ class InfiniteQueryController<
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the latest infinite query result with page helper
  * methods.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'

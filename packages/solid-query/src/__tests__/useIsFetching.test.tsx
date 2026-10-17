@@ -230,7 +230,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    const rendered = render(() => <Page></Page>)
+    const rendered = render(() => <Page />)
 
     expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)

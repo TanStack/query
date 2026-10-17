@@ -1,5 +1,27 @@
 # @tanstack/query-devtools
 
+## 5.104.3
+
+### Patch Changes
+
+- Updated dependencies [[`0f15bc9`](https://github.com/TanStack/query/commit/0f15bc925db5813be6a17527988ec7d7b3c8cfc0)]:
+  - @tanstack/query-core@5.104.3
+
+## 5.104.2
+
+### Patch Changes
+
+- Updated dependencies [[`03e8c39`](https://github.com/TanStack/query/commit/03e8c3955ddbf20f0a07b79982b52dfad8df5323)]:
+  - @tanstack/query-core@5.104.2
+
+## 5.104.1
+
+### Patch Changes
+
+- [#11799](https://github.com/TanStack/query/pull/11799) [`ec060b6`](https://github.com/TanStack/query/commit/ec060b6f74b2e51f4b0c78932beec656ef6f6878) - Isolate the signals and subscriptions used across the DevTools context
+- Updated dependencies []:
+  - @tanstack/query-core@5.104.1
+
 ## 5.104.0
 
 ### Minor Changes

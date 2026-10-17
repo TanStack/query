@@ -1,5 +1,27 @@
 # @tanstack/vue-query
 
+## 5.104.3
+
+### Patch Changes
+
+- Updated dependencies [[`0f15bc9`](https://github.com/TanStack/query/commit/0f15bc925db5813be6a17527988ec7d7b3c8cfc0)]:
+  - @tanstack/query-core@5.104.3
+
+## 5.104.2
+
+### Patch Changes
+
+- [#11796](https://github.com/TanStack/query/pull/11796) [`69e114a`](https://github.com/TanStack/query/commit/69e114aecfdbd0a05625065aea4e43415fa386b3) - Export the `MutationResult` type so inferred `useMutation` return types can be named when emitting declarations
+- Updated dependencies [[`03e8c39`](https://github.com/TanStack/query/commit/03e8c3955ddbf20f0a07b79982b52dfad8df5323)]:
+  - @tanstack/query-core@5.104.2
+
+## 5.104.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.104.1
+
 ## 5.104.0
 
 ### Minor Changes
