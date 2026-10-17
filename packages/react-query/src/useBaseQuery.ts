@@ -10,7 +10,9 @@ import {
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
 import { useIsRestoring } from './IsRestoringProvider'
+import { useQueryStrictMode } from './QueryStrictMode'
 import {
+  checkQueryStrictMode,
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
@@ -63,6 +65,7 @@ export function useBaseQuery<
 
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
+  const strictMode = useQueryStrictMode()
   const client = useQueryClient(queryClient)
   const defaultedOptions = client.defaultQueryOptions(options)
 
@@ -128,8 +131,18 @@ export function useBaseQuery<
     observer.setOptions(defaultedOptions)
   }, [defaultedOptions, observer])
 
+  const willSuspend = !!shouldSuspend(defaultedOptions, result)
+
+  if (!isRestoring) {
+    checkQueryStrictMode(
+      strictMode,
+      client.getQueryCache().get(defaultedOptions.queryHash),
+      willSuspend,
+    )
+  }
+
   // Handle suspense
-  if (shouldSuspend(defaultedOptions, result)) {
+  if (willSuspend) {
     throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
   }
 

@@ -1,3 +1,7 @@
+import {
+  QueryStrictModeError,
+  shouldThrowQueryStrictModeEvent,
+} from './QueryStrictMode'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -7,6 +11,10 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
+import type {
+  QueryStrictModeEvent,
+  QueryStrictModeValue,
+} from './QueryStrictMode'
 
 /**
  * The default `throwOnError` of the suspense hooks: throws the error to the nearest error boundary
@@ -100,3 +108,48 @@ export const fetchOptimistic = <
   observer.fetchOptimistic(defaultedOptions).catch(() => {
     errorResetBoundary.clearReset()
   })
+
+/**
+ * Inside a `QueryStrictMode`, marks a query read by a hook as used, and reports a
+ * `'missing-prefetch'` if a suspending hook is about to start its fetch. Does nothing in production.
+ * @param strictMode - The value of the nearest `QueryStrictMode`, if any.
+ * @param query - The query the hook reads.
+ * @param willSuspend - Whether the hook is about to suspend on the query.
+ * @throws {QueryStrictModeError} When `throwOnMissingPrefetch` applies to the `'missing-prefetch'`.
+ */
+export const checkQueryStrictMode = (
+  strictMode: QueryStrictModeValue | null,
+  query: Query<any, any, any, any> | undefined,
+  willSuspend: boolean,
+) => {
+  if (process.env.NODE_ENV !== 'production') {
+    if (!strictMode || !query) {
+      return
+    }
+    strictMode.markUsed(query)
+    // Check the query's own state: the optimistic result already reports `'fetching'`. A query
+    // that errored is refetched after an error boundary reset, which isn't a missing prefetch.
+    if (
+      willSuspend &&
+      query.state.fetchStatus === 'idle' &&
+      query.state.status !== 'error'
+    ) {
+      const event: QueryStrictModeEvent = {
+        type: 'missing-prefetch',
+        message: `[${query.queryHash}]: A suspense query started its fetch during render. Prefetch it higher up (in a route loader, with usePrefetchQuery, or on the server) to avoid request waterfalls.`,
+        query,
+      }
+      // Throw before the hook starts its fetch, so the query stays idle and throws again after
+      // an error boundary reset
+      if (
+        shouldThrowQueryStrictModeEvent(
+          strictMode.throwOnMissingPrefetch,
+          event,
+        )
+      ) {
+        throw new QueryStrictModeError(event)
+      }
+      strictMode.logger(event)
+    }
+  }
+}
