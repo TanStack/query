@@ -1,5 +1,23 @@
 # @tanstack/angular-query-devtools
 
+## 5.0.0-rc.5
+
+### Major Changes
+
+- Add the stable Angular Query adapter for Angular 20.1+. It includes SSR support, Resource API interoperability, persistence integration, improved internal subscription and pending tasks management, stable `injectQueries` and consistency improvements in the API.
+
+### Patch Changes
+
+- Clear removed panel close callbacks and release devtools ownership when the injector is destroyed.
+
+- Support the theme option in injectDevtoolsPanel
+
+- [#12054](https://github.com/TanStack/query/pull/12054) [`9464a5e`](https://github.com/TanStack/query/commit/9464a5e71f68c95cc12a07068ae30a2f1b13b0ea) - Update the Angular packages to the latest Query core and incorporate upstream adapter fixes, type coverage, and tooling updates.
+
+- [#12054](https://github.com/TanStack/query/pull/12054) [`9464a5e`](https://github.com/TanStack/query/commit/9464a5e71f68c95cc12a07068ae30a2f1b13b0ea) - Build the Angular packages with Vite 8 while preserving their module entry points and external dependencies.
+- Updated dependencies [[`9464a5e`](https://github.com/TanStack/query/commit/9464a5e71f68c95cc12a07068ae30a2f1b13b0ea), [`9464a5e`](https://github.com/TanStack/query/commit/9464a5e71f68c95cc12a07068ae30a2f1b13b0ea)]:
+  - @tanstack/angular-query@5.0.0-rc.5
+
 ## 5.0.0-rc.4
 
 ### Patch Changes

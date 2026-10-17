@@ -1,5 +1,30 @@
 # @tanstack/angular-query
 
+## 5.0.0-rc.5
+
+### Major Changes
+
+- Add the stable Angular Query adapter for Angular 20.1+. It includes SSR support, Resource API interoperability, persistence integration, improved internal subscription and pending tasks management, stable `injectQueries` and consistency improvements in the API.
+
+### Minor Changes
+
+- Bundle an Angular 20.1-compatible migrate-from-experimental schematic that updates imports, migrates Angular and Nx workspace dependencies, and reports remaining API changes. Include opt-in migrations for ambiguous client references and query-core imports, with optional peer dependencies for schematic tooling.
+
+### Patch Changes
+
+- Fix the `migrate-from-experimental` schematic aborting with `Path "…" is a file.` when a project source imports a package subpath that names a file, such as `@noble/hashes/sha3.js`.
+
+- Improve Angular migration and typing:
+
+  - Replace experimental npm aliases for query and devtools packages and preserve exact dependency pins, including opted-in query-core migrations.
+  - Discover application and test sources across Angular, Nx, manually configured runners, and standalone libraries, including project references. Respect explicit test configurations and TypeScript exclusions after merging project declarations.
+  - Fix status-helper calls on heterogeneous `injectQueries` results while preserving signal typing and status-based narrowing. Keep optional initial data undefined-capable.
+  - Document gradual migration, shared ngneat clients, import restrictions, and asynchronous testing patterns. Run Zone.js regression tests alongside zoneless library tests by default.
+
+- [#12054](https://github.com/TanStack/query/pull/12054) [`9464a5e`](https://github.com/TanStack/query/commit/9464a5e71f68c95cc12a07068ae30a2f1b13b0ea) - Update the Angular packages to the latest Query core and incorporate upstream adapter fixes, type coverage, and tooling updates.
+
+- [#12054](https://github.com/TanStack/query/pull/12054) [`9464a5e`](https://github.com/TanStack/query/commit/9464a5e71f68c95cc12a07068ae30a2f1b13b0ea) - Build the Angular packages with Vite 8 while preserving their module entry points and external dependencies.
+
 ## 5.0.0-rc.4
 
 ### Patch Changes
