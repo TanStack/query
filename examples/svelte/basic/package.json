@@ -10,16 +10,16 @@
     "test:types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/query-async-storage-persister": "^5.104.3",
-    "@tanstack/svelte-query": "^6.3.3",
-    "@tanstack/svelte-query-devtools": "^6.3.3",
-    "@tanstack/svelte-query-persist-client": "^6.3.3"
+    "@tanstack/query-async-storage-persister": "^5.104.4",
+    "@tanstack/svelte-query": "^6.3.4",
+    "@tanstack/svelte-query-devtools": "^6.3.4",
+    "@tanstack/svelte-query-persist-client": "^6.3.4"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^7.0.1",
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
-    "@tanstack/eslint-plugin-query": "^5.104.3",
+    "@tanstack/eslint-plugin-query": "^5.104.4",
     "@typescript-eslint/parser": "^8.71.1",
     "eslint-plugin-svelte": "^3.23.0",
     "svelte": "^5.57.1",
