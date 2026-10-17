@@ -1859,7 +1859,7 @@ describe('queryObserver', () => {
     expect(result.isEnabled).toBe(true)
   })
 
-  it('should update currentResult when getOptimisticResult is called with changed data', () => {
+  it('should read changed cache data without updating currentResult in getOptimisticResult', () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1875,13 +1875,18 @@ describe('queryObserver', () => {
     // First render: no data yet
     const initialResult = observer.getOptimisticResult(defaultedOptions)
     expect(initialResult.data).toBeUndefined()
+    const currentResult = observer.getCurrentResult()
 
     // Another component sets data (e.g., dependent query resolved)
     queryClient.setQueryData(key, 'updated')
 
-    // Re-render: getOptimisticResult should pick up the new data and update currentResult
+    // Reading picks up the cache update without changing the committed result.
     const updatedResult = observer.getOptimisticResult(defaultedOptions)
     expect(updatedResult.data).toBe('updated')
+    expect(observer.getCurrentResult()).toBe(currentResult)
+    expect(observer.getCurrentResult().data).toBeUndefined()
+
+    observer.updateResult()
     expect(observer.getCurrentResult().data).toBe('updated')
   })
 

@@ -17,6 +17,191 @@ describe('queriesObserver', () => {
     vi.useRealTimers()
   })
 
+  describe('result readers', () => {
+    it('keeps active queries and combine state unchanged until commit', () => {
+      const keyA = queryKey()
+      const keyB = queryKey()
+      queryClient.setQueryData(keyA, 1)
+      queryClient.setQueryData(keyB, 10)
+      const optionsA = { queryKey: keyA, staleTime: Infinity }
+      const optionsB = { queryKey: keyB, staleTime: Infinity }
+      const combineA = vi.fn((results: Array<QueryObserverResult>) => ({
+        data: results[0]!.data,
+      }))
+      const combineB = vi.fn((results: Array<QueryObserverResult>) => ({
+        data: results[0]!.data,
+      }))
+      const observer = new QueriesObserver(queryClient, [optionsA], {
+        combine: combineA,
+      })
+      const listener = vi.fn()
+      const unsubscribe = observer.subscribe(listener)
+      const readerA = observer.createResultReader([optionsA], {
+        combine: combineA,
+      })
+      const snapshotA = readerA.getSnapshot()
+      const combinedA = readerA.combineResult(snapshotA)
+      readerA.commit()
+      const current = observer.getCurrentResult()
+      const observers = observer.getObservers()
+      const readerB = observer.createResultReader([optionsB], {
+        combine: combineB,
+      })
+      const snapshotB = readerB.getSnapshot()
+      expect(readerB.combineResult(snapshotB)).toEqual({ data: 10 })
+      expect(readerA.getSnapshot()).toBe(snapshotA)
+      expect(readerA.combineResult(snapshotA)).toBe(combinedA)
+      expect(observer.getCurrentResult()).toBe(current)
+      expect(observer.getObservers()).toBe(observers)
+      expect(
+        queryClient
+          .getQueryCache()
+          .find({ queryKey: keyB })!
+          .getObserversCount(),
+      ).toBe(0)
+
+      queryClient.setQueryData(keyA, 2)
+      expect(listener).toHaveBeenCalledTimes(1)
+      expect(readerA.combineResult(readerA.getSnapshot())).toEqual({ data: 2 })
+      expect(combineB).toHaveBeenCalledTimes(1)
+
+      listener.mockClear()
+      readerB.commit()
+      expect(listener).toHaveBeenCalledTimes(1)
+      expect(observer.getQueries()[0]!.queryKey).toEqual(keyB)
+      listener.mockClear()
+      queryClient.setQueryData(keyA, 3)
+      expect(listener).not.toHaveBeenCalled()
+      queryClient.setQueryData(keyB, 11)
+      expect(listener).toHaveBeenCalledTimes(1)
+      expect(readerB.combineResult(readerB.getSnapshot())).toEqual({
+        data: 11,
+      })
+      unsubscribe()
+    })
+
+    it('keeps the snapshot stable when predicted fetching starts', async () => {
+      const options = queryClient.defaultQueryOptions({
+        queryKey: queryKey(),
+        queryFn: () => sleep(10).then(() => 'data'),
+        _optimisticResults: 'optimistic',
+      })
+      const observer = new QueriesObserver(queryClient, [options])
+      const reader = observer.createResultReader([options])
+      const snapshot = reader.getSnapshot()
+      expect(snapshot[0]!.fetchStatus).toBe('fetching')
+      expect(reader.getSnapshot()).toBe(snapshot)
+      const unsubscribe = observer.subscribe(vi.fn())
+      reader.commit()
+      expect(reader.getSnapshot()).toBe(snapshot)
+      await vi.advanceTimersByTimeAsync(10)
+      expect(reader.getSnapshot()).not.toBe(snapshot)
+      expect(reader.getSnapshot()[0]!.data).toBe('data')
+      unsubscribe()
+    })
+
+    it('reuses selection when committing added and reordered queries', () => {
+      const keyA = queryKey()
+      const keyB = queryKey()
+      queryClient.setQueryData(keyA, { value: 1 })
+      queryClient.setQueryData(keyB, { value: 2 })
+      const select = vi.fn((data: { value: number }) => [data.value])
+      const optionsA = { queryKey: keyA, staleTime: Infinity }
+      const optionsB = {
+        queryKey: keyB,
+        staleTime: Infinity,
+        select,
+        structuralSharing: false,
+      }
+      const observer = new QueriesObserver(queryClient, [optionsA])
+      const unsubscribe = observer.subscribe(vi.fn())
+      const reader = observer.createResultReader([optionsB, optionsA])
+      const snapshot = reader.getSnapshot()
+      reader.commit()
+      expect(select).toHaveBeenCalledTimes(1)
+      expect(observer.getCurrentResult()[0]!.data).toBe(snapshot[0]!.data)
+      expect(observer.getQueries().map((query) => query.queryKey)).toEqual([
+        keyB,
+        keyA,
+      ])
+      unsubscribe()
+    })
+
+    it('checks cache updates between reading and committing', () => {
+      const key = queryKey()
+      queryClient.setQueryData(key, 1)
+      const select = vi.fn((data: number) => [data])
+      const options = { queryKey: key, select, structuralSharing: false }
+      const observer = new QueriesObserver(queryClient, [])
+      const reader = observer.createResultReader([options])
+      const snapshot = reader.getSnapshot()
+      queryClient.setQueryData(key, 2)
+      reader.commit()
+      expect(observer.getCurrentResult()[0]!.data).toEqual([2])
+      expect(observer.getCurrentResult()[0]!.data).not.toBe(snapshot[0]!.data)
+      expect(select).toHaveBeenCalledTimes(2)
+    })
+
+    it('combines the complete result when several selectors change on commit', () => {
+      const keys = [queryKey(), queryKey()]
+      keys.forEach((key, index) => queryClient.setQueryData(key, index + 1))
+      const queries = keys.map((key) => ({
+        queryKey: key,
+        staleTime: Infinity,
+      }))
+      const combine = vi.fn((results: Array<QueryObserverResult>) =>
+        results.map((result) => result.data),
+      )
+      const observer = new QueriesObserver(queryClient, queries, { combine })
+      const first = observer.createResultReader(queries, { combine })
+      first.combineResult(first.getSnapshot())
+      first.commit()
+      const unsubscribe = observer.subscribe(vi.fn())
+      combine.mockClear()
+      const reader = observer.createResultReader(
+        queries.map((query) => ({
+          ...query,
+          select: (data: number) => data * 10,
+        })),
+        { combine },
+      )
+      const snapshot = reader.getSnapshot()
+      expect(reader.combineResult(snapshot)).toEqual([10, 20])
+      reader.commit()
+      expect(combine).toHaveBeenCalledTimes(1)
+      expect(observer.getCurrentResult().map((result) => result.data)).toEqual([
+        10, 20,
+      ])
+      unsubscribe()
+    })
+
+    it('updates a stable combine when only selection options change', () => {
+      const key = queryKey()
+      queryClient.setQueryData(key, 2)
+      const options = { queryKey: key, staleTime: Infinity }
+      const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+        data: results[0]!.data,
+      }))
+      const observer = new QueriesObserver(queryClient, [options], { combine })
+      const first = observer.createResultReader([options], { combine })
+      expect(first.combineResult(first.getSnapshot())).toEqual({ data: 2 })
+      first.commit()
+      const second = observer.createResultReader(
+        [{ ...options, select: (data: number) => data * 3 }],
+        { combine },
+      )
+      expect(second.combineResult(second.getSnapshot())).toEqual({ data: 6 })
+      expect(observer.getCurrentResult()[0]!.data).toBe(2)
+      second.commit()
+      const third = observer.createResultReader(
+        [{ ...options, select: (data: number) => data * 3 }],
+        { combine },
+      )
+      expect(third.combineResult(third.getSnapshot())).toEqual({ data: 6 })
+      expect(combine).toHaveBeenCalledTimes(2)
+    })
+  })
+
   it('should return an array with all query results', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
