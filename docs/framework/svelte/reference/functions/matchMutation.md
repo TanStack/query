@@ -9,7 +9,7 @@ title: matchMutation
 function matchMutation(filters: MutationFilters, mutation: Mutation<any, any>): boolean;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:278](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L278)
+Defined in: [packages/query-core/src/utils.ts:269](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L269)
 
 Checks whether a mutation matches the given [MutationFilters](../interfaces/MutationFilters.md).
 Every filter that is specified must match; filters that are left unspecified are ignored.

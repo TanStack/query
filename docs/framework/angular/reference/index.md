@@ -22,7 +22,6 @@ title: "@tanstack/angular-query-experimental"
 
 - [BaseMutationNarrowing](interfaces/BaseMutationNarrowing.md)
 - [BaseQueryNarrowing](interfaces/BaseQueryNarrowing.md)
-- [CacheKeyConfig](interfaces/CacheKeyConfig.md)
 - [CancelOptions](interfaces/CancelOptions.md)
 - [CreateBaseQueryOptions](interfaces/CreateBaseQueryOptions.md)
 - [CreateInfiniteQueryOptions](interfaces/CreateInfiniteQueryOptions.md)
@@ -96,9 +95,6 @@ title: "@tanstack/angular-query-experimental"
 ## Type Aliases
 
 - [AnyDataTag](type-aliases/AnyDataTag.md)
-- [CacheKey](type-aliases/CacheKey.md)
-- [CacheKeyHashFunction](type-aliases/CacheKeyHashFunction.md)
-- [CacheKeyValueSerializer](type-aliases/CacheKeyValueSerializer.md)
 - [CreateBaseMutationResult](type-aliases/CreateBaseMutationResult.md)
 - [CreateBaseQueryResult](type-aliases/CreateBaseQueryResult.md)
 - [CreateInfiniteQueryResult](type-aliases/CreateInfiniteQueryResult.md)
@@ -110,7 +106,6 @@ title: "@tanstack/angular-query-experimental"
 - [dataTagErrorSymbol](type-aliases/dataTagErrorSymbol.md)
 - [dataTagSymbol](type-aliases/dataTagSymbol.md)
 - [DefaultedInfiniteQueryObserverOptions](type-aliases/DefaultedInfiniteQueryObserverOptions.md)
-- [DefaultedMutationOptions](type-aliases/DefaultedMutationOptions.md)
 - [DefaultedQueryObserverOptions](type-aliases/DefaultedQueryObserverOptions.md)
 - [DefaultError](type-aliases/DefaultError.md)
 - [DefinedCreateInfiniteQueryResult](type-aliases/DefinedCreateInfiniteQueryResult.md)
@@ -225,5 +220,4 @@ title: "@tanstack/angular-query-experimental"
 - [queryFeature](functions/queryFeature.md)
 - [queryOptions](functions/queryOptions.md)
 - [replaceEqualDeep](functions/replaceEqualDeep.md)
-- [serializeCacheKey](functions/serializeCacheKey.md)
 - [shouldThrowError](functions/shouldThrowError.md)

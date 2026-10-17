@@ -20,7 +20,6 @@ title: "@tanstack/preact-query"
 
 ## Interfaces
 
-- [CacheKeyConfig](interfaces/CacheKeyConfig.md)
 - [CancelOptions](interfaces/CancelOptions.md)
 - [DefaultOptions](interfaces/DefaultOptions.md)
 - [DehydratedState](interfaces/DehydratedState.md)
@@ -97,14 +96,10 @@ title: "@tanstack/preact-query"
 - [AnyUseQueryOptions](type-aliases/AnyUseQueryOptions.md)
 - [AnyUseSuspenseInfiniteQueryOptions](type-aliases/AnyUseSuspenseInfiniteQueryOptions.md)
 - [AnyUseSuspenseQueryOptions](type-aliases/AnyUseSuspenseQueryOptions.md)
-- [CacheKey](type-aliases/CacheKey.md)
-- [CacheKeyHashFunction](type-aliases/CacheKeyHashFunction.md)
-- [CacheKeyValueSerializer](type-aliases/CacheKeyValueSerializer.md)
 - [DataTag](type-aliases/DataTag.md)
 - [dataTagErrorSymbol](type-aliases/dataTagErrorSymbol.md)
 - [dataTagSymbol](type-aliases/dataTagSymbol.md)
 - [DefaultedInfiniteQueryObserverOptions](type-aliases/DefaultedInfiniteQueryObserverOptions.md)
-- [DefaultedMutationOptions](type-aliases/DefaultedMutationOptions.md)
 - [DefaultedQueryObserverOptions](type-aliases/DefaultedQueryObserverOptions.md)
 - [DefaultError](type-aliases/DefaultError.md)
 - [DefinedInfiniteQueryObserverResult](type-aliases/DefinedInfiniteQueryObserverResult.md)
@@ -226,7 +221,6 @@ title: "@tanstack/preact-query"
 - [QueryErrorResetBoundary](functions/QueryErrorResetBoundary.md)
 - [queryOptions](functions/queryOptions.md)
 - [replaceEqualDeep](functions/replaceEqualDeep.md)
-- [serializeCacheKey](functions/serializeCacheKey.md)
 - [shouldThrowError](functions/shouldThrowError.md)
 - [useInfiniteQuery](functions/useInfiniteQuery.md)
 - [useIsFetching](functions/useIsFetching.md)

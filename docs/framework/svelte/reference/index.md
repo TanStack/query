@@ -20,7 +20,6 @@ title: "@tanstack/svelte-query"
 
 ## Interfaces
 
-- [CacheKeyConfig](interfaces/CacheKeyConfig.md)
 - [CancelOptions](interfaces/CancelOptions.md)
 - [DefaultOptions](interfaces/DefaultOptions.md)
 - [DehydratedState](interfaces/DehydratedState.md)
@@ -84,9 +83,6 @@ title: "@tanstack/svelte-query"
 
 - [Accessor](type-aliases/Accessor.md)
 - [AnyDataTag](type-aliases/AnyDataTag.md)
-- [CacheKey](type-aliases/CacheKey.md)
-- [CacheKeyHashFunction](type-aliases/CacheKeyHashFunction.md)
-- [CacheKeyValueSerializer](type-aliases/CacheKeyValueSerializer.md)
 - [CreateBaseMutationResult](type-aliases/CreateBaseMutationResult.md)
 - [CreateBaseQueryOptions](type-aliases/CreateBaseQueryOptions.md)
 - [CreateBaseQueryResult](type-aliases/CreateBaseQueryResult.md)
@@ -102,7 +98,6 @@ title: "@tanstack/svelte-query"
 - [dataTagErrorSymbol](type-aliases/dataTagErrorSymbol.md)
 - [dataTagSymbol](type-aliases/dataTagSymbol.md)
 - [DefaultedInfiniteQueryObserverOptions](type-aliases/DefaultedInfiniteQueryObserverOptions.md)
-- [DefaultedMutationOptions](type-aliases/DefaultedMutationOptions.md)
 - [DefaultedQueryObserverOptions](type-aliases/DefaultedQueryObserverOptions.md)
 - [DefaultError](type-aliases/DefaultError.md)
 - [DefinedCreateBaseQueryResult](type-aliases/DefinedCreateBaseQueryResult.md)
@@ -209,7 +204,6 @@ title: "@tanstack/svelte-query"
 - [partialMatchKey](functions/partialMatchKey.md)
 - [queryOptions](functions/queryOptions.md)
 - [replaceEqualDeep](functions/replaceEqualDeep.md)
-- [serializeCacheKey](functions/serializeCacheKey.md)
 - [setIsRestoringContext](functions/setIsRestoringContext.md)
 - [setQueryClientContext](functions/setQueryClientContext.md)
 - [shouldThrowError](functions/shouldThrowError.md)

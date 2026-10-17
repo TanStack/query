@@ -9,7 +9,7 @@ title: MutationFunctionContext
 type MutationFunctionContext = object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1890](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1890)
+Defined in: [packages/query-core/src/types.ts:1855](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1855)
 
 The object passed to `mutationFn` and the mutation callbacks: the `QueryClient`, the mutation's
 `meta`, and its `mutationKey`.

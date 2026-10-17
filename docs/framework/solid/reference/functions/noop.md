@@ -25,7 +25,7 @@ See also: [Returns](#returns-summary)
 function noop(): void;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:125](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L125)
+Defined in: [packages/query-core/src/utils.ts:121](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L121)
 
 A function that does nothing.
 
@@ -41,7 +41,7 @@ A function that does nothing.
 function noop(): undefined;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:126](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L126)
+Defined in: [packages/query-core/src/utils.ts:122](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L122)
 
 A function that does nothing.
 
