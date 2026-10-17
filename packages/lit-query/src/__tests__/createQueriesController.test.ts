@@ -369,7 +369,9 @@ describe('createQueriesController', () => {
     const originalDefaultQueryOptions = queryClient.defaultQueryOptions
     let defaultQueryOptionsCalls = 0
     queryClient.defaultQueryOptions = ((options) => {
-      defaultQueryOptionsCalls += 1
+      if (!options._defaulted) {
+        defaultQueryOptionsCalls += 1
+      }
       return originalDefaultQueryOptions.call(queryClient, options as never)
     }) as typeof queryClient.defaultQueryOptions
 

@@ -1527,7 +1527,7 @@ describe('queryObserver', () => {
       expectTypeOf<Options['_optimisticResults']>().toEqualTypeOf<
         'optimistic' | 'isRestoring' | undefined
       >()
-      expectTypeOf<Options['_defaulted']>().toEqualTypeOf<boolean | undefined>()
+      expectTypeOf<Options['_defaulted']>().toEqualTypeOf<true>()
     })
   })
 

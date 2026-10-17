@@ -288,9 +288,34 @@ export type QueriesPlaceholderDataFunction<TQueryData> = (
 ) => TQueryData | undefined
 
 /** @inline */
-export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
+export type QueryKeyHashFunction<TQueryKey extends QueryKey = QueryKey> = (
   queryKey: TQueryKey,
 ) => string
+
+/** Hashes a serialized cache key into a string. */
+export type CacheKeyHashFunction<TCacheKey extends CacheKey = CacheKey> = (
+  cacheKey: TCacheKey,
+) => string
+
+/** Serializes an individual cache key value. */
+export type CacheKeyValueSerializer = (value: unknown) => unknown
+
+/**
+ * Serialization and hashing configuration used by a cache.
+ */
+export interface CacheKeyConfig<TCacheKey extends CacheKey = CacheKey> {
+  /**
+   * Hashes the serialized cache key into the cache identity string.
+   */
+  readonly hashFn?: CacheKeyHashFunction<TCacheKey>
+  /**
+   * Serializes cache key values. The serializer must be deterministic and
+   * idempotent because a key can be serialized more than once. Cache keys must
+   * not be changed after they are used. Public APIs expose the original keys.
+   * The key configuration must not change while the cache contains entries.
+   */
+  readonly valueSerializer?: CacheKeyValueSerializer
+}
 
 /** @inline */
 export type GetPreviousPageParamFunction<TPageParam, TQueryFnData = unknown> = (
@@ -409,8 +434,8 @@ export interface QueryOptions<
    */
   persister?: QueryPersister<TQueryFnData, NoInfer<TQueryKey>, TPageParam>
   /**
-   * The hashed form of `queryKey`, computed with `queryKeyHashFn` (or the default hashing function otherwise). Used
-   * as the actual cache key internally.
+   * The hashed form of `queryKey`, computed with the cache's `hashFn`, the deprecated `queryKeyHashFn`,
+   * or the default hashing function. Used as the actual cache key internally.
    */
   queryHash?: string
   /**
@@ -424,6 +449,7 @@ export interface QueryOptions<
   queryKey?: TQueryKey
   /**
    * If specified, this function is used to hash the `queryKey` to a string.
+   * @deprecated Configure `hashFn` on `QueryCache` instead.
    */
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
   /**
@@ -671,7 +697,9 @@ export type DefaultedQueryObserverOptions<
 > = WithRequired<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   'throwOnError' | 'refetchOnReconnect' | 'queryHash'
->
+> & {
+  _defaulted: true
+}
 
 /**
  * The options of an `InfiniteQueryObserver`: {@link QueryObserverOptions} whose query data is
@@ -714,7 +742,9 @@ export type DefaultedInfiniteQueryObserverOptions<
     TPageParam
   >,
   'throwOnError' | 'refetchOnReconnect' | 'queryHash'
->
+> & {
+  _defaulted: true
+}
 
 /**
  * The options of `queryClient.query`: the {@link QueryOptions} of the query, plus a `staleTime`
@@ -1821,6 +1851,11 @@ export type MutationKey = Register extends {
       : ReadonlyArray<unknown>
   : ReadonlyArray<unknown>
 
+/**
+ * A key used to identify an entry in either cache.
+ */
+export type CacheKey = QueryKey | MutationKey
+
 /** @inline */
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
@@ -1983,6 +2018,13 @@ export interface MutationOptions<
    * Without a scope, a mutation runs as soon as it is triggered.
    */
   scope?: MutationScope
+}
+
+/** Mutation options with the defaults applied. */
+export type DefaultedMutationOptions<
+  TOptions extends MutationOptions<any, any, any, any>,
+> = TOptions & {
+  _defaulted: true
 }
 
 /**
@@ -2359,11 +2401,14 @@ export type MutationObserverResult<
  * `defaultOptions` for its queries and mutations.
  */
 export interface QueryClientConfig {
-  /** The query cache this client is connected to. A new `QueryCache` is created if not provided. */
+  /**
+   * The query cache this client is connected to. A new `QueryCache` is created if not provided.
+   * Custom query key serialization and hashing are configured when this cache is created.
+   */
   queryCache?: QueryCache
   /**
    * The mutation cache this client is connected to. A new `MutationCache` is created if not
-   * provided.
+   * provided. Custom mutation key serialization and hashing are configured when this cache is created.
    */
   mutationCache?: MutationCache
   /** Default options for all queries and mutations created through this client. */

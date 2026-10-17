@@ -1,10 +1,11 @@
-import { hashQueryKeyByOptions, matchQuery } from './utils'
+import { matchQuery, serializeCacheKey } from './utils'
 import { Query } from './query'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
 import type { QueryFilters } from './utils'
 import type { Action, QueryState } from './query'
 import type {
+  CacheKeyConfig,
   DefaultError,
   NotifyEvent,
   QueryKey,
@@ -22,7 +23,7 @@ import type { QueryObserver } from './queryObserver'
  * override, these callbacks are always called. Unlike `MutationCacheConfig`'s callbacks, these
  * are fire-and-forget: their return value is not awaited before the query settles.
  */
-export interface QueryCacheConfig {
+export interface QueryCacheConfig extends CacheKeyConfig<QueryKey> {
   /** Called when any query in the cache encounters an error. */
   onError?: (
     error: DefaultError,
@@ -140,7 +141,7 @@ export interface QueryStore {
 export class QueryCache extends Subscribable<QueryCacheListener> {
   #queries: QueryStore
 
-  constructor(public config: QueryCacheConfig = {}) {
+  constructor(public readonly config: QueryCacheConfig = {}) {
     super()
     this.#queries = new Map<string, Query>()
   }
@@ -179,9 +180,9 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     >,
     state?: QueryState<TData, TError>,
   ): Query<TQueryFnData, TError, TData, TQueryKey> {
-    const queryKey = options.queryKey
-    const queryHash =
-      options.queryHash ?? hashQueryKeyByOptions(queryKey, options)
+    const defaultedOptions = client.defaultQueryOptions(options)
+    const queryKey = defaultedOptions.queryKey
+    const queryHash = defaultedOptions.queryHash
     let query = this.get<TQueryFnData, TError, TData, TQueryKey>(queryHash)
 
     if (!query) {
@@ -189,7 +190,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
         client,
         queryKey,
         queryHash,
-        options: client.defaultQueryOptions(options),
+        options: defaultedOptions,
         state,
         defaultOptions: client.getQueryDefaults(queryKey),
       })
@@ -325,6 +326,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     filters: WithRequired<QueryFilters, 'queryKey'>,
   ): Query<TQueryFnData, TError, TData> | undefined {
     const defaultedFilters = { exact: true, ...filters }
+    defaultedFilters.queryKey = serializeCacheKey(
+      defaultedFilters.queryKey,
+      this.config.valueSerializer,
+    )
 
     return this.getAll().find((query) =>
       matchQuery(defaultedFilters, query),
@@ -349,9 +354,22 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    */
   findAll(filters: QueryFilters<any> = {}): Array<Query> {
     const queries = this.getAll()
-    return Object.keys(filters).length > 0
-      ? queries.filter((query) => matchQuery(filters, query))
-      : queries
+
+    if (!Object.keys(filters).length) {
+      return queries
+    }
+
+    const defaultedFilters = filters.queryKey
+      ? {
+          ...filters,
+          queryKey: serializeCacheKey(
+            filters.queryKey,
+            this.config.valueSerializer,
+          ),
+        }
+      : filters
+
+    return queries.filter((query) => matchQuery(defaultedFilters, query))
   }
 
   /**

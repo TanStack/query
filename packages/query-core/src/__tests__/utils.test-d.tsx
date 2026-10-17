@@ -6,8 +6,8 @@ import {
   addToStart,
   ensureQueryFn,
   functionalUpdate,
+  hashCacheKey,
   hashKey,
-  hashQueryKeyByOptions,
   isPlainArray,
   isPlainObject,
   isServer,
@@ -536,12 +536,13 @@ describe('hashKey', () => {
   })
 })
 
-describe('hashQueryKeyByOptions', () => {
-  it('should accept the options argument optionally', () => {
-    expectTypeOf(hashQueryKeyByOptions(['a'])).toEqualTypeOf<string>()
+describe('hashCacheKey', () => {
+  it('should accept the cache configuration and an optional legacy hash function', () => {
+    expectTypeOf(hashCacheKey(['a'], {})).toEqualTypeOf<string>()
     expectTypeOf(
-      hashQueryKeyByOptions(['a'], { queryKeyHashFn: hashKey }),
+      hashCacheKey(['a'], { hashFn: hashKey }),
     ).toEqualTypeOf<string>()
+    expectTypeOf(hashCacheKey(['a'], {}, hashKey)).toEqualTypeOf<string>()
   })
 })
 
