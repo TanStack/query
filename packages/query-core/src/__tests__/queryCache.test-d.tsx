@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient } from '..'
 import type {
+  CacheKeyConfig,
   DefaultError,
   NotifyEvent,
   NotifyEventType,
@@ -77,8 +78,9 @@ describe('queryCache', () => {
   })
 
   describe('QueryCacheConfig', () => {
-    it('should declare every callback as optional', () => {
+    it('should declare every option as optional', () => {
       expectTypeOf<QueryCacheConfig>().toEqualTypeOf<{
+        queryKey?: CacheKeyConfig<QueryKey>
         onError?: (
           error: DefaultError,
           query: Query<unknown, unknown, unknown>,

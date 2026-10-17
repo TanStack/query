@@ -1,6 +1,8 @@
 import { timeoutManager } from './timeoutManager'
 import type {
+  CacheKeyConfig,
   DefaultError,
+  EqualityFn,
   FetchStatus,
   MutationKey,
   MutationStatus,
@@ -192,6 +194,7 @@ export function resolveQueryValue<
  * Every filter that is specified must match; filters that are left unspecified are ignored.
  * @param filters - The filters to check the query against.
  * @param query - The query to check.
+ * @param keyConfig - The cache configuration for key comparison and hashing.
  * @returns `true` if the query matches every specified filter.
  * @example
  * ```ts
@@ -205,6 +208,7 @@ export function resolveQueryValue<
 export function matchQuery(
   filters: QueryFilters,
   query: Query<any, any, any, any>,
+  keyConfig?: CacheKeyConfig<QueryKey>,
 ): boolean {
   const {
     type = 'all',
@@ -217,10 +221,14 @@ export function matchQuery(
 
   if (queryKey) {
     if (exact) {
-      if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
+      if (
+        query.queryHash !== hashKeyByOptions(queryKey, keyConfig, query.options)
+      ) {
         return false
       }
-    } else if (!partialMatchKey(query.queryKey, queryKey)) {
+    } else if (
+      !partialMatchKey(query.queryKey, queryKey, keyConfig?.equalityFn)
+    ) {
       return false
     }
   }
@@ -256,6 +264,7 @@ export function matchQuery(
  * If a `mutationKey` filter is provided but the mutation has no `mutationKey` of its own, it does not match.
  * @param filters - The filters to check the mutation against.
  * @param mutation - The mutation to check.
+ * @param keyConfig - The cache configuration for key comparison and hashing.
  * @returns `true` if the mutation matches every specified filter.
  * @example
  * ```ts
@@ -269,6 +278,7 @@ export function matchQuery(
 export function matchMutation(
   filters: MutationFilters,
   mutation: Mutation<any, any>,
+  keyConfig?: CacheKeyConfig<MutationKey>,
 ): boolean {
   const { exact, status, predicate, mutationKey } = filters
   if (mutationKey) {
@@ -276,10 +286,19 @@ export function matchMutation(
       return false
     }
     if (exact) {
-      if (hashKey(mutation.options.mutationKey) !== hashKey(mutationKey)) {
+      if (
+        hashKeyByOptions(mutation.options.mutationKey, keyConfig) !==
+        hashKeyByOptions(mutationKey, keyConfig)
+      ) {
         return false
       }
-    } else if (!partialMatchKey(mutation.options.mutationKey, mutationKey)) {
+    } else if (
+      !partialMatchKey(
+        mutation.options.mutationKey,
+        mutationKey,
+        keyConfig?.equalityFn,
+      )
+    ) {
       return false
     }
   }
@@ -296,17 +315,21 @@ export function matchMutation(
 }
 
 /**
- * Hashes a query key with the query's `queryKeyHashFn` option, falling back to {@link hashKey}.
- * @param queryKey - The query key to hash.
+ * Hashes a cache key with the cache's `hashFn`, then the query's `queryKeyHashFn`, falling back to {@link hashKey}.
+ * @param cacheKey - The query or mutation key to hash.
+ * @param keyConfig - The cache configuration that may provide a custom `hashFn`.
  * @param options - The query options that may provide a custom `queryKeyHashFn`.
- * @returns The query hash, a string that identifies the query in the cache.
+ * @returns The hash, a string that identifies the key in the cache.
  */
-export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
-  queryKey: TQueryKey,
+export function hashKeyByOptions<
+  TCacheKey extends ReadonlyArray<unknown> = ReadonlyArray<unknown>,
+>(
+  cacheKey: TCacheKey,
+  keyConfig: CacheKeyConfig<TCacheKey> | undefined,
   options?: Pick<QueryOptions<any, any, any, any>, 'queryKeyHashFn'>,
 ): string {
-  const hashFn = options?.queryKeyHashFn || hashKey
-  return hashFn(queryKey)
+  const queryKeyHashFn = keyConfig?.hashFn ?? options?.queryKeyHashFn ?? hashKey
+  return queryKeyHashFn(cacheKey)
 }
 
 /**
@@ -333,16 +356,32 @@ export function hashKey(queryKey: QueryKey | MutationKey): string {
   )
 }
 
+const defaultEqualityFn: EqualityFn = (a, b) => a === b
+
 /**
  * Checks if key `b` partially matches with key `a`.
  * @param a - The key to check, e.g. a query's own key.
  * @param b - The (partial) key to match against `a`.
+ * @param equalityFn - Compares individual key values. Defaults to strict equality.
  * @returns `true` if every array element or object property in `b` matches the one at the same
  * position in `a`.
  */
-export function partialMatchKey(a: QueryKey, b: QueryKey): boolean
-export function partialMatchKey(a: any, b: any): boolean {
-  if (a === b) {
+export function partialMatchKey(
+  a: QueryKey,
+  b: QueryKey,
+  equalityFn?: EqualityFn,
+): boolean
+export function partialMatchKey(
+  a: unknown,
+  b: unknown,
+  equalityFn?: EqualityFn,
+): boolean
+export function partialMatchKey(
+  a: any,
+  b: any,
+  equalityFn: EqualityFn = defaultEqualityFn,
+): boolean {
+  if (equalityFn(a, b)) {
     return true
   }
 
@@ -350,20 +389,20 @@ export function partialMatchKey(a: any, b: any): boolean {
     return false
   }
 
-  if (a && b && typeof a === 'object' && typeof b === 'object') {
-    if (Array.isArray(a) && Array.isArray(b)) {
-      if (b.length > a.length) return false
-      for (let i = 0; i < b.length; i++) {
-        if (!partialMatchKey(a[i], b[i])) {
-          return false
-        }
+  if (isPlainArray(a) && isPlainArray(b)) {
+    if (b.length > a.length) return false
+    for (let i = 0; i < b.length; i++) {
+      if (!partialMatchKey(a[i], b[i], equalityFn)) {
+        return false
       }
-      return true
     }
+    return true
+  }
 
+  if (isPlainObject(a) && isPlainObject(b)) {
     const bKeys = Object.keys(b)
     for (const key of bKeys) {
-      if (!partialMatchKey(a[key], b[key])) {
+      if (!partialMatchKey(a[key], b[key], equalityFn)) {
         return false
       }
     }
@@ -379,15 +418,41 @@ const hasOwn = Object.prototype.hasOwnProperty
  * This function returns `a` if `b` is deeply equal.
  * If not, it will replace any deeply equal children of `b` with those of `a`.
  * This can be used for structural sharing between JSON values for example.
+ * An optional equality function can be used for custom value types.
  * @param a - The previous value, whose deeply equal parts are reused.
  * @param b - The new value.
- * @param depth - The current recursion depth. Past a depth of `500`, `b` is returned as is.
+ * @param equalityFn - Compares values for structural sharing. Defaults to strict equality.
  * @returns `a` if `b` is deeply equal to it, otherwise `b` with its deeply equal parts replaced by
  * those of `a`.
  */
-export function replaceEqualDeep<T>(a: unknown, b: T, depth?: number): T
-export function replaceEqualDeep(a: any, b: any, depth = 0): any {
-  if (a === b) {
+export function replaceEqualDeep<T>(
+  a: unknown,
+  b: T,
+  equalityFn?: EqualityFn,
+): T
+export function replaceEqualDeep(
+  a: any,
+  b: any,
+  equalityFn: EqualityFn = defaultEqualityFn,
+): any {
+  return replaceEqualDeepInternal(a, b, equalityFn, 0)
+}
+
+/**
+ * Reuses deeply equal values while limiting recursion to 500 levels.
+ * @param a - The previous value.
+ * @param b - The new value.
+ * @param equalityFn - Compares values for structural sharing.
+ * @param depth - The current recursion depth.
+ * @returns The new value with deeply equal parts of the previous value reused.
+ */
+function replaceEqualDeepInternal(
+  a: any,
+  b: any,
+  equalityFn: EqualityFn,
+  depth: number,
+): any {
+  if (equalityFn(a, b)) {
     return a
   }
 
@@ -410,7 +475,7 @@ export function replaceEqualDeep(a: any, b: any, depth = 0): any {
     const aItem = a[key]
     const bItem = b[key]
 
-    if (aItem === bItem) {
+    if (equalityFn(aItem, bItem)) {
       copy[key] = aItem
       if (array ? i < aSize : hasOwn.call(a, key)) equalItems++
       continue
@@ -426,7 +491,7 @@ export function replaceEqualDeep(a: any, b: any, depth = 0): any {
       continue
     }
 
-    const v = replaceEqualDeep(aItem, bItem, depth + 1)
+    const v = replaceEqualDeepInternal(aItem, bItem, equalityFn, depth + 1)
     copy[key] = v
     if (v === aItem) equalItems++
   }
