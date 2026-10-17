@@ -1,4 +1,5 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
+import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   InfiniteData,
@@ -16,25 +17,23 @@ import type {
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
 } from './types'
-import { useBaseQuery } from './useBaseQuery'
 
 /**
- * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
+ * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
  * This overload is selected when `initialData` is set.
- *
+ * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+ * be used.
+ * @returns The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+ * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
+ * `data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+ * `InfiniteData<TQueryFnData>` shape.
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
  * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
  * actions, or add conditions like `hasNextPage && !isFetching`.
  * @see {@link infiniteQueryOptions} to share these options between `useInfiniteQuery` and imperative APIs like `queryClient.infiniteQuery`.
- * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
- * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
- * be used.
- * @returns The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
- * `fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
- * `isFetchingPreviousPage`.
- *
  * @example
  * ```tsx
  * import { useInfiniteQuery } from '@tanstack/preact-query'
@@ -79,20 +78,19 @@ export function useInfiniteQuery<
 ): DefinedUseInfiniteQueryResult<TData, TError>
 
 /**
- * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
+ * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
- *
+ * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+ * be used.
+ * @returns The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+ * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
+ * `data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+ * `InfiniteData<TQueryFnData>` shape.
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
  * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
  * actions, or add conditions like `hasNextPage && !isFetching`.
  * @see {@link infiniteQueryOptions} to share these options between `useInfiniteQuery` and imperative APIs like `queryClient.infiniteQuery`.
- * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
- * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
- * be used.
- * @returns The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
- * `fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
- * `isFetchingPreviousPage`.
- *
  * @example
  * Fetching the next page from a "Load More" button click:
  * ```tsx
@@ -131,7 +129,6 @@ export function useInfiniteQuery<
  *   )
  * }
  * ```
- *
  * @example
  * Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a
  * sentinel element after the list:
@@ -204,20 +201,19 @@ export function useInfiniteQuery<
 ): UseInfiniteQueryResult<TData, TError>
 
 /**
- * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
+ * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
- *
+ * @param options - The {@link UseInfiniteQueryOptions} to use — everything you can pass to `useInfiniteQuery`.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+ * be used.
+ * @returns The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+ * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
+ * `data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+ * `InfiniteData<TQueryFnData>` shape.
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
  * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
  * actions, or add conditions like `hasNextPage && !isFetching`.
  * @see {@link infiniteQueryOptions} to share these options between `useInfiniteQuery` and imperative APIs like `queryClient.infiniteQuery`.
- * @param options - The {@link UseInfiniteQueryOptions} to use — everything you can pass to `useInfiniteQuery`.
- * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
- * be used.
- * @returns The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
- * `fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
- * `isFetchingPreviousPage`.
- *
  * @example
  * Fetching the next page from a "Load More" button click:
  * ```tsx
@@ -256,7 +252,6 @@ export function useInfiniteQuery<
  *   )
  * }
  * ```
- *
  * @example
  * Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a
  * sentinel element after the list:
@@ -310,7 +305,6 @@ export function useInfiniteQuery<
  *   )
  * }
  * ```
- *
  * @example
  * A query that's disabled, type safe, until `postId` is set — pass `skipToken` as `queryFn`
  * instead of setting `enabled: false`:

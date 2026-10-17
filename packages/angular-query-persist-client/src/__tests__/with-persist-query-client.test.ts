@@ -126,7 +126,6 @@ describe('withPersistQueryClient', () => {
     await vi.advanceTimersByTimeAsync(10)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetched')).toBeInTheDocument()
@@ -153,7 +152,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it.todo(
-    '(Once injectQueries is functional) verify that injectQueries transitions to an idle state',
+    'should transition injectQueries to an idle state (once injectQueries is functional)',
   )
 
   it('should show initialData while restoring', async () => {
@@ -223,7 +222,6 @@ describe('withPersistQueryClient', () => {
     await vi.advanceTimersByTimeAsync(10)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetched')).toBeInTheDocument()
@@ -389,7 +387,6 @@ describe('withPersistQueryClient', () => {
     rendered.fixture.detectChanges()
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
     expect(onSuccess).toHaveBeenCalledTimes(1)
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetched')).toBeInTheDocument()
@@ -397,7 +394,7 @@ describe('withPersistQueryClient', () => {
 
   it('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
-    const onErrorMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const queryClient = new QueryClient()
@@ -440,13 +437,12 @@ describe('withPersistQueryClient', () => {
     expect(removeClient).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledTimes(0)
     expect(onError).toHaveBeenCalledTimes(1)
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetched')).toBeInTheDocument()
 
-    expect(onErrorMock).toHaveBeenCalledTimes(1)
-    expect(onErrorMock).toHaveBeenNthCalledWith(1, error)
-    onErrorMock.mockRestore()
+    expect(consoleErrorMock).toHaveBeenCalledTimes(1)
+    expect(consoleErrorMock).toHaveBeenNthCalledWith(1, error)
+    consoleErrorMock.mockRestore()
   })
 })

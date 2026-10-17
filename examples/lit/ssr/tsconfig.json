@@ -8,7 +8,13 @@
     "noEmit": true,
     "isolatedModules": true,
     "skipLibCheck": true,
+    "allowJs": true,
     "useDefineForClassFields": false
   },
-  "include": ["config/**/*.d.ts", "src/**/*.ts", "vite.config.ts"]
+  "include": [
+    "config/**/*.d.ts",
+    "src/**/*.ts",
+    "vite.config.ts",
+    "eslint.config.js"
+  ]
 }

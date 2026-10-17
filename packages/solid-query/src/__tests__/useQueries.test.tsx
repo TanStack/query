@@ -72,14 +72,14 @@ describe('useQueries', () => {
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
-  // eslint-disable-next-line vitest/expect-expect
+  // oxlint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
     const key1 = queryKey()
 
     // We have to mock the QueriesObserver to not unsubscribe
     // the listener when the component is unmounted
     class QueriesObserverMock extends QueriesObserver {
-      subscribe(listener: any) {
+      override subscribe(listener: any) {
         super.subscribe(listener)
         return () => void 0
       }
@@ -192,7 +192,6 @@ describe('useQueries', () => {
     ))
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -201,9 +200,7 @@ describe('useQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')

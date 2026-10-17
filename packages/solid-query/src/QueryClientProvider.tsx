@@ -7,6 +7,9 @@ import {
 import type { QueryClient } from './QueryClient'
 import type { Accessor, JSX } from 'solid-js'
 
+/**
+ * The context that `useQueryClient` reads from. `QueryClientProvider` is the normal way to set it.
+ */
 export const QueryClientContext = createContext<
   (() => QueryClient) | undefined
 >(undefined)
@@ -14,6 +17,14 @@ export const QueryClientContext = createContext<
 const queryClientContextError =
   'No QueryClient set, use QueryClientProvider to set one'
 
+/**
+ * The `useQueryClient` primitive returns the current `QueryClient` instance.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+ * be used.
+ * @returns The current `QueryClient` instance.
+ * @throws {Error} If no `queryClient` argument is passed and no `QueryClientProvider` is found in the
+ * component tree.
+ */
 export const useQueryClient = (queryClient?: QueryClient) => {
   if (queryClient) {
     return queryClient
@@ -27,6 +38,12 @@ export const useQueryClient = (queryClient?: QueryClient) => {
   return client()
 }
 
+/**
+ * Resolves the `QueryClient` to use: the given one, or else the one from the nearest
+ * `QueryClientProvider`.
+ * @param queryClient - Returns a custom `QueryClient`, if any.
+ * @returns An accessor that returns the resolved client. It throws if neither client is available.
+ */
 export const useQueryClientResolver = (
   queryClient?: Accessor<QueryClient | undefined>,
 ): Accessor<QueryClient> => {
@@ -46,11 +63,40 @@ export const useQueryClientResolver = (
   }
 }
 
+/**
+ * The props accepted by `QueryClientProvider`.
+ */
 export type QueryClientProviderProps = {
+  /**
+   * **Required**
+   *
+   * The `QueryClient` instance to provide.
+   */
   client: QueryClient
+  /**
+   * The components that get access to the provided `QueryClient`.
+   */
   children?: JSX.Element
 }
 
+/**
+ * Use the `QueryClientProvider` component to connect and provide a `QueryClient` to your application. Also
+ * calls `client.mount()`/`client.unmount()` as this component mounts/unmounts, which subscribes the client to
+ * focus/online events (resuming any paused mutations and refetching as needed when the app regains focus or
+ * comes back online).
+ * @param props - The `client` to provide, and the `children` that get access to it.
+ * @returns The provided `children`, wrapped so they can read the `QueryClient` via `useQueryClient`.
+ * @example
+ * ```tsx
+ * import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
+ *
+ * const queryClient = new QueryClient()
+ *
+ * function App() {
+ *   return <QueryClientProvider client={queryClient}>...</QueryClientProvider>
+ * }
+ * ```
+ */
 export const QueryClientProvider = (
   props: QueryClientProviderProps,
 ): JSX.Element => {

@@ -18,20 +18,20 @@ replace:
 @Component({
   template: `
     <div>
-      @if (mutation.isPending()) {
+      @if (createTodoMutation.isPending()) {
         <span>Adding todo...</span>
-      } @else if (mutation.isError()) {
-        <div>An error occurred: {{ mutation.error()?.message }}</div>
-      } @else if (mutation.isSuccess()) {
+      } @else if (createTodoMutation.isError()) {
+        <div>An error occurred: {{ createTodoMutation.error()?.message }}</div>
+      } @else if (createTodoMutation.isSuccess()) {
         <div>Todo added!</div>
       }
-      <button (click)="mutation.mutate(1)">Create Todo</button>
+      <button (click)="createTodoMutation.mutate(1)">Create Todo</button>
     </div>
   `,
 })
 export class TodosComponent {
-  todoService = inject(TodoService)
-  mutation = injectMutation(() => ({
+  readonly todoService = inject(TodoService)
+  readonly createTodoMutation = injectMutation(() => ({
     mutationFn: (todoId: number) =>
       lastValueFrom(this.todoService.create(todoId)),
   }))
@@ -51,8 +51,10 @@ export class TodosComponent {
   imports: [ReactiveFormsModule],
   template: `
     <form [formGroup]="todoForm" (ngSubmit)="onCreateTodo()">
-      @if (mutation.error()) {
-        <h5 (click)="mutation.reset()">{{ mutation.error() }}</h5>
+      @if (createTodoMutation.error()) {
+        <h5 (click)="createTodoMutation.reset()">
+          {{ createTodoMutation.error() }}
+        </h5>
       }
       <input type="text" formControlName="title" />
       <br />
@@ -61,11 +63,11 @@ export class TodosComponent {
   `,
 })
 export class TodosComponent {
-  mutation = injectMutation(() => ({
+  readonly createTodoMutation = injectMutation(() => ({
     mutationFn: createTodo,
   }))
 
-  fb = inject(NonNullableFormBuilder)
+  readonly fb = inject(NonNullableFormBuilder)
 
   todoForm = this.fb.group({
     title: this.fb.control('', {
@@ -78,7 +80,7 @@ export class TodosComponent {
   })
 
   onCreateTodo = () => {
-    this.mutation.mutate(this.title())
+    this.createTodoMutation.mutate(this.title())
   }
 }
 ```
@@ -87,7 +89,7 @@ export class TodosComponent {
 [//]: # 'Example4'
 
 ```ts
-mutation = injectMutation(() => ({
+addTodoMutation = injectMutation(() => ({
   mutationFn: addTodo,
   onMutate: (variables, context) => {
     // A mutation is about to happen!
@@ -112,7 +114,7 @@ mutation = injectMutation(() => ({
 [//]: # 'Example5'
 
 ```ts
-mutation = injectMutation(() => ({
+addTodoMutation = injectMutation(() => ({
   mutationFn: addTodo,
   onSuccess: async () => {
     console.log("I'm first!")
@@ -127,7 +129,7 @@ mutation = injectMutation(() => ({
 [//]: # 'Example6'
 
 ```ts
-mutation = injectMutation(() => ({
+addTodoMutation = injectMutation(() => ({
   mutationFn: addTodo,
   onSuccess: (data, variables, onMutateResult, context) => {
     // I will fire first
@@ -140,7 +142,7 @@ mutation = injectMutation(() => ({
   },
 }))
 
-mutation.mutate(todo, {
+addTodoMutation.mutate(todo, {
   onSuccess: (data, variables, onMutateResult, context) => {
     // I will fire second!
   },
@@ -158,7 +160,7 @@ mutation.mutate(todo, {
 
 ```ts
 export class Example {
-  mutation = injectMutation(() => ({
+  readonly addTodoMutation = injectMutation(() => ({
     mutationFn: addTodo,
     onSuccess: (data, variables, onMutateResult, context) => {
       // Will be called 3 times
@@ -167,7 +169,7 @@ export class Example {
 
   doMutations() {
     ;['Todo 1', 'Todo 2', 'Todo 3'].forEach((todo) => {
-      this.mutation.mutate(todo, {
+      this.addTodoMutation.mutate(todo, {
         onSuccess: (data, variables, onMutateResult, context) => {
           // Will execute only once, for the last mutation (Todo 3),
           // regardless which mutation resolves first
@@ -182,10 +184,10 @@ export class Example {
 [//]: # 'Example8'
 
 ```ts
-mutation = injectMutation(() => ({ mutationFn: addTodo }))
+addTodoMutation = injectMutation(() => ({ mutationFn: addTodo }))
 
 try {
-  const todo = await mutation.mutateAsync(todo)
+  const todo = await addTodoMutation.mutateAsync(todo)
   console.log(todo)
 } catch (error) {
   console.error(error)
@@ -198,7 +200,7 @@ try {
 [//]: # 'Example9'
 
 ```ts
-mutation = injectMutation(() => ({
+addTodoMutation = injectMutation(() => ({
   mutationFn: addTodo,
   retry: 3,
 }))
@@ -245,10 +247,12 @@ queryClient.setMutationDefaults(['addTodo'], {
 
 class someComponent {
   // Start mutation in some component:
-  mutation = injectMutation(() => ({ mutationKey: ['addTodo'] }))
+  readonly addTodoMutation = injectMutation(() => ({
+    mutationKey: ['addTodo'],
+  }))
 
   someMethod() {
-    mutation.mutate({ title: 'title' })
+    addTodoMutation.mutate({ title: 'title' })
   }
 }
 
