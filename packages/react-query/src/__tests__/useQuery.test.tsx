@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { act, fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render, renderHook } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import {
@@ -12,6 +12,7 @@ import {
   QueryCache,
   QueryClient,
   dehydrate,
+  focusManager,
   hydrate,
   keepPreviousData,
   noop,
@@ -43,6 +44,38 @@ describe('useQuery', () => {
     queryClient.clear()
     vi.useRealTimers()
   })
+
+  it.each([false, true])(
+    'should stay idle after a cancelled retry delay (StrictMode: %s)',
+    async (strict) => {
+      const key = queryKey()
+      const view = renderHook(
+        () =>
+          useQuery(
+            {
+              queryKey: key,
+              queryFn: () => Promise.reject(new Error('synthetic failure')),
+              retry: 1,
+              retryDelay: 100,
+            },
+            queryClient,
+          ),
+        { wrapper: strict ? React.StrictMode : undefined },
+      )
+      try {
+        await act(() => vi.advanceTimersByTimeAsync(0))
+        await act(() => queryClient.cancelQueries({ queryKey: key }))
+        await act(() => vi.advanceTimersByTimeAsync(1))
+        expect(view.result.current.fetchStatus).toBe('idle')
+        focusManager.setFocused(false)
+        await act(() => vi.advanceTimersByTimeAsync(100))
+        expect(view.result.current.fetchStatus).toBe('idle')
+      } finally {
+        view.unmount()
+        focusManager.setFocused(undefined)
+      }
+    },
+  )
 
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should allow to set default data value', async () => {
