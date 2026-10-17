@@ -1,3 +1,7 @@
+<script lang="ts">
+  import { resolve } from '$app/paths'
+</script>
+
 <h2 class="text-4xl">TanStack Query Demo</h2>
 <p>Using the Star Wars API</p>
 <p>
@@ -18,14 +22,16 @@
   as observable.
 </p>
 <p>
-  Simply associate a key with your fetch call and let{' '}
+  Simply associate a key with your fetch call and let
   <strong>TanStack Query</strong> handle the rest.
 </p>
 <h5 class="text-2xl pt-4">Ready to get started?</h5>
 <p>
-  Check out the{' '}
-  <a href="/films" class="text-blue-500 hover:underline">Films</a>
+  Check out the
+  <a href={resolve('/films')} class="text-blue-500 hover:underline">Films</a>
   and
-  <a href="/characters" class="text-blue-500 hover:underline">Characters</a>
+  <a href={resolve('/characters')} class="text-blue-500 hover:underline"
+    >Characters</a
+  >
   !
 </p>

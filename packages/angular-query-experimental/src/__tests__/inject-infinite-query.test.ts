@@ -56,14 +56,12 @@ describe('injectInfiniteQuery', () => {
 
     expect(rendered.getByText('status: pending')).toBeInTheDocument()
     expect(rendered.getByText('pages: none')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('status: success')).toBeInTheDocument()
     expect(rendered.getByText('pages: data on page 0')).toBeInTheDocument()
 
     rendered.fixture.componentInstance.query.fetchNextPage()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('status: success')).toBeInTheDocument()
@@ -99,10 +97,8 @@ describe('injectInfiniteQuery', () => {
 
     expect(rendered.getByText('status: pending')).toBeInTheDocument()
     expect(rendered.getByText('pages: none')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('status: error')).toBeInTheDocument()
     expect(rendered.getByText('pages: none')).toBeInTheDocument()
     expect(rendered.getByText('error: Some error')).toBeInTheDocument()
@@ -135,7 +131,6 @@ describe('injectInfiniteQuery', () => {
 
     expect(rendered.getByText('pages: 1')).toBeInTheDocument()
     expect(rendered.getByText('isError: false')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('pages: 1')).toBeInTheDocument()
@@ -171,7 +166,6 @@ describe('injectInfiniteQuery', () => {
 
       expect(rendered.getByText('status: pending')).toBeInTheDocument()
       expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
-
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
       expect(queryFn).not.toHaveBeenCalled()
@@ -181,7 +175,6 @@ describe('injectInfiniteQuery', () => {
       rendered.fixture.componentInstance.postId.set('1')
       rendered.fixture.detectChanges()
       expect(rendered.getByText('isFetching: true')).toBeInTheDocument()
-
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
       expect(queryFn).toHaveBeenCalledTimes(1)

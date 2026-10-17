@@ -105,6 +105,10 @@ interface ContinueAction {
   type: 'continue'
 }
 
+/**
+ * The actions a mutation dispatches to update its state, e.g. when it starts, fails, pauses, or
+ * succeeds.
+ */
 export type Action<TData, TError, TVariables, TOnMutateResult> =
   | ContinueAction
   | ErrorAction<TError>
@@ -124,7 +128,6 @@ export type Action<TData, TError, TVariables, TOnMutateResult> =
  * code typically interacts with mutations indirectly through `QueryClient` or
  * a framework hook like `useMutation`. Direct access to a `Mutation` instance
  * is possible via `mutationCache.find()`/`getAll()` for inspecting cache state.
- *
  * @example
  * ```ts
  * const mutationCache = queryClient.getMutationCache()
@@ -164,7 +167,11 @@ export class Mutation<
     this.scheduleGc()
   }
 
-  /** @internal */
+  /**
+   * Replaces the mutation's options and applies their `gcTime`.
+   * @internal
+   * @param options - The new mutation options.
+   */
   setOptions(
     options: MutationOptions<TData, TError, TVariables, TOnMutateResult>,
   ): void {
@@ -175,12 +182,18 @@ export class Mutation<
 
   /**
    * The `meta` object passed in the mutation's options, if any.
+   * @returns The mutation's `meta`, or `undefined` if none was set.
    */
   get meta(): MutationMeta | undefined {
     return this.options.meta
   }
 
-  /** @internal */
+  /**
+   * Subscribes an observer to the mutation and stops its garbage collection.
+   * @internal
+   * @param observer - The observer to add. Adding an observer that is already subscribed does
+   * nothing.
+   */
   addObserver(observer: MutationObserver<any, any, any, any>): void {
     if (!this.#observers.includes(observer)) {
       this.#observers.push(observer)
@@ -196,7 +209,11 @@ export class Mutation<
     }
   }
 
-  /** @internal */
+  /**
+   * Unsubscribes an observer from the mutation.
+   * @internal
+   * @param observer - The observer to remove. Garbage collection is scheduled afterwards.
+   */
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
     this.#observers = this.#observers.filter((x) => x !== observer)
 
@@ -209,7 +226,7 @@ export class Mutation<
     })
   }
 
-  protected optionalRemove() {
+  protected override optionalRemove() {
     if (!this.#observers.length) {
       if (this.state.status === 'pending') {
         this.scheduleGc()
@@ -230,15 +247,15 @@ export class Mutation<
    *   this instance), `execute` is called again with the last known variables.
    * - Otherwise the mutation has already settled and this resolves immediately
    *   without running anything again.
-   *
+   * @returns A promise that settles with the resumed mutation: it rejects if the mutation fails.
+   * It resolves immediately if the mutation has already settled.
+   * @see {@link Mutation#execute}
    * @example
    * ```ts
    * // typically driven by reconnect handling, e.g. queryClient.resumePausedMutations()
    * const mutation = mutationCache.find({ mutationKey: ['addPost'] })
    * await mutation?.continue()
    * ```
-   *
-   * @see {@link Mutation#execute}
    */
   continue(): Promise<unknown> {
     return (
@@ -271,15 +288,15 @@ export class Mutation<
    * those four callbacks is individually caught so that a throwing callback
    * cannot mask the original error; an `error` action is then dispatched and
    * the original error is re-thrown.
-   *
+   * @param variables - The variables passed to the `mutationFn`.
+   * @returns A promise that resolves with the mutation's data, or rejects with its error.
+   * @see {@link Mutation#continue}
    * @example
    * ```ts
    * // Called internally by `MutationObserver.mutate` and `Mutation.continue` —
    * // applications normally trigger mutations through those, not this method.
    * const data = await mutation.execute(variables)
    * ```
-   *
-   * @see {@link Mutation#continue}
    */
   async execute(variables: TVariables): Promise<TData> {
     const onContinue = () => {
@@ -515,6 +532,10 @@ export class Mutation<
   }
 }
 
+/**
+ * Returns the initial state of a mutation: `'idle'`, with no data, error, or variables.
+ * @returns The initial mutation state.
+ */
 export function getDefaultState<
   TData,
   TError,

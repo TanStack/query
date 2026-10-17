@@ -14,15 +14,18 @@ interface Storage {
 }
 
 interface CreateSyncStoragePersisterOptions {
-  /** The storage client used for setting and retrieving items from cache.
+  /**
+   * The storage client used for setting and retrieving items from cache.
    * For SSR pass in `undefined`. Note that window.localStorage can be
    * `null` in Android WebViews depending on how they are configured.
    */
   storage: Storage | undefined | null
   /** The key to use when storing the cache */
   key?: string
-  /** To avoid spamming,
-   * pass a time in ms to throttle saving the cache to disk */
+  /**
+   * To avoid spamming,
+   * pass a time in ms to throttle saving the cache to disk
+   */
   throttleTime?: number
   /**
    * How to serialize the data to storage.
@@ -39,6 +42,12 @@ interface CreateSyncStoragePersisterOptions {
 }
 
 /**
+ * Creates a persister that stores the client in a synchronous storage such as
+ * `window.localStorage`.
+ * @param options - The `storage` to persist to, the `key`, `throttleTime`, `serialize`,
+ * `deserialize`, and `retry` options.
+ * @returns A persister that saves, restores, and removes the client in `storage`. Without
+ * `storage`, its methods do nothing.
  * @deprecated use `createAsyncStoragePersister` from `@tanstack/query-async-storage-persister` instead.
  */
 export function createSyncStoragePersister({
@@ -98,6 +107,13 @@ export function createSyncStoragePersister({
   }
 }
 
+/**
+ * Wraps a function so it runs at most once per `wait` milliseconds, with the arguments of the latest
+ * call.
+ * @param func - The function to throttle.
+ * @param wait - The time to wait before running `func`, in milliseconds.
+ * @returns The throttled function.
+ */
 function throttle<TArgs extends Array<any>>(
   func: (...args: TArgs) => any,
   wait = 100,

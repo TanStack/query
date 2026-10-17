@@ -1,5 +1,47 @@
 # @tanstack/lit-query
 
+## 0.2.28
+
+### Patch Changes
+
+- Updated dependencies [[`0f15bc9`](https://github.com/TanStack/query/commit/0f15bc925db5813be6a17527988ec7d7b3c8cfc0)]:
+  - @tanstack/query-core@5.104.3
+
+## 0.2.27
+
+### Patch Changes
+
+- Updated dependencies [[`03e8c39`](https://github.com/TanStack/query/commit/03e8c3955ddbf20f0a07b79982b52dfad8df5323)]:
+  - @tanstack/query-core@5.104.2
+
+## 0.2.26
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.104.1
+
+## 0.2.25
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/query-core@5.104.0
+
+## 0.2.24
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.103.3
+
+## 0.2.23
+
+### Patch Changes
+
+- Updated dependencies [[`8a28904`](https://github.com/TanStack/query/commit/8a28904aaccb6bc26398b751400a181c0f6d7f0e)]:
+  - @tanstack/query-core@5.103.2
+
 ## 0.2.22
 
 ### Patch Changes

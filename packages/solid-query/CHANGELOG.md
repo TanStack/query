@@ -1,5 +1,48 @@
 # @tanstack/solid-query
 
+## 5.104.3
+
+### Patch Changes
+
+- Updated dependencies [[`0f15bc9`](https://github.com/TanStack/query/commit/0f15bc925db5813be6a17527988ec7d7b3c8cfc0)]:
+  - @tanstack/query-core@5.104.3
+
+## 5.104.2
+
+### Patch Changes
+
+- Updated dependencies [[`03e8c39`](https://github.com/TanStack/query/commit/03e8c3955ddbf20f0a07b79982b52dfad8df5323)]:
+  - @tanstack/query-core@5.104.2
+
+## 5.104.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.104.1
+
+## 5.104.0
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/query-core@5.104.0
+
+## 5.103.3
+
+### Patch Changes
+
+- [#11628](https://github.com/TanStack/query/pull/11628) [`6ebffac`](https://github.com/TanStack/query/commit/6ebffacbe7451ab330574dcf0ec6a139546548e3) - fix: switch SSR cleanup property to address Astro crash
+- Updated dependencies []:
+  - @tanstack/query-core@5.103.3
+
+## 5.103.2
+
+### Patch Changes
+
+- Updated dependencies [[`8a28904`](https://github.com/TanStack/query/commit/8a28904aaccb6bc26398b751400a181c0f6d7f0e)]:
+  - @tanstack/query-core@5.103.2
+
 ## 5.103.1
 
 ### Patch Changes

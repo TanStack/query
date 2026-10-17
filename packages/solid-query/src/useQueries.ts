@@ -185,7 +185,7 @@ type QueriesResults<
         : { [K in keyof T]: GetResults<T[K]> }
 
 /**
- * The `useQueries` hook can be used to fetch a variable number of queries.
+ * The `useQueries` primitive can be used to fetch a variable number of queries.
  *
  * The `queries` key accepts an array with query option objects mostly identical to `useQuery` — see
  * `placeholderData` below for the one difference. A custom `QueryClient` is supplied once, as `useQueries`'
@@ -206,7 +206,6 @@ type QueriesResults<
  * will be used.
  * @returns The combined result. Without `combine`, this is an array with all the query results, in the same
  * order as the input. When `combine` is provided, this is the value returned by `combine` instead.
- *
  * @example
  * ```tsx
  * import { For } from 'solid-js'
@@ -234,7 +233,6 @@ type QueriesResults<
  *   )
  * }
  * ```
- *
  * @example
  * Combining results into a single value:
  * ```tsx

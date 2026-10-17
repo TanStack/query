@@ -1,5 +1,37 @@
 # @tanstack/query-core
 
+## 5.104.3
+
+### Patch Changes
+
+- [#11935](https://github.com/TanStack/query/pull/11935) [`0f15bc9`](https://github.com/TanStack/query/commit/0f15bc925db5813be6a17527988ec7d7b3c8cfc0) - fix(query-core): preserve discriminated union narrowing in setQueryData updaters
+
+## 5.104.2
+
+### Patch Changes
+
+- [#11679](https://github.com/TanStack/query/pull/11679) [`03e8c39`](https://github.com/TanStack/query/commit/03e8c3955ddbf20f0a07b79982b52dfad8df5323) - fix(query-core): start queued scoped mutations when the window is not focused
+
+## 5.104.1
+
+No changes in this release.
+
+## 5.104.0
+
+### Minor Changes
+
+- [#11650](https://github.com/TanStack/query/pull/11650) [`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e) - Build projects with Vite 8
+
+## 5.103.3
+
+No changes in this release.
+
+## 5.103.2
+
+### Patch Changes
+
+- [#11524](https://github.com/TanStack/query/pull/11524) [`8a28904`](https://github.com/TanStack/query/commit/8a28904aaccb6bc26398b751400a181c0f6d7f0e) - Ignore removal requests for query instances that are no longer stored in the cache.
+
 ## 5.103.1
 
 ### Patch Changes

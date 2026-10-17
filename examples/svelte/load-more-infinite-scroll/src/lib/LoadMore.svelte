@@ -31,8 +31,8 @@
 {/if}
 {#if query.isSuccess}
   <div>
-    {#each query.data.pages as { results }}
-      {#each results as planet}
+    {#each query.data.pages as { next, results } (next)}
+      {#each results as planet (planet.url)}
         <div class="card">
           <div class="card-body">
             <h2 class="card-title">Planet Name: {planet.name}</h2>
