@@ -17,6 +17,21 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Suppress false positive "unused import" warnings from @tanstack/query-core
+        // These imports (notifyManager, replaceEqualDeep) are actually used in the code
+        if (
+          warning.code === 'UNUSED_EXTERNAL_IMPORT' &&
+          warning.message?.includes('@tanstack/query-core')
+        ) {
+          return
+        }
+        warn(warning)
+      },
+    },
+  },
   test: {
     name: packageJson.name,
     dir: './tests',
