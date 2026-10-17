@@ -2,6 +2,9 @@ import type { DevtoolsErrorType } from '@tanstack/query-devtools'
 import type { ElementRef, Injector } from '@angular/core'
 import type { QueryClient } from '@tanstack/query-core'
 
+/**
+ * Options for `injectDevtoolsPanel`.
+ */
 export interface InjectDevtoolsPanelOptions {
   /**
    * The `Injector` in which to create the devtools panel.
@@ -21,6 +24,9 @@ export interface DevtoolsPanelRef {
   destroy: () => void
 }
 
+/**
+ * Options for the devtools panel, returned by the function passed to `injectDevtoolsPanel`.
+ */
 export interface DevtoolsPanelOptions {
   /**
    * Custom instance of QueryClient
@@ -35,7 +41,8 @@ export interface DevtoolsPanelOptions {
    */
   styleNonce?: string
   /**
-   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
+   * within the shadow DOM instead of within the head tag in the light DOM.
    */
   shadowDOMTarget?: ShadowRoot
 
@@ -46,11 +53,14 @@ export interface DevtoolsPanelOptions {
 
   /**
    * Element where to render the devtools panel. When set to undefined or null, the devtools panel will not be created, or destroyed if existing.
-   * If changed from undefined to a ElementRef, the devtools panel will be created.
+   * If changed from undefined to an ElementRef, the devtools panel will be created.
    */
   hostElement?: ElementRef
 }
 
+/**
+ * The signature of `injectDevtoolsPanel`, which creates a devtools panel from reactive options.
+ */
 export type InjectDevtoolsPanel = (
   injectDevtoolsPanelFn: () => DevtoolsPanelOptions,
   options?: InjectDevtoolsPanelOptions,

@@ -21,14 +21,10 @@ export default function Layout() {
       </nav>
       <div className="p-2">
         <Routes>
-          <Route exact path="/films" element={<Films />} />
-          <Route exact path="/films/:filmId" element={<Film />} />
-          <Route exact path="/characters" element={<Characters />} />
-          <Route
-            exact
-            path="/characters/:characterId"
-            element={<Character />}
-          />
+          <Route path="/films" element={<Films />} />
+          <Route path="/films/:filmId" element={<Film />} />
+          <Route path="/characters" element={<Characters />} />
+          <Route path="/characters/:characterId" element={<Character />} />
           <Route path="/" element={<Home />} />
         </Routes>
       </div>

@@ -4,6 +4,7 @@
     "lib": ["ES2020", "DOM"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "allowJs": true,
     "moduleResolution": "Bundler",
     "isolatedModules": true,
     "noEmit": true,

@@ -161,7 +161,6 @@ describe('React hydration', () => {
       expect(rendered.getByText('string')).toBeInTheDocument()
       // New query data should be available immediately
       expect(rendered.getByText('added')).toBeInTheDocument()
-
       await vi.advanceTimersByTimeAsync(0)
       // After effects phase has had time to run, the observer should have updated
       expect(rendered.queryByText('string')).not.toBeInTheDocument()
@@ -518,7 +517,6 @@ describe('React hydration', () => {
     )
 
     expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
@@ -548,7 +546,6 @@ describe('React hydration', () => {
     )
 
     expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()

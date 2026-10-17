@@ -208,7 +208,7 @@ describe('mutationOptions', () => {
     expect(queryClient.isMutating()).toBe(0)
   })
 
-  it('should return the number of fetching mutations when used with queryClient.isMutating (filter mutationOpt1.mutationKey)', async () => {
+  it('should return the number of fetching mutations when used with queryClient.isMutating (filter mutationOpts1.mutationKey)', async () => {
     const key = queryKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,
@@ -310,7 +310,7 @@ describe('mutationOptions', () => {
     expect(mutationState()[1]?.data).toBe('data2')
   })
 
-  it('should return the number of fetching mutations when used with injectMutationState (filter mutationOpt1.mutationKey)', async () => {
+  it('should return the number of fetching mutations when used with injectMutationState (filter mutationOpts1.mutationKey)', async () => {
     const key = queryKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,

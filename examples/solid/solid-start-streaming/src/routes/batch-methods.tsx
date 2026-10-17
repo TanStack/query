@@ -32,7 +32,8 @@ export default function BatchMethods() {
 
   const hello = useQuery(() => ({
     queryKey: ['hello', count()] as const,
-    queryFn: ({ queryKey: [_, count] }) => sayHello(`solid ${count}`),
+    queryFn: ({ queryKey: [, currentCount] }) =>
+      sayHello(`solid ${currentCount}`),
   }))
 
   return (

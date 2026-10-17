@@ -129,6 +129,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchInfiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { render } from '@testing-library/preact'
+import { act, render } from '@testing-library/preact'
 import { QueryClient, QueryClientProvider } from '@tanstack/preact-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { PreactQueryDevtoolsPanel as PreactQueryDevtoolsPanelComponent } from '../PreactQueryDevtoolsPanel'
@@ -143,6 +143,16 @@ describe('PreactQueryDevtoolsPanel', () => {
     )
   })
 
+  it('should create the devtools instance only once across re-renders', () => {
+    const { rerender } = render(
+      <PreactQueryDevtoolsPanel client={queryClient} errorTypes={[]} />,
+    )
+
+    rerender(<PreactQueryDevtoolsPanel client={queryClient} errorTypes={[]} />)
+
+    expect(TanstackQueryDevtoolsPanel).toHaveBeenCalledTimes(1)
+  })
+
   it('should preserve the default container height when "style" omits "height"', () => {
     const { container } = render(
       <PreactQueryDevtoolsPanel
@@ -175,7 +185,9 @@ describe('PreactQueryDevtoolsPanel', () => {
     const { unmount } = render(
       <PreactQueryDevtoolsPanel client={queryClient} />,
     )
-    unmount()
+    act(() => {
+      unmount()
+    })
 
     expect(unmountMock).toHaveBeenCalled()
   })

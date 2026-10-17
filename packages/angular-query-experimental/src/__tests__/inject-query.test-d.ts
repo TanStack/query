@@ -169,7 +169,7 @@ describe('injectQuery', () => {
 
   describe('initialData', () => {
     describe('Config object overload', () => {
-      it('TData should always be defined when initialData is provided as an object', () => {
+      it('should always define TData when initialData is provided as an object', () => {
         const key = queryKey()
         const { data } = injectQuery(() => ({
           queryKey: key,
@@ -180,7 +180,7 @@ describe('injectQuery', () => {
         expectTypeOf(data).toEqualTypeOf<Signal<{ wow: boolean }>>()
       })
 
-      it('TData should be defined when passed through queryOptions', () => {
+      it('should define TData when passed through queryOptions', () => {
         const key = queryKey()
         const options = () =>
           queryOptions({
@@ -214,7 +214,7 @@ describe('injectQuery', () => {
         expectTypeOf(query.data).toEqualTypeOf<Signal<boolean | undefined>>()
       })
 
-      it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
+      it('should always define TData when initialData is provided as a function which ALWAYS returns the data', () => {
         const key = queryKey()
         const { data } = injectQuery(() => ({
           queryKey: key,
@@ -231,7 +231,7 @@ describe('injectQuery', () => {
         expectTypeOf(data).toEqualTypeOf<Signal<{ wow: boolean }>>()
       })
 
-      it('TData should have undefined in the union when initialData is NOT provided', () => {
+      it('should have undefined in the TData union when initialData is NOT provided', () => {
         const key = queryKey()
         const { data } = injectQuery(() => ({
           queryKey: key,
@@ -245,7 +245,7 @@ describe('injectQuery', () => {
         expectTypeOf(data).toEqualTypeOf<Signal<{ wow: boolean } | undefined>>()
       })
 
-      it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+      it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
         const key = queryKey()
         const { data } = injectQuery(() => ({
           queryKey: key,
@@ -260,7 +260,7 @@ describe('injectQuery', () => {
         expectTypeOf(data).toEqualTypeOf<Signal<{ wow: boolean } | undefined>>()
       })
 
-      it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
+      it('should narrow TData after an isSuccess check when initialData is provided as a function which can return undefined', () => {
         const key = queryKey()
         const query = injectQuery(() => ({
           queryKey: key,
@@ -296,7 +296,7 @@ describe('injectQuery', () => {
   })
 
   describe('Discriminated union return type', () => {
-    it('data should be possibly undefined by default', () => {
+    it('should have possibly undefined data by default', () => {
       const key = queryKey()
       const query = injectQuery(() => ({
         queryKey: key,
@@ -306,7 +306,7 @@ describe('injectQuery', () => {
       expectTypeOf(query.data).toEqualTypeOf<Signal<string | undefined>>()
     })
 
-    it('data should be defined when query is success', () => {
+    it('should have defined data when query is success', () => {
       const key = queryKey()
       const query = injectQuery(() => ({
         queryKey: key,
@@ -318,7 +318,7 @@ describe('injectQuery', () => {
       }
     })
 
-    it('error should be null when query is success', () => {
+    it('should have null error when query is success', () => {
       const key = queryKey()
       const query = injectQuery(() => ({
         queryKey: key,
@@ -330,7 +330,7 @@ describe('injectQuery', () => {
       }
     })
 
-    it('data should be undefined when query is pending', () => {
+    it('should have undefined data when query is pending', () => {
       const key = queryKey()
       const query = injectQuery(() => ({
         queryKey: key,
@@ -342,7 +342,7 @@ describe('injectQuery', () => {
       }
     })
 
-    it('error should be defined when query is error', () => {
+    it('should have defined error when query is error', () => {
       const key = queryKey()
       const query = injectQuery(() => ({
         queryKey: key,
