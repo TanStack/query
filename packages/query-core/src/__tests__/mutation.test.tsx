@@ -2,7 +2,7 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MutationCache, QueryClient, focusManager } from '..'
 import { MutationObserver } from '../mutationObserver'
-import { executeMutation } from './utils'
+import { executeMutation, mockOnlineManagerIsOnline } from './utils'
 import type { MutationState } from '../mutation'
 
 describe('mutation', () => {
@@ -529,6 +529,80 @@ describe('mutation', () => {
         focusManager.setFocused(undefined)
       }
     })
+
+    it('should keep a queued mutation paused when its onMutate resolves before its turn', async () => {
+      const isPaused: Array<boolean> = []
+      const unsubscribe = queryClient.getMutationCache().subscribe((event) => {
+        if (
+          event.type === 'updated' &&
+          event.mutation.state.variables === 'vars2'
+        ) {
+          isPaused.push(event.mutation.state.isPaused)
+        }
+      })
+
+      executeMutation(
+        queryClient,
+        {
+          scope: {
+            id: 'scope',
+          },
+          mutationFn: () => sleep(20).then(() => 'a'),
+        },
+        'vars1',
+      )
+      executeMutation(
+        queryClient,
+        {
+          scope: {
+            id: 'scope',
+          },
+          onMutate: () => sleep(10),
+          mutationFn: () => sleep(10).then(() => 'b'),
+        },
+        'vars2',
+      )
+      expect(isPaused).toStrictEqual([true])
+
+      // onMutate resolves while the first mutation is still running
+      await vi.advanceTimersByTimeAsync(15)
+      expect(isPaused).not.toContain(false)
+
+      unsubscribe()
+    })
+  })
+
+  it('should unpause a mutation that goes back online while its onMutate runs', async () => {
+    const key = queryKey()
+    const onlineMock = mockOnlineManagerIsOnline(false)
+    const mutationFn = vi.fn(() => sleep(20).then(() => 'data'))
+
+    executeMutation(
+      queryClient,
+      {
+        mutationKey: key,
+        onMutate: () => sleep(10),
+        mutationFn,
+      },
+      'vars',
+    )
+    const mutation = queryClient.getMutationCache().find({ mutationKey: key })!
+    expect(mutation.state).toMatchObject({
+      status: 'pending',
+      isPaused: true,
+    })
+
+    onlineMock.mockReturnValue(true)
+    await vi.advanceTimersByTimeAsync(20)
+    expect(mutationFn).toHaveBeenCalledTimes(1)
+    expect(mutation.state).toMatchObject({
+      status: 'pending',
+      isPaused: false,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(mutation.state.status).toBe('success')
+    onlineMock.mockRestore()
   })
 
   it('should run mutations without scope in parallel', async () => {
