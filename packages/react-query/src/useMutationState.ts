@@ -62,28 +62,36 @@ type MutationStateOptions<
 }
 
 /**
- * Collects the mutations in the cache that match `options.filters`, mapped with `options.select`
- * (or to their state, by default).
+ * Creates a snapshot reader for the mutations that match `options.filters`, mapped with
+ * `options.select` (or to their state, by default).
  * @param mutationCache - The mutation cache to read.
  * @param options - The `filters` to match and the `select` function to map each mutation with.
- * @returns The selected value of every matching mutation.
+ * @returns A reader that reuses structurally equal results between calls.
  */
-function getResult<
+function createSnapshotGetter<
   TResult = MutationState,
   TMutation extends Mutation<any, any, any, any> =
     MutationTypeFromResult<TResult>,
 >(
   mutationCache: MutationCache,
   options: MutationStateOptions<TResult, TMutation>,
-): Array<TResult> {
-  return mutationCache
-    .findAll(options.filters)
-    .map(
-      (mutation): TResult =>
-        (options.select
-          ? options.select(mutation as TMutation)
-          : mutation.state) as TResult,
+): () => Array<TResult> {
+  let result: Array<TResult> | undefined
+
+  return () => {
+    result = replaceEqualDeep(
+      result,
+      mutationCache
+        .findAll(options.filters)
+        .map(
+          (mutation): TResult =>
+            (options.select
+              ? options.select(mutation as TMutation)
+              : mutation.state) as TResult,
+        ),
     )
+    return result
+  }
 }
 
 /**
@@ -164,32 +172,19 @@ export function useMutationState<
   queryClient?: QueryClient,
 ): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
-  const optionsRef = React.useRef(options)
-  const resultRef = React.useRef<Array<TResult>>(null)
-  if (resultRef.current === null) {
-    resultRef.current = getResult(mutationCache, options)
-  }
-
-  React.useEffect(() => {
-    optionsRef.current = options
-  })
+  const { filters, select } = options
+  const getSnapshot = React.useMemo(
+    () => createSnapshotGetter(mutationCache, { filters, select }),
+    [mutationCache, filters, select],
+  )
 
   return React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
-        mutationCache.subscribe(() => {
-          const nextResult = replaceEqualDeep(
-            resultRef.current,
-            getResult(mutationCache, optionsRef.current),
-          )
-          if (resultRef.current !== nextResult) {
-            resultRef.current = nextResult
-            notifyManager.schedule(onStoreChange)
-          }
-        }),
+        mutationCache.subscribe(notifyManager.batchCalls(onStoreChange)),
       [mutationCache],
     ),
-    () => resultRef.current,
-    () => resultRef.current,
-  )!
+    getSnapshot,
+    getSnapshot,
+  )
 }

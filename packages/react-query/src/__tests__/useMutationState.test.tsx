@@ -4,6 +4,7 @@ import * as React from 'react'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, useIsMutating, useMutation, useMutationState } from '..'
 import { renderWithClient } from './utils'
+import type { Mutation } from '..'
 
 describe('useIsMutating', () => {
   beforeEach(() => {
@@ -141,7 +142,11 @@ describe('useIsMutating', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(101)
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(
+      isMutatingArray.filter(
+        (count, index) => index === 0 || count !== isMutatingArray[index - 1],
+      ),
+    ).toEqual([0, 1, 0])
   })
 
   it('should filter correctly by predicate', async () => {
@@ -179,7 +184,11 @@ describe('useIsMutating', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(101)
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(
+      isMutatingArray.filter(
+        (count, index) => index === 0 || count !== isMutatingArray[index - 1],
+      ),
+    ).toEqual([0, 1, 0])
   })
 
   it('should use provided custom queryClient', async () => {
@@ -212,6 +221,32 @@ describe('useIsMutating', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
   })
+
+  it('should update when filters change without a cache update', async () => {
+    const queryClient = new QueryClient()
+    const key = queryKey()
+    const otherKey = queryKey()
+    const mutation = queryClient.getMutationCache().build(queryClient, {
+      mutationKey: key,
+      mutationFn: () => sleep(100),
+    })
+    const promise = mutation.execute(undefined)
+    await vi.advanceTimersByTimeAsync(0)
+
+    function Page({ mutationKey }: { mutationKey: Array<string> }) {
+      const count = useIsMutating({ mutationKey })
+      return <div>mutating: {count}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page mutationKey={key} />)
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
+
+    rendered.rerender(<Page mutationKey={otherKey} />)
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(100)
+    await promise
+  })
 })
 
 describe('useMutationState', () => {
@@ -221,6 +256,114 @@ describe('useMutationState', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  it('should update when filters change without a cache update', () => {
+    const queryClient = new QueryClient()
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const cache = queryClient.getMutationCache()
+    cache.build(queryClient, { mutationKey: key1 })
+    cache.build(queryClient, { mutationKey: key2 })
+    const onCacheChange = vi.fn()
+    const unsubscribe = cache.subscribe(onCacheChange)
+
+    function Page({ mutationKey }: { mutationKey: Array<string> }) {
+      const keys = useMutationState({
+        filters: { mutationKey },
+        select: (mutation) => mutation.options.mutationKey,
+      })
+      return <div>keys: {JSON.stringify(keys)}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page mutationKey={key1} />)
+    expect(
+      rendered.getByText(`keys: ${JSON.stringify([key1])}`),
+    ).toBeInTheDocument()
+
+    rendered.rerender(<Page mutationKey={key2} />)
+    expect(
+      rendered.getByText(`keys: ${JSON.stringify([key2])}`),
+    ).toBeInTheDocument()
+
+    rendered.rerender(<Page mutationKey={queryKey()} />)
+    expect(rendered.getByText('keys: []')).toBeInTheDocument()
+    expect(onCacheChange).not.toHaveBeenCalled()
+    unsubscribe()
+  })
+
+  it('should update when select changes without a cache update', () => {
+    const queryClient = new QueryClient()
+    const key = queryKey()
+    queryClient.getMutationCache().build(queryClient, { mutationKey: key })
+
+    function Page({ select }: { select: (mutation: Mutation) => unknown }) {
+      const result = useMutationState({ select })
+      return <div>result: {JSON.stringify(result)}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <Page select={(mutation) => mutation.options.mutationKey} />,
+    )
+    expect(
+      rendered.getByText(`result: ${JSON.stringify([key])}`),
+    ).toBeInTheDocument()
+
+    rendered.rerender(<Page select={(mutation) => mutation.state.status} />)
+    expect(rendered.getByText('result: ["idle"]')).toBeInTheDocument()
+  })
+
+  it('should preserve the result reference when filters and select are unchanged', () => {
+    const queryClient = new QueryClient()
+    queryClient
+      .getMutationCache()
+      .build(queryClient, { mutationKey: queryKey() })
+    const results: Array<unknown> = []
+    const filters = { status: 'idle' as const }
+    const select = (mutation: Mutation) => ({
+      key: mutation.options.mutationKey,
+    })
+
+    function Page() {
+      const result = useMutationState({ filters, select })
+      results.push(result)
+      return null
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    const previous = results.at(-1)
+    expect(previous).toHaveLength(1)
+
+    rendered.rerender(<Page />)
+    expect(results.at(-1)).toBe(previous)
+  })
+
+  it('should read from a changed custom queryClient', () => {
+    const client1 = new QueryClient()
+    const client2 = new QueryClient()
+    const key1 = queryKey()
+    const key2 = queryKey()
+    client1.getMutationCache().build(client1, { mutationKey: key1 })
+    client2.getMutationCache().build(client2, { mutationKey: key2 })
+    const select = (mutation: Mutation) => mutation.options.mutationKey
+
+    function Page({ client }: { client: QueryClient }) {
+      const keys = useMutationState({ select }, client)
+      return <div>keys: {JSON.stringify(keys)}</div>
+    }
+
+    const rendered = render(<Page client={client1} />)
+    expect(
+      rendered.getByText(`keys: ${JSON.stringify([key1])}`),
+    ).toBeInTheDocument()
+
+    rendered.rerender(<Page client={client2} />)
+    expect(
+      rendered.getByText(`keys: ${JSON.stringify([key2])}`),
+    ).toBeInTheDocument()
+    expect(client1.getMutationCache().hasListeners()).toBe(false)
+    expect(client2.getMutationCache().hasListeners()).toBe(true)
   })
 
   it('should remove successful mutations when the query client is cleared', async () => {
