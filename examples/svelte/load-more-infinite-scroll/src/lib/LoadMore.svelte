@@ -3,8 +3,11 @@
 
   const endPoint = 'https://swapi.dev/api'
 
-  const fetchPlanets = async ({ pageParam = 1 }) =>
-    await fetch(`${endPoint}/planets/?page=${pageParam}`).then((r) => r.json())
+  const fetchPlanets = async ({ pageParam = 1 }) => {
+    const response = await fetch(`${endPoint}/planets/?page=${pageParam}`)
+    if (!response.ok) throw new Error('Failed to fetch planets')
+    return await response.json()
+  }
 
   const query = createInfiniteQuery(() => ({
     queryKey: ['planets'],
