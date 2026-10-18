@@ -16,17 +16,13 @@ describe('useIsMutating', () => {
   })
 
   it('should return the number of fetching mutations', async () => {
-    const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
     const key1 = queryKey()
     const key2 = queryKey()
 
     function IsMutating() {
       const isMutating = useIsMutating()
-
-      isMutatingArray.push(isMutating)
-
-      return null
+      return <div>mutating: {isMutating}</div>
     }
 
     function Mutations() {
@@ -57,25 +53,21 @@ describe('useIsMutating', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
+
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
+    await vi.advanceTimersByTimeAsync(1)
+    expect(rendered.getByText('mutating: 2')).toBeInTheDocument()
 
-    // we don't really care if this yields
-    // [ +0, 1, 2, +0 ]
-    // or
-    // [ +0, 1, 2, 1, +0 ]
-    // our batching strategy might yield different results
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
 
-    await vi.advanceTimersByTimeAsync(41)
-    expect(isMutatingArray[0]).toEqual(0)
-    expect(isMutatingArray[1]).toEqual(1)
-    expect(isMutatingArray[2]).toEqual(2)
-    expect(isMutatingArray[3]).toEqual(1)
-    expect(isMutatingArray[4]).toEqual(0)
-
-    expect(isMutatingArray).toEqual([0, 1, 2, 1, 0])
+    await vi.advanceTimersByTimeAsync(30)
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
   it('should update when the query client is cleared', async () => {
@@ -110,15 +102,13 @@ describe('useIsMutating', () => {
   })
 
   it('should filter correctly by mutationKey', async () => {
-    const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
     const key1 = queryKey()
     const key2 = queryKey()
 
     function IsMutating() {
       const isMutating = useIsMutating({ mutationKey: key1 })
-      isMutatingArray.push(isMutating)
-      return null
+      return <div>mutating: {isMutating}</div>
     }
 
     function Page() {
@@ -139,18 +129,17 @@ describe('useIsMutating', () => {
       return <IsMutating />
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
 
-    await vi.advanceTimersByTimeAsync(101)
-    expect(
-      isMutatingArray.filter(
-        (count, index) => index === 0 || count !== isMutatingArray[index - 1],
-      ),
-    ).toEqual([0, 1, 0])
+    await vi.advanceTimersByTimeAsync(1)
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(100)
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
   it('should filter correctly by predicate', async () => {
-    const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
     const key1 = queryKey()
     const key2 = queryKey()
@@ -159,8 +148,7 @@ describe('useIsMutating', () => {
       const isMutating = useIsMutating({
         predicate: (mutation) => mutation.options.mutationKey?.[0] === key1[0],
       })
-      isMutatingArray.push(isMutating)
-      return null
+      return <div>mutating: {isMutating}</div>
     }
 
     function Page() {
@@ -181,14 +169,14 @@ describe('useIsMutating', () => {
       return <IsMutating />
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
 
-    await vi.advanceTimersByTimeAsync(101)
-    expect(
-      isMutatingArray.filter(
-        (count, index) => index === 0 || count !== isMutatingArray[index - 1],
-      ),
-    ).toEqual([0, 1, 0])
+    await vi.advanceTimersByTimeAsync(1)
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(100)
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
   it('should use provided custom queryClient', async () => {
