@@ -7,7 +7,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject",
+    "prebuild": "expo prebuild",
     "test:eslint": "eslint ./App.tsx ./src",
     "test:types": "tsc --noEmit"
   },
