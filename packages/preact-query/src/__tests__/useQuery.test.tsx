@@ -5934,6 +5934,35 @@ describe('useQuery', () => {
       ).toBe(1)
     })
 
+    it('should not optimistically show fetching when subscribed is false', () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      function Page() {
+        const query = useQuery({
+          queryKey: key,
+          queryFn,
+          subscribed: false,
+        })
+
+        return (
+          <div>
+            <span>isFetching: {String(query.isFetching)}</span>
+            <span>fetchStatus: {query.fetchStatus}</span>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      expect(queryFn).not.toHaveBeenCalled()
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+      ).toBe(0)
+      rendered.getByText('isFetching: false')
+      rendered.getByText('fetchStatus: idle')
+    })
+
     it('should not be attached to the query when subscribed is false', async () => {
       const key = queryKey()
       const queryFn = vi.fn(() => Promise.resolve('data'))
@@ -6938,6 +6967,35 @@ describe('useQuery', () => {
 
     // Should retry because throwOnError returns false (500 error doesn't include '404')
     expect(fetchCount).toBe(initialFetchCount + 1)
+    expect(queryFn).toHaveBeenCalledTimes(2)
+  })
+
+  it('should retry on mount when throwOnError returns false for a falsy error', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => Promise.reject())
+
+    function Component() {
+      const { status } = useQuery({
+        queryKey: key,
+        queryFn,
+        throwOnError: () => false,
+        retryOnMount: () => true,
+        staleTime: Infinity,
+        retry: false,
+      })
+
+      return <div data-testid="status">{status}</div>
+    }
+
+    const rendered1 = renderWithClient(queryClient, <Component />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered1.getByTestId('status')).toHaveTextContent('error')
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    rendered1.unmount()
+
+    const rendered2 = renderWithClient(queryClient, <Component />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered2.getByTestId('status')).toHaveTextContent('error')
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
 })

@@ -43,12 +43,10 @@ function Example() {
     <>
       <Button
         onClick={() => {
-          setShowProjects((old) => {
-            if (!old) {
-              queryClient.query(projectsQueryOptions).catch(noop)
-            }
-            return !old
-          })
+          if (!showProjects) {
+            queryClient.query(projectsQueryOptions).catch(noop)
+          }
+          setShowProjects((old) => !old)
         }}
       >
         {showProjects ? 'Hide Projects' : 'Show Projects'}

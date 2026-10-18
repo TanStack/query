@@ -28,6 +28,7 @@ export default function Example() {
       nextId: number
     }> => {
       const response = await fetch(`/api/projects?cursor=${pageParam}`)
+      if (!response.ok) throw new Error('Failed to fetch projects')
       return await response.json()
     },
     initialPageParam: 0,

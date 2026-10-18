@@ -1,5 +1,13 @@
 # @tanstack/react-query-next-experimental
 
+## 5.104.4
+
+### Patch Changes
+
+- [#11728](https://github.com/TanStack/query/pull/11728) [`a108398`](https://github.com/TanStack/query/commit/a10839824cecec8ea141330191c2e0ad0ae2b53f) - fix(react-query*): declare '@types/react' as an optional peer dependency
+- Updated dependencies [[`c208861`](https://github.com/TanStack/query/commit/c20886163a3759725cceafb421e864e7d213ec26), [`a108398`](https://github.com/TanStack/query/commit/a10839824cecec8ea141330191c2e0ad0ae2b53f)]:
+  - @tanstack/react-query@5.104.4
+
 ## 5.104.3
 
 ### Patch Changes

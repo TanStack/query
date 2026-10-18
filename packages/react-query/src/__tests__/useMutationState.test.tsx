@@ -77,6 +77,37 @@ describe('useIsMutating', () => {
     expect(isMutatingArray).toEqual([0, 1, 2, 1, 0])
   })
 
+  it('should update when the query client is cleared', async () => {
+    const queryClient = new QueryClient()
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: () => sleep(1000).then(() => 'data'),
+      })
+      const isMutating = useIsMutating()
+
+      return (
+        <div>
+          <div>mutating: {isMutating}</div>
+          <button onClick={() => mutate()}>mutate</button>
+          <button onClick={() => queryClient.clear()}>clear</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    fireEvent.click(rendered.getByRole('button', { name: 'mutate' }))
+    await vi.advanceTimersByTimeAsync(1)
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'clear' }))
+    await vi.advanceTimersByTimeAsync(1)
+    expect(queryClient.isMutating()).toBe(0)
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(1000)
+  })
+
   it('should filter correctly by mutationKey', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
@@ -190,6 +221,38 @@ describe('useMutationState', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  it('should remove successful mutations when the query client is cleared', async () => {
+    const queryClient = new QueryClient()
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: () => Promise.resolve('saved'),
+      })
+      const data = useMutationState({
+        filters: { status: 'success' },
+        select: (mutation) => mutation.state.data,
+      })
+
+      return (
+        <div>
+          <div>data: {JSON.stringify(data)}</div>
+          <button onClick={() => mutate()}>mutate</button>
+          <button onClick={() => queryClient.clear()}>clear</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    fireEvent.click(rendered.getByRole('button', { name: 'mutate' }))
+    await vi.advanceTimersByTimeAsync(1)
+    expect(rendered.getByText('data: ["saved"]')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'clear' }))
+    await vi.advanceTimersByTimeAsync(1)
+    expect(queryClient.getMutationCache().getAll()).toEqual([])
+    expect(rendered.getByText('data: []')).toBeInTheDocument()
   })
 
   it('should return variables after calling mutate', async () => {
