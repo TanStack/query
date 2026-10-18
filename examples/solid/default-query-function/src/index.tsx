@@ -10,6 +10,12 @@ import { render } from 'solid-js/web'
 import type { Setter } from 'solid-js'
 import type { QueryFunction } from '@tanstack/solid-query'
 
+type Post = {
+  id: number
+  title: string
+  body: string
+}
+
 // Define a default query function that will receive the query key
 const defaultQueryFn: QueryFunction<unknown> = async ({ queryKey }) => {
   const response = await fetch(
@@ -56,7 +62,7 @@ function App() {
 
 function Posts(props: { setPostId: Setter<number> }) {
   // All you have to do now is pass a key!
-  const state = useQuery<Array<any>>(() => ({ queryKey: ['/posts'] }))
+  const state = useQuery<Array<Post>>(() => ({ queryKey: ['/posts'] }))
 
   return (
     <div>
@@ -104,7 +110,7 @@ function Posts(props: { setPostId: Setter<number> }) {
 
 function Post(props: { postId: number; setPostId: Setter<number> }) {
   // You can even leave out the queryFn and just go straight into options
-  const state = useQuery<any>(() => ({
+  const state = useQuery<Post>(() => ({
     queryKey: [`/posts/${props.postId}`],
     enabled: !!props.postId,
   }))
@@ -125,9 +131,9 @@ function Post(props: { postId: number; setPostId: Setter<number> }) {
         </Match>
         <Match when={state.data !== undefined}>
           <>
-            <h1>{state.data.title}</h1>
+            <h1>{state.data?.title}</h1>
             <div>
-              <p>{state.data.body}</p>
+              <p>{state.data?.body}</p>
             </div>
             <div>{state.isFetching ? 'Background Updating...' : ' '}</div>
           </>
