@@ -91,7 +91,6 @@ function createPost(postId: Accessor<number>) {
   return useQuery(() => ({
     queryKey: ['post', postId()],
     queryFn: () => getPostById(postId()),
-    enabled: !!postId(),
   }))
 }
 
@@ -106,9 +105,7 @@ function Post(props: { postId: number; setPostId: Setter<number> }) {
         </a>
       </div>
       <Switch>
-        <Match when={!props.postId || state.status === 'pending'}>
-          Loading...
-        </Match>
+        <Match when={state.status === 'pending'}>Loading...</Match>
         <Match when={state.status === 'error'}>
           <span>Error: {(state.error as Error).message}</span>
         </Match>
