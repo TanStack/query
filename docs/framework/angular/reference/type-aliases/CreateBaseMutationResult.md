@@ -11,7 +11,7 @@ type CreateBaseMutationResult<TData = unknown, TError = DefaultError, TVariables
 }> & object;
 ```
 
-Defined in: packages/angular-query/src/types.ts:389
+Defined in: [packages/angular-query/src/types.ts:389](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L389)
 
 The pre-`Signal` shape [CreateMutationResult](CreateMutationResult.md) is built from — not what `injectMutation` actually
 returns. Same as [MutationObserverResult](MutationObserverResult.md) from `@tanstack/query-core`, with `mutate` narrowed to the

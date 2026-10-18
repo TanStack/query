@@ -9,7 +9,7 @@ title: UnusedSkipTokenOptions
 type UnusedSkipTokenOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = OmitKeyof<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object;
 ```
 
-Defined in: packages/angular-query/src/query-options.ts:47
+Defined in: [packages/angular-query/src/query-options.ts:47](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-options.ts#L47)
 
 The options accepted by the `queryOptions` overload selected when no `initialData` is set and `queryFn` is
 not `skipToken` — same as [UndefinedInitialDataOptions](UndefinedInitialDataOptions.md), but `queryFn` may not be `skipToken`.

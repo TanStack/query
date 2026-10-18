@@ -13,7 +13,7 @@ type OmitKeyof<TObject, TKey extends TStrictly extends "safely" ?
 | symbol & Record<never, never> : keyof TObject, TStrictly extends "strictly" | "safely" = "strictly"> = Omit<TObject, TKey>;
 ```
 
-Defined in: packages/query-core/src/types.ts:30
+Defined in: [packages/query-core/src/types.ts:30](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L30)
 
 Like `Omit`, but by default (`'strictly'`) `TKey` must be a key of `TObject`, so omitting a key
 that doesn't exist is a type error. Pass `'safely'` to allow other keys too.

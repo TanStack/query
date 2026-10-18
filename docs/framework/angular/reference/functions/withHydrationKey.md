@@ -9,7 +9,7 @@ title: withHydrationKey
 function withHydrationKey(key: string): QueryFeature;
 ```
 
-Defined in: packages/angular-query/src/providers.ts:173
+Defined in: [packages/angular-query/src/providers.ts:173](https://github.com/TanStack/query/blob/main/packages/angular-query/src/providers.ts#L173)
 
 Sets a non-default serialization key for this injector's `QueryClient` cache (server dehydrate /
 browser hydrate via `TransferState`). Use this when you have multiple `QueryClient` instances

@@ -9,7 +9,7 @@ title: TimeoutProvider
 type TimeoutProvider<TTimerId extends ManagedTimerId = ManagedTimerId> = object;
 ```
 
-Defined in: packages/query-core/src/timeoutManager.ts:28
+Defined in: [packages/query-core/src/timeoutManager.ts:28](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L28)
 
 Backend for timer functions.
 

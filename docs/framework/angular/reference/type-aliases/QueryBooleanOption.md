@@ -11,7 +11,7 @@ type QueryBooleanOption<TQueryFnData = unknown, TError = DefaultError, TData = T
   | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean);
 ```
 
-Defined in: packages/query-core/src/types.ts:204
+Defined in: [packages/query-core/src/types.ts:204](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L204)
 
 ## Type Parameters
 

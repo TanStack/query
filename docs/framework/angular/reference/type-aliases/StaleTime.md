@@ -9,4 +9,4 @@ title: StaleTime
 type StaleTime = number | "static";
 ```
 
-Defined in: packages/query-core/src/types.ts:191
+Defined in: [packages/query-core/src/types.ts:191](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L191)

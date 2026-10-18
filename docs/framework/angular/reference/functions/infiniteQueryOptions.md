@@ -13,9 +13,9 @@ function infiniteQueryOptions<TQueryFnData, TError = Error, TData = InfiniteData
 function infiniteQueryOptions<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
-- [`DefinedInitialDataInfiniteOptions` → `DefinedInitialDataInfiniteOptions`](#call-signature-1): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
-- [`UnusedSkipTokenInfiniteOptions` → `UnusedSkipTokenInfiniteOptions`](#call-signature-2): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
-- [`UndefinedInitialDataInfiniteOptions` → `UndefinedInitialDataInfiniteOptions`](#call-signature-3): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+- [`DefinedInitialDataInfiniteOptions` → `DefinedInitialDataInfiniteOptions & QueryKeyWithDataTag`](#call-signature-1): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+- [`UnusedSkipTokenInfiniteOptions` → `UnusedSkipTokenInfiniteOptions & QueryKeyWithDataTag`](#call-signature-2): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+- [`UndefinedInitialDataInfiniteOptions` → `UndefinedInitialDataInfiniteOptions & QueryKeyWithDataTag`](#call-signature-3): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 
@@ -27,7 +27,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function infiniteQueryOptions<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
-Defined in: packages/angular-query/src/infinite-query-options.ts:175
+Defined in: [packages/angular-query/src/infinite-query-options.ts:175](https://github.com/TanStack/query/blob/main/packages/angular-query/src/infinite-query-options.ts#L175)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to
 `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as
@@ -122,7 +122,7 @@ export class Projects {
 function infiniteQueryOptions<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
-Defined in: packages/angular-query/src/infinite-query-options.ts:246
+Defined in: [packages/angular-query/src/infinite-query-options.ts:246](https://github.com/TanStack/query/blob/main/packages/angular-query/src/infinite-query-options.ts#L246)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to
 `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as
@@ -221,7 +221,7 @@ export class Comments {
 function infiniteQueryOptions<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
-Defined in: packages/angular-query/src/infinite-query-options.ts:317
+Defined in: [packages/angular-query/src/infinite-query-options.ts:317](https://github.com/TanStack/query/blob/main/packages/angular-query/src/infinite-query-options.ts#L317)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to
 `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as

@@ -9,7 +9,7 @@ title: DefinedInitialDataOptions
 type DefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object;
 ```
 
-Defined in: packages/angular-query/src/query-options.ts:76
+Defined in: [packages/angular-query/src/query-options.ts:76](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-options.ts#L76)
 
 The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
 `undefined` (unless a `select` changes `TData` to include `undefined`).

@@ -9,7 +9,7 @@ title: MutationStateOptions
 type MutationStateOptions<TResult = MutationState, TMutation extends Mutation<any, any, any, any> = MutationTypeFromResult<TResult>> = object;
 ```
 
-Defined in: packages/angular-query/src/inject-mutation-state.ts:26
+Defined in: [packages/angular-query/src/inject-mutation-state.ts:26](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-mutation-state.ts#L26)
 
 Filters and optional projection for observing entries in the mutation cache.
 

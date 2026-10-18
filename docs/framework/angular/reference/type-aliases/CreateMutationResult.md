@@ -9,7 +9,7 @@ title: CreateMutationResult
 type CreateMutationResult<TData = unknown, TError = DefaultError, TVariables = unknown, TOnMutateResult = unknown, TState = CreateStatusBasedMutationResult<CreateBaseMutationResult["status"], TData, TError, TVariables, TOnMutateResult>> = BaseMutationNarrowing<TData, TError, TVariables, TOnMutateResult> & MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, "safely">, MutationResultFields>;
 ```
 
-Defined in: packages/angular-query/src/types.ts:522
+Defined in: [packages/angular-query/src/types.ts:522](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L522)
 
 The result of `injectMutation`. Based on [CreateBaseMutationResult](CreateBaseMutationResult.md), but value fields are exposed as
 a `Signal` — read them with `mutation.data()`, not `mutation.data` — while function fields (`mutate`,

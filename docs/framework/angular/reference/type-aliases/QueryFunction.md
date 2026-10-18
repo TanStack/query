@@ -9,7 +9,7 @@ title: QueryFunction
 type QueryFunction<T = unknown, TQueryKey extends QueryKey = QueryKey, TPageParam = never> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>;
 ```
 
-Defined in: packages/query-core/src/types.ts:184
+Defined in: [packages/query-core/src/types.ts:184](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L184)
 
 ## Type Parameters
 

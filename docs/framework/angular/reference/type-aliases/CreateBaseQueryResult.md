@@ -9,7 +9,7 @@ title: CreateBaseQueryResult
 type CreateBaseQueryResult<TData = unknown, TError = DefaultError, TState extends QueryObserverResult<TData, TError> = QueryObserverResult<TData, TError>> = BaseQueryNarrowing<TData, TError> & MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, "safely">, QueryResultFields>;
 ```
 
-Defined in: packages/angular-query/src/types.ts:249
+Defined in: [packages/angular-query/src/types.ts:249](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L249)
 
 The result of `injectQuery` when `initialData` isn't set — `data` may be `undefined` while the query is
 `pending`. Same shape as [QueryObserverResult](QueryObserverResult.md) from `@tanstack/query-core`, but value fields (like

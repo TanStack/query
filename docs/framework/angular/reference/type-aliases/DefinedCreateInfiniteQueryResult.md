@@ -9,7 +9,7 @@ title: DefinedCreateInfiniteQueryResult
 type DefinedCreateInfiniteQueryResult<TData = unknown, TError = DefaultError, TDefinedInfiniteQueryObserver extends DefinedInfiniteQueryObserverResult<TData, TError> = DefinedInfiniteQueryObserverResult<TData, TError>> = DefinedInfiniteQueryNarrowing<TData, TError> & MapToSignals<TDefinedInfiniteQueryObserver, InfiniteQueryResultFields>;
 ```
 
-Defined in: packages/angular-query/src/types.ts:313
+Defined in: [packages/angular-query/src/types.ts:313](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L313)
 
 The result of `injectInfiniteQuery` when `initialData` is set — `data` is never `undefined`. Same shape as
 [DefinedInfiniteQueryObserverResult](DefinedInfiniteQueryObserverResult.md) from `@tanstack/query-core`, but value fields are exposed as a

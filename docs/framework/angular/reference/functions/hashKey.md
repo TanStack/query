@@ -9,7 +9,7 @@ title: hashKey
 function hashKey(queryKey: readonly unknown[]): string;
 ```
 
-Defined in: packages/query-core/src/utils.ts:323
+Defined in: [packages/query-core/src/utils.ts:323](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L323)
 
 Default query & mutation keys hash function.
 Hashes the value into a stable hash.
