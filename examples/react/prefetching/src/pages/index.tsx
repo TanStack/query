@@ -67,10 +67,12 @@ export default function Example() {
       <h2>Characters</h2>
       {charactersQuery.isPending ? (
         'Loading...'
+      ) : charactersQuery.isError ? (
+        <span>Error: {charactersQuery.error.message}</span>
       ) : (
         <>
           <ul>
-            {charactersQuery.data?.results.map((char) => (
+            {charactersQuery.data.results.map((char) => (
               <CharacterItem
                 key={char.id}
                 char={char}
@@ -82,6 +84,8 @@ export default function Example() {
           <h3>Selected Character</h3>
           {characterQuery.isPending ? (
             'Loading...'
+          ) : characterQuery.isError ? (
+            <span>Error: {characterQuery.error.message}</span>
           ) : (
             <>
               <pre>{JSON.stringify(characterQuery.data, null, 2)}</pre>
