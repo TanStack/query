@@ -14,21 +14,32 @@
 
   const todos = createQuery<{ items: string[] }>(() => ({
     queryKey: ['refetch'],
-    queryFn: async () => await fetch(endpoint).then((r) => r.json()),
+    queryFn: async () => {
+      const response = await fetch(endpoint)
+      if (!response.ok) throw new Error('Failed to fetch todos')
+      return await response.json()
+    },
     // Refetch the data every second
     refetchInterval: intervalMs,
   }))
 
   const addMutation = createMutation(() => ({
-    mutationFn: (value: string) =>
-      fetch(`${endpoint}?add=${encodeURIComponent(value)}`).then((r) =>
-        r.json(),
-      ),
+    mutationFn: async (value: string) => {
+      const response = await fetch(
+        `${endpoint}?add=${encodeURIComponent(value)}`,
+      )
+      if (!response.ok) throw new Error('Failed to add todo')
+      return await response.json()
+    },
     onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
   }))
 
   const clearMutation = createMutation(() => ({
-    mutationFn: () => fetch(`${endpoint}?clear=1`).then((r) => r.json()),
+    mutationFn: async () => {
+      const response = await fetch(`${endpoint}?clear=1`)
+      if (!response.ok) throw new Error('Failed to clear todos')
+      return await response.json()
+    },
     onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
   }))
 </script>

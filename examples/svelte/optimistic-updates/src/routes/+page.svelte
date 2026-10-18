@@ -22,11 +22,14 @@
 
   const endpoint = '/api/data'
 
-  const fetchTodos = async (): Promise<Todos> =>
-    await fetch(endpoint).then((r) => r.json())
+  const fetchTodos = async (): Promise<Todos> => {
+    const response = await fetch(endpoint)
+    if (!response.ok) throw new Error('Failed to fetch todos')
+    return await response.json()
+  }
 
-  const createTodo = async (text: string): Promise<Todo> =>
-    await fetch(endpoint, {
+  const createTodo = async (text: string): Promise<Todo> => {
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -34,7 +37,13 @@
       body: JSON.stringify({
         text,
       }),
-    }).then((res) => res.json())
+    })
+    if (!response.ok) {
+      const { message } = (await response.json()) as { message: string }
+      throw new Error(message)
+    }
+    return await response.json()
+  }
 
   const todos = createQuery<Todos>(() => ({
     queryKey: ['optimistic'],
