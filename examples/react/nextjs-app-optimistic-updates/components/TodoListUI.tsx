@@ -1,14 +1,18 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
 import { addTodo, todosQueryOptions } from '@/app/todos'
 
 export default function TodoListUI() {
   const queryClient = useQueryClient()
   const [inputValue, setInputValue] = useState('')
 
-  const { data: todos = [] } = useQuery(todosQueryOptions)
+  const { data: todos } = useSuspenseQuery(todosQueryOptions)
 
   const addTodoMutation = useMutation({
     mutationFn: addTodo,
