@@ -16,6 +16,7 @@ import {
 } from 'solid-js'
 import { isServer } from 'solid-js/web'
 import { getSearchParams, properCase } from '../utils'
+import { pokemonQueryOptions, pokemonsQueryOptions } from '../lib/api'
 import { Link } from './Link'
 
 const PokemonIdContext = createContext<() => string>()
@@ -25,8 +26,6 @@ const usePokemonID = () => {
   if (!id) throw new Error('PokemonIdContext not found')
   return id
 }
-
-const MAX_POKEMONS = 100
 
 export const SolidApp = (props: { pokemon?: string }) => {
   const client = new QueryClient()
@@ -73,26 +72,10 @@ const PokemonDetails = () => {
 }
 
 const PokemonDex = (props: { id: string }) => {
-  const pokemon = useQuery(() => ({
-    queryKey: ['pokemon', props.id],
-    queryFn: async () => {
-      const res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${props.id}`,
-      ).then((response) => response.json())
-      return res
-    },
-    placeholderData: keepPreviousData,
-  }))
+  const pokemon = useQuery(() => pokemonQueryOptions(props.id))
 
   const pokemon_stats = useQuery(() => ({
-    queryKey: ['pokemon', props.id],
-    queryFn: async () => {
-      const res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${props.id}`,
-      ).then((response) => response.json())
-
-      return res
-    },
+    ...pokemonQueryOptions(props.id),
     select(data) {
       const nameMap = {
         hp: 'HP',
@@ -102,13 +85,11 @@ const PokemonDex = (props: { id: string }) => {
         'special-defense': 'Special Defense',
         speed: 'Speed',
       }
-      const stats = data.stats.map((stat: any) => ({
+      return data.stats.map((stat) => ({
         name: nameMap[stat.stat.name as keyof typeof nameMap],
         value: stat.base_stat,
       }))
-      return stats as Array<{ name: string; value: number }>
     },
-    placeholderData: keepPreviousData,
     reconcile: 'name',
   }))
 
@@ -125,7 +106,7 @@ const PokemonDex = (props: { id: string }) => {
     <div class="flex flex-col flex-1">
       <Show when={pokemon.data}>
         <div class="flex justify-center text-3xl font-semibold py-4">
-          {properCase(pokemon.data.name)}
+          {properCase(pokemon.data?.name || '')}
         </div>
         <div class="flex justify-center">
           <div class="h-64 w-64 rounded-lg relative overflow-hidden border">
@@ -193,15 +174,7 @@ const SideNav = () => {
   const id = usePokemonID()
 
   const pokemonsList = useQuery(() => ({
-    queryKey: ['pokemons'],
-    queryFn: async () => {
-      const res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon?limit=${MAX_POKEMONS}`,
-      ).then((response) => response.json())
-      return res as {
-        results: Array<{ name: string; url: string }>
-      }
-    },
+    ...pokemonsQueryOptions,
     select(data) {
       return data.results.map((p) => {
         const regex = /\/pokemon\/(\d+)\/$/
