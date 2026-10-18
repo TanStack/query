@@ -16,6 +16,8 @@ The recommended way to achieve this is to use the `browser` module from SvelteKi
   import { browser } from '$app/environment'
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
 
+  let { children } = $props()
+
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -26,7 +28,7 @@ The recommended way to achieve this is to use the `browser` module from SvelteKi
 </script>
 
 <QueryClientProvider client={queryClient}>
-  <slot />
+  {@render children()}
 </QueryClientProvider>
 ```
 
@@ -52,11 +54,11 @@ export async function load() {
 **src/routes/+page.svelte**
 
 ```svelte
-<script>
+<script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import type { PageData } from './$types'
+  import type { PageProps } from './$types'
 
-  export let data: PageData
+  let { data }: PageProps = $props()
 
   const query = createQuery(() => ({
     queryKey: ['posts'],
@@ -92,6 +94,9 @@ export async function load() {
     defaultOptions: {
       queries: {
         enabled: browser,
+        // With SSR, we usually want to set some default staleTime
+        // above 0 to avoid refetching immediately on the client
+        staleTime: 60 * 1000,
       },
     },
   })
@@ -105,19 +110,21 @@ export async function load() {
 ```svelte
 <script lang="ts">
   import { QueryClientProvider } from '@tanstack/svelte-query'
-  import type { LayoutData } from './$types'
+  import type { LayoutProps } from './$types'
 
-  export let data: LayoutData
+  let { data, children }: LayoutProps = $props()
 </script>
 
 <QueryClientProvider client={data.queryClient}>
-  <slot />
+  {@render children()}
 </QueryClientProvider>
 ```
 
 **src/routes/+page.ts**
 
 ```ts
+import { noop } from '@tanstack/svelte-query'
+
 export async function load({ parent, fetch }) {
   const { queryClient } = await parent()
 
