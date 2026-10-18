@@ -14,13 +14,13 @@ const endpoint = 'https://graphqlzero.almansi.me/api'
 const queryClient = new QueryClient()
 
 type Post = {
-  id: number
+  id: string
   title: string
   body: string
 }
 
 function App() {
-  const [postId, setPostId] = React.useState(-1)
+  const [postId, setPostId] = React.useState<string | null>(null)
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -34,7 +34,7 @@ function App() {
           loading sequences)
         </strong>
       </p>
-      {postId > -1 ? (
+      {postId !== null ? (
         <Post postId={postId} setPostId={setPostId} />
       ) : (
         <Posts setPostId={setPostId} />
@@ -71,7 +71,7 @@ function usePosts() {
 function Posts({
   setPostId,
 }: {
-  setPostId: React.Dispatch<React.SetStateAction<number>>
+  setPostId: React.Dispatch<React.SetStateAction<string | null>>
 }) {
   const queryClient = useQueryClient()
   const { status, data, error, isFetching } = usePosts()
@@ -116,26 +116,26 @@ function Posts({
   )
 }
 
-function usePost(postId: number) {
+function usePost(postId: string) {
   return useQuery({
     queryKey: ['post', postId],
     queryFn: async () => {
       const { post } = await request<{ post: Post }>(
         endpoint,
         gql`
-        query {
-          post(id: ${postId}) {
-            id
-            title
-            body
+          query Post($id: ID!) {
+            post(id: $id) {
+              id
+              title
+              body
+            }
           }
-        }
         `,
+        { id: postId },
       )
 
       return post
     },
-    enabled: !!postId,
   })
 }
 
@@ -143,19 +143,19 @@ function Post({
   postId,
   setPostId,
 }: {
-  postId: number
-  setPostId: React.Dispatch<React.SetStateAction<number>>
+  postId: string
+  setPostId: React.Dispatch<React.SetStateAction<string | null>>
 }) {
   const { status, data, error, isFetching } = usePost(postId)
 
   return (
     <div>
       <div>
-        <a onClick={() => setPostId(-1)} href="#">
+        <a onClick={() => setPostId(null)} href="#">
           Back
         </a>
       </div>
-      {!postId || status === 'pending' ? (
+      {status === 'pending' ? (
         'Loading...'
       ) : status === 'error' ? (
         <span>Error: {error.message}</span>
