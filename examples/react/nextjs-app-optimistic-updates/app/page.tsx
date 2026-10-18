@@ -23,7 +23,9 @@ export default function Home() {
         ~30% of the time so you can observe automatic rollback.
       </p>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <ApproachTabs />
+        <React.Suspense fallback={<p>Loading todos…</p>}>
+          <ApproachTabs />
+        </React.Suspense>
       </HydrationBoundary>
     </main>
   )
