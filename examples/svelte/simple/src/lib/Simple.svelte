@@ -11,10 +11,13 @@
 
   const query = createQuery<Repo>(() => ({
     queryKey: ['repoData'],
-    queryFn: async () =>
-      await fetch('https://api.github.com/repos/TanStack/query').then((r) =>
-        r.json(),
-      ),
+    queryFn: async () => {
+      const response = await fetch(
+        'https://api.github.com/repos/TanStack/query',
+      )
+      if (!response.ok) throw new Error('Failed to fetch repo data')
+      return await response.json()
+    },
   }))
 </script>
 
