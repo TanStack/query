@@ -4,43 +4,29 @@
     createQuery,
     createMutation,
   } from '@tanstack/svelte-query'
+  import { addTodo, clearTodos, todosQueryOptions } from '$lib/api'
 
   let intervalMs = $state(1000)
   let value = $state<string>('')
 
   const client = useQueryClient()
 
-  const endpoint = '/api/data'
-
-  const todos = createQuery<{ items: string[] }>(() => ({
-    queryKey: ['refetch'],
-    queryFn: async () => {
-      const response = await fetch(endpoint)
-      if (!response.ok) throw new Error('Failed to fetch todos')
-      return await response.json()
-    },
+  const todos = createQuery(() => ({
+    ...todosQueryOptions,
     // Refetch the data every second
     refetchInterval: intervalMs,
   }))
 
   const addMutation = createMutation(() => ({
-    mutationFn: async (value: string) => {
-      const response = await fetch(
-        `${endpoint}?add=${encodeURIComponent(value)}`,
-      )
-      if (!response.ok) throw new Error('Failed to add todo')
-      return await response.json()
-    },
-    onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
+    mutationFn: addTodo,
+    onSuccess: () =>
+      client.invalidateQueries({ queryKey: todosQueryOptions.queryKey }),
   }))
 
   const clearMutation = createMutation(() => ({
-    mutationFn: async () => {
-      const response = await fetch(`${endpoint}?clear=1`)
-      if (!response.ok) throw new Error('Failed to clear todos')
-      return await response.json()
-    },
-    onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
+    mutationFn: clearTodos,
+    onSuccess: () =>
+      client.invalidateQueries({ queryKey: todosQueryOptions.queryKey }),
   }))
 </script>
 
