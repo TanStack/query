@@ -94,7 +94,6 @@ function usePost(postId: number) {
   return useQuery({
     queryKey: ['post', postId],
     queryFn: () => getPostById(postId),
-    enabled: !!postId,
   })
 }
 
@@ -114,7 +113,7 @@ function Post({
           Back
         </a>
       </div>
-      {!postId || status === 'pending' ? (
+      {status === 'pending' ? (
         'Loading...'
       ) : status === 'error' ? (
         <span>Error: {error.message}</span>
