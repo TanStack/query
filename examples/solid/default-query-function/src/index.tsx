@@ -18,6 +18,7 @@ const defaultQueryFn: QueryFunction<unknown> = async ({ queryKey }) => {
       method: 'GET',
     },
   )
+  if (!response.ok) throw new Error('Failed to fetch data')
   return response.json()
 }
 
