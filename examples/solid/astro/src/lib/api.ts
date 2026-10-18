@@ -12,17 +12,17 @@ type PokemonList = {
 }
 
 const getPokemon = async (id: string): Promise<Pokemon> => {
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(
-    (response) => response.json(),
-  )
-  return res
+  const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+  if (!response.ok) throw new Error('Failed to fetch pokemon')
+  return await response.json()
 }
 
 const getPokemons = async (): Promise<PokemonList> => {
-  const res = await fetch(
+  const response = await fetch(
     `https://pokeapi.co/api/v2/pokemon?limit=${MAX_POKEMONS}`,
-  ).then((response) => response.json())
-  return res
+  )
+  if (!response.ok) throw new Error('Failed to fetch pokemons')
+  return await response.json()
 }
 
 export const pokemonQueryOptions = (id: string) =>
@@ -30,6 +30,7 @@ export const pokemonQueryOptions = (id: string) =>
     queryKey: ['pokemon', id],
     queryFn: () => getPokemon(id),
     placeholderData: keepPreviousData,
+    throwOnError: true,
   })
 
 export const pokemonsQueryOptions = queryOptions({

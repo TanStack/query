@@ -6,11 +6,13 @@ import {
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import {
+  ErrorBoundary,
   For,
   Show,
   Suspense,
   createContext,
-  createSignal,
+  createEffect,
+  on,
   untrack,
   useContext,
 } from 'solid-js'
@@ -58,9 +60,23 @@ const PokemonDetails = () => {
   return (
     <div class="flex-1 flex">
       <Show when={id()}>
-        <Suspense fallback={'Loading'}>
-          <PokemonDex id={id()} />
-        </Suspense>
+        <ErrorBoundary
+          fallback={(error, reset) => {
+            createEffect(on(id, reset, { defer: true }))
+            return (
+              <div class="justify-center items-center flex-1 flex flex-col gap-2 text-zinc-700">
+                <div class="text-2xl font-medium">
+                  Couldn't load this pokemon
+                </div>
+                <div>{error.message}</div>
+              </div>
+            )
+          }}
+        >
+          <Suspense fallback={'Loading'}>
+            <PokemonDex id={id()} />
+          </Suspense>
+        </ErrorBoundary>
       </Show>
       <Show when={!id()}>
         <div class="justify-center items-center flex-1 flex text-2xl font-medium text-zinc-700">
