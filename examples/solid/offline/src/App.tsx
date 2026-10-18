@@ -130,6 +130,12 @@ function List(props: { onSelectMovie: (movieId: string) => void }) {
           </Show>
         </div>
       </Match>
+      <Match when={moviesQuery.isError}>
+        <div>
+          <h1>Couldn't load movies!</h1>
+          <div>{moviesQuery.error?.message}</div>
+        </div>
+      </Match>
     </Switch>
   )
 }
@@ -200,6 +206,21 @@ function Detail(props: { movieId: string; onBack: () => void }) {
               : updateMovie.isPending && 'updating...'}
           </div>
         </form>
+      </Match>
+      <Match when={movieQuery.isError}>
+        <div>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault()
+              props.onBack()
+            }}
+          >
+            Back
+          </a>
+          <h1>Couldn't load movie!</h1>
+          <div>{movieQuery.error?.message}</div>
+        </div>
       </Match>
       <Match when={movieQuery.isPaused}>
         We're offline and have no data to show :(
