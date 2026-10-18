@@ -30,7 +30,7 @@ export function MoviesListScreen({ navigation }: Props) {
     queryFn: fetchMovies,
   })
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
-  useRefreshOnFocus(refetch)
+  useRefreshOnFocus()
 
   const onListItemPress = React.useCallback(
     (movie: Movie) => {
