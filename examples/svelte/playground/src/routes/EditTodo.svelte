@@ -130,7 +130,9 @@
         ? 'Saving...'
         : saveMutation.status === 'error'
           ? saveMutation.error.message
-          : 'Saved!'}
+          : saveMutation.status === 'success'
+            ? 'Saved!'
+            : null}
     </div>
     <div>
       {#if query.isFetching}
