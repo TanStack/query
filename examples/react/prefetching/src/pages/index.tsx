@@ -1,45 +1,9 @@
 import React from 'react'
-import {
-  noop,
-  queryOptions,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query'
+import Link from 'next/link'
+import { noop, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-
-type Character = {
-  id: number
-  name: string
-}
-
-const getCharacters = async (): Promise<{
-  results: Array<Character>
-}> => {
-  await new Promise((r) => setTimeout(r, 500))
-  const response = await fetch('https://rickandmortyapi.com/api/character/')
-  if (!response.ok) throw new Error('Failed to fetch characters')
-  return await response.json()
-}
-
-const getCharacter = async (selectedChar: number): Promise<Character> => {
-  await new Promise((r) => setTimeout(r, 500))
-  const response = await fetch(
-    `https://rickandmortyapi.com/api/character/${selectedChar}`,
-  )
-  if (!response.ok) throw new Error('Failed to fetch character')
-  return await response.json()
-}
-
-const charactersQueryOptions = queryOptions({
-  queryKey: ['characters'],
-  queryFn: getCharacters,
-})
-
-const characterQueryOptions = (id: number) =>
-  queryOptions({
-    queryKey: ['character', id],
-    queryFn: () => getCharacter(id),
-  })
+import { characterQueryOptions, charactersQueryOptions } from '../api'
+import type { Character } from '../api'
 
 function CharacterItem({
   char,
@@ -78,7 +42,8 @@ function CharacterItem({
             : {}
         }
       >
-        {char.id} - {char.name}
+        {char.id} - {char.name}{' '}
+        <Link href={`/character/${char.id}`}>details</Link>
       </div>
     </li>
   )
@@ -96,7 +61,8 @@ export default function Example() {
       <p>
         Hovering over a character will prefetch it, and when it's been
         prefetched it will turn <strong>bold</strong>. Clicking on a prefetched
-        character will show their stats below immediately.
+        character will show their stats below immediately, and opening its
+        details page will render it without a loading state.
       </p>
       <h2>Characters</h2>
       {charactersQuery.isPending ? (
