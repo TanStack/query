@@ -17,7 +17,7 @@ permissions:
 jobs:
   release:
     name: Release
-    if: "${{ github.repository_owner == 'TanStack' && !startsWith(github.event.head_commit.message, 'ci: apply automated fixes') }}"
+    if: github.repository_owner == 'TanStack' && github.actor != 'autofix-ci[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write
