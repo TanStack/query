@@ -1,35 +1,57 @@
 import React from 'react'
-import { noop, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  noop,
+  queryOptions,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
+type Character = {
+  id: number
+  name: string
+}
+
 const getCharacters = async (): Promise<{
-  results: Array<{ id: number; name: string }>
+  results: Array<Character>
 }> => {
   await new Promise((r) => setTimeout(r, 500))
   const response = await fetch('https://rickandmortyapi.com/api/character/')
+  if (!response.ok) throw new Error('Failed to fetch characters')
   return await response.json()
 }
 
-const getCharacter = async (selectedChar: number) => {
+const getCharacter = async (selectedChar: number): Promise<Character> => {
   await new Promise((r) => setTimeout(r, 500))
   const response = await fetch(
     `https://rickandmortyapi.com/api/character/${selectedChar}`,
   )
+  if (!response.ok) throw new Error('Failed to fetch character')
   return await response.json()
 }
+
+const charactersQueryOptions = queryOptions({
+  queryKey: ['characters'],
+  queryFn: getCharacters,
+})
+
+const characterQueryOptions = (id: number) =>
+  queryOptions({
+    queryKey: ['character', id],
+    queryFn: () => getCharacter(id),
+  })
 
 function CharacterItem({
   char,
   onSelect,
 }: {
-  char: { id: number; name: string }
+  char: Character
   onSelect: (id: number) => void
 }) {
   const queryClient = useQueryClient()
 
   const { data } = useQuery({
-    queryKey: ['character', char.id],
-    queryFn: () => getCharacter(char.id),
+    ...characterQueryOptions(char.id),
     enabled: false,
   })
 
@@ -41,8 +63,7 @@ function CharacterItem({
       onMouseEnter={() => {
         queryClient
           .query({
-            queryKey: ['character', char.id],
-            queryFn: () => getCharacter(char.id),
+            ...characterQueryOptions(char.id),
             staleTime: 10 * 1000, // only prefetch if older than 10 seconds
           })
           .catch(noop)
@@ -66,15 +87,9 @@ function CharacterItem({
 export default function Example() {
   const [selectedChar, setSelectedChar] = React.useState(1)
 
-  const charactersQuery = useQuery({
-    queryKey: ['characters'],
-    queryFn: getCharacters,
-  })
+  const charactersQuery = useQuery(charactersQueryOptions)
 
-  const characterQuery = useQuery({
-    queryKey: ['character', selectedChar],
-    queryFn: () => getCharacter(selectedChar),
-  })
+  const characterQuery = useQuery(characterQueryOptions(selectedChar))
 
   return (
     <div className="App">

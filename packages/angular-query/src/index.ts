@@ -3,7 +3,7 @@
 // Re-export core
 export * from '@tanstack/query-core'
 
-export * from './types'
+export type * from './types'
 export type { QueryResource } from './query-resource'
 export { toResource } from './query-resource'
 

@@ -25,7 +25,7 @@
     "@angular/build": "^22.0.0",
     "@angular/cli": "^22.0.0",
     "@angular/compiler-cli": "^22.0.0",
-    "@tanstack/eslint-plugin-query": "^5.104.3",
+    "@tanstack/eslint-plugin-query": "^5.104.4",
     "typescript": "6.0.3"
   }
 }

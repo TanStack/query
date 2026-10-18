@@ -5714,7 +5714,13 @@ describe('useQuery', () => {
     setClient(queryClient2)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('status: success')).toBeInTheDocument()
-    expect(queryClient2.getQueryCache().find({ queryKey: key })).toBeDefined()
+    expect(
+      queryClient2.getQueryCache().find({ queryKey: key })?.state.data,
+    ).toBe('data')
+    expect(
+      queryClient1.getQueryCache().find({ queryKey: key })?.state
+        .dataUpdateCount,
+    ).toBe(1)
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
