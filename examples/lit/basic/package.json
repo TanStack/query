@@ -10,12 +10,12 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/lit-query": "^0.2.29",
-    "@tanstack/query-core": "^5.104.4",
+    "@tanstack/lit-query": "^0.2.30",
+    "@tanstack/query-core": "^5.104.5",
     "lit": "^3.3.3"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.104.4",
+    "@tanstack/eslint-plugin-query": "^5.104.5",
     "typescript": "5.8.3",
     "vite": "^8.3.1"
   }
