@@ -133,7 +133,8 @@ export function useBaseQuery<
   if (!isRestoring) {
     checkQueryStrictMode(
       strictMode,
-      client.getQueryCache().get(defaultedOptions.queryHash),
+      client.getQueryCache(),
+      defaultedOptions.queryHash,
       result,
       !!defaultedOptions.suspense,
     )

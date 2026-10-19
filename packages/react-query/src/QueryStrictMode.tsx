@@ -140,12 +140,6 @@ export interface QueryStrictModeValue {
    * Called for the problems found by hooks below this `QueryStrictMode`.
    */
   handler: QueryStrictModeHandler
-  /**
-   * Marks a query read by a hook inside a `QueryStrictMode` as used. It counts as used even before
-   * the reading component commits, for example while a sibling is still suspended.
-   * @param query - The query the hook reads.
-   */
-  markUsed: (query: Query<any, any, any, any>) => void
 }
 
 const QueryStrictModeContext = React.createContext<QueryStrictModeValue | null>(
@@ -173,6 +167,17 @@ interface PrefetchTracker {
    * `hydrate` isn't recorded.
    */
   prefetches: Map<Query<any, any, any, any>, number>
+  /**
+   * The queries read by a hook inside a `QueryStrictMode`, or already reported. A query counts as
+   * used even before the reading component commits, for example while a sibling still suspends.
+   * Shared by all `QueryStrictMode`s of the cache, so each unused prefetch is reported only once.
+   */
+  used: WeakSet<Query<any, any, any, any>>
+  /**
+   * When the prefetch was recorded that each query was last checked for, so a timer that already
+   * ran doesn't start again
+   */
+  checked: WeakMap<Query<any, any, any, any>, number>
   /**
    * Called with a query when its prefetch is recorded, or when it is removed from the cache.
    */
@@ -210,7 +215,14 @@ const getPrefetchTracker = (cache: QueryCache) => {
       }
       listeners.forEach((listener) => listener(event.query))
     })
-    tracker = { prefetches, listeners, mounted: 0, unsubscribe }
+    tracker = {
+      prefetches,
+      used: new WeakSet(),
+      checked: new WeakMap(),
+      listeners,
+      mounted: 0,
+      unsubscribe,
+    }
     prefetchTrackers.set(cache, tracker)
   }
   return tracker
@@ -273,22 +285,6 @@ const DevQueryStrictMode = ({
   const parent = useQueryStrictMode()
   const isNested = parent !== null
 
-  const [{ used, checked, markUsed: ownMarkUsed }] = React.useState(() => {
-    const queries = new WeakSet<Query<any, any, any, any>>()
-    return {
-      used: queries,
-      // When the prefetch was recorded that each query was last checked for, so a timer that
-      // already ran doesn't start again when the effect runs again
-      checked: new WeakMap<Query<any, any, any, any>, number>(),
-      markUsed: (query: Query<any, any, any, any>) => {
-        queries.add(query)
-      },
-    }
-  })
-  // A nested `QueryStrictMode` marks queries in the tracking of its ancestor, so unused prefetches
-  // are only reported once
-  const markUsed = isNested ? parent.markUsed : ownMarkUsed
-
   // Thrown during render, so it reaches the error boundary above this `QueryStrictMode`. Wrapped,
   // so that any value thrown by `handler` is rethrown unchanged
   const [thrown, setThrown] = React.useState<{ error: unknown } | null>(null)
@@ -314,6 +310,7 @@ const DevQueryStrictMode = ({
     }
 
     const tracker = getPrefetchTracker(cache)
+    const { used, checked } = tracker
     const timers = new Map<
       Query<any, any, any, any>,
       ReturnType<typeof setTimeout>
@@ -380,12 +377,9 @@ const DevQueryStrictMode = ({
         }
       })
     }
-  }, [cache, used, checked, isNested, isRestoring, unusedPrefetchTimeout])
+  }, [cache, isNested, isRestoring, unusedPrefetchTimeout])
 
-  const value = React.useMemo(
-    () => ({ handler, markUsed }),
-    [handler, markUsed],
-  )
+  const value = React.useMemo(() => ({ handler }), [handler])
 
   return (
     <QueryStrictModeContext.Provider value={value}>
@@ -406,22 +400,25 @@ const reportedMissingPrefetches = new WeakSet<
  * `'missing-prefetch'` if the hook is about to start the initial fetch of the query. Does nothing
  * in production.
  * @param strictMode - The value of the nearest `QueryStrictMode`, if any.
- * @param query - The query the hook reads.
+ * @param cache - The cache of the hook's `QueryClient`.
+ * @param queryHash - The hash of the query the hook reads.
  * @param result - The optimistic result of the hook.
  * @param suspense - Whether the hook suspends while the query is pending.
  * @throws {unknown} Whatever the `handler` throws for the `'missing-prefetch'`.
  */
 export const checkQueryStrictMode = (
   strictMode: QueryStrictModeValue | null,
-  query: Query<any, any, any, any> | undefined,
+  cache: QueryCache,
+  queryHash: string,
   result: QueryObserverResult<any, any>,
   suspense: boolean,
 ) => {
   if (process.env.NODE_ENV !== 'production') {
-    if (!strictMode || !query) {
+    const query = strictMode && cache.get(queryHash)
+    if (!query) {
       return
     }
-    strictMode.markUsed(query)
+    prefetchTrackers.get(cache)?.used.add(query)
     // A suspending hook starts the fetch during render. Otherwise, the optimistic result reports
     // `'fetching'` when the hook starts the fetch on mount, or after its options change.
     const startsInitialFetch = suspense

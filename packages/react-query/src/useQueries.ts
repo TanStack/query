@@ -459,7 +459,8 @@ export function useQueries<
       if (opts) {
         checkQueryStrictMode(
           strictMode,
-          client.getQueryCache().get(opts.queryHash),
+          client.getQueryCache(),
+          opts.queryHash,
           result,
           !!opts.suspense,
         )
