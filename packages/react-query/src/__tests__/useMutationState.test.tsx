@@ -302,30 +302,39 @@ describe('useMutationState', () => {
     expect(rendered.getByText('result: ["idle"]')).toBeInTheDocument()
   })
 
-  it('should preserve the result reference when filters and select are unchanged', () => {
-    const queryClient = new QueryClient()
-    queryClient
-      .getMutationCache()
-      .build(queryClient, { mutationKey: queryKey() })
-    const results: Array<unknown> = []
-    const filters = { status: 'idle' as const }
-    const select = (mutation: Mutation) => ({
-      key: mutation.options.mutationKey,
-    })
+  it.each(['stable', 'inline'] as const)(
+    'should preserve the result reference with %s inputs',
+    (inputs) => {
+      const queryClient = new QueryClient()
+      const key = queryKey()
+      queryClient.getMutationCache().build(queryClient, { mutationKey: key })
+      const onResult = vi.fn()
+      const filters = { status: 'idle' as const }
+      const select = (mutation: Mutation) => ({
+        key: mutation.options.mutationKey,
+      })
 
-    function Page() {
-      const result = useMutationState({ filters, select })
-      results.push(result)
-      return null
-    }
+      function Page() {
+        const result = useMutationState({
+          filters: inputs === 'inline' ? { ...filters } : filters,
+          select: inputs === 'inline' ? (mutation) => select(mutation) : select,
+        })
+        React.useEffect(() => {
+          onResult(result)
+        }, [result])
+        return <div>result: {JSON.stringify(result)}</div>
+      }
 
-    const rendered = renderWithClient(queryClient, <Page />)
-    const previous = results.at(-1)
-    expect(previous).toHaveLength(1)
+      const rendered = renderWithClient(queryClient, <Page />)
+      const expected = `result: ${JSON.stringify([{ key }])}`
+      expect(rendered.getByText(expected)).toBeInTheDocument()
+      expect(onResult).toHaveBeenCalledTimes(1)
 
-    rendered.rerender(<Page />)
-    expect(results.at(-1)).toBe(previous)
-  })
+      rendered.rerender(<Page />)
+      expect(rendered.getByText(expected)).toBeInTheDocument()
+      expect(onResult).toHaveBeenCalledTimes(1)
+    },
+  )
 
   it('should read from a changed custom queryClient', () => {
     const client1 = new QueryClient()
@@ -388,18 +397,15 @@ describe('useMutationState', () => {
 
   it('should return variables after calling mutate', async () => {
     const queryClient = new QueryClient()
-    const variables: Array<Array<unknown>> = []
     const mutationKey = ['mutation']
 
     function Variables() {
-      variables.push(
-        useMutationState({
-          filters: { mutationKey, status: 'pending' },
-          select: (mutation) => mutation.state.variables,
-        }),
-      )
+      const variables = useMutationState({
+        filters: { mutationKey, status: 'pending' },
+        select: (mutation) => mutation.state.variables,
+      })
 
-      return null
+      return <div>variables: {JSON.stringify(variables)}</div>
     }
 
     function Mutate() {
@@ -428,11 +434,14 @@ describe('useMutationState', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     expect(rendered.getByText('data: null')).toBeInTheDocument()
+    expect(rendered.getByText('variables: []')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    await vi.advanceTimersByTimeAsync(151)
-    expect(rendered.getByText('data: data1')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(1)
+    expect(rendered.getByText('variables: [1]')).toBeInTheDocument()
 
-    expect(variables).toEqual([[], [1], []])
+    await vi.advanceTimersByTimeAsync(150)
+    expect(rendered.getByText('data: data1')).toBeInTheDocument()
+    expect(rendered.getByText('variables: []')).toBeInTheDocument()
   })
 })

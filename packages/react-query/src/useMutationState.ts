@@ -178,7 +178,7 @@ export function useMutationState<
     [mutationCache, filters, select],
   )
 
-  return React.useSyncExternalStore(
+  const snapshot = React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         mutationCache.subscribe(notifyManager.batchCalls(onStoreChange)),
@@ -187,4 +187,13 @@ export function useMutationState<
     getSnapshot,
     getSnapshot,
   )
+
+  const [previousResult, setPreviousResult] = React.useState(snapshot)
+  const result = replaceEqualDeep(previousResult, snapshot)
+
+  if (previousResult !== result) {
+    setPreviousResult(result)
+  }
+
+  return result
 }
