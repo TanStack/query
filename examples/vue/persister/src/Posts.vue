@@ -2,6 +2,7 @@
 import { defineComponent } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import { experimental_createQueryPersister } from '@tanstack/query-persist-client-core'
+import type { PropType } from 'vue'
 
 import type { Post } from './types'
 
@@ -16,7 +17,7 @@ export default defineComponent({
   name: 'PostsList',
   props: {
     isVisited: {
-      type: Function,
+      type: Function as PropType<(id: number) => boolean>,
       required: true,
     },
   },

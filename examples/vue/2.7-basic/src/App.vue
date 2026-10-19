@@ -8,7 +8,7 @@ export default defineComponent({
   name: 'App',
   components: { Posts, Post },
   setup() {
-    const visitedPosts = ref(new Set())
+    const visitedPosts = ref(new Set<number>())
     const isVisited = (id: number) => visitedPosts.value.has(id)
 
     const postId = ref(-1)
