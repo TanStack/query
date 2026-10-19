@@ -8,7 +8,8 @@ ref: docs/framework/react/guides/paginated-queries.md
 
 ```vue
 <script setup lang="ts">
-import { ref, Ref } from 'vue'
+import { ref } from 'vue'
+import type { Ref } from 'vue'
 import { useQuery, keepPreviousData } from '@tanstack/vue-query'
 
 const fetcher = (page: Ref<number>) =>
