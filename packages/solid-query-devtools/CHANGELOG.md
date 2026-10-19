@@ -1,5 +1,13 @@
 # @tanstack/solid-query-devtools
 
+## 5.104.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.104.5
+  - @tanstack/solid-query@5.104.5
+
 ## 5.104.4
 
 ### Patch Changes
