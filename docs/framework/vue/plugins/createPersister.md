@@ -48,7 +48,7 @@ import { QueryClient } from '@tanstack/vue-query'
 import { experimental_createQueryPersister } from '@tanstack/query-persist-client-core'
 
 const persister = experimental_createQueryPersister({
-  storage: AsyncStorage,
+  storage: localStorage,
   maxAge: 1000 * 60 * 60 * 12, // 12 hours
 })
 
@@ -77,7 +77,7 @@ This utility might be used along `setQueryData` to persist optimistic update to 
 
 ```tsx
 const persister = experimental_createQueryPersister({
-  storage: AsyncStorage,
+  storage: localStorage,
   maxAge: 1000 * 60 * 60 * 12, // 12 hours
 })
 
