@@ -63,7 +63,8 @@ type MutationStateOptions<
 
 /**
  * Creates snapshot getters that share equal selected results across renders.
- * Each getter caches its snapshot until the matching mutations or their states change.
+ * A new getter is created on each render. Each getter caches its snapshot until the matching mutations
+ * or their states change.
  * @returns A factory for snapshot getters with a shared result cache.
  */
 function createSnapshotFactory<
@@ -188,14 +189,10 @@ export function useMutationState<
   queryClient?: QueryClient,
 ): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
-  const { filters, select } = options
   const [createSnapshot] = React.useState(() =>
     createSnapshotFactory<TResult, TMutation>(),
   )
-  const getSnapshot = React.useMemo(
-    () => createSnapshot(mutationCache, { filters, select }),
-    [mutationCache, filters, select, createSnapshot],
-  )
+  const getSnapshot = createSnapshot(mutationCache, options)
 
   return React.useSyncExternalStore(
     React.useCallback(

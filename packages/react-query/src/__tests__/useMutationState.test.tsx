@@ -302,6 +302,55 @@ describe('useMutationState', () => {
     expect(rendered.getByText('result: ["idle"]')).toBeInTheDocument()
   })
 
+  it.each(['object', 'Date'] as const)(
+    'should recompute %s results on rerender with stable filters and select',
+    (resultType) => {
+      const queryClient = new QueryClient()
+      const key = queryKey()
+      const cache = queryClient.getMutationCache()
+      const mutation = cache.build(queryClient, {
+        mutationKey: key,
+        meta: { time: 0 },
+      })
+      const state = mutation.state
+      const filters = { mutationKey: key }
+      const select = (mutation: Mutation) =>
+        resultType === 'Date'
+          ? new Date(Number(mutation.meta?.time))
+          : { time: mutation.meta?.time }
+      const options = { filters, select }
+      const onCacheChange = vi.fn()
+      const unsubscribe = cache.subscribe(onCacheChange)
+
+      function Page() {
+        const result = useMutationState(options)
+        return <div>result: {JSON.stringify(result)}</div>
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      expect(
+        rendered.getByText(
+          resultType === 'Date'
+            ? 'result: ["1970-01-01T00:00:00.000Z"]'
+            : 'result: [{"time":0}]',
+        ),
+      ).toBeInTheDocument()
+
+      mutation.setOptions({ ...mutation.options, meta: { time: 1000 } })
+      rendered.rerender(<Page />)
+      expect(
+        rendered.getByText(
+          resultType === 'Date'
+            ? 'result: ["1970-01-01T00:00:01.000Z"]'
+            : 'result: [{"time":1000}]',
+        ),
+      ).toBeInTheDocument()
+      expect(mutation.state).toBe(state)
+      expect(onCacheChange).not.toHaveBeenCalled()
+      unsubscribe()
+    },
+  )
+
   it('should render selector results that cannot be structurally shared', () => {
     const queryClient = new QueryClient()
     const key = queryKey()
