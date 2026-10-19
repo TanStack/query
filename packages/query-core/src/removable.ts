@@ -22,10 +22,16 @@ export abstract class Removable {
 
   /**
    * Schedules the entry to be removed from its cache after `gcTime`, replacing any timeout scheduled
-   * before. Nothing is scheduled if `gcTime` is `Infinity`.
+   * before. Nothing is scheduled if `gcTime` is `Infinity`, or on the server: a request-scoped
+   * client is discarded with the response, so a pending timer would only keep the render's
+   * async context (and everything it retains) alive until it fires.
    */
   protected scheduleGc(): void {
     this.clearGcTimeout()
+
+    if (isServerEnvironment()) {
+      return
+    }
 
     if (isValidTimeout(this.gcTime)) {
       this.#gcTimeout = timeoutManager.setTimeout(() => {
