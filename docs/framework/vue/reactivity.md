@@ -3,7 +3,7 @@ id: reactivity
 title: Reactivity
 ---
 
-Vue uses the [the signals paradigm](https://vuejs.org/guide/extras/reactivity-in-depth.html#connection-to-signals) to handle and track reactivity. A key feature of
+Vue uses [the signals paradigm](https://vuejs.org/guide/extras/reactivity-in-depth.html#connection-to-signals) to handle and track reactivity. A key feature of
 this system is the reactive system only triggers updates on specifically watched reactive properties. A consequence of this is you also need to ensure that the queries are updated when values they consume are updated.
 
 ## Keeping Queries Reactive
@@ -12,10 +12,10 @@ When creating a composable for a query your first choice may be to write it like
 
 ```ts
 export function useUserProjects(userId: string) {
-  return useQuery(
+  return useQuery({
     queryKey: ['userProjects', userId],
     queryFn: () => api.fetchUserProjects(userId),
-  );
+  })
 }
 ```
 
@@ -35,14 +35,14 @@ const onChangeUser = (newUserId: string) => {
 
 This code will not work as intended. This is because we are extracting the value from the userId ref directly. Vue-query is not tracking the `userId` `ref` so it has no way of knowing when the value changes.
 
-Luckily, the fix for this is trivial. The value must be made trackable in the query key. We can Just accept the `ref` directly in the composable and place it in the query key:
+Luckily, the fix for this is trivial. The value must be made trackable in the query key. We can just accept the `ref` directly in the composable and place it in the query key:
 
 ```ts
 export function useUserProjects(userId: Ref<string>) {
-  return useQuery(
+  return useQuery({
     queryKey: ['userProjects', userId],
     queryFn: () => api.fetchUserProjects(userId.value),
-  );
+  })
 }
 ```
 
@@ -71,10 +71,10 @@ We have to create an intermediate `ref` just to make the parameter type-compatib
 
 ```ts
 export function useUserProjects(userId: MaybeRef<string>) {
-  return useQuery(
+  return useQuery({
     queryKey: ['userProjects', userId],
     queryFn: () => api.fetchUserProjects(toValue(userId)),
-  );
+  })
 }
 ```
 
@@ -147,11 +147,11 @@ the use of reactive values. This comes in handy in situations where you want to 
 
 ```ts
 export function useUserProjects(userId: MaybeRef<string>) {
-  return useQuery(
+  return useQuery({
     queryKey: ['userProjects', userId],
     queryFn: () => api.fetchUserProjects(toValue(userId)),
-    enabled: () => userId.value === activeUserId.value,
-  );
+    enabled: () => toValue(userId) === activeUserId.value,
+  })
 }
 ```
 
