@@ -50,7 +50,7 @@
       onclick={() => query.fetchNextPage()}
       disabled={!query.hasNextPage || query.isFetchingNextPage}
     >
-      {#if query.isFetching}
+      {#if query.isFetchingNextPage}
         Loading more...
       {:else if query.hasNextPage}
         Load More
