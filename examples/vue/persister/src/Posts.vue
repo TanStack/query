@@ -22,15 +22,7 @@ export default defineComponent({
   },
   emits: ['setPostId'],
   setup() {
-    const {
-      isPending,
-      isError,
-      isFetching,
-      isRefetching,
-      data,
-      error,
-      refetch,
-    } = useQuery({
+    const { isPending, isError, isRefetching, data, error } = useQuery({
       queryKey: ['posts'] as const,
       queryFn: () => fetcher(),
       persister: experimental_createQueryPersister({
@@ -43,10 +35,8 @@ export default defineComponent({
       isPending,
       isRefetching,
       isError,
-      isFetching,
       data,
       error,
-      refetch,
     }
   },
 })
