@@ -60,7 +60,7 @@ parameters for a given request change.
 
 ### Accounting for Non-Reactive Queries
 
-While far less likely, sometimes passing non-reactive variables is intentional. For example, some entities only need to be fetched once and don't need tracking or we invalidate a mutation a query options object after a mutation.
+While far less likely, sometimes passing non-reactive variables is intentional. For example, some entities only need to be fetched once and don't need tracking, or we invalidate the query manually after a mutation instead.
 If we use our custom composable defined above the usage in this case feels a bit off:
 
 ```ts
