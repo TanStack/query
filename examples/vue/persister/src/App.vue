@@ -27,7 +27,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <h1>Vue Query - Basic</h1>
+  <h1>Vue Query - Persister</h1>
   <p>
     As you visit the posts below, you will notice them in a loading state the
     first time you load them. However, after you return to this list and click
