@@ -1,8 +1,11 @@
-<script lang="ts">
-import { computed, defineComponent } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 import { skipToken, useQuery } from '@tanstack/vue-query'
 
 import type { Author, Post } from './types'
+
+const props = defineProps<{ postId: number }>()
+defineEmits<{ setPostId: [id: number] }>()
 
 const fetchPost = async (id: number): Promise<Post> => {
   const response = await fetch(
@@ -20,39 +23,25 @@ const fetchAuthor = async (id: number): Promise<Author> => {
   return await response.json()
 }
 
-export default defineComponent({
-  name: 'PostDetails',
-  props: {
-    postId: {
-      type: Number,
-      required: true,
-    },
-  },
-  emits: ['setPostId'],
-  setup(props) {
-    const {
-      isPending,
-      isError,
-      isFetching,
-      data: post,
-      error,
-    } = useQuery({
-      queryKey: ['post', () => props.postId],
-      queryFn: () => fetchPost(props.postId),
-    })
+const {
+  isPending,
+  isError,
+  isFetching,
+  data: post,
+  error,
+} = useQuery({
+  queryKey: ['post', () => props.postId],
+  queryFn: () => fetchPost(props.postId),
+})
 
-    const authorId = computed(() => post.value?.userId)
+const authorId = computed(() => post.value?.userId)
 
-    const { data: author } = useQuery({
-      queryKey: ['author', authorId],
-      queryFn: computed(() => {
-        const id = authorId.value
-        return id === undefined ? skipToken : () => fetchAuthor(id)
-      }),
-    })
-
-    return { isPending, isError, isFetching, post, error, author }
-  },
+const { data: author } = useQuery({
+  queryKey: ['author', authorId],
+  queryFn: computed(() => {
+    const id = authorId.value
+    return id === undefined ? skipToken : () => fetchAuthor(id)
+  }),
 })
 </script>
 

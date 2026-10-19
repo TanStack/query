@@ -1,31 +1,15 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 import type { Repo } from './types'
 
-export default defineComponent({
-  name: 'App',
-  components: { VueQueryDevtools },
-  setup() {
-    const { data, error, isFetching, isPending } = useQuery({
-      queryKey: ['repoData'],
-      async queryFn(): Promise<Repo> {
-        const response = await fetch(
-          'https://api.github.com/repos/TanStack/query',
-        )
-        if (!response.ok) throw new Error('Failed to fetch repo data')
-        return await response.json()
-      },
-    })
-
-    return {
-      data,
-      error,
-      isFetching,
-      isPending,
-    }
+const { data, error, isFetching, isPending } = useQuery({
+  queryKey: ['repoData'],
+  async queryFn(): Promise<Repo> {
+    const response = await fetch('https://api.github.com/repos/TanStack/query')
+    if (!response.ok) throw new Error('Failed to fetch repo data')
+    return await response.json()
   },
 })
 </script>

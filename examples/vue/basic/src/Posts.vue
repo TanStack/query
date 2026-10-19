@@ -1,9 +1,10 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
-import type { PropType } from 'vue'
 
 import type { Post } from './types'
+
+defineProps<{ isVisited: (id: number) => boolean }>()
+defineEmits<{ setPostId: [id: number] }>()
 
 const fetcher = async (): Promise<Array<Post>> => {
   const response = await fetch('https://jsonplaceholder.typicode.com/posts')
@@ -11,23 +12,9 @@ const fetcher = async (): Promise<Array<Post>> => {
   return await response.json()
 }
 
-export default defineComponent({
-  name: 'PostsList',
-  props: {
-    isVisited: {
-      type: Function as PropType<(id: number) => boolean>,
-      required: true,
-    },
-  },
-  emits: ['setPostId'],
-  setup() {
-    const { isPending, isError, isFetching, data, error } = useQuery({
-      queryKey: ['posts'],
-      queryFn: fetcher,
-    })
-
-    return { isPending, isError, isFetching, data, error }
-  },
+const { isPending, isError, isFetching, data, error } = useQuery({
+  queryKey: ['posts'],
+  queryFn: fetcher,
 })
 </script>
 
