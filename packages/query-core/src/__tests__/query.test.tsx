@@ -61,6 +61,28 @@ describe('query', () => {
     expect(query.gcTime).toBe(200)
   })
 
+  it('should not schedule a gc timer on the server even with a finite gcTime', async () => {
+    const restore = setIsServer(true)
+    try {
+      const key = queryKey()
+      await queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => 'data',
+          gcTime: 1000,
+        })
+        .catch(noop)
+
+      // No observers left: on the client this is where the gc timer appears.
+      expect(vi.getTimerCount()).toBe(0)
+
+      await vi.advanceTimersByTimeAsync(1000)
+      expect(queryCache.find({ queryKey: key })).toBeDefined()
+    } finally {
+      restore()
+    }
+  })
+
   it('should continue retry after focus regain and resolve all promises', async () => {
     const key = queryKey()
 

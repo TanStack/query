@@ -1589,6 +1589,35 @@ describe('queryObserver', () => {
     expect(result.data).toBe('data')
   })
 
+  it('should fetch a query that was rebuilt without a queryFn via fetchOptimistic options', async () => {
+    const key = queryKey()
+    const cache = queryClient.getQueryCache()
+
+    // The observer is first bound to a query with a queryFn...
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'old',
+    })
+
+    // ...the query is removed (e.g. removeQueries on logout)...
+    const removed = cache.find({ queryKey: key })!
+    await cache.remove(removed)
+
+    // ...and broadcastQueryClient rebuilds it from { queryKey, queryHash }
+    // only, without a queryFn. The observer is still bound to the removed
+    // query, so the rebuilt query has no observers and no options when the
+    // suspending render calls fetchOptimistic.
+    cache.build(queryClient, { queryKey: key })
+
+    const result = await observer.fetchOptimistic({
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    expect(result.status).toBe('success')
+    expect(result.data).toBe('data')
+  })
+
   it('should resolve fetchOptimistic with cached data while the fetch continues', async () => {
     const key = queryKey()
 
