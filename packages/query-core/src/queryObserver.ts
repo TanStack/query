@@ -447,7 +447,7 @@ export class QueryObserver<
 
     return Promise.race([
       query
-        .fetch()
+        .fetch(defaultedOptions)
         .then(() => {
           const result = this.createResult(query, defaultedOptions)
           // Settle the subscriber promise so both branches always settle.
