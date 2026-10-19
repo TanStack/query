@@ -7,7 +7,7 @@ import {
   onTestFinished,
   vi,
 } from 'vitest'
-import { act, fireEvent } from '@testing-library/react'
+import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import * as ReactDOMClient from 'react-dom/client'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -17,6 +17,7 @@ import {
   QueryClient,
   QueryClientProvider,
   QueryErrorResetBoundary,
+  QueryObserver,
   QueryStrictMode,
   QueryStrictModeError,
   dehydrate,
@@ -63,8 +64,12 @@ describe('QueryStrictMode', () => {
 
   // Renders like an app does, outside of `act`. `act` flushes effects as soon as it renders, but an
   // app flushes passive effects in a later task, after any data that arrives in a microtask. React
-  // schedules that task with the real `setImmediate`, so this uses real timers
-  const renderOutsideAct = (ui: React.ReactElement) => {
+  // schedules that task with the real `setImmediate`, so this uses real timers. `React.StrictMode`
+  // only mounts, unmounts and mounts effects again at the root, so `strictMode` wraps the provider
+  const renderOutsideAct = (
+    ui: React.ReactElement,
+    { strictMode = false }: { strictMode?: boolean } = {},
+  ) => {
     vi.useRealTimers()
     const globals = globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
     const previousIsReactActEnvironment = globals.IS_REACT_ACT_ENVIRONMENT
@@ -73,9 +78,10 @@ describe('QueryStrictMode', () => {
 
     const container = document.createElement('div')
     const root = ReactDOMClient.createRoot(container)
-    root.render(
-      <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+    const tree = (
+      <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
     )
+    root.render(strictMode ? <React.StrictMode>{tree}</React.StrictMode> : tree)
 
     onTestFinished(() => {
       root.unmount()
@@ -261,6 +267,7 @@ describe('QueryStrictMode', () => {
       expect(handler).toHaveBeenCalledTimes(1)
       expect(handler.mock.calls[0]![0]).toMatchObject({
         type: 'missing-prefetch',
+        suspense: true,
         query: getQuery(key2),
       })
     })
@@ -1075,11 +1082,10 @@ describe('QueryStrictMode', () => {
 
       // React.StrictMode renders QueryStrictMode twice, and mounts it, unmounts it and mounts it again
       renderOutsideAct(
-        <React.StrictMode>
-          <QueryStrictMode handler={handler} unusedPrefetchTimeout={10}>
-            <ResolvedPrefetch id={key} />
-          </QueryStrictMode>
-        </React.StrictMode>,
+        <QueryStrictMode handler={handler} unusedPrefetchTimeout={10}>
+          <ResolvedPrefetch id={key} />
+        </QueryStrictMode>,
+        { strictMode: true },
       )
 
       await vi.waitFor(() => expect(getQuery(key)?.state.data).toBe('data'))
@@ -1103,13 +1109,64 @@ describe('QueryStrictMode', () => {
         .catch(noop)
       await act(() => vi.advanceTimersByTimeAsync(10))
 
+      await act(() => vi.advanceTimersByTimeAsync(10))
       rendered.rerender(
         <QueryStrictMode handler={handler} unusedPrefetchTimeout={6000}>
           {null}
         </QueryStrictMode>,
       )
 
+      // The data arrived at 10ms, so the new timeout ends at 6010ms, not 6000ms after the rerender
+      await act(() => vi.advanceTimersByTimeAsync(6010 - 20 - 1))
+      expect(handler).not.toHaveBeenCalled()
+      await act(() => vi.advanceTimersByTimeAsync(1))
+      expect(handledTypes()).toEqual(['unused-prefetch'])
+    })
+
+    it('should not check a prefetch again when it runs its effect again', async () => {
+      const key = queryKey()
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryStrictMode handler={handler} unusedPrefetchTimeout={20}>
+          {null}
+        </QueryStrictMode>,
+      )
+
+      void queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'data'),
+        })
+        .catch(noop)
+      await act(() => vi.advanceTimersByTimeAsync(10))
+
+      // Observed when its timer ends, so it counts as used
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        staleTime: Infinity,
+      })
+      const unsubscribe = observer.subscribe(noop)
+      await act(() => vi.advanceTimersByTimeAsync(20))
+      unsubscribe()
+
+      rendered.rerender(
+        <QueryStrictMode handler={handler} unusedPrefetchTimeout={30}>
+          {null}
+        </QueryStrictMode>,
+      )
       await act(() => vi.advanceTimersByTimeAsync(10_000))
+      expect(handler).not.toHaveBeenCalled()
+
+      // A new prefetch of the same query is checked again
+      void queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'new data'),
+          staleTime: 0,
+        })
+        .catch(noop)
+      await act(() => vi.advanceTimersByTimeAsync(10 + 30))
       expect(handledTypes()).toEqual(['unused-prefetch'])
     })
 
@@ -1204,11 +1261,11 @@ describe('QueryStrictMode', () => {
     })
 
     it('should stop listening to the cache on unmount', async () => {
-      const rendered = renderWithClient(
-        queryClient,
-        <React.StrictMode>
+      const rendered = render(
+        <QueryClientProvider client={queryClient}>
           <QueryStrictMode handler={handler}>{null}</QueryStrictMode>
-        </React.StrictMode>,
+        </QueryClientProvider>,
+        { reactStrictMode: true },
       )
       expect(queryClient.getQueryCache().hasListeners()).toBe(true)
 
@@ -1239,6 +1296,44 @@ describe('QueryStrictMode', () => {
       await act(() => vi.advanceTimersByTimeAsync(10 + 5000))
       expect(handledTypes()).toEqual(['unused-prefetch'])
       expect(innerHandler).not.toHaveBeenCalled()
+    })
+
+    it('should not log for a prefetched query that was read inside a nested QueryStrictMode', async () => {
+      const key = queryKey()
+
+      function Page({ read }: { read: boolean }) {
+        usePrefetchQuery({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => `data ${String(key)}`),
+        })
+        return (
+          <QueryStrictMode handler={handler}>
+            {read && <SuspenseQuery id={key} />}
+          </QueryStrictMode>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryStrictMode handler={handler} unusedPrefetchTimeout={100}>
+          <React.Suspense fallback="loading">
+            <Page read />
+          </React.Suspense>
+        </QueryStrictMode>,
+      )
+      await act(() => vi.advanceTimersByTimeAsync(10))
+      expect(rendered.getByText(`data ${String(key)}`)).toBeInTheDocument()
+
+      // Nothing observes it after its reader unmounts, but it was read
+      rendered.rerender(
+        <QueryStrictMode handler={handler} unusedPrefetchTimeout={100}>
+          <React.Suspense fallback="loading">
+            <Page read={false} />
+          </React.Suspense>
+        </QueryStrictMode>,
+      )
+      await act(() => vi.advanceTimersByTimeAsync(10_000))
+      expect(handler).not.toHaveBeenCalled()
     })
 
     describe('with a handler that throws', () => {
