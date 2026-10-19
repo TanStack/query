@@ -20,6 +20,7 @@ import type { QueryClient } from './QueryClient'
 import type {
   DefaultedQueryObserverOptions,
   Query,
+  QueryCacheNotifyEvent,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
@@ -197,14 +198,33 @@ export function useBaseQueryLayer<
   const [primed, setPrimed] = createSignal(!hydratedMount, {
     ownedWrite: true,
   })
-  const onCacheEvent = (event: { query: { queryHash: string } }) => {
+  /**
+   * Bumped by `observerResultsUpdated`, which is how the observer reports a
+   * query going stale by time. Only `isStale` reads it: the same event also
+   * follows every `setOptions`, and bumping `version` on it re-ran the data
+   * projection a second time after a key switch (#11903).
+   */
+  const [staleVersion, setStaleVersion] = createSignal(0, {
+    ownedWrite: true,
+  })
+  const onCacheEvent = (event: QueryCacheNotifyEvent) => {
     // Match the committed options hash OR the latest computed one (they
     // diverge during a hold — see `latestHash`).
     if (
-      event.query.queryHash === untrack(defaultedOptions).queryHash ||
-      event.query.queryHash === latestHash
+      event.query.queryHash !== untrack(defaultedOptions).queryHash &&
+      event.query.queryHash !== latestHash
+    ) {
+      return
+    }
+    // Other observer events don't change anything the reads derive.
+    if (
+      event.type === 'added' ||
+      event.type === 'removed' ||
+      event.type === 'updated'
     ) {
       setVersion((v) => v + 1)
+    } else if (event.type === 'observerResultsUpdated') {
+      setStaleVersion((v) => v + 1)
     }
   }
 
@@ -434,11 +454,11 @@ export function useBaseQueryLayer<
    * for hydration adoption on the client.
    */
   // Stable promise identity across recomputes: mid-flight version bumps
-  // (fetch dispatch, observer updates) re-run the data compute while the
-  // same underlying fetch is pending. Chaining a fresh `.then` each time
-  // would hand the engine a new pending promise per recompute — the node
-  // keeps restarting its pending tracking and the settle can be missed
-  // (observed as `isPending` probes stuck true after the fetch lands).
+  // (fetch dispatch, retries, other state updates) re-run the data compute
+  // while the same underlying fetch is pending. Chaining a fresh `.then`
+  // each time would hand the engine a new pending promise per recompute —
+  // the node keeps restarting its pending tracking and the settle can be
+  // missed (observed as `isPending` probes stuck true after the fetch lands).
   let chained: {
     base: Promise<unknown>
     select: unknown
@@ -703,6 +723,7 @@ export function useBaseQueryLayer<
         ? (opts.staleTime as (q: any) => number | 'static')(q)
         : opts.staleTime
     version()
+    staleVersion()
     return q.isStaleByTime(staleTime)
   }
 
