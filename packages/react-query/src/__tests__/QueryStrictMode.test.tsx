@@ -1,17 +1,28 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  onTestFinished,
+  vi,
+} from 'vitest'
 import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
+import * as ReactDOMClient from 'react-dom/client'
 import { ErrorBoundary } from 'react-error-boundary'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   IsRestoringProvider,
   QueryClient,
+  QueryClientProvider,
   QueryErrorResetBoundary,
   QueryStrictMode,
   QueryStrictModeError,
   dehydrate,
   hydrate,
   noop,
+  notifyManager,
   usePrefetchQuery,
   useQueries,
   useQuery,
@@ -46,6 +57,48 @@ describe('QueryStrictMode', () => {
     const { data } = useSuspenseQuery({
       queryKey: id,
       queryFn: () => sleep(ms).then(() => `data ${String(id)}`),
+    })
+    return <div>{data}</div>
+  }
+
+  // Renders like an app does, outside of `act`. `act` flushes effects as soon as it renders, but an
+  // app flushes passive effects in a later task, after any data that arrives in a microtask. React
+  // schedules that task with the real `setImmediate`, so this uses real timers
+  const renderOutsideAct = (ui: React.ReactElement) => {
+    vi.useRealTimers()
+    const globals = globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
+    const previousIsReactActEnvironment = globals.IS_REACT_ACT_ENVIRONMENT
+    globals.IS_REACT_ACT_ENVIRONMENT = false
+    notifyManager.setNotifyFunction((fn) => fn())
+
+    const container = document.createElement('div')
+    const root = ReactDOMClient.createRoot(container)
+    root.render(
+      <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+    )
+
+    onTestFinished(() => {
+      root.unmount()
+      notifyManager.setNotifyFunction((fn) => {
+        act(fn)
+      })
+      globals.IS_REACT_ACT_ENVIRONMENT = previousIsReactActEnvironment
+    })
+
+    return container
+  }
+
+  // Prefetches a query whose data arrives in a microtask
+  function ResolvedPrefetch({ id }: { id: QueryKey }) {
+    usePrefetchQuery({ queryKey: id, queryFn: () => Promise.resolve('data') })
+    return null
+  }
+
+  // Reads the query that `ResolvedPrefetch` prefetches
+  function ResolvedQuery({ id }: { id: QueryKey }) {
+    const { data } = useQuery({
+      queryKey: id,
+      queryFn: () => Promise.resolve('data'),
     })
     return <div>{data}</div>
   }
@@ -857,6 +910,109 @@ describe('QueryStrictMode', () => {
 
       await act(() => vi.advanceTimersByTimeAsync(10_000))
       expect(logger).not.toHaveBeenCalled()
+    })
+
+    it('should log for a render-time prefetch whose data arrives before QueryStrictMode subscribes', async () => {
+      const key = queryKey()
+
+      renderOutsideAct(
+        <QueryStrictMode logger={logger} unusedPrefetchTimeout={10}>
+          <ResolvedPrefetch id={key} />
+        </QueryStrictMode>,
+      )
+
+      await vi.waitFor(() => expect(getQuery(key)?.state.data).toBe('data'))
+      await sleep(50)
+      expect(loggedTypes()).toEqual(['unused-prefetch'])
+    })
+
+    it('should log for a render-time prefetch whose data arrives while a sibling suspends the first mount of QueryStrictMode', async () => {
+      const key = queryKey()
+      const otherKey = queryKey()
+
+      // The sibling is outside of QueryStrictMode, so it doesn't report a missing prefetch, but it
+      // keeps QueryStrictMode from committing until its data arrives
+      const container = renderOutsideAct(
+        <React.Suspense fallback="loading">
+          <QueryStrictMode logger={logger} unusedPrefetchTimeout={10}>
+            <ResolvedPrefetch id={key} />
+          </QueryStrictMode>
+          <SuspenseQuery id={otherKey} ms={50} />
+        </React.Suspense>,
+      )
+
+      await vi.waitFor(() => expect(getQuery(key)?.state.data).toBe('data'))
+      // React can wait a little after the data of the sibling arrives before it reveals the content
+      await vi.waitFor(() =>
+        expect(container.textContent).toBe(`data ${String(otherKey)}`),
+      )
+      await sleep(50)
+      expect(loggedTypes()).toEqual(['unused-prefetch'])
+    })
+
+    it('should not log for a prefetch whose data arrives before QueryStrictMode commits, if a component reads it once it commits', async () => {
+      const key = queryKey()
+      const otherKey = queryKey()
+
+      // The reader only subscribes to the query when QueryStrictMode commits, after its data arrived
+      const container = renderOutsideAct(
+        <React.Suspense fallback="loading">
+          <QueryStrictMode logger={logger} unusedPrefetchTimeout={10}>
+            <ResolvedPrefetch id={key} />
+            <ResolvedQuery id={key} />
+          </QueryStrictMode>
+          <SuspenseQuery id={otherKey} ms={50} />
+        </React.Suspense>,
+      )
+
+      await vi.waitFor(() =>
+        expect(container.textContent).toBe(`datadata ${String(otherKey)}`),
+      )
+      await sleep(50)
+      expect(logger).not.toHaveBeenCalled()
+    })
+
+    it('should only log once in React.StrictMode', async () => {
+      const key = queryKey()
+
+      // React.StrictMode renders QueryStrictMode twice, and mounts it, unmounts it and mounts it again
+      renderOutsideAct(
+        <React.StrictMode>
+          <QueryStrictMode logger={logger} unusedPrefetchTimeout={10}>
+            <ResolvedPrefetch id={key} />
+          </QueryStrictMode>
+        </React.StrictMode>,
+      )
+
+      await vi.waitFor(() => expect(getQuery(key)?.state.data).toBe('data'))
+      await sleep(50)
+      expect(loggedTypes()).toEqual(['unused-prefetch'])
+    })
+
+    it('should still log a prefetch whose timer started before unusedPrefetchTimeout changed', async () => {
+      const key = queryKey()
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryStrictMode logger={logger}>{null}</QueryStrictMode>,
+      )
+
+      void queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'data'),
+        })
+        .catch(noop)
+      await act(() => vi.advanceTimersByTimeAsync(10))
+
+      rendered.rerender(
+        <QueryStrictMode logger={logger} unusedPrefetchTimeout={6000}>
+          {null}
+        </QueryStrictMode>,
+      )
+
+      await act(() => vi.advanceTimersByTimeAsync(10_000))
+      expect(loggedTypes()).toEqual(['unused-prefetch'])
     })
 
     it('should not start a timer for setQueryData', async () => {
