@@ -1,8 +1,8 @@
 <script lang="ts">
-import { defineComponent, toRaw } from '@vue/composition-api'
+import { defineComponent } from '@vue/composition-api'
 import { useQuery } from '@tanstack/vue-query'
 
-import { Post } from './types'
+import type { Post } from './types'
 
 const fetcher = async (id: number): Promise<Post> => {
   const response = await fetch(
