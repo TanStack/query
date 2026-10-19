@@ -387,7 +387,12 @@ export function useQueries<
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
-  const strictMode = useQueryStrictMode()
+  const strictMode =
+    process.env.NODE_ENV !== 'production'
+      ? // The condition is constant for a build, so the hooks are always called in the same order
+        // eslint-disable-next-line react-hooks-js/rules-of-hooks
+        useQueryStrictMode()
+      : null
   const subscribed = options.subscribed !== false
 
   const defaultedQueries = React.useMemo(
@@ -453,7 +458,7 @@ export function useQueries<
     )
   }, [defaultedQueries, options, observer])
 
-  if (!isRestoring) {
+  if (process.env.NODE_ENV !== 'production' && !isRestoring) {
     optimisticResult.forEach((result, index) => {
       const opts = defaultedQueries[index]
       if (opts) {

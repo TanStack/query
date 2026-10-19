@@ -142,15 +142,18 @@ export interface QueryStrictModeValue {
   handler: QueryStrictModeHandler
 }
 
-const QueryStrictModeContext = React.createContext<QueryStrictModeValue | null>(
-  null,
-)
+// Only created outside production, so production builds don't ship the context.
+const QueryStrictModeContext =
+  process.env.NODE_ENV !== 'production'
+    ? React.createContext<QueryStrictModeValue | null>(null)
+    : null
 
 /**
  * Reads the nearest `QueryStrictMode`.
  * @returns The value of the nearest `QueryStrictMode`, or `null` outside of one.
  */
-export const useQueryStrictMode = () => React.useContext(QueryStrictModeContext)
+export const useQueryStrictMode = () =>
+  React.useContext(QueryStrictModeContext!)
 
 const defaultHandler: QueryStrictModeHandler = (event) => {
   console.error(event.message)
@@ -380,12 +383,9 @@ const DevQueryStrictMode = ({
   }, [cache, isNested, isRestoring, unusedPrefetchTimeout])
 
   const value = React.useMemo(() => ({ handler }), [handler])
+  const Provider = QueryStrictModeContext!.Provider
 
-  return (
-    <QueryStrictModeContext.Provider value={value}>
-      {children}
-    </QueryStrictModeContext.Provider>
-  )
+  return <Provider value={value}>{children}</Provider>
 }
 
 // The query states a `'missing-prefetch'` was reported for. A component can render more than once
@@ -413,39 +413,37 @@ export const checkQueryStrictMode = (
   result: QueryObserverResult<any, any>,
   suspense: boolean,
 ) => {
-  if (process.env.NODE_ENV !== 'production') {
-    const query = strictMode && cache.get(queryHash)
-    if (!query) {
-      return
+  const query = strictMode && cache.get(queryHash)
+  if (!query) {
+    return
+  }
+  prefetchTrackers.get(cache)?.used.add(query)
+  // A suspending hook starts the fetch during render. Otherwise, the optimistic result reports
+  // `'fetching'` when the hook starts the fetch on mount, or after its options change.
+  const startsInitialFetch = suspense
+    ? result.isPending
+    : result.fetchStatus === 'fetching' && query.state.data === undefined
+  // Check the query's own state: the fetch hasn't started yet if it's still `'idle'`. A query
+  // that errored is refetched after an error boundary reset, which isn't a missing prefetch.
+  if (
+    startsInitialFetch &&
+    query.state.fetchStatus === 'idle' &&
+    query.state.status !== 'error'
+  ) {
+    const event: QueryStrictModeEvent = {
+      type: 'missing-prefetch',
+      suspense,
+      message: suspense
+        ? `[${query.queryHash}]: A suspense query started its fetch during render. Prefetch it higher up (in a route loader, with usePrefetchQuery, or on the server) to avoid request waterfalls.`
+        : `[${query.queryHash}]: A query started its fetch after rendering. Prefetch it higher up (in a route loader, with usePrefetchQuery, or on the server) to start the fetch earlier.`,
+      query,
     }
-    prefetchTrackers.get(cache)?.used.add(query)
-    // A suspending hook starts the fetch during render. Otherwise, the optimistic result reports
-    // `'fetching'` when the hook starts the fetch on mount, or after its options change.
-    const startsInitialFetch = suspense
-      ? result.isPending
-      : result.fetchStatus === 'fetching' && query.state.data === undefined
-    // Check the query's own state: the fetch hasn't started yet if it's still `'idle'`. A query
-    // that errored is refetched after an error boundary reset, which isn't a missing prefetch.
-    if (
-      startsInitialFetch &&
-      query.state.fetchStatus === 'idle' &&
-      query.state.status !== 'error'
-    ) {
-      const event: QueryStrictModeEvent = {
-        type: 'missing-prefetch',
-        suspense,
-        message: suspense
-          ? `[${query.queryHash}]: A suspense query started its fetch during render. Prefetch it higher up (in a route loader, with usePrefetchQuery, or on the server) to avoid request waterfalls.`
-          : `[${query.queryHash}]: A query started its fetch after rendering. Prefetch it higher up (in a route loader, with usePrefetchQuery, or on the server) to start the fetch earlier.`,
-        query,
-      }
-      if (!reportedMissingPrefetches.has(query.state)) {
-        // A throw from `handler` happens before the hook starts its fetch. The state is only marked
-        // once `handler` returns, so the query stays idle and throws again after an error boundary
-        // reset.
-        strictMode.handler(event)
-        reportedMissingPrefetches.add(query.state)
-      }
+    if (!reportedMissingPrefetches.has(query.state)) {
+      // A throw from `handler` happens before the hook starts its fetch. The state is only marked
+      // once `handler` returns, so the query stays idle and throws again after an error boundary
+      // reset.
+      strictMode.handler(event)
+      reportedMissingPrefetches.add(query.state)
     }
   }
 }
