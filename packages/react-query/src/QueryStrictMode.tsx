@@ -1,10 +1,12 @@
 'use client'
 import * as React from 'react'
 
+import { environmentManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './IsRestoringProvider'
 import type {
   Query,
+  QueryCache,
   QueryClient,
   QueryObserverResult,
 } from '@tanstack/query-core'
@@ -158,6 +160,60 @@ const defaultHandler: QueryStrictModeHandler = (event) => {
 }
 
 /**
+ * Records when the data of each prefetch arrives in a `QueryCache`, starting from the first render
+ * of an outermost `QueryStrictMode`. Data can arrive before `QueryStrictMode` commits, for example
+ * while a sibling suspends, so the tracking can't wait for an effect.
+ */
+interface PrefetchTracker {
+  /**
+   * When the data of the last prefetch of each query arrived. Data from `setQueryData` and
+   * `hydrate` isn't recorded.
+   */
+  prefetches: Map<Query<any, any, any, any>, number>
+  /**
+   * Called with a query when its prefetch is recorded, or when it is removed from the cache.
+   */
+  listeners: Set<(query: Query<any, any, any, any>) => void>
+  /**
+   * How many committed `QueryStrictMode`s use the tracker.
+   */
+  mounted: number
+  unsubscribe: () => void
+}
+
+const prefetchTrackers = new WeakMap<QueryCache, PrefetchTracker>()
+
+/**
+ * Gets the tracker of a `QueryCache`, and starts tracking if no `QueryStrictMode` uses it yet.
+ * @param cache - The cache to track.
+ * @returns The tracker of `cache`.
+ */
+const getPrefetchTracker = (cache: QueryCache) => {
+  let tracker = prefetchTrackers.get(cache)
+  if (!tracker) {
+    const prefetches: PrefetchTracker['prefetches'] = new Map()
+    const listeners: PrefetchTracker['listeners'] = new Set()
+    const unsubscribe = cache.subscribe((event) => {
+      if (event.type === 'removed') {
+        prefetches.delete(event.query)
+      } else if (
+        event.type === 'updated' &&
+        event.action.type === 'success' &&
+        !event.action.manual
+      ) {
+        prefetches.set(event.query, Date.now())
+      } else {
+        return
+      }
+      listeners.forEach((listener) => listener(event.query))
+    })
+    tracker = { prefetches, listeners, mounted: 0, unsubscribe }
+    prefetchTrackers.set(cache, tracker)
+  }
+  return tracker
+}
+
+/**
  * Warns about prefetching problems during development:
  *
  * - `'missing-prefetch'`: a query hook, like `useQuery` or `useSuspenseQuery`, starts the initial
@@ -214,10 +270,13 @@ const DevQueryStrictMode = ({
   const parent = useQueryStrictMode()
   const isNested = parent !== null
 
-  const [{ used, markUsed: ownMarkUsed }] = React.useState(() => {
+  const [{ used, checked, markUsed: ownMarkUsed }] = React.useState(() => {
     const queries = new WeakSet<Query<any, any, any, any>>()
     return {
       used: queries,
+      // When the prefetch was recorded that each query was last checked for, so a timer that
+      // already ran doesn't start again when the effect runs again
+      checked: new WeakMap<Query<any, any, any, any>, number>(),
       markUsed: (query: Query<any, any, any, any>) => {
         queries.add(query)
       },
@@ -227,11 +286,18 @@ const DevQueryStrictMode = ({
   // are only reported once
   const markUsed = isNested ? parent.markUsed : ownMarkUsed
 
-  // Thrown during render, so it reaches the error boundary above this `QueryStrictMode`
-  // Wrapped, so that any value thrown by `handler` is rethrown unchanged
+  // Thrown during render, so it reaches the error boundary above this `QueryStrictMode`. Wrapped,
+  // so that any value thrown by `handler` is rethrown unchanged
   const [thrown, setThrown] = React.useState<{ error: unknown } | null>(null)
   if (thrown) {
     throw thrown.error
+  }
+
+  // Tracked from the first render, so prefetches whose data arrives before the effect runs are
+  // reported too. Not on the server, where nothing reports them.
+  const cache = client.getQueryCache()
+  if (!isNested && !environmentManager.isServer()) {
+    getPrefetchTracker(cache)
   }
 
   const handlerRef = React.useRef(handler)
@@ -244,32 +310,35 @@ const DevQueryStrictMode = ({
       return
     }
 
+    const tracker = getPrefetchTracker(cache)
     const timers = new Map<
       Query<any, any, any, any>,
       ReturnType<typeof setTimeout>
     >()
 
-    const clearTimer = (query: Query<any, any, any, any>) => {
-      clearTimeout(timers.get(query))
-      timers.delete(query)
-    }
-
     const isUnused = (query: Query<any, any, any, any>) =>
       !used.has(query) && query.getObserversCount() === 0
 
-    const unsubscribe = client.getQueryCache().subscribe((event) => {
-      if (event.type === 'removed') {
-        clearTimer(event.query)
-      } else if (
-        event.type === 'updated' &&
-        event.action.type === 'success' &&
-        !event.action.manual &&
-        !timers.has(event.query) &&
-        isUnused(event.query)
+    // Starts a timer from when the prefetch of `query` was recorded, or clears it when `query` was
+    // removed from the cache
+    const check = (query: Query<any, any, any, any>) => {
+      const prefetchedAt = tracker.prefetches.get(query)
+      if (prefetchedAt === undefined) {
+        clearTimeout(timers.get(query))
+        timers.delete(query)
+        return
+      }
+      if (
+        timers.has(query) ||
+        checked.get(query) === prefetchedAt ||
+        !isUnused(query)
       ) {
-        const query = event.query
-        const timer = setTimeout(() => {
+        return
+      }
+      const timer = setTimeout(
+        () => {
           timers.delete(query)
+          checked.set(query, prefetchedAt)
           if (isUnused(query)) {
             // Report each query only once
             used.add(query)
@@ -284,17 +353,31 @@ const DevQueryStrictMode = ({
               setThrown({ error })
             }
           }
-        }, unusedPrefetchTimeout)
-        timers.set(query, timer)
-      }
-    })
+        },
+        Math.max(0, prefetchedAt + unusedPrefetchTimeout - Date.now()),
+      )
+      timers.set(query, timer)
+    }
+
+    tracker.mounted++
+    tracker.listeners.add(check)
+    tracker.prefetches.forEach((_, query) => check(query))
 
     return () => {
-      unsubscribe()
+      tracker.listeners.delete(check)
       timers.forEach((timer) => clearTimeout(timer))
       timers.clear()
+      tracker.mounted--
+      // Stop tracking once no `QueryStrictMode` uses the tracker. Checked in a microtask, because
+      // `React.StrictMode` runs the effect again right after this cleanup.
+      queueMicrotask(() => {
+        if (tracker.mounted === 0 && prefetchTrackers.get(cache) === tracker) {
+          tracker.unsubscribe()
+          prefetchTrackers.delete(cache)
+        }
+      })
     }
-  }, [client, used, isNested, isRestoring, unusedPrefetchTimeout])
+  }, [cache, used, checked, isNested, isRestoring, unusedPrefetchTimeout])
 
   const value = React.useMemo(
     () => ({ handler, markUsed }),

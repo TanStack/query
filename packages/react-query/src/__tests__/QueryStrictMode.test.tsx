@@ -1203,6 +1203,21 @@ describe('QueryStrictMode', () => {
       expect(handler).not.toHaveBeenCalled()
     })
 
+    it('should stop listening to the cache on unmount', async () => {
+      const rendered = renderWithClient(
+        queryClient,
+        <React.StrictMode>
+          <QueryStrictMode handler={handler}>{null}</QueryStrictMode>
+        </React.StrictMode>,
+      )
+      expect(queryClient.getQueryCache().hasListeners()).toBe(true)
+
+      rendered.unmount()
+      await act(() => vi.advanceTimersByTimeAsync(0))
+
+      expect(queryClient.getQueryCache().hasListeners()).toBe(false)
+    })
+
     it('should only log once when QueryStrictMode is nested', async () => {
       const key = queryKey()
       const innerHandler = vi.fn<QueryStrictModeHandler>()
