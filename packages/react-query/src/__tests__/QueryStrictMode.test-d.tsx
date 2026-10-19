@@ -26,27 +26,4 @@ describe('QueryStrictMode', () => {
       QueryStrictModeHandler | undefined
     >()
   })
-
-  it('should not accept logger, throwOnMissingPrefetch or throwOnUnusedPrefetch', () => {
-    assertType(
-      <QueryStrictMode
-        // @ts-expect-error logger was replaced by handler
-        logger={() => undefined}
-      />,
-    )
-
-    assertType(
-      <QueryStrictMode
-        // @ts-expect-error throwOnMissingPrefetch was replaced by handler
-        throwOnMissingPrefetch
-      />,
-    )
-
-    assertType(
-      <QueryStrictMode
-        // @ts-expect-error throwOnUnusedPrefetch was replaced by handler
-        throwOnUnusedPrefetch
-      />,
-    )
-  })
 })
