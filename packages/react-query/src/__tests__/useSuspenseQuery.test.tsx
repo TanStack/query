@@ -536,6 +536,58 @@ describe('useSuspenseQuery', () => {
     consoleErrorMock.mockRestore()
   })
 
+  it('should throw the query error when the query was recreated without a queryFn', async () => {
+    const consoleErrorMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+    const queryFn = vi.fn(() =>
+      sleep(10).then(() => Promise.reject(new Error('401 Unauthorized'))),
+    )
+
+    queryClient.setQueryData(key, 'user')
+
+    function Page() {
+      const [, rerender] = React.useReducer((count) => count + 1, 0)
+      const { data } = useSuspenseQuery({
+        queryKey: key,
+        queryFn,
+        retry: false,
+        staleTime: Infinity,
+      })
+
+      return (
+        <div>
+          <div>{data}</div>
+          <button onClick={rerender}>rerender</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={({ error }) => <div>{error.message}</div>}>
+        <React.Suspense fallback="loading">
+          <Page />
+        </React.Suspense>
+      </ErrorBoundary>,
+    )
+
+    expect(rendered.getByText('user')).toBeInTheDocument()
+
+    queryClient.removeQueries({ queryKey: key })
+    // A broadcast can recreate the query before its observer is updated.
+    queryCache.build(queryClient, { queryKey: key, retry: false })
+
+    fireEvent.click(rendered.getByText('rerender'))
+    await act(() => vi.advanceTimersByTimeAsync(10))
+
+    expect(rendered.getByText('401 Unauthorized')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    consoleErrorMock.mockRestore()
+  })
+
   it('should throw select errors to the error boundary by default', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')

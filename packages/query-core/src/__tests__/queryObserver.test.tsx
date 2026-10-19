@@ -1589,6 +1589,25 @@ describe('queryObserver', () => {
     expect(result.data).toBe('data')
   })
 
+  it('should fetch optimistically when the query was recreated without a queryFn', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn().mockResolvedValue('data')
+    const options = { queryKey: key, queryFn, retry: false }
+    const observer = new QueryObserver(queryClient, options)
+
+    queryClient.removeQueries({ queryKey: key })
+    queryClient.getQueryCache().build(queryClient, {
+      queryKey: key,
+      retry: false,
+    })
+
+    const result = await observer.fetchOptimistic(options)
+
+    expect(result.status).toBe('success')
+    expect(result.data).toBe('data')
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
   it('should resolve fetchOptimistic with cached data while the fetch continues', async () => {
     const key = queryKey()
 
