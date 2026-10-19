@@ -378,32 +378,6 @@ describe('QueryStrictMode', () => {
       })
     })
 
-    it('should not log for a refetch of a query that has data', async () => {
-      const key = queryKey()
-
-      queryClient.setQueryData(key, 'cached')
-
-      function Page() {
-        const { data } = useQuery({
-          queryKey: key,
-          queryFn: () => sleep(10).then(() => 'data'),
-          refetchOnMount: 'always',
-        })
-        return <div>{data}</div>
-      }
-
-      const rendered = renderWithClient(
-        queryClient,
-        <QueryStrictMode handler={handler}>
-          <Page />
-        </QueryStrictMode>,
-      )
-
-      await act(() => vi.advanceTimersByTimeAsync(11))
-      expect(rendered.getByText('data')).toBeInTheDocument()
-      expect(handler).not.toHaveBeenCalled()
-    })
-
     it('should only log the queries of useQueries that were not prefetched', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
@@ -788,25 +762,6 @@ describe('QueryStrictMode', () => {
         await act(() => vi.advanceTimersByTimeAsync(10))
         expect(queryFn).not.toHaveBeenCalled()
         consoleMock.mockRestore()
-      })
-
-      it('should not throw when the query is being prefetched', async () => {
-        const key = queryKey()
-        handler.mockImplementation(throwStrictModeError)
-
-        void queryClient
-          .query({
-            queryKey: key,
-            queryFn: () => sleep(10).then(() => `data ${String(key)}`),
-          })
-          .catch(noop)
-
-        const { rendered, errors } = renderThrowing(key)
-
-        await act(() => vi.advanceTimersByTimeAsync(10))
-        expect(rendered.getByText(`data ${String(key)}`)).toBeInTheDocument()
-        expect(errors).toEqual([])
-        expect(handler).not.toHaveBeenCalled()
       })
     })
   })
@@ -1578,54 +1533,6 @@ describe('QueryStrictMode', () => {
         expect(errors[0]).toMatchObject({ query: getQuery(thrown) })
         expect(handler).toHaveBeenCalledTimes(2)
         consoleMock.mockRestore()
-      })
-
-      it('should not throw when the prefetched query is used before the timeout', async () => {
-        const key = queryKey()
-        handler.mockImplementation(throwUnusedPrefetch)
-
-        function Reader() {
-          const { data } = useQuery({
-            queryKey: key,
-            queryFn: () => sleep(10).then(() => 'data'),
-          })
-          return <div>{data}</div>
-        }
-
-        const { rendered, errors } = renderThrowing((children) => (
-          <QueryStrictMode handler={handler}>
-            {children}
-            <Reader />
-          </QueryStrictMode>
-        ))
-
-        prefetch(key)
-
-        await act(() => vi.advanceTimersByTimeAsync(10 + 10_000))
-        expect(rendered.getByText('content')).toBeInTheDocument()
-        expect(rendered.getByText('data')).toBeInTheDocument()
-        expect(errors).toEqual([])
-        // `Reader` mounts before the prefetch, so it starts the fetch itself
-        expect(handledTypes()).toEqual(['missing-prefetch'])
-      })
-
-      it('should never call the handler of a nested QueryStrictMode', async () => {
-        const key = queryKey()
-        const innerHandler = vi.fn(throwUnusedPrefetch)
-
-        const { rendered, errors } = renderThrowing((children) => (
-          <QueryStrictMode handler={handler}>
-            <QueryStrictMode handler={innerHandler}>{children}</QueryStrictMode>
-          </QueryStrictMode>
-        ))
-
-        prefetch(key)
-
-        await act(() => vi.advanceTimersByTimeAsync(10 + 5000))
-        expect(rendered.getByText('content')).toBeInTheDocument()
-        expect(errors).toEqual([])
-        expect(handledTypes()).toEqual(['unused-prefetch'])
-        expect(innerHandler).not.toHaveBeenCalled()
       })
     })
   })

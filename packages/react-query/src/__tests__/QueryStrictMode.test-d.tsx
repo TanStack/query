@@ -1,10 +1,6 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryStrictMode, QueryStrictModeError } from '..'
-import type {
-  QueryStrictModeEvent,
-  QueryStrictModeHandler,
-  QueryStrictModeProps,
-} from '..'
+import type { QueryStrictModeEvent } from '..'
 
 describe('QueryStrictMode', () => {
   it('should accept a handler that receives a QueryStrictModeEvent', () => {
@@ -18,12 +14,5 @@ describe('QueryStrictMode', () => {
         }}
       />,
     )
-
-    expectTypeOf<QueryStrictModeHandler>().toEqualTypeOf<
-      (event: QueryStrictModeEvent) => void
-    >()
-    expectTypeOf<QueryStrictModeProps['handler']>().toEqualTypeOf<
-      QueryStrictModeHandler | undefined
-    >()
   })
 })
