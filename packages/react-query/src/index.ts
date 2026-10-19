@@ -57,7 +57,6 @@ export { useIsRestoring, IsRestoringProvider } from './IsRestoringProvider'
 export { QueryStrictMode, QueryStrictModeError } from './QueryStrictMode'
 export type {
   QueryStrictModeEvent,
-  QueryStrictModeLogger,
+  QueryStrictModeHandler,
   QueryStrictModeProps,
-  QueryStrictModeThrowOption,
 } from './QueryStrictMode'
