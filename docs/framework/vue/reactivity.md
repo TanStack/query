@@ -157,6 +157,8 @@ export function useUserProjects(userId: MaybeRef<string>) {
 
 More details on this option can be found on the [useQuery reference](./reference/functions/useQuery.md) page.
 
+The other query options accept refs as well, and pick up changes to them. Reactive getters, however, are only resolved in `queryKey` and `enabled`, since a function is already a valid value for options such as `select` or `staleTime`.
+
 ### Immutability
 
 Results from `useQuery` are always immutable. This is necessary for performance and caching purposes. If you need to mutate a value returned from `useQuery`, you must create a copy of the data.
@@ -165,7 +167,7 @@ One implication of this design is that passing values from `useQuery` to a two-w
 
 ## Key Takeaways
 
-- `enabled` and `queryKey` are the two query options that can accept reactive values.
+- Every query option accepts refs, but only `queryKey` and `enabled` also accept reactive getters.
 - Pass query option that accept all three types of values in Vue: refs, plain values, and reactive getters.
 - If you expect a query to react to changes based on the values it consumes, ensure that the values are reactive. (i.e. pass in refs directly to the query, or use reactive getters)
 - If you don't need a query to be reactive pass in a plain value.
