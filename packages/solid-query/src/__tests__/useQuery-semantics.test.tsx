@@ -6,7 +6,7 @@
 // re-pointed separately.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent } from '@solidjs/testing-library'
-import { Errored, Loading, createSignal } from 'solid-js'
+import { Errored, Loading, createSignal, flush } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useQuery } from '..'
 import { renderWithClient } from './utils'
@@ -588,6 +588,68 @@ describe('useQuery 2.0 read semantics', () => {
 
       expect(queryCache.getAll()).toHaveLength(1)
       expect(rendered.getByText('v2')).toBeInTheDocument()
+    })
+  })
+
+  describe('key switch', () => {
+    // `select` runs once in the observer's `setOptions` and once in the data
+    // projection. Observer bookkeeping events from `setOptions` used to bump
+    // the version and recompute the projection a second time (#11903).
+    function setup() {
+      const key = queryKey()
+      queryClient.setQueryData([...key, 'base'], 1)
+      queryClient.setQueryData([...key, 'site'], 2)
+      const [tariff, setTariff] = createSignal('base')
+      const selected: Array<number> = []
+      const select = (data: number) => {
+        selected.push(data)
+        return data
+      }
+
+      function Price() {
+        const query = useQuery(() => ({
+          queryKey: [...key, tariff()],
+          queryFn: () => 0,
+          staleTime: Infinity,
+          select,
+        }))
+        return <span>{query.data}</span>
+      }
+
+      const rendered = renderWithClient(queryClient, () => (
+        <Loading fallback={<span>loading</span>}>
+          <Price />
+        </Loading>
+      ))
+      flush()
+      return { rendered, selected, setTariff }
+    }
+
+    it('computes the data once when switching to a cached key (#11903)', async () => {
+      const { rendered, selected, setTariff } = setup()
+      selected.length = 0
+
+      setTariff('site')
+      flush()
+      await vi.advanceTimersByTimeAsync(30)
+
+      expect(rendered.getByText('2')).toBeInTheDocument()
+      expect(selected).toEqual([2, 2])
+    })
+
+    it('computes the data once when switching back to a previously loaded key', async () => {
+      const { rendered, selected, setTariff } = setup()
+      setTariff('site')
+      flush()
+      await vi.advanceTimersByTimeAsync(30)
+      selected.length = 0
+
+      setTariff('base')
+      flush()
+      await vi.advanceTimersByTimeAsync(30)
+
+      expect(rendered.getByText('1')).toBeInTheDocument()
+      expect(selected).toEqual([1, 1])
     })
   })
 })
