@@ -3,13 +3,15 @@ import { defineComponent } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
+import type { Repo } from './types'
+
 export default defineComponent({
   name: 'App',
   components: { VueQueryDevtools },
   setup() {
     const { data, error, isFetching, isPending } = useQuery({
       queryKey: ['repoData'],
-      async queryFn() {
+      async queryFn(): Promise<Repo> {
         const response = await fetch(
           'https://api.github.com/repos/TanStack/query',
         )
@@ -33,7 +35,7 @@ export default defineComponent({
   <template v-else-if="error">
     An error has occurred: {{ error.message }}
   </template>
-  <template v-else>
+  <template v-else-if="data">
     <h1>{{ data.name }}</h1>
     <p>{{ data.description }}</p>
     <strong>👀 {{ data.subscribers_count }}</strong>
