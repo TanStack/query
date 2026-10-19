@@ -1,10 +1,12 @@
-<script lang="ts">
+<script setup lang="ts">
 import { del, entries, get, set } from 'idb-keyval'
-import { defineComponent } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
-
 import { experimental_createQueryPersister } from '@tanstack/query-persist-client-core'
+
 import type { Post } from './types'
+
+const props = defineProps<{ postId: number }>()
+defineEmits<{ setPostId: [id: number] }>()
 
 const fetcher = async (id: number): Promise<Post> => {
   const response = await fetch(
@@ -14,31 +16,17 @@ const fetcher = async (id: number): Promise<Post> => {
   return await response.json()
 }
 
-export default defineComponent({
-  name: 'PostDetails',
-  props: {
-    postId: {
-      type: Number,
-      required: true,
+const { isPending, isError, isFetching, data, error } = useQuery({
+  queryKey: ['post', () => props.postId] as const,
+  queryFn: () => fetcher(props.postId),
+  persister: experimental_createQueryPersister({
+    storage: {
+      getItem: (key: string) => get(key),
+      setItem: (key: string, value: string) => set(key, value),
+      removeItem: (key: string) => del(key),
+      entries: () => entries<string>(),
     },
-  },
-  emits: ['setPostId'],
-  setup(props) {
-    const { isPending, isError, isFetching, data, error } = useQuery({
-      queryKey: ['post', () => props.postId] as const,
-      queryFn: () => fetcher(props.postId),
-      persister: experimental_createQueryPersister({
-        storage: {
-          getItem: (key: string) => get(key),
-          setItem: (key: string, value: string) => set(key, value),
-          removeItem: (key: string) => del(key),
-          entries: () => entries<string>(),
-        },
-      }).persisterFn,
-    })
-
-    return { isPending, isError, isFetching, data, error }
-  },
+  }).persisterFn,
 })
 </script>
 
