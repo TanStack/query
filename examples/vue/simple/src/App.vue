@@ -10,9 +10,11 @@ export default defineComponent({
     const { data, error, isFetching, isPending } = useQuery({
       queryKey: ['repoData'],
       async queryFn() {
-        return await fetch('https://api.github.com/repos/Tanstack/query').then(
-          (response) => response.json(),
+        const response = await fetch(
+          'https://api.github.com/repos/Tanstack/query',
         )
+        if (!response.ok) throw new Error('Failed to fetch repo data')
+        return await response.json()
       },
     })
 

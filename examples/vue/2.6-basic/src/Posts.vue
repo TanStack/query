@@ -4,10 +4,11 @@ import { useQuery } from '@tanstack/vue-query'
 
 import type { Post } from './types'
 
-const fetcher = async (): Promise<Post[]> =>
-  await fetch('https://jsonplaceholder.typicode.com/posts').then((response) =>
-    response.json(),
-  )
+const fetcher = async (): Promise<Post[]> => {
+  const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+  if (!response.ok) throw new Error('Failed to fetch posts')
+  return await response.json()
+}
 
 export default defineComponent({
   name: 'PostsList',
