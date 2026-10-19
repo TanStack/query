@@ -64,6 +64,21 @@ useQuery(
 )
 ```
 
+The devtools look up the client under the default key, so pass the client to them through the `client` prop as well
+
+```vue
+<script setup>
+import { useQueryClient } from '@tanstack/vue-query'
+import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+
+const queryClient = useQueryClient('Foo')
+</script>
+
+<template>
+  <VueQueryDevtools :client="queryClient" />
+</template>
+```
+
 Internally custom key will be combined with default query key as a suffix. But user do not have to worry about it.
 
 ```tsx
