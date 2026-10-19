@@ -31,7 +31,7 @@ export default defineComponent({
 <template>
   <template v-if="isPending"> Loading... </template>
   <template v-else-if="error">
-    'An error has occurred: {{ error.message }}
+    An error has occurred: {{ error.message }}
   </template>
   <template v-else>
     <h1>{{ data.name }}</h1>
