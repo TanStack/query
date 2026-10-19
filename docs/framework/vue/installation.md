@@ -47,7 +47,7 @@ app.use(VueQueryPlugin)
 
 ### Use of Composition API with `<script setup>`
 
-All examples in our documentation use [`<script setup>`](https://staging.vuejs.org/api/sfc-script-setup.html) syntax.
+All examples in our documentation use [`<script setup>`](https://vuejs.org/api/sfc-script-setup.html) syntax.
 
 Vue 2 users can also use that syntax using [this plugin](https://github.com/antfu/unplugin-vue2-script-setup). Please check the plugin documentation for installation details.
 
