@@ -20,12 +20,12 @@ export default defineComponent({
   },
   emits: ['setPostId'],
   setup() {
-    const { isPending, isError, isFetching, data, error, refetch } = useQuery({
+    const { isPending, isError, isFetching, data, error } = useQuery({
       queryKey: ['posts'],
       queryFn: fetcher,
     })
 
-    return { isPending, isError, isFetching, data, error, refetch }
+    return { isPending, isError, isFetching, data, error }
   },
 })
 </script>
@@ -46,11 +46,17 @@ export default defineComponent({
           >
         </li>
       </ul>
+      <div v-if="isFetching" class="update">Background Updating...</div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.update {
+  font-weight: bold;
+  color: green;
+}
+
 .visited {
   font-weight: bold;
   color: green;
