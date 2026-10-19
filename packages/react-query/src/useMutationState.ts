@@ -62,35 +62,51 @@ type MutationStateOptions<
 }
 
 /**
- * Creates a snapshot reader for the mutations that match `options.filters`, mapped with
- * `options.select` (or to their state, by default).
- * @param mutationCache - The mutation cache to read.
- * @param options - The `filters` to match and the `select` function to map each mutation with.
- * @returns A reader that reuses structurally equal results between calls.
+ * Creates snapshot getters that share equal selected results across renders.
+ * Each getter caches its snapshot until the matching mutations or their states change.
+ * @returns A factory for snapshot getters with a shared result cache.
  */
-function createSnapshotGetter<
+function createSnapshotFactory<
   TResult = MutationState,
   TMutation extends Mutation<any, any, any, any> =
     MutationTypeFromResult<TResult>,
->(
-  mutationCache: MutationCache,
-  options: MutationStateOptions<TResult, TMutation>,
-): () => Array<TResult> {
-  let result: Array<TResult> | undefined
+>() {
+  let previousResult: Array<TResult> | undefined
 
-  return () => {
-    result = replaceEqualDeep(
-      result,
-      mutationCache
-        .findAll(options.filters)
-        .map(
-          (mutation): TResult =>
-            (options.select
-              ? options.select(mutation as TMutation)
-              : mutation.state) as TResult,
-        ),
-    )
-    return result
+  return (
+    mutationCache: MutationCache,
+    options: MutationStateOptions<TResult, TMutation>,
+  ) => {
+    let inputs: Array<unknown> = []
+    let snapshot: Array<TResult> | undefined
+
+    return (): Array<TResult> => {
+      const mutations = mutationCache.findAll(options.filters)
+      const nextInputs = mutations.flatMap((mutation) => [
+        mutation,
+        mutation.state,
+      ])
+
+      if (
+        !snapshot ||
+        nextInputs.length !== inputs.length ||
+        nextInputs.some((input, index) => !Object.is(input, inputs[index]))
+      ) {
+        inputs = nextInputs
+        snapshot = replaceEqualDeep(
+          previousResult,
+          mutations.map(
+            (mutation): TResult =>
+              (options.select
+                ? options.select(mutation as TMutation)
+                : mutation.state) as TResult,
+          ),
+        )
+        previousResult = snapshot
+      }
+
+      return snapshot
+    }
   }
 }
 
@@ -173,12 +189,15 @@ export function useMutationState<
 ): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
   const { filters, select } = options
+  const [createSnapshot] = React.useState(() =>
+    createSnapshotFactory<TResult, TMutation>(),
+  )
   const getSnapshot = React.useMemo(
-    () => createSnapshotGetter(mutationCache, { filters, select }),
-    [mutationCache, filters, select],
+    () => createSnapshot(mutationCache, { filters, select }),
+    [mutationCache, filters, select, createSnapshot],
   )
 
-  const snapshot = React.useSyncExternalStore(
+  return React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         mutationCache.subscribe(notifyManager.batchCalls(onStoreChange)),
@@ -187,13 +206,4 @@ export function useMutationState<
     getSnapshot,
     getSnapshot,
   )
-
-  const [previousResult, setPreviousResult] = React.useState(snapshot)
-  const result = replaceEqualDeep(previousResult, snapshot)
-
-  if (previousResult !== result) {
-    setPreviousResult(result)
-  }
-
-  return result
 }

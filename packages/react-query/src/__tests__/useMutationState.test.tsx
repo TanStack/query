@@ -302,6 +302,67 @@ describe('useMutationState', () => {
     expect(rendered.getByText('result: ["idle"]')).toBeInTheDocument()
   })
 
+  it('should render selector results that cannot be structurally shared', () => {
+    const queryClient = new QueryClient()
+    const key = queryKey()
+    queryClient.getMutationCache().build(queryClient, { mutationKey: key })
+
+    function Page({ time }: { time: number }) {
+      const result = useMutationState({
+        filters: { mutationKey: key },
+        select: () => new Date(time),
+      })
+
+      return <div>date: {result[0]?.toISOString()}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page time={0} />)
+    expect(
+      rendered.getByText('date: 1970-01-01T00:00:00.000Z'),
+    ).toBeInTheDocument()
+
+    rendered.rerender(<Page time={1000} />)
+    expect(
+      rendered.getByText('date: 1970-01-01T00:00:01.000Z'),
+    ).toBeInTheDocument()
+  })
+
+  it('should update Date selector results when mutation state changes', async () => {
+    const queryClient = new QueryClient()
+    const key = queryKey()
+    const filters = { mutationKey: key }
+    const select = (mutation: Mutation) =>
+      new Date(mutation.state.status === 'success' ? 1000 : 0)
+
+    function Dates() {
+      const { mutate } = useMutation({
+        mutationKey: key,
+        mutationFn: () => sleep(10),
+      })
+      const result = useMutationState({ filters, select })
+      return (
+        <div>
+          <div>dates: {JSON.stringify(result)}</div>
+          <button onClick={() => mutate()}>mutate</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Dates />)
+    expect(rendered.getByText('dates: []')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'mutate' }))
+    await vi.advanceTimersByTimeAsync(1)
+    expect(
+      rendered.getByText('dates: ["1970-01-01T00:00:00.000Z"]'),
+    ).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText('dates: ["1970-01-01T00:00:01.000Z"]'),
+    ).toBeInTheDocument()
+  })
+
   it.each(['stable', 'inline'] as const)(
     'should preserve the result reference with %s inputs',
     (inputs) => {
