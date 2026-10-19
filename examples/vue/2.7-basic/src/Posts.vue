@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
+import type { PropType } from 'vue'
 
 import type { Post } from './types'
 
@@ -14,7 +15,7 @@ export default defineComponent({
   name: 'PostsList',
   props: {
     isVisited: {
-      type: Function,
+      type: Function as PropType<(id: number) => boolean>,
       required: true,
     },
   },
