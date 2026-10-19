@@ -73,10 +73,10 @@
 
       return { previousTodos }
     },
-    // If the mutation fails, use the context returned from onMutate to roll back
-    onError: (err: any, variables: any, context: any) => {
-      if (context?.previousTodos) {
-        client.setQueryData<Todos>(['optimistic'], context.previousTodos)
+    // If the mutation fails, use the result returned from onMutate to roll back
+    onError: (_err, _variables, onMutateResult) => {
+      if (onMutateResult?.previousTodos) {
+        client.setQueryData<Todos>(['optimistic'], onMutateResult.previousTodos)
       }
     },
     // Always refetch after error or success:
