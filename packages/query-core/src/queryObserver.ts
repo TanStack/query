@@ -447,7 +447,12 @@ export class QueryObserver<
 
     return Promise.race([
       query
-        .fetch()
+        // Pass the options so a query that already existed without a queryFn
+        // (e.g. rebuilt from a broadcast message or hydrated) still fetches
+        // with this observer's queryFn - `build` does not apply options to an
+        // existing query, and `fetch()` would otherwise only fall back to
+        // already-attached observers, of which there are none yet here.
+        .fetch(defaultedOptions)
         .then(() => {
           const result = this.createResult(query, defaultedOptions)
           // Settle the subscriber promise so both branches always settle.
