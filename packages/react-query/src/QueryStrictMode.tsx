@@ -88,6 +88,9 @@ export class QueryStrictModeError extends Error {
  * Called for every problem `QueryStrictMode` finds. Return to report the problem, or throw to send
  * it to an error boundary.
  * @param event - The problem that was found.
+ * @throws {unknown} Anything, for example a `QueryStrictModeError`, to send the problem to an error
+ * boundary: the one above the hook for a `'missing-prefetch'`, or the one above the outermost
+ * `QueryStrictMode` for an `'unused-prefetch'`. The value is rethrown unchanged.
  */
 export type QueryStrictModeHandler = (event: QueryStrictModeEvent) => void
 
