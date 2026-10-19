@@ -126,8 +126,8 @@ function Example() {
   const query = useQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
-      fetch('https://api.github.com/repos/TanStack/query').then(
-        (res) => res.json(),
+      fetch('https://api.github.com/repos/TanStack/query').then((res) =>
+        res.json(),
       ),
   }))
 
