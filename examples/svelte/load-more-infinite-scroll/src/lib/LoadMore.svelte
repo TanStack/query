@@ -1,29 +1,8 @@
 <script lang="ts">
   import { createInfiniteQuery } from '@tanstack/svelte-query'
+  import { planetsInfiniteQueryOptions } from './api'
 
-  const endPoint = 'https://swapi.dev/api'
-
-  const fetchPlanets = async ({ pageParam = 1 }) => {
-    const response = await fetch(`${endPoint}/planets/?page=${pageParam}`)
-    if (!response.ok) throw new Error('Failed to fetch planets')
-    return await response.json()
-  }
-
-  const query = createInfiniteQuery(() => ({
-    queryKey: ['planets'],
-    queryFn: ({ pageParam }) => fetchPlanets({ pageParam }),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      if (lastPage.next) {
-        const nextUrl = new URLSearchParams(new URL(lastPage.next).search)
-        const nextCursor = nextUrl.get('page')
-        if (nextCursor) {
-          return +nextCursor
-        }
-      }
-      return undefined
-    },
-  }))
+  const query = createInfiniteQuery(() => planetsInfiniteQueryOptions)
 </script>
 
 {#if query.isPending}
@@ -50,7 +29,7 @@
       onclick={() => query.fetchNextPage()}
       disabled={!query.hasNextPage || query.isFetchingNextPage}
     >
-      {#if query.isFetching}
+      {#if query.isFetchingNextPage}
         Loading more...
       {:else if query.hasNextPage}
         Load More

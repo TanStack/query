@@ -12,7 +12,7 @@
   <div>
     <a class="button" href={resolve('/')}> Back </a>
   </div>
-  {#if !postId || post.isPending}
+  {#if post.isPending}
     <span>Loading...</span>
   {/if}
   {#if post.error}
