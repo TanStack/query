@@ -5,13 +5,12 @@ import { experimental_createQueryPersister } from '@tanstack/query-persist-clien
 
 import type { Post } from './types'
 
-const fetcher = async (): Promise<Array<Post>> =>
-  await fetch('https://jsonplaceholder.typicode.com/posts').then(
-    (response) =>
-      new Promise((resolve) =>
-        setTimeout(() => resolve(response.json()), 1000),
-      ),
-  )
+const fetcher = async (): Promise<Array<Post>> => {
+  const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+  if (!response.ok) throw new Error('Failed to fetch posts')
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+  return await response.json()
+}
 
 export default defineComponent({
   name: 'PostsList',
