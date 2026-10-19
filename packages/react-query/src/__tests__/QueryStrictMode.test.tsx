@@ -1336,6 +1336,118 @@ describe('QueryStrictMode', () => {
       expect(handler).not.toHaveBeenCalled()
     })
 
+    describe('with sibling QueryStrictModes', () => {
+      const prefetch = (key: QueryKey) =>
+        void queryClient
+          .query({
+            queryKey: key,
+            queryFn: () => sleep(10).then(() => `data ${String(key)}`),
+          })
+          .catch(noop)
+
+      it('should not log for a prefetched query that was read inside the other one', async () => {
+        const key = queryKey()
+        const otherHandler = vi.fn<QueryStrictModeHandler>()
+
+        function Page({ read }: { read: boolean }) {
+          return (
+            <>
+              <QueryStrictMode handler={handler} unusedPrefetchTimeout={100}>
+                <React.Suspense fallback="loading">
+                  {read && <SuspenseQuery id={key} />}
+                </React.Suspense>
+              </QueryStrictMode>
+              <QueryStrictMode
+                handler={otherHandler}
+                unusedPrefetchTimeout={100}
+              >
+                {null}
+              </QueryStrictMode>
+            </>
+          )
+        }
+
+        const rendered = renderWithClient(queryClient, <Page read={false} />)
+        prefetch(key)
+        rendered.rerender(<Page read />)
+        await act(() => vi.advanceTimersByTimeAsync(10))
+        expect(rendered.getByText(`data ${String(key)}`)).toBeInTheDocument()
+
+        // Nothing observes it after its reader unmounts, but it was read
+        rendered.rerender(<Page read={false} />)
+        await act(() => vi.advanceTimersByTimeAsync(10_000))
+        expect(handler).not.toHaveBeenCalled()
+        expect(otherHandler).not.toHaveBeenCalled()
+      })
+
+      it('should only log an unused prefetch once', async () => {
+        const key = queryKey()
+        const otherHandler = vi.fn<QueryStrictModeHandler>()
+
+        renderWithClient(
+          queryClient,
+          <>
+            <QueryStrictMode handler={handler}>{null}</QueryStrictMode>
+            <QueryStrictMode handler={otherHandler}>{null}</QueryStrictMode>
+          </>,
+        )
+        prefetch(key)
+
+        await act(() => vi.advanceTimersByTimeAsync(10 + 5000))
+        expect(handler.mock.calls.length + otherHandler.mock.calls.length).toBe(
+          1,
+        )
+      })
+
+      it('should only throw an unused prefetch to one error boundary', async () => {
+        const key = queryKey()
+        const throwingHandler = (event: QueryStrictModeEvent) => {
+          throw new QueryStrictModeError(event)
+        }
+
+        const rendered = renderWithClient(
+          queryClient,
+          <>
+            {['first', 'second'].map((name) => (
+              <ErrorBoundary key={name} fallback={<div>error</div>}>
+                <QueryStrictMode handler={throwingHandler}>
+                  <div>{name}</div>
+                </QueryStrictMode>
+              </ErrorBoundary>
+            ))}
+          </>,
+        )
+        prefetch(key)
+
+        await act(() => vi.advanceTimersByTimeAsync(10 + 5000))
+        expect(rendered.getAllByText('error')).toHaveLength(1)
+      })
+
+      it('should not log for the one that unmounted', async () => {
+        const key = queryKey()
+        const otherHandler = vi.fn<QueryStrictModeHandler>()
+
+        function Page({ both }: { both: boolean }) {
+          return (
+            <>
+              {both && (
+                <QueryStrictMode handler={otherHandler}>{null}</QueryStrictMode>
+              )}
+              <QueryStrictMode handler={handler}>{null}</QueryStrictMode>
+            </>
+          )
+        }
+
+        const rendered = renderWithClient(queryClient, <Page both />)
+        rendered.rerender(<Page both={false} />)
+        prefetch(key)
+
+        await act(() => vi.advanceTimersByTimeAsync(10 + 5000))
+        expect(otherHandler).not.toHaveBeenCalled()
+        expect(handledTypes()).toEqual(['unused-prefetch'])
+      })
+    })
+
     describe('with a handler that throws', () => {
       const prefetch = (key: QueryKey, ms = 10) =>
         void queryClient
