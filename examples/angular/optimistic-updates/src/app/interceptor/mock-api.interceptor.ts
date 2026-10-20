@@ -5,8 +5,8 @@
  * - POST: Adds a new task to sessionStorage.
  * Simulated responses include a delay to mimic network latency.
  */
-import { HttpResponse } from '@angular/common/http'
-import { delay, of } from 'rxjs'
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http'
+import { delay, of, switchMap, throwError, timer } from 'rxjs'
 import type {
   HttpEvent,
   HttpHandlerFn,
@@ -47,9 +47,18 @@ export const mockInterceptor: HttpInterceptorFn = (
     }
   }
   if (req.url === '/api/tasks-wrong-url') {
-    return respondWith(500, {
-      status: 'error',
-    })
+    return timer(1000).pipe(
+      switchMap(() =>
+        throwError(
+          () =>
+            new HttpErrorResponse({
+              status: 500,
+              url: req.url,
+              error: { status: 'error' },
+            }),
+        ),
+      ),
+    )
   }
 
   return next(req)
