@@ -65,7 +65,7 @@ export function createGreetingQuery(queryClient?: Accessor<QueryClient>) {
 }
 ```
 
-We can create it inside `$effect.root` with a fresh `QueryClient`, wait until the query succeeds, and clean up the effect root at the end:
+We can create it inside `$effect.root` with a fresh `QueryClient`, wait until the query succeeds, and clean up the effect root in `finally`, so it is cleaned up even when an assertion fails:
 
 **queries.svelte.test.ts**
 
@@ -81,12 +81,44 @@ it('should fetch the greeting', async () => {
     query = createGreetingQuery(() => queryClient)
   })
 
-  await vi.waitFor(() => expect(query.isSuccess).toBe(true))
+  try {
+    await vi.waitFor(() => expect(query.isSuccess).toBe(true))
 
-  expect(query.data).toBe('Hello')
-
-  cleanup()
+    expect(query.data).toBe('Hello')
+  } finally {
+    cleanup()
+  }
 })
+```
+
+To avoid repeating `$effect.root` and its cleanup in every test, you can also wrap the whole test body with a helper that runs it inside an effect root:
+
+```ts
+function withEffectRoot(fn: () => Promise<void>) {
+  return async () => {
+    let promise!: Promise<void>
+    const cleanup = $effect.root(() => {
+      promise = fn()
+    })
+    try {
+      await promise
+    } finally {
+      cleanup()
+    }
+  }
+}
+
+it(
+  'should fetch the greeting',
+  withEffectRoot(async () => {
+    const queryClient = new QueryClient()
+    const query = createGreetingQuery(() => queryClient)
+
+    await vi.waitFor(() => expect(query.isSuccess).toBe(true))
+
+    expect(query.data).toBe('Hello')
+  }),
+)
 ```
 
 Note that we create a new `QueryClient` for every test. This helps to ensure that our test is completely isolated from any other tests.
