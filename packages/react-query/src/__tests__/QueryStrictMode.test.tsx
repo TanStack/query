@@ -494,25 +494,34 @@ describe('QueryStrictMode', () => {
       consoleMock.mockRestore()
     })
 
-    it('should log with console.error by default', async () => {
+    it('should throw a QueryStrictModeError by default', async () => {
       const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
       const key = queryKey()
+      const errors: Array<unknown> = []
 
-      renderWithClient(
+      const rendered = renderWithClient(
         queryClient,
         <QueryStrictMode>
-          <React.Suspense fallback="loading">
-            <SuspenseQuery id={key} />
-          </React.Suspense>
+          <ErrorBoundary
+            onError={(error) => errors.push(error)}
+            fallbackRender={() => <div>error</div>}
+          >
+            <React.Suspense fallback="loading">
+              <SuspenseQuery id={key} />
+            </React.Suspense>
+          </ErrorBoundary>
         </QueryStrictMode>,
       )
 
-      expect(consoleMock).toHaveBeenCalledTimes(1)
-      expect(consoleMock).toHaveBeenCalledWith(
-        expect.stringContaining(getQuery(key)!.queryHash),
-      )
+      expect(rendered.getByText('error')).toBeInTheDocument()
+      expect(errors[0]).toBeInstanceOf(QueryStrictModeError)
+      expect(errors[0]).toMatchObject({
+        type: 'missing-prefetch',
+        message: expect.stringContaining(getQuery(key)!.queryHash),
+        query: getQuery(key),
+      })
 
       await act(() => vi.advanceTimersByTimeAsync(10))
       consoleMock.mockRestore()

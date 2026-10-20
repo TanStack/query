@@ -12,18 +12,27 @@ import type {
 } from '@tanstack/query-core'
 
 /**
- * A problem reported by `QueryStrictMode`.
+ * A problem reported by `QueryStrictMode`. Its `type` is one of:
+ *
+ * - **`'missing-prefetch'`**: a query hook, like `useQuery` or `useSuspenseQuery`, starts the
+ * initial fetch of its query because it wasn't prefetched. Suspense hooks start it during render,
+ * which causes request waterfalls; `suspense` tells them apart. Only reported for hooks inside
+ * `QueryStrictMode`.
+ * - **`'unused-prefetch'`**: a query was prefetched, but nothing used it within
+ * `unusedPrefetchTimeout`. A query counts as used once a hook inside a `QueryStrictMode` reads it,
+ * or while anything observes it. A query only read outside of `QueryStrictMode`, by a component
+ * that unmounted before the timeout, is reported. Checked for the whole cache of the
+ * `QueryClient`, except for queries that were already fetched before `QueryStrictMode` mounted.
+ *
+ * Data from `setQueryData` and `hydrate` doesn't count as a prefetch.
  */
 export interface QueryStrictModeEvent {
   /**
-   * `'missing-prefetch'` when a hook starts the initial fetch of its query, and `'unused-prefetch'`
-   * when nothing used a prefetched query within `unusedPrefetchTimeout`.
+   * The type of the problem, `'missing-prefetch'` or `'unused-prefetch'`.
    */
   type: 'missing-prefetch' | 'unused-prefetch'
   /**
-   * For a `'missing-prefetch'`, whether the hook suspends on the fetch. A suspending hook can't
-   * render until the fetch finishes, which causes request waterfalls. Use it to only report suspense
-   * hooks, for example.
+   * For a `'missing-prefetch'`, whether the source was a suspending hook or not.
    */
   suspense?: boolean
   /**
@@ -37,27 +46,22 @@ export interface QueryStrictModeEvent {
 }
 
 /**
- * An error for a problem found by `QueryStrictMode`, for a `handler` to throw:
+ * `Error` class wrapper for {@link QueryStrictModeEvent}.
  *
- * - `'missing-prefetch'`: thrown by the hook, instead of starting the fetch.
- * - `'unused-prefetch'`: thrown by the outermost `QueryStrictMode`, to the error boundary above
- * it.
  * @example
  * ```tsx
  * <ErrorBoundary
  *   fallbackRender={({ error }) =>
  *     error instanceof QueryStrictModeError ? (
- *       <pre>{error.query.queryHash} was not prefetched</pre>
+ *       <pre>
+ *         {error.type}: {error.query.queryHash}
+ *       </pre>
  *     ) : (
  *       <GenericError />
  *     )
  *   }
  * >
- *   <QueryStrictMode
- *     handler={(event) => {
- *       throw new QueryStrictModeError(event)
- *     }}
- *   >
+ *   <QueryStrictMode>
  *     <Routes />
  *   </QueryStrictMode>
  * </ErrorBoundary>
@@ -73,8 +77,8 @@ export class QueryStrictModeError extends Error {
    */
   query: Query<any, any, any, any>
   /**
-   * Creates the error for a problem found by `QueryStrictMode`.
-   * @param event - The problem to throw.
+   * Creates the error for a problem found by `QueryStrictMode`. Passes down `event.message` as the `Error.message`.
+   * @param event - The problem the error is for.
    */
   constructor(event: QueryStrictModeEvent) {
     super(event.message)
@@ -85,12 +89,38 @@ export class QueryStrictModeError extends Error {
 }
 
 /**
- * Called for every problem `QueryStrictMode` finds. Return to report the problem, or throw to send
- * it to an error boundary.
+ * Called for every problem `QueryStrictMode` finds. Throw to send the problem to an error boundary,
+ * or return to let rendering continue, for example after logging `event.message`. Thrown values are
+ * rethrown unchanged, so you can throw a {@link QueryStrictModeError} or your own error.
+ *
+ * Where a throw goes depends on the type of the problem:
+ *
+ * - **`'missing-prefetch'`**: the handler of the nearest `QueryStrictMode` is called during the
+ * render of the hook that reads the query. A throw goes to the nearest error boundary above the hook, before the hook starts its
+ * fetch. The query stays idle, so the handler is called again after the error boundary is reset.
+ * If the handler returns, it isn't called again for the same query state.
+ * - **`'unused-prefetch'`**: the handler of the outermost `QueryStrictMode` is called. A throw goes
+ * to the error boundary above that `QueryStrictMode`, which unmounts the whole subtree.
+ *
+ * Use it to filter out known or intentional waterfalls, for example by `queryKey`, `meta`, or
+ * `suspense`.
  * @param event - The problem that was found.
- * @throws {unknown} Anything, for example a `QueryStrictModeError`, to send the problem to an error
- * boundary: the one above the hook for a `'missing-prefetch'`, or the one above the outermost
- * `QueryStrictMode` for an `'unused-prefetch'`. The value is rethrown unchanged.
+ * @throws {unknown} Anything, to send the problem to an error boundary.
+ * @example
+ * ```tsx
+ * <QueryStrictMode
+ *   handler={(event) => {
+ *     if (event.query.meta?.allowWaterfall) return
+ *     if (event.type === 'unused-prefetch') {
+ *       console.warn(event.message)
+ *       return
+ *     }
+ *     throw new QueryStrictModeError(event)
+ *   }}
+ * >
+ *   <Routes />
+ * </QueryStrictMode>
+ * ```
  */
 export type QueryStrictModeHandler = (event: QueryStrictModeEvent) => void
 
@@ -103,20 +133,9 @@ export interface QueryStrictModeProps {
    */
   children?: React.ReactNode
   /**
-   * Called for every problem that is found. Return to report it, or throw to send it to an error
-   * boundary:
-   *
-   * - `'missing-prefetch'`: called during the render of the hook that reads the query. A throw goes
-   * to the nearest error boundary above the hook, before the hook starts its fetch, so the query
-   * stays idle and the handler is called again after the error boundary is reset. If the handler
-   * returns, it isn't called again for the same query state.
-   * - `'unused-prefetch'`: called by the outermost `QueryStrictMode`. A throw goes to the error
-   * boundary above that `QueryStrictMode`, which unmounts the whole subtree. The handler of a
-   * nested `QueryStrictMode` never receives it.
-   *
-   * Use it to filter out known or intentional waterfalls, for example by `queryKey`, `meta`, or
-   * `suspense`.
-   * @defaultValue Logs `event.message` with `console.error`.
+   * Called for every problem that is found. See {@link QueryStrictModeHandler} for where a throw
+   * goes. A nested `QueryStrictMode` only receives `'missing-prefetch'` problems.
+   * @defaultValue A handler that throws a `QueryStrictModeError`.
    */
   handler?: QueryStrictModeHandler
   /**
@@ -156,7 +175,7 @@ export const useQueryStrictMode = () =>
   React.useContext(QueryStrictModeContext!)
 
 const defaultHandler: QueryStrictModeHandler = (event) => {
-  console.error(event.message)
+  throw new QueryStrictModeError(event)
 }
 
 /**
@@ -232,24 +251,13 @@ const getPrefetchTracker = (cache: QueryCache) => {
 }
 
 /**
- * Warns about prefetching problems during development:
+ * Reports prefetching problems in development: hooks that start the initial fetch of a query that
+ * wasn't prefetched, and prefetched queries that nothing uses. See {@link QueryStrictModeEvent} for
+ * what each problem means.
  *
- * - `'missing-prefetch'`: a query hook, like `useQuery` or `useSuspenseQuery`, starts the initial
- * fetch of its query because it wasn't prefetched. Suspense hooks start it during render, which
- * causes request waterfalls; `event.suspense` tells them apart. Only reported for hooks inside
- * `QueryStrictMode`.
- * - `'unused-prefetch'`: a query was prefetched, but nothing used it within
- * `unusedPrefetchTimeout`. A query counts as used once a hook inside a `QueryStrictMode` reads it,
- * or while anything observes it. A query only read outside of `QueryStrictMode`, by a component
- * that unmounted before the timeout, is reported. Checked for the whole cache of the
- * `QueryClient`, except for queries that were already fetched before `QueryStrictMode` mounted.
- *
- * Data from `setQueryData` and `hydrate` doesn't count as a prefetch. A nested `QueryStrictMode`
- * reports missing prefetches in its subtree to its own `handler`, and leaves unused prefetches to
- * the outermost one. In production, it only renders `children`.
- *
- * Throw from `handler`, for example a `QueryStrictModeError`, to send a problem to an error
- * boundary instead of logging it.
+ * Each problem is passed to the `handler`, which throws a {@link QueryStrictModeError} to an error
+ * boundary by default. See {@link QueryStrictModeHandler} to filter problems or log them instead.
+ * In production, it only renders `children`.
  * @param props - The `children` to check, and optionally a `handler`, an `unusedPrefetchTimeout`,
  * and a `queryClient`.
  * @returns The `children`.
