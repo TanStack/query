@@ -52,7 +52,7 @@ export function mutationOptions<
  * to `createMutation`.
  *
  * @example
- *   ```svelte
+ *   ;```svelte
  *   <script lang="ts">
  *   import { mutationOptions, createMutation } from '@tanstack/svelte-query'
  *

@@ -64,7 +64,7 @@ export type VueQueryPluginOptions = ConfigOptions | ClientOptions
  * wrapping component.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   import { createApp } from 'vue'
  *   import { VueQueryPlugin } from '@tanstack/vue-query'
  *

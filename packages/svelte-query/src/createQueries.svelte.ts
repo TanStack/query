@@ -190,7 +190,7 @@ export type QueriesResults<
  * queries.
  *
  * @example
- *   ```svelte
+ *   ;```svelte
  *   <script lang="ts">
  *   import { createQueries } from '@tanstack/svelte-query'
  *

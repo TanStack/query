@@ -30,20 +30,20 @@ import type { TemplateResult } from 'lit'
  *   const queryClient = new QueryClient()
  *
  *   class AppQueryProvider extends QueryClientProvider {
- *     constructor() {
- *       super()
- *       this.client = queryClient
- *     }
+ *   constructor() {
+ *   super()
+ *   this.client = queryClient
+ *   }
  *   }
  *
  *   customElements.define('app-query-provider', AppQueryProvider)
  *
  *   class AppRoot extends LitElement {
- *     render() {
- *       return html`<app-query-provider
- *       ><todos-view></todos-view
- *     ></app-query-provider>`
- *     }
+ *   render() {
+ *   return html`<app-query-provider
+ *   ><todos-view></todos-view
+ *   ></app-query-provider>`
+ *   }
  *   }
  *   ```
  *
@@ -58,9 +58,9 @@ import type { TemplateResult } from 'lit'
  *
  *   const view = html`
  *   <query-client-provider .client=${queryClient}>
- *     <todos-view></todos-view>
+ *   <todos-view></todos-view>
  *   </query-client-provider>
- * `
+ *   `
  *   ```
  */
 export class QueryClientProvider extends LitElement {

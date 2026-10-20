@@ -8,7 +8,7 @@ import type { Box } from './containers.svelte.js'
  * conditions between the restore and mounting queries.
  *
  * @example
- *   ```svelte
+ *   ;```svelte
  *   <script lang="ts">
  *   import { useIsRestoring } from '@tanstack/svelte-query'
  *

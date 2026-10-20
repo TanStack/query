@@ -78,7 +78,7 @@ export interface MutationFilters<
  * the previous data. See {@link functionalUpdate}.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   queryClient.setQueryData(['posts'], newPosts)
  *
  *   // Or, using an updater function that receives the current data:
@@ -184,7 +184,7 @@ export function resolveQueryValue<
  * that is specified must match; filters that are left unspecified are ignored.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const queryCache = queryClient.getQueryCache()
  *
  *   const matchingQueries = queryCache
@@ -251,7 +251,7 @@ export function matchQuery(
  * `mutationKey` of its own, it does not match.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const mutationCache = queryClient.getMutationCache()
  *
  *   const matchingMutations = mutationCache
@@ -316,7 +316,7 @@ export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
  * hash.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   // Object keys are sorted, so key order doesn't affect the hash:
  *   hashKey(['todos', { page: 1, filter: 'done' }]) // === '["todos",{"filter":"done","page":1}]'
  *   ```
@@ -525,8 +525,8 @@ export function isPlainObject(o: any): o is Record<PropertyKey, unknown> {
  * Checks whether a value's `Object.prototype.toString` tag is `[object
  * Object]`.
  *
- * @param o - The value to check.
- * @returns `true` if the tag is `[object Object]`.
+ * @param o - The value to check. @returns `true` if the tag is `[object
+ * Object]`.
  */
 function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
@@ -590,7 +590,7 @@ export function replaceData<
  * previously fetched data until the new data arrives.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   new QueryObserver(queryClient, {
  *     queryKey: ['posts', page],
  *     queryFn: () => fetchPosts(page),
@@ -647,7 +647,7 @@ export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
  * `skipToken` cannot be triggered with `refetch`.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   new QueryObserver(queryClient, {
  *     queryKey: ['post', postId],
  *     queryFn: postId != null ? () => fetchPost(postId) : skipToken,
@@ -711,7 +711,7 @@ export function ensureQueryFn<
  * `false`).
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const throwOnError =
  *     query.state.error && typeof options.throwOnError === 'function'
  *       ? shouldThrowError(options.throwOnError, [query.state.error, query])

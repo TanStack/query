@@ -37,30 +37,30 @@ import type {
  *   import { useInfiniteQuery } from '@tanstack/solid-query'
  *
  *   function Projects() {
- *     // `projectsQuery.data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
- *     // list stays visible alongside the error.
- *     const projectsQuery = useInfiniteQuery(() => ({
- *       queryKey: ['projects'],
- *       queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *       initialPageParam: 0,
- *       getNextPageParam: (lastPage) => lastPage.nextId,
- *       initialData: { pages: [], pageParams: [] },
- *     }))
+ *   // `projectsQuery.data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
+ *   // list stays visible alongside the error.
+ *   const projectsQuery = useInfiniteQuery(() => ({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ *   initialData: { pages: [], pageParams: [] },
+ *   }))
  *
- *     return (
- *       <div>
- *         {projectsQuery.isError ? (
- *           <span>Error: {projectsQuery.error.message}</span>
- *         ) : null}
- *         <ul>
- *           <For each={projectsQuery.data.pages}>
- *             {(page) => (
- *               <For each={page.projects}>{(p) => <li>{p.name}</li>}</For>
- *             )}
- *           </For>
- *         </ul>
- *       </div>
- *     )
+ *   return (
+ *   <div>
+ *   {projectsQuery.isError ? (
+ *   <span>Error: {projectsQuery.error.message}</span>
+ *   ) : null}
+ *   <ul>
+ *   <For each={projectsQuery.data.pages}>
+ *   {(page) => (
+ *   <For each={page.projects}>{(p) => <li>{p.name}</li>}</For>
+ *   )}
+ *   </For>
+ *   </ul>
+ *   </div>
+ *   )
  *   }
  *   ```
  *

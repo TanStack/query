@@ -126,7 +126,7 @@ export interface QueryStore {
  * directly) do not notify subscribers.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const unsubscribe = queryCache.subscribe((event) => {
  *     console.log(event.type, event.query)
  *   })
@@ -148,7 +148,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * bypassing the reactive `QueryObserver` machinery.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const queryCache = queryClient.getQueryCache()
    *
    *   const query = queryCache.build(queryClient, {
@@ -225,7 +225,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * `QueryCache` instances.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const queryCache = queryClient.getQueryCache()
    *   const query = queryCache.find({ queryKey: ['posts'] })
    *
@@ -250,7 +250,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * Removes all queries from the cache.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const queryCache = queryClient.getQueryCache()
    *
    *   queryCache.clear()
@@ -271,7 +271,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * (e.g. broadcast/hydration) that already have a hash to look up directly.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const queryCache = queryClient.getQueryCache()
    *   const queryHash = hashKey(['posts'])
    *
@@ -298,7 +298,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * Returns all queries within the cache.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const queryCache = queryClient.getQueryCache()
    *
    *   const queries = queryCache.getAll()
@@ -322,7 +322,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * be used as an initial value).
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const queryCache = queryClient.getQueryCache()
    *
    *   const query = queryCache.find({ queryKey: ['posts'] })
@@ -352,7 +352,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * when needing more information about queries in rare scenarios.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const queryCache = queryClient.getQueryCache()
    *
    *   const queries = queryCache.findAll({ queryKey: ['posts'] })

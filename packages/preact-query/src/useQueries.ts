@@ -248,7 +248,7 @@ export type QueriesResults<
  * stable as possible.
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { useQueries } from '@tanstack/preact-query'
  *
  *   function Posts({ ids }: { ids: Array<number> }) {

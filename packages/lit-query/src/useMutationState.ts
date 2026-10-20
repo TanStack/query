@@ -165,14 +165,14 @@ class MutationStateController<TResult> extends BaseController<Array<TResult>> {
  *   import { useMutationState } from '@tanstack/lit-query'
  *
  *   class PendingUploads extends LitElement {
- *     private readonly uploads = useMutationState(this, {
- *       filters: { mutationKey: ['upload'], status: 'pending' },
- *       select: (mutation) => mutation.state.variables as File,
- *     })
+ *   private readonly uploads = useMutationState(this, {
+ *   filters: { mutationKey: ['upload'], status: 'pending' },
+ *   select: (mutation) => mutation.state.variables as File,
+ *   })
  *
- *     render() {
- *       return html`<span>${this.uploads().length} uploads pending</span>`
- *     }
+ *   render() {
+ *   return html`<span>${this.uploads().length} uploads pending</span>`
+ *   }
  *   }
  *   ```
  *

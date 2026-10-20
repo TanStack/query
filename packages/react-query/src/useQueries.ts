@@ -268,7 +268,7 @@ export type QueriesResults<
  *   from previously rendered queries, because the number of queries can differ
  *   between renders.
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { useQueries } from '@tanstack/react-query'
  *
  *   function Posts({ ids }: { ids: Array<number> }) {

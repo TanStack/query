@@ -120,7 +120,7 @@ export function createNotifyManager() {
      * re-render instead of one per subscriber.
      *
      * @example
-     *   ```ts
+     *   ;```ts
      *   import { notifyManager } from '@tanstack/query-core'
      *   import { batch } from 'solid-js'
      *
@@ -138,7 +138,7 @@ export function createNotifyManager() {
      * default behavior is `setTimeout(callback, 0)`.
      *
      * @example
-     *   ```ts
+     *   ;```ts
      *   import { notifyManager } from '@tanstack/query-core'
      *
      *   // Schedule batches in the next microtask

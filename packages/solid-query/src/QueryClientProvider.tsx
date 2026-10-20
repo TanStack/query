@@ -87,7 +87,7 @@ export type QueryClientProviderProps = {
  * and refetching as needed when the app regains focus or comes back online).
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
  *
  *   const queryClient = new QueryClient()

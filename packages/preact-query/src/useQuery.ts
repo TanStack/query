@@ -22,24 +22,24 @@ import type {
  *   import { useQuery } from '@tanstack/preact-query'
  *
  *   function Posts() {
- *     // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
- *     // so the list stays visible alongside the error.
- *     const { data, isError, error } = useQuery({
- *       queryKey: ['posts'],
- *       queryFn: fetchPosts,
- *       initialData: [],
- *     })
+ *   // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
+ *   // so the list stays visible alongside the error.
+ *   const { data, isError, error } = useQuery({
+ *   queryKey: ['posts'],
+ *   queryFn: fetchPosts,
+ *   initialData: [],
+ *   })
  *
- *     return (
- *       <div>
- *         {isError ? <span>Error: {error.message}</span> : null}
- *         <ul>
- *           {data.map((post) => (
- *             <li key={post.id}>{post.title}</li>
- *           ))}
- *         </ul>
- *       </div>
- *     )
+ *   return (
+ *   <div>
+ *   {isError ? <span>Error: {error.message}</span> : null}
+ *   <ul>
+ *   {data.map((post) => (
+ *   <li key={post.id}>{post.title}</li>
+ *   ))}
+ *   </ul>
+ *   </div>
+ *   )
  *   }
  *   ```
  *
@@ -69,7 +69,7 @@ export function useQuery<
  * `undefined`, so the resulting `data` can be `undefined`.
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { useQuery } from '@tanstack/preact-query'
  *
  *   function Posts() {
@@ -143,7 +143,7 @@ export function useQuery<
  * infer whether `data` can be `undefined` from `initialData` directly.
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { useQuery } from '@tanstack/preact-query'
  *
  *   function Posts() {

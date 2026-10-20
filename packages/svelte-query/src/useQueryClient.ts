@@ -5,7 +5,7 @@ import type { QueryClient } from '@tanstack/query-core'
  * The `useQueryClient` function returns the current `QueryClient` instance.
  *
  * @example
- *   ```svelte
+ *   ;```svelte
  *   <script lang="ts">
  *   import { useQueryClient } from '@tanstack/svelte-query'
  *

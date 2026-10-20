@@ -10,7 +10,7 @@ import type { Accessor } from 'solid-js'
  * indicators).
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { useIsMutating } from '@tanstack/solid-query'
  *
  *   function PostsMutatingIndicator() {

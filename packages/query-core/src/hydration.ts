@@ -265,7 +265,7 @@ export function defaultShouldDehydrateQuery(query: Query) {
  * `defaultShouldDehydrateMutation`.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const queryClient = new QueryClient()
  *
  *   await queryClient.prefetchQuery({

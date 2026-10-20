@@ -38,7 +38,7 @@ export type UseIsMutatingFilters =
  * reactive state.
  *
  * @example
- *   ```vue
+ *   ;```vue
  *   <script setup lang="ts">
  *   import { useIsMutating } from '@tanstack/vue-query'
  *

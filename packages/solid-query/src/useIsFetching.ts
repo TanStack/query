@@ -10,7 +10,7 @@ import type { Accessor } from 'solid-js'
  * loading indicators).
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { useIsFetching } from '@tanstack/solid-query'
  *
  *   function GlobalLoadingIndicator() {

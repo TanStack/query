@@ -81,8 +81,8 @@ type CreateStatusBasedQueryResult<
  * the branch, the same way `status` narrowing works on the plain object
  * `react-query` returns.
  *
- * @template TData - The type `data` ends up as after `select` runs.
- * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs. @template
+ * TError - The type of errors your `queryFn` may throw.
  */
 export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
   /**

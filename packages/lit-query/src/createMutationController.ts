@@ -301,26 +301,26 @@ class MutationController<
  *   import { createMutationController } from '@tanstack/lit-query'
  *
  *   class AddTodoForm extends LitElement {
- *     private readonly addTodo = createMutationController(this, {
- *       mutationFn: (title: string) =>
- *         fetch('/api/todos', {
- *           method: 'POST',
- *           body: JSON.stringify({ title }),
- *         }),
- *     })
+ *   private readonly addTodo = createMutationController(this, {
+ *   mutationFn: (title: string) =>
+ *   fetch('/api/todos', {
+ *   method: 'POST',
+ *   body: JSON.stringify({ title }),
+ *   }),
+ *   })
  *
- *     render() {
- *       const mutation = this.addTodo()
+ *   render() {
+ *   const mutation = this.addTodo()
  *
- *       return html`
- *       <button
- *         ?disabled=${mutation.isPending}
- *         @click=${() => this.addTodo.mutate('Ship docs')}
- *       >
- *         Add todo
- *       </button>
- *     `
- *     }
+ *   return html`
+ *   <button
+ *   ?disabled=${mutation.isPending}
+ *   @click=${() => this.addTodo.mutate('Ship docs')}
+ *   >
+ *   Add todo
+ *   </button>
+ *   `
+ *   }
  *   }
  *   ```
  *

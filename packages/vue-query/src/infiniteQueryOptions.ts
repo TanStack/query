@@ -86,7 +86,7 @@ export type DefinedInitialDataInfiniteOptions<
  * required and is the query key to generate options for.
  *
  * @example
- *   ```vue
+ *   ;```vue
  *   <script setup lang="ts">
  *   import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query'
  *

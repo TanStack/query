@@ -65,7 +65,7 @@ interface MutationDefaults {
  * mutations created through it.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const queryClient = new QueryClient({
  *     defaultOptions: {
  *       queries: {
@@ -143,7 +143,7 @@ export class QueryClient {
    * loading new pages, and loading more infinite query results.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   if (queryClient.isFetching()) {
    *     console.log('At least one query is fetching!')
    *   }
@@ -166,7 +166,7 @@ export class QueryClient {
    * optionally matching a set of filters.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   if (queryClient.isMutating()) {
    *     console.log('At least one mutation is pending!')
    *   }
@@ -260,7 +260,7 @@ export class QueryClient {
    * contents.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const data = queryClient.getQueriesData({ queryKey: ['posts'] })
    *   ```
    *
@@ -290,7 +290,7 @@ export class QueryClient {
    * previously retrieved via {@link QueryClient#getQueryData}, in place.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   queryClient.setQueryData(['posts'], newPosts)
    *
    *   // Or, using an updater function that receives the current data:
@@ -349,7 +349,7 @@ export class QueryClient {
    * matching query.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   queryClient.setQueriesData({ queryKey: ['posts'] }, (oldPosts) =>
    *     oldPosts ? oldPosts.filter((post) => post.id !== deletedId) : oldPosts,
    *   )
@@ -390,7 +390,7 @@ export class QueryClient {
    * query does not exist, `undefined` is returned.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const state = queryClient.getQueryState(['posts'])
    *   console.log(state?.dataUpdatedAt)
    *   ```
@@ -421,7 +421,7 @@ export class QueryClient {
    * Without filters, every query in the cache is removed.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   queryClient.removeQueries({ queryKey: ['posts'], exact: true })
    *   ```
    *
@@ -446,7 +446,7 @@ export class QueryClient {
    * resolves once that refetch settles.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   await queryClient.resetQueries({ queryKey: ['posts'], exact: true })
    *   ```
    *
@@ -489,7 +489,7 @@ export class QueryClient {
    * The returned promise never rejects, even if individual cancellations fail.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   await queryClient.cancelQueries({ queryKey: ['posts'], exact: true })
    *   ```
    *
@@ -524,7 +524,7 @@ export class QueryClient {
    * `'active'`.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   await queryClient.invalidateQueries({
    *     queryKey: ['posts'],
    *     refetchType: 'active',
@@ -573,7 +573,7 @@ export class QueryClient {
    * unless `throwOnError` is set.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   // refetch all active queries partially matching a query key:
    *   await queryClient.refetchQueries({ queryKey: ['posts'], type: 'active' })
    *   ```
@@ -636,7 +636,7 @@ export class QueryClient {
    * staleTime: 'static' }` — the deprecated `ensureQueryData`.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   try {
    *     const data = await queryClient.query({
    *       queryKey,
@@ -774,7 +774,7 @@ export class QueryClient {
    * with `{ staleTime: 'static' }` — the deprecated `ensureInfiniteQueryData`.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   try {
    *     const data = await queryClient.infiniteQuery({
    *       queryKey,
@@ -916,7 +916,7 @@ export class QueryClient {
    * Does nothing (resolving immediately) if the client is currently offline.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   import { QueryClient } from '@tanstack/query-core'
    *
    *   const queryClient = new QueryClient()
@@ -936,7 +936,7 @@ export class QueryClient {
    * Returns the query cache this client is connected to.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   import { QueryClient } from '@tanstack/query-core'
    *
    *   const queryClient = new QueryClient()
@@ -954,7 +954,7 @@ export class QueryClient {
    * Returns the mutation cache this client is connected to.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   import { QueryClient } from '@tanstack/query-core'
    *
    *   const queryClient = new QueryClient()
@@ -973,7 +973,7 @@ export class QueryClient {
    * {@link QueryClient#setDefaultOptions}.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   import { QueryClient } from '@tanstack/query-core'
    *
    *   const queryClient = new QueryClient()
@@ -991,7 +991,7 @@ export class QueryClient {
    * previously defined default options.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   import { QueryClient } from '@tanstack/query-core'
    *
    *   const queryClient = new QueryClient()
@@ -1020,7 +1020,7 @@ export class QueryClient {
    * registered after more generic ones so they take precedence.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   queryClient.setQueryDefaults(['posts'], { queryFn: fetchPosts })
    *
    *   await queryClient.query({ queryKey: ['posts'] })
@@ -1057,7 +1057,7 @@ export class QueryClient {
    * they are merged together in registration order.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const defaultOptions = queryClient.getQueryDefaults(['posts'])
    *   ```
    *
@@ -1090,7 +1090,7 @@ export class QueryClient {
    * mutation key.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   queryClient.setMutationDefaults(['addPost'], { mutationFn: addPost })
    *   ```
    *
@@ -1124,7 +1124,7 @@ export class QueryClient {
    * match, they are merged together in registration order.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const defaultOptions = queryClient.getMutationDefaults(['addPost'])
    *   ```
    *
@@ -1273,7 +1273,7 @@ export class QueryClient {
    * to.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   import { QueryClient } from '@tanstack/query-core'
    *
    *   const queryClient = new QueryClient()

@@ -89,7 +89,7 @@ export type UseMutationReturnType<
  * state.
  *
  * @example
- *   ```vue
+ *   ;```vue
  *   <script setup lang="ts">
  *   import { useMutation, useQueryClient } from '@tanstack/vue-query'
  *

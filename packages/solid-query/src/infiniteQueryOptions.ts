@@ -81,37 +81,37 @@ export type DefinedInitialDataInfiniteOptions<
  *   ```tsx
  *   import { For } from 'solid-js'
  *   import {
- *     infiniteQueryOptions,
- *     useInfiniteQuery,
+ *   infiniteQueryOptions,
+ *   useInfiniteQuery,
  *   } from '@tanstack/solid-query'
  *
  *   const projectsOptions = infiniteQueryOptions({
- *     queryKey: ['projects'],
- *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *     initialPageParam: 0,
- *     getNextPageParam: (lastPage) => lastPage.nextId,
- *     initialData: { pages: [], pageParams: [] },
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ *   initialData: { pages: [], pageParams: [] },
  *   })
  *
  *   function Projects() {
- *     // `projectsQuery.data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
- *     // list stays visible alongside the error.
- *     const projectsQuery = useInfiniteQuery(() => projectsOptions)
+ *   // `projectsQuery.data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
+ *   // list stays visible alongside the error.
+ *   const projectsQuery = useInfiniteQuery(() => projectsOptions)
  *
- *     return (
- *       <div>
- *         {projectsQuery.isError ? (
- *           <span>Error: {projectsQuery.error.message}</span>
- *         ) : null}
- *         <ul>
- *           <For each={projectsQuery.data.pages}>
- *             {(page) => (
- *               <For each={page.projects}>{(p) => <li>{p.name}</li>}</For>
- *             )}
- *           </For>
- *         </ul>
- *       </div>
- *     )
+ *   return (
+ *   <div>
+ *   {projectsQuery.isError ? (
+ *   <span>Error: {projectsQuery.error.message}</span>
+ *   ) : null}
+ *   <ul>
+ *   <For each={projectsQuery.data.pages}>
+ *   {(page) => (
+ *   <For each={page.projects}>{(p) => <li>{p.name}</li>}</For>
+ *   )}
+ *   </For>
+ *   </ul>
+ *   </div>
+ *   )
  *   }
  *   ```
  *

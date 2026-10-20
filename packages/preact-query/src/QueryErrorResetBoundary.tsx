@@ -69,7 +69,7 @@ const QueryErrorResetBoundaryContext = createContext(createValue())
  * globally.
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { useErrorBoundary } from 'preact/hooks'
  *   import type { ComponentChildren } from 'preact'
  *   import { useQueryErrorResetBoundary } from '@tanstack/preact-query'
@@ -124,7 +124,7 @@ export interface QueryErrorResetBoundaryProps {
  * any query errors within the boundaries of the component.
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { useErrorBoundary } from 'preact/hooks'
  *   import type { ComponentChildren } from 'preact'
  *   import { QueryErrorResetBoundary } from '@tanstack/preact-query'

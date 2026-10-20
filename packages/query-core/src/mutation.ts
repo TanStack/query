@@ -123,7 +123,7 @@ export type Action<TData, TError, TVariables, TOnMutateResult> =
  * possible via `mutationCache.find()`/`getAll()` for inspecting cache state.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const mutationCache = queryClient.getMutationCache()
  *
  *   const mutation = mutationCache.find({ mutationKey: ['addPost'] })
@@ -248,7 +248,7 @@ export class Mutation<
    *   without running anything again.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   // typically driven by reconnect handling, e.g. queryClient.resumePausedMutations()
    *   const mutation = mutationCache.find({ mutationKey: ['addPost'] })
    *   await mutation?.continue()

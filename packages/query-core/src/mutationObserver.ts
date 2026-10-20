@@ -29,7 +29,7 @@ type MutationObserverListener<TData, TError, TVariables, TOnMutateResult> = (
  * a new underlying `Mutation` in the `MutationCache` and executes it.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const observer = new MutationObserver(queryClient, {
  *     mutationFn: (variables: { title: string }) => addPost(variables),
  *   })
@@ -90,7 +90,7 @@ export class MutationObserver<
    * `pending`, its options are updated in place as well.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   observer.setOptions({
    *     mutationFn: (variables: { title: string }) => addPost(variables),
    *     onSuccess: (data) => console.log(data),
@@ -99,7 +99,7 @@ export class MutationObserver<
    *
    * @param options - The new mutation observer options. They are defaulted with
    *   {@link
-   *   QueryClient#defaultMutationOptions} before being applied.
+   *     QueryClient#defaultMutationOptions} before being applied.
    */
   setOptions(
     options: MutationObserverOptions<
@@ -188,7 +188,7 @@ export class MutationObserver<
    * brand new mutation.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   observer.reset()
    *   ```
    *
@@ -213,7 +213,7 @@ export class MutationObserver<
    * the observer's own options.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   await observer.mutate(
    *     { title: 'New post' },
    *     { onSuccess: (data) => console.log(data) },

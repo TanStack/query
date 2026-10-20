@@ -24,7 +24,7 @@ export type UseIsFetchingFilters =
  * reactive state.
  *
  * @example
- *   ```vue
+ *   ;```vue
  *   <script setup lang="ts">
  *   import { useIsFetching } from '@tanstack/vue-query'
  *

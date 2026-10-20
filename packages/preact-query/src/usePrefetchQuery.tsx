@@ -18,7 +18,7 @@ import type { UsePrefetchQueryOptions } from './types'
  * already in flight.
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { Suspense } from 'preact/compat'
  *   import { usePrefetchQuery } from '@tanstack/preact-query'
  *

@@ -27,7 +27,7 @@ type InfiniteQueryObserverListener<TData, TError> = (
  * `useInfiniteQuery`) build their hooks on top of.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const observer = new InfiniteQueryObserver(queryClient, {
  *     queryKey: ['projects'],
  *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
@@ -152,7 +152,7 @@ export class InfiniteQueryObserver<
    * current pages/page params and whose result also determines `hasNextPage`.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const { hasNextPage } = observer.getCurrentResult()
    *
    *   if (hasNextPage) {
@@ -187,7 +187,7 @@ export class InfiniteQueryObserver<
    * `hasPreviousPage`.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const { hasPreviousPage } = observer.getCurrentResult()
    *
    *   if (hasPreviousPage) {

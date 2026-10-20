@@ -22,7 +22,7 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  * perform server side-effects. `useMutation` is the hook for that.
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { useMutation, useQueryClient } from '@tanstack/preact-query'
  *
  *   function AddTodo() {

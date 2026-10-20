@@ -18,7 +18,7 @@ export class Subscribable<TListener extends Function> {
    * subclasses clear all of theirs in `destroy()`.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const unsubscribe = subscribable.subscribe(() => {
    *     // react to the update
    *   })

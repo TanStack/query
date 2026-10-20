@@ -65,7 +65,7 @@ export type Override<TTargetA, TTargetB> = {
  * `@tanstack/query-core` works too and covers every adapter at once.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   // Use the module you installed — here, the React adapter.
  *   declare module '@tanstack/react-query' {
  *     interface Register {

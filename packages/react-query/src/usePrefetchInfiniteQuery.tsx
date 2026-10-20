@@ -30,7 +30,7 @@ import type { UsePrefetchInfiniteQueryOptions } from './types'
  * already in flight.
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { Suspense } from 'react'
  *   import {
  *     infiniteQueryOptions,

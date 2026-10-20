@@ -75,7 +75,7 @@ export function createQuery<
  * it — `enabled: false` skips the initial fetch.
  *
  * @example
- *   ```svelte
+ *   ;```svelte
  *   <script lang="ts">
  *   import { createQuery } from '@tanstack/svelte-query'
  *

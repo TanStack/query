@@ -126,26 +126,26 @@ export type DefinedInitialDataOptions<
  *   import { queryOptions, useQuery } from '@tanstack/preact-query'
  *
  *   export const postsOptions = queryOptions({
- *     queryKey: ['posts'],
- *     queryFn: fetchPosts,
- *     initialData: [],
+ *   queryKey: ['posts'],
+ *   queryFn: fetchPosts,
+ *   initialData: [],
  *   })
  *
  *   function Posts() {
- *     // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
- *     // so the list stays visible alongside the error.
- *     const { data, isError, error } = useQuery(postsOptions)
+ *   // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
+ *   // so the list stays visible alongside the error.
+ *   const { data, isError, error } = useQuery(postsOptions)
  *
- *     return (
- *       <div>
- *         {isError ? <span>Error: {error.message}</span> : null}
- *         <ul>
- *           {data.map((post) => (
- *             <li key={post.id}>{post.title}</li>
- *           ))}
- *         </ul>
- *       </div>
- *     )
+ *   return (
+ *   <div>
+ *   {isError ? <span>Error: {error.message}</span> : null}
+ *   <ul>
+ *   {data.map((post) => (
+ *   <li key={post.id}>{post.title}</li>
+ *   ))}
+ *   </ul>
+ *   </div>
+ *   )
  *   }
  *   ```
  *

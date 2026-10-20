@@ -20,7 +20,7 @@ import type {
  * it — `enabled: false` skips the initial fetch.
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { For, Match, Switch } from 'solid-js'
  *   import { useQuery } from '@tanstack/solid-query'
  *
@@ -214,24 +214,24 @@ export function useQuery<
  *   import { useQuery } from '@tanstack/solid-query'
  *
  *   function Posts() {
- *     // `postsQuery.data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
- *     // list stays visible alongside the error.
- *     const postsQuery = useQuery(() => ({
- *       queryKey: ['posts'],
- *       queryFn: fetchPosts,
- *       initialData: [],
- *     }))
+ *   // `postsQuery.data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
+ *   // list stays visible alongside the error.
+ *   const postsQuery = useQuery(() => ({
+ *   queryKey: ['posts'],
+ *   queryFn: fetchPosts,
+ *   initialData: [],
+ *   }))
  *
- *     return (
- *       <div>
- *         {postsQuery.isError ? (
- *           <span>Error: {postsQuery.error.message}</span>
- *         ) : null}
- *         <ul>
- *           <For each={postsQuery.data}>{(post) => <li>{post.title}</li>}</For>
- *         </ul>
- *       </div>
- *     )
+ *   return (
+ *   <div>
+ *   {postsQuery.isError ? (
+ *   <span>Error: {postsQuery.error.message}</span>
+ *   ) : null}
+ *   <ul>
+ *   <For each={postsQuery.data}>{(post) => <li>{post.title}</li>}</For>
+ *   </ul>
+ *   </div>
+ *   )
  *   }
  *   ```
  *

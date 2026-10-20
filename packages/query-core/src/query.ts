@@ -267,7 +267,7 @@ export type Action<TData, TError> =
  * possible via `queryCache.find()`/`findAll()` for inspecting cache state.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const queryCache = queryClient.getQueryCache()
  *   const query = queryCache.find({ queryKey: ['posts'] })
  *
@@ -425,7 +425,7 @@ export class Query<
    * - If no fetch is in progress, resolves immediately.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   await query.cancel()
    *   ```
    *
@@ -542,7 +542,7 @@ export class Query<
    *   or has been invalidated.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   if (query.isStale()) {
    *     // refetch or otherwise treat the cached data as outdated
    *   }
@@ -573,7 +573,7 @@ export class Query<
    * - Otherwise, staleness is based on elapsed time since `dataUpdatedAt`.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const isStale = query.isStaleByTime(1000 * 60)
    *   ```
    *
@@ -688,7 +688,7 @@ export class Query<
    * Returns the number of observers currently subscribed to this query.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   if (query.getObserversCount() === 0) {
    *     // no component is currently watching this query
    *   }
@@ -706,7 +706,7 @@ export class Query<
    * itself trigger a refetch.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   query.invalidate()
    *   ```
    */

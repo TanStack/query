@@ -72,7 +72,7 @@ export type UndefinedInitialDataOptions<
  * error types across TanStack Query APIs.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   import { queryOptions } from '@tanstack/lit-query'
  *
  *   const todosOptions = queryOptions({

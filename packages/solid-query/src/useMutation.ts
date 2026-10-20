@@ -16,7 +16,7 @@ import type { Accessor } from 'solid-js'
  * perform server side-effects. `useMutation` is the primitive for that.
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { useMutation, useQueryClient } from '@tanstack/solid-query'
  *
  *   function TodoItem(props: { id: number }) {

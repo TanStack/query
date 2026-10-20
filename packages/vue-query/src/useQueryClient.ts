@@ -9,7 +9,7 @@ import type { QueryClient } from './queryClient'
  * an injection context.
  *
  * @example
- *   ```vue
+ *   ;```vue
  *   <script setup lang="ts">
  *   import { useQueryClient } from '@tanstack/vue-query'
  *

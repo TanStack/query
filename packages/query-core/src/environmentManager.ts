@@ -24,7 +24,7 @@ export const isServer = (): boolean => isServerFn()
  * though the environment should behave like a client.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   import { environmentManager } from '@tanstack/query-core'
  *
  *   environmentManager.setIsServer(() => false)

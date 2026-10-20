@@ -8,7 +8,7 @@ import type { QueryClient, QueryFilters } from '@tanstack/query-core'
  * loading indicators).
  *
  * @example
- *   ```svelte
+ *   ;```svelte
  *   <script lang="ts">
  *   import { useIsFetching } from '@tanstack/svelte-query'
  *

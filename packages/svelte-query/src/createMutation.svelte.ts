@@ -15,7 +15,7 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  * perform server side-effects. `createMutation` is the function for that.
  *
  * @example
- *   ```svelte
+ *   ;```svelte
  *   <script lang="ts">
  *   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
  *

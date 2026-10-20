@@ -58,7 +58,7 @@ export class FocusManager extends Subscribable<Listener> {
    * notify subscribers.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   import { focusManager } from '@tanstack/query-core'
    *
    *   focusManager.setEventListener((handleFocus) => {
@@ -96,7 +96,7 @@ export class FocusManager extends Subscribable<Listener> {
    * to fall back to the default focus check.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   import { focusManager } from '@tanstack/query-core'
    *
    *   // Set focused

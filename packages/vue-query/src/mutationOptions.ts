@@ -12,30 +12,31 @@ import type { MutationOptions } from './types'
  * entry, rather than its current value. `ref` entries are still unwrapped
  * normally.
  *
- * @example
- *   Looking the mutation up elsewhere via its `mutationKey`, e.g. for a global "saving…" indicator:
- *   ```vue
- *   <script setup lang="ts">
- *   import { mutationOptions, useMutationState } from '@tanstack/vue-query'
- *   import { computed } from 'vue'
+ * @example Looking the mutation up elsewhere via its `mutationKey`, e.g. for a
+ * global "saving…" indicator:
  *
- *   const createPostOptions = mutationOptions({
- *   mutationKey: ['posts', 'create'],
- *   mutationFn: createPost,
- *   })
+ * ```vue
+ * <script setup lang="ts">
+ * import { mutationOptions, useMutationState } from '@tanstack/vue-query'
+ * import { computed } from 'vue'
  *
- *   // Call `useMutationState` once — it manages its own subscription — then derive from its result.
- *   const creatingPosts = useMutationState({
- *   filters: { mutationKey: createPostOptions.mutationKey, status: 'pending' },
- *   })
- *   const isCreatingPost = computed(() => creatingPosts.value.length > 0)
- *   </script>
- *   ```
+ * const createPostOptions = mutationOptions({
+ * mutationKey: ['posts', 'create'],
+ * mutationFn: createPost,
+ * })
+ *
+ * // Call `useMutationState` once — it manages its own subscription — then derive from its result.
+ * const creatingPosts = useMutationState({
+ * filters: { mutationKey: createPostOptions.mutationKey, status: 'pending' },
+ * })
+ * const isCreatingPost = computed(() => creatingPosts.value.length > 0)
+ * </script>
+ * ```
  *
  * @param options - The mutation options to use, identical to what you'd pass to
- *   `useMutation`, with a required `mutationKey`.
- * @returns The same options object, unchanged.
- * @see {@link useMutation} to run the mutation these options describe.
+ * `useMutation`, with a required `mutationKey`. @returns The same options
+ * object, unchanged. @see {@link useMutation} to run the mutation these options
+ * describe.
  */
 export function mutationOptions<
   TData = unknown,
@@ -111,7 +112,7 @@ export function mutationOptions<
  *   See the other overload's example for looking a mutation up via
  *   `useMutationState`.
  * @example
- *   ```vue
+ *   ;```vue
  *   <script setup lang="ts">
  *   import { mutationOptions, useMutation } from '@tanstack/vue-query'
  *

@@ -123,13 +123,13 @@ class IsFetchingController extends BaseController<number> {
  *   import { useIsFetching } from '@tanstack/lit-query'
  *
  *   class TodosStatus extends LitElement {
- *     private readonly todosFetching = useIsFetching(this, {
- *       queryKey: ['todos'],
- *     })
+ *   private readonly todosFetching = useIsFetching(this, {
+ *   queryKey: ['todos'],
+ *   })
  *
- *     render() {
- *       return html`<span>${this.todosFetching()} active todo fetches</span>`
- *     }
+ *   render() {
+ *   return html`<span>${this.todosFetching()} active todo fetches</span>`
+ *   }
  *   }
  *   ```
  *

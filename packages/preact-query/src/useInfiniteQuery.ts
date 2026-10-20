@@ -35,26 +35,26 @@ import type {
  *   import { useInfiniteQuery } from '@tanstack/preact-query'
  *
  *   function Projects() {
- *     // `data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
- *     // list stays visible alongside the error.
- *     const { data, isError, error } = useInfiniteQuery({
- *       queryKey: ['projects'],
- *       queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *       initialPageParam: 0,
- *       getNextPageParam: (lastPage) => lastPage.nextId,
- *       initialData: { pages: [], pageParams: [] },
- *     })
+ *   // `data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
+ *   // list stays visible alongside the error.
+ *   const { data, isError, error } = useInfiniteQuery({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ *   initialData: { pages: [], pageParams: [] },
+ *   })
  *
- *     return (
- *       <div>
- *         {isError ? <span>Error: {error.message}</span> : null}
- *         <ul>
- *           {data.pages.map((page) =>
- *             page.projects.map((p) => <li key={p.id}>{p.name}</li>),
- *           )}
- *         </ul>
- *       </div>
- *     )
+ *   return (
+ *   <div>
+ *   {isError ? <span>Error: {error.message}</span> : null}
+ *   <ul>
+ *   {data.pages.map((page) =>
+ *   page.projects.map((p) => <li key={p.id}>{p.name}</li>),
+ *   )}
+ *   </ul>
+ *   </div>
+ *   )
  *   }
  *   ```
  *

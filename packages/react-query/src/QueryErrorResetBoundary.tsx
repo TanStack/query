@@ -81,7 +81,7 @@ const QueryErrorResetBoundaryContext = React.createContext(createValue())
  * globally.
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { ErrorBoundary } from 'react-error-boundary'
  *   import { useQueryErrorResetBoundary } from '@tanstack/react-query'
  *
@@ -137,7 +137,7 @@ export interface QueryErrorResetBoundaryProps {
  * any query errors within the boundaries of the component.
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { ErrorBoundary } from 'react-error-boundary'
  *   import { QueryErrorResetBoundary } from '@tanstack/react-query'
  *

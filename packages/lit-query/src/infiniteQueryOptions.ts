@@ -11,7 +11,7 @@ import type {
  * data and error types across TanStack Query APIs.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   import { infiniteQueryOptions } from '@tanstack/lit-query'
  *
  *   const projectsOptions = infiniteQueryOptions({

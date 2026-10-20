@@ -43,7 +43,7 @@ interface ObserverFetchOptions extends FetchOptions {
  * outside of any framework.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const observer = new QueryObserver(queryClient, {
  *     queryKey: ['posts'],
  *     queryFn: fetchPosts,
@@ -181,7 +181,7 @@ export class QueryObserver<
    * refetch-interval timers as needed.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   observer.setOptions({
    *     queryKey: ['posts', 1],
    *     queryFn: () => fetchPost(1),
@@ -195,7 +195,7 @@ export class QueryObserver<
    *
    * @param options - The new observer options. They are defaulted with
    *   {@link
-   *   QueryClient#defaultQueryOptions} before being applied.
+   *     QueryClient#defaultQueryOptions} before being applied.
    * @throws {Error} If `enabled` is neither a boolean nor a function.
    */
   setOptions(
@@ -337,7 +337,7 @@ export class QueryObserver<
    * method).
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const result = observer.getCurrentResult()
    *   console.log(result.status, result.data)
    *   ```
@@ -400,7 +400,7 @@ export class QueryObserver<
    * resulting `QueryObserverResult`.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const result = await observer.refetch({ cancelRefetch: false })
    *   console.log(result.data)
    *   ```
@@ -426,7 +426,7 @@ export class QueryObserver<
    * to) will need, ahead of time.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const result = await observer.fetchOptimistic({
    *     queryKey: ['posts', 2],
    *     queryFn: () => fetchPost(2),

@@ -8,7 +8,7 @@ import type { MutationFilters, QueryClient } from '@tanstack/query-core'
  * indicators).
  *
  * @example
- *   ```svelte
+ *   ;```svelte
  *   <script lang="ts">
  *   import { useIsMutating } from '@tanstack/svelte-query'
  *

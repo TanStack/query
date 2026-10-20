@@ -121,7 +121,7 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
  * added, removed, or updated.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const unsubscribe = mutationCache.subscribe((event) => {
  *     console.log(event.type, event.mutation)
  *   })
@@ -146,7 +146,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    *   options.
    * @param options - The mutation options. They are defaulted with
    *   {@link
-   *   QueryClient#defaultMutationOptions}.
+   *     QueryClient#defaultMutationOptions}.
    * @param state - The initial state of the mutation, e.g. when restoring a
    *   dehydrated mutation.
    * @returns The new mutation, already added to the cache.
@@ -272,7 +272,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * Removes all mutations from the cache.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const mutationCache = queryClient.getMutationCache()
    *
    *   mutationCache.clear()
@@ -296,7 +296,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * when needing more information about a mutation in rare scenarios.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const mutationCache = queryClient.getMutationCache()
    *
    *   const mutations = mutationCache.getAll()
@@ -317,7 +317,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * when needing more information about a mutation in rare scenarios.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const mutationCache = queryClient.getMutationCache()
    *
    *   const mutation = mutationCache.find({ mutationKey: ['addPost'] })
@@ -351,7 +351,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * when needing more information about mutations in rare scenarios.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const mutationCache = queryClient.getMutationCache()
    *
    *   const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })

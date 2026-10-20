@@ -50,7 +50,7 @@ export interface QueriesObserverOptions<
  * `useQueries`) build their hooks on top of.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const observer = new QueriesObserver(queryClient, [
  *     { queryKey: ['post', 1], queryFn: fetchPost },
  *     { queryKey: ['post', 2], queryFn: fetchPost },
@@ -125,7 +125,7 @@ export class QueriesObserver<
    * created and subscribed to for newly added queries.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   observer.setQueries([
    *     { queryKey: ['post', 1], queryFn: fetchPost },
    *     { queryKey: ['post', 3], queryFn: fetchPost },
@@ -214,7 +214,7 @@ export class QueriesObserver<
    * or `setQueries`.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   const results = observer.getCurrentResult()
    *   const data = results.map((result) => result.data)
    *   ```

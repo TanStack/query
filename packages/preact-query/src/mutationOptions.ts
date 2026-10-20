@@ -56,7 +56,7 @@ export function mutationOptions<
  *   See the other overload's example for looking a mutation up via
  *   `useMutationState`.
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { mutationOptions, useMutation } from '@tanstack/preact-query'
  *
  *   export const createPostOptions = mutationOptions({

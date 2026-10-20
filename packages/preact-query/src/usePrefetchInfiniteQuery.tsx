@@ -25,7 +25,7 @@ import type { UsePrefetchInfiniteQueryOptions } from './types'
  * already in flight.
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { Suspense } from 'preact/compat'
  *   import {
  *     infiniteQueryOptions,

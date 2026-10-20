@@ -105,11 +105,11 @@ export function canFetch(networkMode: NetworkMode | undefined): boolean {
  *   query.cancel()
  *
  *   try {
- *     await query.promise
+ *   await query.promise
  *   } catch (error) {
- *     if (error instanceof CancelledError) {
- *       // the fetch was cancelled, e.g. via `query.cancel()`
- *     }
+ *   if (error instanceof CancelledError) {
+ *   // the fetch was cancelled, e.g. via `query.cancel()`
+ *   }
  *   }
  *   ```
  */

@@ -17,7 +17,7 @@ import type {
  * indicators).
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { useIsMutating } from '@tanstack/preact-query'
  *
  *   function PostsMutatingIndicator() {

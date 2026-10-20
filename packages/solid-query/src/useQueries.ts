@@ -205,7 +205,7 @@ type QueriesResults<
  * queries can differ between renders.
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { For } from 'solid-js'
  *   import { useQueries } from '@tanstack/solid-query'
  *

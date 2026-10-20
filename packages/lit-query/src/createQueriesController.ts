@@ -687,22 +687,22 @@ class QueriesController<
  *   import { createQueriesController } from '@tanstack/lit-query'
  *
  *   class DashboardView extends LitElement {
- *     private readonly dashboard = createQueriesController(this, {
- *       queries: [
- *         { queryKey: ['stats'], queryFn: fetchStats },
- *         { queryKey: ['projects'], queryFn: fetchProjects },
- *       ],
- *       combine: ([stats, projects]) => ({
- *         stats: stats.data,
- *         projects: projects.data ?? [],
- *         isPending: stats.isPending || projects.isPending,
- *       }),
- *     })
+ *   private readonly dashboard = createQueriesController(this, {
+ *   queries: [
+ *   { queryKey: ['stats'], queryFn: fetchStats },
+ *   { queryKey: ['projects'], queryFn: fetchProjects },
+ *   ],
+ *   combine: ([stats, projects]) => ({
+ *   stats: stats.data,
+ *   projects: projects.data ?? [],
+ *   isPending: stats.isPending || projects.isPending,
+ *   }),
+ *   })
  *
- *     render() {
- *       const dashboard = this.dashboard()
- *       return html`<p>Projects: ${dashboard.projects.length}</p>`
- *     }
+ *   render() {
+ *   const dashboard = this.dashboard()
+ *   return html`<p>Projects: ${dashboard.projects.length}</p>`
+ *   }
  *   }
  *   ```
  *

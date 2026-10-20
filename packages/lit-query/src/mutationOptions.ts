@@ -7,7 +7,7 @@ import type {
  * Preserves and types mutation options for reuse across Lit Query APIs.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   import { mutationOptions } from '@tanstack/lit-query'
  *
  *   const addTodoOptions = mutationOptions({

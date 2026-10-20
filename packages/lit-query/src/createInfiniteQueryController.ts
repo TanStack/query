@@ -373,25 +373,25 @@ class InfiniteQueryController<
  *   import { createInfiniteQueryController } from '@tanstack/lit-query'
  *
  *   class ProjectsView extends LitElement {
- *     private readonly projects = createInfiniteQueryController(this, {
- *       queryKey: ['projects'],
- *       queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *       initialPageParam: 0,
- *       getNextPageParam: (lastPage) => lastPage.nextCursor,
- *     })
+ *   private readonly projects = createInfiniteQueryController(this, {
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextCursor,
+ *   })
  *
- *     render() {
- *       const query = this.projects()
+ *   render() {
+ *   const query = this.projects()
  *
- *       return html`
- *       <button
- *         ?disabled=${!query.hasNextPage}
- *         @click=${() => this.projects.fetchNextPage()}
- *       >
- *         Load more
- *       </button>
- *     `
- *     }
+ *   return html`
+ *   <button
+ *   ?disabled=${!query.hasNextPage}
+ *   @click=${() => this.projects.fetchNextPage()}
+ *   >
+ *   Load more
+ *   </button>
+ *   `
+ *   }
  *   }
  *   ```
  *

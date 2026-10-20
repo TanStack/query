@@ -325,21 +325,21 @@ class QueryController<
  *   import { createQueryController } from '@tanstack/lit-query'
  *
  *   class TodosView extends LitElement {
- *     private readonly todos = createQueryController(this, {
- *       queryKey: ['todos'],
- *       queryFn: async () => fetch('/api/todos').then((r) => r.json()),
- *     })
+ *   private readonly todos = createQueryController(this, {
+ *   queryKey: ['todos'],
+ *   queryFn: async () => fetch('/api/todos').then((r) => r.json()),
+ *   })
  *
- *     render() {
- *       const query = this.todos()
+ *   render() {
+ *   const query = this.todos()
  *
- *       if (query.isPending) return html`Loading...`
- *       if (query.isError) return html`Error`
+ *   if (query.isPending) return html`Loading...`
+ *   if (query.isError) return html`Error`
  *
- *       return html`<ul>
- *       ${query.data.map((todo) => html`<li>${todo.title}</li>`)}
- *     </ul>`
- *     }
+ *   return html`<ul>
+ *   ${query.data.map((todo) => html`<li>${todo.title}</li>`)}
+ *   </ul>`
+ *   }
  *   }
  *   ```
  *

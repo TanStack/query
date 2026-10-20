@@ -254,7 +254,7 @@ type UseQueriesOptionsArg<T extends Array<any>> = readonly [
  * queries can differ between renders.
  *
  * @example
- *   ```vue
+ *   ;```vue
  *   <script setup lang="ts">
  *   import { useQueries } from '@tanstack/vue-query'
  *

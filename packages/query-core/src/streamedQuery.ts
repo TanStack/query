@@ -60,7 +60,7 @@ type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
  * 'fetching' until the stream ends.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   await queryClient.query({
  *     queryKey: ['data'],
  *     queryFn: streamedQuery({

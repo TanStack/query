@@ -105,7 +105,7 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    * others' timers.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   import { timeoutManager, QueryClient } from '@tanstack/query-core'
    *   import { CustomTimeoutProvider } from './CustomTimeoutProvider'
    *
@@ -154,7 +154,7 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    * coerced to a number via `Symbol.toPrimitive`.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   import { timeoutManager } from '@tanstack/query-core'
    *
    *   const timeoutId = timeoutManager.setTimeout(
@@ -182,7 +182,7 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    * returned by `setTimeout`.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   import { timeoutManager } from '@tanstack/query-core'
    *
    *   const timeoutId = timeoutManager.setTimeout(
@@ -207,7 +207,7 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    * object that can be coerced to a number via `Symbol.toPrimitive`.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   import { timeoutManager } from '@tanstack/query-core'
    *
    *   const intervalId = timeoutManager.setInterval(
@@ -233,7 +233,7 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    * by `setInterval`.
    *
    * @example
-   *   ```ts
+   *   ;```ts
    *   import { timeoutManager } from '@tanstack/query-core'
    *
    *   const intervalId = timeoutManager.setInterval(

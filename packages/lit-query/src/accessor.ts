@@ -5,7 +5,7 @@
  * depend on reactive host state.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const staticKey: Accessor<readonly unknown[]> = ['todos']
  *   const reactiveKey: Accessor<readonly unknown[]> = () => [
  *     'todos',
@@ -34,7 +34,7 @@ export function readAccessor<T>(value: Accessor<T>): T {
  * can use either `result()` or `result.current`.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   const query = this.todos()
  *   const sameQuery = this.todos.current
  *   ```

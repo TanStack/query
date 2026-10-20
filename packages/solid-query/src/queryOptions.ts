@@ -67,26 +67,26 @@ export type DefinedInitialDataOptions<
  *   import { queryOptions, useQuery } from '@tanstack/solid-query'
  *
  *   const postsOptions = queryOptions({
- *     queryKey: ['posts'],
- *     queryFn: fetchPosts,
- *     initialData: [],
+ *   queryKey: ['posts'],
+ *   queryFn: fetchPosts,
+ *   initialData: [],
  *   })
  *
  *   function Posts() {
- *     // `postsQuery.data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
- *     // so the list stays visible alongside the error.
- *     const postsQuery = useQuery(() => postsOptions)
+ *   // `postsQuery.data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
+ *   // so the list stays visible alongside the error.
+ *   const postsQuery = useQuery(() => postsOptions)
  *
- *     return (
- *       <div>
- *         {postsQuery.isError ? (
- *           <span>Error: {postsQuery.error.message}</span>
- *         ) : null}
- *         <ul>
- *           <For each={postsQuery.data}>{(post) => <li>{post.title}</li>}</For>
- *         </ul>
- *       </div>
- *     )
+ *   return (
+ *   <div>
+ *   {postsQuery.isError ? (
+ *   <span>Error: {postsQuery.error.message}</span>
+ *   ) : null}
+ *   <ul>
+ *   <For each={postsQuery.data}>{(post) => <li>{post.title}</li>}</For>
+ *   </ul>
+ *   </div>
+ *   )
  *   }
  *   ```
  *

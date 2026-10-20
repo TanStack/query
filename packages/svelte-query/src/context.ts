@@ -31,7 +31,7 @@ export const getQueryClientContext = (): QueryClient => {
  * need to set the client from your own component instead.
  *
  * @example
- *   ```svelte
+ *   ;```svelte
  *   <script lang="ts">
  *   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
  *

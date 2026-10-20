@@ -11,7 +11,7 @@ import type { QueryClient, QueryFilters } from '@tanstack/query-core'
  * loading indicators).
  *
  * @example
- *   ```tsx
+ *   ;```tsx
  *   import { useIsFetching } from '@tanstack/preact-query'
  *
  *   function PostsFetchingIndicator() {

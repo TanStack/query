@@ -156,33 +156,33 @@ export type DefinedInitialDataInfiniteOptions<
  * @example
  *   ```tsx
  *   import {
- *     infiniteQueryOptions,
- *     useInfiniteQuery,
+ *   infiniteQueryOptions,
+ *   useInfiniteQuery,
  *   } from '@tanstack/react-query'
  *
  *   export const projectsOptions = infiniteQueryOptions({
- *     queryKey: ['projects'],
- *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *     initialPageParam: 0,
- *     getNextPageParam: (lastPage) => lastPage.nextId,
- *     initialData: { pages: [], pageParams: [] },
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ *   initialData: { pages: [], pageParams: [] },
  *   })
  *
  *   function Projects() {
- *     // `data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
- *     // list stays visible alongside the error.
- *     const { data, isError, error } = useInfiniteQuery(projectsOptions)
+ *   // `data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
+ *   // list stays visible alongside the error.
+ *   const { data, isError, error } = useInfiniteQuery(projectsOptions)
  *
- *     return (
- *       <div>
- *         {isError ? <span>Error: {error.message}</span> : null}
- *         <ul>
- *           {data.pages.map((page) =>
- *             page.projects.map((p) => <li key={p.id}>{p.name}</li>),
- *           )}
- *         </ul>
- *       </div>
- *     )
+ *   return (
+ *   <div>
+ *   {isError ? <span>Error: {error.message}</span> : null}
+ *   <ul>
+ *   {data.pages.map((page) =>
+ *   page.projects.map((p) => <li key={p.id}>{p.name}</li>),
+ *   )}
+ *   </ul>
+ *   </div>
+ *   )
  *   }
  *   ```
  *

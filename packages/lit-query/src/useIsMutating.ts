@@ -123,13 +123,13 @@ class IsMutatingController extends BaseController<number> {
  *   import { useIsMutating } from '@tanstack/lit-query'
  *
  *   class MutationStatus extends LitElement {
- *     private readonly savesPending = useIsMutating(this, {
- *       mutationKey: ['save-project'],
- *     })
+ *   private readonly savesPending = useIsMutating(this, {
+ *   mutationKey: ['save-project'],
+ *   })
  *
- *     render() {
- *       return html`<span>${this.savesPending()} saves pending</span>`
- *     }
+ *   render() {
+ *   return html`<span>${this.savesPending()} saves pending</span>`
+ *   }
  *   }
  *   ```
  *

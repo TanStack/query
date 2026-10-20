@@ -48,7 +48,7 @@ export function provideQueryClient(
  * features such as developer tools.
  *
  * @example
- *   ```ts
+ *   ;```ts
  *   import {
  *     provideTanStackQuery,
  *     QueryClient,
