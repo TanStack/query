@@ -886,9 +886,6 @@ importers:
       '@tanstack/lit-query':
         specifier: ^0.2.30
         version: link:../../../packages/lit-query
-      '@tanstack/query-core':
-        specifier: ^5.104.5
-        version: link:../../../packages/query-core
       lit:
         specifier: ^3.3.3
         version: 3.3.3
@@ -908,9 +905,6 @@ importers:
       '@tanstack/lit-query':
         specifier: ^0.2.30
         version: link:../../../packages/lit-query
-      '@tanstack/query-core':
-        specifier: ^5.104.5
-        version: link:../../../packages/query-core
       lit:
         specifier: ^3.3.3
         version: 3.3.3
@@ -933,9 +927,6 @@ importers:
       '@tanstack/lit-query':
         specifier: ^0.2.30
         version: link:../../../packages/lit-query
-      '@tanstack/query-core':
-        specifier: ^5.104.5
-        version: link:../../../packages/query-core
       lit:
         specifier: ^3.3.3
         version: 3.3.3
