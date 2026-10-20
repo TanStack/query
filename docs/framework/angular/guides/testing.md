@@ -80,12 +80,15 @@ Retries slow failing tests because the default backoff runs three times. Set `re
 
 ## HttpClient & network stubs
 
-Angular's `HttpClientTestingModule` plays nicely with PendingTasks. Register it alongside the Query provider and flush responses through `HttpTestingController`:
+Angular's `HttpClient` testing utilities play nicely with PendingTasks. Register `provideHttpClient()` and `provideHttpClientTesting()` alongside the Query provider and flush responses through `HttpTestingController`:
 
 ```ts
 TestBed.configureTestingModule({
-  imports: [HttpClientTestingModule],
-  providers: [provideTanStackQuery(queryClient)],
+  providers: [
+    provideHttpClient(),
+    provideHttpClientTesting(),
+    provideTanStackQuery(queryClient),
+  ],
 })
 
 const httpCtrl = TestBed.inject(HttpTestingController)
@@ -112,7 +115,8 @@ Use the same pattern for infinite queries: call `fetchNextPage()`, advance timer
 const infinite = TestBed.runInInjectionContext(() =>
   injectInfiniteQuery(() => ({
     queryKey: ['pages'],
-    queryFn: ({ pageParam = 1 }) => fetchPage(pageParam),
+    queryFn: ({ pageParam }) => fetchPage(pageParam),
+    initialPageParam: 1,
     getNextPageParam: (last, all) => all.length + 1,
   })),
 )
@@ -152,6 +156,6 @@ expect(mutation.data()).toBe('TEST')
 - Fresh `QueryClient` per test (and clear it afterwards)
 - Disable or control retries to avoid timeouts
 - Advance timers + microtasks before `whenStable()` when using fake timers
-- Use `HttpClientTestingModule` or your preferred mock to assert network calls
+- Use `provideHttpClientTesting()` or your preferred mock to assert network calls
 - Await `whenStable()` after every `refetch`, `fetchNextPage`, or mutation
 - Prefer `TestBed.runInInjectionContext` for service tests and `fixture.whenStable()` for component tests
