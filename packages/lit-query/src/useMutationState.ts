@@ -10,9 +10,7 @@ import type {
 } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
 
-/**
- * Options accepted by `useMutationState`.
- */
+/** Recovers mutation generics when the selected result is a mutation state. */
 type MutationTypeFromResult<TResult> = [TResult] extends [
   MutationState<
     infer TData,
@@ -24,6 +22,7 @@ type MutationTypeFromResult<TResult> = [TResult] extends [
   ? Mutation<TData, TError, TVariables, TOnMutateResult>
   : Mutation
 
+/** Options accepted by `useMutationState`. */
 export type MutationStateOptions<
   TResult,
   TMutation extends Mutation<any, any, any, any> =
@@ -202,7 +201,7 @@ class MutationStateController<
  * ```
  */
 export function useMutationState<
-  TResult = MutationState<unknown, unknown, unknown, unknown>,
+  TResult = MutationState,
   TMutation extends Mutation<any, any, any, any> =
     MutationTypeFromResult<TResult>,
 >(
