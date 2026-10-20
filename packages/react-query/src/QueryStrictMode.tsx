@@ -47,7 +47,6 @@ export interface QueryStrictModeEvent {
 
 /**
  * `Error` class wrapper for {@link QueryStrictModeEvent}.
- *
  * @example
  * ```tsx
  * <ErrorBoundary
