@@ -109,26 +109,31 @@ httpCtrl.verify()
 
 ## Infinite queries & pagination
 
-Use the same pattern for infinite queries: call `fetchNextPage()`, advance timers if you are faking time, then await stability and assert on `data().pages`.
+`whenStable()` can resolve before the pages of an infinite query reach the `data()` signal. With fake timers, advance the clock past the query function's delay instead, call `fetchNextPage()`, and advance it again before asserting on `data().pages`:
 
 ```ts
+vi.useFakeTimers()
+
 const infinite = TestBed.runInInjectionContext(() =>
   injectInfiniteQuery(() => ({
     queryKey: ['pages'],
-    queryFn: ({ pageParam }) => fetchPage(pageParam),
+    queryFn: ({ pageParam }) =>
+      new Promise<string>((resolve) =>
+        setTimeout(() => resolve(`page ${pageParam}`), 10),
+      ),
     initialPageParam: 1,
-    getNextPageParam: (last, all) => all.length + 1,
+    getNextPageParam: (_lastPage, allPages) => allPages.length + 1,
   })),
 )
 
-await appRef.whenStable()
-expect(infinite.data().pages).toHaveLength(1)
+await vi.advanceTimersByTimeAsync(11)
+expect(infinite.data()?.pages).toEqual(['page 1'])
 
-await infinite.fetchNextPage()
-await vi.advanceTimersByTimeAsync(0)
-await appRef.whenStable()
+void infinite.fetchNextPage()
+await vi.advanceTimersByTimeAsync(11)
+expect(infinite.data()?.pages).toEqual(['page 1', 'page 2'])
 
-expect(infinite.data().pages).toHaveLength(2)
+vi.useRealTimers()
 ```
 
 ## Mutations and optimistic updates
@@ -157,5 +162,5 @@ expect(mutation.data()).toBe('TEST')
 - Disable or control retries to avoid timeouts
 - Advance timers + microtasks before `whenStable()` when using fake timers
 - Use `provideHttpClientTesting()` or your preferred mock to assert network calls
-- Await `whenStable()` after every `refetch`, `fetchNextPage`, or mutation
+- Await `whenStable()` after every `refetch` or mutation, and advance timers past the query function after `fetchNextPage()`
 - Prefer `TestBed.runInInjectionContext` for service tests and `fixture.whenStable()` for component tests
