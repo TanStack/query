@@ -7,7 +7,7 @@ Most Angular tests using TanStack Query will involve services or components that
 
 TanStack Query's `inject*` functions integrate with [`PendingTasks`](https://angular.dev/api/core/PendingTasks) which ensures the framework is aware of in-progress queries and mutations.
 
-This means tests and SSR can wait until mutations and queries resolve. In unit tests you can use `ApplicationRef.whenStable()` or `fixture.whenStable()` to await query completion. This works for both Zone.js and Zoneless setups.
+This lets the framework, for example during SSR, wait until mutations and queries resolve. In unit tests, `ApplicationRef.whenStable()` and `fixture.whenStable()` work for both Zone.js and Zoneless setups when the work settles right away, such as a synchronous query function or a response flushed through `HttpTestingController`. They can resolve before a query or mutation that takes time settles, so advance fake timers instead, as shown in the sections below.
 
 > This integration requires Angular 19 or later. Earlier versions of Angular do not support `PendingTasks`.
 
@@ -55,7 +55,7 @@ expect(query.status()).toBe('success')
 expect(query.data()).toBe('Hello')
 ```
 
-PendingTasks will have `whenStable()` resolve after the query settles. When using fake timers (Vitest), advance the clock and a microtask before awaiting stability:
+Here `whenStable()` resolves after the query settles because the query function returns right away. When using fake timers (Vitest), advance the clock and a microtask before awaiting stability:
 
 ```ts
 await vi.advanceTimersByTimeAsync(0)
