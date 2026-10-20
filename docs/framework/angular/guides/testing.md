@@ -109,31 +109,37 @@ httpCtrl.verify()
 
 ## Infinite queries & pagination
 
-`whenStable()` can resolve before the pages of an infinite query reach the `data()` signal. With fake timers, advance the clock past the query function's delay instead, call `fetchNextPage()`, and advance it again before asserting on `data().pages`:
+`whenStable()` can resolve before the pages of an infinite query reach the `data()` signal. With fake timers, advance the clock past the query function's delay instead, call `fetchNextPage()`, and advance it again before asserting on `data().pages`. Restore real timers in `afterEach`, so they are restored even when an assertion fails:
 
 ```ts
-vi.useFakeTimers()
+beforeEach(() => {
+  vi.useFakeTimers()
+})
 
-const infinite = TestBed.runInInjectionContext(() =>
-  injectInfiniteQuery(() => ({
-    queryKey: ['pages'],
-    queryFn: ({ pageParam }) =>
-      new Promise<string>((resolve) =>
-        setTimeout(() => resolve(`page ${pageParam}`), 10),
-      ),
-    initialPageParam: 1,
-    getNextPageParam: (_lastPage, allPages) => allPages.length + 1,
-  })),
-)
+afterEach(() => {
+  vi.useRealTimers()
+})
 
-await vi.advanceTimersByTimeAsync(11)
-expect(infinite.data()?.pages).toEqual(['page 1'])
+it('should load the next page', async () => {
+  const infinite = TestBed.runInInjectionContext(() =>
+    injectInfiniteQuery(() => ({
+      queryKey: ['pages'],
+      queryFn: ({ pageParam }) =>
+        new Promise<string>((resolve) =>
+          setTimeout(() => resolve(`page ${pageParam}`), 10),
+        ),
+      initialPageParam: 1,
+      getNextPageParam: (_lastPage, allPages) => allPages.length + 1,
+    })),
+  )
 
-void infinite.fetchNextPage()
-await vi.advanceTimersByTimeAsync(11)
-expect(infinite.data()?.pages).toEqual(['page 1', 'page 2'])
+  await vi.advanceTimersByTimeAsync(11)
+  expect(infinite.data()?.pages).toEqual(['page 1'])
 
-vi.useRealTimers()
+  void infinite.fetchNextPage()
+  await vi.advanceTimersByTimeAsync(11)
+  expect(infinite.data()?.pages).toEqual(['page 1', 'page 2'])
+})
 ```
 
 ## Mutations and optimistic updates
