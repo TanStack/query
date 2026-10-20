@@ -19,8 +19,8 @@ const setPostId = (id: number) => {
     instantly and background refresh right before your eyes!
     <br />
     You will also notice, that after some time the name of the author gets
-    loaded. This Data is not directly included in the
-    <code>/post/id</code> response but gets fetched when the post gets loaded
+    loaded. This data is not directly included in the
+    <code>/posts/id</code> response but gets fetched when the post gets loaded
     from its <code>userId</code>.
     <strong>
       (You may need to throttle your network speed to simulate longer loading
