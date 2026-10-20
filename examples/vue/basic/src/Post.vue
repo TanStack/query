@@ -1,23 +1,13 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
-
-import type { Post } from './types'
+import { postQueryOptions } from './api'
 
 const props = defineProps<{ postId: number }>()
 defineEmits<{ setPostId: [id: number] }>()
 
-const fetcher = async (id: number): Promise<Post> => {
-  const response = await fetch(
-    `https://jsonplaceholder.typicode.com/posts/${id}`,
-  )
-  if (!response.ok) throw new Error('Failed to fetch post')
-  return await response.json()
-}
-
-const { isPending, isError, isFetching, data, error } = useQuery({
-  queryKey: ['post', () => props.postId],
-  queryFn: () => fetcher(props.postId),
-})
+const { isPending, isError, isFetching, data, error } = useQuery(() =>
+  postQueryOptions(props.postId),
+)
 </script>
 
 <template>
