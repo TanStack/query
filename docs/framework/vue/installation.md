@@ -29,11 +29,11 @@ or
 bun add @tanstack/vue-query
 ```
 
-> Wanna give it a spin before you download? Try out the [basic](./examples/basic) example!
-
-Vue Query is compatible with Vue 2.x and 3.x
+Vue Query is compatible with Vue v2.6+ and v3.3+.
 
 > If you are using Vue 2.6, make sure to also setup [@vue/composition-api](https://github.com/vuejs/composition-api)
+
+> Wanna give it a spin before you download? Try out the [basic](./examples/basic) example!
 
 ### Vue Query Initialization
 
