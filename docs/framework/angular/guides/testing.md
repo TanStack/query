@@ -128,6 +128,27 @@ it('should render the query data', async () => {
 })
 ```
 
+To test the same query without a component, create it with `TestBed.runInInjectionContext`, advance the clock the same way, and assert on its signals:
+
+```ts
+it('should resolve the query data', async () => {
+  const query = TestBed.runInInjectionContext(() =>
+    injectQuery(() => ({
+      queryKey: ['example'],
+      queryFn: () =>
+        new Promise<{ value: number }>((resolve) =>
+          setTimeout(() => resolve({ value: 42 }), 10),
+        ),
+    })),
+  )
+  expect(query.isPending()).toBe(true)
+
+  await vi.advanceTimersByTimeAsync(11)
+
+  expect(query.data()).toEqual({ value: 42 })
+})
+```
+
 ## Handling retries
 
 Retries slow failing tests because the default backoff runs three times. Set `retry: false` (or a specific number) through `defaultOptions` or per query to keep tests fast. If a query intentionally retries, assert on the final state rather than intermediate counts.
