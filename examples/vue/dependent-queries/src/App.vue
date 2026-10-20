@@ -4,12 +4,8 @@ import { ref } from 'vue'
 import Posts from './Posts.vue'
 import Post from './Post.vue'
 
-const visitedPosts = ref(new Set<number>())
-const isVisited = (id: number) => visitedPosts.value.has(id)
-
 const postId = ref(-1)
 const setPostId = (id: number) => {
-  visitedPosts.value.add(id)
   postId.value = id
 }
 </script>
@@ -32,5 +28,5 @@ const setPostId = (id: number) => {
     </strong>
   </p>
   <Post v-if="postId > -1" :postId="postId" @setPostId="setPostId" />
-  <Posts v-else :isVisited="isVisited" @setPostId="setPostId" />
+  <Posts v-else @setPostId="setPostId" />
 </template>
