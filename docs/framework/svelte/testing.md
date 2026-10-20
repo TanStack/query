@@ -43,44 +43,38 @@ In a SvelteKit project, use the `sveltekit()` plugin from `@sveltejs/kit/vite` i
 
 ## Our First Test
 
-There is no Svelte context outside of a component, so to test a function on its own, it needs to accept a `QueryClient` accessor like `createQuery` does. If your function only reads the `QueryClient` from context, test it through a component as shown in [Testing components](#testing-components) instead.
+Given the following query options, shared with [`queryOptions`](./reference/functions/queryOptions.md):
 
-Given the following custom function, which forwards an optional `QueryClient` accessor to `createQuery`:
-
-**queries.svelte.ts**
+**queries.ts**
 
 ```ts
-import { createQuery } from '@tanstack/svelte-query'
-import type { Accessor, QueryClient } from '@tanstack/svelte-query'
+import { queryOptions } from '@tanstack/svelte-query'
 
-export function createGreetingQuery(queryClient?: Accessor<QueryClient>) {
-  return createQuery(
-    () => ({
-      queryKey: ['greeting'],
-      queryFn: () =>
-        new Promise<string>((resolve) =>
-          setTimeout(() => resolve('Hello'), 10),
-        ),
-    }),
-    queryClient,
-  )
-}
+export const greetingOptions = queryOptions({
+  queryKey: ['greeting'],
+  queryFn: () =>
+    new Promise<string>((resolve) => setTimeout(() => resolve('Hello'), 10)),
+})
 ```
 
-We can create it inside `$effect.root` with a fresh `QueryClient`, wait until the query succeeds, and clean up the effect root in `finally`, so it is cleaned up even when an assertion fails:
+There is no Svelte context outside of a component, so pass a fresh `QueryClient` to `createQuery` as its second argument. Create the query inside `$effect.root`, wait until it succeeds, and clean up the effect root in `finally`, so it is cleaned up even when an assertion fails:
 
 **queries.svelte.test.ts**
 
 ```ts
 import { expect, it, vi } from 'vitest'
-import { QueryClient } from '@tanstack/svelte-query'
-import { createGreetingQuery } from './queries.svelte'
+import { QueryClient, createQuery } from '@tanstack/svelte-query'
+import { greetingOptions } from './queries'
+import type { CreateQueryResult } from '@tanstack/svelte-query'
 
 it('should fetch the greeting', async () => {
   const queryClient = new QueryClient()
-  let query!: ReturnType<typeof createGreetingQuery>
+  let query!: CreateQueryResult<string>
   const cleanup = $effect.root(() => {
-    query = createGreetingQuery(() => queryClient)
+    query = createQuery(
+      () => greetingOptions,
+      () => queryClient,
+    )
   })
 
   try {
@@ -114,7 +108,10 @@ it(
   'should fetch the greeting',
   withEffectRoot(async () => {
     const queryClient = new QueryClient()
-    const query = createGreetingQuery(() => queryClient)
+    const query = createQuery(
+      () => greetingOptions,
+      () => queryClient,
+    )
 
     await vi.waitFor(() => expect(query.isSuccess).toBe(true))
 
@@ -131,15 +128,16 @@ It is possible to share a single `QueryClient` between tests, but if so we need 
 
 ## Testing components
 
-Components read the `QueryClient` from the context that `QueryClientProvider` sets. Given a component that uses the custom function above:
+Components read the `QueryClient` from the context that `QueryClientProvider` sets. Given a component that uses the same query options:
 
 **Greeting.svelte**
 
 ```svelte
 <script lang="ts">
-  import { createGreetingQuery } from './queries.svelte'
+  import { createQuery } from '@tanstack/svelte-query'
+  import { greetingOptions } from './queries'
 
-  const query = createGreetingQuery()
+  const query = createQuery(() => greetingOptions)
 </script>
 
 {#if query.isPending}
