@@ -20,25 +20,25 @@ Component-based devtools use a framework-agnostic implementation and are always 
 
 The devtools component is a separate package that you need to install:
 
-```bash
+```sh
 npm i @tanstack/vue-query-devtools
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/vue-query-devtools
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/vue-query-devtools
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/vue-query-devtools
 ```
 
