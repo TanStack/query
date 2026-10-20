@@ -1,33 +1,13 @@
 <script setup lang="ts">
-import { del, entries, get, set } from 'idb-keyval'
 import { useQuery } from '@tanstack/vue-query'
-import { experimental_createQueryPersister } from '@tanstack/query-persist-client-core'
-
-import type { Post } from './types'
+import { postQueryOptions } from './api'
 
 const props = defineProps<{ postId: number }>()
 defineEmits<{ setPostId: [id: number] }>()
 
-const fetcher = async (id: number): Promise<Post> => {
-  const response = await fetch(
-    `https://jsonplaceholder.typicode.com/posts/${id}`,
-  )
-  if (!response.ok) throw new Error('Failed to fetch post')
-  return await response.json()
-}
-
-const { isPending, isError, isFetching, data, error } = useQuery({
-  queryKey: ['post', () => props.postId] as const,
-  queryFn: () => fetcher(props.postId),
-  persister: experimental_createQueryPersister({
-    storage: {
-      getItem: (key: string) => get(key),
-      setItem: (key: string, value: string) => set(key, value),
-      removeItem: (key: string) => del(key),
-      entries: () => entries<string>(),
-    },
-  }).persisterFn,
-})
+const { isPending, isError, isFetching, data, error } = useQuery(() =>
+  postQueryOptions(props.postId),
+)
 </script>
 
 <template>
