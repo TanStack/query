@@ -1,32 +1,26 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { useQuery } from '@tanstack/vue-query'
-import type { PropType } from 'vue'
-
-import type { Post } from './types'
-
-const fetcher = async (): Promise<Array<Post>> => {
-  const response = await fetch('https://jsonplaceholder.typicode.com/posts')
-  if (!response.ok) throw new Error('Failed to fetch posts')
-  return await response.json()
-}
+import { useQuery, useQueryClient } from '@tanstack/vue-query'
+import { postQueryOptions, postsQueryOptions } from './api'
 
 export default defineComponent({
   name: 'PostsList',
-  props: {
-    isVisited: {
-      type: Function as PropType<(id: number) => boolean>,
-      required: true,
-    },
-  },
   emits: ['setPostId'],
   setup() {
-    const { isPending, isError, isFetching, data, error } = useQuery({
-      queryKey: ['posts'],
-      queryFn: fetcher,
-    })
+    const queryClient = useQueryClient()
 
-    return { isPending, isError, isFetching, data, error }
+    const { isPending, isError, isFetching, data, error } =
+      useQuery(postsQueryOptions())
+
+    return {
+      queryClient,
+      postQueryOptions,
+      isPending,
+      isError,
+      isFetching,
+      data,
+      error,
+    }
   },
 })
 </script>
@@ -42,7 +36,11 @@ export default defineComponent({
           <a
             @click="$emit('setPostId', item.id)"
             href="#"
-            :class="{ visited: isVisited(item.id) }"
+            :class="{
+              visited: queryClient.getQueryData(
+                postQueryOptions(item.id).queryKey,
+              ),
+            }"
             >{{ item.title }}</a
           >
         </li>
