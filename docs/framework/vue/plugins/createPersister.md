@@ -7,25 +7,25 @@ title: experimental_createQueryPersister
 
 This utility comes as a separate package and is available under the `'@tanstack/query-persist-client-core'` import.
 
-```bash
+```sh
 npm install @tanstack/query-persist-client-core
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/query-persist-client-core
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/query-persist-client-core
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/query-persist-client-core
 ```
 

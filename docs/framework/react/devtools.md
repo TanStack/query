@@ -21,25 +21,25 @@ When you begin your React Query journey, you'll want these devtools by your side
 
 The devtools are a separate package that you need to install:
 
-```bash
+```sh
 npm i @tanstack/react-query-devtools
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/react-query-devtools
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/react-query-devtools
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/react-query-devtools
 ```
 

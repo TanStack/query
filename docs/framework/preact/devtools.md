@@ -17,25 +17,25 @@ When you begin your Preact Query journey, you'll want these devtools by your sid
 
 The devtools are a separate package that you need to install:
 
-```bash
+```sh
 npm i @tanstack/preact-query-devtools
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/preact-query-devtools
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/preact-query-devtools
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/preact-query-devtools
 ```
 

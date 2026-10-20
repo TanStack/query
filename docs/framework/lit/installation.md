@@ -7,25 +7,25 @@ title: Installation
 
 Install Lit Query with Lit and TanStack Query Core:
 
-```bash
+```sh
 npm i @tanstack/lit-query @tanstack/query-core lit
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/lit-query @tanstack/query-core lit
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/lit-query @tanstack/query-core lit
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/lit-query @tanstack/query-core lit
 ```
 

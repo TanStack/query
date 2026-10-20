@@ -9,25 +9,25 @@ or a good ol' `<script>` via
 
 ### NPM
 
-```bash
+```sh
 npm i @tanstack/solid-query
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/solid-query
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/solid-query
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/solid-query
 ```
 
