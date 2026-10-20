@@ -195,7 +195,7 @@ export class QueryObserver<
    *
    * @param options - The new observer options. They are defaulted with
    *   {@link
-   *       QueryClient#defaultQueryOptions} before being applied.
+   *         QueryClient#defaultQueryOptions} before being applied.
    * @throws {Error} If `enabled` is neither a boolean nor a function.
    */
   setOptions(

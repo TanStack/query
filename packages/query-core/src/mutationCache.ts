@@ -146,7 +146,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    *   options.
    * @param options - The mutation options. They are defaulted with
    *   {@link
-   *       QueryClient#defaultMutationOptions}.
+   *         QueryClient#defaultMutationOptions}.
    * @param state - The initial state of the mutation, e.g. when restoring a
    *   dehydrated mutation.
    * @returns The new mutation, already added to the cache.
