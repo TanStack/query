@@ -421,7 +421,7 @@ class PaginationDemo extends LitElement {
 
         ${
           query.isError
-            ? html`<p data-testid="query-error">${String(query.error)}</p>`
+            ? html`<p data-testid="query-error">${query.error.message}</p>`
             : null
         }
         ${
@@ -493,7 +493,7 @@ class PaginationDemo extends LitElement {
           ${
             createProject.isError
               ? html`<div data-testid="create-mutation-error">
-                  ${String(createProject.error)}
+                  ${createProject.error.message}
                 </div>`
               : null
           }
@@ -530,7 +530,7 @@ class PaginationDemo extends LitElement {
           ${
             favoriteProject.isError
               ? html`<div data-testid="favorite-mutation-error">
-                  ${String(favoriteProject.error)}
+                  ${favoriteProject.error.message}
                 </div>`
               : null
           }
