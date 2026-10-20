@@ -65,7 +65,6 @@
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "@tanstack/query-core": "^5.104.5",
     "lit": ">=2.8.0 <4"
   }
 }
