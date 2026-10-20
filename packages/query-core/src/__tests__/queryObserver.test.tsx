@@ -1589,6 +1589,35 @@ describe('queryObserver', () => {
     expect(result.data).toBe('data')
   })
 
+  it('should use the supplied queryFn via fetchOptimistic after the query is recreated', async () => {
+    const key = queryKey()
+    const error = new Error('401 Unauthorized')
+    const queryFn = vi.fn(() => Promise.reject(error))
+    const options = {
+      queryKey: key,
+      queryFn,
+      retry: false,
+      staleTime: Infinity,
+    }
+
+    queryClient.setQueryData(key, 'data')
+
+    const observer = new QueryObserver(queryClient, options)
+    const unsubscribe = observer.subscribe(noop)
+
+    queryClient.removeQueries({ queryKey: key })
+    // Broadcast can recreate the query without a queryFn before the observer updates.
+    queryClient.getQueryCache().build(queryClient, {
+      queryKey: key,
+      retry: false,
+    })
+
+    await expect(observer.fetchOptimistic(options)).rejects.toBe(error)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    unsubscribe()
+  })
+
   it('should resolve fetchOptimistic with cached data while the fetch continues', async () => {
     const key = queryKey()
 

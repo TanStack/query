@@ -5,7 +5,7 @@ import {
   useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-import { For, Match, Switch, createSignal } from 'solid-js'
+import { For, Match, Show, Switch, createSignal } from 'solid-js'
 import { render } from 'solid-js/web'
 import { gql, request } from 'graphql-request'
 import type { Accessor, Setter } from 'solid-js'
@@ -15,13 +15,13 @@ const endpoint = 'https://graphqlzero.almansi.me/api'
 const queryClient = new QueryClient()
 
 type Post = {
-  id: number
+  id: string
   title: string
   body: string
 }
 
 function App() {
-  const [postId, setPostId] = createSignal(-1)
+  const [postId, setPostId] = createSignal<string | null>(null)
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -36,11 +36,9 @@ function App() {
           loading sequences)
         </strong>
       </p>
-      {postId() > -1 ? (
-        <Post postId={postId()} setPostId={setPostId} />
-      ) : (
-        <Posts setPostId={setPostId} />
-      )}
+      <Show when={postId()} fallback={<Posts setPostId={setPostId} />}>
+        {(id) => <Post postId={id()} setPostId={setPostId} />}
+      </Show>
     </QueryClientProvider>
   )
 }
@@ -69,7 +67,7 @@ function createPosts() {
   }))
 }
 
-function Posts(props: { setPostId: Setter<number> }) {
+function Posts(props: { setPostId: Setter<string | null> }) {
   const state = createPosts()
 
   return (
@@ -85,7 +83,7 @@ function Posts(props: { setPostId: Setter<number> }) {
             <>
               <div>
                 <For each={state.data}>
-                  {(post: any) => (
+                  {(post) => (
                     <p>
                       <a
                         onClick={() => props.setPostId(post.id)}
@@ -116,43 +114,41 @@ function Posts(props: { setPostId: Setter<number> }) {
   )
 }
 
-function createPost(postId: Accessor<number>) {
+function createPost(postId: Accessor<string>) {
   return useQuery(() => ({
     queryKey: ['post', postId()],
     queryFn: async () => {
       const { post } = await request<{ post: Post }>(
         endpoint,
         gql`
-        query {
-          post(id: ${postId()}) {
-            id
-            title
-            body
+          query Post($id: ID!) {
+            post(id: $id) {
+              id
+              title
+              body
+            }
           }
-        }
         `,
+        { id: postId() },
       )
 
       return post
     },
-    enabled: !!postId(),
   }))
 }
 
-function Post(props: { postId: number; setPostId: Setter<number> }) {
+function Post(props: { postId: string; setPostId: Setter<string | null> }) {
   const state = createPost(() => props.postId)
 
   return (
     <div>
       <div>
-        <a onClick={() => props.setPostId(-1)} href="#">
+        <a onClick={() => props.setPostId(null)} href="#">
           Back
         </a>
       </div>
       <Switch>
-        <Match when={!props.postId || state.status === 'pending'}>
-          Loading...
-        </Match>
+        <Match when={state.status === 'pending'}>Loading...</Match>
         <Match when={state.status === 'error'}>
           <span>Error: {(state.error as Error).message}</span>
         </Match>

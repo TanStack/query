@@ -1,5 +1,13 @@
 # @tanstack/react-query
 
+## 5.104.5
+
+### Patch Changes
+
+- [#12117](https://github.com/TanStack/query/pull/12117) [`1f8d134`](https://github.com/TanStack/query/commit/1f8d134ea3fa356072b40c69d5cd0227886b89bd) - Recompute `useMutationState` and `useIsMutating` results when their filters, selector, or query client change, without waiting for a mutation cache update.
+- Updated dependencies [[`f608f93`](https://github.com/TanStack/query/commit/f608f933a36da30670082e90d0a56b2569290563)]:
+  - @tanstack/query-core@5.104.5
+
 ## 5.104.4
 
 ### Patch Changes

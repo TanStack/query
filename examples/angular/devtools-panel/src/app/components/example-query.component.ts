@@ -40,7 +40,7 @@ export class ExampleQueryComponent {
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(
-        this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+        this.#http.get<Response>('https://api.github.com/repos/TanStack/query'),
       ),
   }))
 }

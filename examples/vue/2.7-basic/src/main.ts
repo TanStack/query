@@ -5,7 +5,7 @@ import App from './App.vue'
 
 Vue.use(VueQueryPlugin)
 
-var app = new Vue({
+new Vue({
   el: '#app',
 
   render: () => {

@@ -10,8 +10,8 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.104.4",
-    "@tanstack/react-query-devtools": "^5.104.4",
+    "@tanstack/react-query": "^5.104.5",
+    "@tanstack/react-query-devtools": "^5.104.5",
     "localforage": "^1.10.0",
     "match-sorter": "^8.3.0",
     "react": "^19.0.0",
@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@eslint-react/eslint-plugin": "^5.21.0",
-    "@tanstack/eslint-plugin-query": "^5.104.4",
+    "@tanstack/eslint-plugin-query": "^5.104.5",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@types/sort-by": "^1.2.3",

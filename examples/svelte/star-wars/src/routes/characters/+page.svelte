@@ -1,12 +1,9 @@
 <script lang="ts">
   import { resolve } from '$app/paths'
   import { createQuery } from '@tanstack/svelte-query'
-  import { getCharacters } from '$lib/api'
+  import { charactersQueryOptions } from '$lib/api'
 
-  const query = createQuery(() => ({
-    queryKey: ['characters'],
-    queryFn: () => getCharacters(),
-  }))
+  const query = createQuery(() => charactersQueryOptions)
 </script>
 
 {#if query.status === 'pending'}
