@@ -20,10 +20,9 @@ export class PostComponent {
 
   @Output() setPostId = new EventEmitter<number>()
 
-  postId = input(0)
+  postId = input.required<number>()
 
   postQuery = injectQuery(() => ({
-    enabled: this.postId() > 0,
     queryKey: ['post', this.postId()],
     queryFn: async (context) => {
       // Cancels the request when component is destroyed before the request finishes

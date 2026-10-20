@@ -55,7 +55,6 @@ export class OptimisticUpdatesComponent {
   #tasksService = inject(TasksService)
 
   tasks = injectQuery(() => this.#tasksService.allTasks())
-  clearMutation = injectMutation(() => this.#tasksService.addTask())
   addMutation = injectMutation(() => this.#tasksService.addTask())
 
   newItem = ''
