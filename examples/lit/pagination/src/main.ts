@@ -112,16 +112,9 @@ class PaginationDemo extends LitElement {
       placeholderData: keepPreviousData,
     }
 
-    this.projectsQuery = createQueryController<ProjectsPageResponse, Error>(
-      this,
-      this.projectsQueryOptions,
-    )
+    this.projectsQuery = createQueryController(this, this.projectsQueryOptions)
 
-    this.createProjectMutation = createMutationController<
-      Project,
-      Error,
-      CreateProjectInput
-    >(
+    this.createProjectMutation = createMutationController(
       this,
       {
         mutationKey: ['create-project'],
@@ -150,12 +143,7 @@ class PaginationDemo extends LitElement {
       queryClient,
     )
 
-    this.favoriteMutation = createMutationController<
-      Project,
-      Error,
-      ToggleProjectFavoriteInput,
-      FavoriteMutationContext
-    >(
+    this.favoriteMutation = createMutationController(
       this,
       {
         mutationKey: ['toggle-project-favorite'],
