@@ -89,6 +89,12 @@ export class QueryClient extends QC {
   }
 
   /**
+   * Returns the cached data of a query, or fetches it if there is none. With `revalidateIfStale`,
+   * stale cached data is also refetched in the background.
+   * @param options - The query options. If the query has no cached data yet, it is fetched with
+   * these options.
+   * @returns A promise that resolves to the cached data, or to the fetched data if nothing was
+   * cached yet.
    * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
    */
   override ensureQueryData<
@@ -99,6 +105,10 @@ export class QueryClient extends QC {
   >(
     options: EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<TData>
+  /**
+   * {@inheritDoc QueryClient.ensureQueryData:0}
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   */
   override ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
@@ -322,6 +332,12 @@ export class QueryClient extends QC {
   }
 
   /**
+   * Fetches and caches a query, or returns its cached data if it isn't stale. Unlike in observers,
+   * the fetch isn't retried unless `retry` is set.
+   * @param options - The query options, including the `queryKey` and the `queryFn` used if the
+   * query needs to fetch.
+   * @returns A promise that resolves to the cached or fetched data, or rejects with the fetch
+   * error.
    * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
    */
   override fetchQuery<
@@ -339,6 +355,10 @@ export class QueryClient extends QC {
       TPageParam
     >,
   ): Promise<TData>
+  /**
+   * {@inheritDoc QueryClient.fetchQuery:0}
+   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   */
   override fetchQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -374,6 +394,11 @@ export class QueryClient extends QC {
   }
 
   /**
+   * Fetches and caches a query like {@link QueryClient#fetchQuery}, but ignores the result and any
+   * error.
+   * @param options - The query options, including the `queryKey` and the `queryFn` used if the
+   * query needs to fetch.
+   * @returns A promise that resolves once the fetch settles. It never rejects.
    * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */
   override prefetchQuery<
@@ -384,6 +409,10 @@ export class QueryClient extends QC {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void>
+  /**
+   * {@inheritDoc QueryClient.prefetchQuery:0}
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   override prefetchQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -476,6 +505,11 @@ export class QueryClient extends QC {
   }
 
   /**
+   * Fetches and caches an infinite query, or returns its cached data if it isn't stale.
+   * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
+   * `initialPageParam`.
+   * @returns A promise that resolves to the cached or fetched {@link InfiniteData}, or rejects with
+   * the fetch error.
    * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
    */
   override fetchInfiniteQuery<
@@ -493,6 +527,10 @@ export class QueryClient extends QC {
       TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>>
+  /**
+   * {@inheritDoc QueryClient.fetchInfiniteQuery:0}
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
+   */
   override fetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -532,6 +570,11 @@ export class QueryClient extends QC {
   }
 
   /**
+   * Fetches and caches an infinite query like {@link QueryClient#fetchInfiniteQuery}, but ignores
+   * the result and any error.
+   * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
+   * `initialPageParam`.
+   * @returns A promise that resolves once the fetch settles. It never rejects.
    * @deprecated use void queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */
   override prefetchInfiniteQuery<
@@ -549,6 +592,10 @@ export class QueryClient extends QC {
       TPageParam
     >,
   ): Promise<void>
+  /**
+   * {@inheritDoc QueryClient.prefetchInfiniteQuery:0}
+   * @deprecated use void queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   override prefetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
