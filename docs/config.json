@@ -826,6 +826,10 @@
             {
               "label": "SSR",
               "to": "framework/lit/guides/ssr"
+            },
+            {
+              "label": "Testing",
+              "to": "framework/lit/guides/testing"
             }
           ]
         },
