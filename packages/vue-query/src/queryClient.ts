@@ -78,6 +78,7 @@ export class QueryClient extends QC {
   >(
     queryKey: TTaggedQueryKey,
   ): InferDataFromTag<TData, TTaggedQueryKey> | undefined
+  /** {@inheritDoc QueryClient.getQueryData:0} */
   override getQueryData<TData = unknown>(
     queryKey: MaybeRefDeep<QueryKey>,
   ): TData | undefined
@@ -140,6 +141,7 @@ export class QueryClient extends QC {
     >,
     options?: MaybeRefDeep<SetDataOptions>,
   ): NoInfer<TInferredQueryFnData> | undefined
+  /** {@inheritDoc QueryClient.setQueryData:0} */
   override setQueryData<TQueryFnData, TData = NoUnknown<TQueryFnData>>(
     queryKey: MaybeRefDeep<QueryKey>,
     updater: Updater<NoInfer<TData> | undefined, NoInfer<TData> | undefined>,
@@ -277,6 +279,7 @@ export class QueryClient extends QC {
       TPageParam
     >,
   ): Promise<TData>
+  /** {@inheritDoc QueryClient.query:0} */
   override query<
     TQueryFnData,
     TError = DefaultError,
@@ -426,6 +429,7 @@ export class QueryClient extends QC {
       ? InfiniteData<TQueryFnData, TPageParam>
       : TData
   >
+  /** {@inheritDoc QueryClient.infiniteQuery:0} */
   override infiniteQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
