@@ -43,6 +43,8 @@ In a SvelteKit project, use the `sveltekit()` plugin from `@sveltejs/kit/vite` i
 
 ## Our First Test
 
+There is no Svelte context outside of a component, so to test a function on its own, it needs to accept a `QueryClient` accessor like `createQuery` does. If your function only reads the `QueryClient` from context, test it through a component as shown in [Testing components](#testing-components) instead.
+
 Given the following custom function, which forwards an optional `QueryClient` accessor to `createQuery`:
 
 **queries.svelte.ts**
