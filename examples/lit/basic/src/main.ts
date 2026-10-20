@@ -237,13 +237,13 @@ class TanstackLitQueryDemo extends LitElement {
 
         ${
           query.isError
-            ? html`<div data-testid="query-error">${String(query.error)}</div>`
+            ? html`<div data-testid="query-error">${query.error.message}</div>`
             : null
         }
         ${
           mutation.isError
             ? html`<div data-testid="mutation-error">
-                ${String(mutation.error)}
+                ${mutation.error.message}
               </div>`
             : null
         }
