@@ -219,22 +219,25 @@ it('should load the next page', async () => {
 
 ## Mutations and optimistic updates
 
+`whenStable()` can resolve before a mutation started with `mutate()` settles. With fake timers enabled as in the examples above, advance the clock past the mutation function's delay before asserting on the result:
+
 ```ts
-const mutation = TestBed.runInInjectionContext(() =>
-  injectMutation(() => ({
-    mutationFn: async (input: string) => input.toUpperCase(),
-  })),
-)
+it('should uppercase the input', async () => {
+  const mutation = TestBed.runInInjectionContext(() =>
+    injectMutation(() => ({
+      mutationFn: (input: string) =>
+        new Promise<string>((resolve) =>
+          setTimeout(() => resolve(input.toUpperCase()), 10),
+        ),
+    })),
+  )
 
-mutation.mutate('test')
+  mutation.mutate('test')
+  await vi.advanceTimersByTimeAsync(11)
 
-// Trigger effect
-TestBed.tick()
-
-await appRef.whenStable()
-
-expect(mutation.isSuccess()).toBe(true)
-expect(mutation.data()).toBe('TEST')
+  expect(mutation.isSuccess()).toBe(true)
+  expect(mutation.data()).toBe('TEST')
+})
 ```
 
 ## Quick checklist
@@ -243,5 +246,5 @@ expect(mutation.data()).toBe('TEST')
 - Disable or control retries to avoid timeouts
 - Advance timers + microtasks before `whenStable()` when using fake timers
 - Use `provideHttpClientTesting()` or your preferred mock to assert network calls
-- Await `whenStable()` after every `refetch` or mutation, and advance timers past the query function after `fetchNextPage()`
+- Advance timers past the query or mutation function after every `refetch`, `fetchNextPage()`, or mutation instead of awaiting `whenStable()`
 - Prefer `TestBed.runInInjectionContext` for service tests, and `TestBed.createComponent` or Angular Testing Library's `render` with `fixture.detectChanges()` for component tests
