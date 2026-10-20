@@ -35,6 +35,16 @@ bun add @tanstack/lit-query @tanstack/query-core lit
 
 Lit Query is intended for Lit 2.8 and newer, including Lit 3. It uses Lit reactive controllers and Lit context, so query consumers should be `ReactiveControllerHost` instances such as `LitElement`.
 
+The snippets in these docs declare reactive properties with `static properties` and initialize them as class fields. Class fields that use the native `[[Define]]` semantics shadow the accessors Lit uses to detect changes, so with TypeScript set `useDefineForClassFields` to `false`, as the runnable examples do. See [Avoiding issues with class fields](https://lit.dev/docs/components/properties/#avoiding-issues-with-class-fields) in the Lit docs for more details.
+
+```json
+{
+  "compilerOptions": {
+    "useDefineForClassFields": false
+  }
+}
+```
+
 TanStack Query is optimized for modern browsers:
 
 ```txt
