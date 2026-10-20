@@ -51,19 +51,12 @@ class TanstackLitQueryDemo extends LitElement {
   private nextTodoTitle = 'Add mutation assertion'
   private cacheSeedCount = 0
 
-  private readonly todosQuery = createQueryController<TodosResponse, Error>(
-    this,
-    {
-      queryKey: ['todos'],
-      queryFn: fetchTodosFromServer,
-    },
-  )
+  private readonly todosQuery = createQueryController(this, {
+    queryKey: ['todos'],
+    queryFn: fetchTodosFromServer,
+  })
 
-  private readonly createTodoMutation = createMutationController<
-    Todo,
-    Error,
-    string
-  >(this, {
+  private readonly createTodoMutation = createMutationController(this, {
     mutationKey: ['create-todo'],
     mutationFn: addTodoOnServer,
     onSuccess: (createdTodo) => {
