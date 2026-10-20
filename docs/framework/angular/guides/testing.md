@@ -65,13 +65,67 @@ await appRef.whenStable()
 
 ## Testing components
 
-For components, bootstrap them through `TestBed.createComponent`, then await `fixture.whenStable()`:
+For components, create them through `TestBed.createComponent`. `fixture.whenStable()` can resolve before the query data arrives, so with fake timers, advance the clock past the query function's delay, then run `fixture.detectChanges()` and assert on what the component renders:
 
 ```ts
-const fixture = TestBed.createComponent(ExampleComponent)
+beforeEach(() => {
+  vi.useFakeTimers()
+})
 
-await fixture.whenStable()
-expect(fixture.componentInstance.query.data()).toEqual({ value: 42 })
+afterEach(() => {
+  vi.useRealTimers()
+})
+
+it('should render the query data', async () => {
+  @Component({
+    template: `<p>{{ query.data()?.value ?? 'Loading...' }}</p>`,
+  })
+  class ExampleComponent {
+    readonly query = injectQuery(() => ({
+      queryKey: ['example'],
+      queryFn: () =>
+        new Promise<{ value: number }>((resolve) =>
+          setTimeout(() => resolve({ value: 42 }), 10),
+        ),
+    }))
+  }
+
+  const fixture = TestBed.createComponent(ExampleComponent)
+  fixture.detectChanges()
+  expect(fixture.nativeElement.textContent).toContain('Loading...')
+
+  await vi.advanceTimersByTimeAsync(11)
+  fixture.detectChanges()
+
+  expect(fixture.nativeElement.textContent).toContain('42')
+})
+```
+
+If you use [Angular Testing Library](https://testing-library.com/docs/angular-testing-library/intro/), render the component with `render` and follow the same flow, running change detection through `rendered.fixture`:
+
+```ts
+it('should render the query data', async () => {
+  @Component({
+    template: `<p>{{ query.data()?.value ?? 'Loading...' }}</p>`,
+  })
+  class ExampleComponent {
+    readonly query = injectQuery(() => ({
+      queryKey: ['example'],
+      queryFn: () =>
+        new Promise<{ value: number }>((resolve) =>
+          setTimeout(() => resolve({ value: 42 }), 10),
+        ),
+    }))
+  }
+
+  const rendered = await render(ExampleComponent)
+  expect(rendered.getByText('Loading...')).toBeInTheDocument()
+
+  await vi.advanceTimersByTimeAsync(11)
+  rendered.fixture.detectChanges()
+
+  expect(rendered.getByText('42')).toBeInTheDocument()
+})
 ```
 
 ## Handling retries
@@ -169,4 +223,4 @@ expect(mutation.data()).toBe('TEST')
 - Advance timers + microtasks before `whenStable()` when using fake timers
 - Use `provideHttpClientTesting()` or your preferred mock to assert network calls
 - Await `whenStable()` after every `refetch` or mutation, and advance timers past the query function after `fetchNextPage()`
-- Prefer `TestBed.runInInjectionContext` for service tests and `fixture.whenStable()` for component tests
+- Prefer `TestBed.runInInjectionContext` for service tests, and `TestBed.createComponent` or Angular Testing Library's `render` with `fixture.detectChanges()` for component tests
