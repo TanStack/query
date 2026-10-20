@@ -6,7 +6,7 @@ import type { HttpEvent, HttpInterceptorFn } from '@angular/common/http'
 export const autocompleteMockInterceptor: HttpInterceptorFn = (
   req,
   next,
-): Observable<HttpEvent<any>> => {
+): Observable<HttpEvent<unknown>> => {
   const { url } = req
 
   if (url.includes('/api/autocomplete')) {
