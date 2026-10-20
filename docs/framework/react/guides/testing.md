@@ -134,17 +134,17 @@ function generateMockedResponse(page) {
 ```
 
 Then, our `nock` configuration needs to differentiate responses based on the page, and we'll be using `uri` to do this.
-`uri`'s value here will be something like `"/?page=1` or `/?page=2`
+`uri`'s value here will be something like `/api/data?page=1` or `/api/data?page=2`
 
 ```tsx
 const expectation = nock('http://example.com')
   .persist()
-  .query(true)
   .get('/api/data')
+  .query(true)
   .reply(200, (uri) => {
     const url = new URL(`http://example.com${uri}`)
     const { page } = Object.fromEntries(url.searchParams)
-    return generateMockedResponse(page)
+    return generateMockedResponse(Number(page))
   })
 ```
 
@@ -159,14 +159,14 @@ const { result } = renderHook(() => useInfiniteQueryCustomHook(), {
 
 await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-expect(result.current.data.pages).toStrictEqual(generateMockedResponse(1))
+expect(result.current.data.pages).toStrictEqual([generateMockedResponse(1)])
 
 result.current.fetchNextPage()
 
 await waitFor(() =>
   expect(result.current.data.pages).toStrictEqual([
-    ...generateMockedResponse(1),
-    ...generateMockedResponse(2),
+    generateMockedResponse(1),
+    generateMockedResponse(2),
   ]),
 )
 
