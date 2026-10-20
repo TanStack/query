@@ -210,6 +210,36 @@ describe('broadcastQueryClient', () => {
       expect(queryClient.getQueryState(existingKey)?.status).toBe('error')
       expect(queryClient.getQueryState(existingKey)?.error).toBe(error)
     })
+
+    it('should adopt an "added" message\'s error state for an existing query that has no data yet', () => {
+      const existingKey = queryKey()
+      const error = new Error('down')
+
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
+
+      const existingQuery = queryCache.build(queryClient, {
+        queryKey: existingKey,
+      })
+
+      lastCreatedChannel.onmessage?.({
+        type: 'added',
+        queryHash: existingQuery.queryHash,
+        queryKey: existingKey,
+        state: {
+          status: 'error',
+          fetchStatus: 'idle',
+          data: undefined,
+          dataUpdatedAt: 0,
+          error,
+          errorUpdatedAt: 0,
+        },
+      })
+      expect(queryClient.getQueryState(existingKey)?.status).toBe('error')
+      expect(queryClient.getQueryState(existingKey)?.error).toBe(error)
+    })
   })
 
   describe('postMessage error handling', () => {
