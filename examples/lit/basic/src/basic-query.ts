@@ -60,7 +60,7 @@ class BasicQueryExample extends LitElement {
         ${
           query.isError
             ? html`<p data-testid="basic-error">
-                Error: ${String(query.error)}
+                Error: ${query.error.message}
               </p>`
             : null
         }
