@@ -9,25 +9,25 @@ title: Installation
 
 _Angular Query is compatible with Angular v16 and higher_
 
-```bash
+```sh
 npm i @tanstack/angular-query-experimental
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/angular-query-experimental
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/angular-query-experimental
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/angular-query-experimental
 ```
 

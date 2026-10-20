@@ -7,25 +7,25 @@ You can install Vue Query via [NPM](https://npmjs.com).
 
 ### NPM
 
-```bash
+```sh
 npm i @tanstack/vue-query
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/vue-query
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/vue-query
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/vue-query
 ```
 
