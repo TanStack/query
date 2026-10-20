@@ -90,6 +90,10 @@ it('should fetch the greeting', async () => {
 To avoid repeating `$effect.root` and its cleanup in every test, you can also wrap the whole test body with a helper that runs it inside an effect root:
 
 ```ts
+import { expect, it, vi } from 'vitest'
+import { QueryClient, createQuery } from '@tanstack/svelte-query'
+import { greetingOptions } from './queries'
+
 function withEffectRoot(fn: () => Promise<void>) {
   return async () => {
     let promise!: Promise<void>
@@ -192,6 +196,11 @@ it('should render the greeting', async () => {
 `vi.waitFor` and `findByText` retry until the assertion passes, which works for query functions that wait on real requests. When the query function waits on a timer, you can use fake timers and advance them instead, for example with [`vi.advanceTimersByTimeAsync`](https://vitest.dev/api/vi.html#vi-advancetimersbytimeasync). Restore real timers in `afterEach`, so they are restored even when an assertion fails:
 
 ```ts
+import { render } from '@testing-library/svelte'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import { QueryClient } from '@tanstack/svelte-query'
+import GreetingTest from './GreetingTest.svelte'
+
 beforeEach(() => {
   vi.useFakeTimers()
 })
