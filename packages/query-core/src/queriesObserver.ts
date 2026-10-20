@@ -11,6 +11,7 @@ import type { QueryClient } from './queryClient'
 
 /**
  * Returns the items of `array1` that are not in `array2`.
+ *
  * @param array1 - The items to filter.
  * @param array2 - The items to exclude.
  * @returns A new array with the items of `array1` that are not in `array2`.
@@ -26,9 +27,7 @@ type CombineFn<TCombinedResult> = (
   result: Array<QueryObserverResult>,
 ) => TCombinedResult
 
-/**
- * Options for a `QueriesObserver` that apply to all of its queries at once.
- */
+/** Options for a `QueriesObserver` that apply to all of its queries at once. */
 export interface QueriesObserverOptions<
   TCombinedResult = Array<QueryObserverResult>,
 > {
@@ -44,22 +43,23 @@ export interface QueriesObserverOptions<
 }
 
 /**
- * A `QueriesObserver` watches an array of queries at once, exposing them as
- * a single array of `QueryObserverResult`s (or, when a `combine` option is
- * given, as a combined value derived from that array). It manages one
- * internal `QueryObserver` per query, and is the primitive that framework
- * adapters (e.g. `useQueries`) build their hooks on top of.
- * @example
- * ```ts
- * const observer = new QueriesObserver(queryClient, [
- *   { queryKey: ['post', 1], queryFn: fetchPost },
- *   { queryKey: ['post', 2], queryFn: fetchPost },
- * ])
+ * A `QueriesObserver` watches an array of queries at once, exposing them as a
+ * single array of `QueryObserverResult`s (or, when a `combine` option is given,
+ * as a combined value derived from that array). It manages one internal
+ * `QueryObserver` per query, and is the primitive that framework adapters (e.g.
+ * `useQueries`) build their hooks on top of.
  *
- * const unsubscribe = observer.subscribe((result) => {
- *   console.log(result)
- * })
- * ```
+ * @example
+ *   ```ts
+ *   const observer = new QueriesObserver(queryClient, [
+ *     { queryKey: ['post', 1], queryFn: fetchPost },
+ *     { queryKey: ['post', 2], queryFn: fetchPost },
+ *   ])
+ *
+ *   const unsubscribe = observer.subscribe((result) => {
+ *     console.log(result)
+ *   })
+ *   ```
  */
 export class QueriesObserver<
   TCombinedResult = Array<QueryObserverResult>,
@@ -119,19 +119,22 @@ export class QueriesObserver<
   }
 
   /**
-   * Replaces the set of queries being observed. Existing `QueryObserver`s
-   * are reused for queries that match an already-observed query hash;
-   * observers for queries that are no longer present are destroyed, and new
-   * observers are created and subscribed to for newly added queries.
-   * @param queries - The options of the queries to observe.
-   * @param options - Replaces the observer's options, e.g. its `combine` function.
+   * Replaces the set of queries being observed. Existing `QueryObserver`s are
+   * reused for queries that match an already-observed query hash; observers for
+   * queries that are no longer present are destroyed, and new observers are
+   * created and subscribed to for newly added queries.
+   *
    * @example
-   * ```ts
-   * observer.setQueries([
-   *   { queryKey: ['post', 1], queryFn: fetchPost },
-   *   { queryKey: ['post', 3], queryFn: fetchPost },
-   * ])
-   * ```
+   *   ```ts
+   *   observer.setQueries([
+   *     { queryKey: ['post', 1], queryFn: fetchPost },
+   *     { queryKey: ['post', 3], queryFn: fetchPost },
+   *   ])
+   *   ```
+   *
+   * @param queries - The options of the queries to observe.
+   * @param options - Replaces the observer's options, e.g. its `combine`
+   *   function.
    */
   setQueries(
     queries: Array<QueryObserverOptions>,
@@ -206,23 +209,26 @@ export class QueriesObserver<
   }
 
   /**
-   * Returns the most recently computed array of `QueryObserverResult`s, one
-   * per observed query, in the same order as the queries passed to the
-   * constructor or `setQueries`.
-   * @returns The current results.
+   * Returns the most recently computed array of `QueryObserverResult`s, one per
+   * observed query, in the same order as the queries passed to the constructor
+   * or `setQueries`.
+   *
    * @example
-   * ```ts
-   * const results = observer.getCurrentResult()
-   * const data = results.map((result) => result.data)
-   * ```
+   *   ```ts
+   *   const results = observer.getCurrentResult()
+   *   const data = results.map((result) => result.data)
+   *   ```
+   *
+   * @returns The current results.
    */
   getCurrentResult(): Array<QueryObserverResult> {
     return this.#result
   }
 
   /**
-   * Returns the underlying `Query` instances currently being observed, in
-   * the same order as the queries passed to the constructor or `setQueries`.
+   * Returns the underlying `Query` instances currently being observed, in the
+   * same order as the queries passed to the constructor or `setQueries`.
+   *
    * @returns The observed queries.
    */
   getQueries() {
@@ -230,9 +236,9 @@ export class QueriesObserver<
   }
 
   /**
-   * Returns the underlying `QueryObserver` instances this observer manages,
-   * in the same order as the queries passed to the constructor or
-   * `setQueries`.
+   * Returns the underlying `QueryObserver` instances this observer manages, in
+   * the same order as the queries passed to the constructor or `setQueries`.
+   *
    * @returns The managed query observers.
    */
   getObservers() {
@@ -240,15 +246,21 @@ export class QueriesObserver<
   }
 
   /**
-   * The `QueriesObserver` counterpart of {@link QueryObserver#getOptimisticResult} — computes
-   * the result for the given (already-defaulted) queries right now, synchronously. Called by
-   * framework adapters (e.g. `useQueries`) ahead of subscribing, returning a tuple of the raw
-   * per-query results, a function to compute the combined result from them, and a function to
-   * wrap the results for property-access tracking.
-   * @param queries - The defaulted options of the queries to compute the result for.
-   * @param combine - The `combine` function used by the returned `combineResult`, if any.
-   * @returns A tuple of the per-query results, a function that computes the combined result, and a
-   * function that returns the results wrapped for property-access tracking.
+   * The `QueriesObserver` counterpart of
+   * {@link QueryObserver#getOptimisticResult} — computes the result for the
+   * given (already-defaulted) queries right now, synchronously. Called by
+   * framework adapters (e.g. `useQueries`) ahead of subscribing, returning a
+   * tuple of the raw per-query results, a function to compute the combined
+   * result from them, and a function to wrap the results for property-access
+   * tracking.
+   *
+   * @param queries - The defaulted options of the queries to compute the result
+   *   for.
+   * @param combine - The `combine` function used by the returned
+   *   `combineResult`, if any.
+   * @returns A tuple of the per-query results, a function that computes the
+   *   combined result, and a function that returns the results wrapped for
+   *   property-access tracking.
    */
   getOptimisticResult(
     queries: Array<QueryObserverOptions>,

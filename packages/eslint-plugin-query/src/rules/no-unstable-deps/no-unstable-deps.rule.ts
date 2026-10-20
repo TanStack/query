@@ -45,8 +45,9 @@ export const rule = createRule({
     }> = []
 
     /**
-     * Returns the name of the React hook a call expression calls, if it is one: a known hook, an
-     * alias of one, or `React.<hook>`.
+     * Returns the name of the React hook a call expression calls, if it is one:
+     * a known hook, an alias of one, or `React.<hook>`.
+     *
      * @param node - The call expression.
      * @returns The hook name, or `undefined` if the call is not a React hook.
      */
@@ -71,10 +72,11 @@ export const rule = createRule({
     }
 
     /**
-     * Tracks the variables bound to a query hook's result, so they can be reported when used as
-     * dependencies.
-     * @param pattern - The binding: an identifier, or an array pattern whose elements and rest
-     * element are tracked.
+     * Tracks the variables bound to a query hook's result, so they can be
+     * reported when used as dependencies.
+     *
+     * @param pattern - The binding: an identifier, or an array pattern whose
+     *   elements and rest element are tracked.
      * @param queryHook - The name of the query hook the result comes from.
      */
     function collectVariableNames(
@@ -102,15 +104,19 @@ export const rule = createRule({
 
     /**
      * Checks whether a name follows the custom hook naming convention.
+     *
      * @param hookName - The name to check.
-     * @returns `true` if the name starts with `use` followed by an uppercase letter or a digit.
+     * @returns `true` if the name starts with `use` followed by an uppercase
+     *   letter or a digit.
      */
     function isCustomHookName(hookName: string): boolean {
       return /^use[A-Z0-9]/.test(hookName)
     }
 
     /**
-     * Checks whether a call passes an object literal with a `combine` property as its first argument.
+     * Checks whether a call passes an object literal with a `combine` property
+     * as its first argument.
+     *
      * @param callExpression - The call expression to check.
      * @returns `true` if the first argument has a `combine` property.
      */
@@ -132,10 +138,13 @@ export const rule = createRule({
     }
 
     /**
-     * Returns the name of the TanStack Query hook a call expression calls directly. `useQueries` and
-     * `useSuspenseQueries` with `combine` are ignored, since their result can be stable.
+     * Returns the name of the TanStack Query hook a call expression calls
+     * directly. `useQueries` and `useSuspenseQueries` with `combine` are
+     * ignored, since their result can be stable.
+     *
      * @param callExpression - The call to check.
-     * @returns The hook name, or `undefined` if the call is not a tracked query hook.
+     * @returns The hook name, or `undefined` if the call is not a tracked query
+     *   hook.
      */
     function getDirectQueryHook(
       callExpression: TSESTree.CallExpression,
@@ -160,8 +169,9 @@ export const rule = createRule({
     }
 
     /**
-     * Returns the query hook behind a call expression: a direct query hook call, or a custom hook that
-     * returns one.
+     * Returns the query hook behind a call expression: a direct query hook
+     * call, or a custom hook that returns one.
+     *
      * @param callExpression - The call to check.
      * @returns The query hook name, or `undefined` if there is none.
      */
@@ -181,10 +191,13 @@ export const rule = createRule({
     }
 
     /**
-     * Returns the query hook that a custom hook's body returns: either an expression body that calls
-     * one, or a block with a single `return` of such a call.
+     * Returns the query hook that a custom hook's body returns: either an
+     * expression body that calls one, or a block with a single `return` of such
+     * a call.
+     *
      * @param body - The body of the custom hook.
-     * @returns The query hook name, or `undefined` if the body doesn't return one.
+     * @returns The query hook name, or `undefined` if the body doesn't return
+     *   one.
      */
     function getReturnedQueryHook(
       body:
@@ -216,7 +229,9 @@ export const rule = createRule({
     }
 
     /**
-     * Reports the tracked query results used in a React hook's dependency array.
+     * Reports the tracked query results used in a React hook's dependency
+     * array.
+     *
      * @param reactHook - The name of the React hook.
      * @param depsArray - The dependency array to check.
      */

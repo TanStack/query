@@ -7,93 +7,96 @@ import type {
 import type { QueryClient } from '@tanstack/vue-query'
 
 /**
- * The props of `VueQueryDevtools`, which renders the devtools with a toggle button that opens them.
+ * The props of `VueQueryDevtools`, which renders the devtools with a toggle
+ * button that opens them.
  */
 export interface DevtoolsOptions {
-  /**
-   * Set this true if you want the dev tools to default to being open
-   */
+  /** Set this true if you want the dev tools to default to being open */
   initialIsOpen?: boolean
   /**
    * The position of the TanStack logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
+   *
    * @defaultValue bottom-right
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
-   * The position of the Vue Query devtools panel.
-   * 'top' | 'bottom' | 'left' | 'right'
+   * The position of the Vue Query devtools panel. 'top' | 'bottom' | 'left' |
+   * 'right'
+   *
    * @defaultValue bottom
    */
   position?: DevtoolsPosition
-  /**
-   * Custom instance of QueryClient
-   */
+  /** Custom instance of QueryClient */
   client?: QueryClient
-  /**
-   * Use this so you can define custom errors that can be shown in the devtools.
-   */
+  /** Use this so you can define custom errors that can be shown in the devtools. */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   * Use this to pass a nonce to the style tag that is added to the document
+   * head. This is useful if you are using a Content Security Policy (CSP) nonce
+   * to allow inline styles.
    */
   styleNonce?: string
   /**
-   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
-   * within the shadow DOM instead of within the head tag in the light DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles
+   * will be applied within the shadow DOM instead of within the head tag in the
+   * light DOM.
    */
   shadowDOMTarget?: ShadowRoot
-  /**
-   * Set this to true to hide disabled queries from the devtools panel.
-   */
+  /** Set this to true to hide disabled queries from the devtools panel. */
   hideDisabledQueries?: boolean
   /**
-   * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+   * Set this to 'light', 'dark', or 'system' to change the theme of the
+   * devtools panel.
+   *
    * @defaultValue system
    */
   theme?: Theme
 }
 
 /**
- * The props of `VueQueryDevtoolsPanel`, which renders the devtools panel inline.
+ * The props of `VueQueryDevtoolsPanel`, which renders the devtools panel
+ * inline.
  */
 export interface DevtoolsPanelOptions {
-  /**
-   * Custom instance of QueryClient
-   */
+  /** Custom instance of QueryClient */
   client?: QueryClient
-  /**
-   * Use this so you can define custom errors that can be shown in the devtools.
-   */
+  /** Use this so you can define custom errors that can be shown in the devtools. */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   * Use this to pass a nonce to the style tag that is added to the document
+   * head. This is useful if you are using a Content Security Policy (CSP) nonce
+   * to allow inline styles.
    */
   styleNonce?: string
   /**
-   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
-   * within the shadow DOM instead of within the head tag in the light DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles
+   * will be applied within the shadow DOM instead of within the head tag in the
+   * light DOM.
    */
   shadowDOMTarget?: ShadowRoot
 
   /**
    * Custom styles for the devtools panel
+   *
+   * @example
+   *   ;({ height: '100%' })
+   *
+   * @example
+   *   ;({ height: '100%', width: '100%' })
+   *
    * @default { height: '500px' }
-   * @example { height: '100%' }
-   * @example { height: '100%', width: '100%' }
    */
   style?: Partial<CSSStyleDeclaration>
 
-  /**
-   * Callback function that is called when the devtools panel is closed
-   */
+  /** Callback function that is called when the devtools panel is closed */
   onClose?: () => void
-  /**
-   * Set this to true to hide disabled queries from the devtools panel.
-   */
+  /** Set this to true to hide disabled queries from the devtools panel. */
   hideDisabledQueries?: boolean
   /**
-   * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+   * Set this to 'light', 'dark', or 'system' to change the theme of the
+   * devtools panel.
+   *
    * @defaultValue system
    */
   theme?: Theme

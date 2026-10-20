@@ -22,9 +22,11 @@ type EnhancedCreate = (
 ) => ReturnType<Create>
 
 /**
- * Wraps a rule's `create` function to track the identifiers imported from TanStack Query packages,
- * and passes helpers that check them.
- * @param create - The rule's `create` function, which also receives the helpers.
+ * Wraps a rule's `create` function to track the identifiers imported from
+ * TanStack Query packages, and passes helpers that check them.
+ *
+ * @param create - The rule's `create` function, which also receives the
+ *   helpers.
  * @returns The wrapped `create` function.
  */
 export function detectTanstackQueryImports(create: EnhancedCreate): Create {

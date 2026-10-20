@@ -22,7 +22,8 @@ import type {
 import type { TanstackQueryDevtools } from '@tanstack/query-devtools'
 
 /**
- * Internal token used to prevent double providing of devtools in child injectors
+ * Internal token used to prevent double providing of devtools in child
+ * injectors
  */
 const DEVTOOLS_PROVIDED = new InjectionToken('', {
   factory: () => ({
@@ -30,9 +31,7 @@ const DEVTOOLS_PROVIDED = new InjectionToken('', {
   }),
 })
 
-/**
- * Internal token for providing devtools options
- */
+/** Internal token for providing devtools options */
 const DEVTOOLS_OPTIONS_SIGNAL = new InjectionToken<Signal<DevtoolsOptions>>('')
 
 /**
@@ -42,16 +41,19 @@ const DEVTOOLS_OPTIONS_SIGNAL = new InjectionToken<Signal<DevtoolsOptions>>('')
  *
  * ```ts
  * export const appConfig: ApplicationConfig = {
- *   providers: [
- *     provideTanStackQuery(new QueryClient(), withDevtools())
- *   ]
+ *   providers: [provideTanStackQuery(new QueryClient(), withDevtools())],
  * }
  * ```
+ *
  * The devtools will be rendered in `<body>`.
  *
- * If you need more control over when devtools are loaded, you can use the `loadDevtools` option.
+ * If you need more control over when devtools are loaded, you can use the
+ * `loadDevtools` option.
  *
- * If you need more control over where devtools are rendered, consider `injectDevtoolsPanel`. This allows rendering devtools inside your own devtools for example.
+ * If you need more control over where devtools are rendered, consider
+ * `injectDevtoolsPanel`. This allows rendering devtools inside your own
+ * devtools for example.
+ *
  * @param withDevtoolsFn - A function that returns `DevtoolsOptions`.
  * @param options - Additional options for configuring `withDevtools`.
  * @returns A set of providers for use with `provideTanStackQuery`.

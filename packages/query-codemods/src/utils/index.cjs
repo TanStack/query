@@ -38,8 +38,9 @@ module.exports = ({ root, jscodeshift }) => {
     }
 
     /**
-     * First, we search for the namespace import identifier because if we have any, we assume the consumer uses
-     * namespace imports. In this case, we won't search for named imports at all.
+     * First, we search for the namespace import identifier because if we have
+     * any, we assume the consumer uses namespace imports. In this case, we
+     * won't search for named imports at all.
      */
     const namespaceImportIdentifier = findNamespaceImportIdentifier()
 

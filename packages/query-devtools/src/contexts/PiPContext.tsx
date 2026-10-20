@@ -33,11 +33,12 @@ const PiPContext = createContext<Accessor<PiPContextType> | undefined>(
 )
 
 /**
- * Provides the picture-in-picture window of the devtools, and functions to
- * open and close it.
- * @param props - The `children` to render, the `localStore` and
- * `setLocalStore` that persist whether the window is open, and `disabled` to
- * turn picture-in-picture off.
+ * Provides the picture-in-picture window of the devtools, and functions to open
+ * and close it.
+ *
+ * @param props - The `children` to render, the `localStore` and `setLocalStore`
+ *   that persist whether the window is open, and `disabled` to turn
+ *   picture-in-picture off.
  * @returns The context provider.
  */
 export const PiPProvider = (props: PiPProviderProps) => {
@@ -202,8 +203,9 @@ export const PiPProvider = (props: PiPProviderProps) => {
 
 /**
  * Reads the picture-in-picture context provided by {@link PiPProvider}.
+ *
  * @returns An accessor of the picture-in-picture window and the functions to
- * open and close it.
+ *   open and close it.
  */
 export const usePiPWindow = () => {
   const context = createMemo(() => {

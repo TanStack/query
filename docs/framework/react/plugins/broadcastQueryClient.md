@@ -44,20 +44,22 @@ An object of options:
 interface BroadcastQueryClientOptions {
   /** The QueryClient to sync */
   queryClient: QueryClient
-  /** This is the unique channel name that will be used
-   * to communicate between tabs and windows */
+  /**
+   * This is the unique channel name that will be used to communicate between
+   * tabs and windows
+   */
   broadcastChannel?: string
   /** Options for the BroadcastChannel API */
   options?: BroadcastChannelOptions
   /**
-   * Called when a query event fails to broadcast to other tabs — most
-   * commonly because the query's data, error, or key contains a value the
-   * structured-clone algorithm cannot serialize (e.g. `ReadableStream`,
-   * `File`, functions, Vue `reactive` proxies).
+   * Called when a query event fails to broadcast to other tabs — most commonly
+   * because the query's data, error, or key contains a value the
+   * structured-clone algorithm cannot serialize (e.g. `ReadableStream`, `File`,
+   * functions, Vue `reactive` proxies).
    *
-   * If omitted, a `console.warn` is emitted in development so failures
-   * are never entirely silent. May return a `Promise`; any rejection is
-   * caught internally.
+   * If omitted, a `console.warn` is emitted in development so failures are
+   * never entirely silent. May return a `Promise`; any rejection is caught
+   * internally.
    */
   onBroadcastError?: (
     error: unknown,

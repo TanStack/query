@@ -63,14 +63,16 @@ module.exports = ({
 
   const findQueryCacheMethodCalls = (importIdentifiers) => {
     /**
-     * Here we collect all query client instantiations. We have to make aware of them because the query cache can be
-     * accessed by the query client as well.
+     * Here we collect all query client instantiations. We have to make aware of
+     * them because the query cache can be accessed by the query client as
+     * well.
      */
     const queryClientIdentifiers =
       utils.queryClient.findQueryClientIdentifiers(importIdentifiers)
     /**
-     * Here we collect all query cache instantiations. The reason is simple: the methods can be called on query cache
-     * instances, to locate the possible usages we need to be aware of the identifier names.
+     * Here we collect all query cache instantiations. The reason is simple: the
+     * methods can be called on query cache instances, to locate the possible
+     * usages we need to be aware of the identifier names.
      */
     const queryCacheIdentifiers = findQueryCacheInstantiations(
       importIdentifiers,

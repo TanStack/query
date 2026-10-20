@@ -10,12 +10,17 @@ const newName = 'isPending'
  * @param {Object} utils
  * @param {import('jscodeshift').Collection} root
  * @param {string} filePath
- * @param {{keyName: "mutationKey"|"queryKey", queryClientMethods: ReadonlyArray<string>, hooks: ReadonlyArray<string>}} config
+ * @param {{
+ *   keyName: 'mutationKey' | 'queryKey'
+ *   queryClientMethods: ReadonlyArray<string>
+ *   hooks: ReadonlyArray<string>
+ * }} config
  */
 const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
   /**
-   * @param {import('jscodeshift').CallExpression | import('jscodeshift').ExpressionStatement} node
-   * @returns {{start: number, end: number}}
+   * @param {import('jscodeshift').CallExpression
+   *   | import('jscodeshift').ExpressionStatement} node
+   * @returns {{ start: number; end: number }}
    */
   const getNodeLocation = (node) => {
     const location = utils.isCallExpression(node) ? node.callee.loc : node.loc
@@ -75,7 +80,7 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
 
   /**
    * @param {import('jscodeshift').ObjectPattern} node
-   * @returns {import('jscodeshift').ObjectProperty|null}
+   * @returns {import('jscodeshift').ObjectProperty | null}
    */
   const findIsLoadingObjectPropertyInObjectPattern = (node) => {
     return (
@@ -92,7 +97,7 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
 
   /**
    * @param {import('jscodeshift').ObjectPattern} node
-   * @returns {import('jscodeshift').RestElement|null}
+   * @returns {import('jscodeshift').RestElement | null}
    */
   const findRestElementInObjectPattern = (node) => {
     return (

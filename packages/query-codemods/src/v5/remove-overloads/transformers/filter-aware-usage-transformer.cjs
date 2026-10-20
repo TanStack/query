@@ -9,7 +9,12 @@ const createUseQueryLikeTransformer = require('../../../utils/transformers/use-q
  * @param {Object} utils
  * @param {import('jscodeshift').Collection} root
  * @param {string} filePath
- * @param {{keyName: "mutationKey"|"queryKey", fnName: "mutationFn"|"queryFn", queryClientMethods: ReadonlyArray<string>, hooks: ReadonlyArray<string>}} config
+ * @param {{
+ *   keyName: 'mutationKey' | 'queryKey'
+ *   fnName: 'mutationFn' | 'queryFn'
+ *   queryClientMethods: ReadonlyArray<string>
+ *   hooks: ReadonlyArray<string>
+ * }} config
  */
 const transformFilterAwareUsages = ({
   jscodeshift,
@@ -22,8 +27,8 @@ const transformFilterAwareUsages = ({
 
   /**
    * @param {import('jscodeshift').CallExpression} node
-   * @param {"mutationKey"|"queryKey"} keyName
-   * @param {"mutationFn"|"queryFn"} fnName
+   * @param {'mutationKey' | 'queryKey'} keyName
+   * @param {'mutationFn' | 'queryFn'} fnName
    * @returns {boolean}
    */
   const canSkipReplacement = (node, keyName, fnName) => {
@@ -38,8 +43,9 @@ const transformFilterAwareUsages = ({
       )
 
     /**
-     * This call has at least one argument. If it's an object expression and contains the "queryKey" or "mutationKey"
-     * field, the transformation can be skipped, because it's already matching the expected signature.
+     * This call has at least one argument. If it's an object expression and
+     * contains the "queryKey" or "mutationKey" field, the transformation can be
+     * skipped, because it's already matching the expected signature.
      */
     return (
       callArguments.length > 0 &&
@@ -49,8 +55,8 @@ const transformFilterAwareUsages = ({
   }
 
   /**
-   * This function checks whether the given object property is a spread element or a property that's not named
-   * "queryKey" or "mutationKey".
+   * This function checks whether the given object property is a spread element
+   * or a property that's not named "queryKey" or "mutationKey".
    *
    * @param {import('jscodeshift').ObjectProperty} property
    * @returns {boolean}
@@ -96,7 +102,8 @@ const transformFilterAwareUsages = ({
 
       /**
        * Here we attempt to determine the first parameter of the function call.
-       * If it's a function definition, we can create an object property from it (the mutation fn).
+       * If it's a function definition, we can create an object property from it
+       * (the mutation fn).
        */
       const firstArgument = node.arguments[0]
       if (isFunctionDefinition(firstArgument)) {
@@ -132,10 +139,11 @@ const transformFilterAwareUsages = ({
       }
 
       /**
-       * If, instead, the first parameter is an array expression or an identifier that references
-       * an array expression, then we create an object property from it (the query or mutation key).
+       * If, instead, the first parameter is an array expression or an
+       * identifier that references an array expression, then we create an
+       * object property from it (the query or mutation key).
        *
-       * @type {import('jscodeshift').Property|undefined}
+       * @type {import('jscodeshift').Property | undefined}
        */
       const keyProperty = v5Utils.transformArgumentToKey(
         path,
@@ -145,8 +153,9 @@ const transformFilterAwareUsages = ({
       )
 
       /**
-       * The first parameter couldn't be transformed into an object property, so it's time to throw an exception,
-       * it will notify the consumers that they need to rewrite this usage manually.
+       * The first parameter couldn't be transformed into an object property, so
+       * it's time to throw an exception, it will notify the consumers that they
+       * need to rewrite this usage manually.
        */
       if (!keyProperty) {
         const secondArgument =
@@ -222,9 +231,10 @@ const transformFilterAwareUsages = ({
         }
 
         /**
-         * If it has a second argument, and it's an object expression, then we get the properties from it
-         * (except the "queryKey" or "mutationKey" properties), because these arguments will also be moved to the
-         * newly created object expression.
+         * If it has a second argument, and it's an object expression, then we
+         * get the properties from it (except the "queryKey" or "mutationKey"
+         * properties), because these arguments will also be moved to the newly
+         * created object expression.
          */
         if (utils.isObjectExpression(secondParameter)) {
           v5Utils.copyPropertiesFromSource(

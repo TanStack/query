@@ -59,21 +59,23 @@ interface MutationDefaults {
 // CLASS
 
 /**
- * `QueryClient` is used to interact with a cache of queries and mutations. It owns a
- * `QueryCache` and a `MutationCache` (creating default ones if none are passed in) and holds
- * the default options that are applied to queries and mutations created through it.
- * @example
- * ```ts
- * const queryClient = new QueryClient({
- *   defaultOptions: {
- *     queries: {
- *       staleTime: Infinity,
- *     },
- *   },
- * })
+ * `QueryClient` is used to interact with a cache of queries and mutations. It
+ * owns a `QueryCache` and a `MutationCache` (creating default ones if none are
+ * passed in) and holds the default options that are applied to queries and
+ * mutations created through it.
  *
- * await queryClient.query({ queryKey: ['posts'], queryFn: fetchPosts })
- * ```
+ * @example
+ *   ```ts
+ *   const queryClient = new QueryClient({
+ *     defaultOptions: {
+ *       queries: {
+ *         staleTime: Infinity,
+ *       },
+ *     },
+ *   })
+ *
+ *   await queryClient.query({ queryKey: ['posts'], queryFn: fetchPosts })
+ *   ```
  */
 export class QueryClient {
   #queryCache: QueryCache
@@ -95,10 +97,11 @@ export class QueryClient {
   }
 
   /**
-   * Called by a framework adapter's `QueryClientProvider`-equivalent when it mounts, to start
-   * listening for focus/online events and resume paused mutations. Ref-counted via an internal
-   * mount count, so nested or multiple providers sharing the same `QueryClient` don't tear down
-   * the shared listeners until the last one unmounts.
+   * Called by a framework adapter's `QueryClientProvider`-equivalent when it
+   * mounts, to start listening for focus/online events and resume paused
+   * mutations. Ref-counted via an internal mount count, so nested or multiple
+   * providers sharing the same `QueryClient` don't tear down the shared
+   * listeners until the last one unmounts.
    */
   mount(): void {
     this.#mountCount++
@@ -120,8 +123,8 @@ export class QueryClient {
 
   /**
    * The inverse of {@link QueryClient#mount} — called by a framework adapter's
-   * `QueryClientProvider`-equivalent when it unmounts. Only tears down the focus/online
-   * listeners once the mount count returns to `0`.
+   * `QueryClientProvider`-equivalent when it unmounts. Only tears down the
+   * focus/online listeners once the mount count returns to `0`.
    */
   unmount(): void {
     this.#mountCount--
@@ -135,18 +138,21 @@ export class QueryClient {
   }
 
   /**
-   * Returns the number of queries in the cache that are currently fetching, optionally
-   * matching a set of filters. This includes background-fetching, loading new pages, and
-   * loading more infinite query results.
-   * @param filters - Narrows down which fetching queries are counted. Without filters, every
-   * fetching query is counted.
-   * @returns The number of matching queries whose `fetchStatus` is `'fetching'`.
+   * Returns the number of queries in the cache that are currently fetching,
+   * optionally matching a set of filters. This includes background-fetching,
+   * loading new pages, and loading more infinite query results.
+   *
    * @example
-   * ```ts
-   * if (queryClient.isFetching()) {
-   *   console.log('At least one query is fetching!')
-   * }
-   * ```
+   *   ```ts
+   *   if (queryClient.isFetching()) {
+   *     console.log('At least one query is fetching!')
+   *   }
+   *   ```
+   *
+   * @param filters - Narrows down which fetching queries are counted. Without
+   *   filters, every fetching query is counted.
+   * @returns The number of matching queries whose `fetchStatus` is
+   *   `'fetching'`.
    */
   isFetching<TQueryFilters extends QueryFilters<any> = QueryFilters>(
     filters?: TQueryFilters,
@@ -156,17 +162,19 @@ export class QueryClient {
   }
 
   /**
-   * Returns the number of mutations in the cache that are currently pending, optionally
-   * matching a set of filters.
-   * @param filters - Narrows down which pending mutations are counted. Without filters, every
-   * pending mutation is counted.
-   * @returns The number of matching mutations whose `status` is `'pending'`.
+   * Returns the number of mutations in the cache that are currently pending,
+   * optionally matching a set of filters.
+   *
    * @example
-   * ```ts
-   * if (queryClient.isMutating()) {
-   *   console.log('At least one mutation is pending!')
-   * }
-   * ```
+   *   ```ts
+   *   if (queryClient.isMutating()) {
+   *     console.log('At least one mutation is pending!')
+   *   }
+   *   ```
+   *
+   * @param filters - Narrows down which pending mutations are counted. Without
+   *   filters, every pending mutation is counted.
+   * @returns The number of matching mutations whose `status` is `'pending'`.
    */
   isMutating<
     TMutationFilters extends MutationFilters<any, any> = MutationFilters,
@@ -175,13 +183,17 @@ export class QueryClient {
   }
 
   /**
-   * Imperative (non-reactive) way to retrieve data for a QueryKey.
-   * Should only be used in callbacks or functions where reading the latest data is necessary, e.g. for optimistic updates.
+   * Imperative (non-reactive) way to retrieve data for a QueryKey. Should only
+   * be used in callbacks or functions where reading the latest data is
+   * necessary, e.g. for optimistic updates.
    *
-   * Hint: Do not use this function inside a component, because it won't receive updates.
-   * Use `useQuery` to create a `QueryObserver` that subscribes to changes.
+   * Hint: Do not use this function inside a component, because it won't receive
+   * updates. Use `useQuery` to create a `QueryObserver` that subscribes to
+   * changes.
+   *
    * @param queryKey - The query key of the query to read.
-   * @returns The cached data for the query, or `undefined` if no query with this key has been observed yet.
+   * @returns The cached data for the query, or `undefined` if no query with
+   *   this key has been observed yet.
    * @see {@link QueryClient#getQueriesData}
    */
   getQueryData<
@@ -196,13 +208,16 @@ export class QueryClient {
   }
 
   /**
-   * Returns the cached data of a query, or fetches it if there is none. With `revalidateIfStale`,
-   * stale cached data is also refetched in the background.
-   * @param options - The query options. If the query has no cached data yet, it is fetched with
-   * these options.
-   * @returns A promise that resolves to the cached data, or to the fetched data if nothing was
-   * cached yet.
-   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   * Returns the cached data of a query, or fetches it if there is none. With
+   * `revalidateIfStale`, stale cached data is also refetched in the
+   * background.
+   *
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' })
+   *   instead. This method will be removed in the next major version.
+   * @param options - The query options. If the query has no cached data yet, it
+   *   is fetched with these options.
+   * @returns A promise that resolves to the cached data, or to the fetched data
+   *   if nothing was cached yet.
    */
   ensureQueryData<
     TQueryFnData,
@@ -233,22 +248,26 @@ export class QueryClient {
   }
 
   /**
-   * Imperative (non-reactive) way to retrieve the cached data of multiple queries at once.
-   * Only queries matching the given filters are returned; if none match, an empty array is
-   * returned.
+   * Imperative (non-reactive) way to retrieve the cached data of multiple
+   * queries at once. Only queries matching the given filters are returned; if
+   * none match, an empty array is returned.
    *
-   * Because the matched queries can hold data of different shapes (e.g. a broad filter can match
-   * queries with unrelated data types), the `TQueryFnData` generic defaults to `unknown` rather
-   * than being inferred. Passing a more specific type is a convenience for call sites that know
-   * every matched query holds the same shape — it is not checked against the actual cache
+   * Because the matched queries can hold data of different shapes (e.g. a broad
+   * filter can match queries with unrelated data types), the `TQueryFnData`
+   * generic defaults to `unknown` rather than being inferred. Passing a more
+   * specific type is a convenience for call sites that know every matched query
+   * holds the same shape — it is not checked against the actual cache
    * contents.
-   * @param filters - The filters that select which queries to read.
-   * @returns An array of query key and data pairs. The data is `undefined` for a query with no cached data.
-   * @see {@link QueryClient#getQueryData}
+   *
    * @example
-   * ```ts
-   * const data = queryClient.getQueriesData({ queryKey: ['posts'] })
-   * ```
+   *   ```ts
+   *   const data = queryClient.getQueriesData({ queryKey: ['posts'] })
+   *   ```
+   *
+   * @param filters - The filters that select which queries to read.
+   * @returns An array of query key and data pairs. The data is `undefined` for
+   *   a query with no cached data.
+   * @see {@link QueryClient#getQueryData}
    */
   getQueriesData<
     TQueryFnData = unknown,
@@ -261,26 +280,31 @@ export class QueryClient {
   }
 
   /**
-   * Synchronous way to immediately update a query's cached data. If the updater (or the value
-   * passed) resolves to `undefined`, the cache is left untouched and no query is created;
-   * otherwise, if the query does not exist yet, it will be created. To update multiple queries
-   * at once by partially matching query keys, use {@link QueryClient#setQueriesData} instead.
+   * Synchronous way to immediately update a query's cached data. If the updater
+   * (or the value passed) resolves to `undefined`, the cache is left untouched
+   * and no query is created; otherwise, if the query does not exist yet, it
+   * will be created. To update multiple queries at once by partially matching
+   * query keys, use {@link QueryClient#setQueriesData} instead.
    *
-   * Updates must be performed immutably: do not mutate `oldData`, or data previously retrieved
-   * via {@link QueryClient#getQueryData}, in place.
-   * @param queryKey - The query key to set data for.
-   * @param updater - Either the new data, or a function that receives the current data (which
-   * may be `undefined`) and returns the new data.
-   * @param options - Set `updatedAt` to override the timestamp the written data is recorded with.
-   * @returns The data that was written, or `undefined` if the updater returned `undefined` — in that case
-   * the write is skipped and the cache is left unchanged.
+   * Updates must be performed immutably: do not mutate `oldData`, or data
+   * previously retrieved via {@link QueryClient#getQueryData}, in place.
+   *
    * @example
-   * ```ts
-   * queryClient.setQueryData(['posts'], newPosts)
+   *   ```ts
+   *   queryClient.setQueryData(['posts'], newPosts)
    *
-   * // Or, using an updater function that receives the current data:
-   * queryClient.setQueryData(['posts'], (oldPosts) => [...oldPosts, newPost])
-   * ```
+   *   // Or, using an updater function that receives the current data:
+   *   queryClient.setQueryData(['posts'], (oldPosts) => [...oldPosts, newPost])
+   *   ```
+   *
+   * @param queryKey - The query key to set data for.
+   * @param updater - Either the new data, or a function that receives the
+   *   current data (which may be `undefined`) and returns the new data.
+   * @param options - Set `updatedAt` to override the timestamp the written data
+   *   is recorded with.
+   * @returns The data that was written, or `undefined` if the updater returned
+   *   `undefined` — in that case the write is skipped and the cache is left
+   *   unchanged.
    */
   setQueryData<
     TQueryFnData = unknown,
@@ -318,22 +342,27 @@ export class QueryClient {
   }
 
   /**
-   * Synchronous way to immediately update the cached data of multiple queries at once, using
-   * filters or partial query key matching. Only queries that already exist and match the given
-   * filters are updated; no new cache entries are created. Internally this calls
-   * {@link QueryClient#setQueryData} for each matching query.
-   * @param filters - The filters that select which existing queries to update.
-   * @param updater - Either the new data, or a function that receives each matched query's current
-   * data (which may be `undefined`) and returns the new data.
-   * @param options - Set `updatedAt` to override the timestamp the written data is recorded with.
-   * @returns One `[queryKey, data]` tuple per matched query, in the same shape and with the same
-   * `undefined` case as {@link QueryClient#setQueryData}.
+   * Synchronous way to immediately update the cached data of multiple queries
+   * at once, using filters or partial query key matching. Only queries that
+   * already exist and match the given filters are updated; no new cache entries
+   * are created. Internally this calls {@link QueryClient#setQueryData} for each
+   * matching query.
+   *
    * @example
-   * ```ts
-   * queryClient.setQueriesData({ queryKey: ['posts'] }, (oldPosts) =>
-   *   oldPosts ? oldPosts.filter((post) => post.id !== deletedId) : oldPosts,
-   * )
-   * ```
+   *   ```ts
+   *   queryClient.setQueriesData({ queryKey: ['posts'] }, (oldPosts) =>
+   *     oldPosts ? oldPosts.filter((post) => post.id !== deletedId) : oldPosts,
+   *   )
+   *   ```
+   *
+   * @param filters - The filters that select which existing queries to update.
+   * @param updater - Either the new data, or a function that receives each
+   *   matched query's current data (which may be `undefined`) and returns the
+   *   new data.
+   * @param options - Set `updatedAt` to override the timestamp the written data
+   *   is recorded with.
+   * @returns One `[queryKey, data]` tuple per matched query, in the same shape
+   *   and with the same `undefined` case as {@link QueryClient#setQueryData}.
    */
   setQueriesData<
     TQueryFnData,
@@ -357,15 +386,18 @@ export class QueryClient {
   }
 
   /**
-   * Imperative (non-reactive) way to retrieve an existing query's state. If the query does not
-   * exist, `undefined` is returned.
-   * @param queryKey - The query key of the query to read.
-   * @returns The query's state, or `undefined` if no query with this key exists.
+   * Imperative (non-reactive) way to retrieve an existing query's state. If the
+   * query does not exist, `undefined` is returned.
+   *
    * @example
-   * ```ts
-   * const state = queryClient.getQueryState(['posts'])
-   * console.log(state?.dataUpdatedAt)
-   * ```
+   *   ```ts
+   *   const state = queryClient.getQueryState(['posts'])
+   *   console.log(state?.dataUpdatedAt)
+   *   ```
+   *
+   * @param queryKey - The query key of the query to read.
+   * @returns The query's state, or `undefined` if no query with this key
+   *   exists.
    */
   getQueryState<
     TQueryFnData = unknown,
@@ -384,15 +416,17 @@ export class QueryClient {
 
   /**
    * Removes queries from the cache that match the given filters. Unlike
-   * {@link QueryClient#invalidateQueries} or {@link QueryClient#refetchQueries}, this removes
-   * matching queries from the cache instead of refetching them. Without filters, every query in
-   * the cache is removed.
-   * @param filters - The filters that select which queries to remove. Without filters, every query
-   * is removed.
+   * {@link QueryClient#invalidateQueries} or {@link QueryClient#refetchQueries},
+   * this removes matching queries from the cache instead of refetching them.
+   * Without filters, every query in the cache is removed.
+   *
    * @example
-   * ```ts
-   * queryClient.removeQueries({ queryKey: ['posts'], exact: true })
-   * ```
+   *   ```ts
+   *   queryClient.removeQueries({ queryKey: ['posts'], exact: true })
+   *   ```
+   *
+   * @param filters - The filters that select which queries to remove. Without
+   *   filters, every query is removed.
    */
   removeQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
     filters?: QueryFilters<TTaggedQueryKey>,
@@ -406,18 +440,22 @@ export class QueryClient {
   }
 
   /**
-   * Resets queries matching the given filters back to their initial state (e.g. any
-   * `initialData`), notifying subscribers rather than removing them. Active queries among the
-   * matched set are then refetched, and the returned promise resolves once that refetch settles.
-   * @param filters - The filters that select which queries to reset. Without filters, every query
-   * is reset.
-   * @param options - Passed to the refetch of the active matched queries, e.g. `cancelRefetch` and
-   * `throwOnError`.
-   * @returns A promise that resolves once the refetch of the active matched queries settles.
+   * Resets queries matching the given filters back to their initial state (e.g.
+   * any `initialData`), notifying subscribers rather than removing them. Active
+   * queries among the matched set are then refetched, and the returned promise
+   * resolves once that refetch settles.
+   *
    * @example
-   * ```ts
-   * await queryClient.resetQueries({ queryKey: ['posts'], exact: true })
-   * ```
+   *   ```ts
+   *   await queryClient.resetQueries({ queryKey: ['posts'], exact: true })
+   *   ```
+   *
+   * @param filters - The filters that select which queries to reset. Without
+   *   filters, every query is reset.
+   * @param options - Passed to the refetch of the active matched queries, e.g.
+   *   `cancelRefetch` and `throwOnError`.
+   * @returns A promise that resolves once the refetch of the active matched
+   *   queries settles.
    */
   resetQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
     filters?: QueryFilters<TTaggedQueryKey>,
@@ -442,21 +480,24 @@ export class QueryClient {
   }
 
   /**
-   * Cancels outgoing fetches for queries matching the given filters. Most useful when performing
-   * optimistic updates, since any outgoing refetch that resolves afterwards would otherwise
-   * overwrite the optimistic update. By default (`revert: true`), a cancelled query's data is
-   * reverted to its state before the outgoing fetch started.
+   * Cancels outgoing fetches for queries matching the given filters. Most
+   * useful when performing optimistic updates, since any outgoing refetch that
+   * resolves afterwards would otherwise overwrite the optimistic update. By
+   * default (`revert: true`), a cancelled query's data is reverted to its state
+   * before the outgoing fetch started.
    *
    * The returned promise never rejects, even if individual cancellations fail.
-   * @param filters - The filters that select which queries to cancel. Without filters, every query
-   * is cancelled.
-   * @param cancelOptions - Passed to each matched query's cancellation. `revert` defaults to
-   * `true`.
-   * @returns A promise that resolves once every cancellation has settled.
+   *
    * @example
-   * ```ts
-   * await queryClient.cancelQueries({ queryKey: ['posts'], exact: true })
-   * ```
+   *   ```ts
+   *   await queryClient.cancelQueries({ queryKey: ['posts'], exact: true })
+   *   ```
+   *
+   * @param filters - The filters that select which queries to cancel. Without
+   *   filters, every query is cancelled.
+   * @param cancelOptions - Passed to each matched query's cancellation.
+   *   `revert` defaults to `true`.
+   * @returns A promise that resolves once every cancellation has settled.
    */
   cancelQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
     filters?: QueryFilters<TTaggedQueryKey>,
@@ -477,19 +518,26 @@ export class QueryClient {
    * Marks queries matching the given filters as invalidated. Unlike
    * {@link QueryClient#removeQueries}, invalidated queries stay in the cache.
    *
-   * Unless `filters.refetchType` is `'none'`, matching queries are then refetched via
-   * {@link QueryClient#refetchQueries}, using `filters.refetchType` if set, otherwise
-   * `filters.type`, otherwise `'active'`.
-   * @param filters - The filters that select which queries to invalidate, plus `refetchType` to
-   * control which of them to refetch afterwards. Without filters, every query is invalidated.
-   * @param options - Passed to {@link QueryClient#refetchQueries}, e.g. `cancelRefetch` and
-   * `throwOnError`.
-   * @returns A promise that resolves once the refetch settles, or immediately if `refetchType` is
-   * `'none'`.
+   * Unless `filters.refetchType` is `'none'`, matching queries are then
+   * refetched via {@link QueryClient#refetchQueries}, using
+   * `filters.refetchType` if set, otherwise `filters.type`, otherwise
+   * `'active'`.
+   *
    * @example
-   * ```ts
-   * await queryClient.invalidateQueries({ queryKey: ['posts'], refetchType: 'active' })
-   * ```
+   *   ```ts
+   *   await queryClient.invalidateQueries({
+   *     queryKey: ['posts'],
+   *     refetchType: 'active',
+   *   })
+   *   ```
+   *
+   * @param filters - The filters that select which queries to invalidate, plus
+   *   `refetchType` to control which of them to refetch afterwards. Without
+   *   filters, every query is invalidated.
+   * @param options - Passed to {@link QueryClient#refetchQueries}, e.g.
+   *   `cancelRefetch` and `throwOnError`.
+   * @returns A promise that resolves once the refetch settles, or immediately
+   *   if `refetchType` is `'none'`.
    */
   invalidateQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
     filters?: InvalidateQueryFilters<TTaggedQueryKey>,
@@ -514,23 +562,28 @@ export class QueryClient {
   }
 
   /**
-   * Refetches queries matching the given filters, regardless of whether they are stale. Without
-   * filters, every query in the cache is refetched. Queries that are disabled, or static (only
-   * have observers with a static `staleTime`), are never refetched.
+   * Refetches queries matching the given filters, regardless of whether they
+   * are stale. Without filters, every query in the cache is refetched. Queries
+   * that are disabled, or static (only have observers with a static
+   * `staleTime`), are never refetched.
    *
-   * By default (`cancelRefetch: true`), a currently running fetch is cancelled before the new
-   * one starts. The returned promise resolves once all matching queries have settled; it does
-   * not reject on individual query failures unless `throwOnError` is set.
-   * @param filters - The filters that select which queries to refetch. Without filters, every query
-   * in the cache is included.
-   * @param options - Set `cancelRefetch` to `false` to keep a running fetch instead of cancelling
-   * it, and `throwOnError` to `true` to reject when a refetch fails.
-   * @returns A promise that resolves once every matched query has settled.
+   * By default (`cancelRefetch: true`), a currently running fetch is cancelled
+   * before the new one starts. The returned promise resolves once all matching
+   * queries have settled; it does not reject on individual query failures
+   * unless `throwOnError` is set.
+   *
    * @example
-   * ```ts
-   * // refetch all active queries partially matching a query key:
-   * await queryClient.refetchQueries({ queryKey: ['posts'], type: 'active' })
-   * ```
+   *   ```ts
+   *   // refetch all active queries partially matching a query key:
+   *   await queryClient.refetchQueries({ queryKey: ['posts'], type: 'active' })
+   *   ```
+   *
+   * @param filters - The filters that select which queries to refetch. Without
+   *   filters, every query in the cache is included.
+   * @param options - Set `cancelRefetch` to `false` to keep a running fetch
+   *   instead of cancelling it, and `throwOnError` to `true` to reject when a
+   *   refetch fails.
+   * @returns A promise that resolves once every matched query has settled.
    */
   refetchQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
     filters?: RefetchQueryFilters<TTaggedQueryKey>,
@@ -559,38 +612,46 @@ export class QueryClient {
   }
 
   /**
-   * Asynchronous method to fetch and cache a query, resolving with the data or throwing with
-   * the error.
+   * Asynchronous method to fetch and cache a query, resolving with the data or
+   * throwing with the error.
    *
-   * If the query already exists in the cache and its data is not stale (per the given
-   * `staleTime`), the cached data is returned without fetching. Otherwise, the query is fetched
-   * and the promise resolves once the fetch settles. If a `select` function is provided, it is
-   * applied to the data in both cases (cached or freshly fetched) before it is returned.
+   * If the query already exists in the cache and its data is not stale (per the
+   * given `staleTime`), the cached data is returned without fetching.
+   * Otherwise, the query is fetched and the promise resolves once the fetch
+   * settles. If a `select` function is provided, it is applied to the data in
+   * both cases (cached or freshly fetched) before it is returned.
    *
-   * Unlike a reactive observer, retries are disabled by default here (`retry: false`) unless
-   * explicitly configured, since there is no component to catch a thrown error and retry through
-   * re-render.
+   * Unlike a reactive observer, retries are disabled by default here (`retry:
+   * false`) unless explicitly configured, since there is no component to catch
+   * a thrown error and retry through re-render.
    *
-   * The accepted options are `QueryObserverOptions` minus the fields that only make sense for a
-   * reactive observer — `enabled`, `refetchInterval`, `refetchIntervalInBackground`,
-   * `refetchOnWindowFocus`, `refetchOnReconnect`, `refetchOnMount`, `retryOnMount`,
-   * `notifyOnChangeProps`, `throwOnError`, `suspense`, and `placeholderData` are not part of this
-   * method's options.
+   * The accepted options are `QueryObserverOptions` minus the fields that only
+   * make sense for a reactive observer — `enabled`, `refetchInterval`,
+   * `refetchIntervalInBackground`, `refetchOnWindowFocus`,
+   * `refetchOnReconnect`, `refetchOnMount`, `retryOnMount`,
+   * `notifyOnChangeProps`, `throwOnError`, `suspense`, and `placeholderData`
+   * are not part of this method's options.
    *
-   * This method replaces the deprecated `fetchQuery`, and — combined with
-   * `{ staleTime: 'static' }` — the deprecated `ensureQueryData`.
-   * @param options - The query options, including the `queryKey` and the `queryFn` used if the
-   * query needs to fetch.
-   * @returns A promise that resolves to the data, or to the result of `select` if provided. It
-   * rejects with the error from the fetch or from `select`.
+   * This method replaces the deprecated `fetchQuery`, and — combined with `{
+   * staleTime: 'static' }` — the deprecated `ensureQueryData`.
+   *
    * @example
-   * ```ts
-   * try {
-   *   const data = await queryClient.query({ queryKey, queryFn, staleTime: 10000 })
-   * } catch (error) {
-   *   console.log(error)
-   * }
-   * ```
+   *   ```ts
+   *   try {
+   *     const data = await queryClient.query({
+   *       queryKey,
+   *       queryFn,
+   *       staleTime: 10000,
+   *     })
+   *   } catch (error) {
+   *     console.log(error)
+   *   }
+   *   ```
+   *
+   * @param options - The query options, including the `queryKey` and the
+   *   `queryFn` used if the query needs to fetch.
+   * @returns A promise that resolves to the data, or to the result of `select`
+   *   if provided. It rejects with the error from the fetch or from `select`.
    */
   async query<
     TQueryFnData,
@@ -636,13 +697,15 @@ export class QueryClient {
   }
 
   /**
-   * Fetches and caches a query, or returns its cached data if it isn't stale. Unlike in observers,
-   * the fetch isn't retried unless `retry` is set.
-   * @param options - The query options, including the `queryKey` and the `queryFn` used if the
-   * query needs to fetch.
-   * @returns A promise that resolves to the cached or fetched data, or rejects with the fetch
-   * error.
-   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   * Fetches and caches a query, or returns its cached data if it isn't stale.
+   * Unlike in observers, the fetch isn't retried unless `retry` is set.
+   *
+   * @deprecated Use queryClient.query(options) instead. This method will be
+   *   removed in the next major version.
+   * @param options - The query options, including the `queryKey` and the
+   *   `queryFn` used if the query needs to fetch.
+   * @returns A promise that resolves to the cached or fetched data, or rejects
+   *   with the fetch error.
    */
   fetchQuery<
     TQueryFnData,
@@ -676,12 +739,15 @@ export class QueryClient {
   }
 
   /**
-   * Fetches and caches a query like {@link QueryClient#fetchQuery}, but ignores the result and any
-   * error.
-   * @param options - The query options, including the `queryKey` and the `queryFn` used if the
-   * query needs to fetch.
+   * Fetches and caches a query like {@link QueryClient#fetchQuery}, but ignores
+   * the result and any error.
+   *
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors
+   *   with `.catch(noop)`. This method will be removed in the next major
+   *   version.
+   * @param options - The query options, including the `queryKey` and the
+   *   `queryFn` used if the query needs to fetch.
    * @returns A promise that resolves once the fetch settles. It never rejects.
-   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */
   prefetchQuery<
     TQueryFnData = unknown,
@@ -700,24 +766,32 @@ export class QueryClient {
    * {@link InfiniteData} object or throwing with the error.
    *
    * Behaves like {@link QueryClient#query}, accepting the same options (minus
-   * `initialPageParam`), plus the required `initialPageParam`, and an optional `pages` /
-   * `getNextPageParam` pair used to refetch a fixed number of pages from the start.
+   * `initialPageParam`), plus the required `initialPageParam`, and an optional
+   * `pages` / `getNextPageParam` pair used to refetch a fixed number of pages
+   * from the start.
    *
-   * This method replaces the deprecated `fetchInfiniteQuery`, and — combined with
-   * `{ staleTime: 'static' }` — the deprecated `ensureInfiniteQueryData`.
-   * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
-   * `initialPageParam`.
-   * @returns A promise that resolves to the {@link InfiniteData}, or to the result of `select` if
-   * provided. It rejects with the error from the fetch or from `select`.
+   * This method replaces the deprecated `fetchInfiniteQuery`, and — combined
+   * with `{ staleTime: 'static' }` — the deprecated `ensureInfiniteQueryData`.
+   *
    * @example
-   * ```ts
-   * try {
-   *   const data = await queryClient.infiniteQuery({ queryKey, queryFn, initialPageParam: 0 })
-   *   console.log(data.pages)
-   * } catch (error) {
-   *   console.log(error)
-   * }
-   * ```
+   *   ```ts
+   *   try {
+   *     const data = await queryClient.infiniteQuery({
+   *       queryKey,
+   *       queryFn,
+   *       initialPageParam: 0,
+   *     })
+   *     console.log(data.pages)
+   *   } catch (error) {
+   *     console.log(error)
+   *   }
+   *   ```
+   *
+   * @param options - The infinite query options, including the `queryKey`, the
+   *   `queryFn`, and the `initialPageParam`.
+   * @returns A promise that resolves to the {@link InfiniteData}, or to the
+   *   result of `select` if provided. It rejects with the error from the fetch
+   *   or from `select`.
    */
   infiniteQuery<
     TQueryFnData,
@@ -743,12 +817,15 @@ export class QueryClient {
   }
 
   /**
-   * Fetches and caches an infinite query, or returns its cached data if it isn't stale.
-   * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
-   * `initialPageParam`.
-   * @returns A promise that resolves to the cached or fetched {@link InfiniteData}, or rejects with
-   * the fetch error.
-   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
+   * Fetches and caches an infinite query, or returns its cached data if it
+   * isn't stale.
+   *
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method
+   *   will be removed in the next major version.
+   * @param options - The infinite query options, including the `queryKey`, the
+   *   `queryFn`, and the `initialPageParam`.
+   * @returns A promise that resolves to the cached or fetched
+   *   {@link InfiniteData}, or rejects with the fetch error.
    */
   fetchInfiniteQuery<
     TQueryFnData,
@@ -771,12 +848,16 @@ export class QueryClient {
   }
 
   /**
-   * Fetches and caches an infinite query like {@link QueryClient#fetchInfiniteQuery}, but ignores
-   * the result and any error.
-   * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
-   * `initialPageParam`.
+   * Fetches and caches an infinite query like
+   * {@link QueryClient#fetchInfiniteQuery}, but ignores the result and any
+   * error.
+   *
+   * @deprecated Use queryClient.infiniteQuery(options) instead. You can swallow
+   *   errors with `.catch(noop)`. This method will be removed in the next major
+   *   version.
+   * @param options - The infinite query options, including the `queryKey`, the
+   *   `queryFn`, and the `initialPageParam`.
    * @returns A promise that resolves once the fetch settles. It never rejects.
-   * @deprecated Use queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */
   prefetchInfiniteQuery<
     TQueryFnData,
@@ -798,13 +879,16 @@ export class QueryClient {
   }
 
   /**
-   * Returns the cached data of an infinite query, or fetches it if there is none. With
-   * `revalidateIfStale`, stale cached data is also refetched in the background.
-   * @param options - The infinite query options. If the query has no cached data yet, it is fetched
-   * with these options.
-   * @returns A promise that resolves to the cached {@link InfiniteData}, or to the fetched data if
-   * nothing was cached yet.
-   * @deprecated Use queryClient.infiniteQuery({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   * Returns the cached data of an infinite query, or fetches it if there is
+   * none. With `revalidateIfStale`, stale cached data is also refetched in the
+   * background.
+   *
+   * @deprecated Use queryClient.infiniteQuery({ ...options, staleTime: 'static'
+   *   }) instead. This method will be removed in the next major version.
+   * @param options - The infinite query options. If the query has no cached
+   *   data yet, it is fetched with these options.
+   * @returns A promise that resolves to the cached {@link InfiniteData}, or to
+   *   the fetched data if nothing was cached yet.
    */
   ensureInfiniteQueryData<
     TQueryFnData,
@@ -828,16 +912,18 @@ export class QueryClient {
   }
 
   /**
-   * Resumes mutations that were paused because there was no network connection. Does nothing
-   * (resolving immediately) if the client is currently offline.
-   * @returns A promise that resolves once the resumed mutations have settled.
-   * @example
-   * ```ts
-   * import { QueryClient } from '@tanstack/query-core'
+   * Resumes mutations that were paused because there was no network connection.
+   * Does nothing (resolving immediately) if the client is currently offline.
    *
-   * const queryClient = new QueryClient()
-   * await queryClient.resumePausedMutations()
-   * ```
+   * @example
+   *   ```ts
+   *   import { QueryClient } from '@tanstack/query-core'
+   *
+   *   const queryClient = new QueryClient()
+   *   await queryClient.resumePausedMutations()
+   *   ```
+   *
+   * @returns A promise that resolves once the resumed mutations have settled.
    */
   resumePausedMutations(): Promise<unknown> {
     if (onlineManager.isOnline()) {
@@ -848,15 +934,17 @@ export class QueryClient {
 
   /**
    * Returns the query cache this client is connected to.
-   * @returns The {@link QueryCache} instance.
-   * @example
-   * ```ts
-   * import { QueryClient } from '@tanstack/query-core'
    *
-   * const queryClient = new QueryClient()
-   * const queryCache = queryClient.getQueryCache()
-   * const queries = queryCache.findAll({ queryKey: ['posts'] })
-   * ```
+   * @example
+   *   ```ts
+   *   import { QueryClient } from '@tanstack/query-core'
+   *
+   *   const queryClient = new QueryClient()
+   *   const queryCache = queryClient.getQueryCache()
+   *   const queries = queryCache.findAll({ queryKey: ['posts'] })
+   *   ```
+   *
+   * @returns The {@link QueryCache} instance.
    */
   getQueryCache(): QueryCache {
     return this.#queryCache
@@ -864,15 +952,17 @@ export class QueryClient {
 
   /**
    * Returns the mutation cache this client is connected to.
-   * @returns The {@link MutationCache} instance.
-   * @example
-   * ```ts
-   * import { QueryClient } from '@tanstack/query-core'
    *
-   * const queryClient = new QueryClient()
-   * const mutationCache = queryClient.getMutationCache()
-   * const mutations = mutationCache.findAll({ status: 'pending' })
-   * ```
+   * @example
+   *   ```ts
+   *   import { QueryClient } from '@tanstack/query-core'
+   *
+   *   const queryClient = new QueryClient()
+   *   const mutationCache = queryClient.getMutationCache()
+   *   const mutations = mutationCache.findAll({ status: 'pending' })
+   *   ```
+   *
+   * @returns The {@link MutationCache} instance.
    */
   getMutationCache(): MutationCache {
     return this.#mutationCache
@@ -881,55 +971,64 @@ export class QueryClient {
   /**
    * Returns the default options that were set when creating the client, or via
    * {@link QueryClient#setDefaultOptions}.
-   * @returns The client's current default options.
-   * @example
-   * ```ts
-   * import { QueryClient } from '@tanstack/query-core'
    *
-   * const queryClient = new QueryClient()
-   * const defaultOptions = queryClient.getDefaultOptions()
-   * ```
+   * @example
+   *   ```ts
+   *   import { QueryClient } from '@tanstack/query-core'
+   *
+   *   const queryClient = new QueryClient()
+   *   const defaultOptions = queryClient.getDefaultOptions()
+   *   ```
+   *
+   * @returns The client's current default options.
    */
   getDefaultOptions(): DefaultOptions {
     return this.#defaultOptions
   }
 
   /**
-   * Dynamically sets the default options for this client, overwriting any previously defined
-   * default options.
+   * Dynamically sets the default options for this client, overwriting any
+   * previously defined default options.
+   *
+   * @example
+   *   ```ts
+   *   import { QueryClient } from '@tanstack/query-core'
+   *
+   *   const queryClient = new QueryClient()
+   *   queryClient.setDefaultOptions({
+   *     queries: {
+   *       staleTime: Infinity,
+   *     },
+   *   })
+   *   ```
+   *
    * @param options - The new default options for queries and mutations.
    * @see {@link QueryClient#getDefaultOptions}
-   * @example
-   * ```ts
-   * import { QueryClient } from '@tanstack/query-core'
-   *
-   * const queryClient = new QueryClient()
-   * queryClient.setDefaultOptions({
-   *   queries: {
-   *     staleTime: Infinity,
-   *   },
-   * })
-   * ```
    */
   setDefaultOptions(options: DefaultOptions): void {
     this.#defaultOptions = options
   }
 
   /**
-   * Sets default options for queries whose query key partially matches the given `queryKey`.
+   * Sets default options for queries whose query key partially matches the
+   * given `queryKey`.
    *
-   * If several registered query defaults match a given query key, they are merged together in
-   * registration order by {@link QueryClient#getQueryDefaults}, so register defaults from the
-   * most generic key to the least generic one — more specific defaults should be registered
-   * after more generic ones so they take precedence.
-   * @param queryKey - The query key that query keys are partially matched against.
-   * @param options - The default options applied to matching queries.
+   * If several registered query defaults match a given query key, they are
+   * merged together in registration order by
+   * {@link QueryClient#getQueryDefaults}, so register defaults from the most
+   * generic key to the least generic one — more specific defaults should be
+   * registered after more generic ones so they take precedence.
+   *
    * @example
-   * ```ts
-   * queryClient.setQueryDefaults(['posts'], { queryFn: fetchPosts })
+   *   ```ts
+   *   queryClient.setQueryDefaults(['posts'], { queryFn: fetchPosts })
    *
-   * await queryClient.query({ queryKey: ['posts'] })
-   * ```
+   *   await queryClient.query({ queryKey: ['posts'] })
+   *   ```
+   *
+   * @param queryKey - The query key that query keys are partially matched
+   *   against.
+   * @param options - The default options applied to matching queries.
    */
   setQueryDefaults<
     TQueryFnData = unknown,
@@ -952,16 +1051,19 @@ export class QueryClient {
   }
 
   /**
-   * Returns the default options registered for queries whose query key partially matches the
-   * given `queryKey`, via {@link QueryClient#setQueryDefaults}. If multiple registered defaults
-   * match, they are merged together in registration order.
-   * @param queryKey - The query key to look up registered defaults for.
-   * @returns The merged default options of every registration that matches, or an empty object if
-   * none match.
+   * Returns the default options registered for queries whose query key
+   * partially matches the given `queryKey`, via
+   * {@link QueryClient#setQueryDefaults}. If multiple registered defaults match,
+   * they are merged together in registration order.
+   *
    * @example
-   * ```ts
-   * const defaultOptions = queryClient.getQueryDefaults(['posts'])
-   * ```
+   *   ```ts
+   *   const defaultOptions = queryClient.getQueryDefaults(['posts'])
+   *   ```
+   *
+   * @param queryKey - The query key to look up registered defaults for.
+   * @returns The merged default options of every registration that matches, or
+   *   an empty object if none match.
    */
   getQueryDefaults(
     queryKey: QueryKey,
@@ -982,16 +1084,20 @@ export class QueryClient {
   }
 
   /**
-   * Sets default options for mutations whose mutation key partially matches the given
-   * `mutationKey`. As with {@link QueryClient#setQueryDefaults}, the order of registration
-   * matters when several registered defaults match the same mutation key.
-   * @param mutationKey - The mutation key that mutation keys are partially matched against.
+   * Sets default options for mutations whose mutation key partially matches the
+   * given `mutationKey`. As with {@link QueryClient#setQueryDefaults}, the order
+   * of registration matters when several registered defaults match the same
+   * mutation key.
+   *
+   * @example
+   *   ```ts
+   *   queryClient.setMutationDefaults(['addPost'], { mutationFn: addPost })
+   *   ```
+   *
+   * @param mutationKey - The mutation key that mutation keys are partially
+   *   matched against.
    * @param options - The default options applied to matching mutations.
    * @see {@link QueryClient#getMutationDefaults}
-   * @example
-   * ```ts
-   * queryClient.setMutationDefaults(['addPost'], { mutationFn: addPost })
-   * ```
    */
   setMutationDefaults<
     TData = unknown,
@@ -1012,16 +1118,19 @@ export class QueryClient {
   }
 
   /**
-   * Returns the default options registered for mutations whose mutation key partially matches
-   * the given `mutationKey`, via {@link QueryClient#setMutationDefaults}. If multiple registered
-   * defaults match, they are merged together in registration order.
-   * @param mutationKey - The mutation key to look up registered defaults for.
-   * @returns The merged default options of every registration that matches, or an empty object if
-   * none match.
+   * Returns the default options registered for mutations whose mutation key
+   * partially matches the given `mutationKey`, via
+   * {@link QueryClient#setMutationDefaults}. If multiple registered defaults
+   * match, they are merged together in registration order.
+   *
    * @example
-   * ```ts
-   * const defaultOptions = queryClient.getMutationDefaults(['addPost'])
-   * ```
+   *   ```ts
+   *   const defaultOptions = queryClient.getMutationDefaults(['addPost'])
+   *   ```
+   *
+   * @param mutationKey - The mutation key to look up registered defaults for.
+   * @returns The merged default options of every registration that matches, or
+   *   an empty object if none match.
    */
   getMutationDefaults(
     mutationKey: MutationKey,
@@ -1043,13 +1152,15 @@ export class QueryClient {
   }
 
   /**
-   * Called by framework adapters (e.g. inside `useQuery`) to resolve the options passed by the
-   * caller into their final, defaulted form: merging the client's own `defaultOptions.queries`,
-   * then `queryClient.setQueryDefaults` for the given `queryKey`, then the caller's options on
-   * top. A no-op if the options are already defaulted (`_defaulted: true`).
+   * Called by framework adapters (e.g. inside `useQuery`) to resolve the
+   * options passed by the caller into their final, defaulted form: merging the
+   * client's own `defaultOptions.queries`, then `queryClient.setQueryDefaults`
+   * for the given `queryKey`, then the caller's options on top. A no-op if the
+   * options are already defaulted (`_defaulted: true`).
+   *
    * @param options - The query options passed by the caller.
-   * @returns The defaulted options, with `queryHash` and dependent defaults (e.g.
-   * `refetchOnReconnect`) filled in.
+   * @returns The defaulted options, with `queryHash` and dependent defaults
+   *   (e.g. `refetchOnReconnect`) filled in.
    */
   defaultQueryOptions<
     TQueryFnData = unknown,
@@ -1133,10 +1244,12 @@ export class QueryClient {
   }
 
   /**
-   * The mutation counterpart of {@link QueryClient#defaultQueryOptions}. Called by framework
-   * adapters (e.g. inside `useMutation`) to merge the client's `defaultOptions.mutations`, then
-   * `queryClient.setMutationDefaults` for the given `mutationKey`, then the caller's options on
-   * top. A no-op if the options are already defaulted (`_defaulted: true`).
+   * The mutation counterpart of {@link QueryClient#defaultQueryOptions}. Called
+   * by framework adapters (e.g. inside `useMutation`) to merge the client's
+   * `defaultOptions.mutations`, then `queryClient.setMutationDefaults` for the
+   * given `mutationKey`, then the caller's options on top. A no-op if the
+   * options are already defaulted (`_defaulted: true`).
+   *
    * @param options - The mutation options passed by the caller.
    * @returns The defaulted options.
    */
@@ -1156,14 +1269,16 @@ export class QueryClient {
   }
 
   /**
-   * Clears both the query cache and the mutation cache this client is connected to.
-   * @example
-   * ```ts
-   * import { QueryClient } from '@tanstack/query-core'
+   * Clears both the query cache and the mutation cache this client is connected
+   * to.
    *
-   * const queryClient = new QueryClient()
-   * queryClient.clear()
-   * ```
+   * @example
+   *   ```ts
+   *   import { QueryClient } from '@tanstack/query-core'
+   *
+   *   const queryClient = new QueryClient()
+   *   queryClient.clear()
+   *   ```
    */
   clear(): void {
     this.#queryCache.clear()

@@ -74,11 +74,13 @@ type TypeChecker = ReturnType<Program['getTypeChecker']>
 type Type = ReturnType<TypeChecker['getTypeAtLocation']>
 
 /**
- * Checks whether a query function's return type resolves to `void` or `undefined`, including in any
- * member of a union.
+ * Checks whether a query function's return type resolves to `void` or
+ * `undefined`, including in any member of a union.
+ *
  * @param checker - The TypeScript type checker.
  * @param type - The return type of the query function.
- * @returns `true` if the awaited type, or a member of it, is `void` or `undefined`.
+ * @returns `true` if the awaited type, or a member of it, is `void` or
+ *   `undefined`.
  */
 function isIllegalReturn(checker: TypeChecker, type: Type): boolean {
   const awaited = checker.getAwaitedType(type)

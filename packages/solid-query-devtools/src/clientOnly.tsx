@@ -11,11 +11,13 @@ import type { Component, ComponentProps, JSX } from 'solid-js'
 
 /**
  * This function has been taken from solid-start's codebase:
- * <https://github.com/solidjs/solid-start/blob/2967fc2db3f0df826f061020231dbdafdfa0746b/packages/start/islands/clientOnly.tsx>.
- * This allows the devtools to be loaded only on the client and bypasses any server side rendering.
+ * [https://github.com/solidjs/solid-start/blob/2967fc2db3f0df826f061020231dbdafdfa0746b/packages/start/islands/clientOnly.tsx](https://github.com/solidjs/solid-start/blob/2967fc2db3f0df826f061020231dbdafdfa0746b/packages/start/islands/clientOnly.tsx).
+ * This allows the devtools to be loaded only on the client and bypasses any
+ * server side rendering.
+ *
  * @param fn - Imports the module whose default export is the component.
- * @returns A component that renders `fallback` on the server and while the module loads on the
- * client, then the imported component.
+ * @returns A component that renders `fallback` on the server and while the
+ *   module loads on the client, then the imported component.
  */
 export default function clientOnly<T extends Component<any>>(
   fn: () => Promise<{

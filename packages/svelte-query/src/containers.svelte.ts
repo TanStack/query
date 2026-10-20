@@ -4,18 +4,17 @@ type VoidFn = () => void
 type Subscriber = (update: VoidFn) => void | VoidFn
 
 /**
- * An object holding a value in its `current` property, e.g. a reactive value backed by `$state`.
+ * An object holding a value in its `current` property, e.g. a reactive value
+ * backed by `$state`.
  */
 export type Box<T> = {
-  /**
-   * The held value.
-   */
+  /** The held value. */
   current: T
 }
 
 /**
- * A {@link Box} whose `current` value is computed on each read, and that notifies the reactive
- * contexts reading it through the given subscriber.
+ * A {@link Box} whose `current` value is computed on each read, and that
+ * notifies the reactive contexts reading it through the given subscriber.
  */
 export class ReactiveValue<T> implements Box<T> {
   #fn
@@ -28,6 +27,7 @@ export class ReactiveValue<T> implements Box<T> {
 
   /**
    * Subscribes the reactive context reading it, then computes the value.
+   *
    * @returns The value returned by the compute function.
    */
   get current() {
@@ -37,11 +37,14 @@ export class ReactiveValue<T> implements Box<T> {
 }
 
 /**
- * Makes all of the top-level keys of an object into $state.raw fields whose initial values
- * are the same as in the original object. Does not mutate the original object. Provides an `update`
- * function that _can_ (but does not have to be) be used to replace all of the object's top-level keys
- * with the values of the new object, while maintaining the original root object's reference.
- * @param init - The object or array whose top-level keys become the initial fields.
+ * Makes all of the top-level keys of an object into $state.raw fields whose
+ * initial values are the same as in the original object. Does not mutate the
+ * original object. Provides an `update` function that _can_ (but does not have
+ * to be) be used to replace all of the object's top-level keys with the values
+ * of the new object, while maintaining the original root object's reference.
+ *
+ * @param init - The object or array whose top-level keys become the initial
+ *   fields.
  * @returns A tuple of the reactive object and the `update` function.
  */
 export function createRawRef<T extends {} | Array<unknown>>(
@@ -118,8 +121,10 @@ export function createRawRef<T extends {} | Array<unknown>>(
   })
 
   /**
-   * Replaces the top-level keys of the reactive object with those of `newValue`, removing keys that
-   * `newValue` doesn't have, while keeping the object's reference.
+   * Replaces the top-level keys of the reactive object with those of
+   * `newValue`, removing keys that `newValue` doesn't have, while keeping the
+   * object's reference.
+   *
    * @param newValue - The object or array to take the new keys and values from.
    */
   function update(newValue: T) {
@@ -162,8 +167,9 @@ const lazyBrand = Symbol('LazyValue')
 type Branded<T extends () => unknown> = T & { [lazyBrand]: true }
 
 /**
- * Marks a function as a lazy value, so that reading the property it is stored in calls it instead of
- * returning the function.
+ * Marks a function as a lazy value, so that reading the property it is stored
+ * in calls it instead of returning the function.
+ *
  * @param fn - The function that returns the value.
  * @returns The same function, marked as lazy.
  */
@@ -175,6 +181,7 @@ function brand<T extends () => unknown>(fn: T): Branded<T> {
 
 /**
  * Checks whether a function was marked as a lazy value with {@link brand}.
+ *
  * @param fn - The function to check.
  * @returns `true` if the function is marked as lazy.
  */

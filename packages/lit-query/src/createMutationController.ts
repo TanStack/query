@@ -68,8 +68,9 @@ export type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> =
   }
 
 /**
- * Returns the result used while no `QueryClient` is available: `'idle'`, with a `mutate` that
- * rejects with the missing client error.
+ * Returns the result used while no `QueryClient` is available: `'idle'`, with a
+ * `mutate` that rejects with the missing client error.
+ *
  * @returns A new result object in that state.
  */
 function createIdleMutationResult<
@@ -293,35 +294,43 @@ class MutationController<
  *
  * If `queryClient` is omitted, the controller resolves the client from the
  * nearest connected `QueryClientProvider`.
- * @param host - The Lit reactive controller host that owns the mutation
- * subscription.
- * @param options - Mutation observer options, or a getter that returns options.
- * @param queryClient - Optional explicit query client. Provide this for
- * controllers that should not resolve a client from Lit context.
- * @returns An accessor for the latest mutation result with mutation helper
- * methods.
+ *
  * @example
- * ```ts
- * import { LitElement, html } from 'lit'
- * import { createMutationController } from '@tanstack/lit-query'
+ *   ```ts
+ *   import { LitElement, html } from 'lit'
+ *   import { createMutationController } from '@tanstack/lit-query'
  *
- * class AddTodoForm extends LitElement {
- *   private readonly addTodo = createMutationController(this, {
- *     mutationFn: (title: string) =>
- *       fetch('/api/todos', { method: 'POST', body: JSON.stringify({ title }) }),
- *   })
+ *   class AddTodoForm extends LitElement {
+ *     private readonly addTodo = createMutationController(this, {
+ *       mutationFn: (title: string) =>
+ *         fetch('/api/todos', {
+ *           method: 'POST',
+ *           body: JSON.stringify({ title }),
+ *         }),
+ *     })
  *
- *   render() {
- *     const mutation = this.addTodo()
+ *     render() {
+ *       const mutation = this.addTodo()
  *
- *     return html`
- *       <button ?disabled=${mutation.isPending} @click=${() => this.addTodo.mutate('Ship docs')}>
+ *       return html`
+ *       <button
+ *         ?disabled=${mutation.isPending}
+ *         @click=${() => this.addTodo.mutate('Ship docs')}
+ *       >
  *         Add todo
  *       </button>
  *     `
+ *     }
  *   }
- * }
- * ```
+ *   ```
+ *
+ * @param host - The Lit reactive controller host that owns the mutation
+ *   subscription.
+ * @param options - Mutation observer options, or a getter that returns options.
+ * @param queryClient - Optional explicit query client. Provide this for
+ *   controllers that should not resolve a client from Lit context.
+ * @returns An accessor for the latest mutation result with mutation helper
+ *   methods.
  */
 export function createMutationController<
   TData = unknown,

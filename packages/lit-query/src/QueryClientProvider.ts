@@ -10,54 +10,58 @@ import type { QueryClient } from '@tanstack/query-core'
 import type { TemplateResult } from 'lit'
 
 /**
- * Lit element that provides a `QueryClient` to descendant Lit Query
- * controllers through Lit context.
+ * Lit element that provides a `QueryClient` to descendant Lit Query controllers
+ * through Lit context.
  *
  * The `client` is a property, not an attribute. When rendering this element in
- * a Lit template, bind it with property binding: `.client=${queryClient}`.
- * The provider throws if it connects without a client, or if an already
- * connected provider has its client cleared.
+ * a Lit template, bind it with property binding: `.client=${queryClient}`. The
+ * provider throws if it connects without a client, or if an already connected
+ * provider has its client cleared.
  *
  * This class is not registered as a custom element by the package. Applications
  * must register either a subclass or the class itself with
  * `customElements.define`.
+ *
  * @example
- * ```ts
- * import { html, LitElement } from 'lit'
- * import { QueryClient, QueryClientProvider } from '@tanstack/lit-query'
+ *   ```ts
+ *   import { html, LitElement } from 'lit'
+ *   import { QueryClient, QueryClientProvider } from '@tanstack/lit-query'
  *
- * const queryClient = new QueryClient()
+ *   const queryClient = new QueryClient()
  *
- * class AppQueryProvider extends QueryClientProvider {
- *   constructor() {
- *     super()
- *     this.client = queryClient
+ *   class AppQueryProvider extends QueryClientProvider {
+ *     constructor() {
+ *       super()
+ *       this.client = queryClient
+ *     }
  *   }
- * }
  *
- * customElements.define('app-query-provider', AppQueryProvider)
+ *   customElements.define('app-query-provider', AppQueryProvider)
  *
- * class AppRoot extends LitElement {
- *   render() {
- *     return html`<app-query-provider><todos-view></todos-view></app-query-provider>`
+ *   class AppRoot extends LitElement {
+ *     render() {
+ *       return html`<app-query-provider
+ *       ><todos-view></todos-view
+ *     ></app-query-provider>`
+ *     }
  *   }
- * }
- * ```
+ *   ```
+ *
  * @example
- * ```ts
- * import { html } from 'lit'
- * import { QueryClient, QueryClientProvider } from '@tanstack/lit-query'
+ *   ```ts
+ *   import { html } from 'lit'
+ *   import { QueryClient, QueryClientProvider } from '@tanstack/lit-query'
  *
- * const queryClient = new QueryClient()
+ *   const queryClient = new QueryClient()
  *
- * customElements.define('query-client-provider', QueryClientProvider)
+ *   customElements.define('query-client-provider', QueryClientProvider)
  *
- * const view = html`
+ *   const view = html`
  *   <query-client-provider .client=${queryClient}>
  *     <todos-view></todos-view>
  *   </query-client-provider>
  * `
- * ```
+ *   ```
  */
 export class QueryClientProvider extends LitElement {
   /** @internal */
@@ -87,6 +91,7 @@ export class QueryClientProvider extends LitElement {
   /**
    * Provides the client to descendants and mounts it when the element is
    * connected.
+   *
    * @internal
    */
   override connectedCallback(): void {
@@ -98,6 +103,7 @@ export class QueryClientProvider extends LitElement {
 
   /**
    * Unmounts the client when the element is disconnected.
+   *
    * @internal
    */
   override disconnectedCallback(): void {
@@ -107,10 +113,12 @@ export class QueryClientProvider extends LitElement {
 
   /**
    * Swaps the provided and mounted client when `client` changes.
-   * @internal
-   * @param changedProperties - The properties that changed. When `client` changes, the previous
-   * client is unmounted and the new one is provided and mounted.
+   *
+   * @param changedProperties - The properties that changed. When `client`
+   *   changes, the previous client is unmounted and the new one is provided and
+   *   mounted.
    * @throws {Error} If `client` is unset while the provider is connected.
+   * @internal
    */
   protected override willUpdate(
     changedProperties: Map<PropertyKey, unknown>,
@@ -148,8 +156,9 @@ export class QueryClientProvider extends LitElement {
 
   /**
    * Renders the provider's children.
-   * @internal
+   *
    * @returns A `<slot>` that renders the provider's children.
+   * @internal
    */
   override render(): TemplateResult {
     return html`<slot></slot>`

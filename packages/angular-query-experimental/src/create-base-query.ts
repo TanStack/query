@@ -25,11 +25,13 @@ import type { CreateBaseQueryOptions } from './types'
 
 /**
  * Base implementation for `injectQuery` and `injectInfiniteQuery`.
- * @param optionsFn - A function that returns the query options. It is re-run when the signals it
- * reads change.
- * @param Observer - The observer class from query-core (`QueryObserver` or `InfiniteQueryObserver`).
- * @returns The query result, with each value field exposed as a computed signal. Functions such as
- * `refetch` stay callable functions.
+ *
+ * @param optionsFn - A function that returns the query options. It is re-run
+ *   when the signals it reads change.
+ * @param Observer - The observer class from query-core (`QueryObserver` or
+ *   `InfiniteQueryObserver`).
+ * @returns The query result, with each value field exposed as a computed
+ *   signal. Functions such as `refetch` stay callable functions.
  */
 export function createBaseQuery<
   TQueryFnData,
@@ -53,10 +55,10 @@ export function createBaseQuery<
   const isRestoring = injectIsRestoring()
 
   /**
-   * Signal that has the default options from query client applied
-   * computed() is used so signals can be inserted into the options
-   * making it reactive. Wrapping options in a function ensures embedded expressions
-   * are preserved and can keep being applied after signal changes
+   * Signal that has the default options from query client applied computed() is
+   * used so signals can be inserted into the options making it reactive.
+   * Wrapping options in a function ensures embedded expressions are preserved
+   * and can keep being applied after signal changes
    */
   const defaultedOptionsSignal = computed(() => {
     const defaultedOptions = queryClient.defaultQueryOptions(optionsFn())

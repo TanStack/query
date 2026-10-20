@@ -121,9 +121,9 @@ export abstract class BaseController<TResult> implements ReactiveController {
   }
 
   /**
-   * Permanently disconnects the controller and removes it from its host, if
-   * the host supports `removeController`. The controller ignores later
-   * lifecycle callbacks.
+   * Permanently disconnects the controller and removes it from its host, if the
+   * host supports `removeController`. The controller ignores later lifecycle
+   * callbacks.
    */
   destroy(): void {
     if (this.destroyed) {
@@ -146,8 +146,9 @@ export abstract class BaseController<TResult> implements ReactiveController {
 
   /**
    * Returns the `QueryClient` without throwing when none is available.
+   *
    * @returns The explicitly passed client, otherwise the client from context,
-   * or `undefined` if neither is available.
+   *   or `undefined` if neither is available.
    */
   protected tryGetQueryClient(): QueryClient | undefined {
     return this.explicitClient ?? this.contextClient
@@ -155,6 +156,7 @@ export abstract class BaseController<TResult> implements ReactiveController {
 
   /**
    * Returns the `QueryClient`, throwing when none is available.
+   *
    * @returns The explicitly passed client, otherwise the client from context.
    * @throws {Error} If no `QueryClient` is available.
    */
@@ -170,6 +172,7 @@ export abstract class BaseController<TResult> implements ReactiveController {
   /**
    * Stores a new result and requests a host update, unless it is the same
    * result or the host is already updating.
+   *
    * @param next - The new result.
    */
   protected setResult(next: TResult): void {
@@ -185,6 +188,7 @@ export abstract class BaseController<TResult> implements ReactiveController {
 
   /**
    * The latest result of the controller.
+   *
    * @returns The latest result.
    * @throws {Error} If no `QueryClient` could be resolved from context.
    */
@@ -198,15 +202,14 @@ export abstract class BaseController<TResult> implements ReactiveController {
 
   /**
    * Whether the controller's host is connected.
+   *
    * @returns `true` while the host is connected.
    */
   protected get connectedState(): boolean {
     return this.connected
   }
 
-  /**
-   * Requests a host update in a microtask, batching multiple calls into one.
-   */
+  /** Requests a host update in a microtask, batching multiple calls into one. */
   protected queueUpdate(): void {
     if (this.updateQueued) {
       return
@@ -338,19 +341,17 @@ export abstract class BaseController<TResult> implements ReactiveController {
   }
 
   /**
-   * Called in a microtask after the host connects, once the subclass fields
-   * are initialized. Subclasses subscribe to the `QueryClient` here, if one is
+   * Called in a microtask after the host connects, once the subclass fields are
+   * initialized. Subclasses subscribe to the `QueryClient` here, if one is
    * available.
    */
   protected abstract onConnected(): void
   /**
-   * Called when the host disconnects or the controller is destroyed.
-   * Subclasses unsubscribe here.
+   * Called when the host disconnects or the controller is destroyed. Subclasses
+   * unsubscribe here.
    */
   protected abstract onDisconnected(): void
-  /**
-   * Called before each host update. Subclasses refresh their options here.
-   */
+  /** Called before each host update. Subclasses refresh their options here. */
   protected abstract onHostUpdate(): void
   /**
    * Called in a microtask when the `QueryClient` from context changes, or when

@@ -5,9 +5,12 @@ import type { Box } from './containers.svelte'
 const _contextKey = Symbol('QueryClient')
 
 /**
- * Retrieves the `QueryClient` set on Svelte's context by `QueryClientProvider` (or by
- * {@link setQueryClientContext} directly). This is what {@link useQueryClient} calls internally.
- * @returns The `QueryClient` set on context, whether by `QueryClientProvider` or {@link setQueryClientContext}.
+ * Retrieves the `QueryClient` set on Svelte's context by `QueryClientProvider`
+ * (or by {@link setQueryClientContext} directly). This is what
+ * {@link useQueryClient} calls internally.
+ *
+ * @returns The `QueryClient` set on context, whether by `QueryClientProvider`
+ *   or {@link setQueryClientContext}.
  * @throws {Error} If no `QueryClient` was found in context.
  */
 export const getQueryClientContext = (): QueryClient => {
@@ -22,22 +25,25 @@ export const getQueryClientContext = (): QueryClient => {
 }
 
 /**
- * Sets a `QueryClient` on Svelte's context, so it can be read with {@link getQueryClientContext} (or
- * {@link useQueryClient}) from any descendant component. `QueryClientProvider` wraps this — use it directly
- * only if you need to set the client from your own component instead.
- * @param client - The `QueryClient` to make available to descendant components.
+ * Sets a `QueryClient` on Svelte's context, so it can be read with
+ * {@link getQueryClientContext} (or {@link useQueryClient}) from any descendant
+ * component. `QueryClientProvider` wraps this — use it directly only if you
+ * need to set the client from your own component instead.
+ *
  * @example
- * ```svelte
- * <script lang="ts">
+ *   ```svelte
+ *   <script lang="ts">
  *   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
  *
  *   const queryClient = new QueryClient()
- * </script>
+ *   </script>
  *
- * <QueryClientProvider client={queryClient}>
+ *   <QueryClientProvider client={queryClient}>
  *   ...
- * </QueryClientProvider>
- * ```
+ *   </QueryClientProvider>
+ *   ```
+ *
+ * @param client - The `QueryClient` to make available to descendant components.
  */
 export const setQueryClientContext = (client: QueryClient): void => {
   setContext(_contextKey, client)
@@ -47,8 +53,9 @@ const _isRestoringContextKey = Symbol('isRestoring')
 
 /**
  * Retrieves a `isRestoring` from Svelte's context.
- * @returns The `isRestoring` box set on context, or a box holding `false` if none was set or the
- * context is unavailable.
+ *
+ * @returns The `isRestoring` box set on context, or a box holding `false` if
+ *   none was set or the context is unavailable.
  */
 export const getIsRestoringContext = (): Box<boolean> => {
   try {
@@ -63,7 +70,9 @@ export const getIsRestoringContext = (): Box<boolean> => {
 
 /**
  * Sets a `isRestoring` on Svelte's context.
- * @param isRestoring - The box holding whether the cache is being restored, e.g. by a persister.
+ *
+ * @param isRestoring - The box holding whether the cache is being restored,
+ *   e.g. by a persister.
  */
 export const setIsRestoringContext = (isRestoring: Box<boolean>): void => {
   setContext(_isRestoringContextKey, isRestoring)

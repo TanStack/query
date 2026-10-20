@@ -47,8 +47,9 @@ export type QueryResultAccessor<TData, TError> = ValueAccessor<
 }
 
 /**
- * Returns the result used while no `QueryClient` is available: `'pending'` and idle, with methods
- * that reject with the missing client error.
+ * Returns the result used while no `QueryClient` is available: `'pending'` and
+ * idle, with methods that reject with the missing client error.
+ *
  * @returns A new result object in that state.
  */
 function createPendingQueryResult<TData, TError>(): QueryObserverResult<
@@ -317,33 +318,37 @@ class QueryController<
  *
  * If `queryClient` is omitted, the controller resolves the client from the
  * nearest connected `QueryClientProvider`.
+ *
+ * @example
+ *   ```ts
+ *   import { LitElement, html } from 'lit'
+ *   import { createQueryController } from '@tanstack/lit-query'
+ *
+ *   class TodosView extends LitElement {
+ *     private readonly todos = createQueryController(this, {
+ *       queryKey: ['todos'],
+ *       queryFn: async () => fetch('/api/todos').then((r) => r.json()),
+ *     })
+ *
+ *     render() {
+ *       const query = this.todos()
+ *
+ *       if (query.isPending) return html`Loading...`
+ *       if (query.isError) return html`Error`
+ *
+ *       return html`<ul>
+ *       ${query.data.map((todo) => html`<li>${todo.title}</li>`)}
+ *     </ul>`
+ *     }
+ *   }
+ *   ```
+ *
  * @param host - The Lit reactive controller host that owns the query
- * subscription.
+ *   subscription.
  * @param options - Query observer options, or a getter that returns options.
  * @param queryClient - Optional explicit query client. Provide this for
- * controllers that should not resolve a client from Lit context.
+ *   controllers that should not resolve a client from Lit context.
  * @returns An accessor for the latest query result with query helper methods.
- * @example
- * ```ts
- * import { LitElement, html } from 'lit'
- * import { createQueryController } from '@tanstack/lit-query'
- *
- * class TodosView extends LitElement {
- *   private readonly todos = createQueryController(this, {
- *     queryKey: ['todos'],
- *     queryFn: async () => fetch('/api/todos').then((r) => r.json()),
- *   })
- *
- *   render() {
- *     const query = this.todos()
- *
- *     if (query.isPending) return html`Loading...`
- *     if (query.isError) return html`Error`
- *
- *     return html`<ul>${query.data.map((todo) => html`<li>${todo.title}</li>`)}</ul>`
- *   }
- * }
- * ```
  */
 export function createQueryController<
   TQueryFnData = unknown,

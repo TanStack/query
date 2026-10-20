@@ -10,39 +10,42 @@ import { QueryClient, notifyManager } from '@tanstack/query-core'
 import type { MutationFilters } from '@tanstack/query-core'
 import type { Signal } from '@angular/core'
 
-/**
- * Options for `injectIsMutating`, passed after the mutation filters.
- */
+/** Options for `injectIsMutating`, passed after the mutation filters. */
 export interface InjectIsMutatingOptions {
   /**
    * The `Injector` in which to create the isMutating signal.
    *
-   * If this is not provided, the current injection context will be used instead (via `inject`).
+   * If this is not provided, the current injection context will be used instead
+   * (via `inject`).
    */
   injector?: Injector
 }
 
 /**
- * Injects a signal that tracks the number of mutations that your application currently has `pending`
- * (useful for app-wide loading indicators).
- * @param filters - The {@link MutationFilters} to narrow down the matched mutations.
- * @param options - Additional configuration
- * @returns A `Signal` with the number of mutations that your application currently has `pending`.
+ * Injects a signal that tracks the number of mutations that your application
+ * currently has `pending` (useful for app-wide loading indicators).
+ *
  * @example
- * ```angular-ts
- * @Component({
+ *   ```angular-ts
+ *   @Component({
  *   selector: 'posts-mutating-indicator',
  *   template: `
- *     @if (isMutatingPosts()) {
- *       <span>Saving posts...</span>
- *     }
+ *   @if (isMutatingPosts()) {
+ *   <span>Saving posts...</span>
+ *   }
  *   `,
- * })
- * export class PostsMutatingIndicator {
+ *   })
+ *   export class PostsMutatingIndicator {
  *   // How many mutations matching the posts prefix are in progress?
  *   readonly isMutatingPosts = injectIsMutating({ mutationKey: ['posts'] })
- * }
- * ```
+ *   }
+ *   ```
+ *
+ * @param filters - The {@link MutationFilters} to narrow down the matched
+ *   mutations.
+ * @param options - Additional configuration
+ * @returns A `Signal` with the number of mutations that your application
+ *   currently has `pending`.
  */
 export function injectIsMutating(
   filters?: MutationFilters,

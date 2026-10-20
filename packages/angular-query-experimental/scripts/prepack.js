@@ -3,25 +3,31 @@ import path from 'node:path'
 
 /**
  * Prepack script that prepares the package for publishing by:
- * 1. Creating a modified package.json without dev dependencies, publishConfig and build scripts
- * 2. Updating file paths to remove 'dist/' prefixes (since files will be at root in published package)
+ *
+ * 1. Creating a modified package.json without dev dependencies, publishConfig and
+ *    build scripts
+ * 2. Updating file paths to remove 'dist/' prefixes (since files will be at root
+ *    in published package)
  * 3. Writing this modified package.json to the `dist` directory
  * 4. Copying additional files like README.md to the dist directory
  *
- * Type declarations need to be in the package root or corresponding sub-path to support
- * sub-path exports in applications still using `moduleResolution: node`.
+ * Type declarations need to be in the package root or corresponding sub-path to
+ * support sub-path exports in applications still using `moduleResolution:
+ * node`.
  */
 
 console.log('Running prepack script')
 
 /**
  * Files to copy to the dist directory
+ *
  * @type {string[]}
  */
 const FILES_TO_COPY = ['README.md']
 
 /**
  * Fields to remove from the package.json copy
+ *
  * @type {string[]}
  */
 const FIELDS_TO_REMOVE = [
@@ -32,8 +38,9 @@ const FIELDS_TO_REMOVE = [
 ]
 
 /**
- * Replaces 'dist/' or './dist/' prefix from a file path with './'
- * Only matches at the start of the path to avoid false matches
+ * Replaces 'dist/' or './dist/' prefix from a file path with './' Only matches
+ * at the start of the path to avoid false matches
+ *
  * @param {string} filePath - The file path to process
  * @returns {string} The path without dist prefix
  */
@@ -45,6 +52,7 @@ function replaceDist(filePath) {
 
 /**
  * Recursively processes package.json `exports` to remove dist prefixes
+ *
  * @param {Record<string, any>} exports - The exports object to process
  * @returns {Record<string, any>} The processed exports object
  */

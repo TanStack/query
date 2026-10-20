@@ -217,8 +217,9 @@ export type QueriesResultAccessor<TCombinedResult> =
   }
 
 /**
- * Returns the result used while no `QueryClient` is available: `'pending'` and idle, with methods
- * that reject with the missing client error.
+ * Returns the result used while no `QueryClient` is available: `'pending'` and
+ * idle, with methods that reject with the missing client error.
+ *
  * @returns A new result object in that state.
  */
 function createPendingQueryObserverResult(): QueryObserverResult {
@@ -255,8 +256,10 @@ function createPendingQueryObserverResult(): QueryObserverResult {
 }
 
 /**
- * Returns the result of a query used while no `QueryClient` is available: a `'success'` result with
- * the query's `initialData` (after `select`), or the pending result if there is no `initialData`.
+ * Returns the result of a query used while no `QueryClient` is available: a
+ * `'success'` result with the query's `initialData` (after `select`), or the
+ * pending result if there is no `initialData`.
+ *
  * @param query - The query options.
  * @returns The `'success'` result with `initialData`, or a pending one.
  */
@@ -292,6 +295,7 @@ function createPlaceholderQueryObserverResult(
 
 /**
  * Reads the controller's options and defaults each query with the client.
+ *
  * @param optionsAccessor - The options, or a getter that returns them.
  * @param client - The client used to default the query options.
  * @returns The defaulted query options and the `combine` function.
@@ -676,37 +680,40 @@ class QueriesController<
  *
  * If `queryClient` is omitted, the controller resolves the client from the
  * nearest connected `QueryClientProvider`.
- * @param host - The Lit reactive controller host that owns the queries
- * subscription.
- * @param options - Queries controller options, or a getter that returns options.
- * @param queryClient - Optional explicit query client. Provide this for
- * controllers that should not resolve a client from Lit context.
- * @returns An accessor for the latest query results, or the value returned by
- * `combine`.
+ *
  * @example
- * ```ts
- * import { LitElement, html } from 'lit'
- * import { createQueriesController } from '@tanstack/lit-query'
+ *   ```ts
+ *   import { LitElement, html } from 'lit'
+ *   import { createQueriesController } from '@tanstack/lit-query'
  *
- * class DashboardView extends LitElement {
- *   private readonly dashboard = createQueriesController(this, {
- *     queries: [
- *       { queryKey: ['stats'], queryFn: fetchStats },
- *       { queryKey: ['projects'], queryFn: fetchProjects },
- *     ],
- *     combine: ([stats, projects]) => ({
- *       stats: stats.data,
- *       projects: projects.data ?? [],
- *       isPending: stats.isPending || projects.isPending,
- *     }),
- *   })
+ *   class DashboardView extends LitElement {
+ *     private readonly dashboard = createQueriesController(this, {
+ *       queries: [
+ *         { queryKey: ['stats'], queryFn: fetchStats },
+ *         { queryKey: ['projects'], queryFn: fetchProjects },
+ *       ],
+ *       combine: ([stats, projects]) => ({
+ *         stats: stats.data,
+ *         projects: projects.data ?? [],
+ *         isPending: stats.isPending || projects.isPending,
+ *       }),
+ *     })
  *
- *   render() {
- *     const dashboard = this.dashboard()
- *     return html`<p>Projects: ${dashboard.projects.length}</p>`
+ *     render() {
+ *       const dashboard = this.dashboard()
+ *       return html`<p>Projects: ${dashboard.projects.length}</p>`
+ *     }
  *   }
- * }
- * ```
+ *   ```
+ *
+ * @param host - The Lit reactive controller host that owns the queries
+ *   subscription.
+ * @param options - Queries controller options, or a getter that returns
+ *   options.
+ * @param queryClient - Optional explicit query client. Provide this for
+ *   controllers that should not resolve a client from Lit context.
+ * @returns An accessor for the latest query results, or the value returned by
+ *   `combine`.
  */
 export function createQueriesController<
   TQueryOptions extends Array<any>,

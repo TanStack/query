@@ -25,17 +25,18 @@ type InfiniteQueryObserverListener<TData, TError> = (
  * infinite-query-specific fields and methods, such as `hasNextPage` and
  * `fetchNextPage`, and is the primitive that framework adapters (e.g.
  * `useInfiniteQuery`) build their hooks on top of.
- * @example
- * ```ts
- * const observer = new InfiniteQueryObserver(queryClient, {
- *   queryKey: ['projects'],
- *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *   initialPageParam: 0,
- *   getNextPageParam: (lastPage) => lastPage.nextCursor,
- * })
  *
- * const unsubscribe = observer.subscribe((result) => console.log(result))
- * ```
+ * @example
+ *   ```ts
+ *   const observer = new InfiniteQueryObserver(queryClient, {
+ *     queryKey: ['projects'],
+ *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextCursor,
+ *   })
+ *
+ *   const unsubscribe = observer.subscribe((result) => console.log(result))
+ *   ```
  */
 export class InfiniteQueryObserver<
   TQueryFnData = unknown,
@@ -100,9 +101,9 @@ export class InfiniteQueryObserver<
 
   /**
    * Updates the observer's options. Behaves the same as
-   * `QueryObserver.setOptions`, additionally marking the options as
-   * belonging to an infinite query before delegating to the base
-   * implementation.
+   * `QueryObserver.setOptions`, additionally marking the options as belonging
+   * to an infinite query before delegating to the base implementation.
+   *
    * @param options - The new infinite query observer options.
    */
   override setOptions(
@@ -119,11 +120,13 @@ export class InfiniteQueryObserver<
   }
 
   /**
-   * The infinite-query counterpart of {@link QueryObserver#getOptimisticResult}, marking the
-   * options as an infinite query before delegating to it. Called by framework adapters (e.g.
-   * `useInfiniteQuery`) ahead of subscribing, to compute the current `InfiniteQueryObserverResult`
-   * synchronously.
-   * @param options - The defaulted infinite query observer options to compute the result for.
+   * The infinite-query counterpart of {@link QueryObserver#getOptimisticResult},
+   * marking the options as an infinite query before delegating to it. Called by
+   * framework adapters (e.g. `useInfiniteQuery`) ahead of subscribing, to
+   * compute the current `InfiniteQueryObserverResult` synchronously.
+   *
+   * @param options - The defaulted infinite query observer options to compute
+   *   the result for.
    * @returns The result for the given options.
    */
   override getOptimisticResult(
@@ -144,23 +147,26 @@ export class InfiniteQueryObserver<
 
   /**
    * Fetches the next page of the infinite query and returns a promise that
-   * resolves with the resulting `InfiniteQueryObserverResult`. The page
-   * param used for the fetch is determined by `getNextPageParam`, which
-   * receives the current pages/page params and whose result also determines
-   * `hasNextPage`.
-   * @param options - Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
-   * and `throwOnError` to `true` to reject when the fetch fails.
-   * @returns A promise that resolves with the result after the next page is fetched. With
-   * `cancelRefetch: false`, a running fetch is reused instead, so the next page may not be fetched.
-   * @see {@link InfiniteQueryObserver#fetchPreviousPage}
-   * @example
-   * ```ts
-   * const { hasNextPage } = observer.getCurrentResult()
+   * resolves with the resulting `InfiniteQueryObserverResult`. The page param
+   * used for the fetch is determined by `getNextPageParam`, which receives the
+   * current pages/page params and whose result also determines `hasNextPage`.
    *
-   * if (hasNextPage) {
-   *   await observer.fetchNextPage()
-   * }
-   * ```
+   * @example
+   *   ```ts
+   *   const { hasNextPage } = observer.getCurrentResult()
+   *
+   *   if (hasNextPage) {
+   *     await observer.fetchNextPage()
+   *   }
+   *   ```
+   *
+   * @param options - Set `cancelRefetch` to `false` to ignore the call while a
+   *   fetch is running, and `throwOnError` to `true` to reject when the fetch
+   *   fails.
+   * @returns A promise that resolves with the result after the next page is
+   *   fetched. With `cancelRefetch: false`, a running fetch is reused instead,
+   *   so the next page may not be fetched.
+   * @see {@link InfiniteQueryObserver#fetchPreviousPage}
    */
   fetchNextPage(
     options?: FetchNextPageOptions,
@@ -174,24 +180,28 @@ export class InfiniteQueryObserver<
   }
 
   /**
-   * Fetches the previous page of the infinite query and returns a promise
-   * that resolves with the resulting `InfiniteQueryObserverResult`. The page
-   * param used for the fetch is determined by `getPreviousPageParam`, which
-   * receives the current pages/page params and whose result also determines
+   * Fetches the previous page of the infinite query and returns a promise that
+   * resolves with the resulting `InfiniteQueryObserverResult`. The page param
+   * used for the fetch is determined by `getPreviousPageParam`, which receives
+   * the current pages/page params and whose result also determines
    * `hasPreviousPage`.
-   * @param options - Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
-   * and `throwOnError` to `true` to reject when the fetch fails.
-   * @returns A promise that resolves with the result after the previous page is fetched. With
-   * `cancelRefetch: false`, a running fetch is reused instead, so the previous page may not be fetched.
-   * @see {@link InfiniteQueryObserver#fetchNextPage}
-   * @example
-   * ```ts
-   * const { hasPreviousPage } = observer.getCurrentResult()
    *
-   * if (hasPreviousPage) {
-   *   await observer.fetchPreviousPage()
-   * }
-   * ```
+   * @example
+   *   ```ts
+   *   const { hasPreviousPage } = observer.getCurrentResult()
+   *
+   *   if (hasPreviousPage) {
+   *     await observer.fetchPreviousPage()
+   *   }
+   *   ```
+   *
+   * @param options - Set `cancelRefetch` to `false` to ignore the call while a
+   *   fetch is running, and `throwOnError` to `true` to reject when the fetch
+   *   fails.
+   * @returns A promise that resolves with the result after the previous page is
+   *   fetched. With `cancelRefetch: false`, a running fetch is reused instead,
+   *   so the previous page may not be fetched.
+   * @see {@link InfiniteQueryObserver#fetchNextPage}
    */
   fetchPreviousPage(
     options?: FetchPreviousPageOptions,

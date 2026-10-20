@@ -38,39 +38,32 @@ export interface MutationState<
    * `onError` and `onSettled` as the mutation's context.
    */
   context: TOnMutateResult | undefined
-  /**
-   * The last successfully resolved data for the mutation.
-   */
+  /** The last successfully resolved data for the mutation. */
   data: TData | undefined
   /**
-   * The error object for the mutation, if the last attempt resulted in an error.
+   * The error object for the mutation, if the last attempt resulted in an
+   * error.
+   *
    * - Defaults to `null`.
    */
   error: TError | null
   /**
-   * The number of times the mutation function has failed for the current attempt.
+   * The number of times the mutation function has failed for the current
+   * attempt.
    */
   failureCount: number
-  /**
-   * The reason the current attempt failed, as reported by the retryer.
-   */
+  /** The reason the current attempt failed, as reported by the retryer. */
   failureReason: TError | null
   /**
-   * Whether the mutation is currently paused (see network mode), or is
-   * waiting for another mutation with the same `scope` to finish.
+   * Whether the mutation is currently paused (see network mode), or is waiting
+   * for another mutation with the same `scope` to finish.
    */
   isPaused: boolean
-  /**
-   * The status of the mutation.
-   */
+  /** The status of the mutation. */
   status: MutationStatus
-  /**
-   * The variables the mutation was last called with.
-   */
+  /** The variables the mutation was last called with. */
   variables: TVariables | undefined
-  /**
-   * The timestamp for when the mutation was submitted.
-   */
+  /** The timestamp for when the mutation was submitted. */
   submittedAt: number
 }
 
@@ -106,8 +99,8 @@ interface ContinueAction {
 }
 
 /**
- * The actions a mutation dispatches to update its state, e.g. when it starts, fails, pauses, or
- * succeeds.
+ * The actions a mutation dispatches to update its state, e.g. when it starts,
+ * fails, pauses, or succeeds.
  */
 export type Action<TData, TError, TVariables, TOnMutateResult> =
   | ContinueAction
@@ -125,15 +118,16 @@ export type Action<TData, TError, TVariables, TOnMutateResult> =
  * subscribed to it.
  *
  * Instances are created and managed internally by `MutationCache`; application
- * code typically interacts with mutations indirectly through `QueryClient` or
- * a framework hook like `useMutation`. Direct access to a `Mutation` instance
- * is possible via `mutationCache.find()`/`getAll()` for inspecting cache state.
- * @example
- * ```ts
- * const mutationCache = queryClient.getMutationCache()
+ * code typically interacts with mutations indirectly through `QueryClient` or a
+ * framework hook like `useMutation`. Direct access to a `Mutation` instance is
+ * possible via `mutationCache.find()`/`getAll()` for inspecting cache state.
  *
- * const mutation = mutationCache.find({ mutationKey: ['addPost'] })
- * ```
+ * @example
+ *   ```ts
+ *   const mutationCache = queryClient.getMutationCache()
+ *
+ *   const mutation = mutationCache.find({ mutationKey: ['addPost'] })
+ *   ```
  */
 export class Mutation<
   TData = unknown,
@@ -169,8 +163,9 @@ export class Mutation<
 
   /**
    * Replaces the mutation's options and applies their `gcTime`.
-   * @internal
+   *
    * @param options - The new mutation options.
+   * @internal
    */
   setOptions(
     options: MutationOptions<TData, TError, TVariables, TOnMutateResult>,
@@ -182,6 +177,7 @@ export class Mutation<
 
   /**
    * The `meta` object passed in the mutation's options, if any.
+   *
    * @returns The mutation's `meta`, or `undefined` if none was set.
    */
   get meta(): MutationMeta | undefined {
@@ -190,9 +186,10 @@ export class Mutation<
 
   /**
    * Subscribes an observer to the mutation and stops its garbage collection.
+   *
+   * @param observer - The observer to add. Adding an observer that is already
+   *   subscribed does nothing.
    * @internal
-   * @param observer - The observer to add. Adding an observer that is already subscribed does
-   * nothing.
    */
   addObserver(observer: MutationObserver<any, any, any, any>): void {
     if (!this.#observers.includes(observer)) {
@@ -211,8 +208,10 @@ export class Mutation<
 
   /**
    * Unsubscribes an observer from the mutation.
+   *
+   * @param observer - The observer to remove. Garbage collection is scheduled
+   *   afterwards.
    * @internal
-   * @param observer - The observer to remove. Garbage collection is scheduled afterwards.
    */
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
     this.#observers = this.#observers.filter((x) => x !== observer)
@@ -240,22 +239,25 @@ export class Mutation<
    * Resumes a mutation that is currently paused or was restored from a
    * dehydrated, still-`pending` state.
    *
-   * - If this mutation has an active retryer (it paused mid-attempt, e.g. due
-   *   to the network mode or scope-based queuing), its retryer is resumed.
+   * - If this mutation has an active retryer (it paused mid-attempt, e.g. due to
+   *   the network mode or scope-based queuing), its retryer is resumed.
    * - Otherwise, if the mutation's status is still `pending` (e.g. it was
-   *   dehydrated while an attempt was in flight and never got a retryer in
-   *   this instance), `execute` is called again with the last known variables.
+   *   dehydrated while an attempt was in flight and never got a retryer in this
+   *   instance), `execute` is called again with the last known variables.
    * - Otherwise the mutation has already settled and this resolves immediately
    *   without running anything again.
-   * @returns A promise that settles with the resumed mutation: it rejects if the mutation fails.
-   * It resolves immediately if the mutation has already settled.
-   * @see {@link Mutation#execute}
+   *
    * @example
-   * ```ts
-   * // typically driven by reconnect handling, e.g. queryClient.resumePausedMutations()
-   * const mutation = mutationCache.find({ mutationKey: ['addPost'] })
-   * await mutation?.continue()
-   * ```
+   *   ```ts
+   *   // typically driven by reconnect handling, e.g. queryClient.resumePausedMutations()
+   *   const mutation = mutationCache.find({ mutationKey: ['addPost'] })
+   *   await mutation?.continue()
+   *   ```
+   *
+   * @returns A promise that settles with the resumed mutation: it rejects if
+   *   the mutation fails. It resolves immediately if the mutation has already
+   *   settled.
+   * @see {@link Mutation#execute}
    */
   continue(): Promise<unknown> {
     return (
@@ -274,29 +276,32 @@ export class Mutation<
    *
    * If this mutation's state is already `pending` when `execute` is called
    * (i.e. it was restored, still in-flight, from a dehydrated state), the
-   * `onMutate` step is skipped and a `continue` action is dispatched to
-   * unpause it; otherwise a `pending` action is dispatched first, then the
-   * mutation cache's `onMutate` and the mutation's own `onMutate` option are
-   * awaited in that order, and the resulting context is stored.
+   * `onMutate` step is skipped and a `continue` action is dispatched to unpause
+   * it; otherwise a `pending` action is dispatched first, then the mutation
+   * cache's `onMutate` and the mutation's own `onMutate` option are awaited in
+   * that order, and the resulting context is stored.
    *
    * The mutation function is then run (subject to `retry`/`retryDelay`/
-   * `networkMode`, and to the mutation cache's scope-based serialization).
-   * On success, the cache's `onSuccess`/`onSettled` callbacks run before the
+   * `networkMode`, and to the mutation cache's scope-based serialization). On
+   * success, the cache's `onSuccess`/`onSettled` callbacks run before the
    * mutation's own `onSuccess`/`onSettled` options, a `success` action is
    * dispatched, and the resolved data is returned. On failure, the same
    * cache-then-option ordering is used for `onError`/`onSettled`, but each of
    * those four callbacks is individually caught so that a throwing callback
    * cannot mask the original error; an `error` action is then dispatched and
    * the original error is re-thrown.
-   * @param variables - The variables passed to the `mutationFn`.
-   * @returns A promise that resolves with the mutation's data, or rejects with its error.
-   * @see {@link Mutation#continue}
+   *
    * @example
-   * ```ts
-   * // Called internally by `MutationObserver.mutate` and `Mutation.continue` —
-   * // applications normally trigger mutations through those, not this method.
-   * const data = await mutation.execute(variables)
-   * ```
+   *   ```ts
+   *   // Called internally by `MutationObserver.mutate` and `Mutation.continue` —
+   *   // applications normally trigger mutations through those, not this method.
+   *   const data = await mutation.execute(variables)
+   *   ```
+   *
+   * @param variables - The variables passed to the `mutationFn`.
+   * @returns A promise that resolves with the mutation's data, or rejects with
+   *   its error.
+   * @see {@link Mutation#continue}
    */
   async execute(variables: TVariables): Promise<TData> {
     const onContinue = () => {
@@ -533,7 +538,9 @@ export class Mutation<
 }
 
 /**
- * Returns the initial state of a mutation: `'idle'`, with no data, error, or variables.
+ * Returns the initial state of a mutation: `'idle'`, with no data, error, or
+ * variables.
+ *
  * @returns The initial mutation state.
  */
 export function getDefaultState<

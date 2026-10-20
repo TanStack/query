@@ -15,8 +15,9 @@ const pluginId = 'vue-query'
 const pluginName = 'Vue Query'
 
 /**
- * Registers the Vue Query plugin with the Vue devtools, adding a query inspector and a timeline
- * layer for query cache events.
+ * Registers the Vue Query plugin with the Vue devtools, adding a query
+ * inspector and a timeline layer for query cache events.
+ *
  * @param app - The Vue app instance.
  * @param queryClient - The client whose query cache is shown in the devtools.
  */

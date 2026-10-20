@@ -15,25 +15,24 @@ interface Storage {
 
 interface CreateSyncStoragePersisterOptions {
   /**
-   * The storage client used for setting and retrieving items from cache.
-   * For SSR pass in `undefined`. Note that window.localStorage can be
-   * `null` in Android WebViews depending on how they are configured.
+   * The storage client used for setting and retrieving items from cache. For
+   * SSR pass in `undefined`. Note that window.localStorage can be `null` in
+   * Android WebViews depending on how they are configured.
    */
   storage: Storage | undefined | null
   /** The key to use when storing the cache */
   key?: string
-  /**
-   * To avoid spamming,
-   * pass a time in ms to throttle saving the cache to disk
-   */
+  /** To avoid spamming, pass a time in ms to throttle saving the cache to disk */
   throttleTime?: number
   /**
    * How to serialize the data to storage.
+   *
    * @default `JSON.stringify`
    */
   serialize?: (client: PersistedClient) => string
   /**
    * How to deserialize the data from storage.
+   *
    * @default `JSON.parse`
    */
   deserialize?: (cachedString: string) => PersistedClient
@@ -44,11 +43,13 @@ interface CreateSyncStoragePersisterOptions {
 /**
  * Creates a persister that stores the client in a synchronous storage such as
  * `window.localStorage`.
- * @param options - The `storage` to persist to, the `key`, `throttleTime`, `serialize`,
- * `deserialize`, and `retry` options.
- * @returns A persister that saves, restores, and removes the client in `storage`. Without
- * `storage`, its methods do nothing.
- * @deprecated use `createAsyncStoragePersister` from `@tanstack/query-async-storage-persister` instead.
+ *
+ * @deprecated use `createAsyncStoragePersister` from
+ *   `@tanstack/query-async-storage-persister` instead.
+ * @param options - The `storage` to persist to, the `key`, `throttleTime`,
+ *   `serialize`, `deserialize`, and `retry` options.
+ * @returns A persister that saves, restores, and removes the client in
+ *   `storage`. Without `storage`, its methods do nothing.
  */
 export function createSyncStoragePersister({
   storage,
@@ -108,8 +109,9 @@ export function createSyncStoragePersister({
 }
 
 /**
- * Wraps a function so it runs at most once per `wait` milliseconds, with the arguments of the latest
- * call.
+ * Wraps a function so it runs at most once per `wait` milliseconds, with the
+ * arguments of the latest call.
+ *
  * @param func - The function to throttle.
  * @param wait - The time to wait before running `func`, in milliseconds.
  * @returns The throttled function.

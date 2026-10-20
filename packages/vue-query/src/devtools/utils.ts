@@ -11,8 +11,9 @@ enum QueryState {
 }
 
 /**
- * Returns the devtools state of a query: fetching, paused, inactive (no observers), stale, or fresh,
- * checked in that order.
+ * Returns the devtools state of a query: fetching, paused, inactive (no
+ * observers), stale, or fresh, checked in that order.
+ *
  * @param query - The query to check.
  * @returns A `QueryState` value, used to label, color, and sort the query.
  */
@@ -35,6 +36,7 @@ export function getQueryState(query: Query): QueryState {
 
 /**
  * Returns the label of a query's devtools state, shown in the inspector.
+ *
  * @param query - The query to label.
  * @returns `'fetching'`, `'paused'`, `'stale'`, `'inactive'`, or `'fresh'`.
  */
@@ -59,6 +61,7 @@ export function getQueryStateLabel(query: Query): string {
 
 /**
  * Returns the text color of a query's state label in the inspector.
+ *
  * @param query - The query to get the color for.
  * @returns Black for stale queries, otherwise white, as a hex number.
  */
@@ -74,6 +77,7 @@ export function getQueryStatusFg(query: Query): number {
 
 /**
  * Returns the background color of a query's state label in the inspector.
+ *
  * @param query - The query to get the color for.
  * @returns The color for the query's state, as a hex number.
  */

@@ -21,11 +21,13 @@ import type {
 /**
  * Inject a TanStack Query devtools panel and render it in the DOM.
  *
- * Devtools panel allows programmatic control over the devtools, for example if you want to render
- * the devtools as part of your own devtools.
+ * Devtools panel allows programmatic control over the devtools, for example if
+ * you want to render the devtools as part of your own devtools.
  *
  * Consider `withDevtools` instead if you don't need this.
- * @param injectDevtoolsPanelFn - A function that returns devtools panel options.
+ *
+ * @param injectDevtoolsPanelFn - A function that returns devtools panel
+ *   options.
  * @param options - Additional configuration
  * @returns DevtoolsPanelRef
  * @see https://tanstack.com/query/v5/docs/framework/angular/devtools

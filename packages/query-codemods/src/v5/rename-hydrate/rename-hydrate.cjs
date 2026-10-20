@@ -22,8 +22,9 @@ module.exports = (file, api) => {
 
     importSpecifiers.replaceWith(({ node: mutableNode }) => {
       /**
-       * When the local and imported names match which means the code doesn't contain import aliases, we need
-       * to replace only the import specifier.
+       * When the local and imported names match which means the code doesn't
+       * contain import aliases, we need to replace only the import specifier.
+       *
        * @type {boolean}
        */
       const usesDefaultImport =

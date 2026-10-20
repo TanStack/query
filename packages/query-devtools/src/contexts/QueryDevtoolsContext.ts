@@ -19,7 +19,9 @@ export const QueryDevtoolsContext = createContext<QueryDevtoolsProps>({
 })
 
 /**
- * Returns the devtools configuration from context, such as the `client` and the `onlineManager`.
+ * Returns the devtools configuration from context, such as the `client` and the
+ * `onlineManager`.
+ *
  * @returns The devtools configuration.
  */
 export function useQueryDevtoolsContext() {

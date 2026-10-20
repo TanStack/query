@@ -31,7 +31,7 @@ type PersistQueryClientOptions = {
  *
  * ```ts
  * const localStoragePersister = createAsyncStoragePersister({
- *  storage: window.localStorage,
+ *   storage: window.localStorage,
  * })
  *
  * export const appConfig: ApplicationConfig = {
@@ -42,13 +42,17 @@ type PersistQueryClientOptions = {
  *         persistOptions: {
  *           persister: localStoragePersister,
  *         },
- *         onSuccess: () => console.log('Restoration completed successfully.'),
- *       })
+ *         onSuccess: () =>
+ *           console.log('Restoration completed successfully.'),
+ *       }),
  *     ),
  *   ],
- * };
+ * }
  * ```
- * @param persistQueryClientOptions - persistence options and optional onSuccess and onError callbacks which get called when the restoration process is complete.
+ *
+ * @param persistQueryClientOptions - Persistence options and optional onSuccess
+ *   and onError callbacks which get called when the restoration process is
+ *   complete.
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public
  */

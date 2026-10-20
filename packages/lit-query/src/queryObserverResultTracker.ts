@@ -11,9 +11,7 @@ export class QueryObserverResultTracker<TResult extends object> {
   private result: TResult | undefined
   private usesTracking = false
 
-  /**
-   * Forgets the last result, so the next `update` returns a result again.
-   */
+  /** Forgets the last result, so the next `update` returns a result again. */
   reset(): void {
     this.result = undefined
     this.usesTracking = false
@@ -22,10 +20,11 @@ export class QueryObserverResultTracker<TResult extends object> {
   /**
    * Returns the result to expose, tracked through the observer when it uses
    * property tracking.
+   *
    * @param observer - The observer the result comes from, if any.
    * @param result - The latest result of the observer.
-   * @returns The result to expose, or `undefined` if neither the result nor
-   * the tracking mode changed since the last call.
+   * @returns The result to expose, or `undefined` if neither the result nor the
+   *   tracking mode changed since the last call.
    */
   update(
     observer: TrackableQueryObserver<TResult> | undefined,

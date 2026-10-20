@@ -38,10 +38,10 @@ describe('useSuspenseQuery', () => {
   })
 
   /**
-   * Preact Suspense handles the rerenders differently than React.
-   * This test only checks for 4 renders (vs. React -> 6)
-   * so, instead of state change reacting and updating (and also losing the state)
-   * we abstract out the suspense
+   * Preact Suspense handles the rerenders differently than React. This test
+   * only checks for 4 renders (vs. React -> 6) so, instead of state change
+   * reacting and updating (and also losing the state) we abstract out the
+   * suspense
    */
   it('should render correctly when state is lifted above Suspense', async () => {
     const states: Array<UseSuspenseQueryResult<number>> = []

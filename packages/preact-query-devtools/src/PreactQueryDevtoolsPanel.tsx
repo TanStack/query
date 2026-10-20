@@ -6,7 +6,8 @@ import type { QueryClient } from '@tanstack/preact-query'
 import type { CSSProperties, VNode } from 'preact'
 
 /**
- * The props of `PreactQueryDevtoolsPanel`, which renders the devtools panel inline.
+ * The props of `PreactQueryDevtoolsPanel`, which renders the devtools panel
+ * inline.
  */
 export interface DevtoolsPanelOptions {
   /**
@@ -14,42 +15,38 @@ export interface DevtoolsPanelOptions {
    * nearest QueryClientProvider will be used.
    */
   client?: QueryClient
-  /**
-   * Custom error types to be shown in the devtools.
-   */
+  /** Custom error types to be shown in the devtools. */
   errorTypes?: Array<DevtoolsErrorType>
   /**
    * Use this to pass a nonce to the style tag that is added to the document
-   * head. This is useful if you are using a Content Security Policy (CSP)
-   * nonce to allow inline styles.
+   * head. This is useful if you are using a Content Security Policy (CSP) nonce
+   * to allow inline styles.
    */
   styleNonce?: string
   /**
-   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
-   * within the shadow DOM instead of within the head tag in the light DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles
+   * will be applied within the shadow DOM instead of within the head tag in the
+   * light DOM.
    */
   shadowDOMTarget?: ShadowRoot
-  /**
-   * Custom styles for the devtools panel container.
-   */
+  /** Custom styles for the devtools panel container. */
   style?: CSSProperties
-  /**
-   * Callback function when the devtools panel is closed.
-   */
+  /** Callback function when the devtools panel is closed. */
   onClose?: () => unknown
-  /**
-   * Use this to hide disabled queries from the devtools panel.
-   */
+  /** Use this to hide disabled queries from the devtools panel. */
   hideDisabledQueries?: boolean
   /**
    * Use this to set the theme of the devtools panel.
+   *
    * @defaultValue system
    */
   theme?: Theme
 }
 
 /**
- * Renders the TanStack Query devtools panel inline, for the given or nearest `QueryClient`.
+ * Renders the TanStack Query devtools panel inline, for the given or nearest
+ * `QueryClient`.
+ *
  * @param props - The devtools panel options.
  * @returns The element the devtools panel is mounted in.
  */

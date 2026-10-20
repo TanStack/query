@@ -5,8 +5,9 @@ import type { DevtoolsOfflineState } from '../contexts/types'
 import type { ParentProps } from 'solid-js'
 
 /**
- * Provides its children with the offline state of the devtools `onlineManager`, and a function
- * that toggles it.
+ * Provides its children with the offline state of the devtools `onlineManager`,
+ * and a function that toggles it.
+ *
  * @param props - The `children` to render.
  * @returns The `children`, wrapped in the context provider.
  */

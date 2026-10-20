@@ -4,10 +4,12 @@ import type { Mutation, Query } from '@tanstack/query-core'
 import type { DevtoolsPosition } from './contexts'
 
 /**
- * Returns the status label of a query: fetching, inactive (no observers), paused, stale, or fresh,
- * checked in that order.
+ * Returns the status label of a query: fetching, inactive (no observers),
+ * paused, stale, or fresh, checked in that order.
+ *
  * @param query - The query to label.
- * @returns One of `'fetching'`, `'inactive'`, `'paused'`, `'stale'`, or `'fresh'`.
+ * @returns One of `'fetching'`, `'inactive'`, `'paused'`, `'stale'`, or
+ *   `'fresh'`.
  */
 export function getQueryStatusLabel(query: Query) {
   return query.state.fetchStatus === 'fetching'
@@ -24,7 +26,9 @@ export function getQueryStatusLabel(query: Query) {
 type QueryStatusLabel = 'fresh' | 'stale' | 'paused' | 'inactive' | 'fetching'
 
 /**
- * Appends a capitalized side to a CSS property name, e.g. `border` and `left` to `borderLeft`.
+ * Appends a capitalized side to a CSS property name, e.g. `border` and `left`
+ * to `borderLeft`.
+ *
  * @param prop - The property name.
  * @param side - The side to append.
  * @returns The sided property name.
@@ -39,8 +43,9 @@ export function getSidedProp<T extends string>(
 }
 
 /**
- * Returns the color of a query's status: blue while fetching, gray without observers, purple while
- * paused, yellow when stale, otherwise green.
+ * Returns the color of a query's status: blue while fetching, gray without
+ * observers, purple while paused, yellow when stale, otherwise green.
+ *
  * @param params - The query's `queryState`, `observerCount`, and `isStale`.
  * @returns The color name.
  */
@@ -65,8 +70,9 @@ export function getQueryStatusColor({
 }
 
 /**
- * Returns the color of a mutation's status: purple while paused, red on error, yellow while pending,
- * green on success, otherwise gray.
+ * Returns the color of a mutation's status: purple while paused, red on error,
+ * yellow while pending, green on success, otherwise gray.
+ *
  * @param params - The mutation's `status` and `isPaused`.
  * @returns The color name.
  */
@@ -90,6 +96,7 @@ export function getMutationStatusColor({
 
 /**
  * Returns the color of a query status label.
+ *
  * @param label - A label returned by {@link getQueryStatusLabel}.
  * @returns The color name.
  */
@@ -107,6 +114,7 @@ export function getQueryStatusColorByLabel(label: QueryStatusLabel) {
 
 /**
  * Displays a string regardless of the type of the data.
+ *
  * @param value - Value to be stringified
  * @param beautify - Formats json to multiline
  * @returns The value serialized with `superjson`, as a JSON string.
@@ -179,6 +187,7 @@ export const mutationSortFns: Record<string, MutationSortFn> = {
 
 /**
  * Converts a length in `rem` to pixels, using the root element's font size.
+ *
  * @param rem - The length in `rem`.
  * @returns The length in pixels.
  */
@@ -188,8 +197,9 @@ export const convertRemToPixels = (rem: number) => {
 
 /**
  * Tracks the user's `prefers-color-scheme` setting.
+ *
  * @returns An accessor of `'light'` or `'dark'`, updated when the setting
- * changes.
+ *   changes.
  */
 export const getPreferredColorScheme = () => {
   const [colorScheme, setColorScheme] = createSignal<'light' | 'dark'>('dark')
@@ -209,6 +219,7 @@ export const getPreferredColorScheme = () => {
 
 /**
  * Updates nested data by path.
+ *
  * @param oldData - Data to be updated
  * @param updatePath - Path to the data to be updated
  * @param value - New value
@@ -283,9 +294,10 @@ export const updateNestedDataByPath = (
 
 /**
  * Deletes nested data by path.
+ *
  * @param oldData - Data to be updated
  * @param deletePath - Path to the data to be deleted
- * @returns newData without the deleted items by path
+ * @returns NewData without the deleted items by path
  */
 export const deleteNestedDataByPath = (
   oldData: unknown,
@@ -344,10 +356,13 @@ export const deleteNestedDataByPath = (
 }
 
 /**
- * Sets up the goober stylesheet with a `nonce`, for pages with a Content Security Policy. Without a
- * `nonce`, it does nothing and goober creates the stylesheet itself.
+ * Sets up the goober stylesheet with a `nonce`, for pages with a Content
+ * Security Policy. Without a `nonce`, it does nothing and goober creates the
+ * stylesheet itself.
+ *
  * @param nonce - The nonce to set on the style tag.
- * @param target - The shadow root to add the style tag to, instead of `document.head`.
+ * @param target - The shadow root to add the style tag to, instead of
+ *   `document.head`.
  */
 export const setupStyleSheet = (nonce?: string, target?: ShadowRoot) => {
   if (!nonce)

@@ -23,9 +23,12 @@ const QUERY_RESULT_TYPE_NAMES = new Set([
 ])
 
 /**
- * Checks whether a type is one of the query result types, or a union that contains one.
+ * Checks whether a type is one of the query result types, or a union that
+ * contains one.
+ *
  * @param type - The type to check.
- * @returns `true` if the type's alias or symbol name is a known query result type.
+ * @returns `true` if the type's alias or symbol name is a known query result
+ *   type.
  */
 function isQueryResultType(type: Type): boolean {
   if (type.aliasSymbol && QUERY_RESULT_TYPE_NAMES.has(type.aliasSymbol.name)) {

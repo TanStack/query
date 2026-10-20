@@ -2,7 +2,6 @@ const UnknownUsageError = require('./unknown-usage-error.cjs')
 
 module.exports = ({ jscodeshift, utils }) => {
   /**
-   *
    * @param {import('jscodeshift').ObjectExpression} source
    * @param {import('jscodeshift').ObjectExpression} target
    * @param {(node: import('jscodeshift').Node) => boolean} predicate
@@ -19,20 +18,20 @@ module.exports = ({ jscodeshift, utils }) => {
    * @param {import('jscodeshift').NodePath} path
    * @param {string} argumentName
    * @param {string} filePath
-   * @returns {*}
+   * @returns {any}
    */
   const getBindingFromScope = (path, argumentName, filePath) => {
     /**
-     * If the current scope contains the declaration then we can use the actual one else we attempt to find the
-     * binding from above.
+     * If the current scope contains the declaration then we can use the actual
+     * one else we attempt to find the binding from above.
      */
     const scope = path.scope.declares(argumentName)
       ? path.scope
       : path.scope.lookup(argumentName)
 
     /**
-     * The declaration couldn't be found for some reason, time to move on. We warn the user it needs to be rewritten
-     * by themselves.
+     * The declaration couldn't be found for some reason, time to move on. We
+     * warn the user it needs to be rewritten by themselves.
      */
     if (!scope) {
       return undefined
@@ -52,7 +51,7 @@ module.exports = ({ jscodeshift, utils }) => {
 
   /**
    * @param {import('jscodeshift').VariableDeclarator} binding
-   * @returns {import('jscodeshift').Node|undefined}
+   * @returns {import('jscodeshift').Node | undefined}
    */
   const getInitializerByDeclarator = (binding) => {
     const isVariableDeclaration = jscodeshift.match(binding, {
@@ -85,9 +84,9 @@ module.exports = ({ jscodeshift, utils }) => {
   /**
    * @param {import('jscodeshift').NodePath} path
    * @param {import('jscodeshift').Node} node
-   * @param {"queryKey"|"mutationKey"} keyName
+   * @param {'queryKey' | 'mutationKey'} keyName
    * @param {string} filePath
-   * @returns {import('jscodeshift').Property|undefined}
+   * @returns {import('jscodeshift').Property | undefined}
    */
   const transformArgumentToKey = (path, node, keyName, filePath) => {
     // If the first argument is an identifier we have to infer its type if possible.

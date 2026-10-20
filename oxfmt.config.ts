@@ -6,6 +6,7 @@ export default defineConfig({
   trailingComma: 'all',
   printWidth: 80,
   sortPackageJson: false,
+  jsdoc: true,
   svelte: {},
   ignorePatterns: [
     '**/.next',

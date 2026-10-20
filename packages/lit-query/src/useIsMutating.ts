@@ -116,27 +116,29 @@ class IsMutatingController extends BaseController<number> {
  * When `filters` is a function, it is re-read during host updates so the count
  * can follow reactive host state. If `queryClient` is omitted, the controller
  * resolves the client from the nearest connected `QueryClientProvider`.
+ *
+ * @example
+ *   ```ts
+ *   import { LitElement, html } from 'lit'
+ *   import { useIsMutating } from '@tanstack/lit-query'
+ *
+ *   class MutationStatus extends LitElement {
+ *     private readonly savesPending = useIsMutating(this, {
+ *       mutationKey: ['save-project'],
+ *     })
+ *
+ *     render() {
+ *       return html`<span>${this.savesPending()} saves pending</span>`
+ *     }
+ *   }
+ *   ```
+ *
  * @param host - The Lit reactive controller host that owns the cache
- * subscription.
+ *   subscription.
  * @param filters - Mutation filters, or a getter that returns mutation filters.
  * @param queryClient - Optional explicit query client. Provide this for
- * controllers that should not resolve a client from Lit context.
+ *   controllers that should not resolve a client from Lit context.
  * @returns An accessor for the current number of matching pending mutations.
- * @example
- * ```ts
- * import { LitElement, html } from 'lit'
- * import { useIsMutating } from '@tanstack/lit-query'
- *
- * class MutationStatus extends LitElement {
- *   private readonly savesPending = useIsMutating(this, {
- *     mutationKey: ['save-project'],
- *   })
- *
- *   render() {
- *     return html`<span>${this.savesPending()} saves pending</span>`
- *   }
- * }
- * ```
  */
 export function useIsMutating(
   host: ReactiveControllerHost,

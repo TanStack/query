@@ -23,8 +23,8 @@ export function makeQueryClient() {
     defaultOptions: {
       hydrate: {
         /**
-         * Called when the query is rebuilt from a prefetched
-         * promise, before the query data is put into the cache.
+         * Called when the query is rebuilt from a prefetched promise, before
+         * the query data is put into the cache.
          */
         deserializeData: (data) => {
           return tson.deserialize(data)

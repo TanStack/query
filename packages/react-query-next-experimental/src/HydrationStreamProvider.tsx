@@ -25,46 +25,38 @@ interface HydrationStreamContext<TShape> {
   id: string
   stream: {
     /**
-     * **Server method**
-     * Push a new entry to the stream
-     * Will be ignored on the client
+     * **Server method** Push a new entry to the stream Will be ignored on the
+     * client
      */
     push: (...shape: Array<TShape>) => void
   }
 }
 
-/**
- * The props of the `Provider` returned by `createHydrationStreamProvider`.
- */
+/** The props of the `Provider` returned by `createHydrationStreamProvider`. */
 export interface HydrationStreamProviderProps<TShape> {
-  /**
-   * The children to render inside the stream provider.
-   */
+  /** The children to render inside the stream provider. */
   children: React.ReactNode
   /**
-   * Optional transformer to serialize/deserialize the data
-   * Example devalue, superjson et al
+   * Optional transformer to serialize/deserialize the data Example devalue,
+   * superjson et al
    */
   transformer?: DataTransformer
-  /**
-   * **Client method**
-   * Called in the browser when new entries are received
-   */
+  /** **Client method** Called in the browser when new entries are received */
   onEntries: (entries: Array<TShape>) => void
-  /**
-   * **Server method**
-   * onFlush is called on the server when the cache is flushed
-   */
+  /** **Server method** onFlush is called on the server when the cache is flushed */
   onFlush?: () => Array<TShape>
   /**
-   * A nonce that'll allow the inline script to be executed when Content Security Policy is enforced
+   * A nonce that'll allow the inline script to be executed when Content
+   * Security Policy is enforced
    */
   nonce?: string
 }
 
 /**
- * Creates a provider that streams entries (e.g. dehydrated query state) from the server to the
- * client while the page streams in, and the context it shares the stream through.
+ * Creates a provider that streams entries (e.g. dehydrated query state) from
+ * the server to the client while the page streams in, and the context it shares
+ * the stream through.
+ *
  * @returns The `Provider` component and its `context`.
  */
 export function createHydrationStreamProvider<TShape>() {
@@ -72,36 +64,42 @@ export function createHydrationStreamProvider<TShape>() {
     null as any,
   )
   /**
-   * 1. (Happens on server): the callback registered with `useServerInsertedHTML()` is called **on the server** whenever
-   *    Next.js inserts HTML into the streamed response.
-   *    - This means that we might have some new entries in the cache that needs to be flushed.
-   *    - We pass these to the client by inserting a `<script>`-tag where we do `window[id].push(serializedVersionOfCache)`.
+   * 1. (Happens on server): the callback registered with `useServerInsertedHTML()`
+   *    is called **on the server** whenever Next.js inserts HTML into the
+   *    streamed response.
+   *
+   *    - This means that we might have some new entries in the cache that needs to
+   *      be flushed.
+   *    - We pass these to the client by inserting a `<script>`-tag where we do
+   *      `window[id].push(serializedVersionOfCache)`.
    * 2. (Happens in browser) In `useEffect()`:
-   *   - We check if `window[id]` is set to an array and call `push()` on all the entries which will call `onEntries()` with the new entries.
-   *   - We replace `window[id]` with a `push()`-method that will be called whenever new entries are received.
-   * @param props - The `children` to render, the `onEntries`/`onFlush` callbacks, and the optional
-   * `transformer` and `nonce`.
+   *
+   * - We check if `window[id]` is set to an array and call `push()` on all the
+   *   entries which will call `onEntries()` with the new entries.
+   * - We replace `window[id]` with a `push()`-method that will be called whenever
+   *   new entries are received.
+   *
+   * @param props - The `children` to render, the `onEntries`/`onFlush`
+   *   callbacks, and the optional `transformer` and `nonce`.
    * @returns The `children`, wrapped in the stream context provider.
    */
   function UseClientHydrationStreamProvider(props: {
     children: React.ReactNode
     /**
-     * Optional transformer to serialize/deserialize the data
-     * Example devalue, superjson et al
+     * Optional transformer to serialize/deserialize the data Example devalue,
+     * superjson et al
      */
     transformer?: DataTransformer
-    /**
-     * **Client method**
-     * Called in the browser when new entries are received
-     */
+    /** **Client method** Called in the browser when new entries are received */
     onEntries: (entries: Array<TShape>) => void
     /**
-     * **Server method**
-     * onFlush is called on the server when the cache is flushed
+     * **Server method** onFlush is called on the server when the cache is
+     * flushed
      */
     onFlush?: () => Array<TShape>
     /**
-     * A nonce that'll allow the inline script to be executed when Content Security Policy is enforced
+     * A nonce that'll allow the inline script to be executed when Content
+     * Security Policy is enforced
      */
     nonce?: string
   }) {

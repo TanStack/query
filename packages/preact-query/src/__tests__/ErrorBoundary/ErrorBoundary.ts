@@ -49,9 +49,8 @@ export class ErrorBoundary extends Component<
 
   override componentDidCatch(error: Error, info: ErrorInfo) {
     /**
-     * To emulate the react behavior of console.error
-     * we add one here to show that the errors bubble up
-     * to the system and can be seen in the console
+     * To emulate the react behavior of console.error we add one here to show
+     * that the errors bubble up to the system and can be seen in the console
      */
     console.error('%o\n\n%s', error, info)
     this.props.onError?.(error, info)

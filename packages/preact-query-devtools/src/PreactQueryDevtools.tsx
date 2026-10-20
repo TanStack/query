@@ -11,23 +11,23 @@ import type { QueryClient } from '@tanstack/preact-query'
 import type { VNode } from 'preact'
 
 /**
- * The props of `PreactQueryDevtools`, which renders the devtools with a toggle button that opens
- * them.
+ * The props of `PreactQueryDevtools`, which renders the devtools with a toggle
+ * button that opens them.
  */
 export interface DevtoolsOptions {
-  /**
-   * Set this true if you want the dev tools to default to being open
-   */
+  /** Set this true if you want the dev tools to default to being open */
   initialIsOpen?: boolean
   /**
    * The position of the TanStack logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
+   *
    * @defaultValue bottom-right
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
-   * The position of the Preact Query devtools panel.
-   * 'top' | 'bottom' | 'left' | 'right'
+   * The position of the Preact Query devtools panel. 'top' | 'bottom' | 'left'
+   * | 'right'
+   *
    * @defaultValue bottom
    */
   position?: DevtoolsPosition
@@ -36,35 +36,34 @@ export interface DevtoolsOptions {
    * nearest QueryClientProvider will be used.
    */
   client?: QueryClient
-  /**
-   * Use this to provide custom error type handlers for the devtools panel.
-   */
+  /** Use this to provide custom error type handlers for the devtools panel. */
   errorTypes?: Array<DevtoolsErrorType>
   /**
    * Use this to pass a nonce to the style tag that is added to the document
-   * head. This is useful if you are using a Content Security Policy (CSP)
-   * nonce to allow inline styles.
+   * head. This is useful if you are using a Content Security Policy (CSP) nonce
+   * to allow inline styles.
    */
   styleNonce?: string
   /**
-   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
-   * within the shadow DOM instead of within the head tag in the light DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles
+   * will be applied within the shadow DOM instead of within the head tag in the
+   * light DOM.
    */
   shadowDOMTarget?: ShadowRoot
-  /**
-   * Use this to hide disabled queries from the devtools panel.
-   */
+  /** Use this to hide disabled queries from the devtools panel. */
   hideDisabledQueries?: boolean
   /**
    * Use this to set the theme of the devtools panel.
+   *
    * @defaultValue system
    */
   theme?: Theme
 }
 
 /**
- * Renders the TanStack Query devtools, with a toggle button that opens them, for the given or
- * nearest `QueryClient`.
+ * Renders the TanStack Query devtools, with a toggle button that opens them,
+ * for the given or nearest `QueryClient`.
+ *
  * @param props - The devtools options.
  * @returns The element the devtools are mounted in.
  */

@@ -16,8 +16,8 @@ export class TasksService {
   readonly #http = inject(HttpClient) // Handles HTTP requests
 
   /**
-   * Fetches all tasks from the API.
-   * Returns an observable containing an array of task strings.
+   * Fetches all tasks from the API. Returns an observable containing an array
+   * of task strings.
    */
   allTasks = (intervalMs: number) =>
     queryOptions({
@@ -29,8 +29,8 @@ export class TasksService {
     })
 
   /**
-   * Creates a mutation for adding a task.
-   * On success, invalidates and refetches the "tasks" query cache to update the task list.
+   * Creates a mutation for adding a task. On success, invalidates and refetches
+   * the "tasks" query cache to update the task list.
    */
   addTask() {
     return mutationOptions({
@@ -44,8 +44,8 @@ export class TasksService {
   }
 
   /**
-   * Creates a mutation for clearing all tasks.
-   * On success, invalidates and refetches the "tasks" query cache to ensure consistency.
+   * Creates a mutation for clearing all tasks. On success, invalidates and
+   * refetches the "tasks" query cache to ensure consistency.
    */
   clearAllTasks() {
     return mutationOptions({

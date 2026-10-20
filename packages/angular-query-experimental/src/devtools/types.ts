@@ -7,14 +7,14 @@ import type {
 } from '@tanstack/query-devtools'
 import type { DevtoolsFeature } from '../providers'
 
-/**
- * Options for configuring withDevtools.
- */
+/** Options for configuring withDevtools. */
 export interface WithDevtoolsOptions {
   /**
-   * An array of dependencies to be injected and passed to the `withDevtoolsFn` function.
+   * An array of dependencies to be injected and passed to the `withDevtoolsFn`
+   * function.
    *
    * **Example**
+   *
    * ```ts
    * export const appConfig: ApplicationConfig = {
    *   providers: [
@@ -36,85 +36,88 @@ export interface WithDevtoolsOptions {
   deps?: Array<any>
 }
 
-/**
- * Options for configuring the TanStack Query devtools.
- */
+/** Options for configuring the TanStack Query devtools. */
 export interface DevtoolsOptions {
-  /**
-   * Set this true if you want the devtools to default to being open
-   */
+  /** Set this true if you want the devtools to default to being open */
   initialIsOpen?: boolean
   /**
    * The position of the TanStack logo to open and close the devtools panel.
    * `top-left` | `top-right` | `bottom-left` | `bottom-right` | `relative`
+   *
    * @defaultValue bottom-right
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
-   * The position of the Angular Query devtools panel.
-   * `top` | `bottom` | `left` | `right`
+   * The position of the Angular Query devtools panel. `top` | `bottom` | `left`
+   * | `right`
+   *
    * @defaultValue bottom
    */
   position?: DevtoolsPosition
-  /**
-   * Custom instance of QueryClient
-   */
+  /** Custom instance of QueryClient */
   client?: QueryClient
-  /**
-   * Use this so you can define custom errors that can be shown in the devtools.
-   */
+  /** Use this so you can define custom errors that can be shown in the devtools. */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   * Use this to pass a nonce to the style tag that is added to the document
+   * head. This is useful if you are using a Content Security Policy (CSP) nonce
+   * to allow inline styles.
    */
   styleNonce?: string
   /**
-   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
-   * within the shadow DOM instead of within the head tag in the light DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles
+   * will be applied within the shadow DOM instead of within the head tag in the
+   * light DOM.
    */
   shadowDOMTarget?: ShadowRoot
-  /**
-   * Set this to true to hide disabled queries from the devtools panel.
-   */
+  /** Set this to true to hide disabled queries from the devtools panel. */
   hideDisabledQueries?: boolean
   /**
-   * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+   * Set this to 'light', 'dark', or 'system' to change the theme of the
+   * devtools panel.
+   *
    * @defaultValue system
    */
   theme?: Theme
 
   /**
    * Whether the developer tools should load.
-   * - `auto`- (Default) Lazily loads devtools when in development mode. Skips loading in production mode.
+   *
+   * - `auto`- (Default) Lazily loads devtools when in development mode. Skips
+   *   loading in production mode.
    * - `true`- Always load the devtools, regardless of the environment.
    * - `false`- Never load the devtools, regardless of the environment.
    *
-   * You can use `true` and `false` to override loading developer tools from an environment file.
-   * For example, a test environment might run in production mode but you may want to load developer tools.
+   * You can use `true` and `false` to override loading developer tools from an
+   * environment file. For example, a test environment might run in production
+   * mode but you may want to load developer tools.
    *
-   * Additionally, you can use a signal in the callback to dynamically load the devtools based on a condition. For example,
-   * a signal created from a RxJS observable that listens for a keyboard shortcut.
+   * Additionally, you can use a signal in the callback to dynamically load the
+   * devtools based on a condition. For example, a signal created from a RxJS
+   * observable that listens for a keyboard shortcut.
    *
    * **Example**
+   *
    * ```ts
-   *    withDevtools(() => ({
-   *      initialIsOpen: true,
-   *      loadDevtools: inject(ExampleService).loadDevtools()
-   *    }))
-   *  ```
+   * withDevtools(() => ({
+   *   initialIsOpen: true,
+   *   loadDevtools: inject(ExampleService).loadDevtools(),
+   * }))
+   * ```
    */
   loadDevtools?: 'auto' | boolean
 }
 
 /**
  * A function that returns the devtools options. It receives the `deps` of
- * {@link WithDevtoolsOptions} and runs inside a `computed`, so the devtools update when the signals
- * it reads change.
+ * {@link WithDevtoolsOptions} and runs inside a `computed`, so the devtools
+ * update when the signals it reads change.
  */
 export type WithDevtoolsFn = (...deps: Array<any>) => DevtoolsOptions
 
 /**
- * The signature of `withDevtools`, which creates the devtools feature for `provideTanStackQuery`.
+ * The signature of `withDevtools`, which creates the devtools feature for
+ * `provideTanStackQuery`.
  */
 export type WithDevtools = (
   withDevtoolsFn?: WithDevtoolsFn,

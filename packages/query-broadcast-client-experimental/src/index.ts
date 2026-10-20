@@ -4,21 +4,15 @@ import type { QueryClient, QueryKey } from '@tanstack/query-core'
 
 /**
  * Metadata describing a broadcast that failed to be delivered to other tabs.
- * Passed to {@link BroadcastQueryClientOptions.onBroadcastError} so callers
- * can correlate failures with the originating query.
+ * Passed to {@link BroadcastQueryClientOptions.onBroadcastError} so callers can
+ * correlate failures with the originating query.
  */
 export interface BroadcastErrorEvent {
-  /**
-   * The kind of cache event that was being broadcast.
-   */
+  /** The kind of cache event that was being broadcast. */
   type: 'updated' | 'removed' | 'added'
-  /**
-   * The hash of the query the broadcast was about.
-   */
+  /** The hash of the query the broadcast was about. */
   queryHash: string
-  /**
-   * The key of the query the broadcast was about.
-   */
+  /** The key of the query the broadcast was about. */
   queryKey: QueryKey
 }
 
@@ -32,16 +26,17 @@ interface BroadcastQueryClientOptions {
   queryClient: QueryClient
   /**
    * Unique channel name used to communicate between tabs and windows.
+   *
    * @default 'tanstack-query'
    */
   broadcastChannel?: string
   /** Options forwarded to the underlying `BroadcastChannel`. */
   options?: BroadcastChannelOptions
   /**
-   * Called when a query event fails to broadcast to other tabs — most
-   * commonly because the query's `state.data`, `state.error`, or `queryKey`
-   * contains a value the structured-clone algorithm cannot serialize
-   * (e.g. `ReadableStream`, `File`, functions, Vue `reactive` proxies).
+   * Called when a query event fails to broadcast to other tabs — most commonly
+   * because the query's `state.data`, `state.error`, or `queryKey` contains a
+   * value the structured-clone algorithm cannot serialize (e.g.
+   * `ReadableStream`, `File`, functions, Vue `reactive` proxies).
    *
    * Provide this to route failures to an error tracker. If omitted, a
    * `console.warn` is emitted in development so failures are never silent.
@@ -56,11 +51,13 @@ interface BroadcastQueryClientOptions {
 }
 
 /**
- * Syncs a client's query cache with the caches of other tabs and windows through a
- * `BroadcastChannel`: added queries, successful updates, and removals of queries that have
- * observers are broadcast, and those received from other tabs are applied.
- * @param options - The `queryClient` to sync, the `broadcastChannel` name, the channel `options`,
- * and the `onBroadcastError` callback.
+ * Syncs a client's query cache with the caches of other tabs and windows
+ * through a `BroadcastChannel`: added queries, successful updates, and removals
+ * of queries that have observers are broadcast, and those received from other
+ * tabs are applied.
+ *
+ * @param options - The `queryClient` to sync, the `broadcastChannel` name, the
+ *   channel `options`, and the `onBroadcastError` callback.
  * @returns A function that stops syncing and closes the channel.
  */
 export function broadcastQueryClient({

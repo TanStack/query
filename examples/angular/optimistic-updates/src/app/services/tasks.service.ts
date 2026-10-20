@@ -16,8 +16,8 @@ export class TasksService {
   #http = inject(HttpClient) // Handles HTTP requests
 
   /**
-   * Fetches all tasks from the API.
-   * Returns an observable containing an array of task strings.
+   * Fetches all tasks from the API. Returns an observable containing an array
+   * of task strings.
    */
   allTasks = () =>
     queryOptions({
@@ -28,8 +28,8 @@ export class TasksService {
     })
 
   /**
-   * Creates a mutation for adding a task.
-   * On success, invalidates and refetches the "tasks" query cache to update the task list.
+   * Creates a mutation for adding a task. On success, invalidates and refetches
+   * the "tasks" query cache to update the task list.
    */
   addTask() {
     return mutationOptions({
