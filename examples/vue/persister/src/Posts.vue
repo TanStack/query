@@ -1,27 +1,13 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query'
-import { experimental_createQueryPersister } from '@tanstack/query-persist-client-core'
+import { useQuery, useQueryClient } from '@tanstack/vue-query'
+import { postQueryOptions, postsQueryOptions } from './api'
 
-import type { Post } from './types'
-
-defineProps<{ isVisited: (id: number) => boolean }>()
 defineEmits<{ setPostId: [id: number] }>()
 
-const fetcher = async (): Promise<Array<Post>> => {
-  const response = await fetch('https://jsonplaceholder.typicode.com/posts')
-  if (!response.ok) throw new Error('Failed to fetch posts')
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-  return await response.json()
-}
+const queryClient = useQueryClient()
 
-const { isPending, isError, isRefetching, data, error } = useQuery({
-  queryKey: ['posts'] as const,
-  queryFn: () => fetcher(),
-  persister: experimental_createQueryPersister({
-    storage: localStorage,
-  }).persisterFn,
-  staleTime: 5000,
-})
+const { isPending, isError, isRefetching, data, error } =
+  useQuery(postsQueryOptions())
 </script>
 
 <template>
@@ -35,7 +21,11 @@ const { isPending, isError, isRefetching, data, error } = useQuery({
         <a
           @click="$emit('setPostId', item.id)"
           href="#"
-          :class="{ visited: isVisited(item.id) }"
+          :class="{
+            visited: queryClient.getQueryData(
+              postQueryOptions(item.id).queryKey,
+            ),
+          }"
           >{{ item.title }}</a
         >
       </li>
