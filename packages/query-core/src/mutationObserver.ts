@@ -99,7 +99,7 @@ export class MutationObserver<
    *
    * @param options - The new mutation observer options. They are defaulted with
    *   {@link
-   *     QueryClient#defaultMutationOptions} before being applied.
+   *       QueryClient#defaultMutationOptions} before being applied.
    */
   setOptions(
     options: MutationObserverOptions<
