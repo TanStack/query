@@ -5,28 +5,28 @@ title: Installation
 
 > IMPORTANT: The Lit adapter is currently experimental and v0.1. Pin exact versions if you need extra release stability while the API is early.
 
-Install Lit Query with Lit:
+Install Lit Query:
 
 ```sh
-npm i @tanstack/lit-query lit
+npm i @tanstack/lit-query
 ```
 
 or
 
 ```sh
-pnpm add @tanstack/lit-query lit
+pnpm add @tanstack/lit-query
 ```
 
 or
 
 ```sh
-yarn add @tanstack/lit-query lit
+yarn add @tanstack/lit-query
 ```
 
 or
 
 ```sh
-bun add @tanstack/lit-query lit
+bun add @tanstack/lit-query
 ```
 
 ## Requirements
