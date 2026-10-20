@@ -67,7 +67,7 @@ await appRef.whenStable()
 
 For components, create them through `TestBed.createComponent`. `fixture.whenStable()` can resolve before the query data arrives, so with fake timers, advance the clock past the query function's delay, then run `fixture.detectChanges()` and assert on what the component renders:
 
-```ts
+```angular-ts
 beforeEach(() => {
   vi.useFakeTimers()
 })
@@ -103,7 +103,7 @@ it('should render the query data', async () => {
 
 If you use [Angular Testing Library](https://testing-library.com/docs/angular-testing-library/intro/), render the component with `render` and follow the same flow, running change detection through `rendered.fixture`:
 
-```ts
+```angular-ts
 it('should render the query data', async () => {
   @Component({
     template: `<p>{{ query.data()?.value ?? 'Loading...' }}</p>`,
