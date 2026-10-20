@@ -18,10 +18,9 @@ export class PostComponent {
   readonly #postsService = inject(PostsService)
 
   readonly setPostId = output<number>()
-  readonly postId = input(0)
+  readonly postId = input.required<number>()
 
   readonly postQuery = injectQuery(() => ({
-    enabled: this.postId() > 0,
     queryKey: ['post', this.postId()],
     queryFn: (context) => {
       // Cancels the request when component is destroyed before the request finishes
