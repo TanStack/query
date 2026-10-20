@@ -29,7 +29,7 @@ import type {
 } from './api'
 
 type ProjectsCacheSnapshot = Array<[QueryKey, ProjectsPageResponse | undefined]>
-type FavoriteMutationContext = {
+type FavoriteMutationResult = {
   snapshots: ProjectsCacheSnapshot
 }
 
@@ -99,7 +99,7 @@ class PaginationDemo extends LitElement {
     Project,
     Error,
     ToggleProjectFavoriteInput,
-    FavoriteMutationContext
+    FavoriteMutationResult
   >
 
   constructor() {
@@ -177,8 +177,8 @@ class PaginationDemo extends LitElement {
 
           return { snapshots }
         },
-        onError: (_error, _variables, context) => {
-          for (const [key, snapshot] of context?.snapshots ?? []) {
+        onError: (_error, _variables, onMutateResult) => {
+          for (const [key, snapshot] of onMutateResult?.snapshots ?? []) {
             queryClient.setQueryData(key, snapshot)
           }
         },
