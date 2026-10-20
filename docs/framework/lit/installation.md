@@ -5,29 +5,31 @@ title: Installation
 
 > IMPORTANT: The Lit adapter is currently experimental and v0.1. Pin exact versions if you need extra release stability while the API is early.
 
-Install Lit Query with Lit:
+Install Lit Query with Lit and TanStack Query Core:
 
 ```sh
-npm i @tanstack/lit-query lit
+npm i @tanstack/lit-query @tanstack/query-core lit
 ```
 
 or
 
 ```sh
-pnpm add @tanstack/lit-query lit
+pnpm add @tanstack/lit-query @tanstack/query-core lit
 ```
 
 or
 
 ```sh
-yarn add @tanstack/lit-query lit
+yarn add @tanstack/lit-query @tanstack/query-core lit
 ```
 
 or
 
 ```sh
-bun add @tanstack/lit-query lit
+bun add @tanstack/lit-query @tanstack/query-core lit
 ```
+
+`@tanstack/query-core` is a peer dependency of `@tanstack/lit-query`. Even though the Lit docs import user-facing APIs from `@tanstack/lit-query`, your app should install `@tanstack/query-core` explicitly.
 
 ## Requirements
 
