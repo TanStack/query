@@ -176,7 +176,7 @@ computed(() => {
 
 If you inline query options into `injectQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `injectQuery` and e.g. `queryClient.query`, or manage them in a service. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
 
-```ts
+```angular-ts
 import { noop } from '@tanstack/angular-query-experimental'
 
 @Injectable({

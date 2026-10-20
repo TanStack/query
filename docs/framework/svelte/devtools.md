@@ -13,25 +13,25 @@ title: Devtools
 
 The devtools are a separate package that you need to install:
 
-```bash
+```sh
 npm i @tanstack/svelte-query-devtools
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/svelte-query-devtools
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/svelte-query-devtools
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/svelte-query-devtools
 ```
 

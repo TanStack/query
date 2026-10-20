@@ -101,25 +101,32 @@ Note that `withSetup` creates a new `QueryClient` for every call. This helps to 
 
 It is possible to share a single `QueryClient` between tests, but if so we need to ensure that the `QueryClient` gets cleared before every test, and that tests don't run in parallel otherwise one test will influence the results of others.
 
-`flushPromises` is enough here because the query function resolves right away. When the query function waits on a timer, use fake timers and advance them, for example with [`vi.advanceTimersByTimeAsync`](https://vitest.dev/api/vi.html#vi-advancetimersbytimeasync) in Vitest:
+`flushPromises` is enough here because the query function resolves right away. When the query function waits on a timer, use fake timers and advance them, for example with [`vi.advanceTimersByTimeAsync`](https://vitest.dev/api/vi.html#vi-advancetimersbytimeasync) in Vitest. Restore real timers in `afterEach`, so they are restored even when an assertion fails:
 
 ```ts
-vi.useFakeTimers()
+beforeEach(() => {
+  vi.useFakeTimers()
+})
 
-const [result, wrapper] = withSetup(() =>
-  useQuery({
-    queryKey: ['delayed'],
-    queryFn: () =>
-      new Promise((resolve) => setTimeout(() => resolve('Hello'), 1000)),
-  }),
-)
+afterEach(() => {
+  vi.useRealTimers()
+})
 
-await vi.advanceTimersByTimeAsync(1000)
+it('should resolve the delayed query', async () => {
+  const [result, wrapper] = withSetup(() =>
+    useQuery({
+      queryKey: ['delayed'],
+      queryFn: () =>
+        new Promise((resolve) => setTimeout(() => resolve('Hello'), 1000)),
+    }),
+  )
 
-expect(result.data.value).toEqual('Hello')
+  await vi.advanceTimersByTimeAsync(1000)
 
-wrapper.unmount()
-vi.useRealTimers()
+  expect(result.data.value).toEqual('Hello')
+
+  wrapper.unmount()
+})
 ```
 
 When the query function waits on a real request, wait until the assertion passes instead, for example with [`vi.waitFor`](https://vitest.dev/api/vi.html#vi-waitfor):
