@@ -18,8 +18,8 @@ import type { Observable } from 'rxjs'
 export const mockInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
-): Observable<HttpEvent<any>> => {
-  const respondWith = (status: number, body: any) =>
+): Observable<HttpEvent<unknown>> => {
+  const respondWith = (status: number, body: unknown) =>
     of(new HttpResponse({ status, body })).pipe(delay(1000))
   if (req.url === '/api/tasks') {
     switch (req.method) {
