@@ -7,25 +7,25 @@ You can install Svelte Query via [NPM](https://npmjs.com).
 
 ### NPM
 
-```bash
+```sh
 npm i @tanstack/svelte-query
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/svelte-query
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/svelte-query
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/svelte-query
 ```
 
