@@ -50,26 +50,32 @@ It is possible to write this wrapper only once, but if so we need to ensure that
 
 `result` is the reactive object that `useQuery` returns, not a snapshot, so read its properties after waiting instead of destructuring them up front. A destructured value keeps the value it had when it was read.
 
-`waitFor` retries the assertion until it passes, which works for query functions that wait on real requests. When the query function waits on a timer, you can use fake timers and advance them instead, for example with [`vi.advanceTimersByTimeAsync`](https://vitest.dev/api/vi.html#vi-advancetimersbytimeasync) in Vitest:
+`waitFor` retries the assertion until it passes, which works for query functions that wait on real requests. When the query function waits on a timer, you can use fake timers and advance them instead, for example with [`vi.advanceTimersByTimeAsync`](https://vitest.dev/api/vi.html#vi-advancetimersbytimeasync) in Vitest. Restore real timers in `afterEach`, so they are restored even when an assertion fails:
 
 ```tsx
-vi.useFakeTimers()
+beforeEach(() => {
+  vi.useFakeTimers()
+})
 
-const { result } = renderHook(
-  () =>
-    useQuery(() => ({
-      queryKey: ['delayed'],
-      queryFn: () =>
-        new Promise((resolve) => setTimeout(() => resolve('Hello'), 1000)),
-    })),
-  { wrapper },
-)
+afterEach(() => {
+  vi.useRealTimers()
+})
 
-await vi.advanceTimersByTimeAsync(1000)
+it('should resolve the delayed query', async () => {
+  const { result } = renderHook(
+    () =>
+      useQuery(() => ({
+        queryKey: ['delayed'],
+        queryFn: () =>
+          new Promise((resolve) => setTimeout(() => resolve('Hello'), 1000)),
+      })),
+    { wrapper },
+  )
 
-expect(result.data).toEqual('Hello')
+  await vi.advanceTimersByTimeAsync(1000)
 
-vi.useRealTimers()
+  expect(result.data).toEqual('Hello')
+})
 ```
 
 For more complex primitives, it can be easier to test the component that uses them instead, by rendering it with `render` from Solid Testing Library under the same `QueryClientProvider` and asserting on what it renders.
