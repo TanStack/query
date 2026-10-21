@@ -435,6 +435,49 @@ describe('QueryStrictMode', () => {
       })
     })
 
+    it('should use the handleMissingPrefetch of the parent when a nested QueryStrictMode has none', async () => {
+      const key = queryKey()
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryStrictMode handleMissingPrefetch={handler}>
+          <QueryStrictMode>
+            <React.Suspense fallback="loading">
+              <SuspenseQuery id={key} />
+            </React.Suspense>
+          </QueryStrictMode>
+        </QueryStrictMode>,
+      )
+
+      await act(() => vi.advanceTimersByTimeAsync(10))
+      expect(rendered.getByText(`data ${String(key)}`)).toBeInTheDocument()
+      expect(handler).toHaveBeenCalledTimes(1)
+      expect(handler.mock.calls[0]![0]).toMatchObject({
+        type: 'missing-prefetch',
+        query: getQuery(key),
+      })
+    })
+
+    it('should use its own handleMissingPrefetch when a nested QueryStrictMode has one', async () => {
+      const key = queryKey()
+      const innerHandler = vi.fn<Handler>()
+
+      renderWithClient(
+        queryClient,
+        <QueryStrictMode handleMissingPrefetch={handler}>
+          <QueryStrictMode handleMissingPrefetch={innerHandler}>
+            <React.Suspense fallback="loading">
+              <SuspenseQuery id={key} />
+            </React.Suspense>
+          </QueryStrictMode>
+        </QueryStrictMode>,
+      )
+
+      await act(() => vi.advanceTimersByTimeAsync(10))
+      expect(innerHandler).toHaveBeenCalledTimes(1)
+      expect(handler).not.toHaveBeenCalled()
+    })
+
     it('should not log for hooks outside of QueryStrictMode', async () => {
       const key = queryKey()
 

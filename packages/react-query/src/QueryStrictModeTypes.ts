@@ -72,7 +72,7 @@ export type QueryStrictModeEvent =
  * a {@link QueryStrictModeMissingPrefetchError} or your own error.
  *
  * It is called during the render of the hook that reads the query, using the
- * `handleMissingPrefetch` of the nearest `QueryStrictMode`. A throw goes to the nearest error
+ * `handleMissingPrefetch` of the nearest `QueryStrictMode` that has one. A throw goes to the nearest error
  * boundary above the hook, before the hook starts its fetch. The query stays idle, so it is called
  * again after the error boundary is reset. If it returns, it isn't called again for the same query
  * state.
@@ -132,8 +132,10 @@ export interface QueryStrictModeProps {
   children?: React.ReactNode
   /**
    * Called when a hook starts the initial fetch of a query that wasn't prefetched. See
-   * {@link QueryStrictModeMissingPrefetchHandler} for where a throw goes.
-   * @defaultValue A handler that throws a `QueryStrictModeMissingPrefetchError`.
+   * {@link QueryStrictModeMissingPrefetchHandler} for where a throw goes. A nested
+   * `QueryStrictMode` without one uses the one of its parent.
+   * @defaultValue The `handleMissingPrefetch` of the parent `QueryStrictMode`, or a handler that
+   * throws a `QueryStrictModeMissingPrefetchError` outside of one.
    */
   handleMissingPrefetch?: QueryStrictModeMissingPrefetchHandler
   /**

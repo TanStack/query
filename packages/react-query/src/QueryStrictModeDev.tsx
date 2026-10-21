@@ -125,15 +125,20 @@ const getPrefetchTracker = (cache: QueryCache) => {
  */
 export const DevQueryStrictMode = ({
   children,
-  handleMissingPrefetch = defaultHandleMissingPrefetch,
   handleUnusedPrefetch = defaultHandleUnusedPrefetch,
   unusedPrefetchTimeout = 5000,
   queryClient,
+  ...props
 }: QueryStrictModeProps) => {
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const parent = useQueryStrictMode()
   const isNested = parent !== null
+  // A nested `QueryStrictMode` without its own handler keeps the one of its parent
+  const handleMissingPrefetch =
+    props.handleMissingPrefetch ??
+    parent?.handleMissingPrefetch ??
+    defaultHandleMissingPrefetch
 
   // Thrown during render, so it reaches the error boundary above this `QueryStrictMode`. Wrapped,
   // so that any value thrown by `handleUnusedPrefetch` is rethrown unchanged
