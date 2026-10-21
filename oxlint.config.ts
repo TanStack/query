@@ -292,6 +292,7 @@ export default defineConfig({
           'error',
           { additionalTestBlockFunctions: ['itIf'] },
         ],
+        'vitest/require-to-throw-message': 'error',
         'vitest/valid-expect': 'off',
         'vitest-js/valid-expect': 'error',
       },

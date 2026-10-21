@@ -1088,7 +1088,7 @@ describe('queryClient', () => {
           queryFn: skipToken,
           select,
         }),
-      ).rejects.toThrow()
+      ).rejects.toThrow('Missing queryFn')
 
       expect(select).not.toHaveBeenCalled()
     })
@@ -1129,7 +1129,7 @@ describe('queryClient', () => {
           queryKey: queryKey(),
           queryFn: skipToken,
         }),
-      ).rejects.toThrow()
+      ).rejects.toThrow('Missing queryFn')
     })
 
     it('should fetch when enabled callback returns false', async () => {
@@ -1538,7 +1538,7 @@ describe('queryClient', () => {
           initialPageParam: 0,
           select,
         }),
-      ).rejects.toThrow()
+      ).rejects.toThrow('Missing queryFn')
 
       expect(select).not.toHaveBeenCalled()
     })
@@ -1550,7 +1550,7 @@ describe('queryClient', () => {
           queryFn: skipToken,
           initialPageParam: 0,
         }),
-      ).rejects.toThrow()
+      ).rejects.toThrow('Missing queryFn')
     })
 
     it('should evaluate staleTime callback and refetch when it returns stale', async () => {
