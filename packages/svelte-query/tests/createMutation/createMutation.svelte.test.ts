@@ -378,7 +378,10 @@ describe('createMutation', () => {
         })
         .catch(noop)
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toStrictEqual(['useMutation.onError', 'mutateAsync.onError'])
+      expect(callbacks).toStrictEqual([
+        'useMutation.onError',
+        'mutateAsync.onError',
+      ])
     }),
   )
 

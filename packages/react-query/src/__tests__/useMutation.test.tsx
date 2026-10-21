@@ -229,7 +229,10 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toStrictEqual(['mutateAsync.onError', 'mutateAsync.onSettled'])
+    expect(callbacks).toStrictEqual([
+      'mutateAsync.onError',
+      'mutateAsync.onSettled',
+    ])
   })
 
   it('should call only mutate onSuccess when useMutation has no callbacks', async () => {
@@ -606,7 +609,10 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toStrictEqual(['useMutation.onSuccess', 'mutate.onSuccess'])
+    expect(callbacks).toStrictEqual([
+      'useMutation.onSuccess',
+      'mutate.onSuccess',
+    ])
   })
 
   it('should be able to call `onError` callback after failed mutate', async () => {
@@ -675,7 +681,10 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toStrictEqual(['useMutation.onSettled', 'mutate.onSettled'])
+    expect(callbacks).toStrictEqual([
+      'useMutation.onSettled',
+      'mutate.onSettled',
+    ])
   })
 
   it('should be able to call `onSuccess` callback after successful mutateAsync', async () => {
@@ -743,7 +752,10 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toStrictEqual(['useMutation.onError', 'mutateAsync.onError'])
+    expect(callbacks).toStrictEqual([
+      'useMutation.onError',
+      'mutateAsync.onError',
+    ])
   })
 
   it('should be able to call `onSettled` callback after mutateAsync', async () => {
@@ -2488,7 +2500,10 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
     expect(onSuccess).toHaveBeenCalledTimes(1)
-    expect(onSuccess.mock.calls[0]?.[3].mutationKey).toStrictEqual(['todos', 'add'])
+    expect(onSuccess.mock.calls[0]?.[3].mutationKey).toStrictEqual([
+      'todos',
+      'add',
+    ])
   })
 
   it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {

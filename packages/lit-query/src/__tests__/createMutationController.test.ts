@@ -477,7 +477,10 @@ describe('createMutationController', () => {
       })
       .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toStrictEqual(['mutateAsync.onError', 'mutateAsync.onSettled'])
+    expect(callbacks).toStrictEqual([
+      'mutateAsync.onError',
+      'mutateAsync.onSettled',
+    ])
   })
 
   it('should call only mutate onSuccess when createMutationController has no callbacks', async () => {
@@ -768,7 +771,10 @@ describe('createMutationController', () => {
     const successPromise = mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(successPromise).resolves.toBe(2)
-    expect(callbackEvents.slice(0, 2)).toStrictEqual(['success:v1', 'settled:v1'])
+    expect(callbackEvents.slice(0, 2)).toStrictEqual([
+      'success:v1',
+      'settled:v1',
+    ])
 
     version = 'v2'
     host.requestUpdate()

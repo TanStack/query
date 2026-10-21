@@ -504,7 +504,10 @@ describe('injectMutation', () => {
       mutation.mutate('todo')
       await vi.advanceTimersByTimeAsync(10)
       expect(onSuccess).toHaveBeenCalledTimes(1)
-      expect(onSuccess.mock.calls[0]?.[3].mutationKey).toStrictEqual(['todos', 'add'])
+      expect(onSuccess.mock.calls[0]?.[3].mutationKey).toStrictEqual([
+        'todos',
+        'add',
+      ])
     })
 
     it('should let onSuccess invalidate queries via context.client without an injected QueryClient', async () => {
@@ -626,7 +629,10 @@ describe('injectMutation', () => {
     expect(mutations).toHaveLength(2)
     const [mutation1, mutation2] = mutations
     expect(mutation1!.options.mutationKey).toStrictEqual(['fake', 'value'])
-    expect(mutation2!.options.mutationKey).toStrictEqual(['fake', 'updatedValue'])
+    expect(mutation2!.options.mutationKey).toStrictEqual([
+      'fake',
+      'updatedValue',
+    ])
   })
 
   describe('throwOnError', () => {

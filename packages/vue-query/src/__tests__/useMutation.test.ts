@@ -775,7 +775,10 @@ describe('useMutation', () => {
     mutation.mutate('todo')
     await vi.advanceTimersByTimeAsync(10)
     expect(onSuccess).toHaveBeenCalledTimes(1)
-    expect(onSuccess.mock.calls[0]?.[3].mutationKey).toStrictEqual(['todos', 'add'])
+    expect(onSuccess.mock.calls[0]?.[3].mutationKey).toStrictEqual([
+      'todos',
+      'add',
+    ])
   })
 
   it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {

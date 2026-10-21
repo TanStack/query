@@ -232,16 +232,30 @@ describe('queryCache', () => {
       expect(queryCache.findAll({ queryKey: key1 })).toStrictEqual([query1])
       // wrapping in an extra array doesn't yield the same results anymore since v4 because keys need to be an array
       expect(queryCache.findAll({ queryKey: [key1] })).toStrictEqual([])
-      expect(queryCache.findAll()).toStrictEqual([query1, query2, query3, query4])
-      expect(queryCache.findAll({})).toStrictEqual([query1, query2, query3, query4])
-      expect(queryCache.findAll({ queryKey: key1, type: 'inactive' })).toStrictEqual([
+      expect(queryCache.findAll()).toStrictEqual([
         query1,
+        query2,
+        query3,
+        query4,
       ])
-      expect(queryCache.findAll({ queryKey: key1, type: 'active' })).toStrictEqual([])
-      expect(queryCache.findAll({ queryKey: key1, stale: true })).toStrictEqual([])
-      expect(queryCache.findAll({ queryKey: key1, stale: false })).toStrictEqual([
+      expect(queryCache.findAll({})).toStrictEqual([
         query1,
+        query2,
+        query3,
+        query4,
       ])
+      expect(
+        queryCache.findAll({ queryKey: key1, type: 'inactive' }),
+      ).toStrictEqual([query1])
+      expect(
+        queryCache.findAll({ queryKey: key1, type: 'active' }),
+      ).toStrictEqual([])
+      expect(queryCache.findAll({ queryKey: key1, stale: true })).toStrictEqual(
+        [],
+      )
+      expect(
+        queryCache.findAll({ queryKey: key1, stale: false }),
+      ).toStrictEqual([query1])
       expect(
         queryCache.findAll({ queryKey: key1, stale: false, type: 'active' }),
       ).toStrictEqual([])
@@ -262,14 +276,18 @@ describe('queryCache', () => {
       ).toStrictEqual([query1])
 
       expect(queryCache.findAll({ queryKey: key2 })).toStrictEqual([query2])
-      expect(queryCache.findAll({ queryKey: key2, stale: undefined })).toStrictEqual([
-        query2,
+      expect(
+        queryCache.findAll({ queryKey: key2, stale: undefined }),
+      ).toStrictEqual([query2])
+      expect(queryCache.findAll({ queryKey: key2, stale: true })).toStrictEqual(
+        [query2],
+      )
+      expect(
+        queryCache.findAll({ queryKey: key2, stale: false }),
+      ).toStrictEqual([])
+      expect(queryCache.findAll({ queryKey: [{ b: 'b' }] })).toStrictEqual([
+        query3,
       ])
-      expect(queryCache.findAll({ queryKey: key2, stale: true })).toStrictEqual([
-        query2,
-      ])
-      expect(queryCache.findAll({ queryKey: key2, stale: false })).toStrictEqual([])
-      expect(queryCache.findAll({ queryKey: [{ b: 'b' }] })).toStrictEqual([query3])
       expect(
         queryCache.findAll({ queryKey: [{ a: 'a' }], exact: false }),
       ).toStrictEqual([query3])
@@ -279,9 +297,9 @@ describe('queryCache', () => {
       expect(
         queryCache.findAll({ queryKey: [{ a: 'a', b: 'b' }], exact: true }),
       ).toStrictEqual([query3])
-      expect(queryCache.findAll({ queryKey: [{ a: 'a', b: 'b' }] })).toStrictEqual([
-        query3,
-      ])
+      expect(
+        queryCache.findAll({ queryKey: [{ a: 'a', b: 'b' }] }),
+      ).toStrictEqual([query3])
       expect(
         queryCache.findAll({ queryKey: [{ a: 'a', b: 'b', c: 'c' }] }),
       ).toStrictEqual([])
@@ -300,7 +318,9 @@ describe('queryCache', () => {
       expect(
         queryCache.findAll({ predicate: (query) => query === query3 }),
       ).toStrictEqual([query3])
-      expect(queryCache.findAll({ queryKey: ['posts'] })).toStrictEqual([query4])
+      expect(queryCache.findAll({ queryKey: ['posts'] })).toStrictEqual([
+        query4,
+      ])
 
       expect(queryCache.findAll({ fetchStatus: 'idle' })).toStrictEqual([
         query1,

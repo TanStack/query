@@ -50,10 +50,9 @@ describe('removeOldestQuery', () => {
       error: new Error('full'),
       errorCount: 1,
     })
-    expect(result?.clientState.queries.map((query) => query.queryKey)).toStrictEqual([
-      ['a'],
-      ['c'],
-    ])
+    expect(
+      result?.clientState.queries.map((query) => query.queryKey),
+    ).toStrictEqual([['a'], ['c']])
   })
 
   it('should remove only a single query when multiple share the oldest dataUpdatedAt', () => {
@@ -67,9 +66,9 @@ describe('removeOldestQuery', () => {
       error: new Error('full'),
       errorCount: 1,
     })
-    expect(result?.clientState.queries.map((query) => query.queryKey)).toStrictEqual([
-      ['b'],
-    ])
+    expect(
+      result?.clientState.queries.map((query) => query.queryKey),
+    ).toStrictEqual([['b']])
   })
 
   it('should return undefined when there are no queries to remove', () => {

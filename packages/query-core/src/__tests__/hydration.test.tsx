@@ -145,11 +145,12 @@ describe('dehydration and rehydration', () => {
     expect(hydrationCache.find({ queryKey: numberKey })?.state.data).toBe(1)
     expect(hydrationCache.find({ queryKey: booleanKey })?.state.data).toBe(true)
     expect(hydrationCache.find({ queryKey: nullKey })?.state.data).toBeNull()
-    expect(hydrationCache.find({ queryKey: arrayKey })?.state.data).toStrictEqual([
-      'string',
-      0,
-    ])
-    expect(hydrationCache.find({ queryKey: nestedKey })?.state.data).toStrictEqual({
+    expect(
+      hydrationCache.find({ queryKey: arrayKey })?.state.data,
+    ).toStrictEqual(['string', 0])
+    expect(
+      hydrationCache.find({ queryKey: nestedKey })?.state.data,
+    ).toStrictEqual({
       key: [{ nestedKey: 1 }],
     })
 
