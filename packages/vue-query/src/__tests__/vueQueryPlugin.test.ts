@@ -368,7 +368,7 @@ describe('VueQueryPlugin', () => {
 
       expect(customClient.isRestoring?.value).toBe(true)
       expect(query.isFetching.value).toBe(false)
-      expect(query.data.value).toStrictEqual(undefined)
+      expect(query.data.value).toBeUndefined()
       expect(queryFn).toHaveBeenCalledTimes(0)
       await vi.advanceTimersByTimeAsync(0)
       expect(customClient.isRestoring?.value).toBe(false)
@@ -431,10 +431,10 @@ describe('VueQueryPlugin', () => {
       expect(customClient.isRestoring?.value).toBe(true)
 
       expect(query.isFetching.value).toBe(false)
-      expect(query.data.value).toStrictEqual(undefined)
+      expect(query.data.value).toBeUndefined()
 
       expect(queries.value[0].isFetching).toBe(false)
-      expect(queries.value[0].data).toStrictEqual(undefined)
+      expect(queries.value[0].data).toBeUndefined()
       expect(queryFn).toHaveBeenCalledTimes(0)
       await vi.advanceTimersByTimeAsync(0)
       expect(customClient.isRestoring?.value).toBe(false)

@@ -3445,7 +3445,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(queryFn).not.toHaveBeenCalled()
-    expect(queryCache.find({ queryKey: key })).not.toBeUndefined()
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
     expect(rendered.getByText('fetchStatus: idle')).toBeInTheDocument()
   })
 
@@ -3985,7 +3985,7 @@ describe('useQuery', () => {
       },
     ])
 
-    expect(placeholderFunctionRunCount).toEqual(1)
+    expect(placeholderFunctionRunCount).toBe(1)
   })
 
   it('should always return the correct state from select', async () => {

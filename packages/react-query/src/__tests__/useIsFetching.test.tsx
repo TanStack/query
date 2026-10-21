@@ -111,17 +111,17 @@ describe('useIsFetching', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    expect(isFetchingArray[0]).toEqual(0)
+    expect(isFetchingArray[0]).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
-    expect(isFetchingArray[1]).toEqual(1)
+    expect(isFetchingArray[1]).toBe(1)
     await vi.advanceTimersByTimeAsync(50)
-    expect(isFetchingArray[2]).toEqual(1)
+    expect(isFetchingArray[2]).toBe(1)
     await vi.advanceTimersByTimeAsync(1)
-    expect(isFetchingArray[3]).toEqual(2)
+    expect(isFetchingArray[3]).toBe(2)
     await vi.advanceTimersByTimeAsync(50)
-    expect(isFetchingArray[4]).toEqual(1)
+    expect(isFetchingArray[4]).toBe(1)
     await vi.advanceTimersByTimeAsync(50)
-    expect(isFetchingArray[5]).toEqual(0)
+    expect(isFetchingArray[5]).toBe(0)
 
     expect(isFetchingArray).toEqual([0, 1, 1, 2, 1, 0])
   })

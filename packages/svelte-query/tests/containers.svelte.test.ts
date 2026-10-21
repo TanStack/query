@@ -121,10 +121,10 @@ describe('createRawRef', () => {
     })
 
     delete ref.b
-    expect(Reflect.getOwnPropertyDescriptor(ref, 'b')).toEqual(undefined)
+    expect(Reflect.getOwnPropertyDescriptor(ref, 'b')).toBeUndefined()
 
     update({})
-    expect(Reflect.getOwnPropertyDescriptor(ref, 'a')).toEqual(undefined)
+    expect(Reflect.getOwnPropertyDescriptor(ref, 'a')).toBeUndefined()
 
     update({ a: 1, b: 2 })
     expect(Reflect.getOwnPropertyDescriptor(ref, 'a')).toEqual({

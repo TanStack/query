@@ -237,7 +237,7 @@ describe('createPersister', () => {
     query.state.data = 'data0'
     vi.spyOn(query, 'fetch').mockResolvedValue(undefined)
 
-    expect(query.state.dataUpdatedAt).toEqual(0)
+    expect(query.state.dataUpdatedAt).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(query.fetch).toHaveBeenCalledTimes(0)
@@ -685,7 +685,7 @@ describe('createPersister', () => {
       await persister.restoreQueries(client)
       expect(client.getQueryCache().getAll()).toHaveLength(1)
 
-      expect(client.getQueryData(queryKey)).toEqual('foo')
+      expect(client.getQueryData(queryKey)).toBe('foo')
     })
 
     it('should properly restore queries from cache', async () => {
@@ -703,7 +703,7 @@ describe('createPersister', () => {
       await persister.restoreQueries(client, { queryKey })
       expect(client.getQueryCache().getAll()).toHaveLength(1)
 
-      expect(client.getQueryData(queryKey)).toEqual('foo')
+      expect(client.getQueryData(queryKey)).toBe('foo')
     })
 
     it('should not restore queries from cache if there is no match', async () => {
@@ -737,7 +737,7 @@ describe('createPersister', () => {
       await persister.restoreQueries(client, { queryKey: ['foo'] })
       expect(client.getQueryCache().getAll()).toHaveLength(1)
 
-      expect(client.getQueryData(queryKey)).toEqual('foo')
+      expect(client.getQueryData(queryKey)).toBe('foo')
     })
 
     it('should not restore queries from cache with exact match if there is no match', async () => {

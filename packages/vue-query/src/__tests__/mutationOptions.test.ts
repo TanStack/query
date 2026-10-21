@@ -63,7 +63,7 @@ describe('mutationOptions', () => {
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-    expect(data.value).toEqual('data')
+    expect(data.value).toBe('data')
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (with mutationKey in mutationOptions)', async () => {
@@ -176,9 +176,9 @@ describe('mutationOptions', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutating.value).toEqual(1)
+    expect(isMutating.value).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
-    expect(isMutating.value).toEqual(0)
+    expect(isMutating.value).toBe(0)
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (getter without mutationKey in mutationOptions)', async () => {
@@ -277,9 +277,9 @@ describe('mutationOptions', () => {
     mutate()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -303,9 +303,9 @@ describe('mutationOptions', () => {
     mutate()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -335,9 +335,9 @@ describe('mutationOptions', () => {
     mutate2()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(2)
+    expect(Math.max(...isMutatingArray)).toBe(2)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -375,9 +375,9 @@ describe('mutationOptions', () => {
     mutate2()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -404,9 +404,9 @@ describe('mutationOptions', () => {
     mutate()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -430,9 +430,9 @@ describe('mutationOptions', () => {
     mutate()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -462,9 +462,9 @@ describe('mutationOptions', () => {
     mutate2()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(2)
+    expect(Math.max(...isMutatingArray)).toBe(2)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -504,9 +504,9 @@ describe('mutationOptions', () => {
     mutate2()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })

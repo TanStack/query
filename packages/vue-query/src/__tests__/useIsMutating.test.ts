@@ -26,14 +26,14 @@ describe('useIsMutating', () => {
     })
     const isMutating = useIsMutating()
 
-    expect(isMutating.value).toStrictEqual(0)
+    expect(isMutating.value).toBe(0)
 
     mutation.mutateAsync('a')
     mutation2.mutateAsync('b')
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutating.value).toStrictEqual(2)
+    expect(isMutating.value).toBe(2)
     await vi.advanceTimersByTimeAsync(10)
-    expect(isMutating.value).toStrictEqual(0)
+    expect(isMutating.value).toBe(0)
   })
 
   it('should stop listening to changes on onScopeDispose', async () => {
@@ -52,16 +52,16 @@ describe('useIsMutating', () => {
     })
     const isMutating = useIsMutating()
 
-    expect(isMutating.value).toStrictEqual(0)
+    expect(isMutating.value).toBe(0)
 
     mutation.mutateAsync('a')
     mutation2.mutateAsync('b')
     await vi.advanceTimersByTimeAsync(0)
     expect(queryClient.isMutating({ mutationKey: key })).toBe(2)
-    expect(isMutating.value).toStrictEqual(0)
+    expect(isMutating.value).toBe(0)
     await vi.advanceTimersByTimeAsync(10)
     expect(queryClient.isMutating({ mutationKey: key })).toBe(0)
-    expect(isMutating.value).toStrictEqual(0)
+    expect(isMutating.value).toBe(0)
 
     onScopeDisposeMock.mockReset()
   })
@@ -78,11 +78,11 @@ describe('useIsMutating', () => {
 
     const isMutating = useIsMutating(filter)
 
-    expect(isMutating.value).toStrictEqual(0)
+    expect(isMutating.value).toBe(0)
 
     filter.mutationKey = key
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutating.value).toStrictEqual(1)
+    expect(isMutating.value).toBe(1)
   })
 
   it('should work with options getter and be reactive', async () => {
@@ -98,11 +98,11 @@ describe('useIsMutating', () => {
       mutationKey: [keyRef.value],
     }))
 
-    expect(isMutating.value).toStrictEqual(0)
+    expect(isMutating.value).toBe(0)
 
     keyRef.value = key[0]!
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutating.value).toStrictEqual(1)
+    expect(isMutating.value).toBe(1)
   })
 
   it('should accept filters wrapped in a ref', async () => {
@@ -121,9 +121,9 @@ describe('useIsMutating', () => {
     mutation1.mutate('a')
     mutation2.mutate('b')
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutating.value).toStrictEqual(1)
+    expect(isMutating.value).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
-    expect(isMutating.value).toStrictEqual(0)
+    expect(isMutating.value).toBe(0)
   })
 
   it('should use the queryClient passed as the second argument', async () => {
@@ -136,12 +136,12 @@ describe('useIsMutating', () => {
     )
     const isMutating = useIsMutating({}, queryClient)
 
-    expect(isMutating.value).toStrictEqual(0)
+    expect(isMutating.value).toBe(0)
 
     mutation.mutate('a')
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutating.value).toStrictEqual(1)
+    expect(isMutating.value).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
-    expect(isMutating.value).toStrictEqual(0)
+    expect(isMutating.value).toBe(0)
   })
 })

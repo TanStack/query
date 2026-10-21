@@ -1469,7 +1469,7 @@ describe('Devtools', () => {
         themeMenu?.querySelectorAll<HTMLElement>('[role="menuitemradio"]') ??
           [],
       ).find((el) => String(el.textContent).includes('Light'))
-      expect(lightItem).not.toBeUndefined()
+      expect(lightItem).toBeDefined()
       fireEvent.keyDown(lightItem!, { key: 'Enter' })
       expect(
         localStorage.getItem('TanstackQueryDevtools.theme_preference'),

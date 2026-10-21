@@ -36,7 +36,7 @@ describe('utils', () => {
     it('should copy primitives and functions AS-IS', () => {
       expect(cloneDeep(3456)).toBe(3456)
       expect(cloneDeep('theString')).toBe('theString')
-      expect(cloneDeep(null)).toBe(null)
+      expect(cloneDeep(null)).toBeNull()
     })
 
     it('should copy Maps and Sets AS-IS', () => {
@@ -149,7 +149,7 @@ describe('utils', () => {
     })
 
     it('should unref undefined', () => {
-      expect(cloneDeepUnref(ref(undefined))).toBe(undefined)
+      expect(cloneDeepUnref(ref(undefined))).toBeUndefined()
     })
   })
 })

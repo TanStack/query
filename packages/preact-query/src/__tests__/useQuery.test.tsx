@@ -730,15 +730,15 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     rendered.getByText('error: Select Error')
-    expect(runs).toEqual(1)
+    expect(runs).toBe(1)
 
     fireEvent.click(rendered.getByRole('button', { name: 'rerender' }))
     await vi.advanceTimersByTimeAsync(0)
-    expect(runs).toEqual(1)
+    expect(runs).toBe(1)
 
     fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
     await vi.advanceTimersByTimeAsync(0)
-    expect(runs).toEqual(2)
+    expect(runs).toBe(2)
   })
 
   it('should track properties and only re-render when a tracked property changes', async () => {
@@ -3910,7 +3910,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     expect(queryFn).not.toHaveBeenCalled()
-    expect(queryCache.find({ queryKey: key })).not.toBeUndefined()
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
     expect(rendered.getByText('fetchStatus: idle')).toBeInTheDocument()
   })
 
@@ -4425,7 +4425,7 @@ describe('useQuery', () => {
       },
     ])
 
-    expect(placeholderFunctionRunCount).toEqual(1)
+    expect(placeholderFunctionRunCount).toBe(1)
   })
 
   it('should only run select when dependencies change if memoized', async () => {

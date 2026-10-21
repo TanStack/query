@@ -1229,7 +1229,7 @@ describe('createQuery', () => {
       // Wait for refetch to complete
       await vi.advanceTimersByTimeAsync(20)
       expect(states).toHaveLength(2)
-      expect(states[0]).toBe(undefined)
+      expect(states[0]).toBeUndefined()
       expect(states[1]).toBe('test')
     }),
   )

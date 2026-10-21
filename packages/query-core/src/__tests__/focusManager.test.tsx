@@ -38,7 +38,7 @@ describe('focusManager', () => {
     focusManager.setEventListener(setup)
 
     vi.advanceTimersByTime(20)
-    expect(count).toEqual(1)
+    expect(count).toBe(1)
     expect(focusManager.isFocused()).toBe(true)
   })
 

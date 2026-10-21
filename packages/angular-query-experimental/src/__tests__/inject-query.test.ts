@@ -288,15 +288,15 @@ describe('injectQuery', () => {
       )
     })
 
-    expect(query1.data()).toStrictEqual(undefined)
-    expect(query2.fetchStatus()).toStrictEqual('idle')
+    expect(query1.data()).toBeUndefined()
+    expect(query2.fetchStatus()).toBe('idle')
     expect(dependentQueryFn).not.toHaveBeenCalled()
     await vi.advanceTimersByTimeAsync(11)
-    expect(query1.data()).toStrictEqual('Some data')
-    expect(query2.fetchStatus()).toStrictEqual('fetching')
+    expect(query1.data()).toBe('Some data')
+    expect(query2.fetchStatus()).toBe('fetching')
     await vi.advanceTimersByTimeAsync(1002)
-    expect(query2.fetchStatus()).toStrictEqual('idle')
-    expect(query2.status()).toStrictEqual('success')
+    expect(query2.fetchStatus()).toBe('idle')
+    expect(query2.status()).toBe('success')
     expect(dependentQueryFn).toHaveBeenCalledTimes(1)
     expect(dependentQueryFn).toHaveBeenCalledWith(
       expect.objectContaining({ queryKey: key2 }),
@@ -445,7 +445,7 @@ describe('injectQuery', () => {
 
     fixture.detectChanges()
     await vi.advanceTimersByTimeAsync(0)
-    expect(fixture.componentInstance.query.data()).toEqual(
+    expect(fixture.componentInstance.query.data()).toBe(
       'signal-input-required-test',
     )
   })

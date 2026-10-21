@@ -178,7 +178,7 @@ describe('queryClient', () => {
             },
           },
         }).defaultQueryOptions({ queryKey: queryKey() }).networkMode,
-      ).toBe(undefined)
+      ).toBeUndefined()
     })
 
     it('should not default networkMode when already present', () => {
@@ -240,26 +240,26 @@ describe('queryClient', () => {
 
     it('should not create a new query if query was not found and data is undefined', () => {
       const key = queryKey()
-      expect(queryClient.getQueryCache().find({ queryKey: key })).toBe(
-        undefined,
-      )
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key }),
+      ).toBeUndefined()
 
       queryClient.setQueryData(key, undefined)
-      expect(queryClient.getQueryCache().find({ queryKey: key })).toBe(
-        undefined,
-      )
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key }),
+      ).toBeUndefined()
     })
 
     it('should not create a new query if query was not found and updater returns undefined', () => {
       const key = queryKey()
-      expect(queryClient.getQueryCache().find({ queryKey: key })).toBe(
-        undefined,
-      )
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key }),
+      ).toBeUndefined()
 
       queryClient.setQueryData(key, () => undefined)
-      expect(queryClient.getQueryCache().find({ queryKey: key })).toBe(
-        undefined,
-      )
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key }),
+      ).toBeUndefined()
     })
 
     it('should not update query data if data is undefined', () => {
@@ -284,7 +284,7 @@ describe('queryClient', () => {
       queryClient.setQueryData(key, 'test data')
       queryClient.setQueryData(key, updater)
       expect(updater).toHaveBeenCalledWith('test data')
-      expect(queryCache.find({ queryKey: key })!.state.data).toEqual(
+      expect(queryCache.find({ queryKey: key })!.state.data).toBe(
         'new data + test data',
       )
     })
@@ -401,7 +401,7 @@ describe('queryClient', () => {
       )
 
       expect(result).toEqual([])
-      expect(queryClient.getQueryData(['key'])).toBe(undefined)
+      expect(queryClient.getQueryData(['key'])).toBeUndefined()
     })
   })
 
@@ -425,9 +425,9 @@ describe('queryClient', () => {
         .catch(noop)
       expect(queryClient.isFetching()).toBe(2)
       await vi.advanceTimersByTimeAsync(5)
-      expect(queryClient.isFetching()).toEqual(1)
+      expect(queryClient.isFetching()).toBe(1)
       await vi.advanceTimersByTimeAsync(5)
-      expect(queryClient.isFetching()).toEqual(0)
+      expect(queryClient.isFetching()).toBe(0)
     })
   })
 
@@ -445,9 +445,9 @@ describe('queryClient', () => {
 
       expect(queryClient.isMutating()).toBe(2)
       await vi.advanceTimersByTimeAsync(5)
-      expect(queryClient.isMutating()).toEqual(1)
+      expect(queryClient.isMutating()).toBe(1)
       await vi.advanceTimersByTimeAsync(5)
-      expect(queryClient.isMutating()).toEqual(0)
+      expect(queryClient.isMutating()).toBe(0)
     })
   })
 
@@ -480,7 +480,7 @@ describe('queryClient', () => {
       await expect(
         // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn }),
-      ).resolves.toEqual('bar')
+      ).resolves.toBe('bar')
     })
 
     it('should return the cached query data if the query is found and cached query data is falsy', async () => {
@@ -491,7 +491,7 @@ describe('queryClient', () => {
       await expect(
         // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn }),
-      ).resolves.toEqual(null)
+      ).resolves.toBeNull()
     })
 
     it('should call ensureQueryData and return its results if the query is not found', async () => {
@@ -501,7 +501,7 @@ describe('queryClient', () => {
       await expect(
         // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({ queryKey: [key], queryFn }),
-      ).resolves.toEqual('data')
+      ).resolves.toBe('data')
     })
 
     it('should return the cached query data if the query is found and preFetchQuery in the background when revalidateIfStale is set', async () => {
@@ -521,7 +521,7 @@ describe('queryClient', () => {
           queryFn,
           revalidateIfStale: true,
         }),
-      ).resolves.toEqual('old')
+      ).resolves.toBe('old')
       await vi.advanceTimersByTimeAsync(TIMEOUT + 10)
       await expect(
         // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
@@ -530,7 +530,7 @@ describe('queryClient', () => {
           queryFn,
           revalidateIfStale: true,
         }),
-      ).resolves.toEqual('new')
+      ).resolves.toBe('new')
     })
 
     it('should not fetch with initialData', async () => {
@@ -544,7 +544,7 @@ describe('queryClient', () => {
           queryFn,
           initialData: 'initial',
         }),
-      ).resolves.toEqual('initial')
+      ).resolves.toBe('initial')
 
       expect(queryFn).toHaveBeenCalledTimes(0)
     })
@@ -562,7 +562,7 @@ describe('queryClient', () => {
           queryFn,
           staleTime: 'static',
         }),
-      ).resolves.toEqual('bar')
+      ).resolves.toBe('bar')
       expect(queryFn).not.toHaveBeenCalled()
     })
 
@@ -577,7 +577,7 @@ describe('queryClient', () => {
           queryFn,
           staleTime: 'static',
         }),
-      ).resolves.toEqual(null)
+      ).resolves.toBeNull()
       expect(queryFn).not.toHaveBeenCalled()
     })
 
@@ -591,7 +591,7 @@ describe('queryClient', () => {
           queryFn,
           staleTime: 'static',
         }),
-      ).resolves.toEqual('data')
+      ).resolves.toBe('data')
       expect(queryFn).toHaveBeenCalledTimes(1)
     })
 
@@ -606,7 +606,7 @@ describe('queryClient', () => {
           staleTime: 'static',
           initialData: 'initial',
         }),
-      ).resolves.toEqual('initial')
+      ).resolves.toBe('initial')
 
       expect(queryFn).not.toHaveBeenCalled()
     })
@@ -622,7 +622,7 @@ describe('queryClient', () => {
           queryFn,
           staleTime: 'static',
         }),
-      ).resolves.toEqual('data-1')
+      ).resolves.toBe('data-1')
       expect(queryFn).toHaveBeenCalledTimes(1)
 
       value = 'data-2'
@@ -788,7 +788,7 @@ describe('queryClient', () => {
           queryKey: key,
           queryFn: fetchFn,
         }),
-      ).resolves.toEqual('data')
+      ).resolves.toBe('data')
     })
 
     // https://github.com/tannerlinsley/react-query/issues/652
@@ -863,9 +863,9 @@ describe('queryClient', () => {
         gcTime: 0,
       })
       await vi.advanceTimersByTimeAsync(10)
-      await expect(promise).resolves.toEqual(1)
+      await expect(promise).resolves.toBe(1)
       await vi.advanceTimersByTimeAsync(1)
-      expect(queryClient.getQueryData(key1)).toEqual(undefined)
+      expect(queryClient.getQueryData(key1)).toBeUndefined()
     })
 
     it('should keep a query in cache if garbage collection time is Infinity', async () => {
@@ -878,8 +878,8 @@ describe('queryClient', () => {
       })
       await vi.advanceTimersByTimeAsync(10)
       const result2 = queryClient.getQueryData(key1)
-      await expect(promise).resolves.toEqual(1)
-      expect(result2).toEqual(1)
+      await expect(promise).resolves.toBe(1)
+      expect(result2).toBe(1)
     })
 
     it('should not force fetch', async () => {
@@ -980,7 +980,7 @@ describe('queryClient', () => {
           queryKey: key,
           queryFn: fetchFn,
         }),
-      ).resolves.toEqual('data')
+      ).resolves.toBe('data')
     })
 
     // https://github.com/tannerlinsley/react-query/issues/652
@@ -1202,9 +1202,9 @@ describe('queryClient', () => {
         gcTime: 0,
       })
       await vi.advanceTimersByTimeAsync(10)
-      await expect(promise).resolves.toEqual(1)
+      await expect(promise).resolves.toBe(1)
       await vi.advanceTimersByTimeAsync(1)
-      expect(queryClient.getQueryData(key1)).toEqual(undefined)
+      expect(queryClient.getQueryData(key1)).toBeUndefined()
     })
 
     it('should keep a query in cache if garbage collection time is Infinity', async () => {
@@ -1216,8 +1216,8 @@ describe('queryClient', () => {
       })
       await vi.advanceTimersByTimeAsync(10)
       const result2 = queryClient.getQueryData(key1)
-      await expect(promise).resolves.toEqual(1)
-      expect(result2).toEqual(1)
+      await expect(promise).resolves.toBe(1)
+      expect(result2).toBe(1)
     })
 
     it('should not force fetch', async () => {
@@ -1849,7 +1849,7 @@ describe('queryClient', () => {
 
       const result = queryClient.getQueryData(key)
 
-      expect(result).toEqual('data')
+      expect(result).toBe('data')
     })
 
     it('should return undefined when an error is thrown', async () => {
@@ -1899,7 +1899,7 @@ describe('queryClient', () => {
 
       const result = queryClient.getQueryData(key)
 
-      expect(result).toEqual('data')
+      expect(result).toBe('data')
     })
 
     it('should resolve to undefined when error is caught with noop', async () => {
@@ -1929,7 +1929,7 @@ describe('queryClient', () => {
         .catch(noop)
       expect(queryCache.find({ queryKey: key })).toBeDefined()
       await vi.advanceTimersByTimeAsync(15)
-      expect(queryCache.find({ queryKey: key })).not.toBeDefined()
+      expect(queryCache.find({ queryKey: key })).toBeUndefined()
     })
   })
 
@@ -2277,7 +2277,7 @@ describe('queryClient', () => {
       } catch (err) {
         error = err
       }
-      expect(error).toEqual('error')
+      expect(error).toBe('error')
     })
 
     it('should resolve Promise immediately if query is paused', async () => {
@@ -2593,16 +2593,16 @@ describe('queryClient', () => {
         .catch(noop)
 
       let state = queryClient.getQueryState(key)
-      expect(state?.data).toEqual('data')
-      expect(state?.status).toEqual('success')
+      expect(state?.data).toBe('data')
+      expect(state?.status).toBe('success')
 
       queryClient.resetQueries({ queryKey: key })
 
       state = queryClient.getQueryState(key)
 
       expect(state?.data).toBeUndefined()
-      expect(state?.status).toEqual('pending')
-      expect(state?.fetchStatus).toEqual('idle')
+      expect(state?.status).toBe('pending')
+      expect(state?.fetchStatus).toBe('idle')
     })
 
     it('should reset query data to initial data if set', async () => {
@@ -2617,13 +2617,13 @@ describe('queryClient', () => {
         .catch(noop)
 
       let state = queryClient.getQueryState(key)
-      expect(state?.data).toEqual('data')
+      expect(state?.data).toBe('data')
 
       queryClient.resetQueries({ queryKey: key })
 
       state = queryClient.getQueryState(key)
 
-      expect(state?.data).toEqual('initial')
+      expect(state?.data).toBe('initial')
     })
 
     it('should refetch queries matched by a state-dependent predicate', async () => {

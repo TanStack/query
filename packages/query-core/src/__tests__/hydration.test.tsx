@@ -144,7 +144,7 @@ describe('dehydration and rehydration', () => {
     )
     expect(hydrationCache.find({ queryKey: numberKey })?.state.data).toBe(1)
     expect(hydrationCache.find({ queryKey: booleanKey })?.state.data).toBe(true)
-    expect(hydrationCache.find({ queryKey: nullKey })?.state.data).toBe(null)
+    expect(hydrationCache.find({ queryKey: nullKey })?.state.data).toBeNull()
     expect(hydrationCache.find({ queryKey: arrayKey })?.state.data).toEqual([
       'string',
       0,
@@ -813,7 +813,7 @@ describe('dehydration and rehydration', () => {
     expect(
       dehydrated.queries.find((q) => q.queryHash === JSON.stringify(noMetaKey))
         ?.meta,
-    ).toEqual(undefined)
+    ).toBeUndefined()
 
     expect(
       Object.keys(
@@ -836,9 +836,7 @@ describe('dehydration and rehydration', () => {
     expect(hydrationCache.find({ queryKey: metaKey })?.meta).toEqual({
       some: 'meta',
     })
-    expect(hydrationCache.find({ queryKey: noMetaKey })?.meta).toEqual(
-      undefined,
-    )
+    expect(hydrationCache.find({ queryKey: noMetaKey })?.meta).toBeUndefined()
   })
 
   it('should dehydrate and hydrate meta for mutations', async () => {
@@ -882,7 +880,7 @@ describe('dehydration and rehydration', () => {
     expect(Object.keys(dehydrated.mutations[1]!)).not.toEqual(
       expect.arrayContaining(['meta']),
     )
-    expect(dehydrated.mutations[1]?.meta).toEqual(undefined)
+    expect(dehydrated.mutations[1]?.meta).toBeUndefined()
 
     const stringified = JSON.stringify(dehydrated)
 
@@ -897,9 +895,9 @@ describe('dehydration and rehydration', () => {
     expect(hydrationCache.find({ mutationKey: metaKey })?.meta).toEqual({
       some: 'meta',
     })
-    expect(hydrationCache.find({ mutationKey: noMetaKey })?.meta).toEqual(
-      undefined,
-    )
+    expect(
+      hydrationCache.find({ mutationKey: noMetaKey })?.meta,
+    ).toBeUndefined()
   })
 
   it('should not change fetchStatus when updating a query with dehydrate', async () => {

@@ -299,7 +299,7 @@ describe('PendingTasks Integration', () => {
       // Angular should become stable even though component was destroyed
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(150)
-      await expect(stablePromise).resolves.toEqual(undefined)
+      await expect(stablePromise).resolves.toBeUndefined()
     })
 
     it('should cleanup pending tasks when component with active mutation is destroyed', async () => {
@@ -314,7 +314,7 @@ describe('PendingTasks Integration', () => {
       // Angular should become stable even though component was destroyed
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(150)
-      await expect(stablePromise).resolves.toEqual(undefined)
+      await expect(stablePromise).resolves.toBeUndefined()
     })
   })
 

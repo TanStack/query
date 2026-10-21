@@ -898,7 +898,7 @@ describe('useSuspenseQueries', () => {
       expect(queryClient.getQueryData(key)).toBe('data')
       // wait for gc
       await vi.advanceTimersByTimeAsync(1000)
-      expect(queryClient.getQueryData(key)).toBe(undefined)
+      expect(queryClient.getQueryData(key)).toBeUndefined()
     })
   })
 

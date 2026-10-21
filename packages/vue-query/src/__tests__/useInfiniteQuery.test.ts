@@ -26,14 +26,14 @@ describe('useInfiniteQuery', () => {
       getNextPageParam: () => 12,
     })
 
-    expect(data.value).toStrictEqual(undefined)
-    expect(status.value).toStrictEqual('pending')
+    expect(data.value).toBeUndefined()
+    expect(status.value).toBe('pending')
     await vi.advanceTimersByTimeAsync(0)
     expect(data.value).toStrictEqual({
       pageParams: [0],
       pages: ['data on page 0'],
     })
-    expect(status.value).toStrictEqual('success')
+    expect(status.value).toBe('success')
 
     fetchNextPage()
     await vi.advanceTimersByTimeAsync(0)
@@ -41,7 +41,7 @@ describe('useInfiniteQuery', () => {
       pageParams: [0, 12],
       pages: ['data on page 0', 'data on page 12'],
     })
-    expect(status.value).toStrictEqual('success')
+    expect(status.value).toBe('success')
   })
   it('should properly execute infinite query using infiniteQueryOptions', async () => {
     const key = queryKey()
@@ -55,14 +55,14 @@ describe('useInfiniteQuery', () => {
 
     const { data, fetchNextPage, status } = useInfiniteQuery(options)
 
-    expect(data.value).toStrictEqual(undefined)
-    expect(status.value).toStrictEqual('pending')
+    expect(data.value).toBeUndefined()
+    expect(status.value).toBe('pending')
     await vi.advanceTimersByTimeAsync(0)
     expect(data.value).toStrictEqual({
       pageParams: [0],
       pages: ['data on page 0'],
     })
-    expect(status.value).toStrictEqual('success')
+    expect(status.value).toBe('success')
 
     fetchNextPage()
     await vi.advanceTimersByTimeAsync(0)
@@ -70,7 +70,7 @@ describe('useInfiniteQuery', () => {
       pageParams: [0, 12],
       pages: ['data on page 0', 'data on page 12'],
     })
-    expect(status.value).toStrictEqual('success')
+    expect(status.value).toBe('success')
   })
 
   it('should react to maxPages changing via a whole-options getter', async () => {
@@ -134,11 +134,11 @@ describe('useInfiniteQuery', () => {
     })
 
     expect(data.value).toStrictEqual({ pages: [1], pageParams: [1] })
-    expect(status.value).toStrictEqual('success')
+    expect(status.value).toBe('success')
     expect(isError.value).toBe(false)
     await vi.advanceTimersByTimeAsync(10)
     expect(data.value).toStrictEqual({ pages: [1], pageParams: [1] })
-    expect(status.value).toStrictEqual('error')
+    expect(status.value).toBe('error')
     expect(isError.value).toBe(true)
   })
 
