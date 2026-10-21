@@ -54,7 +54,10 @@ Queries controller options, or a getter that returns options.
 
 #### `options` properties
 
-Built from [`CreateQueriesControllerOptions`](../type-aliases/CreateQueriesControllerOptions.md#properties). See the type above for what it changes.
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="options-property-combine"></a> `combine?` | (`result`: `CreateQueriesResults`\<`TQueryOptions`\>) => `TCombinedResult` | Optional function that combines the query result array into one value. |
+| <a id="options-property-queries"></a> `queries` | [`Accessor`](../type-aliases/Accessor.md)\< \| readonly \[`...CreateQueriesOptions<TQueryOptions>`\] \| readonly \[`...{ [K in keyof TQueryOptions]: GetCreateQueriesInput<TQueryOptions[K]> }`\]\> | Query options to observe, or a getter that returns the current options. |
 
 ### queryClient?
 
