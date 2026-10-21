@@ -3268,9 +3268,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
-    queryFn.mockImplementation(() => {
-      return Promise.reject(new Error('Error test Barrett'))
-    })
+    queryFn.mockRejectedValue(new Error('Error test Barrett'))
 
     function Page() {
       const { status, failureCount, failureReason } = useQuery({
@@ -3307,13 +3305,9 @@ describe('useQuery', () => {
 
     const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
 
-    queryFn.mockImplementationOnce(() => {
-      return Promise.reject(new Error('Error test Tanner'))
-    })
+    queryFn.mockRejectedValueOnce(new Error('Error test Tanner'))
 
-    queryFn.mockImplementation(() => {
-      return Promise.reject(new Error('NoRetry'))
-    })
+    queryFn.mockRejectedValue(new Error('NoRetry'))
 
     function Page() {
       const { status, failureCount, failureReason, error } = useQuery({
@@ -3353,9 +3347,7 @@ describe('useQuery', () => {
     type DelayError = { delay: number }
 
     const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
-    queryFn.mockImplementation(() => {
-      return Promise.reject({ delay: 50 })
-    })
+    queryFn.mockRejectedValue({ delay: 50 })
 
     function Page() {
       const { status, failureCount, failureReason } = useQuery({

@@ -479,9 +479,7 @@ describe('useMutation', () => {
 
     const mutateFn = vi.fn<(value: Value) => Promise<Value>>()
 
-    mutateFn.mockImplementationOnce(() =>
-      Promise.reject(new Error('Error test Jonas')),
-    )
+    mutateFn.mockRejectedValueOnce(new Error('Error test Jonas'))
 
     mutateFn.mockImplementation((value) => sleep(10).then(() => value))
 

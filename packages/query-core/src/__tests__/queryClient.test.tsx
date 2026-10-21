@@ -535,7 +535,7 @@ describe('queryClient', () => {
 
     it('should not fetch with initialData', async () => {
       const key = queryKey()
-      const queryFn = vi.fn().mockImplementation(() => Promise.resolve('data'))
+      const queryFn = vi.fn().mockResolvedValue('data')
 
       await expect(
         // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
