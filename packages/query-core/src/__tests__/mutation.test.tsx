@@ -1,6 +1,6 @@
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { MutationCache, QueryClient, focusManager } from '..'
+import { MutationCache, QueryClient, focusManager, onlineManager } from '..'
 import { MutationObserver } from '../mutationObserver'
 import { executeMutation } from './utils'
 import type { MutationState } from '../mutation'
@@ -406,6 +406,47 @@ describe('mutation', () => {
     expect(onSuccess).toHaveBeenCalledWith(2)
   })
 
+  it('should not continue a retry while the window is not focused', async () => {
+    const key = queryKey()
+    let count = 0
+
+    focusManager.setFocused(false)
+
+    try {
+      executeMutation(
+        queryClient,
+        {
+          mutationKey: key,
+          networkMode: 'always',
+          retry: 1,
+          retryDelay: 10,
+          mutationFn: () => {
+            count++
+            return Promise.reject(new Error('error'))
+          },
+        },
+        'vars',
+      ).catch(() => undefined)
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(1)
+      expect(
+        queryClient.getMutationCache().find({ mutationKey: key })?.state
+          .isPaused,
+      ).toBe(true)
+
+      void queryClient.resumePausedMutations()
+      await vi.advanceTimersByTimeAsync(0)
+      expect(count).toBe(1)
+
+      focusManager.setFocused(true)
+      await vi.advanceTimersByTimeAsync(0)
+      expect(count).toBe(2)
+    } finally {
+      focusManager.setFocused(undefined)
+    }
+  })
+
   describe('scoped mutations', () => {
     it('should run mutations in the same scope in serial', async () => {
       const key1 = queryKey()
@@ -528,6 +569,136 @@ describe('mutation', () => {
       } finally {
         focusManager.setFocused(undefined)
       }
+    })
+
+    it('should not start the next mutation in the same scope while offline', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+
+      const results: Array<string> = []
+
+      try {
+        executeMutation(
+          queryClient,
+          {
+            mutationKey: key1,
+            scope: {
+              id: 'scope',
+            },
+            mutationFn: async () => {
+              results.push('start-A')
+              await sleep(10)
+              results.push('finish-A')
+              return 'a'
+            },
+          },
+          'vars1',
+        )
+
+        executeMutation(
+          queryClient,
+          {
+            mutationKey: key2,
+            scope: {
+              id: 'scope',
+            },
+            mutationFn: async () => {
+              results.push('start-B')
+              await sleep(10)
+              results.push('finish-B')
+              return 'b'
+            },
+          },
+          'vars2',
+        )
+
+        await vi.advanceTimersByTimeAsync(0)
+        expect(results).toStrictEqual(['start-A'])
+
+        onlineManager.setOnline(false)
+
+        await vi.advanceTimersByTimeAsync(10)
+        expect(results).toStrictEqual(['start-A', 'finish-A'])
+        expect(
+          queryClient.getMutationCache().find({ mutationKey: key2 })?.state,
+        ).toMatchObject({
+          status: 'pending',
+          isPaused: true,
+        })
+
+        onlineManager.setOnline(true)
+
+        await vi.advanceTimersByTimeAsync(10)
+        expect(results).toStrictEqual([
+          'start-A',
+          'finish-A',
+          'start-B',
+          'finish-B',
+        ])
+      } finally {
+        onlineManager.setOnline(true)
+      }
+    })
+
+    it('should not start the next mutation in the same scope when paused mutations are resumed while the previous one is running', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+
+      const results: Array<string> = []
+
+      executeMutation(
+        queryClient,
+        {
+          mutationKey: key1,
+          scope: {
+            id: 'scope',
+          },
+          mutationFn: async () => {
+            results.push('start-A')
+            await sleep(10)
+            results.push('finish-A')
+            return 'a'
+          },
+        },
+        'vars1',
+      )
+
+      executeMutation(
+        queryClient,
+        {
+          mutationKey: key2,
+          scope: {
+            id: 'scope',
+          },
+          mutationFn: async () => {
+            results.push('start-B')
+            await sleep(10)
+            results.push('finish-B')
+            return 'b'
+          },
+        },
+        'vars2',
+      )
+
+      await vi.advanceTimersByTimeAsync(0)
+      expect(results).toStrictEqual(['start-A'])
+      expect(
+        queryClient.getMutationCache().find({ mutationKey: key2 })?.state
+          .isPaused,
+      ).toBe(true)
+
+      void queryClient.resumePausedMutations()
+
+      await vi.advanceTimersByTimeAsync(0)
+      expect(results).toStrictEqual(['start-A'])
+
+      await vi.advanceTimersByTimeAsync(20)
+      expect(results).toStrictEqual([
+        'start-A',
+        'finish-A',
+        'start-B',
+        'finish-B',
+      ])
     })
   })
 
