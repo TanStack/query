@@ -412,6 +412,42 @@ describe('useMutationState', () => {
     ).toBeInTheDocument()
   })
 
+  it('should update when only the mutation state changes', async () => {
+    const queryClient = new QueryClient()
+    const key = queryKey()
+    const filters = { mutationKey: key }
+    const select = (mutation: Mutation) => mutation.state.status
+
+    function Statuses() {
+      const result = useMutationState({ filters, select })
+      return <div>statuses: {JSON.stringify(result)}</div>
+    }
+
+    function Mutate() {
+      const { mutate } = useMutation({
+        mutationKey: key,
+        mutationFn: () => sleep(10),
+      })
+      return <button onClick={() => mutate()}>mutate</button>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <div>
+        <Statuses />
+        <Mutate />
+      </div>,
+    )
+    expect(rendered.getByText('statuses: []')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'mutate' }))
+    await vi.advanceTimersByTimeAsync(1)
+    expect(rendered.getByText('statuses: ["pending"]')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('statuses: ["success"]')).toBeInTheDocument()
+  })
+
   it.each(['stable', 'inline'] as const)(
     'should preserve the result reference with %s inputs',
     (inputs) => {

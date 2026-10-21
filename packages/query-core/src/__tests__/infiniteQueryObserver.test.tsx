@@ -243,4 +243,31 @@ describe('InfiniteQueryObserver', () => {
       isRefetching: false,
     })
   })
+
+  it('should fetch with the supplied infinite options via fetchOptimistic after the query is recreated', async () => {
+    const key = queryKey()
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) => sleep(10).then(() => `page-${pageParam}`),
+      initialPageParam: 0,
+      getNextPageParam: (_, allPages) => allPages.length,
+      staleTime: Infinity,
+    })
+    const unsubscribe = observer.subscribe(() => {})
+    await vi.advanceTimersByTimeAsync(10)
+
+    queryClient.removeQueries({ queryKey: key })
+    queryClient.getQueryCache().build(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'recreated-page'),
+    })
+
+    const promise = observer.fetchOptimistic(observer.options)
+    await vi.advanceTimersByTimeAsync(10)
+    const result = await promise
+
+    expect(result.data).toEqual({ pages: ['page-0'], pageParams: [0] })
+
+    unsubscribe()
+  })
 })
