@@ -19,9 +19,9 @@ type StoreRef = {
  * @param getSnapshot - Returns the current snapshot of the store.
  * @returns The current snapshot.
  */
-export function useSyncExternalStore(
+export function useSyncExternalStore<T>(
   subscribe: (onStoreChange: () => void) => () => void,
-  getSnapshot: () => any,
+  getSnapshot: () => T,
 ) {
   const value = getSnapshot()
 

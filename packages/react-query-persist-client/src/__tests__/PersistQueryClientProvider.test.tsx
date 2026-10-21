@@ -109,7 +109,7 @@ describe('PersistQueryClientProvider', () => {
     await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('fetched')).toBeInTheDocument()
 
-    expect(states).toHaveLength(4)
+    expect(states).toHaveLength(3)
 
     expect(states[0]).toMatchObject({
       status: 'pending',
@@ -124,12 +124,6 @@ describe('PersistQueryClientProvider', () => {
     })
 
     expect(states[2]).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: 'hydrated',
-    })
-
-    expect(states[3]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -260,7 +254,7 @@ describe('PersistQueryClientProvider', () => {
     await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('fetched')).toBeInTheDocument()
 
-    expect(states).toHaveLength(4)
+    expect(states).toHaveLength(3)
 
     expect(states[0]).toMatchObject({
       status: 'pending',
@@ -275,12 +269,6 @@ describe('PersistQueryClientProvider', () => {
     })
 
     expect(states[2]).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: 'hydrated',
-    })
-
-    expect(states[3]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -342,7 +330,7 @@ describe('PersistQueryClientProvider', () => {
     await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('fetched')).toBeInTheDocument()
 
-    expect(states).toHaveLength(4)
+    expect(states).toHaveLength(3)
 
     expect(states[0]).toMatchObject({
       status: 'success',
@@ -357,12 +345,6 @@ describe('PersistQueryClientProvider', () => {
     })
 
     expect(states[2]).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: 'hydrated',
-    })
-
-    expect(states[3]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -705,7 +687,7 @@ describe('PersistQueryClientProvider', () => {
     expect(queryFn2).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledTimes(1)
 
-    expect(states).toHaveLength(5)
+    expect(states).toHaveLength(4)
 
     expect(states[0]).toMatchObject({
       status: 'pending',
@@ -726,12 +708,6 @@ describe('PersistQueryClientProvider', () => {
     })
 
     expect(states[3]).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: 'hydrated',
-    })
-
-    expect(states[4]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'queryFn2',

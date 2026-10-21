@@ -758,6 +758,10 @@ describe('createInfiniteQueryController', () => {
 
     class Host extends LitElement {
       infinite?: InfiniteQueryResultAccessor<InfiniteData<number>, Error>
+
+      override render() {
+        return html`pages: ${this.infinite?.().data?.pages.join(', ') ?? 'none'}`
+      }
     }
 
     customElements.define(generateElementName(), Host)
@@ -782,6 +786,7 @@ describe('createInfiniteQueryController', () => {
     expect(infinite().data?.pages).toEqual([0])
     await vi.advanceTimersByTimeAsync(10)
     expect(infinite().data?.pages).toEqual([0])
+    expect(host.shadowRoot).toHaveTextContent('pages: 0')
 
     infinite.destroy()
   })

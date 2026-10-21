@@ -22,6 +22,99 @@ describe('useQueries', () => {
     vi.useRealTimers()
   })
 
+  it('reads cache updates on an unrelated render while unsubscribed', async () => {
+    const key = queryKey()
+    queryClient.setQueryData(key, 'first')
+    const combine = (results: Array<QueryObserverResult>) =>
+      results[0]!.data as string
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      const data = useQueries({
+        queries: [{ queryKey: key }],
+        subscribed: false,
+        combine,
+      })
+      return (
+        <button onClick={() => setCount(count + 1)}>
+          {count}: {data}
+        </button>
+      )
+    }
+    const rendered = renderWithClient(queryClient, <Page />)
+    queryClient.setQueryData(key, 'second')
+    fireEvent.click(rendered.getByRole('button'))
+    await vi.advanceTimersByTimeAsync(1)
+    expect(rendered.getByText('1: second')).toBeInTheDocument()
+  })
+
+  it('runs a data effect once when changing a memoized selection with combine', async () => {
+    const key = queryKey()
+    queryClient.setQueryData(key, [1, 2, 3])
+    const effect = vi.fn()
+    const combine = (results: Array<QueryObserverResult>) =>
+      results[0]!.data as Array<number>
+    function Page() {
+      const [minimum, setMinimum] = React.useState(1)
+      const select = React.useCallback(
+        (data: Array<number>) => data.filter((value) => value >= minimum),
+        [minimum],
+      )
+      const data = useQueries({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () => Promise.resolve([1, 2, 3]),
+            select,
+            staleTime: Infinity,
+            structuralSharing: false,
+          },
+        ],
+        combine,
+      })
+      React.useEffect(() => {
+        effect(data)
+      }, [data])
+      return <button onClick={() => setMinimum(2)}>{data.join(',')}</button>
+    }
+    const rendered = renderWithClient(queryClient, <Page />)
+    await vi.advanceTimersByTimeAsync(1)
+    effect.mockClear()
+    fireEvent.click(rendered.getByRole('button'))
+    await vi.advanceTimersByTimeAsync(1)
+    expect(rendered.getByText('2,3')).toBeInTheDocument()
+    expect(effect).toHaveBeenCalledTimes(1)
+    expect(effect).toHaveBeenCalledWith([2, 3])
+  })
+
+  it.each([true, false])(
+    'reads updates between render and commit when subscribed is %s',
+    async (subscribed) => {
+      const keys = [queryKey(), queryKey()]
+      queryClient.setQueryData(keys[0]!, 'first')
+      queryClient.setQueryData(keys[1]!, 'second')
+      const combine = (results: Array<QueryObserverResult>) =>
+        results[0]!.data as string
+      function Page() {
+        const [index, setIndex] = React.useState(0)
+        React.useLayoutEffect(() => {
+          queryClient.setQueryData(keys[index]!, 'updated ' + index)
+        }, [index])
+        const data = useQueries({
+          queries: [{ queryKey: keys[index]!, staleTime: Infinity }],
+          subscribed,
+          combine,
+        })
+        return <button onClick={() => setIndex(1)}>{data}</button>
+      }
+      const rendered = renderWithClient(queryClient, <Page />)
+      await vi.advanceTimersByTimeAsync(1)
+      expect(rendered.getByText('updated 0')).toBeInTheDocument()
+      fireEvent.click(rendered.getByRole('button'))
+      await vi.advanceTimersByTimeAsync(1)
+      expect(rendered.getByText('updated 1')).toBeInTheDocument()
+    },
+  )
+
   it('should return the correct states', async () => {
     const key1 = queryKey()
     const key2 = queryKey()

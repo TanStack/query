@@ -32,6 +32,7 @@ describe('queriesObserver', () => {
         | 'getQueries'
         | 'getObservers'
         | 'getOptimisticResult'
+        | 'createResultReader'
       >()
     })
   })
