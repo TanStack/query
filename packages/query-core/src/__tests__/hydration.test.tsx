@@ -145,11 +145,11 @@ describe('dehydration and rehydration', () => {
     expect(hydrationCache.find({ queryKey: numberKey })?.state.data).toBe(1)
     expect(hydrationCache.find({ queryKey: booleanKey })?.state.data).toBe(true)
     expect(hydrationCache.find({ queryKey: nullKey })?.state.data).toBeNull()
-    expect(hydrationCache.find({ queryKey: arrayKey })?.state.data).toEqual([
+    expect(hydrationCache.find({ queryKey: arrayKey })?.state.data).toStrictEqual([
       'string',
       0,
     ])
-    expect(hydrationCache.find({ queryKey: nestedKey })?.state.data).toEqual({
+    expect(hydrationCache.find({ queryKey: nestedKey })?.state.data).toStrictEqual({
       key: [{ nestedKey: 1 }],
     })
 
@@ -806,7 +806,7 @@ describe('dehydration and rehydration', () => {
     expect(
       dehydrated.queries.find((q) => q.queryHash === JSON.stringify(metaKey))
         ?.meta,
-    ).toEqual({
+    ).toStrictEqual({
       some: 'meta',
     })
 
@@ -821,7 +821,7 @@ describe('dehydration and rehydration', () => {
           (q) => q.queryHash === JSON.stringify(noMetaKey),
         )!,
       ),
-    ).not.toEqual(expect.arrayContaining(['meta']))
+    ).not.toStrictEqual(expect.arrayContaining(['meta']))
 
     const stringified = JSON.stringify(dehydrated)
 
@@ -833,7 +833,7 @@ describe('dehydration and rehydration', () => {
       queryCache: hydrationCache,
     })
     hydrate(hydrationClient, parsed)
-    expect(hydrationCache.find({ queryKey: metaKey })?.meta).toEqual({
+    expect(hydrationCache.find({ queryKey: metaKey })?.meta).toStrictEqual({
       some: 'meta',
     })
     expect(hydrationCache.find({ queryKey: noMetaKey })?.meta).toBeUndefined()
@@ -870,14 +870,14 @@ describe('dehydration and rehydration', () => {
       shouldDehydrateMutation: () => true,
     })
 
-    expect(Object.keys(dehydrated.mutations[0]!)).toEqual(
+    expect(Object.keys(dehydrated.mutations[0]!)).toStrictEqual(
       expect.arrayContaining(['meta']),
     )
-    expect(dehydrated.mutations[0]?.meta).toEqual({
+    expect(dehydrated.mutations[0]?.meta).toStrictEqual({
       some: 'meta',
     })
 
-    expect(Object.keys(dehydrated.mutations[1]!)).not.toEqual(
+    expect(Object.keys(dehydrated.mutations[1]!)).not.toStrictEqual(
       expect.arrayContaining(['meta']),
     )
     expect(dehydrated.mutations[1]?.meta).toBeUndefined()
@@ -892,7 +892,7 @@ describe('dehydration and rehydration', () => {
       mutationCache: hydrationCache,
     })
     hydrate(hydrationClient, parsed)
-    expect(hydrationCache.find({ mutationKey: metaKey })?.meta).toEqual({
+    expect(hydrationCache.find({ mutationKey: metaKey })?.meta).toStrictEqual({
       some: 'meta',
     })
     expect(
@@ -1538,7 +1538,7 @@ describe('dehydration and rehydration', () => {
     hydrate(hydrationClient, dehydrated)
 
     const hydratedQuery = hydrationCache.find({ queryKey: key })
-    expect(hydratedQuery?.state.data).toEqual({
+    expect(hydratedQuery?.state.data).toStrictEqual({
       pages: [{ items: ['page-0'], nextCursor: 1 }],
       pageParams: [0],
     })
@@ -1673,7 +1673,7 @@ describe('dehydration and rehydration', () => {
     await vi.advanceTimersByTimeAsync(10)
     const result = await resultPromise
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       pages: [{ items: ['page-0'], next: 1 }],
       pageParams: [0],
     })
@@ -1762,7 +1762,7 @@ describe('dehydration and rehydration', () => {
     await vi.advanceTimersByTimeAsync(20)
     const result = await resultPromise
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       pages: [
         { items: ['item-0'], next: 1 },
         { items: ['item-1'], next: 2 },

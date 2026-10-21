@@ -100,7 +100,7 @@ describe('mutationCache', () => {
         'vars',
       ).catch(() => undefined)
       await vi.advanceTimersByTimeAsync(50)
-      expect(states).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+      expect(states).toStrictEqual([1, 2, 3, 4, 5, 6, 7, 8])
     })
   })
 
@@ -189,7 +189,7 @@ describe('mutationCache', () => {
         'vars',
       )
       await vi.advanceTimersByTimeAsync(50)
-      expect(states).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+      expect(states).toStrictEqual([1, 2, 3, 4, 5, 6, 7, 8])
     })
   })
 
@@ -244,7 +244,7 @@ describe('mutationCache', () => {
         'vars',
       )
       await vi.advanceTimersByTimeAsync(20)
-      expect(states).toEqual([1, 2, 3, 4])
+      expect(states).toStrictEqual([1, 2, 3, 4])
     })
 
     it('should run options.onMutate synchronously when mutationCache.config.onMutate is not defined', () => {
@@ -267,7 +267,7 @@ describe('mutationCache', () => {
         },
         'vars',
       )
-      expect(states).toEqual(['onMutate'])
+      expect(states).toStrictEqual(['onMutate'])
     })
   })
 
@@ -288,16 +288,16 @@ describe('mutationCache', () => {
 
       const [mutation] = testCache.getAll()
 
-      expect(testCache.find({ mutationKey: key })).toEqual(mutation)
+      expect(testCache.find({ mutationKey: key })).toStrictEqual(mutation)
       expect(
         testCache.find({ mutationKey: ['mutation'], exact: false }),
-      ).toEqual(mutation)
+      ).toStrictEqual(mutation)
       expect(testCache.find({ mutationKey: ['unknown'] })).toBeUndefined()
       expect(
         testCache.find({
           predicate: (m) => m.options.mutationKey?.[0] === key[0],
         }),
-      ).toEqual(mutation)
+      ).toStrictEqual(mutation)
     })
   })
 
@@ -336,13 +336,13 @@ describe('mutationCache', () => {
       expect(
         testCache.findAll({ mutationKey: ['a'], exact: false }),
       ).toHaveLength(2)
-      expect(testCache.find({ mutationKey: ['a', 1] })).toEqual(mutation1)
+      expect(testCache.find({ mutationKey: ['a', 1] })).toStrictEqual(mutation1)
       expect(
         testCache.findAll({
           predicate: (m) => m.options.mutationKey?.[1] === 2,
         }),
-      ).toEqual([mutation2])
-      expect(testCache.findAll({ mutationKey: ['unknown'] })).toEqual([])
+      ).toStrictEqual([mutation2])
+      expect(testCache.findAll({ mutationKey: ['unknown'] })).toStrictEqual([])
     })
   })
 
@@ -453,7 +453,7 @@ describe('mutationCache', () => {
       })
       expect(callback).toHaveNthReturnedWith(1, [])
       expect(callback).toHaveNthReturnedWith(2, [])
-      expect(testCache.getAll()).toEqual([])
+      expect(testCache.getAll()).toStrictEqual([])
     })
 
     it('should preserve mutations added by removal subscribers', () => {
@@ -470,7 +470,7 @@ describe('mutationCache', () => {
       testCache.clear()
 
       expect(testCache.getAll()).toHaveLength(1)
-      expect(testCache.getAll()[0]?.options.mutationKey).toEqual(key)
+      expect(testCache.getAll()[0]?.options.mutationKey).toStrictEqual(key)
     })
   })
 
@@ -493,7 +493,7 @@ describe('mutationCache', () => {
       testCache.remove(mutation1)
 
       expect(testCache.getAll()).toHaveLength(1)
-      expect(testCache.getAll()).toEqual([mutation2])
+      expect(testCache.getAll()).toStrictEqual([mutation2])
     })
 
     it('should delete scope when removing the only mutation in that scope', () => {

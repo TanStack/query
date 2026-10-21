@@ -299,7 +299,7 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByLabelText('Remove all items'))
-      expect(queryClient.getQueryData(['data'])).toEqual([])
+      expect(queryClient.getQueryData(['data'])).toStrictEqual([])
     })
 
     it('should delete the entry at the current "dataPath" when the delete button is clicked', () => {
@@ -318,7 +318,7 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByLabelText('Delete item'))
-      expect(queryClient.getQueryData(['data'])).toEqual(['a', 'c'])
+      expect(queryClient.getQueryData(['data'])).toStrictEqual(['a', 'c'])
     })
 
     it('should toggle a boolean value via "setQueryData" when the toggle button is clicked', () => {
@@ -336,7 +336,7 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByLabelText('Toggle value'))
-      expect(queryClient.getQueryData(['data'])).toEqual({ flag: false })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ flag: false })
     })
 
     it.each([true, false])(
@@ -494,7 +494,7 @@ describe('Explorer', () => {
       expect(input).toHaveAttribute('type', 'text')
 
       fireEvent.change(input, { target: { value: 'Bob' } })
-      expect(queryClient.getQueryData(['data'])).toEqual({ name: 'Bob' })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ name: 'Bob' })
     })
 
     it('should write the new number value via "setQueryData" when a number input is changed', () => {
@@ -517,7 +517,7 @@ describe('Explorer', () => {
       fireEvent.change(input, {
         target: { value: '42', valueAsNumber: 42 },
       })
-      expect(queryClient.getQueryData(['data'])).toEqual({ count: 42 })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ count: 42 })
     })
 
     it('should render "ToggleValueButton" inline for a boolean primitive row', () => {
@@ -572,11 +572,11 @@ describe('Explorer', () => {
 
       const ageRow = rendered.getByText('age:').parentElement!
       fireEvent.click(within(ageRow).getByLabelText('Delete item'))
-      expect(queryClient.getQueryData(['data'])).toEqual({ name: 'Anna' })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ name: 'Anna' })
 
       const nameRow = rendered.getByText('name:').parentElement!
       fireEvent.click(within(nameRow).getByLabelText('Delete item'))
-      expect(queryClient.getQueryData(['data'])).toEqual({})
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({})
     })
   })
 

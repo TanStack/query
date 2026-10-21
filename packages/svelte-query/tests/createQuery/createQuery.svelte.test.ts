@@ -45,7 +45,7 @@ describe('createQuery', () => {
         () => queryClient,
       )
 
-      expect(query).toEqual({
+      expect(query).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: null,
@@ -75,7 +75,7 @@ describe('createQuery', () => {
 
       resolve('resolved')
       await vi.advanceTimersByTimeAsync(0)
-      expect(query).toEqual({
+      expect(query).toStrictEqual({
         data: 'resolved',
         dataUpdatedAt: expect.any(Number),
         error: null,
@@ -130,7 +130,7 @@ describe('createQuery', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(query.isError).toBe(true)
 
-      expect(states[0]).toEqual({
+      expect(states[0]).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: null,
@@ -158,7 +158,7 @@ describe('createQuery', () => {
         fetchStatus: 'fetching',
       })
 
-      expect(states[1]).toEqual({
+      expect(states[1]).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: null,
@@ -186,7 +186,7 @@ describe('createQuery', () => {
         fetchStatus: 'fetching',
       })
 
-      expect(states[2]).toEqual({
+      expect(states[2]).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: new Error('rejected #2'),
@@ -758,8 +758,8 @@ describe('createQuery', () => {
       const newTodo1 = newTodos?.[0]
       const newTodo2 = newTodos?.[1]
 
-      expect(todos).toEqual(result1)
-      expect(newTodos).toEqual(result2)
+      expect(todos).toStrictEqual(result1)
+      expect(newTodos).toStrictEqual(result2)
       expect(newTodos).not.toBe(todos)
       expect(newTodo1).toBe(todo1)
       expect(newTodo2).not.toBe(todo2)
@@ -1604,13 +1604,13 @@ describe('createQuery', () => {
 
       expect(
         queryClient1.getQueryCache().find({ queryKey: key })?.queryKey,
-      ).toEqual(key)
+      ).toStrictEqual(key)
 
       currentClient = queryClient2
       flushSync()
       expect(
         queryClient2.getQueryCache().find({ queryKey: key })?.queryKey,
-      ).toEqual(key)
+      ).toStrictEqual(key)
     }),
   )
 

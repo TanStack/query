@@ -279,9 +279,9 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
     const args = queryFn.mock.calls[0]![0]
     expect(args.pageParam).toBeUndefined()
-    expect(args.queryKey).toEqual(key)
+    expect(args.queryKey).toStrictEqual(key)
     expect(args.signal).toBeInstanceOf(AbortSignal)
-    expect(args.client).toEqual(queryClient)
+    expect(args.client).toStrictEqual(queryClient)
   })
 
   it('should continue if cancellation is not supported and signal is not consumed', async () => {
@@ -909,7 +909,7 @@ describe('query', () => {
       queryFn,
     })
     await vi.advanceTimersByTimeAsync(10)
-    expect(updates).toEqual([
+    expect(updates).toStrictEqual([
       'updated', // type: 'fetch'
       'updated', // type: 'success'
     ])

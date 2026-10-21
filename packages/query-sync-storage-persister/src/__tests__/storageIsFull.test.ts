@@ -92,7 +92,7 @@ describe('create persister', () => {
     persister.persistClient(persistClient)
     await sleep(1)
     const restoredClient = await persister.restoreClient()
-    expect(restoredClient).toEqual(persistClient)
+    expect(restoredClient).toStrictEqual(persistClient)
   })
 
   it('should clean the old queries when storage full', async () => {

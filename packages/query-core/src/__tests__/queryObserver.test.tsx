@@ -1042,7 +1042,7 @@ describe('queryObserver', () => {
       queryFn: () => 'data',
     })
 
-    expect(observer.getCurrentQuery().queryKey).toEqual(key)
+    expect(observer.getCurrentQuery().queryKey).toStrictEqual(key)
   })
 
   it('should throw an error if throwOnError option is true', async () => {
@@ -1335,8 +1335,8 @@ describe('queryObserver', () => {
     }) // Successful fetch for new key
 
     expect(stableSelect).toHaveBeenCalledTimes(2)
-    expect(stableSelect.mock.calls[0]![0]).toEqual(data1)
-    expect(stableSelect.mock.calls[1]![0]).toEqual(data2)
+    expect(stableSelect.mock.calls[0]![0]).toStrictEqual(data1)
+    expect(stableSelect.mock.calls[1]![0]).toStrictEqual(data2)
   })
 
   it('should notify cache listeners when setOptions is called', () => {

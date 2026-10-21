@@ -66,7 +66,7 @@ describe('injectDevtoolsPanel', () => {
       }))
     })
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       destroy: expect.any(Function),
     })
   })

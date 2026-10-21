@@ -155,7 +155,7 @@ describe('broadcastQueryClient', () => {
         queryKey: existingKey,
         state: { status: 'pending', data: undefined },
       })
-      expect(queryClient.getQueryData(existingKey)).toEqual({
+      expect(queryClient.getQueryData(existingKey)).toStrictEqual({
         value: 'resolved',
       })
       expect(queryClient.getQueryState(existingKey)?.status).toBe('success')
@@ -183,7 +183,7 @@ describe('broadcastQueryClient', () => {
         queryKey: existingKey,
         state: { status: 'success', data: { value: 'from other tab' } },
       })
-      expect(queryClient.getQueryData(existingKey)).toEqual({
+      expect(queryClient.getQueryData(existingKey)).toStrictEqual({
         value: 'from other tab',
       })
     })

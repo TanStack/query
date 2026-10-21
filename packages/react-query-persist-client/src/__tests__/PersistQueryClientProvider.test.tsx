@@ -556,7 +556,7 @@ describe('PersistQueryClientProvider', () => {
     await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('fetched')).toBeInTheDocument()
 
-    expect(states).toEqual([
+    expect(states).toStrictEqual([
       'onSuccess',
       'onSuccess done',
       'fetching',

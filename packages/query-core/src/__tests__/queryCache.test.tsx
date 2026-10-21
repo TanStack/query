@@ -63,7 +63,7 @@ describe('queryCache', () => {
       await vi.advanceTimersByTimeAsync(11)
       expect(events).toHaveLength(8)
 
-      expect(events).toEqual([
+      expect(events).toStrictEqual([
         'added', // 1. Query added -> loading
         'observerResultsUpdated', // 2. Observer result updated -> loading
         'observerAdded', // 3. Observer added
@@ -229,29 +229,29 @@ describe('queryCache', () => {
       const query3 = queryCache.find({ queryKey: [{ a: 'a', b: 'b' }] })!
       const query4 = queryCache.find({ queryKey: ['posts', 1] })!
 
-      expect(queryCache.findAll({ queryKey: key1 })).toEqual([query1])
+      expect(queryCache.findAll({ queryKey: key1 })).toStrictEqual([query1])
       // wrapping in an extra array doesn't yield the same results anymore since v4 because keys need to be an array
-      expect(queryCache.findAll({ queryKey: [key1] })).toEqual([])
-      expect(queryCache.findAll()).toEqual([query1, query2, query3, query4])
-      expect(queryCache.findAll({})).toEqual([query1, query2, query3, query4])
-      expect(queryCache.findAll({ queryKey: key1, type: 'inactive' })).toEqual([
+      expect(queryCache.findAll({ queryKey: [key1] })).toStrictEqual([])
+      expect(queryCache.findAll()).toStrictEqual([query1, query2, query3, query4])
+      expect(queryCache.findAll({})).toStrictEqual([query1, query2, query3, query4])
+      expect(queryCache.findAll({ queryKey: key1, type: 'inactive' })).toStrictEqual([
         query1,
       ])
-      expect(queryCache.findAll({ queryKey: key1, type: 'active' })).toEqual([])
-      expect(queryCache.findAll({ queryKey: key1, stale: true })).toEqual([])
-      expect(queryCache.findAll({ queryKey: key1, stale: false })).toEqual([
+      expect(queryCache.findAll({ queryKey: key1, type: 'active' })).toStrictEqual([])
+      expect(queryCache.findAll({ queryKey: key1, stale: true })).toStrictEqual([])
+      expect(queryCache.findAll({ queryKey: key1, stale: false })).toStrictEqual([
         query1,
       ])
       expect(
         queryCache.findAll({ queryKey: key1, stale: false, type: 'active' }),
-      ).toEqual([])
+      ).toStrictEqual([])
       expect(
         queryCache.findAll({
           queryKey: key1,
           stale: false,
           type: 'inactive',
         }),
-      ).toEqual([query1])
+      ).toStrictEqual([query1])
       expect(
         queryCache.findAll({
           queryKey: key1,
@@ -259,50 +259,50 @@ describe('queryCache', () => {
           type: 'inactive',
           exact: true,
         }),
-      ).toEqual([query1])
+      ).toStrictEqual([query1])
 
-      expect(queryCache.findAll({ queryKey: key2 })).toEqual([query2])
-      expect(queryCache.findAll({ queryKey: key2, stale: undefined })).toEqual([
+      expect(queryCache.findAll({ queryKey: key2 })).toStrictEqual([query2])
+      expect(queryCache.findAll({ queryKey: key2, stale: undefined })).toStrictEqual([
         query2,
       ])
-      expect(queryCache.findAll({ queryKey: key2, stale: true })).toEqual([
+      expect(queryCache.findAll({ queryKey: key2, stale: true })).toStrictEqual([
         query2,
       ])
-      expect(queryCache.findAll({ queryKey: key2, stale: false })).toEqual([])
-      expect(queryCache.findAll({ queryKey: [{ b: 'b' }] })).toEqual([query3])
+      expect(queryCache.findAll({ queryKey: key2, stale: false })).toStrictEqual([])
+      expect(queryCache.findAll({ queryKey: [{ b: 'b' }] })).toStrictEqual([query3])
       expect(
         queryCache.findAll({ queryKey: [{ a: 'a' }], exact: false }),
-      ).toEqual([query3])
+      ).toStrictEqual([query3])
       expect(
         queryCache.findAll({ queryKey: [{ a: 'a' }], exact: true }),
-      ).toEqual([])
+      ).toStrictEqual([])
       expect(
         queryCache.findAll({ queryKey: [{ a: 'a', b: 'b' }], exact: true }),
-      ).toEqual([query3])
-      expect(queryCache.findAll({ queryKey: [{ a: 'a', b: 'b' }] })).toEqual([
+      ).toStrictEqual([query3])
+      expect(queryCache.findAll({ queryKey: [{ a: 'a', b: 'b' }] })).toStrictEqual([
         query3,
       ])
       expect(
         queryCache.findAll({ queryKey: [{ a: 'a', b: 'b', c: 'c' }] }),
-      ).toEqual([])
+      ).toStrictEqual([])
       expect(
         queryCache.findAll({ queryKey: [{ a: 'a' }], stale: false }),
-      ).toEqual([query3])
+      ).toStrictEqual([query3])
       expect(
         queryCache.findAll({ queryKey: [{ a: 'a' }], stale: true }),
-      ).toEqual([])
+      ).toStrictEqual([])
       expect(
         queryCache.findAll({ queryKey: [{ a: 'a' }], type: 'active' }),
-      ).toEqual([])
+      ).toStrictEqual([])
       expect(
         queryCache.findAll({ queryKey: [{ a: 'a' }], type: 'inactive' }),
-      ).toEqual([query3])
+      ).toStrictEqual([query3])
       expect(
         queryCache.findAll({ predicate: (query) => query === query3 }),
-      ).toEqual([query3])
-      expect(queryCache.findAll({ queryKey: ['posts'] })).toEqual([query4])
+      ).toStrictEqual([query3])
+      expect(queryCache.findAll({ queryKey: ['posts'] })).toStrictEqual([query4])
 
-      expect(queryCache.findAll({ fetchStatus: 'idle' })).toEqual([
+      expect(queryCache.findAll({ fetchStatus: 'idle' })).toStrictEqual([
         query1,
         query2,
         query3,
@@ -310,7 +310,7 @@ describe('queryCache', () => {
       ])
       expect(
         queryCache.findAll({ queryKey: key2, fetchStatus: undefined }),
-      ).toEqual([query2])
+      ).toStrictEqual([query2])
 
       void queryClient
         .query({
@@ -318,11 +318,11 @@ describe('queryCache', () => {
           queryFn: () => sleep(20).then(() => 'dataFetching'),
         })
         .catch(noop)
-      expect(queryCache.findAll({ fetchStatus: 'fetching' })).toEqual([
+      expect(queryCache.findAll({ fetchStatus: 'fetching' })).toStrictEqual([
         queryCache.find({ queryKey: keyFetching }),
       ])
       await vi.advanceTimersByTimeAsync(20)
-      expect(queryCache.findAll({ fetchStatus: 'fetching' })).toEqual([])
+      expect(queryCache.findAll({ fetchStatus: 'fetching' })).toStrictEqual([])
     })
 
     it('should return all the queries when no filters are defined', async () => {

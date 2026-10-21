@@ -124,7 +124,7 @@ describe('useIsFetching', () => {
     await vi.advanceTimersByTimeAsync(50)
     expect(isFetchingArray[5]).toBe(0)
 
-    expect(isFetchingArray).toEqual([0, 1, 1, 2, 1, 0])
+    expect(isFetchingArray).toStrictEqual([0, 1, 1, 2, 1, 0])
   })
 
   it('should be able to filter', async () => {
@@ -183,7 +183,7 @@ describe('useIsFetching', () => {
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
 
     // at no point should we have isFetching: 2
-    expect(isFetchingArray).toEqual(expect.not.arrayContaining([2]))
+    expect(isFetchingArray).toStrictEqual(expect.not.arrayContaining([2]))
   })
 
   it('should show the correct fetching state when mounted after a query', async () => {

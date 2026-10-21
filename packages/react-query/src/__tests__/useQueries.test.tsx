@@ -857,7 +857,7 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('data: foo')).toBeInTheDocument()
 
-    expect(queryFns).toEqual(['first result', 'second result'])
+    expect(queryFns).toStrictEqual(['first result', 'second result'])
 
     expect(renders).toBe(1)
   })

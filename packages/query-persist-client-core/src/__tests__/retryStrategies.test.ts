@@ -50,7 +50,7 @@ describe('removeOldestQuery', () => {
       error: new Error('full'),
       errorCount: 1,
     })
-    expect(result?.clientState.queries.map((query) => query.queryKey)).toEqual([
+    expect(result?.clientState.queries.map((query) => query.queryKey)).toStrictEqual([
       ['a'],
       ['c'],
     ])
@@ -67,7 +67,7 @@ describe('removeOldestQuery', () => {
       error: new Error('full'),
       errorCount: 1,
     })
-    expect(result?.clientState.queries.map((query) => query.queryKey)).toEqual([
+    expect(result?.clientState.queries.map((query) => query.queryKey)).toStrictEqual([
       ['b'],
     ])
   })
@@ -101,7 +101,7 @@ describe('removeOldestQuery', () => {
       error: new Error('full'),
       errorCount: 1,
     })
-    expect(result?.clientState.queries).toEqual([])
-    expect(result?.clientState.mutations).toEqual(mutations)
+    expect(result?.clientState.queries).toStrictEqual([])
+    expect(result?.clientState.mutations).toStrictEqual(mutations)
   })
 })

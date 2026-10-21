@@ -262,7 +262,7 @@ describe('PiPContext', () => {
         { disabled: true },
       )
 
-      expect(observed).toEqual([fakeWindow, null])
+      expect(observed).toStrictEqual([fakeWindow, null])
       expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
         'false',
       )
@@ -295,7 +295,7 @@ describe('PiPContext', () => {
       )
 
       expect(fakeWindow.close).toHaveBeenCalledTimes(1)
-      expect(observed).toEqual([fakeWindow, null])
+      expect(observed).toStrictEqual([fakeWindow, null])
     })
 
     it('should call "close" only once when "closePipWindow" runs twice in a row', () => {

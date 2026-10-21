@@ -84,7 +84,7 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(50)
     isMutatingArray.push(isMutating.value)
 
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (without mutationKey in mutationOptions)', async () => {
@@ -104,7 +104,7 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(50)
     isMutatingArray.push(isMutating.value)
 
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should return the number of fetching mutations when used with useIsMutating', async () => {
@@ -130,7 +130,7 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(50)
     isMutatingArray.push(isMutating.value)
 
-    expect(isMutatingArray).toEqual([0, 2, 0])
+    expect(isMutatingArray).toStrictEqual([0, 2, 0])
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (filter mutationOpts1.mutationKey)', async () => {
@@ -158,7 +158,7 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(50)
     isMutatingArray.push(isMutating.value)
 
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (getter with mutationKey in mutationOptions)', async () => {
@@ -198,7 +198,7 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(50)
     isMutatingArray.push(isMutating.value)
 
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (getter)', async () => {
@@ -224,7 +224,7 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(50)
     isMutatingArray.push(isMutating.value)
 
-    expect(isMutatingArray).toEqual([0, 2, 0])
+    expect(isMutatingArray).toStrictEqual([0, 2, 0])
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (getter, filter mutationOpts1.mutationKey)', async () => {
@@ -254,7 +254,7 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(50)
     isMutatingArray.push(isMutating.value)
 
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (with mutationKey in mutationOptions)', async () => {
@@ -523,11 +523,11 @@ describe('mutationOptions', () => {
       select: (mutation) => mutation.state.data,
     })
 
-    expect(states.value).toEqual([])
+    expect(states.value).toStrictEqual([])
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.value).toEqual(['data'])
+    expect(states.value).toStrictEqual(['data'])
   })
 
   it('should return mutation states when used with useMutationState (without mutationKey in mutationOptions)', async () => {
@@ -541,11 +541,11 @@ describe('mutationOptions', () => {
       select: (mutation) => mutation.state.data,
     })
 
-    expect(states.value).toEqual([])
+    expect(states.value).toStrictEqual([])
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.value).toEqual(['data'])
+    expect(states.value).toStrictEqual(['data'])
   })
 
   it('should return mutation states when used with useMutationState', async () => {
@@ -564,12 +564,12 @@ describe('mutationOptions', () => {
       select: (mutation) => mutation.state.data,
     })
 
-    expect(states.value).toEqual([])
+    expect(states.value).toStrictEqual([])
 
     mutate1()
     mutate2()
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.value).toEqual(['data1', 'data2'])
+    expect(states.value).toStrictEqual(['data1', 'data2'])
   })
 
   it('should return mutation states when used with useMutationState (filter mutationOpts1.mutationKey)', async () => {
@@ -588,12 +588,12 @@ describe('mutationOptions', () => {
       select: (mutation) => mutation.state.data,
     })
 
-    expect(states.value).toEqual([])
+    expect(states.value).toStrictEqual([])
 
     mutate1()
     mutate2()
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.value).toEqual(['data1'])
+    expect(states.value).toStrictEqual(['data1'])
   })
 
   it('should return mutation states when used with useMutationState (getter with mutationKey in mutationOptions)', async () => {
@@ -612,7 +612,7 @@ describe('mutationOptions', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(states.value).toEqual(['foo'])
+    expect(states.value).toStrictEqual(['foo'])
   })
 
   it('should return mutation states when used with useMutationState (getter without mutationKey in mutationOptions)', async () => {
@@ -626,11 +626,11 @@ describe('mutationOptions', () => {
       select: (mutation) => mutation.state.data,
     })
 
-    expect(states.value).toEqual([])
+    expect(states.value).toStrictEqual([])
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.value).toEqual(['data'])
+    expect(states.value).toStrictEqual(['data'])
   })
 
   it('should return mutation states when used with useMutationState (getter)', async () => {
@@ -649,12 +649,12 @@ describe('mutationOptions', () => {
       select: (mutation) => mutation.state.data,
     })
 
-    expect(states.value).toEqual([])
+    expect(states.value).toStrictEqual([])
 
     mutate1()
     mutate2()
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.value).toEqual(['data1', 'data2'])
+    expect(states.value).toStrictEqual(['data1', 'data2'])
   })
 
   it('should return mutation states when used with useMutationState (getter, filter mutationOpts1.mutationKey)', async () => {
@@ -675,12 +675,12 @@ describe('mutationOptions', () => {
       select: (mutation) => mutation.state.data,
     })
 
-    expect(states.value).toEqual([])
+    expect(states.value).toStrictEqual([])
 
     mutate1()
     mutate2()
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.value).toEqual(['data1'])
+    expect(states.value).toStrictEqual(['data1'])
   })
 
   it('should return data in a shallow ref when shallow is true', async () => {
@@ -694,7 +694,7 @@ describe('mutationOptions', () => {
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-    expect(data.value).toEqual({ nested: { count: 0 } })
+    expect(data.value).toStrictEqual({ nested: { count: 0 } })
     expect(isReactive(data.value?.nested)).toBe(false)
   })
 
@@ -709,7 +709,7 @@ describe('mutationOptions', () => {
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-    expect(data.value).toEqual({ nested: { count: 0 } })
+    expect(data.value).toStrictEqual({ nested: { count: 0 } })
     expect(isReactive(data.value?.nested)).toBe(false)
   })
 

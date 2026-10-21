@@ -136,7 +136,7 @@ describe('useMutation', () => {
     mutation.mutate('xyz')
     await vi.advanceTimersByTimeAsync(10)
     const mutations = mutationCache.find({ mutationKey: key2 })
-    expect(mutations?.options.mutationKey).toEqual(key2)
+    expect(mutations?.options.mutationKey).toStrictEqual(key2)
   })
 
   it('should update reactive options deeply', async () => {
@@ -203,7 +203,7 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     const mutations = mutationCache.find({ mutationKey: key2 })
-    expect(mutations?.options.mutationKey).toEqual(key2)
+    expect(mutations?.options.mutationKey).toStrictEqual(key2)
     expect(proof).toBe(true)
   })
 
@@ -326,7 +326,7 @@ describe('useMutation', () => {
         onSettled: () => callbacks.push('mutate.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutate.onSuccess', 'mutate.onSettled'])
+      expect(callbacks).toStrictEqual(['mutate.onSuccess', 'mutate.onSettled'])
     })
 
     it('should call onError and onSettled when passed as arguments of mutate function', async () => {
@@ -341,7 +341,7 @@ describe('useMutation', () => {
         onSettled: () => callbacks.push('mutate.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutate.onError', 'mutate.onSettled'])
+      expect(callbacks).toStrictEqual(['mutate.onError', 'mutate.onSettled'])
     })
 
     it('should call onSuccess and onSettled when passed as arguments of mutateAsync function', async () => {
@@ -355,7 +355,7 @@ describe('useMutation', () => {
         onSettled: () => callbacks.push('mutateAsync.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual([
+      expect(callbacks).toStrictEqual([
         'mutateAsync.onSuccess',
         'mutateAsync.onSettled',
       ])
@@ -375,7 +375,7 @@ describe('useMutation', () => {
         })
         .catch(noop)
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual([
+      expect(callbacks).toStrictEqual([
         'mutateAsync.onError',
         'mutateAsync.onSettled',
       ])
@@ -391,7 +391,7 @@ describe('useMutation', () => {
         onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutateAsync.onSuccess'])
+      expect(callbacks).toStrictEqual(['mutateAsync.onSuccess'])
     })
 
     it('should call onError when passed as an argument of mutateAsync function', async () => {
@@ -407,7 +407,7 @@ describe('useMutation', () => {
         })
         .catch(noop)
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutateAsync.onError'])
+      expect(callbacks).toStrictEqual(['mutateAsync.onError'])
     })
 
     it('should call onSettled when passed as an argument of mutateAsync function', async () => {
@@ -420,7 +420,7 @@ describe('useMutation', () => {
         onSettled: () => callbacks.push('mutateAsync.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutateAsync.onSettled'])
+      expect(callbacks).toStrictEqual(['mutateAsync.onSettled'])
     })
 
     it('should fire both onSettled functions', async () => {
@@ -516,7 +516,7 @@ describe('useMutation', () => {
 
       mutate()
       await vi.advanceTimersByTimeAsync(10)
-      expect(data.value).toEqual({ nested: { count: 0 } })
+      expect(data.value).toStrictEqual({ nested: { count: 0 } })
       expect(isReactive(data.value?.nested)).toBe(true)
       expect(isReadonly(data.value?.nested)).toBe(true)
     },
@@ -530,7 +530,7 @@ describe('useMutation', () => {
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-    expect(data.value).toEqual({ nested: { count: 0 } })
+    expect(data.value).toStrictEqual({ nested: { count: 0 } })
     expect(isReactive(data.value?.nested)).toBe(false)
     expect(isReadonly(data.value?.nested)).toBe(false)
   })
@@ -651,10 +651,10 @@ describe('useMutation', () => {
       // onMutate runs synchronously up to its first await, so the optimistic
       // value is visible immediately, before the mutationFn settles.
       await vi.advanceTimersByTimeAsync(0)
-      expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+      expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1', 'Todo 2'])
       await vi.advanceTimersByTimeAsync(10)
       expect(mutation).toMatchObject({ isError: { value: true } })
-      expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
+      expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1'])
     })
 
     it('should keep the optimistic update in place when the mutation succeeds', async () => {
@@ -683,7 +683,7 @@ describe('useMutation', () => {
       mutation.mutate('Todo 2')
       await vi.advanceTimersByTimeAsync(10)
       expect(mutation).toMatchObject({ isSuccess: { value: true } })
-      expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+      expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1', 'Todo 2'])
     })
   })
 
@@ -703,7 +703,7 @@ describe('useMutation', () => {
       )
       await vi.advanceTimersByTimeAsync(10)
       const results = await settledPromise
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         { status: 'fulfilled', value: 'Todo 1' },
         { status: 'rejected', reason: Error('Some error') },
         { status: 'fulfilled', value: 'Todo 3' },
@@ -743,7 +743,7 @@ describe('useMutation', () => {
     const [data, variables, onMutateResult, context] = onSuccess.mock.calls[0]!
     expect(data).toBe('TODO')
     expect(variables).toBe('todo')
-    expect(onMutateResult).toEqual({ startedWith: 'todo' })
+    expect(onMutateResult).toStrictEqual({ startedWith: 'todo' })
     expect(context.client).toBe(useQueryClient())
     expect(context.meta).toBeUndefined()
     expect(context.mutationKey).toBeUndefined()
@@ -775,7 +775,7 @@ describe('useMutation', () => {
     mutation.mutate('todo')
     await vi.advanceTimersByTimeAsync(10)
     expect(onSuccess).toHaveBeenCalledTimes(1)
-    expect(onSuccess.mock.calls[0]?.[3].mutationKey).toEqual(['todos', 'add'])
+    expect(onSuccess.mock.calls[0]?.[3].mutationKey).toStrictEqual(['todos', 'add'])
   })
 
   it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {

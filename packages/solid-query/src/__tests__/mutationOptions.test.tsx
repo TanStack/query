@@ -381,7 +381,7 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    expect(mutationStateArray[0]).toEqual([])
+    expect(mutationStateArray[0]).toStrictEqual([])
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
@@ -415,7 +415,7 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    expect(mutationStateArray[0]).toEqual([])
+    expect(mutationStateArray[0]).toStrictEqual([])
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
@@ -456,7 +456,7 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    expect(mutationStateArray[0]).toEqual([])
+    expect(mutationStateArray[0]).toStrictEqual([])
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
@@ -499,7 +499,7 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    expect(mutationStateArray[0]).toEqual([])
+    expect(mutationStateArray[0]).toStrictEqual([])
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))

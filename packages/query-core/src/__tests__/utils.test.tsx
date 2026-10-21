@@ -41,7 +41,7 @@ describe('core/utils', () => {
       const defaultResult = hashKey(key)
       const result = hashQueryKeyByOptions(key)
 
-      expect(result).toEqual(defaultResult)
+      expect(result).toStrictEqual(defaultResult)
     })
   })
 
@@ -237,7 +237,7 @@ describe('core/utils', () => {
       const prev = [1, 2]
       const next = [1, 2, 3]
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
     })
@@ -246,7 +246,7 @@ describe('core/utils', () => {
       const prev = [1, 2, 3]
       const next = [1, 2]
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
     })
@@ -273,7 +273,7 @@ describe('core/utils', () => {
       const prev = { a: { b: 'b' }, c: 'c' }
       const next = { a: { b: 'b' }, c: 'd' }
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
       expect(result.a).toBe(prev.a)
@@ -284,7 +284,7 @@ describe('core/utils', () => {
       const prev = [1, { a: 'a' }, { b: { b: 'b' } }, [1]] as const
       const next = [1, { a: 'a' }, { b: { b: 'c' } }, [1]] as const
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
       expect(result[0]).toBe(prev[0])
@@ -298,7 +298,7 @@ describe('core/utils', () => {
       const prev = [{ a: 'a' }, { b: 'b' }, { c: 'c' }]
       const next = [{ a: 'a' }, { b: 'b' }]
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
       expect(result[0]).toBe(prev[0])
@@ -310,7 +310,7 @@ describe('core/utils', () => {
       const prev = [{ a: 'a' }, { b: 'b' }]
       const next = [{ a: 'a' }, { b: 'b' }, { c: 'c' }]
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
       expect(result[0]).toBe(prev[0])
@@ -367,7 +367,7 @@ describe('core/utils', () => {
         otherTodo: { id: '2', meta: { createdAt: 0 }, state: { done: true } },
       }
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
       expect(result.todo).not.toBe(prev.todo)
@@ -393,7 +393,7 @@ describe('core/utils', () => {
         ],
       }
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
       expect(result.todos).not.toBe(prev.todos)
@@ -496,27 +496,27 @@ describe('core/utils', () => {
     it('should add item to the end of the array', () => {
       const items = [1, 2, 3]
       const newItems = addToEnd(items, 4)
-      expect(newItems).toEqual([1, 2, 3, 4])
+      expect(newItems).toStrictEqual([1, 2, 3, 4])
     })
 
     it('should not exceed max if provided', () => {
       const items = [1, 2, 3]
       const newItems = addToEnd(items, 4, 3)
-      expect(newItems).toEqual([2, 3, 4])
+      expect(newItems).toStrictEqual([2, 3, 4])
     })
 
     it('should add item to the end of the array when max = 0', () => {
       const items = [1, 2, 3]
       const item = 4
       const max = 0
-      expect(addToEnd(items, item, max)).toEqual([1, 2, 3, 4])
+      expect(addToEnd(items, item, max)).toStrictEqual([1, 2, 3, 4])
     })
 
     it('should add item to the end of the array when max is undefined', () => {
       const items = [1, 2, 3]
       const item = 4
       const max = undefined
-      expect(addToEnd(items, item, max)).toEqual([1, 2, 3, 4])
+      expect(addToEnd(items, item, max)).toStrictEqual([1, 2, 3, 4])
     })
   })
 
@@ -525,7 +525,7 @@ describe('core/utils', () => {
       const items = [1, 2, 3]
       const item = 4
       const newItems = addToStart(items, item)
-      expect(newItems).toEqual([4, 1, 2, 3])
+      expect(newItems).toStrictEqual([4, 1, 2, 3])
     })
 
     it('should respect the max argument', () => {
@@ -533,7 +533,7 @@ describe('core/utils', () => {
       const item = 4
       const max = 2
       const newItems = addToStart(items, item, max)
-      expect(newItems).toEqual([4, 1, 2])
+      expect(newItems).toStrictEqual([4, 1, 2])
     })
 
     it('should not remove any items if max = 0', () => {
@@ -541,7 +541,7 @@ describe('core/utils', () => {
       const item = 4
       const max = 0
       const newItems = addToStart(items, item, max)
-      expect(newItems).toEqual([4, 1, 2, 3])
+      expect(newItems).toStrictEqual([4, 1, 2, 3])
     })
 
     it('should not remove any items if max is undefined', () => {
@@ -549,15 +549,15 @@ describe('core/utils', () => {
       const item = 4
       const max = 0
       const newItems = addToStart(items, item, max)
-      expect(newItems).toEqual([4, 1, 2, 3])
+      expect(newItems).toStrictEqual([4, 1, 2, 3])
     })
   })
 
   describe('hashKey', () => {
     it('should hash primitives correctly', () => {
-      expect(hashKey(['test'])).toEqual(JSON.stringify(['test']))
-      expect(hashKey([123])).toEqual(JSON.stringify([123]))
-      expect(hashKey([null])).toEqual(JSON.stringify([null]))
+      expect(hashKey(['test'])).toStrictEqual(JSON.stringify(['test']))
+      expect(hashKey([123])).toStrictEqual(JSON.stringify([123]))
+      expect(hashKey([null])).toStrictEqual(JSON.stringify([null]))
     })
 
     it('should hash objects with sorted keys consistently', () => {
@@ -567,29 +567,29 @@ describe('core/utils', () => {
       const hash1 = hashKey(key1)
       const hash2 = hashKey(key2)
 
-      expect(hash1).toEqual(hash2)
-      expect(hash1).toEqual(JSON.stringify([{ a: 1, b: 2 }]))
+      expect(hash1).toStrictEqual(hash2)
+      expect(hash1).toStrictEqual(JSON.stringify([{ a: 1, b: 2 }]))
     })
 
     it('should hash arrays consistently', () => {
       const arr1 = [{ b: 2, a: 1 }, 'test', 123]
       const arr2 = [{ a: 1, b: 2 }, 'test', 123]
 
-      expect(hashKey(arr1)).toEqual(hashKey(arr2))
+      expect(hashKey(arr1)).toStrictEqual(hashKey(arr2))
     })
 
     it('should handle nested objects with sorted keys', () => {
       const nested1 = [{ a: { d: 4, c: 3 }, b: 2 }]
       const nested2 = [{ b: 2, a: { c: 3, d: 4 } }]
 
-      expect(hashKey(nested1)).toEqual(hashKey(nested2))
+      expect(hashKey(nested1)).toStrictEqual(hashKey(nested2))
     })
 
     it('should hash undefined object properties the same as missing properties', () => {
       const withUndefined = ['todos', { filters: undefined }]
       const withoutProperty = ['todos', {}]
 
-      expect(hashKey(withUndefined)).toEqual(hashKey(withoutProperty))
+      expect(hashKey(withUndefined)).toStrictEqual(hashKey(withoutProperty))
     })
   })
 

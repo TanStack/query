@@ -72,7 +72,7 @@ describe('createQueriesController', () => {
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
-    expect(consumer.queries()).toEqual([
+    expect(consumer.queries()).toStrictEqual([
       { status: 'pending', data: undefined },
       { status: 'pending', data: undefined },
     ])
@@ -89,7 +89,7 @@ describe('createQueriesController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]?.status).toBe('success')
     expect(consumer.queries()[1]?.status).toBe('success')
-    expect(consumer.queries().map((item) => item.data)).toEqual([
+    expect(consumer.queries().map((item) => item.data)).toStrictEqual([
       'alpha',
       'beta',
     ])
@@ -203,7 +203,7 @@ describe('createQueriesController', () => {
 
     expect(host.shadowRoot).toHaveTextContent('data: none, none')
     await vi.advanceTimersByTimeAsync(10)
-    expect(queries()).toEqual(['alpha', 'beta'])
+    expect(queries()).toStrictEqual(['alpha', 'beta'])
     expect(host.shadowRoot).toHaveTextContent('data: alpha, beta')
   })
 
@@ -604,7 +604,7 @@ describe('createQueriesController', () => {
     expect(queries()).toHaveLength(2)
     expect(queries()[0]?.status).toBe('success')
     expect(queries()[1]?.status).toBe('success')
-    expect(queries().map((item) => item.data)).toEqual(['alpha', 'gamma'])
+    expect(queries().map((item) => item.data)).toStrictEqual(['alpha', 'gamma'])
     expect(host.shadowRoot).toHaveTextContent(
       'results: success:alpha, success:gamma',
     )
@@ -639,13 +639,13 @@ describe('createQueriesController', () => {
     const queries = host.queries
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(queries()).toEqual(['first', 'second'])
+    expect(queries()).toStrictEqual(['first', 'second'])
     expect(host.shadowRoot).toHaveTextContent('data: first, second')
 
     order = ['second', 'first']
     host.requestUpdate()
     await host.updateComplete
-    expect(queries()).toEqual(['second', 'first'])
+    expect(queries()).toStrictEqual(['second', 'first'])
     expect(host.shadowRoot).toHaveTextContent('data: second, first')
   })
 
@@ -774,7 +774,7 @@ describe('createQueriesController', () => {
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
-    expect(consumer.queries()).toEqual([
+    expect(consumer.queries()).toStrictEqual([
       { status: 'pending', data: undefined },
       { status: 'pending', data: undefined },
     ])
@@ -796,7 +796,7 @@ describe('createQueriesController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]?.status).toBe('success')
     expect(consumer.queries()[1]?.status).toBe('success')
-    expect(consumer.queries().map((item) => item.data)).toEqual([
+    expect(consumer.queries().map((item) => item.data)).toStrictEqual([
       'alpha',
       'beta',
     ])
@@ -862,7 +862,7 @@ describe('createQueriesController', () => {
     expect(() => new DeferredFieldsQueriesHost()).not.toThrow()
 
     const host = new DeferredFieldsQueriesHost()
-    expect(host.queries()).toEqual(['pending', 'pending'])
+    expect(host.queries()).toStrictEqual(['pending', 'pending'])
   })
 
   it('should re-surface permanent placeholder combine errors after initialization', async () => {
@@ -943,7 +943,7 @@ describe('createQueriesController', () => {
     const host = new Host()
     const queries = host.queries
 
-    expect(queries()).toEqual({ data: 'seed', dataUpdatedAt: 1000 })
+    expect(queries()).toStrictEqual({ data: 'seed', dataUpdatedAt: 1000 })
 
     queries.destroy()
   })
@@ -1000,11 +1000,11 @@ describe('createQueriesController', () => {
     expect(() => new DeferredExplicitQueriesHost()).not.toThrow()
 
     const host = new DeferredExplicitQueriesHost()
-    expect(host.queries()).toEqual(['pending', 'pending'])
+    expect(host.queries()).toStrictEqual(['pending', 'pending'])
 
     container.append(host)
     await vi.advanceTimersByTimeAsync(10)
-    expect(host.queries()).toEqual(['success', 'success'])
+    expect(host.queries()).toStrictEqual(['success', 'success'])
 
     host.queries.destroy()
   })
@@ -1041,11 +1041,11 @@ describe('createQueriesController', () => {
     expect(() => new DeferredExplicitCombineQueriesHost()).not.toThrow()
 
     const host = new DeferredExplicitCombineQueriesHost()
-    expect(host.queries()).toEqual(['alpha:pending'])
+    expect(host.queries()).toStrictEqual(['alpha:pending'])
 
     container.append(host)
     await vi.advanceTimersByTimeAsync(10)
-    expect(host.queries()).toEqual(['alpha:success'])
+    expect(host.queries()).toStrictEqual(['alpha:success'])
 
     host.queries.destroy()
   })
@@ -1169,12 +1169,12 @@ describe('createQueriesController', () => {
       queryClient,
     )
     const queries = host.queries
-    expect(queries()).toEqual([
+    expect(queries()).toStrictEqual([
       { status: 'success', data: 'alpha' },
       { status: 'success', data: 'beta' },
     ])
     await vi.advanceTimersByTimeAsync(10)
-    expect(queries()).toEqual([
+    expect(queries()).toStrictEqual([
       { status: 'success', data: 'alpha' },
       { status: 'success', data: 'beta' },
     ])

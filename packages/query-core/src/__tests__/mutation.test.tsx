@@ -64,7 +64,7 @@ describe('mutation', () => {
       onMutate: (text) => text,
     })
 
-    expect(mutation.getCurrentResult()).toEqual({
+    expect(mutation.getCurrentResult()).toStrictEqual({
       context: undefined,
       data: undefined,
       error: null,
@@ -90,7 +90,7 @@ describe('mutation', () => {
 
     mutation.mutate('todo')
     await vi.advanceTimersByTimeAsync(0)
-    expect(states[0]).toEqual({
+    expect(states[0]).toStrictEqual({
       context: undefined,
       data: undefined,
       error: null,
@@ -108,7 +108,7 @@ describe('mutation', () => {
       submittedAt: expect.any(Number),
     })
     await vi.advanceTimersByTimeAsync(0)
-    expect(states[1]).toEqual({
+    expect(states[1]).toStrictEqual({
       context: 'todo',
       data: undefined,
       error: null,
@@ -126,7 +126,7 @@ describe('mutation', () => {
       submittedAt: expect.any(Number),
     })
     await vi.advanceTimersByTimeAsync(10)
-    expect(states[2]).toEqual({
+    expect(states[2]).toStrictEqual({
       context: 'todo',
       data: 'todo',
       error: null,
@@ -162,7 +162,7 @@ describe('mutation', () => {
 
     mutation.mutate('todo').catch(() => undefined)
     await vi.advanceTimersByTimeAsync(0)
-    expect(states[0]).toEqual({
+    expect(states[0]).toStrictEqual({
       context: undefined,
       data: undefined,
       error: null,
@@ -180,7 +180,7 @@ describe('mutation', () => {
       submittedAt: expect.any(Number),
     })
     await vi.advanceTimersByTimeAsync(0)
-    expect(states[1]).toEqual({
+    expect(states[1]).toStrictEqual({
       context: 'todo',
       data: undefined,
       error: null,
@@ -198,7 +198,7 @@ describe('mutation', () => {
       submittedAt: expect.any(Number),
     })
     await vi.advanceTimersByTimeAsync(20)
-    expect(states[2]).toEqual({
+    expect(states[2]).toStrictEqual({
       context: 'todo',
       data: undefined,
       error: null,
@@ -216,7 +216,7 @@ describe('mutation', () => {
       submittedAt: expect.any(Number),
     })
     await vi.advanceTimersByTimeAsync(30)
-    expect(states[3]).toEqual({
+    expect(states[3]).toStrictEqual({
       context: 'todo',
       data: undefined,
       error: new Error('err'),
@@ -269,7 +269,7 @@ describe('mutation', () => {
         },
       )
 
-    expect(mutation.state).toEqual({
+    expect(mutation.state).toStrictEqual({
       context: 'todo',
       data: undefined,
       error: null,
@@ -284,7 +284,7 @@ describe('mutation', () => {
     void queryClient.resumePausedMutations()
 
     // check that the mutation is correctly resumed
-    expect(mutation.state).toEqual({
+    expect(mutation.state).toStrictEqual({
       context: 'todo',
       data: undefined,
       error: null,
@@ -296,7 +296,7 @@ describe('mutation', () => {
       submittedAt: 1,
     })
     await vi.advanceTimersByTimeAsync(10)
-    expect(mutation.state).toEqual({
+    expect(mutation.state).toStrictEqual({
       context: 'todo',
       data: 'todo',
       error: null,
@@ -353,7 +353,7 @@ describe('mutation', () => {
     } catch (err) {
       error = err
     }
-    expect(error).toEqual(new Error('No mutationFn found'))
+    expect(error).toStrictEqual(new Error('No mutationFn found'))
   })
 
   it('should update the mutation state with mutate even without an active subscription 1', async () => {
@@ -861,7 +861,7 @@ describe('mutation', () => {
         'vars',
       )
       await vi.advanceTimersByTimeAsync(0)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate-sync',
         'onSuccess-implicit-void',
         'onSettled-return-value',
@@ -896,7 +896,7 @@ describe('mutation', () => {
         'vars',
       )
       await vi.advanceTimersByTimeAsync(30)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate-async',
         'onSuccess-async-start',
         'onSuccess-async-end',
@@ -933,7 +933,7 @@ describe('mutation', () => {
         'vars',
       )
       await vi.advanceTimersByTimeAsync(30)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onSuccess-start',
         'track-analytics',
         'invalidate-queries',
@@ -982,7 +982,7 @@ describe('mutation', () => {
       // Verify mutation returns its own result, not callback returns
       expect(mutationResult).toBe('actual-result')
       console.log(results)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'sync-onMutate',
         'async-onSuccess',
         'settled-onMutateResult-data',
@@ -1029,7 +1029,7 @@ describe('mutation', () => {
         mutationError = error
       })
       await vi.advanceTimersByTimeAsync(30)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate',
         'onError-async',
         'error-cleanup-1',
@@ -1037,7 +1037,7 @@ describe('mutation', () => {
         'settled-error-error-data',
       ])
 
-      expect(mutationError).toEqual(newMutationError)
+      expect(mutationError).toStrictEqual(newMutationError)
     })
   })
 
@@ -1088,14 +1088,14 @@ describe('mutation', () => {
         mutationError = error
       })
       await vi.advanceTimersByTimeAsync(30)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate-async',
         'onError-async-start',
         'onError-async-end',
         'onSettled-promise',
       ])
 
-      expect(mutationError).toEqual(newMutationError)
+      expect(mutationError).toStrictEqual(newMutationError)
     })
 
     it('should trigger onError callback on error by mutations onSuccess', async () => {
@@ -1135,7 +1135,7 @@ describe('mutation', () => {
         mutationError = error
       })
       await vi.advanceTimersByTimeAsync(30)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate-async',
         'onSuccess-async-start',
         'onError-async-start',
@@ -1143,7 +1143,7 @@ describe('mutation', () => {
         'onSettled-promise',
       ])
 
-      expect(mutationError).toEqual(newMutationError)
+      expect(mutationError).toStrictEqual(newMutationError)
     })
 
     it('should trigger onError callback on error by global onSettled, calling global onSettled callback twice', async ({
@@ -1201,7 +1201,7 @@ describe('mutation', () => {
         mutationError = error
       })
       await vi.advanceTimersByTimeAsync(50)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate-async',
         'onSuccess-async-start',
         'onSuccess-async-end',
@@ -1219,7 +1219,7 @@ describe('mutation', () => {
         expect.any(Promise),
       )
 
-      expect(mutationError).toEqual(newMutationError)
+      expect(mutationError).toStrictEqual(newMutationError)
     })
 
     it('should trigger onError callback on error by mutations onSettled, calling both onSettled callbacks twice', async ({
@@ -1268,7 +1268,7 @@ describe('mutation', () => {
         mutationError = error
       })
       await vi.advanceTimersByTimeAsync(50)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate-async',
         'onSuccess-async-start',
         'onSuccess-async-end',
@@ -1285,7 +1285,7 @@ describe('mutation', () => {
         expect.any(Promise),
       )
 
-      expect(mutationError).toEqual(newMutationError)
+      expect(mutationError).toStrictEqual(newMutationError)
     })
 
     it('should transfer errors by onError and consecutive onSettled callbacks to different execution context where they are reported', async ({
@@ -1349,13 +1349,13 @@ describe('mutation', () => {
         mutationError = error
       })
       await vi.advanceTimersByTimeAsync(30)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate-async',
         'onError-async-start',
         'onSettled-promise',
       ])
 
-      expect(mutationError).toEqual(newMutationError)
+      expect(mutationError).toStrictEqual(newMutationError)
 
       expect(unhandledRejectionFn).toHaveBeenCalledTimes(4)
       expect(unhandledRejectionFn).toHaveBeenNthCalledWith(

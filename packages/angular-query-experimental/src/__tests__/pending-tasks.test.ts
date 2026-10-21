@@ -97,7 +97,7 @@ describe('PendingTasks Integration', () => {
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
       expect(query.status()).toBe('error')
-      expect(query.error()).toEqual(new Error('instant-error'))
+      expect(query.error()).toStrictEqual(new Error('instant-error'))
     })
 
     it('should handle synchronous mutationFn with whenStable()', async () => {
@@ -146,7 +146,7 @@ describe('PendingTasks Integration', () => {
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
       expect(mutation.isError()).toBe(true)
-      expect(mutation.error()).toEqual(new Error('sync-mutation-error'))
+      expect(mutation.error()).toStrictEqual(new Error('sync-mutation-error'))
     })
   })
 
@@ -486,9 +486,9 @@ describe('PendingTasks Integration', () => {
       await vi.advanceTimersByTimeAsync(20)
       await stablePromise
       expect(query1.status()).toBe('success')
-      expect(query1.data()).toEqual({ id: 1 })
+      expect(query1.data()).toStrictEqual({ id: 1 })
       expect(query2.status()).toBe('success')
-      expect(query2.data()).toEqual({ id: 2 })
+      expect(query2.data()).toStrictEqual({ id: 2 })
 
       httpTestingController.verify()
     })

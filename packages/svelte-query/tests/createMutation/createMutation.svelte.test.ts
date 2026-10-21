@@ -62,7 +62,7 @@ describe('createMutation', () => {
         onSettled: () => callbacks.push('mutate.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutate.onSuccess', 'mutate.onSettled'])
+      expect(callbacks).toStrictEqual(['mutate.onSuccess', 'mutate.onSettled'])
     }),
   )
 
@@ -84,7 +84,7 @@ describe('createMutation', () => {
         onSettled: () => callbacks.push('mutate.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutate.onError', 'mutate.onSettled'])
+      expect(callbacks).toStrictEqual(['mutate.onError', 'mutate.onSettled'])
     }),
   )
 
@@ -104,7 +104,7 @@ describe('createMutation', () => {
         onSuccess: () => callbacks.push('mutate.onSuccess'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutate.onSuccess'])
+      expect(callbacks).toStrictEqual(['mutate.onSuccess'])
     }),
   )
 
@@ -125,7 +125,7 @@ describe('createMutation', () => {
         onError: () => callbacks.push('mutate.onError'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutate.onError'])
+      expect(callbacks).toStrictEqual(['mutate.onError'])
     }),
   )
 
@@ -145,7 +145,7 @@ describe('createMutation', () => {
         onSettled: () => callbacks.push('mutate.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutate.onSettled'])
+      expect(callbacks).toStrictEqual(['mutate.onSettled'])
     }),
   )
 
@@ -166,7 +166,7 @@ describe('createMutation', () => {
         onSettled: () => callbacks.push('mutateAsync.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual([
+      expect(callbacks).toStrictEqual([
         'mutateAsync.onSuccess',
         'mutateAsync.onSettled',
       ])
@@ -193,7 +193,7 @@ describe('createMutation', () => {
         })
         .catch(noop)
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual([
+      expect(callbacks).toStrictEqual([
         'mutateAsync.onError',
         'mutateAsync.onSettled',
       ])
@@ -216,7 +216,7 @@ describe('createMutation', () => {
         onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutateAsync.onSuccess'])
+      expect(callbacks).toStrictEqual(['mutateAsync.onSuccess'])
     }),
   )
 
@@ -239,7 +239,7 @@ describe('createMutation', () => {
         })
         .catch(noop)
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutateAsync.onError'])
+      expect(callbacks).toStrictEqual(['mutateAsync.onError'])
     }),
   )
 
@@ -259,7 +259,7 @@ describe('createMutation', () => {
         onSettled: () => callbacks.push('mutateAsync.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutateAsync.onSettled'])
+      expect(callbacks).toStrictEqual(['mutateAsync.onSettled'])
     }),
   )
 
@@ -351,7 +351,7 @@ describe('createMutation', () => {
         onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual([
+      expect(callbacks).toStrictEqual([
         'useMutation.onSuccess',
         'mutateAsync.onSuccess',
       ])
@@ -378,7 +378,7 @@ describe('createMutation', () => {
         })
         .catch(noop)
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['useMutation.onError', 'mutateAsync.onError'])
+      expect(callbacks).toStrictEqual(['useMutation.onError', 'mutateAsync.onError'])
     }),
   )
 
@@ -399,7 +399,7 @@ describe('createMutation', () => {
         onSettled: () => callbacks.push('mutateAsync.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual([
+      expect(callbacks).toStrictEqual([
         'useMutation.onSettled',
         'mutateAsync.onSettled',
       ])
@@ -429,7 +429,7 @@ describe('createMutation', () => {
         })
         .then((result) => callbacks.push(`mutateAsync.result:${result}`))
       await vi.advanceTimersByTimeAsync(30)
-      expect(callbacks).toEqual([
+      expect(callbacks).toStrictEqual([
         'useMutation.onSuccess',
         'useMutation.onSettled',
         'mutateAsync.onSuccess',
@@ -465,7 +465,7 @@ describe('createMutation', () => {
           callbacks.push(`mutateAsync.error:${(error as Error).message}`),
         )
       await vi.advanceTimersByTimeAsync(30)
-      expect(callbacks).toEqual([
+      expect(callbacks).toStrictEqual([
         'useMutation.onError',
         'useMutation.onSettled',
         'mutateAsync.onError',
@@ -514,9 +514,9 @@ describe('createMutation', () => {
     // The optimistic value lands after onMutate's first await, so flush
     // microtasks before asserting.
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+    expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1', 'Todo 2'])
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
+    expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1'])
   })
 
   it('should keep the optimistic update in place when the mutation succeeds', async () => {
@@ -529,7 +529,7 @@ describe('createMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /add/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+    expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1', 'Todo 2'])
   })
 
   it('should pass a non-undefined onMutateResult alongside context to onSuccess', async () => {
@@ -546,7 +546,7 @@ describe('createMutation', () => {
       onSuccessMock.mock.calls[0]!
     expect(data).toBe('TODO')
     expect(variables).toBe('todo')
-    expect(onMutateResult).toEqual({ startedWith: 'todo' })
+    expect(onMutateResult).toStrictEqual({ startedWith: 'todo' })
     expect(context.client).toBe(queryClient)
     expect(context.meta).toBeUndefined()
     expect(context.mutationKey).toBeUndefined()
@@ -562,7 +562,7 @@ describe('createMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
     expect(onSuccessMock).toHaveBeenCalledTimes(1)
-    expect(onSuccessMock.mock.calls[0]?.[3].mutationKey).toEqual([
+    expect(onSuccessMock.mock.calls[0]?.[3].mutationKey).toStrictEqual([
       'todos',
       'add',
     ])

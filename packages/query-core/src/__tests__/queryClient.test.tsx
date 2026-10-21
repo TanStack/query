@@ -371,7 +371,7 @@ describe('queryClient', () => {
         (old) => (old ? old + 5 : undefined),
       )
 
-      expect(result).toEqual([
+      expect(result).toStrictEqual([
         [['key', 1], 6],
         [['key', 2], 7],
       ])
@@ -389,7 +389,7 @@ describe('queryClient', () => {
         (old) => old! + 5,
       )
 
-      expect(result).toEqual([[['key', 1], 6]])
+      expect(result).toStrictEqual([[['key', 1], 6]])
       expect(queryClient.getQueryData(['key', 1])).toBe(6)
       expect(queryClient.getQueryData(['key', 2])).toBe(2)
     })
@@ -400,7 +400,7 @@ describe('queryClient', () => {
         'data',
       )
 
-      expect(result).toEqual([])
+      expect(result).toStrictEqual([])
       expect(queryClient.getQueryData(['key'])).toBeUndefined()
     })
   })
@@ -654,7 +654,7 @@ describe('queryClient', () => {
           initialPageParam: 1,
           getNextPageParam: () => undefined,
         }),
-      ).resolves.toEqual({ pages: ['bar'], pageParams: [0] })
+      ).resolves.toStrictEqual({ pages: ['bar'], pageParams: [0] })
     })
 
     it('should fetch the query and return its results if the query is not found', async () => {
@@ -669,7 +669,7 @@ describe('queryClient', () => {
           initialPageParam: 1,
           getNextPageParam: () => undefined,
         }),
-      ).resolves.toEqual({ pages: ['data'], pageParams: [1] })
+      ).resolves.toStrictEqual({ pages: ['data'], pageParams: [1] })
     })
 
     it('should return the cached query data if the query is found and preFetchQuery in the background when revalidateIfStale is set', async () => {
@@ -688,7 +688,7 @@ describe('queryClient', () => {
           getNextPageParam: () => undefined,
           revalidateIfStale: true,
         }),
-      ).resolves.toEqual({ pages: ['old'], pageParams: [0] })
+      ).resolves.toStrictEqual({ pages: ['old'], pageParams: [0] })
       await vi.advanceTimersByTimeAsync(TIMEOUT + 10)
       await expect(
         // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
@@ -699,7 +699,7 @@ describe('queryClient', () => {
           getNextPageParam: () => undefined,
           revalidateIfStale: true,
         }),
-      ).resolves.toEqual({ pages: ['new'], pageParams: [0] })
+      ).resolves.toStrictEqual({ pages: ['new'], pageParams: [0] })
     })
   })
 
@@ -720,7 +720,7 @@ describe('queryClient', () => {
           initialPageParam: 1,
           getNextPageParam: () => undefined,
         }),
-      ).resolves.toEqual({ pages: ['bar'], pageParams: [0] })
+      ).resolves.toStrictEqual({ pages: ['bar'], pageParams: [0] })
       expect(queryFn).not.toHaveBeenCalled()
     })
 
@@ -736,7 +736,7 @@ describe('queryClient', () => {
           initialPageParam: 1,
           getNextPageParam: () => undefined,
         }),
-      ).resolves.toEqual({ pages: ['data'], pageParams: [1] })
+      ).resolves.toStrictEqual({ pages: ['data'], pageParams: [1] })
       expect(queryFn).toHaveBeenCalledTimes(1)
     })
   })
@@ -748,7 +748,7 @@ describe('queryClient', () => {
       queryClient.setQueryData([key1, 1], 1)
       queryClient.setQueryData([key1, 2], 2)
       queryClient.setQueryData([key2, 2], 2)
-      expect(queryClient.getQueriesData({ queryKey: [key1] })).toEqual([
+      expect(queryClient.getQueriesData({ queryKey: [key1] })).toStrictEqual([
         [[key1, 1], 1],
         [[key1, 2], 2],
       ])
@@ -756,7 +756,7 @@ describe('queryClient', () => {
 
     it('should return empty array if queries are not found', () => {
       const key = queryKey()
-      expect(queryClient.getQueriesData({ queryKey: key })).toEqual([])
+      expect(queryClient.getQueriesData({ queryKey: key })).toStrictEqual([])
     })
 
     it('should accept query filters', () => {
@@ -768,7 +768,7 @@ describe('queryClient', () => {
         predicate: (query) => query === query1,
       })
 
-      expect(result).toEqual([[['key', 1], 1]])
+      expect(result).toStrictEqual([[['key', 1], 1]])
     })
   })
 
@@ -803,7 +803,7 @@ describe('queryClient', () => {
             throw new Error('error')
           },
         }),
-      ).rejects.toEqual(new Error('error'))
+      ).rejects.toStrictEqual(new Error('error'))
     })
 
     it('should return the cached data on cache hit', async () => {
@@ -994,7 +994,7 @@ describe('queryClient', () => {
             throw new Error('error')
           },
         }),
-      ).rejects.toEqual(new Error('error'))
+      ).rejects.toStrictEqual(new Error('error'))
     })
 
     it('should return the cached data on cache hit', async () => {
@@ -1340,7 +1340,7 @@ describe('queryClient', () => {
             throw new Error('error')
           },
         }),
-      ).rejects.toEqual(new Error('error'))
+      ).rejects.toStrictEqual(new Error('error'))
     })
 
     it('should apply select when data is fresh in cache', async () => {
@@ -1397,7 +1397,7 @@ describe('queryClient', () => {
           StrictQueryKey,
           number
         >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 }),
-      ).resolves.toEqual(data)
+      ).resolves.toStrictEqual(data)
     })
 
     it('should return infinite query data', async () => {
@@ -1415,8 +1415,8 @@ describe('queryClient', () => {
         pageParams: [10],
       }
 
-      expect(result).toEqual(expected)
-      expect(result2).toEqual(expected)
+      expect(result).toStrictEqual(expected)
+      expect(result2).toStrictEqual(expected)
     })
   })
 
@@ -1442,7 +1442,7 @@ describe('queryClient', () => {
           StrictQueryKey,
           number
         >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 }),
-      ).resolves.toEqual(data)
+      ).resolves.toStrictEqual(data)
     })
 
     it('should return infinite query data', async () => {
@@ -1459,8 +1459,8 @@ describe('queryClient', () => {
         pageParams: [10],
       }
 
-      expect(result).toEqual(expected)
-      expect(result2).toEqual(expected)
+      expect(result).toStrictEqual(expected)
+      expect(result2).toStrictEqual(expected)
     })
 
     it('should fetch when disabled', async () => {
@@ -1477,7 +1477,7 @@ describe('queryClient', () => {
           // @ts-expect-error enabled is not supported for imperative queries
           enabled: false,
         }),
-      ).resolves.toEqual({ pages: [0], pageParams: [0] })
+      ).resolves.toStrictEqual({ pages: [0], pageParams: [0] })
 
       expect(queryFn).toHaveBeenCalledTimes(1)
     })
@@ -1501,7 +1501,7 @@ describe('queryClient', () => {
         enabled: false,
         select: (data) => data.pages.map((page) => `${page}-selected`),
       })
-      expect(result).toEqual(["'fetched-0-selected"])
+      expect(result).toStrictEqual(["'fetched-0-selected"])
       expect(queryFn).toHaveBeenCalledTimes(1)
     })
 
@@ -1519,7 +1519,7 @@ describe('queryClient', () => {
         initialPageParam: 0,
         staleTime: 'static',
       })
-      expect(result).toEqual({
+      expect(result).toStrictEqual({
         pages: ['page-1'],
         pageParams: [0],
       })
@@ -1586,7 +1586,7 @@ describe('queryClient', () => {
         initialPageParam: 0,
         staleTime,
       })
-      expect(result).toEqual({
+      expect(result).toStrictEqual({
         pages: [{ value: 'new-page-0', staleTime: 0 }],
         pageParams: [0],
       })
@@ -1606,7 +1606,7 @@ describe('queryClient', () => {
         initialPageParam: 0,
         staleTime: 'static',
       })
-      expect(first).toEqual({
+      expect(first).toStrictEqual({
         pages: [{ value: 'fetched-0' }],
         pageParams: [0],
       })
@@ -1636,7 +1636,7 @@ describe('queryClient', () => {
         queryFn: ({ pageParam }) => Number(pageParam),
         select: (data) => data.pages.map((page) => page * 2),
       })
-      expect(result).toEqual([20])
+      expect(result).toStrictEqual([20])
     })
   })
 
@@ -1661,7 +1661,7 @@ describe('queryClient', () => {
 
       const result = queryClient.getQueryData(key)
 
-      expect(result).toEqual({
+      expect(result).toStrictEqual({
         pages: ['data'],
         pageParams: [0],
       })
@@ -1679,7 +1679,7 @@ describe('queryClient', () => {
 
       const result = queryClient.getQueryData(key)
 
-      expect(result).toEqual({
+      expect(result).toStrictEqual({
         pages: [10],
         pageParams: [10],
       })
@@ -1700,7 +1700,7 @@ describe('queryClient', () => {
 
       const result = queryClient.getQueryData(key)
 
-      expect(result).toEqual({
+      expect(result).toStrictEqual({
         pages: ['10', '15', '20'],
         pageParams: [10, 15, 20],
       })
@@ -1724,7 +1724,7 @@ describe('queryClient', () => {
 
       const result = queryClient.getQueryData(key)
 
-      expect(result).toEqual({
+      expect(result).toStrictEqual({
         pages: ['10', '15', '20'],
         pageParams: [10, 15, 20],
       })
@@ -1753,7 +1753,7 @@ describe('queryClient', () => {
 
       const result = queryClient.getQueryData(key)
 
-      expect(result).toEqual({
+      expect(result).toStrictEqual({
         pages: ['data'],
         pageParams: [0],
       })
@@ -1772,7 +1772,7 @@ describe('queryClient', () => {
 
       const result = queryClient.getQueryData(key)
 
-      expect(result).toEqual({
+      expect(result).toStrictEqual({
         pages: [10],
         pageParams: [10],
       })
@@ -1794,7 +1794,7 @@ describe('queryClient', () => {
 
       const result = queryClient.getQueryData(key)
 
-      expect(result).toEqual({
+      expect(result).toStrictEqual({
         pages: ['10', '15', '20'],
         pageParams: [10, 15, 20],
       })
@@ -1819,7 +1819,7 @@ describe('queryClient', () => {
 
       const result = queryClient.getQueryData(key)
 
-      expect(result).toEqual({
+      expect(result).toStrictEqual({
         pages: ['10', '15', '20'],
         pageParams: [10, 15, 20],
       })
@@ -2823,7 +2823,7 @@ describe('queryClient', () => {
       expect(observer1.getCurrentResult().status).toBe('success')
       expect(observer2.getCurrentResult().status).toBe('success')
 
-      expect(orders).toEqual(['1start', '2start', '2end', '1end'])
+      expect(orders).toStrictEqual(['1start', '2start', '2end', '1end'])
     })
 
     it('should resume paused mutations one after the other when in the same scope when invoked manually at the same time', async () => {
@@ -2867,7 +2867,7 @@ describe('queryClient', () => {
       expect(observer1.getCurrentResult().status).toBe('success')
       expect(observer2.getCurrentResult().status).toBe('success')
 
-      expect(orders).toEqual(['1start', '1end', '2start', '2end'])
+      expect(orders).toStrictEqual(['1start', '1end', '2start', '2end'])
     })
 
     it('should resumePausedMutations when coming online after having called resumePausedMutations while offline', async () => {

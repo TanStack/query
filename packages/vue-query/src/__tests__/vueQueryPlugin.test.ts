@@ -124,7 +124,7 @@ describe('VueQueryPlugin', () => {
 
       appMock.unmount()
 
-      expect(appMock.unmount).not.toEqual(originalUnmount)
+      expect(appMock.unmount).not.toStrictEqual(originalUnmount)
       expect(customClient.unmount).toHaveBeenCalledTimes(1)
       expect(originalUnmount).toHaveBeenCalledTimes(1)
     })
@@ -140,7 +140,7 @@ describe('VueQueryPlugin', () => {
 
       appMock._unmount()
 
-      expect(appMock.unmount).toEqual(originalUnmount)
+      expect(appMock.unmount).toStrictEqual(originalUnmount)
       expect(customClient.unmount).toHaveBeenCalledTimes(1)
     })
   })
@@ -265,7 +265,7 @@ describe('VueQueryPlugin', () => {
         const client = appMock._provided.VUE_QUERY_CLIENT as QueryClient
         const defaultOptions = client.getDefaultOptions()
 
-        expect(defaultOptions).toEqual(config.defaultOptions)
+        expect(defaultOptions).toStrictEqual(config.defaultOptions)
       },
     )
 
@@ -284,7 +284,7 @@ describe('VueQueryPlugin', () => {
           .calls[0]?.[1] as QueryClient
         const defaultOptions = client.getDefaultOptions()
 
-        expect(defaultOptions).toEqual(config.defaultOptions)
+        expect(defaultOptions).toStrictEqual(config.defaultOptions)
       },
     )
   })

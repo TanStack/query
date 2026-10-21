@@ -107,7 +107,7 @@ describe('useQuery', () => {
 
     expect(states).toHaveLength(2)
 
-    expect(states[0]).toEqual({
+    expect(states[0]).toStrictEqual({
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -135,7 +135,7 @@ describe('useQuery', () => {
       fetchStatus: 'fetching',
     })
 
-    expect(states[1]).toEqual({
+    expect(states[1]).toStrictEqual({
       data: 'test',
       dataUpdatedAt: expect.any(Number),
       error: null,
@@ -196,7 +196,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('Status: error')).toBeInTheDocument()
 
-    expect(states[0]).toEqual({
+    expect(states[0]).toStrictEqual({
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -224,7 +224,7 @@ describe('useQuery', () => {
       fetchStatus: 'fetching',
     })
 
-    expect(states[1]).toEqual({
+    expect(states[1]).toStrictEqual({
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -252,7 +252,7 @@ describe('useQuery', () => {
       fetchStatus: 'fetching',
     })
 
-    expect(states[2]).toEqual({
+    expect(states[2]).toStrictEqual({
       data: undefined,
       dataUpdatedAt: 0,
       error: new Error('rejected'),
@@ -911,8 +911,8 @@ describe('useQuery', () => {
     const newTodo1 = newTodos?.[0]
     const newTodo2 = newTodos?.[1]
 
-    expect(todos).toEqual(result1)
-    expect(newTodos).toEqual(result2)
+    expect(todos).toStrictEqual(result1)
+    expect(newTodos).toStrictEqual(result2)
     expect(newTodo1).toBe(todo1)
     expect(newTodo2).toBe(todo2)
 
@@ -4755,7 +4755,7 @@ describe('useQuery', () => {
       ).toBeInTheDocument()
       expect(rendered.getByText('data: data')).toBeInTheDocument()
 
-      expect(states).toEqual(['paused', 'fetching', 'idle'])
+      expect(states).toStrictEqual(['paused', 'fetching', 'idle'])
     })
 
     it('should not refetch online queries if you are offline', async () => {

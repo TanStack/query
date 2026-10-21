@@ -163,7 +163,7 @@ describe('createQueryController', () => {
     expect(host.shadowRoot).toHaveTextContent('name: none')
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
-    expect(query().data).toEqual({ id: 1, name: 'Ada' })
+    expect(query().data).toStrictEqual({ id: 1, name: 'Ada' })
     expect(callCount).toBe(1)
     expect(host.shadowRoot).toHaveTextContent('name: Ada')
   })
@@ -782,7 +782,7 @@ describe('createQueryController', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isError).toBe(true)
-    expect(query().error).toEqual(new Error('select-failed'))
+    expect(query().error).toStrictEqual(new Error('select-failed'))
     expect(host.shadowRoot).toHaveTextContent(
       'status: error, error: select-failed',
     )
@@ -1308,7 +1308,7 @@ describe('createQueryController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     const cacheQuery = queryClient.getQueryCache().find({ queryKey: key })
-    expect(cacheQuery?.state.data).toEqual(['a', 'b'])
+    expect(cacheQuery?.state.data).toStrictEqual(['a', 'b'])
     expect(cacheQuery?.getObserversCount()).toBe(1)
 
     host.remove()
@@ -1703,7 +1703,7 @@ describe('createQueryController', () => {
         .getQueryCache()
         .findAll({ queryKey: key })
         .map((query) => query.queryKey),
-    ).toEqual([[...key, 'alpha']])
+    ).toStrictEqual([[...key, 'alpha']])
 
     host.query.destroy()
   })
