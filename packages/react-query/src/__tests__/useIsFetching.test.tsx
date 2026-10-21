@@ -241,6 +241,6 @@ describe('useIsFetching', () => {
     expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
-    expect(onSuccess).toHaveBeenCalledOnce()
+    expect(onSuccess).toHaveBeenCalledTimes(1)
   })
 })

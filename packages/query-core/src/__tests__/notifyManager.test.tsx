@@ -46,7 +46,7 @@ describe('notifyManager', () => {
 
     notifyManagerTest.batch(() => notifyManagerTest.schedule(vi.fn))
 
-    expect(customCallback).toHaveBeenCalledOnce()
+    expect(customCallback).toHaveBeenCalledTimes(1)
     await vi.advanceTimersByTimeAsync(0)
     expect(notifySpy).toHaveBeenCalledTimes(1)
   })
