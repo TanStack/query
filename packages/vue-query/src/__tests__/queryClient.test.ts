@@ -496,7 +496,7 @@ describe('QueryCache', () => {
         select: ref(select),
       })
 
-      expect(QueryClientOrigin.prototype.infiniteQuery).toBeCalledWith(
+      expect(QueryClientOrigin.prototype.infiniteQuery).toHaveBeenCalledWith(
         expect.objectContaining({
           queryKey: queryKeyUnref,
           initialPageParam: 0,

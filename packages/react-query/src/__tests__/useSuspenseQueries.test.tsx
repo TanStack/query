@@ -72,7 +72,7 @@ describe('useSuspenseQueries', () => {
       </React.Suspense>,
     )
 
-    expect(onSuspend).toHaveBeenCalledOnce()
+    expect(onSuspend).toHaveBeenCalledTimes(1)
   })
 
   it('should resolve queries', async () => {
