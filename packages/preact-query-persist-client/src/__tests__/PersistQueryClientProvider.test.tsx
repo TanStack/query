@@ -3,7 +3,15 @@
 import '@testing-library/jest-dom/vitest'
 
 import { act, cleanup, render } from '@testing-library/preact'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, useQuery } from '../../../preact-query/src'
 import { noop, notifyManager } from '../../../query-core/src'
@@ -16,8 +24,10 @@ import type {
   Persister,
 } from '../../../query-persist-client-core/src'
 
-notifyManager.setNotifyFunction((fn) => {
-  act(fn)
+beforeAll(() => {
+  notifyManager.setNotifyFunction((fn) => {
+    act(fn)
+  })
 })
 
 const createMockPersister = (): Persister => {
