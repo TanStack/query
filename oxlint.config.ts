@@ -299,6 +299,7 @@ export default defineConfig({
         'vitest/prefer-comparison-matcher': 'error',
         'vitest/prefer-equality-matcher': 'error',
         'vitest/prefer-strict-boolean-matchers': 'error',
+        'vitest/prefer-to-contain': 'error',
         'vitest/prefer-to-have-been-called-times': 'error',
         'vitest/require-awaited-expect-poll': 'error',
         'vitest/require-to-throw-message': 'error',
