@@ -6,11 +6,11 @@ import {
   createMemo,
   createRenderEffect,
   createResource,
+  createSignal,
   mergeProps,
   on,
   onCleanup,
   onMount,
-  untrack,
 } from 'solid-js'
 import { useQueryClientResolver } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
@@ -299,21 +299,17 @@ export function useQueries<
     ),
   )
 
-  const observer = createMemo(() => {
-    const currentClient = client()
-    return untrack(
-      () =>
-        new QueriesObserver(
-          currentClient,
-          defaultedQueries(),
-          queriesOptions().combine
-            ? ({
-                combine: queriesOptions().combine,
-              } as QueriesObserverOptions<TCombinedResult>)
-            : undefined,
-        ),
-    )
-  })
+  const [observer, setObserver] = createSignal(
+    new QueriesObserver(
+      client(),
+      defaultedQueries(),
+      queriesOptions().combine
+        ? ({
+            combine: queriesOptions().combine,
+          } as QueriesObserverOptions<TCombinedResult>)
+        : undefined,
+    ),
+  )
 
   const [state, setState] = createStore<TCombinedResult>(
     observer().getOptimisticResult(
@@ -324,15 +320,26 @@ export function useQueries<
 
   createComputed(
     on(
-      observer,
-      (obs) =>
+      client,
+      (c) => {
+        const newObserver = new QueriesObserver(
+          c,
+          defaultedQueries(),
+          queriesOptions().combine
+            ? ({
+                combine: queriesOptions().combine,
+              } as QueriesObserverOptions<TCombinedResult>)
+            : undefined,
+        )
+        setObserver(newObserver)
         setState(
-          obs.getOptimisticResult(
+          newObserver.getOptimisticResult(
             defaultedQueries(),
             (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
               .combine,
           )[1](),
-        ),
+        )
+      },
       { defer: true },
     ),
   )
