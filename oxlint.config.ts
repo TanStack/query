@@ -303,6 +303,7 @@ export default defineConfig({
         'vitest/prefer-equality-matcher': 'error',
         'vitest/prefer-expect-resolves': 'error',
         'vitest/prefer-expect-type-of': 'error',
+        'vitest/prefer-import-in-mock': 'error',
         'vitest/prefer-mock-promise-shorthand': 'error',
         'vitest/prefer-spy-on': 'error',
         'vitest/prefer-strict-boolean-matchers': 'error',

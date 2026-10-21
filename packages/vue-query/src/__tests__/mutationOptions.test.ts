@@ -6,7 +6,7 @@ import { useIsMutating, useMutationState } from '../useMutationState'
 import { useQueryClient } from '../useQueryClient'
 import { mutationOptions } from '../mutationOptions'
 
-vi.mock('../useQueryClient')
+vi.mock(import('../useQueryClient'))
 
 describe('mutationOptions', () => {
   beforeEach(() => {

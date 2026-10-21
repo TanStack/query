@@ -38,11 +38,12 @@ function MockTanstackQueryDevtools() {
 
 const mockTanstackQueryDevtools = vi.fn(MockTanstackQueryDevtools)
 
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the mocked devtools classes have '#private' fields, and this environment cannot load the real Solid module
 vi.mock('@tanstack/query-devtools', () => ({
   TanstackQueryDevtools: mockTanstackQueryDevtools,
 }))
 
-vi.mock('@angular/core', async () => {
+vi.mock(import('@angular/core'), async () => {
   const actual = await vi.importActual('@angular/core')
   return {
     ...actual,
