@@ -26,7 +26,7 @@ vi.mock(import('goober'), () => {
 describe('DevtoolsPanelComponent', () => {
   const storage: { [key: string]: string } = {}
   let queryClient: QueryClient
-  let previousRootFontSize = ''
+  let previousRootFontSize: string
 
   beforeEach(() => {
     previousRootFontSize = document.documentElement.style.fontSize

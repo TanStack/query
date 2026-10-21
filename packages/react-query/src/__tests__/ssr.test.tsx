@@ -1,6 +1,15 @@
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
@@ -17,10 +26,13 @@ import {
 import { setIsServer } from './utils'
 
 describe('Server Side Rendering', () => {
-  setIsServer(true)
-
+  let restoreIsServer: () => void
   let queryCache: QueryCache
   let queryClient: QueryClient
+
+  beforeAll(() => {
+    restoreIsServer = setIsServer(true)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -31,6 +43,10 @@ describe('Server Side Rendering', () => {
   afterEach(() => {
     queryClient.clear()
     vi.useRealTimers()
+  })
+
+  afterAll(() => {
+    restoreIsServer()
   })
 
   it('should not trigger fetch', () => {

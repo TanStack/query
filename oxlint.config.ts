@@ -324,6 +324,7 @@ export default defineConfig({
         'vitest/prefer-to-have-length': 'error',
         'vitest/prefer-todo': 'error',
         'vitest/require-awaited-expect-poll': 'error',
+        'vitest/require-hook': 'error',
         'vitest/require-to-throw-message': 'error',
         'vitest/valid-expect': 'off',
         'vitest-js/valid-expect': 'error',

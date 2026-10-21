@@ -1,4 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { QueryClient, keepPreviousData } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
@@ -8,7 +16,9 @@ import { generateElementName } from './utils.js'
 import type { QueryResultAccessor } from '../createQueryController.js'
 
 const providerTagName = generateElementName()
-customElements.define(providerTagName, QueryClientProvider)
+beforeAll(() => {
+  customElements.define(providerTagName, QueryClientProvider)
+})
 
 describe('createQueryController', () => {
   let queryClient: QueryClient

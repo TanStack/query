@@ -1,4 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { QueryClient, noop } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
@@ -8,7 +16,9 @@ import { generateElementName } from './utils.js'
 import type { MutationResultAccessor } from '../createMutationController.js'
 
 const providerTagName = generateElementName()
-customElements.define(providerTagName, QueryClientProvider)
+beforeAll(() => {
+  customElements.define(providerTagName, QueryClientProvider)
+})
 
 describe('createMutationController', () => {
   let queryClient: QueryClient

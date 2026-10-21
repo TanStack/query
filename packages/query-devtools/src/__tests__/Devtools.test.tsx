@@ -43,8 +43,8 @@ vi.mock(import('goober'), () => {
 describe('Devtools', () => {
   const storage: { [key: string]: string } = {}
   let queryClient: QueryClient
-  let previousRootFontSize = ''
-  let resizeObservers: Array<ResizeObserver> = []
+  let previousRootFontSize: string
+  let resizeObservers: Array<ResizeObserver>
 
   beforeEach(() => {
     resizeObservers = []

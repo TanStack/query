@@ -1,4 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { LitElement } from 'lit'
 import { QueryClient } from '@tanstack/query-core'
 import { QueryClientProvider } from '../QueryClientProvider.js'
@@ -7,7 +15,9 @@ import { generateElementName } from './utils.js'
 import type { ReactiveControllerHost } from 'lit'
 
 const providerTagName = generateElementName()
-customElements.define(providerTagName, QueryClientProvider)
+beforeAll(() => {
+  customElements.define(providerTagName, QueryClientProvider)
+})
 
 class RecordingController extends BaseController<string> {
   readonly lifecycle: Array<string> = []

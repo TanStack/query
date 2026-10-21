@@ -24,8 +24,6 @@ interface TestApp extends App {
   $root: TestApp
 }
 
-const itIf = (condition: boolean) => (condition ? it : it.skip)
-
 function getAppMock(withUnmountHook = false): TestApp {
   const mock = {
     provide: vi.fn(),
@@ -61,7 +59,7 @@ describe('VueQueryPlugin', () => {
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(0)
     })
 
-    itIf(isVue2)('should NOT setup devtools by default', () => {
+    it.runIf(isVue2)('should NOT setup devtools by default in Vue 2', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
       const setupDevtoolsMock = vi.mocked(setupDevtools)
@@ -75,7 +73,7 @@ describe('VueQueryPlugin', () => {
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(0)
     })
 
-    itIf(isVue2)('should setup devtools', () => {
+    it.runIf(isVue2)('should setup devtools in Vue 2', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
       const setupDevtoolsMock = vi.mocked(setupDevtools)
@@ -89,7 +87,7 @@ describe('VueQueryPlugin', () => {
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(1)
     })
 
-    itIf(isVue3)('should NOT setup devtools by default', () => {
+    it.runIf(isVue3)('should NOT setup devtools by default in Vue 3', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
       const setupDevtoolsMock = vi.mocked(setupDevtools)
@@ -100,7 +98,7 @@ describe('VueQueryPlugin', () => {
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(0)
     })
 
-    itIf(isVue3)('should setup devtools', () => {
+    it.runIf(isVue3)('should setup devtools in Vue 3', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
       const setupDevtoolsMock = vi.mocked(setupDevtools)
@@ -148,53 +146,65 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('when called without additional options', () => {
-    itIf(isVue2)('should provide a client with default clientKey', () => {
-      const appMock = getAppMock()
-      VueQueryPlugin.install(appMock)
+    it.runIf(isVue2)(
+      'should provide a client with default clientKey in Vue 2',
+      () => {
+        const appMock = getAppMock()
+        VueQueryPlugin.install(appMock)
 
-      appMock._mixin.beforeCreate?.call(appMock)
+        appMock._mixin.beforeCreate?.call(appMock)
 
-      expect(appMock._provided).toMatchObject({
-        VUE_QUERY_CLIENT: expect.any(QueryClient),
-      })
-    })
+        expect(appMock._provided).toMatchObject({
+          VUE_QUERY_CLIENT: expect.any(QueryClient),
+        })
+      },
+    )
 
-    itIf(isVue3)('should provide a client with default clientKey', () => {
-      const appMock = getAppMock()
-      VueQueryPlugin.install(appMock)
+    it.runIf(isVue3)(
+      'should provide a client with default clientKey in Vue 3',
+      () => {
+        const appMock = getAppMock()
+        VueQueryPlugin.install(appMock)
 
-      expect(appMock.provide).toHaveBeenCalledWith(
-        VUE_QUERY_CLIENT,
-        expect.any(QueryClient),
-      )
-    })
+        expect(appMock.provide).toHaveBeenCalledWith(
+          VUE_QUERY_CLIENT,
+          expect.any(QueryClient),
+        )
+      },
+    )
   })
 
   describe('when called with custom clientKey', () => {
-    itIf(isVue2)('should provide a client with customized clientKey', () => {
-      const appMock = getAppMock()
-      VueQueryPlugin.install(appMock, { queryClientKey: 'CUSTOM' })
+    it.runIf(isVue2)(
+      'should provide a client with customized clientKey in Vue 2',
+      () => {
+        const appMock = getAppMock()
+        VueQueryPlugin.install(appMock, { queryClientKey: 'CUSTOM' })
 
-      appMock._mixin.beforeCreate?.call(appMock)
+        appMock._mixin.beforeCreate?.call(appMock)
 
-      expect(appMock._provided).toMatchObject({
-        [VUE_QUERY_CLIENT + ':CUSTOM']: expect.any(QueryClient),
-      })
-    })
+        expect(appMock._provided).toMatchObject({
+          [VUE_QUERY_CLIENT + ':CUSTOM']: expect.any(QueryClient),
+        })
+      },
+    )
 
-    itIf(isVue3)('should provide a client with customized clientKey', () => {
-      const appMock = getAppMock()
-      VueQueryPlugin.install(appMock, { queryClientKey: 'CUSTOM' })
+    it.runIf(isVue3)(
+      'should provide a client with customized clientKey in Vue 3',
+      () => {
+        const appMock = getAppMock()
+        VueQueryPlugin.install(appMock, { queryClientKey: 'CUSTOM' })
 
-      expect(appMock.provide).toHaveBeenCalledWith(
-        VUE_QUERY_CLIENT + ':CUSTOM',
-        expect.any(QueryClient),
-      )
-    })
+        expect(appMock.provide).toHaveBeenCalledWith(
+          VUE_QUERY_CLIENT + ':CUSTOM',
+          expect.any(QueryClient),
+        )
+      },
+    )
   })
 
   describe('when called with custom client', () => {
-    itIf(isVue2)('should provide that custom client', () => {
+    it.runIf(isVue2)('should provide that custom client in Vue 2', () => {
       const appMock = getAppMock()
       const customClient = { mount: vi.fn() } as unknown as QueryClient
       VueQueryPlugin.install(appMock, { queryClient: customClient })
@@ -207,7 +217,7 @@ describe('VueQueryPlugin', () => {
       })
     })
 
-    itIf(isVue3)('should provide that custom client', () => {
+    it.runIf(isVue3)('should provide that custom client in Vue 3', () => {
       const appMock = getAppMock()
       const customClient = { mount: vi.fn() } as unknown as QueryClient
       VueQueryPlugin.install(appMock, { queryClient: customClient })
@@ -240,37 +250,43 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('when called with custom client config', () => {
-    itIf(isVue2)('should instantiate a client with the provided config', () => {
-      const appMock = getAppMock()
-      const config = {
-        defaultOptions: { queries: { enabled: true } },
-      }
-      VueQueryPlugin.install(appMock, {
-        queryClientConfig: config,
-      })
+    it.runIf(isVue2)(
+      'should instantiate a client with the provided config in Vue 2',
+      () => {
+        const appMock = getAppMock()
+        const config = {
+          defaultOptions: { queries: { enabled: true } },
+        }
+        VueQueryPlugin.install(appMock, {
+          queryClientConfig: config,
+        })
 
-      appMock._mixin.beforeCreate?.call(appMock)
-      const client = appMock._provided.VUE_QUERY_CLIENT as QueryClient
-      const defaultOptions = client.getDefaultOptions()
+        appMock._mixin.beforeCreate?.call(appMock)
+        const client = appMock._provided.VUE_QUERY_CLIENT as QueryClient
+        const defaultOptions = client.getDefaultOptions()
 
-      expect(defaultOptions).toEqual(config.defaultOptions)
-    })
+        expect(defaultOptions).toEqual(config.defaultOptions)
+      },
+    )
 
-    itIf(isVue3)('should instantiate a client with the provided config', () => {
-      const appMock = getAppMock()
-      const config = {
-        defaultOptions: { queries: { enabled: true } },
-      }
-      VueQueryPlugin.install(appMock, {
-        queryClientConfig: config,
-      })
+    it.runIf(isVue3)(
+      'should instantiate a client with the provided config in Vue 3',
+      () => {
+        const appMock = getAppMock()
+        const config = {
+          defaultOptions: { queries: { enabled: true } },
+        }
+        VueQueryPlugin.install(appMock, {
+          queryClientConfig: config,
+        })
 
-      const client = vi.mocked(appMock.provide).mock
-        .calls[0]?.[1] as QueryClient
-      const defaultOptions = client.getDefaultOptions()
+        const client = vi.mocked(appMock.provide).mock
+          .calls[0]?.[1] as QueryClient
+        const defaultOptions = client.getDefaultOptions()
 
-      expect(defaultOptions).toEqual(config.defaultOptions)
-    })
+        expect(defaultOptions).toEqual(config.defaultOptions)
+      },
+    )
   })
 
   describe('when persister is provided', () => {
