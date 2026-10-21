@@ -258,9 +258,7 @@ describe('useQuery', () => {
 
     const enabled = computed(() => !!data.value)
 
-    const dependentQueryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'Some data'))
+    const dependentQueryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
     const { fetchStatus, status } = useQuery(
       reactive({
         queryKey: key2,

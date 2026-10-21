@@ -144,7 +144,7 @@ describe('QueryClientProvider', () => {
     it('should throw an error if no query client has been set', () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       function Page() {
         useQueryClient()
@@ -162,7 +162,7 @@ describe('QueryClientProvider', () => {
   it('should not throw an error if user provides custom query client', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     function Page() {
       const client = new QueryClient()
@@ -203,7 +203,7 @@ describe('QueryClientProvider', () => {
   it('should defer missing provider errors until a resolver is called', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     let resolveClient!: () => QueryClient
 
     function Page() {

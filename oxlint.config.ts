@@ -313,6 +313,7 @@ export default defineConfig({
         'vitest/prefer-import-in-mock': 'error',
         'vitest/prefer-importing-vitest-globals': 'error',
         'vitest/prefer-mock-promise-shorthand': 'error',
+        'vitest/prefer-mock-return-shorthand': 'error',
         'vitest/prefer-snapshot-hint': 'error',
         'vitest/prefer-spy-on': 'error',
         'vitest/prefer-strict-boolean-matchers': 'error',

@@ -29,7 +29,7 @@ describe('usePrefetchInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
-  const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
+  const Fallback = vi.fn().mockReturnValue(<div>Loading...</div>)
 
   it('should prefetch an infinite query if query state does not exist', async () => {
     const data = [

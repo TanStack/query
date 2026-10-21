@@ -158,7 +158,7 @@ describe('withDevtools feature', () => {
   it("should throw 'No QueryClient found' when 'loadDevtools' is 'true' and no 'QueryClient' is provided", async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     TestBed.configureTestingModule({
       providers: [

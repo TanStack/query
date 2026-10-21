@@ -567,10 +567,8 @@ describe('PersistQueryClientProvider', () => {
   it('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
     const consoleErrorMock = vi.spyOn(console, 'error')
-    const consoleWarnMock = vi
-      .spyOn(console, 'warn')
-      .mockImplementation(() => undefined)
-    consoleErrorMock.mockImplementation(() => undefined)
+    const consoleWarnMock = vi.spyOn(console, 'warn').mockReturnValue(undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const queryClient = new QueryClient()
     const removeClient = vi.fn()
@@ -639,12 +637,8 @@ describe('PersistQueryClientProvider', () => {
 
     const onSuccess = vi.fn()
 
-    const queryFn1 = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'queryFn1'))
-    const queryFn2 = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'queryFn2'))
+    const queryFn1 = vi.fn(() => sleep(10).then(() => 'queryFn1'))
+    const queryFn2 = vi.fn(() => sleep(10).then(() => 'queryFn2'))
 
     function App() {
       const [client, setClient] = React.useState(

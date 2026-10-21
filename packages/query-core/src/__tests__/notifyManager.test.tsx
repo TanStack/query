@@ -21,7 +21,7 @@ describe('notifyManager', () => {
 
   it('should use default batchNotifyFn', async () => {
     const notifyManagerTest = createNotifyManager()
-    const callbackScheduleSpy = vi.fn().mockImplementation(() => sleep(20))
+    const callbackScheduleSpy = vi.fn(() => sleep(20))
     const callbackBatchLevel2Spy = vi.fn().mockImplementation(() => {
       notifyManagerTest.schedule(callbackScheduleSpy)
     })

@@ -2770,7 +2770,7 @@ describe('queryClient', () => {
 
     it('should resume paused mutations when coming online', async () => {
       const consoleErrorMock = vi.spyOn(console, 'error')
-      consoleErrorMock.mockImplementation(() => undefined)
+      consoleErrorMock.mockReturnValue(undefined)
       onlineManager.setOnline(false)
 
       const observer1 = new MutationObserver(queryClient, {
@@ -2828,7 +2828,7 @@ describe('queryClient', () => {
 
     it('should resume paused mutations one after the other when in the same scope when invoked manually at the same time', async () => {
       const consoleErrorMock = vi.spyOn(console, 'error')
-      consoleErrorMock.mockImplementation(() => undefined)
+      consoleErrorMock.mockReturnValue(undefined)
       onlineManager.setOnline(false)
 
       const orders: Array<string> = []
@@ -2872,7 +2872,7 @@ describe('queryClient', () => {
 
     it('should resumePausedMutations when coming online after having called resumePausedMutations while offline', async () => {
       const consoleErrorMock = vi.spyOn(console, 'error')
-      consoleErrorMock.mockImplementation(() => undefined)
+      consoleErrorMock.mockReturnValue(undefined)
       onlineManager.setOnline(false)
 
       const observer = new MutationObserver(queryClient, {
@@ -2894,7 +2894,7 @@ describe('queryClient', () => {
 
     it('should resumePausedMutations when coming online after having restored cache (and resumed) while offline', async () => {
       const consoleErrorMock = vi.spyOn(console, 'error')
-      consoleErrorMock.mockImplementation(() => undefined)
+      consoleErrorMock.mockReturnValue(undefined)
       onlineManager.setOnline(false)
 
       const observer = new MutationObserver(queryClient, {

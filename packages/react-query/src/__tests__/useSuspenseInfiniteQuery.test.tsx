@@ -120,7 +120,7 @@ describe('useSuspenseInfiniteQuery', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -155,7 +155,7 @@ describe('useSuspenseInfiniteQuery', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {

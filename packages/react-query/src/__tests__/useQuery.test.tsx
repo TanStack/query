@@ -2700,7 +2700,7 @@ describe('useQuery', () => {
   it('should set status to error if queryFn throws', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -2731,7 +2731,7 @@ describe('useQuery', () => {
   it('should throw error if queryFn throws and throwOnError is in use', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -2765,7 +2765,7 @@ describe('useQuery', () => {
   it('should throw error if queryFn rejects with a falsy error and throwOnError is in use', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -2853,7 +2853,7 @@ describe('useQuery', () => {
   it('should throw error instead of setting status when error should be thrown', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     const key = queryKey()
 
@@ -3534,10 +3534,10 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<string>> = []
 
     const queryFn = vi.fn<(...args: Array<unknown>) => string>()
-    queryFn.mockImplementation(() => 'data')
+    queryFn.mockReturnValue('data')
 
     const prefetchQueryFn = vi.fn<(...args: Array<unknown>) => string>()
-    prefetchQueryFn.mockImplementation(() => 'not yet...')
+    prefetchQueryFn.mockReturnValue('not yet...')
 
     await queryClient
       .query({
@@ -3568,11 +3568,11 @@ describe('useQuery', () => {
     const key = queryKey()
 
     const queryFn = vi.fn<(...args: Array<unknown>) => string>()
-    queryFn.mockImplementation(() => 'data')
+    queryFn.mockReturnValue('data')
 
-    const prefetchQueryFn =
-      vi.fn<(...args: Array<unknown>) => Promise<string>>()
-    prefetchQueryFn.mockImplementation(() => sleep(10).then(() => 'not yet...'))
+    const prefetchQueryFn = vi.fn<(...args: Array<unknown>) => Promise<string>>(
+      () => sleep(10).then(() => 'not yet...'),
+    )
 
     void queryClient
       .query({
@@ -3885,7 +3885,7 @@ describe('useQuery', () => {
   it('should support enabled:false in query object syntax', () => {
     const key = queryKey()
     const queryFn = vi.fn<(...args: Array<unknown>) => string>()
-    queryFn.mockImplementation(() => 'data')
+    queryFn.mockReturnValue('data')
 
     function Page() {
       const { fetchStatus } = useQuery({
@@ -4897,8 +4897,7 @@ describe('useQuery', () => {
 
   it('should refetch when changed enabled to true in error state', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
-    queryFn.mockImplementation(() =>
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>(() =>
       sleep(10).then(() => Promise.reject(new Error('Suspense Error Bingo'))),
     )
 
@@ -6430,7 +6429,7 @@ describe('useQuery', () => {
     // Mock console error to avoid noise when test is run
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     const key = queryKey()
     const queryFn = () => 'data'
@@ -6493,7 +6492,7 @@ describe('useQuery', () => {
   it('should allow enabled: true and queryFn: skipToken', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function App() {
@@ -6673,7 +6672,7 @@ describe('useQuery', () => {
   it('should retry failed initialPromise on the client', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     const serverQueryClient = new QueryClient({
@@ -7042,9 +7041,7 @@ describe('useQuery', () => {
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
     const key = queryKey()
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
 
     function Page() {
       const result = useQuery({

@@ -277,7 +277,7 @@ describe('useSuspenseQueries', () => {
   it('should not call combine while reset queries are pending again', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
     let shouldError = false
 
@@ -573,7 +573,7 @@ describe('useSuspenseQueries', () => {
   it('should throw error when a queryFn rejects with a falsy error', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -608,7 +608,7 @@ describe('useSuspenseQueries', () => {
   it('should throw error when queryKey changes and new query fails', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -798,7 +798,7 @@ describe('useSuspenseQueries', () => {
   it('should show error boundary even with gcTime:0 (#7853)', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
     let count = 0
 
@@ -944,7 +944,7 @@ describe('useSuspenseQueries', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -980,7 +980,7 @@ describe('useSuspenseQueries', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {

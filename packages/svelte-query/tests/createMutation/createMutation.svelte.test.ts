@@ -299,6 +299,7 @@ describe('createMutation', () => {
 
     const mutationFn = vi.fn<(value: Value) => Promise<Value>>()
 
+    // oxlint-disable-next-line vitest/prefer-mock-return-shorthand -- the promise must be created when the mock is called, not when it is set up
     mutationFn.mockImplementationOnce(() =>
       sleep(20).then(() => Promise.reject(`Expected mock error`)),
     )

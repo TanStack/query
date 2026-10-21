@@ -396,7 +396,7 @@ describe('withPersistQueryClient', () => {
     const key = queryKey()
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const queryClient = new QueryClient()
     const removeClient = vi.fn()
     const [error, persister] = createMockErrorPersister(removeClient)

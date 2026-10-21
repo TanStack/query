@@ -107,11 +107,11 @@ describe('persist', () => {
     it('should rethrow exceptions in `restoreClient`', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const consoleWarnMock = vi
         .spyOn(console, 'warn')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const restoreError = new Error('Error restoring client')
 
@@ -135,11 +135,11 @@ describe('persist', () => {
     it('should rethrow exceptions in `removeClient` before `restoreClient`', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const consoleWarnMock = vi
         .spyOn(console, 'warn')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const restoreError = new Error('Error restoring client')
       const removeError = new Error('Error removing client')

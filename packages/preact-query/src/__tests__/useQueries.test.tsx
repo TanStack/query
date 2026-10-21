@@ -142,7 +142,7 @@ describe('useQueries', () => {
   it("should throw error if in one of queries' queryFn throws and throwOnError is in use", async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -208,7 +208,7 @@ describe('useQueries', () => {
   it("should throw error if in one of queries' queryFn throws and throwOnError function resolves to true", async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -276,7 +276,7 @@ describe('useQueries', () => {
   it("should throw error if in one of queries' queryFn rejects with a falsy error and throwOnError is in use", async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {

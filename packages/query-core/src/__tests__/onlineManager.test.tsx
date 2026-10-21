@@ -18,7 +18,7 @@ describe('onlineManager', () => {
 
     // Force navigator to be undefined
     // @ts-expect-error
-    navigatorSpy.mockImplementation(() => undefined)
+    navigatorSpy.mockReturnValue(undefined)
 
     expect(onlineManager.isOnline()).toBe(true)
 
@@ -27,7 +27,7 @@ describe('onlineManager', () => {
 
   it('should return true from isOnline if navigator.onLine is true', () => {
     const navigatorSpy = vi.spyOn(navigator, 'onLine', 'get')
-    navigatorSpy.mockImplementation(() => true)
+    navigatorSpy.mockReturnValue(true)
 
     expect(onlineManager.isOnline()).toBe(true)
 
@@ -65,8 +65,8 @@ describe('onlineManager', () => {
 
   it('should not call cleanup (removeEventListener) if window is not defined', () => {
     const windowSpy = vi.spyOn(globalThis, 'window', 'get')
-    windowSpy.mockImplementation(
-      () => undefined as unknown as Window & typeof globalThis,
+    windowSpy.mockReturnValue(
+      undefined as unknown as Window & typeof globalThis,
     )
     const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
 
@@ -140,7 +140,7 @@ describe('onlineManager', () => {
   })
 
   it('should keep setup function even if last listener unsubscribes', () => {
-    const setupSpy = vi.fn().mockImplementation(() => () => undefined)
+    const setupSpy = vi.fn().mockReturnValue(() => undefined)
 
     onlineManager.setEventListener(setupSpy)
 
