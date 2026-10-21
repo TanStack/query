@@ -73,7 +73,7 @@ describe('watchChanges', () => {
 
       source.value = 2
       flushSync()
-      expect(cleanup).toHaveBeenCalledOnce()
+      expect(cleanup).toHaveBeenCalledTimes(1)
     }),
   )
 })
