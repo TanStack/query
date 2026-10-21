@@ -6,6 +6,10 @@ import * as React from 'react'
 import { environmentManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './IsRestoringProvider'
+import {
+  QueryStrictModeProvider,
+  useQueryStrictMode,
+} from './QueryStrictModeContext'
 import { QueryStrictModeMissingPrefetchError } from './QueryStrictModeError'
 import type {
   Query,
@@ -20,16 +24,6 @@ import type {
   QueryStrictModeUnusedPrefetchHandler,
   QueryStrictModeValue,
 } from './QueryStrictModeTypes'
-
-const QueryStrictModeContext = React.createContext<QueryStrictModeValue | null>(
-  null,
-)
-
-/**
- * Reads the nearest `QueryStrictMode`.
- * @returns The value of the nearest `QueryStrictMode`, or `null` outside of one.
- */
-export const useQueryStrictMode = () => React.useContext(QueryStrictModeContext)
 
 // Missing prefetches cause request waterfalls, so they are thrown. Unused prefetches only waste a
 // request, so they are logged.
@@ -239,9 +233,7 @@ export const DevQueryStrictMode = ({
     [handleMissingPrefetch],
   )
   return (
-    <QueryStrictModeContext.Provider value={value}>
-      {children}
-    </QueryStrictModeContext.Provider>
+    <QueryStrictModeProvider value={value}>{children}</QueryStrictModeProvider>
   )
 }
 

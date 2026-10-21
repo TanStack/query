@@ -15,7 +15,8 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { checkQueryStrictMode, useQueryStrictMode } from './QueryStrictModeDev'
+import { useQueryStrictMode } from './QueryStrictModeContext'
+import { checkQueryStrictMode } from './QueryStrictModeDev'
 import {
   ensureSuspenseTimers,
   fetchOptimistic,
