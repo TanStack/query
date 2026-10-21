@@ -11,6 +11,7 @@ const setOnCloseMock = vi.fn()
 const setErrorTypesMock = vi.fn()
 const setThemeMock = vi.fn()
 
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the mocked devtools classes have '#private' fields, and this environment cannot load the real Solid module
 vi.mock('@tanstack/query-devtools', () => ({
   TanstackQueryDevtoolsPanel: vi.fn(function (
     this: TanstackQueryDevtoolsPanel,

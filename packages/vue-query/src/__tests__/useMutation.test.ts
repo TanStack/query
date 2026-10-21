@@ -14,7 +14,7 @@ import { useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
 import type { MutationFunctionContext } from '@tanstack/query-core'
 
-vi.mock('../useQueryClient')
+vi.mock(import('../useQueryClient'))
 
 describe('useMutation', () => {
   beforeEach(() => {

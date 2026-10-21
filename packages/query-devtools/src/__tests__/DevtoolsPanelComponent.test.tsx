@@ -7,15 +7,15 @@ import DevtoolsPanelComponent from '../DevtoolsPanelComponent'
 // `@solid-primitives/transition-group`, whose `exports` field points at
 // `src/index.ts` (not published) under a `@solid-primitives/source` condition
 // that Vite can't fall through, so we stub it with a transparent pass-through.
-vi.mock('solid-transition-group', () => ({
-  TransitionGroup: (props: { children: unknown }) => props.children,
+vi.mock(import('solid-transition-group'), () => ({
+  TransitionGroup: (props) => props.children,
 }))
 
 // `goober` compiles every `css\`...\`` template literal at mount time
 // (template parsing + class hashing + style serialization), which
 // dominates mount cost and produces no value for label/role-based
 // assertions, so we replace it with a no-op factory.
-vi.mock('goober', () => {
+vi.mock(import('goober'), () => {
   let counter = 0
   const css = Object.assign(() => `tsqd-${++counter}`, {
     bind: () => css,

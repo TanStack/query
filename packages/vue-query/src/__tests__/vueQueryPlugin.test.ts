@@ -10,9 +10,9 @@ import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
 import type { App, ComponentOptions } from 'vue'
 
-vi.mock('../devtools/devtools')
-vi.mock('../useQueryClient')
-vi.mock('../useBaseQuery')
+vi.mock(import('../devtools/devtools'))
+vi.mock(import('../useQueryClient'))
+vi.mock(import('../useBaseQuery'))
 
 type UnmountCallback = () => void
 

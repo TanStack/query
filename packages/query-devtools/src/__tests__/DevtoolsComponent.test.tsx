@@ -7,8 +7,8 @@ import DevtoolsComponent from '../DevtoolsComponent'
 // `@solid-primitives/transition-group`, whose `exports` field points at
 // `src/index.ts` (not published) under a `@solid-primitives/source` condition
 // that Vite can't fall through, so we stub it with a transparent pass-through.
-vi.mock('solid-transition-group', () => ({
-  TransitionGroup: (props: { children: unknown }) => props.children,
+vi.mock(import('solid-transition-group'), () => ({
+  TransitionGroup: (props) => props.children,
 }))
 
 describe('DevtoolsComponent', () => {

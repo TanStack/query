@@ -3,7 +3,7 @@ import * as VueDemi from 'vue-demi'
 import { useQueryClient } from '../useQueryClient'
 import { VUE_QUERY_CLIENT } from '../utils'
 
-vi.mock('vue-demi', async () => {
+vi.mock(import('vue-demi'), async () => {
   const actual = await vi.importActual<typeof VueDemi>('vue-demi')
   return {
     ...actual,

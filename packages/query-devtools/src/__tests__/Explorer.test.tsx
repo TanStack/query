@@ -7,7 +7,7 @@ import type { Query } from '@tanstack/query-core'
 
 // `goober` compiles every `css\`...\`` template literal at mount time;
 // replace it with a no-op factory so label/role-based assertions stay fast.
-vi.mock('goober', () => {
+vi.mock(import('goober'), () => {
   let counter = 0
   const css = Object.assign(() => `tsqd-${++counter}`, {
     bind: () => css,
