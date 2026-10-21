@@ -150,6 +150,33 @@ describe('queryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
+
+  it('should infer even if there is a conditional skipToken', () => {
+    const key = queryKey()
+    const { queryKey: tagged } = queryOptions({
+      queryKey: key,
+      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+    })
+
+    const queryClient = new QueryClient()
+    const data = queryClient.getQueryData(tagged)
+
+    expectTypeOf(data).toEqualTypeOf<number | undefined>()
+  })
+
+  it('should infer to unknown if we disable a query with just a skipToken', () => {
+    const key = queryKey()
+    const { queryKey: tagged } = queryOptions({
+      queryKey: key,
+      queryFn: skipToken,
+    })
+
+    const queryClient = new QueryClient()
+    const data = queryClient.getQueryData(tagged)
+
+    expectTypeOf(data).toEqualTypeOf<unknown>()
+    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<unknown>()
+  })
   it('should allow to be passed to QueryClient methods while containing getter', () => {
     const ref1 = ref(1)
     const ref2 = ref(2)
