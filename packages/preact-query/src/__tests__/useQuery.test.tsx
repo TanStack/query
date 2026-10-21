@@ -5934,6 +5934,41 @@ describe('useQuery', () => {
       ).toBe(1)
     })
 
+    it('should not fetch the previous key when subscribing in the same render as a key change', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn((filter: string) => sleep(10).then(() => filter))
+
+      function Page({
+        filter,
+        subscribed,
+      }: {
+        filter: string
+        subscribed: boolean
+      }) {
+        const { data } = useQuery({
+          queryKey: [...key, filter],
+          queryFn: () => queryFn(filter),
+          subscribed,
+        })
+
+        return <div>data: {data}</div>
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <Page filter="a" subscribed={false} />,
+      )
+
+      await vi.advanceTimersByTimeAsync(11)
+      expect(queryFn).toHaveBeenCalledTimes(0)
+
+      rendered.rerender(<Page filter="b" subscribed={true} />)
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('data: b')).toBeInTheDocument()
+
+      expect(queryFn.mock.calls).toEqual([['b']])
+    })
+
     it('should not optimistically show fetching when subscribed is false', () => {
       const key = queryKey()
       const queryFn = vi.fn(() => Promise.resolve('data'))
