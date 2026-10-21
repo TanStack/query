@@ -175,6 +175,7 @@ describe('queryOptions', () => {
     const data = queryClient.getQueryData(tagged)
 
     expectTypeOf(data).toEqualTypeOf<unknown>()
+    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<unknown>()
   })
   it('should allow to be passed to QueryClient methods while containing getter', () => {
     const ref1 = ref(1)
