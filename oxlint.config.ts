@@ -293,6 +293,7 @@ export default defineConfig({
           { additionalTestBlockFunctions: ['itIf'] },
         ],
         'vitest/hoisted-apis-on-top': 'error',
+        'vitest/no-alias-methods': 'error',
         'vitest/no-conditional-tests': 'error',
         'vitest/no-duplicate-hooks': 'error',
         'vitest/no-test-return-statement': 'error',
