@@ -178,8 +178,8 @@ describe('useMutation', () => {
         relevantMutation?.options.mutationKey as
           | Array<MutationKeyTest>
           | undefined
-      )?.[0]?.otherObject.name === 'someOtherObjectName',
-    ).toBe(true)
+      )?.[0]?.otherObject.name,
+    ).toBe('someOtherObjectName')
   })
 
   it('should allow for non-options object (mutationFn or mutationKey) passed as arg1 & arg2 to trigger reactive updates', async () => {

@@ -568,8 +568,8 @@ describe('createQueryController', () => {
     await expect(refetchPromise).resolves.toMatchObject({ data: 'user-2' })
     expect(query().data).toBe('user-2')
     expect(host.shadowRoot).toHaveTextContent('data: user-2')
-    expect(seenKeys.includes(1)).toBe(true)
-    expect(seenKeys.includes(2)).toBe(true)
+    expect(seenKeys).toContain(1)
+    expect(seenKeys).toContain(2)
   })
 
   it('should not request a host update when function options resolve to an unchanged result', async () => {

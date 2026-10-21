@@ -1,11 +1,24 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sleep } from '../sleep'
 
 describe('sleep', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should sleep for the given amount of time', async () => {
-    const start = Date.now()
-    await sleep(100)
-    const end = Date.now()
-    expect(end - start).toBeGreaterThanOrEqual(100)
+    const onResolve = vi.fn()
+
+    void sleep(100).then(onResolve)
+
+    await vi.advanceTimersByTimeAsync(99)
+    expect(onResolve).not.toHaveBeenCalled()
+
+    await vi.advanceTimersByTimeAsync(1)
+    expect(onResolve).toHaveBeenCalledTimes(1)
   })
 })
