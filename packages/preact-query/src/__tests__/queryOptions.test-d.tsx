@@ -218,6 +218,7 @@ describe('queryOptions', () => {
     const queryClient = new QueryClient()
     const data = queryClient.getQueryData(options.queryKey)
     expectTypeOf(data).toEqualTypeOf<unknown>()
+    expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<unknown>()
   })
 
   it('should throw a type error when using queryFn with skipToken in a suspense query', () => {
