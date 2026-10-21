@@ -7,7 +7,7 @@ import { MutationCache } from '../mutationCache'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { queryOptions } from '../queryOptions'
 
-vi.mock('@tanstack/query-core', async () => {
+vi.mock(import('@tanstack/query-core'), async () => {
   const actual = await vi.importActual<{
     QueryClient: typeof QueryClientOrigin
   }>('@tanstack/query-core')

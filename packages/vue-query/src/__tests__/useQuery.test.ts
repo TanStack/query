@@ -20,8 +20,8 @@ import { useQuery } from '../useQuery'
 import { useBaseQuery } from '../useBaseQuery'
 import { useQueryClient } from '../useQueryClient'
 
-vi.mock('../useQueryClient')
-vi.mock('../useBaseQuery')
+vi.mock(import('../useQueryClient'))
+vi.mock(import('../useBaseQuery'))
 
 describe('useQuery', () => {
   beforeEach(() => {

@@ -5,7 +5,7 @@ import { computed, isVue3 } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 
-vi.mock('../useQueryClient')
+vi.mock(import('../useQueryClient'))
 
 describe('Server Side Rendering', () => {
   beforeEach(() => {

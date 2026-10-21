@@ -27,6 +27,7 @@ const mocks = vi.hoisted(() => {
   }
 })
 
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the mocked devtools classes have '#private' fields, and this environment cannot load the real Solid module
 vi.mock('@tanstack/query-devtools', () => ({
   TanstackQueryDevtoolsPanel: mocks.mockTanstackQueryDevtoolsPanel,
 }))

@@ -9,15 +9,23 @@ const mockPostMessage = vi.fn().mockResolvedValue(undefined)
 const mockClose = vi.fn()
 let lastCreatedChannel: { onmessage: ((action: any) => void) | null }
 
-vi.mock('broadcast-channel', async (importOriginal) => {
+vi.mock(import('broadcast-channel'), async (importOriginal) => {
   const actual = await importOriginal()
   return {
-    ...(actual as object),
+    ...actual,
     BroadcastChannel: class MockBroadcastChannel {
+      readonly id = 0
+      readonly name: string
+      readonly options = {}
+      readonly type = 'simulate'
+      readonly isClosed = false
       onmessage = null
       postMessage = mockPostMessage
       close = mockClose
-      constructor() {
+      addEventListener = vi.fn()
+      removeEventListener = vi.fn()
+      constructor(name: string) {
+        this.name = name
         lastCreatedChannel = this
       }
     },

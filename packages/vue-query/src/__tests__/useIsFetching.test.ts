@@ -4,7 +4,7 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { useIsFetching } from '../useIsFetching'
 
-vi.mock('../useQueryClient')
+vi.mock(import('../useQueryClient'))
 
 describe('useIsFetching', () => {
   beforeEach(() => {

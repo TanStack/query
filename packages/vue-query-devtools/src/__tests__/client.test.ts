@@ -11,6 +11,7 @@ const { setClient, mount, unmount } = vi.hoisted(() => ({
   unmount: vi.fn(),
 }))
 
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the mocked devtools classes have '#private' fields, and this environment cannot load the real Solid module
 vi.mock('@tanstack/query-devtools', () => {
   class MockDevtools {
     setClient = setClient
