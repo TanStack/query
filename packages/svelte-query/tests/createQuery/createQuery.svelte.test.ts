@@ -502,7 +502,7 @@ describe('createQuery', () => {
       await vi.advanceTimersByTimeAsync(100)
     })()
 
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     expect(states[0]).toMatchObject({
       isPending: true,
       isSuccess: false,
@@ -748,7 +748,7 @@ describe('createQuery', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(query.data?.[1]?.done).toBe(true)
 
-      expect(states.length).toBe(4)
+      expect(states).toHaveLength(4)
 
       const todos = states[1]?.data
       const todo1 = todos?.[0]
@@ -1177,7 +1177,7 @@ describe('createQuery', () => {
       }, 10)
 
       await vi.advanceTimersByTimeAsync(10)
-      expect(states.length).toBe(2)
+      expect(states).toHaveLength(2)
 
       expect(states[0]).toMatchObject({
         data: undefined,
@@ -1228,7 +1228,7 @@ describe('createQuery', () => {
 
       // Wait for refetch to complete
       await vi.advanceTimersByTimeAsync(20)
-      expect(states.length).toBe(2)
+      expect(states).toHaveLength(2)
       expect(states[0]).toBe(undefined)
       expect(states[1]).toBe('test')
     }),
@@ -1264,7 +1264,7 @@ describe('createQuery', () => {
       expect(query.data).toBe('test')
 
       expect(renderCount).toBe(2)
-      expect(states.length).toBe(2)
+      expect(states).toHaveLength(2)
       expect(states[0]).toMatchObject({ data: undefined })
       expect(states[1]).toMatchObject({ data: 'test' })
     }),

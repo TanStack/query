@@ -515,7 +515,7 @@ describe('useSuspenseQueries', () => {
     await act(() => vi.advanceTimersByTimeAsync(20))
     expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
 
-    expect(refs.length).toBe(2)
+    expect(refs).toHaveLength(2)
     expect(refs[0]).toBe(refs[1])
   })
 

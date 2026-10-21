@@ -995,7 +995,7 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(21)
-    expect(states.length).toBe(3)
+    expect(states).toHaveLength(3)
     expect(states[0]).toMatchObject({ data: undefined, isPending: false })
     expect(states[1]).toMatchObject({ data: undefined, isPending: true })
     expect(states[2]).toMatchObject({ data: 'todo', isPending: false })
@@ -1235,8 +1235,8 @@ describe('useMutation', () => {
     expect(rendered.getByText('isPaused: true')).toBeInTheDocument()
 
     expect(
-      queryClient.getMutationCache().findAll({ mutationKey: key }).length,
-    ).toBe(1)
+      queryClient.getMutationCache().findAll({ mutationKey: key }),
+    ).toHaveLength(1)
     expect(
       queryClient.getMutationCache().findAll({ mutationKey: key })[0]?.state,
     ).toMatchObject({

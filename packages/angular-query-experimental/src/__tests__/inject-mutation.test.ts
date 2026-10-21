@@ -623,7 +623,7 @@ describe('injectMutation', () => {
     expect(span.nativeElement.textContent).toEqual('updatedValue')
 
     const mutations = mutationCache.findAll()
-    expect(mutations.length).toBe(2)
+    expect(mutations).toHaveLength(2)
     const [mutation1, mutation2] = mutations
     expect(mutation1!.options.mutationKey).toEqual(['fake', 'value'])
     expect(mutation2!.options.mutationKey).toEqual(['fake', 'updatedValue'])

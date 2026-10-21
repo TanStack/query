@@ -77,7 +77,7 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
     expect(renders).toBe(4)
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     expect(states[1]).toMatchObject({ data: 1, status: 'success' })
     expect(states[3]).toMatchObject({ data: 2, status: 'success' })
   })
@@ -121,7 +121,7 @@ describe("useQuery's in Suspense mode", () => {
     // oxlint-disable-next-line cspell/spellchecker
     // TODO(lukemurray): in react this is 1 in solid this is 2 because suspense
     // occurs on read.
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[1]).toMatchObject({
       data: { pages: [1], pageParams: [1] },
       status: 'success',
@@ -133,7 +133,7 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
     // oxlint-disable-next-line cspell/spellchecker
     // TODO(lukemurray): in react this is 2 and in solid it is 4
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     expect(states[3]).toMatchObject({
       data: { pages: [2], pageParams: [1] },
       status: 'success',

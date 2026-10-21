@@ -66,7 +66,7 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(100)
     expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
 
-    expect(results.length).toBe(3)
+    expect(results).toHaveLength(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
     expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
