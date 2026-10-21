@@ -300,6 +300,7 @@ export default defineConfig({
         'vitest/prefer-strict-boolean-matchers': 'error',
         'vitest/prefer-to-have-been-called-times': 'error',
         'vitest/require-awaited-expect-poll': 'error',
+        'vitest/require-to-throw-message': 'error',
         'vitest/valid-expect': 'off',
         'vitest-js/valid-expect': 'error',
       },
