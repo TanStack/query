@@ -58,11 +58,11 @@ describe('mutationCache', () => {
       ).toEqualTypeOf<MutationCacheConfig>()
     })
 
-    it('should stay writable', () => {
+    it('should be readonly', () => {
       type Config = Pick<MutationCache, 'config'>
 
       expectTypeOf<Config>().toEqualTypeOf<{
-        -readonly [K in keyof Config]: Config[K]
+        readonly [K in keyof Config]: Config[K]
       }>()
     })
 
@@ -74,13 +74,18 @@ describe('mutationCache', () => {
   })
 
   describe('MutationCacheConfig', () => {
-    it('should declare exactly its four callbacks', () => {
+    it('should declare its callbacks and key configuration', () => {
       expectTypeOf<keyof MutationCacheConfig>().toEqualTypeOf<
-        'onError' | 'onSuccess' | 'onMutate' | 'onSettled'
+        | 'onError'
+        | 'onSuccess'
+        | 'onMutate'
+        | 'onSettled'
+        | 'hashFn'
+        | 'valueSerializer'
       >()
     })
 
-    it('should declare every callback as optional', () => {
+    it('should declare every option as optional', () => {
       type OptionalKeys = {
         [K in keyof MutationCacheConfig]-?: {} extends Pick<
           MutationCacheConfig,

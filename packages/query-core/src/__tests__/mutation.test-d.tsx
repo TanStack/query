@@ -174,6 +174,8 @@ describe('mutation', () => {
         | 'state'
         | 'options'
         | 'mutationId'
+        | 'cacheKeyConfig'
+        | 'cacheKeyConfig'
         | 'setOptions'
         | 'meta'
         | 'addObserver'

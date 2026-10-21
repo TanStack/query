@@ -1,16 +1,17 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
+import { QueryCache } from '../queryCache'
+import { MutationCache } from '../mutationCache'
 import { skipToken } from '../utils'
 import type { MutationFilters, QueryFilters, Updater } from '../utils'
 import type { Mutation } from '../mutation'
 import type { Query, QueryState } from '../query'
-import type { QueryCache } from '../queryCache'
-import type { MutationCache } from '../mutationCache'
 import type {
   DataTag,
   DefaultError,
   DefaultOptions,
+  DefaultedMutationOptions,
   DefaultedQueryObserverOptions,
   EnsureQueryDataOptions,
   FetchInfiniteQueryOptions,
@@ -27,6 +28,50 @@ import type {
   SetDataOptions,
   UnsetMarker,
 } from '../types'
+
+describe('cache key config', () => {
+  it('should type the query and mutation cache configuration', () => {
+    const queryCache = new QueryCache({
+      hashFn: (key) => {
+        expectTypeOf(key).toEqualTypeOf<QueryKey>()
+        return 'query-hash'
+      },
+      valueSerializer: (value) => value,
+    })
+    const mutationCache = new MutationCache({
+      hashFn: (key) => {
+        expectTypeOf(key).toEqualTypeOf<MutationKey>()
+        return 'mutation-hash'
+      },
+      valueSerializer: (value) => value,
+    })
+    const queryClient = new QueryClient({
+      queryCache,
+      mutationCache,
+    })
+
+    expectTypeOf(queryClient.getQueryCache().config).toEqualTypeOf(
+      queryCache.config,
+    )
+    expectTypeOf(queryClient.getMutationCache().config).toEqualTypeOf(
+      mutationCache.config,
+    )
+    queryClient.setQueryData(['key'], 'data')
+    expectTypeOf(queryClient).toEqualTypeOf<QueryClient>()
+  })
+
+  it('should allow query-level hash functions', () => {
+    const queryClient = new QueryClient()
+
+    queryClient.query({
+      queryKey: ['key'],
+      queryFn: () => 'data',
+      queryKeyHashFn: () => 'hash',
+    })
+
+    expectTypeOf(queryClient).toEqualTypeOf<QueryClient>()
+  })
+})
 
 type TypedData = { foo: string }
 type TypedError = DefaultError & { bar: string }
@@ -1254,13 +1299,13 @@ describe('queryClient', () => {
       assertType<Parameters<QueryClient['defaultMutationOptions']>>([])
     })
 
-    it('should return the same type it is given', () => {
+    it('should mark the returned options as defaulted', () => {
       const queryClient = new QueryClient()
       const options: MutationOptions<number, Error, string> = {}
       const defaulted = queryClient.defaultMutationOptions(options)
 
       expectTypeOf(defaulted).toEqualTypeOf<
-        MutationOptions<number, Error, string>
+        DefaultedMutationOptions<MutationOptions<number, Error, string>>
       >()
     })
 
@@ -1269,10 +1314,18 @@ describe('queryClient', () => {
 
       expectTypeOf(
         queryClient.defaultMutationOptions(typedMutationOptions),
-      ).toEqualTypeOf<MutationOptions<TypedData, TypedError, void, unknown>>()
+      ).toEqualTypeOf<
+        DefaultedMutationOptions<
+          MutationOptions<TypedData, TypedError, void, unknown>
+        >
+      >()
       expectTypeOf(
         queryClient.defaultMutationOptions(untypedMutationOptions),
-      ).toEqualTypeOf<MutationOptions<unknown, DefaultError, void, unknown>>()
+      ).toEqualTypeOf<
+        DefaultedMutationOptions<
+          MutationOptions<unknown, DefaultError, void, unknown>
+        >
+      >()
     })
   })
 

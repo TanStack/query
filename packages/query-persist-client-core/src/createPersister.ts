@@ -1,8 +1,8 @@
 import {
-  hashKey,
   matchQuery,
   notifyManager,
   partialMatchKey,
+  serializeCacheKey,
 } from '@tanstack/query-core'
 import type {
   Query,
@@ -25,9 +25,7 @@ export interface PersistedQuery {
    * The hash of the query.
    */
   queryHash: string
-  /**
-   * The key of the query.
-   */
+  /** The original public query key. */
   queryKey: QueryKey
   /**
    * The state of the query, including its data and when it was last updated.
@@ -168,6 +166,21 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     }
 
     return true
+  }
+
+  /**
+   * Computes the hash used by exact persistence filters.
+   * @param queryClient - The client that provides the cache key configuration.
+   * @param queryKey - The key to match, if the filter specifies one.
+   * @returns The hash for an exact match, or `undefined` without a key.
+   */
+  function getFilterQueryHash(
+    queryClient: QueryClient,
+    queryKey: QueryKey | undefined,
+  ): string | undefined {
+    return queryKey
+      ? queryClient.defaultQueryOptions({ queryKey }).queryHash
+      : undefined
   }
 
   /**
@@ -351,18 +364,23 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   }
 
   /**
-   * Restores every persisted query matching `filters` into the client's cache with
+   * Restores every persisted query matching `queryFilters` into the client's cache with
    * `queryClient.setQueryData`. Requires the storage to implement `entries`.
    * @param queryClient - The client to restore the queries into.
-   * @param filters - The `queryKey` and `exact` filters to match. Without them, every query is
+   * @param queryFilters - The `queryKey` and `exact` filters to match. Without them, every query is
    * restored.
    * @returns A promise that resolves once every entry is checked.
    */
   async function restoreQueries(
     queryClient: QueryClient,
-    filters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
+    queryFilters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
   ): Promise<void> {
-    const { exact, queryKey } = filters
+    const { exact, queryKey } = queryFilters
+    const queryHash = getFilterQueryHash(queryClient, queryKey)
+    const valueSerializer = queryClient.getQueryCache().config.valueSerializer
+    const serializedQueryKey = queryKey
+      ? serializeCacheKey(queryKey, valueSerializer)
+      : undefined
 
     if (storage?.entries) {
       const storageKeyPrefix = `${prefix}-`
@@ -383,10 +401,15 @@ export function experimental_createQueryPersister<TStorageValue = string>({
 
           if (queryKey) {
             if (exact) {
-              if (persistedQuery.queryHash !== hashKey(queryKey)) {
+              if (persistedQuery.queryHash !== queryHash) {
                 continue
               }
-            } else if (!partialMatchKey(persistedQuery.queryKey, queryKey)) {
+            } else if (
+              !partialMatchKey(
+                serializeCacheKey(persistedQuery.queryKey, valueSerializer),
+                serializedQueryKey!,
+              )
+            ) {
               continue
             }
           }
@@ -408,16 +431,23 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   }
 
   /**
-   * Removes every persisted query matching `filters` from storage. Requires the storage to implement
+   * Removes every persisted query matching `queryFilters` from storage. Requires the storage to implement
    * `entries`.
-   * @param filters - The `queryKey` and `exact` filters to match. Without them, every query is
+   * @param queryClient - The client whose cache key configuration is used to match queries.
+   * @param queryFilters - The `queryKey` and `exact` filters to match. Without them, every query is
    * removed.
    * @returns A promise that resolves once every entry is checked.
    */
   async function removeQueries(
-    filters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
+    queryClient: QueryClient,
+    queryFilters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
   ): Promise<void> {
-    const { exact, queryKey } = filters
+    const { exact, queryKey } = queryFilters
+    const queryHash = getFilterQueryHash(queryClient, queryKey)
+    const valueSerializer = queryClient.getQueryCache().config.valueSerializer
+    const serializedQueryKey = queryKey
+      ? serializeCacheKey(queryKey, valueSerializer)
+      : undefined
 
     if (storage?.entries) {
       const entries = await storage.entries()
@@ -438,10 +468,15 @@ export function experimental_createQueryPersister<TStorageValue = string>({
           }
 
           if (exact) {
-            if (persistedQuery.queryHash !== hashKey(queryKey)) {
+            if (persistedQuery.queryHash !== queryHash) {
               continue
             }
-          } else if (!partialMatchKey(persistedQuery.queryKey, queryKey)) {
+          } else if (
+            !partialMatchKey(
+              serializeCacheKey(persistedQuery.queryKey, valueSerializer),
+              serializedQueryKey!,
+            )
+          ) {
             continue
           }
 

@@ -1088,6 +1088,7 @@ describe('infiniteQueryObserver', () => {
         initialPageParam: 1,
         getNextPageParam: () => 1,
         queryHash: 'hash',
+        _defaulted: true,
         throwOnError: false,
         refetchOnReconnect: true,
       }

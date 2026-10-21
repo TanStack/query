@@ -75,7 +75,7 @@ Invoking `experimental_createQueryPersister` returns additional utilities in add
 
 ### `persistQueryByKey(queryKey: QueryKey, queryClient: QueryClient): Promise<void>`
 
-This function will persist `Query` to storage and key defined when creating persister.  
+This function will persist `Query` to storage and key defined when creating persister.
 This utility might be used along `setQueryData` to persist optimistic update to storage without waiting for invalidation.
 
 ```tsx
@@ -101,19 +101,19 @@ useMutation({
 
 ### `retrieveQuery<T>(queryHash: string): Promise<T | undefined>`
 
-This function would attempt to retrieve persisted query by `queryHash`.  
+This function would attempt to retrieve persisted query by `queryHash`.
 If `query` is `expired`, `busted` or `malformed` it would be removed from the storage instead, and `undefined` would be returned.
 
 ### `persisterGc(): Promise<void>`
 
 This function can be used to sporadically clean up storage from `expired`, `busted` or `malformed` entries.
 
-For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.  
+For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.
 For example `Object.entries(localStorage)` for `localStorage` or `entries` from `idb-keyval`.
 
 ### `restoreQueries(queryClient: QueryClient, filters): Promise<void>`
 
-This function can be used to restore queries that are currently stored by persister.  
+This function can be used to restore queries that are currently stored by persister.
 For example when your app is starting up in offline mode, or you want all or only specific data from previous session to be immediately available without intermediate `loading` state.
 
 The filter object supports the following properties:
@@ -123,10 +123,10 @@ The filter object supports the following properties:
 - `exact?: boolean`
   - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed.
 
-For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.  
+For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.
 For example `Object.entries(localStorage)` for `localStorage` or `entries` from `idb-keyval`.
 
-### `removeQueries(filters): Promise<void>`
+### `removeQueries(queryClient: QueryClient, filters?): Promise<void>`
 
 When using `queryClient.removeQueries`, the data remains in the persister and needs to be removed separately.
 This function can be used to remove queries that are currently stored by persister.
@@ -138,7 +138,7 @@ The filter object supports the following properties:
 - `exact?: boolean`
   - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed.
 
-For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.  
+For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.
 For example `Object.entries(localStorage)` for `localStorage` or `entries` from `idb-keyval`.
 
 ## API

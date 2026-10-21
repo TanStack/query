@@ -46,6 +46,27 @@ describe('QueryCache', () => {
     vi.useRealTimers()
   })
 
+  it('should use the query cache key configuration', () => {
+    const queryClient = new QueryClient({
+      queryCache: new QueryCache({ hashFn: () => 'custom-hash' }),
+    })
+
+    queryClient.setQueryData(['foo'], 'data')
+    expect(queryClient.getQueryData(['foo'])).toBe('data')
+  })
+
+  it('should use the query cache value serializer', () => {
+    const queryClient = new QueryClient({
+      queryCache: new QueryCache({
+        valueSerializer: (value) =>
+          value instanceof Date ? value.toISOString() : value,
+      }),
+    })
+
+    queryClient.setQueryData(['dates', new Date(0)], 'data')
+    expect(queryClient.getQueryData(['dates', new Date(0)])).toBe('data')
+  })
+
   describe('constructor', () => {
     it('should use the queryCache and mutationCache passed in the config', () => {
       const queryCache = new QueryCache()

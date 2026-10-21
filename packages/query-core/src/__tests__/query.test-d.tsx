@@ -942,6 +942,8 @@ describe('query', () => {
     it('should declare exactly its public members', () => {
       expectTypeOf<keyof Query>().toEqualTypeOf<
         | 'queryKey'
+        | 'cacheKeyConfig'
+        | 'serializedQueryKey'
         | 'queryHash'
         | 'options'
         | 'state'

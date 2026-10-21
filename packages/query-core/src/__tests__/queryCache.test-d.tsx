@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient } from '..'
 import type {
+  CacheKeyHashFunction,
+  CacheKeyValueSerializer,
   DefaultError,
   NotifyEvent,
   NotifyEventType,
@@ -61,11 +63,11 @@ describe('queryCache', () => {
       expectTypeOf(new QueryCache().config).toEqualTypeOf<QueryCacheConfig>()
     })
 
-    it('should stay writable', () => {
+    it('should be readonly', () => {
       type Config = Pick<QueryCache, 'config'>
 
       expectTypeOf<Config>().toEqualTypeOf<{
-        -readonly [K in keyof Config]: Config[K]
+        readonly [K in keyof Config]: Config[K]
       }>()
     })
 
@@ -77,8 +79,10 @@ describe('queryCache', () => {
   })
 
   describe('QueryCacheConfig', () => {
-    it('should declare every callback as optional', () => {
+    it('should declare the key configuration and callbacks as optional', () => {
       expectTypeOf<QueryCacheConfig>().toEqualTypeOf<{
+        readonly hashFn?: CacheKeyHashFunction<QueryKey>
+        readonly valueSerializer?: CacheKeyValueSerializer
         onError?: (
           error: DefaultError,
           query: Query<unknown, unknown, unknown>,
