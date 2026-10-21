@@ -607,7 +607,9 @@ describe('createInfiniteQueryController', () => {
     expect(host.shadowRoot).toHaveTextContent('status: pending')
 
     host.remove()
-    expect(cancelFn).toHaveBeenCalled()
+    expect(cancelFn).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'abort' }),
+    )
   })
 
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {

@@ -338,7 +338,11 @@ describe('PiPContext', () => {
         initialStorage: { 'TanstackQueryDevtools.pip_open': 'true' },
       })
 
-      expect(open).toHaveBeenCalled()
+      expect(open).toHaveBeenCalledWith(
+        '',
+        'TSQD-Devtools-Panel',
+        'width=1024,height=500,popup',
+      )
     })
 
     it('should not auto-open a PiP window when "disabled" is true', () => {

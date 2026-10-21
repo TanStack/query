@@ -380,7 +380,9 @@ describe('useQuery', () => {
 
     checked.value = true
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryFn).toHaveBeenCalled()
+    expect(queryFn).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: key }),
+    )
   })
 
   it('should allow getters for query keys', async () => {

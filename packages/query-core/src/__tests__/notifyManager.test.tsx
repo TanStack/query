@@ -16,7 +16,7 @@ describe('notifyManager', () => {
     const callbackSpy = vi.fn()
     notifyManagerTest.schedule(callbackSpy)
     await vi.advanceTimersByTimeAsync(0)
-    expect(callbackSpy).toHaveBeenCalled()
+    expect(callbackSpy).toHaveBeenCalledWith()
   })
 
   it('should use default batchNotifyFn', async () => {
@@ -82,9 +82,9 @@ describe('notifyManager', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(batchNotifySpy).toHaveBeenCalled()
-    expect(callbackSpy1).toHaveBeenCalled()
-    expect(callbackSpy2).toHaveBeenCalled()
+    expect(batchNotifySpy).toHaveBeenCalledWith(expect.any(Function))
+    expect(callbackSpy1).toHaveBeenCalledWith()
+    expect(callbackSpy2).toHaveBeenCalledWith()
   })
 
   it('should batch calls correctly', async () => {

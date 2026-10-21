@@ -480,7 +480,12 @@ describe('withDevtools feature', () => {
     await vi.advanceTimersByTimeAsync(0)
     TestBed.tick()
     await vi.dynamicImportSettled()
-    expect(mockTanstackQueryDevtools).toHaveBeenCalled()
+    expect(mockTanstackQueryDevtools).toHaveBeenCalledWith(
+      expect.objectContaining({
+        client: expect.any(QueryClient),
+        queryFlavor: 'Angular Query',
+      }),
+    )
     expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
     expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(0)
 

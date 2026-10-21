@@ -50,14 +50,14 @@ describe('ReactQueryDevtools', () => {
         </QueryClientProvider>,
       ),
     ).not.toThrow()
-    expect(mountMock).toHaveBeenCalled()
+    expect(mountMock).toHaveBeenCalledWith(expect.any(HTMLDivElement))
   })
 
   it('should not throw an error if query client is provided via props', () => {
     expect(() =>
       render(<ReactQueryDevtools client={queryClient} />),
     ).not.toThrow()
-    expect(mountMock).toHaveBeenCalled()
+    expect(mountMock).toHaveBeenCalledWith(expect.any(HTMLDivElement))
   })
 
   it('should forward "buttonPosition" to the devtools instance', () => {
@@ -225,7 +225,7 @@ describe('ReactQueryDevtools', () => {
     const { unmount } = render(<ReactQueryDevtools client={queryClient} />)
     unmount()
 
-    expect(unmountMock).toHaveBeenCalled()
+    expect(unmountMock).toHaveBeenCalledWith()
   })
 
   it('should return null in non-development environments', async () => {

@@ -4165,7 +4165,9 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('off')).toBeInTheDocument()
 
-    expect(cancelFn).toHaveBeenCalled()
+    expect(cancelFn).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'abort' }),
+    )
   })
 
   it('should cancel the query if the signal was consumed and there are no more subscriptions', async () => {

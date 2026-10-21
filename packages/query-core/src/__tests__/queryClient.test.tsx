@@ -283,7 +283,7 @@ describe('queryClient', () => {
 
       queryClient.setQueryData(key, 'test data')
       queryClient.setQueryData(key, updater)
-      expect(updater).toHaveBeenCalled()
+      expect(updater).toHaveBeenCalledWith('test data')
       expect(queryCache.find({ queryKey: key })!.state.data).toEqual(
         'new data + test data',
       )
@@ -1590,7 +1590,7 @@ describe('queryClient', () => {
         pages: [{ value: 'new-page-0', staleTime: 0 }],
         pageParams: [0],
       })
-      expect(staleTimeSpy).toHaveBeenCalled()
+      expect(staleTimeSpy).toHaveBeenCalledWith()
       expect(queryFn).toHaveBeenCalledTimes(1)
     })
 

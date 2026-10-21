@@ -309,8 +309,16 @@ describe('mutation', () => {
     })
 
     expect(onMutate).not.toHaveBeenCalled()
-    expect(onSuccess).toHaveBeenCalled()
-    expect(onSettled).toHaveBeenCalled()
+    expect(onSuccess).toHaveBeenCalledWith('todo', 'todo', 'todo', {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: key,
+    })
+    expect(onSettled).toHaveBeenCalledWith('todo', null, 'todo', 'todo', {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: key,
+    })
   })
 
   it('should not add an existing observer with addObserver', () => {
