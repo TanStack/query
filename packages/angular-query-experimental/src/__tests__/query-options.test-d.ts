@@ -259,4 +259,5 @@ it('should infer to unknown if we disable a query with just a skipToken', () => 
   const data = queryClient.getQueryData(options.queryKey)
 
   expectTypeOf(data).toEqualTypeOf<unknown>()
+  expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<unknown>()
 })
