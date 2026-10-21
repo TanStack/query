@@ -127,7 +127,7 @@ describe('createQueryController', () => {
 
       host.remove()
       query.destroy()
-      expect(cacheQuery?.getObserversCount() ?? 0).toBe(0)
+      expect(cacheQuery?.getObserversCount()).toBe(0)
     }
   })
 
@@ -509,12 +509,11 @@ describe('createQueryController', () => {
 
     firstHost.remove()
     firstQuery.destroy()
-    // With gcTime:0, cache entry may be immediately removed after last observer unmounts.
     expect(
       queryClient
         .getQueryCache()
         .find({ queryKey: key })
-        ?.getObserversCount() ?? 0,
+        ?.getObserversCount(),
     ).toBe(0)
 
     const secondHost = new Host()
@@ -1229,7 +1228,7 @@ describe('createQueryController', () => {
     const newCacheQueryAfterSwitch = clientB
       .getQueryCache()
       .find({ queryKey: consumer.queryKey })
-    expect(oldCacheQueryAfterSwitch?.getObserversCount() ?? 0).toBe(0)
+    expect(oldCacheQueryAfterSwitch?.getObserversCount()).toBe(0)
     expect(newCacheQueryAfterSwitch?.getObserversCount()).toBe(1)
 
     void clientB.invalidateQueries({ queryKey: consumer.queryKey })
@@ -1277,7 +1276,7 @@ describe('createQueryController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(query().failureCount).toBe(1)
     expect(query().failureReason).toBeInstanceOf(Error)
-    expect(query().isPending || query().isError).toBe(true)
+    expect(query().isPending).toBe(true)
     expect(host.shadowRoot).toHaveTextContent('failureCount: 1, data: none')
     await vi.advanceTimersByTimeAsync(80)
     expect(query().isSuccess).toBe(true)
@@ -1529,7 +1528,7 @@ describe('createQueryController', () => {
       queryClient
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount() ?? 0,
+        ?.getObserversCount(),
     ).toBe(0)
 
     container.append(consumer)
@@ -1584,7 +1583,7 @@ describe('createQueryController', () => {
       clientA
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount() ?? 0,
+        ?.getObserversCount(),
     ).toBe(0)
 
     container.append(consumer)
@@ -1603,7 +1602,7 @@ describe('createQueryController', () => {
       clientA
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount() ?? 0,
+        ?.getObserversCount(),
     ).toBe(0)
     expect(
       clientB
