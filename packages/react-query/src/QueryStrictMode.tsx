@@ -1,6 +1,5 @@
 'use client'
 import { DevQueryStrictMode } from './QueryStrictModeDev'
-// Only used in `{@link}`s
 import type { QueryStrictModeMissingPrefetchError } from './QueryStrictModeError'
 import type {
   QueryStrictModeMissingPrefetchEvent,
@@ -9,15 +8,14 @@ import type {
 } from './QueryStrictModeTypes'
 
 /**
- * Reports prefetching problems in development: hooks that start the initial fetch of a query that
- * wasn't prefetched, and prefetched queries that nothing uses. See
- * {@link QueryStrictModeMissingPrefetchEvent} and {@link QueryStrictModeUnusedPrefetchEvent} for
- * what each problem means.
+ * Reports prefetching issues in development. See
+ * {@link QueryStrictModeMissingPrefetchEvent} and {@link QueryStrictModeUnusedPrefetchEvent}.
  *
  * By default, a missing prefetch throws a {@link QueryStrictModeMissingPrefetchError} to an error
  * boundary, and an unused prefetch is logged with `console.warn`. Pass `handleMissingPrefetch` or
- * `handleUnusedPrefetch` to filter problems, or to log or throw them instead. In production, it
- * only renders `children`.
+ * `handleUnusedPrefetch` to filter problems, or to log or throw them instead.
+ *
+ * Only affects development builds; returns children in production.
  * @param props - The `children` to check, and optionally `handleMissingPrefetch`,
  * `handleUnusedPrefetch`, an `unusedPrefetchTimeout`, and a `queryClient`.
  * @returns The `children`.
