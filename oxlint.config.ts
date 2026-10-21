@@ -301,6 +301,7 @@ export default defineConfig({
         'vitest/prefer-called-with': 'error',
         'vitest/prefer-comparison-matcher': 'error',
         'vitest/prefer-equality-matcher': 'error',
+        'vitest/prefer-expect-resolves': 'error',
         'vitest/prefer-expect-type-of': 'error',
         'vitest/prefer-mock-promise-shorthand': 'error',
         'vitest/prefer-spy-on': 'error',

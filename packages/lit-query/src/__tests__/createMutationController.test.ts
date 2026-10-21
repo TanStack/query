@@ -291,7 +291,9 @@ describe('createMutationController', () => {
     expect(mutation().isPending).toBe(true)
     expect(host.shadowRoot).toHaveTextContent('status: pending, error: none')
     await vi.advanceTimersByTimeAsync(10)
-    expect(await errorPromise).toEqual(new Error('negative-not-allowed'))
+    await expect(errorPromise).resolves.toEqual(
+      new Error('negative-not-allowed'),
+    )
     expect(mutation().isError).toBe(true)
     expect(mutation().error).toEqual(new Error('negative-not-allowed'))
     expect(host.shadowRoot).toHaveTextContent(
