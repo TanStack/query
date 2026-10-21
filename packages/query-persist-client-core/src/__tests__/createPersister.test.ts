@@ -235,7 +235,7 @@ describe('createPersister', () => {
 
     await persister.persisterFn(queryFn, context, query)
     query.state.data = 'data0'
-    query.fetch = vi.fn()
+    vi.spyOn(query, 'fetch').mockResolvedValue(undefined)
 
     expect(query.state.dataUpdatedAt).toEqual(0)
     await vi.advanceTimersByTimeAsync(0)
@@ -263,7 +263,7 @@ describe('createPersister', () => {
 
     await persister.persisterFn(queryFn, context, query)
     query.state.isInvalidated = true
-    query.fetch = vi.fn()
+    vi.spyOn(query, 'fetch').mockResolvedValue(undefined)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(0)
@@ -290,7 +290,7 @@ describe('createPersister', () => {
 
     await persister.persisterFn(queryFn, context, query)
     query.state.isInvalidated = true
-    query.fetch = vi.fn()
+    vi.spyOn(query, 'fetch').mockResolvedValue(undefined)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(0)
@@ -317,7 +317,7 @@ describe('createPersister', () => {
 
     await persister.persisterFn(queryFn, context, query)
     query.state.isInvalidated = true
-    query.fetch = vi.fn()
+    vi.spyOn(query, 'fetch').mockResolvedValue(undefined)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(0)
@@ -378,7 +378,7 @@ describe('createPersister', () => {
     )
 
     await persister.persisterFn(queryFn, context, query)
-    query.fetch = vi.fn()
+    vi.spyOn(query, 'fetch').mockResolvedValue(undefined)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -406,7 +406,7 @@ describe('createPersister', () => {
 
     await persister.persisterFn(queryFn, context, query)
     query.state.isInvalidated = true
-    query.fetch = vi.fn()
+    vi.spyOn(query, 'fetch').mockResolvedValue(undefined)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(0)
