@@ -284,6 +284,7 @@ export default defineConfig({
       ],
       rules: {
         ...pluginVitest.configs.recommended.rules,
+        'vitest/consistent-test-filename': 'error',
         'vitest/consistent-test-it': [
           'error',
           { fn: 'it', withinDescribe: 'it' },
