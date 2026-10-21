@@ -50,11 +50,11 @@ describe.each([
     app = createApp(() => h(component, { client: client.value }))
     app.mount(container)
 
-    expect(setClient).toHaveBeenLastCalledWith(first)
+    expect(setClient.mock.lastCall?.[0]).toBe(first)
     client.value = second
     await nextTick()
 
-    expect(setClient).toHaveBeenLastCalledWith(second)
+    expect(setClient.mock.lastCall?.[0]).toBe(second)
     expect(mount).toHaveBeenCalledTimes(1)
     expect(unmount).not.toHaveBeenCalled()
   })
@@ -68,14 +68,14 @@ describe.each([
     app.use(VueQueryPlugin, { queryClient: contextClient })
     app.mount(container)
 
-    expect(setClient).toHaveBeenLastCalledWith(contextClient)
+    expect(setClient.mock.lastCall?.[0]).toBe(contextClient)
     client.value = override
     await nextTick()
-    expect(setClient).toHaveBeenLastCalledWith(override)
+    expect(setClient.mock.lastCall?.[0]).toBe(override)
 
     client.value = undefined
     await nextTick()
-    expect(setClient).toHaveBeenLastCalledWith(contextClient)
+    expect(setClient.mock.lastCall?.[0]).toBe(contextClient)
     expect(mount).toHaveBeenCalledTimes(1)
   })
 })

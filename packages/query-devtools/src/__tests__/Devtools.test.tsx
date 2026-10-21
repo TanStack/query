@@ -355,6 +355,83 @@ describe('Devtools', () => {
         secondClient.clear()
       })
 
+      it('should switch mutation cache subscriptions when the client changes', async () => {
+        const secondClient = new QueryClient()
+        const [client, setClient] = createSignal(queryClient)
+        const Component =
+          mode === 'full' ? DevtoolsComponent : DevtoolsPanelComponent
+        const rendered = render(() => (
+          <Component
+            client={client()}
+            onlineManager={onlineManager}
+            queryFlavor="TanStack Query"
+            version="5"
+            initialIsOpen
+          />
+        ))
+        const panel = within(rendered.container)
+        fireEvent.click(panel.getByText('Mutations'))
+        setClient(secondClient)
+
+        await secondClient
+          .getMutationCache()
+          .build(secondClient, {
+            mutationKey: ['switch-mutation'],
+            mutationFn: () => Promise.resolve('new-result'),
+          })
+          .execute({})
+        await vi.advanceTimersByTimeAsync(0)
+        expect(panel.getAllByLabelText(/Mutation submitted at/)).toHaveLength(1)
+        rendered.unmount()
+        secondClient.clear()
+      })
+
+      it('should drop queued mutation cache updates from the previous client', async () => {
+        const secondClient = new QueryClient()
+        const [client, setClient] = createSignal(queryClient)
+        const Component =
+          mode === 'full' ? DevtoolsComponent : DevtoolsPanelComponent
+        const rendered = render(() => (
+          <Component
+            client={client()}
+            onlineManager={onlineManager}
+            queryFlavor="TanStack Query"
+            version="5"
+            initialIsOpen
+          />
+        ))
+        const panel = within(rendered.container)
+        fireEvent.click(panel.getByText('Mutations'))
+
+        void queryClient
+          .getMutationCache()
+          .build(queryClient, {
+            mutationKey: ['previous-mutation'],
+            mutationFn: () => new Promise(noop),
+          })
+          .execute({})
+        setClient(secondClient)
+
+        await vi.advanceTimersByTimeAsync(0)
+        expect(panel.getByLabelText('Pending: 0')).toBeInTheDocument()
+        rendered.unmount()
+        secondClient.clear()
+      })
+
+      it('should toggle the supplied online manager when the offline button is clicked', () => {
+        const Manager =
+          onlineManager.constructor as new () => typeof onlineManager
+        const manager = new Manager()
+        const panel = within(mount(queryClient, manager).container)
+
+        fireEvent.click(panel.getByLabelText('Mock offline behavior'))
+        expect(manager.isOnline()).toBe(false)
+        expect(onlineManager.isOnline()).toBe(true)
+        expect(
+          panel.getByLabelText('Unset offline mocking behavior'),
+        ).toHaveAttribute('aria-pressed', 'true')
+      })
+
       it('should keep query selection independent between clients', () => {
         const secondClient = new QueryClient()
         queryClient.setQueryData(['isolation-a'], 'a')
