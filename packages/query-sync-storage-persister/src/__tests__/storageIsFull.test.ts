@@ -151,13 +151,13 @@ describe('create persister', () => {
     persister.persistClient(persistClient)
     await sleep(10)
     const restoredClient = await persister.restoreClient()
-    expect(restoredClient?.clientState.queries.length).toEqual(4)
+    expect(restoredClient?.clientState.queries.length).toBe(4)
     expect(
       restoredClient?.clientState.queries.find((q) => q.queryKey[0] === 'A'),
     ).toBeUndefined()
     expect(
       restoredClient?.clientState.queries.find((q) => q.queryKey[0] === 'B'),
-    ).not.toBeUndefined()
+    ).toBeDefined()
 
     // update query Data
     await queryClient
@@ -174,7 +174,7 @@ describe('create persister', () => {
     persister.persistClient(updatedPersistClient)
     await sleep(10)
     const restoredClient2 = await persister.restoreClient()
-    expect(restoredClient2?.clientState.queries.length).toEqual(4)
+    expect(restoredClient2?.clientState.queries.length).toBe(4)
     expect(
       restoredClient2?.clientState.queries.find((q) => q.queryKey[0] === 'A'),
     ).toHaveProperty('state.data', 'a'.repeat(N))
@@ -211,6 +211,6 @@ describe('create persister', () => {
     persister.persistClient(persistClient)
     await sleep(10)
     const restoredClient = await persister.restoreClient()
-    expect(restoredClient).toEqual(undefined)
+    expect(restoredClient).toBeUndefined()
   })
 })

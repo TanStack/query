@@ -456,9 +456,9 @@ describe('query', () => {
 
     // The query should
     expect(queryFn).toHaveBeenCalledTimes(1) // have been called,
-    expect(query.state.error).toBe(null) // not have an error, and
+    expect(query.state.error).toBeNull() // not have an error, and
     expect(query.state.fetchStatus).toBe('idle') // not be loading any longer
-    expect(query.state.data).toBe(undefined) // have no data
+    expect(query.state.data).toBeUndefined() // have no data
 
     // the call to fetchQuery must reject
     // because it was reset and not reverted
@@ -485,7 +485,7 @@ describe('query', () => {
     const query = hydrationClient.getQueryCache().find({ queryKey: key })
     query?.reset()
 
-    expect(hydrationClient.getQueryData(key)).toBe(undefined)
+    expect(hydrationClient.getQueryData(key)).toBeUndefined()
   })
 
   it('should be able to refetch a cancelled query', async () => {
@@ -506,7 +506,7 @@ describe('query', () => {
     const result = query.fetch()
     await vi.advanceTimersByTimeAsync(50)
     await expect(result).resolves.toBe('data')
-    expect(query.state.error).toBe(null)
+    expect(query.state.error).toBeNull()
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
@@ -693,21 +693,21 @@ describe('query', () => {
     const observer3 = new QueryObserver(queryClient, options)
     const query = queryCache.find({ queryKey: key })
 
-    expect(query?.getObserversCount()).toEqual(0)
+    expect(query?.getObserversCount()).toBe(0)
 
     const unsubscribe1 = observer.subscribe(() => undefined)
     const unsubscribe2 = observer2.subscribe(() => undefined)
     const unsubscribe3 = observer3.subscribe(() => undefined)
-    expect(query?.getObserversCount()).toEqual(3)
+    expect(query?.getObserversCount()).toBe(3)
 
     unsubscribe3()
-    expect(query?.getObserversCount()).toEqual(2)
+    expect(query?.getObserversCount()).toBe(2)
 
     unsubscribe2()
-    expect(query?.getObserversCount()).toEqual(1)
+    expect(query?.getObserversCount()).toBe(1)
 
     unsubscribe1()
-    expect(query?.getObserversCount()).toEqual(0)
+    expect(query?.getObserversCount()).toBe(0)
   })
 
   it('should store meta object in query', async () => {
@@ -811,19 +811,19 @@ describe('query', () => {
       .query({ queryKey: key, queryFn: () => 'data' })
       .catch(noop)
     const query = queryCache.find({ queryKey: key })!
-    expect(query.getObserversCount()).toEqual(0)
+    expect(query.getObserversCount()).toBe(0)
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
     })
 
-    expect(query.getObserversCount()).toEqual(0)
+    expect(query.getObserversCount()).toBe(0)
 
     query.addObserver(observer)
-    expect(query.getObserversCount()).toEqual(1)
+    expect(query.getObserversCount()).toBe(1)
 
     query.addObserver(observer)
-    expect(query.getObserversCount()).toEqual(1)
+    expect(query.getObserversCount()).toBe(1)
   })
 
   it('should not try to remove an observer that does not exist', async () => {
@@ -837,7 +837,7 @@ describe('query', () => {
       queryKey: key,
     })
 
-    expect(query.getObserversCount()).toEqual(0)
+    expect(query.getObserversCount()).toBe(0)
 
     const notifySpy = vi.spyOn(queryCache, 'notify')
     expect(() => query.removeObserver(observer)).not.toThrow()

@@ -31,7 +31,7 @@ describe('mutation', () => {
 
     mutation.mutate(null)
     await vi.advanceTimersByTimeAsync(0)
-    expect(variables).toBe(null)
+    expect(variables).toBeNull()
   })
 
   it('should be able to set defaults with setMutationDefaults', async () => {
@@ -368,7 +368,7 @@ describe('mutation', () => {
 
     mutation.mutate(undefined, { onSuccess, onSettled })
     await vi.advanceTimersByTimeAsync(0)
-    expect(mutation.getCurrentResult().data).toEqual('update')
+    expect(mutation.getCurrentResult().data).toBe('update')
     expect(onSuccess).not.toHaveBeenCalled()
     expect(onSettled).not.toHaveBeenCalled()
   })
@@ -385,7 +385,7 @@ describe('mutation', () => {
 
     mutation.mutate(undefined, { onSuccess, onSettled })
     await vi.advanceTimersByTimeAsync(0)
-    expect(mutation.getCurrentResult().data).toEqual('update')
+    expect(mutation.getCurrentResult().data).toBe('update')
     expect(onSuccess).not.toHaveBeenCalled()
     expect(onSettled).not.toHaveBeenCalled()
   })

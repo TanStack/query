@@ -105,7 +105,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('test')).toBeInTheDocument()
 
-    expect(states.length).toEqual(2)
+    expect(states.length).toBe(2)
 
     expect(states[0]).toEqual({
       data: undefined,
@@ -3445,7 +3445,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(queryFn).not.toHaveBeenCalled()
-    expect(queryCache.find({ queryKey: key })).not.toBeUndefined()
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
     expect(rendered.getByText('fetchStatus: idle')).toBeInTheDocument()
   })
 
@@ -3641,7 +3641,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('count: 2')).toBeInTheDocument()
 
-    expect(states.length).toEqual(6)
+    expect(states.length).toBe(6)
 
     expect(states).toMatchObject([
       {
@@ -3702,7 +3702,7 @@ describe('useQuery', () => {
 
     // extra advance to make sure we're not re-fetching
     await vi.advanceTimersByTimeAsync(100)
-    expect(states.length).toEqual(2)
+    expect(states.length).toBe(2)
 
     expect(states).toMatchObject([
       {
@@ -3985,7 +3985,7 @@ describe('useQuery', () => {
       },
     ])
 
-    expect(placeholderFunctionRunCount).toEqual(1)
+    expect(placeholderFunctionRunCount).toBe(1)
   })
 
   it('should always return the correct state from select', async () => {

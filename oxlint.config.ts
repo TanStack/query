@@ -316,6 +316,7 @@ export default defineConfig({
         'vitest/prefer-snapshot-hint': 'error',
         'vitest/prefer-spy-on': 'error',
         'vitest/prefer-strict-boolean-matchers': 'error',
+        'vitest/prefer-to-be': 'error',
         'vitest/prefer-to-be-object': 'error',
         'vitest/prefer-to-contain': 'error',
         'vitest/prefer-to-have-been-called-times': 'error',

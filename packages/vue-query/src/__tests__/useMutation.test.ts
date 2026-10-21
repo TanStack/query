@@ -204,7 +204,7 @@ describe('useMutation', () => {
 
     const mutations = mutationCache.find({ mutationKey: key2 })
     expect(mutations?.options.mutationKey).toEqual(key2)
-    expect(proof).toEqual(true)
+    expect(proof).toBe(true)
   })
 
   it('should reset state after invoking mutation.reset', async () => {

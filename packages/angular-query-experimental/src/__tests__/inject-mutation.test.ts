@@ -575,7 +575,7 @@ describe('injectMutation', () => {
     fixture.detectChanges()
 
     const text = debugElement.query(By.css('span')).nativeElement.textContent
-    expect(text).toEqual('value')
+    expect(text).toBe('value')
     const mutation = mutationCache.find({ mutationKey: ['fake', 'value'] })
     expect(mutation?.options.mutationKey).toStrictEqual(['fake', 'value'])
   })
@@ -613,14 +613,14 @@ describe('injectMutation', () => {
     button.triggerEventHandler('click')
     await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
-    expect(span.nativeElement.textContent).toEqual('value')
+    expect(span.nativeElement.textContent).toBe('value')
 
     setFixtureSignalInputs(fixture, { name: 'updatedValue' })
 
     button.triggerEventHandler('click')
     await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
-    expect(span.nativeElement.textContent).toEqual('updatedValue')
+    expect(span.nativeElement.textContent).toBe('updatedValue')
 
     const mutations = mutationCache.findAll()
     expect(mutations.length).toBe(2)

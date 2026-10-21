@@ -292,7 +292,7 @@ describe('mutationCache', () => {
       expect(
         testCache.find({ mutationKey: ['mutation'], exact: false }),
       ).toEqual(mutation)
-      expect(testCache.find({ mutationKey: ['unknown'] })).toEqual(undefined)
+      expect(testCache.find({ mutationKey: ['unknown'] })).toBeUndefined()
       expect(
         testCache.find({
           predicate: (m) => m.options.mutationKey?.[0] === key[0],

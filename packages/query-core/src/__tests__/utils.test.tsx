@@ -33,7 +33,7 @@ describe('core/utils', () => {
       })
 
       expect(customHashFn).toHaveBeenCalledWith(key)
-      expect(result).toEqual('custom-hash')
+      expect(result).toBe('custom-hash')
     })
 
     it('should use default hash function when no options provided', () => {
@@ -197,8 +197,8 @@ describe('core/utils', () => {
       expect(replaceEqualDeep('1', '1')).toBe('1')
       expect(replaceEqualDeep(true, true)).toBe(true)
       expect(replaceEqualDeep(false, false)).toBe(false)
-      expect(replaceEqualDeep(null, null)).toBe(null)
-      expect(replaceEqualDeep(undefined, undefined)).toBe(undefined)
+      expect(replaceEqualDeep(null, null)).toBeNull()
+      expect(replaceEqualDeep(undefined, undefined)).toBeUndefined()
     })
     it('should return the next value when the previous value is a different value', () => {
       const date1 = new Date()
@@ -215,14 +215,14 @@ describe('core/utils', () => {
     it('should return the next value when the previous value is a different type', () => {
       const array = [1]
       const object = { a: 'a' }
-      expect(replaceEqualDeep(0, undefined)).toBe(undefined)
+      expect(replaceEqualDeep(0, undefined)).toBeUndefined()
       expect(replaceEqualDeep(undefined, 0)).toBe(0)
-      expect(replaceEqualDeep(2, undefined)).toBe(undefined)
+      expect(replaceEqualDeep(2, undefined)).toBeUndefined()
       expect(replaceEqualDeep(undefined, 2)).toBe(2)
-      expect(replaceEqualDeep(undefined, null)).toBe(null)
-      expect(replaceEqualDeep(null, undefined)).toBe(undefined)
-      expect(replaceEqualDeep({}, undefined)).toBe(undefined)
-      expect(replaceEqualDeep([], undefined)).toBe(undefined)
+      expect(replaceEqualDeep(undefined, null)).toBeNull()
+      expect(replaceEqualDeep(null, undefined)).toBeUndefined()
+      expect(replaceEqualDeep({}, undefined)).toBeUndefined()
+      expect(replaceEqualDeep([], undefined)).toBeUndefined()
       expect(replaceEqualDeep(array, object)).toBe(object)
       expect(replaceEqualDeep(object, array)).toBe(array)
     })

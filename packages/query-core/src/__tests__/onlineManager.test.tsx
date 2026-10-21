@@ -48,7 +48,7 @@ describe('onlineManager', () => {
     onlineManager.setEventListener(setup)
 
     vi.advanceTimersByTime(20)
-    expect(count).toEqual(1)
+    expect(count).toBe(1)
     expect(onlineManager.isOnline()).toBe(false)
   })
 

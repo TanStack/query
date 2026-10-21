@@ -457,7 +457,7 @@ describe('queryCache', () => {
 
       queryCache.add(queryClone)
 
-      expect(queryCache.getAll().length).toEqual(1)
+      expect(queryCache.getAll().length).toBe(1)
     })
   })
 })

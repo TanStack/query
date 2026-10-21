@@ -151,7 +151,7 @@ describe('useQueries', () => {
     )
     await vi.advanceTimersByTimeAsync(0)
     await vi.advanceTimersByTimeAsync(0)
-    expect(queriesState.value.length).toEqual(2)
+    expect(queriesState.value.length).toBe(2)
     expect(queriesState.value).toMatchObject([
       {
         data: 'value31',

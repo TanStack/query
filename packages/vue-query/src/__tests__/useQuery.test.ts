@@ -269,15 +269,15 @@ describe('useQuery', () => {
       }),
     )
 
-    expect(data.value).toStrictEqual(undefined)
-    expect(fetchStatus.value).toStrictEqual('idle')
+    expect(data.value).toBeUndefined()
+    expect(fetchStatus.value).toBe('idle')
     expect(dependentQueryFn).not.toHaveBeenCalled()
     await vi.advanceTimersByTimeAsync(0)
-    expect(data.value).toStrictEqual('Some data')
-    expect(fetchStatus.value).toStrictEqual('fetching')
+    expect(data.value).toBe('Some data')
+    expect(fetchStatus.value).toBe('fetching')
     await vi.advanceTimersByTimeAsync(10)
-    expect(fetchStatus.value).toStrictEqual('idle')
-    expect(status.value).toStrictEqual('success')
+    expect(fetchStatus.value).toBe('idle')
+    expect(status.value).toBe('success')
     expect(dependentQueryFn).toHaveBeenCalledTimes(1)
     expect(dependentQueryFn).toHaveBeenCalledWith(
       expect.objectContaining({ queryKey: key2 }),
@@ -295,12 +295,12 @@ describe('useQuery', () => {
       queryFn: () => sleep(0).then(() => 'Some data'),
     })
 
-    expect(status.value).toStrictEqual('pending')
+    expect(status.value).toBe('pending')
     await vi.advanceTimersByTimeAsync(0)
     expect(queryClient.getQueryData(key)).toBe('Some data')
-    expect(status.value).toStrictEqual('pending')
+    expect(status.value).toBe('pending')
     await vi.advanceTimersByTimeAsync(0)
-    expect(status.value).toStrictEqual('pending')
+    expect(status.value).toBe('pending')
   })
 
   it('should use the current value for the queryKey when refetch is called', async () => {

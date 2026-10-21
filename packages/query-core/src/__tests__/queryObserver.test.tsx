@@ -1061,7 +1061,7 @@ describe('queryObserver', () => {
       error = err as string
     }
 
-    expect(error).toEqual('error')
+    expect(error).toBe('error')
   })
 
   it('should not refetch in background if refetchIntervalInBackground is false', async () => {
@@ -1190,8 +1190,8 @@ describe('queryObserver', () => {
     unsubscribe()
     expect(results.length).toBe(4)
     expect(keys.length).toBe(3)
-    expect(keys[0]).toBe(null) // First Query - status: 'pending', fetchStatus: 'idle'
-    expect(keys[1]).toBe(null) // First Query - status: 'pending', fetchStatus: 'fetching'
+    expect(keys[0]).toBeNull() // First Query - status: 'pending', fetchStatus: 'idle'
+    expect(keys[1]).toBeNull() // First Query - status: 'pending', fetchStatus: 'fetching'
     expect(keys[2]).toBe(key1) // Second Query - status: 'pending', fetchStatus: 'fetching'
 
     expect(results[0]).toMatchObject({

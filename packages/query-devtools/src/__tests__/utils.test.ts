@@ -171,7 +171,7 @@ describe('Utils tests', () => {
       it('should return primitive data as-is when it is not an Object/Array/Map/Set', () => {
         expect(updateNestedDataByPath(42, ['x'], 'new')).toBe(42)
         expect(updateNestedDataByPath('hello', ['x'], 'new')).toBe('hello')
-        expect(updateNestedDataByPath(null, ['x'], 'new')).toBe(null)
+        expect(updateNestedDataByPath(null, ['x'], 'new')).toBeNull()
       })
     })
 
@@ -556,7 +556,7 @@ describe('Utils tests', () => {
       it('should return primitive data as-is when it is not an Object/Array/Map/Set', () => {
         expect(deleteNestedDataByPath(42, ['x'])).toBe(42)
         expect(deleteNestedDataByPath('hello', ['x'])).toBe('hello')
-        expect(deleteNestedDataByPath(null, ['x'])).toBe(null)
+        expect(deleteNestedDataByPath(null, ['x'])).toBeNull()
       })
     })
 
