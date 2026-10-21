@@ -14,7 +14,7 @@ import {
   hydrate,
   noop,
 } from '..'
-import { hashQueryKeyByOptions } from '../utils'
+import { hashKeyByOptions } from '../utils'
 import { mockOnlineManagerIsOnline, setIsServer } from './utils'
 import type { QueryFunctionContext, QueryKey, QueryObserverResult } from '..'
 
@@ -1250,7 +1250,10 @@ describe('query', () => {
     const query = new Query({
       client: queryClient,
       queryKey: key,
-      queryHash: hashQueryKeyByOptions(key),
+      queryHash: hashKeyByOptions(
+        key,
+        queryClient.getQueryCache().config.queryKey,
+      ),
     })
 
     query.addObserver(observer)
@@ -1285,7 +1288,10 @@ describe('query', () => {
     const query = new Query({
       client: queryClient,
       queryKey: key,
-      queryHash: hashQueryKeyByOptions(key),
+      queryHash: hashKeyByOptions(
+        key,
+        queryClient.getQueryCache().config.queryKey,
+      ),
       options: {
         queryFn: () => 'data',
         initialData: initialDataFn,
@@ -1364,7 +1370,10 @@ describe('query', () => {
     const query = new Query({
       client: queryClient,
       queryKey: key,
-      queryHash: hashQueryKeyByOptions(key),
+      queryHash: hashKeyByOptions(
+        key,
+        queryClient.getQueryCache().config.queryKey,
+      ),
       options: { queryFn },
     })
 

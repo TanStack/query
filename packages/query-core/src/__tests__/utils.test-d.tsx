@@ -7,7 +7,7 @@ import {
   ensureQueryFn,
   functionalUpdate,
   hashKey,
-  hashQueryKeyByOptions,
+  hashKeyByOptions,
   isPlainArray,
   isPlainObject,
   isServer,
@@ -37,6 +37,7 @@ import type { Mutation } from '../mutation'
 import type { Query } from '../query'
 import type {
   DataTag,
+  EqualityFn,
   MutationStatus,
   QueryFunction,
   QueryKey,
@@ -505,18 +506,16 @@ describe('isPlainObject', () => {
 })
 
 describe('partialMatchKey', () => {
-  it('should only expose the QueryKey overload, not the any implementation', () => {
+  it('should accept unknown values and an optional equality function', () => {
+    expectTypeOf(partialMatchKey).parameter(0).toEqualTypeOf<unknown>()
+    expectTypeOf(partialMatchKey).parameter(1).toEqualTypeOf<unknown>()
     expectTypeOf(partialMatchKey)
-      .parameter(0)
-      .toEqualTypeOf<ReadonlyArray<unknown>>()
-    expectTypeOf(partialMatchKey)
-      .parameter(1)
-      .toEqualTypeOf<ReadonlyArray<unknown>>()
+      .parameter(2)
+      .toEqualTypeOf<EqualityFn | undefined>()
     expectTypeOf(partialMatchKey).returns.toEqualTypeOf<boolean>()
 
     expectTypeOf(partialMatchKey(['a'], ['a'])).toEqualTypeOf<boolean>()
-    // @ts-expect-error a non-QueryKey argument is rejected
-    partialMatchKey(1, 2)
+    expectTypeOf(partialMatchKey(1, 2, Object.is)).toEqualTypeOf<boolean>()
   })
 })
 
@@ -536,11 +535,14 @@ describe('hashKey', () => {
   })
 })
 
-describe('hashQueryKeyByOptions', () => {
+describe('hashKeyByOptions', () => {
   it('should accept the options argument optionally', () => {
-    expectTypeOf(hashQueryKeyByOptions(['a'])).toEqualTypeOf<string>()
+    expectTypeOf(hashKeyByOptions(['a'], undefined)).toEqualTypeOf<string>()
     expectTypeOf(
-      hashQueryKeyByOptions(['a'], { queryKeyHashFn: hashKey }),
+      hashKeyByOptions(['a'], undefined, { queryKeyHashFn: hashKey }),
+    ).toEqualTypeOf<string>()
+    expectTypeOf(
+      hashKeyByOptions(['a'], { hashFn: hashKey }),
     ).toEqualTypeOf<string>()
   })
 })
@@ -642,11 +644,13 @@ describe('replaceEqualDeep', () => {
       .toEqualTypeOf<number>()
   })
 
-  it('should accept the depth argument optionally', () => {
+  it('should accept the equality function optionally', () => {
     // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
     expectTypeOf(replaceEqualDeep(1 as unknown, 2)).toEqualTypeOf<number>()
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    expectTypeOf(replaceEqualDeep(1 as unknown, 2, 0)).toEqualTypeOf<number>()
+    expectTypeOf(
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      replaceEqualDeep(1 as unknown, 2, Object.is),
+    ).toEqualTypeOf<number>()
   })
 })
 
