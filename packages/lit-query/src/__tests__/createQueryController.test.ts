@@ -510,10 +510,7 @@ describe('createQueryController', () => {
     firstHost.remove()
     firstQuery.destroy()
     expect(
-      queryClient
-        .getQueryCache()
-        .find({ queryKey: key })
-        ?.getObserversCount(),
+      queryClient.getQueryCache().find({ queryKey: key })?.getObserversCount(),
     ).toBe(0)
 
     const secondHost = new Host()
