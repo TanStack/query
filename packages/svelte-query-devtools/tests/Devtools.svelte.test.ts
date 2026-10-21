@@ -5,6 +5,8 @@ import SvelteQueryDevtools from '../src/Devtools.svelte'
 import Wrapper from './Wrapper.svelte'
 import type { TanstackQueryDevtools } from '@tanstack/query-devtools'
 
+const mountMock = vi.fn()
+const unmountMock = vi.fn()
 const setButtonPositionMock = vi.fn()
 const setPositionMock = vi.fn()
 const setInitialIsOpenMock = vi.fn()
@@ -13,8 +15,8 @@ const setThemeMock = vi.fn()
 
 vi.mock('@tanstack/query-devtools', () => ({
   TanstackQueryDevtools: vi.fn(function (this: TanstackQueryDevtools) {
-    this.mount = vi.fn()
-    this.unmount = vi.fn()
+    this.mount = mountMock
+    this.unmount = unmountMock
     this.setButtonPosition = setButtonPositionMock
     this.setPosition = setPositionMock
     this.setInitialIsOpen = setInitialIsOpenMock
