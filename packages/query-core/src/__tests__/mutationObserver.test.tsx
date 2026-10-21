@@ -579,4 +579,48 @@ describe('mutationObserver', () => {
 
     unsubscribe()
   })
+
+  it('should not invoke onSettled with the next mutation options when mutate is called inside onError', async () => {
+    const onSettledFirst = vi.fn()
+    const onSettledSecond = vi.fn()
+
+    const error = new Error('error')
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: (value: number) =>
+        value === 1 ? Promise.reject(error) : Promise.resolve(value),
+    })
+
+    const unsubscribe = mutation.subscribe(() => {})
+
+    mutation
+      .mutate(1, {
+        onError: () => {
+          void mutation.mutate(2, { onSettled: onSettledSecond })
+        },
+        onSettled: onSettledFirst,
+      })
+      .catch(() => {})
+
+    await vi.runAllTimersAsync()
+
+    expect(onSettledFirst).toHaveBeenCalledTimes(1)
+    expect(onSettledFirst).toHaveBeenCalledWith(
+      undefined,
+      error,
+      1,
+      undefined,
+      expect.any(Object),
+    )
+
+    expect(onSettledSecond).toHaveBeenCalledTimes(1)
+    expect(onSettledSecond).toHaveBeenCalledWith(
+      2,
+      null,
+      2,
+      undefined,
+      expect.any(Object),
+    )
+
+    unsubscribe()
+  })
 })
