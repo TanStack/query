@@ -175,7 +175,7 @@ describe('createQueries', () => {
       )
 
       // Initially both queries are loading
-      expect(queries).toEqual({
+      expect(queries).toStrictEqual({
         combined: true,
         res: '',
       })
@@ -190,7 +190,7 @@ describe('createQueries', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(queries.res).toBe('first result,second result')
 
-      expect(queries).toEqual({
+      expect(queries).toStrictEqual({
         combined: true,
         res: 'first result,second result',
       })

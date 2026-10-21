@@ -400,7 +400,7 @@ describe('useSuspenseQueries', () => {
     await vi.advanceTimersByTimeAsync(20)
     expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
 
-    expect(results).toEqual(['loading', '1', '2'])
+    expect(results).toStrictEqual(['loading', '1', '2'])
   })
 
   it('should not unmount before all promises fetched', async () => {

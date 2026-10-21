@@ -119,7 +119,7 @@ describe('useIsFetching', () => {
 
     // unlike react, Updating renderSecond wont cause a rerender for FirstQuery
     await vi.advanceTimersByTimeAsync(300)
-    expect(isFetchingArray).toEqual([0, 1, 2, 1, 0])
+    expect(isFetchingArray).toStrictEqual([0, 1, 2, 1, 0])
   })
 
   it('should be able to filter', async () => {
@@ -180,7 +180,7 @@ describe('useIsFetching', () => {
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
 
     // at no point should we have isFetching: 2
-    expect(isFetchingArray).toEqual(expect.not.arrayContaining([2]))
+    expect(isFetchingArray).toStrictEqual(expect.not.arrayContaining([2]))
   })
 
   it('should show the correct fetching state when mounted after a query', async () => {

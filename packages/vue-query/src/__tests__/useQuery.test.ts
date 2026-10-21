@@ -343,7 +343,7 @@ describe('useQuery', () => {
       })
 
       await vi.advanceTimersByTimeAsync(10)
-      expect(data.value).toEqual({ nested: { count: 0 } })
+      expect(data.value).toStrictEqual({ nested: { count: 0 } })
       expect(isReactive(data.value?.nested)).toBe(true)
       expect(isReadonly(data.value?.nested)).toBe(true)
     },
@@ -358,7 +358,7 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(data.value).toEqual({ nested: { count: 0 } })
+    expect(data.value).toStrictEqual({ nested: { count: 0 } })
     expect(isReactive(data.value?.nested)).toBe(false)
     expect(isReadonly(data.value?.nested)).toBe(false)
   })
@@ -488,7 +488,7 @@ describe('useQuery', () => {
 
     const queryClient = useQueryClient()
 
-    expect(queryClient.getQueryData(key)).toEqual(['a', 'b', 'c'])
+    expect(queryClient.getQueryData(key)).toStrictEqual(['a', 'b', 'c'])
   })
 
   it('should stay disabled until the dependent value is set', async () => {

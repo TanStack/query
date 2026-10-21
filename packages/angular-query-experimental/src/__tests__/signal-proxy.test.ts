@@ -22,6 +22,6 @@ describe('signalProxy', () => {
   })
 
   it('should support "Object.keys"', () => {
-    expect(Object.keys(proxy)).toEqual(['fn', 'baz'])
+    expect(Object.keys(proxy)).toStrictEqual(['fn', 'baz'])
   })
 })

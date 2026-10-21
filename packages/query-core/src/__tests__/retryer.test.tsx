@@ -95,7 +95,7 @@ describe('createRetryer', () => {
     const delays = setTimeoutSpy.mock.calls
       .filter((call) => typeof call[1] === 'number')
       .map((call) => call[1])
-    expect(delays).toEqual([1000, 2000, 4000, 8000, 16000, 30000])
+    expect(delays).toStrictEqual([1000, 2000, 4000, 8000, 16000, 30000])
   })
 
   it('should reject with a CancelledError carrying the cancel options and call onCancel', async () => {

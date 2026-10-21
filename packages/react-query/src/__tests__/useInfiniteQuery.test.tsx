@@ -64,7 +64,7 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     expect(states).toHaveLength(2)
-    expect(states[0]).toEqual({
+    expect(states[0]).toStrictEqual({
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -99,7 +99,7 @@ describe('useInfiniteQuery', () => {
       status: 'pending',
       fetchStatus: 'fetching',
     })
-    expect(states[1]).toEqual({
+    expect(states[1]).toStrictEqual({
       data: { pages: [0], pageParams: [0] },
       dataUpdatedAt: expect.any(Number),
       error: null,
@@ -954,8 +954,8 @@ describe('useInfiniteQuery', () => {
 
     let callIndex = 0
     const firstCtx = fetchPage.mock.calls[callIndex]![0]
-    expect(firstCtx.pageParam).toEqual(start)
-    expect(firstCtx.queryKey).toEqual(key)
+    expect(firstCtx.pageParam).toStrictEqual(start)
+    expect(firstCtx.queryKey).toStrictEqual(key)
     expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
     expect(firstCtx.signal.aborted).toBe(false)
     expect(onAborts[callIndex]).not.toHaveBeenCalled()
@@ -964,7 +964,7 @@ describe('useInfiniteQuery', () => {
     callIndex = 1
     const secondCtx = fetchPage.mock.calls[callIndex]![0]
     expect(secondCtx.pageParam).toBe(11)
-    expect(secondCtx.queryKey).toEqual(key)
+    expect(secondCtx.queryKey).toStrictEqual(key)
     expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
     expect(secondCtx.signal.aborted).toBe(true)
     expect(onAborts[callIndex]).toHaveBeenCalledTimes(1)
@@ -973,7 +973,7 @@ describe('useInfiniteQuery', () => {
     callIndex = 2
     const thirdCtx = fetchPage.mock.calls[callIndex]![0]
     expect(thirdCtx.pageParam).toBe(11)
-    expect(thirdCtx.queryKey).toEqual(key)
+    expect(thirdCtx.queryKey).toStrictEqual(key)
     expect(thirdCtx.signal).toBeInstanceOf(AbortSignal)
     expect(thirdCtx.signal.aborted).toBe(false)
     expect(onAborts[callIndex]).not.toHaveBeenCalled()
@@ -1029,8 +1029,8 @@ describe('useInfiniteQuery', () => {
 
     let callIndex = 0
     const firstCtx = fetchPage.mock.calls[callIndex]![0]
-    expect(firstCtx.pageParam).toEqual(start)
-    expect(firstCtx.queryKey).toEqual(key)
+    expect(firstCtx.pageParam).toStrictEqual(start)
+    expect(firstCtx.queryKey).toStrictEqual(key)
     expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
     expect(firstCtx.signal.aborted).toBe(false)
     expect(onAborts[callIndex]).not.toHaveBeenCalled()
@@ -1039,7 +1039,7 @@ describe('useInfiniteQuery', () => {
     callIndex = 1
     const secondCtx = fetchPage.mock.calls[callIndex]![0]
     expect(secondCtx.pageParam).toBe(11)
-    expect(secondCtx.queryKey).toEqual(key)
+    expect(secondCtx.queryKey).toStrictEqual(key)
     expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
     expect(secondCtx.signal.aborted).toBe(false)
     expect(onAborts[callIndex]).not.toHaveBeenCalled()

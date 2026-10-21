@@ -76,7 +76,7 @@ describe('BaseController', () => {
 
     const controller = new RecordingController(host)
     await vi.advanceTimersByTimeAsync(0)
-    expect(controller.lifecycle).toEqual([
+    expect(controller.lifecycle).toStrictEqual([
       'connected:missing',
       'changed:client',
     ])
@@ -97,7 +97,7 @@ describe('BaseController', () => {
     controller.hostConnected()
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(controller.lifecycle).toEqual([
+    expect(controller.lifecycle).toStrictEqual([
       'connected:missing',
       'changed:missing',
     ])

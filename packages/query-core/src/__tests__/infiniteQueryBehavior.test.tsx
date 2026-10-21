@@ -414,19 +414,19 @@ describe('InfiniteQueryBehavior', () => {
     const fetchPage1Promise = observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     const page1Data = await fetchPage1Promise
-    expect(page1Data.data?.pageParams).toEqual([1])
+    expect(page1Data.data?.pageParams).toStrictEqual([1])
 
     // Fetch Page 2, as per the queryFn, this will reject 2 times then resolves
     const fetchPage2Promise = observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(70)
     const page2Data = await fetchPage2Promise
-    expect(page2Data.data?.pageParams).toEqual([1, 2])
+    expect(page2Data.data?.pageParams).toStrictEqual([1, 2])
 
     // Fetch Page 3
     const fetchPage3Promise = observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     const page3Data = await fetchPage3Promise
-    expect(page3Data.data?.pageParams).toEqual([1, 2, 3])
+    expect(page3Data.data?.pageParams).toStrictEqual([1, 2, 3])
 
     // Now the real deal; re-fetching this query **should not** stamp into an
     // infinite loop where the retryer every time restarts from page 1
@@ -436,7 +436,7 @@ describe('InfiniteQueryBehavior', () => {
     const reFetchPromise = observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     const reFetchedData = await reFetchPromise
-    expect(reFetchedData.data?.pageParams).toEqual([1, 2, 3])
+    expect(reFetchedData.data?.pageParams).toStrictEqual([1, 2, 3])
   })
 
   it('should fetch even if initialPageParam is null', async () => {
@@ -486,7 +486,7 @@ describe('InfiniteQueryBehavior', () => {
       getNextPageParam: () => undefined,
     })
 
-    expect(pageParams).toEqual([null, null])
+    expect(pageParams).toStrictEqual([null, null])
   })
 
   it('should not fetch next page when getNextPageParam returns null', async () => {

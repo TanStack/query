@@ -1167,7 +1167,9 @@ describe('Devtools', () => {
         target: { value: JSON.stringify({ name: 'b' }) },
       })
       fireEvent.submit(textarea.closest('form')!)
-      expect(queryClient.getQueryData(['edit-save'])).toEqual({ name: 'b' })
+      expect(queryClient.getQueryData(['edit-save'])).toStrictEqual({
+        name: 'b',
+      })
     })
 
     it('should set an error state when the edited data is invalid JSON', () => {

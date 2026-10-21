@@ -261,7 +261,7 @@ describe('useQueries', () => {
     )
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(queriesResult.value).toEqual({
+    expect(queriesResult.value).toStrictEqual({
       combined: true,
       res: [firstResult, secondResult],
     })
@@ -427,7 +427,7 @@ describe('useQueries', () => {
     })
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(queriesState.value[0].data).toEqual({ nested: { count: 0 } })
+    expect(queriesState.value[0].data).toStrictEqual({ nested: { count: 0 } })
     expect(isReadonly(queriesState.value[0])).toBe(true)
   })
 
@@ -444,7 +444,7 @@ describe('useQueries', () => {
     })
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(queriesState.value[0].data).toEqual({ nested: { count: 0 } })
+    expect(queriesState.value[0].data).toStrictEqual({ nested: { count: 0 } })
     expect(isReadonly(queriesState.value[0])).toBe(false)
   })
 

@@ -51,8 +51,8 @@ describe('queriesObserver', () => {
     const queries = observer.getQueries()
 
     expect(queries).toHaveLength(2)
-    expect(queries[0]?.queryKey).toEqual(key1)
-    expect(queries[1]?.queryKey).toEqual(key2)
+    expect(queries[0]?.queryKey).toStrictEqual(key1)
+    expect(queries[1]?.queryKey).toStrictEqual(key2)
 
     unsubscribe()
   })
@@ -145,7 +145,7 @@ describe('queriesObserver', () => {
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
     expect(
       queryCache.find({ queryKey: key2, type: 'active' })?.queryKey,
-    ).toEqual(key2)
+    ).toStrictEqual(key2)
 
     unsubscribe()
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
@@ -487,7 +487,7 @@ describe('queriesObserver', () => {
       [query],
       combine,
     )
-    expect(getCombinedResult(rawResult)).toEqual(['data'])
+    expect(getCombinedResult(rawResult)).toStrictEqual(['data'])
     expect(combine).toHaveBeenCalledTimes(1)
 
     const unsubscribe = observer.subscribe(() => undefined)
@@ -520,7 +520,7 @@ describe('queriesObserver', () => {
       [query],
       combine,
     )
-    expect(getCombinedResult(rawResult)).toEqual(['data'])
+    expect(getCombinedResult(rawResult)).toStrictEqual(['data'])
     expect(combine).toHaveBeenCalledTimes(1)
 
     const unsubscribe = observer.subscribe(() => undefined)
@@ -609,7 +609,7 @@ describe('queriesObserver', () => {
     )
     const initialCombined = getInitialCombined(initialRaw)
 
-    expect(initialCombined.keys).toEqual(['success'])
+    expect(initialCombined.keys).toStrictEqual(['success'])
 
     const [newRaw, getNewCombined] = observer.getOptimisticResult(
       [{ queryKey: key2, queryFn: queryFn2 }],
@@ -617,7 +617,7 @@ describe('queriesObserver', () => {
     )
     const newCombined = getNewCombined(newRaw)
 
-    expect(newCombined.keys).toEqual(['pending'])
+    expect(newCombined.keys).toStrictEqual(['pending'])
   })
 
   it('should recalculate combined result when combine function changes', () => {

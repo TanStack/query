@@ -66,7 +66,7 @@ describe('useIsMutating', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(150)
-    expect(isMutatingArray).toEqual([0, 1, 2, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 2, 1, 0])
   })
 
   it('should filter correctly by mutationKey', async () => {
@@ -106,7 +106,7 @@ describe('useIsMutating', () => {
 
     // Unlike React, IsMutating Wont re-render twice with mutation2
     await vi.advanceTimersByTimeAsync(100)
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should filter correctly by predicate', async () => {
@@ -149,7 +149,7 @@ describe('useIsMutating', () => {
 
     // Again, No unnecessary re-renders like React
     await vi.advanceTimersByTimeAsync(100)
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should use provided custom queryClient', async () => {

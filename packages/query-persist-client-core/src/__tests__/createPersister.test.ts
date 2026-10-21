@@ -241,7 +241,7 @@ describe('createPersister', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(query.fetch).toHaveBeenCalledTimes(0)
-    expect(query.state.dataUpdatedAt).toEqual(dataUpdatedAt)
+    expect(query.state.dataUpdatedAt).toStrictEqual(dataUpdatedAt)
   })
 
   it('should restore item from the storage and refetch when `stale`', async () => {

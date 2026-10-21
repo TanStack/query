@@ -10,7 +10,7 @@ describe('utils', () => {
       const expected = { option1: 'x', option2: 'y', option3: 'z' }
 
       updateState(origin, update)
-      expect(origin).toEqual(expected)
+      expect(origin).toStrictEqual(expected)
     })
 
     it('should update only existing keys', () => {
@@ -19,7 +19,7 @@ describe('utils', () => {
       const expected = { option1: 'x', option2: 'y' }
 
       updateState(origin, update)
-      expect(origin).toEqual(expected)
+      expect(origin).toStrictEqual(expected)
     })
 
     it('should set keys missing from the update to undefined', () => {
@@ -134,7 +134,7 @@ describe('utils', () => {
       })
       const cp = cloneDeepUnref(val)
 
-      expect(cp).toEqual({
+      expect(cp).toStrictEqual({
         a: 1,
         b: 2,
         c: ['c1', ['c2']],

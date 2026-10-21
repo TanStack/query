@@ -537,7 +537,7 @@ describe('useMutationState', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: 'clear' }))
     await vi.advanceTimersByTimeAsync(1)
-    expect(queryClient.getMutationCache().getAll()).toEqual([])
+    expect(queryClient.getMutationCache().getAll()).toStrictEqual([])
     expect(rendered.getByText('data: []')).toBeInTheDocument()
   })
 

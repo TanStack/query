@@ -559,7 +559,7 @@ describe('injectQuery', () => {
 
       // Query should be complete after whenStable() thanks to PendingTasks integration
       expect(query.status()).toBe('success')
-      expect(query.data()).toEqual({ message: 'http test data' })
+      expect(query.data()).toStrictEqual({ message: 'http test data' })
 
       httpTestingController.verify()
     })

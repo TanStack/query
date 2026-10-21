@@ -36,7 +36,7 @@ describe('test-utils', () => {
       'should generate permutations of $input',
       ({ input, expected }) => {
         const permutations = generatePermutations(input)
-        expect(permutations).toEqual(expected)
+        expect(permutations).toStrictEqual(expected)
       },
     )
   })
