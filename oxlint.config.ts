@@ -330,6 +330,7 @@ export default defineConfig({
         'vitest/require-mock-type-parameters': 'error',
         'vitest/require-to-throw-message': 'error',
         'vitest/valid-expect': 'off',
+        'vitest-js/prefer-vi-mocked': 'error',
         'vitest-js/valid-expect': 'error',
       },
     },
