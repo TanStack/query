@@ -1464,6 +1464,18 @@
               "to": "framework/react/reference/type-aliases/AnyUseSuspenseQueryOptions"
             },
             {
+              "label": "Types / CoreInfiniteQueryOptions",
+              "to": "framework/react/reference/type-aliases/CoreInfiniteQueryOptions"
+            },
+            {
+              "label": "Types / CoreMutationOptions",
+              "to": "framework/react/reference/type-aliases/CoreMutationOptions"
+            },
+            {
+              "label": "Types / CoreQueryOptions",
+              "to": "framework/react/reference/type-aliases/CoreQueryOptions"
+            },
+            {
               "label": "Types / DataTag",
               "to": "framework/react/reference/type-aliases/DataTag"
             },
@@ -3018,6 +3030,18 @@
               "to": "framework/solid/reference/type-aliases/AnyDataTag"
             },
             {
+              "label": "Types / CoreInfiniteQueryOptions",
+              "to": "framework/solid/reference/type-aliases/CoreInfiniteQueryOptions"
+            },
+            {
+              "label": "Types / CoreMutationOptions",
+              "to": "framework/solid/reference/type-aliases/CoreMutationOptions"
+            },
+            {
+              "label": "Types / CoreQueryOptions",
+              "to": "framework/solid/reference/type-aliases/CoreQueryOptions"
+            },
+            {
               "label": "Types / DataTag",
               "to": "framework/solid/reference/type-aliases/DataTag"
             },
@@ -3807,6 +3831,18 @@
               "to": "framework/svelte/reference/type-aliases/AnyDataTag"
             },
             {
+              "label": "Types / CoreInfiniteQueryOptions",
+              "to": "framework/svelte/reference/type-aliases/CoreInfiniteQueryOptions"
+            },
+            {
+              "label": "Types / CoreMutationOptions",
+              "to": "framework/svelte/reference/type-aliases/CoreMutationOptions"
+            },
+            {
+              "label": "Types / CoreQueryOptions",
+              "to": "framework/svelte/reference/type-aliases/CoreQueryOptions"
+            },
+            {
               "label": "Types / CreateBaseMutationResult",
               "to": "framework/svelte/reference/type-aliases/CreateBaseMutationResult"
             },
@@ -4586,6 +4622,18 @@
             {
               "label": "Types / AnyDataTag",
               "to": "framework/lit/reference/type-aliases/AnyDataTag"
+            },
+            {
+              "label": "Types / CoreInfiniteQueryOptions",
+              "to": "framework/lit/reference/type-aliases/CoreInfiniteQueryOptions"
+            },
+            {
+              "label": "Types / CoreMutationOptions",
+              "to": "framework/lit/reference/type-aliases/CoreMutationOptions"
+            },
+            {
+              "label": "Types / CoreQueryOptions",
+              "to": "framework/lit/reference/type-aliases/CoreQueryOptions"
             },
             {
               "label": "Types / CreateInfiniteQueryOptions",
@@ -5415,6 +5463,18 @@
             {
               "label": "Types / AnyDataTag",
               "to": "framework/angular/reference/type-aliases/AnyDataTag"
+            },
+            {
+              "label": "Types / CoreInfiniteQueryOptions",
+              "to": "framework/angular/reference/type-aliases/CoreInfiniteQueryOptions"
+            },
+            {
+              "label": "Types / CoreMutationOptions",
+              "to": "framework/angular/reference/type-aliases/CoreMutationOptions"
+            },
+            {
+              "label": "Types / CoreQueryOptions",
+              "to": "framework/angular/reference/type-aliases/CoreQueryOptions"
             },
             {
               "label": "Types / CreateBaseMutationResult",
@@ -6256,6 +6316,18 @@
             {
               "label": "Types / AnyUseSuspenseQueryOptions",
               "to": "framework/preact/reference/type-aliases/AnyUseSuspenseQueryOptions"
+            },
+            {
+              "label": "Types / CoreInfiniteQueryOptions",
+              "to": "framework/preact/reference/type-aliases/CoreInfiniteQueryOptions"
+            },
+            {
+              "label": "Types / CoreMutationOptions",
+              "to": "framework/preact/reference/type-aliases/CoreMutationOptions"
+            },
+            {
+              "label": "Types / CoreQueryOptions",
+              "to": "framework/preact/reference/type-aliases/CoreQueryOptions"
             },
             {
               "label": "Types / DataTag",
