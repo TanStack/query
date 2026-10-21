@@ -1243,7 +1243,7 @@ describe('createQueriesController', () => {
     const cacheAEntryAfterSwitch = clientA
       .getQueryCache()
       .find({ queryKey: consumer.queryKey })
-    expect(cacheAEntryAfterSwitch?.getObserversCount() ?? 0).toBe(0)
+    expect(cacheAEntryAfterSwitch?.getObserversCount()).toBe(0)
 
     void clientB.invalidateQueries({ queryKey: consumer.queryKey })
     expect(consumer.queryCalls).toBe(3)
@@ -1302,7 +1302,7 @@ describe('createQueriesController', () => {
       clientA
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount() ?? 0,
+        ?.getObserversCount(),
     ).toBe(0)
 
     providerA.remove()
@@ -1317,7 +1317,7 @@ describe('createQueriesController', () => {
       clientA
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount() ?? 0,
+        ?.getObserversCount(),
     ).toBe(0)
     expect(
       clientB

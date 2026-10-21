@@ -905,7 +905,7 @@ describe('createInfiniteQueryController', () => {
     const cacheAEntryAfterSwitch = clientA
       .getQueryCache()
       .find({ queryKey: consumer.queryKey })
-    expect(cacheAEntryAfterSwitch?.getObserversCount() ?? 0).toBe(0)
+    expect(cacheAEntryAfterSwitch?.getObserversCount()).toBe(0)
 
     void consumer.infinite.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
@@ -966,7 +966,7 @@ describe('createInfiniteQueryController', () => {
       clientA
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount() ?? 0,
+        ?.getObserversCount(),
     ).toBe(0)
 
     providerA.remove()
@@ -984,7 +984,7 @@ describe('createInfiniteQueryController', () => {
       clientA
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount() ?? 0,
+        ?.getObserversCount(),
     ).toBe(0)
     expect(
       clientB
