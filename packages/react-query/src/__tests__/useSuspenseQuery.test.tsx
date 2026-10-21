@@ -378,9 +378,9 @@ describe('useSuspenseQuery', () => {
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
     expect(
-      typeof queryClient.getQueryCache().find({ queryKey: key })?.observers[0]
-        ?.options.staleTime,
-    ).toBe('function')
+      queryClient.getQueryCache().find({ queryKey: key })?.observers[0]?.options
+        .staleTime,
+    ).toBeTypeOf('function')
   })
 
   it('should suspend when switching to a new query', async () => {

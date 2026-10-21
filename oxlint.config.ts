@@ -297,6 +297,7 @@ export default defineConfig({
         'vitest/no-duplicate-hooks': 'error',
         'vitest/no-test-return-statement': 'error',
         'vitest/prefer-comparison-matcher': 'error',
+        'vitest/prefer-expect-type-of': 'error',
         'vitest/prefer-strict-boolean-matchers': 'error',
         'vitest/prefer-to-have-been-called-times': 'error',
         'vitest/require-awaited-expect-poll': 'error',
