@@ -302,6 +302,7 @@ export default defineConfig({
         'vitest/prefer-comparison-matcher': 'error',
         'vitest/prefer-equality-matcher': 'error',
         'vitest/prefer-expect-type-of': 'error',
+        'vitest/prefer-mock-promise-shorthand': 'error',
         'vitest/prefer-spy-on': 'error',
         'vitest/prefer-strict-boolean-matchers': 'error',
         'vitest/prefer-to-contain': 'error',

@@ -576,9 +576,7 @@ describe('dehydration and rehydration', () => {
     consoleErrorMock.mockImplementation(() => undefined)
     const onlineMock = mockOnlineManagerIsOnline(false)
 
-    const serverAddTodo = vi
-      .fn()
-      .mockImplementation(() => Promise.reject(new Error('offline')))
+    const serverAddTodo = vi.fn().mockRejectedValue(new Error('offline'))
     const serverOnMutate = vi
       .fn()
       .mockImplementation((variables: { text: string }) => {
@@ -662,9 +660,7 @@ describe('dehydration and rehydration', () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
     consoleErrorMock.mockImplementation(() => undefined)
 
-    const serverAddTodo = vi
-      .fn()
-      .mockImplementation(() => Promise.reject(new Error('offline')))
+    const serverAddTodo = vi.fn().mockRejectedValue(new Error('offline'))
 
     const queryClient = new QueryClient()
 
@@ -696,9 +692,7 @@ describe('dehydration and rehydration', () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
     consoleErrorMock.mockImplementation(() => undefined)
 
-    const serverAddTodo = vi
-      .fn()
-      .mockImplementation(() => Promise.reject(new Error('offline')))
+    const serverAddTodo = vi.fn().mockRejectedValue(new Error('offline'))
 
     const queryClient = new QueryClient()
 
