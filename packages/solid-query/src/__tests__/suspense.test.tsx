@@ -143,7 +143,9 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       useQuery(() => ({
@@ -624,7 +626,9 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn when not enabled', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn(() => sleep(10).then(() => '23'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => '23'),
+    )
 
     function Page() {
       const [enabled, setEnabled] = createSignal(false)

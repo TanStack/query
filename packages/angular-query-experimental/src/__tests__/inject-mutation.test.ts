@@ -14,6 +14,7 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { noop } from '@tanstack/query-core'
 import { QueryClient, injectMutation, provideTanStackQuery } from '..'
 import { expectSignals, setFixtureSignalInputs } from './test-utils'
+import type { MutationFunctionContext } from '@tanstack/query-core'
 
 describe('injectMutation', () => {
   let queryClient: QueryClient
@@ -209,7 +210,8 @@ describe('injectMutation', () => {
     })
 
     it('should call onMutate when passed as an option', async () => {
-      const onMutate = vi.fn()
+      const onMutate =
+        vi.fn<(variables: string, context: MutationFunctionContext) => void>()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationFn: (params: string) => sleep(10).then(() => params),
@@ -223,7 +225,15 @@ describe('injectMutation', () => {
     })
 
     it('should call onError when passed as an option', async () => {
-      const onError = vi.fn()
+      const onError =
+        vi.fn<
+          (
+            error: Error,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationFn: (_params: string) =>
@@ -238,7 +248,15 @@ describe('injectMutation', () => {
     })
 
     it('should call onSuccess when passed as an option', async () => {
-      const onSuccess = vi.fn()
+      const onSuccess =
+        vi.fn<
+          (
+            data: string,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationFn: (params: string) => sleep(10).then(() => params),
@@ -252,7 +270,16 @@ describe('injectMutation', () => {
     })
 
     it('should call onSettled when passed as an option', async () => {
-      const onSettled = vi.fn()
+      const onSettled =
+        vi.fn<
+          (
+            data: string | undefined,
+            error: Error | null,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationFn: (params: string) => sleep(10).then(() => params),
@@ -266,7 +293,15 @@ describe('injectMutation', () => {
     })
 
     it('should call onError when passed as an argument of mutate function', async () => {
-      const onError = vi.fn()
+      const onError =
+        vi.fn<
+          (
+            error: Error,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationFn: (_params: string) =>
@@ -280,7 +315,15 @@ describe('injectMutation', () => {
     })
 
     it('should call onSuccess when passed as an argument of mutate function', async () => {
-      const onSuccess = vi.fn()
+      const onSuccess =
+        vi.fn<
+          (
+            data: string,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationFn: (params: string) => sleep(10).then(() => params),
@@ -293,7 +336,16 @@ describe('injectMutation', () => {
     })
 
     it('should call onSettled when passed as an argument of mutate function', async () => {
-      const onSettled = vi.fn()
+      const onSettled =
+        vi.fn<
+          (
+            data: string | undefined,
+            error: Error | null,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationFn: (params: string) => sleep(10).then(() => params),
@@ -428,8 +480,26 @@ describe('injectMutation', () => {
     })
 
     it('should fire both onSettled functions', async () => {
-      const onSettled = vi.fn()
-      const onSettledMutate = vi.fn()
+      const onSettled =
+        vi.fn<
+          (
+            data: string | undefined,
+            error: Error | null,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
+      const onSettledMutate =
+        vi.fn<
+          (
+            data: string | undefined,
+            error: Error | null,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationFn: (params: string) => sleep(10).then(() => params),
@@ -444,7 +514,15 @@ describe('injectMutation', () => {
     })
 
     it('should pass a non-undefined onMutateResult alongside context to onSuccess', async () => {
-      const onSuccess = vi.fn()
+      const onSuccess =
+        vi.fn<
+          (
+            data: string,
+            variables: string,
+            onMutateResult: { startedWith: string },
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationFn: (text: string) =>
@@ -492,7 +570,15 @@ describe('injectMutation', () => {
     })
 
     it('should include mutationKey in the context passed to hook-level callbacks', async () => {
-      const onSuccess = vi.fn()
+      const onSuccess =
+        vi.fn<
+          (
+            data: string,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationKey: ['todos', 'add'],
@@ -531,7 +617,15 @@ describe('injectMutation', () => {
     })
 
     it('should give a per-call onSuccess the same QueryClient instance via context', async () => {
-      const onSuccessMutate = vi.fn()
+      const onSuccessMutate =
+        vi.fn<
+          (
+            data: string,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationFn: (text: string) => sleep(10).then(() => text),
@@ -639,7 +733,7 @@ describe('injectMutation', () => {
     it('should evaluate throwOnError when mutation is expected to throw', async () => {
       const key = queryKey()
       const err = new Error('Expected mock error. All is well!')
-      const throwOnError = vi.fn()
+      const throwOnError = vi.fn<(error: Error) => boolean>()
       const { mutate } = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationKey: key,
@@ -1065,7 +1159,15 @@ describe('injectMutation', () => {
     })
 
     it('should only fire the per-call onSuccess for the last mutate() call', async () => {
-      const onSuccessMutate = vi.fn()
+      const onSuccessMutate =
+        vi.fn<
+          (
+            data: string,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
 
       @Component({
         template: `<div>data: {{ mutation.data() ?? 'none' }}</div>`,

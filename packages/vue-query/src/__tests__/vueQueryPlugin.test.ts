@@ -26,10 +26,10 @@ interface TestApp extends App {
 
 function getAppMock(withUnmountHook = false): TestApp {
   const mock = {
-    provide: vi.fn(),
-    unmount: vi.fn(),
+    provide: vi.fn<TestApp['provide']>(),
+    unmount: vi.fn<TestApp['unmount']>(),
     onUnmount: withUnmountHook
-      ? vi.fn((u: UnmountCallback) => {
+      ? vi.fn<(u: UnmountCallback) => void>((u: UnmountCallback) => {
           mock._unmount = u
         })
       : undefined,
@@ -114,8 +114,8 @@ describe('VueQueryPlugin', () => {
     it('should call unmount on each client when onUnmount is missing', () => {
       const appMock = getAppMock()
       const customClient = {
-        mount: vi.fn(),
-        unmount: vi.fn(),
+        mount: vi.fn<QueryClient['mount']>(),
+        unmount: vi.fn<QueryClient['unmount']>(),
       } as unknown as QueryClient
       const originalUnmount = appMock.unmount
       VueQueryPlugin.install(appMock, {
@@ -132,8 +132,8 @@ describe('VueQueryPlugin', () => {
     it('should call onUnmount if present', () => {
       const appMock = getAppMock(true)
       const customClient = {
-        mount: vi.fn(),
-        unmount: vi.fn(),
+        mount: vi.fn<QueryClient['mount']>(),
+        unmount: vi.fn<QueryClient['unmount']>(),
       } as unknown as QueryClient
       const originalUnmount = appMock.unmount
       VueQueryPlugin.install(appMock, { queryClient: customClient })
@@ -206,7 +206,9 @@ describe('VueQueryPlugin', () => {
   describe('when called with custom client', () => {
     it.runIf(isVue2)('should provide that custom client in Vue 2', () => {
       const appMock = getAppMock()
-      const customClient = { mount: vi.fn() } as unknown as QueryClient
+      const customClient = {
+        mount: vi.fn<QueryClient['mount']>(),
+      } as unknown as QueryClient
       VueQueryPlugin.install(appMock, { queryClient: customClient })
 
       appMock._mixin.beforeCreate?.call(appMock)
@@ -219,7 +221,9 @@ describe('VueQueryPlugin', () => {
 
     it.runIf(isVue3)('should provide that custom client in Vue 3', () => {
       const appMock = getAppMock()
-      const customClient = { mount: vi.fn() } as unknown as QueryClient
+      const customClient = {
+        mount: vi.fn<QueryClient['mount']>(),
+      } as unknown as QueryClient
       VueQueryPlugin.install(appMock, { queryClient: customClient })
 
       expect(customClient.mount).toHaveBeenCalledWith()
@@ -293,14 +297,14 @@ describe('VueQueryPlugin', () => {
     it('should properly modify isRestoring flag on queryClient', async () => {
       const appMock = getAppMock()
       const customClient = {
-        mount: vi.fn(),
+        mount: vi.fn<QueryClient['mount']>(),
         isRestoring: ref(false),
       } as unknown as QueryClient
 
       VueQueryPlugin.install(appMock, {
         queryClient: customClient,
         clientPersister: () => [
-          vi.fn(),
+          vi.fn<() => void>(),
           new Promise((resolve) => {
             resolve()
           }),
@@ -315,11 +319,11 @@ describe('VueQueryPlugin', () => {
     it('should call clientPersisterOnSuccess with the client after restoring', async () => {
       const appMock = getAppMock()
       const customClient = new QueryClient()
-      const clientPersisterOnSuccess = vi.fn()
+      const clientPersisterOnSuccess = vi.fn<(client: QueryClient) => void>()
 
       VueQueryPlugin.install(appMock, {
         queryClient: customClient,
-        clientPersister: () => [vi.fn(), sleep(10)],
+        clientPersister: () => [vi.fn<() => void>(), sleep(10)],
         clientPersisterOnSuccess,
       })
 
@@ -332,7 +336,7 @@ describe('VueQueryPlugin', () => {
     it('should call the unmount returned by clientPersister when the app unmounts', () => {
       const appMock = getAppMock(true)
       const customClient = new QueryClient()
-      const persisterUnmount = vi.fn()
+      const persisterUnmount = vi.fn<() => void>()
 
       VueQueryPlugin.install(appMock, {
         queryClient: customClient,
@@ -360,7 +364,7 @@ describe('VueQueryPlugin', () => {
       VueQueryPlugin.install(appMock, {
         queryClient: customClient,
         clientPersister: (client) => [
-          vi.fn(),
+          vi.fn<() => void>(),
           new Promise((resolve) => {
             setTimeout(() => {
               client.setQueryData(key, () => ({
@@ -372,7 +376,7 @@ describe('VueQueryPlugin', () => {
         ],
       })
 
-      const queryFn = vi.fn()
+      const queryFn = vi.fn<() => { foo: string }>()
 
       const query = useQuery(
         {
@@ -407,7 +411,7 @@ describe('VueQueryPlugin', () => {
       VueQueryPlugin.install(appMock, {
         queryClient: customClient,
         clientPersister: (client) => [
-          vi.fn(),
+          vi.fn<() => void>(),
           new Promise((resolve) => {
             setTimeout(() => {
               client.setQueryData(key1, () => ({
@@ -422,7 +426,7 @@ describe('VueQueryPlugin', () => {
         ],
       })
 
-      const queryFn = vi.fn()
+      const queryFn = vi.fn<() => Record<string, string>>()
 
       const query = useQuery(
         {

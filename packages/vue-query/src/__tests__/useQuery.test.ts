@@ -19,6 +19,7 @@ import { keepPreviousData } from '..'
 import { useQuery } from '../useQuery'
 import { useBaseQuery } from '../useBaseQuery'
 import { useQueryClient } from '../useQueryClient'
+import type { Query, QueryObserverResult } from '@tanstack/query-core'
 
 vi.mock(import('../useQueryClient'))
 vi.mock(import('../useBaseQuery'))
@@ -258,7 +259,9 @@ describe('useQuery', () => {
 
     const enabled = computed(() => !!data.value)
 
-    const dependentQueryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+    const dependentQueryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'Some data'),
+    )
     const { fetchStatus, status } = useQuery(
       reactive({
         queryKey: key2,
@@ -303,7 +306,7 @@ describe('useQuery', () => {
 
   it('should use the current value for the queryKey when refetch is called', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const keyRef = ref('key11')
     const query = useQuery({
       queryKey: [...key, keyRef],
@@ -365,7 +368,7 @@ describe('useQuery', () => {
 
   it('should be `enabled` to accept getter function', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const checked = ref(false)
 
     useQuery({
@@ -385,7 +388,7 @@ describe('useQuery', () => {
 
   it('should allow getters for query keys', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
 
@@ -407,7 +410,7 @@ describe('useQuery', () => {
 
   it('should allow arbitrarily nested getters for query keys', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
     const key3 = ref('key3')
@@ -457,7 +460,9 @@ describe('useQuery', () => {
 
   it('should allow a getter for the whole query key', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'foo'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'foo'),
+    )
     const key1 = ref('key1')
 
     useQuery({
@@ -494,7 +499,9 @@ describe('useQuery', () => {
   it('should stay disabled until the dependent value is set', async () => {
     const key = queryKey()
     const postId = ref<number>()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'Some data'),
+    )
 
     const query = useQuery({
       queryKey: [...key, postId],
@@ -518,7 +525,9 @@ describe('useQuery', () => {
   it('should skip the query while a computed queryFn resolves to skipToken, and run it once defined', async () => {
     const key = queryKey()
     const postId = ref<number>()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'Some data'),
+    )
 
     const query = useQuery({
       queryKey: [...key, postId],
@@ -554,7 +563,9 @@ describe('useQuery', () => {
 
   it('should still fetch in the background and replace initialData with the fetched value', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     const query = useQuery({
       queryKey: key,
@@ -597,8 +608,8 @@ describe('useQuery', () => {
   it('should keep the previous page visible while the next page loads with keepPreviousData', async () => {
     const key = queryKey()
     const page = ref(0)
-    const queryFn = vi.fn((pageParam: number) =>
-      sleep(10).then(() => `page-${pageParam}`),
+    const queryFn = vi.fn<(pageParam: number) => Promise<string>>(
+      (pageParam: number) => sleep(10).then(() => `page-${pageParam}`),
     )
 
     const query = useQuery({
@@ -629,7 +640,13 @@ describe('useQuery', () => {
   describe('throwOnError', () => {
     it('should evaluate throwOnError when query is expected to throw', async () => {
       const key = queryKey()
-      const throwOnError = vi.fn()
+      const throwOnError =
+        vi.fn<
+          (
+            error: Error,
+            query: Query<unknown, Error, unknown, Array<string>>,
+          ) => boolean
+        >()
       useQuery({
         queryKey: key,
         queryFn: () =>
@@ -686,8 +703,11 @@ describe('useQuery', () => {
 
     it('should resolve after being enabled', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
-      const onResolve = vi.fn()
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'Some data'),
+      )
+      const onResolve =
+        vi.fn<(result: QueryObserverResult<string, Error>) => void>()
       const isEnabled = ref(false)
       const query = useQuery({
         queryKey: key,
@@ -711,7 +731,9 @@ describe('useQuery', () => {
 
     it('should resolve immediately without refetching when the data is fresh', () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'Some data'),
+      )
 
       const query = useQuery({
         queryKey: key,
@@ -746,7 +768,7 @@ describe('useQuery', () => {
       onTestFinished,
     }) => {
       const key = queryKey()
-      const throwOnError = vi.fn().mockReturnValue(true)
+      const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
       const query = useQuery({
         queryKey: key,
         queryFn: () =>

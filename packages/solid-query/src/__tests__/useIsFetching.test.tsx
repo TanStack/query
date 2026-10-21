@@ -245,7 +245,7 @@ describe('useIsFetching', () => {
     const [client, setClient] = createSignal(queryClient1)
     const queryCache1 = queryClient1.getQueryCache()
     const originalSubscribe1 = queryCache1.subscribe.bind(queryCache1)
-    const unsubscribe1 = vi.fn()
+    const unsubscribe1 = vi.fn<() => void>()
 
     vi.spyOn(queryCache1, 'subscribe').mockImplementation((listener) => {
       const cleanup = originalSubscribe1(listener)

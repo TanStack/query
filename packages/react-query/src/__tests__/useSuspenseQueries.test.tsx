@@ -19,12 +19,12 @@ import {
   useSuspenseQuery,
 } from '..'
 import { renderWithClient } from './utils'
-import type { UseSuspenseQueryOptions } from '..'
+import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from '..'
 
 describe('useSuspenseQueries', () => {
   let queryClient: QueryClient
-  const onSuspend = vi.fn()
-  const onQueriesResolution = vi.fn()
+  const onSuspend = vi.fn<() => void>()
+  const onQueriesResolution = vi.fn<(result: unknown) => void>()
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -236,7 +236,12 @@ describe('useSuspenseQueries', () => {
   })
 
   it('should only call combine after resolving', async () => {
-    const spy = vi.fn()
+    const spy =
+      vi.fn<
+        (
+          result: Array<UseSuspenseQueryResult<{ value: number }, Error>>,
+        ) => void
+      >()
     const key = queryKey()
 
     function Page() {
@@ -1117,8 +1122,12 @@ describe('useSuspenseQueries', () => {
     queryClient.setQueryData(key1, 'cached1')
     queryClient.setQueryData(key2, 'cached2')
 
-    const queryFn1 = vi.fn(() => sleep(20).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data2'),
+    )
 
     function Page() {
       const [result1, result2] = useSuspenseQueries({
@@ -1171,7 +1180,9 @@ describe('useSuspenseQueries', () => {
     // Make key1 fresh again by resetting its data
     queryClient.setQueryData(key1, 'cached1')
 
-    const queryFn1 = vi.fn(() => sleep(20).then(() => 'data1'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data1'),
+    )
 
     function Page() {
       const [result1, result2] = useSuspenseQueries({
@@ -1237,7 +1248,9 @@ describe('useSuspenseQueries', () => {
     // Make key2 fresh again by resetting its data
     queryClient.setQueryData(key2, 'cached2')
 
-    const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data2'),
+    )
 
     function Page() {
       const [result1, result2] = useSuspenseQueries({

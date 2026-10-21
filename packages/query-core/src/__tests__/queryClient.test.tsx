@@ -17,6 +17,7 @@ import type {
   InfiniteData,
   Query,
   QueryCache,
+  QueryCacheNotifyEvent,
   QueryFunction,
   QueryObserverOptions,
 } from '..'
@@ -279,7 +280,9 @@ describe('queryClient', () => {
     it('should accept an update function', () => {
       const key = queryKey()
 
-      const updater = vi.fn((oldData) => `new data + ${oldData}`)
+      const updater = vi.fn<(oldData: string | undefined) => string>(
+        (oldData) => `new data + ${oldData}`,
+      )
 
       queryClient.setQueryData(key, 'test data')
       queryClient.setQueryData(key, updater)
@@ -535,7 +538,7 @@ describe('queryClient', () => {
 
     it('should not fetch with initialData', async () => {
       const key = queryKey()
-      const queryFn = vi.fn().mockResolvedValue('data')
+      const queryFn = vi.fn<() => Promise<string>>().mockResolvedValue('data')
 
       await expect(
         // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
@@ -553,7 +556,9 @@ describe('queryClient', () => {
   describe('query with static staleTime', () => {
     it('should return the cached query data if the query is found', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => Promise.resolve('data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('data'),
+      )
 
       queryClient.setQueryData([key, 'id'], 'bar')
       await expect(
@@ -568,7 +573,7 @@ describe('queryClient', () => {
 
     it('should return the cached query data if the query is found and cached query data is falsy', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => Promise.resolve(0))
+      const queryFn = vi.fn<() => Promise<number>>(() => Promise.resolve(0))
 
       queryClient.setQueryData([key, 'id'], null)
       await expect(
@@ -583,7 +588,9 @@ describe('queryClient', () => {
 
     it('should call queryFn and return its results if the query is not found', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => Promise.resolve('data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('data'),
+      )
 
       await expect(
         queryClient.query({
@@ -597,7 +604,9 @@ describe('queryClient', () => {
 
     it('should not fetch when initialData is provided', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => Promise.resolve('data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('data'),
+      )
 
       await expect(
         queryClient.query({
@@ -614,7 +623,7 @@ describe('queryClient', () => {
     it('should support manual background revalidation via a second query call', async () => {
       const key = queryKey()
       let value = 'data-1'
-      const queryFn = vi.fn(() => Promise.resolve(value))
+      const queryFn = vi.fn<() => Promise<string>>(() => Promise.resolve(value))
 
       await expect(
         queryClient.query({
@@ -706,7 +715,9 @@ describe('queryClient', () => {
   describe('infiniteQuery with static staleTime', () => {
     it('should return the cached query data if the query is found', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => Promise.resolve('data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('data'),
+      )
 
       queryClient.setQueryData([key, 'id'], {
         pages: ['bar'],
@@ -726,7 +737,9 @@ describe('queryClient', () => {
 
     it('should fetch the query and return its results if the query is not found', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => Promise.resolve('data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('data'),
+      )
 
       await expect(
         queryClient.infiniteQuery({
@@ -827,7 +840,9 @@ describe('queryClient', () => {
     it('should read from cache with static staleTime even if invalidated', async () => {
       const key = queryKey()
 
-      const fetchFn = vi.fn(() => Promise.resolve({ data: 'data' }))
+      const fetchFn = vi.fn<() => Promise<{ data: string }>>(() =>
+        Promise.resolve({ data: 'data' }),
+      )
 
       // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       const first = await queryClient.fetchQuery({
@@ -1014,7 +1029,9 @@ describe('queryClient', () => {
 
     it('should fetch when disabled', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => Promise.resolve('data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('data'),
+      )
 
       await expect(
         queryClient.query({
@@ -1030,7 +1047,9 @@ describe('queryClient', () => {
 
     it('should fetch when disabled by callback', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => Promise.resolve('data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('data'),
+      )
 
       await expect(
         queryClient.query({
@@ -1046,7 +1065,9 @@ describe('queryClient', () => {
 
     it('should fetch when disabled and apply select', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => Promise.resolve('fetched-data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('fetched-data'),
+      )
 
       queryClient.setQueryData(key, 'cached-data')
 
@@ -1063,7 +1084,9 @@ describe('queryClient', () => {
     })
 
     it('should fetch instead of returning initialData when disabled', async () => {
-      const booleanQueryFn = vi.fn(() => Promise.resolve('fetched-data'))
+      const booleanQueryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('fetched-data'),
+      )
 
       await expect(
         queryClient.query({
@@ -1080,7 +1103,9 @@ describe('queryClient', () => {
 
     it('should throw when skipToken is provided and no cached data exists', async () => {
       const key = queryKey()
-      const select = vi.fn((data: unknown) => (data as string).length)
+      const select = vi.fn<(data: unknown) => number>(
+        (data: unknown) => (data as string).length,
+      )
 
       await expect(
         queryClient.query({
@@ -1134,7 +1159,9 @@ describe('queryClient', () => {
 
     it('should fetch when enabled callback returns false', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => Promise.resolve('fetched-data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('fetched-data'),
+      )
 
       queryClient.setQueryData(key, 'cached-data')
 
@@ -1154,7 +1181,9 @@ describe('queryClient', () => {
       queryClient.setQueryData(key, 'old-data')
       await vi.advanceTimersByTimeAsync(1)
 
-      const queryFn = vi.fn(() => Promise.resolve('new-data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('new-data'),
+      )
 
       const result = await queryClient.query({
         queryKey: key,
@@ -1170,7 +1199,9 @@ describe('queryClient', () => {
     it('should read from cache with static staleTime even if invalidated', async () => {
       const key = queryKey()
 
-      const fetchFn = vi.fn(() => Promise.resolve({ data: 'data' }))
+      const fetchFn = vi.fn<() => Promise<{ data: string }>>(() =>
+        Promise.resolve({ data: 'data' }),
+      )
       const first = await queryClient.query({
         queryKey: key,
         queryFn: fetchFn,
@@ -1272,12 +1303,14 @@ describe('queryClient', () => {
 
     it('should evaluate staleTime when provided as a function', async () => {
       const key = queryKey()
-      const staleTime = vi.fn(() => 0)
+      const staleTime = vi.fn<() => number>(() => 0)
 
       queryClient.setQueryData(key, 'old-data')
       await vi.advanceTimersByTimeAsync(1)
 
-      const queryFn = vi.fn(() => Promise.resolve('new-data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('new-data'),
+      )
 
       const result = await queryClient.query({
         queryKey: key,
@@ -1317,7 +1350,9 @@ describe('queryClient', () => {
       queryClient.setQueryData(key, 'old-data')
       await vi.advanceTimersByTimeAsync(1)
 
-      const queryFn = vi.fn(() => Promise.resolve('new-data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('new-data'),
+      )
 
       const result = await queryClient.query({
         queryKey: key,
@@ -1345,7 +1380,9 @@ describe('queryClient', () => {
 
     it('should apply select when data is fresh in cache', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => Promise.resolve('fetched-data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('fetched-data'),
+      )
 
       queryClient.setQueryData(key, 'cached-data')
 
@@ -1361,7 +1398,9 @@ describe('queryClient', () => {
 
     it('should apply select to freshly fetched data', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => Promise.resolve({ value: 'fetched-data' }))
+      const queryFn = vi.fn<() => Promise<{ value: string }>>(() =>
+        Promise.resolve({ value: 'fetched-data' }),
+      )
 
       const result = await queryClient.query({
         queryKey: key,
@@ -1465,9 +1504,9 @@ describe('queryClient', () => {
 
     it('should fetch when disabled', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
-        Promise.resolve(pageParam),
-      )
+      const queryFn = vi.fn<
+        (context: { pageParam: number }) => Promise<number>
+      >(({ pageParam }: { pageParam: number }) => Promise.resolve(pageParam))
 
       await expect(
         queryClient.infiniteQuery({
@@ -1484,7 +1523,9 @@ describe('queryClient', () => {
 
     it('should fetch when disabled and apply select', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+      const queryFn = vi.fn<
+        (context: { pageParam: number }) => Promise<string>
+      >(({ pageParam }: { pageParam: number }) =>
         Promise.resolve(`'fetched-${String(pageParam)}`),
       )
 
@@ -1527,7 +1568,7 @@ describe('queryClient', () => {
 
     it('should throw when skipToken is provided and no cached data exists', async () => {
       const key = queryKey()
-      const select = vi.fn(
+      const select = vi.fn<(data: { pages: Array<string> }) => number>(
         (data: { pages: Array<string> }) => data.pages.length,
       )
 
@@ -1562,13 +1603,17 @@ describe('queryClient', () => {
       })
       await vi.advanceTimersByTimeAsync(1)
 
-      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+      const queryFn = vi.fn<
+        (context: {
+          pageParam: number
+        }) => Promise<{ value: string; staleTime: number }>
+      >(({ pageParam }: { pageParam: number }) =>
         Promise.resolve({
           value: `new-page-${String(pageParam)}`,
           staleTime: 0,
         }),
       )
-      const staleTimeSpy = vi.fn()
+      const staleTimeSpy = vi.fn<() => void>()
       const staleTime = (
         query: Query<
           { value: string; staleTime: number },
@@ -1597,7 +1642,9 @@ describe('queryClient', () => {
     it('should read from cache with static staleTime even if invalidated', async () => {
       const key = queryKey()
 
-      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+      const queryFn = vi.fn<
+        (context: { pageParam: number }) => Promise<{ value: string }>
+      >(({ pageParam }: { pageParam: number }) =>
         Promise.resolve({ value: `fetched-${String(pageParam)}` }),
       )
       const first = await queryClient.infiniteQuery({
@@ -2313,7 +2360,7 @@ describe('queryClient', () => {
 
     it('should not refetch static queries', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => 'data1')
+      const queryFn = vi.fn<() => string>(() => 'data1')
       await queryClient.query({ queryKey: key, queryFn: queryFn })
       expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -2496,7 +2543,7 @@ describe('queryClient', () => {
 
     it('should cancel ongoing fetches if cancelRefetch option is set (default value)', async () => {
       const key = queryKey()
-      const abortFn = vi.fn()
+      const abortFn = vi.fn<(event: Event) => void>()
       let fetchCount = 0
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
@@ -2519,7 +2566,7 @@ describe('queryClient', () => {
 
     it('should not cancel ongoing fetches if cancelRefetch option is set to false', async () => {
       const key = queryKey()
-      const abortFn = vi.fn()
+      const abortFn = vi.fn<(event: Event) => void>()
       let fetchCount = 0
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
@@ -2543,7 +2590,7 @@ describe('queryClient', () => {
 
     it('should not refetch static queries after invalidation', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => 'data1')
+      const queryFn = vi.fn<() => string>(() => 'data1')
       await queryClient.query({ queryKey: key, queryFn: queryFn })
       expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -2564,7 +2611,7 @@ describe('queryClient', () => {
     it('should notify listeners when a query is reset', async () => {
       const key = queryKey()
 
-      const callback = vi.fn()
+      const callback = vi.fn<(event: QueryCacheNotifyEvent) => void>()
 
       await queryClient
         .query({ queryKey: key, queryFn: () => 'data' })

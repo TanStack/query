@@ -269,7 +269,7 @@ describe('useQueries', () => {
 
   it('should be `enabled` to accept getter function', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const checked = ref(false)
 
     useQueries({
@@ -293,7 +293,9 @@ describe('useQueries', () => {
 
   it('should skip a query while a computed queryFn resolves to skipToken, and run it once defined', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'foo'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'foo'),
+    )
     const checked = ref(false)
 
     useQueries({
@@ -316,7 +318,7 @@ describe('useQueries', () => {
 
   it('should allow getters for query keys', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
 
@@ -342,7 +344,7 @@ describe('useQueries', () => {
 
   it('should allow arbitrarily nested getters for query keys', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
     const key3 = ref('key3')
@@ -396,7 +398,9 @@ describe('useQueries', () => {
 
   it('should allow a getter for the whole query key', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'foo'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'foo'),
+    )
     const key1 = ref('key1')
 
     useQueries({
@@ -450,7 +454,7 @@ describe('useQueries', () => {
 
   it('should use the current value for the queryKey when refetch is called', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const keyRef = ref('key11')
     const queriesState = useQueries({
       queries: [
@@ -541,7 +545,7 @@ describe('useQueries', () => {
 
   it('should work with options getter and be reactive', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
     const key3 = ref('key3')

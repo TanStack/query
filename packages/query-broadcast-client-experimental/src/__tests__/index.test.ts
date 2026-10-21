@@ -4,9 +4,12 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { broadcastQueryClient } from '..'
 import type { BroadcastErrorEvent } from '..'
 import type { QueryCache } from '@tanstack/query-core'
+import type { BroadcastChannel } from 'broadcast-channel'
 
-const mockPostMessage = vi.fn().mockResolvedValue(undefined)
-const mockClose = vi.fn()
+const mockPostMessage = vi
+  .fn<BroadcastChannel['postMessage']>()
+  .mockResolvedValue(undefined)
+const mockClose = vi.fn<BroadcastChannel['close']>()
 let lastCreatedChannel: { onmessage: ((action: any) => void) | null }
 
 vi.mock(import('broadcast-channel'), async (importOriginal) => {
@@ -22,8 +25,8 @@ vi.mock(import('broadcast-channel'), async (importOriginal) => {
       onmessage = null
       postMessage = mockPostMessage
       close = mockClose
-      addEventListener = vi.fn()
-      removeEventListener = vi.fn()
+      addEventListener = vi.fn<BroadcastChannel['addEventListener']>()
+      removeEventListener = vi.fn<BroadcastChannel['removeEventListener']>()
       constructor(name: string) {
         this.name = name
         lastCreatedChannel = this
@@ -212,7 +215,7 @@ describe('broadcastQueryClient', () => {
       process.on('unhandledRejection', onUnhandledRejection)
 
       try {
-        const onBroadcastError = vi.fn().mockImplementation(() => {
+        const onBroadcastError = vi.fn<() => never>().mockImplementation(() => {
           throw new Error('boom')
         })
 
@@ -282,7 +285,7 @@ describe('broadcastQueryClient', () => {
 
       try {
         const onBroadcastError = vi
-          .fn()
+          .fn<() => Promise<never>>()
           .mockRejectedValueOnce(new Error('async boom'))
 
         broadcastQueryClient({
@@ -341,7 +344,10 @@ describe('broadcastQueryClient', () => {
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
-      const onBroadcastError = vi.fn()
+      const onBroadcastError =
+        vi.fn<
+          (error: unknown, event: BroadcastErrorEvent) => void | Promise<void>
+        >()
       broadcastQueryClient({
         queryClient,
         broadcastChannel: 'test_channel',

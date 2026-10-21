@@ -1710,7 +1710,9 @@ describe('createQueryController', () => {
 
   it('should fetch and resolve with the fetched result from suspense when the data is stale', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     class Host extends LitElement {
       readonly query = createQueryController(
@@ -1746,7 +1748,9 @@ describe('createQueryController', () => {
 
   it('should resolve immediately without refetching from suspense when the data is fresh', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     class Host extends LitElement {
       readonly query = createQueryController(
@@ -1786,7 +1790,9 @@ describe('createQueryController', () => {
 
   it('should resolve with the current result without fetching from suspense when disabled', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     class Host extends LitElement {
       readonly query = createQueryController(

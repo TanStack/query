@@ -14,6 +14,7 @@ import { StatelessRef } from './utils.svelte.js'
 import type {
   PersistedClient,
   Persister,
+  Promisable,
 } from '@tanstack/query-persist-client-core'
 import type { StatusResult } from './utils.svelte.js'
 
@@ -294,7 +295,7 @@ describe('PersistQueryClientProvider', () => {
 
     queryClient.clear()
 
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<() => void>()
 
     const rendered = render(OnSuccess, {
       props: {
@@ -364,9 +365,9 @@ describe('PersistQueryClientProvider', () => {
     const consoleWarnMock = vi.spyOn(console, 'warn').mockReturnValue(undefined)
 
     const queryClient = new QueryClient()
-    const removeClient = vi.fn()
-    const onSuccess = vi.fn()
-    const onError = vi.fn()
+    const removeClient = vi.fn<() => Promisable<void>>()
+    const onSuccess = vi.fn<() => void>()
+    const onError = vi.fn<() => void>()
 
     const [error, persister] = createMockErrorPersister(removeClient)
 

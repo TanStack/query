@@ -716,7 +716,9 @@ describe('mutationOptions', () => {
   it('should reactively update mutationKey when ref changes in getter', async () => {
     const key = queryKey()
     const keyRef = ref('key01')
-    const mutationFn = vi.fn((params: string) => sleep(10).then(() => params))
+    const mutationFn = vi.fn<(params: string) => Promise<string>>(
+      (params: string) => sleep(10).then(() => params),
+    )
     const mutationOpts = mutationOptions(() => ({
       mutationKey: [...key, keyRef.value],
       mutationFn,

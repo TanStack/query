@@ -8,7 +8,11 @@ import {
   timeoutManager,
 } from '..'
 import { setIsServer } from './utils'
-import type { QueryObserverResult } from '..'
+import type {
+  QueryCacheNotifyEvent,
+  QueryFunction,
+  QueryObserverResult,
+} from '..'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient
@@ -784,7 +788,8 @@ describe('queryObserver', () => {
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
       .mockReturnValue('data')
-    const callback = vi.fn()
+    const callback =
+      vi.fn<(result: QueryObserverResult<unknown, Error>) => void>()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       enabled: false,
@@ -915,7 +920,7 @@ describe('queryObserver', () => {
 
   it('should call refetchInterval with the query when it is a function', async () => {
     const key = queryKey()
-    const refetchInterval = vi.fn(() => 10)
+    const refetchInterval = vi.fn<() => number>(() => 10)
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
@@ -941,7 +946,8 @@ describe('queryObserver', () => {
       staleTime: Infinity,
       notifyOnChangeProps: () => ['data'],
     })
-    const listener = vi.fn()
+    const listener =
+      vi.fn<(result: QueryObserverResult<string, Error>) => void>()
 
     const unsubscribe = observer.subscribe(listener)
     listener.mockClear()
@@ -964,7 +970,8 @@ describe('queryObserver', () => {
       staleTime: Infinity,
       notifyOnChangeProps: () => ['data'],
     })
-    const listener = vi.fn()
+    const listener =
+      vi.fn<(result: QueryObserverResult<string, Error>) => void>()
 
     const unsubscribe = observer.subscribe(listener)
     listener.mockClear()
@@ -1289,7 +1296,9 @@ describe('queryObserver', () => {
     const data1 = { value: 'data1' }
     const data2 = { value: 'data2' }
 
-    const stableSelect = vi.fn((data: { value: string }) => data.value)
+    const stableSelect = vi.fn<(data: { value: string }) => string>(
+      (data: { value: string }) => data.value,
+    )
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key1,
@@ -1347,7 +1356,7 @@ describe('queryObserver', () => {
       enabled: false,
     })
 
-    const spy = vi.fn()
+    const spy = vi.fn<(event: QueryCacheNotifyEvent) => void>()
     const unsubscribe = queryClient.getQueryCache().subscribe(spy)
     observer.setOptions({ queryKey: key, enabled: false, refetchInterval: 10 })
 
@@ -1518,7 +1527,7 @@ describe('queryObserver', () => {
 
   it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is a function returning true', () => {
     const key = queryKey()
-    const refetchOnWindowFocus = vi.fn(() => true)
+    const refetchOnWindowFocus = vi.fn<() => boolean>(() => true)
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -1534,7 +1543,7 @@ describe('queryObserver', () => {
 
   it('should return false from shouldFetchOnWindowFocus when refetchOnWindowFocus is a function returning false', () => {
     const key = queryKey()
-    const refetchOnWindowFocus = vi.fn(() => false)
+    const refetchOnWindowFocus = vi.fn<() => boolean>(() => false)
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -1550,7 +1559,7 @@ describe('queryObserver', () => {
 
   it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is a function returning "always" even if the query is fresh', async () => {
     const key = queryKey()
-    const refetchOnWindowFocus = vi.fn(() => 'always' as const)
+    const refetchOnWindowFocus = vi.fn<() => 'always'>(() => 'always' as const)
 
     void queryClient
       .query({
@@ -1592,7 +1601,7 @@ describe('queryObserver', () => {
   it('should use the supplied queryFn via fetchOptimistic after the query is recreated', async () => {
     const key = queryKey()
     const error = new Error('401 Unauthorized')
-    const queryFn = vi.fn(() => Promise.reject(error))
+    const queryFn = vi.fn<() => Promise<never>>(() => Promise.reject(error))
     const options = {
       queryKey: key,
       queryFn,
@@ -1724,7 +1733,7 @@ describe('queryObserver', () => {
 
   it('should not refetch on mount when retryOnMount is false and query is in error state', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => Promise.reject('error'))
+    const queryFn = vi.fn<() => Promise<never>>(() => Promise.reject('error'))
 
     // First observer causes query to fail
     const firstObserver = new QueryObserver(queryClient, {
@@ -1757,7 +1766,7 @@ describe('queryObserver', () => {
 
   it('should not refetchOnMount when set to "always" when staleTime is Static', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'data')
+    const queryFn = vi.fn<() => string>(() => 'data')
     queryClient.setQueryData(key, 'initial')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -1775,7 +1784,7 @@ describe('queryObserver', () => {
   it('should not refetchOnWindowFocus when staleTime is static and query has background error', async () => {
     const key = queryKey()
     let callCount = 0
-    const queryFn = vi.fn(() => {
+    const queryFn = vi.fn<() => Promise<string>>(() => {
       callCount++
       if (callCount === 1) {
         return Promise.resolve('data')
@@ -1814,7 +1823,7 @@ describe('queryObserver', () => {
   it('should refetchOnWindowFocus when query has background error and staleTime is not static', async () => {
     const key = queryKey()
     let callCount = 0
-    const queryFn = vi.fn(() => {
+    const queryFn = vi.fn<() => Promise<string>>(() => {
       callCount++
       if (callCount === 1) {
         return Promise.resolve('data')
@@ -1917,7 +1926,9 @@ describe('queryObserver', () => {
   describe('StrictMode behavior', () => {
     it('should deduplicate calls to queryFn', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(() => sleep(50).then(() => 'data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        sleep(50).then(() => 'data'),
+      )
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
         queryFn,
@@ -1943,7 +1954,7 @@ describe('queryObserver', () => {
 
     it('should resolve with data when signal was consumed', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(({ signal }) =>
+      const queryFn = vi.fn<QueryFunction<string>>(({ signal }) =>
         sleep(50).then(() => 'data' + String(signal)),
       )
       const observer = new QueryObserver(queryClient, {

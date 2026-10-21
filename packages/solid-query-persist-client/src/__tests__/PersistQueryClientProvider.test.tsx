@@ -8,6 +8,7 @@ import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 import type {
   PersistedClient,
   Persister,
+  Promisable,
 } from '@tanstack/query-persist-client-core'
 
 const createMockPersister = (): Persister => {
@@ -425,7 +426,7 @@ describe('PersistQueryClientProvider', () => {
       )
     }
 
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<() => void>()
 
     render(() => (
       <PersistQueryClientProvider
@@ -452,9 +453,9 @@ describe('PersistQueryClientProvider', () => {
       .spyOn(console, 'error')
       .mockReturnValue(undefined)
     const queryClient = new QueryClient()
-    const removeClient = vi.fn()
-    const onSuccess = vi.fn()
-    const onError = vi.fn()
+    const removeClient = vi.fn<() => Promisable<void>>()
+    const onSuccess = vi.fn<() => void>()
+    const onError = vi.fn<() => void>()
 
     const [error, persister] = createMockErrorPersister(removeClient)
 
@@ -519,10 +520,14 @@ describe('PersistQueryClientProvider', () => {
 
     queryClient.clear()
 
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<() => void>()
 
-    const queryFn1 = vi.fn(() => sleep(10).then(() => 'queryFn1'))
-    const queryFn2 = vi.fn(() => sleep(10).then(() => 'queryFn2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'queryFn1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'queryFn2'),
+    )
 
     function App() {
       const [client, setClient] = createSignal(

@@ -731,7 +731,7 @@ describe('QueryErrorResetBoundary', () => {
 
     it('should refetch after error when staleTime is Infinity and previous data exists (#9728)', async () => {
       const key = queryKey()
-      const queryFn = vi.fn()
+      const queryFn = vi.fn<() => Promise<string>>()
       let count = 0
 
       queryFn.mockImplementation(async () => {

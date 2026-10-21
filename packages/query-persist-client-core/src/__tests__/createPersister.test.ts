@@ -4,8 +4,17 @@ import {
   PERSISTER_KEY_PREFIX,
   experimental_createQueryPersister,
 } from '../createPersister'
-import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
-import type { StoragePersisterOptions } from '../createPersister'
+import type {
+  QueryFunction,
+  QueryFunctionContext,
+  QueryKey,
+  QueryState,
+} from '@tanstack/query-core'
+import type {
+  MaybePromise,
+  PersistedQuery,
+  StoragePersisterOptions,
+} from '../createPersister'
 
 function getFreshStorage() {
   const storage = new Map()
@@ -40,7 +49,7 @@ function setupPersister(
   const queryHash = hashKey(queryKey)
   const storageKey = `${PERSISTER_KEY_PREFIX}-${queryHash}`
 
-  const queryFn = vi.fn()
+  const queryFn = vi.fn<QueryFunction>()
 
   const persister = experimental_createQueryPersister(persisterOptions)
 
@@ -95,7 +104,14 @@ describe('createPersister', () => {
     const queryKey = ['foo']
     queryClient.setQueryData(queryKey, 'cached')
     const query = queryClient.getQueryCache().find({ queryKey })!
-    const deserialize = vi.fn(() => ({
+    const deserialize = vi.fn<
+      () => {
+        buster: string
+        queryHash: string
+        queryKey: ReadonlyArray<unknown>
+        state: QueryState<unknown, Error>
+      }
+    >(() => ({
       buster: '',
       queryHash: query.queryHash,
       queryKey: query.queryKey,
@@ -104,8 +120,8 @@ describe('createPersister', () => {
     const persister = experimental_createQueryPersister<number>({
       storage: {
         getItem: () => 0,
-        setItem: vi.fn(),
-        removeItem: vi.fn(),
+        setItem: vi.fn<(key: string, value: number) => MaybePromise<unknown>>(),
+        removeItem: vi.fn<(key: string) => MaybePromise<void>>(),
       },
       deserialize,
     })
@@ -467,7 +483,8 @@ describe('createPersister', () => {
     })
 
     it('should skip persistence if storage is not provided', async () => {
-      const serializeMock = vi.fn()
+      const serializeMock =
+        vi.fn<(persistedQuery: PersistedQuery) => MaybePromise<string>>()
       const { persister, query } = setupPersister(['foo'], {
         storage: null,
         serialize: serializeMock,
@@ -481,7 +498,8 @@ describe('createPersister', () => {
 
   describe('persistQueryByKey', () => {
     it('should skip persistence if storage is not provided', async () => {
-      const serializeMock = vi.fn()
+      const serializeMock =
+        vi.fn<(persistedQuery: PersistedQuery) => MaybePromise<string>>()
       const { persister, client, queryKey } = setupPersister(['foo'], {
         storage: null,
         serialize: serializeMock,
@@ -493,7 +511,8 @@ describe('createPersister', () => {
     })
 
     it('should skip persistence if query was not found', async () => {
-      const serializeMock = vi.fn()
+      const serializeMock =
+        vi.fn<(persistedQuery: PersistedQuery) => MaybePromise<string>>()
       const storage = getFreshStorage()
       const { client, persister, queryKey } = setupPersister(['foo'], {
         storage,

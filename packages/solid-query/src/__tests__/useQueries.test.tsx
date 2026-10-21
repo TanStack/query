@@ -162,8 +162,12 @@ describe('useQueries', () => {
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data2'),
+    )
 
     function Page() {
       const results = useQueries(() => ({

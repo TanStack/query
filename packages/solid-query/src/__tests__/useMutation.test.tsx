@@ -14,6 +14,7 @@ import {
   setActTimeout,
 } from './utils'
 import type { UseMutationResult } from '../types'
+import type { MutationFunctionContext } from '..'
 
 describe('useMutation', () => {
   let queryCache: QueryCache
@@ -424,8 +425,8 @@ describe('useMutation', () => {
 
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
     const [count, setCount] = createSignal(0)
-    const onSuccessMock = vi.fn()
-    const onSettledMock = vi.fn()
+    const onSuccessMock = vi.fn<(data: number) => void>()
+    const onSettledMock = vi.fn<(data: number | undefined) => void>()
 
     function Page() {
       const mutation = useMutation(() => ({
@@ -533,8 +534,8 @@ describe('useMutation', () => {
   })
 
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
-    const onErrorMock = vi.fn()
-    const onSettledMock = vi.fn()
+    const onErrorMock = vi.fn<(message: string) => void>()
+    const onSettledMock = vi.fn<(message: string | undefined) => void>()
     const [count, setCount] = createSignal(0)
 
     function Page() {
@@ -825,7 +826,8 @@ describe('useMutation', () => {
 
   it('should call onMutate even if paused', async () => {
     const onlineMock = mockOnlineManagerIsOnline(false)
-    const onMutate = vi.fn()
+    const onMutate =
+      vi.fn<(variables: string, context: MutationFunctionContext) => void>()
     let count = 0
 
     function Page() {
@@ -1134,7 +1136,7 @@ describe('useMutation', () => {
   })
 
   it('should pass meta to mutation on success', async () => {
-    const successMock = vi.fn()
+    const successMock = vi.fn<(message: unknown) => void>()
 
     const queryClientMutationMeta = new QueryClient({
       mutationCache: new MutationCache({
@@ -1171,7 +1173,7 @@ describe('useMutation', () => {
   })
 
   it('should pass meta to mutation on error', async () => {
-    const errorMock = vi.fn()
+    const errorMock = vi.fn<(message: unknown) => void>()
 
     const queryClientMutationMeta = new QueryClient({
       mutationCache: new MutationCache({
@@ -1210,10 +1212,44 @@ describe('useMutation', () => {
   })
 
   it('should call cache callbacks when unmounted', async () => {
-    const onSuccess = vi.fn()
-    const onSuccessMutate = vi.fn()
-    const onSettled = vi.fn()
-    const onSettledMutate = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: number,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSuccessMutate =
+      vi.fn<
+        (
+          data: number,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettled =
+      vi.fn<
+        (
+          data: number | undefined,
+          error: Error | null,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettledMutate =
+      vi.fn<
+        (
+          data: number | undefined,
+          error: Error | null,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
     const mutationKey = queryKey()
     let count = 0
 
@@ -1279,10 +1315,44 @@ describe('useMutation', () => {
   })
 
   it('should call mutate callbacks only for the last observer', async () => {
-    const onSuccess = vi.fn()
-    const onSuccessMutate = vi.fn()
-    const onSettled = vi.fn()
-    const onSettledMutate = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSuccessMutate =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettled =
+      vi.fn<
+        (
+          data: string | undefined,
+          error: Error | null,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettledMutate =
+      vi.fn<
+        (
+          data: string | undefined,
+          error: Error | null,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
     let count = 0
 
     function Page() {
@@ -1349,7 +1419,15 @@ describe('useMutation', () => {
 
   it('should go to error state if onSuccess callback errors', async () => {
     const error = new Error('error from onSuccess')
-    const onError = vi.fn()
+    const onError =
+      vi.fn<
+        (
+          error: Error,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     function Page() {
       const mutation = useMutation(() => ({
@@ -1383,7 +1461,7 @@ describe('useMutation', () => {
   it('should go to error state if onError callback errors', async ({
     onTestFinished,
   }) => {
-    const unhandledRejectionFn = vi.fn()
+    const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
     process.on('unhandledRejection', unhandledRejectionFn)
     onTestFinished(() => {
       process.off('unhandledRejection', unhandledRejectionFn)
@@ -1428,7 +1506,7 @@ describe('useMutation', () => {
   it('should go to error state if onSettled callback errors', async ({
     onTestFinished,
   }) => {
-    const unhandledRejectionFn = vi.fn()
+    const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
     process.on('unhandledRejection', unhandledRejectionFn)
     onTestFinished(() => {
       process.off('unhandledRejection', unhandledRejectionFn)
@@ -1436,7 +1514,15 @@ describe('useMutation', () => {
 
     const error = new Error('error from onSettled')
     const mutateFnError = new Error('mutateFnError')
-    const onError = vi.fn()
+    const onError =
+      vi.fn<
+        (
+          error: Error,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     function Page() {
       const mutation = useMutation(() => ({
@@ -1717,7 +1803,15 @@ describe('useMutation', () => {
   })
 
   it('should pass a non-undefined onMutateResult alongside context to onSuccess', async () => {
-    const onSuccess = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: { startedWith: string },
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     function Page() {
       const mutation = useMutation(() => ({
@@ -1769,7 +1863,15 @@ describe('useMutation', () => {
   })
 
   it('should include mutationKey in the context passed to hook-level callbacks', async () => {
-    const onSuccess = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     function Page() {
       const mutation = useMutation(() => ({

@@ -53,8 +53,8 @@ describe('onlineManager', () => {
   })
 
   it('should call previous remove handler when replacing an event listener with setEventListener', () => {
-    const remove1Spy = vi.fn()
-    const remove2Spy = vi.fn()
+    const remove1Spy = vi.fn<() => void>()
+    const remove2Spy = vi.fn<() => void>()
 
     onlineManager.setEventListener(() => remove1Spy)
     onlineManager.setEventListener(() => remove2Spy)
@@ -140,7 +140,9 @@ describe('onlineManager', () => {
   })
 
   it('should keep setup function even if last listener unsubscribes', () => {
-    const setupSpy = vi.fn().mockReturnValue(() => undefined)
+    const setupSpy = vi
+      .fn<() => () => undefined>()
+      .mockReturnValue(() => undefined)
 
     onlineManager.setEventListener(setupSpy)
 
@@ -169,7 +171,7 @@ describe('onlineManager', () => {
   })
 
   it('should call listeners when setOnline is called', () => {
-    const listener = vi.fn()
+    const listener = vi.fn<(online: boolean) => void>()
 
     onlineManager.subscribe(listener)
 

@@ -181,7 +181,9 @@ describe('Explorer', () => {
 
   describe('action menu', () => {
     it('should copy the serialized value to the clipboard when the copy button is clicked', () => {
-      const writeText = vi.fn().mockResolvedValue(undefined)
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockResolvedValue(undefined)
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       queryClient.setQueryData(['data'], { name: 'Anna' })
 
@@ -198,13 +200,15 @@ describe('Explorer', () => {
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
       expect(writeText).toHaveBeenCalledTimes(1)
       const [arg] = writeText.mock.calls[0]!
-      expect(JSON.parse(arg as string)).toMatchObject({
+      expect(JSON.parse(arg)).toMatchObject({
         json: { name: 'Anna' },
       })
     })
 
     it('should switch the copy button to an error state when clipboard write fails', async () => {
-      const writeText = vi.fn().mockRejectedValue(new Error('denied'))
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockRejectedValue(new Error('denied'))
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       const consoleErrorMock = vi
         .spyOn(console, 'error')
@@ -233,7 +237,9 @@ describe('Explorer', () => {
     })
 
     it('should reset the copy button to the idle state 1500ms after a successful copy', async () => {
-      const writeText = vi.fn().mockResolvedValue(undefined)
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockResolvedValue(undefined)
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       queryClient.setQueryData(['data'], { name: 'Anna' })
 
@@ -259,7 +265,9 @@ describe('Explorer', () => {
     })
 
     it('should reset the copy button to the idle state 1500ms after a failed copy', async () => {
-      const writeText = vi.fn().mockRejectedValue(new Error('denied'))
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockRejectedValue(new Error('denied'))
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       vi.spyOn(console, 'error').mockImplementation(() => {})
       queryClient.setQueryData(['data'], { name: 'Anna' })

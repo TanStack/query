@@ -4,6 +4,7 @@ import * as React from 'react'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useIsFetching, useQuery } from '..'
 import { renderWithClient, setActTimeout } from './utils'
+import type { Query } from '..'
 
 describe('useIsFetching', () => {
   beforeEach(() => {
@@ -212,7 +213,8 @@ describe('useIsFetching', () => {
   })
 
   it('should use provided custom queryClient', async () => {
-    const onSuccess = vi.fn()
+    const onSuccess =
+      vi.fn<(data: unknown, query: Query<unknown, unknown, unknown>) => void>()
 
     const queryCache = new QueryCache({ onSuccess })
     const queryClient = new QueryClient({ queryCache })

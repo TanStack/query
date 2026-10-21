@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, QueryObserver, hashKey, noop } from '..'
+import type { DefaultError, Query, QueryCacheNotifyEvent } from '..'
 
 describe('queryCache', () => {
   let queryClient: QueryClient
@@ -20,7 +21,7 @@ describe('queryCache', () => {
   describe('subscribe', () => {
     it('should pass the correct query', () => {
       const key = queryKey()
-      const subscriber = vi.fn()
+      const subscriber = vi.fn<(event: QueryCacheNotifyEvent) => void>()
       const unsubscribe = queryCache.subscribe(subscriber)
       queryClient.setQueryData(key, 'foo')
       const query = queryCache.find({ queryKey: key })
@@ -31,7 +32,7 @@ describe('queryCache', () => {
 
     it('should notify listeners when new query is added', async () => {
       const key = queryKey()
-      const callback = vi.fn()
+      const callback = vi.fn<(event: QueryCacheNotifyEvent) => void>()
       queryCache.subscribe(callback)
       void queryClient
         .query({
@@ -85,7 +86,7 @@ describe('queryCache', () => {
 
     it('should include the queryCache and query when notifying listeners', async () => {
       const key = queryKey()
-      const callback = vi.fn()
+      const callback = vi.fn<(event: QueryCacheNotifyEvent) => void>()
       queryCache.subscribe(callback)
       void queryClient
         .query({
@@ -100,7 +101,7 @@ describe('queryCache', () => {
 
     it('should notify subscribers when new query with initialData is added', async () => {
       const key = queryKey()
-      const callback = vi.fn()
+      const callback = vi.fn<(event: QueryCacheNotifyEvent) => void>()
       queryCache.subscribe(callback)
       void queryClient
         .query({
@@ -367,9 +368,22 @@ describe('queryCache', () => {
   describe('QueryCacheConfig error callbacks', () => {
     it('should call onError and onSettled when a query errors', async () => {
       const key = queryKey()
-      const onSuccess = vi.fn()
-      const onSettled = vi.fn()
-      const onError = vi.fn()
+      const onSuccess =
+        vi.fn<
+          (data: unknown, query: Query<unknown, unknown, unknown>) => void
+        >()
+      const onSettled =
+        vi.fn<
+          (
+            data: unknown | undefined,
+            error: DefaultError | null,
+            query: Query<unknown, unknown, unknown>,
+          ) => void
+        >()
+      const onError =
+        vi.fn<
+          (error: DefaultError, query: Query<unknown, unknown, unknown>) => void
+        >()
       const testCache = new QueryCache({ onSuccess, onError, onSettled })
       const testClient = new QueryClient({ queryCache: testCache })
       void testClient
@@ -392,9 +406,22 @@ describe('queryCache', () => {
   describe('QueryCacheConfig success callbacks', () => {
     it('should call onSuccess and onSettled when a query is successful', async () => {
       const key = queryKey()
-      const onSuccess = vi.fn()
-      const onSettled = vi.fn()
-      const onError = vi.fn()
+      const onSuccess =
+        vi.fn<
+          (data: unknown, query: Query<unknown, unknown, unknown>) => void
+        >()
+      const onSettled =
+        vi.fn<
+          (
+            data: unknown | undefined,
+            error: DefaultError | null,
+            query: Query<unknown, unknown, unknown>,
+          ) => void
+        >()
+      const onError =
+        vi.fn<
+          (error: DefaultError, query: Query<unknown, unknown, unknown>) => void
+        >()
       const testCache = new QueryCache({ onSuccess, onError, onSettled })
       const testClient = new QueryClient({ queryCache: testCache })
       void testClient
@@ -448,7 +475,7 @@ describe('queryCache', () => {
       const currentQuery = queryCache.build(queryClient, { queryKey: key })
 
       expect(currentQuery).not.toBe(staleQuery)
-      const subscriber = vi.fn()
+      const subscriber = vi.fn<(event: QueryCacheNotifyEvent) => void>()
       const unsubscribe = queryCache.subscribe(subscriber)
 
       queryCache.remove(staleQuery)

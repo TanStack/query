@@ -65,7 +65,7 @@ describe('useQueries', () => {
 
   it('should not optimistically show fetching when unsubscribed', () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => Promise.resolve('data'))
+    const queryFn = vi.fn<() => Promise<string>>(() => Promise.resolve('data'))
 
     function Page() {
       const [query] = useQueries({
@@ -671,7 +671,7 @@ describe('useQueries', () => {
 
     const client = new QueryClient()
 
-    const spy = vi.fn()
+    const spy = vi.fn<(result: { combined: boolean; res: string }) => void>()
     let value = 0
 
     function Page() {
@@ -750,7 +750,10 @@ describe('useQueries', () => {
 
     const client = new QueryClient()
 
-    const spy = vi.fn()
+    const spy =
+      vi.fn<
+        (result: { combined: boolean; state: number; res: string }) => void
+      >()
 
     function Page() {
       const [state, setState] = React.useState(0)
@@ -989,7 +992,7 @@ describe('useQueries', () => {
 
     const client = new QueryClient()
 
-    const spy = vi.fn()
+    const spy = vi.fn<(result: { combined: boolean; res: string }) => void>()
 
     function Page() {
       const [unrelatedState, setUnrelatedState] = React.useState(0)
@@ -1180,8 +1183,12 @@ describe('useQueries', () => {
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data2'),
+    )
 
     function Page() {
       const results = useQueries({
@@ -1233,8 +1240,12 @@ describe('useQueries', () => {
   it('should not fetch queries with different durations for the duration of the restoring period when isRestoring is true', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data2'),
+    )
 
     function Page() {
       const results = useQueries({

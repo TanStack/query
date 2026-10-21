@@ -17,26 +17,29 @@ import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
+  TanstackQueryDevtools,
   Theme,
 } from '@tanstack/query-devtools'
 import type { DevtoolsOptions } from '../devtools'
 
 const mockDevtoolsInstance = {
-  mount: vi.fn(),
-  unmount: vi.fn(),
-  setClient: vi.fn(),
-  setPosition: vi.fn(),
-  setErrorTypes: vi.fn(),
-  setButtonPosition: vi.fn(),
-  setInitialIsOpen: vi.fn(),
-  setTheme: vi.fn(),
+  mount: vi.fn<TanstackQueryDevtools['mount']>(),
+  unmount: vi.fn<TanstackQueryDevtools['unmount']>(),
+  setClient: vi.fn<TanstackQueryDevtools['setClient']>(),
+  setPosition: vi.fn<TanstackQueryDevtools['setPosition']>(),
+  setErrorTypes: vi.fn<TanstackQueryDevtools['setErrorTypes']>(),
+  setButtonPosition: vi.fn<TanstackQueryDevtools['setButtonPosition']>(),
+  setInitialIsOpen: vi.fn<TanstackQueryDevtools['setInitialIsOpen']>(),
+  setTheme: vi.fn<TanstackQueryDevtools['setTheme']>(),
 }
 
 function MockTanstackQueryDevtools() {
   return mockDevtoolsInstance
 }
 
-const mockTanstackQueryDevtools = vi.fn(MockTanstackQueryDevtools)
+const mockTanstackQueryDevtools = vi.fn<typeof MockTanstackQueryDevtools>(
+  MockTanstackQueryDevtools,
+)
 
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- the mocked devtools classes have '#private' fields, and this environment cannot load the real Solid module
 vi.mock('@tanstack/query-devtools', () => ({
@@ -47,7 +50,7 @@ vi.mock(import('@angular/core'), async () => {
   const actual = await vi.importActual('@angular/core')
   return {
     ...actual,
-    isDevMode: vi.fn(),
+    isDevMode: vi.fn<() => boolean>(),
   }
 })
 
@@ -543,7 +546,9 @@ describe('withDevtools feature', () => {
       const mockService2 = { value: 'service2' }
       const mockService1Token = new InjectionToken('MockService1')
       const mockService2Token = new InjectionToken('MockService2')
-      const withDevtoolsFn = vi.fn().mockReturnValue({ loadDevtools: true })
+      const withDevtoolsFn = vi
+        .fn<() => { loadDevtools: boolean }>()
+        .mockReturnValue({ loadDevtools: true })
 
       TestBed.configureTestingModule({
         providers: [
@@ -571,7 +576,9 @@ describe('withDevtools feature', () => {
     })
 
     it('should work with empty deps array', async () => {
-      const withDevtoolsFn = vi.fn().mockReturnValue({ loadDevtools: true })
+      const withDevtoolsFn = vi
+        .fn<() => { loadDevtools: boolean }>()
+        .mockReturnValue({ loadDevtools: true })
 
       TestBed.configureTestingModule({
         providers: [

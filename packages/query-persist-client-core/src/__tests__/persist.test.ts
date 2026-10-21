@@ -54,7 +54,7 @@ describe('persist', () => {
       })
 
       const queryKey = ['test']
-      const queryFn = vi.fn().mockReturnValue(1)
+      const queryFn = vi.fn<() => number>().mockReturnValue(1)
       const observer = new QueriesObserver(queryClient, [{ queryKey, queryFn }])
       const unsubscribeObserver = observer.subscribe(vi.fn())
       observer

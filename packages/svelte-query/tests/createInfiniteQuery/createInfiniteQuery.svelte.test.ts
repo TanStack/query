@@ -155,8 +155,9 @@ describe('createInfiniteQuery', () => {
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
     const key = queryKey()
     const postId = ref<string | undefined>(undefined)
-    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
-      sleep(10).then(() => `comments for 1 page ${pageParam}`),
+    const queryFn = vi.fn<(context: { pageParam: number }) => Promise<string>>(
+      ({ pageParam }: { pageParam: number }) =>
+        sleep(10).then(() => `comments for 1 page ${pageParam}`),
     )
 
     const rendered = render(Options, {
