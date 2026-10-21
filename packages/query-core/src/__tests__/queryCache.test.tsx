@@ -61,7 +61,7 @@ describe('queryCache', () => {
 
       const unsubScribeObserver = observer.subscribe(vi.fn())
       await vi.advanceTimersByTimeAsync(11)
-      expect(events.length).toBe(8)
+      expect(events).toHaveLength(8)
 
       expect(events).toEqual([
         'added', // 1. Query added -> loading
@@ -143,14 +143,14 @@ describe('queryCache', () => {
           queryFn: () => sleep(100).then(() => 'data1'),
         })
         .catch(noop)
-      expect(testCache.findAll().length).toBe(1)
+      expect(testCache.findAll()).toHaveLength(1)
       void testClient
         .query({
           queryKey: key2,
           queryFn: () => sleep(100).then(() => 'data2'),
         })
         .catch(noop)
-      expect(testCache.findAll().length).toBe(2)
+      expect(testCache.findAll()).toHaveLength(2)
       void testClient
         .query({
           queryKey: key3,
@@ -158,7 +158,7 @@ describe('queryCache', () => {
         })
         .catch(noop)
       await vi.advanceTimersByTimeAsync(100)
-      expect(testCache.findAll().length).toBe(1)
+      expect(testCache.findAll()).toHaveLength(1)
       expect(testCache.findAll()[0]!.state.data).toBe('data3')
 
       unsubscribe()
@@ -340,7 +340,7 @@ describe('queryCache', () => {
           queryFn: () => 'data2',
         })
         .catch(noop)
-      expect(queryCache.findAll().length).toBe(2)
+      expect(queryCache.findAll()).toHaveLength(2)
     })
   })
 
@@ -457,7 +457,7 @@ describe('queryCache', () => {
 
       queryCache.add(queryClone)
 
-      expect(queryCache.getAll().length).toBe(1)
+      expect(queryCache.getAll()).toHaveLength(1)
     })
   })
 })

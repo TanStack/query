@@ -114,8 +114,8 @@ describe('createMutationController', () => {
     expect(
       providerClient
         .getMutationCache()
-        .findAll({ mutationKey: consumer.mutationKey }).length,
-    ).toBe(0)
+        .findAll({ mutationKey: consumer.mutationKey }),
+    ).toHaveLength(0)
 
     consumer.mutation.destroy()
     provider.remove()

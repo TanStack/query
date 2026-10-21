@@ -219,7 +219,7 @@ describe('dehydration and rehydration', () => {
       shouldDehydrateQuery: () => false,
     })
 
-    expect(dehydrated.queries.length).toBe(0)
+    expect(dehydrated.queries).toHaveLength(0)
 
     queryClient.clear()
   })
@@ -297,7 +297,7 @@ describe('dehydration and rehydration', () => {
       .catch(noop)
     await vi.advanceTimersByTimeAsync(0)
     const dehydrated = dehydrate(queryClient)
-    expect(dehydrated.queries.length).toBe(1)
+    expect(dehydrated.queries).toHaveLength(1)
     expect(dehydrated.queries[0]?.state.error).toStrictEqual(new Error('error'))
     const stringified = JSON.stringify(dehydrated)
     const parsed = JSON.parse(stringified)
@@ -336,7 +336,7 @@ describe('dehydration and rehydration', () => {
     )
 
     const dehydrated = dehydrate(queryClient)
-    expect(dehydrated.mutations.length).toBe(1)
+    expect(dehydrated.mutations).toHaveLength(1)
     expect(dehydrated.mutations[0]?.state.data).toBe('done')
     const stringified = JSON.stringify(dehydrated)
     const parsed = JSON.parse(stringified)
@@ -681,7 +681,7 @@ describe('dehydration and rehydration', () => {
       shouldDehydrateMutation: () => false,
     })
 
-    expect(dehydrated.mutations.length).toBe(0)
+    expect(dehydrated.mutations).toHaveLength(0)
 
     queryClient.clear()
     consoleErrorMock.mockRestore()
@@ -714,7 +714,7 @@ describe('dehydration and rehydration', () => {
     await vi.advanceTimersByTimeAsync(1)
     const dehydrated = dehydrate(queryClient)
 
-    expect(dehydrated.mutations.length).toBe(0)
+    expect(dehydrated.mutations).toHaveLength(0)
     await vi.advanceTimersByTimeAsync(30)
     queryClient.clear()
     consoleErrorMock.mockRestore()

@@ -91,7 +91,7 @@ describe('useSuspenseQuery', () => {
      * Instead of React's 6 (where strict-mode changes the number of renders)
      */
     expect(renders).toBe(4)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({ data: 1, status: 'success' })
     expect(states[1]).toMatchObject({ data: 2, status: 'success' })
   })
@@ -134,7 +134,7 @@ describe('useSuspenseQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
-    expect(states.length).toBe(1)
+    expect(states).toHaveLength(1)
     expect(states[0]).toMatchObject({
       data: { pages: [1], pageParams: [1] },
       status: 'success',
@@ -145,7 +145,7 @@ describe('useSuspenseQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[1]).toMatchObject({
       data: { pages: [2], pageParams: [1] },
       status: 'success',

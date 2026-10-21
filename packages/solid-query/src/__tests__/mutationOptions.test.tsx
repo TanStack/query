@@ -386,7 +386,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
     const lastSnapshot = mutationStateArray[mutationStateArray.length - 1]!
-    expect(lastSnapshot.length).toBe(1)
+    expect(lastSnapshot).toHaveLength(1)
     expect(lastSnapshot[0]?.data).toBe('data')
   })
 
@@ -420,7 +420,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
     const lastSnapshot = mutationStateArray[mutationStateArray.length - 1]!
-    expect(lastSnapshot.length).toBe(1)
+    expect(lastSnapshot).toHaveLength(1)
     expect(lastSnapshot[0]?.data).toBe('data')
   })
 
@@ -462,7 +462,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(10)
     const lastSnapshot = mutationStateArray[mutationStateArray.length - 1]!
-    expect(lastSnapshot.length).toBe(2)
+    expect(lastSnapshot).toHaveLength(2)
     expect(lastSnapshot[0]?.data).toBe('data1')
     expect(lastSnapshot[1]?.data).toBe('data2')
   })
@@ -505,7 +505,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(10)
     const lastSnapshot = mutationStateArray[mutationStateArray.length - 1]!
-    expect(lastSnapshot.length).toBe(1)
+    expect(lastSnapshot).toHaveLength(1)
     expect(lastSnapshot[0]?.data).toBe('data1')
   })
 })

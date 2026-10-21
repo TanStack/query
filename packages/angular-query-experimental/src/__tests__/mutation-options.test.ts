@@ -252,11 +252,11 @@ describe('mutationOptions', () => {
       })),
     ])
 
-    expect(mutationState().length).toBe(0)
+    expect(mutationState()).toHaveLength(0)
 
     mutation.mutate()
     await vi.advanceTimersByTimeAsync(11)
-    expect(mutationState().length).toBe(1)
+    expect(mutationState()).toHaveLength(1)
     expect(mutationState()[0]?.data).toBe('data')
   })
 
@@ -272,11 +272,11 @@ describe('mutationOptions', () => {
       })),
     ])
 
-    expect(mutationState().length).toBe(0)
+    expect(mutationState()).toHaveLength(0)
 
     mutation.mutate()
     await vi.advanceTimersByTimeAsync(11)
-    expect(mutationState().length).toBe(1)
+    expect(mutationState()).toHaveLength(1)
     expect(mutationState()[0]?.data).toBe('data')
   })
 
@@ -300,12 +300,12 @@ describe('mutationOptions', () => {
       ],
     )
 
-    expect(mutationState().length).toBe(0)
+    expect(mutationState()).toHaveLength(0)
 
     mutation1.mutate()
     mutation2.mutate()
     await vi.advanceTimersByTimeAsync(11)
-    expect(mutationState().length).toBe(2)
+    expect(mutationState()).toHaveLength(2)
     expect(mutationState()[0]?.data).toBe('data1')
     expect(mutationState()[1]?.data).toBe('data2')
   })
@@ -333,12 +333,12 @@ describe('mutationOptions', () => {
       ],
     )
 
-    expect(mutationState().length).toBe(0)
+    expect(mutationState()).toHaveLength(0)
 
     mutation1.mutate()
     mutation2.mutate()
     await vi.advanceTimersByTimeAsync(11)
-    expect(mutationState().length).toBe(1)
+    expect(mutationState()).toHaveLength(1)
     expect(mutationState()[0]?.data).toBe('data1')
   })
 })

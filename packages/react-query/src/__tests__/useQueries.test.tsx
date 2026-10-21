@@ -57,7 +57,7 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(201)
     expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
 
-    expect(results.length).toBe(3)
+    expect(results).toHaveLength(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
     expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
@@ -85,8 +85,8 @@ describe('useQueries', () => {
 
     expect(queryFn).not.toHaveBeenCalled()
     expect(
-      queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
-    ).toBe(0)
+      queryClient.getQueryCache().find({ queryKey: key })!.observers,
+    ).toHaveLength(0)
     rendered.getByText('isFetching: false')
     rendered.getByText('fetchStatus: idle')
   })
@@ -124,7 +124,7 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
-    expect(results.length).toBe(2)
+    expect(results).toHaveLength(2)
     expect(results[0]).toMatchObject([{ data: undefined }])
     expect(results[1]).toMatchObject([{ data: 1 }])
 
@@ -133,7 +133,7 @@ describe('useQueries', () => {
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
     // only one render for data update, no render for isFetching transition
-    expect(results.length).toBe(3)
+    expect(results).toHaveLength(3)
 
     expect(results[2]).toMatchObject([{ data: 2 }])
   })
@@ -538,7 +538,7 @@ describe('useQueries', () => {
       rendered.getByText('data: true first result 0,second result 0'),
     ).toBeInTheDocument()
 
-    expect(results.length).toBe(3)
+    expect(results).toHaveLength(3)
 
     expect(results[0]).toStrictEqual({
       combined: true,
@@ -579,7 +579,7 @@ describe('useQueries', () => {
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await vi.advanceTimersByTimeAsync(100)
     // no further re-render because data didn't change
-    expect(results.length).toBe(length)
+    expect(results).toHaveLength(length)
   })
 
   it('should synchronously track properties of all observer even if a property (isLoading) is only accessed on one observer (#7000)', async () => {
@@ -1173,7 +1173,7 @@ describe('useQueries', () => {
     expect(rendered.getByTestId('length').textContent).toBe('2')
 
     results.forEach((result) => {
-      expect(result.length).toBe(result.n)
+      expect(result).toHaveLength(result.n)
     })
   })
 

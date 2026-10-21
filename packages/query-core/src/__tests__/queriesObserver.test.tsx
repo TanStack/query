@@ -75,7 +75,7 @@ describe('queriesObserver', () => {
     queryClient.setQueryData(key2, 3)
     unsubscribe()
 
-    expect(results.length).toBe(6)
+    expect(results).toHaveLength(6)
     expect(results[0]).toMatchObject([
       { status: 'pending', fetchStatus: 'idle', data: undefined },
       { status: 'pending', fetchStatus: 'idle', data: undefined },
@@ -150,7 +150,7 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
     expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeUndefined()
-    expect(results.length).toBe(6)
+    expect(results).toHaveLength(6)
     expect(results[0]).toMatchObject([
       { status: 'pending', fetchStatus: 'idle', data: undefined },
       { status: 'pending', fetchStatus: 'idle', data: undefined },
@@ -196,7 +196,7 @@ describe('queriesObserver', () => {
 
     unsubscribe()
 
-    expect(results.length).toBe(6)
+    expect(results).toHaveLength(6)
     expect(results[0]).toMatchObject([
       { status: 'pending', fetchStatus: 'idle', data: undefined },
       { status: 'pending', fetchStatus: 'idle', data: undefined },
@@ -245,7 +245,7 @@ describe('queriesObserver', () => {
 
     unsubscribe()
 
-    expect(results.length).toBe(5)
+    expect(results).toHaveLength(5)
     expect(results[0]).toMatchObject([
       { status: 'pending', fetchStatus: 'idle', data: undefined },
       { status: 'pending', fetchStatus: 'idle', data: undefined },
@@ -344,7 +344,7 @@ describe('queriesObserver', () => {
 
     unsubscribe()
 
-    expect(results.length).toBe(6)
+    expect(results).toHaveLength(6)
     expect(results[0]).toMatchObject([
       { status: 'pending', fetchStatus: 'idle', data: undefined },
       { status: 'pending', fetchStatus: 'idle', data: undefined },
