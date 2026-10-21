@@ -330,7 +330,15 @@ export default defineConfig({
         'vitest/require-mock-type-parameters': 'error',
         'vitest/require-to-throw-message': 'error',
         'vitest/valid-expect': 'off',
+        'vitest-js/no-conditional-in-test': 'error',
         'vitest-js/valid-expect': 'error',
+      },
+    },
+    {
+      files: ['**/*.test-d.ts*'],
+      rules: {
+        // Type tests narrow results with `if` to check the type of each state
+        'vitest-js/no-conditional-in-test': 'off',
       },
     },
   ],
