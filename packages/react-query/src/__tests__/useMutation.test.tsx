@@ -1292,7 +1292,7 @@ describe('useMutation', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     function Page() {
       const { mutate } = useMutation<string, Error>({
         mutationFn: () => {
@@ -1333,7 +1333,7 @@ describe('useMutation', () => {
   it('should be able to throw an error when throwOnError is a function that returns true', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     let boundary = false
     function Page() {
       const { mutate, error } = useMutation<string>({

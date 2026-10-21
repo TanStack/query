@@ -101,7 +101,7 @@ describe('usePrefetchQuery', () => {
 
   it('should let errors fall through and not refetch failed queries', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
     const queryFn = vi.fn(() => sleep(10).then(() => 'Not an error'))
 
     const queryOpts = {
@@ -109,6 +109,7 @@ describe('usePrefetchQuery', () => {
       queryFn,
     }
 
+    // oxlint-disable-next-line vitest/prefer-mock-return-shorthand -- the promise must be created when the mock is called, not when it is set up
     queryFn.mockImplementationOnce(() =>
       sleep(10).then(() => {
         throw new Error('Oops! Server error!')
@@ -181,7 +182,7 @@ describe('usePrefetchQuery', () => {
 
   it('should be able to recover from errors and try fetching again', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
     const queryFn = vi.fn(() =>
       sleep(10).then(() => 'This is fine :dog: :fire:'),
     )
@@ -191,6 +192,7 @@ describe('usePrefetchQuery', () => {
       queryFn,
     }
 
+    // oxlint-disable-next-line vitest/prefer-mock-return-shorthand -- the promise must be created when the mock is called, not when it is set up
     queryFn.mockImplementationOnce(() =>
       sleep(10).then(() => {
         throw new Error('Oops! Server error!')
@@ -258,7 +260,7 @@ describe('usePrefetchQuery', () => {
       ),
     }
 
-    const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
+    const Fallback = vi.fn().mockReturnValue(<div>Loading...</div>)
 
     function FirstQuery({ children }: { children?: VNode }) {
       const state = useSuspenseQuery(firstQueryOpts)

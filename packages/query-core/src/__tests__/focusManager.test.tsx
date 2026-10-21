@@ -55,8 +55,8 @@ describe('focusManager', () => {
 
   it('should not call cleanup (removeEventListener) if window is not defined', () => {
     const windowSpy = vi.spyOn(globalThis, 'window', 'get')
-    windowSpy.mockImplementation(
-      () => undefined as unknown as Window & typeof globalThis,
+    windowSpy.mockReturnValue(
+      undefined as unknown as Window & typeof globalThis,
     )
     const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
 
@@ -93,8 +93,8 @@ describe('focusManager', () => {
   })
 
   it('should replace default window listener when a new event listener is set', () => {
-    const unsubscribeSpy = vi.fn().mockImplementation(() => undefined)
-    const handlerSpy = vi.fn().mockImplementation(() => unsubscribeSpy)
+    const unsubscribeSpy = vi.fn().mockReturnValue(undefined)
+    const handlerSpy = vi.fn().mockReturnValue(unsubscribeSpy)
 
     focusManager.setEventListener(() => handlerSpy())
 
@@ -132,7 +132,7 @@ describe('focusManager', () => {
   })
 
   it('should keep setup function even if last listener unsubscribes', () => {
-    const setupSpy = vi.fn().mockImplementation(() => () => undefined)
+    const setupSpy = vi.fn().mockReturnValue(() => undefined)
 
     focusManager.setEventListener(setupSpy)
 

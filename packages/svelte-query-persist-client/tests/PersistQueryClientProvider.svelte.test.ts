@@ -360,10 +360,8 @@ describe('PersistQueryClientProvider', () => {
   it('should remove cache after non-successful restoring', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-    const consoleWarnMock = vi
-      .spyOn(console, 'warn')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
+    const consoleWarnMock = vi.spyOn(console, 'warn').mockReturnValue(undefined)
 
     const queryClient = new QueryClient()
     const removeClient = vi.fn()

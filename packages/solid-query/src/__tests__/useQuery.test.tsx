@@ -2040,7 +2040,7 @@ describe('useQuery', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -2072,7 +2072,7 @@ describe('useQuery', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -2109,7 +2109,7 @@ describe('useQuery', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -2144,7 +2144,7 @@ describe('useQuery', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -2181,7 +2181,7 @@ describe('useQuery', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -2703,8 +2703,7 @@ describe('useQuery', () => {
   it('should retry specified number of times', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
-    queryFn.mockImplementation(() =>
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>(() =>
       sleep(10).then(() => Promise.reject(new Error('Error test Barrett'))),
     )
 
@@ -2745,14 +2744,13 @@ describe('useQuery', () => {
   it('should not retry if retry function `false`', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
-
-    queryFn.mockImplementationOnce(() =>
-      sleep(10).then(() => Promise.reject(new Error('Error test Tanner'))),
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>(() =>
+      sleep(10).then(() => Promise.reject(new Error('NoRetry'))),
     )
 
-    queryFn.mockImplementation(() =>
-      sleep(10).then(() => Promise.reject(new Error('NoRetry'))),
+    // oxlint-disable-next-line vitest/prefer-mock-return-shorthand -- the promise must be created when the mock is called, not when it is set up
+    queryFn.mockImplementationOnce(() =>
+      sleep(10).then(() => Promise.reject(new Error('Error test Tanner'))),
     )
 
     function Page() {
@@ -3012,10 +3010,10 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<string>> = []
 
     const queryFn = vi.fn<(...args: Array<unknown>) => string>()
-    queryFn.mockImplementation(() => 'data')
+    queryFn.mockReturnValue('data')
 
     const prefetchQueryFn = vi.fn<(...args: Array<unknown>) => string>()
-    prefetchQueryFn.mockImplementation(() => 'not yet...')
+    prefetchQueryFn.mockReturnValue('not yet...')
 
     void queryClient
       .query({
@@ -3046,12 +3044,13 @@ describe('useQuery', () => {
   it('should not refetch if not stale after a prefetch', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<(...args: Array<unknown>) => Promise<string>>()
-    queryFn.mockImplementation(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<(...args: Array<unknown>) => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
-    const prefetchQueryFn =
-      vi.fn<(...args: Array<unknown>) => Promise<string>>()
-    prefetchQueryFn.mockImplementation(() => sleep(10).then(() => 'not yet...'))
+    const prefetchQueryFn = vi.fn<(...args: Array<unknown>) => Promise<string>>(
+      () => sleep(10).then(() => 'not yet...'),
+    )
 
     void queryClient
       .query({
@@ -3430,7 +3429,7 @@ describe('useQuery', () => {
   it('should support enabled:false in query object syntax', () => {
     const key = queryKey()
     const queryFn = vi.fn<(...args: Array<unknown>) => string>()
-    queryFn.mockImplementation(() => 'data')
+    queryFn.mockReturnValue('data')
 
     function Page() {
       const { fetchStatus } = useQuery(() => ({
@@ -4457,8 +4456,7 @@ describe('useQuery', () => {
 
   it('should refetch when changed enabled to true in error state', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
-    queryFn.mockImplementation(() =>
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>(() =>
       sleep(10).then(() => Promise.reject(new Error('Suspense Error Bingo'))),
     )
 
@@ -5616,9 +5614,7 @@ describe('useQuery', () => {
 
   it('should not fetch while restoring and refetch after restoring is complete', async () => {
     const key = queryKey()
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
 
     const [isRestoring, setIsRestoring] = createSignal(true)
 
@@ -5686,9 +5682,7 @@ describe('useQuery', () => {
     const queryClient1 = new QueryClient()
     const queryClient2 = new QueryClient()
 
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
 
     function Page(props: { client: () => QueryClient }) {
       const query = useQuery(

@@ -51,7 +51,7 @@ describe('Server side rendering with de/rehydration', () => {
 
   it('should not mismatch on success', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
 
@@ -128,7 +128,7 @@ describe('Server side rendering with de/rehydration', () => {
 
   it('should not mismatch on error', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const fetchDataError = vi.fn(() => {
       throw new Error('fetchDataError')
@@ -209,7 +209,7 @@ describe('Server side rendering with de/rehydration', () => {
 
   it('should not mismatch on queries that were not prefetched', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
 

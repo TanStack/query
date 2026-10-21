@@ -100,7 +100,7 @@ describe('createRetryer', () => {
 
   it('should reject with a CancelledError carrying the cancel options and call onCancel', async () => {
     const onCancel = vi.fn()
-    const fn = vi.fn().mockImplementation(() => new Promise(() => {}))
+    const fn = vi.fn(() => new Promise(() => {}))
     const retryer = createRetryer({
       fn,
       onCancel,

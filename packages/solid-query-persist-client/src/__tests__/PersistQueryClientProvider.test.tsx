@@ -450,7 +450,7 @@ describe('PersistQueryClientProvider', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const queryClient = new QueryClient()
     const removeClient = vi.fn()
     const onSuccess = vi.fn()
@@ -521,12 +521,8 @@ describe('PersistQueryClientProvider', () => {
 
     const onSuccess = vi.fn()
 
-    const queryFn1 = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'queryFn1'))
-    const queryFn2 = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'queryFn2'))
+    const queryFn1 = vi.fn(() => sleep(10).then(() => 'queryFn1'))
+    const queryFn2 = vi.fn(() => sleep(10).then(() => 'queryFn2'))
 
     function App() {
       const [client, setClient] = createSignal(

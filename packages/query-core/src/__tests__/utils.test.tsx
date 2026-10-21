@@ -649,7 +649,7 @@ describe('core/utils', () => {
     it('should return a function that rejects with missing queryFn error when queryFn is set to skipToken', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const resolved = ensureQueryFn({
         queryFn: skipToken,

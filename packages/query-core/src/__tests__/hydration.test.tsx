@@ -402,7 +402,7 @@ describe('dehydration and rehydration', () => {
     const errorKey = queryKey()
 
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
@@ -573,7 +573,7 @@ describe('dehydration and rehydration', () => {
   it('should be able to dehydrate mutations and continue on hydration', async () => {
     const key = queryKey()
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
     const onlineMock = mockOnlineManagerIsOnline(false)
 
     const serverAddTodo = vi.fn().mockRejectedValue(new Error('offline'))
@@ -658,7 +658,7 @@ describe('dehydration and rehydration', () => {
   it('should not dehydrate mutations if dehydrateMutations is set to false', async () => {
     const key = queryKey()
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const serverAddTodo = vi.fn().mockRejectedValue(new Error('offline'))
 
@@ -690,7 +690,7 @@ describe('dehydration and rehydration', () => {
   it('should not dehydrate mutation if mutation state is set to pause', async () => {
     const key = queryKey()
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const serverAddTodo = vi.fn().mockRejectedValue(new Error('offline'))
 
@@ -1384,7 +1384,7 @@ describe('dehydration and rehydration', () => {
   it('should redact errors by default when shouldRedactErrors is not set', async () => {
     const key = queryKey()
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({
@@ -1419,7 +1419,7 @@ describe('dehydration and rehydration', () => {
     process.env.NODE_ENV = 'development'
 
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({

@@ -274,9 +274,7 @@ describe('injectQuery', () => {
       }))
     })
 
-    const dependentQueryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(1000).then(() => 'Some data'))
+    const dependentQueryFn = vi.fn(() => sleep(1000).then(() => 'Some data'))
 
     const query2 = TestBed.runInInjectionContext(() => {
       return injectQuery(
@@ -453,9 +451,7 @@ describe('injectQuery', () => {
   describe('isRestoring', () => {
     it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
       const key = queryKey()
-      const queryFn = vi
-        .fn()
-        .mockImplementation(() => sleep(10).then(() => 'data'))
+      const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
 
       TestBed.configureTestingModule({
         providers: [provideIsRestoring(signal(true).asReadonly())],

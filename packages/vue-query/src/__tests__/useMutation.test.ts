@@ -575,7 +575,7 @@ describe('useMutation', () => {
       async () => {
         const consoleErrorMock = vi
           .spyOn(console, 'error')
-          .mockImplementation(() => undefined)
+          .mockReturnValue(undefined)
         const throwOnError = vi.fn().mockReturnValue(true)
         const { mutate } = useMutation({
           mutationFn: () =>

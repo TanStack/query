@@ -491,9 +491,9 @@ describe('query', () => {
   it('should be able to refetch a cancelled query', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
-
-    queryFn.mockImplementation(() => sleep(50).then(() => 'data'))
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>(() =>
+      sleep(50).then(() => 'data'),
+    )
 
     void queryClient.query({ queryKey: key, queryFn }).catch(noop)
     const query = queryCache.find({ queryKey: key })!
@@ -939,7 +939,7 @@ describe('query', () => {
 
   it('should dispatch an error from fetch if the queryFn returns undefined', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1155,11 +1155,11 @@ describe('query', () => {
   it('should have an error log when queryFn data is not serializable', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
 
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const key = queryKey()
 
-    const queryFn = vi.fn()
+    const queryFn = vi.fn(() => sleep(10).then(() => data))
 
     const initialData = {
       foo: 'bar',
@@ -1170,8 +1170,6 @@ describe('query', () => {
         return this.foo
       },
     }
-
-    queryFn.mockImplementation(() => sleep(10).then(() => data))
 
     void queryClient
       .query({
@@ -1203,9 +1201,9 @@ describe('query', () => {
   it('should have an error status when setData has any error inside', async () => {
     const key = queryKey()
 
-    const queryFn = vi
-      .fn<() => Promise<string>>()
-      .mockImplementation(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     void queryClient
       .query({
@@ -1402,7 +1400,7 @@ describe('query', () => {
 
   it('should not increment dataUpdateCount when setting initialData on prefetched query', async () => {
     const key = queryKey()
-    const queryFn = vi.fn().mockImplementation(() => 'fetched-data')
+    const queryFn = vi.fn().mockReturnValue('fetched-data')
 
     // First prefetch the query (creates query without data)
     void queryClient

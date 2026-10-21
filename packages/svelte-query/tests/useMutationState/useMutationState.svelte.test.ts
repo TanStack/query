@@ -23,11 +23,9 @@ describe('useMutationState', () => {
     const successKey = queryKey()
     const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
-    const errorMutationFn = vi
-      .fn()
-      .mockImplementation(() =>
-        sleep(20).then(() => Promise.reject(new Error('error'))),
-      )
+    const errorMutationFn = vi.fn(() =>
+      sleep(20).then(() => Promise.reject(new Error('error'))),
+    )
 
     const rendered = render(Base, {
       props: {
@@ -58,11 +56,9 @@ describe('useMutationState', () => {
     const successKey = queryKey()
     const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
-    const errorMutationFn = vi
-      .fn()
-      .mockImplementation(() =>
-        sleep(20).then(() => Promise.reject(new Error('error'))),
-      )
+    const errorMutationFn = vi.fn(() =>
+      sleep(20).then(() => Promise.reject(new Error('error'))),
+    )
 
     const rendered = render(Base, {
       props: {
@@ -122,11 +118,9 @@ describe('useMutationState', () => {
     const successKey = queryKey()
     const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
-    const errorMutationFn = vi
-      .fn()
-      .mockImplementation(() =>
-        sleep(20).then(() => Promise.reject(new Error('error'))),
-      )
+    const errorMutationFn = vi.fn(() =>
+      sleep(20).then(() => Promise.reject(new Error('error'))),
+    )
 
     const rendered = render(Base, {
       props: {

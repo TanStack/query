@@ -441,7 +441,7 @@ describe("useQuery's in Suspense mode", () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -533,7 +533,7 @@ describe("useQuery's in Suspense mode", () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -665,7 +665,7 @@ describe("useQuery's in Suspense mode", () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     let succeed = true
 
@@ -729,7 +729,7 @@ describe("useQuery's in Suspense mode", () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     function Page() {
       const [key, setKey] = createSignal(0)
@@ -789,7 +789,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should error caught in error boundary without infinite loop when enabled changed', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     function Page() {
       const queryKeys = '1'

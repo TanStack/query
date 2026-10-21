@@ -213,7 +213,7 @@ describe('useSuspenseQuery', () => {
   it('should reset error state if new component instances are mounted', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     let succeed = false
@@ -280,7 +280,7 @@ describe('useSuspenseQuery', () => {
   it('should retry fetch if the reset error boundary has been reset', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     let succeed = false
@@ -429,7 +429,7 @@ describe('useSuspenseQuery', () => {
   it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     let succeed = false
@@ -498,7 +498,7 @@ describe('useSuspenseQuery', () => {
   it('should throw errors to the error boundary by default', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -539,7 +539,7 @@ describe('useSuspenseQuery', () => {
   it('should throw select errors to the error boundary by default', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -581,7 +581,7 @@ describe('useSuspenseQuery', () => {
   it('should error caught in error boundary without infinite loop', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     let succeed = true
@@ -649,7 +649,7 @@ describe('useSuspenseQuery', () => {
   it('should error caught in error boundary without infinite loop when query keys changed', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     let succeed = true
 
     function Page() {
@@ -763,7 +763,7 @@ describe('useSuspenseQuery', () => {
   it('should not throw background errors to the error boundary', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     let succeed = true
     const key = queryKey()
 
@@ -940,7 +940,7 @@ describe('useSuspenseQuery', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -973,7 +973,7 @@ describe('useSuspenseQuery', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {

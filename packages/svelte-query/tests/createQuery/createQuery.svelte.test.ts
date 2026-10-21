@@ -1544,7 +1544,7 @@ describe('createQuery', () => {
     const key = queryKey()
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     const rendered = render(Base, {
       props: {
