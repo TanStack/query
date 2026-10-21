@@ -10,7 +10,7 @@ import {
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
 import { useIsRestoring } from './IsRestoringProvider'
-import { checkQueryStrictMode, useQueryStrictMode } from './QueryStrictMode'
+import { checkQueryStrictMode, useQueryStrictMode } from './QueryStrictModeDev'
 import {
   ensureSuspenseTimers,
   fetchOptimistic,
