@@ -37,7 +37,7 @@ describe('asyncThrottle', () => {
     await vi.advanceTimersByTimeAsync(interval)
     expect(mockFunc).toHaveBeenCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(3)
-    expect(execTimeStamps.length).toBe(2)
+    expect(execTimeStamps).toHaveLength(2)
     expect(execTimeStamps[1]! - execTimeStamps[0]!).toBeGreaterThanOrEqual(
       interval,
     )
@@ -68,7 +68,7 @@ describe('asyncThrottle', () => {
     await vi.advanceTimersByTimeAsync(interval)
     expect(mockFunc).toHaveBeenCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(4)
-    expect(execTimeStamps.length).toBe(2)
+    expect(execTimeStamps).toHaveLength(2)
     expect(execTimeStamps[1]! - execTimeStamps[0]!).toBeGreaterThanOrEqual(
       interval,
     )
@@ -97,7 +97,7 @@ describe('asyncThrottle', () => {
     await vi.advanceTimersByTimeAsync(interval + 10)
     expect(mockFunc).toHaveBeenCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(3)
-    expect(execTimeStamps.length).toBe(2)
+    expect(execTimeStamps).toHaveLength(2)
     expect(execTimeStamps[1]! - execTimeStamps[0]!).toBeGreaterThanOrEqual(
       interval,
     )

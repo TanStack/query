@@ -319,6 +319,7 @@ export default defineConfig({
         'vitest/prefer-to-be-object': 'error',
         'vitest/prefer-to-contain': 'error',
         'vitest/prefer-to-have-been-called-times': 'error',
+        'vitest/prefer-to-have-length': 'error',
         'vitest/prefer-todo': 'error',
         'vitest/require-awaited-expect-poll': 'error',
         'vitest/require-to-throw-message': 'error',

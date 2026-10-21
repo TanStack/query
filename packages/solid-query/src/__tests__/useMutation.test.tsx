@@ -730,7 +730,7 @@ describe('useMutation', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(20)
-    expect(states.length).toBe(3)
+    expect(states).toHaveLength(3)
     expect(states[0]).toMatchObject({ data: undefined, isPending: false })
     expect(states[1]).toMatchObject({ data: undefined, isPending: true })
     expect(states[2]).toMatchObject({ data: 'todo', isPending: false })
@@ -970,7 +970,7 @@ describe('useMutation', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(16)
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     expect(states[0]).toMatchObject({
       isPending: false,
       isPaused: false,
@@ -1000,7 +1000,7 @@ describe('useMutation', () => {
     window.dispatchEvent(new Event('online'))
 
     await vi.advanceTimersByTimeAsync(1)
-    expect(states.length).toBe(6)
+    expect(states).toHaveLength(6)
     expect(states[4]).toMatchObject({
       isPending: true,
       isPaused: false,

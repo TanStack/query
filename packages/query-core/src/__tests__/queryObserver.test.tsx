@@ -297,7 +297,7 @@ describe('queryObserver', () => {
     observer.setOptions({ queryKey: key2, queryFn: () => 2 })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
-    expect(results.length).toBe(4)
+    expect(results).toHaveLength(4)
     expect(results[0]).toMatchObject({ data: undefined, status: 'pending' })
     expect(results[1]).toMatchObject({ data: 1, status: 'success' })
     expect(results[2]).toMatchObject({ data: undefined, status: 'pending' })
@@ -395,7 +395,7 @@ describe('queryObserver', () => {
     await observer.refetch()
     unsubscribe()
     expect(count).toBe(2)
-    expect(results.length).toBe(5)
+    expect(results).toHaveLength(5)
     expect(results[0]).toMatchObject({
       status: 'pending',
       isFetching: true,
@@ -449,7 +449,7 @@ describe('queryObserver', () => {
     await observer.refetch()
     unsubscribe()
     expect(count).toBe(1)
-    expect(results.length).toBe(4)
+    expect(results).toHaveLength(4)
     expect(results[0]).toMatchObject({
       status: 'pending',
       isFetching: true,
@@ -815,7 +815,7 @@ describe('queryObserver', () => {
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(results.length).toBe(2)
+    expect(results).toHaveLength(2)
     expect(results[0]).toMatchObject({ isStale: false, data: undefined })
     expect(results[1]).toMatchObject({ isStale: false, data: 'data' })
   })
@@ -842,8 +842,8 @@ describe('queryObserver', () => {
     unsubscribe1()
     unsubscribe2()
     expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(results1.length).toBe(2)
-    expect(results2.length).toBe(2)
+    expect(results1).toHaveLength(2)
+    expect(results2).toHaveLength(2)
     expect(results1[0]).toMatchObject({ data: undefined })
     expect(results1[1]).toMatchObject({ data: 'data' })
     expect(results2[0]).toMatchObject({ data: undefined })
@@ -997,7 +997,7 @@ describe('queryObserver', () => {
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
 
-    expect(results.length).toBe(2)
+    expect(results).toHaveLength(2)
     expect(results[0]).toMatchObject({ status: 'success', data: 'placeholder' })
     expect(results[1]).toMatchObject({ status: 'success', data: 'data' })
   })
@@ -1188,8 +1188,8 @@ describe('queryObserver', () => {
     })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
-    expect(results.length).toBe(4)
-    expect(keys.length).toBe(3)
+    expect(results).toHaveLength(4)
+    expect(keys).toHaveLength(3)
     expect(keys[0]).toBe(null) // First Query - status: 'pending', fetchStatus: 'idle'
     expect(keys[1]).toBe(null) // First Query - status: 'pending', fetchStatus: 'fetching'
     expect(keys[2]).toBe(key1) // Second Query - status: 'pending', fetchStatus: 'fetching'
@@ -1254,7 +1254,7 @@ describe('queryObserver', () => {
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
 
-    expect(results.length).toBe(4)
+    expect(results).toHaveLength(4)
     expect(results[0]).toMatchObject({
       data: undefined,
       status: 'pending',
@@ -1312,7 +1312,7 @@ describe('queryObserver', () => {
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
 
-    expect(results.length).toBe(4)
+    expect(results).toHaveLength(4)
     expect(results[0]).toMatchObject({
       data: undefined,
       status: 'pending',
@@ -1680,7 +1680,7 @@ describe('queryObserver', () => {
     const lastResult = results[results.length - 1]
     expect(lastResult?.status).toBe('error')
 
-    expect(results.length).toBe(1)
+    expect(results).toHaveLength(1)
     expect(results[0]).toMatchObject({
       status: 'error',
       error: 'error',
@@ -1717,7 +1717,7 @@ describe('queryObserver', () => {
     // Without throwOnError, `error` is not auto-added to trackedProps.
     // Since only `data` is tracked and it did not change (stayed undefined),
     // the listener is not invoked even though `error` prop changed.
-    expect(results.length).toBe(0)
+    expect(results).toHaveLength(0)
 
     unsubscribe()
   })

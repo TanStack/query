@@ -105,7 +105,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('test')).toBeInTheDocument()
 
-    expect(states.length).toEqual(2)
+    expect(states).toHaveLength(2)
 
     expect(states[0]).toEqual({
       data: undefined,
@@ -307,7 +307,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
 
     expect(states[0]).toMatchObject({
       data: 'prefetched',
@@ -444,7 +444,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'data' })
   })
@@ -496,7 +496,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     // First load
     expect(states[0]).toMatchObject({
       isPending: true,
@@ -542,7 +542,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
   })
@@ -568,7 +568,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(1)
+    expect(states).toHaveLength(1)
     expect(states[0]).toMatchObject({ data: 'prefetched' })
   })
 
@@ -591,7 +591,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
   })
@@ -615,7 +615,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
   })
@@ -639,7 +639,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
   })
@@ -673,7 +673,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: test')).toBeInTheDocument()
 
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
   })
@@ -703,7 +703,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
 
     expect(states[0]).toMatchObject({ status: 'pending', data: undefined })
     expect(states[1]).toMatchObject({ status: 'error', error })
@@ -745,7 +745,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('test')).toBeInTheDocument()
 
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
   })
@@ -785,7 +785,7 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(renderCount).toBe(2)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
   })
@@ -901,7 +901,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: true')).toBeInTheDocument()
 
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
 
     const todos = states[2]?.data
     const todo1 = todos?.[0]
@@ -957,7 +957,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: fetched')).toBeInTheDocument()
 
-    expect(results.length).toBe(3)
+    expect(results).toHaveLength(3)
 
     expect(results[0]).toMatchObject({ data: 'set', isFetching: false })
     expect(results[1]).toMatchObject({ data: 'set', isFetching: true })
@@ -1005,7 +1005,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
 
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -1069,7 +1069,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(30)
-    expect(states.length).toBe(1)
+    expect(states).toHaveLength(1)
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: false,
@@ -1110,7 +1110,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(30)
-    expect(states.length).toBe(1)
+    expect(states).toHaveLength(1)
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: false,
@@ -1148,7 +1148,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(3)
+    expect(states).toHaveLength(3)
 
     // Fetch query
     expect(states[0]).toMatchObject({
@@ -1197,7 +1197,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(30)
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
 
     // Initial
     expect(states[0]).toMatchObject({
@@ -1271,7 +1271,7 @@ describe('useQuery', () => {
       rendered.getByText('data: 1, count: 1, isFetching: false'),
     ).toBeInTheDocument()
 
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
 
     // Initial
     expect(states[0]).toMatchObject({
@@ -1343,7 +1343,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(50)
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
 
     // Disabled query
     expect(states[0]).toMatchObject({
@@ -1421,7 +1421,7 @@ describe('useQuery', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
 
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -1487,8 +1487,8 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(200)
-    expect(states1.length).toBe(4)
-    expect(states2.length).toBe(3)
+    expect(states1).toHaveLength(4)
+    expect(states2).toHaveLength(3)
 
     expect(states1).toMatchObject([
       // First render
@@ -1551,7 +1551,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(70)
-    expect(states.length).toBe(3)
+    expect(states).toHaveLength(3)
     expect(states[0]).toMatchObject({ isStale: true })
     expect(states[1]).toMatchObject({ isStale: false })
     expect(states[2]).toMatchObject({ isStale: true })
@@ -1584,7 +1584,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(15)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({
       data: undefined,
       status: 'pending',
@@ -1814,7 +1814,7 @@ describe('useQuery', () => {
     window.dispatchEvent(new Event('visibilitychange'))
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
   })
@@ -1842,7 +1842,7 @@ describe('useQuery', () => {
     window.dispatchEvent(new Event('visibilitychange'))
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
   })
@@ -1870,7 +1870,7 @@ describe('useQuery', () => {
     window.dispatchEvent(new Event('visibilitychange'))
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
   })
@@ -1899,7 +1899,7 @@ describe('useQuery', () => {
     window.dispatchEvent(new Event('visibilitychange'))
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
     expect(states[2]).toMatchObject({ data: 0, isFetching: true })
@@ -1930,7 +1930,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 0')).toBeInTheDocument()
 
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
 
@@ -1940,7 +1940,7 @@ describe('useQuery', () => {
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
     // refetch should happen
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
 
     expect(states[2]).toMatchObject({ data: 0, isFetching: true })
     expect(states[3]).toMatchObject({ data: 1, isFetching: false })
@@ -1950,7 +1950,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     // no more refetch now
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
   })
 
   it('should refetch fresh query when refetchOnMount is set to always', async () => {
@@ -1981,7 +1981,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({
       data: 'prefetched',
       isStale: false,
@@ -2022,7 +2022,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({
       data: 'prefetched',
       isStale: true,
@@ -2478,7 +2478,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: data')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(60)
-    expect(states.length).toBe(3)
+    expect(states).toHaveLength(3)
 
     expect(states[0]).toMatchObject({
       data: 'prefetched',
@@ -2516,7 +2516,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
 
     expect(states[0]).toMatchObject({
       data: 'initial',
@@ -2551,7 +2551,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({ data: 'initial', isError: false })
     expect(states[1]).toMatchObject({ data: 'initial', isError: true })
   })
@@ -2576,7 +2576,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(60)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({
       data: 'initial',
       isStale: false,
@@ -2612,7 +2612,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(70)
-    expect(states.length).toBe(3)
+    expect(states).toHaveLength(3)
     expect(states[0]).toMatchObject({
       data: 'initial',
       isStale: true,
@@ -2651,7 +2651,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({
       data: 'initial',
       isStale: true,
@@ -2693,7 +2693,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     // Initial
     expect(states[0]).toMatchObject({ data: { count: 0 } })
     // Set state
@@ -2930,7 +2930,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states).toMatchObject([
       {
         data: 'prefetched',
@@ -2973,14 +2973,14 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
 
     // reset visibilityState to original value
     visibilityMock.mockRestore()
     window.dispatchEvent(new Event('visibilitychange'))
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
 
     expect(states).toMatchObject([
       {
@@ -3037,7 +3037,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
 
     expect(prefetchQueryFn).toHaveBeenCalledTimes(1)
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -3358,7 +3358,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: serverData')).toBeInTheDocument()
 
-    expect(results.length).toBe(2)
+    expect(results).toHaveLength(2)
     expect(results[0]).toMatchObject({ data: 'initialData', isFetching: true })
     expect(results[1]).toMatchObject({ data: 'serverData', isFetching: false })
   })
@@ -3384,7 +3384,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(results.length).toBe(2)
+    expect(results).toHaveLength(2)
     expect(results[0]).toMatchObject({ data: 0, isFetching: true })
     expect(results[1]).toMatchObject({ data: 1, isFetching: false })
   })
@@ -3420,7 +3420,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(15)
-    expect(results.length).toBe(3)
+    expect(results).toHaveLength(3)
     expect(results[0]).toMatchObject({ data: 'initial', isStale: true })
     expect(results[1]).toMatchObject({ data: 'fetched data', isStale: true })
     // disabled observers are not stale
@@ -3641,7 +3641,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('count: 2')).toBeInTheDocument()
 
-    expect(states.length).toEqual(6)
+    expect(states).toHaveLength(6)
 
     expect(states).toMatchObject([
       {
@@ -3702,7 +3702,7 @@ describe('useQuery', () => {
 
     // extra advance to make sure we're not re-fetching
     await vi.advanceTimersByTimeAsync(100)
-    expect(states.length).toEqual(2)
+    expect(states).toHaveLength(2)
 
     expect(states).toMatchObject([
       {
@@ -4267,7 +4267,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(50)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     // Load query 1
     expect(states[0]).toMatchObject({
       status: 'pending',
@@ -4322,7 +4322,7 @@ describe('useQuery', () => {
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
     expect(count).toBe(2)
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
 
     expect(states[0]).toMatchObject({
       isPending: true,
@@ -4399,7 +4399,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: null')).toBeInTheDocument()
 
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
 
     expect(count).toBe(1)
 
@@ -4685,7 +4685,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 5')).toBeInTheDocument()
 
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
 
     expect(states[0]).toMatchObject({
       status: 'pending',

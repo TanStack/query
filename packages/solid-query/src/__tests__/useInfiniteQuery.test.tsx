@@ -74,7 +74,7 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toEqual({
       data: undefined,
       dataUpdatedAt: 0,
@@ -235,7 +235,7 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('data: 0-asc')).toBeInTheDocument()
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
 
-    expect(states.length).toBe(6)
+    expect(states).toHaveLength(6)
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: true,
@@ -307,7 +307,7 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({
       data: undefined,
       isSuccess: false,
@@ -350,7 +350,7 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(selectCalled).toBe(1)
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -412,7 +412,7 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 1,0')).toBeInTheDocument()
 
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     expect(states[0]).toMatchObject({
       data: undefined,
       isSuccess: false,
@@ -472,7 +472,7 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(30)
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     expect(states[0]).toMatchObject({
       data: undefined,
       hasNextPage: false,
@@ -568,7 +568,7 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(30)
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
 
-    expect(states.length).toBe(8)
+    expect(states).toHaveLength(8)
     // Initial fetch
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -691,7 +691,7 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
 
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     // Initial fetch
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -789,7 +789,7 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
 
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     // Initial fetch
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -891,7 +891,7 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
 
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     // Initial fetch
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -979,7 +979,7 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(160)
-    expect(states.length).toBe(5)
+    expect(states).toHaveLength(5)
     expect(states[0]).toMatchObject({
       hasNextPage: false,
       data: undefined,
@@ -1193,7 +1193,7 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(60)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({
       hasNextPage: false,
       data: undefined,
@@ -1301,7 +1301,7 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(70)
-    expect(states.length).toBe(5)
+    expect(states).toHaveLength(5)
     expect(states[0]).toMatchObject({
       hasNextPage: false,
       data: undefined,
@@ -1372,7 +1372,7 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({
       data: { pages: [1] },
       isError: false,
@@ -1462,7 +1462,7 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(30)
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     expect(states[0]).toMatchObject({
       data: { pages: [1] },
       hasNextPage: true,
@@ -1515,7 +1515,7 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({
       data: undefined,
       hasNextPage: false,
@@ -1555,7 +1555,7 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({
       data: { pages: [10] },
       hasNextPage: true,
@@ -1595,7 +1595,7 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({
       data: { pages: [10] },
       hasNextPage: false,
@@ -1638,7 +1638,7 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[0]).toMatchObject({
       data: undefined,
       hasNextPage: false,

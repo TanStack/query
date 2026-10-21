@@ -56,7 +56,7 @@ describe('createQueries', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(result[1].data).toBe(2)
 
-      expect(results.length).toBe(3)
+      expect(results).toHaveLength(3)
       expect(results[0]).toMatchObject([
         { data: undefined },
         { data: undefined },
@@ -92,7 +92,7 @@ describe('createQueries', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(result[0].data).toBe(1)
 
-      expect(results.length).toBe(2)
+      expect(results).toHaveLength(2)
       expect(results[0]).toMatchObject([{ data: undefined }])
       expect(results[1]).toMatchObject([{ data: 1 }])
 
@@ -102,7 +102,7 @@ describe('createQueries', () => {
       expect(result[0].data).toBe(2)
 
       // Only one render for data update, no render for isFetching transition
-      expect(results.length).toBe(3)
+      expect(results).toHaveLength(3)
       expect(results[2]).toMatchObject([{ data: 2 }])
     }),
   )
@@ -295,7 +295,7 @@ describe('createQueries', () => {
       await queries.refetch()
 
       // No further re-render because data didn't change
-      expect(results.length).toBe(length)
+      expect(results).toHaveLength(length)
     }),
   )
 
