@@ -804,6 +804,37 @@ describe('QueryStrictMode', () => {
       })
     })
 
+    it('should warn instead of throwing by default', async () => {
+      const consoleMock = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined)
+      const key = queryKey()
+
+      const rendered = renderWithClient(
+        queryClient,
+        <ErrorBoundary fallback={<div>error</div>}>
+          <QueryStrictMode>
+            <div>content</div>
+          </QueryStrictMode>
+        </ErrorBoundary>,
+      )
+
+      void queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'data'),
+        })
+        .catch(noop)
+
+      await act(() => vi.advanceTimersByTimeAsync(10 + 5000))
+      expect(rendered.getByText('content')).toBeInTheDocument()
+      expect(consoleMock).toHaveBeenCalledTimes(1)
+      expect(consoleMock).toHaveBeenCalledWith(
+        expect.stringContaining(getQuery(key)!.queryHash),
+      )
+      consoleMock.mockRestore()
+    })
+
     it('should log when the prefetched query is only read outside of QueryStrictMode, by a component that unmounted', async () => {
       const key = queryKey()
 

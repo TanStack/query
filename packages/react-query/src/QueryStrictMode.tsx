@@ -134,7 +134,8 @@ export interface QueryStrictModeProps {
   /**
    * Called for every problem that is found. See {@link QueryStrictModeHandler} for where a throw
    * goes. A nested `QueryStrictMode` only receives `'missing-prefetch'` problems.
-   * @defaultValue A handler that throws a `QueryStrictModeError`.
+   * @defaultValue A handler that throws a `QueryStrictModeError` for a `'missing-prefetch'`, and
+   * logs the `message` of an `'unused-prefetch'` with `console.warn`.
    */
   handler?: QueryStrictModeHandler
   /**
@@ -173,7 +174,13 @@ const QueryStrictModeContext =
 export const useQueryStrictMode = () =>
   React.useContext(QueryStrictModeContext!)
 
+// Missing prefetches cause request waterfalls, so they are thrown. Unused prefetches only waste a
+// request, so they are logged.
 const defaultHandler: QueryStrictModeHandler = (event) => {
+  if (event.type === 'unused-prefetch') {
+    console.warn(event.message)
+    return
+  }
   throw new QueryStrictModeError(event)
 }
 
@@ -254,9 +261,10 @@ const getPrefetchTracker = (cache: QueryCache) => {
  * wasn't prefetched, and prefetched queries that nothing uses. See {@link QueryStrictModeEvent} for
  * what each problem means.
  *
- * Each problem is passed to the `handler`, which throws a {@link QueryStrictModeError} to an error
- * boundary by default. See {@link QueryStrictModeHandler} to filter problems or log them instead.
- * In production, it only renders `children`.
+ * Each problem is passed to the `handler`. By default, it throws a {@link QueryStrictModeError} to
+ * an error boundary for a `'missing-prefetch'`, and logs an `'unused-prefetch'` with
+ * `console.warn`. See {@link QueryStrictModeHandler} to filter problems or log them instead. In
+ * production, it only renders `children`.
  * @param props - The `children` to check, and optionally a `handler`, an `unusedPrefetchTimeout`,
  * and a `queryClient`.
  * @returns The `children`.
