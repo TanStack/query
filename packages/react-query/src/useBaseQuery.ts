@@ -10,6 +10,7 @@ import {
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
 import { useIsRestoring } from './IsRestoringProvider'
+import { useClientObserver } from './useClientObserver'
 import {
   ensureSuspenseTimers,
   fetchOptimistic,
@@ -93,10 +94,11 @@ export function useBaseQuery<
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
   useClearResetErrorBoundary(errorResetBoundary)
 
-  const [observer] = React.useState(
-    () =>
+  const observer = useClientObserver(
+    client,
+    (observerClient) =>
       new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
-        client,
+        observerClient,
         defaultedOptions,
       ),
   )
