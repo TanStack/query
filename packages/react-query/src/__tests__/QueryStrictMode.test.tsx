@@ -501,9 +501,7 @@ describe('QueryStrictMode', () => {
     })
 
     it('should not log again when an error boundary is reset', async () => {
-      const consoleMock = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+      vi.spyOn(console, 'error').mockReturnValue(undefined)
       const key = queryKey()
       let succeed = false
 
@@ -548,14 +546,11 @@ describe('QueryStrictMode', () => {
       await act(() => vi.advanceTimersByTimeAsync(10))
       expect(rendered.getByText('data')).toBeInTheDocument()
 
-      expect(handledTypes()).toEqual(['missing-prefetch'])
-      consoleMock.mockRestore()
+      expect(handledTypes()).toStrictEqual(['missing-prefetch'])
     })
 
     it('should throw a QueryStrictModeMissingPrefetchError by default', async () => {
-      const consoleMock = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+      vi.spyOn(console, 'error').mockReturnValue(undefined)
       const key = queryKey()
       const errors: Array<unknown> = []
 
@@ -581,7 +576,6 @@ describe('QueryStrictMode', () => {
       })
 
       await act(() => vi.advanceTimersByTimeAsync(10))
-      consoleMock.mockRestore()
     })
 
     describe('with a handler that throws', () => {
@@ -591,7 +585,9 @@ describe('QueryStrictMode', () => {
 
       function renderThrowing(
         id: QueryKey,
-        queryFn = vi.fn(() => sleep(10).then(() => `data ${String(id)}`)),
+        queryFn = vi.fn<() => Promise<string>>(() =>
+          sleep(10).then(() => `data ${String(id)}`),
+        ),
       ) {
         const errors: Array<unknown> = []
 
@@ -622,9 +618,7 @@ describe('QueryStrictMode', () => {
       }
 
       it('should throw to the nearest error boundary instead of fetching', async () => {
-        const consoleMock = vi
-          .spyOn(console, 'error')
-          .mockImplementation(() => undefined)
+        vi.spyOn(console, 'error').mockReturnValue(undefined)
         const key = queryKey()
         handler.mockImplementation(throwStrictModeError)
 
@@ -658,14 +652,13 @@ describe('QueryStrictMode', () => {
 
         await act(() => vi.advanceTimersByTimeAsync(10))
         expect(queryFn).not.toHaveBeenCalled()
-        expect(rendered.queryByText(`data ${String(key)}`)).toBeNull()
-        consoleMock.mockRestore()
+        expect(
+          rendered.queryByText(`data ${String(key)}`),
+        ).not.toBeInTheDocument()
       })
 
       it('should throw a custom error to the error boundary unchanged', async () => {
-        const consoleMock = vi
-          .spyOn(console, 'error')
-          .mockImplementation(() => undefined)
+        vi.spyOn(console, 'error').mockReturnValue(undefined)
         const key = queryKey()
         const customError = new Error('custom missing-prefetch')
         handler.mockImplementation(() => {
@@ -681,13 +674,10 @@ describe('QueryStrictMode', () => {
 
         await act(() => vi.advanceTimersByTimeAsync(10))
         expect(queryFn).not.toHaveBeenCalled()
-        consoleMock.mockRestore()
       })
 
       it('should throw again after the error boundary is reset', async () => {
-        const consoleMock = vi
-          .spyOn(console, 'error')
-          .mockImplementation(() => undefined)
+        vi.spyOn(console, 'error').mockReturnValue(undefined)
         const key = queryKey()
         handler.mockImplementation(throwStrictModeError)
 
@@ -702,15 +692,14 @@ describe('QueryStrictMode', () => {
         expect(handler.mock.calls.length).toBeGreaterThan(callsBeforeReset)
         expect(errors.length).toBeGreaterThan(errorsBeforeReset)
         expect(queryFn).not.toHaveBeenCalled()
-        consoleMock.mockRestore()
       })
 
       it('should only be called once more for the query state when it returns after an error boundary reset', async () => {
-        const consoleMock = vi
-          .spyOn(console, 'error')
-          .mockImplementation(() => undefined)
+        vi.spyOn(console, 'error').mockReturnValue(undefined)
         const key = queryKey()
-        const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+        const queryFn = vi.fn<() => Promise<string>>(() =>
+          sleep(10).then(() => 'data'),
+        )
         let shouldThrow = true
         handler.mockImplementation((event) => {
           if (shouldThrow) throw toStrictModeError(event)
@@ -755,13 +744,10 @@ describe('QueryStrictMode', () => {
           query: getQuery(key),
         })
         expect(queryFn).toHaveBeenCalledTimes(1)
-        consoleMock.mockRestore()
       })
 
       it('should throw for some queries and report the others', async () => {
-        const consoleMock = vi
-          .spyOn(console, 'error')
-          .mockImplementation(() => undefined)
+        vi.spyOn(console, 'error').mockReturnValue(undefined)
         const thrown = queryKey()
         const reported = queryKey()
         handler.mockImplementation((event) => {
@@ -780,21 +766,20 @@ describe('QueryStrictMode', () => {
         expect(
           second.rendered.getByText(`data ${String(reported)}`),
         ).toBeInTheDocument()
-        expect(second.errors).toEqual([])
+        expect(second.errors).toStrictEqual([])
         expect(handler).toHaveBeenCalledTimes(1)
         expect(handler.mock.calls[0]![0]).toMatchObject({
           type: 'missing-prefetch',
           query: getQuery(reported),
         })
-        consoleMock.mockRestore()
       })
 
       it('should throw from useQuery instead of fetching', async () => {
-        const consoleMock = vi
-          .spyOn(console, 'error')
-          .mockImplementation(() => undefined)
+        vi.spyOn(console, 'error').mockReturnValue(undefined)
         const key = queryKey()
-        const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+        const queryFn = vi.fn<() => Promise<string>>(() =>
+          sleep(10).then(() => 'data'),
+        )
         handler.mockImplementation(throwStrictModeError)
 
         function Page() {
@@ -831,7 +816,6 @@ describe('QueryStrictMode', () => {
         )
         await act(() => vi.advanceTimersByTimeAsync(10))
         expect(queryFn).not.toHaveBeenCalled()
-        consoleMock.mockRestore()
       })
     })
   })
@@ -868,9 +852,7 @@ describe('QueryStrictMode', () => {
     })
 
     it('should warn instead of throwing by default', async () => {
-      const consoleMock = vi
-        .spyOn(console, 'warn')
-        .mockImplementation(() => undefined)
+      const consoleMock = vi.spyOn(console, 'warn').mockReturnValue(undefined)
       const key = queryKey()
 
       const rendered = renderWithClient(
@@ -895,7 +877,6 @@ describe('QueryStrictMode', () => {
       expect(consoleMock).toHaveBeenCalledWith(
         expect.stringContaining(getQuery(key)!.queryHash),
       )
-      consoleMock.mockRestore()
     })
 
     it('should log when the prefetched query is only read outside of QueryStrictMode, by a component that unmounted', async () => {
@@ -937,10 +918,10 @@ describe('QueryStrictMode', () => {
       await act(() => vi.advanceTimersByTimeAsync(10))
 
       rendered.rerender(<App showReader={false} />)
-      expect(rendered.queryByText('data')).toBeNull()
+      expect(rendered.queryByText('data')).not.toBeInTheDocument()
 
       await act(() => vi.advanceTimersByTimeAsync(5000))
-      expect(handledTypes()).toEqual(['unused-prefetch'])
+      expect(handledTypes()).toStrictEqual(['unused-prefetch'])
       expect(handler.mock.calls[0]![0].query).toBe(getQuery(key))
     })
 
@@ -968,7 +949,7 @@ describe('QueryStrictMode', () => {
       expect(handler).not.toHaveBeenCalled()
 
       await act(() => vi.advanceTimersByTimeAsync(1))
-      expect(handledTypes()).toEqual(['unused-prefetch'])
+      expect(handledTypes()).toStrictEqual(['unused-prefetch'])
     })
 
     it('should not log when the prefetched query is used before the timeout', async () => {
@@ -1055,12 +1036,12 @@ describe('QueryStrictMode', () => {
         .catch(noop)
 
       await act(() => vi.advanceTimersByTimeAsync(10 + 5000))
-      expect(handledTypes()).toEqual(['unused-prefetch'])
+      expect(handledTypes()).toStrictEqual(['unused-prefetch'])
 
       void queryClient.invalidateQueries({ queryKey: key, refetchType: 'all' })
 
       await act(() => vi.advanceTimersByTimeAsync(10 + 10_000))
-      expect(handledTypes()).toEqual(['unused-prefetch'])
+      expect(handledTypes()).toStrictEqual(['unused-prefetch'])
     })
 
     it('should not log for queries prefetched before QueryStrictMode mounted', async () => {
@@ -1100,7 +1081,7 @@ describe('QueryStrictMode', () => {
 
       await vi.waitFor(() => expect(getQuery(key)?.state.data).toBe('data'))
       await sleep(50)
-      expect(handledTypes()).toEqual(['unused-prefetch'])
+      expect(handledTypes()).toStrictEqual(['unused-prefetch'])
     })
 
     it('should log for a render-time prefetch whose data arrives while a sibling suspends the first mount of QueryStrictMode', async () => {
@@ -1127,7 +1108,7 @@ describe('QueryStrictMode', () => {
         expect(container.textContent).toBe(`data ${String(otherKey)}`),
       )
       await sleep(50)
-      expect(handledTypes()).toEqual(['unused-prefetch'])
+      expect(handledTypes()).toStrictEqual(['unused-prefetch'])
     })
 
     it('should not log for a prefetch whose data arrives before QueryStrictMode commits, if a component reads it once it commits', async () => {
@@ -1171,7 +1152,7 @@ describe('QueryStrictMode', () => {
 
       await vi.waitFor(() => expect(getQuery(key)?.state.data).toBe('data'))
       await sleep(50)
-      expect(handledTypes()).toEqual(['unused-prefetch'])
+      expect(handledTypes()).toStrictEqual(['unused-prefetch'])
     })
 
     it('should still log a prefetch whose timer started before unusedPrefetchTimeout changed', async () => {
@@ -1206,7 +1187,7 @@ describe('QueryStrictMode', () => {
       await act(() => vi.advanceTimersByTimeAsync(6010 - 20 - 1))
       expect(handler).not.toHaveBeenCalled()
       await act(() => vi.advanceTimersByTimeAsync(1))
-      expect(handledTypes()).toEqual(['unused-prefetch'])
+      expect(handledTypes()).toStrictEqual(['unused-prefetch'])
     })
 
     it('should not check a prefetch again when it runs its effect again', async () => {
@@ -1259,7 +1240,7 @@ describe('QueryStrictMode', () => {
         })
         .catch(noop)
       await act(() => vi.advanceTimersByTimeAsync(10 + 30))
-      expect(handledTypes()).toEqual(['unused-prefetch'])
+      expect(handledTypes()).toStrictEqual(['unused-prefetch'])
     })
 
     it('should not start a timer for setQueryData', async () => {
@@ -1339,7 +1320,7 @@ describe('QueryStrictMode', () => {
 
       await act(() => vi.advanceTimersByTimeAsync(10 + 10_000))
       // Only the initial fetch of `Page` is reported
-      expect(handledTypes()).toEqual(['missing-prefetch'])
+      expect(handledTypes()).toStrictEqual(['missing-prefetch'])
     })
 
     it('should clear its timers on unmount', async () => {
@@ -1404,7 +1385,7 @@ describe('QueryStrictMode', () => {
         .catch(noop)
 
       await act(() => vi.advanceTimersByTimeAsync(10 + 5000))
-      expect(handledTypes()).toEqual(['unused-prefetch'])
+      expect(handledTypes()).toStrictEqual(['unused-prefetch'])
       expect(innerHandler).not.toHaveBeenCalled()
     })
 
@@ -1571,7 +1552,7 @@ describe('QueryStrictMode', () => {
 
         await act(() => vi.advanceTimersByTimeAsync(10 + 5000))
         expect(otherHandler).not.toHaveBeenCalled()
-        expect(handledTypes()).toEqual(['unused-prefetch'])
+        expect(handledTypes()).toStrictEqual(['unused-prefetch'])
       })
     })
 
@@ -1604,9 +1585,7 @@ describe('QueryStrictMode', () => {
       }
 
       it('should throw from QueryStrictMode to the error boundary above it', async () => {
-        const consoleMock = vi
-          .spyOn(console, 'error')
-          .mockImplementation(() => undefined)
+        vi.spyOn(console, 'error').mockReturnValue(undefined)
         const key = queryKey()
         handler.mockImplementation(throwUnusedPrefetch)
 
@@ -1623,7 +1602,7 @@ describe('QueryStrictMode', () => {
         expect(handler).not.toHaveBeenCalled()
 
         await act(() => vi.advanceTimersByTimeAsync(1))
-        expect(rendered.queryByText('content')).toBeNull()
+        expect(rendered.queryByText('content')).not.toBeInTheDocument()
         expect(
           rendered.getByText(
             new RegExp(`error: .*${getQuery(key)!.queryHash}`),
@@ -1644,13 +1623,10 @@ describe('QueryStrictMode', () => {
           message: expect.stringContaining(getQuery(key)!.queryHash),
           event: { type: 'unused-prefetch', query: getQuery(key) },
         })
-        consoleMock.mockRestore()
       })
 
       it('should throw a custom error to the error boundary unchanged', async () => {
-        const consoleMock = vi
-          .spyOn(console, 'error')
-          .mockImplementation(() => undefined)
+        vi.spyOn(console, 'error').mockReturnValue(undefined)
         const key = queryKey()
         const customError = new Error('custom unused-prefetch')
         handler.mockImplementation(() => {
@@ -1666,18 +1642,15 @@ describe('QueryStrictMode', () => {
         prefetch(key)
 
         await act(() => vi.advanceTimersByTimeAsync(10 + 5000))
-        expect(rendered.queryByText('content')).toBeNull()
+        expect(rendered.queryByText('content')).not.toBeInTheDocument()
         expect(
           rendered.getByText('error: custom unused-prefetch'),
         ).toBeInTheDocument()
         expect(errors[0]).toBe(customError)
-        consoleMock.mockRestore()
       })
 
       it('should throw for some queries and report the others', async () => {
-        const consoleMock = vi
-          .spyOn(console, 'error')
-          .mockImplementation(() => undefined)
+        vi.spyOn(console, 'error').mockReturnValue(undefined)
         const reported = queryKey()
         const thrown = queryKey()
         handler.mockImplementation((event) => {
@@ -1704,10 +1677,9 @@ describe('QueryStrictMode', () => {
         })
 
         await act(() => vi.advanceTimersByTimeAsync(10))
-        expect(rendered.queryByText('content')).toBeNull()
+        expect(rendered.queryByText('content')).not.toBeInTheDocument()
         expect(errors[0]).toMatchObject({ event: { query: getQuery(thrown) } })
         expect(handler).toHaveBeenCalledTimes(2)
-        consoleMock.mockRestore()
       })
     })
   })
