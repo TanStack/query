@@ -11,7 +11,7 @@ describe('sleep', () => {
   })
 
   it('should sleep for the given amount of time', async () => {
-    const onResolve = vi.fn()
+    const onResolve = vi.fn<() => void>()
 
     void sleep(100).then(onResolve)
 

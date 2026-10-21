@@ -527,7 +527,7 @@ describe('createQuery', () => {
 
   it('should fetch when refetchOnMount is false and nothing has been fetched yet', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'test')
+    const queryFn = vi.fn<() => string>(() => 'test')
 
     const rendered = render(Base, {
       props: {
@@ -549,7 +549,7 @@ describe('createQuery', () => {
 
   it('should not fetch when refetchOnMount is false and data has been fetched already', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'test')
+    const queryFn = vi.fn<() => string>(() => 'test')
 
     queryClient.setQueryData(key, 'prefetched')
 
@@ -822,7 +822,7 @@ describe('createQuery', () => {
 
   it('should not update disabled query when refetching with refetchQueries', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 1))
+    const queryFn = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 1))
 
     const rendered = render(Base, {
       props: {
@@ -847,7 +847,7 @@ describe('createQuery', () => {
 
   it('should not refetch disabled query when invalidated with invalidateQueries', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 1))
+    const queryFn = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 1))
 
     const rendered = render(Base, {
       props: {
@@ -1348,7 +1348,7 @@ describe('createQuery', () => {
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
     const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue('data')
+    const queryFn = vi.fn<() => string>().mockReturnValue('data')
 
     const rendered = render(Base, {
       props: {
@@ -1615,7 +1615,9 @@ describe('createQuery', () => {
   )
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     const rendered = render(IsRestoring, {
       props: { queryClient, queryFn },

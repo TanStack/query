@@ -16,7 +16,13 @@ import {
 } from '..'
 import { hashQueryKeyByOptions } from '../utils'
 import { mockOnlineManagerIsOnline, setIsServer } from './utils'
-import type { QueryFunctionContext, QueryKey, QueryObserverResult } from '..'
+import type {
+  QueryCacheNotifyEvent,
+  QueryFunction,
+  QueryFunctionContext,
+  QueryKey,
+  QueryObserverResult,
+} from '..'
 
 describe('query', () => {
   let queryClient: QueryClient
@@ -352,8 +358,8 @@ describe('query', () => {
           context: QueryFunctionContext<ReturnType<typeof queryKey>>,
         ) => Promise<unknown>
       >()
-    const onAbort = vi.fn()
-    const abortListener = vi.fn()
+    const onAbort = vi.fn<(event: Event) => void>()
+    const abortListener = vi.fn<(event: Event) => void>()
     let error
 
     queryFn.mockImplementation(async ({ signal }) => {
@@ -773,7 +779,7 @@ describe('query', () => {
       it: 'works',
     }
 
-    const queryFn = vi.fn(() => 'data')
+    const queryFn = vi.fn<() => string>(() => 'data')
 
     const key = queryKey()
 
@@ -851,7 +857,8 @@ describe('query', () => {
     const options = { queryKey: key, enabled: false }
     const firstObserver = new QueryObserver(queryClient, options)
     const secondObserver = new QueryObserver(queryClient, options)
-    const secondListener = vi.fn()
+    const secondListener =
+      vi.fn<(result: QueryObserverResult<unknown, Error>) => void>()
 
     let unsubscribeFirst: () => void = () => undefined
     unsubscribeFirst = firstObserver.subscribe(() => {
@@ -1008,7 +1015,7 @@ describe('query', () => {
   it('should call initialDataUpdatedAt in constructor if defined as a function', async () => {
     const key = queryKey()
 
-    const initialDataUpdatedAtSpy = vi.fn()
+    const initialDataUpdatedAtSpy = vi.fn<() => number | undefined>()
 
     await queryClient
       .query({
@@ -1045,7 +1052,7 @@ describe('query', () => {
 
     queryClient.setQueryDefaults(key, { gcTime: 10 })
 
-    const fn = vi.fn()
+    const fn = vi.fn<(event: QueryCacheNotifyEvent) => void>()
 
     const unsubscribe = queryClient.getQueryCache().subscribe(fn)
 
@@ -1117,7 +1124,7 @@ describe('query', () => {
       queryKey: key,
       queryFn,
     })
-    const spy = vi.fn()
+    const spy = vi.fn<(data: unknown) => void>()
     newObserver.subscribe(({ data }) => spy(data))
     await vi.advanceTimersByTimeAsync(60) // let it resolve
     expect(spy).toHaveBeenCalledWith('1 - 2')
@@ -1130,7 +1137,7 @@ describe('query', () => {
 
     queryClient.setQueryData(key, 'initial')
     const queryFn = vi
-      .fn()
+      .fn<() => Promise<string>>()
       .mockImplementation(() => sleep(100).then(() => 'data' + x))
 
     const promise = queryClient.query({
@@ -1159,7 +1166,9 @@ describe('query', () => {
 
     const key = queryKey()
 
-    const queryFn = vi.fn(() => sleep(10).then(() => data))
+    const queryFn = vi.fn<() => Promise<typeof data>>(() =>
+      sleep(10).then(() => data),
+    )
 
     const initialData = {
       foo: 'bar',
@@ -1278,7 +1287,7 @@ describe('query', () => {
 
   it('should call initialData function when it is a function', () => {
     const key = queryKey()
-    const initialDataFn = vi.fn(() => 'initial data')
+    const initialDataFn = vi.fn<() => string>(() => 'initial data')
 
     const query = new Query({
       client: queryClient,
@@ -1296,7 +1305,9 @@ describe('query', () => {
 
   it('should update initialData when Query exists without data', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(100).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(100).then(() => 'data'),
+    )
 
     const promise = queryClient
       .query({
@@ -1353,11 +1364,13 @@ describe('query', () => {
     const key = queryKey()
     let count = 0
 
-    const queryFn = vi.fn(async ({ signal: _signal }) => {
-      // Destructure `signal` to intentionally consume it so observer-removal uses revert-cancel path
-      await sleep(50)
-      return 'data' + count++
-    })
+    const queryFn = vi.fn<QueryFunction<string>>(
+      async ({ signal: _signal }) => {
+        // Destructure `signal` to intentionally consume it so observer-removal uses revert-cancel path
+        await sleep(50)
+        return 'data' + count++
+      },
+    )
 
     const query = new Query({
       client: queryClient,
@@ -1400,7 +1413,7 @@ describe('query', () => {
 
   it('should not increment dataUpdateCount when setting initialData on prefetched query', async () => {
     const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue('fetched-data')
+    const queryFn = vi.fn<() => string>().mockReturnValue('fetched-data')
 
     // First prefetch the query (creates query without data)
     void queryClient

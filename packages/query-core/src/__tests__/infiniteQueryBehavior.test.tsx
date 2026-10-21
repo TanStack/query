@@ -2,7 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { CancelledError, InfiniteQueryObserver, QueryClient } from '..'
 import { infiniteQueryBehavior } from '../infiniteQueryBehavior'
-import type { InfiniteData, InfiniteQueryObserverResult, QueryCache } from '..'
+import type {
+  InfiniteData,
+  InfiniteQueryObserverResult,
+  QueryCache,
+  QueryFunction,
+  QueryKey,
+} from '..'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
@@ -51,12 +57,14 @@ describe('InfiniteQueryBehavior', () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
-    const queryFnSpy = vi.fn().mockImplementation(({ pageParam, signal }) => {
-      abortSignal = signal
-      return pageParam
-    })
+    const queryFnSpy = vi
+      .fn<QueryFunction<number, QueryKey, number>>()
+      .mockImplementation(({ pageParam, signal }) => {
+        abortSignal = signal
+        return pageParam
+      })
 
-    const observer = new InfiniteQueryObserver<number>(queryClient, {
+    const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: queryFnSpy,
       getNextPageParam: (lastPage) => lastPage + 1,
@@ -195,13 +203,15 @@ describe('InfiniteQueryBehavior', () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
-    const queryFnSpy = vi.fn().mockImplementation(({ pageParam, signal }) => {
-      abortSignal = signal
-      sleep(10)
-      return pageParam
-    })
+    const queryFnSpy = vi
+      .fn<QueryFunction<number, QueryKey, number>>()
+      .mockImplementation(({ pageParam, signal }) => {
+        abortSignal = signal
+        sleep(10)
+        return pageParam
+      })
 
-    const observer = new InfiniteQueryObserver<number>(queryClient, {
+    const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: queryFnSpy,
       getNextPageParam: (lastPage) => lastPage + 1,
@@ -247,12 +257,14 @@ describe('InfiniteQueryBehavior', () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
-    let queryFnSpy = vi.fn().mockImplementation(({ pageParam, signal }) => {
-      abortSignal = signal
-      return pageParam
-    })
+    let queryFnSpy = vi
+      .fn<QueryFunction<number, QueryKey, number>>()
+      .mockImplementation(({ pageParam, signal }) => {
+        abortSignal = signal
+        return pageParam
+      })
 
-    const observer = new InfiniteQueryObserver<number>(queryClient, {
+    const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: queryFnSpy,
       getNextPageParam: (lastPage) => lastPage + 1,
@@ -295,11 +307,13 @@ describe('InfiniteQueryBehavior', () => {
       signal: abortSignal,
     })
 
-    queryFnSpy = vi.fn().mockImplementation(({ pageParam = 1, signal }) => {
-      abortSignal = signal
-      sleep(10)
-      return pageParam
-    })
+    queryFnSpy = vi
+      .fn<QueryFunction<number, QueryKey, number>>()
+      .mockImplementation(({ pageParam = 1, signal }) => {
+        abortSignal = signal
+        sleep(10)
+        return pageParam
+      })
 
     // Refetch the query
     observer.refetch()
@@ -328,15 +342,17 @@ describe('InfiniteQueryBehavior', () => {
   it('should surface the abort reason when cancellation happens between refetched pages', async () => {
     const key = queryKey()
     const abortController = new AbortController()
-    const queryFn = vi.fn().mockImplementation(({ pageParam, signal }) => {
-      void signal.aborted
+    const queryFn = vi
+      .fn<QueryFunction<number, QueryKey, number>>()
+      .mockImplementation(({ pageParam, signal }) => {
+        void signal.aborted
 
-      if (pageParam === 1) {
-        abortController.abort()
-      }
+        if (pageParam === 1) {
+          abortController.abort()
+        }
 
-      return pageParam
-    })
+        return pageParam
+      })
 
     const behavior = infiniteQueryBehavior<number, Error, number, number>()
     const context = {
@@ -524,6 +540,7 @@ describe('InfiniteQueryBehavior', () => {
   it('should use persister when provided', async () => {
     const key = queryKey()
 
+    // oxlint-disable-next-line vitest/require-mock-type-parameters -- the persister receives an argument-less fetch function at runtime, which 'QueryPersister' cannot express
     const persisterSpy = vi.fn().mockImplementation(async (fn) => {
       return await fn()
     })

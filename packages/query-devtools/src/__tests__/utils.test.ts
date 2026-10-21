@@ -1323,26 +1323,26 @@ describe('Utils tests', () => {
 
     function setupMatchMediaMock(initialMatches: boolean) {
       const listeners = new Set<MatchMediaListener>()
-      const matchMedia: typeof window.matchMedia = vi.fn(
-        (query: string): MediaQueryList => ({
-          matches: initialMatches,
-          media: query,
-          onchange: null,
-          addEventListener: vi.fn(
-            (_event: string, listener: MatchMediaListener) => {
-              listeners.add(listener)
-            },
-          ) as MediaQueryList['addEventListener'],
-          removeEventListener: vi.fn(
-            (_event: string, listener: MatchMediaListener) => {
-              listeners.delete(listener)
-            },
-          ) as MediaQueryList['removeEventListener'],
-          dispatchEvent: vi.fn(() => true),
-          addListener: vi.fn(),
-          removeListener: vi.fn(),
-        }),
-      )
+      const matchMedia: typeof window.matchMedia = vi.fn<
+        (query: string) => MediaQueryList
+      >((query: string): MediaQueryList => ({
+        matches: initialMatches,
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn<
+          (_event: string, listener: MatchMediaListener) => void
+        >((_event: string, listener: MatchMediaListener) => {
+          listeners.add(listener)
+        }) as MediaQueryList['addEventListener'],
+        removeEventListener: vi.fn<
+          (_event: string, listener: MatchMediaListener) => void
+        >((_event: string, listener: MatchMediaListener) => {
+          listeners.delete(listener)
+        }) as MediaQueryList['removeEventListener'],
+        dispatchEvent: vi.fn<() => boolean>(() => true),
+        addListener: vi.fn<MediaQueryList['addListener']>(),
+        removeListener: vi.fn<MediaQueryList['removeListener']>(),
+      }))
       vi.stubGlobal('matchMedia', matchMedia)
       return {
         matchMedia,

@@ -14,8 +14,8 @@ describe('focusManager', () => {
   })
 
   it('should call previous remove handler when replacing an event listener', () => {
-    const remove1Spy = vi.fn()
-    const remove2Spy = vi.fn()
+    const remove1Spy = vi.fn<() => void>()
+    const remove2Spy = vi.fn<() => void>()
 
     focusManager.setEventListener(() => remove1Spy)
     focusManager.setEventListener(() => remove2Spy)
@@ -93,8 +93,10 @@ describe('focusManager', () => {
   })
 
   it('should replace default window listener when a new event listener is set', () => {
-    const unsubscribeSpy = vi.fn().mockReturnValue(undefined)
-    const handlerSpy = vi.fn().mockReturnValue(unsubscribeSpy)
+    const unsubscribeSpy = vi.fn<() => undefined>().mockReturnValue(undefined)
+    const handlerSpy = vi
+      .fn<() => () => undefined>()
+      .mockReturnValue(unsubscribeSpy)
 
     focusManager.setEventListener(() => handlerSpy())
 
@@ -132,7 +134,9 @@ describe('focusManager', () => {
   })
 
   it('should keep setup function even if last listener unsubscribes', () => {
-    const setupSpy = vi.fn().mockReturnValue(() => undefined)
+    const setupSpy = vi
+      .fn<() => () => undefined>()
+      .mockReturnValue(() => undefined)
 
     focusManager.setEventListener(setupSpy)
 
@@ -148,7 +152,7 @@ describe('focusManager', () => {
   })
 
   it('should call listeners when setFocused is called', () => {
-    const listener = vi.fn()
+    const listener = vi.fn<(focused: boolean) => void>()
 
     focusManager.subscribe(listener)
 

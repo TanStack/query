@@ -51,19 +51,19 @@ describe('DevtoolsPanelComponent', () => {
         matches: false,
         media: query,
         onchange: null,
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        dispatchEvent: vi.fn(),
+        addEventListener: vi.fn<MediaQueryList['addEventListener']>(),
+        removeEventListener: vi.fn<MediaQueryList['removeEventListener']>(),
+        addListener: vi.fn<MediaQueryList['addListener']>(),
+        removeListener: vi.fn<MediaQueryList['removeListener']>(),
+        dispatchEvent: vi.fn<MediaQueryList['dispatchEvent']>(),
       })),
     )
     vi.stubGlobal(
       'ResizeObserver',
       class {
-        observe = vi.fn()
-        unobserve = vi.fn()
-        disconnect = vi.fn()
+        observe = vi.fn<ResizeObserver['observe']>()
+        unobserve = vi.fn<ResizeObserver['unobserve']>()
+        disconnect = vi.fn<ResizeObserver['disconnect']>()
       },
     )
     queryClient = new QueryClient()
@@ -125,7 +125,7 @@ describe('DevtoolsPanelComponent', () => {
   })
 
   it('should call "onClose" when the close button is clicked', () => {
-    const onClose = vi.fn()
+    const onClose = vi.fn<() => void>()
     const rendered = render(() => (
       <DevtoolsPanelComponent
         client={queryClient}

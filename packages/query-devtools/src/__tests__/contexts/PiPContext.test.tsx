@@ -17,11 +17,11 @@ function stubPipWindow(overrides: FakePipWindowOverrides = {}) {
     document: pipDocument,
     innerWidth: overrides.innerWidth ?? 800,
     innerHeight: overrides.innerHeight ?? 600,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    close: vi.fn(),
+    addEventListener: vi.fn<(type: string, listener: () => void) => void>(),
+    removeEventListener: vi.fn<(type: string, listener: () => void) => void>(),
+    close: vi.fn<Window['close']>(),
   }
-  const open = vi.fn(() => fakeWindow)
+  const open = vi.fn<() => typeof fakeWindow>(() => fakeWindow)
   vi.stubGlobal('open', open)
   return { pipDocument, fakeWindow, open }
 }
@@ -401,8 +401,8 @@ describe('PiPContext', () => {
   describe('"#_goober" MutationObserver', () => {
     function stubMutationObserver() {
       let observerCallback: MutationCallback | undefined
-      const observeSpy = vi.fn()
-      const disconnectSpy = vi.fn()
+      const observeSpy = vi.fn<MutationObserver['observe']>()
+      const disconnectSpy = vi.fn<MutationObserver['disconnect']>()
       class FakeMutationObserver {
         observe = observeSpy
         disconnect = disconnectSpy

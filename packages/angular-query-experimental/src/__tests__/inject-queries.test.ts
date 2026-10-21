@@ -180,8 +180,12 @@ describe('injectQueries', () => {
     it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn(() => sleep(10).then(() => 1))
-      const queryFn2 = vi.fn(() => sleep(10).then(() => 2))
+      const queryFn1 = vi.fn<() => Promise<number>>(() =>
+        sleep(10).then(() => 1),
+      )
+      const queryFn2 = vi.fn<() => Promise<number>>(() =>
+        sleep(10).then(() => 2),
+      )
 
       TestBed.configureTestingModule({
         providers: [provideIsRestoring(signal(true).asReadonly())],

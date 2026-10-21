@@ -2,6 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { MutationCache, MutationObserver, QueryClient } from '..'
 import { executeMutation } from './utils'
+import type {
+  DefaultError,
+  Mutation,
+  MutationCacheNotifyEvent,
+  MutationFunctionContext,
+} from '..'
 
 describe('mutationCache', () => {
   beforeEach(() => {
@@ -15,9 +21,37 @@ describe('mutationCache', () => {
   describe('MutationCacheConfig error callbacks', () => {
     it('should call onError and onSettled when a mutation errors', async () => {
       const key = queryKey()
-      const onError = vi.fn()
-      const onSuccess = vi.fn()
-      const onSettled = vi.fn()
+      const onError =
+        vi.fn<
+          (
+            error: DefaultError,
+            variables: unknown,
+            onMutateResult: unknown,
+            mutation: Mutation<unknown, unknown, unknown>,
+            context: MutationFunctionContext,
+          ) => void
+        >()
+      const onSuccess =
+        vi.fn<
+          (
+            data: unknown,
+            variables: unknown,
+            onMutateResult: unknown,
+            mutation: Mutation<unknown, unknown, unknown>,
+            context: MutationFunctionContext,
+          ) => void
+        >()
+      const onSettled =
+        vi.fn<
+          (
+            data: unknown | undefined,
+            error: DefaultError | null,
+            variables: unknown,
+            onMutateResult: unknown,
+            mutation: Mutation<unknown, unknown, unknown>,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const testCache = new MutationCache({ onError, onSuccess, onSettled })
       const testClient = new QueryClient({ mutationCache: testCache })
 
@@ -107,9 +141,37 @@ describe('mutationCache', () => {
   describe('MutationCacheConfig success callbacks', () => {
     it('should call onSuccess and onSettled when a mutation is successful', async () => {
       const key = queryKey()
-      const onError = vi.fn()
-      const onSuccess = vi.fn()
-      const onSettled = vi.fn()
+      const onError =
+        vi.fn<
+          (
+            error: DefaultError,
+            variables: unknown,
+            onMutateResult: unknown,
+            mutation: Mutation<unknown, unknown, unknown>,
+            context: MutationFunctionContext,
+          ) => void
+        >()
+      const onSuccess =
+        vi.fn<
+          (
+            data: unknown,
+            variables: unknown,
+            onMutateResult: unknown,
+            mutation: Mutation<unknown, unknown, unknown>,
+            context: MutationFunctionContext,
+          ) => void
+        >()
+      const onSettled =
+        vi.fn<
+          (
+            data: unknown | undefined,
+            error: DefaultError | null,
+            variables: unknown,
+            onMutateResult: unknown,
+            mutation: Mutation<unknown, unknown, unknown>,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const testCache = new MutationCache({ onError, onSuccess, onSettled })
       const testClient = new QueryClient({ mutationCache: testCache })
 
@@ -196,7 +258,14 @@ describe('mutationCache', () => {
   describe('MutationCacheConfig.onMutate', () => {
     it('should be called before a mutation executes', () => {
       const key = queryKey()
-      const onMutate = vi.fn()
+      const onMutate =
+        vi.fn<
+          (
+            variables: unknown,
+            mutation: Mutation<unknown, unknown, unknown>,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const testCache = new MutationCache({ onMutate })
       const testClient = new QueryClient({ mutationCache: testCache })
 
@@ -350,7 +419,15 @@ describe('mutationCache', () => {
     it('should remove unused mutations after gcTime has elapsed', async () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
-      const onSuccess = vi.fn()
+      const onSuccess =
+        vi.fn<
+          (
+            data: undefined,
+            variables: number,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
 
       executeMutation(
         testClient,
@@ -391,7 +468,15 @@ describe('mutationCache', () => {
 
     it('should be garbage collected later when unsubscribed and mutation is pending', async () => {
       const queryClient = new QueryClient()
-      const onSuccess = vi.fn()
+      const onSuccess =
+        vi.fn<
+          (
+            data: string,
+            variables: number,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const observer = new MutationObserver(queryClient, {
         gcTime: 10,
         mutationFn: () => sleep(10).then(() => 'data'),
@@ -414,7 +499,15 @@ describe('mutationCache', () => {
 
     it('should call callbacks even with gcTime 0 and mutation still pending', async () => {
       const queryClient = new QueryClient()
-      const onSuccess = vi.fn()
+      const onSuccess =
+        vi.fn<
+          (
+            data: string,
+            variables: number,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const observer = new MutationObserver(queryClient, {
         gcTime: 0,
         mutationFn: () => sleep(10).then(() => 'data'),
@@ -437,7 +530,9 @@ describe('mutationCache', () => {
       const testClient = new QueryClient({ mutationCache: testCache })
       const mutation1 = testCache.build(testClient, {})
       const mutation2 = testCache.build(testClient, {})
-      const callback = vi.fn(() => testCache.getAll())
+      const callback = vi.fn<
+        () => Array<Mutation<unknown, Error, unknown, unknown>>
+      >(() => testCache.getAll())
       testCache.subscribe(callback)
 
       testCache.clear()
@@ -525,7 +620,7 @@ describe('mutationCache', () => {
       expect(testCache.getAll()).toHaveLength(0)
 
       // Remove again — mutation is already gone from the cache
-      const callback = vi.fn()
+      const callback = vi.fn<(event: MutationCacheNotifyEvent) => void>()
       const unsubscribe = testCache.subscribe(callback)
       testCache.remove(mutation)
 

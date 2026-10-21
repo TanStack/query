@@ -3527,7 +3527,7 @@ describe('useQuery', () => {
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
       .mockReturnValue('data')
-    const memoFn = vi.fn()
+    const memoFn = vi.fn<() => void>()
 
     function Page() {
       const result = useQuery(() => ({
@@ -4134,11 +4134,11 @@ describe('useQuery', () => {
 
   it('should cancel the query function when there are no more subscriptions', async () => {
     const key = queryKey()
-    let cancelFn: Mock = vi.fn()
+    let cancelFn: Mock = vi.fn<(event: Event) => void>()
 
     const queryFn = ({ signal }: { signal?: AbortSignal }) => {
       const promise = new Promise<string>((resolve, reject) => {
-        cancelFn = vi.fn(() => reject('Cancelled'))
+        cancelFn = vi.fn<() => void>(() => reject('Cancelled'))
         signal?.addEventListener('abort', cancelFn)
         sleep(20).then(() => resolve('OK'))
       })
@@ -5614,7 +5614,9 @@ describe('useQuery', () => {
 
   it('should not fetch while restoring and refetch after restoring is complete', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     const [isRestoring, setIsRestoring] = createSignal(true)
 
@@ -5682,7 +5684,9 @@ describe('useQuery', () => {
     const queryClient1 = new QueryClient()
     const queryClient2 = new QueryClient()
 
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page(props: { client: () => QueryClient }) {
       const query = useQuery(
@@ -5722,7 +5726,9 @@ describe('useQuery', () => {
 
   it('should not fetch when queryFn is skipToken, and fetch once postId is set', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'post 1'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'post 1'),
+    )
 
     function Page() {
       const [postId, setPostId] = createSignal<number>()

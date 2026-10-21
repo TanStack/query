@@ -194,7 +194,7 @@ describe('useIsMutating', () => {
     const [client, setClient] = createSignal(queryClient1)
     const mutationCache1 = queryClient1.getMutationCache()
     const originalSubscribe1 = mutationCache1.subscribe.bind(mutationCache1)
-    const unsubscribe1 = vi.fn()
+    const unsubscribe1 = vi.fn<() => void>()
 
     vi.spyOn(mutationCache1, 'subscribe').mockImplementation((listener) => {
       const cleanup = originalSubscribe1(listener)

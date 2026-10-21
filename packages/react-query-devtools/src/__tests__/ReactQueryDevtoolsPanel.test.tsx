@@ -4,25 +4,25 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { ReactQueryDevtoolsPanel as ReactQueryDevtoolsPanelComponent } from '../ReactQueryDevtoolsPanel'
 
-const mountMock = vi.fn()
-const unmountMock = vi.fn()
-const setClientMock = vi.fn()
-const setOnCloseMock = vi.fn()
-const setErrorTypesMock = vi.fn()
-const setThemeMock = vi.fn()
+const mountMock = vi.fn<TanstackQueryDevtoolsPanel['mount']>()
+const unmountMock = vi.fn<TanstackQueryDevtoolsPanel['unmount']>()
+const setClientMock = vi.fn<TanstackQueryDevtoolsPanel['setClient']>()
+const setOnCloseMock = vi.fn<TanstackQueryDevtoolsPanel['setOnClose']>()
+const setErrorTypesMock = vi.fn<TanstackQueryDevtoolsPanel['setErrorTypes']>()
+const setThemeMock = vi.fn<TanstackQueryDevtoolsPanel['setTheme']>()
 
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- the mocked devtools classes have '#private' fields, and this environment cannot load the real Solid module
 vi.mock('@tanstack/query-devtools', () => ({
-  TanstackQueryDevtoolsPanel: vi.fn(function (
-    this: TanstackQueryDevtoolsPanel,
-  ) {
-    this.mount = mountMock
-    this.unmount = unmountMock
-    this.setClient = setClientMock
-    this.setOnClose = setOnCloseMock
-    this.setErrorTypes = setErrorTypesMock
-    this.setTheme = setThemeMock
-  }),
+  TanstackQueryDevtoolsPanel: vi.fn<(this: TanstackQueryDevtoolsPanel) => void>(
+    function (this: TanstackQueryDevtoolsPanel) {
+      this.mount = mountMock
+      this.unmount = unmountMock
+      this.setClient = setClientMock
+      this.setOnClose = setOnCloseMock
+      this.setErrorTypes = setErrorTypesMock
+      this.setTheme = setThemeMock
+    },
+  ),
 }))
 
 describe('ReactQueryDevtoolsPanel', () => {
@@ -60,7 +60,7 @@ describe('ReactQueryDevtoolsPanel', () => {
   })
 
   it('should forward "onClose" to the devtools instance', () => {
-    const onClose = vi.fn()
+    const onClose = vi.fn<() => void>()
 
     render(<ReactQueryDevtoolsPanel client={queryClient} onClose={onClose} />)
 
@@ -70,7 +70,7 @@ describe('ReactQueryDevtoolsPanel', () => {
   it('should default "onClose" to a no-op function when the prop is omitted', () => {
     render(<ReactQueryDevtoolsPanel client={queryClient} />)
 
-    const forwarded = setOnCloseMock.mock.calls[0]?.[0]
+    const forwarded = setOnCloseMock.mock.calls[0]![0]
     expect(forwarded).toBeInstanceOf(Function)
     expect(forwarded()).toBeUndefined()
   })

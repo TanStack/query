@@ -7,6 +7,7 @@ import { dehydrateQuery } from '../index'
 import { MutationCache } from '../mutationCache'
 import { noop } from '../utils'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
+import type { MutationFunction, MutationFunctionContext } from '../index'
 
 describe('dehydration and rehydration', () => {
   beforeEach(() => {
@@ -43,7 +44,9 @@ describe('dehydration and rehydration', () => {
     it('should serialize data when dehydrating a query directly', () => {
       const key = queryKey()
       const data = new Date('2024-01-01T00:00:00.000Z')
-      const serializeData = vi.fn((value: Date) => value.toISOString())
+      const serializeData = vi.fn<(value: Date) => string>((value: Date) =>
+        value.toISOString(),
+      )
       const queryClient = new QueryClient()
       queryClient.setQueryData(key, data)
       const query = queryClient.getQueryCache().find({ queryKey: key })!
@@ -60,7 +63,7 @@ describe('dehydration and rehydration', () => {
     it('should use shouldRedactErrors when dehydrating a query directly', async () => {
       const key = queryKey()
       const testError = new Error('original error')
-      const shouldRedactErrors = vi.fn(() => false)
+      const shouldRedactErrors = vi.fn<() => boolean>(() => false)
       const queryClient = new QueryClient()
       const promise = queryClient
         .query({
@@ -577,14 +580,28 @@ describe('dehydration and rehydration', () => {
     consoleErrorMock.mockReturnValue(undefined)
     const onlineMock = mockOnlineManagerIsOnline(false)
 
-    const serverAddTodo = vi.fn().mockRejectedValue(new Error('offline'))
+    const serverAddTodo = vi
+      .fn<MutationFunction<{ id: number; text: string }, { text: string }>>()
+      .mockRejectedValue(new Error('offline'))
     const serverOnMutate = vi
-      .fn()
+      .fn<
+        (variables: { text: string }) => {
+          optimisticTodo: { id: number; text: string }
+        }
+      >()
       .mockImplementation((variables: { text: string }) => {
         const optimisticTodo = { id: 1, text: variables.text }
         return { optimisticTodo }
       })
-    const serverOnSuccess = vi.fn()
+    const serverOnSuccess =
+      vi.fn<
+        (
+          data: { id: number; text: string },
+          variables: { text: string },
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const serverClient = new QueryClient()
 
@@ -618,17 +635,29 @@ describe('dehydration and rehydration', () => {
     const client = new QueryClient()
 
     const clientAddTodo = vi
-      .fn()
-      .mockImplementation((variables: { text: string }) => {
-        return { id: 2, text: variables.text }
+      .fn<MutationFunction<{ id: number; text: string }, { text: string }>>()
+      .mockImplementation((variables) => {
+        return Promise.resolve({ id: 2, text: variables.text })
       })
     const clientOnMutate = vi
-      .fn()
+      .fn<
+        (variables: { text: string }) => {
+          optimisticTodo: { id: number; text: string }
+        }
+      >()
       .mockImplementation((variables: { text: string }) => {
         const optimisticTodo = { id: 1, text: variables.text }
         return { optimisticTodo }
       })
-    const clientOnSuccess = vi.fn()
+    const clientOnSuccess =
+      vi.fn<
+        (
+          data: { id: number; text: string },
+          variables: { text: string },
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     client.setMutationDefaults(key, {
       mutationFn: clientAddTodo,
@@ -661,7 +690,9 @@ describe('dehydration and rehydration', () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
     consoleErrorMock.mockReturnValue(undefined)
 
-    const serverAddTodo = vi.fn().mockRejectedValue(new Error('offline'))
+    const serverAddTodo = vi
+      .fn<() => Promise<never>>()
+      .mockRejectedValue(new Error('offline'))
 
     const queryClient = new QueryClient()
 
@@ -693,7 +724,9 @@ describe('dehydration and rehydration', () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
     consoleErrorMock.mockReturnValue(undefined)
 
-    const serverAddTodo = vi.fn().mockRejectedValue(new Error('offline'))
+    const serverAddTodo = vi
+      .fn<() => Promise<never>>()
+      .mockRejectedValue(new Error('offline'))
 
     const queryClient = new QueryClient()
 
@@ -1281,8 +1314,10 @@ describe('dehydration and rehydration', () => {
 
   it('should overwrite data when a new promise is streamed in', async () => {
     const key = queryKey()
-    const serializeDataMock = vi.fn((data: any) => data)
-    const deserializeDataMock = vi.fn((data: any) => data)
+    const serializeDataMock = vi.fn<(data: unknown) => unknown>((data) => data)
+    const deserializeDataMock = vi.fn<(data: unknown) => unknown>(
+      (data) => data,
+    )
 
     const countRef = { current: 0 }
     // --- server ---

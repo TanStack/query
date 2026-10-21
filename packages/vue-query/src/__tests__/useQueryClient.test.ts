@@ -7,8 +7,9 @@ vi.mock(import('vue-demi'), async () => {
   const actual = await vi.importActual<typeof VueDemi>('vue-demi')
   return {
     ...actual,
+    // oxlint-disable-next-line vitest/require-mock-type-parameters -- 'Mock' keeps only the last overload, so it cannot type the overloaded generic 'inject'
     inject: vi.fn(),
-    hasInjectionContext: vi.fn(() => true),
+    hasInjectionContext: vi.fn<() => boolean>(() => true),
   }
 })
 

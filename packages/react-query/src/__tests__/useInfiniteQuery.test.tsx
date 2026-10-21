@@ -913,8 +913,8 @@ describe('useInfiniteQuery', () => {
     const fetchPage = vi.fn<
       (context: QueryFunctionContext<typeof key, number>) => Promise<number>
     >(async ({ pageParam, signal }) => {
-      const onAbort = vi.fn()
-      const abortListener = vi.fn()
+      const onAbort = vi.fn<(event: Event) => void>()
+      const abortListener = vi.fn<(event: Event) => void>()
       onAborts.push(onAbort)
       abortListeners.push(abortListener)
       signal.onabort = onAbort
@@ -988,8 +988,8 @@ describe('useInfiniteQuery', () => {
     const fetchPage = vi.fn<
       (context: QueryFunctionContext<typeof key, number>) => Promise<number>
     >(async ({ pageParam, signal }) => {
-      const onAbort = vi.fn()
-      const abortListener = vi.fn()
+      const onAbort = vi.fn<(event: Event) => void>()
+      const abortListener = vi.fn<(event: Event) => void>()
       onAborts.push(onAbort)
       abortListeners.push(abortListener)
       signal.onabort = onAbort
@@ -1721,11 +1721,11 @@ describe('useInfiniteQuery', () => {
 
   it('should cancel the query function when there are no more subscriptions', () => {
     const key = queryKey()
-    let cancelFn: Mock = vi.fn()
+    let cancelFn: Mock = vi.fn<(event: Event) => void>()
 
     const queryFn = ({ signal }: { signal?: AbortSignal }) => {
       const promise = new Promise<string>((resolve, reject) => {
-        cancelFn = vi.fn(() => reject('Cancelled'))
+        cancelFn = vi.fn<() => void>(() => reject('Cancelled'))
         signal?.addEventListener('abort', cancelFn)
         sleep(1000).then(() => resolve('OK'))
       })
@@ -1797,8 +1797,9 @@ describe('useInfiniteQuery', () => {
 
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
-      sleep(10).then(() => `comments for 1 page ${pageParam}`),
+    const queryFn = vi.fn<(context: { pageParam: number }) => Promise<string>>(
+      ({ pageParam }: { pageParam: number }) =>
+        sleep(10).then(() => `comments for 1 page ${pageParam}`),
     )
 
     function Page() {

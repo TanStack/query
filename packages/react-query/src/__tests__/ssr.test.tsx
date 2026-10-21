@@ -51,7 +51,9 @@ describe('Server Side Rendering', () => {
 
   it('should not trigger fetch', () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       const query = useQuery({ queryKey: key, queryFn })
@@ -92,7 +94,9 @@ describe('Server Side Rendering', () => {
 
   it('should return existing data from the cache', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       const query = useQuery({ queryKey: key, queryFn })
@@ -151,7 +155,9 @@ describe('Server Side Rendering', () => {
 
   it('should return the correct state from useInfiniteQuery', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'page 1'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'page 1'),
+    )
 
     function Page() {
       const query = useInfiniteQuery({

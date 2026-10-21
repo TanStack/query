@@ -3,6 +3,8 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { InfiniteQueryObserver, QueryClient } from '..'
 import type {
   DefaultedInfiniteQueryObserverOptions,
+  GetNextPageParamFunction,
+  GetPreviousPageParamFunction,
   InfiniteData,
 } from '../types'
 
@@ -49,7 +51,7 @@ describe('InfiniteQueryObserver', () => {
     }
 
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 1))
+    const queryFn = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 1))
     const observer = new InfiniteQueryObserver(queryClient, {
       meta,
       queryKey: key,
@@ -114,8 +116,9 @@ describe('InfiniteQueryObserver', () => {
   it('should not invoke getNextPageParam and getPreviousPageParam on empty pages', () => {
     const key = queryKey()
 
-    const getNextPageParam = vi.fn()
-    const getPreviousPageParam = vi.fn()
+    const getNextPageParam = vi.fn<GetNextPageParamFunction<number, string>>()
+    const getPreviousPageParam =
+      vi.fn<GetPreviousPageParamFunction<number, string>>()
 
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,

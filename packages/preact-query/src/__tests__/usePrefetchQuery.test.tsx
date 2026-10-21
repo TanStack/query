@@ -13,7 +13,7 @@ import {
 } from '..'
 import { ErrorBoundary } from './ErrorBoundary'
 import { renderWithClient } from './utils'
-import type { VNode } from 'preact'
+import type { JSX, VNode } from 'preact'
 
 describe('usePrefetchQuery', () => {
   let queryCache: QueryCache
@@ -33,7 +33,9 @@ describe('usePrefetchQuery', () => {
   it('should prefetch query if query state does not exist', async () => {
     const queryOpts = {
       queryKey: queryKey(),
-      queryFn: vi.fn(() => sleep(10).then(() => 'prefetchQuery')),
+      queryFn: vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'prefetchQuery'),
+      ),
     }
 
     const componentQueryOpts = {
@@ -67,7 +69,7 @@ describe('usePrefetchQuery', () => {
   it('should not prefetch query if query state exists', async () => {
     const queryOpts = {
       queryKey: queryKey(),
-      queryFn: vi.fn(() =>
+      queryFn: vi.fn<() => Promise<string>>(() =>
         sleep(10).then(() => 'The usePrefetchQuery hook is smart!'),
       ),
     }
@@ -102,7 +104,9 @@ describe('usePrefetchQuery', () => {
   it('should let errors fall through and not refetch failed queries', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
     consoleErrorMock.mockReturnValue(undefined)
-    const queryFn = vi.fn(() => sleep(10).then(() => 'Not an error'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'Not an error'),
+    )
 
     const queryOpts = {
       queryKey: queryKey(),
@@ -146,7 +150,9 @@ describe('usePrefetchQuery', () => {
   })
 
   it('should not create an endless loop when using inside a suspense boundary', async () => {
-    const queryFn = vi.fn(() => sleep(10).then(() => 'prefetchedQuery'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'prefetchedQuery'),
+    )
 
     const queryOpts = {
       queryKey: queryKey(),
@@ -183,7 +189,7 @@ describe('usePrefetchQuery', () => {
   it('should be able to recover from errors and try fetching again', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
     consoleErrorMock.mockReturnValue(undefined)
-    const queryFn = vi.fn(() =>
+    const queryFn = vi.fn<() => Promise<string>>(() =>
       sleep(10).then(() => 'This is fine :dog: :fire:'),
     )
 
@@ -245,22 +251,28 @@ describe('usePrefetchQuery', () => {
   it('should not create a suspense waterfall if prefetch is fired', async () => {
     const firstQueryOpts = {
       queryKey: queryKey(),
-      queryFn: vi.fn(() => sleep(10).then(() => 'Prefetch is nice!')),
+      queryFn: vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'Prefetch is nice!'),
+      ),
     }
 
     const secondQueryOpts = {
       queryKey: queryKey(),
-      queryFn: vi.fn(() => sleep(10).then(() => 'Prefetch is really nice!!')),
+      queryFn: vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'Prefetch is really nice!!'),
+      ),
     }
 
     const thirdQueryOpts = {
       queryKey: queryKey(),
-      queryFn: vi.fn(() =>
+      queryFn: vi.fn<() => Promise<string>>(() =>
         sleep(10).then(() => 'Prefetch does not create waterfalls!!'),
       ),
     }
 
-    const Fallback = vi.fn().mockReturnValue(<div>Loading...</div>)
+    const Fallback = vi
+      .fn<() => JSX.Element>()
+      .mockReturnValue(<div>Loading...</div>)
 
     function FirstQuery({ children }: { children?: VNode }) {
       const state = useSuspenseQuery(firstQueryOpts)

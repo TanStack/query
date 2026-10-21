@@ -26,7 +26,7 @@ describe('core/utils', () => {
   describe('hashQueryKeyByOptions', () => {
     it('should use custom hash function when provided in options', () => {
       const key = ['test', { a: 1, b: 2 }]
-      const customHashFn = vi.fn(() => 'custom-hash')
+      const customHashFn = vi.fn<() => string>(() => 'custom-hash')
 
       const result = hashQueryKeyByOptions(key, {
         queryKeyHashFn: customHashFn,
@@ -704,7 +704,7 @@ describe('core/utils', () => {
     it('should call onCancelled immediately when the signal is already aborted on first access', () => {
       const controller = new AbortController()
       controller.abort()
-      const onCancelled = vi.fn()
+      const onCancelled = vi.fn<VoidFunction>()
       const object = addConsumeAwareSignal(
         {},
         () => controller.signal,

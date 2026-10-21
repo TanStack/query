@@ -93,7 +93,9 @@ describe('useMutation', () => {
     const key = queryKey()
     const result = 'Mock data'
     const keyRef = ref('key01')
-    const mutationFn = vi.fn((params: string) => sleep(10).then(() => params))
+    const mutationFn = vi.fn<(params: string) => Promise<string>>(
+      (params: string) => sleep(10).then(() => params),
+    )
     const mutation = useMutation(() => ({
       mutationKey: [...key, keyRef.value],
       mutationFn,
@@ -233,7 +235,8 @@ describe('useMutation', () => {
     })
 
     it('should call onMutate when passed as an option', async () => {
-      const onMutate = vi.fn()
+      const onMutate =
+        vi.fn<(variables: string, context: MutationFunctionContext) => void>()
       const mutation = useMutation({
         mutationFn: (params: string) => sleep(10).then(() => params),
         onMutate,
@@ -245,7 +248,15 @@ describe('useMutation', () => {
     })
 
     it('should call onError when passed as an option', async () => {
-      const onError = vi.fn()
+      const onError =
+        vi.fn<
+          (
+            error: Error,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = useMutation({
         mutationFn: () =>
           sleep(10).then(() => Promise.reject(new Error('Some error'))),
@@ -258,7 +269,15 @@ describe('useMutation', () => {
     })
 
     it('should call onSuccess when passed as an option', async () => {
-      const onSuccess = vi.fn()
+      const onSuccess =
+        vi.fn<
+          (
+            data: string,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = useMutation({
         mutationFn: (params: string) => sleep(10).then(() => params),
         onSuccess,
@@ -270,7 +289,16 @@ describe('useMutation', () => {
     })
 
     it('should call onSettled when passed as an option', async () => {
-      const onSettled = vi.fn()
+      const onSettled =
+        vi.fn<
+          (
+            data: string | undefined,
+            error: Error | null,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = useMutation({
         mutationFn: (params: string) => sleep(10).then(() => params),
         onSettled,
@@ -282,7 +310,15 @@ describe('useMutation', () => {
     })
 
     it('should call onError when passed as an argument of mutate function', async () => {
-      const onError = vi.fn()
+      const onError =
+        vi.fn<
+          (
+            error: Error,
+            variables: void,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = useMutation({
         mutationFn: () =>
           sleep(10).then(() => Promise.reject(new Error('Some error'))),
@@ -294,7 +330,15 @@ describe('useMutation', () => {
     })
 
     it('should call onSuccess when passed as an argument of mutate function', async () => {
-      const onSuccess = vi.fn()
+      const onSuccess =
+        vi.fn<
+          (
+            data: string,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = useMutation({
         mutationFn: (params: string) => sleep(10).then(() => params),
       })
@@ -305,7 +349,16 @@ describe('useMutation', () => {
     })
 
     it('should call onSettled when passed as an argument of mutate function', async () => {
-      const onSettled = vi.fn()
+      const onSettled =
+        vi.fn<
+          (
+            data: string | undefined,
+            error: Error | null,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = useMutation({
         mutationFn: (params: string) => sleep(10).then(() => params),
       })
@@ -424,8 +477,26 @@ describe('useMutation', () => {
     })
 
     it('should fire both onSettled functions', async () => {
-      const onSettled = vi.fn()
-      const onSettledMutate = vi.fn()
+      const onSettled =
+        vi.fn<
+          (
+            data: string | undefined,
+            error: Error | null,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
+      const onSettledMutate =
+        vi.fn<
+          (
+            data: string | undefined,
+            error: Error | null,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = useMutation({
         mutationFn: (params: string) => sleep(10).then(() => params),
         onSettled,
@@ -558,7 +629,7 @@ describe('useMutation', () => {
   describe('throwOnError', () => {
     it('should evaluate throwOnError when mutation is expected to throw', async () => {
       const err = new Error('Expected mock error. All is well!')
-      const throwOnError = vi.fn()
+      const throwOnError = vi.fn<(error: Error) => boolean>()
       const { mutate } = useMutation({
         mutationFn: () => sleep(10).then(() => Promise.reject(err)),
         throwOnError,
@@ -576,7 +647,7 @@ describe('useMutation', () => {
         const consoleErrorMock = vi
           .spyOn(console, 'error')
           .mockReturnValue(undefined)
-        const throwOnError = vi.fn().mockReturnValue(true)
+        const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
         const { mutate } = useMutation({
           mutationFn: () =>
             sleep(10).then(() => Promise.reject(new Error('Some error'))),
@@ -595,14 +666,14 @@ describe('useMutation', () => {
     it.runIf(isVue3)(
       'should throw from error watcher when throwOnError returns true, which Vue 3 surfaces as an unhandled rejection',
       async ({ onTestFinished }) => {
-        const throwOnError = vi.fn().mockReturnValue(true)
+        const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
         const { mutate } = useMutation({
           mutationFn: () =>
             sleep(10).then(() => Promise.reject(new Error('Some error'))),
           throwOnError,
         })
 
-        const unhandledRejectionFn = vi.fn()
+        const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
         process.on('unhandledRejection', unhandledRejectionFn)
         onTestFinished(() => {
           process.off('unhandledRejection', unhandledRejectionFn)
@@ -711,7 +782,15 @@ describe('useMutation', () => {
     })
 
     it('should only fire the per-call onSuccess for the last mutate() call', async () => {
-      const onSuccessMutate = vi.fn()
+      const onSuccessMutate =
+        vi.fn<
+          (
+            data: string,
+            variables: string,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const mutation = useMutation({
         mutationFn: (todo: string) => sleep(10).then(() => todo),
       })
@@ -730,7 +809,15 @@ describe('useMutation', () => {
   })
 
   it('should pass a non-undefined onMutateResult alongside context to onSuccess', async () => {
-    const onSuccess = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: { startedWith: string },
+          context: MutationFunctionContext,
+        ) => void
+      >()
     const mutation = useMutation({
       mutationFn: (text: string) => sleep(10).then(() => text.toUpperCase()),
       onMutate: (text: string) => ({ startedWith: text }),
@@ -765,7 +852,15 @@ describe('useMutation', () => {
   })
 
   it('should include mutationKey in the context passed to hook-level callbacks', async () => {
-    const onSuccess = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
     const mutation = useMutation({
       mutationKey: ['todos', 'add'],
       mutationFn: (text: string) => sleep(10).then(() => text),

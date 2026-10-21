@@ -17,6 +17,7 @@ import { withPersistQueryClient } from '../with-persist-query-client'
 import type {
   PersistedClient,
   Persister,
+  Promisable,
 } from '@tanstack/query-persist-client-core'
 
 const createMockPersister = (): Persister => {
@@ -367,7 +368,7 @@ describe('withPersistQueryClient', () => {
       }))
     }
 
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<() => void>()
 
     const rendered = await render(Page, {
       providers: [
@@ -398,10 +399,10 @@ describe('withPersistQueryClient', () => {
       .spyOn(console, 'error')
       .mockReturnValue(undefined)
     const queryClient = new QueryClient()
-    const removeClient = vi.fn()
+    const removeClient = vi.fn<() => Promisable<void>>()
     const [error, persister] = createMockErrorPersister(removeClient)
-    const onSuccess = vi.fn()
-    const onError = vi.fn()
+    const onSuccess = vi.fn<() => void>()
+    const onError = vi.fn<() => void>()
 
     @Component({
       template: `

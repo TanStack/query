@@ -15,6 +15,7 @@ import PerCallSuccess from './PerCallSuccess.svelte'
 import MutationFnContext from './MutationFnContext.svelte'
 import ParallelMutateAsync from './ParallelMutateAsync.svelte'
 import ConcurrentMutate from './ConcurrentMutate.svelte'
+import type { MutationFunctionContext } from '@tanstack/query-core'
 
 describe('createMutation', () => {
   let queryClient: QueryClient
@@ -264,8 +265,8 @@ describe('createMutation', () => {
   )
 
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
-    const onSuccessMock = vi.fn()
-    const onSettledMock = vi.fn()
+    const onSuccessMock = vi.fn<(data: number) => void>()
+    const onSettledMock = vi.fn<(data: number | undefined) => void>()
 
     const rendered = render(Success, {
       props: {
@@ -536,7 +537,15 @@ describe('createMutation', () => {
   })
 
   it('should pass a non-undefined onMutateResult alongside context to onSuccess', async () => {
-    const onSuccessMock = vi.fn()
+    const onSuccessMock =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: { startedWith: string },
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const rendered = render(SuccessContext, {
       props: { queryClient, onSuccessMock },
@@ -556,7 +565,15 @@ describe('createMutation', () => {
   })
 
   it('should include mutationKey in the context passed to hook-level callbacks', async () => {
-    const onSuccessMock = vi.fn()
+    const onSuccessMock =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: { startedWith: string },
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const rendered = render(SuccessContext, {
       props: { queryClient, mutationKey: ['todos', 'add'], onSuccessMock },
@@ -600,7 +617,15 @@ describe('createMutation', () => {
   })
 
   it('should give a per-call onSuccess the same QueryClient instance via context', async () => {
-    const onSuccessMutate = vi.fn()
+    const onSuccessMutate =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const rendered = render(PerCallSuccess, {
       props: { queryClient, onSuccessMutate },
@@ -653,7 +678,15 @@ describe('createMutation', () => {
   })
 
   it('should only fire the per-call onSuccess for the last mutate() call', async () => {
-    const onSuccessMutate = vi.fn()
+    const onSuccessMutate =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const rendered = render(ConcurrentMutate, {
       props: { queryClient, onSuccessMutate },

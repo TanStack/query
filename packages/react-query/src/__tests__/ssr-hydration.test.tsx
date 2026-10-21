@@ -129,7 +129,7 @@ describe('Server side rendering with de/rehydration', () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
     consoleErrorMock.mockReturnValue(undefined)
 
-    const fetchDataError = vi.fn(() => {
+    const fetchDataError = vi.fn<() => never>(() => {
       throw new Error('fetchDataError')
     })
     const key = queryKey()

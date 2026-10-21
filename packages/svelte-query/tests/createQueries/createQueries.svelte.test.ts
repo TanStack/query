@@ -300,8 +300,12 @@ describe('createQueries', () => {
   )
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data2'),
+    )
 
     const rendered = render(IsRestoring, {
       props: { queryClient, queryFn1, queryFn2 },
@@ -328,8 +332,12 @@ describe('createQueries', () => {
   })
 
   it('should not fetch queries with different durations for the duration of the restoring period when isRestoring is true', async () => {
-    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data2'),
+    )
 
     const rendered = render(IsRestoring, {
       props: { queryClient, queryFn1, queryFn2 },

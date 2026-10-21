@@ -4,6 +4,7 @@ import { MutationCache, QueryClient, focusManager, onlineManager } from '..'
 import { MutationObserver } from '../mutationObserver'
 import { executeMutation } from './utils'
 import type { MutationState } from '../mutation'
+import type { MutationCacheNotifyEvent, MutationFunctionContext } from '..'
 
 describe('mutation', () => {
   let queryClient: QueryClient
@@ -36,7 +37,13 @@ describe('mutation', () => {
 
   it('should be able to set defaults with setMutationDefaults', async () => {
     const key = queryKey()
-    const fn = vi.fn()
+    const fn =
+      vi.fn<
+        (
+          variables: string,
+          context: MutationFunctionContext,
+        ) => Promise<unknown>
+      >()
 
     queryClient.setMutationDefaults(key, {
       mutationFn: fn,
@@ -238,9 +245,27 @@ describe('mutation', () => {
   it('should be able to restore a mutation', async () => {
     const key = queryKey()
 
-    const onMutate = vi.fn()
-    const onSuccess = vi.fn()
-    const onSettled = vi.fn()
+    const onMutate =
+      vi.fn<(variables: string, context: MutationFunctionContext) => void>()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettled =
+      vi.fn<
+        (
+          data: string | undefined,
+          error: Error | null,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     queryClient.setMutationDefaults(key, {
       mutationFn: (text: string) => sleep(10).then(() => text),
@@ -326,7 +351,7 @@ describe('mutation', () => {
     const observer = new MutationObserver(queryClient, {})
     const currentMutation = mutationCache.build(queryClient, {})
 
-    const fn = vi.fn()
+    const fn = vi.fn<(type: MutationCacheNotifyEvent['type']) => void>()
 
     const unsubscribe = mutationCache.subscribe((event) => {
       fn(event.type)
@@ -357,8 +382,25 @@ describe('mutation', () => {
   })
 
   it('should update the mutation state with mutate even without an active subscription 1', async () => {
-    const onSuccess = vi.fn()
-    const onSettled = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: void,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettled =
+      vi.fn<
+        (
+          data: string | undefined,
+          error: Error | null,
+          variables: void,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const mutation = new MutationObserver(queryClient, {
       mutationFn: () => {
@@ -374,8 +416,25 @@ describe('mutation', () => {
   })
 
   it('should update the mutation state with mutate even without an active subscription 2', async () => {
-    const onSuccess = vi.fn()
-    const onSettled = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: void,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettled =
+      vi.fn<
+        (
+          data: string | undefined,
+          error: Error | null,
+          variables: void,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const mutation = new MutationObserver(queryClient, {
       mutationFn: () => {
@@ -391,7 +450,7 @@ describe('mutation', () => {
   })
 
   it('should see updated options in mutation callbacks', async () => {
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<(value: number) => void>()
 
     const mutation = new MutationObserver(queryClient, {
       mutationFn: () => sleep(100).then(() => Promise.resolve('update')),
@@ -1162,7 +1221,7 @@ describe('mutation', () => {
       })
       queryClient.mount()
 
-      const unhandledRejectionFn = vi.fn()
+      const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
       process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         process.off('unhandledRejection', unhandledRejectionFn)
@@ -1225,7 +1284,7 @@ describe('mutation', () => {
     it('should trigger onError callback on error by mutations onSettled, calling both onSettled callbacks twice', async ({
       onTestFinished,
     }) => {
-      const unhandledRejectionFn = vi.fn()
+      const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
       process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         process.off('unhandledRejection', unhandledRejectionFn)
@@ -1291,7 +1350,7 @@ describe('mutation', () => {
     it('should transfer errors by onError and consecutive onSettled callbacks to different execution context where they are reported', async ({
       onTestFinished,
     }) => {
-      const unhandledRejectionFn = vi.fn()
+      const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
       process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         process.off('unhandledRejection', unhandledRejectionFn)
@@ -1437,7 +1496,9 @@ describe('mutation', () => {
   })
 
   it('should not re-execute a settled mutation when it is continued', async () => {
-    const mutationFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const mutationFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
     const observer = new MutationObserver(queryClient, { mutationFn })
 
     observer.mutate()
@@ -1454,7 +1515,9 @@ describe('mutation', () => {
   })
 
   it('should still continue a restored paused mutation that has no retryer', async () => {
-    const mutationFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const mutationFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
     // a mutation restored from a dehydrated pending state has no retryer yet
     const mutation = queryClient.getMutationCache().build(
       queryClient,

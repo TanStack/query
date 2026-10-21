@@ -42,7 +42,7 @@ describe('SolidQueryDevtoolsPanel', () => {
       TanstackQueryDevtoolsPanel.prototype,
       'setOnClose',
     )
-    const onClose = vi.fn()
+    const onClose = vi.fn<() => void>()
 
     render(() => (
       <SolidQueryDevtoolsPanel client={queryClient} onClose={onClose} />
