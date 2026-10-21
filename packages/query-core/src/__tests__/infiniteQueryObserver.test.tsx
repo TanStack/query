@@ -259,7 +259,7 @@ describe('InfiniteQueryObserver', () => {
     queryClient.removeQueries({ queryKey: key })
     queryClient.getQueryCache().build(queryClient, {
       queryKey: key,
-      queryFn: () => sleep(10).then(() => 'page-0'),
+      queryFn: () => sleep(10).then(() => 'recreated-page'),
     })
 
     const promise = observer.fetchOptimistic(observer.options)
