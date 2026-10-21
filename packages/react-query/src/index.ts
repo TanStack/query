@@ -54,9 +54,17 @@ export { useMutation } from './useMutation'
 export { mutationOptions } from './mutationOptions'
 export { useInfiniteQuery } from './useInfiniteQuery'
 export { useIsRestoring, IsRestoringProvider } from './IsRestoringProvider'
-export { QueryStrictMode, QueryStrictModeError } from './QueryStrictMode'
+export {
+  QueryStrictMode,
+  QueryStrictModeError,
+  QueryStrictModeMissingPrefetchError,
+  QueryStrictModeUnusedPrefetchError,
+} from './QueryStrictMode'
 export type {
   QueryStrictModeEvent,
-  QueryStrictModeHandler,
+  QueryStrictModeMissingPrefetchEvent,
+  QueryStrictModeMissingPrefetchHandler,
   QueryStrictModeProps,
+  QueryStrictModeUnusedPrefetchEvent,
+  QueryStrictModeUnusedPrefetchHandler,
 } from './QueryStrictMode'

@@ -20,6 +20,8 @@ import {
   QueryObserver,
   QueryStrictMode,
   QueryStrictModeError,
+  QueryStrictModeMissingPrefetchError,
+  QueryStrictModeUnusedPrefetchError,
   dehydrate,
   hydrate,
   noop,
@@ -32,16 +34,27 @@ import {
   useSuspenseQuery,
 } from '..'
 import { renderWithClient } from './utils'
-import type { QueryKey, QueryStrictModeEvent, QueryStrictModeHandler } from '..'
+import type {
+  QueryKey,
+  QueryStrictModeEvent,
+  QueryStrictModeUnusedPrefetchEvent,
+} from '..'
+
+type Handler = (event: QueryStrictModeEvent) => void
+
+const toStrictModeError = (event: QueryStrictModeEvent) =>
+  event.type === 'missing-prefetch'
+    ? new QueryStrictModeMissingPrefetchError(event)
+    : new QueryStrictModeUnusedPrefetchError(event)
 
 describe('QueryStrictMode', () => {
   let queryClient: QueryClient
-  let handler: ReturnType<typeof vi.fn<QueryStrictModeHandler>>
+  let handler: ReturnType<typeof vi.fn<Handler>>
 
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
-    handler = vi.fn<QueryStrictModeHandler>()
+    handler = vi.fn<Handler>()
   })
 
   afterEach(() => {
@@ -116,7 +129,7 @@ describe('QueryStrictMode', () => {
       const rendered = renderWithClient(
         queryClient,
         <React.StrictMode>
-          <QueryStrictMode handler={handler}>
+          <QueryStrictMode handleMissingPrefetch={handler}>
             <React.Suspense fallback="loading">
               <SuspenseQuery id={key} />
             </React.Suspense>
@@ -156,7 +169,7 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>
+        <QueryStrictMode handleMissingPrefetch={handler}>
           <React.Suspense fallback="loading">
             <Page />
           </React.Suspense>
@@ -184,7 +197,7 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>
+        <QueryStrictMode handleMissingPrefetch={handler}>
           <React.Suspense fallback="loading">
             <SuspenseQuery id={key} />
           </React.Suspense>
@@ -214,7 +227,7 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>
+        <QueryStrictMode handleMissingPrefetch={handler}>
           <Parent />
         </QueryStrictMode>,
       )
@@ -253,7 +266,7 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>
+        <QueryStrictMode handleMissingPrefetch={handler}>
           <React.Suspense fallback="loading">
             <Page />
           </React.Suspense>
@@ -286,7 +299,7 @@ describe('QueryStrictMode', () => {
       const rendered = renderWithClient(
         queryClient,
         <React.StrictMode>
-          <QueryStrictMode handler={handler}>
+          <QueryStrictMode handleMissingPrefetch={handler}>
             <Page />
           </QueryStrictMode>
         </React.StrictMode>,
@@ -328,7 +341,7 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>
+        <QueryStrictMode handleMissingPrefetch={handler}>
           <Page />
         </QueryStrictMode>,
       )
@@ -354,7 +367,7 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>
+        <QueryStrictMode handleMissingPrefetch={handler}>
           <Page enabled={false} />
         </QueryStrictMode>,
       )
@@ -364,7 +377,7 @@ describe('QueryStrictMode', () => {
       expect(handler).not.toHaveBeenCalled()
 
       rendered.rerender(
-        <QueryStrictMode handler={handler}>
+        <QueryStrictMode handleMissingPrefetch={handler}>
           <Page enabled />
         </QueryStrictMode>,
       )
@@ -405,7 +418,7 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>
+        <QueryStrictMode handleMissingPrefetch={handler}>
           <Page />
         </QueryStrictMode>,
       )
@@ -428,7 +441,9 @@ describe('QueryStrictMode', () => {
       const rendered = renderWithClient(
         queryClient,
         <>
-          <QueryStrictMode handler={handler}>{null}</QueryStrictMode>
+          <QueryStrictMode handleMissingPrefetch={handler}>
+            {null}
+          </QueryStrictMode>
           <React.Suspense fallback="loading">
             <SuspenseQuery id={key} />
           </React.Suspense>
@@ -464,7 +479,7 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>
+        <QueryStrictMode handleMissingPrefetch={handler}>
           <QueryErrorResetBoundary>
             {({ reset }) => (
               <ErrorBoundary
@@ -494,7 +509,7 @@ describe('QueryStrictMode', () => {
       consoleMock.mockRestore()
     })
 
-    it('should throw a QueryStrictModeError by default', async () => {
+    it('should throw a QueryStrictModeMissingPrefetchError by default', async () => {
       const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
@@ -516,11 +531,10 @@ describe('QueryStrictMode', () => {
       )
 
       expect(rendered.getByText('error')).toBeInTheDocument()
-      expect(errors[0]).toBeInstanceOf(QueryStrictModeError)
+      expect(errors[0]).toBeInstanceOf(QueryStrictModeMissingPrefetchError)
       expect(errors[0]).toMatchObject({
-        type: 'missing-prefetch',
         message: expect.stringContaining(getQuery(key)!.queryHash),
-        query: getQuery(key),
+        event: { type: 'missing-prefetch', query: getQuery(key) },
       })
 
       await act(() => vi.advanceTimersByTimeAsync(10))
@@ -529,7 +543,7 @@ describe('QueryStrictMode', () => {
 
     describe('with a handler that throws', () => {
       const throwStrictModeError = (event: QueryStrictModeEvent) => {
-        throw new QueryStrictModeError(event)
+        throw toStrictModeError(event)
       }
 
       function renderThrowing(
@@ -545,7 +559,7 @@ describe('QueryStrictMode', () => {
 
         const rendered = renderWithClient(
           queryClient,
-          <QueryStrictMode handler={handler}>
+          <QueryStrictMode handleMissingPrefetch={handler}>
             <ErrorBoundary
               onError={(error) => errors.push(error)}
               fallbackRender={({ error, resetErrorBoundary }) => (
@@ -586,13 +600,17 @@ describe('QueryStrictMode', () => {
         })
 
         const error = errors[0]
+        expect(error).toBeInstanceOf(QueryStrictModeMissingPrefetchError)
         expect(error).toBeInstanceOf(QueryStrictModeError)
         expect(error).toBeInstanceOf(Error)
         expect(error).toMatchObject({
-          name: 'QueryStrictModeError',
-          type: 'missing-prefetch',
+          name: 'QueryStrictModeMissingPrefetchError',
           message: expect.stringContaining(getQuery(key)!.queryHash),
-          query: getQuery(key),
+          event: {
+            type: 'missing-prefetch',
+            suspense: true,
+            query: getQuery(key),
+          },
         })
 
         await act(() => vi.advanceTimersByTimeAsync(10))
@@ -652,7 +670,7 @@ describe('QueryStrictMode', () => {
         const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
         let shouldThrow = true
         handler.mockImplementation((event) => {
-          if (shouldThrow) throw new QueryStrictModeError(event)
+          if (shouldThrow) throw toStrictModeError(event)
         })
 
         function Page() {
@@ -664,7 +682,7 @@ describe('QueryStrictMode', () => {
         const rendered = renderWithClient(
           queryClient,
           <React.StrictMode>
-            <QueryStrictMode handler={handler}>
+            <QueryStrictMode handleMissingPrefetch={handler}>
               <ErrorBoundary
                 fallbackRender={({ resetErrorBoundary }) => (
                   <button onClick={() => resetErrorBoundary()}>retry</button>
@@ -705,7 +723,7 @@ describe('QueryStrictMode', () => {
         const reported = queryKey()
         handler.mockImplementation((event) => {
           if (event.query.queryHash === getQuery(thrown)?.queryHash) {
-            throw new QueryStrictModeError(event)
+            throw toStrictModeError(event)
           }
         })
 
@@ -743,12 +761,12 @@ describe('QueryStrictMode', () => {
 
         const rendered = renderWithClient(
           queryClient,
-          <QueryStrictMode handler={handler}>
+          <QueryStrictMode handleMissingPrefetch={handler}>
             <ErrorBoundary
               fallbackRender={({ error }) => (
                 <div>
                   {error instanceof QueryStrictModeError
-                    ? `strict: ${error.type}`
+                    ? `strict: ${error.event.type}`
                     : 'other'}
                 </div>
               )}
@@ -781,7 +799,9 @@ describe('QueryStrictMode', () => {
 
       renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>{null}</QueryStrictMode>,
+        <QueryStrictMode handleUnusedPrefetch={handler}>
+          {null}
+        </QueryStrictMode>,
       )
 
       void queryClient
@@ -849,7 +869,9 @@ describe('QueryStrictMode', () => {
       function App({ showReader }: { showReader: boolean }) {
         return (
           <>
-            <QueryStrictMode handler={handler}>{null}</QueryStrictMode>
+            <QueryStrictMode handleUnusedPrefetch={handler}>
+              {null}
+            </QueryStrictMode>
             {showReader && <Reader />}
           </>
         )
@@ -884,7 +906,10 @@ describe('QueryStrictMode', () => {
 
       renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler} unusedPrefetchTimeout={1000}>
+        <QueryStrictMode
+          handleUnusedPrefetch={handler}
+          unusedPrefetchTimeout={1000}
+        >
           {null}
         </QueryStrictMode>,
       )
@@ -914,14 +939,16 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>{null}</QueryStrictMode>,
+        <QueryStrictMode handleUnusedPrefetch={handler}>
+          {null}
+        </QueryStrictMode>,
       )
 
       void queryClient.query({ queryKey: key, queryFn }).catch(noop)
       await act(() => vi.advanceTimersByTimeAsync(10 + 1000))
 
       rendered.rerender(
-        <QueryStrictMode handler={handler}>
+        <QueryStrictMode handleUnusedPrefetch={handler}>
           <Page />
         </QueryStrictMode>,
       )
@@ -950,7 +977,7 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>
+        <QueryStrictMode handleUnusedPrefetch={handler}>
           <React.Suspense fallback="loading">
             <SuspenseQuery id={fast} />
             <SuspenseQuery id={slow} ms={10_000} />
@@ -972,7 +999,9 @@ describe('QueryStrictMode', () => {
 
       renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>{null}</QueryStrictMode>,
+        <QueryStrictMode handleUnusedPrefetch={handler}>
+          {null}
+        </QueryStrictMode>,
       )
 
       void queryClient
@@ -1005,7 +1034,9 @@ describe('QueryStrictMode', () => {
 
       renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>{null}</QueryStrictMode>,
+        <QueryStrictMode handleUnusedPrefetch={handler}>
+          {null}
+        </QueryStrictMode>,
       )
 
       await act(() => vi.advanceTimersByTimeAsync(10_000))
@@ -1016,7 +1047,10 @@ describe('QueryStrictMode', () => {
       const key = queryKey()
 
       renderOutsideAct(
-        <QueryStrictMode handler={handler} unusedPrefetchTimeout={10}>
+        <QueryStrictMode
+          handleUnusedPrefetch={handler}
+          unusedPrefetchTimeout={10}
+        >
           <ResolvedPrefetch id={key} />
         </QueryStrictMode>,
       )
@@ -1034,7 +1068,10 @@ describe('QueryStrictMode', () => {
       // keeps QueryStrictMode from committing until its data arrives
       const container = renderOutsideAct(
         <React.Suspense fallback="loading">
-          <QueryStrictMode handler={handler} unusedPrefetchTimeout={10}>
+          <QueryStrictMode
+            handleUnusedPrefetch={handler}
+            unusedPrefetchTimeout={10}
+          >
             <ResolvedPrefetch id={key} />
           </QueryStrictMode>
           <SuspenseQuery id={otherKey} ms={50} />
@@ -1057,7 +1094,10 @@ describe('QueryStrictMode', () => {
       // The reader only subscribes to the query when QueryStrictMode commits, after its data arrived
       const container = renderOutsideAct(
         <React.Suspense fallback="loading">
-          <QueryStrictMode handler={handler} unusedPrefetchTimeout={10}>
+          <QueryStrictMode
+            handleUnusedPrefetch={handler}
+            unusedPrefetchTimeout={10}
+          >
             <ResolvedPrefetch id={key} />
             <ResolvedQuery id={key} />
           </QueryStrictMode>
@@ -1077,7 +1117,10 @@ describe('QueryStrictMode', () => {
 
       // React.StrictMode renders QueryStrictMode twice, and mounts it, unmounts it and mounts it again
       renderOutsideAct(
-        <QueryStrictMode handler={handler} unusedPrefetchTimeout={10}>
+        <QueryStrictMode
+          handleUnusedPrefetch={handler}
+          unusedPrefetchTimeout={10}
+        >
           <ResolvedPrefetch id={key} />
         </QueryStrictMode>,
         { strictMode: true },
@@ -1093,7 +1136,9 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>{null}</QueryStrictMode>,
+        <QueryStrictMode handleUnusedPrefetch={handler}>
+          {null}
+        </QueryStrictMode>,
       )
 
       void queryClient
@@ -1106,7 +1151,10 @@ describe('QueryStrictMode', () => {
 
       await act(() => vi.advanceTimersByTimeAsync(10))
       rendered.rerender(
-        <QueryStrictMode handler={handler} unusedPrefetchTimeout={6000}>
+        <QueryStrictMode
+          handleUnusedPrefetch={handler}
+          unusedPrefetchTimeout={6000}
+        >
           {null}
         </QueryStrictMode>,
       )
@@ -1123,7 +1171,10 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler} unusedPrefetchTimeout={20}>
+        <QueryStrictMode
+          handleUnusedPrefetch={handler}
+          unusedPrefetchTimeout={20}
+        >
           {null}
         </QueryStrictMode>,
       )
@@ -1146,7 +1197,10 @@ describe('QueryStrictMode', () => {
       unsubscribe()
 
       rendered.rerender(
-        <QueryStrictMode handler={handler} unusedPrefetchTimeout={30}>
+        <QueryStrictMode
+          handleUnusedPrefetch={handler}
+          unusedPrefetchTimeout={30}
+        >
           {null}
         </QueryStrictMode>,
       )
@@ -1170,7 +1224,9 @@ describe('QueryStrictMode', () => {
 
       renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>{null}</QueryStrictMode>,
+        <QueryStrictMode handleUnusedPrefetch={handler}>
+          {null}
+        </QueryStrictMode>,
       )
 
       act(() => {
@@ -1192,7 +1248,9 @@ describe('QueryStrictMode', () => {
 
       renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>{null}</QueryStrictMode>,
+        <QueryStrictMode handleUnusedPrefetch={handler}>
+          {null}
+        </QueryStrictMode>,
       )
 
       act(() => {
@@ -1215,7 +1273,10 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>
+        <QueryStrictMode
+          handleMissingPrefetch={handler}
+          handleUnusedPrefetch={handler}
+        >
           <Page />
         </QueryStrictMode>,
       )
@@ -1224,7 +1285,12 @@ describe('QueryStrictMode', () => {
       expect(rendered.getByText('data')).toBeInTheDocument()
 
       rendered.rerender(
-        <QueryStrictMode handler={handler}>{null}</QueryStrictMode>,
+        <QueryStrictMode
+          handleMissingPrefetch={handler}
+          handleUnusedPrefetch={handler}
+        >
+          {null}
+        </QueryStrictMode>,
       )
       void queryClient.invalidateQueries({ queryKey: key, refetchType: 'all' })
 
@@ -1238,7 +1304,9 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>{null}</QueryStrictMode>,
+        <QueryStrictMode handleUnusedPrefetch={handler}>
+          {null}
+        </QueryStrictMode>,
       )
 
       void queryClient
@@ -1258,7 +1326,9 @@ describe('QueryStrictMode', () => {
     it('should stop listening to the cache on unmount', async () => {
       const rendered = render(
         <QueryClientProvider client={queryClient}>
-          <QueryStrictMode handler={handler}>{null}</QueryStrictMode>
+          <QueryStrictMode handleUnusedPrefetch={handler}>
+            {null}
+          </QueryStrictMode>
         </QueryClientProvider>,
         { reactStrictMode: true },
       )
@@ -1272,12 +1342,14 @@ describe('QueryStrictMode', () => {
 
     it('should only log once when QueryStrictMode is nested', async () => {
       const key = queryKey()
-      const innerHandler = vi.fn<QueryStrictModeHandler>()
+      const innerHandler = vi.fn<Handler>()
 
       renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler}>
-          <QueryStrictMode handler={innerHandler}>{null}</QueryStrictMode>
+        <QueryStrictMode handleUnusedPrefetch={handler}>
+          <QueryStrictMode handleUnusedPrefetch={innerHandler}>
+            {null}
+          </QueryStrictMode>
         </QueryStrictMode>,
       )
 
@@ -1302,7 +1374,7 @@ describe('QueryStrictMode', () => {
           queryFn: () => sleep(10).then(() => `data ${String(key)}`),
         })
         return (
-          <QueryStrictMode handler={handler}>
+          <QueryStrictMode handleUnusedPrefetch={handler}>
             {read && <SuspenseQuery id={key} />}
           </QueryStrictMode>
         )
@@ -1310,7 +1382,10 @@ describe('QueryStrictMode', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <QueryStrictMode handler={handler} unusedPrefetchTimeout={100}>
+        <QueryStrictMode
+          handleUnusedPrefetch={handler}
+          unusedPrefetchTimeout={100}
+        >
           <React.Suspense fallback="loading">
             <Page read />
           </React.Suspense>
@@ -1321,7 +1396,10 @@ describe('QueryStrictMode', () => {
 
       // Nothing observes it after its reader unmounts, but it was read
       rendered.rerender(
-        <QueryStrictMode handler={handler} unusedPrefetchTimeout={100}>
+        <QueryStrictMode
+          handleUnusedPrefetch={handler}
+          unusedPrefetchTimeout={100}
+        >
           <React.Suspense fallback="loading">
             <Page read={false} />
           </React.Suspense>
@@ -1342,18 +1420,21 @@ describe('QueryStrictMode', () => {
 
       it('should not log for a prefetched query that was read inside the other one', async () => {
         const key = queryKey()
-        const otherHandler = vi.fn<QueryStrictModeHandler>()
+        const otherHandler = vi.fn<Handler>()
 
         function Page({ read }: { read: boolean }) {
           return (
             <>
-              <QueryStrictMode handler={handler} unusedPrefetchTimeout={100}>
+              <QueryStrictMode
+                handleUnusedPrefetch={handler}
+                unusedPrefetchTimeout={100}
+              >
                 <React.Suspense fallback="loading">
                   {read && <SuspenseQuery id={key} />}
                 </React.Suspense>
               </QueryStrictMode>
               <QueryStrictMode
-                handler={otherHandler}
+                handleUnusedPrefetch={otherHandler}
                 unusedPrefetchTimeout={100}
               >
                 {null}
@@ -1377,13 +1458,17 @@ describe('QueryStrictMode', () => {
 
       it('should only log an unused prefetch once', async () => {
         const key = queryKey()
-        const otherHandler = vi.fn<QueryStrictModeHandler>()
+        const otherHandler = vi.fn<Handler>()
 
         renderWithClient(
           queryClient,
           <>
-            <QueryStrictMode handler={handler}>{null}</QueryStrictMode>
-            <QueryStrictMode handler={otherHandler}>{null}</QueryStrictMode>
+            <QueryStrictMode handleUnusedPrefetch={handler}>
+              {null}
+            </QueryStrictMode>
+            <QueryStrictMode handleUnusedPrefetch={otherHandler}>
+              {null}
+            </QueryStrictMode>
           </>,
         )
         prefetch(key)
@@ -1396,8 +1481,8 @@ describe('QueryStrictMode', () => {
 
       it('should only throw an unused prefetch to one error boundary', async () => {
         const key = queryKey()
-        const throwingHandler = (event: QueryStrictModeEvent) => {
-          throw new QueryStrictModeError(event)
+        const throwingHandler = (event: QueryStrictModeUnusedPrefetchEvent) => {
+          throw new QueryStrictModeUnusedPrefetchError(event)
         }
 
         const rendered = renderWithClient(
@@ -1405,7 +1490,7 @@ describe('QueryStrictMode', () => {
           <>
             {['first', 'second'].map((name) => (
               <ErrorBoundary key={name} fallback={<div>error</div>}>
-                <QueryStrictMode handler={throwingHandler}>
+                <QueryStrictMode handleUnusedPrefetch={throwingHandler}>
                   <div>{name}</div>
                 </QueryStrictMode>
               </ErrorBoundary>
@@ -1420,15 +1505,19 @@ describe('QueryStrictMode', () => {
 
       it('should not log for the one that unmounted', async () => {
         const key = queryKey()
-        const otherHandler = vi.fn<QueryStrictModeHandler>()
+        const otherHandler = vi.fn<Handler>()
 
         function Page({ both }: { both: boolean }) {
           return (
             <>
               {both && (
-                <QueryStrictMode handler={otherHandler}>{null}</QueryStrictMode>
+                <QueryStrictMode handleUnusedPrefetch={otherHandler}>
+                  {null}
+                </QueryStrictMode>
               )}
-              <QueryStrictMode handler={handler}>{null}</QueryStrictMode>
+              <QueryStrictMode handleUnusedPrefetch={handler}>
+                {null}
+              </QueryStrictMode>
             </>
           )
         }
@@ -1449,11 +1538,8 @@ describe('QueryStrictMode', () => {
           .query({ queryKey: key, queryFn: () => sleep(ms).then(() => 'data') })
           .catch(noop)
 
-      // Only throws unused prefetches, so hooks that start their own fetch are still reported
       const throwUnusedPrefetch = (event: QueryStrictModeEvent) => {
-        if (event.type === 'unused-prefetch') {
-          throw new QueryStrictModeError(event)
-        }
+        throw toStrictModeError(event)
       }
 
       function renderThrowing(
@@ -1482,7 +1568,9 @@ describe('QueryStrictMode', () => {
         handler.mockImplementation(throwUnusedPrefetch)
 
         const { rendered, errors } = renderThrowing((children) => (
-          <QueryStrictMode handler={handler}>{children}</QueryStrictMode>
+          <QueryStrictMode handleUnusedPrefetch={handler}>
+            {children}
+          </QueryStrictMode>
         ))
 
         prefetch(key)
@@ -1506,12 +1594,12 @@ describe('QueryStrictMode', () => {
         })
 
         const error = errors[0]
+        expect(error).toBeInstanceOf(QueryStrictModeUnusedPrefetchError)
         expect(error).toBeInstanceOf(QueryStrictModeError)
         expect(error).toMatchObject({
-          name: 'QueryStrictModeError',
-          type: 'unused-prefetch',
+          name: 'QueryStrictModeUnusedPrefetchError',
           message: expect.stringContaining(getQuery(key)!.queryHash),
-          query: getQuery(key),
+          event: { type: 'unused-prefetch', query: getQuery(key) },
         })
         consoleMock.mockRestore()
       })
@@ -1527,7 +1615,9 @@ describe('QueryStrictMode', () => {
         })
 
         const { rendered, errors } = renderThrowing((children) => (
-          <QueryStrictMode handler={handler}>{children}</QueryStrictMode>
+          <QueryStrictMode handleUnusedPrefetch={handler}>
+            {children}
+          </QueryStrictMode>
         ))
 
         prefetch(key)
@@ -1549,12 +1639,14 @@ describe('QueryStrictMode', () => {
         const thrown = queryKey()
         handler.mockImplementation((event) => {
           if (event.query.queryHash === getQuery(thrown)?.queryHash) {
-            throw new QueryStrictModeError(event)
+            throw toStrictModeError(event)
           }
         })
 
         const { rendered, errors } = renderThrowing((children) => (
-          <QueryStrictMode handler={handler}>{children}</QueryStrictMode>
+          <QueryStrictMode handleUnusedPrefetch={handler}>
+            {children}
+          </QueryStrictMode>
         ))
 
         prefetch(reported, 10)
@@ -1570,7 +1662,7 @@ describe('QueryStrictMode', () => {
 
         await act(() => vi.advanceTimersByTimeAsync(10))
         expect(rendered.queryByText('content')).toBeNull()
-        expect(errors[0]).toMatchObject({ query: getQuery(thrown) })
+        expect(errors[0]).toMatchObject({ event: { query: getQuery(thrown) } })
         expect(handler).toHaveBeenCalledTimes(2)
         consoleMock.mockRestore()
       })
@@ -1610,7 +1702,10 @@ describe('QueryStrictMode', () => {
     const rendered = renderWithClient(
       queryClient,
       <IsRestoringProvider value={true}>
-        <QueryStrictMode handler={handler}>
+        <QueryStrictMode
+          handleMissingPrefetch={handler}
+          handleUnusedPrefetch={handler}
+        >
           <React.Suspense fallback="loading">
             <SuspenseQuery id={suspended} />
           </React.Suspense>
@@ -1643,7 +1738,10 @@ describe('QueryStrictMode', () => {
 
     const rendered = renderWithClient(
       queryClient,
-      <QueryStrictMode handler={handler}>
+      <QueryStrictMode
+        handleMissingPrefetch={handler}
+        handleUnusedPrefetch={handler}
+      >
         <React.Suspense fallback="loading">
           <SuspenseQuery id={key} />
         </React.Suspense>
