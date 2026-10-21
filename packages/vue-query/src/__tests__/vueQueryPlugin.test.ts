@@ -201,7 +201,7 @@ describe('VueQueryPlugin', () => {
 
       appMock._mixin.beforeCreate?.call(appMock)
 
-      expect(customClient.mount).toHaveBeenCalled()
+      expect(customClient.mount).toHaveBeenCalledWith()
       expect(appMock._provided).toMatchObject({
         VUE_QUERY_CLIENT: customClient,
       })
@@ -212,7 +212,7 @@ describe('VueQueryPlugin', () => {
       const customClient = { mount: vi.fn() } as unknown as QueryClient
       VueQueryPlugin.install(appMock, { queryClient: customClient })
 
-      expect(customClient.mount).toHaveBeenCalled()
+      expect(customClient.mount).toHaveBeenCalledWith()
       expect(appMock.provide).toHaveBeenCalledWith(
         VUE_QUERY_CLIENT,
         customClient,

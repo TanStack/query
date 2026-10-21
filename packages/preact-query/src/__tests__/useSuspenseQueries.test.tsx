@@ -186,7 +186,7 @@ describe('useSuspenseQueries', () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1000)
     })
-    expect(onSuspend).toHaveBeenCalled()
+    expect(onSuspend).toHaveBeenCalledWith()
     // the test for onQueriesResolution is React-specific and not applicable to Preact
   })
 
@@ -276,7 +276,11 @@ describe('useSuspenseQueries', () => {
     await vi.advanceTimersByTimeAsync(30)
     expect(rendered.getByText('data')).toBeInTheDocument()
 
-    expect(spy).toHaveBeenCalled()
+    expect(spy).toHaveBeenCalledWith([
+      expect.objectContaining({ data: { value: 10 } }),
+      expect.objectContaining({ data: { value: 20 } }),
+      expect.objectContaining({ data: { value: 30 } }),
+    ])
   })
 
   it('should handle duplicate query keys without infinite loops', async () => {
@@ -333,7 +337,7 @@ describe('useSuspenseQueries', () => {
     )
 
     await vi.advanceTimersByTimeAsync(localDuration)
-    expect(onSuspend).toHaveBeenCalled()
+    expect(onSuspend).toHaveBeenCalledWith()
     await vi.advanceTimersByTimeAsync(100)
     expect(onQueriesResolution).toHaveBeenCalledTimes(1)
     expect(onQueriesResolution).toHaveBeenLastCalledWith({

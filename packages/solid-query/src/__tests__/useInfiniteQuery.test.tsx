@@ -1951,7 +1951,9 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(5)
     expect(rendered.getByText('off')).toBeInTheDocument()
 
-    expect(cancelFn).toHaveBeenCalled()
+    expect(cancelFn).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'abort' }),
+    )
   })
 
   it('should use provided custom queryClient', async () => {

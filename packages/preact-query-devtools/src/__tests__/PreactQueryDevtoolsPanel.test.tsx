@@ -49,14 +49,14 @@ describe('PreactQueryDevtoolsPanel', () => {
         </QueryClientProvider>,
       ),
     ).not.toThrow()
-    expect(mountMock).toHaveBeenCalled()
+    expect(mountMock).toHaveBeenCalledWith(expect.any(HTMLDivElement))
   })
 
   it('should not throw an error if query client is provided via props', () => {
     expect(() =>
       render(<PreactQueryDevtoolsPanel client={queryClient} />),
     ).not.toThrow()
-    expect(mountMock).toHaveBeenCalled()
+    expect(mountMock).toHaveBeenCalledWith(expect.any(HTMLDivElement))
   })
 
   it('should forward "onClose" to the devtools instance', () => {
@@ -189,7 +189,7 @@ describe('PreactQueryDevtoolsPanel', () => {
       unmount()
     })
 
-    expect(unmountMock).toHaveBeenCalled()
+    expect(unmountMock).toHaveBeenCalledWith()
   })
 
   it('should return null in non-development environments', async () => {

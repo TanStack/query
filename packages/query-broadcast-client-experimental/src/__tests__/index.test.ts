@@ -84,7 +84,9 @@ describe('broadcastQueryClient', () => {
       // A later local change must still be broadcast to other tabs, instead
       // of being silently swallowed because the transaction flag got stuck.
       queryClient.setQueryData(localKey, { value: 1 })
-      expect(mockPostMessage).toHaveBeenCalled()
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        expect.objectContaining({ queryKey: localKey }),
+      )
     })
 
     it('should keep broadcasting local changes after query.setState throws for an existing query', () => {
@@ -118,7 +120,9 @@ describe('broadcastQueryClient', () => {
       mockPostMessage.mockClear()
 
       queryClient.setQueryData(localKey, { value: 1 })
-      expect(mockPostMessage).toHaveBeenCalled()
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        expect.objectContaining({ queryKey: localKey }),
+      )
     })
 
     it('should not overwrite an existing query with data when an "added" message arrives for it', () => {

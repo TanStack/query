@@ -267,7 +267,11 @@ describe('useSuspenseQueries', () => {
     await act(() => vi.advanceTimersByTimeAsync(30))
     expect(rendered.getByText('data')).toBeInTheDocument()
 
-    expect(spy).toHaveBeenCalled()
+    expect(spy).toHaveBeenCalledWith([
+      expect.objectContaining({ data: { value: 10 } }),
+      expect.objectContaining({ data: { value: 20 } }),
+      expect.objectContaining({ data: { value: 30 } }),
+    ])
   })
 
   it('should not call combine while reset queries are pending again', async () => {

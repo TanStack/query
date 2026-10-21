@@ -264,7 +264,13 @@ describe('persist', () => {
       await restorePromise
 
       queryClient.setQueryData(['key'], 'data')
-      expect(persister.persistClient).toHaveBeenCalled()
+      expect(persister.persistClient).toHaveBeenCalledWith(
+        expect.objectContaining({
+          clientState: expect.objectContaining({
+            queries: [expect.objectContaining({ queryKey: ['key'] })],
+          }),
+        }),
+      )
 
       unsubscribe()
     })

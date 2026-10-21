@@ -148,7 +148,7 @@ describe('SolidQueryDevtoolsPanel', () => {
     ))
     unmountComponent()
 
-    expect(unmount).toHaveBeenCalled()
+    expect(unmount).toHaveBeenCalledWith()
   })
 
   it('should return null in non-development environments', async () => {

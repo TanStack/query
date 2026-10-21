@@ -4588,7 +4588,9 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(6)
     rendered.getByText('off')
 
-    expect(cancelFn).toHaveBeenCalled()
+    expect(cancelFn).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'abort' }),
+    )
   })
 
   it('should cancel the query if the signal was consumed and there are no more subscriptions', async () => {
@@ -6986,7 +6988,9 @@ describe('useQuery', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(retryOnMount).toHaveBeenCalled()
+    expect(retryOnMount).toHaveBeenCalledWith(
+      queryClient.getQueryCache().find({ queryKey: key }),
+    )
     const query = retryOnMount.mock.calls.at(-1)![0]
     expect(query.state.status).toBe('error')
     expect(query.state.data).toBeUndefined()

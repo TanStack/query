@@ -1018,7 +1018,7 @@ describe('query', () => {
         initialDataUpdatedAt: initialDataUpdatedAtSpy,
       })
       .catch(noop)
-    expect(initialDataUpdatedAtSpy).toHaveBeenCalled()
+    expect(initialDataUpdatedAtSpy).toHaveBeenCalledWith()
   })
 
   it('should work with initialDataUpdatedAt set to zero', async () => {

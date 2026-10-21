@@ -287,7 +287,10 @@ describe('QueryCache', () => {
         queryKey: queryKeyRef,
       })
 
-      expect(invalidateQueries).toHaveBeenCalled()
+      expect(invalidateQueries).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref, refetchType: 'none' },
+        {},
+      )
       expect(refetchQueries).not.toHaveBeenCalled()
       await vi.advanceTimersByTimeAsync(0)
       expect(refetchQueries).toHaveBeenCalledWith(
@@ -333,7 +336,10 @@ describe('QueryCache', () => {
         refetchType: 'none',
       })
 
-      expect(invalidateQueries).toHaveBeenCalled()
+      expect(invalidateQueries).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref, refetchType: 'none' },
+        {},
+      )
       expect(refetchQueries).not.toHaveBeenCalled()
       await vi.advanceTimersByTimeAsync(0)
       expect(refetchQueries).not.toHaveBeenCalled()
