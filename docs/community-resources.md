@@ -89,7 +89,7 @@ utilities:
     {
       title: 'Query Key Kit',
       url: 'https://github.com/amjadiqbal/query-key-kit',
-      description: 'Typed query-key hierarchy and scoped invalidation helpers for TanStack Query v5, returning queryOptions()-shaped objects with DataTag keys. Drop-in API for query-key-factory; framework-agnostic (built on query-core types).',
+      description: 'Typed query-key hierarchy and scoped invalidation helpers for TanStack Query v5, returning queryOptions()-shaped objects with DataTag keys. Same API as query-key-factory (see the migration notes); framework-agnostic (built on query-core types).',
     },
 
     {
