@@ -1,9 +1,10 @@
 /**
- * MockApiInterceptor is used to simulate API responses for `/api/tasks` endpoints.
- * It handles the following operations:
+ * MockApiInterceptor is used to simulate API responses for `/api/tasks`
+ * endpoints. It handles the following operations:
+ *
  * - GET: Fetches all tasks from sessionStorage.
- * - POST: Adds a new task to sessionStorage.
- * Simulated responses include a delay to mimic network latency.
+ * - POST: Adds a new task to sessionStorage. Simulated responses include a delay
+ *   to mimic network latency.
  */
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http'
 import { delay, of, switchMap, throwError, timer } from 'rxjs'

@@ -5,6 +5,7 @@ export const DevtoolsOfflineContext = createContext<DevtoolsOfflineState>()
 
 /**
  * Returns the devtools offline state provided by `DevtoolsOfflineProvider`.
+ *
  * @returns The offline state.
  * @throws {Error} If there is no `DevtoolsOfflineProvider` above.
  */

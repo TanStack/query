@@ -35,18 +35,23 @@ import type {
 } from '@tanstack/query-core'
 
 /**
- * Vue-aware subclass of `@tanstack/query-core`'s `QueryClient`. Methods that accept `options` (such as
- * `CancelOptions` or `InvalidateOptions`) or filters (such as the `QueryFilters` accepted by
- * `invalidateQueries`) also accept a {@link MaybeRefDeep} version of it, so you can pass `ref`s directly
- * without unwrapping them yourself — e.g. `queryClient.invalidateQueries({ queryKey: ['post', myRef] })`.
+ * Vue-aware subclass of `@tanstack/query-core`'s `QueryClient`. Methods that
+ * accept `options` (such as `CancelOptions` or `InvalidateOptions`) or filters
+ * (such as the `QueryFilters` accepted by `invalidateQueries`) also accept a
+ * {@link MaybeRefDeep} version of it, so you can pass `ref`s directly without
+ * unwrapping them yourself — e.g. `queryClient.invalidateQueries({ queryKey:
+ * ['post', myRef] })`.
  *
- * `ref` entries in a `queryKey` are unwrapped this way on every method, but reactive getter entries
- * (`() => id.value`) are only unwrapped when the `queryKey` is passed as a `queryKey` property of a
- * filters/options object (e.g. `invalidateQueries({ queryKey: ['post', idGetter] })`) — methods like
- * `getQueryData` that take the `queryKey` array as their own argument do not unwrap getter entries there,
- * and the getter function itself ends up in the cache key.
+ * `ref` entries in a `queryKey` are unwrapped this way on every method, but
+ * reactive getter entries (`() => id.value`) are only unwrapped when the
+ * `queryKey` is passed as a `queryKey` property of a filters/options object
+ * (e.g. `invalidateQueries({ queryKey: ['post', idGetter] })`) — methods like
+ * `getQueryData` that take the `queryKey` array as their own argument do not
+ * unwrap getter entries there, and the getter function itself ends up in the
+ * cache key.
  *
- * Install one on your app with `VueQueryPlugin`, or retrieve it with `useQueryClient`.
+ * Install one on your app with `VueQueryPlugin`, or retrieve it with
+ * `useQueryClient`.
  */
 export class QueryClient extends QC {
   constructor(config: QueryClientConfig = {}) {
@@ -59,8 +64,9 @@ export class QueryClient extends QC {
   }
 
   /**
-   * `true` while a `clientPersister` passed to `VueQueryPlugin` is restoring the cache. Queries don't fetch
-   * while this is `true`. Defaults to `false` if no persister is configured.
+   * `true` while a `clientPersister` passed to `VueQueryPlugin` is restoring
+   * the cache. Queries don't fetch while this is `true`. Defaults to `false` if
+   * no persister is configured.
    */
   isRestoring?: Ref<boolean> = ref(false)
 
@@ -89,13 +95,16 @@ export class QueryClient extends QC {
   }
 
   /**
-   * Returns the cached data of a query, or fetches it if there is none. With `revalidateIfStale`,
-   * stale cached data is also refetched in the background.
-   * @param options - The query options. If the query has no cached data yet, it is fetched with
-   * these options.
-   * @returns A promise that resolves to the cached data, or to the fetched data if nothing was
-   * cached yet.
-   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   * Returns the cached data of a query, or fetches it if there is none. With
+   * `revalidateIfStale`, stale cached data is also refetched in the
+   * background.
+   *
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' })
+   *   instead. This method will be removed in the next major version.
+   * @param options - The query options. If the query has no cached data yet, it
+   *   is fetched with these options.
+   * @returns A promise that resolves to the cached data, or to the fetched data
+   *   if nothing was cached yet.
    */
   override ensureQueryData<
     TQueryFnData,
@@ -107,7 +116,9 @@ export class QueryClient extends QC {
   ): Promise<TData>
   /**
    * {@inheritDoc QueryClient.ensureQueryData:0}
-   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   *
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' })
+   *   instead. This method will be removed in the next major version.
    */
   override ensureQueryData<
     TQueryFnData,
@@ -332,13 +343,15 @@ export class QueryClient extends QC {
   }
 
   /**
-   * Fetches and caches a query, or returns its cached data if it isn't stale. Unlike in observers,
-   * the fetch isn't retried unless `retry` is set.
-   * @param options - The query options, including the `queryKey` and the `queryFn` used if the
-   * query needs to fetch.
-   * @returns A promise that resolves to the cached or fetched data, or rejects with the fetch
-   * error.
-   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   * Fetches and caches a query, or returns its cached data if it isn't stale.
+   * Unlike in observers, the fetch isn't retried unless `retry` is set.
+   *
+   * @deprecated Use queryClient.query(options) instead. This method will be
+   *   removed in the next major version.
+   * @param options - The query options, including the `queryKey` and the
+   *   `queryFn` used if the query needs to fetch.
+   * @returns A promise that resolves to the cached or fetched data, or rejects
+   *   with the fetch error.
    */
   override fetchQuery<
     TQueryFnData,
@@ -357,7 +370,9 @@ export class QueryClient extends QC {
   ): Promise<TData>
   /**
    * {@inheritDoc QueryClient.fetchQuery:0}
-   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   *
+   * @deprecated Use queryClient.query(options) instead. This method will be
+   *   removed in the next major version.
    */
   override fetchQuery<
     TQueryFnData,
@@ -394,12 +409,15 @@ export class QueryClient extends QC {
   }
 
   /**
-   * Fetches and caches a query like {@link QueryClient#fetchQuery}, but ignores the result and any
-   * error.
-   * @param options - The query options, including the `queryKey` and the `queryFn` used if the
-   * query needs to fetch.
+   * Fetches and caches a query like {@link QueryClient#fetchQuery}, but ignores
+   * the result and any error.
+   *
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors
+   *   with `.catch(noop)`. This method will be removed in the next major
+   *   version.
+   * @param options - The query options, including the `queryKey` and the
+   *   `queryFn` used if the query needs to fetch.
    * @returns A promise that resolves once the fetch settles. It never rejects.
-   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */
   override prefetchQuery<
     TQueryFnData = unknown,
@@ -411,7 +429,10 @@ export class QueryClient extends QC {
   ): Promise<void>
   /**
    * {@inheritDoc QueryClient.prefetchQuery:0}
-   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   *
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors
+   *   with `.catch(noop)`. This method will be removed in the next major
+   *   version.
    */
   override prefetchQuery<
     TQueryFnData = unknown,
@@ -505,12 +526,15 @@ export class QueryClient extends QC {
   }
 
   /**
-   * Fetches and caches an infinite query, or returns its cached data if it isn't stale.
-   * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
-   * `initialPageParam`.
-   * @returns A promise that resolves to the cached or fetched {@link InfiniteData}, or rejects with
-   * the fetch error.
-   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
+   * Fetches and caches an infinite query, or returns its cached data if it
+   * isn't stale.
+   *
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method
+   *   will be removed in the next major version.
+   * @param options - The infinite query options, including the `queryKey`, the
+   *   `queryFn`, and the `initialPageParam`.
+   * @returns A promise that resolves to the cached or fetched
+   *   {@link InfiniteData}, or rejects with the fetch error.
    */
   override fetchInfiniteQuery<
     TQueryFnData = unknown,
@@ -529,7 +553,9 @@ export class QueryClient extends QC {
   ): Promise<InfiniteData<TData, TPageParam>>
   /**
    * {@inheritDoc QueryClient.fetchInfiniteQuery:0}
-   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
+   *
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method
+   *   will be removed in the next major version.
    */
   override fetchInfiniteQuery<
     TQueryFnData,
@@ -570,12 +596,16 @@ export class QueryClient extends QC {
   }
 
   /**
-   * Fetches and caches an infinite query like {@link QueryClient#fetchInfiniteQuery}, but ignores
-   * the result and any error.
-   * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
-   * `initialPageParam`.
+   * Fetches and caches an infinite query like
+   * {@link QueryClient#fetchInfiniteQuery}, but ignores the result and any
+   * error.
+   *
+   * @deprecated use void queryClient.infiniteQuery(options) instead. You can
+   *   swallow errors with `.catch(noop)`. This method will be removed in the
+   *   next major version.
+   * @param options - The infinite query options, including the `queryKey`, the
+   *   `queryFn`, and the `initialPageParam`.
    * @returns A promise that resolves once the fetch settles. It never rejects.
-   * @deprecated use void queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */
   override prefetchInfiniteQuery<
     TQueryFnData,
@@ -594,7 +624,10 @@ export class QueryClient extends QC {
   ): Promise<void>
   /**
    * {@inheritDoc QueryClient.prefetchInfiniteQuery:0}
-   * @deprecated use void queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   *
+   * @deprecated use void queryClient.infiniteQuery(options) instead. You can
+   *   swallow errors with `.catch(noop)`. This method will be removed in the
+   *   next major version.
    */
   override prefetchInfiniteQuery<
     TQueryFnData,

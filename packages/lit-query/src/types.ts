@@ -14,9 +14,7 @@ import type {
 } from './createQueriesController.js'
 import type { CreateQueryOptions } from './createQueryController.js'
 
-/**
- * Accessor-wrapped options accepted by `createQueryController`.
- */
+/** Accessor-wrapped options accepted by `createQueryController`. */
 export type QueryControllerOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -27,17 +25,13 @@ export type QueryControllerOptions<
   CreateQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
 >
 
-/**
- * Result object produced by a Lit query controller.
- */
+/** Result object produced by a Lit query controller. */
 export type QueryControllerResult<
   TData = unknown,
   TError = DefaultError,
 > = QueryObserverResult<TData, TError>
 
-/**
- * Accessor-wrapped options accepted by `createInfiniteQueryController`.
- */
+/** Accessor-wrapped options accepted by `createInfiniteQueryController`. */
 export type InfiniteQueryControllerOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -48,9 +42,7 @@ export type InfiniteQueryControllerOptions<
   CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
 >
 
-/**
- * Accessor-wrapped options accepted by `createMutationController`.
- */
+/** Accessor-wrapped options accepted by `createMutationController`. */
 export type MutationControllerOptions<
   TData = unknown,
   TError = DefaultError,
@@ -58,9 +50,7 @@ export type MutationControllerOptions<
   TOnMutateResult = unknown,
 > = Accessor<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>>
 
-/**
- * Result object produced by a Lit mutation controller.
- */
+/** Result object produced by a Lit mutation controller. */
 export type MutationControllerResult<
   TData = unknown,
   TError = DefaultError,
@@ -68,9 +58,7 @@ export type MutationControllerResult<
   TOnMutateResult = unknown,
 > = MutationObserverResult<TData, TError, TVariables, TOnMutateResult>
 
-/**
- * Accessor-wrapped options accepted by `createQueriesController`.
- */
+/** Accessor-wrapped options accepted by `createQueriesController`. */
 export type QueriesControllerOptions<
   TQueryOptions extends Array<any> = Array<any>,
   TCombinedResult = CreateQueriesResults<TQueryOptions>,

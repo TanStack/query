@@ -64,9 +64,6 @@ describe('injectQuery', () => {
     injectQuery<number>(() => ({ queryKey: key, queryFn: () => 'test' }))
 
     // it should infer the result type from a generic query function
-    /**
-     *
-     */
     function queryFn<T = string>(): Promise<T> {
       return Promise.resolve({} as T)
     }

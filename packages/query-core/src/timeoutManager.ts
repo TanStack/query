@@ -2,9 +2,9 @@
  * {@link TimeoutManager} does not support passing arguments to the callback.
  *
  * `(_: void)` is the argument type inferred by TypeScript's default typings for
- * `setTimeout(cb, number)`.
- * If we don't accept a single void argument, then
- * `new Promise(resolve => timeoutManager.setTimeout(resolve, N))` is a type error.
+ * `setTimeout(cb, number)`. If we don't accept a single void argument, then
+ * `new Promise(resolve => timeoutManager.setTimeout(resolve, N))` is a type
+ * error.
  */
 export type TimeoutCallback = (_: void) => void
 
@@ -19,30 +19,29 @@ export type ManagedTimerId = number | { [Symbol.toPrimitive]: () => number }
 /**
  * Backend for timer functions.
  *
- * Timers are performance-sensitive: short-lived timers (delays under a few seconds) tend to be
- * latency-sensitive, while long-lived ones may benefit more from coalescing — batching timers
- * with similar deadlines together — which the default provider (backed by the platform's global
- * `setTimeout`/`setInterval`) does not do. A custom provider can implement coalescing, and can
- * also support delays longer than the ~24-day maximum of the global `setTimeout`.
+ * Timers are performance-sensitive: short-lived timers (delays under a few
+ * seconds) tend to be latency-sensitive, while long-lived ones may benefit more
+ * from coalescing — batching timers with similar deadlines together — which the
+ * default provider (backed by the platform's global `setTimeout`/`setInterval`)
+ * does not do. A custom provider can implement coalescing, and can also support
+ * delays longer than the ~24-day maximum of the global `setTimeout`.
  */
 export type TimeoutProvider<TTimerId extends ManagedTimerId = ManagedTimerId> =
   {
     /**
-     * Schedules `callback` to run once after `delay` milliseconds, like the global `setTimeout`.
+     * Schedules `callback` to run once after `delay` milliseconds, like the
+     * global `setTimeout`.
      */
     readonly setTimeout: (callback: TimeoutCallback, delay: number) => TTimerId
-    /**
-     * Cancels a timeout scheduled with `setTimeout`.
-     */
+    /** Cancels a timeout scheduled with `setTimeout`. */
     readonly clearTimeout: (timeoutId: TTimerId | undefined) => void
 
     /**
-     * Schedules `callback` to run every `delay` milliseconds, like the global `setInterval`.
+     * Schedules `callback` to run every `delay` milliseconds, like the global
+     * `setInterval`.
      */
     readonly setInterval: (callback: TimeoutCallback, delay: number) => TTimerId
-    /**
-     * Cancels an interval scheduled with `setInterval`.
-     */
+    /** Cancels an interval scheduled with `setInterval`. */
     readonly clearInterval: (intervalId: TTimerId | undefined) => void
   }
 
@@ -97,23 +96,25 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    *
    * This may be useful if you notice event loop performance issues with
    * thousands of queries. A custom TimeoutProvider could also support timer
-   * delays longer than the global `setTimeout` maximum delay value of about
-   * 24 days.
+   * delays longer than the global `setTimeout` maximum delay value of about 24
+   * days.
    *
-   * It is important to call `setTimeoutProvider` before creating a
-   * QueryClient or queries, so that the same provider is used consistently
-   * for all timers in the application, since different TimeoutProviders
-   * cannot cancel each others' timers.
-   * @param provider - The `TimeoutProvider` to use for all timers from now on.
+   * It is important to call `setTimeoutProvider` before creating a QueryClient
+   * or queries, so that the same provider is used consistently for all timers
+   * in the application, since different TimeoutProviders cannot cancel each
+   * others' timers.
+   *
    * @example
-   * ```ts
-   * import { timeoutManager, QueryClient } from '@tanstack/query-core'
-   * import { CustomTimeoutProvider } from './CustomTimeoutProvider'
+   *   ;```ts
+   *   import { timeoutManager, QueryClient } from '@tanstack/query-core'
+   *   import { CustomTimeoutProvider } from './CustomTimeoutProvider'
    *
-   * timeoutManager.setTimeoutProvider(new CustomTimeoutProvider())
+   *   timeoutManager.setTimeoutProvider(new CustomTimeoutProvider())
    *
-   * export const queryClient = new QueryClient()
-   * ```
+   *   export const queryClient = new QueryClient()
+   *   ```
+   *
+   * @param provider - The `TimeoutProvider` to use for all timers from now on.
    */
   setTimeoutProvider<TTimerId extends ManagedTimerId>(
     provider: TimeoutProvider<TTimerId>,
@@ -151,20 +152,22 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    *
    * It returns a timer ID, which may be a number or an object that can be
    * coerced to a number via `Symbol.toPrimitive`.
+   *
+   * @example
+   *   ;```ts
+   *   import { timeoutManager } from '@tanstack/query-core'
+   *
+   *   const timeoutId = timeoutManager.setTimeout(
+   *     () => console.log('ran at:', new Date()),
+   *     1000,
+   *   )
+   *
+   *   const timeoutIdNumber: number = Number(timeoutId)
+   *   ```
+   *
    * @param callback - The function to call when the timeout elapses.
    * @param delay - The time to wait before calling `callback`, in milliseconds.
    * @returns The timer ID, to pass to {@link TimeoutManager#clearTimeout}.
-   * @example
-   * ```ts
-   * import { timeoutManager } from '@tanstack/query-core'
-   *
-   * const timeoutId = timeoutManager.setTimeout(
-   *   () => console.log('ran at:', new Date()),
-   *   1000,
-   * )
-   *
-   * const timeoutIdNumber: number = Number(timeoutId)
-   * ```
    */
   setTimeout(callback: TimeoutCallback, delay: number): ManagedTimerId {
     if (process.env.NODE_ENV !== 'production') {
@@ -174,44 +177,48 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
   }
 
   /**
-   * `clearTimeout` cancels a timeout callback scheduled with `setTimeout`,
-   * like the global `clearTimeout` function. It should be called with a
-   * timer ID returned by `setTimeout`.
-   * @param timeoutId - The timer ID returned by `setTimeout`, or `undefined`.
+   * `clearTimeout` cancels a timeout callback scheduled with `setTimeout`, like
+   * the global `clearTimeout` function. It should be called with a timer ID
+   * returned by `setTimeout`.
+   *
    * @example
-   * ```ts
-   * import { timeoutManager } from '@tanstack/query-core'
+   *   ;```ts
+   *   import { timeoutManager } from '@tanstack/query-core'
    *
-   * const timeoutId = timeoutManager.setTimeout(
-   *   () => console.log('ran at:', new Date()),
-   *   1000,
-   * )
+   *   const timeoutId = timeoutManager.setTimeout(
+   *     () => console.log('ran at:', new Date()),
+   *     1000,
+   *   )
    *
-   * timeoutManager.clearTimeout(timeoutId)
-   * ```
+   *   timeoutManager.clearTimeout(timeoutId)
+   *   ```
+   *
+   * @param timeoutId - The timer ID returned by `setTimeout`, or `undefined`.
    */
   clearTimeout(timeoutId: ManagedTimerId | undefined): void {
     this.#provider.clearTimeout(timeoutId)
   }
 
   /**
-   * `setInterval` schedules a callback to be called approximately every
-   * `delay` milliseconds, like the global `setInterval` function.
+   * `setInterval` schedules a callback to be called approximately every `delay`
+   * milliseconds, like the global `setInterval` function.
    *
    * Like `setTimeout`, it returns a timer ID, which may be a number or an
    * object that can be coerced to a number via `Symbol.toPrimitive`.
+   *
+   * @example
+   *   ;```ts
+   *   import { timeoutManager } from '@tanstack/query-core'
+   *
+   *   const intervalId = timeoutManager.setInterval(
+   *     () => console.log('ran at:', new Date()),
+   *     1000,
+   *   )
+   *   ```
+   *
    * @param callback - The function to call on every interval.
    * @param delay - The time between calls, in milliseconds.
    * @returns The timer ID, to pass to {@link TimeoutManager#clearInterval}.
-   * @example
-   * ```ts
-   * import { timeoutManager } from '@tanstack/query-core'
-   *
-   * const intervalId = timeoutManager.setInterval(
-   *   () => console.log('ran at:', new Date()),
-   *   1000,
-   * )
-   * ```
    */
   setInterval(callback: TimeoutCallback, delay: number): ManagedTimerId {
     if (process.env.NODE_ENV !== 'production') {
@@ -222,20 +229,22 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
 
   /**
    * `clearInterval` can be used to cancel an interval, like the global
-   * `clearInterval` function. It should be called with an interval ID
-   * returned by `setInterval`.
-   * @param intervalId - The timer ID returned by `setInterval`, or `undefined`.
+   * `clearInterval` function. It should be called with an interval ID returned
+   * by `setInterval`.
+   *
    * @example
-   * ```ts
-   * import { timeoutManager } from '@tanstack/query-core'
+   *   ;```ts
+   *   import { timeoutManager } from '@tanstack/query-core'
    *
-   * const intervalId = timeoutManager.setInterval(
-   *   () => console.log('ran at:', new Date()),
-   *   1000,
-   * )
+   *   const intervalId = timeoutManager.setInterval(
+   *     () => console.log('ran at:', new Date()),
+   *     1000,
+   *   )
    *
-   * timeoutManager.clearInterval(intervalId)
-   * ```
+   *   timeoutManager.clearInterval(intervalId)
+   *   ```
+   *
+   * @param intervalId - The timer ID returned by `setInterval`, or `undefined`.
    */
   clearInterval(intervalId: ManagedTimerId | undefined): void {
     this.#provider.clearInterval(intervalId)
@@ -243,7 +252,8 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
 }
 
 /**
- * Singleton instance of {@link TimeoutManager}, used throughout TanStack Query to schedule and cancel timers.
+ * Singleton instance of {@link TimeoutManager}, used throughout TanStack Query
+ * to schedule and cancel timers.
  */
 export const timeoutManager = new TimeoutManager()
 
@@ -253,6 +263,7 @@ export const timeoutManager = new TimeoutManager()
  *
  * This function is provided to make auditing the `tanstack/query-core` for
  * incorrect use of system `setTimeout` easier.
+ *
  * @param callback - The function to call on the next event loop tick.
  */
 export function systemSetTimeoutZero(callback: TimeoutCallback): void {

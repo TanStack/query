@@ -4,13 +4,13 @@ type Listener = (online: boolean) => void
 type SetupFn = (setOnline: Listener) => (() => void) | undefined
 
 /**
- * The `OnlineManager` manages the online state within TanStack Query. It can
- * be used to change the default event listeners or to manually change the
- * online state.
+ * The `OnlineManager` manages the online state within TanStack Query. It can be
+ * used to change the default event listeners or to manually change the online
+ * state.
  *
  * By default, the `onlineManager` assumes an active network connection, and
- * listens to the `online` and `offline` events on the `window` object to
- * detect changes.
+ * listens to the `online` and `offline` events on the `window` object to detect
+ * changes.
  */
 export class OnlineManager extends Subscribable<Listener> {
   #online = true
@@ -55,23 +55,26 @@ export class OnlineManager extends Subscribable<Listener> {
   }
 
   /**
-   * `setEventListener` can be used to set a custom event listener that will
-   * be used to determine the online state. The provided `setup` function
-   * receives a `setOnline` callback that should be called with a `boolean`
-   * whenever the online state changes.
-   * @param setup - Receives the `setOnline` callback, registers the event listener, and may return
-   * a cleanup function that is called when the listener is replaced or no longer needed.
-   * @example
-   * ```ts
-   * import NetInfo from '@react-native-community/netinfo'
-   * import { onlineManager } from '@tanstack/query-core'
+   * `setEventListener` can be used to set a custom event listener that will be
+   * used to determine the online state. The provided `setup` function receives
+   * a `setOnline` callback that should be called with a `boolean` whenever the
+   * online state changes.
    *
-   * onlineManager.setEventListener((setOnline) => {
-   *   return NetInfo.addEventListener((state) => {
-   *     setOnline(!!state.isConnected)
+   * @example
+   *   ;```ts
+   *   import NetInfo from '@react-native-community/netinfo'
+   *   import { onlineManager } from '@tanstack/query-core'
+   *
+   *   onlineManager.setEventListener((setOnline) => {
+   *     return NetInfo.addEventListener((state) => {
+   *       setOnline(!!state.isConnected)
+   *     })
    *   })
-   * })
-   * ```
+   *   ```
+   *
+   * @param setup - Receives the `setOnline` callback, registers the event
+   *   listener, and may return a cleanup function that is called when the
+   *   listener is replaced or no longer needed.
    */
   setEventListener(setup: SetupFn): void {
     this.#setup = setup
@@ -81,17 +84,19 @@ export class OnlineManager extends Subscribable<Listener> {
 
   /**
    * `setOnline` can be used to manually set the online state.
-   * @param online - The online state.
+   *
    * @example
-   * ```ts
-   * import { onlineManager } from '@tanstack/query-core'
+   *   ;```ts
+   *   import { onlineManager } from '@tanstack/query-core'
    *
-   * // Set to online
-   * onlineManager.setOnline(true)
+   *   // Set to online
+   *   onlineManager.setOnline(true)
    *
-   * // Set to offline
-   * onlineManager.setOnline(false)
-   * ```
+   *   // Set to offline
+   *   onlineManager.setOnline(false)
+   *   ```
+   *
+   * @param online - The online state.
    */
   setOnline(online: boolean): void {
     const changed = this.#online !== online
@@ -106,6 +111,7 @@ export class OnlineManager extends Subscribable<Listener> {
 
   /**
    * `isOnline` can be used to get the current online state.
+   *
    * @returns `true` if online.
    */
   isOnline(): boolean {
@@ -114,6 +120,7 @@ export class OnlineManager extends Subscribable<Listener> {
 }
 
 /**
- * Singleton instance of {@link OnlineManager}, used to manage and observe the online state within TanStack Query.
+ * Singleton instance of {@link OnlineManager}, used to manage and observe the
+ * online state within TanStack Query.
  */
 export const onlineManager = new OnlineManager()

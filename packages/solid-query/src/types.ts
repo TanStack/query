@@ -20,14 +20,17 @@ import type {
 import type { Accessor } from 'solid-js'
 
 /**
- * The options accepted by `useQuery`. Extends {@link QueryObserverOptions} from `@tanstack/query-core` with
- * the `solid-query`-specific `deferStream` and `suspense` options.
+ * The options accepted by `useQuery`. Extends {@link QueryObserverOptions} from
+ * `@tanstack/query-core` with the `solid-query`-specific `deferStream` and
+ * `suspense` options.
+ *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
- * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
- * `select` is used.
- * @template TQueryData - The type of the data actually held in the query cache — the input to `select` and
- * `placeholderData`. Defaults to, and is usually the same as, `TQueryFnData`.
+ * @template TData - The type `data` ends up as after `select` runs. Defaults to
+ *   `TQueryFnData` when no `select` is used.
+ * @template TQueryData - The type of the data actually held in the query cache
+ *   — the input to `select` and `placeholderData`. Defaults to, and is usually
+ *   the same as, `TQueryFnData`.
  * @template TQueryKey - The type of your `queryKey`.
  */
 export interface UseBaseQueryOptions<
@@ -41,9 +44,11 @@ export interface UseBaseQueryOptions<
   'suspense'
 > {
   /**
-   * Only applicable while rendering queries on the server with streaming.
-   * Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
-   * This can be useful to avoid sending a loading state to the client before the query has resolved.
+   * Only applicable while rendering queries on the server with streaming. Set
+   * `deferStream` to `true` to wait for the query to resolve on the server
+   * before flushing the stream. This can be useful to avoid sending a loading
+   * state to the client before the query has resolved.
+   *
    * @defaultValue false
    */
   deferStream?: boolean
@@ -57,10 +62,11 @@ export interface UseBaseQueryOptions<
 
 /**
  * The options accepted by `useQuery` and `queryOptions`.
+ *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
- * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
- * `select` is used.
+ * @template TData - The type `data` ends up as after `select` runs. Defaults to
+ *   `TQueryFnData` when no `select` is used.
  * @template TQueryKey - The type of your `queryKey`.
  */
 export interface QueryOptions<
@@ -77,12 +83,13 @@ export interface QueryOptions<
 > {}
 
 /**
- * The accessor `useQuery` expects as its first argument — Solid re-evaluates it reactively, so `queryKey` and
- * other options can depend on signals.
+ * The accessor `useQuery` expects as its first argument — Solid re-evaluates it
+ * reactively, so `queryKey` and other options can depend on signals.
+ *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
- * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
- * `select` is used.
+ * @template TData - The type `data` ends up as after `select` runs. Defaults to
+ *   `TQueryFnData` when no `select` is used.
  * @template TQueryKey - The type of your `queryKey`.
  */
 export type UseQueryOptions<
@@ -95,9 +102,11 @@ export type UseQueryOptions<
 /* --- Create Query and Create Base Query  Types --- */
 
 /**
- * The object `useQuery` returns when `initialData` isn't set — `data`/`error` may still be `undefined`/`null`
- * while the query is `pending`. Re-exports {@link QueryObserverResult} from `@tanstack/query-core`.
- * `useInfiniteQuery` returns {@link UseInfiniteQueryResult} instead.
+ * The object `useQuery` returns when `initialData` isn't set — `data`/`error`
+ * may still be `undefined`/`null` while the query is `pending`. Re-exports
+ * {@link QueryObserverResult} from `@tanstack/query-core`. `useInfiniteQuery`
+ * returns {@link UseInfiniteQueryResult} instead.
+ *
  * @template TData - The type `data` ends up as, after `select` runs (if set).
  * @template TError - The type of errors this query may hold.
  */
@@ -107,8 +116,9 @@ export type UseBaseQueryResult<
 > = QueryObserverResult<TData, TError>
 
 /**
- * The object `useQuery` returns — `data`/`error` may still be `undefined`/`null` while the query is
- * `pending`.
+ * The object `useQuery` returns — `data`/`error` may still be
+ * `undefined`/`null` while the query is `pending`.
+ *
  * @template TData - The type `data` ends up as, after `select` runs (if set).
  * @template TError - The type of errors this query may hold.
  */
@@ -118,8 +128,9 @@ export type UseQueryResult<
 > = UseBaseQueryResult<TData, TError>
 
 /**
- * The object `useQuery` returns when `initialData` guarantees `data` is never `undefined` (unless a
- * `select` changes `TData` to include `undefined`).
+ * The object `useQuery` returns when `initialData` guarantees `data` is never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
+ *
  * @template TData - The type `data` ends up as, after `select` runs (if set).
  * @template TError - The type of errors this query may hold.
  */
@@ -129,8 +140,9 @@ export type DefinedUseBaseQueryResult<
 > = DefinedQueryObserverResult<TData, TError>
 
 /**
- * The object `useQuery` returns when `initialData` guarantees `data` is never `undefined` (unless a
- * `select` changes `TData` to include `undefined`).
+ * The object `useQuery` returns when `initialData` guarantees `data` is never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
+ *
  * @template TData - The type `data` ends up as, after `select` runs (if set).
  * @template TError - The type of errors this query may hold.
  */
@@ -142,11 +154,14 @@ export type DefinedUseQueryResult<
 /* --- Create Infinite Queries Types --- */
 /**
  * The options accepted by `useInfiniteQuery`.
- * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ *
+ * @template TQueryFnData - The type of a single page, as your `queryFn`
+ *   resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TQueryKey - The type of your `queryKey`.
- * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch
+ *   a given page.
  */
 export interface InfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -165,18 +180,23 @@ export interface InfiniteQueryOptions<
   'queryKey' | 'suspense'
 > {
   /**
-   * The query key to use for this query. Required here, unlike on the options this type extends.
+   * The query key to use for this query. Required here, unlike on the options
+   * this type extends.
    *
-   * The query key will be hashed into a stable hash. See [Query Keys](https://tanstack.com/query/latest/docs/framework/solid/guides/query-keys)
+   * The query key will be hashed into a stable hash. See [Query
+   * Keys](https://tanstack.com/query/latest/docs/framework/solid/guides/query-keys)
    * for more information.
    *
-   * The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
+   * The query will automatically update when this key changes (as long as
+   * `enabled` is not set to `false`).
    */
   queryKey: TQueryKey
   /**
-   * Only applicable while rendering queries on the server with streaming.
-   * Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
-   * This can be useful to avoid sending a loading state to the client before the query has resolved.
+   * Only applicable while rendering queries on the server with streaming. Set
+   * `deferStream` to `true` to wait for the query to resolve on the server
+   * before flushing the stream. This can be useful to avoid sending a loading
+   * state to the client before the query has resolved.
+   *
    * @defaultValue false
    */
   deferStream?: boolean
@@ -189,13 +209,17 @@ export interface InfiniteQueryOptions<
 }
 
 /**
- * The accessor `useInfiniteQuery` expects as its first argument — Solid re-evaluates it reactively, so
- * `queryKey` and other options can depend on signals.
- * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ * The accessor `useInfiniteQuery` expects as its first argument — Solid
+ * re-evaluates it reactively, so `queryKey` and other options can depend on
+ * signals.
+ *
+ * @template TQueryFnData - The type of a single page, as your `queryFn`
+ *   resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TQueryKey - The type of your `queryKey`.
- * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch
+ *   a given page.
  */
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -208,8 +232,9 @@ export type UseInfiniteQueryOptions<
 >
 
 /**
- * The object `useInfiniteQuery` returns — `data`/`error` may still be `undefined`/`null` while the query is
- * `pending`.
+ * The object `useInfiniteQuery` returns — `data`/`error` may still be
+ * `undefined`/`null` while the query is `pending`.
+ *
  * @template TData - The type `data` ends up as, after `select` runs (if set).
  * @template TError - The type of errors this query may hold.
  */
@@ -219,8 +244,10 @@ export type UseInfiniteQueryResult<
 > = InfiniteQueryObserverResult<TData, TError>
 
 /**
- * The object `useInfiniteQuery` returns when `initialData` guarantees `data` is never `undefined` (unless a
- * `select` changes `TData` to include `undefined`).
+ * The object `useInfiniteQuery` returns when `initialData` guarantees `data` is
+ * never `undefined` (unless a `select` changes `TData` to include
+ * `undefined`).
+ *
  * @template TData - The type `data` ends up as, after `select` runs (if set).
  * @template TError - The type of errors this query may hold.
  */
@@ -232,10 +259,12 @@ export type DefinedUseInfiniteQueryResult<
 /* --- Create Mutation Types --- */
 /**
  * The options accepted by `useMutation` and `mutationOptions`.
+ *
  * @template TData - The type your `mutationFn` resolves to.
  * @template TError - The type of errors your `mutationFn` may throw.
  * @template TVariables - The type of the variables your `mutationFn` accepts.
- * @template TOnMutateResult - The type returned by `onMutate`, passed on to `onSuccess`/`onError`/`onSettled`.
+ * @template TOnMutateResult - The type returned by `onMutate`, passed on to
+ *   `onSuccess`/`onError`/`onSettled`.
  */
 export interface MutationOptions<
   TData = unknown,
@@ -248,12 +277,14 @@ export interface MutationOptions<
 > {}
 
 /**
- * The accessor `useMutation` expects as its first argument — Solid re-evaluates it reactively, so callbacks
- * and other options can depend on signals.
+ * The accessor `useMutation` expects as its first argument — Solid re-evaluates
+ * it reactively, so callbacks and other options can depend on signals.
+ *
  * @template TData - The type your `mutationFn` resolves to.
  * @template TError - The type of errors your `mutationFn` may throw.
  * @template TVariables - The type of the variables your `mutationFn` accepts.
- * @template TOnMutateResult - The type returned by `onMutate`, passed on to `onSuccess`/`onError`/`onSettled`.
+ * @template TOnMutateResult - The type returned by `onMutate`, passed on to
+ *   `onSuccess`/`onError`/`onSettled`.
  */
 export type UseMutationOptions<
   TData = unknown,
@@ -263,15 +294,18 @@ export type UseMutationOptions<
 > = Accessor<MutationOptions<TData, TError, TVariables, TOnMutateResult>>
 
 /**
- * The type of `mutate`, as returned by `useMutation`. Forwards the variables (and an optional per-call
- * `onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced
- * through the mutation result instead of being thrown by `mutate`, unless `throwOnError` makes `useMutation`
- * rethrow them.
+ * The type of `mutate`, as returned by `useMutation`. Forwards the variables
+ * (and an optional per-call `onSuccess`/`onError`/`onSettled`) to the
+ * underlying `mutate` call. Fire-and-forget — errors are surfaced through the
+ * mutation result instead of being thrown by `mutate`, unless `throwOnError`
+ * makes `useMutation` rethrow them.
+ *
  * @template TData - The type your mutation function resolves to.
  * @template TError - The type of errors your mutation function may throw.
  * @template TVariables - The type of the variable passed to `mutate`.
- * @template TOnMutateResult - The type returned by `onMutate`, passed to `onSuccess`/`onError`/`onSettled` as
- * their `onMutateResult` parameter — useful for optimistic-update rollback data.
+ * @template TOnMutateResult - The type returned by `onMutate`, passed to
+ *   `onSuccess`/`onError`/`onSettled` as their `onMutateResult` parameter —
+ *   useful for optimistic-update rollback data.
  */
 export type UseMutateFunction<
   TData = unknown,
@@ -285,13 +319,15 @@ export type UseMutateFunction<
 ) => void
 
 /**
- * The type of `mutateAsync`, as returned by `useMutation`. Similar to {@link UseMutateFunction}, but returns a
- * promise which can be awaited.
+ * The type of `mutateAsync`, as returned by `useMutation`. Similar to
+ * {@link UseMutateFunction}, but returns a promise which can be awaited.
+ *
  * @template TData - The type your `mutationFn` resolves to.
  * @template TError - The type of errors your `mutationFn` may throw.
  * @template TVariables - The type of the variable passed to `mutateAsync`.
- * @template TOnMutateResult - The type returned by `onMutate`, passed to `onSuccess`/`onError`/`onSettled` as
- * their `onMutateResult` parameter — useful for optimistic-update rollback data.
+ * @template TOnMutateResult - The type returned by `onMutate`, passed to
+ *   `onSuccess`/`onError`/`onSettled` as their `onMutateResult` parameter —
+ *   useful for optimistic-update rollback data.
  */
 export type UseMutateAsyncFunction<
   TData = unknown,
@@ -301,13 +337,17 @@ export type UseMutateAsyncFunction<
 > = MutateFunction<TData, TError, TVariables, TOnMutateResult>
 
 /**
- * The result of `useMutation`. Same as {@link MutationObserverResult} from `@tanstack/query-core`, with
- * `mutate` narrowed to the fire-and-forget {@link UseMutateFunction} signature, plus the added `mutateAsync`.
+ * The result of `useMutation`. Same as {@link MutationObserverResult} from
+ * `@tanstack/query-core`, with `mutate` narrowed to the fire-and-forget
+ * {@link UseMutateFunction} signature, plus the added `mutateAsync`.
+ *
  * @template TData - The type your `mutationFn` resolves to.
  * @template TError - The type of errors your `mutationFn` may throw.
- * @template TVariables - The type of the variable passed to `mutate`/`mutateAsync`.
- * @template TOnMutateResult - The type returned by `onMutate`, passed to `onSuccess`/`onError`/`onSettled` as
- * their `onMutateResult` parameter — useful for optimistic-update rollback data.
+ * @template TVariables - The type of the variable passed to
+ *   `mutate`/`mutateAsync`.
+ * @template TOnMutateResult - The type returned by `onMutate`, passed to
+ *   `onSuccess`/`onError`/`onSettled` as their `onMutateResult` parameter —
+ *   useful for optimistic-update rollback data.
  */
 export type UseBaseMutationResult<
   TData = unknown,
@@ -318,9 +358,7 @@ export type UseBaseMutationResult<
   MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
   { mutate: UseMutateFunction<TData, TError, TVariables, TOnMutateResult> }
 > & {
-  /**
-   * Similar to `mutate`, but returns a promise which can be awaited.
-   */
+  /** Similar to `mutate`, but returns a promise which can be awaited. */
   mutateAsync: UseMutateAsyncFunction<
     TData,
     TError,
@@ -331,11 +369,14 @@ export type UseBaseMutationResult<
 
 /**
  * The result of `useMutation`. Same as {@link UseBaseMutationResult}.
+ *
  * @template TData - The type your `mutationFn` resolves to.
  * @template TError - The type of errors your `mutationFn` may throw.
- * @template TVariables - The type of the variable passed to `mutate`/`mutateAsync`.
- * @template TOnMutateResult - The type returned by `onMutate`, passed to `onSuccess`/`onError`/`onSettled` as
- * their `onMutateResult` parameter — useful for optimistic-update rollback data.
+ * @template TVariables - The type of the variable passed to
+ *   `mutate`/`mutateAsync`.
+ * @template TOnMutateResult - The type returned by `onMutate`, passed to
+ *   `onSuccess`/`onError`/`onSettled` as their `onMutateResult` parameter —
+ *   useful for optimistic-update rollback data.
  */
 export type UseMutationResult<
   TData = unknown,

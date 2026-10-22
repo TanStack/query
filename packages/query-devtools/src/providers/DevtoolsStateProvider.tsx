@@ -5,6 +5,7 @@ import type { ParentProps } from 'solid-js'
 
 /**
  * Provides the selected query and mutation and the panel width to its children.
+ *
  * @param props - The `children` to render.
  * @returns The `children`, wrapped in the context provider.
  */

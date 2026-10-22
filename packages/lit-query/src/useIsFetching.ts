@@ -116,27 +116,29 @@ class IsFetchingController extends BaseController<number> {
  * When `filters` is a function, it is re-read during host updates so the count
  * can follow reactive host state. If `queryClient` is omitted, the controller
  * resolves the client from the nearest connected `QueryClientProvider`.
- * @param host - The Lit reactive controller host that owns the cache
- * subscription.
- * @param filters - Query filters, or a getter that returns query filters.
- * @param queryClient - Optional explicit query client. Provide this for
- * controllers that should not resolve a client from Lit context.
- * @returns An accessor for the current number of matching fetching queries.
- * @example
- * ```ts
- * import { LitElement, html } from 'lit'
- * import { useIsFetching } from '@tanstack/lit-query'
  *
- * class TodosStatus extends LitElement {
+ * @example
+ *   ```ts
+ *   import { LitElement, html } from 'lit'
+ *   import { useIsFetching } from '@tanstack/lit-query'
+ *
+ *   class TodosStatus extends LitElement {
  *   private readonly todosFetching = useIsFetching(this, {
- *     queryKey: ['todos'],
+ *   queryKey: ['todos'],
  *   })
  *
  *   render() {
- *     return html`<span>${this.todosFetching()} active todo fetches</span>`
+ *   return html`<span>${this.todosFetching()} active todo fetches</span>`
  *   }
- * }
- * ```
+ *   }
+ *   ```
+ *
+ * @param host - The Lit reactive controller host that owns the cache
+ *   subscription.
+ * @param filters - Query filters, or a getter that returns query filters.
+ * @param queryClient - Optional explicit query client. Provide this for
+ *   controllers that should not resolve a client from Lit context.
+ * @returns An accessor for the current number of matching fetching queries.
  */
 export function useIsFetching(
   host: ReactiveControllerHost,

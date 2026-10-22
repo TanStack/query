@@ -8,8 +8,9 @@ import type {
 import type { CreateQueryOptions } from './types.js'
 
 /**
- * The options accepted by the `queryOptions` overload selected when `initialData` is omitted or may be
- * `undefined` — `data` may be `undefined` while the query is `pending`.
+ * The options accepted by the `queryOptions` overload selected when
+ * `initialData` is omitted or may be `undefined` — `data` may be `undefined`
+ * while the query is `pending`.
  */
 export type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
@@ -24,8 +25,9 @@ export type UndefinedInitialDataOptions<
 }
 
 /**
- * The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
- * `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * The options accepted by the `queryOptions` overload selected when
+ * `initialData` is set — `data` is never `undefined` (unless a `select` changes
+ * `TData` to include `undefined`).
  */
 export type DefinedInitialDataOptions<
   TQueryFnData = unknown,
@@ -39,41 +41,46 @@ export type DefinedInitialDataOptions<
 }
 
 /**
- * You can generally pass everything to `queryOptions` that you can also pass to `createQuery`. These options
- * can be shared across `createQuery` calls and imperative APIs such as `queryClient.query`. `options.queryKey`
- * is required and is the query key to generate options for.
+ * You can generally pass everything to `queryOptions` that you can also pass to
+ * `createQuery`. These options can be shared across `createQuery` calls and
+ * imperative APIs such as `queryClient.query`. `options.queryKey` is required
+ * and is the query key to generate options for.
  *
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
- * a `select` changes `TData` to include `undefined`).
- * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `createQuery`,
- * with `initialData` set.
- * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- * @see {@link createQuery} to run a query with these options.
+ * This overload is selected when `initialData` is set, so the resulting `data`
+ * is never `undefined` (unless a `select` changes `TData` to include
+ * `undefined`).
+ *
  * @example
- * ```svelte
- * <script lang="ts">
+ *   ```svelte
+ *   <script lang="ts">
  *   import { queryOptions, createQuery } from '@tanstack/svelte-query'
  *
  *   const postsOptions = queryOptions({
- *     queryKey: ['posts'],
- *     queryFn: fetchPosts,
- *     initialData: [],
+ *   queryKey: ['posts'],
+ *   queryFn: fetchPosts,
+ *   initialData: [],
  *   })
  *
  *   // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
  *   // so the list stays visible alongside the error.
  *   const query = createQuery(() => postsOptions)
- * </script>
+ *   </script>
  *
- * {#if query.isError}
+ *   {#if query.isError}
  *   <span>Error: {query.error.message}</span>
- * {/if}
- * <ul>
+ *   {/if}
+ *   <ul>
  *   {#each query.data as post (post.id)}
- *     <li>{post.title}</li>
+ *   <li>{post.title}</li>
  *   {/each}
- * </ul>
- * ```
+ *   </ul>
+ *   ```
+ *
+ * @param options - The {@link DefinedInitialDataOptions} to use — everything
+ *   you can pass to `createQuery`, with `initialData` set.
+ * @returns The same options object, typed so that `queryKey` carries the
+ *   inferred data type.
+ * @see {@link createQuery} to run a query with these options.
  */
 export function queryOptions<
   TQueryFnData = unknown,
@@ -86,37 +93,42 @@ export function queryOptions<
   QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
 /**
- * You can generally pass everything to `queryOptions` that you can also pass to `createQuery`. These options
- * can be shared across `createQuery` calls and imperative APIs such as `queryClient.query`. `options.queryKey`
- * is required and is the query key to generate options for.
- * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `createQuery`.
- * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- * @see {@link createQuery} to run a query with these options.
+ * You can generally pass everything to `queryOptions` that you can also pass to
+ * `createQuery`. These options can be shared across `createQuery` calls and
+ * imperative APIs such as `queryClient.query`. `options.queryKey` is required
+ * and is the query key to generate options for.
+ *
  * @example
- * A parameterized factory, so the same options object can be reused per `id`:
- * ```svelte
- * <script lang="ts">
+ *   A parameterized factory, so the same options object can be reused per `id`:
+ *   ```svelte
+ *   <script lang="ts">
  *   import { queryOptions, createQuery } from '@tanstack/svelte-query'
  *
  *   let { id }: { id: string } = $props()
  *
  *   const postOptions = (id: string) =>
- *     queryOptions({
- *       queryKey: ['post', id],
- *       queryFn: () => fetchPost(id),
- *     })
+ *   queryOptions({
+ *   queryKey: ['post', id],
+ *   queryFn: () => fetchPost(id),
+ *   })
  *
  *   const query = createQuery(() => postOptions(id))
- * </script>
+ *   </script>
  *
- * {#if query.isPending}
+ *   {#if query.isPending}
  *   Loading...
- * {:else if query.isError}
+ *   {:else if query.isError}
  *   <span>Error: {query.error.message}</span>
- * {:else}
+ *   {:else}
  *   <h1>{query.data.title}</h1>
- * {/if}
- * ```
+ *   {/if}
+ *   ```
+ *
+ * @param options - The {@link UndefinedInitialDataOptions} to use — everything
+ *   you can pass to `createQuery`.
+ * @returns The same options object, typed so that `queryKey` carries the
+ *   inferred data type.
+ * @see {@link createQuery} to run a query with these options.
  */
 export function queryOptions<
   TQueryFnData = unknown,

@@ -150,17 +150,20 @@ experimental_createQueryPersister(options: StoragePersisterOptions)
 
 ```tsx
 export interface StoragePersisterOptions {
-  /** The storage client used for setting and retrieving items from cache.
-   * For SSR pass in `undefined`.
+  /**
+   * The storage client used for setting and retrieving items from cache. For
+   * SSR pass in `undefined`.
    */
   storage: AsyncStorage | Storage | undefined | null
   /**
    * How to serialize the data to storage.
+   *
    * @default `JSON.stringify`
    */
   serialize?: (persistedQuery: PersistedQuery) => string
   /**
    * How to deserialize the data from storage.
+   *
    * @default `JSON.parse`
    */
   deserialize?: (cachedString: string) => PersistedQuery
@@ -170,27 +173,25 @@ export interface StoragePersisterOptions {
    */
   buster?: string
   /**
-   * The max-allowed age of the cache in milliseconds.
-   * If a persisted cache is found that is older than this
-   * time, it will be discarded
+   * The max-allowed age of the cache in milliseconds. If a persisted cache is
+   * found that is older than this time, it will be discarded
+   *
    * @default 24 hours
    */
   maxAge?: number
   /**
-   * Prefix to be used for storage key.
-   * Storage key is a combination of prefix and query hash in a form of `prefix-queryHash`.
+   * Prefix to be used for storage key. Storage key is a combination of prefix
+   * and query hash in a form of `prefix-queryHash`.
    */
   prefix?: string
   /**
-   * If set to `true`, the query will refetch on successful query restoration if the data is stale.
-   * If set to `false`, the query will not refetch on successful query restoration.
-   * If set to `'always'`, the query will always refetch on successful query restoration.
-   * Defaults to `true`.
+   * If set to `true`, the query will refetch on successful query restoration if
+   * the data is stale. If set to `false`, the query will not refetch on
+   * successful query restoration. If set to `'always'`, the query will always
+   * refetch on successful query restoration. Defaults to `true`.
    */
   refetchOnRestore?: boolean | 'always'
-  /**
-   * Filters to narrow down which Queries should be persisted.
-   */
+  /** Filters to narrow down which Queries should be persisted. */
   filters?: QueryFilters
 }
 

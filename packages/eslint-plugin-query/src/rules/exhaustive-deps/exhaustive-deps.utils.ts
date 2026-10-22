@@ -74,11 +74,14 @@ export const ExhaustiveDepsUtils = {
   },
 
   /**
-   * Given required refs and existing queryKey entries, compute missing dependency paths
-   * respecting allowlisted variables and types.
-   * @param params - The references the query function needs, the allowlisted variables, and the
-   * root identifiers and full paths already in the query key.
-   * @returns The missing dependency paths, without paths whose root is already missing.
+   * Given required refs and existing queryKey entries, compute missing
+   * dependency paths respecting allowlisted variables and types.
+   *
+   * @param params - The references the query function needs, the allowlisted
+   *   variables, and the root identifiers and full paths already in the query
+   *   key.
+   * @returns The missing dependency paths, without paths whose root is already
+   *   missing.
    */
   computeFilteredMissingPaths(params: {
     requiredRefs: Array<{
@@ -122,8 +125,11 @@ export const ExhaustiveDepsUtils = {
 
   /**
    * Extract existing queryKey deps as root identifiers and full member paths.
-   * @param params - The source code, the scope manager, and the query key node to scan.
-   * @returns The root identifiers that cover all of their members, and every dependency path.
+   *
+   * @param params - The source code, the scope manager, and the query key node
+   *   to scan.
+   * @returns The root identifiers that cover all of their members, and every
+   *   dependency path.
    */
   collectQueryKeyDeps(params: {
     sourceCode: Readonly<TSESLint.SourceCode>
@@ -137,6 +143,7 @@ export const ExhaustiveDepsUtils = {
 
     /**
      * Records an identifier that covers all of its members.
+     *
      * @param name - The identifier, normalized before it is recorded.
      */
     function addRoot(name: string) {
@@ -146,6 +153,7 @@ export const ExhaustiveDepsUtils = {
     }
     /**
      * Records a full member path.
+     *
      * @param text - The path, normalized before it is recorded.
      */
     function addFull(text: string) {
@@ -154,6 +162,7 @@ export const ExhaustiveDepsUtils = {
     }
     /**
      * Records a computed reference path as a root or a full path.
+     *
      * @param refPath - The reference path, or `null` to record nothing.
      */
     function addRefPath(
@@ -175,6 +184,7 @@ export const ExhaustiveDepsUtils = {
 
     /**
      * Visits every child node of a node.
+     *
      * @param node - The node whose children are visited.
      */
     function visitChildren(node: TSESTree.Node): void {
@@ -201,8 +211,9 @@ export const ExhaustiveDepsUtils = {
     }
 
     /**
-     * Records the dependencies of a node: identifiers directly, and the external references of
-     * functions. Other nodes are visited recursively.
+     * Records the dependencies of a node: identifiers directly, and the
+     * external references of functions. Other nodes are visited recursively.
+     *
      * @param node - The node to visit.
      */
     function visit(node: TSESTree.Node | null | undefined): void {
@@ -284,8 +295,10 @@ export const ExhaustiveDepsUtils = {
 
   /**
    * Checks whether the resolved variable is allowlisted by its type annotation.
+   *
    * @param params - The allowlisted type names, and the variable to check.
-   * @returns `true` if a type referenced in the variable's type annotation is allowlisted.
+   * @returns `true` if a type referenced in the variable's type annotation is
+   *   allowlisted.
    */
   variableIsAllowlistedByType(params: {
     allowlistedTypes: Set<string>
@@ -321,8 +334,10 @@ export const ExhaustiveDepsUtils = {
    * Normalizes a chain by removing optional chaining operators
    *
    * Example: `a?.b.c!` -> `a.b.c`
+   *
    * @param text - The source text of the chain.
-   * @returns The chain without optional chaining, non-null assertions, and whitespace.
+   * @returns The chain without optional chaining, non-null assertions, and
+   *   whitespace.
    */
   normalizeChain(text: string): string {
     return text.replace(/(?:\?(\.)|!)/g, '$1').replace(/\s+/g, '')
@@ -332,9 +347,11 @@ export const ExhaustiveDepsUtils = {
    * Computes the reference path for an identifier
    *
    * Example: `a.b.c!` -> `{ path: 'a.b.c', root: 'a' }`
+   *
    * @param params - The identifier, and the source code to read the chain from.
-   * @returns The dependency `path`, its `root`, and whether the path is the root itself and covers
-   * all of its members. For a method call, the method name is dropped from the path.
+   * @returns The dependency `path`, its `root`, and whether the path is the
+   *   root itself and covers all of its members. For a method call, the method
+   *   name is dropped from the path.
    */
   computeRefPath(params: {
     identifier: TSESTree.Identifier
@@ -390,8 +407,9 @@ export const ExhaustiveDepsUtils = {
     const externalRefs: Array<TSESLint.Scope.Reference> = []
 
     /**
-     * Collects the read references of a scope and its child scopes that resolve to variables
-     * declared outside the function.
+     * Collects the read references of a scope and its child scopes that resolve
+     * to variables declared outside the function.
+     *
      * @param scope - The scope to collect from.
      */
     function collect(scope: TSESLint.Scope.Scope) {
@@ -429,8 +447,9 @@ export const ExhaustiveDepsUtils = {
 
   /**
    * Recursively collects type identifiers from a type annotation.
-   * @param typeNode - The type to collect from: type references, unions, intersections, arrays, and
-   * tuples are handled.
+   *
+   * @param typeNode - The type to collect from: type references, unions,
+   *   intersections, arrays, and tuples are handled.
    * @param out - The set the type names are added to.
    */
   collectTypeIdentifiers(typeNode: TSESTree.TypeNode, out: Set<string>): void {
@@ -462,8 +481,10 @@ export const ExhaustiveDepsUtils = {
   },
 
   /**
-   * Gets the function expression nodes from a queryFn property, handling conditional expressions.
-   * When neither branch is skipToken, returns both branches so all deps are scanned.
+   * Gets the function expression nodes from a queryFn property, handling
+   * conditional expressions. When neither branch is skipToken, returns both
+   * branches so all deps are scanned.
+   *
    * @param queryFn - The `queryFn` property.
    * @returns The nodes to scan for dependencies.
    */

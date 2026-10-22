@@ -9,8 +9,8 @@ module.exports = ({
 
   const findQueryClientMethodCalls = (importIdentifiers, methods) => {
     /**
-     * Here we collect all query client instantiations. We have to make aware of them because some method calls might
-     * be invoked on these instances.
+     * Here we collect all query client instantiations. We have to make aware of
+     * them because some method calls might be invoked on these instances.
      */
     const queryClientIdentifiers =
       utils.queryClient.findQueryClientIdentifiers(importIdentifiers)

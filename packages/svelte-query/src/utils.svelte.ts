@@ -2,7 +2,9 @@ import { untrack } from 'svelte'
 // modified from the great https://github.com/svecosystem/runed
 /**
  * Runs an effect after (`'post'`) or before (`'pre'`) the DOM updates.
- * @param flush - When to run the effect: `'post'` uses `$effect`, `'pre'` uses `$effect.pre`.
+ *
+ * @param flush - When to run the effect: `'post'` uses `$effect`, `'pre'` uses
+ *   `$effect.pre`.
  * @param effect - The effect to run. It may return a cleanup function.
  */
 function runEffect(
@@ -20,12 +22,16 @@ function runEffect(
 }
 type Getter<T> = () => T
 /**
- * Runs `effect` whenever the reactive state read by `sources` changes, even if they return the
- * same values, skipping the first run. The effect receives the new and previous values, and is
- * called untracked, so only `sources` are tracked.
+ * Runs `effect` whenever the reactive state read by `sources` changes, even if
+ * they return the same values, skipping the first run. The effect receives the
+ * new and previous values, and is called untracked, so only `sources` are
+ * tracked.
+ *
  * @param sources - The getter, or array of getters, to watch.
- * @param flush - Whether to run after (`'post'`) or before (`'pre'`) the DOM updates.
- * @param effect - Called with the new and previous values. It may return a cleanup function.
+ * @param flush - Whether to run after (`'post'`) or before (`'pre'`) the DOM
+ *   updates.
+ * @param effect - Called with the new and previous values. It may return a
+ *   cleanup function.
  */
 export const watchChanges = <T>(
   sources: Getter<T> | Array<Getter<T>>,

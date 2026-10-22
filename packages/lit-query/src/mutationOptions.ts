@@ -5,17 +5,19 @@ import type {
 
 /**
  * Preserves and types mutation options for reuse across Lit Query APIs.
+ *
+ * @example
+ *   ;```ts
+ *   import { mutationOptions } from '@tanstack/lit-query'
+ *
+ *   const addTodoOptions = mutationOptions({
+ *     mutationKey: ['add-todo'],
+ *     mutationFn: (title: string) => addTodo(title),
+ *   })
+ *   ```
+ *
  * @param options - Mutation options to preserve.
  * @returns The same options object.
- * @example
- * ```ts
- * import { mutationOptions } from '@tanstack/lit-query'
- *
- * const addTodoOptions = mutationOptions({
- *   mutationKey: ['add-todo'],
- *   mutationFn: (title: string) => addTodo(title),
- * })
- * ```
  */
 export function mutationOptions<
   TData = unknown,

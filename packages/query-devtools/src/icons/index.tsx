@@ -2,6 +2,7 @@ import { Show, createUniqueId } from 'solid-js'
 
 /**
  * Renders the search icon.
+ *
  * @returns The icon's SVG element.
  */
 export function Search() {
@@ -26,6 +27,7 @@ export function Search() {
 
 /**
  * Renders the trash icon.
+ *
  * @returns The icon's SVG element.
  */
 export function Trash() {
@@ -50,6 +52,7 @@ export function Trash() {
 
 /**
  * Renders the chevron-down icon.
+ *
  * @returns The icon's SVG element.
  */
 export function ChevronDown() {
@@ -74,6 +77,7 @@ export function ChevronDown() {
 
 /**
  * Renders the up arrow icon.
+ *
  * @returns The icon's SVG element.
  */
 export function ArrowUp() {
@@ -98,6 +102,7 @@ export function ArrowUp() {
 
 /**
  * Renders the down arrow icon.
+ *
  * @returns The icon's SVG element.
  */
 export function ArrowDown() {
@@ -122,6 +127,7 @@ export function ArrowDown() {
 
 /**
  * Renders the left arrow icon.
+ *
  * @returns The icon's SVG element.
  */
 export function ArrowLeft() {
@@ -149,6 +155,7 @@ export function ArrowLeft() {
 
 /**
  * Renders the right arrow icon.
+ *
  * @returns The icon's SVG element.
  */
 export function ArrowRight() {
@@ -176,6 +183,7 @@ export function ArrowRight() {
 
 /**
  * Renders the sun (light theme) icon.
+ *
  * @returns The icon's SVG element.
  */
 export function Sun() {
@@ -200,6 +208,7 @@ export function Sun() {
 
 /**
  * Renders the moon (dark theme) icon.
+ *
  * @returns The icon's SVG element.
  */
 export function Moon() {
@@ -224,6 +233,7 @@ export function Moon() {
 
 /**
  * Renders the monitor (system theme) icon.
+ *
  * @returns The icon's SVG element.
  */
 export function Monitor() {
@@ -248,6 +258,7 @@ export function Monitor() {
 
 /**
  * Renders the Wi-Fi (online) icon.
+ *
  * @returns The icon's SVG element.
  */
 export function Wifi() {
@@ -269,6 +280,7 @@ export function Wifi() {
 
 /**
  * Renders the offline icon.
+ *
  * @returns The icon's SVG element.
  */
 export function Offline() {
@@ -291,6 +303,7 @@ export function Offline() {
 
 /**
  * Renders the settings icon.
+ *
  * @returns The icon's SVG element.
  */
 export function Settings() {
@@ -322,6 +335,7 @@ export function Settings() {
 
 /**
  * Renders the picture-in-picture icon.
+ *
  * @returns The icon's SVG element.
  */
 export function PiPIcon() {
@@ -346,6 +360,7 @@ export function PiPIcon() {
 
 /**
  * Renders the copy icon.
+ *
  * @returns The icon's SVG element.
  */
 export function Copier() {
@@ -371,6 +386,7 @@ export function Copier() {
 
 /**
  * Renders the pencil (edit) icon.
+ *
  * @returns The icon's SVG element.
  */
 export function Pencil() {
@@ -395,6 +411,7 @@ export function Pencil() {
 
 /**
  * Renders the icon shown after a value was copied.
+ *
  * @param props - The `theme` that decides the icon's color.
  * @returns The icon's SVG element.
  */
@@ -420,6 +437,7 @@ export function CopiedCopier(props: { theme: 'light' | 'dark' }) {
 
 /**
  * Renders the copy error icon.
+ *
  * @returns The icon's SVG element.
  */
 export function ErrorCopier() {
@@ -444,6 +462,7 @@ export function ErrorCopier() {
 
 /**
  * Renders the list icon.
+ *
  * @returns The icon's SVG element.
  */
 export function List() {
@@ -467,7 +486,9 @@ export function List() {
 
 /**
  * Renders a checkbox icon.
- * @param props - Whether the checkbox is `checked`, and the `theme` that decides its color.
+ *
+ * @param props - Whether the checkbox is `checked`, and the `theme` that
+ *   decides its color.
  * @returns The checked or unchecked checkbox icon.
  */
 export function Check(props: { checked: boolean; theme: 'light' | 'dark' }) {
@@ -513,6 +534,7 @@ export function Check(props: { checked: boolean; theme: 'light' | 'dark' }) {
 
 /**
  * Renders the check circle icon.
+ *
  * @returns The icon's SVG element.
  */
 export function CheckCircle() {
@@ -537,6 +559,7 @@ export function CheckCircle() {
 
 /**
  * Renders the loading circle icon.
+ *
  * @returns The icon's SVG element.
  */
 export function LoadingCircle() {
@@ -570,6 +593,7 @@ export function LoadingCircle() {
 
 /**
  * Renders the X circle icon.
+ *
  * @returns The icon's SVG element.
  */
 export function XCircle() {
@@ -594,6 +618,7 @@ export function XCircle() {
 
 /**
  * Renders the pause circle icon.
+ *
  * @returns The icon's SVG element.
  */
 export function PauseCircle() {
@@ -618,6 +643,7 @@ export function PauseCircle() {
 
 /**
  * Renders the TanStack logo.
+ *
  * @returns The logo's SVG element.
  */
 export function TanstackLogo() {

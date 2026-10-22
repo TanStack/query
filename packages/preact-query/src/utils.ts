@@ -1,10 +1,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
 
 /**
- * This is taken from https://github.com/preactjs/preact/blob/main/compat/src/hooks.js#L8-L54
- * which is taken from https://github.com/facebook/react/blob/main/packages/use-sync-external-store/src/useSyncExternalStoreShimClient.js#L84
- * on a high level this cuts out the warnings, ... and attempts a smaller implementation.
- * This way we don't have to import preact/compat with side effects
+ * This is taken from
+ * https://github.com/preactjs/preact/blob/main/compat/src/hooks.js#L8-L54 which
+ * is taken from
+ * https://github.com/facebook/react/blob/main/packages/use-sync-external-store/src/useSyncExternalStoreShimClient.js#L84
+ * on a high level this cuts out the warnings, ... and attempts a smaller
+ * implementation. This way we don't have to import preact/compat with side
+ * effects
  */
 type InternalStore = {
   _value: any
@@ -14,8 +17,11 @@ type StoreRef = {
   _instance: InternalStore
 }
 /**
- * Subscribes to an external store and returns its current snapshot, re-rendering when it changes.
- * @param subscribe - Subscribes to the store, and returns a function that unsubscribes.
+ * Subscribes to an external store and returns its current snapshot,
+ * re-rendering when it changes.
+ *
+ * @param subscribe - Subscribes to the store, and returns a function that
+ *   unsubscribes.
  * @param getSnapshot - Returns the current snapshot of the store.
  * @returns The current snapshot.
  */
@@ -55,7 +61,9 @@ export function useSyncExternalStore(
 
 /**
  * Checks whether the store's snapshot changed since it was last read.
- * @param inst - The stored snapshot and the function that reads the current one.
+ *
+ * @param inst - The stored snapshot and the function that reads the current
+ *   one.
  * @returns `true` if the current snapshot differs, or if reading it throws.
  */
 function didSnapshotChange(inst: {
@@ -73,9 +81,11 @@ function didSnapshotChange(inst: {
 }
 
 /**
- * Like {@link useSyncExternalStore}, but returns a selected part of the snapshot, only updating it
- * when `isEqual` reports a change.
- * @param subscribe - Subscribes to the store, and returns a function that unsubscribes.
+ * Like {@link useSyncExternalStore}, but returns a selected part of the
+ * snapshot, only updating it when `isEqual` reports a change.
+ *
+ * @param subscribe - Subscribes to the store, and returns a function that
+ *   unsubscribes.
  * @param getSnapshot - Returns the current snapshot of the store.
  * @param selector - Selects the part of the snapshot to return.
  * @param isEqual - Compares the previous and the new selection.

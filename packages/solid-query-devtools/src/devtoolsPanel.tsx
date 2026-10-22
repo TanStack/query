@@ -6,52 +6,57 @@ import type { QueryClient } from '@tanstack/solid-query'
 import type { JSX } from 'solid-js'
 
 /**
- * The props of `SolidQueryDevtoolsPanel`, which renders the devtools panel inline.
+ * The props of `SolidQueryDevtoolsPanel`, which renders the devtools panel
+ * inline.
  */
 export interface DevtoolsPanelOptions {
-  /**
-   * Custom instance of QueryClient
-   */
+  /** Custom instance of QueryClient */
   client?: QueryClient
-  /**
-   * Use this so you can define custom errors that can be shown in the devtools.
-   */
+  /** Use this so you can define custom errors that can be shown in the devtools. */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   * Use this to pass a nonce to the style tag that is added to the document
+   * head. This is useful if you are using a Content Security Policy (CSP) nonce
+   * to allow inline styles.
    */
   styleNonce?: string
   /**
-   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
-   * within the shadow DOM instead of within the head tag in the light DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles
+   * will be applied within the shadow DOM instead of within the head tag in the
+   * light DOM.
    */
   shadowDOMTarget?: ShadowRoot
 
   /**
    * Custom styles for the devtools panel
+   *
+   * @example
+   *   ;({ height: '100%' })
+   *
+   * @example
+   *   ;({ height: '100%', width: '100%' })
+   *
    * @default { height: '500px' }
-   * @example { height: '100%' }
-   * @example { height: '100%', width: '100%' }
    */
   style?: JSX.CSSProperties
 
-  /**
-   * Callback function that is called when the devtools panel is closed
-   */
+  /** Callback function that is called when the devtools panel is closed */
   onClose?: () => void
-  /**
-   * Set this to true to hide disabled queries from the devtools panel.
-   */
+  /** Set this to true to hide disabled queries from the devtools panel. */
   hideDisabledQueries?: boolean
   /**
-   * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+   * Set this to 'light', 'dark', or 'system' to change the theme of the
+   * devtools panel.
+   *
    * @defaultValue system
    */
   theme?: Theme
 }
 
 /**
- * Renders the TanStack Query devtools panel inline, for the given or nearest `QueryClient`.
+ * Renders the TanStack Query devtools panel inline, for the given or nearest
+ * `QueryClient`.
+ *
  * @param props - The devtools panel options.
  * @returns The element the devtools panel is mounted in.
  */

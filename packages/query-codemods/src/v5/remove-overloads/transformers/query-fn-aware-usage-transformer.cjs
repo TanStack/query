@@ -7,7 +7,11 @@ const createQueryClientTransformer = require('../../../utils/transformers/query-
  * @param {Object} utils
  * @param {import('jscodeshift').Collection} root
  * @param {string} filePath
- * @param {{keyName: "mutationKey"|"queryKey", queryClientMethods: ReadonlyArray<string>, hooks: ReadonlyArray<string>}} config
+ * @param {{
+ *   keyName: 'mutationKey' | 'queryKey'
+ *   queryClientMethods: ReadonlyArray<string>
+ *   hooks: ReadonlyArray<string>
+ * }} config
  */
 const transformQueryFnAwareUsages = ({
   jscodeshift,

@@ -21,10 +21,13 @@ const stream = createHydrationStreamProvider<DehydratedState>()
 
 /**
  * This component is responsible for:
- * - dehydrating the query client on the server.
- * - hydrating the query client in the browser.
- * @param props - The `children` to render, an optional custom `queryClient`, the `nonce` for the
- * inline script, the hydrate and dehydrate `options`, and the data `transformer`.
+ *
+ * - Dehydrating the query client on the server.
+ * - Hydrating the query client in the browser.
+ *
+ * @param props - The `children` to render, an optional custom `queryClient`,
+ *   the `nonce` for the inline script, the hydrate and dehydrate `options`, and
+ *   the data `transformer`.
  * @returns The `children`, wrapped in the hydration stream provider.
  */
 export function ReactQueryStreamedHydration(props: {
@@ -39,9 +42,7 @@ export function ReactQueryStreamedHydration(props: {
 }) {
   const queryClient = useQueryClient(props.queryClient)
 
-  /**
-   * We need to track which queries were added/updated during the render
-   */
+  /** We need to track which queries were added/updated during the render */
   const [trackedKeys] = React.useState(() => new Set<string>())
 
   // <server only>
@@ -63,7 +64,8 @@ export function ReactQueryStreamedHydration(props: {
       // Happens on server:
       onFlush={() => {
         /**
-         * Dehydrated state of the client where we only include the queries that were added/updated since the last flush
+         * Dehydrated state of the client where we only include the queries that
+         * were added/updated since the last flush
          */
         const shouldDehydrate =
           props.options?.dehydrate?.shouldDehydrateQuery ??

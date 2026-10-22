@@ -25,8 +25,9 @@ import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 import type { MaybeRefOrGetter } from './types'
 
 /**
- * The result of the query composables: every property of the observer result wrapped in a `Ref`, except
- * the `refetch`, `fetchNextPage`, and `fetchPreviousPage` functions, plus `suspense`.
+ * The result of the query composables: every property of the observer result
+ * wrapped in a `Ref`, except the `refetch`, `fetchNextPage`, and
+ * `fetchPreviousPage` functions, plus `suspense`.
  */
 export type UseBaseQueryReturnType<
   TData,
@@ -41,12 +42,14 @@ export type UseBaseQueryReturnType<
     : Ref<Readonly<TResult>[K]>
 } & {
   /**
-   * Returns a promise for use with Vue's `Suspense` or `onServerPrefetch`. It fetches the query if it has no
-   * data or its data is stale and resolves with the result once that fetch resolves (usually when the query
-   * function finishes, but earlier after the first chunk of a streamed query or when data is set during the
-   * fetch), or resolves immediately if the data is fresh. While the query is disabled, it waits until the query
-   * is enabled. If the fetch fails, it resolves with the error result, unless `throwOnError` is (or returns)
-   * `true`, in which case it rejects.
+   * Returns a promise for use with Vue's `Suspense` or `onServerPrefetch`. It
+   * fetches the query if it has no data or its data is stale and resolves with
+   * the result once that fetch resolves (usually when the query function
+   * finishes, but earlier after the first chunk of a streamed query or when
+   * data is set during the fetch), or resolves immediately if the data is
+   * fresh. While the query is disabled, it waits until the query is enabled. If
+   * the fetch fails, it resolves with the error result, unless `throwOnError`
+   * is (or returns) `true`, in which case it rejects.
    */
   suspense: () => Promise<TResult>
 }
@@ -64,10 +67,13 @@ type UseQueryOptionsGeneric<
 
 /**
  * Base implementation shared by `useQuery` and `useInfiniteQuery`.
- * @param Observer - The observer class from query-core (`QueryObserver` or `InfiniteQueryObserver`).
- * @param options - A `ref`, plain value, or reactive getter resolving to the query options.
- * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
- * will be used.
+ *
+ * @param Observer - The observer class from query-core (`QueryObserver` or
+ *   `InfiniteQueryObserver`).
+ * @param options - A `ref`, plain value, or reactive getter resolving to the
+ *   query options.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the
+ *   one provided by `VueQueryPlugin` will be used.
  * @returns The query result as `ref`s, plus the `suspense` function.
  */
 export function useBaseQuery<

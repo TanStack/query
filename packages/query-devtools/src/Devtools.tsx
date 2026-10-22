@@ -102,8 +102,8 @@ interface QueryStatusProps {
 }
 
 /**
- * The devtools component that `TanstackQueryDevtools` and `TanstackQueryDevtoolsPanel` lazily load
- * and render.
+ * The devtools component that `TanstackQueryDevtools` and
+ * `TanstackQueryDevtoolsPanel` lazily load and render.
  */
 export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
   shadowDOMTarget?: ShadowRoot
@@ -112,8 +112,9 @@ export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
 /**
  * The floating devtools: a toggle button that opens a resizable panel, or the
  * panel in a picture-in-picture window when one is open.
+ *
  * @param props - The `localStore` that persists the devtools settings, and its
- * `setLocalStore` setter.
+ *   `setLocalStore` setter.
  * @returns The toggle button and the panel.
  */
 export const Devtools: Component<DevtoolsPanelProps> = (props) => {
@@ -347,8 +348,9 @@ const PiPPanel: Component<{
 }
 
 /**
- * The container of the embedded devtools panel, which tracks its width for
- * the responsive layout.
+ * The container of the embedded devtools panel, which tracks its width for the
+ * responsive layout.
+ *
  * @param props - The `children` to render inside the panel.
  * @returns The panel container.
  */
@@ -682,9 +684,10 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
 /**
  * The content of the devtools panel: the query and mutation lists with their
  * filters and actions, and the details of the selected query or mutation.
+ *
  * @param props - The `localStore` and `setLocalStore` that persist the devtools
- * settings, `showPanelViewOnly` to hide the controls that only apply to the
- * floating devtools, and `onClose` to close an embedded panel.
+ *   settings, `showPanelViewOnly` to hide the controls that only apply to the
+ *   floating devtools, and `onClose` to close an embedded panel.
  * @returns The panel content.
  */
 export const ContentView: Component<ContentViewProps> = (props) => {

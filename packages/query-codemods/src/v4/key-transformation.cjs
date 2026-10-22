@@ -61,8 +61,8 @@ const transformUseQueriesUsages = ({
   })
   const replacer = ({ node }) => {
     /**
-     * When the node doesn't have the 'original' property, that means the codemod has been already applied,
-     * so we don't need to do any changes.
+     * When the node doesn't have the 'original' property, that means the
+     * codemod has been already applied, so we don't need to do any changes.
      */
     if (!node.original) {
       return node

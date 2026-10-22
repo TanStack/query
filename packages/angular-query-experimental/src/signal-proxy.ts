@@ -2,17 +2,20 @@ import { computed, untracked } from '@angular/core'
 import type { Signal } from '@angular/core'
 
 /**
- * Maps each field of `T` to a `Signal` of its value. Functions are kept as they are.
+ * Maps each field of `T` to a `Signal` of its value. Functions are kept as they
+ * are.
  */
 export type MapToSignals<T> = {
   [K in keyof T]: T[K] extends Function ? T[K] : Signal<T[K]>
 }
 
 /**
- * Exposes fields of an object passed via an Angular `Signal` as `Computed` signals.
- * Functions on the object are passed through as-is.
+ * Exposes fields of an object passed via an Angular `Signal` as `Computed`
+ * signals. Functions on the object are passed through as-is.
+ *
  * @param inputSignal - `Signal` that must return an object.
- * @returns A proxy object with the same fields as the input object, but with each field wrapped in a `Computed` signal.
+ * @returns A proxy object with the same fields as the input object, but with
+ *   each field wrapped in a `Computed` signal.
  */
 export function signalProxy<TInput extends Record<string | symbol, any>>(
   inputSignal: Signal<TInput>,

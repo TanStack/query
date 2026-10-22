@@ -46,43 +46,45 @@ interface QueryConfig<
 }
 
 /**
- * The raw state stored on a `Query` instance. This is the underlying state
- * that observer results (e.g. `QueryObserverResult`) are derived from.
+ * The raw state stored on a `Query` instance. This is the underlying state that
+ * observer results (e.g. `QueryObserverResult`) are derived from.
  */
 export interface QueryState<TData = unknown, TError = DefaultError> {
-  /**
-   * The last successfully resolved data for the query.
-   */
+  /** The last successfully resolved data for the query. */
   data: TData | undefined
-  /**
-   * The number of times the query has successfully resolved.
-   */
+  /** The number of times the query has successfully resolved. */
   dataUpdateCount: number
   /**
-   * The timestamp for when the query most recently returned the `status` as `"success"`.
+   * The timestamp for when the query most recently returned the `status` as
+   * `"success"`.
    */
   dataUpdatedAt: number
   /**
    * The error object for the query, if the last attempt resulted in an error.
+   *
    * - Defaults to `null`.
    */
   error: TError | null
   /**
-   * The sum of all errors, incremented every time the query resolves with an error.
+   * The sum of all errors, incremented every time the query resolves with an
+   * error.
    */
   errorUpdateCount: number
   /**
-   * The timestamp for when the query most recently returned the `status` as `"error"`.
+   * The timestamp for when the query most recently returned the `status` as
+   * `"error"`.
    */
   errorUpdatedAt: number
   /**
    * The failure count for the current fetch.
+   *
    * - Incremented every time the fetch fails.
    * - Reset to `0` when the fetch succeeds.
    */
   fetchFailureCount: number
   /**
    * The reason the current fetch failed, as reported by the retryer.
+   *
    * - Reset to `null` when the fetch succeeds.
    */
   fetchFailureReason: TError | null
@@ -93,11 +95,13 @@ export interface QueryState<TData = unknown, TError = DefaultError> {
   fetchMeta: FetchMeta | null
   /**
    * Whether the query has been marked as invalidated via `invalidate()`.
+   *
    * - Reset to `false` whenever the query resolves successfully.
    */
   isInvalidated: boolean
   /**
    * The status of the query.
+   *
    * - `pending` if there's no cached data and no attempt was finished yet.
    * - `error` if the last attempt resulted in an error.
    * - `success` if the query has data.
@@ -105,6 +109,7 @@ export interface QueryState<TData = unknown, TError = DefaultError> {
   status: QueryStatus
   /**
    * The fetch status of the query.
+   *
    * - `fetching`: the `queryFn` is currently executing.
    * - `paused`: a fetch wanted to run but has been paused (see network mode).
    * - `idle`: the query is not fetching.
@@ -113,8 +118,9 @@ export interface QueryState<TData = unknown, TError = DefaultError> {
 }
 
 /**
- * The context passed to a {@link QueryBehavior}'s `onFetch`, which can replace `fetchFn` to change
- * how the query fetches (e.g. to fetch pages for an infinite query).
+ * The context passed to a {@link QueryBehavior}'s `onFetch`, which can replace
+ * `fetchFn` to change how the query fetches (e.g. to fetch pages for an
+ * infinite query).
  */
 export interface FetchContext<
   TQueryFnData,
@@ -123,37 +129,27 @@ export interface FetchContext<
   TQueryKey extends QueryKey = QueryKey,
 > {
   /**
-   * The function that runs the fetch. By default it calls `queryFn`; `onFetch` can replace it.
+   * The function that runs the fetch. By default it calls `queryFn`; `onFetch`
+   * can replace it.
    */
   fetchFn: () => unknown | Promise<unknown>
-  /**
-   * The options of this fetch.
-   */
+  /** The options of this fetch. */
   fetchOptions?: FetchOptions
-  /**
-   * The `AbortSignal` that aborts when the fetch is cancelled.
-   */
+  /** The `AbortSignal` that aborts when the fetch is cancelled. */
   signal: AbortSignal
-  /**
-   * The options of the query.
-   */
+  /** The options of the query. */
   options: QueryOptions<TQueryFnData, TError, TData, any>
-  /**
-   * The `QueryClient` the query belongs to.
-   */
+  /** The `QueryClient` the query belongs to. */
   client: QueryClient
-  /**
-   * The key of the query.
-   */
+  /** The key of the query. */
   queryKey: TQueryKey
-  /**
-   * The state of the query when the fetch starts.
-   */
+  /** The state of the query when the fetch starts. */
   state: QueryState<TData, TError>
 }
 
 /**
- * Customizes how a query fetches, e.g. the behavior that fetches the pages of an infinite query.
+ * Customizes how a query fetches, e.g. the behavior that fetches the pages of
+ * an infinite query.
  */
 export interface QueryBehavior<
   TQueryFnData = unknown,
@@ -162,7 +158,8 @@ export interface QueryBehavior<
   TQueryKey extends QueryKey = QueryKey,
 > {
   /**
-   * Called before each fetch of the query, e.g. to replace `fetchFn` in the context.
+   * Called before each fetch of the query, e.g. to replace `fetchFn` in the
+   * context.
    */
   onFetch: (
     context: FetchContext<TQueryFnData, TError, TData, TQueryKey>,
@@ -171,37 +168,35 @@ export interface QueryBehavior<
 }
 
 /**
- * The direction an infinite query fetches in: `'forward'` for the next page, `'backward'` for the
- * previous one.
+ * The direction an infinite query fetches in: `'forward'` for the next page,
+ * `'backward'` for the previous one.
  */
 export type FetchDirection = 'forward' | 'backward'
 
 /**
- * Metadata for a fetch, e.g. the direction when an infinite query fetches more pages.
+ * Metadata for a fetch, e.g. the direction when an infinite query fetches more
+ * pages.
  */
 export interface FetchMeta {
   /**
-   * Set when an infinite query fetches another page, with the direction to fetch in.
+   * Set when an infinite query fetches another page, with the direction to
+   * fetch in.
    */
   fetchMore?: { direction: FetchDirection }
 }
 
-/**
- * Options for a single fetch of a query.
- */
+/** Options for a single fetch of a query. */
 export interface FetchOptions<TData = unknown> {
   /**
-   * If `true`, an in-flight fetch is cancelled before starting a new one, when the query already
-   * has data. Otherwise, the in-flight fetch is reused.
+   * If `true`, an in-flight fetch is cancelled before starting a new one, when
+   * the query already has data. Otherwise, the in-flight fetch is reused.
    */
   cancelRefetch?: boolean
-  /**
-   * Metadata of the fetch, stored in the query's `fetchMeta` state.
-   */
+  /** Metadata of the fetch, stored in the query's `fetchMeta` state. */
   meta?: FetchMeta
   /**
-   * A promise to use for the first attempt instead of calling `fetchFn`, e.g. a pending promise
-   * restored by `hydrate`.
+   * A promise to use for the first attempt instead of calling `fetchFn`, e.g. a
+   * pending promise restored by `hydrate`.
    */
   initialPromise?: Promise<TData>
 }
@@ -247,8 +242,8 @@ interface SetStateAction<TData, TError> {
 }
 
 /**
- * The actions a query dispatches to update its state, e.g. when it starts fetching, fails, or
- * succeeds.
+ * The actions a query dispatches to update its state, e.g. when it starts
+ * fetching, fails, or succeeds.
  */
 export type Action<TData, TError> =
   | ContinueAction
@@ -267,18 +262,19 @@ export type Action<TData, TError> =
  * state (data/error/status), and the observers currently subscribed to it.
  *
  * Instances are created and managed internally by `QueryCache`; application
- * code typically interacts with queries indirectly through `QueryClient` or
- * a framework hook like `useQuery`. Direct access to a `Query` instance is
+ * code typically interacts with queries indirectly through `QueryClient` or a
+ * framework hook like `useQuery`. Direct access to a `Query` instance is
  * possible via `queryCache.find()`/`findAll()` for inspecting cache state.
- * @example
- * ```ts
- * const queryCache = queryClient.getQueryCache()
- * const query = queryCache.find({ queryKey: ['posts'] })
  *
- * if (query) {
- *   console.log(query.state.dataUpdatedAt)
- * }
- * ```
+ * @example
+ *   ;```ts
+ *   const queryCache = queryClient.getQueryCache()
+ *   const query = queryCache.find({ queryKey: ['posts'] })
+ *
+ *   if (query) {
+ *     console.log(query.state.dataUpdatedAt)
+ *   }
+ *   ```
  */
 export class Query<
   TQueryFnData = unknown,
@@ -318,6 +314,7 @@ export class Query<
   }
   /**
    * The `meta` object passed in the query's options, if any.
+   *
    * @returns The query's `meta`, or `undefined` if none was set.
    */
   get meta(): QueryMeta | undefined {
@@ -326,8 +323,10 @@ export class Query<
 
   /**
    * `'infinite'` for an infinite query, otherwise `undefined`.
+   *
+   * @returns The type of the query, set from the `_type` option (e.g.
+   *   `'infinite'`).
    * @internal
-   * @returns The type of the query, set from the `_type` option (e.g. `'infinite'`).
    */
   get queryType() {
     return this.#queryType
@@ -336,6 +335,7 @@ export class Query<
   /**
    * The promise for the currently in-flight fetch, if the query is fetching.
    * `undefined` when the query is not fetching.
+   *
    * @returns The promise of the in-flight fetch, or `undefined`.
    */
   get promise(): Promise<TData> | undefined {
@@ -343,10 +343,12 @@ export class Query<
   }
 
   /**
-   * Replaces the query's options and applies their `gcTime`. If the query has no data yet, it gets
-   * the `initialData` from the new options, if any.
+   * Replaces the query's options and applies their `gcTime`. If the query has
+   * no data yet, it gets the `initialData` from the new options, if any.
+   *
+   * @param options - The new query options, merged on top of the query's
+   *   default options.
    * @internal
-   * @param options - The new query options, merged on top of the query's default options.
    */
   setOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
@@ -379,11 +381,13 @@ export class Query<
 
   /**
    * Writes new data to the query and marks it as successfully fetched.
-   * @internal
-   * @param newData - The data to write. Structural sharing with the current data is applied.
-   * @param options - Set `updatedAt` to override the timestamp, and `manual` to mark the write as
-   * manual (e.g. from `queryClient.setQueryData`).
+   *
+   * @param newData - The data to write. Structural sharing with the current
+   *   data is applied.
+   * @param options - Set `updatedAt` to override the timestamp, and `manual` to
+   *   mark the write as manual (e.g. from `queryClient.setQueryData`).
    * @returns The data that was written.
+   * @internal
    */
   setData(
     newData: TData,
@@ -403,9 +407,11 @@ export class Query<
   }
 
   /**
-   * Merges the given partial state directly into this query's state, notifying observers. Used
-   * by persistence and broadcast plugins to restore a state snapshot, and by devtools to let a
-   * user manually trigger a loading/error state or edit the cached data.
+   * Merges the given partial state directly into this query's state, notifying
+   * observers. Used by persistence and broadcast plugins to restore a state
+   * snapshot, and by devtools to let a user manually trigger a loading/error
+   * state or edit the cached data.
+   *
    * @param state - The partial state to merge into the query's state.
    */
   setState(state: Partial<QueryState<TData, TError>>): void {
@@ -414,15 +420,19 @@ export class Query<
 
   /**
    * Cancels the query's currently in-flight fetch, if any.
+   *
    * - Returns a promise that resolves once the cancellation has settled.
    * - If no fetch is in progress, resolves immediately.
-   * @param options - Set `revert` to restore the state from before the fetch started, and `silent`
-   * to suppress the cancellation error when a new fetch replaces the cancelled one.
-   * @returns A promise that resolves once the cancellation has settled.
+   *
    * @example
-   * ```ts
-   * await query.cancel()
-   * ```
+   *   ;```ts
+   *   await query.cancel()
+   *   ```
+   *
+   * @param options - Set `revert` to restore the state from before the fetch
+   *   started, and `silent` to suppress the cancellation error when a new fetch
+   *   replaces the cancelled one.
+   * @returns A promise that resolves once the cancellation has settled.
    */
   cancel(options?: CancelOptions): Promise<void> {
     const promise = this.#retryer?.promise
@@ -432,8 +442,9 @@ export class Query<
 
   /**
    * Clears the query's garbage collection timeout and silently cancels any
-   * in-flight fetch. Called by `QueryCache` when the query is removed from
-   * the cache.
+   * in-flight fetch. Called by `QueryCache` when the query is removed from the
+   * cache.
+   *
    * @see {@link Query#cancel}
    */
   override destroy(): void {
@@ -444,8 +455,10 @@ export class Query<
 
   /**
    * The state the query was created with.
+   *
+   * @returns The state the query had when it was first created, used by
+   *   {@link Query#reset}.
    * @internal
-   * @returns The state the query had when it was first created, used by {@link Query#reset}.
    */
   get resetState(): QueryState<TData, TError> {
     return this.#initialState
@@ -464,6 +477,7 @@ export class Query<
   /**
    * Returns `true` if the query has at least one observer for which `enabled`
    * does not resolve to `false`.
+   *
    * @returns `true` if the query has an enabled observer.
    */
   isActive(): boolean {
@@ -475,10 +489,12 @@ export class Query<
   /**
    * Returns `true` if the query is disabled, meaning it will not fetch
    * automatically.
+   *
    * - If the query has observers, it is disabled when none of them are active
    *   (see `isActive`).
    * - If the query has no observers, it is disabled when its `queryFn` is
    *   `skipToken` or it has never been fetched.
+   *
    * @returns `true` if the query is disabled.
    */
   isDisabled(): boolean {
@@ -492,6 +508,7 @@ export class Query<
   /**
    * Returns `true` if the query has been fetched, i.e. it has resolved with
    * either data or an error at least once.
+   *
    * @returns `true` if the query has been fetched.
    */
   isFetched() {
@@ -501,6 +518,7 @@ export class Query<
   /**
    * Returns `true` if the query has at least one observer configured with
    * `staleTime: 'static'`, meaning it is treated as never stale.
+   *
    * @returns `true` if the query is static.
    */
   isStatic(): boolean {
@@ -516,19 +534,22 @@ export class Query<
 
   /**
    * Returns `true` if the query is stale.
-   * - If the query has observers, defers to whether any observer's current
-   *   result reports `isStale` (which accounts for each observer's own
-   *   `staleTime` and `enabled` state).
-   * - If the query has no observers, it is considered stale when it has no
-   *   data or has been invalidated.
+   *
+   * - If the query has observers, defers to whether any observer's current result
+   *   reports `isStale` (which accounts for each observer's own `staleTime` and
+   *   `enabled` state).
+   * - If the query has no observers, it is considered stale when it has no data
+   *   or has been invalidated.
+   *
+   * @example
+   *   ;```ts
+   *   if (query.isStale()) {
+   *     // refetch or otherwise treat the cached data as outdated
+   *   }
+   *   ```
+   *
    * @returns `true` if the query is stale.
    * @see {@link Query#isStaleByTime}
-   * @example
-   * ```ts
-   * if (query.isStale()) {
-   *   // refetch or otherwise treat the cached data as outdated
-   * }
-   * ```
    */
   isStale(): boolean {
     // check observers first, their `isStale` has the source of truth
@@ -545,18 +566,22 @@ export class Query<
   /**
    * Returns `true` if the query's data is stale relative to the given
    * `staleTime` (defaults to `0`).
+   *
    * - A query with no data is always stale.
    * - `staleTime: 'static'` is never stale.
    * - An invalidated query is always stale.
    * - Otherwise, staleness is based on elapsed time since `dataUpdatedAt`.
-   * @param staleTime - The time, in milliseconds, after which data is considered stale, or
-   * `'static'` to never treat existing data as stale. A query without data is stale either way.
+   *
+   * @example
+   *   ;```ts
+   *   const isStale = query.isStaleByTime(1000 * 60)
+   *   ```
+   *
+   * @param staleTime - The time, in milliseconds, after which data is
+   *   considered stale, or `'static'` to never treat existing data as stale. A
+   *   query without data is stale either way.
    * @returns `true` if the query's data is stale.
    * @see {@link Query#isStale}
-   * @example
-   * ```ts
-   * const isStale = query.isStaleByTime(1000 * 60)
-   * ```
    */
   isStaleByTime(staleTime: StaleTime = 0): boolean {
     // no data is always stale
@@ -576,8 +601,9 @@ export class Query<
   }
 
   /**
-   * Refetches the query when the window regains focus, if an observer wants that, and continues a
-   * paused fetch.
+   * Refetches the query when the window regains focus, if an observer wants
+   * that, and continues a paused fetch.
+   *
    * @internal
    */
   onFocus(): void {
@@ -590,8 +616,9 @@ export class Query<
   }
 
   /**
-   * Refetches the query when the app reconnects, if an observer wants that, and continues a paused
-   * fetch.
+   * Refetches the query when the app reconnects, if an observer wants that, and
+   * continues a paused fetch.
+   *
    * @internal
    */
   onOnline(): void {
@@ -605,9 +632,10 @@ export class Query<
 
   /**
    * Subscribes an observer to the query and stops its garbage collection.
+   *
+   * @param observer - The observer to add. Adding an observer that is already
+   *   subscribed does nothing.
    * @internal
-   * @param observer - The observer to add. Adding an observer that is already subscribed does
-   * nothing.
    */
   addObserver(observer: QueryObserver<any, any, any, any, any>): void {
     if (!this.observers.includes(observer)) {
@@ -622,10 +650,12 @@ export class Query<
 
   /**
    * Unsubscribes an observer from the query.
+   *
+   * @param observer - The observer to remove. When the last observer is
+   *   removed, the in-flight fetch is cancelled if its abort signal was
+   *   consumed (otherwise only its retries are stopped), and garbage collection
+   *   is scheduled.
    * @internal
-   * @param observer - The observer to remove. When the last observer is removed, the in-flight
-   * fetch is cancelled if its abort signal was consumed (otherwise only its retries are stopped),
-   * and garbage collection is scheduled.
    */
   removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
     const index = this.observers.indexOf(observer)
@@ -656,13 +686,15 @@ export class Query<
 
   /**
    * Returns the number of observers currently subscribed to this query.
-   * @returns The number of observers.
+   *
    * @example
-   * ```ts
-   * if (query.getObserversCount() === 0) {
-   *   // no component is currently watching this query
-   * }
-   * ```
+   *   ;```ts
+   *   if (query.getObserversCount() === 0) {
+   *     // no component is currently watching this query
+   *   }
+   *   ```
+   *
+   * @returns The number of observers.
    */
   getObserversCount(): number {
     return this.observers.length
@@ -672,10 +704,11 @@ export class Query<
    * Marks the query as invalidated, unless it is already invalidated. This
    * updates `state.isInvalidated` and notifies observers, but does not by
    * itself trigger a refetch.
+   *
    * @example
-   * ```ts
-   * query.invalidate()
-   * ```
+   *   ;```ts
+   *   query.invalidate()
+   *   ```
    */
   invalidate(): void {
     if (!this.state.isInvalidated) {
@@ -686,19 +719,21 @@ export class Query<
   /**
    * Fetches the query, i.e. runs its `queryFn` (through any configured
    * retryer/behavior) and updates the query's state with the result.
-   * - If a fetch is already in flight, returns its promise instead of
-   *   starting a new one, unless `fetchOptions.cancelRefetch` is set and the
-   *   query already has data, in which case the current fetch is silently
-   *   cancelled first.
-   * - If `options` is passed, it replaces the query's current options
-   *   before fetching.
-   * @param options - Query options that replace the query's current options before fetching. They
-   * are not applied when an in-flight fetch is reused.
-   * @param fetchOptions - Set `cancelRefetch` to cancel an in-flight fetch first (only if the query
-   * already has data), and `meta` to pass extra information to the query's behavior.
-   * @returns A promise that resolves with the fetched data, or rejects with the fetch error. If the
-   * fetch is cancelled with `revert` while the query has data, it resolves with the restored data
-   * instead.
+   *
+   * - If a fetch is already in flight, returns its promise instead of starting a
+   *   new one, unless `fetchOptions.cancelRefetch` is set and the query already
+   *   has data, in which case the current fetch is silently cancelled first.
+   * - If `options` is passed, it replaces the query's current options before
+   *   fetching.
+   *
+   * @param options - Query options that replace the query's current options
+   *   before fetching. They are not applied when an in-flight fetch is reused.
+   * @param fetchOptions - Set `cancelRefetch` to cancel an in-flight fetch
+   *   first (only if the query already has data), and `meta` to pass extra
+   *   information to the query's behavior.
+   * @returns A promise that resolves with the fetched data, or rejects with the
+   *   fetch error. If the fetch is cancelled with `revert` while the query has
+   *   data, it resolves with the restored data instead.
    */
   async fetch(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
@@ -1018,10 +1053,11 @@ export class Query<
 
 /**
  * Returns the state changes applied when a query starts fetching.
- * @param data - The query's current data. If it is `undefined`, the query is also reset to
- * `'pending'` with no error.
- * @param options - The query options, whose `networkMode` decides whether the query is `'fetching'`
- * or `'paused'`.
+ *
+ * @param data - The query's current data. If it is `undefined`, the query is
+ *   also reset to `'pending'` with no error.
+ * @param options - The query options, whose `networkMode` decides whether the
+ *   query is `'fetching'` or `'paused'`.
  * @returns The partial query state for a starting fetch.
  */
 export function fetchState<
@@ -1047,8 +1083,10 @@ export function fetchState<
 
 /**
  * Returns the state changes applied when a query receives data.
+ *
  * @param data - The new data.
- * @param dataUpdatedAt - The timestamp the data is recorded with. Defaults to the current time.
+ * @param dataUpdatedAt - The timestamp the data is recorded with. Defaults to
+ *   the current time.
  * @returns The partial query state for a successful update.
  */
 function successState<TData>(data: TData | undefined, dataUpdatedAt?: number) {
@@ -1062,10 +1100,12 @@ function successState<TData>(data: TData | undefined, dataUpdatedAt?: number) {
 }
 
 /**
- * Returns the initial state of a query, based on its `initialData` and `initialDataUpdatedAt`
- * options.
+ * Returns the initial state of a query, based on its `initialData` and
+ * `initialDataUpdatedAt` options.
+ *
  * @param options - The query options.
- * @returns The initial query state: `'success'` if `initialData` is set, otherwise `'pending'`.
+ * @returns The initial query state: `'success'` if `initialData` is set,
+ *   otherwise `'pending'`.
  */
 function getDefaultState<
   TQueryFnData,

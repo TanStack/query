@@ -18,6 +18,7 @@ export const ReactQueryDevtoolsPanel: (typeof DevtoolsPanel)['ReactQueryDevtools
     : DevtoolsPanel.ReactQueryDevtoolsPanel
 
 /**
- * The props of `ReactQueryDevtoolsPanel`, which renders the devtools panel inline.
+ * The props of `ReactQueryDevtoolsPanel`, which renders the devtools panel
+ * inline.
  */
 export type DevtoolsPanelOptions = DevtoolsPanel.DevtoolsPanelOptions

@@ -5,8 +5,8 @@ import { defineConfig } from 'oxlint'
 
 /**
  * Oxlint ships a native `jsdoc` plugin that only covers part of
- * 'eslint-plugin-jsdoc', so the original plugin is loaded as a JS plugin
- * under the `jsdoc-js` alias and its recommended rules are renamed to match.
+ * 'eslint-plugin-jsdoc', so the original plugin is loaded as a JS plugin under
+ * the `jsdoc-js` alias and its recommended rules are renamed to match.
  */
 const jsdocRecommendedRules = Object.fromEntries(
   Object.entries(
@@ -179,12 +179,13 @@ export default defineConfig({
     ],
 
     /**
-     * Disallows direct calls to deprecated imperative query methods of `QueryClient`
-     * for new tests and code
+     * Disallows direct calls to deprecated imperative query methods of
+     * `QueryClient` for new tests and code
      *
      * Existing tests that directly test the methods from before the refactoring
-     * will be grandfathered in and allowed to continue using the deprecated methods.
-     * They should not be removed, but new tests should use the new methods instead.
+     * will be grandfathered in and allowed to continue using the deprecated
+     * methods. They should not be removed, but new tests should use the new
+     * methods instead.
      */
     'tanstack-query/no-restricted-syntax': [
       'error',
@@ -347,12 +348,13 @@ export default defineConfig({
 })
 
 /**
- * Native Oxlint equivalent of 'eslint-config-preact', applied on top of the root config.
+ * Native Oxlint equivalent of 'eslint-config-preact', applied on top of the
+ * root config.
  *
- * Not ported because Oxlint does not implement them: `no-dupe-args`, `no-undef`,
- * `no-undef-init`, `strict`, `react/jsx-no-bind`, `react/jsx-uses-react`,
- * `react/jsx-uses-vars`, `react/no-deprecated`, `react/prefer-stateless-function`
- * and `react/require-render-return`.
+ * Not ported because Oxlint does not implement them: `no-dupe-args`,
+ * `no-undef`, `no-undef-init`, `strict`, `react/jsx-no-bind`,
+ * `react/jsx-uses-react`, `react/jsx-uses-vars`, `react/no-deprecated`,
+ * `react/prefer-stateless-function` and `react/require-render-return`.
  */
 export const preactConfig = defineConfig({
   plugins: ['import', 'typescript', 'unicorn', 'vitest', 'react'],

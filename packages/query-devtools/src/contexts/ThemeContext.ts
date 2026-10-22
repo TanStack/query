@@ -7,7 +7,9 @@ export const ThemeContext = createContext<Accessor<'light' | 'dark'>>(
 
 /**
  * Returns the devtools theme from context.
- * @returns A getter for the current theme, `'light'` or `'dark'`. Defaults to `'dark'`.
+ *
+ * @returns A getter for the current theme, `'light'` or `'dark'`. Defaults to
+ *   `'dark'`.
  */
 export function useTheme() {
   return useContext(ThemeContext)

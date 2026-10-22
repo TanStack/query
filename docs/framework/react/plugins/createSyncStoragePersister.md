@@ -105,18 +105,20 @@ createSyncStoragePersister(options: CreateSyncStoragePersisterOptions)
 
 ```tsx
 interface CreateSyncStoragePersisterOptions {
-  /** The storage client used for setting an retrieving items from cache (window.localStorage or window.sessionStorage) */
+  /**
+   * The storage client used for setting an retrieving items from cache
+   * (window.localStorage or window.sessionStorage)
+   */
   storage: Storage | undefined | null
   /** The key to use when storing the cache */
   key?: string
-  /** To avoid spamming,
-   * pass a time in ms to throttle saving the cache to disk */
+  /** To avoid spamming, pass a time in ms to throttle saving the cache to disk */
   throttleTime?: number
   /** How to serialize the data to storage */
   serialize?: (client: PersistedClient) => string
   /** How to deserialize the data from storage */
   deserialize?: (cachedString: string) => PersistedClient
-  /** How to retry persistence on error **/
+  /** How to retry persistence on error * */
   retry?: PersistRetryer
 }
 ```

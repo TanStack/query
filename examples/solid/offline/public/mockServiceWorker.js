@@ -3,6 +3,7 @@
 
 /**
  * Mock Service Worker.
+ *
  * @see https://github.com/mswjs/msw
  * - Please do NOT modify this file.
  */
@@ -179,10 +180,11 @@ async function handleRequest(event, requestId, requestInterceptedAt) {
 }
 
 /**
- * Resolve the main client for the given event.
- * Client that issues a request doesn't necessarily equal the client
- * that registered the worker. It's with the latter the worker should
- * communicate with during the response resolving phase.
+ * Resolve the main client for the given event. Client that issues a request
+ * doesn't necessarily equal the client that registered the worker. It's with
+ * the latter the worker should communicate with during the response resolving
+ * phase.
+ *
  * @param {FetchEvent} event
  * @returns {Promise<Client | undefined>}
  */
@@ -294,7 +296,7 @@ async function getResponse(event, client, requestId, requestInterceptedAt) {
 /**
  * @param {Client} client
  * @param {any} message
- * @param {Array<Transferable>} transferrables
+ * @param {Transferable[]} transferrables
  * @returns {Promise<any>}
  */
 function sendToClient(client, message, transferrables = []) {
@@ -339,9 +341,7 @@ function respondWithMock(response) {
   return mockedResponse
 }
 
-/**
- * @param {Request} request
- */
+/** @param {Request} request */
 async function serializeRequest(request) {
   return {
     url: request.url,

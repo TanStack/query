@@ -13,14 +13,16 @@ type BatchCallsCallback<T extends Array<unknown>> = (...args: T) => void
 type ScheduleFunction = (callback: () => void) => void
 
 /**
- * Default scheduling function used by the notify manager.
- * Schedules the callback with the system's `setTimeout(callback, 0)`.
+ * Default scheduling function used by the notify manager. Schedules the
+ * callback with the system's `setTimeout(callback, 0)`.
  */
 export const defaultScheduler: ScheduleFunction = systemSetTimeoutZero
 
 /**
- * Creates a notify manager, which schedules and batches notifications to subscribers. Query uses a
- * single instance of it, exported as {@link notifyManager}.
+ * Creates a notify manager, which schedules and batches notifications to
+ * subscribers. Query uses a single instance of it, exported as
+ * {@link notifyManager}.
+ *
  * @returns A new notify manager.
  */
 export function createNotifyManager() {
@@ -59,10 +61,11 @@ export function createNotifyManager() {
 
   return {
     /**
-     * Batches all updates scheduled inside the passed callback.
-     * This is mainly used internally to optimize query client updating.
-     * Batches can be nested; the queue is only flushed once the outermost `batch` call finishes.
-     * The return value of `callback` is passed through.
+     * Batches all updates scheduled inside the passed callback. This is mainly
+     * used internally to optimize query client updating. Batches can be nested;
+     * the queue is only flushed once the outermost `batch` call finishes. The
+     * return value of `callback` is passed through.
+     *
      * @param callback - The function to run in the batch.
      * @returns The return value of `callback`.
      */
@@ -81,8 +84,10 @@ export function createNotifyManager() {
     },
     /**
      * All calls to the wrapped function will be batched.
+     *
      * @param callback - The function to wrap.
-     * @returns A function that schedules a call to `callback` with the given arguments.
+     * @returns A function that schedules a call to `callback` with the given
+     *   arguments.
      */
     batchCalls: <T extends Array<unknown>>(
       callback: BatchCallsCallback<T>,
@@ -94,51 +99,60 @@ export function createNotifyManager() {
       }
     },
     /**
-     * Schedules a function to be run on the next batch.
-     * By default, the batch is run with a `setTimeout`, but this can be configured via `setScheduler`.
+     * Schedules a function to be run on the next batch. By default, the batch
+     * is run with a `setTimeout`, but this can be configured via
+     * `setScheduler`.
      */
     schedule,
     /**
-     * Use this method to set a custom notify function.
-     * This can be used to for example wrap notifications with `React.act` while running tests.
+     * Use this method to set a custom notify function. This can be used to for
+     * example wrap notifications with `React.act` while running tests.
+     *
      * @param fn - Receives each notification callback and must call it.
      */
     setNotifyFunction: (fn: NotifyFunction) => {
       notifyFn = fn
     },
     /**
-     * Use this method to set a custom function to batch notifications together into a single tick.
-     * Framework adapters use this to plug in their own batching primitive, so that a single query
-     * update only triggers one re-render instead of one per subscriber.
-     * @param fn - Receives a function that runs a batch of notifications and must call it.
-     * @example
-     * ```ts
-     * import { notifyManager } from '@tanstack/query-core'
-     * import { batch } from 'solid-js'
+     * Use this method to set a custom function to batch notifications together
+     * into a single tick. Framework adapters use this to plug in their own
+     * batching primitive, so that a single query update only triggers one
+     * re-render instead of one per subscriber.
      *
-     * notifyManager.setBatchNotifyFunction(batch)
-     * ```
+     * @example
+     *   ;```ts
+     *   import { notifyManager } from '@tanstack/query-core'
+     *   import { batch } from 'solid-js'
+     *
+     *   notifyManager.setBatchNotifyFunction(batch)
+     *   ```
+     *
+     * @param fn - Receives a function that runs a batch of notifications and
+     *   must call it.
      */
     setBatchNotifyFunction: (fn: BatchNotifyFunction) => {
       batchNotifyFn = fn
     },
     /**
-     * Configures a custom callback that schedules when the next batch runs.
-     * The default behavior is `setTimeout(callback, 0)`.
-     * @param fn - Receives a callback that runs the next batch, and schedules it.
+     * Configures a custom callback that schedules when the next batch runs. The
+     * default behavior is `setTimeout(callback, 0)`.
+     *
      * @example
-     * ```ts
-     * import { notifyManager } from '@tanstack/query-core'
+     *   ;```ts
+     *   import { notifyManager } from '@tanstack/query-core'
      *
-     * // Schedule batches in the next microtask
-     * notifyManager.setScheduler(queueMicrotask)
+     *   // Schedule batches in the next microtask
+     *   notifyManager.setScheduler(queueMicrotask)
      *
-     * // Schedule batches before the next frame is rendered
-     * notifyManager.setScheduler(requestAnimationFrame)
+     *   // Schedule batches before the next frame is rendered
+     *   notifyManager.setScheduler(requestAnimationFrame)
      *
-     * // Schedule batches some time in the future
-     * notifyManager.setScheduler((cb) => setTimeout(cb, 10))
-     * ```
+     *   // Schedule batches some time in the future
+     *   notifyManager.setScheduler((cb) => setTimeout(cb, 10))
+     *   ```
+     *
+     * @param fn - Receives a callback that runs the next batch, and schedules
+     *   it.
      */
     setScheduler: (fn: ScheduleFunction) => {
       scheduleFn = fn
@@ -148,7 +162,5 @@ export function createNotifyManager() {
 
 // SINGLETON
 
-/**
- * Handles scheduling and batching callbacks in TanStack Query.
- */
+/** Handles scheduling and batching callbacks in TanStack Query. */
 export const notifyManager = createNotifyManager()

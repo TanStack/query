@@ -89,14 +89,16 @@ interface CreateAsyncStoragePersisterOptions {
   storage: AsyncStorage | undefined | null
   /** The key to use when storing the cache to localStorage */
   key?: string
-  /** To avoid localStorage spamming,
-   * pass a time in ms to throttle saving the cache to disk */
+  /**
+   * To avoid localStorage spamming, pass a time in ms to throttle saving the
+   * cache to disk
+   */
   throttleTime?: number
   /** How to serialize the data to storage */
   serialize?: (client: PersistedClient) => MaybePromise<string>
   /** How to deserialize the data from storage */
   deserialize?: (cachedString: string) => MaybePromise<PersistedClient>
-  /** How to retry persistence on error **/
+  /** How to retry persistence on error * */
   retry?: AsyncPersistRetryer
 }
 

@@ -4,25 +4,28 @@ import { getClientKey } from './utils'
 import type { QueryClient } from './queryClient'
 
 /**
- * Retrieves the `QueryClient` installed by `VueQueryPlugin`, via Vue's `inject`. Must be called inside
- * `setup()` or another function that supports an injection context.
- * @param id - The `queryClientKey` passed to `VueQueryPlugin` — only needed when multiple `QueryClient`s are
- * installed in the same app.
- * @returns The installed `QueryClient`.
- * @throws {Error} If called outside an injection context, or if no `QueryClient` was installed via
- * `VueQueryPlugin`.
+ * Retrieves the `QueryClient` installed by `VueQueryPlugin`, via Vue's
+ * `inject`. Must be called inside `setup()` or another function that supports
+ * an injection context.
+ *
  * @example
- * ```vue
- * <script setup lang="ts">
- * import { useQueryClient } from '@tanstack/vue-query'
+ *   ;```vue
+ *   <script setup lang="ts">
+ *   import { useQueryClient } from '@tanstack/vue-query'
  *
- * const queryClient = useQueryClient()
+ *   const queryClient = useQueryClient()
  *
- * function invalidate() {
+ *   function invalidate() {
  *   queryClient.invalidateQueries({ queryKey: ['todos'] })
- * }
- * </script>
- * ```
+ *   }
+ *   </script>
+ *   ```
+ *
+ * @param id - The `queryClientKey` passed to `VueQueryPlugin` — only needed
+ *   when multiple `QueryClient`s are installed in the same app.
+ * @returns The installed `QueryClient`.
+ * @throws {Error} If called outside an injection context, or if no
+ *   `QueryClient` was installed via `VueQueryPlugin`.
  */
 export function useQueryClient(id = ''): QueryClient {
   // ensures that `inject()` can be used

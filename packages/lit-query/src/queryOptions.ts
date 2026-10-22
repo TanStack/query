@@ -10,9 +10,7 @@ import type {
   SkipToken,
 } from '@tanstack/query-core'
 
-/**
- * Query options with `initialData` that guarantees defined query data.
- */
+/** Query options with `initialData` that guarantees defined query data. */
 export type DefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -28,9 +26,7 @@ export type DefinedInitialDataOptions<
   queryFn?: QueryFunction<TQueryFnData, TQueryKey>
 }
 
-/**
- * Query options where `queryFn` is present and not a `skipToken`.
- */
+/** Query options where `queryFn` is present and not a `skipToken`. */
 export type UnusedSkipTokenOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -52,9 +48,7 @@ export type UnusedSkipTokenOptions<
   >
 }
 
-/**
- * Query options where `initialData` can be omitted or undefined.
- */
+/** Query options where `initialData` can be omitted or undefined. */
 export type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -76,18 +70,20 @@ export type UndefinedInitialDataOptions<
 /**
  * Brands query options so the `queryKey` carries the query function data and
  * error types across TanStack Query APIs.
+ *
+ * @example
+ *   ;```ts
+ *   import { queryOptions } from '@tanstack/lit-query'
+ *
+ *   const todosOptions = queryOptions({
+ *     queryKey: ['todos'],
+ *     queryFn: fetchTodos,
+ *     initialData: [],
+ *   })
+ *   ```
+ *
  * @param options - Query options to preserve and brand.
  * @returns The same options object with a typed `queryKey`.
- * @example
- * ```ts
- * import { queryOptions } from '@tanstack/lit-query'
- *
- * const todosOptions = queryOptions({
- *   queryKey: ['todos'],
- *   queryFn: fetchTodos,
- *   initialData: [],
- * })
- * ```
  */
 export function queryOptions<
   TQueryFnData = unknown,
@@ -103,6 +99,7 @@ export function queryOptions<
 /**
  * Brands query options so the `queryKey` carries the query function data and
  * error types across TanStack Query APIs.
+ *
  * @param options - Query options to preserve and brand.
  * @returns The same options object with a typed `queryKey`.
  */
@@ -120,6 +117,7 @@ export function queryOptions<
 /**
  * Brands query options so the `queryKey` carries the query function data and
  * error types across TanStack Query APIs.
+ *
  * @param options - Query options to preserve and brand.
  * @returns The same options object with a typed `queryKey`.
  */

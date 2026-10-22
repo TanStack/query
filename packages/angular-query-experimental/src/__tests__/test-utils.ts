@@ -52,6 +52,7 @@ function componentHasSignalInputProperty<TProperty extends string>(
 
 /**
  * Set required signal input value to component fixture
+ *
  * @see https://github.com/angular/angular/issues/54013
  */
 export function setSignalInputs<T extends NonNullable<unknown>>(

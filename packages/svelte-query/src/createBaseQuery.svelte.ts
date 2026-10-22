@@ -12,6 +12,7 @@ import type {
 
 /**
  * Base implementation for `createQuery` and `createInfiniteQuery`
+ *
  * @param options - A function that returns query options
  * @param Observer - The observer from query-core
  * @param queryClient - Custom query client which overrides provider
@@ -63,8 +64,9 @@ export function createBaseQuery<
   )
 
   /**
-   * Computes the observer's current result for the resolved options, tracking property access unless
-   * `notifyOnChangeProps` is set.
+   * Computes the observer's current result for the resolved options, tracking
+   * property access unless `notifyOnChangeProps` is set.
+   *
    * @returns The current query result.
    */
   function createResult() {

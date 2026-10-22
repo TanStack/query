@@ -133,22 +133,31 @@ All options available are as follows:
 interface PersistQueryClientOptions {
   /** The QueryClient to persist */
   queryClient: QueryClient
-  /** The Persister interface for storing and restoring the cache
-   * to/from a persisted location */
+  /**
+   * The Persister interface for storing and restoring the cache to/from a
+   * persisted location
+   */
   persister: Persister
-  /** The max-allowed age of the cache in milliseconds.
-   * If a persisted cache is found that is older than this
-   * time, it will be **silently** discarded
-   * (defaults to 24 hours) */
+  /**
+   * The max-allowed age of the cache in milliseconds. If a persisted cache is
+   * found that is older than this time, it will be **silently** discarded
+   * (defaults to 24 hours)
+   */
   maxAge?: number
-  /** A unique string that can be used to forcefully
-   * invalidate existing caches if they do not share the same buster string */
+  /**
+   * A unique string that can be used to forcefully invalidate existing caches
+   * if they do not share the same buster string
+   */
   buster?: string
-  /** The options passed to the hydrate function
-   * Not used on `persistQueryClientSave` or `persistQueryClientSubscribe` */
+  /**
+   * The options passed to the hydrate function Not used on
+   * `persistQueryClientSave` or `persistQueryClientSubscribe`
+   */
   hydrateOptions?: HydrateOptions
-  /** The options passed to the dehydrate function
-   * Not used on `persistQueryClientRestore` */
+  /**
+   * The options passed to the dehydrate function Not used on
+   * `persistQueryClientRestore`
+   */
   dehydrateOptions?: DehydrateOptions
 }
 ```
@@ -274,6 +283,7 @@ import {
 
 /**
  * Creates an Indexed DB persister
+ *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
  */
 export function createIDBPersister(idbValidKey: IDBValidKey = 'reactQuery') {

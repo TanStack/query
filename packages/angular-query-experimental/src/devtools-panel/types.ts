@@ -2,64 +2,63 @@ import type { DevtoolsErrorType } from '@tanstack/query-devtools'
 import type { ElementRef, Injector } from '@angular/core'
 import type { QueryClient } from '@tanstack/query-core'
 
-/**
- * Options for `injectDevtoolsPanel`.
- */
+/** Options for `injectDevtoolsPanel`. */
 export interface InjectDevtoolsPanelOptions {
   /**
    * The `Injector` in which to create the devtools panel.
    *
-   * If this is not provided, the current injection context will be used instead (via `inject`).
+   * If this is not provided, the current injection context will be used instead
+   * (via `inject`).
    */
   injector?: Injector
 }
 
-/**
- * A devtools panel, which can be manually destroyed.
- */
+/** A devtools panel, which can be manually destroyed. */
 export interface DevtoolsPanelRef {
   /**
-   * Destroy the panel, removing it from the DOM and stops listening to signal changes.
+   * Destroy the panel, removing it from the DOM and stops listening to signal
+   * changes.
    */
   destroy: () => void
 }
 
 /**
- * Options for the devtools panel, returned by the function passed to `injectDevtoolsPanel`.
+ * Options for the devtools panel, returned by the function passed to
+ * `injectDevtoolsPanel`.
  */
 export interface DevtoolsPanelOptions {
-  /**
-   * Custom instance of QueryClient
-   */
+  /** Custom instance of QueryClient */
   client?: QueryClient
-  /**
-   * Use this so you can define custom errors that can be shown in the devtools.
-   */
+  /** Use this so you can define custom errors that can be shown in the devtools. */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   * Use this to pass a nonce to the style tag that is added to the document
+   * head. This is useful if you are using a Content Security Policy (CSP) nonce
+   * to allow inline styles.
    */
   styleNonce?: string
   /**
-   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
-   * within the shadow DOM instead of within the head tag in the light DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles
+   * will be applied within the shadow DOM instead of within the head tag in the
+   * light DOM.
    */
   shadowDOMTarget?: ShadowRoot
 
-  /**
-   * Callback function that is called when the devtools panel is closed
-   */
+  /** Callback function that is called when the devtools panel is closed */
   onClose?: () => void
 
   /**
-   * Element where to render the devtools panel. When set to undefined or null, the devtools panel will not be created, or destroyed if existing.
-   * If changed from undefined to an ElementRef, the devtools panel will be created.
+   * Element where to render the devtools panel. When set to undefined or null,
+   * the devtools panel will not be created, or destroyed if existing. If
+   * changed from undefined to an ElementRef, the devtools panel will be
+   * created.
    */
   hostElement?: ElementRef
 }
 
 /**
- * The signature of `injectDevtoolsPanel`, which creates a devtools panel from reactive options.
+ * The signature of `injectDevtoolsPanel`, which creates a devtools panel from
+ * reactive options.
  */
 export type InjectDevtoolsPanel = (
   injectDevtoolsPanelFn: () => DevtoolsPanelOptions,

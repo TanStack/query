@@ -7,10 +7,13 @@ import type { QueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 
 /**
- * The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
- * `undefined` while the query is `pending`. `queryOptions` itself accepts and returns a plain object (its
- * parameter type is `ReturnType<UndefinedInitialDataOptions<...>>`, i.e. this `Accessor` called); Solid's
- * reactivity applies where the result is consumed instead, e.g. `useQuery(() => options)`.
+ * The options accepted by the `queryOptions` overload selected when no
+ * `initialData` is set — `data` may be `undefined` while the query is
+ * `pending`. `queryOptions` itself accepts and returns a plain object (its
+ * parameter type is `ReturnType<UndefinedInitialDataOptions<...>>`, i.e. this
+ * `Accessor` called); Solid's reactivity applies where the result is consumed
+ * instead, e.g. `useQuery(() => options)`.
+ *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
@@ -28,8 +31,10 @@ export type UndefinedInitialDataOptions<
 >
 
 /**
- * The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
- * `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * The options accepted by the `queryOptions` overload selected when
+ * `initialData` is set — `data` is never `undefined` (unless a `select` changes
+ * `TData` to include `undefined`).
+ *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
@@ -47,41 +52,49 @@ export type DefinedInitialDataOptions<
 >
 
 /**
- * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
- * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
- * is the query key to generate options for.
+ * You can generally pass everything to `queryOptions` that you can also pass to
+ * `useQuery`. These options can be shared across hooks and imperative APIs such
+ * as `queryClient.query`. `options.queryKey` is required and is the query key
+ * to generate options for.
  *
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
- * a `select` changes `TData` to include `undefined`).
- * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` set.
- * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- * @see {@link useQuery} to run a query with these options.
+ * This overload is selected when `initialData` is set, so the resulting `data`
+ * is never `undefined` (unless a `select` changes `TData` to include
+ * `undefined`).
+ *
  * @example
- * ```tsx
- * import { For } from 'solid-js'
- * import { queryOptions, useQuery } from '@tanstack/solid-query'
+ *   ```tsx
+ *   import { For } from 'solid-js'
+ *   import { queryOptions, useQuery } from '@tanstack/solid-query'
  *
- * const postsOptions = queryOptions({
+ *   const postsOptions = queryOptions({
  *   queryKey: ['posts'],
  *   queryFn: fetchPosts,
  *   initialData: [],
- * })
+ *   })
  *
- * function Posts() {
+ *   function Posts() {
  *   // `postsQuery.data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
  *   // so the list stays visible alongside the error.
  *   const postsQuery = useQuery(() => postsOptions)
  *
  *   return (
- *     <div>
- *       {postsQuery.isError ? <span>Error: {postsQuery.error.message}</span> : null}
- *       <ul>
- *         <For each={postsQuery.data}>{(post) => <li>{post.title}</li>}</For>
- *       </ul>
- *     </div>
+ *   <div>
+ *   {postsQuery.isError ? (
+ *   <span>Error: {postsQuery.error.message}</span>
+ *   ) : null}
+ *   <ul>
+ *   <For each={postsQuery.data}>{(post) => <li>{post.title}</li>}</For>
+ *   </ul>
+ *   </div>
  *   )
- * }
- * ```
+ *   }
+ *   ```
+ *
+ * @param options - The {@link DefinedInitialDataOptions} to use — everything
+ *   you can pass to `useQuery`, with `initialData` set.
+ * @returns The same options object, typed so that `queryKey` carries the
+ *   inferred data type.
+ * @see {@link useQuery} to run a query with these options.
  */
 export function queryOptions<
   TQueryFnData = unknown,
@@ -98,38 +111,43 @@ export function queryOptions<
   QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
 /**
- * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
- * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
- * is the query key to generate options for.
- * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
- * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- * @see {@link useQuery} to run a query with these options.
- * @example
- * A parameterized factory, so the same options object can be reused per `id`:
- * ```tsx
- * import { Match, Switch } from 'solid-js'
- * import { queryOptions, useQuery } from '@tanstack/solid-query'
+ * You can generally pass everything to `queryOptions` that you can also pass to
+ * `useQuery`. These options can be shared across hooks and imperative APIs such
+ * as `queryClient.query`. `options.queryKey` is required and is the query key
+ * to generate options for.
  *
- * const postOptions = (id: string) =>
+ * @example
+ *   A parameterized factory, so the same options object can be reused per `id`:
+ *   ```tsx
+ *   import { Match, Switch } from 'solid-js'
+ *   import { queryOptions, useQuery } from '@tanstack/solid-query'
+ *
+ *   const postOptions = (id: string) =>
  *   queryOptions({
- *     queryKey: ['post', id],
- *     queryFn: () => fetchPost(id),
+ *   queryKey: ['post', id],
+ *   queryFn: () => fetchPost(id),
  *   })
  *
- * function Post(props: { id: string }) {
+ *   function Post(props: { id: string }) {
  *   const postQuery = useQuery(() => postOptions(props.id))
  *
  *   return (
- *     <Switch>
- *       <Match when={postQuery.isPending}>Loading...</Match>
- *       <Match when={postQuery.isError}>Error: {postQuery.error.message}</Match>
- *       <Match when={postQuery.isSuccess}>
- *         <h1>{postQuery.data.title}</h1>
- *       </Match>
- *     </Switch>
+ *   <Switch>
+ *   <Match when={postQuery.isPending}>Loading...</Match>
+ *   <Match when={postQuery.isError}>Error: {postQuery.error.message}</Match>
+ *   <Match when={postQuery.isSuccess}>
+ *   <h1>{postQuery.data.title}</h1>
+ *   </Match>
+ *   </Switch>
  *   )
- * }
- * ```
+ *   }
+ *   ```
+ *
+ * @param options - The {@link UndefinedInitialDataOptions} to use — everything
+ *   you can pass to `useQuery`.
+ * @returns The same options object, typed so that `queryKey` carries the
+ *   inferred data type.
+ * @see {@link useQuery} to run a query with these options.
  */
 export function queryOptions<
   TQueryFnData = unknown,

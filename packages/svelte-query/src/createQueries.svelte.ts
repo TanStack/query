@@ -124,7 +124,8 @@ type GetCreateQueryResult<T> =
                   CreateQueryResult
 
 /**
- * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
+ * QueriesOptions reducer recursively unwraps function arguments to
+ * infer/enforce type param
  */
 export type QueriesOptions<
   T extends Array<any>,
@@ -165,9 +166,7 @@ export type QueriesOptions<
             : // Fallback
               Array<CreateQueryOptionsForCreateQueries>
 
-/**
- * QueriesResults reducer recursively maps type param to results
- */
+/** QueriesResults reducer recursively maps type param to results */
 export type QueriesResults<
   T extends Array<any>,
   TResults extends Array<any> = [],
@@ -187,74 +186,79 @@ export type QueriesResults<
         : { [K in keyof T]: GetCreateQueryResult<T[K]> }
 
 /**
- * The `createQueries` function can be used to fetch a variable number of queries.
- * @param createQueriesOptions - The `queries` array to run, and an optional `combine` function, wrapped in an
- * {@link Accessor} so options can be reactive.
- * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context
- * will be used.
- * @returns An array with one result per query, in the same order as `queries` — or, if `combine` is provided,
- * whatever `combine` returns.
+ * The `createQueries` function can be used to fetch a variable number of
+ * queries.
+ *
  * @example
- * ```svelte
- * <script lang="ts">
+ *   ;```svelte
+ *   <script lang="ts">
  *   import { createQueries } from '@tanstack/svelte-query'
  *
  *   let { ids }: { ids: Array<number> } = $props()
  *
  *   const postQueries = createQueries(() => ({
- *     queries: ids.map((id) => ({
- *       queryKey: ['post', id],
- *       queryFn: () => fetchPost(id),
- *       staleTime: Infinity,
- *     })),
+ *   queries: ids.map((id) => ({
+ *   queryKey: ['post', id],
+ *   queryFn: () => fetchPost(id),
+ *   staleTime: Infinity,
+ *   })),
  *   }))
- * </script>
+ *   </script>
  *
- * <ul>
+ *   <ul>
  *   {#each postQueries as query, index (ids[index])}
- *     {#if query.isPending}
- *       <li>Loading...</li>
- *     {:else if query.isError}
- *       <li>Error: {query.error.message}</li>
- *     {:else}
- *       <li>{query.data.title}</li>
- *     {/if}
+ *   {#if query.isPending}
+ *   <li>Loading...</li>
+ *   {:else if query.isError}
+ *   <li>Error: {query.error.message}</li>
+ *   {:else}
+ *   <li>{query.data.title}</li>
+ *   {/if}
  *   {/each}
- * </ul>
- * ```
+ *   </ul>
+ *   ```
+ *
  * @example
- * Combining results into a single value:
- * ```svelte
- * <script lang="ts">
+ *   Combining results into a single value:
+ *   ```svelte
+ *   <script lang="ts">
  *   import { createQueries } from '@tanstack/svelte-query'
  *
  *   let { ids }: { ids: Array<number> } = $props()
  *
  *   const combined = createQueries(() => ({
- *     queries: ids.map((id) => ({
- *       queryKey: ['post', id],
- *       queryFn: () => fetchPost(id),
- *     })),
- *     combine: (postQueries) => ({
- *       data: postQueries.map((query) => query.data),
- *       isPending: postQueries.some((query) => query.isPending),
- *       isError: postQueries.some((query) => query.isError),
- *     }),
+ *   queries: ids.map((id) => ({
+ *   queryKey: ['post', id],
+ *   queryFn: () => fetchPost(id),
+ *   })),
+ *   combine: (postQueries) => ({
+ *   data: postQueries.map((query) => query.data),
+ *   isPending: postQueries.some((query) => query.isPending),
+ *   isError: postQueries.some((query) => query.isError),
+ *   }),
  *   }))
- * </script>
+ *   </script>
  *
- * {#if combined.isPending}
+ *   {#if combined.isPending}
  *   Loading...
- * {:else if combined.isError}
+ *   {:else if combined.isError}
  *   Error loading posts
- * {:else}
+ *   {:else}
  *   <ul>
- *     {#each combined.data as post}
- *       <li>{post?.title}</li>
- *     {/each}
+ *   {#each combined.data as post}
+ *   <li>{post?.title}</li>
+ *   {/each}
  *   </ul>
- * {/if}
- * ```
+ *   {/if}
+ *   ```
+ *
+ * @param createQueriesOptions - The `queries` array to run, and an optional
+ *   `combine` function, wrapped in an {@link Accessor} so options can be
+ *   reactive.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the
+ *   one from the nearest context will be used.
+ * @returns An array with one result per query, in the same order as `queries` —
+ *   or, if `combine` is provided, whatever `combine` returns.
  */
 export function createQueries<
   T extends Array<any>,
@@ -295,7 +299,9 @@ export function createQueries<
   )
 
   /**
-   * Computes the combined result of the observer's queries for the resolved options.
+   * Computes the combined result of the observer's queries for the resolved
+   * options.
+   *
    * @returns The combined result, built from the tracked per-query results.
    */
   function createResult() {
