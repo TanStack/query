@@ -1,4 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
@@ -9,7 +17,10 @@ import { generateElementName } from './utils.js'
 import type { MutationStateAccessor } from '../useMutationState.js'
 
 const providerTagName = generateElementName()
-customElements.define(providerTagName, QueryClientProvider)
+
+beforeAll(() => {
+  customElements.define(providerTagName, QueryClientProvider)
+})
 
 describe('useMutationState', () => {
   let queryClient: QueryClient
@@ -60,7 +71,7 @@ describe('useMutationState', () => {
       container.append(host)
       await host.updateComplete
       await vi.advanceTimersByTimeAsync(0)
-      expect(mutationStates()).toEqual([])
+      expect(mutationStates()).toStrictEqual([])
 
       host.updatesRequested = 0
 
@@ -69,7 +80,7 @@ describe('useMutationState', () => {
         await host.updateComplete
       }
       expect(host.updatesRequested).toBe(5)
-      expect(mutationStates()).toEqual([])
+      expect(mutationStates()).toStrictEqual([])
     } finally {
       mutationStates.destroy()
     }
@@ -109,7 +120,7 @@ describe('useMutationState', () => {
       container.append(host)
       await host.updateComplete
       await vi.advanceTimersByTimeAsync(0)
-      expect(mutationStates()).toEqual(['idle'])
+      expect(mutationStates()).toStrictEqual(['idle'])
 
       host.updatesRequested = 0
 
@@ -122,7 +133,7 @@ describe('useMutationState', () => {
         await vi.advanceTimersByTimeAsync(0)
       }
       expect(host.updatesRequested).toBe(0)
-      expect(mutationStates()).toEqual(['idle'])
+      expect(mutationStates()).toStrictEqual(['idle'])
     } finally {
       mutationStates.destroy()
     }
@@ -148,7 +159,7 @@ describe('useMutationState', () => {
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
-    expect(consumer.mutationStatuses()).toEqual([])
+    expect(consumer.mutationStatuses()).toStrictEqual([])
 
     const provider = document.createElement(
       providerTagName,
@@ -208,7 +219,7 @@ describe('useMutationState', () => {
 
     consumer.mutation.mutate()
     await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.mutationStatuses()).toEqual(['success'])
+    expect(consumer.mutationStatuses()).toStrictEqual(['success'])
 
     consumer.mutation.destroy()
     consumer.mutationStatuses.destroy()
@@ -452,13 +463,13 @@ describe('useMutationState', () => {
       ),
       vi.advanceTimersByTimeAsync(10),
     ])
-    expect(mutationStatuses()).toEqual(['success'])
+    expect(mutationStatuses()).toStrictEqual(['success'])
     expect(host.shadowRoot).toHaveTextContent('statuses: success')
 
     activeFilter = { mutationKey: mutationKey2 }
     host.requestUpdate()
     await host.updateComplete
-    expect(mutationStatuses()).toEqual(['error'])
+    expect(mutationStatuses()).toStrictEqual(['error'])
     expect(host.shadowRoot).toHaveTextContent('statuses: error')
   })
 
@@ -501,13 +512,13 @@ describe('useMutationState', () => {
     const promise = mutation.mutateAsync(undefined)
     await vi.advanceTimersByTimeAsync(10)
     await expect(promise).resolves.toBe('ok')
-    expect(mutationLabels()).toEqual(['before'])
+    expect(mutationLabels()).toStrictEqual(['before'])
     expect(host.shadowRoot).toHaveTextContent('labels: before')
 
     label = 'after'
     host.requestUpdate()
     await host.updateComplete
-    expect(mutationLabels()).toEqual(['after'])
+    expect(mutationLabels()).toStrictEqual(['after'])
     expect(host.shadowRoot).toHaveTextContent('labels: after')
 
     mutation.destroy()
@@ -529,7 +540,7 @@ describe('useMutationState', () => {
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
-    expect(consumer.mutationStatuses()).toEqual([])
+    expect(consumer.mutationStatuses()).toStrictEqual([])
 
     container.append(consumer)
     await vi.advanceTimersByTimeAsync(0)
@@ -546,7 +557,7 @@ describe('useMutationState', () => {
     await provider.updateComplete
     await consumer.updateComplete
 
-    expect(consumer.mutationStatuses()).toEqual([])
+    expect(consumer.mutationStatuses()).toStrictEqual([])
 
     consumer.mutationStatuses.destroy()
     provider.remove()

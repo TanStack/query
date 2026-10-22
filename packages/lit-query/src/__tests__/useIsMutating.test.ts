@@ -1,4 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
@@ -9,7 +17,10 @@ import { generateElementName } from './utils.js'
 import type { IsMutatingAccessor } from '../useIsMutating.js'
 
 const providerTagName = generateElementName()
-customElements.define(providerTagName, QueryClientProvider)
+
+beforeAll(() => {
+  customElements.define(providerTagName, QueryClientProvider)
+})
 
 describe('useIsMutating', () => {
   let queryClient: QueryClient
@@ -115,8 +126,8 @@ describe('useIsMutating', () => {
     expect(
       providerClient
         .getMutationCache()
-        .findAll({ mutationKey: consumer.mutationKey }).length,
-    ).toBe(0)
+        .findAll({ mutationKey: consumer.mutationKey }),
+    ).toHaveLength(0)
 
     consumer.mutation.destroy()
     consumer.isMutating.destroy()

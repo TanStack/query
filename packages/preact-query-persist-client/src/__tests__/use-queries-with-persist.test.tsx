@@ -4,7 +4,15 @@ import '@testing-library/jest-dom/vitest'
 
 import { act, cleanup, render } from '@testing-library/preact'
 import { useCallback } from 'preact/hooks'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient, useQueries } from '../../../preact-query/src'
 import { notifyManager } from '../../../query-core/src'
@@ -16,8 +24,10 @@ import type {
 } from '../../../query-persist-client-core/src'
 import type { QueryObserverResult } from '../../../query-core/src'
 
-notifyManager.setNotifyFunction((fn) => {
-  act(fn)
+beforeAll(() => {
+  notifyManager.setNotifyFunction((fn) => {
+    act(fn)
+  })
 })
 
 describe('useQueries with persist and memoized combine (preact)', () => {

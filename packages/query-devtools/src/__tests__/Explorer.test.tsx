@@ -7,7 +7,7 @@ import type { Query } from '@tanstack/query-core'
 
 // `goober` compiles every `css\`...\`` template literal at mount time;
 // replace it with a no-op factory so label/role-based assertions stay fast.
-vi.mock('goober', () => {
+vi.mock(import('goober'), () => {
   let counter = 0
   const css = Object.assign(() => `tsqd-${++counter}`, {
     bind: () => css,
@@ -181,7 +181,9 @@ describe('Explorer', () => {
 
   describe('action menu', () => {
     it('should copy the serialized value to the clipboard when the copy button is clicked', () => {
-      const writeText = vi.fn().mockResolvedValue(undefined)
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockResolvedValue(undefined)
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       queryClient.setQueryData(['data'], { name: 'Anna' })
 
@@ -198,13 +200,15 @@ describe('Explorer', () => {
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
       expect(writeText).toHaveBeenCalledTimes(1)
       const [arg] = writeText.mock.calls[0]!
-      expect(JSON.parse(arg as string)).toMatchObject({
+      expect(JSON.parse(arg)).toMatchObject({
         json: { name: 'Anna' },
       })
     })
 
     it('should switch the copy button to an error state when clipboard write fails', async () => {
-      const writeText = vi.fn().mockRejectedValue(new Error('denied'))
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockRejectedValue(new Error('denied'))
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       const consoleErrorMock = vi
         .spyOn(console, 'error')
@@ -233,7 +237,9 @@ describe('Explorer', () => {
     })
 
     it('should reset the copy button to the idle state 1500ms after a successful copy', async () => {
-      const writeText = vi.fn().mockResolvedValue(undefined)
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockResolvedValue(undefined)
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       queryClient.setQueryData(['data'], { name: 'Anna' })
 
@@ -259,7 +265,9 @@ describe('Explorer', () => {
     })
 
     it('should reset the copy button to the idle state 1500ms after a failed copy', async () => {
-      const writeText = vi.fn().mockRejectedValue(new Error('denied'))
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockRejectedValue(new Error('denied'))
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       vi.spyOn(console, 'error').mockImplementation(() => {})
       queryClient.setQueryData(['data'], { name: 'Anna' })
@@ -299,7 +307,7 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByLabelText('Remove all items'))
-      expect(queryClient.getQueryData(['data'])).toEqual([])
+      expect(queryClient.getQueryData(['data'])).toStrictEqual([])
     })
 
     it('should delete the entry at the current "dataPath" when the delete button is clicked', () => {
@@ -318,7 +326,7 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByLabelText('Delete item'))
-      expect(queryClient.getQueryData(['data'])).toEqual(['a', 'c'])
+      expect(queryClient.getQueryData(['data'])).toStrictEqual(['a', 'c'])
     })
 
     it('should toggle a boolean value via "setQueryData" when the toggle button is clicked', () => {
@@ -336,7 +344,7 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByLabelText('Toggle value'))
-      expect(queryClient.getQueryData(['data'])).toEqual({ flag: false })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ flag: false })
     })
 
     it.each([true, false])(
@@ -494,7 +502,7 @@ describe('Explorer', () => {
       expect(input).toHaveAttribute('type', 'text')
 
       fireEvent.change(input, { target: { value: 'Bob' } })
-      expect(queryClient.getQueryData(['data'])).toEqual({ name: 'Bob' })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ name: 'Bob' })
     })
 
     it('should write the new number value via "setQueryData" when a number input is changed', () => {
@@ -517,7 +525,7 @@ describe('Explorer', () => {
       fireEvent.change(input, {
         target: { value: '42', valueAsNumber: 42 },
       })
-      expect(queryClient.getQueryData(['data'])).toEqual({ count: 42 })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ count: 42 })
     })
 
     it('should render "ToggleValueButton" inline for a boolean primitive row', () => {
@@ -572,11 +580,11 @@ describe('Explorer', () => {
 
       const ageRow = rendered.getByText('age:').parentElement!
       fireEvent.click(within(ageRow).getByLabelText('Delete item'))
-      expect(queryClient.getQueryData(['data'])).toEqual({ name: 'Anna' })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ name: 'Anna' })
 
       const nameRow = rendered.getByText('name:').parentElement!
       fireEvent.click(within(nameRow).getByLabelText('Delete item'))
-      expect(queryClient.getQueryData(['data'])).toEqual({})
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({})
     })
   })
 

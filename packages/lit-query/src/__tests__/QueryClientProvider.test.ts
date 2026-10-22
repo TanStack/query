@@ -1,4 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
@@ -12,7 +20,10 @@ import { QueryClientProvider } from '../QueryClientProvider.js'
 import { generateElementName } from './utils.js'
 
 const tagName = generateElementName()
-customElements.define(tagName, QueryClientProvider)
+
+beforeAll(() => {
+  customElements.define(tagName, QueryClientProvider)
+})
 
 describe('QueryClientProvider/context', () => {
   let queryClient: QueryClient

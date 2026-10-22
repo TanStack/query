@@ -1,4 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { QueryClient, keepPreviousData } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
@@ -8,7 +16,10 @@ import { generateElementName } from './utils.js'
 import type { QueryResultAccessor } from '../createQueryController.js'
 
 const providerTagName = generateElementName()
-customElements.define(providerTagName, QueryClientProvider)
+
+beforeAll(() => {
+  customElements.define(providerTagName, QueryClientProvider)
+})
 
 describe('createQueryController', () => {
   let queryClient: QueryClient
@@ -117,7 +128,7 @@ describe('createQueryController', () => {
 
       host.remove()
       query.destroy()
-      expect(cacheQuery?.getObserversCount() ?? 0).toBe(0)
+      expect(cacheQuery?.getObserversCount()).toBe(0)
     }
   })
 
@@ -153,7 +164,7 @@ describe('createQueryController', () => {
     expect(host.shadowRoot).toHaveTextContent('name: none')
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
-    expect(query().data).toEqual({ id: 1, name: 'Ada' })
+    expect(query().data).toStrictEqual({ id: 1, name: 'Ada' })
     expect(callCount).toBe(1)
     expect(host.shadowRoot).toHaveTextContent('name: Ada')
   })
@@ -499,12 +510,8 @@ describe('createQueryController', () => {
 
     firstHost.remove()
     firstQuery.destroy()
-    // With gcTime:0, cache entry may be immediately removed after last observer unmounts.
     expect(
-      queryClient
-        .getQueryCache()
-        .find({ queryKey: key })
-        ?.getObserversCount() ?? 0,
+      queryClient.getQueryCache().find({ queryKey: key })?.getObserversCount(),
     ).toBe(0)
 
     const secondHost = new Host()
@@ -568,8 +575,8 @@ describe('createQueryController', () => {
     await expect(refetchPromise).resolves.toMatchObject({ data: 'user-2' })
     expect(query().data).toBe('user-2')
     expect(host.shadowRoot).toHaveTextContent('data: user-2')
-    expect(seenKeys.includes(1)).toBe(true)
-    expect(seenKeys.includes(2)).toBe(true)
+    expect(seenKeys).toContain(1)
+    expect(seenKeys).toContain(2)
   })
 
   it('should not request a host update when function options resolve to an unchanged result', async () => {
@@ -772,7 +779,7 @@ describe('createQueryController', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isError).toBe(true)
-    expect(query().error).toEqual(new Error('select-failed'))
+    expect(query().error).toStrictEqual(new Error('select-failed'))
     expect(host.shadowRoot).toHaveTextContent(
       'status: error, error: select-failed',
     )
@@ -1219,7 +1226,7 @@ describe('createQueryController', () => {
     const newCacheQueryAfterSwitch = clientB
       .getQueryCache()
       .find({ queryKey: consumer.queryKey })
-    expect(oldCacheQueryAfterSwitch?.getObserversCount() ?? 0).toBe(0)
+    expect(oldCacheQueryAfterSwitch?.getObserversCount()).toBe(0)
     expect(newCacheQueryAfterSwitch?.getObserversCount()).toBe(1)
 
     void clientB.invalidateQueries({ queryKey: consumer.queryKey })
@@ -1267,7 +1274,7 @@ describe('createQueryController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(query().failureCount).toBe(1)
     expect(query().failureReason).toBeInstanceOf(Error)
-    expect(query().isPending || query().isError).toBe(true)
+    expect(query().isPending).toBe(true)
     expect(host.shadowRoot).toHaveTextContent('failureCount: 1, data: none')
     await vi.advanceTimersByTimeAsync(80)
     expect(query().isSuccess).toBe(true)
@@ -1298,7 +1305,7 @@ describe('createQueryController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     const cacheQuery = queryClient.getQueryCache().find({ queryKey: key })
-    expect(cacheQuery?.state.data).toEqual(['a', 'b'])
+    expect(cacheQuery?.state.data).toStrictEqual(['a', 'b'])
     expect(cacheQuery?.getObserversCount()).toBe(1)
 
     host.remove()
@@ -1519,7 +1526,7 @@ describe('createQueryController', () => {
       queryClient
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount() ?? 0,
+        ?.getObserversCount(),
     ).toBe(0)
 
     container.append(consumer)
@@ -1574,7 +1581,7 @@ describe('createQueryController', () => {
       clientA
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount() ?? 0,
+        ?.getObserversCount(),
     ).toBe(0)
 
     container.append(consumer)
@@ -1593,7 +1600,7 @@ describe('createQueryController', () => {
       clientA
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount() ?? 0,
+        ?.getObserversCount(),
     ).toBe(0)
     expect(
       clientB
@@ -1693,14 +1700,16 @@ describe('createQueryController', () => {
         .getQueryCache()
         .findAll({ queryKey: key })
         .map((query) => query.queryKey),
-    ).toEqual([[...key, 'alpha']])
+    ).toStrictEqual([[...key, 'alpha']])
 
     host.query.destroy()
   })
 
   it('should fetch and resolve with the fetched result from suspense when the data is stale', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     class Host extends LitElement {
       readonly query = createQueryController(
@@ -1736,7 +1745,9 @@ describe('createQueryController', () => {
 
   it('should resolve immediately without refetching from suspense when the data is fresh', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     class Host extends LitElement {
       readonly query = createQueryController(
@@ -1776,7 +1787,9 @@ describe('createQueryController', () => {
 
   it('should resolve with the current result without fetching from suspense when disabled', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     class Host extends LitElement {
       readonly query = createQueryController(

@@ -4,6 +4,7 @@ import { MutationCache, QueryClient, focusManager, onlineManager } from '..'
 import { MutationObserver } from '../mutationObserver'
 import { executeMutation } from './utils'
 import type { MutationState } from '../mutation'
+import type { MutationCacheNotifyEvent, MutationFunctionContext } from '..'
 
 describe('mutation', () => {
   let queryClient: QueryClient
@@ -31,12 +32,18 @@ describe('mutation', () => {
 
     mutation.mutate(null)
     await vi.advanceTimersByTimeAsync(0)
-    expect(variables).toBe(null)
+    expect(variables).toBeNull()
   })
 
   it('should be able to set defaults with setMutationDefaults', async () => {
     const key = queryKey()
-    const fn = vi.fn()
+    const fn =
+      vi.fn<
+        (
+          variables: string,
+          context: MutationFunctionContext,
+        ) => Promise<unknown>
+      >()
 
     queryClient.setMutationDefaults(key, {
       mutationFn: fn,
@@ -64,7 +71,7 @@ describe('mutation', () => {
       onMutate: (text) => text,
     })
 
-    expect(mutation.getCurrentResult()).toEqual({
+    expect(mutation.getCurrentResult()).toStrictEqual({
       context: undefined,
       data: undefined,
       error: null,
@@ -90,7 +97,7 @@ describe('mutation', () => {
 
     mutation.mutate('todo')
     await vi.advanceTimersByTimeAsync(0)
-    expect(states[0]).toEqual({
+    expect(states[0]).toStrictEqual({
       context: undefined,
       data: undefined,
       error: null,
@@ -108,7 +115,7 @@ describe('mutation', () => {
       submittedAt: expect.any(Number),
     })
     await vi.advanceTimersByTimeAsync(0)
-    expect(states[1]).toEqual({
+    expect(states[1]).toStrictEqual({
       context: 'todo',
       data: undefined,
       error: null,
@@ -126,7 +133,7 @@ describe('mutation', () => {
       submittedAt: expect.any(Number),
     })
     await vi.advanceTimersByTimeAsync(10)
-    expect(states[2]).toEqual({
+    expect(states[2]).toStrictEqual({
       context: 'todo',
       data: 'todo',
       error: null,
@@ -162,7 +169,7 @@ describe('mutation', () => {
 
     mutation.mutate('todo').catch(() => undefined)
     await vi.advanceTimersByTimeAsync(0)
-    expect(states[0]).toEqual({
+    expect(states[0]).toStrictEqual({
       context: undefined,
       data: undefined,
       error: null,
@@ -180,7 +187,7 @@ describe('mutation', () => {
       submittedAt: expect.any(Number),
     })
     await vi.advanceTimersByTimeAsync(0)
-    expect(states[1]).toEqual({
+    expect(states[1]).toStrictEqual({
       context: 'todo',
       data: undefined,
       error: null,
@@ -198,7 +205,7 @@ describe('mutation', () => {
       submittedAt: expect.any(Number),
     })
     await vi.advanceTimersByTimeAsync(20)
-    expect(states[2]).toEqual({
+    expect(states[2]).toStrictEqual({
       context: 'todo',
       data: undefined,
       error: null,
@@ -216,7 +223,7 @@ describe('mutation', () => {
       submittedAt: expect.any(Number),
     })
     await vi.advanceTimersByTimeAsync(30)
-    expect(states[3]).toEqual({
+    expect(states[3]).toStrictEqual({
       context: 'todo',
       data: undefined,
       error: new Error('err'),
@@ -238,9 +245,27 @@ describe('mutation', () => {
   it('should be able to restore a mutation', async () => {
     const key = queryKey()
 
-    const onMutate = vi.fn()
-    const onSuccess = vi.fn()
-    const onSettled = vi.fn()
+    const onMutate =
+      vi.fn<(variables: string, context: MutationFunctionContext) => void>()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettled =
+      vi.fn<
+        (
+          data: string | undefined,
+          error: Error | null,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     queryClient.setMutationDefaults(key, {
       mutationFn: (text: string) => sleep(10).then(() => text),
@@ -269,7 +294,7 @@ describe('mutation', () => {
         },
       )
 
-    expect(mutation.state).toEqual({
+    expect(mutation.state).toStrictEqual({
       context: 'todo',
       data: undefined,
       error: null,
@@ -284,7 +309,7 @@ describe('mutation', () => {
     void queryClient.resumePausedMutations()
 
     // check that the mutation is correctly resumed
-    expect(mutation.state).toEqual({
+    expect(mutation.state).toStrictEqual({
       context: 'todo',
       data: undefined,
       error: null,
@@ -296,7 +321,7 @@ describe('mutation', () => {
       submittedAt: 1,
     })
     await vi.advanceTimersByTimeAsync(10)
-    expect(mutation.state).toEqual({
+    expect(mutation.state).toStrictEqual({
       context: 'todo',
       data: 'todo',
       error: null,
@@ -309,8 +334,16 @@ describe('mutation', () => {
     })
 
     expect(onMutate).not.toHaveBeenCalled()
-    expect(onSuccess).toHaveBeenCalled()
-    expect(onSettled).toHaveBeenCalled()
+    expect(onSuccess).toHaveBeenCalledWith('todo', 'todo', 'todo', {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: key,
+    })
+    expect(onSettled).toHaveBeenCalledWith('todo', null, 'todo', 'todo', {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: key,
+    })
   })
 
   it('should not add an existing observer with addObserver', () => {
@@ -318,7 +351,7 @@ describe('mutation', () => {
     const observer = new MutationObserver(queryClient, {})
     const currentMutation = mutationCache.build(queryClient, {})
 
-    const fn = vi.fn()
+    const fn = vi.fn<(type: MutationCacheNotifyEvent['type']) => void>()
 
     const unsubscribe = mutationCache.subscribe((event) => {
       fn(event.type)
@@ -345,12 +378,29 @@ describe('mutation', () => {
     } catch (err) {
       error = err
     }
-    expect(error).toEqual(new Error('No mutationFn found'))
+    expect(error).toStrictEqual(new Error('No mutationFn found'))
   })
 
   it('should update the mutation state with mutate even without an active subscription 1', async () => {
-    const onSuccess = vi.fn()
-    const onSettled = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: void,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettled =
+      vi.fn<
+        (
+          data: string | undefined,
+          error: Error | null,
+          variables: void,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const mutation = new MutationObserver(queryClient, {
       mutationFn: () => {
@@ -360,14 +410,31 @@ describe('mutation', () => {
 
     mutation.mutate(undefined, { onSuccess, onSettled })
     await vi.advanceTimersByTimeAsync(0)
-    expect(mutation.getCurrentResult().data).toEqual('update')
+    expect(mutation.getCurrentResult().data).toBe('update')
     expect(onSuccess).not.toHaveBeenCalled()
     expect(onSettled).not.toHaveBeenCalled()
   })
 
   it('should update the mutation state with mutate even without an active subscription 2', async () => {
-    const onSuccess = vi.fn()
-    const onSettled = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: void,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettled =
+      vi.fn<
+        (
+          data: string | undefined,
+          error: Error | null,
+          variables: void,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const mutation = new MutationObserver(queryClient, {
       mutationFn: () => {
@@ -377,13 +444,13 @@ describe('mutation', () => {
 
     mutation.mutate(undefined, { onSuccess, onSettled })
     await vi.advanceTimersByTimeAsync(0)
-    expect(mutation.getCurrentResult().data).toEqual('update')
+    expect(mutation.getCurrentResult().data).toBe('update')
     expect(onSuccess).not.toHaveBeenCalled()
     expect(onSettled).not.toHaveBeenCalled()
   })
 
   it('should see updated options in mutation callbacks', async () => {
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<(value: number) => void>()
 
     const mutation = new MutationObserver(queryClient, {
       mutationFn: () => sleep(100).then(() => Promise.resolve('update')),
@@ -853,7 +920,7 @@ describe('mutation', () => {
         'vars',
       )
       await vi.advanceTimersByTimeAsync(0)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate-sync',
         'onSuccess-implicit-void',
         'onSettled-return-value',
@@ -888,7 +955,7 @@ describe('mutation', () => {
         'vars',
       )
       await vi.advanceTimersByTimeAsync(30)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate-async',
         'onSuccess-async-start',
         'onSuccess-async-end',
@@ -925,7 +992,7 @@ describe('mutation', () => {
         'vars',
       )
       await vi.advanceTimersByTimeAsync(30)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onSuccess-start',
         'track-analytics',
         'invalidate-queries',
@@ -974,7 +1041,7 @@ describe('mutation', () => {
       // Verify mutation returns its own result, not callback returns
       expect(mutationResult).toBe('actual-result')
       console.log(results)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'sync-onMutate',
         'async-onSuccess',
         'settled-onMutateResult-data',
@@ -1021,7 +1088,7 @@ describe('mutation', () => {
         mutationError = error
       })
       await vi.advanceTimersByTimeAsync(30)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate',
         'onError-async',
         'error-cleanup-1',
@@ -1029,7 +1096,7 @@ describe('mutation', () => {
         'settled-error-error-data',
       ])
 
-      expect(mutationError).toEqual(newMutationError)
+      expect(mutationError).toStrictEqual(newMutationError)
     })
   })
 
@@ -1080,14 +1147,14 @@ describe('mutation', () => {
         mutationError = error
       })
       await vi.advanceTimersByTimeAsync(30)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate-async',
         'onError-async-start',
         'onError-async-end',
         'onSettled-promise',
       ])
 
-      expect(mutationError).toEqual(newMutationError)
+      expect(mutationError).toStrictEqual(newMutationError)
     })
 
     it('should trigger onError callback on error by mutations onSuccess', async () => {
@@ -1127,7 +1194,7 @@ describe('mutation', () => {
         mutationError = error
       })
       await vi.advanceTimersByTimeAsync(30)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate-async',
         'onSuccess-async-start',
         'onError-async-start',
@@ -1135,7 +1202,7 @@ describe('mutation', () => {
         'onSettled-promise',
       ])
 
-      expect(mutationError).toEqual(newMutationError)
+      expect(mutationError).toStrictEqual(newMutationError)
     })
 
     it('should trigger onError callback on error by global onSettled, calling global onSettled callback twice', async ({
@@ -1154,7 +1221,7 @@ describe('mutation', () => {
       })
       queryClient.mount()
 
-      const unhandledRejectionFn = vi.fn()
+      const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
       process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         process.off('unhandledRejection', unhandledRejectionFn)
@@ -1193,7 +1260,7 @@ describe('mutation', () => {
         mutationError = error
       })
       await vi.advanceTimersByTimeAsync(50)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate-async',
         'onSuccess-async-start',
         'onSuccess-async-end',
@@ -1211,13 +1278,13 @@ describe('mutation', () => {
         expect.any(Promise),
       )
 
-      expect(mutationError).toEqual(newMutationError)
+      expect(mutationError).toStrictEqual(newMutationError)
     })
 
     it('should trigger onError callback on error by mutations onSettled, calling both onSettled callbacks twice', async ({
       onTestFinished,
     }) => {
-      const unhandledRejectionFn = vi.fn()
+      const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
       process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         process.off('unhandledRejection', unhandledRejectionFn)
@@ -1260,7 +1327,7 @@ describe('mutation', () => {
         mutationError = error
       })
       await vi.advanceTimersByTimeAsync(50)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate-async',
         'onSuccess-async-start',
         'onSuccess-async-end',
@@ -1277,13 +1344,13 @@ describe('mutation', () => {
         expect.any(Promise),
       )
 
-      expect(mutationError).toEqual(newMutationError)
+      expect(mutationError).toStrictEqual(newMutationError)
     })
 
     it('should transfer errors by onError and consecutive onSettled callbacks to different execution context where they are reported', async ({
       onTestFinished,
     }) => {
-      const unhandledRejectionFn = vi.fn()
+      const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
       process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         process.off('unhandledRejection', unhandledRejectionFn)
@@ -1341,13 +1408,13 @@ describe('mutation', () => {
         mutationError = error
       })
       await vi.advanceTimersByTimeAsync(30)
-      expect(results).toEqual([
+      expect(results).toStrictEqual([
         'onMutate-async',
         'onError-async-start',
         'onSettled-promise',
       ])
 
-      expect(mutationError).toEqual(newMutationError)
+      expect(mutationError).toStrictEqual(newMutationError)
 
       expect(unhandledRejectionFn).toHaveBeenCalledTimes(4)
       expect(unhandledRejectionFn).toHaveBeenNthCalledWith(
@@ -1429,7 +1496,9 @@ describe('mutation', () => {
   })
 
   it('should not re-execute a settled mutation when it is continued', async () => {
-    const mutationFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const mutationFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
     const observer = new MutationObserver(queryClient, { mutationFn })
 
     observer.mutate()
@@ -1446,7 +1515,9 @@ describe('mutation', () => {
   })
 
   it('should still continue a restored paused mutation that has no retryer', async () => {
-    const mutationFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const mutationFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
     // a mutation restored from a dehydrated pending state has no retryer yet
     const mutation = queryClient.getMutationCache().build(
       queryClient,

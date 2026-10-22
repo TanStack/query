@@ -11,7 +11,7 @@ import {
   useSuspenseInfiniteQuery,
 } from '..'
 import { renderWithClient } from './utils'
-import type { VNode } from 'preact'
+import type { JSX, VNode } from 'preact'
 
 describe('usePrefetchInfiniteQuery', () => {
   let queryCache: QueryCache
@@ -29,7 +29,9 @@ describe('usePrefetchInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
-  const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
+  const Fallback = vi
+    .fn<() => JSX.Element>()
+    .mockReturnValue(<div>Loading...</div>)
 
   it('should prefetch an infinite query if query state does not exist', async () => {
     const data = [

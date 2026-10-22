@@ -108,6 +108,6 @@ describe('useMutationState', () => {
     await vi.advanceTimersByTimeAsync(150)
     expect(rendered.getByText('data: data1')).toBeInTheDocument()
 
-    expect(variables).toEqual([[], [1], []])
+    expect(variables).toStrictEqual([[], [1], []])
   })
 })
