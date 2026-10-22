@@ -334,6 +334,7 @@ export default defineConfig({
         'vitest-js/padding-around-after-each-blocks': 'error',
         'vitest-js/padding-around-before-all-blocks': 'error',
         'vitest-js/padding-around-before-each-blocks': 'error',
+        'vitest-js/padding-around-describe-blocks': 'error',
         'vitest-js/padding-around-test-blocks': 'error',
         'vitest-js/prefer-vi-mocked': 'error',
         'vitest-js/valid-expect': 'error',
