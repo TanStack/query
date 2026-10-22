@@ -1911,8 +1911,8 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('Page 0: 3')).toBeInTheDocument()
     expect(rendered.getByText('Page 1: 4')).toBeInTheDocument()
     expect(rendered.getByText('Nothing more to load')).toBeInTheDocument()
-    expect(rendered.queryByText('Item: 29')).toBeNull()
-    expect(rendered.queryByText('Page 2: 5')).toBeNull()
+    expect(rendered.queryByText('Item: 29')).not.toBeInTheDocument()
+    expect(rendered.queryByText('Page 2: 5')).not.toBeInTheDocument()
   })
 
   it('should cancel the query function when there are no more subscriptions', async () => {

@@ -18,14 +18,6 @@ import type {
 } from '@tanstack/query-persist-client-core'
 import type { StatusResult } from './utils.svelte.js'
 
-beforeEach(() => {
-  vi.useFakeTimers()
-})
-
-afterEach(() => {
-  vi.useRealTimers()
-})
-
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
 
@@ -61,6 +53,14 @@ const createMockErrorPersister = (
 }
 
 describe('PersistQueryClientProvider', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should restore cache from persister', async () => {
     const states = new StatelessRef<Array<StatusResult<string>>>([])
 

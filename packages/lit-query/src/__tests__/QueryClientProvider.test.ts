@@ -21,13 +21,13 @@ import { generateElementName } from './utils.js'
 
 const tagName = generateElementName()
 
-beforeAll(() => {
-  customElements.define(tagName, QueryClientProvider)
-})
-
 describe('QueryClientProvider/context', () => {
   let queryClient: QueryClient
   let container: HTMLElement
+
+  beforeAll(() => {
+    customElements.define(tagName, QueryClientProvider)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()

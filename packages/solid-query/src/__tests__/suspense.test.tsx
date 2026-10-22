@@ -893,6 +893,6 @@ describe("useQuery's in Suspense mode", () => {
       status: 'success',
     })
     expect(renders).toBe(2)
-    expect(rendered.queryByText('rendered')).toBeInTheDocument()
+    expect(rendered.getByText('rendered')).toBeInTheDocument()
   })
 })

@@ -1,6 +1,8 @@
 import { fileURLToPath } from 'node:url'
 import pluginVitest from '@vitest/eslint-plugin'
+import pluginJestDom from 'eslint-plugin-jest-dom'
 import pluginJsdoc from 'eslint-plugin-jsdoc'
+import pluginTestingLibrary from 'eslint-plugin-testing-library'
 import { defineConfig } from 'oxlint'
 
 /**
@@ -281,9 +283,21 @@ export default defineConfig({
       jsPlugins: [
         // Unlike the native rule, also checks `expectTypeOf` calls
         { name: 'vitest-js', specifier: '@vitest/eslint-plugin' },
+        { name: 'jest-dom', specifier: 'eslint-plugin-jest-dom' },
+        { name: 'testing-library', specifier: 'eslint-plugin-testing-library' },
       ],
       rules: {
         ...pluginVitest.configs.recommended.rules,
+        ...pluginJestDom.configs['flat/recommended'].rules,
+        // `toHaveTextContent` matches substrings, so exact `textContent` checks stay as `toBe`
+        'jest-dom/prefer-to-have-text-content': 'off',
+        ...pluginTestingLibrary.configs['flat/dom'].rules,
+        // Tests name the render result `rendered` and query through it
+        'testing-library/prefer-screen-queries': 'off',
+        'vitest/consistent-each-for': [
+          'error',
+          { describe: 'each', it: 'each' },
+        ],
         'vitest/consistent-test-filename': 'error',
         'vitest/consistent-test-it': [
           'error',
@@ -313,6 +327,7 @@ export default defineConfig({
         'vitest/prefer-hooks-on-top': 'error',
         'vitest/prefer-import-in-mock': 'error',
         'vitest/prefer-importing-vitest-globals': 'error',
+        'vitest/prefer-lowercase-title': ['error', { ignore: ['describe'] }],
         'vitest/prefer-mock-promise-shorthand': 'error',
         'vitest/prefer-mock-return-shorthand': 'error',
         'vitest/prefer-snapshot-hint': 'error',
@@ -329,6 +344,7 @@ export default defineConfig({
         'vitest/require-hook': 'error',
         'vitest/require-mock-type-parameters': 'error',
         'vitest/require-to-throw-message': 'error',
+        'vitest/require-top-level-describe': 'error',
         'vitest/valid-expect': 'off',
         'vitest-js/no-conditional-in-test': 'error',
         'vitest-js/padding-around-after-all-blocks': 'error',

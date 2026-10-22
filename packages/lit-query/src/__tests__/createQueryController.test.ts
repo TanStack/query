@@ -17,13 +17,13 @@ import type { QueryResultAccessor } from '../createQueryController.js'
 
 const providerTagName = generateElementName()
 
-beforeAll(() => {
-  customElements.define(providerTagName, QueryClientProvider)
-})
-
 describe('createQueryController', () => {
   let queryClient: QueryClient
   let container: HTMLElement
+
+  beforeAll(() => {
+    customElements.define(providerTagName, QueryClientProvider)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()

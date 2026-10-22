@@ -662,7 +662,7 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      expect(rendered.queryByText('page')).not.toBeNull()
+      expect(rendered.getByText('page')).toBeInTheDocument()
 
       consoleErrorMock.mockRestore()
     })

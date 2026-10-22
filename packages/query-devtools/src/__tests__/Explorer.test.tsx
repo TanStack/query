@@ -84,7 +84,9 @@ describe('Explorer', () => {
       const rendered = renderExplorer({ label: 'data', value: {} })
 
       expect(rendered.getByText('data:')).toBeInTheDocument()
-      expect(rendered.queryByRole('button', { expanded: false })).toBeNull()
+      expect(
+        rendered.queryByRole('button', { expanded: false }),
+      ).not.toBeInTheDocument()
     })
 
     it('should render an array with an expander showing the item count', () => {
@@ -95,8 +97,8 @@ describe('Explorer', () => {
 
       const expander = rendered.getByRole('button', { expanded: false })
       expect(expander).toBeInTheDocument()
-      expect(expander.textContent).toContain('list')
-      expect(expander.textContent).toContain('3 items')
+      expect(expander).toHaveTextContent('list')
+      expect(expander).toHaveTextContent('3 items')
     })
 
     it('should render children under their index labels when the array expander is clicked', () => {
@@ -148,8 +150,8 @@ describe('Explorer', () => {
       })
 
       expect(
-        rendered.getByRole('button', { expanded: false }).textContent,
-      ).toContain('(Iterable)')
+        rendered.getByRole('button', { expanded: false }),
+      ).toHaveTextContent('(Iterable)')
     })
 
     it('should render iterable children under their numeric index when expanded', () => {
@@ -383,8 +385,12 @@ describe('Explorer', () => {
           .find({ queryKey: ['data'] }) as Query,
       })
 
-      expect(rendered.queryByLabelText('Copy object to clipboard')).toBeNull()
-      expect(rendered.queryByLabelText('Remove all items')).toBeNull()
+      expect(
+        rendered.queryByLabelText('Copy object to clipboard'),
+      ).not.toBeInTheDocument()
+      expect(
+        rendered.queryByLabelText('Remove all items'),
+      ).not.toBeInTheDocument()
     })
 
     it('should not render "ClearArrayButton" when value is not an array', () => {
@@ -400,7 +406,9 @@ describe('Explorer', () => {
           .find({ queryKey: ['data'] }) as Query,
       })
 
-      expect(rendered.queryByLabelText('Remove all items')).toBeNull()
+      expect(
+        rendered.queryByLabelText('Remove all items'),
+      ).not.toBeInTheDocument()
       expect(
         rendered.getByLabelText('Copy object to clipboard'),
       ).toBeInTheDocument()
@@ -426,7 +434,7 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
-      expect(rendered.queryByText('0:')).toBeNull()
+      expect(rendered.queryByText('0:')).not.toBeInTheDocument()
     })
 
     it('should reveal the items of a page when the page header is clicked', () => {
@@ -454,7 +462,7 @@ describe('Explorer', () => {
       expect(rendered.getByText('"item-100"')).toBeInTheDocument()
 
       fireEvent.click(rendered.getByText('[0...99]'))
-      expect(rendered.queryByText('"item-0"')).toBeNull()
+      expect(rendered.queryByText('"item-0"')).not.toBeInTheDocument()
       expect(rendered.getByText('"item-100"')).toBeInTheDocument()
     })
 

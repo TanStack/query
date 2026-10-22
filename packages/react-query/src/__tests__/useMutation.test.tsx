@@ -83,7 +83,7 @@ describe('useMutation', () => {
 
     const { getByRole, queryByRole } = renderWithClient(queryClient, <Page />)
 
-    expect(queryByRole('heading')).toBeNull()
+    expect(queryByRole('heading')).not.toBeInTheDocument()
 
     fireEvent.click(getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
@@ -93,7 +93,7 @@ describe('useMutation', () => {
 
     fireEvent.click(getByRole('button', { name: /reset/i }))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByRole('heading')).toBeNull()
+    expect(queryByRole('heading')).not.toBeInTheDocument()
   })
 
   it('should call mutate callbacks when useMutation has no callbacks', async () => {
@@ -1322,7 +1322,7 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText, queryByText } = renderWithClient(
+    const { getByText } = renderWithClient(
       queryClient,
       <ErrorBoundary
         fallbackRender={() => (
@@ -1337,7 +1337,7 @@ describe('useMutation', () => {
 
     fireEvent.click(getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('error')).not.toBeNull()
+    expect(getByText('error')).toBeInTheDocument()
 
     expect(consoleErrorMock.mock.calls[0]?.[1]).toBe(err)
 
@@ -1369,7 +1369,7 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText, queryByText } = renderWithClient(
+    const { getByText } = renderWithClient(
       queryClient,
       <ErrorBoundary
         fallbackRender={() => (
@@ -1385,13 +1385,13 @@ describe('useMutation', () => {
     // first error goes to component
     fireEvent.click(getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('mock error')).not.toBeNull()
+    expect(getByText('mock error')).toBeInTheDocument()
 
     // second error goes to boundary
     boundary = true
     fireEvent.click(getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('error boundary')).not.toBeNull()
+    expect(getByText('error boundary')).toBeInTheDocument()
     consoleErrorMock.mockRestore()
   })
 
@@ -1496,14 +1496,11 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText, queryByText } = renderWithClient(
-      queryClientMutationMeta,
-      <Page />,
-    )
+    const { getByText } = renderWithClient(queryClientMutationMeta, <Page />)
 
     fireEvent.click(getByText('succeed'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('successTest')).not.toBeNull()
+    expect(getByText('successTest')).toBeInTheDocument()
 
     expect(successMock).toHaveBeenCalledTimes(1)
     expect(successMock).toHaveBeenCalledWith(metaSuccessMessage)
@@ -1538,14 +1535,11 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText, queryByText } = renderWithClient(
-      queryClientMutationMeta,
-      <Page />,
-    )
+    const { getByText } = renderWithClient(queryClientMutationMeta, <Page />)
 
     fireEvent.click(getByText('error'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('errorTest')).not.toBeNull()
+    expect(getByText('errorTest')).toBeInTheDocument()
 
     expect(errorMock).toHaveBeenCalledTimes(1)
     expect(errorMock).toHaveBeenCalledWith(metaErrorMessage)
