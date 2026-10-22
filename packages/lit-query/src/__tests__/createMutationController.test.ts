@@ -16,6 +16,7 @@ import { generateElementName } from './utils.js'
 import type { MutationResultAccessor } from '../createMutationController.js'
 
 const providerTagName = generateElementName()
+
 beforeAll(() => {
   customElements.define(providerTagName, QueryClientProvider)
 })

@@ -15,6 +15,7 @@ import { generateElementName } from './utils.js'
 import type { ReactiveControllerHost } from 'lit'
 
 const providerTagName = generateElementName()
+
 beforeAll(() => {
   customElements.define(providerTagName, QueryClientProvider)
 })
