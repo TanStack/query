@@ -2,7 +2,7 @@
 /** @jsxImportSource preact */
 import '@testing-library/jest-dom/vitest'
 
-import { act, cleanup, render } from '@testing-library/preact'
+import { act, render } from '@testing-library/preact'
 import {
   afterEach,
   beforeAll,
@@ -54,7 +54,6 @@ describe('PersistQueryClientProvider (preact)', () => {
   })
 
   afterEach(() => {
-    cleanup()
     vi.useRealTimers()
   })
 

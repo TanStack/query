@@ -2,7 +2,7 @@
 /** @jsxImportSource preact */
 import '@testing-library/jest-dom/vitest'
 
-import { act, cleanup, render } from '@testing-library/preact'
+import { act, render } from '@testing-library/preact'
 import { useCallback } from 'preact/hooks'
 import {
   afterEach,
@@ -53,7 +53,6 @@ describe('useQueries with persist and memoized combine (preact)', () => {
   })
 
   afterEach(() => {
-    cleanup()
     Object.keys(storage).forEach((key) => delete storage[key])
     vi.useRealTimers()
   })
