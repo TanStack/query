@@ -64,6 +64,7 @@ describe('pageParam', () => {
     })
   })
 })
+
 describe('select', () => {
   it('should still return paginated data if no select result', () => {
     const infiniteQuery = useInfiniteQuery({
@@ -98,6 +99,7 @@ describe('select', () => {
     expectTypeOf(infiniteQuery.data).toEqualTypeOf<'selected' | undefined>()
   })
 })
+
 describe('getNextPageParam / getPreviousPageParam', () => {
   it('should get typed params', () => {
     const infiniteQuery = useInfiniteQuery({

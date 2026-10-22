@@ -6,7 +6,7 @@ import { useQueries } from '../useQueries'
 import { useQueryClient } from '../useQueryClient'
 import { QueryClient } from '../queryClient'
 
-vi.mock('../useQueryClient')
+vi.mock(import('../useQueryClient'))
 
 describe('useQueries', () => {
   beforeEach(() => {
@@ -151,7 +151,7 @@ describe('useQueries', () => {
     )
     await vi.advanceTimersByTimeAsync(0)
     await vi.advanceTimersByTimeAsync(0)
-    expect(queriesState.value.length).toEqual(2)
+    expect(queriesState.value).toHaveLength(2)
     expect(queriesState.value).toMatchObject([
       {
         data: 'value31',
@@ -261,7 +261,7 @@ describe('useQueries', () => {
     )
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(queriesResult.value).toEqual({
+    expect(queriesResult.value).toStrictEqual({
       combined: true,
       res: [firstResult, secondResult],
     })
@@ -269,7 +269,7 @@ describe('useQueries', () => {
 
   it('should be `enabled` to accept getter function', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const checked = ref(false)
 
     useQueries({
@@ -286,12 +286,16 @@ describe('useQueries', () => {
 
     checked.value = true
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryFn).toHaveBeenCalled()
+    expect(queryFn).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: key }),
+    )
   })
 
   it('should skip a query while a computed queryFn resolves to skipToken, and run it once defined', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'foo'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'foo'),
+    )
     const checked = ref(false)
 
     useQueries({
@@ -307,12 +311,14 @@ describe('useQueries', () => {
 
     checked.value = true
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryFn).toHaveBeenCalled()
+    expect(queryFn).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: key }),
+    )
   })
 
   it('should allow getters for query keys', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
 
@@ -338,7 +344,7 @@ describe('useQueries', () => {
 
   it('should allow arbitrarily nested getters for query keys', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
     const key3 = ref('key3')
@@ -392,7 +398,9 @@ describe('useQueries', () => {
 
   it('should allow a getter for the whole query key', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'foo'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'foo'),
+    )
     const key1 = ref('key1')
 
     useQueries({
@@ -423,7 +431,7 @@ describe('useQueries', () => {
     })
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(queriesState.value[0].data).toEqual({ nested: { count: 0 } })
+    expect(queriesState.value[0].data).toStrictEqual({ nested: { count: 0 } })
     expect(isReadonly(queriesState.value[0])).toBe(true)
   })
 
@@ -440,13 +448,13 @@ describe('useQueries', () => {
     })
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(queriesState.value[0].data).toEqual({ nested: { count: 0 } })
+    expect(queriesState.value[0].data).toStrictEqual({ nested: { count: 0 } })
     expect(isReadonly(queriesState.value[0])).toBe(false)
   })
 
   it('should use the current value for the queryKey when refetch is called', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const keyRef = ref('key11')
     const queriesState = useQueries({
       queries: [
@@ -537,7 +545,7 @@ describe('useQueries', () => {
 
   it('should work with options getter and be reactive', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
     const key3 = ref('key3')

@@ -41,7 +41,9 @@ describe('Server Side Rendering', () => {
 
   it('should not trigger fetch', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     class Page extends LitElement {
       readonly query = createQueryController(
@@ -63,7 +65,9 @@ describe('Server Side Rendering', () => {
 
   it('should return existing data from the cache', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     class Page extends LitElement {
       readonly query = createQueryController(
@@ -110,12 +114,14 @@ describe('Server Side Rendering', () => {
     await renderToString(Page)
 
     const keys = queryCache.getAll().map((query) => query.queryKey)
-    expect(keys).toEqual([[key, 1]])
+    expect(keys).toStrictEqual([[key, 1]])
   })
 
   it('should return the correct state from createInfiniteQueryController', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'page 1'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'page 1'),
+    )
 
     class Page extends LitElement {
       readonly query = createInfiniteQueryController(
