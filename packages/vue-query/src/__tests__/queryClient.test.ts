@@ -7,28 +7,15 @@ import { MutationCache } from '../mutationCache'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { queryOptions } from '../queryOptions'
 
-vi.mock(import('@tanstack/query-core'), async () => {
-  const actual = await vi.importActual<{
-    QueryClient: typeof QueryClientOrigin
-  }>('@tanstack/query-core')
-
-  // Get the prototype methods dynamically
-  const prototypeMethods = Object.getOwnPropertyNames(
-    actual.QueryClient.prototype,
-  ).filter((prop): prop is keyof typeof actual.QueryClient.prototype => {
-    const descriptor = Object.getOwnPropertyDescriptor(
-      actual.QueryClient.prototype,
-      prop,
-    )
-    return typeof descriptor?.value === 'function' && prop !== 'constructor'
-  })
-
-  // Spy on all methods in the prototype
-  prototypeMethods.forEach((method) => {
-    vi.spyOn(actual.QueryClient.prototype, method)
-  })
-
-  return actual
+// Get the prototype methods dynamically
+const prototypeMethods = Object.getOwnPropertyNames(
+  QueryClientOrigin.prototype,
+).filter((prop): prop is keyof typeof QueryClientOrigin.prototype => {
+  const descriptor = Object.getOwnPropertyDescriptor(
+    QueryClientOrigin.prototype,
+    prop,
+  )
+  return typeof descriptor?.value === 'function' && prop !== 'constructor'
 })
 
 const queryKeyRef = ['foo', ref('bar')]
@@ -39,7 +26,10 @@ const fn = () => 'mock'
 describe('QueryCache', () => {
   beforeEach(() => {
     vi.useFakeTimers()
-    vi.clearAllMocks()
+    // Spy on all methods in the prototype
+    prototypeMethods.forEach((method) => {
+      vi.spyOn(QueryClientOrigin.prototype, method)
+    })
   })
 
   afterEach(() => {

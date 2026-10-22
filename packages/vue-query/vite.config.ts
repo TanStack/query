@@ -32,6 +32,7 @@ export default defineConfig({
       enabled: true,
       checker: '../../node_modules/typescript/bin/tsc',
     },
+    restoreMocks: true,
     onConsoleLog: function (log) {
       if (log.includes('Download the Vue Devtools extension')) {
         return false
