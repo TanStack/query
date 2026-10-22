@@ -962,7 +962,9 @@ describe("useQueries's in Suspense mode", () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       const queries = useQueries(() => ({
@@ -1022,7 +1024,7 @@ describe("useQueries's in Suspense mode", () => {
     const rendered = renderWithClient(queryClient, () => <App />)
 
     expect(rendered.queryByText('data:')).not.toBeInTheDocument()
-    expect(queryCache.find({ queryKey: key })).toBeFalsy()
+    expect(queryCache.find({ queryKey: key })).toBeUndefined()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     await vi.advanceTimersByTimeAsync(10)
@@ -1079,7 +1081,9 @@ describe("useQueries's in Suspense mode", () => {
   it('should not suspend when queries are disabled', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       const [enabled, setEnabled] = createSignal(false)
@@ -1191,12 +1195,13 @@ describe("useQueries's in Suspense mode", () => {
     await vi.advanceTimersByTimeAsync(20)
     expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
 
-    expect(results).toEqual(['1', '2'])
+    expect(results).toStrictEqual(['1', '2'])
   })
 
   it('should only call combine after resolving', async () => {
     const key = queryKey()
-    const combineSpy = vi.fn()
+    const combineSpy =
+      vi.fn<(data: Array<{ value: number } | undefined>) => void>()
 
     function Page() {
       const queries = useQueries(() => ({
@@ -1229,7 +1234,7 @@ describe("useQueries's in Suspense mode", () => {
       call[0].every((d: unknown) => d !== undefined),
     )
     expect(resolvedCalls.length).toBeGreaterThanOrEqual(1)
-    expect(resolvedCalls[0]![0]).toEqual([
+    expect(resolvedCalls[0]![0]).toStrictEqual([
       { value: 10 },
       { value: 20 },
       { value: 30 },
@@ -1427,13 +1432,13 @@ describe("useQueries's in Suspense mode", () => {
 
     // Both queries should have resolved before the component rendered
     // The order should be: loading -> query 1 resolves -> query 2 resolves
-    expect(results).toEqual(['loading', '1', '2'])
+    expect(results).toStrictEqual(['loading', '1', '2'])
   })
 
   it('should throw error when queryKey changes and new query fails', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -1484,7 +1489,7 @@ describe("useQueries's in Suspense mode", () => {
   it('should show error boundary even with gcTime:0', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
     let count = 0
 
@@ -1568,7 +1573,7 @@ describe("useQueries's in Suspense mode", () => {
     expect(queryClient.getQueryData(key)).toBe('data')
     // wait for gc
     await vi.advanceTimersByTimeAsync(1000)
-    expect(queryClient.getQueryData(key)).toBe(undefined)
+    expect(queryClient.getQueryData(key)).toBeUndefined()
   })
 
   it('should report the paused query while offline, and suspend again once a query changes online', async ({
@@ -1935,10 +1940,11 @@ describe("useQueries's in Suspense mode", () => {
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
     expect(rendered.getByText('q1: cached1, q2: cached2')).toBeInTheDocument()
   })
+
   it('should suspend again and throw to the error boundary when reset queries fail', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
     let shouldError = false
 
@@ -2001,7 +2007,7 @@ describe("useQueries's in Suspense mode", () => {
   it('should throw error when a queryFn rejects with a falsy error', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -2086,7 +2092,9 @@ describe("useQueries's in Suspense mode", () => {
   it('should only suspend queries that are pending when the faster query already has data', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn2 = vi.fn(() => sleep(1000).then(() => 'data2'))
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(1000).then(() => 'data2'),
+    )
 
     queryClient.setQueryData(key2, 'cached')
 
@@ -2142,7 +2150,9 @@ describe("useQueries's in Suspense mode", () => {
     // Make key1 fresh again by resetting its data
     queryClient.setQueryData(key1, 'cached1')
 
-    const queryFn1 = vi.fn(() => sleep(20).then(() => 'data1'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data1'),
+    )
 
     function Page() {
       const [result1, result2] = useQueries(() => ({
@@ -2199,7 +2209,9 @@ describe("useQueries's in Suspense mode", () => {
     // Make key2 fresh again by resetting its data
     queryClient.setQueryData(key2, 'cached2')
 
-    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data2'),
+    )
 
     function Page() {
       const [result1, result2] = useQueries(() => ({
@@ -2327,7 +2339,9 @@ describe("useQueries's in Suspense mode", () => {
 
   it('should show restored data as soon as restoring finishes', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'fetched'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'fetched'),
+    )
     const [isRestoring, setIsRestoring] = createSignal(true)
 
     function Page() {
@@ -2416,7 +2430,7 @@ describe("useQueries's in Suspense mode", () => {
   it('should throw to the error boundary when reading an object that combine returns with throwOnError: true', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -2513,7 +2527,7 @@ describe("useQueries's in Suspense mode", () => {
   it('should throw to the error boundary when a refetch of cached data fails with throwOnError: true', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
     queryClient.setQueryData(key, 'cached')
 

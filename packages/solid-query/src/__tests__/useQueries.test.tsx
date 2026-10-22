@@ -214,6 +214,7 @@ describe('useQueries', () => {
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
   })
+
   it('should keep updating a destructured result', async () => {
     const key = queryKey()
 
