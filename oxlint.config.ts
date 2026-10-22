@@ -307,10 +307,6 @@ export default defineConfig({
           'error',
           { fn: 'it', withinDescribe: 'it' },
         ],
-        'vitest/no-standalone-expect': [
-          'error',
-          { additionalTestBlockFunctions: ['itIf'] },
-        ],
         'vitest/consistent-vitest-vi': 'error',
         'vitest/hoisted-apis-on-top': 'error',
         'vitest/max-nested-describe': 'error',
