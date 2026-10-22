@@ -134,6 +134,10 @@
               "to": "framework/svelte/ssr"
             },
             {
+              "label": "Testing",
+              "to": "framework/svelte/testing"
+            },
+            {
               "label": "Migrate from v5 to v6",
               "to": "framework/svelte/migrate-from-v5-to-v6"
             }
@@ -822,6 +826,10 @@
             {
               "label": "SSR",
               "to": "framework/lit/guides/ssr"
+            },
+            {
+              "label": "Testing",
+              "to": "framework/lit/guides/testing"
             }
           ]
         },

@@ -12,6 +12,7 @@ export default function Example() {
     queryKey: ['todos'],
     queryFn: async (): Promise<Array<string>> => {
       const response = await fetch('/api/data')
+      if (!response.ok) throw new Error('Failed to fetch todos')
       return await response.json()
     },
     // Refetch the data every second
@@ -19,12 +20,18 @@ export default function Example() {
   })
 
   const addMutation = useMutation({
-    mutationFn: (add: string) => fetch(`/api/data?add=${add}`),
+    mutationFn: async (add: string) => {
+      const response = await fetch(`/api/data?add=${add}`)
+      if (!response.ok) throw new Error('Failed to add todo')
+    },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
   const clearMutation = useMutation({
-    mutationFn: () => fetch(`/api/data?clear=1`),
+    mutationFn: async () => {
+      const response = await fetch(`/api/data?clear=1`)
+      if (!response.ok) throw new Error('Failed to clear todos')
+    },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
@@ -33,7 +40,7 @@ export default function Example() {
 
   return (
     <div>
-      <h1>Auto Refetch with stale-time set to {intervalMs}ms</h1>
+      <h1>Auto Refetch with refetchInterval set to {intervalMs}ms</h1>
       <p>
         This example is best experienced on your own machine, where you can open
         multiple tabs to the same localhost server and see your changes

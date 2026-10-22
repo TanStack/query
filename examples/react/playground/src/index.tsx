@@ -320,7 +320,9 @@ function EditTodo({
               ? 'Saving...'
               : saveMutation.status === 'error'
                 ? saveMutation.error.message
-                : 'Saved!'}
+                : saveMutation.status === 'success'
+                  ? 'Saved!'
+                  : null}
           </div>
           <div>
             {isFetching ? (
@@ -368,7 +370,9 @@ function AddTodo() {
           ? 'Saving...'
           : addMutation.status === 'error'
             ? addMutation.error.message
-            : 'Saved!'}
+            : addMutation.status === 'success'
+              ? 'Saved!'
+              : null}
       </div>
     </div>
   )

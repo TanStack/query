@@ -694,12 +694,14 @@ describe('queryClient', () => {
         { queryKey: '1' },
       ])
     })
+
     it('should reject an object queryKey (#8684)', () => {
       assertType<Parameters<QueryClient['invalidateQueries']>>([
         // @ts-expect-error key is not an array
         { queryKey: { foo: true } },
       ])
     })
+
     it('should type the predicate if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
@@ -891,6 +893,7 @@ describe('queryClient', () => {
         { notAFilter: true },
       ])
     })
+
     it('should accept typed and untyped mutation filters alike', () => {
       const queryClient = new QueryClient()
 

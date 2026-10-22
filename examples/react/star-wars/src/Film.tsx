@@ -1,14 +1,11 @@
 import { Link as RouterLink, useParams } from 'react-router-dom'
-import { skipToken, useQuery } from '@tanstack/react-query'
-import { getCharacter, getFilm } from './api'
+import { useQuery } from '@tanstack/react-query'
+import { characterQueryOptions, filmQueryOptions } from './api'
 
 export default function Film() {
   const { filmId } = useParams()
 
-  const { data, status } = useQuery({
-    queryKey: ['film', filmId],
-    queryFn: filmId ? () => getFilm(filmId) : skipToken,
-  })
+  const { data, status } = useQuery(filmQueryOptions(filmId))
 
   if (!filmId) {
     return <p>Invalid film ID</p>
@@ -24,7 +21,7 @@ export default function Film() {
       <p>{data.opening_crawl}</p>
       <br />
       <h4 className="text-2xl">Characters</h4>
-      {data.characters.map((character: string) => {
+      {data.characters.map((character) => {
         const characterUrlParts = character.split('/').filter(Boolean)
         const characterId = characterUrlParts[characterUrlParts.length - 1]
         return <Character characterId={characterId} key={characterId} />
@@ -34,10 +31,7 @@ export default function Film() {
 }
 
 function Character({ characterId }: { characterId: string }) {
-  const { data, status } = useQuery({
-    queryKey: ['character', characterId],
-    queryFn: () => getCharacter(characterId),
-  })
+  const { data, status } = useQuery(characterQueryOptions(characterId))
 
   if (status !== 'success') {
     return null

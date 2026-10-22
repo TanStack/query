@@ -26,7 +26,10 @@ export const loader =
     if (!params.contactId) {
       throw new Error('No contact ID provided')
     }
-    await queryClient.ensureQueryData(contactDetailQuery(params.contactId))
+    await queryClient.query({
+      ...contactDetailQuery(params.contactId),
+      staleTime: 'static',
+    })
     return { contactId: params.contactId }
   }
 

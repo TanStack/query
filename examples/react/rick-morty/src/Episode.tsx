@@ -1,15 +1,12 @@
 import { Link as RouterLink, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { getCharacter, getEpisode } from './api'
+import { characterQueryOptions, episodeQueryOptions } from './api'
 
 function Episode() {
   const params = useParams()
   const episodeId = params.episodeId!
 
-  const { data, status } = useQuery({
-    queryKey: ['episode', episodeId],
-    queryFn: () => getEpisode(episodeId),
-  })
+  const { data, status } = useQuery(episodeQueryOptions(episodeId))
 
   if (status === 'pending') return <p>Loading...</p>
 
@@ -21,7 +18,7 @@ function Episode() {
       <p>{data.air_date}</p>
       <br />
       <h4 className="text-2xl">Characters</h4>
-      {data.characters.map((character: any) => {
+      {data.characters.map((character) => {
         const characterUrlParts = character.split('/').filter(Boolean)
         const characterId = characterUrlParts[characterUrlParts.length - 1]
         return <Character characterId={characterId} key={characterId} />
@@ -31,10 +28,7 @@ function Episode() {
 }
 
 function Character({ characterId }: { characterId: string }) {
-  const { data, status } = useQuery({
-    queryKey: ['character', characterId],
-    queryFn: () => getCharacter(characterId),
-  })
+  const { data, status } = useQuery(characterQueryOptions(characterId))
 
   if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>

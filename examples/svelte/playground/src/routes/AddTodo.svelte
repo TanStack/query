@@ -62,6 +62,8 @@
       ? 'Saving...'
       : addMutation.status === 'error'
         ? addMutation.error.message
-        : 'Saved!'}
+        : addMutation.status === 'success'
+          ? 'Saved!'
+          : null}
   </div>
 </div>

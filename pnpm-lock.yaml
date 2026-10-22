@@ -294,8 +294,8 @@ importers:
         specifier: 0.4.0
         version: 0.4.0(@typescript-eslint/utils@8.58.1(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
       '@tanstack/typedoc-config':
-        specifier: 0.3.4
-        version: 0.3.4(typescript@6.0.3)
+        specifier: 0.3.5
+        version: 0.3.5(typescript@6.0.3)
       '@testing-library/jest-dom':
         specifier: ^6.8.0
         version: 6.9.1
@@ -314,9 +314,15 @@ importers:
       eslint-plugin-import-x:
         specifier: ^4.17.1
         version: 4.17.1(@typescript-eslint/utils@8.58.1(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)
+      eslint-plugin-jest-dom:
+        specifier: ^5.10.1
+        version: 5.10.1(@testing-library/dom@10.4.1)(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))
       eslint-plugin-jsdoc:
         specifier: ^65.0.1
         version: 65.0.1(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
+      eslint-plugin-testing-library:
+        specifier: ^7.16.2
+        version: 7.16.2(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
       jsdom:
         specifier: ^27.0.0
         version: 27.4.0(supports-color@7.2.0)
@@ -402,7 +408,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -424,7 +430,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/compiler@20.3.18)(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
@@ -445,7 +451,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -467,7 +473,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/compiler@20.3.18)(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
@@ -488,13 +494,13 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/angular-query-experimental
       '@tanstack/angular-query-persist-client':
         specifier: ^5.103.2
         version: link:../../../packages/angular-query-persist-client
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/query-async-storage-persister
       rxjs:
         specifier: ^7.8.2
@@ -516,7 +522,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/compiler@20.3.18)(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
@@ -540,7 +546,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -562,7 +568,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/compiler@20.3.18)(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
@@ -583,7 +589,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -605,7 +611,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/compiler@20.3.18)(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
@@ -629,7 +635,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -651,7 +657,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/compiler@20.3.18)(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
@@ -672,7 +678,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -694,7 +700,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/compiler@20.3.18)(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
@@ -718,7 +724,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -740,7 +746,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/compiler@20.3.18)(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
@@ -764,7 +770,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -786,7 +792,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/compiler@20.3.18)(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
@@ -810,7 +816,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -832,7 +838,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/compiler@20.3.18)(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
@@ -853,7 +859,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -875,7 +881,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/compiler@20.3.18)(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
@@ -884,17 +890,17 @@ importers:
   examples/lit/basic:
     dependencies:
       '@tanstack/lit-query':
-        specifier: ^0.2.28
+        specifier: ^0.2.30
         version: link:../../../packages/lit-query
       '@tanstack/query-core':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/query-core
       lit:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
@@ -906,17 +912,17 @@ importers:
   examples/lit/pagination:
     dependencies:
       '@tanstack/lit-query':
-        specifier: ^0.2.28
+        specifier: ^0.2.30
         version: link:../../../packages/lit-query
       '@tanstack/query-core':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/query-core
       lit:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
@@ -931,10 +937,10 @@ importers:
         specifier: ^3.3.0
         version: 3.3.1
       '@tanstack/lit-query':
-        specifier: ^0.2.28
+        specifier: ^0.2.30
         version: link:../../../packages/lit-query
       '@tanstack/query-core':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/query-core
       lit:
         specifier: ^3.3.3
@@ -944,7 +950,7 @@ importers:
         specifier: ^1.1.7
         version: 1.1.8
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       tsx:
         specifier: ^4.19.0
@@ -959,7 +965,7 @@ importers:
   examples/preact/simple:
     dependencies:
       '@tanstack/preact-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/preact-query
       preact:
         specifier: ^11.0.1
@@ -969,7 +975,7 @@ importers:
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       eslint:
         specifier: ^9.36.0
@@ -990,10 +996,10 @@ importers:
         specifier: 5.59.0
         version: 5.59.0
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1006,7 +1012,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -1027,10 +1033,10 @@ importers:
   examples/react/auto-refetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -1046,7 +1052,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/node':
         specifier: ^24.19.2
@@ -1064,16 +1070,16 @@ importers:
   examples/react/basic:
     dependencies:
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-persist-client
       react:
         specifier: ^19.0.0
@@ -1086,7 +1092,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -1107,10 +1113,10 @@ importers:
   examples/react/basic-graphql-request:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.9.0
@@ -1129,7 +1135,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -1153,10 +1159,10 @@ importers:
         specifier: ^0.23.0
         version: 0.23.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1169,7 +1175,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -1190,10 +1196,10 @@ importers:
   examples/react/chat:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1209,7 +1215,7 @@ importers:
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -1233,10 +1239,10 @@ importers:
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1249,7 +1255,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -1270,10 +1276,10 @@ importers:
   examples/react/devtools-panel:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1286,7 +1292,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -1307,16 +1313,16 @@ importers:
   examples/react/eslint-legacy:
     dependencies:
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-persist-client
       react:
         specifier: ^19.0.0
@@ -1326,7 +1332,7 @@ importers:
         version: 19.2.4(react@19.2.4)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -1356,14 +1362,14 @@ importers:
   examples/react/eslint-plugin-demo:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       react:
         specifier: ^19.0.0
         version: 19.2.4
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       eslint:
         specifier: ^9.39.0
@@ -1378,10 +1384,10 @@ importers:
   examples/react/infinite-query-with-max-pages:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -1397,7 +1403,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/node':
         specifier: ^24.19.2
@@ -1415,10 +1421,10 @@ importers:
   examples/react/load-more-infinite-scroll:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -1437,7 +1443,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/node':
         specifier: ^24.19.2
@@ -1455,10 +1461,10 @@ importers:
   examples/react/nextjs:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -1474,7 +1480,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/node':
         specifier: ^24.19.2
@@ -1492,10 +1498,10 @@ importers:
   examples/react/nextjs-app-optimistic-updates:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -1511,7 +1517,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/node':
         specifier: ^24.19.2
@@ -1529,10 +1535,10 @@ importers:
   examples/react/nextjs-app-prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -1548,7 +1554,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/node':
         specifier: ^24.19.2
@@ -1566,13 +1572,13 @@ importers:
   examples/react/nextjs-suspense-streaming:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^16.0.7
@@ -1588,7 +1594,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/node':
         specifier: ^24.19.2
@@ -1606,19 +1612,19 @@ importers:
   examples/react/offline:
     dependencies:
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.4
         version: 3.7.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-persist-client
       msw:
         specifier: ^2.15.0
@@ -1637,7 +1643,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -1658,10 +1664,10 @@ importers:
   examples/react/pagination:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -1677,7 +1683,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/node':
         specifier: ^24.19.2
@@ -1695,10 +1701,10 @@ importers:
   examples/react/playground:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1711,7 +1717,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -1732,10 +1738,10 @@ importers:
   examples/react/prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -1751,7 +1757,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/node':
         specifier: ^24.19.2
@@ -1778,10 +1784,10 @@ importers:
         specifier: ^6.4.1
         version: 6.4.1(871faad673a6f611b59541c52f400327)
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^57.0.24
@@ -1820,9 +1826,15 @@ importers:
       '@babel/core':
         specifier: ^7.24.9
         version: 7.29.7(supports-color@10.2.2)
+      '@eslint-react/eslint-plugin':
+        specifier: ^5.21.0
+        version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@expo/config':
         specifier: ^57.0.9
         version: 57.0.9(supports-color@10.2.2)(typescript@5.8.3)
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.104.5
+        version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.14
@@ -1833,10 +1845,10 @@ importers:
   examples/react/react-router:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
@@ -1867,7 +1879,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -1891,10 +1903,10 @@ importers:
   examples/react/rick-morty:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1916,7 +1928,7 @@ importers:
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -1940,10 +1952,10 @@ importers:
   examples/react/shadow-dom:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1956,7 +1968,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -1977,10 +1989,10 @@ importers:
   examples/react/simple:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1993,7 +2005,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -2014,10 +2026,10 @@ importers:
   examples/react/star-wars:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -2039,7 +2051,7 @@ importers:
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -2063,10 +2075,10 @@ importers:
   examples/react/suspense:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/react-query-devtools
       font-awesome:
         specifier: ^4.7.0
@@ -2085,7 +2097,7 @@ importers:
         specifier: ^5.21.0
         version: 5.23.3(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -2118,10 +2130,10 @@ importers:
         specifier: ^6.0.2
         version: 6.0.2(astro@7.3.5(@types/node@24.19.2)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1(supports-color@10.2.2))(jiti@1.21.7)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/solid-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query-devtools
       astro:
         specifier: ^7.3.5
@@ -2137,7 +2149,7 @@ importers:
         version: 5.8.3
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       eslint-plugin-solid:
         specifier: ^0.18.1
@@ -2146,17 +2158,17 @@ importers:
   examples/solid/basic:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.9.15
         version: 1.9.15
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       eslint-plugin-solid:
         specifier: ^0.18.1
@@ -2174,10 +2186,10 @@ importers:
   examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.9.0
@@ -2190,7 +2202,7 @@ importers:
         version: 1.9.15
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       eslint-plugin-solid:
         specifier: ^0.18.1
@@ -2208,17 +2220,17 @@ importers:
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.9.15
         version: 1.9.15
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       eslint-plugin-solid:
         specifier: ^0.18.1
@@ -2236,16 +2248,16 @@ importers:
   examples/solid/offline:
     dependencies:
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/solid-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query-devtools
       '@tanstack/solid-query-persist-client':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query-persist-client
       msw:
         specifier: ^2.15.0
@@ -2255,7 +2267,7 @@ importers:
         version: 1.9.15
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       eslint-plugin-solid:
         specifier: ^0.18.1
@@ -2273,17 +2285,17 @@ importers:
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.9.15
         version: 1.9.15
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       eslint-plugin-solid:
         specifier: ^0.18.1
@@ -2310,10 +2322,10 @@ importers:
         specifier: ^1.1.3
         version: 1.3.2(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vinxi@0.5.11(@types/node@24.19.2)(@vercel/functions@2.2.13)(db0@0.3.4)(debug@4.4.3(supports-color@10.2.2))(idb-keyval@6.2.2)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.2.4)(sass@1.90.0)(supports-color@10.2.2)(terser@5.46.1)(tsx@4.21.0)(webpack@5.105.4)(yaml@2.9.0))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/solid-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.9.15
@@ -2323,7 +2335,7 @@ importers:
         version: 0.5.11(@types/node@24.19.2)(@vercel/functions@2.2.13)(db0@0.3.4)(debug@4.4.3(supports-color@10.2.2))(idb-keyval@6.2.2)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.2.4)(sass@1.90.0)(supports-color@10.2.2)(terser@5.46.1)(tsx@4.21.0)(webpack@5.105.4)(yaml@2.9.0)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       eslint-plugin-solid:
         specifier: ^0.18.1
@@ -2332,10 +2344,10 @@ importers:
   examples/svelte/auto-refetching:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -2348,7 +2360,7 @@ importers:
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.71.1
@@ -2372,16 +2384,16 @@ importers:
   examples/svelte/basic:
     dependencies:
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/svelte-query':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query-devtools
       '@tanstack/svelte-query-persist-client':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query-persist-client
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -2394,7 +2406,7 @@ importers:
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.71.1
@@ -2418,10 +2430,10 @@ importers:
   examples/svelte/load-more-infinite-scroll:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -2434,7 +2446,7 @@ importers:
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.71.1
@@ -2458,10 +2470,10 @@ importers:
   examples/svelte/optimistic-updates:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -2474,7 +2486,7 @@ importers:
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.71.1
@@ -2498,10 +2510,10 @@ importers:
   examples/svelte/playground:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -2514,7 +2526,7 @@ importers:
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.71.1
@@ -2538,17 +2550,17 @@ importers:
   examples/svelte/simple:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@tsconfig/svelte':
         specifier: ^5.0.4
@@ -2575,10 +2587,10 @@ importers:
   examples/svelte/ssr:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -2591,7 +2603,7 @@ importers:
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.71.1
@@ -2615,10 +2627,10 @@ importers:
   examples/svelte/star-wars:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -2634,7 +2646,7 @@ importers:
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.71.1
@@ -2661,17 +2673,17 @@ importers:
   examples/vue/basic:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.5.43
         version: 3.5.43(typescript@5.8.3)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
@@ -2689,14 +2701,14 @@ importers:
   examples/vue/dependent-queries:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/vue-query
       vue:
         specifier: ^3.5.43
         version: 3.5.43(typescript@5.8.3)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
@@ -2713,17 +2725,11 @@ importers:
 
   examples/vue/persister:
     dependencies:
-      '@tanstack/query-core':
-        specifier: ^5.104.3
-        version: link:../../../packages/query-core
       '@tanstack/query-persist-client-core':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/query-persist-client-core
-      '@tanstack/query-sync-storage-persister':
-        specifier: ^5.104.3
-        version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/vue-query
       idb-keyval:
         specifier: ^6.3.0
@@ -2733,7 +2739,7 @@ importers:
         version: 3.5.43(typescript@5.8.3)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
@@ -2748,17 +2754,17 @@ importers:
   examples/vue/simple:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^6.3.3
+        specifier: ^6.3.5
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.5.43
         version: 3.5.43(typescript@5.8.3)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
@@ -2794,7 +2800,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.18(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.104.3
+        specifier: ^5.104.5
         version: link:../../packages/angular-query-experimental
       rxjs:
         specifier: ~7.8.0
@@ -9041,8 +9047,8 @@ packages:
   '@tanstack/store@0.11.1':
     resolution: {integrity: sha512-mzTOBhypOuDJAy/D8n2MfUZ1HFkXnmSETviRyhqEC8LUE7/IZQExOTxMANj3KjTofYTkFNpBY67qaVrT41YccA==}
 
-  '@tanstack/typedoc-config@0.3.4':
-    resolution: {integrity: sha512-WXJavpiNqumNwdBQTM3wBqbHaULgoZ3cIri7xJinKqX/mOGXgc6ZghfAardD2PydP8tOcPf+xhrd1Qk/am9DMg==}
+  '@tanstack/typedoc-config@0.3.5':
+    resolution: {integrity: sha512-ssYx7Z7qY0SkDsnblPUVAQn5cZhvgohIJtmEBMA0R61XvnR/5A3bkC8cEYYV/TwAdFQ2ZfPrRxN0ea1z1tKapw==}
     engines: {node: '>=18'}
 
   '@testing-library/angular@18.1.1':
@@ -12016,6 +12022,16 @@ packages:
       eslint-import-resolver-node:
         optional: true
 
+  eslint-plugin-jest-dom@5.10.1:
+    resolution: {integrity: sha512-IIJdzbACbhJUJyMAqpA9E9gxp1Gv29TeQ3DtL+pepwP8Oq2WiqjOB2HbnEIs23h0ewdKIZRDI56yLro2eUO+DA==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0, npm: '>=6', yarn: '>=1'}
+    peerDependencies:
+      '@testing-library/dom': ^8.0.0 || ^9.0.0 || ^10.0.0
+      eslint: ^6.8.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0
+    peerDependenciesMeta:
+      '@testing-library/dom':
+        optional: true
+
   eslint-plugin-jsdoc@65.0.1:
     resolution: {integrity: sha512-7IvB+ZS71WCw5tGKh6f6D5k55qtXKdrGTnIpQTBKWdpyZ5IfhGHfh0i6ArWlCJ4JEtz22YRk5Bqu1MvbOlpMKQ==}
     engines: {node: ^22.22.2 || >=24.15.0}
@@ -12126,6 +12142,12 @@ packages:
     peerDependenciesMeta:
       svelte:
         optional: true
+
+  eslint-plugin-testing-library@7.16.2:
+    resolution: {integrity: sha512-8gleGnQXK2ZA3hHwjCwpYTZvM+9VsrJ+/9kDI8CjqAQGAdMQOdn/rJNu7ZySENuiWlGKQWyZJ4ZjEg2zamaRHw==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
 
   eslint-scope@4.0.3:
     resolution: {integrity: sha512-p7VutNr1O/QrxysMo3E45FjYDTeXBy0iTltPFNSqKAIfjDSXC+4dj+qfyuD8bfAXrW/y6lW3O76VaYNPKfpKrg==}
@@ -15845,6 +15867,10 @@ packages:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
     engines: {node: '>=0.10.0'}
 
+  requireindex@1.2.0:
+    resolution: {integrity: sha512-L9jEkOi3ASd9PYit2cwRfyppc9NoABujTP8/5gFcbERmo5jUoAKovIC3fsF17pkTnGsrByysqX+Kxd2OTNI1ww==}
+    engines: {node: '>=0.10.5'}
+
   requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
 
@@ -17112,13 +17138,15 @@ packages:
   typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
-  typedoc-plugin-frontmatter@1.3.1:
-    resolution: {integrity: sha512-wXKnhpiOuG3lY9GGKiKcXNrhKbPYm/jA5wbzGE/kKdwlSu8++ZbEuKA0K2dvIna3F+5EQrv+3AeObHkS1QP7JA==}
+  typedoc-plugin-frontmatter@1.3.3:
+    resolution: {integrity: sha512-J7MUgoyJ0M6Mk1MLOzsy2U1YIrE64F2VQLHzzphmXmsjc8di572QsFvCoueaT+9JvQ7KkjyKcV6tUzit0szBiw==}
+    engines: {node: '>= 18'}
     peerDependencies:
-      typedoc-plugin-markdown: '>=4.9.0'
+      typedoc: 0.28.x
+      typedoc-plugin-markdown: '>=4.11.0'
 
-  typedoc-plugin-markdown@4.12.0:
-    resolution: {integrity: sha512-eJDEMAfxCmede22c/Jw7d0FA13ggAQv+KkwQYKYCdqI02cin6Rc9QRwbG/7XvvHWinuFejySnZVUWDtvGk3Vbg==}
+  typedoc-plugin-markdown@4.14.0:
+    resolution: {integrity: sha512-Y2a3oDV9ekrbkk6RBSGH8GyNkh0xIdemIOOTr3tiRN/33nvFGStOs9nw+6Q84gF1XFkcVZrgM4Ckcsf6e/YpKQ==}
     engines: {node: '>= 18'}
     peerDependencies:
       typedoc: 0.28.x
@@ -23717,11 +23745,11 @@ snapshots:
 
   '@tanstack/store@0.11.1': {}
 
-  '@tanstack/typedoc-config@0.3.4(typescript@6.0.3)':
+  '@tanstack/typedoc-config@0.3.5(typescript@6.0.3)':
     dependencies:
       typedoc: 0.28.20(typescript@6.0.3)
-      typedoc-plugin-frontmatter: 1.3.1(typedoc-plugin-markdown@4.12.0(typedoc@0.28.20(typescript@6.0.3)))
-      typedoc-plugin-markdown: 4.12.0(typedoc@0.28.20(typescript@6.0.3))
+      typedoc-plugin-frontmatter: 1.3.3(typedoc-plugin-markdown@4.14.0(typedoc@0.28.20(typescript@6.0.3)))(typedoc@0.28.20(typescript@6.0.3))
+      typedoc-plugin-markdown: 4.14.0(typedoc@0.28.20(typescript@6.0.3))
     transitivePeerDependencies:
       - typescript
 
@@ -24163,6 +24191,15 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@typescript-eslint/project-service@8.71.1(supports-color@7.2.0)(typescript@6.0.3)':
+    dependencies:
+      '@typescript-eslint/tsconfig-utils': 8.71.1(typescript@6.0.3)
+      '@typescript-eslint/types': 8.71.1
+      debug: 4.4.3(supports-color@7.2.0)
+      typescript: 6.0.3
+    transitivePeerDependencies:
+      - supports-color
+
   '@typescript-eslint/rule-tester@8.71.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)':
     dependencies:
       '@typescript-eslint/parser': 8.71.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -24408,6 +24445,21 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@typescript-eslint/typescript-estree@8.71.1(supports-color@7.2.0)(typescript@6.0.3)':
+    dependencies:
+      '@typescript-eslint/project-service': 8.71.1(supports-color@7.2.0)(typescript@6.0.3)
+      '@typescript-eslint/tsconfig-utils': 8.71.1(typescript@6.0.3)
+      '@typescript-eslint/types': 8.71.1
+      '@typescript-eslint/visitor-keys': 8.71.1
+      debug: 4.4.3(supports-color@7.2.0)
+      minimatch: 10.2.5
+      semver: 7.8.5
+      tinyglobby: 0.2.17
+      ts-api-utils: 2.5.0(typescript@6.0.3)
+      typescript: 6.0.3
+    transitivePeerDependencies:
+      - supports-color
+
   '@typescript-eslint/utils@8.58.1(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
     dependencies:
       '@eslint-community/eslint-utils': 4.9.1(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))
@@ -24515,6 +24567,17 @@ snapshots:
       '@typescript-eslint/types': 8.71.1
       '@typescript-eslint/typescript-estree': 8.71.1(supports-color@10.2.2)(typescript@6.0.3)
       eslint: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
+      typescript: 6.0.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/utils@8.71.1(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
+    dependencies:
+      '@eslint-community/eslint-utils': 4.9.1(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))
+      '@typescript-eslint/scope-manager': 8.71.1
+      '@typescript-eslint/types': 8.71.1
+      '@typescript-eslint/typescript-estree': 8.71.1(supports-color@7.2.0)(typescript@6.0.3)
+      eslint: 9.39.4(jiti@2.7.0)(supports-color@7.2.0)
       typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
@@ -27489,6 +27552,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  eslint-plugin-jest-dom@5.10.1(@testing-library/dom@10.4.1)(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0)):
+    dependencies:
+      eslint: 9.39.4(jiti@2.7.0)(supports-color@7.2.0)
+      requireindex: 1.2.0
+    optionalDependencies:
+      '@testing-library/dom': 10.4.1
+
   eslint-plugin-jsdoc@65.0.1(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3):
     dependencies:
       '@es-joy/jsdoccomment': 0.98.0
@@ -27920,6 +27990,15 @@ snapshots:
       svelte: 5.57.1(@typescript-eslint/types@8.58.1)
     transitivePeerDependencies:
       - ts-node
+
+  eslint-plugin-testing-library@7.16.2(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3):
+    dependencies:
+      '@typescript-eslint/scope-manager': 8.71.1
+      '@typescript-eslint/utils': 8.71.1(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
+      eslint: 9.39.4(jiti@2.7.0)(supports-color@7.2.0)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
 
   eslint-scope@4.0.3:
     dependencies:
@@ -32763,6 +32842,8 @@ snapshots:
 
   require-from-string@2.0.2: {}
 
+  requireindex@1.2.0: {}
+
   requires-port@1.0.0: {}
 
   reserved-identifiers@1.2.0: {}
@@ -34327,12 +34408,13 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typedoc-plugin-frontmatter@1.3.1(typedoc-plugin-markdown@4.12.0(typedoc@0.28.20(typescript@6.0.3))):
+  typedoc-plugin-frontmatter@1.3.3(typedoc-plugin-markdown@4.14.0(typedoc@0.28.20(typescript@6.0.3)))(typedoc@0.28.20(typescript@6.0.3)):
     dependencies:
-      typedoc-plugin-markdown: 4.12.0(typedoc@0.28.20(typescript@6.0.3))
+      typedoc: 0.28.20(typescript@6.0.3)
+      typedoc-plugin-markdown: 4.14.0(typedoc@0.28.20(typescript@6.0.3))
       yaml: 2.9.1
 
-  typedoc-plugin-markdown@4.12.0(typedoc@0.28.20(typescript@6.0.3)):
+  typedoc-plugin-markdown@4.14.0(typedoc@0.28.20(typescript@6.0.3)):
     dependencies:
       typedoc: 0.28.20(typescript@6.0.3)
 

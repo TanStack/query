@@ -1,27 +1,15 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
-export default defineComponent({
-  name: 'App',
-  components: { VueQueryDevtools },
-  setup() {
-    const { data, error, isFetching, isPending } = useQuery({
-      queryKey: ['repoData'],
-      async queryFn() {
-        return await fetch('https://api.github.com/repos/Tanstack/query').then(
-          (response) => response.json(),
-        )
-      },
-    })
+import type { Repo } from './types'
 
-    return {
-      data,
-      error,
-      isFetching,
-      isPending,
-    }
+const { data, error, isFetching, isPending } = useQuery({
+  queryKey: ['repoData'],
+  async queryFn(): Promise<Repo> {
+    const response = await fetch('https://api.github.com/repos/TanStack/query')
+    if (!response.ok) throw new Error('Failed to fetch repo data')
+    return await response.json()
   },
 })
 </script>
@@ -29,9 +17,9 @@ export default defineComponent({
 <template>
   <template v-if="isPending"> Loading... </template>
   <template v-else-if="error">
-    'An error has occurred: {{ error.message }}
+    An error has occurred: {{ error.message }}
   </template>
-  <template v-else>
+  <template v-else-if="data">
     <h1>{{ data.name }}</h1>
     <p>{{ data.description }}</p>
     <strong>👀 {{ data.subscribers_count }}</strong>

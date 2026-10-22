@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native'
-import { Paragraph, Title } from 'react-native-paper'
+import { Text } from 'react-native-paper'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import { ErrorMessage } from '../components/ErrorMessage'
@@ -50,21 +50,21 @@ export function MovieDetailsScreen({ route }: Props) {
       }
     >
       <View style={styles.titleRow}>
-        <Title>
+        <Text variant="titleLarge">
           {data.title} ({data.year})
-        </Title>
+        </Text>
       </View>
       {'info' in data ? (
         <>
           <View style={styles.infoRow}>
-            <Paragraph>{data.info.plot}</Paragraph>
+            <Text variant="bodyMedium">{data.info.plot}</Text>
           </View>
           <View style={styles.actorsRow}>
-            <Paragraph>
+            <Text variant="bodyMedium">
               {data.info.actors.slice(0, -1).join(', ') +
                 ' or ' +
                 data.info.actors.slice(-1)}
-            </Paragraph>
+            </Text>
           </View>
         </>
       ) : (

@@ -1,15 +1,16 @@
 import { Link as RouterLink, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { getCharacter, getFilm, getPlanet } from './api'
+import {
+  characterQueryOptions,
+  filmQueryOptions,
+  homeworldQueryOptions,
+} from './api'
 
 export default function Character() {
   const params = useParams()
   const characterId = params.characterId!
 
-  const { status, data } = useQuery({
-    queryKey: ['character', characterId],
-    queryFn: () => getCharacter(characterId),
-  })
+  const { status, data } = useQuery(characterQueryOptions(characterId))
 
   if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>
@@ -40,7 +41,7 @@ export default function Character() {
       </p>
 
       <h4 className="text-2xl pt-4">Films</h4>
-      {data.films.map((film: any) => {
+      {data.films.map((film) => {
         const filmUrlParts = film.split('/').filter(Boolean)
         const filmId = filmUrlParts[filmUrlParts.length - 1]
         return <Film filmId={filmId} key={`${filmId}`} />
@@ -50,10 +51,7 @@ export default function Character() {
 }
 
 function Film({ filmId }: { filmId: string }) {
-  const { data, status } = useQuery({
-    queryKey: ['film', filmId],
-    queryFn: () => getFilm(filmId),
-  })
+  const { data, status } = useQuery(filmQueryOptions(filmId))
 
   if (status === 'success') {
     return (
@@ -70,10 +68,7 @@ function Film({ filmId }: { filmId: string }) {
 }
 
 function Homeworld({ homeworldId }: { homeworldId: string }) {
-  const { data, status } = useQuery({
-    queryKey: ['homeworld', homeworldId],
-    queryFn: () => getPlanet(homeworldId),
-  })
+  const { data, status } = useQuery(homeworldQueryOptions(homeworldId))
 
   if (status === 'pending') return <span>Loading...</span>
   if (status === 'error') return <span>Error :(</span>

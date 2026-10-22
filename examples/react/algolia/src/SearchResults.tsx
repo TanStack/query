@@ -13,6 +13,7 @@ type SearchResultsProps = {
 export default function SearchResults({ query = '' }: SearchResultsProps) {
   const {
     data: hits,
+    error,
     isLoading,
     isFetching,
     status,
@@ -30,6 +31,8 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
   if (!query) return null
 
   if (isLoading) return <div className="loading">Loading...</div>
+
+  if (status === 'error') return <div>Error: {error.message}</div>
 
   return (
     <div>
@@ -59,9 +62,14 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
           )}
         </div>
         {hasNextPage && (
-          <div className="search-more" onClick={() => fetchNextPage()}>
+          <button
+            type="button"
+            className="search-more"
+            onClick={() => fetchNextPage()}
+            disabled={isFetching}
+          >
             more
-          </div>
+          </button>
         )}
         {isFetchingNextPage && (
           <div className="search-status">Fetching next page...</div>

@@ -1,42 +1,23 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { Todo } from '@/app/api/todos/data'
-
-async function fetchTodos(): Promise<Array<Todo>> {
-  const res = await fetch('/api/todos')
-  if (!res.ok) throw new Error('Failed to fetch todos')
-  return res.json()
-}
-
-async function addTodo(text: string): Promise<Todo> {
-  const res = await fetch('/api/todos', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text }),
-  })
-  if (!res.ok) {
-    const err = (await res.json()) as { error: string }
-    throw new Error(err.error)
-  }
-  return res.json()
-}
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
+import { addTodo, todosQueryOptions } from '@/app/todos'
 
 export default function TodoListUI() {
   const queryClient = useQueryClient()
   const [inputValue, setInputValue] = useState('')
 
-  const { data: todos = [] } = useQuery({
-    queryKey: ['todos'],
-    queryFn: fetchTodos,
-  })
+  const { data: todos } = useSuspenseQuery(todosQueryOptions)
 
   const addTodoMutation = useMutation({
     mutationFn: addTodo,
-    onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: ['todos'] })
-    },
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: todosQueryOptions.queryKey }),
   })
 
   function handleSubmit(e: React.FormEvent) {
