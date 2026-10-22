@@ -1497,10 +1497,7 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText } = renderWithClient(
-      queryClientMutationMeta,
-      <Page />,
-    )
+    const { getByText } = renderWithClient(queryClientMutationMeta, <Page />)
 
     fireEvent.click(getByText('succeed'))
     await vi.advanceTimersByTimeAsync(0)
@@ -1539,10 +1536,7 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText } = renderWithClient(
-      queryClientMutationMeta,
-      <Page />,
-    )
+    const { getByText } = renderWithClient(queryClientMutationMeta, <Page />)
 
     fireEvent.click(getByText('error'))
     await vi.advanceTimersByTimeAsync(0)
