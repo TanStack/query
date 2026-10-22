@@ -441,9 +441,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should throw errors to the error boundary by default', async () => {
     const key = queryKey()
 
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -483,8 +481,6 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when throwOnError: false', async () => {
@@ -533,9 +529,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should throw errors to the error boundary when a throwOnError function returns true', async () => {
     const key = queryKey()
 
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -575,8 +569,6 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when a throwOnError function returns false', async () => {
@@ -667,9 +659,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should error caught in error boundary without infinite loop', async () => {
     const key = queryKey()
 
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     let succeed = true
 
@@ -724,16 +714,12 @@ describe("useQuery's in Suspense mode", () => {
     // render error boundary fallback (error boundary)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should error caught in error boundary without infinite loop when query keys changed', async () => {
     let succeed = true
 
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const [key, setKey] = createSignal(0)
@@ -786,14 +772,10 @@ describe("useQuery's in Suspense mode", () => {
     // render error boundary fallback (error boundary)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should error caught in error boundary without infinite loop when enabled changed', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const queryKeys = '1'
@@ -849,8 +831,6 @@ describe("useQuery's in Suspense mode", () => {
     // render error boundary fallback (error boundary)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {

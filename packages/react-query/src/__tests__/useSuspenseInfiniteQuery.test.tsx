@@ -111,7 +111,6 @@ describe('useSuspenseInfiniteQuery', () => {
     expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseInfiniteQuery',
     )
-    consoleErrorMock.mockRestore()
   })
 
   it('should log an error when skipToken is used in development environment', () => {
@@ -145,7 +144,6 @@ describe('useSuspenseInfiniteQuery', () => {
       'skipToken is not allowed for useSuspenseInfiniteQuery',
     )
 
-    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 
@@ -178,7 +176,6 @@ describe('useSuspenseInfiniteQuery', () => {
 
     expect(consoleErrorMock).not.toHaveBeenCalled()
 
-    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 

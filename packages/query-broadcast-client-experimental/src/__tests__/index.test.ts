@@ -252,24 +252,20 @@ describe('broadcastQueryClient', () => {
         .spyOn(console, 'warn')
         .mockImplementation(() => {})
 
-      try {
-        broadcastQueryClient({
-          queryClient,
-          broadcastChannel: 'test_channel',
-          onBroadcastError: () => {
-            throw callbackError
-          },
-        })
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+        onBroadcastError: () => {
+          throw callbackError
+        },
+      })
 
-        queryClient.setQueryData(key, { value: 1 })
-        await sleep(0)
-        expect(consoleWarnMock).toHaveBeenCalledWith(
-          expect.stringContaining('onBroadcastError threw while handling'),
-          callbackError,
-        )
-      } finally {
-        consoleWarnMock.mockRestore()
-      }
+      queryClient.setQueryData(key, { value: 1 })
+      await sleep(0)
+      expect(consoleWarnMock).toHaveBeenCalledWith(
+        expect.stringContaining('onBroadcastError threw while handling'),
+        callbackError,
+      )
     })
 
     it('should not cause an unhandled rejection when async onBroadcastError rejects', async () => {
@@ -321,22 +317,18 @@ describe('broadcastQueryClient', () => {
         .spyOn(console, 'warn')
         .mockImplementation(() => {})
 
-      try {
-        broadcastQueryClient({
-          queryClient,
-          broadcastChannel: 'test_channel',
-          onBroadcastError: () => Promise.reject(asyncError),
-        })
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+        onBroadcastError: () => Promise.reject(asyncError),
+      })
 
-        queryClient.setQueryData(key, { value: 1 })
-        await sleep(10)
-        expect(consoleWarnMock).toHaveBeenCalledWith(
-          expect.stringContaining('onBroadcastError threw while handling'),
-          asyncError,
-        )
-      } finally {
-        consoleWarnMock.mockRestore()
-      }
+      queryClient.setQueryData(key, { value: 1 })
+      await sleep(10)
+      expect(consoleWarnMock).toHaveBeenCalledWith(
+        expect.stringContaining('onBroadcastError threw while handling'),
+        asyncError,
+      )
     })
 
     it('should call onBroadcastError when postMessage fails', async () => {
@@ -376,21 +368,17 @@ describe('broadcastQueryClient', () => {
         .spyOn(console, 'warn')
         .mockImplementation(() => {})
 
-      try {
-        broadcastQueryClient({
-          queryClient,
-          broadcastChannel: 'test_channel',
-        })
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
 
-        queryClient.setQueryData(key, { value: 1 })
-        await sleep(0)
-        expect(consoleWarnMock).toHaveBeenCalledWith(
-          expect.stringContaining('cross-tab sync for this query was skipped'),
-          cloneError,
-        )
-      } finally {
-        consoleWarnMock.mockRestore()
-      }
+      queryClient.setQueryData(key, { value: 1 })
+      await sleep(0)
+      expect(consoleWarnMock).toHaveBeenCalledWith(
+        expect.stringContaining('cross-tab sync for this query was skipped'),
+        cloneError,
+      )
     })
 
     it('should not warn in production when postMessage fails', async () => {
@@ -403,18 +391,14 @@ describe('broadcastQueryClient', () => {
         .spyOn(console, 'warn')
         .mockImplementation(() => {})
 
-      try {
-        broadcastQueryClient({
-          queryClient,
-          broadcastChannel: 'test_channel',
-        })
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
 
-        queryClient.setQueryData(key, { value: 1 })
-        await sleep(0)
-        expect(consoleWarnMock).not.toHaveBeenCalled()
-      } finally {
-        consoleWarnMock.mockRestore()
-      }
+      queryClient.setQueryData(key, { value: 1 })
+      await sleep(0)
+      expect(consoleWarnMock).not.toHaveBeenCalled()
     })
   })
 })

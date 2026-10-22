@@ -145,8 +145,6 @@ describe('usePrefetchQuery', () => {
     expect(rendered.getByText('Oops!')).toBeInTheDocument()
     expect(rendered.queryByText('data: Not an error')).not.toBeInTheDocument()
     expect(queryOpts.queryFn).not.toHaveBeenCalled()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should not create an endless loop when using inside a suspense boundary', async () => {
@@ -245,7 +243,6 @@ describe('usePrefetchQuery', () => {
       rendered.getByText('data: This is fine :dog: :fire:'),
     ).toBeInTheDocument()
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
-    consoleErrorMock.mockRestore()
   })
 
   it('should not create a suspense waterfall if prefetch is fired', async () => {

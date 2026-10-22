@@ -137,23 +137,18 @@ describe('usePrefetchInfiniteQuery', () => {
       .spyOn(console, 'warn')
       .mockImplementation(() => {})
 
-    try {
-      usePrefetchInfiniteQuery(
-        {
-          queryKey: queryKey(),
-          queryFn: () =>
-            Promise.resolve({ data: 'prefetched', currentPage: 1 }),
-          initialPageParam: 1,
-          getNextPageParam: () => undefined,
-        },
-        new QueryClient(),
-      )
+    usePrefetchInfiniteQuery(
+      {
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve({ data: 'prefetched', currentPage: 1 }),
+        initialPageParam: 1,
+        getNextPageParam: () => undefined,
+      },
+      new QueryClient(),
+    )
 
-      expect(consoleWarnMock).toHaveBeenCalledWith(
-        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
-      )
-    } finally {
-      consoleWarnMock.mockRestore()
-    }
+    expect(consoleWarnMock).toHaveBeenCalledWith(
+      'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+    )
   })
 })

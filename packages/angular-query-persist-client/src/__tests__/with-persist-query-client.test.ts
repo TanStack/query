@@ -444,6 +444,5 @@ describe('withPersistQueryClient', () => {
 
     expect(consoleErrorMock).toHaveBeenCalledTimes(1)
     expect(consoleErrorMock).toHaveBeenNthCalledWith(1, error)
-    consoleErrorMock.mockRestore()
   })
 })

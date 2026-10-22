@@ -525,9 +525,7 @@ describe('useSuspenseQueries', () => {
   })
 
   it('should throw error when a queryFn rejects with a falsy error', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -560,7 +558,6 @@ describe('useSuspenseQueries', () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it('should throw error when queryKey changes and new query fails', async () => {
@@ -612,8 +609,6 @@ describe('useSuspenseQueries', () => {
     expect(consoleErrorMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should keep previous data when wrapped in a transition', async () => {
@@ -766,9 +761,7 @@ describe('useSuspenseQueries', () => {
   })
 
   it('should show error boundary even with gcTime:0 (#7853)', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
     const key = queryKey()
     let count = 0
 
@@ -808,8 +801,6 @@ describe('useSuspenseQueries', () => {
     expect(rendered.getByText('There was an error!')).toBeInTheDocument()
 
     expect(count).toBe(1)
-
-    consoleErrorMock.mockRestore()
   })
 
   describe('gc (with fake timers)', () => {
@@ -905,7 +896,6 @@ describe('useSuspenseQueries', () => {
     expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseQueries',
     )
-    consoleErrorMock.mockRestore()
   })
 
   it('should log an error when skipToken is used in development environment', () => {
@@ -940,7 +930,6 @@ describe('useSuspenseQueries', () => {
     expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseQueries',
     )
-    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 
@@ -974,7 +963,6 @@ describe('useSuspenseQueries', () => {
     )
 
     expect(consoleErrorMock).not.toHaveBeenCalled()
-    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 

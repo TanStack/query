@@ -142,9 +142,7 @@ describe('QueryClientProvider', () => {
 
   describe('useQueryClient', () => {
     it('should throw an error if no query client has been set', () => {
-      const consoleErrorMock = vi
-        .spyOn(console, 'error')
-        .mockReturnValue(undefined)
+      vi.spyOn(console, 'error').mockReturnValue(undefined)
 
       function Page() {
         useQueryClient()
@@ -154,8 +152,6 @@ describe('QueryClientProvider', () => {
       expect(() => render(() => <Page />)).toThrow(
         'No QueryClient set, use QueryClientProvider to set one',
       )
-
-      consoleErrorMock.mockRestore()
     })
   })
 
@@ -173,8 +169,6 @@ describe('QueryClientProvider', () => {
     render(() => <Page />)
 
     expect(consoleErrorMock).not.toHaveBeenCalled()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should create a query client resolver that is safe to call in reactive callbacks', () => {
@@ -201,9 +195,7 @@ describe('QueryClientProvider', () => {
   })
 
   it('should defer missing provider errors until a resolver is called', () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
     let resolveClient!: () => QueryClient
 
     function Page() {
@@ -220,7 +212,5 @@ describe('QueryClientProvider', () => {
         dispose()
       }),
     ).toThrow('No QueryClient set, use QueryClientProvider to set one')
-
-    consoleErrorMock.mockRestore()
   })
 })
