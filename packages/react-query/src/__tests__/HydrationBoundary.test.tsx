@@ -556,9 +556,9 @@ describe('React hydration', () => {
   })
 
   it('should not double fetch when hydrating existing query with fresh data on subsequent visits', async () => {
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'initial-data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'initial-data'),
+    )
 
     const queryClient = new QueryClient()
 
@@ -622,9 +622,9 @@ describe('React hydration', () => {
   })
 
   it('should not refetch when refetchOnMount is true during hydration', async () => {
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'new-data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'new-data'),
+    )
 
     const queryClient = new QueryClient()
 
@@ -686,9 +686,9 @@ describe('React hydration', () => {
   })
 
   it('should not refetch when refetchOnMount function returns true during hydration', async () => {
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'new-data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'new-data'),
+    )
 
     const queryClient = new QueryClient()
 
@@ -750,9 +750,9 @@ describe('React hydration', () => {
   })
 
   it('should not refetch when refetchOnMount is false during hydration', async () => {
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'new-data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'new-data'),
+    )
 
     const queryClient = new QueryClient()
 
@@ -812,9 +812,9 @@ describe('React hydration', () => {
   })
 
   it('should not refetch when refetchOnMount function returns false during hydration', async () => {
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'new-data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'new-data'),
+    )
 
     const queryClient = new QueryClient()
 
@@ -874,9 +874,9 @@ describe('React hydration', () => {
   })
 
   it('should still refetch when refetchOnMount is explicitly set to "always" despite hydration', async () => {
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'new-data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'new-data'),
+    )
 
     const queryClient = new QueryClient()
 
@@ -944,9 +944,9 @@ describe('React hydration', () => {
   })
 
   it('should still refetch when refetchOnMount function returns "always" despite hydration', async () => {
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'new-data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'new-data'),
+    )
 
     const queryClient = new QueryClient()
 
@@ -1010,9 +1010,9 @@ describe('React hydration', () => {
   })
 
   it('should refetch when hydrated data is stale (cached markup scenario)', async () => {
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'new-data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'new-data'),
+    )
 
     const queryClient = new QueryClient()
 
@@ -1074,12 +1074,12 @@ describe('React hydration', () => {
   })
 
   it('should not double fetch for multiple queries when hydrating', async () => {
-    const queryFn1 = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'data-1'))
-    const queryFn2 = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'data-2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data-1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data-2'),
+    )
 
     const queryClient = new QueryClient()
 
@@ -1152,9 +1152,9 @@ describe('React hydration', () => {
   })
 
   it('should hydrate new queries immediately without pending flag', async () => {
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'client-data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'client-data'),
+    )
 
     // Client has no existing query (empty cache)
     const queryClient = new QueryClient()
@@ -1203,9 +1203,9 @@ describe('React hydration', () => {
   })
 
   it('should not hydrate when server data is older than client data', async () => {
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'new-data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'new-data'),
+    )
 
     const queryClient = new QueryClient()
 
@@ -1401,9 +1401,9 @@ describe('React hydration', () => {
   })
 
   it('should not refetch after unmount and remount during hydration', async () => {
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'new-data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'new-data'),
+    )
 
     const queryClient = new QueryClient()
 
