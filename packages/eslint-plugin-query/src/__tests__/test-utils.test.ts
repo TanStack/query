@@ -32,6 +32,7 @@ describe('test-utils', () => {
         expected: [['a']],
       },
     ]
+
     it.each(testCases)(
       'should generate permutations of $input',
       ({ input, expected }) => {
@@ -74,6 +75,7 @@ describe('test-utils', () => {
         minLength: 0,
       },
     ]
+
     it.each(testCases)(
       'should generate combinations of $input with at least $minLength items',
       ({ input, minLength, expected }) => {
@@ -96,6 +98,7 @@ describe('test-utils', () => {
         ],
       },
     ]
+
     it.each(testCases)(
       'should interleave $additional into $data',
       ({ data, additional, expected }) => {

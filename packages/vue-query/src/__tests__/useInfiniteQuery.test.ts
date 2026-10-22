@@ -43,6 +43,7 @@ describe('useInfiniteQuery', () => {
     })
     expect(status.value).toBe('success')
   })
+
   it('should properly execute infinite query using infiniteQueryOptions', async () => {
     const key = queryKey()
     const options = infiniteQueryOptions({

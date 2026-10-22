@@ -6,6 +6,7 @@ describe('queryKey', () => {
     const key = queryKey()
     expect(key).toStrictEqual(['query_1'])
   })
+
   it('should return a new query key each time', () => {
     expect(queryKey()).not.toStrictEqual(queryKey())
   })
