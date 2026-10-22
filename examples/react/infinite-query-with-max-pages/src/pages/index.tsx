@@ -14,6 +14,7 @@ const fetchProjects = async ({
   pageParam: number
 }): Promise<ProjectsPage> => {
   const response = await fetch(`/api/projects?cursor=${pageParam}`)
+  if (!response.ok) throw new Error('Failed to fetch projects')
   return await response.json()
 }
 

@@ -1,5 +1,19 @@
 # @tanstack/query-core
 
+## 5.104.5
+
+### Patch Changes
+
+- [#12131](https://github.com/TanStack/query/pull/12131) [`f608f93`](https://github.com/TanStack/query/commit/f608f933a36da30670082e90d0a56b2569290563) - Use the supplied query options when fetching optimistically so Suspense queries can fetch after their cache entry is recreated without a query function.
+
+## 5.104.4
+
+### Patch Changes
+
+- [#11470](https://github.com/TanStack/query/pull/11470) [`1fee044`](https://github.com/TanStack/query/commit/1fee0443dbeb346b8401557ca286a66cdec7ad71) - Clear the mutation cache before notifying subscribers so `useMutationState` and `useIsMutating` update correctly after `queryClient.clear()`.
+
+- [#11527](https://github.com/TanStack/query/pull/11527) [`fce89dd`](https://github.com/TanStack/query/commit/fce89ddf7a35b14252096ff64a1217efd81b415c) - Preserve a stored `null` first page parameter when refetching an infinite query.
+
 ## 5.104.3
 
 ### Patch Changes

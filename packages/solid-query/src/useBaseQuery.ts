@@ -352,8 +352,8 @@ export function useBaseQuery<
           unsubscribe()
         }
         const newObserver = new Observer(c, defaultedOptions())
-        unsubscribe = createClientSubscriber()
         setObserver(newObserver)
+        unsubscribe = createClientSubscriber()
       },
       {
         defer: true,

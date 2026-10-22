@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-next-experimental",
-  "version": "5.104.3",
+  "version": "5.104.5",
   "description": "Hydration utils for React Query in the NextJs app directory",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -64,7 +64,13 @@
   },
   "peerDependencies": {
     "@tanstack/react-query": "workspace:^",
+    "@types/react": "^18 || ^19",
     "next": "^13 || ^14 || ^15 || ^16",
     "react": "^18 || ^19"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    }
   }
 }

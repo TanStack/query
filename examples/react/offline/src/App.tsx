@@ -86,7 +86,6 @@ function Movies() {
         {
           path: ':movieId',
           element: <Detail />,
-          errorElement: <MovieError />,
           loader: async ({ params: { movieId } }) =>
             queryClient.getQueryData(movieQueryOptions(movieId).queryKey) ??
             // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
@@ -139,20 +138,17 @@ function List() {
     )
   }
 
+  if (moviesQuery.isError) {
+    return (
+      <div>
+        <h1>Couldn't load movies!</h1>
+        <div>{moviesQuery.error.message}</div>
+      </div>
+    )
+  }
+
   // query will be in 'idle' fetchStatus while restoring from localStorage
   return null
-}
-
-function MovieError() {
-  const { error } = useMatch()
-
-  return (
-    <div>
-      <Link to="..">Back</Link>
-      <h1>Couldn't load movie!</h1>
-      {error instanceof Error && <div>{error.message}</div>}
-    </div>
-  )
 }
 
 function Detail() {
@@ -213,6 +209,16 @@ function Detail() {
             : updateMovie.isPending && 'updating...'}
         </div>
       </form>
+    )
+  }
+
+  if (movieQuery.isError) {
+    return (
+      <div>
+        <Link to="..">Back</Link>
+        <h1>Couldn't load movie!</h1>
+        <div>{movieQuery.error.message}</div>
+      </div>
     )
   }
 

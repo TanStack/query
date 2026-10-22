@@ -212,7 +212,7 @@ MC.findAll
 getAll(): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:285](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L285)
+Defined in: [packages/query-core/src/mutationCache.ts:286](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L286)
 
 Returns all mutations within the cache.
 

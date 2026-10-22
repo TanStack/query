@@ -34,6 +34,7 @@ describe('Preact hydration', () => {
     stringifiedState = JSON.stringify(dehydrated)
     queryClient.clear()
   })
+
   afterEach(() => {
     vi.useRealTimers()
   })

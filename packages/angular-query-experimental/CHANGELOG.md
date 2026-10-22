@@ -1,5 +1,20 @@
 # @tanstack/angular-query-experimental
 
+## 5.104.5
+
+### Patch Changes
+
+- Updated dependencies [[`f608f93`](https://github.com/TanStack/query/commit/f608f933a36da30670082e90d0a56b2569290563)]:
+  - @tanstack/query-core@5.104.5
+
+## 5.104.4
+
+### Patch Changes
+
+- [#11251](https://github.com/TanStack/query/pull/11251) [`fc3a384`](https://github.com/TanStack/query/commit/fc3a3848f25adec750e6ee6d3abf9280c7e3a990) - fix({preact,solid,svelte,angular-query-experimental}): switch to 'export type *' for type-only re-exports
+- Updated dependencies [[`1fee044`](https://github.com/TanStack/query/commit/1fee0443dbeb346b8401557ca286a66cdec7ad71), [`fce89dd`](https://github.com/TanStack/query/commit/fce89ddf7a35b14252096ff64a1217efd81b415c)]:
+  - @tanstack/query-core@5.104.4
+
 ## 5.104.3
 
 ### Patch Changes

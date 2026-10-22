@@ -4,32 +4,29 @@
     createQuery,
     createMutation,
   } from '@tanstack/svelte-query'
+  import { addTodo, clearTodos, todosQueryOptions } from '$lib/api'
 
   let intervalMs = $state(1000)
   let value = $state<string>('')
 
   const client = useQueryClient()
 
-  const endpoint = '/api/data'
-
-  const todos = createQuery<{ items: string[] }>(() => ({
-    queryKey: ['refetch'],
-    queryFn: async () => await fetch(endpoint).then((r) => r.json()),
+  const todos = createQuery(() => ({
+    ...todosQueryOptions,
     // Refetch the data every second
     refetchInterval: intervalMs,
   }))
 
   const addMutation = createMutation(() => ({
-    mutationFn: (value: string) =>
-      fetch(`${endpoint}?add=${encodeURIComponent(value)}`).then((r) =>
-        r.json(),
-      ),
-    onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
+    mutationFn: addTodo,
+    onSuccess: () =>
+      client.invalidateQueries({ queryKey: todosQueryOptions.queryKey }),
   }))
 
   const clearMutation = createMutation(() => ({
-    mutationFn: () => fetch(`${endpoint}?clear=1`).then((r) => r.json()),
-    onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
+    mutationFn: clearTodos,
+    onSuccess: () =>
+      client.invalidateQueries({ queryKey: todosQueryOptions.queryKey }),
   }))
 </script>
 

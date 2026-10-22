@@ -9,9 +9,7 @@
   } from '$lib/stores.svelte'
   import type { Todos } from '$lib/stores.svelte'
 
-  let { initialFilter }: { initialFilter: string } = $props()
-
-  let filter = $state(initialFilter)
+  let { initialFilter: filter }: { initialFilter: string } = $props()
 
   const fetchTodos = async ({ filter }: { filter: string }): Promise<Todos> => {
     return new Promise((resolve, reject) => {

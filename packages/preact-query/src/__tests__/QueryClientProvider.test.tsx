@@ -148,7 +148,7 @@ describe('QueryClientProvider', () => {
     it('should throw an error if no query client has been set', () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       function Page() {
         useQueryClient()
