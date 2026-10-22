@@ -284,6 +284,10 @@ export default defineConfig({
       ],
       rules: {
         ...pluginVitest.configs.recommended.rules,
+        'vitest/consistent-each-for': [
+          'error',
+          { describe: 'each', it: 'each' },
+        ],
         'vitest/consistent-test-filename': 'error',
         'vitest/consistent-test-it': [
           'error',
