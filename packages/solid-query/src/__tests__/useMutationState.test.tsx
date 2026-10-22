@@ -30,7 +30,7 @@ describe('useMutationState', () => {
     function Mutate() {
       const mutation = useMutation(() => ({
         mutationKey,
-        mutationFn: (input: number) => sleep(150).then(() => 'data' + input),
+        mutationFn: (input: number) => sleep(150).then(() => `data${input}`),
       }))
 
       return (
@@ -80,7 +80,7 @@ describe('useMutationState', () => {
     function Mutate() {
       const mutation = useMutation(() => ({
         mutationKey,
-        mutationFn: (input: number) => sleep(150).then(() => 'data' + input),
+        mutationFn: (input: number) => sleep(150).then(() => `data${input}`),
       }))
 
       return (
