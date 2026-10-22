@@ -20,6 +20,7 @@ import { QueryClientProvider } from '../QueryClientProvider.js'
 import { generateElementName } from './utils.js'
 
 const tagName = generateElementName()
+
 beforeAll(() => {
   customElements.define(tagName, QueryClientProvider)
 })
