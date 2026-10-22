@@ -14,6 +14,7 @@ describe('useMutationState', () => {
 
     expectTypeOf(result()).toEqualTypeOf<Array<MutationState>>()
   })
+
   it('should infer with select', () => {
     const result = useMutationState(() => ({
       filters: { status: 'pending' },
@@ -22,6 +23,7 @@ describe('useMutationState', () => {
 
     expectTypeOf(result()).toEqualTypeOf<Array<MutationStatus>>()
   })
+
   it('should propagate generics to select callback when TResult is typed MutationState', () => {
     type MyData = { data: Array<string> }
     type MyError = { code: number; message: string }
