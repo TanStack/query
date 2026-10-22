@@ -205,9 +205,9 @@ describe('useInfiniteQuery', () => {
       async () => {
         const consoleErrorMock = vi
           .spyOn(console, 'error')
-          .mockImplementation(() => undefined)
+          .mockReturnValue(undefined)
         const key = queryKey()
-        const throwOnError = vi.fn().mockReturnValue(true)
+        const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
         useInfiniteQuery({
           queryKey: key,
           queryFn: () =>
@@ -235,7 +235,7 @@ describe('useInfiniteQuery', () => {
       'should throw from error watcher when throwOnError returns true, which Vue 3 surfaces as an unhandled rejection',
       async ({ onTestFinished }) => {
         const key = queryKey()
-        const throwOnError = vi.fn().mockReturnValue(true)
+        const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
         useInfiniteQuery({
           queryKey: key,
           queryFn: () =>
@@ -246,7 +246,7 @@ describe('useInfiniteQuery', () => {
           throwOnError,
         })
 
-        const unhandledRejectionFn = vi.fn()
+        const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
         process.on('unhandledRejection', unhandledRejectionFn)
         onTestFinished(() => {
           process.off('unhandledRejection', unhandledRejectionFn)
@@ -274,7 +274,7 @@ describe('useInfiniteQuery', () => {
       onTestFinished,
     }) => {
       const key = queryKey()
-      const throwOnError = vi.fn().mockReturnValue(true)
+      const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
       const query = useInfiniteQuery({
         queryKey: key,
         queryFn: () =>
@@ -289,8 +289,8 @@ describe('useInfiniteQuery', () => {
       // Vue 2 and surface as an unhandled rejection on Vue 3
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
-      const unhandledRejectionFn = vi.fn()
+        .mockReturnValue(undefined)
+      const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
       process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         consoleErrorMock.mockRestore()

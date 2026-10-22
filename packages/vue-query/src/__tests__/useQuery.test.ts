@@ -670,9 +670,9 @@ describe('useQuery', () => {
       async () => {
         const consoleErrorMock = vi
           .spyOn(console, 'error')
-          .mockImplementation(() => undefined)
+          .mockReturnValue(undefined)
         const key = queryKey()
-        const throwOnError = vi.fn().mockReturnValue(true)
+        const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
         useQuery({
           queryKey: key,
           queryFn: () =>
@@ -698,7 +698,7 @@ describe('useQuery', () => {
       'should throw from error watcher when throwOnError returns true, which Vue 3 surfaces as an unhandled rejection',
       async ({ onTestFinished }) => {
         const key = queryKey()
-        const throwOnError = vi.fn().mockReturnValue(true)
+        const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
         useQuery({
           queryKey: key,
           queryFn: () =>
@@ -707,7 +707,7 @@ describe('useQuery', () => {
           throwOnError,
         })
 
-        const unhandledRejectionFn = vi.fn()
+        const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
         process.on('unhandledRejection', unhandledRejectionFn)
         onTestFinished(() => {
           process.off('unhandledRejection', unhandledRejectionFn)
@@ -845,8 +845,8 @@ describe('useQuery', () => {
       // Vue 2 and surface as an unhandled rejection on Vue 3
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
-      const unhandledRejectionFn = vi.fn()
+        .mockReturnValue(undefined)
+      const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
       process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         consoleErrorMock.mockRestore()
