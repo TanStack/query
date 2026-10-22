@@ -17,6 +17,7 @@ import { generateElementName } from './utils.js'
 import type { IsMutatingAccessor } from '../useIsMutating.js'
 
 const providerTagName = generateElementName()
+
 beforeAll(() => {
   customElements.define(providerTagName, QueryClientProvider)
 })

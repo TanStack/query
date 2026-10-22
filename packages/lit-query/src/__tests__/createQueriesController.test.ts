@@ -18,6 +18,7 @@ import type { QueriesResultAccessor } from '../createQueriesController.js'
 import type { QueryObserverResult, QueryStatus } from '@tanstack/query-core'
 
 const providerTagName = generateElementName()
+
 beforeAll(() => {
   customElements.define(providerTagName, QueryClientProvider)
 })

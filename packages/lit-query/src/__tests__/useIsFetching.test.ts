@@ -17,6 +17,7 @@ import { generateElementName } from './utils.js'
 import type { IsFetchingAccessor } from '../useIsFetching.js'
 
 const providerTagName = generateElementName()
+
 beforeAll(() => {
   customElements.define(providerTagName, QueryClientProvider)
 })
