@@ -139,9 +139,7 @@ describe('useQueries', () => {
   })
 
   it("should throw error if in one of queries' queryFn throws and throwOnError is in use", async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -201,13 +199,10 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('single query error')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it("should throw error if in one of queries' queryFn throws and throwOnError function resolves to true", async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -269,13 +264,10 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('single query error')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it("should throw error if in one of queries' queryFn rejects with a falsy error and throwOnError is in use", async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -302,7 +294,6 @@ describe('useQueries', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it('should use provided custom queryClient', async () => {

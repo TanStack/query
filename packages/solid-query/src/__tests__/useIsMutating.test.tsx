@@ -246,11 +246,9 @@ describe('useIsMutating', () => {
       }
     }
 
-    const MutationCacheSpy = vi
-      .spyOn(QueryCore, 'MutationCache')
-      .mockImplementation((fn) => {
-        return new MutationCacheMock(fn)
-      })
+    vi.spyOn(QueryCore, 'MutationCache').mockImplementation((fn) => {
+      return new MutationCacheMock(fn)
+    })
 
     // Create the client after mocking MutationCache so it uses the mock,
     // not the centralized client from beforeEach
@@ -292,6 +290,5 @@ describe('useIsMutating', () => {
     // "Warning: Can't perform a React state update on an unmounted component"
 
     await vi.advanceTimersByTimeAsync(20)
-    MutationCacheSpy.mockRestore()
   })
 })

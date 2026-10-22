@@ -660,7 +660,6 @@ describe('useMutation', () => {
         expect(throwOnError).toHaveBeenCalledTimes(1)
         expect(throwOnError).toHaveBeenCalledWith(Error('Some error'))
         expect(consoleErrorMock).toHaveBeenCalledWith(Error('Some error'))
-        consoleErrorMock.mockRestore()
       },
     )
 

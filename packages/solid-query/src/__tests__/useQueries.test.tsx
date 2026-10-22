@@ -85,14 +85,12 @@ describe('useQueries', () => {
       }
     }
 
-    const QueriesObserverSpy = vi
-      .spyOn(QueryCore, 'QueriesObserver')
-      .mockImplementation(function (
-        client: InstanceType<typeof QueryCore.QueryClient>,
-        queries: Array<QueryCore.QueryObserverOptions>,
-      ) {
-        return new QueriesObserverMock(client, queries)
-      })
+    vi.spyOn(QueryCore, 'QueriesObserver').mockImplementation(function (
+      client: InstanceType<typeof QueryCore.QueryClient>,
+      queries: Array<QueryCore.QueryObserverOptions>,
+    ) {
+      return new QueriesObserverMock(client, queries)
+    })
 
     function Queries() {
       useQueries(() => ({
@@ -130,7 +128,6 @@ describe('useQueries', () => {
     // "Warning: Can't perform a React state update on an unmounted component"
 
     await vi.advanceTimersByTimeAsync(20)
-    QueriesObserverSpy.mockRestore()
   })
 
   it('should use provided custom queryClient', async () => {

@@ -61,9 +61,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to reset `error`', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const mutation = useMutation<string, Error>(() => ({
@@ -95,8 +93,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
     expect(rendered.queryByRole('heading')).not.toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should call mutate callbacks when useMutation has no callbacks', async () => {
@@ -933,8 +929,6 @@ describe('useMutation', () => {
     expect(
       rendered.getByText('data: 1, status: success, isPaused: false'),
     ).toBeInTheDocument()
-
-    onlineMock.mockRestore()
   })
 
   it('should be able to retry a mutation when online', async () => {
@@ -1043,9 +1037,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to throw an error when throwOnError is set to true', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const mutation = useMutation<string, Error>(() => ({
@@ -1079,14 +1071,10 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error')).toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should be able to throw an error when throwOnError is a function that returns true', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     let boundary = false
     function Page() {
@@ -1131,8 +1119,6 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should pass meta to mutation on success', async () => {
