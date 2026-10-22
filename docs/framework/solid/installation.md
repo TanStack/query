@@ -9,27 +9,29 @@ or a good ol' `<script>` via
 
 ### NPM
 
-```bash
+```sh
 npm i @tanstack/solid-query
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/solid-query
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/solid-query
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/solid-query
 ```
+
+Solid Query is compatible with Solid v1.6+.
 
 > Wanna give it a spin before you download? Try out the [simple](./examples/simple) or [basic](./examples/basic) examples!
 

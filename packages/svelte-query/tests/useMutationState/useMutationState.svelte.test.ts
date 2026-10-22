@@ -22,12 +22,12 @@ describe('useMutationState', () => {
   it('should run few mutation functions and check from useMutationState', async () => {
     const successKey = queryKey()
     const errorKey = queryKey()
-    const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
-    const errorMutationFn = vi
-      .fn()
-      .mockImplementation(() =>
-        sleep(20).then(() => Promise.reject(new Error('error'))),
-      )
+    const successMutationFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
+    const errorMutationFn = vi.fn<() => Promise<never>>(() =>
+      sleep(20).then(() => Promise.reject(new Error('error'))),
+    )
 
     const rendered = render(Base, {
       props: {
@@ -57,12 +57,12 @@ describe('useMutationState', () => {
   it('should select specific type of mutation ( i.e: error only )', async () => {
     const successKey = queryKey()
     const errorKey = queryKey()
-    const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
-    const errorMutationFn = vi
-      .fn()
-      .mockImplementation(() =>
-        sleep(20).then(() => Promise.reject(new Error('error'))),
-      )
+    const successMutationFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
+    const errorMutationFn = vi.fn<() => Promise<never>>(() =>
+      sleep(20).then(() => Promise.reject(new Error('error'))),
+    )
 
     const rendered = render(Base, {
       props: {
@@ -121,12 +121,12 @@ describe('useMutationState', () => {
   it('should select specific mutation using mutation key', async () => {
     const successKey = queryKey()
     const errorKey = queryKey()
-    const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
-    const errorMutationFn = vi
-      .fn()
-      .mockImplementation(() =>
-        sleep(20).then(() => Promise.reject(new Error('error'))),
-      )
+    const successMutationFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
+    const errorMutationFn = vi.fn<() => Promise<never>>(() =>
+      sleep(20).then(() => Promise.reject(new Error('error'))),
+    )
 
     const rendered = render(Base, {
       props: {
@@ -159,7 +159,9 @@ describe('useMutationState', () => {
   it('should remove mutations that no longer match the filter', async () => {
     const firstKey = queryKey()
     const secondKey = queryKey()
-    const mutationFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const mutationFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     const rendered = render(Base, {
       props: {

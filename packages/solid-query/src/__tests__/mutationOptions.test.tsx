@@ -63,12 +63,12 @@ describe('mutationOptions', () => {
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    expect(isMutatingArray[0]).toEqual(0)
+    expect(isMutatingArray[0]).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutatingArray[1]).toEqual(1)
+    expect(isMutatingArray[1]).toBe(1)
     await vi.advanceTimersByTimeAsync(50)
-    expect(isMutatingArray[2]).toEqual(0)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[2]).toBe(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (without mutationKey in mutationOptions)', async () => {
@@ -95,12 +95,12 @@ describe('mutationOptions', () => {
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    expect(isMutatingArray[0]).toEqual(0)
+    expect(isMutatingArray[0]).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutatingArray[1]).toEqual(1)
+    expect(isMutatingArray[1]).toBe(1)
     await vi.advanceTimersByTimeAsync(50)
-    expect(isMutatingArray[2]).toEqual(0)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[2]).toBe(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
   })
 
   it('should return the number of fetching mutations when used with useIsMutating', async () => {
@@ -135,11 +135,11 @@ describe('mutationOptions', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
-    expect(isMutatingArray[0]).toEqual(0)
+    expect(isMutatingArray[0]).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutatingArray[2]).toEqual(2)
+    expect(isMutatingArray[2]).toBe(2)
     await vi.advanceTimersByTimeAsync(50)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (filter mutationOpts1.mutationKey)', async () => {
@@ -176,12 +176,12 @@ describe('mutationOptions', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
-    expect(isMutatingArray[0]).toEqual(0)
+    expect(isMutatingArray[0]).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutatingArray[1]).toEqual(1)
+    expect(isMutatingArray[1]).toBe(1)
     await vi.advanceTimersByTimeAsync(50)
-    expect(isMutatingArray[2]).toEqual(0)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[2]).toBe(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (with mutationKey in mutationOptions)', async () => {
@@ -212,12 +212,12 @@ describe('mutationOptions', () => {
     isMutatingArray.push(queryClient.isMutating(mutationOpts))
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    expect(isMutatingArray[0]).toEqual(0)
+    expect(isMutatingArray[0]).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -248,12 +248,12 @@ describe('mutationOptions', () => {
     isMutatingArray.push(queryClient.isMutating())
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    expect(isMutatingArray[0]).toEqual(0)
+    expect(isMutatingArray[0]).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -292,12 +292,12 @@ describe('mutationOptions', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
-    expect(isMutatingArray[0]).toEqual(0)
+    expect(isMutatingArray[0]).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(2)
+    expect(Math.max(...isMutatingArray)).toBe(2)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -344,12 +344,12 @@ describe('mutationOptions', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
-    expect(isMutatingArray[0]).toEqual(0)
+    expect(isMutatingArray[0]).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -381,13 +381,13 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    expect(mutationStateArray[0]).toEqual([])
+    expect(mutationStateArray[0]).toStrictEqual([])
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
     const lastSnapshot = mutationStateArray[mutationStateArray.length - 1]!
-    expect(lastSnapshot.length).toEqual(1)
-    expect(lastSnapshot[0]?.data).toEqual('data')
+    expect(lastSnapshot).toHaveLength(1)
+    expect(lastSnapshot[0]?.data).toBe('data')
   })
 
   it('should return the number of fetching mutations when used with useMutationState (without mutationKey in mutationOptions)', async () => {
@@ -415,13 +415,13 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    expect(mutationStateArray[0]).toEqual([])
+    expect(mutationStateArray[0]).toStrictEqual([])
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
     const lastSnapshot = mutationStateArray[mutationStateArray.length - 1]!
-    expect(lastSnapshot.length).toEqual(1)
-    expect(lastSnapshot[0]?.data).toEqual('data')
+    expect(lastSnapshot).toHaveLength(1)
+    expect(lastSnapshot[0]?.data).toBe('data')
   })
 
   it('should return the number of fetching mutations when used with useMutationState', async () => {
@@ -456,15 +456,15 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    expect(mutationStateArray[0]).toEqual([])
+    expect(mutationStateArray[0]).toStrictEqual([])
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(10)
     const lastSnapshot = mutationStateArray[mutationStateArray.length - 1]!
-    expect(lastSnapshot.length).toEqual(2)
-    expect(lastSnapshot[0]?.data).toEqual('data1')
-    expect(lastSnapshot[1]?.data).toEqual('data2')
+    expect(lastSnapshot).toHaveLength(2)
+    expect(lastSnapshot[0]?.data).toBe('data1')
+    expect(lastSnapshot[1]?.data).toBe('data2')
   })
 
   it('should return the number of fetching mutations when used with useMutationState (filter mutationOpts1.mutationKey)', async () => {
@@ -499,13 +499,13 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    expect(mutationStateArray[0]).toEqual([])
+    expect(mutationStateArray[0]).toStrictEqual([])
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(10)
     const lastSnapshot = mutationStateArray[mutationStateArray.length - 1]!
-    expect(lastSnapshot.length).toEqual(1)
-    expect(lastSnapshot[0]?.data).toEqual('data1')
+    expect(lastSnapshot).toHaveLength(1)
+    expect(lastSnapshot[0]?.data).toBe('data1')
   })
 })

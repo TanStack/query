@@ -57,7 +57,7 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(201)
     expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
 
-    expect(results.length).toBe(3)
+    expect(results).toHaveLength(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
     expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
@@ -65,7 +65,7 @@ describe('useQueries', () => {
 
   it('should not optimistically show fetching when unsubscribed', () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => Promise.resolve('data'))
+    const queryFn = vi.fn<() => Promise<string>>(() => Promise.resolve('data'))
 
     function Page() {
       const [query] = useQueries({
@@ -85,8 +85,8 @@ describe('useQueries', () => {
 
     expect(queryFn).not.toHaveBeenCalled()
     expect(
-      queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
-    ).toBe(0)
+      queryClient.getQueryCache().find({ queryKey: key })!.observers,
+    ).toHaveLength(0)
     rendered.getByText('isFetching: false')
     rendered.getByText('fetchStatus: idle')
   })
@@ -124,7 +124,7 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
-    expect(results.length).toBe(2)
+    expect(results).toHaveLength(2)
     expect(results[0]).toMatchObject([{ data: undefined }])
     expect(results[1]).toMatchObject([{ data: 1 }])
 
@@ -133,7 +133,7 @@ describe('useQueries', () => {
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
     // only one render for data update, no render for isFetching transition
-    expect(results.length).toBe(3)
+    expect(results).toHaveLength(3)
 
     expect(results[2]).toMatchObject([{ data: 2 }])
   })
@@ -141,7 +141,7 @@ describe('useQueries', () => {
   it("should throw error if in one of queries' queryFn throws and throwOnError is in use", async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -207,7 +207,7 @@ describe('useQueries', () => {
   it("should throw error if in one of queries' queryFn throws and throwOnError function resolves to true", async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -275,7 +275,7 @@ describe('useQueries', () => {
   it("should throw error if in one of queries' queryFn rejects with a falsy error and throwOnError is in use", async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -538,7 +538,7 @@ describe('useQueries', () => {
       rendered.getByText('data: true first result 0,second result 0'),
     ).toBeInTheDocument()
 
-    expect(results.length).toBe(3)
+    expect(results).toHaveLength(3)
 
     expect(results[0]).toStrictEqual({
       combined: true,
@@ -579,7 +579,7 @@ describe('useQueries', () => {
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await vi.advanceTimersByTimeAsync(100)
     // no further re-render because data didn't change
-    expect(results.length).toBe(length)
+    expect(results).toHaveLength(length)
   })
 
   it('should synchronously track properties of all observer even if a property (isLoading) is only accessed on one observer (#7000)', async () => {
@@ -671,7 +671,7 @@ describe('useQueries', () => {
 
     const client = new QueryClient()
 
-    const spy = vi.fn()
+    const spy = vi.fn<(result: { combined: boolean; res: string }) => void>()
     let value = 0
 
     function Page() {
@@ -750,7 +750,10 @@ describe('useQueries', () => {
 
     const client = new QueryClient()
 
-    const spy = vi.fn()
+    const spy =
+      vi.fn<
+        (result: { combined: boolean; state: number; res: string }) => void
+      >()
 
     function Page() {
       const [state, setState] = React.useState(0)
@@ -857,7 +860,7 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('data: foo')).toBeInTheDocument()
 
-    expect(queryFns).toEqual(['first result', 'second result'])
+    expect(queryFns).toStrictEqual(['first result', 'second result'])
 
     expect(renders).toBe(1)
   })
@@ -989,7 +992,7 @@ describe('useQueries', () => {
 
     const client = new QueryClient()
 
-    const spy = vi.fn()
+    const spy = vi.fn<(result: { combined: boolean; res: string }) => void>()
 
     function Page() {
       const [unrelatedState, setUnrelatedState] = React.useState(0)
@@ -1173,15 +1176,19 @@ describe('useQueries', () => {
     expect(rendered.getByTestId('length').textContent).toBe('2')
 
     results.forEach((result) => {
-      expect(result.length).toBe(result.n)
+      expect(result).toHaveLength(result.n)
     })
   })
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data2'),
+    )
 
     function Page() {
       const results = useQueries({
@@ -1233,8 +1240,12 @@ describe('useQueries', () => {
   it('should not fetch queries with different durations for the duration of the restoring period when isRestoring is true', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data2'),
+    )
 
     function Page() {
       const results = useQueries({

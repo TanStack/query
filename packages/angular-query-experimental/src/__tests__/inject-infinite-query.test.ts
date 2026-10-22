@@ -140,7 +140,9 @@ describe('injectInfiniteQuery', () => {
   describe('skipToken', () => {
     it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+      const queryFn = vi.fn<
+        (context: { pageParam: number }) => Promise<string>
+      >(({ pageParam }: { pageParam: number }) =>
         sleep(10).then(() => `comments for 1 page ${pageParam}`),
       )
 
