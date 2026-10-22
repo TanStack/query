@@ -1213,7 +1213,7 @@ describe('Devtools', () => {
       expect(rendered.getByText('Invalid Value')).toBeInTheDocument()
 
       fireEvent.focus(textarea)
-      expect(rendered.queryByText('Invalid Value')).toBeNull()
+      expect(rendered.queryByText('Invalid Value')).not.toBeInTheDocument()
     })
 
     it('should return to the data view when the editor "Cancel" button is clicked', () => {
@@ -1227,7 +1227,9 @@ describe('Devtools', () => {
       ).toBeInTheDocument()
 
       fireEvent.click(rendered.getByText('Cancel'))
-      expect(rendered.queryByLabelText('Edit query data as JSON')).toBeNull()
+      expect(
+        rendered.queryByLabelText('Edit query data as JSON'),
+      ).not.toBeInTheDocument()
       expect(rendered.getByLabelText('Bulk Edit Data')).toBeInTheDocument()
     })
   })

@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import pluginVitest from '@vitest/eslint-plugin'
+import pluginJestDom from 'eslint-plugin-jest-dom'
 import pluginJsdoc from 'eslint-plugin-jsdoc'
 import { defineConfig } from 'oxlint'
 
@@ -281,9 +282,13 @@ export default defineConfig({
       jsPlugins: [
         // Unlike the native rule, also checks `expectTypeOf` calls
         { name: 'vitest-js', specifier: '@vitest/eslint-plugin' },
+        { name: 'jest-dom', specifier: 'eslint-plugin-jest-dom' },
       ],
       rules: {
         ...pluginVitest.configs.recommended.rules,
+        ...pluginJestDom.configs['flat/recommended'].rules,
+        // `toHaveTextContent` matches substrings, so exact `textContent` checks stay as `toBe`
+        'jest-dom/prefer-to-have-text-content': 'off',
         'vitest/consistent-each-for': [
           'error',
           { describe: 'each', it: 'each' },
