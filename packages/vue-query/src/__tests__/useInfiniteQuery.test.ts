@@ -5,7 +5,7 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 
-vi.mock('../useQueryClient')
+vi.mock(import('../useQueryClient'))
 
 describe('useInfiniteQuery', () => {
   beforeEach(() => {
@@ -26,14 +26,14 @@ describe('useInfiniteQuery', () => {
       getNextPageParam: () => 12,
     })
 
-    expect(data.value).toStrictEqual(undefined)
-    expect(status.value).toStrictEqual('pending')
+    expect(data.value).toBeUndefined()
+    expect(status.value).toBe('pending')
     await vi.advanceTimersByTimeAsync(0)
     expect(data.value).toStrictEqual({
       pageParams: [0],
       pages: ['data on page 0'],
     })
-    expect(status.value).toStrictEqual('success')
+    expect(status.value).toBe('success')
 
     fetchNextPage()
     await vi.advanceTimersByTimeAsync(0)
@@ -41,8 +41,9 @@ describe('useInfiniteQuery', () => {
       pageParams: [0, 12],
       pages: ['data on page 0', 'data on page 12'],
     })
-    expect(status.value).toStrictEqual('success')
+    expect(status.value).toBe('success')
   })
+
   it('should properly execute infinite query using infiniteQueryOptions', async () => {
     const key = queryKey()
     const options = infiniteQueryOptions({
@@ -55,14 +56,14 @@ describe('useInfiniteQuery', () => {
 
     const { data, fetchNextPage, status } = useInfiniteQuery(options)
 
-    expect(data.value).toStrictEqual(undefined)
-    expect(status.value).toStrictEqual('pending')
+    expect(data.value).toBeUndefined()
+    expect(status.value).toBe('pending')
     await vi.advanceTimersByTimeAsync(0)
     expect(data.value).toStrictEqual({
       pageParams: [0],
       pages: ['data on page 0'],
     })
-    expect(status.value).toStrictEqual('success')
+    expect(status.value).toBe('success')
 
     fetchNextPage()
     await vi.advanceTimersByTimeAsync(0)
@@ -70,7 +71,7 @@ describe('useInfiniteQuery', () => {
       pageParams: [0, 12],
       pages: ['data on page 0', 'data on page 12'],
     })
-    expect(status.value).toStrictEqual('success')
+    expect(status.value).toBe('success')
   })
 
   it('should react to maxPages changing via a whole-options getter', async () => {
@@ -134,19 +135,20 @@ describe('useInfiniteQuery', () => {
     })
 
     expect(data.value).toStrictEqual({ pages: [1], pageParams: [1] })
-    expect(status.value).toStrictEqual('success')
+    expect(status.value).toBe('success')
     expect(isError.value).toBe(false)
     await vi.advanceTimersByTimeAsync(10)
     expect(data.value).toStrictEqual({ pages: [1], pageParams: [1] })
-    expect(status.value).toStrictEqual('error')
+    expect(status.value).toBe('error')
     expect(isError.value).toBe(true)
   })
 
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
     const key = queryKey()
     const postId = ref<string>()
-    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
-      sleep(10).then(() => `comments for ${postId.value} page ${pageParam}`),
+    const queryFn = vi.fn<(context: { pageParam: number }) => Promise<string>>(
+      ({ pageParam }: { pageParam: number }) =>
+        sleep(10).then(() => `comments for ${postId.value} page ${pageParam}`),
     )
 
     const { data, isFetching } = useInfiniteQuery(() => ({
@@ -174,8 +176,9 @@ describe('useInfiniteQuery', () => {
   it('should skip the query while a computed queryFn resolves to skipToken, and run it once defined', async () => {
     const key = queryKey()
     const postId = ref<number>()
-    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
-      sleep(10).then(() => 'data on page ' + pageParam),
+    const queryFn = vi.fn<(context: { pageParam: number }) => Promise<string>>(
+      ({ pageParam }: { pageParam: number }) =>
+        sleep(10).then(() => 'data on page ' + pageParam),
     )
 
     const { data, status } = useInfiniteQuery({

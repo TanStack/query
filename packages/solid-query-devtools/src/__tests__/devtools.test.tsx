@@ -224,11 +224,11 @@ describe('SolidQueryDevtools', () => {
     ))
     unmountComponent()
 
-    expect(unmount).toHaveBeenCalled()
+    expect(unmount).toHaveBeenCalledWith()
   })
 
   it('should return null in non-development environments', async () => {
-    vi.doMock('solid-js/web', async (importOriginal) => {
+    vi.doMock(import('solid-js/web'), async (importOriginal) => {
       const actual = await importOriginal()
       return Object.assign({}, actual, { isDev: false })
     })

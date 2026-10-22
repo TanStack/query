@@ -8,6 +8,7 @@ import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 import type {
   PersistedClient,
   Persister,
+  Promisable,
 } from '@tanstack/query-persist-client-core'
 import type {
   DefinedUseQueryResult,
@@ -477,7 +478,7 @@ describe('PersistQueryClientProvider', () => {
       )
     }
 
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<() => void>()
 
     const rendered = render(
       <PersistQueryClientProvider
@@ -556,7 +557,7 @@ describe('PersistQueryClientProvider', () => {
     await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('fetched')).toBeInTheDocument()
 
-    expect(states).toEqual([
+    expect(states).toStrictEqual([
       'onSuccess',
       'onSuccess done',
       'fetching',
@@ -567,15 +568,13 @@ describe('PersistQueryClientProvider', () => {
   it('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
     const consoleErrorMock = vi.spyOn(console, 'error')
-    const consoleWarnMock = vi
-      .spyOn(console, 'warn')
-      .mockImplementation(() => undefined)
-    consoleErrorMock.mockImplementation(() => undefined)
+    const consoleWarnMock = vi.spyOn(console, 'warn').mockReturnValue(undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const queryClient = new QueryClient()
-    const removeClient = vi.fn()
-    const onSuccess = vi.fn()
-    const onError = vi.fn()
+    const removeClient = vi.fn<() => Promisable<void>>()
+    const onSuccess = vi.fn<() => void>()
+    const onError = vi.fn<() => void>()
 
     const [error, persister] = createMockErrorPersister(removeClient)
 
@@ -637,14 +636,14 @@ describe('PersistQueryClientProvider', () => {
 
     queryClient.clear()
 
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<() => void>()
 
-    const queryFn1 = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'queryFn1'))
-    const queryFn2 = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'queryFn2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'queryFn1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'queryFn2'),
+    )
 
     function App() {
       const [client, setClient] = React.useState(
@@ -770,7 +769,7 @@ describe('PersistQueryClientProvider', () => {
 
     const persister = createPersister()
 
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<() => void>()
 
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)

@@ -70,9 +70,12 @@ export class TasksService {
 
         return previousTodos
       },
-      onError: (err, variables, context) => {
-        if (context) {
-          this.#queryClient.setQueryData<Array<string>>(['tasks'], context)
+      onError: (_err, _variables, onMutateResult) => {
+        if (onMutateResult) {
+          this.#queryClient.setQueryData<Array<string>>(
+            ['tasks'],
+            onMutateResult,
+          )
         }
       },
       // Always refetch after error or success:

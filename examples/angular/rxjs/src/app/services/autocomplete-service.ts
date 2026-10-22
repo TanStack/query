@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http'
 import { Injectable, inject } from '@angular/core'
 import { of } from 'rxjs'
 
-interface Response {
+interface SuggestionsResponse {
   suggestions: Array<string>
 }
 
@@ -15,7 +15,7 @@ export class AutocompleteService {
   getSuggestions = (term: string = '') =>
     term.trim() === ''
       ? of({ suggestions: [] })
-      : this.#http.get<Response>(
+      : this.#http.get<SuggestionsResponse>(
           `/api/autocomplete?term=${encodeURIComponent(term)}`,
         )
 }
