@@ -2038,9 +2038,7 @@ describe('useQuery', () => {
   it('should set status to error if queryFn throws', async () => {
     const key = queryKey()
 
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -2063,16 +2061,12 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error')).toBeInTheDocument()
     expect(rendered.getByText('Error test')).toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should throw error if queryFn throws and throwOnError is in use', async () => {
     const key = queryKey()
 
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -2100,16 +2094,12 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should throw error inside the same component if queryFn throws and throwOnError is in use', async () => {
     const key = queryKey()
 
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -2135,16 +2125,12 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should throw error inside the same component if queryFn throws and show the correct error message', async () => {
     const key = queryKey()
 
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -2172,16 +2158,12 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Fallback error: Error test')).toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should show the correct error message on the error property when accessed outside error boundary', async () => {
     const key = queryKey()
 
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -2212,8 +2194,6 @@ describe('useQuery', () => {
       rendered.getByText('Outside error boundary: Error test'),
     ).toBeInTheDocument()
     expect(rendered.getByText('Fallback error: Error test')).toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should update with data if we observe no properties and throwOnError', async () => {
@@ -4867,7 +4847,7 @@ describe('useQuery', () => {
       await vi.advanceTimersByTimeAsync(10)
       expect(rendered.getByText('data: data1')).toBeInTheDocument()
 
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
       fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
       await vi.advanceTimersByTimeAsync(10)
@@ -4880,7 +4860,6 @@ describe('useQuery', () => {
       await vi.advanceTimersByTimeAsync(10)
       expect(rendered.queryByText('data: data2')).not.toBeInTheDocument()
       expect(count).toBe(1)
-      onlineMock.mockRestore()
     })
 
     it('should not refetch online queries while already paused', async () => {
@@ -4912,7 +4891,7 @@ describe('useQuery', () => {
         )
       }
 
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
       const rendered = renderWithClient(queryClient, () => <Page />)
 
@@ -4927,7 +4906,6 @@ describe('useQuery', () => {
         rendered.getByText('status: pending, fetchStatus: paused'),
       ).toBeInTheDocument()
       expect(count).toBe(0)
-      onlineMock.mockRestore()
     })
 
     it('should not refetch online queries while already paused if data is in the cache', async () => {
@@ -4960,7 +4938,7 @@ describe('useQuery', () => {
         )
       }
 
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
       const rendered = renderWithClient(queryClient, () => <Page />)
 
@@ -4976,7 +4954,6 @@ describe('useQuery', () => {
         rendered.getByText('status: success, fetchStatus: paused'),
       ).toBeInTheDocument()
       expect(count).toBe(0)
-      onlineMock.mockRestore()
     })
 
     it('should not get online queries stuck in fetching state when pausing multiple times', async () => {
@@ -5226,8 +5203,6 @@ describe('useQuery', () => {
       })
 
       expect(count).toBe(1)
-
-      onlineMock.mockRestore()
     })
 
     it('should not fetch online queries if paused and we go online when cancelled and no refetchOnReconnect', async () => {
@@ -5282,8 +5257,6 @@ describe('useQuery', () => {
         rendered.getByText('status: pending, fetchStatus: idle'),
       ).toBeInTheDocument()
       expect(count).toBe(0)
-
-      onlineMock.mockRestore()
     })
 
     it('should fetch online queries if paused and we go online even if already unmounted when refetch was not cancelled', async () => {
@@ -5356,7 +5329,7 @@ describe('useQuery', () => {
 
   describe('networkMode always', () => {
     it('should start fetching always queries even if you are offline', async () => {
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
       let count = 0
@@ -5389,12 +5362,10 @@ describe('useQuery', () => {
         rendered.getByText('status: success, isPaused: false'),
       ).toBeInTheDocument()
       expect(rendered.getByText('data: data 1')).toBeInTheDocument()
-
-      onlineMock.mockRestore()
     })
 
     it('should not pause retries of always queries', async () => {
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
       let count = 0
@@ -5436,8 +5407,6 @@ describe('useQuery', () => {
       expect(rendered.getByText('error: error 2')).toBeInTheDocument()
 
       expect(count).toBe(2)
-
-      onlineMock.mockRestore()
     })
   })
 

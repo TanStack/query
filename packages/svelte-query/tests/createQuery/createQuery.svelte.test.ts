@@ -1542,9 +1542,7 @@ describe('createQuery', () => {
 
   it('should set status to error if queryFn throws', async () => {
     const key = queryKey()
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const rendered = render(Base, {
       props: {
@@ -1560,8 +1558,6 @@ describe('createQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('status')).toHaveTextContent('error')
     expect(rendered.getByTestId('error')).toHaveTextContent('Error test')
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should set status to error instead of throwing when error should not be thrown', async () => {

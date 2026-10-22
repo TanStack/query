@@ -726,8 +726,6 @@ describe('queriesObserver', () => {
     expect(trackedResults).toHaveLength(1)
     // trackResult should NOT be called when notifyOnChangeProps is set
     expect(trackResultSpy).not.toHaveBeenCalled()
-
-    trackResultSpy.mockRestore()
   })
 
   it('should return cached combined result when nothing has changed', () => {
@@ -831,8 +829,6 @@ describe('queriesObserver', () => {
     void trackedResults[1]!.status
 
     expect(trackPropSpy).toHaveBeenCalledTimes(4)
-
-    trackPropSpy.mockRestore()
   })
 
   it('should subscribe to new observers when a query is added while subscribed', async () => {

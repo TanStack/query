@@ -235,13 +235,8 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('when running on the server', () => {
-    it('should not mount the client', ({ onTestFinished }) => {
-      const isServerSpy = vi
-        .spyOn(environmentManager, 'isServer')
-        .mockReturnValue(true)
-      onTestFinished(() => {
-        isServerSpy.mockRestore()
-      })
+    it('should not mount the client', () => {
+      vi.spyOn(environmentManager, 'isServer').mockReturnValue(true)
 
       const appMock = getAppMock()
       const customClient = new QueryClient()

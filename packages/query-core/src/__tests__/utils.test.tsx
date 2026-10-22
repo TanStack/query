@@ -666,8 +666,6 @@ describe('core/utils', () => {
       await expect(resolved(context)).rejects.toThrow(
         'Missing queryFn: \'["skip"]\'',
       )
-
-      consoleErrorMock.mockRestore()
     })
   })
 
