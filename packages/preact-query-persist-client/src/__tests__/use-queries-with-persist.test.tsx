@@ -1,37 +1,17 @@
-/** @jsxRuntime automatic */
-/** @jsxImportSource preact */
-import '@testing-library/jest-dom/vitest'
-
 import { act, render } from '@testing-library/preact'
 import { useCallback } from 'preact/hooks'
-import {
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
-import { QueryClient, useQueries } from '../../../preact-query/src'
-import { notifyManager } from '../../../query-core/src'
-
-import { PersistQueryClientProvider } from './testPersistProvider'
+import { QueryClient, useQueries } from '@tanstack/preact-query'
+import { PersistQueryClientProvider } from '@tanstack/preact-query-persist-client'
 import type {
   PersistedClient,
   Persister,
-} from '../../../query-persist-client-core/src'
-import type { QueryObserverResult } from '../../../query-core/src'
+} from '@tanstack/query-persist-client-core'
+import type { QueryObserverResult } from '@tanstack/preact-query'
 
 describe('useQueries with persist and memoized combine (preact)', () => {
   const storage: Record<string, string> = {}
-
-  beforeAll(() => {
-    notifyManager.setNotifyFunction((fn) => {
-      act(fn)
-    })
-  })
 
   beforeEach(() => {
     vi.useFakeTimers()
