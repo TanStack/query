@@ -85,7 +85,7 @@ describe('useMutation', () => {
 
     const rendered = renderWithClient(queryClient, () => <Page />)
 
-    expect(rendered.queryByRole('heading')).toBeNull()
+    expect(rendered.queryByRole('heading')).not.toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
@@ -94,7 +94,7 @@ describe('useMutation', () => {
     )
 
     fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
-    expect(rendered.queryByRole('heading')).toBeNull()
+    expect(rendered.queryByRole('heading')).not.toBeInTheDocument()
 
     consoleErrorMock.mockRestore()
   })
@@ -1078,7 +1078,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('error')).not.toBeNull()
+    expect(rendered.queryByText('error')).toBeInTheDocument()
 
     consoleErrorMock.mockRestore()
   })
@@ -1125,12 +1125,12 @@ describe('useMutation', () => {
     // first error goes to component
     fireEvent.click(rendered.getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('mock error')).not.toBeNull()
+    expect(rendered.queryByText('mock error')).toBeInTheDocument()
 
     // second error goes to boundary
     fireEvent.click(rendered.getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('error boundary')).not.toBeNull()
+    expect(rendered.queryByText('error boundary')).toBeInTheDocument()
 
     consoleErrorMock.mockRestore()
   })
@@ -1166,7 +1166,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByText('succeed'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('successTest')).not.toBeNull()
+    expect(rendered.queryByText('successTest')).toBeInTheDocument()
 
     expect(successMock).toHaveBeenCalledTimes(1)
     expect(successMock).toHaveBeenCalledWith(metaSuccessMessage)
@@ -1205,7 +1205,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByText('error'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('errorTest')).not.toBeNull()
+    expect(rendered.queryByText('errorTest')).toBeInTheDocument()
 
     expect(errorMock).toHaveBeenCalledTimes(1)
     expect(errorMock).toHaveBeenCalledWith(metaErrorMessage)
