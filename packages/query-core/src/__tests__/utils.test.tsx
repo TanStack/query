@@ -62,6 +62,7 @@ describe('core/utils', () => {
       expect(shallowEqualObjects({ a: 1 }, undefined)).toBe(false)
     })
   })
+
   describe('isPlainObject', () => {
     it('should return `true` for a plain object', () => {
       expect(isPlainObject({})).toBe(true)

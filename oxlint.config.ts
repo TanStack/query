@@ -331,6 +331,7 @@ export default defineConfig({
         'vitest/require-to-throw-message': 'error',
         'vitest/valid-expect': 'off',
         'vitest-js/no-conditional-in-test': 'error',
+        'vitest-js/padding-around-describe-blocks': 'error',
         'vitest-js/prefer-vi-mocked': 'error',
         'vitest-js/valid-expect': 'error',
       },
