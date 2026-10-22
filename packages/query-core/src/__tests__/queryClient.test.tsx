@@ -2085,6 +2085,7 @@ describe('queryClient', () => {
       observer1.destroy()
       expect(queryFn).toHaveBeenCalledTimes(1)
     })
+
     it('should refetch if at least one observer is enabled', async () => {
       const key = queryKey()
       const queryFn = vi
@@ -2108,6 +2109,7 @@ describe('queryClient', () => {
       observer2.destroy()
       expect(queryFn).toHaveBeenCalledTimes(2)
     })
+
     it('should refetch all queries when no arguments are given', async () => {
       const key1 = queryKey()
       const key2 = queryKey()

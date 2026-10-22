@@ -218,6 +218,7 @@ describe('Devtools', () => {
               />
             ))
       }
+
       it('should keep cache notifications and cleanup independent for the same query key', () => {
         const secondClient = new QueryClient()
         queryClient.setQueryData(['shared-key'], 'first-data')
@@ -1323,6 +1324,7 @@ describe('Devtools', () => {
         unsubscribe()
       }
     })
+
     it('should hide disabled queries when the "hideDisabledQueries" prop is true', () => {
       const disabled = new QueryObserver(queryClient, {
         queryKey: ['hide-prop-disabled'],

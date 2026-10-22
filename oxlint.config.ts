@@ -332,6 +332,7 @@ export default defineConfig({
         'vitest/valid-expect': 'off',
         'vitest-js/no-conditional-in-test': 'error',
         'vitest-js/padding-around-after-each-blocks': 'error',
+        'vitest-js/padding-around-test-blocks': 'error',
         'vitest-js/prefer-vi-mocked': 'error',
         'vitest-js/valid-expect': 'error',
       },
