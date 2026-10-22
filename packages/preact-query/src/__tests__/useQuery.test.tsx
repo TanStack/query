@@ -2050,6 +2050,7 @@ describe('useQuery', () => {
       await vi.advanceTimersByTimeAsync(50)
       expect(states).toHaveLength(2)
     })
+
     it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
       const key = queryKey()
       const states: Array<UseQueryResult<string>> = []
@@ -6183,6 +6184,7 @@ describe('useQuery', () => {
     expect(rendered.getByText('status: success')).toBeInTheDocument()
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
   })
+
   it('should reuse same data object reference when queryKey changes back to some cached data', async () => {
     const key = queryKey()
     const spy = vi.fn<(data: unknown) => void>()
@@ -6797,6 +6799,7 @@ describe('useQuery', () => {
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(queryFn).toHaveBeenCalledTimes(0)
   })
+
   it('should retry on mount when throwOnError returns false', async () => {
     const key = queryKey()
     let fetchCount = 0

@@ -200,6 +200,7 @@ describe('core/utils', () => {
       expect(replaceEqualDeep(null, null)).toBeNull()
       expect(replaceEqualDeep(undefined, undefined)).toBeUndefined()
     })
+
     it('should return the next value when the previous value is a different value', () => {
       const date1 = new Date()
       const date2 = new Date()
