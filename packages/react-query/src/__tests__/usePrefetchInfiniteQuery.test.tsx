@@ -27,7 +27,9 @@ describe('usePrefetchInfiniteQuery', () => {
   })
 
   it('should prefetch an infinite query if query state does not exist', async () => {
-    const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
+    const Fallback = vi
+      .fn<() => React.JSX.Element>()
+      .mockReturnValue(<div>Loading...</div>)
     const data = [
       'Do you fetch on render?',
       'Or do you render as you fetch?',
@@ -88,7 +90,9 @@ describe('usePrefetchInfiniteQuery', () => {
   })
 
   it('should not display fallback if the query cache is already populated', async () => {
-    const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
+    const Fallback = vi
+      .fn<() => React.JSX.Element>()
+      .mockReturnValue(<div>Loading...</div>)
     const data = [
       'Prefetch rocks!',
       'No waterfalls, boy!',

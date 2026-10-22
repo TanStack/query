@@ -8,13 +8,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { provideTanStackQuery } from '../providers'
 import { injectDevtoolsPanel } from '../devtools-panel'
+import type { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 
 const mockDevtoolsPanelInstance = {
-  mount: vi.fn(),
-  unmount: vi.fn(),
-  setClient: vi.fn(),
-  setErrorTypes: vi.fn(),
-  setOnClose: vi.fn(),
+  mount: vi.fn<TanstackQueryDevtoolsPanel['mount']>(),
+  unmount: vi.fn<TanstackQueryDevtoolsPanel['unmount']>(),
+  setClient: vi.fn<TanstackQueryDevtoolsPanel['setClient']>(),
+  setErrorTypes: vi.fn<TanstackQueryDevtoolsPanel['setErrorTypes']>(),
+  setOnClose: vi.fn<TanstackQueryDevtoolsPanel['setOnClose']>(),
 }
 
 const mocks = vi.hoisted(() => {
@@ -23,10 +24,13 @@ const mocks = vi.hoisted(() => {
   }
 
   return {
-    mockTanstackQueryDevtoolsPanel: vi.fn(MockTanstackQueryDevtoolsPanel),
+    mockTanstackQueryDevtoolsPanel: vi.fn<
+      typeof MockTanstackQueryDevtoolsPanel
+    >(MockTanstackQueryDevtoolsPanel),
   }
 })
 
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the mocked devtools classes have '#private' fields, and this environment cannot load the real Solid module
 vi.mock('@tanstack/query-devtools', () => ({
   TanstackQueryDevtoolsPanel: mocks.mockTanstackQueryDevtoolsPanel,
 }))
@@ -65,7 +69,7 @@ describe('injectDevtoolsPanel', () => {
       }))
     })
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       destroy: expect.any(Function),
     })
   })
