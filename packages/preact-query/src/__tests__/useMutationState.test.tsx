@@ -4,7 +4,7 @@ import { useEffect } from 'preact/hooks'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, useIsMutating, useMutation, useMutationState } from '..'
 import { renderWithClient } from './utils'
-import type { Mutation } from '..'
+import type { Mutation, MutationCacheNotifyEvent } from '..'
 
 describe('useIsMutating', () => {
   beforeEach(() => {
@@ -253,7 +253,7 @@ describe('useMutationState', () => {
     const cache = queryClient.getMutationCache()
     cache.build(queryClient, { mutationKey: key1 })
     cache.build(queryClient, { mutationKey: key2 })
-    const onCacheChange = vi.fn()
+    const onCacheChange = vi.fn<(event: MutationCacheNotifyEvent) => void>()
     const unsubscribe = cache.subscribe(onCacheChange)
 
     function Page({ mutationKey }: { mutationKey: Array<string> }) {
@@ -319,7 +319,7 @@ describe('useMutationState', () => {
           ? new Date(Number(mutation.meta?.time))
           : { time: mutation.meta?.time }
       const options = { filters, select }
-      const onCacheChange = vi.fn()
+      const onCacheChange = vi.fn<(event: MutationCacheNotifyEvent) => void>()
       const unsubscribe = cache.subscribe(onCacheChange)
 
       function Page() {
@@ -454,7 +454,10 @@ describe('useMutationState', () => {
       const queryClient = new QueryClient()
       const key = queryKey()
       queryClient.getMutationCache().build(queryClient, { mutationKey: key })
-      const onResult = vi.fn()
+      const onResult =
+        vi.fn<
+          (result: Array<{ key: ReadonlyArray<unknown> | undefined }>) => void
+        >()
       const filters = { status: 'idle' as const }
       const select = (mutation: Mutation) => ({
         key: mutation.options.mutationKey,
@@ -537,7 +540,7 @@ describe('useMutationState', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: 'clear' }))
     await vi.advanceTimersByTimeAsync(1)
-    expect(queryClient.getMutationCache().getAll()).toEqual([])
+    expect(queryClient.getMutationCache().getAll()).toStrictEqual([])
     expect(rendered.getByText('data: []')).toBeInTheDocument()
   })
 
@@ -557,7 +560,7 @@ describe('useMutationState', () => {
     function Mutate() {
       const { mutate, data } = useMutation({
         mutationKey,
-        mutationFn: (input: number) => sleep(150).then(() => 'data' + input),
+        mutationFn: (input: number) => sleep(150).then(() => `data${input}`),
       })
 
       return (
