@@ -150,12 +150,12 @@ export function experimental_createQueryPersister<TStorageValue = string>({
 }: StoragePersisterOptions<TStorageValue>) {
   /**
    * Checks whether a persisted query should be discarded.
-   * @param persistedQuery - The persisted query to check.
+   * @param persistedQuery - The possibly incomplete persisted query to check.
    * @returns `true` if it has no `dataUpdatedAt`, is older than `maxAge`, or has a different
    * `buster`.
    */
-  function isExpiredOrBusted(persistedQuery: PersistedQuery) {
-    if (persistedQuery.state.dataUpdatedAt) {
+  function isExpiredOrBusted(persistedQuery: Partial<PersistedQuery> | null) {
+    if (persistedQuery?.state?.dataUpdatedAt) {
       const queryAge = Date.now() - persistedQuery.state.dataUpdatedAt
       const expired = queryAge > maxAge
       const busted = persistedQuery.buster !== buster
