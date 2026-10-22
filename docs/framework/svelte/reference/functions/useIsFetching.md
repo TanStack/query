@@ -12,7 +12,7 @@ function useIsFetching(filters?: QueryFilters<readonly unknown[]>, queryClient?:
 Defined in: [packages/svelte-query/src/useIsFetching.svelte.ts:40](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useIsFetching.svelte.ts#L40)
 
 The `useIsFetching` function returns the `number` of the queries that your application is loading or
-fetching in the background (useful for app-wide loading indicators).
+fetching in the background by default (useful for app-wide loading indicators).
 
 ## Parameters
 
@@ -20,8 +20,8 @@ fetching in the background (useful for app-wide loading indicators).
 
 [`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>
 
-[QueryFilters](../interfaces/QueryFilters.md) to narrow down which queries to count. Omit to count every fetching
-query.
+[QueryFilters](../interfaces/QueryFilters.md) to narrow down which queries to count. `fetchStatus` defaults to
+`'fetching'` when omitted or `undefined`; set it to `'paused'` or `'idle'` to count queries in that status instead.
 
 <a id="filters-properties"></a>
 
@@ -47,7 +47,7 @@ be used.
 
 `ReactiveValue`\<`number`\>
 
-A reactive value — read `.current` to get how many matching queries are currently fetching.
+A reactive value — read `.current` to get how many queries match the requested `fetchStatus` and other filters.
 
 ## Examples
 

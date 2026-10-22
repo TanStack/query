@@ -15,6 +15,45 @@ describe('useIsFetching', () => {
     vi.useRealTimers()
   })
 
+  it('should track fetchStatus filters as queries change status', async () => {
+    const queryClient = new QueryClient()
+    const key = queryKey()
+    const query = queryClient.getQueryCache().build(queryClient, {
+      queryKey: key,
+    })
+    query.setState({ fetchStatus: 'paused' })
+
+    function Page() {
+      const fetching = useIsFetching({ queryKey: key })
+      const paused = useIsFetching({ queryKey: key, fetchStatus: 'paused' })
+      const idle = useIsFetching({ queryKey: key, fetchStatus: 'idle' })
+
+      return (
+        <div>
+          fetching: {fetching}, paused: {paused}, idle: {idle}
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(
+      rendered.getByText('fetching: 0, paused: 1, idle: 0'),
+    ).toBeInTheDocument()
+
+    query.setState({ fetchStatus: 'fetching' })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(
+      rendered.getByText('fetching: 1, paused: 0, idle: 0'),
+    ).toBeInTheDocument()
+
+    query.setState({ fetchStatus: 'idle' })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(
+      rendered.getByText('fetching: 0, paused: 0, idle: 1'),
+    ).toBeInTheDocument()
+  })
+
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
     const queryClient = new QueryClient()

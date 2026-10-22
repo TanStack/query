@@ -14,7 +14,7 @@ Defined in: [packages/lit-query/src/useIsFetching.ts:13](https://github.com/TanS
 Accessor returned by `useIsFetching`.
 
 Call the accessor or read its `current` property to get the number of
-currently fetching queries that match the filters.
+queries that match the filters, defaulting to currently fetching queries.
 
 ## Type Declaration
 

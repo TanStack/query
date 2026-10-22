@@ -409,6 +409,66 @@ describe('queryClient', () => {
   })
 
   describe('isFetching', () => {
+    it.each([
+      { fetchStatus: 'fetching', otherFetchStatus: 'idle' },
+      { fetchStatus: 'paused', otherFetchStatus: 'fetching' },
+      { fetchStatus: 'idle', otherFetchStatus: 'fetching' },
+    ] as const)(
+      'should count $fetchStatus queries and apply other filters',
+      ({ fetchStatus, otherFetchStatus }) => {
+        const key = queryKey()
+        const query = queryCache.build(queryClient, { queryKey: key })
+        const child = queryCache.build(queryClient, {
+          queryKey: [...key, 'child'],
+        })
+        const unrelated = queryCache.build(queryClient, {
+          queryKey: queryKey(),
+        })
+        const other = queryCache.build(queryClient, {
+          queryKey: [...key, 'other'],
+        })
+        query.setState({ fetchStatus })
+        child.setState({ fetchStatus })
+        unrelated.setState({ fetchStatus })
+        other.setState({ fetchStatus: otherFetchStatus })
+
+        expect(queryClient.isFetching({ fetchStatus })).toBe(3)
+        expect(queryClient.isFetching({ queryKey: key, fetchStatus })).toBe(2)
+        expect(
+          queryClient.isFetching({ queryKey: key, exact: true, fetchStatus }),
+        ).toBe(1)
+        expect(
+          queryClient.isFetching({
+            queryKey: key,
+            fetchStatus,
+            predicate: (candidate) => candidate.queryHash === child.queryHash,
+          }),
+        ).toBe(1)
+        expect(
+          queryClient.isFetching({ queryKey: queryKey(), fetchStatus }),
+        ).toBe(0)
+      },
+    )
+
+    it('should default to fetching when fetchStatus is omitted or undefined', () => {
+      const key = queryKey()
+      for (const fetchStatus of ['fetching', 'paused', 'idle'] as const) {
+        queryCache
+          .build(queryClient, { queryKey: [...key, fetchStatus] })
+          .setState({ fetchStatus })
+      }
+      queryCache
+        .build(queryClient, { queryKey: queryKey() })
+        .setState({ fetchStatus: 'fetching' })
+
+      expect(queryClient.isFetching()).toBe(2)
+      expect(queryClient.isFetching({})).toBe(2)
+      expect(queryClient.isFetching({ queryKey: key })).toBe(1)
+      expect(
+        queryClient.isFetching({ queryKey: key, fetchStatus: undefined }),
+      ).toBe(1)
+    })
+
     it('should return length of fetching queries', async () => {
       expect(queryClient.isFetching()).toBe(0)
 

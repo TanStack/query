@@ -12,7 +12,7 @@ function injectIsFetching(filters?: QueryFilters<readonly unknown[]>, options?: 
 Defined in: [packages/angular-query-experimental/src/inject-is-fetching.ts:63](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-fetching.ts#L63)
 
 Injects a signal that tracks the number of queries that your application is loading or fetching in the
-background (useful for app-wide loading indicators).
+background by default (useful for app-wide loading indicators).
 
 ## Parameters
 
@@ -20,7 +20,8 @@ background (useful for app-wide loading indicators).
 
 [`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>
 
-The [QueryFilters](../interfaces/QueryFilters.md) to narrow down the matched queries.
+The [QueryFilters](../interfaces/QueryFilters.md) to narrow down the matched queries. `fetchStatus` defaults to
+`'fetching'` when omitted or `undefined`; set it to `'paused'` or `'idle'` to count queries in that status instead.
 
 <a id="filters-properties"></a>
 
@@ -53,8 +54,7 @@ Additional configuration
 
 `Signal`\<`number`\>
 
-A `Signal` with the number of queries that your application is currently loading or fetching in
-the background.
+A `Signal` with the number of matching queries with the requested `fetchStatus`.
 
 ## Examples
 

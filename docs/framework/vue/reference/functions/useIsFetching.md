@@ -14,7 +14,7 @@ function useIsFetching(fetchingFilters?: UseIsFetchingFilters, queryClient?: Que
 Defined in: [packages/vue-query/src/useIsFetching.ts:55](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useIsFetching.ts#L55)
 
 The `useIsFetching` composable returns a `ref` to the `number` of the queries that your application is
-loading or fetching in the background (useful for app-wide loading indicators).
+loading or fetching in the background by default (useful for app-wide loading indicators).
 
 `fetchingFilters` may be a plain object, `MaybeRefDeep`, or a reactive getter (`() => ({ ... })`) — pass a
 getter if the filters themselves depend on other reactive state.
@@ -25,7 +25,8 @@ getter if the filters themselves depend on other reactive state.
 
 [`UseIsFetchingFilters`](../type-aliases/UseIsFetchingFilters.md) = `{}`
 
-The [QueryFilters](../interfaces/QueryFilters.md) to narrow down the matched queries.
+The [QueryFilters](../interfaces/QueryFilters.md) to narrow down the matched queries. `fetchStatus` defaults to
+`'fetching'` when omitted or `undefined`; set it to `'paused'` or `'idle'` to count queries in that status instead.
 
 ### queryClient?
 
@@ -38,8 +39,7 @@ will be used.
 
 `Ref`\<`number`\>
 
-A `ref` to the `number` of the queries that your application is currently loading or fetching in
-the background.
+A `ref` to the `number` of matching queries with the requested `fetchStatus`.
 
 ## Examples
 

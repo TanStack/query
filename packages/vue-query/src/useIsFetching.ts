@@ -16,15 +16,15 @@ export type UseIsFetchingFilters =
 
 /**
  * The `useIsFetching` composable returns a `ref` to the `number` of the queries that your application is
- * loading or fetching in the background (useful for app-wide loading indicators).
+ * loading or fetching in the background by default (useful for app-wide loading indicators).
  *
  * `fetchingFilters` may be a plain object, `MaybeRefDeep`, or a reactive getter (`() => ({ ... })`) — pass a
  * getter if the filters themselves depend on other reactive state.
- * @param fetchingFilters - The {@link QueryFilters} to narrow down the matched queries.
+ * @param fetchingFilters - The {@link QueryFilters} to narrow down the matched queries. `fetchStatus` defaults to
+ * `'fetching'` when omitted or `undefined`; set it to `'paused'` or `'idle'` to count queries in that status instead.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
- * @returns A `ref` to the `number` of the queries that your application is currently loading or fetching in
- * the background.
+ * @returns A `ref` to the `number` of matching queries with the requested `fetchStatus`.
  * @example
  * ```vue
  * <script setup lang="ts">

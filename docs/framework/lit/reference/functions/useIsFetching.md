@@ -13,10 +13,10 @@ function useIsFetching(
 ): IsFetchingAccessor;
 ```
 
-Defined in: [packages/lit-query/src/useIsFetching.ts:141](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsFetching.ts#L141)
+Defined in: [packages/lit-query/src/useIsFetching.ts:142](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsFetching.ts#L142)
 
 Creates a Lit reactive controller that tracks how many matching queries are
-currently fetching.
+currently fetching by default.
 
 When `filters` is a function, it is re-read during host updates so the count
 can follow reactive host state. If `queryClient` is omitted, the controller
@@ -35,7 +35,8 @@ subscription.
 
 [`Accessor`](../type-aliases/Accessor.md)\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\> = `{}`
 
-Query filters, or a getter that returns query filters.
+Query filters, or a getter that returns query filters. `fetchStatus` defaults to
+`'fetching'` when omitted or `undefined`; set it to `'paused'` or `'idle'` to count queries in that status instead.
 
 <a id="filters-properties"></a>
 
@@ -54,7 +55,7 @@ controllers that should not resolve a client from Lit context.
 
 [`IsFetchingAccessor`](../type-aliases/IsFetchingAccessor.md)
 
-An accessor for the current number of matching fetching queries.
+An accessor for the number of matching queries with the requested `fetchStatus`.
 
 ## Example
 
