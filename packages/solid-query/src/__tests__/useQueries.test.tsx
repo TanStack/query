@@ -165,7 +165,9 @@ describe('useQueries', () => {
     const queryClient1 = new QueryClient()
     const queryClient2 = new QueryClient()
 
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page(props: { client: () => QueryClient }) {
       const queries = useQueries(
