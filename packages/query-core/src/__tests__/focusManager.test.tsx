@@ -3,6 +3,7 @@ import { FocusManager } from '../focusManager'
 
 describe('focusManager', () => {
   let focusManager: FocusManager
+
   beforeEach(() => {
     vi.useFakeTimers()
     vi.resetModules()
