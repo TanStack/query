@@ -42,6 +42,7 @@ describe('SvelteQueryDevtools', () => {
     })
 
     expect(
+      // oxlint-disable-next-line testing-library/no-node-access -- the devtools mount container has no role or text to query by
       container.querySelector('.tsqd-parent-container'),
     ).toBeInTheDocument()
   })

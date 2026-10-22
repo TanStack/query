@@ -162,6 +162,7 @@ describe('PreactQueryDevtoolsPanel', () => {
       />,
     )
 
+    // oxlint-disable-next-line testing-library/no-node-access -- the devtools mount container has no role or text to query by
     expect(container.querySelector('.tsqd-parent-container')).toHaveStyle({
       height: '500px',
       width: '300px',
@@ -176,6 +177,7 @@ describe('PreactQueryDevtoolsPanel', () => {
       />,
     )
 
+    // oxlint-disable-next-line testing-library/no-node-access -- the devtools mount container has no role or text to query by
     expect(container.querySelector('.tsqd-parent-container')).toHaveStyle({
       height: '300px',
       width: '300px',

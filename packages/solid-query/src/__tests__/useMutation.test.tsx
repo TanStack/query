@@ -1078,7 +1078,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('error')).toBeInTheDocument()
+    expect(rendered.getByText('error')).toBeInTheDocument()
 
     consoleErrorMock.mockRestore()
   })
@@ -1125,12 +1125,12 @@ describe('useMutation', () => {
     // first error goes to component
     fireEvent.click(rendered.getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('mock error')).toBeInTheDocument()
+    expect(rendered.getByText('mock error')).toBeInTheDocument()
 
     // second error goes to boundary
     fireEvent.click(rendered.getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('error boundary')).toBeInTheDocument()
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
     consoleErrorMock.mockRestore()
   })
@@ -1166,7 +1166,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByText('succeed'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('successTest')).toBeInTheDocument()
+    expect(rendered.getByText('successTest')).toBeInTheDocument()
 
     expect(successMock).toHaveBeenCalledTimes(1)
     expect(successMock).toHaveBeenCalledWith(metaSuccessMessage)
@@ -1205,7 +1205,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByText('error'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('errorTest')).toBeInTheDocument()
+    expect(rendered.getByText('errorTest')).toBeInTheDocument()
 
     expect(errorMock).toHaveBeenCalledTimes(1)
     expect(errorMock).toHaveBeenCalledWith(metaErrorMessage)

@@ -35,7 +35,7 @@ describe('createMutation', () => {
       props: { queryClient },
     })
 
-    expect(rendered.queryByText('Error: undefined')).toBeInTheDocument()
+    expect(rendered.getByText('Error: undefined')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     await vi.advanceTimersByTimeAsync(11)
@@ -276,13 +276,13 @@ describe('createMutation', () => {
       },
     })
 
-    expect(rendered.queryByText('Count: 0')).toBeInTheDocument()
+    expect(rendered.getByText('Count: 0')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(rendered.queryByText('Count: 3')).toBeInTheDocument()
+    expect(rendered.getByText('Count: 3')).toBeInTheDocument()
 
     expect(onSuccessMock).toHaveBeenCalledTimes(3)
     expect(onSuccessMock).toHaveBeenNthCalledWith(1, 1)
@@ -314,7 +314,7 @@ describe('createMutation', () => {
       },
     })
 
-    expect(rendered.queryByText('Data: undefined')).toBeInTheDocument()
+    expect(rendered.getByText('Data: undefined')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     expect(rendered.getByText('Data: undefined')).toBeInTheDocument()
