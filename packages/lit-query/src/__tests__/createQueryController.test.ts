@@ -16,6 +16,7 @@ import { generateElementName } from './utils.js'
 import type { QueryResultAccessor } from '../createQueryController.js'
 
 const providerTagName = generateElementName()
+
 beforeAll(() => {
   customElements.define(providerTagName, QueryClientProvider)
 })
