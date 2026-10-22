@@ -159,14 +159,13 @@ describe('query', () => {
     // Promise should eventually be resolved
     await vi.advanceTimersByTimeAsync(2)
     expect(result).toBe('data3')
-    onlineMock.mockRestore()
   })
 
   it('should throw a CancelledError when a paused query is cancelled', async () => {
     const key = queryKey()
 
     // make page unfocused
-    const visibilityMock = mockVisibilityState('hidden')
+    mockVisibilityState('hidden')
     let count = 0
 
     const promise = queryClient.query({
@@ -189,12 +188,7 @@ describe('query', () => {
     query.cancel()
 
     // Check if the error is set to the cancelled error
-    try {
-      await expect(promise).rejects.toBeInstanceOf(CancelledError)
-    } finally {
-      // Reset visibilityState to original value
-      visibilityMock.mockRestore()
-    }
+    await expect(promise).rejects.toBeInstanceOf(CancelledError)
   })
 
   it('should cancel a paused initial fetch when the last observer unsubscribes', async () => {
@@ -234,8 +228,6 @@ describe('query', () => {
       status: 'pending',
     })
     expect(count).toBe(0)
-
-    onlineMock.mockRestore()
   })
 
   it('should not throw a CancelledError when fetchQuery is in progress and the last observer unsubscribes when AbortSignal is consumed', async () => {
@@ -807,7 +799,6 @@ describe('query', () => {
     expect(refetchSpy).toHaveBeenCalledTimes(1)
 
     unsubscribe()
-    refetchSpy.mockRestore()
   })
 
   it('should not add an existing observer', async () => {
@@ -848,8 +839,6 @@ describe('query', () => {
     const notifySpy = vi.spyOn(queryCache, 'notify')
     expect(() => query.removeObserver(observer)).not.toThrow()
     expect(notifySpy).not.toHaveBeenCalled()
-
-    notifySpy.mockRestore()
   })
 
   it('should notify remaining observers when one unsubscribes during an update', () => {
@@ -974,7 +963,6 @@ describe('query', () => {
     )
 
     unsubscribe()
-    consoleErrorMock.mockRestore()
   })
 
   it('should not retry on the server', async () => {
@@ -1203,8 +1191,6 @@ describe('query', () => {
         'Structural sharing requires data to be JSON serializable',
       ),
     )
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should have an error status when setData has any error inside', async () => {
@@ -1281,8 +1267,6 @@ describe('query', () => {
     expect(consoleErrorMock).toHaveBeenCalledWith(
       "As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']",
     )
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should call initialData function when it is a function', () => {

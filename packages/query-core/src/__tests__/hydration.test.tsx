@@ -449,7 +449,6 @@ describe('dehydration and rehydration', () => {
 
     queryClient.clear()
     hydrationClient.clear()
-    consoleErrorMock.mockRestore()
   })
 
   it('should filter queries via dehydrateQuery', async () => {
@@ -681,8 +680,6 @@ describe('dehydration and rehydration', () => {
     )
 
     client.clear()
-    consoleErrorMock.mockRestore()
-    onlineMock.mockRestore()
   })
 
   it('should not dehydrate mutations if dehydrateMutations is set to false', async () => {
@@ -716,7 +713,6 @@ describe('dehydration and rehydration', () => {
     expect(dehydrated.mutations).toHaveLength(0)
 
     queryClient.clear()
-    consoleErrorMock.mockRestore()
   })
 
   it('should not dehydrate mutation if mutation state is set to pause', async () => {
@@ -751,7 +747,6 @@ describe('dehydration and rehydration', () => {
     expect(dehydrated.mutations).toHaveLength(0)
     await vi.advanceTimersByTimeAsync(30)
     queryClient.clear()
-    consoleErrorMock.mockRestore()
   })
 
   it('should support hydratedState with undefined queries and mutations', () => {
@@ -974,7 +969,7 @@ describe('dehydration and rehydration', () => {
   it('should dehydrate and hydrate mutation scopes', () => {
     const key = queryKey()
     const queryClient = new QueryClient()
-    const onlineMock = mockOnlineManagerIsOnline(false)
+    mockOnlineManagerIsOnline(false)
 
     void executeMutation(
       queryClient,
@@ -1001,8 +996,6 @@ describe('dehydration and rehydration', () => {
 
     hydrate(hydrationClient, parsed)
     expect(dehydrated.mutations[0]?.scope?.id).toBe('scope')
-
-    onlineMock.mockRestore()
   })
 
   it('should dehydrate promises for pending queries', async () => {
@@ -1444,7 +1437,6 @@ describe('dehydration and rehydration', () => {
 
     await expect(dehydrated.queries[0]?.promise).rejects.toThrow('redacted')
     await promise
-    consoleErrorMock.mockRestore()
   })
 
   it('should log error in development environment when redacting errors', async () => {
@@ -1485,7 +1477,6 @@ describe('dehydration and rehydration', () => {
     await promise
 
     process.env.NODE_ENV = originalNodeEnv
-    consoleErrorMock.mockRestore()
   })
 
   // When React hydrates promises across RSC/client boundaries, it passes

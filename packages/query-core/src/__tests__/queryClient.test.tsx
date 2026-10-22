@@ -2335,13 +2335,12 @@ describe('queryClient', () => {
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data1')
       await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
       await queryClient.refetchQueries({ queryKey: key1 })
 
       // if we reach this point, the test succeeds because the Promise was resolved immediately
       expect(queryFn1).toHaveBeenCalledTimes(1)
-      onlineMock.mockRestore()
     })
 
     it('should refetch if query we are offline but query networkMode is always', async () => {
@@ -2351,13 +2350,12 @@ describe('queryClient', () => {
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data1')
       await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
       await queryClient.refetchQueries({ queryKey: key1 })
 
       // initial fetch + refetch (even though we are offline)
       expect(queryFn1).toHaveBeenCalledTimes(2)
-      onlineMock.mockRestore()
     })
 
     it('should not refetch static queries', async () => {
@@ -2778,10 +2776,6 @@ describe('queryClient', () => {
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
       expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
-
-      queryCacheOnFocusSpy.mockRestore()
-      mutationCacheResumePausedMutationsSpy.mockRestore()
-      queryCacheOnOnlineSpy.mockRestore()
     })
 
     it('should notify queryCache and mutationCache if online', async () => {
@@ -2812,10 +2806,6 @@ describe('queryClient', () => {
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
       expect(queryCacheOnFocusSpy).not.toHaveBeenCalled()
-
-      queryCacheOnFocusSpy.mockRestore()
-      queryCacheOnOnlineSpy.mockRestore()
-      mutationCacheResumePausedMutationsSpy.mockRestore()
     })
 
     it('should resume paused mutations when coming online', async () => {
@@ -3097,9 +3087,6 @@ describe('queryClient', () => {
       expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1)
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(2)
 
-      queryCacheOnFocusSpy.mockRestore()
-      queryCacheOnOnlineSpy.mockRestore()
-      mutationCacheResumePausedMutationsSpy.mockRestore()
       focusManager.setFocused(undefined)
       onlineManager.setOnline(true)
     })
@@ -3132,9 +3119,6 @@ describe('queryClient', () => {
       expect(queryCacheOnFocusSpy).not.toHaveBeenCalled()
       expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
 
-      queryCacheOnFocusSpy.mockRestore()
-      queryCacheOnOnlineSpy.mockRestore()
-      mutationCacheResumePausedMutationsSpy.mockRestore()
       focusManager.setFocused(undefined)
       onlineManager.setOnline(true)
     })

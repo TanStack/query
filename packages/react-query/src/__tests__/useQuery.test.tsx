@@ -2704,9 +2704,7 @@ describe('useQuery', () => {
   })
 
   it('should set status to error if queryFn throws', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -2731,13 +2729,10 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error')).toBeInTheDocument()
     expect(rendered.getByText('Error test')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it('should throw error if queryFn throws and throwOnError is in use', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -2765,13 +2760,10 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it('should throw error if queryFn rejects with a falsy error and throwOnError is in use', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -2794,7 +2786,6 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it('should update with data if we observe no properties and throwOnError', async () => {
@@ -2857,9 +2848,7 @@ describe('useQuery', () => {
   })
 
   it('should throw error instead of setting status when error should be thrown', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const key = queryKey()
 
@@ -2897,7 +2886,6 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('Remote Error')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it('should continue retries when observers unmount and remount while waiting for a retry (#3031)', async () => {
@@ -5189,7 +5177,6 @@ describe('useQuery', () => {
       expect(rendered.getByText('data: data')).toBeInTheDocument()
 
       expect(states).toStrictEqual(['paused', 'fetching', 'idle'])
-      onlineMock.mockRestore()
     })
 
     it('should not refetch online queries if you are offline', async () => {
@@ -5250,8 +5237,6 @@ describe('useQuery', () => {
       rendered.getByText('failureReason: null')
 
       expect(rendered.getByText('data: data2')).toBeInTheDocument()
-
-      onlineMock.mockRestore()
     })
 
     it('should not refetch online queries if you are offline and refocus', async () => {
@@ -5288,7 +5273,7 @@ describe('useQuery', () => {
       await vi.advanceTimersByTimeAsync(11)
       rendered.getByText('data: data1')
 
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
       fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
       await vi.advanceTimersByTimeAsync(0)
       rendered.getByText('status: success, fetchStatus: paused')
@@ -5298,7 +5283,6 @@ describe('useQuery', () => {
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.queryByText('data: data2')).not.toBeInTheDocument()
       expect(count).toBe(1)
-      onlineMock.mockRestore()
     })
 
     it('should not refetch online queries while already paused', async () => {
@@ -5330,7 +5314,7 @@ describe('useQuery', () => {
         )
       }
 
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
       const rendered = renderWithClient(queryClient, <Page />)
 
@@ -5343,7 +5327,6 @@ describe('useQuery', () => {
       rendered.getByText('status: pending, fetchStatus: paused')
 
       expect(count).toBe(0)
-      onlineMock.mockRestore()
     })
 
     it('should not refetch online queries while already paused if data is in the cache', async () => {
@@ -5376,7 +5359,7 @@ describe('useQuery', () => {
         )
       }
 
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
       const rendered = renderWithClient(queryClient, <Page />)
 
@@ -5390,7 +5373,6 @@ describe('useQuery', () => {
       rendered.getByText('status: success, fetchStatus: paused')
 
       expect(count).toBe(0)
-      onlineMock.mockRestore()
     })
 
     it('should not get online queries stuck in fetching state when pausing multiple times', async () => {
@@ -5448,8 +5430,6 @@ describe('useQuery', () => {
       expect(rendered.getByText('data: data1')).toBeInTheDocument()
 
       expect(count).toBe(1)
-
-      onlineMock.mockRestore()
     })
 
     it('should pause retries of online queries if you are offline', async () => {
@@ -5501,8 +5481,6 @@ describe('useQuery', () => {
       rendered.getByText('failureReason: failed3')
 
       expect(count).toBe(3)
-
-      onlineMock.mockRestore()
     })
 
     it('should not fetch online queries if paused initial load and we go online after unmount', async () => {
@@ -5558,8 +5536,6 @@ describe('useQuery', () => {
       })
 
       expect(count).toBe(0)
-
-      onlineMock.mockRestore()
     })
 
     it('should re-fetch online queries if paused and we go online even if already unmounted (because not cancelled)', async () => {
@@ -5618,8 +5594,6 @@ describe('useQuery', () => {
 
       // give it a bit more time to make sure queryFn is not called again
       expect(count).toBe(1)
-
-      onlineMock.mockRestore()
     })
 
     it('should not fetch online queries if paused and we go online when cancelled and no refetchOnReconnect', async () => {
@@ -5671,8 +5645,6 @@ describe('useQuery', () => {
       rendered.getByText('status: pending, fetchStatus: idle')
 
       expect(count).toBe(0)
-
-      onlineMock.mockRestore()
     })
 
     it('should fetch online queries if paused and we go online even if already unmounted when refetch was not cancelled', async () => {
@@ -5737,14 +5709,12 @@ describe('useQuery', () => {
       })
 
       expect(count).toBe(2)
-
-      onlineMock.mockRestore()
     })
   })
 
   describe('networkMode always', () => {
     it('should start fetching always queries even if you are offline', async () => {
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
       let count = 0
@@ -5775,12 +5745,10 @@ describe('useQuery', () => {
       await vi.advanceTimersByTimeAsync(11)
       rendered.getByText('status: success, isPaused: false')
       expect(rendered.getByText('data: data 1')).toBeInTheDocument()
-
-      onlineMock.mockRestore()
     })
 
     it('should not pause retries of always queries', async () => {
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
       let count = 0
@@ -5817,8 +5785,6 @@ describe('useQuery', () => {
       expect(rendered.getByText('error: error 2')).toBeInTheDocument()
 
       expect(count).toBe(2)
-
-      onlineMock.mockRestore()
     })
   })
 
@@ -5871,7 +5837,6 @@ describe('useQuery', () => {
       rendered.getByText('failureReason: failed3')
 
       expect(count).toBe(3)
-      onlineMock.mockRestore()
     })
   })
 
@@ -6440,9 +6405,7 @@ describe('useQuery', () => {
   // For Project without TS, when migrating from v4 to v5, make sure invalid calls due to bad parameters are tracked.
   it('should throw in case of bad arguments to enhance DevX', () => {
     // Mock console error to avoid noise when test is run
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const key = queryKey()
     const queryFn = () => 'data'
@@ -6455,7 +6418,6 @@ describe('useQuery', () => {
     }
 
     expect(() => render(<Page />)).toThrow('Bad argument type')
-    consoleErrorMock.mockRestore()
   })
 
   it('should respect skipToken and refetch when skipToken is taken away', async () => {
@@ -6530,7 +6492,6 @@ describe('useQuery', () => {
 
     // no warnings expected about skipToken / missing queryFn
     expect(consoleErrorMock).toHaveBeenCalledTimes(0)
-    consoleErrorMock.mockRestore()
   })
 
   it('should return correct optimistic result when fetching after error', async () => {
@@ -6743,8 +6704,6 @@ describe('useQuery', () => {
     expect(consoleErrorMock).toHaveBeenCalledWith(
       `A query that was dehydrated as pending ended up rejecting. [${query?.queryHash}]: Error: server error; The error will be redacted in production builds`,
     )
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should console.error when there is no queryFn', () => {
@@ -6762,8 +6721,6 @@ describe('useQuery', () => {
     expect(consoleErrorMock).toHaveBeenCalledWith(
       `[${queryClient.getQueryCache().find({ queryKey: key })?.queryHash}]: No queryFn was passed as an option, and no default queryFn was found. The queryFn parameter is only optional when using a default queryFn. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
     )
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should retry on mount when throwOnError returns false', async () => {

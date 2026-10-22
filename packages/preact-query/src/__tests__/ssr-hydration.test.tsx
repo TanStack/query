@@ -123,7 +123,6 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleErrorMock.mockRestore()
   })
 
   it('should not mismatch on error', async () => {
@@ -204,7 +203,6 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleErrorMock.mockRestore()
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
@@ -272,6 +270,5 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleErrorMock.mockRestore()
   })
 })

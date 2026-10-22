@@ -493,7 +493,6 @@ describe('PersistQueryClientProvider', () => {
 
     expect(consoleErrorMock).toHaveBeenCalledTimes(1)
     expect(consoleErrorMock).toHaveBeenNthCalledWith(1, error)
-    consoleErrorMock.mockRestore()
   })
 
   it('should be able to persist into multiple clients', async () => {

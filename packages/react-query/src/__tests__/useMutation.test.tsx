@@ -1092,7 +1092,6 @@ describe('useMutation', () => {
     ).toBeInTheDocument()
 
     expect(count).toBe(2)
-    onlineMock.mockRestore()
   })
 
   it('should call onMutate even if paused', async () => {
@@ -1151,8 +1150,6 @@ describe('useMutation', () => {
 
     expect(onMutate).toHaveBeenCalledTimes(1)
     expect(count).toBe(1)
-
-    onlineMock.mockRestore()
   })
 
   it('should optimistically go to paused state if offline', async () => {
@@ -1205,8 +1202,6 @@ describe('useMutation', () => {
     expect(
       rendered.getByText('data: 1, status: success, isPaused: false'),
     ).toBeInTheDocument()
-
-    onlineMock.mockRestore()
   })
 
   it('should be able to retry a mutation when online', async () => {
@@ -1275,8 +1270,6 @@ describe('useMutation', () => {
       failureReason: null,
       data: 'data2',
     })
-
-    onlineMock.mockRestore()
   })
 
   // oxlint-disable-next-line vitest/expect-expect
@@ -1340,14 +1333,10 @@ describe('useMutation', () => {
     expect(getByText('error')).toBeInTheDocument()
 
     expect(consoleErrorMock.mock.calls[0]?.[1]).toBe(err)
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should be able to throw an error when throwOnError is a function that returns true', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
     let boundary = false
     function Page() {
       const { mutate, error } = useMutation<string>({
@@ -1392,7 +1381,6 @@ describe('useMutation', () => {
     fireEvent.click(getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
     expect(getByText('error boundary')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it('should not throw an error when throwOnError is set to false', async () => {
