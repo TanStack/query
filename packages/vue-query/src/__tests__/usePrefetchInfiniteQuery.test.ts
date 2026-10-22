@@ -154,7 +154,6 @@ describe('usePrefetchInfiniteQuery', () => {
       )
     } finally {
       consoleWarnMock.mockRestore()
-      vi.unstubAllEnvs()
     }
   })
 })
