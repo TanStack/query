@@ -524,22 +524,18 @@ describe('useQueries', () => {
       .spyOn(console, 'warn')
       .mockImplementation(() => {})
 
-    try {
-      useQueries({
-        queries: [
-          {
-            queryKey: queryKey(),
-            queryFn: () => sleep(0).then(() => 'data'),
-          },
-        ],
-      })
+    useQueries({
+      queries: [
+        {
+          queryKey: queryKey(),
+          queryFn: () => sleep(0).then(() => 'data'),
+        },
+      ],
+    })
 
-      expect(consoleWarnMock).toHaveBeenCalledWith(
-        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
-      )
-    } finally {
-      consoleWarnMock.mockRestore()
-    }
+    expect(consoleWarnMock).toHaveBeenCalledWith(
+      'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+    )
   })
 
   it('should work with options getter and be reactive', async () => {

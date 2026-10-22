@@ -613,17 +613,13 @@ describe('useMutation', () => {
       .spyOn(console, 'warn')
       .mockImplementation(() => {})
 
-    try {
-      useMutation({
-        mutationFn: (params: string) => sleep(0).then(() => params),
-      })
+    useMutation({
+      mutationFn: (params: string) => sleep(0).then(() => params),
+    })
 
-      expect(consoleWarnMock).toHaveBeenCalledWith(
-        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
-      )
-    } finally {
-      consoleWarnMock.mockRestore()
-    }
+    expect(consoleWarnMock).toHaveBeenCalledWith(
+      'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+    )
   })
 
   describe('throwOnError', () => {
