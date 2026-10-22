@@ -107,7 +107,6 @@ describe('useIsFetching', () => {
       )
     } finally {
       consoleWarnMock.mockRestore()
-      vi.unstubAllEnvs()
     }
   })
 })
