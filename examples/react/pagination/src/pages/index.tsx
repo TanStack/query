@@ -1,54 +1,26 @@
 import React from 'react'
 import {
-  QueryClient,
-  QueryClientProvider,
   keepPreviousData,
   noop,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { projectsQueryOptions } from '../lib/api'
 
-const queryClient = new QueryClient()
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Example />
-    </QueryClientProvider>
-  )
-}
-
-const fetchProjects = async (
-  page = 0,
-): Promise<{
-  projects: Array<{ name: string; id: number }>
-  hasMore: boolean
-}> => {
-  const response = await fetch(`/api/projects?page=${page}`)
-  return await response.json()
-}
-
-function Example() {
+export default function Example() {
   const queryClient = useQueryClient()
   const [page, setPage] = React.useState(0)
 
   const { status, data, error, isFetching, isPlaceholderData } = useQuery({
-    queryKey: ['projects', page],
-    queryFn: () => fetchProjects(page),
+    ...projectsQueryOptions(page),
     placeholderData: keepPreviousData,
-    staleTime: 5000,
   })
 
   // Prefetch the next page!
   React.useEffect(() => {
     if (!isPlaceholderData && data?.hasMore) {
-      queryClient
-        .query({
-          queryKey: ['projects', page + 1],
-          queryFn: () => fetchProjects(page + 1),
-        })
-        .catch(noop)
+      queryClient.query(projectsQueryOptions(page + 1)).catch(noop)
     }
   }, [data, isPlaceholderData, page, queryClient])
 

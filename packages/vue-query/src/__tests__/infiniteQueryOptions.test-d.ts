@@ -30,6 +30,7 @@ describe('infiniteQueryOptions', () => {
       }),
     )
   })
+
   it('should infer types for callbacks', () => {
     const key = queryKey()
     infiniteQueryOptions({
@@ -43,6 +44,7 @@ describe('infiniteQueryOptions', () => {
       },
     })
   })
+
   it('should work when passed to useInfiniteQuery', () => {
     const key = queryKey()
     const options = infiniteQueryOptions({
@@ -58,6 +60,7 @@ describe('infiniteQueryOptions', () => {
       InfiniteData<string, unknown> | undefined
     >()
   })
+
   it('keeps initialData required when it is defined', () => {
     const options = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -105,6 +108,7 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
+
   it('should work when passed to infiniteQuery with select', async () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
@@ -122,6 +126,7 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<Array<string>>()
   })
+
   it('should tag the queryKey with the result type of the QueryFn', () => {
     const key = queryKey()
     const { queryKey: tagged } = infiniteQueryOptions({
@@ -133,6 +138,7 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
   })
+
   it('should tag the queryKey even if no promise is returned', () => {
     const key = queryKey()
     const { queryKey: tagged } = infiniteQueryOptions({
@@ -144,6 +150,7 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
   })
+
   it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
     const key = queryKey()
     const { queryKey: tagged } = infiniteQueryOptions({
@@ -156,6 +163,7 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
   })
+
   it('should return the proper type when passed to getQueryData', () => {
     const key = queryKey()
     const { queryKey: tagged } = infiniteQueryOptions({
@@ -172,6 +180,7 @@ describe('infiniteQueryOptions', () => {
       InfiniteData<string, unknown> | undefined
     >()
   })
+
   it('should properly type when passed to setQueryData', () => {
     const key = queryKey()
     const { queryKey: tagged } = infiniteQueryOptions({

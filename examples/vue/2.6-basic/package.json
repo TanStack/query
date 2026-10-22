@@ -6,7 +6,8 @@
     "postinstall": "vue-demi-switch 2",
     "dev": "vite",
     "_build": "vite build",
-    "_preview": "vite preview"
+    "_preview": "vite preview",
+    "test:eslint": "eslint ./src"
   },
   "dependencies": {
     "@tanstack/vue-query": "^5.90.2",

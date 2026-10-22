@@ -22,7 +22,10 @@ export const fetchPost = async ({
   if (!simulateError) {
     response = await fetch(
       `https://jsonplaceholder.typicode.com/posts/${postId}`,
-    ).then((res) => res.json())
+    ).then((res) => {
+      if (!res.ok) throw new Error('Failed to fetch post')
+      return res.json()
+    })
   }
 
   // simulate extra latency to make things like streaming behavior more clear
@@ -36,7 +39,7 @@ export const fetchPost = async ({
     throw new Error('API request to get post was not OK')
   }
 
-  return [response] as PostData[]
+  return [response] as Array<PostData>
 }
 
 export const fetchUser = async ({

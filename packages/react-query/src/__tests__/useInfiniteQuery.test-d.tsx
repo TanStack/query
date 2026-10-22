@@ -30,7 +30,7 @@ describe('pageParam', () => {
 
   it('should define type of param passed to queryFunctionContext with initialPageParam for fetchInfiniteQuery', () => {
     const queryClient = new QueryClient()
-    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
     queryClient.fetchInfiniteQuery({
       queryKey: queryKey(),
       queryFn: ({ pageParam }) => {
@@ -54,7 +54,7 @@ describe('pageParam', () => {
 
   it('should define type of param passed to queryFunctionContext with initialPageParam for prefetchInfiniteQuery', () => {
     const queryClient = new QueryClient()
-    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
     queryClient.prefetchInfiniteQuery({
       queryKey: queryKey(),
       queryFn: ({ pageParam }) => {
@@ -64,6 +64,7 @@ describe('pageParam', () => {
     })
   })
 })
+
 describe('select', () => {
   it('should still return paginated data if no select result', () => {
     const infiniteQuery = useInfiniteQuery({
@@ -98,6 +99,7 @@ describe('select', () => {
     expectTypeOf(infiniteQuery.data).toEqualTypeOf<'selected' | undefined>()
   })
 })
+
 describe('getNextPageParam / getPreviousPageParam', () => {
   it('should get typed params', () => {
     const infiniteQuery = useInfiniteQuery({
