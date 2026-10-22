@@ -1,24 +1,14 @@
-/** @jsxRuntime automatic */
-/** @jsxImportSource preact */
-import '@testing-library/jest-dom/vitest'
-
+import { act, render } from '@testing-library/preact'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { QueryClient, noop, useQuery } from '@tanstack/preact-query'
+import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
+import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
+import type { UseQueryResult } from '@tanstack/preact-query'
 import type {
   PersistedClient,
   Persister,
-} from '../../../query-persist-client-core/src'
-import { persistQueryClientSave } from '../../../query-persist-client-core/src'
-import { notifyManager, noop } from '../../../query-core/src'
-import { act, cleanup, render } from '@testing-library/preact'
-import type { UseQueryResult } from '../../../preact-query/src'
-import { QueryClient, useQuery } from '../../../preact-query/src'
-import { afterEach, beforeEach, describe, expect, vi, it } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
-
-import { PersistQueryClientProvider } from './testPersistProvider'
-
-notifyManager.setNotifyFunction((fn) => {
-  act(fn)
-})
+} from '@tanstack/query-persist-client-core'
 
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
@@ -44,7 +34,6 @@ describe('PersistQueryClientProvider (preact)', () => {
   })
 
   afterEach(() => {
-    cleanup()
     vi.useRealTimers()
   })
 

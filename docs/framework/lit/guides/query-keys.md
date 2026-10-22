@@ -73,6 +73,10 @@ If your query function reads a reactive host property, include that value in the
 
 ```ts
 class UserTodos extends LitElement {
+  static properties = {
+    userId: { type: String },
+  }
+
   userId = ''
 
   private readonly todos = createQueryController(this, () => ({

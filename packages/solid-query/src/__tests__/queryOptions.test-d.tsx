@@ -28,6 +28,7 @@ describe('queryOptions', () => {
       }),
     )
   })
+
   it('should infer types for callbacks', () => {
     queryOptions({
       queryKey: queryKey(),
@@ -38,6 +39,7 @@ describe('queryOptions', () => {
       },
     })
   })
+
   it('should work when passed to useQuery', () => {
     const options = queryOptions({
       queryKey: queryKey(),
@@ -47,6 +49,7 @@ describe('queryOptions', () => {
     const { data } = useQuery(() => options)
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
+
   it('should work when passed to query', async () => {
     const options = queryOptions({
       queryKey: ['key'],
@@ -56,6 +59,7 @@ describe('queryOptions', () => {
     const data = await new QueryClient().query(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
+
   it('should work when passed to query with select', async () => {
     const options = queryOptions({
       queryKey: ['key'],
@@ -66,6 +70,7 @@ describe('queryOptions', () => {
     const data = await new QueryClient().query(options)
     expectTypeOf(data).toEqualTypeOf<string>()
   })
+
   it('should work when passed to query with enabled: false', async () => {
     const options = queryOptions({
       queryKey: ['key'],
@@ -76,6 +81,7 @@ describe('queryOptions', () => {
     const data = await new QueryClient().query(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
+
   it('should work when passed to query with skipToken', async () => {
     const options = queryOptions({
       queryKey: ['key'],
@@ -85,16 +91,18 @@ describe('queryOptions', () => {
     const data = await new QueryClient().query(options)
     expectTypeOf(data).toEqualTypeOf<unknown>()
   })
+
   it('should work when passed to fetchQuery', async () => {
     const options = queryOptions({
       queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
     })
 
-    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
+
   it('should tag the queryKey with the result type of the QueryFn', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: queryKey(),
@@ -103,6 +111,7 @@ describe('queryOptions', () => {
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<number>()
   })
+
   it('should tag the queryKey with the result type of the QueryFn when initialData may be undefined', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: queryKey(),
@@ -112,6 +121,7 @@ describe('queryOptions', () => {
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<number>()
   })
+
   it('should tag the queryKey even if no promise is returned', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: queryKey(),
@@ -120,6 +130,7 @@ describe('queryOptions', () => {
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<number>()
   })
+
   it('should tag the queryKey with unknown if there is no queryFn', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: queryKey(),
@@ -127,6 +138,7 @@ describe('queryOptions', () => {
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<unknown>()
   })
+
   it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: queryKey(),
@@ -136,6 +148,7 @@ describe('queryOptions', () => {
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<number>()
   })
+
   it('should tag the queryKey with the default error type', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: queryKey(),
@@ -144,6 +157,7 @@ describe('queryOptions', () => {
 
     expectTypeOf(tagged[dataTagErrorSymbol]).toEqualTypeOf<Error>()
   })
+
   it('should return the proper type when passed to getQueryData', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: queryKey(),
@@ -154,6 +168,7 @@ describe('queryOptions', () => {
     const data = queryClient.getQueryData(tagged)
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
+
   it('should return the proper type when passed to getQueryState', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: queryKey(),
@@ -164,6 +179,7 @@ describe('queryOptions', () => {
     const state = queryClient.getQueryState(tagged)
     expectTypeOf(state?.data).toEqualTypeOf<number | undefined>()
   })
+
   it('should properly type updaterFn when passed to setQueryData', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: queryKey(),
@@ -177,6 +193,7 @@ describe('queryOptions', () => {
     })
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
+
   it('should properly type value when passed to setQueryData', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: queryKey(),
@@ -214,6 +231,7 @@ describe('queryOptions', () => {
     const queryClient = new QueryClient()
     const data = queryClient.getQueryData(options.queryKey)
     expectTypeOf(data).toEqualTypeOf<unknown>()
+    expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<unknown>()
   })
 
   it('should allow optional initialData object', () => {

@@ -1,4 +1,5 @@
 import { QueryObserver } from '@tanstack/query-core'
+import { useBaseQuery } from './useBaseQuery'
 import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 
 import type {
@@ -10,7 +11,6 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from './types'
-import { useBaseQuery } from './useBaseQuery'
 
 /**
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless

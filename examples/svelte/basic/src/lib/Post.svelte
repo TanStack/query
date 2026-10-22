@@ -1,21 +1,18 @@
 <script lang="ts">
+  import { resolve } from '$app/paths'
   import { createQuery } from '@tanstack/svelte-query'
-  import { getPostById } from './data'
-  import type { Post } from './types'
+  import { postQueryOptions } from './queries'
 
   const { postId }: { postId: number } = $props()
 
-  const post = createQuery<Post>(() => ({
-    queryKey: ['post', postId],
-    queryFn: () => getPostById(postId),
-  }))
+  const post = createQuery(() => postQueryOptions(postId))
 </script>
 
 <div>
   <div>
-    <a class="button" href="/"> Back </a>
+    <a class="button" href={resolve('/')}> Back </a>
   </div>
-  {#if !postId || post.isPending}
+  {#if post.isPending}
     <span>Loading...</span>
   {/if}
   {#if post.error}

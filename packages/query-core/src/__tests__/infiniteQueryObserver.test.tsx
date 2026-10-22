@@ -3,6 +3,8 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { InfiniteQueryObserver, QueryClient } from '..'
 import type {
   DefaultedInfiniteQueryObserverOptions,
+  GetNextPageParamFunction,
+  GetPreviousPageParamFunction,
   InfiniteData,
 } from '../types'
 
@@ -49,7 +51,7 @@ describe('InfiniteQueryObserver', () => {
     }
 
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 1))
+    const queryFn = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 1))
     const observer = new InfiniteQueryObserver(queryClient, {
       meta,
       queryKey: key,
@@ -99,23 +101,24 @@ describe('InfiniteQueryObserver', () => {
     await vi.advanceTimersByTimeAsync(10)
     observer.fetchPreviousPage()
     await vi.advanceTimersByTimeAsync(10)
-    expect(single).toEqual(['next1', 'prev1', 'prev1', 'next1', 'prev0'])
-    expect(all).toEqual(['next1', 'prev1', 'prev1', 'next0,1', 'prev0,1'])
+    expect(single).toStrictEqual(['next1', 'prev1', 'prev1', 'next1', 'prev0'])
+    expect(all).toStrictEqual(['next1', 'prev1', 'prev1', 'next0,1', 'prev0,1'])
 
     single = []
     all = []
 
     observer.refetch()
     await vi.advanceTimersByTimeAsync(20)
-    expect(single).toEqual(['next0', 'next1', 'prev0'])
-    expect(all).toEqual(['next0', 'next0,1', 'prev0,1'])
+    expect(single).toStrictEqual(['next0', 'next1', 'prev0'])
+    expect(all).toStrictEqual(['next0', 'next0,1', 'prev0,1'])
   })
 
   it('should not invoke getNextPageParam and getPreviousPageParam on empty pages', () => {
     const key = queryKey()
 
-    const getNextPageParam = vi.fn()
-    const getPreviousPageParam = vi.fn()
+    const getNextPageParam = vi.fn<GetNextPageParamFunction<number, string>>()
+    const getPreviousPageParam =
+      vi.fn<GetPreviousPageParamFunction<number, string>>()
 
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
@@ -158,7 +161,7 @@ describe('InfiniteQueryObserver', () => {
     await vi.advanceTimersByTimeAsync(10)
     observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
-    expect(observer.getCurrentResult().data?.pages).toEqual(['1', '2'])
+    expect(observer.getCurrentResult().data?.pages).toStrictEqual(['1', '2'])
     expect(queryFn).toHaveBeenCalledTimes(2)
     expect(observer.getCurrentResult().hasNextPage).toBe(true)
 
@@ -166,7 +169,7 @@ describe('InfiniteQueryObserver', () => {
 
     observer.refetch()
     await vi.advanceTimersByTimeAsync(10)
-    expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
+    expect(observer.getCurrentResult().data?.pages).toStrictEqual(['1'])
     expect(queryFn).toHaveBeenCalledTimes(3)
     expect(observer.getCurrentResult().hasNextPage).toBe(false)
   })
@@ -188,7 +191,7 @@ describe('InfiniteQueryObserver', () => {
     await vi.advanceTimersByTimeAsync(10)
     observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
-    expect(observer.getCurrentResult().data?.pages).toEqual(['1', '2'])
+    expect(observer.getCurrentResult().data?.pages).toStrictEqual(['1', '2'])
     expect(queryFn).toHaveBeenCalledTimes(2)
     expect(observer.getCurrentResult().hasNextPage).toBe(true)
 
@@ -196,7 +199,7 @@ describe('InfiniteQueryObserver', () => {
 
     observer.refetch()
     await vi.advanceTimersByTimeAsync(10)
-    expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
+    expect(observer.getCurrentResult().data?.pages).toStrictEqual(['1'])
     expect(queryFn).toHaveBeenCalledTimes(3)
     expect(observer.getCurrentResult().hasNextPage).toBe(false)
   })
@@ -242,5 +245,32 @@ describe('InfiniteQueryObserver', () => {
       isRefetchError: false,
       isRefetching: false,
     })
+  })
+
+  it('should fetch with the supplied infinite options via fetchOptimistic after the query is recreated', async () => {
+    const key = queryKey()
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) => sleep(10).then(() => `page-${pageParam}`),
+      initialPageParam: 0,
+      getNextPageParam: (_, allPages) => allPages.length,
+      staleTime: Infinity,
+    })
+    const unsubscribe = observer.subscribe(() => {})
+    await vi.advanceTimersByTimeAsync(10)
+
+    queryClient.removeQueries({ queryKey: key })
+    queryClient.getQueryCache().build(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'recreated-page'),
+    })
+
+    const promise = observer.fetchOptimistic(observer.options)
+    await vi.advanceTimersByTimeAsync(10)
+    const result = await promise
+
+    expect(result.data).toStrictEqual({ pages: ['page-0'], pageParams: [0] })
+
+    unsubscribe()
   })
 })

@@ -66,7 +66,7 @@ describe('useIsMutating', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(150)
-    expect(isMutatingArray).toEqual([0, 1, 2, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 2, 1, 0])
   })
 
   it('should filter correctly by mutationKey', async () => {
@@ -106,7 +106,7 @@ describe('useIsMutating', () => {
 
     // Unlike React, IsMutating Wont re-render twice with mutation2
     await vi.advanceTimersByTimeAsync(100)
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should filter correctly by predicate', async () => {
@@ -149,7 +149,7 @@ describe('useIsMutating', () => {
 
     // Again, No unnecessary re-renders like React
     await vi.advanceTimersByTimeAsync(100)
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should use provided custom queryClient', async () => {
@@ -179,7 +179,7 @@ describe('useIsMutating', () => {
       )
     }
 
-    const rendered = render(() => <Page></Page>)
+    const rendered = render(() => <Page />)
 
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -194,7 +194,7 @@ describe('useIsMutating', () => {
     const [client, setClient] = createSignal(queryClient1)
     const mutationCache1 = queryClient1.getMutationCache()
     const originalSubscribe1 = mutationCache1.subscribe.bind(mutationCache1)
-    const unsubscribe1 = vi.fn()
+    const unsubscribe1 = vi.fn<() => void>()
 
     vi.spyOn(mutationCache1, 'subscribe').mockImplementation((listener) => {
       const cleanup = originalSubscribe1(listener)
@@ -235,7 +235,7 @@ describe('useIsMutating', () => {
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
-  // eslint-disable-next-line vitest/expect-expect
+  // oxlint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
     // We have to mock the MutationCache to not unsubscribe
     // the listener when the component is unmounted

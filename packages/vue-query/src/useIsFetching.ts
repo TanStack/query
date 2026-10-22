@@ -11,7 +11,8 @@ import type { QueryClient } from './queryClient'
  * getter.
  */
 export type UseIsFetchingFilters =
-  MaybeRefDeep<QueryFilters> | (() => MaybeRefDeep<QueryFilters>)
+  | MaybeRefDeep<QueryFilters>
+  | (() => MaybeRefDeep<QueryFilters>)
 
 /**
  * The `useIsFetching` composable returns a `ref` to the `number` of the queries that your application is

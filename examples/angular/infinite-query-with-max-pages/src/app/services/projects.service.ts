@@ -8,8 +8,8 @@ interface Project {
 
 interface ProjectResponse {
   data: Array<Project>
-  nextId: number | undefined
-  previousId: number | undefined
+  nextId: number | null
+  previousId: number | null
 }
 
 @Injectable({
