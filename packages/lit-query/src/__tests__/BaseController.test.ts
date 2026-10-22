@@ -16,10 +16,6 @@ import type { ReactiveControllerHost } from 'lit'
 
 const providerTagName = generateElementName()
 
-beforeAll(() => {
-  customElements.define(providerTagName, QueryClientProvider)
-})
-
 class RecordingController extends BaseController<string> {
   readonly lifecycle: Array<string> = []
 
@@ -47,6 +43,10 @@ class RecordingController extends BaseController<string> {
 describe('BaseController', () => {
   let queryClient: QueryClient
   let container: HTMLElement
+
+  beforeAll(() => {
+    customElements.define(providerTagName, QueryClientProvider)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()

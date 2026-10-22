@@ -24,14 +24,14 @@ import type {
 } from '../../../query-persist-client-core/src'
 import type { QueryObserverResult } from '../../../query-core/src'
 
-beforeAll(() => {
-  notifyManager.setNotifyFunction((fn) => {
-    act(fn)
-  })
-})
-
 describe('useQueries with persist and memoized combine (preact)', () => {
   const storage: Record<string, string> = {}
+
+  beforeAll(() => {
+    notifyManager.setNotifyFunction((fn) => {
+      act(fn)
+    })
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()
