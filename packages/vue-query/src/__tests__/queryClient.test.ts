@@ -459,6 +459,7 @@ describe('QueryCache', () => {
         }),
       )
     })
+
     it('should properly unwrap parameter using infiniteQueryOptions with unref', () => {
       const queryClient = new QueryClient()
 
