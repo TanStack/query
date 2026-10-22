@@ -1619,9 +1619,7 @@ describe('createQuery', () => {
 
   it('should throw error to the nearest svelte:boundary when throwOnError is true', async () => {
     const key = queryKey()
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    const consoleMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const rendered = render(ErrorBoundary, {
       props: {
@@ -1646,9 +1644,7 @@ describe('createQuery', () => {
 
   it('should throw error to the nearest svelte:boundary when throwOnError function returns true', async () => {
     const key = queryKey()
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    const consoleMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const rendered = render(ErrorBoundary, {
       props: {
@@ -1673,9 +1669,7 @@ describe('createQuery', () => {
 
   it('should throw error to the nearest svelte:boundary when queryFn rejects with a falsy error and throwOnError is in use', async () => {
     const key = queryKey()
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    const consoleMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const rendered = render(ErrorBoundary, {
       props: {
@@ -1697,9 +1691,7 @@ describe('createQuery', () => {
 
   it('should throw a cached error to the nearest svelte:boundary without refetching', async () => {
     const key = queryKey()
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    const consoleMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const first = render(Base, {
       props: {
@@ -1719,7 +1711,7 @@ describe('createQuery', () => {
     first.unmount()
 
     // `enabled: false` rules out a fetch, so the throw must come from the cached error.
-    const queryFn = vi.fn(() =>
+    const queryFn = vi.fn<() => Promise<never>>(() =>
       sleep(10).then(() => Promise.reject(new Error('should not fetch'))),
     )
     const rendered = render(ErrorBoundary, {
@@ -1746,9 +1738,7 @@ describe('createQuery', () => {
 
   it('should not throw while a refetch triggered on remount is in flight, only once it settles', async () => {
     const key = queryKey()
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    const consoleMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const first = render(Base, {
       props: {
@@ -1769,7 +1759,7 @@ describe('createQuery', () => {
 
     // The refetch on remount keeps `isFetching` true, so the cached error must not throw yet.
     const { promise, reject } = promiseWithResolvers<never>()
-    const queryFn = vi.fn(() => promise)
+    const queryFn = vi.fn<() => Promise<never>>(() => promise)
     const rendered = render(ErrorBoundary, {
       props: {
         queryClient,
@@ -1783,7 +1773,7 @@ describe('createQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(rendered.queryByTestId('error-boundary')).toBeNull()
+    expect(rendered.queryByTestId('error-boundary')).not.toBeInTheDocument()
 
     reject(new Error('Refetch failed'))
     await vi.advanceTimersByTimeAsync(10)
@@ -1796,12 +1786,10 @@ describe('createQuery', () => {
 
   it("should refetch and recover after `<svelte:boundary>`'s reset re-mounts the query", async () => {
     const key = queryKey()
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    const consoleMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     let callCount = 0
-    const queryFn = vi.fn(() => {
+    const queryFn = vi.fn<() => Promise<never>>(() => {
       callCount++
       return sleep(10).then(() =>
         Promise.reject(new Error(`Error ${callCount}`)),
@@ -1824,7 +1812,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('error-boundary')).toHaveTextContent('Error 1')
     expect(queryFn).toHaveBeenCalledTimes(1)
 
-    await fireEvent.click(rendered.getByTestId('reset-button'))
+    fireEvent.click(rendered.getByTestId('reset-button'))
     await vi.advanceTimersByTimeAsync(10)
 
     expect(queryFn).toHaveBeenCalledTimes(2)
@@ -1885,9 +1873,7 @@ describe('createQuery', () => {
 
   it('should throw a cached error to the nearest svelte:boundary when the query client changes', async () => {
     const key = queryKey()
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    const consoleMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const queryClient1 = new QueryClient()
     const queryClient2 = new QueryClient()
@@ -1910,7 +1896,7 @@ describe('createQuery', () => {
     first.unmount()
 
     let currentClient = $state(queryClient1)
-    const queryFn = vi.fn(() =>
+    const queryFn = vi.fn<() => Promise<never>>(() =>
       sleep(10).then(() => Promise.reject(new Error('should not fetch'))),
     )
 

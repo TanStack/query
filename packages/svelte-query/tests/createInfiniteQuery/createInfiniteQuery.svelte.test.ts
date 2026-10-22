@@ -234,9 +234,7 @@ describe('createInfiniteQuery', () => {
 
   it('should throw error to the nearest svelte:boundary when throwOnError is true', async () => {
     const key = queryKey()
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    const consoleMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const rendered = render(ErrorBoundary, {
       props: {
@@ -263,9 +261,7 @@ describe('createInfiniteQuery', () => {
 
   it('should throw error to the nearest svelte:boundary when throwOnError function returns true', async () => {
     const key = queryKey()
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    const consoleMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const rendered = render(ErrorBoundary, {
       props: {
@@ -315,9 +311,7 @@ describe('createInfiniteQuery', () => {
 
   it('should throw error to the nearest svelte:boundary when queryFn rejects with a falsy error and throwOnError is in use', async () => {
     const key = queryKey()
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    const consoleMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const rendered = render(ErrorBoundary, {
       props: {
