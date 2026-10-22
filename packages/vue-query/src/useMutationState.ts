@@ -25,7 +25,8 @@ type VueMutationFilters = MaybeRefDeep<MutationFilters>
  * getter.
  */
 export type UseIsMutatingFilters =
-  VueMutationFilters | (() => VueMutationFilters)
+  | VueMutationFilters
+  | (() => VueMutationFilters)
 
 /**
  * The `useIsMutating` composable returns a `ref` to the `number` of mutations that your application currently

@@ -111,7 +111,7 @@ describe('Utils tests', () => {
           ['fr', 'bonjour'],
         ])
 
-        /* eslint-disable cspell/spellchecker */
+        /* oxlint-disable cspell/spellchecker */
         const newData = updateNestedDataByPath(oldData, ['fr'], 'salut')
         expect(newData).not.toBe(oldData) // should not be the same reference
 
@@ -128,7 +128,7 @@ describe('Utils tests', () => {
           }
         `)
       })
-      /* eslint-enable */
+      /* oxlint-enable cspell/spellchecker */
     })
 
     describe('empty path', () => {
@@ -171,13 +171,13 @@ describe('Utils tests', () => {
       it('should return primitive data as-is when it is not an Object/Array/Map/Set', () => {
         expect(updateNestedDataByPath(42, ['x'], 'new')).toBe(42)
         expect(updateNestedDataByPath('hello', ['x'], 'new')).toBe('hello')
-        expect(updateNestedDataByPath(null, ['x'], 'new')).toBe(null)
+        expect(updateNestedDataByPath(null, ['x'], 'new')).toBeNull()
       })
     })
 
     describe('nested data', () => {
       it('should update data correctly', () => {
-        /* eslint-disable cspell/spellchecker */
+        /* oxlint-disable cspell/spellchecker */
         const oldData = new Map([
           [
             'pumpkin-pie',
@@ -433,7 +433,7 @@ describe('Utils tests', () => {
             },
           }
         `)
-        /* eslint-enable */
+        /* oxlint-enable cspell/spellchecker */
       })
     })
   })
@@ -556,13 +556,13 @@ describe('Utils tests', () => {
       it('should return primitive data as-is when it is not an Object/Array/Map/Set', () => {
         expect(deleteNestedDataByPath(42, ['x'])).toBe(42)
         expect(deleteNestedDataByPath('hello', ['x'])).toBe('hello')
-        expect(deleteNestedDataByPath(null, ['x'])).toBe(null)
+        expect(deleteNestedDataByPath(null, ['x'])).toBeNull()
       })
     })
 
     describe('nested data', () => {
       it('should delete nested items correctly', () => {
-        /* eslint-disable cspell/spellchecker */
+        /* oxlint-disable cspell/spellchecker */
         const oldData = new Map([
           [
             'pumpkin-pie',
@@ -813,7 +813,7 @@ describe('Utils tests', () => {
             },
           }
         `)
-        /* eslint-enable */
+        /* oxlint-enable cspell/spellchecker */
       })
     })
   })
@@ -1323,26 +1323,26 @@ describe('Utils tests', () => {
 
     function setupMatchMediaMock(initialMatches: boolean) {
       const listeners = new Set<MatchMediaListener>()
-      const matchMedia: typeof window.matchMedia = vi.fn(
-        (query: string): MediaQueryList => ({
-          matches: initialMatches,
-          media: query,
-          onchange: null,
-          addEventListener: vi.fn(
-            (_event: string, listener: MatchMediaListener) => {
-              listeners.add(listener)
-            },
-          ) as MediaQueryList['addEventListener'],
-          removeEventListener: vi.fn(
-            (_event: string, listener: MatchMediaListener) => {
-              listeners.delete(listener)
-            },
-          ) as MediaQueryList['removeEventListener'],
-          dispatchEvent: vi.fn(() => true),
-          addListener: vi.fn(),
-          removeListener: vi.fn(),
-        }),
-      )
+      const matchMedia: typeof window.matchMedia = vi.fn<
+        (query: string) => MediaQueryList
+      >((query: string): MediaQueryList => ({
+        matches: initialMatches,
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn<
+          (_event: string, listener: MatchMediaListener) => void
+        >((_event: string, listener: MatchMediaListener) => {
+          listeners.add(listener)
+        }) as MediaQueryList['addEventListener'],
+        removeEventListener: vi.fn<
+          (_event: string, listener: MatchMediaListener) => void
+        >((_event: string, listener: MatchMediaListener) => {
+          listeners.delete(listener)
+        }) as MediaQueryList['removeEventListener'],
+        dispatchEvent: vi.fn<() => boolean>(() => true),
+        addListener: vi.fn<MediaQueryList['addListener']>(),
+        removeListener: vi.fn<MediaQueryList['removeListener']>(),
+      }))
       vi.stubGlobal('matchMedia', matchMedia)
       return {
         matchMedia,

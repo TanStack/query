@@ -4,13 +4,14 @@ import { useEffect, useState } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { MutationCache, QueryCache, QueryClient, useMutation } from '..'
-import type { UseMutationResult } from '../types'
 import { ErrorBoundary } from './ErrorBoundary'
 import {
   mockOnlineManagerIsOnline,
   renderWithClient,
   setActTimeout,
 } from './utils'
+import type { UseMutationResult } from '../types'
+import type { MutationFunctionContext } from '..'
 
 describe('useMutation', () => {
   let queryCache: QueryCache
@@ -83,7 +84,7 @@ describe('useMutation', () => {
 
     const { getByRole, queryByRole } = renderWithClient(queryClient, <Page />)
 
-    expect(queryByRole('heading')).toBeNull()
+    expect(queryByRole('heading')).not.toBeInTheDocument()
 
     fireEvent.click(getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
@@ -93,7 +94,7 @@ describe('useMutation', () => {
 
     fireEvent.click(getByRole('button', { name: /reset/i }))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByRole('heading')).toBeNull()
+    expect(queryByRole('heading')).not.toBeInTheDocument()
   })
 
   it('should call mutate callbacks when useMutation has no callbacks', async () => {
@@ -126,7 +127,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual(['mutate.onSuccess', 'mutate.onSettled'])
+    expect(callbacks).toStrictEqual(['mutate.onSuccess', 'mutate.onSettled'])
   })
 
   it('should call mutateAsync callbacks when useMutation has no callbacks', async () => {
@@ -156,7 +157,7 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual([
+    expect(callbacks).toStrictEqual([
       'mutateAsync.onSuccess',
       'mutateAsync.onSettled',
     ])
@@ -195,7 +196,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual(['mutate.onError', 'mutate.onSettled'])
+    expect(callbacks).toStrictEqual(['mutate.onError', 'mutate.onSettled'])
   })
 
   it('should call mutateAsync error callbacks when useMutation has no callbacks', async () => {
@@ -230,7 +231,10 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual(['mutateAsync.onError', 'mutateAsync.onSettled'])
+    expect(callbacks).toStrictEqual([
+      'mutateAsync.onError',
+      'mutateAsync.onSettled',
+    ])
   })
 
   it('should call only mutate onSuccess when useMutation has no callbacks', async () => {
@@ -260,7 +264,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual(['mutate.onSuccess'])
+    expect(callbacks).toStrictEqual(['mutate.onSuccess'])
   })
 
   it('should call only mutate onError when useMutation has no callbacks', async () => {
@@ -293,7 +297,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual(['mutate.onError'])
+    expect(callbacks).toStrictEqual(['mutate.onError'])
   })
 
   it('should call only mutate onSettled when useMutation has no callbacks', async () => {
@@ -323,7 +327,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual(['mutate.onSettled'])
+    expect(callbacks).toStrictEqual(['mutate.onSettled'])
   })
 
   it('should call only mutateAsync onSuccess when useMutation has no callbacks', async () => {
@@ -350,7 +354,7 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual(['mutateAsync.onSuccess'])
+    expect(callbacks).toStrictEqual(['mutateAsync.onSuccess'])
   })
 
   it('should call only mutateAsync onError when useMutation has no callbacks', async () => {
@@ -382,7 +386,7 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual(['mutateAsync.onError'])
+    expect(callbacks).toStrictEqual(['mutateAsync.onError'])
   })
 
   it('should call only mutateAsync onSettled when useMutation has no callbacks', async () => {
@@ -409,13 +413,13 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual(['mutateAsync.onSettled'])
+    expect(callbacks).toStrictEqual(['mutateAsync.onSettled'])
   })
 
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
     let count = 0
-    const onSuccessMock = vi.fn()
-    const onSettledMock = vi.fn()
+    const onSuccessMock = vi.fn<(data: number) => void>()
+    const onSettledMock = vi.fn<(data: number | undefined) => void>()
 
     function Page() {
       const { mutate } = useMutation({
@@ -465,9 +469,7 @@ describe('useMutation', () => {
 
     const mutateFn = vi.fn<(value: Value) => Promise<Value>>()
 
-    mutateFn.mockImplementationOnce(() => {
-      return Promise.reject(new Error('Error test Jonas'))
-    })
+    mutateFn.mockRejectedValueOnce(new Error('Error test Jonas'))
 
     mutateFn.mockImplementation((value) =>
       sleep(10).then(() => Promise.resolve(value)),
@@ -512,8 +514,8 @@ describe('useMutation', () => {
   })
 
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
-    const onErrorMock = vi.fn()
-    const onSettledMock = vi.fn()
+    const onErrorMock = vi.fn<(message: string) => void>()
+    const onSettledMock = vi.fn<(message: string | undefined) => void>()
     let count = 0
 
     function Page() {
@@ -609,7 +611,10 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual(['useMutation.onSuccess', 'mutate.onSuccess'])
+    expect(callbacks).toStrictEqual([
+      'useMutation.onSuccess',
+      'mutate.onSuccess',
+    ])
   })
 
   it('should be able to call `onError` callback after failed mutate', async () => {
@@ -645,7 +650,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual(['useMutation.onError', 'mutate.onError'])
+    expect(callbacks).toStrictEqual(['useMutation.onError', 'mutate.onError'])
   })
 
   it('should be able to call `onSettled` callback after mutate', async () => {
@@ -678,7 +683,10 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual(['useMutation.onSettled', 'mutate.onSettled'])
+    expect(callbacks).toStrictEqual([
+      'useMutation.onSettled',
+      'mutate.onSettled',
+    ])
   })
 
   it('should be able to call `onSuccess` callback after successful mutateAsync', async () => {
@@ -708,7 +716,7 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual([
+    expect(callbacks).toStrictEqual([
       'useMutation.onSuccess',
       'mutateAsync.onSuccess',
     ])
@@ -746,7 +754,10 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual(['useMutation.onError', 'mutateAsync.onError'])
+    expect(callbacks).toStrictEqual([
+      'useMutation.onError',
+      'mutateAsync.onError',
+    ])
   })
 
   it('should be able to call `onSettled` callback after mutateAsync', async () => {
@@ -776,7 +787,7 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual([
+    expect(callbacks).toStrictEqual([
       'useMutation.onSettled',
       'mutateAsync.onSettled',
     ])
@@ -822,7 +833,7 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual([
+    expect(callbacks).toStrictEqual([
       'useMutation.onSuccess',
       'useMutation.onSettled',
       'mutateAsync.onSuccess',
@@ -872,7 +883,7 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual([
+    expect(callbacks).toStrictEqual([
       'useMutation.onError',
       'useMutation.onSettled',
       'mutateAsync.onError',
@@ -918,7 +929,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual([
+    expect(callbacks).toStrictEqual([
       'useMutation.onError',
       'useMutation.onSettled',
       'mutate.onError',
@@ -962,7 +973,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(callbacks).toEqual([
+    expect(callbacks).toStrictEqual([
       'useMutation.onSuccess',
       'useMutation.onSettled',
       'mutate.onSuccess',
@@ -998,7 +1009,7 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(21)
-    expect(states.length).toBe(3)
+    expect(states).toHaveLength(3)
     expect(states[0]).toMatchObject({ data: undefined, isPending: false })
     expect(states[1]).toMatchObject({ data: undefined, isPending: true })
     expect(states[2]).toMatchObject({ data: 'todo', isPending: false })
@@ -1087,7 +1098,8 @@ describe('useMutation', () => {
 
   it('should call onMutate even if paused', async () => {
     const onlineMock = mockOnlineManagerIsOnline(false)
-    const onMutate = vi.fn()
+    const onMutate =
+      vi.fn<(variables: string, context: MutationFunctionContext) => void>()
     let count = 0
 
     function Page() {
@@ -1238,8 +1250,8 @@ describe('useMutation', () => {
     expect(rendered.getByText('isPaused: true')).toBeInTheDocument()
 
     expect(
-      queryClient.getMutationCache().findAll({ mutationKey: key }).length,
-    ).toBe(1)
+      queryClient.getMutationCache().findAll({ mutationKey: key }),
+    ).toHaveLength(1)
     expect(
       queryClient.getMutationCache().findAll({ mutationKey: key })[0]?.state,
     ).toMatchObject({
@@ -1268,7 +1280,7 @@ describe('useMutation', () => {
     onlineMock.mockRestore()
   })
 
-  // eslint-disable-next-line vitest/expect-expect
+  // oxlint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', () => {
     function Mutates() {
       const { mutate } = useMutation({ mutationFn: () => sleep(10) })
@@ -1295,7 +1307,7 @@ describe('useMutation', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     function Page() {
       const { mutate } = useMutation<string, Error>({
         mutationFn: () => {
@@ -1311,7 +1323,7 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText, queryByText } = renderWithClient(
+    const { getByText } = renderWithClient(
       queryClient,
       <ErrorBoundary
         fallbackRender={() => (
@@ -1326,7 +1338,7 @@ describe('useMutation', () => {
 
     fireEvent.click(getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('error')).not.toBeNull()
+    expect(getByText('error')).toBeInTheDocument()
 
     expect(consoleErrorMock.mock.calls[0]?.[1]).toBe(err)
 
@@ -1336,7 +1348,7 @@ describe('useMutation', () => {
   it('should be able to throw an error when throwOnError is a function that returns true', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     let boundary = false
     function Page() {
       const { mutate, error } = useMutation<string>({
@@ -1358,7 +1370,7 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText, queryByText } = renderWithClient(
+    const { getByText } = renderWithClient(
       queryClient,
       <ErrorBoundary
         fallbackRender={() => (
@@ -1374,13 +1386,13 @@ describe('useMutation', () => {
     // first error goes to component
     fireEvent.click(getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('mock error')).not.toBeNull()
+    expect(getByText('mock error')).toBeInTheDocument()
 
     // second error goes to boundary
     boundary = true
     fireEvent.click(getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('error boundary')).not.toBeNull()
+    expect(getByText('error boundary')).toBeInTheDocument()
     consoleErrorMock.mockRestore()
   })
 
@@ -1459,7 +1471,7 @@ describe('useMutation', () => {
   })
 
   it('should pass meta to mutation on success', async () => {
-    const successMock = vi.fn()
+    const successMock = vi.fn<(message: unknown) => void>()
 
     const queryClientMutationMeta = new QueryClient({
       mutationCache: new MutationCache({
@@ -1485,21 +1497,18 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText, queryByText } = renderWithClient(
-      queryClientMutationMeta,
-      <Page />,
-    )
+    const { getByText } = renderWithClient(queryClientMutationMeta, <Page />)
 
     fireEvent.click(getByText('succeed'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('successTest')).not.toBeNull()
+    expect(getByText('successTest')).toBeInTheDocument()
 
     expect(successMock).toHaveBeenCalledTimes(1)
     expect(successMock).toHaveBeenCalledWith(metaSuccessMessage)
   })
 
   it('should pass meta to mutation on error', async () => {
-    const errorMock = vi.fn()
+    const errorMock = vi.fn<(message: unknown) => void>()
 
     const queryClientMutationMeta = new QueryClient({
       mutationCache: new MutationCache({
@@ -1527,24 +1536,55 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText, queryByText } = renderWithClient(
-      queryClientMutationMeta,
-      <Page />,
-    )
+    const { getByText } = renderWithClient(queryClientMutationMeta, <Page />)
 
     fireEvent.click(getByText('error'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('errorTest')).not.toBeNull()
+    expect(getByText('errorTest')).toBeInTheDocument()
 
     expect(errorMock).toHaveBeenCalledTimes(1)
     expect(errorMock).toHaveBeenCalledWith(metaErrorMessage)
   })
 
   it('should call cache callbacks when unmounted', async () => {
-    const onSuccess = vi.fn()
-    const onSuccessMutate = vi.fn()
-    const onSettled = vi.fn()
-    const onSettledMutate = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: number,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSuccessMutate =
+      vi.fn<
+        (
+          data: number,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettled =
+      vi.fn<
+        (
+          data: number | undefined,
+          error: Error | null,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettledMutate =
+      vi.fn<
+        (
+          data: number | undefined,
+          error: Error | null,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
     const mutationKey = queryKey()
     let count = 0
 
@@ -1613,10 +1653,44 @@ describe('useMutation', () => {
   })
 
   it('should call mutate callbacks only for the last observer', async () => {
-    const onSuccess = vi.fn()
-    const onSuccessMutate = vi.fn()
-    const onSettled = vi.fn()
-    const onSettledMutate = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSuccessMutate =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettled =
+      vi.fn<
+        (
+          data: string | undefined,
+          error: Error | null,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettledMutate =
+      vi.fn<
+        (
+          data: string | undefined,
+          error: Error | null,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
     let count = 0
 
     function Page() {
@@ -1724,7 +1798,15 @@ describe('useMutation', () => {
 
   it('should go to error state if onSuccess callback errors', async () => {
     const error = new Error('error from onSuccess')
-    const onError = vi.fn()
+    const onError =
+      vi.fn<
+        (
+          error: Error,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     function Page() {
       const mutation = useMutation({
@@ -1759,7 +1841,7 @@ describe('useMutation', () => {
   it('should go to error state if onError callback errors', async ({
     onTestFinished,
   }) => {
-    const unhandledRejectionFn = vi.fn()
+    const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
     process.on('unhandledRejection', unhandledRejectionFn)
     onTestFinished(() => {
       process.off('unhandledRejection', unhandledRejectionFn)
@@ -1803,7 +1885,7 @@ describe('useMutation', () => {
   it('should go to error state if onSettled callback errors', async ({
     onTestFinished,
   }) => {
-    const unhandledRejectionFn = vi.fn()
+    const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
     process.on('unhandledRejection', unhandledRejectionFn)
     onTestFinished(() => {
       process.off('unhandledRejection', unhandledRejectionFn)
@@ -1811,7 +1893,15 @@ describe('useMutation', () => {
 
     const error = new Error('error from onSettled')
     const mutateFnError = new Error('mutateFnError')
-    const onError = vi.fn()
+    const onError =
+      vi.fn<
+        (
+          error: Error,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     function Page() {
       const mutation = useMutation({
@@ -2249,9 +2339,9 @@ describe('useMutation', () => {
     // The optimistic value lands after onMutate's first await, so flush
     // microtasks before asserting.
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+    expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1', 'Todo 2'])
     await vi.advanceTimersByTimeAsync(11)
-    expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
+    expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1'])
   })
 
   it('should keep the optimistic update in place when the mutation succeeds', async () => {
@@ -2281,7 +2371,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /add/i }))
     await vi.advanceTimersByTimeAsync(11)
-    expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+    expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1', 'Todo 2'])
   })
 
   it('should be able to run multiple mutateAsync calls in parallel with Promise.all', async () => {
@@ -2422,7 +2512,15 @@ describe('useMutation', () => {
   })
 
   it('should pass a non-undefined onMutateResult alongside context to onSuccess', async () => {
-    const onSuccess = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: { startedWith: string },
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     function Page() {
       const { mutate } = useMutation({
@@ -2442,7 +2540,7 @@ describe('useMutation', () => {
     const [data, variables, onMutateResult, context] = onSuccess.mock.calls[0]!
     expect(data).toBe('TODO')
     expect(variables).toBe('todo')
-    expect(onMutateResult).toEqual({ startedWith: 'todo' })
+    expect(onMutateResult).toStrictEqual({ startedWith: 'todo' })
     expect(context.client).toBe(queryClient)
     expect(context.meta).toBeUndefined()
     expect(context.mutationKey).toBeUndefined()
@@ -2474,7 +2572,15 @@ describe('useMutation', () => {
   })
 
   it('should include mutationKey in the context passed to hook-level callbacks', async () => {
-    const onSuccess = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     function Page() {
       const { mutate } = useMutation({
@@ -2491,7 +2597,10 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
     expect(onSuccess).toHaveBeenCalledTimes(1)
-    expect(onSuccess.mock.calls[0]?.[3].mutationKey).toEqual(['todos', 'add'])
+    expect(onSuccess.mock.calls[0]?.[3].mutationKey).toStrictEqual([
+      'todos',
+      'add',
+    ])
   })
 
   it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {

@@ -146,7 +146,7 @@ export function cloneDeepUnref<T>(
  * @param value - The value to check.
  * @returns `true` if `value` is a plain object.
  */
-// eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
+// oxlint-disable-next-line typescript/no-wrapper-object-types
 function isPlainObject(value: unknown): value is Object {
   if (Object.prototype.toString.call(value) !== '[object Object]') {
     return false

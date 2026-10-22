@@ -1,7 +1,7 @@
-import type { QueryClient } from '@tanstack/query-core'
 import { createContext } from 'preact'
-import type { ComponentChildren, VNode } from 'preact'
 import { useContext, useEffect } from 'preact/hooks'
+import type { QueryClient } from '@tanstack/query-core'
+import type { ComponentChildren, VNode } from 'preact'
 
 /**
  * The context that `useQueryClient` reads from. `QueryClientProvider` is the normal way to set it.

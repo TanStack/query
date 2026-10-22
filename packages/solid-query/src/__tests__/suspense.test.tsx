@@ -86,7 +86,7 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
     expect(renders).toBe(4)
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     expect(states[1]).toMatchObject({ data: 1, status: 'success' })
     expect(states[3]).toMatchObject({ data: 2, status: 'success' })
   })
@@ -127,10 +127,10 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
-    // eslint-disable-next-line cspell/spellchecker
+    // oxlint-disable-next-line cspell/spellchecker
     // TODO(lukemurray): in react this is 1 in solid this is 2 because suspense
     // occurs on read.
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[1]).toMatchObject({
       data: { pages: [1], pageParams: [1] },
       status: 'success',
@@ -140,9 +140,9 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
-    // eslint-disable-next-line cspell/spellchecker
+    // oxlint-disable-next-line cspell/spellchecker
     // TODO(lukemurray): in react this is 2 and in solid it is 4
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     expect(states[3]).toMatchObject({
       data: { pages: [2], pageParams: [1] },
       status: 'success',
@@ -152,7 +152,9 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       useQuery(() => ({
@@ -450,7 +452,7 @@ describe("useQuery's in Suspense mode", () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -542,7 +544,7 @@ describe("useQuery's in Suspense mode", () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -633,7 +635,9 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn when not enabled', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn(() => sleep(10).then(() => '23'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => '23'),
+    )
 
     function Page() {
       const [enabled, setEnabled] = createSignal(false)
@@ -674,7 +678,7 @@ describe("useQuery's in Suspense mode", () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     let succeed = true
 
@@ -738,7 +742,7 @@ describe("useQuery's in Suspense mode", () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     function Page() {
       const [key, setKey] = createSignal(0)
@@ -798,7 +802,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should error caught in error boundary without infinite loop when enabled changed', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     function Page() {
       const queryKeys = '1'
@@ -898,7 +902,7 @@ describe("useQuery's in Suspense mode", () => {
       status: 'success',
     })
     expect(renders).toBe(2)
-    expect(rendered.queryByText('rendered')).toBeInTheDocument()
+    expect(rendered.getByText('rendered')).toBeInTheDocument()
   })
 })
 

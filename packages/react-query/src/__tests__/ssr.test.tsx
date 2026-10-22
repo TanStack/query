@@ -1,6 +1,15 @@
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
@@ -17,10 +26,13 @@ import {
 import { setIsServer } from './utils'
 
 describe('Server Side Rendering', () => {
-  setIsServer(true)
-
+  let restoreIsServer: () => void
   let queryCache: QueryCache
   let queryClient: QueryClient
+
+  beforeAll(() => {
+    restoreIsServer = setIsServer(true)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -33,9 +45,15 @@ describe('Server Side Rendering', () => {
     vi.useRealTimers()
   })
 
+  afterAll(() => {
+    restoreIsServer()
+  })
+
   it('should not trigger fetch', () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       const query = useQuery({ queryKey: key, queryFn })
@@ -76,7 +94,9 @@ describe('Server Side Rendering', () => {
 
   it('should return existing data from the cache', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       const query = useQuery({ queryKey: key, queryFn })
@@ -130,12 +150,14 @@ describe('Server Side Rendering', () => {
 
     const keys = queryCache.getAll().map((query) => query.queryKey)
 
-    expect(keys).toEqual([[key, 1]])
+    expect(keys).toStrictEqual([[key, 1]])
   })
 
   it('should return the correct state from useInfiniteQuery', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'page 1'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'page 1'),
+    )
 
     function Page() {
       const query = useInfiniteQuery({

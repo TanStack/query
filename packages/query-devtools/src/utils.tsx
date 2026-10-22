@@ -350,7 +350,8 @@ export const deleteNestedDataByPath = (
  * @param target - The shadow root to add the style tag to, instead of `document.head`.
  */
 export const setupStyleSheet = (nonce?: string, target?: ShadowRoot) => {
-  if (!nonce) return // Goober reads window.__nonce__ every time it creates or accesses its style
+  if (!nonce)
+    return // Goober reads window.__nonce__ every time it creates or accesses its style
   // element (el.nonce = window.__nonce__). Without this, goober overwrites the
   // nonce we set on the pre-created element with undefined, clearing it.
   ;(window as any).__nonce__ = nonce

@@ -97,7 +97,7 @@ describe('PendingTasks Integration', () => {
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
       expect(query.status()).toBe('error')
-      expect(query.error()).toEqual(new Error('instant-error'))
+      expect(query.error()).toStrictEqual(new Error('instant-error'))
     })
 
     it('should handle synchronous mutationFn with whenStable()', async () => {
@@ -146,7 +146,7 @@ describe('PendingTasks Integration', () => {
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
       expect(mutation.isError()).toBe(true)
-      expect(mutation.error()).toEqual(new Error('sync-mutation-error'))
+      expect(mutation.error()).toStrictEqual(new Error('sync-mutation-error'))
     })
   })
 
@@ -299,7 +299,7 @@ describe('PendingTasks Integration', () => {
       // Angular should become stable even though component was destroyed
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(150)
-      await expect(stablePromise).resolves.toEqual(undefined)
+      await expect(stablePromise).resolves.toBeUndefined()
     })
 
     it('should cleanup pending tasks when component with active mutation is destroyed', async () => {
@@ -314,7 +314,7 @@ describe('PendingTasks Integration', () => {
       // Angular should become stable even though component was destroyed
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(150)
-      await expect(stablePromise).resolves.toEqual(undefined)
+      await expect(stablePromise).resolves.toBeUndefined()
     })
   })
 
@@ -486,9 +486,9 @@ describe('PendingTasks Integration', () => {
       await vi.advanceTimersByTimeAsync(20)
       await stablePromise
       expect(query1.status()).toBe('success')
-      expect(query1.data()).toEqual({ id: 1 })
+      expect(query1.data()).toStrictEqual({ id: 1 })
       expect(query2.status()).toBe('success')
-      expect(query2.data()).toEqual({ id: 2 })
+      expect(query2.data()).toStrictEqual({ id: 2 })
 
       httpTestingController.verify()
     })
