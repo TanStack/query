@@ -623,7 +623,6 @@ describe('useMutation', () => {
       )
     } finally {
       consoleWarnMock.mockRestore()
-      vi.unstubAllEnvs()
     }
   })
 

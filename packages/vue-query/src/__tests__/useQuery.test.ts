@@ -684,7 +684,6 @@ describe('useQuery', () => {
         )
       } finally {
         consoleWarnMock.mockRestore()
-        vi.unstubAllEnvs()
       }
     })
   })

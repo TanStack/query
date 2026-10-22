@@ -28,7 +28,6 @@ function stubPipWindow(overrides: FakePipWindowOverrides = {}) {
 
 describe('PiPContext', () => {
   afterEach(() => {
-    vi.unstubAllGlobals()
     localStorage.clear()
   })
 

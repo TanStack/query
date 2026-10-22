@@ -123,7 +123,6 @@ describe('usePrefetchQuery', () => {
       )
     } finally {
       consoleWarnMock.mockRestore()
-      vi.unstubAllEnvs()
     }
   })
 })
