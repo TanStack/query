@@ -331,6 +331,7 @@ export default defineConfig({
         'vitest/require-to-throw-message': 'error',
         'vitest/valid-expect': 'off',
         'vitest-js/no-conditional-in-test': 'error',
+        'vitest-js/padding-around-after-all-blocks': 'error',
         'vitest-js/padding-around-after-each-blocks': 'error',
         'vitest-js/padding-around-before-all-blocks': 'error',
         'vitest-js/padding-around-before-each-blocks': 'error',
