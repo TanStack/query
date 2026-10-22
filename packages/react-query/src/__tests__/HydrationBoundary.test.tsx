@@ -30,6 +30,7 @@ describe('React hydration', () => {
     stringifiedState = JSON.stringify(dehydrated)
     queryClient.clear()
   })
+
   afterEach(() => {
     vi.useRealTimers()
   })
