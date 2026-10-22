@@ -118,6 +118,7 @@ describe('timeoutManager', () => {
       provider = createMockProvider()
       timeoutManager.setTimeoutProvider(provider)
     })
+
     afterEach(() => {
       timeoutManager.setTimeoutProvider(defaultTimeoutProvider)
     })

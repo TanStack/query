@@ -2748,6 +2748,7 @@ describe('queryClient', () => {
       onlineManager.setOnline(true)
       focusManager.setFocused(undefined)
     })
+
     it('should notify queryCache and mutationCache if focused', async () => {
       const testClient = new QueryClient()
       testClient.mount()
