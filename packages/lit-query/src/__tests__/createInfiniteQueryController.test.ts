@@ -18,6 +18,7 @@ import type { InfiniteData, QueryFunctionContext } from '@tanstack/query-core'
 import type { Mock } from 'vitest'
 
 const providerTagName = generateElementName()
+
 beforeAll(() => {
   customElements.define(providerTagName, QueryClientProvider)
 })
