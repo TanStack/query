@@ -313,6 +313,7 @@ export default defineConfig({
         'vitest/prefer-hooks-on-top': 'error',
         'vitest/prefer-import-in-mock': 'error',
         'vitest/prefer-importing-vitest-globals': 'error',
+        'vitest/prefer-lowercase-title': ['error', { ignore: ['describe'] }],
         'vitest/prefer-mock-promise-shorthand': 'error',
         'vitest/prefer-mock-return-shorthand': 'error',
         'vitest/prefer-snapshot-hint': 'error',
