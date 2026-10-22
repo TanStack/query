@@ -4,20 +4,31 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { broadcastQueryClient } from '..'
 import type { BroadcastErrorEvent } from '..'
 import type { QueryCache } from '@tanstack/query-core'
+import type { BroadcastChannel } from 'broadcast-channel'
 
-const mockPostMessage = vi.fn().mockResolvedValue(undefined)
-const mockClose = vi.fn()
+const mockPostMessage = vi
+  .fn<BroadcastChannel['postMessage']>()
+  .mockResolvedValue(undefined)
+const mockClose = vi.fn<BroadcastChannel['close']>()
 let lastCreatedChannel: { onmessage: ((action: any) => void) | null }
 
-vi.mock('broadcast-channel', async (importOriginal) => {
+vi.mock(import('broadcast-channel'), async (importOriginal) => {
   const actual = await importOriginal()
   return {
-    ...(actual as object),
+    ...actual,
     BroadcastChannel: class MockBroadcastChannel {
+      readonly id = 0
+      readonly name: string
+      readonly options = {}
+      readonly type = 'simulate'
+      readonly isClosed = false
       onmessage = null
       postMessage = mockPostMessage
       close = mockClose
-      constructor() {
+      addEventListener = vi.fn<BroadcastChannel['addEventListener']>()
+      removeEventListener = vi.fn<BroadcastChannel['removeEventListener']>()
+      constructor(name: string) {
+        this.name = name
         lastCreatedChannel = this
       }
     },
@@ -84,7 +95,9 @@ describe('broadcastQueryClient', () => {
       // A later local change must still be broadcast to other tabs, instead
       // of being silently swallowed because the transaction flag got stuck.
       queryClient.setQueryData(localKey, { value: 1 })
-      expect(mockPostMessage).toHaveBeenCalled()
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        expect.objectContaining({ queryKey: localKey }),
+      )
     })
 
     it('should keep broadcasting local changes after query.setState throws for an existing query', () => {
@@ -118,7 +131,9 @@ describe('broadcastQueryClient', () => {
       mockPostMessage.mockClear()
 
       queryClient.setQueryData(localKey, { value: 1 })
-      expect(mockPostMessage).toHaveBeenCalled()
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        expect.objectContaining({ queryKey: localKey }),
+      )
     })
 
     it('should not overwrite an existing query with data when an "added" message arrives for it', () => {
@@ -143,7 +158,7 @@ describe('broadcastQueryClient', () => {
         queryKey: existingKey,
         state: { status: 'pending', data: undefined },
       })
-      expect(queryClient.getQueryData(existingKey)).toEqual({
+      expect(queryClient.getQueryData(existingKey)).toStrictEqual({
         value: 'resolved',
       })
       expect(queryClient.getQueryState(existingKey)?.status).toBe('success')
@@ -171,7 +186,7 @@ describe('broadcastQueryClient', () => {
         queryKey: existingKey,
         state: { status: 'success', data: { value: 'from other tab' } },
       })
-      expect(queryClient.getQueryData(existingKey)).toEqual({
+      expect(queryClient.getQueryData(existingKey)).toStrictEqual({
         value: 'from other tab',
       })
     })
@@ -200,7 +215,7 @@ describe('broadcastQueryClient', () => {
       process.on('unhandledRejection', onUnhandledRejection)
 
       try {
-        const onBroadcastError = vi.fn().mockImplementation(() => {
+        const onBroadcastError = vi.fn<() => never>().mockImplementation(() => {
           throw new Error('boom')
         })
 
@@ -270,7 +285,7 @@ describe('broadcastQueryClient', () => {
 
       try {
         const onBroadcastError = vi
-          .fn()
+          .fn<() => Promise<never>>()
           .mockRejectedValueOnce(new Error('async boom'))
 
         broadcastQueryClient({
@@ -329,7 +344,10 @@ describe('broadcastQueryClient', () => {
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
-      const onBroadcastError = vi.fn()
+      const onBroadcastError =
+        vi.fn<
+          (error: unknown, event: BroadcastErrorEvent) => void | Promise<void>
+        >()
       broadcastQueryClient({
         queryClient,
         broadcastChannel: 'test_channel',

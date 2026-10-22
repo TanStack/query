@@ -34,6 +34,7 @@ describe('infiniteQueryOptions', () => {
       }),
     )
   })
+
   it('should infer types for callbacks', () => {
     infiniteQueryOptions({
       queryKey: queryKey(),
@@ -46,6 +47,7 @@ describe('infiniteQueryOptions', () => {
       },
     })
   })
+
   it('should work when passed to useInfiniteQuery', () => {
     const options = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -61,6 +63,7 @@ describe('infiniteQueryOptions', () => {
       InfiniteData<string, unknown> | undefined
     >()
   })
+
   it('should work when passed to useSuspenseInfiniteQuery', () => {
     const options = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -73,6 +76,7 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
   })
+
   it('should work when passed to infiniteQuery', async () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
@@ -85,6 +89,7 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
+
   it('should work when passed to infiniteQuery with select', async () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
@@ -98,6 +103,7 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<Array<string>>()
   })
+
   it('should work when passed to infiniteQuery with enabled: false', async () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
@@ -111,6 +117,7 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
+
   it('should work when passed to infiniteQuery with skipToken', async () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
@@ -123,6 +130,7 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
   })
+
   it('should work when passed to fetchInfiniteQuery', async () => {
     const options = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -136,6 +144,7 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
+
   it('should tag the queryKey with the result type of the QueryFn', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -146,6 +155,7 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
   })
+
   it('should tag the queryKey even if no promise is returned', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -156,6 +166,7 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
   })
+
   it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -167,6 +178,7 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
   })
+
   it('should return the proper type when passed to getQueryData', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -182,6 +194,7 @@ describe('infiniteQueryOptions', () => {
       InfiniteData<string, unknown> | undefined
     >()
   })
+
   it('should properly type when passed to setQueryData', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -202,6 +215,7 @@ describe('infiniteQueryOptions', () => {
       InfiniteData<string, unknown> | undefined
     >()
   })
+
   it('should throw a type error when using queryFn with skipToken in a suspense query', () => {
     const options = infiniteQueryOptions({
       queryKey: queryKey(),

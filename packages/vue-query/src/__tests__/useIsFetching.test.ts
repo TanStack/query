@@ -4,7 +4,7 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { useIsFetching } from '../useIsFetching'
 
-vi.mock('../useQueryClient')
+vi.mock(import('../useQueryClient'))
 
 describe('useIsFetching', () => {
   beforeEach(() => {
@@ -28,11 +28,11 @@ describe('useIsFetching', () => {
     })
     const isFetching = useIsFetching()
 
-    expect(isFetchingQuery.value).toStrictEqual(true)
-    expect(isFetching.value).toStrictEqual(2)
+    expect(isFetchingQuery.value).toBe(true)
+    expect(isFetching.value).toBe(2)
     await vi.advanceTimersByTimeAsync(0)
-    expect(isFetchingQuery.value).toStrictEqual(false)
-    expect(isFetching.value).toStrictEqual(0)
+    expect(isFetchingQuery.value).toBe(false)
+    expect(isFetching.value).toBe(0)
   })
 
   it('should stop listening to changes on onScopeDispose', async () => {
@@ -46,14 +46,14 @@ describe('useIsFetching', () => {
     })
     const isFetching = useIsFetching()
 
-    expect(status.value).toStrictEqual('pending')
-    expect(isFetching.value).toStrictEqual(1)
+    expect(status.value).toBe('pending')
+    expect(isFetching.value).toBe(1)
     await vi.advanceTimersByTimeAsync(0)
-    expect(status.value).toStrictEqual('pending')
-    expect(isFetching.value).toStrictEqual(1)
+    expect(status.value).toBe('pending')
+    expect(isFetching.value).toBe(1)
     await vi.advanceTimersByTimeAsync(0)
-    expect(status.value).toStrictEqual('pending')
-    expect(isFetching.value).toStrictEqual(1)
+    expect(status.value).toBe('pending')
+    expect(isFetching.value).toBe(1)
 
     onScopeDisposeMock.mockReset()
   })
@@ -67,11 +67,11 @@ describe('useIsFetching', () => {
     })
     const isFetching = useIsFetching(filter)
 
-    expect(isFetching.value).toStrictEqual(0)
+    expect(isFetching.value).toBe(0)
 
     filter.stale = true
     await vi.advanceTimersByTimeAsync(0)
-    expect(isFetching.value).toStrictEqual(1)
+    expect(isFetching.value).toBe(1)
   })
 
   it('should work with options getter and be reactive', async () => {
@@ -86,11 +86,11 @@ describe('useIsFetching', () => {
       queryKey: key,
     }))
 
-    expect(isFetching.value).toStrictEqual(0)
+    expect(isFetching.value).toBe(0)
 
     staleRef.value = true
     await vi.advanceTimersByTimeAsync(0)
-    expect(isFetching.value).toStrictEqual(1)
+    expect(isFetching.value).toBe(1)
   })
 
   it('should warn when used outside of setup function in development mode', () => {

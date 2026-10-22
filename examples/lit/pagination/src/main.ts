@@ -29,7 +29,7 @@ import type {
 } from './api'
 
 type ProjectsCacheSnapshot = Array<[QueryKey, ProjectsPageResponse | undefined]>
-type FavoriteMutationContext = {
+type FavoriteMutationResult = {
   snapshots: ProjectsCacheSnapshot
 }
 
@@ -99,7 +99,7 @@ class PaginationDemo extends LitElement {
     Project,
     Error,
     ToggleProjectFavoriteInput,
-    FavoriteMutationContext
+    FavoriteMutationResult
   >
 
   constructor() {
@@ -112,16 +112,9 @@ class PaginationDemo extends LitElement {
       placeholderData: keepPreviousData,
     }
 
-    this.projectsQuery = createQueryController<ProjectsPageResponse, Error>(
-      this,
-      this.projectsQueryOptions,
-    )
+    this.projectsQuery = createQueryController(this, this.projectsQueryOptions)
 
-    this.createProjectMutation = createMutationController<
-      Project,
-      Error,
-      CreateProjectInput
-    >(
+    this.createProjectMutation = createMutationController(
       this,
       {
         mutationKey: ['create-project'],
@@ -150,12 +143,7 @@ class PaginationDemo extends LitElement {
       queryClient,
     )
 
-    this.favoriteMutation = createMutationController<
-      Project,
-      Error,
-      ToggleProjectFavoriteInput,
-      FavoriteMutationContext
-    >(
+    this.favoriteMutation = createMutationController(
       this,
       {
         mutationKey: ['toggle-project-favorite'],
@@ -189,8 +177,8 @@ class PaginationDemo extends LitElement {
 
           return { snapshots }
         },
-        onError: (_error, _variables, context) => {
-          for (const [key, snapshot] of context?.snapshots ?? []) {
+        onError: (_error, _variables, onMutateResult) => {
+          for (const [key, snapshot] of onMutateResult?.snapshots ?? []) {
             queryClient.setQueryData(key, snapshot)
           }
         },
@@ -421,7 +409,7 @@ class PaginationDemo extends LitElement {
 
         ${
           query.isError
-            ? html`<p data-testid="query-error">${String(query.error)}</p>`
+            ? html`<p data-testid="query-error">${query.error.message}</p>`
             : null
         }
         ${
@@ -493,7 +481,7 @@ class PaginationDemo extends LitElement {
           ${
             createProject.isError
               ? html`<div data-testid="create-mutation-error">
-                  ${String(createProject.error)}
+                  ${createProject.error.message}
                 </div>`
               : null
           }
@@ -530,7 +518,7 @@ class PaginationDemo extends LitElement {
           ${
             favoriteProject.isError
               ? html`<div data-testid="favorite-mutation-error">
-                  ${String(favoriteProject.error)}
+                  ${favoriteProject.error.message}
                 </div>`
               : null
           }
