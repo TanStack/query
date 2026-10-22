@@ -18,13 +18,13 @@ import type { IsFetchingAccessor } from '../useIsFetching.js'
 
 const providerTagName = generateElementName()
 
-beforeAll(() => {
-  customElements.define(providerTagName, QueryClientProvider)
-})
-
 describe('useIsFetching', () => {
   let queryClient: QueryClient
   let container: HTMLElement
+
+  beforeAll(() => {
+    customElements.define(providerTagName, QueryClientProvider)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()

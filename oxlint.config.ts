@@ -329,6 +329,7 @@ export default defineConfig({
         'vitest/require-hook': 'error',
         'vitest/require-mock-type-parameters': 'error',
         'vitest/require-to-throw-message': 'error',
+        'vitest/require-top-level-describe': 'error',
         'vitest/valid-expect': 'off',
         'vitest-js/no-conditional-in-test': 'error',
         'vitest-js/padding-around-after-all-blocks': 'error',

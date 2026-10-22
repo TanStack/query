@@ -17,13 +17,13 @@ import type { MutationResultAccessor } from '../createMutationController.js'
 
 const providerTagName = generateElementName()
 
-beforeAll(() => {
-  customElements.define(providerTagName, QueryClientProvider)
-})
-
 describe('createMutationController', () => {
   let queryClient: QueryClient
   let container: HTMLElement
+
+  beforeAll(() => {
+    customElements.define(providerTagName, QueryClientProvider)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()

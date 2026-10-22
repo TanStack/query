@@ -24,12 +24,6 @@ import type {
   Persister,
 } from '../../../query-persist-client-core/src'
 
-beforeAll(() => {
-  notifyManager.setNotifyFunction((fn) => {
-    act(fn)
-  })
-})
-
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
 
@@ -49,6 +43,12 @@ const createMockPersister = (): Persister => {
 }
 
 describe('PersistQueryClientProvider (preact)', () => {
+  beforeAll(() => {
+    notifyManager.setNotifyFunction((fn) => {
+      act(fn)
+    })
+  })
+
   beforeEach(() => {
     vi.useFakeTimers()
   })

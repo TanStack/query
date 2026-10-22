@@ -18,13 +18,13 @@ import type { IsMutatingAccessor } from '../useIsMutating.js'
 
 const providerTagName = generateElementName()
 
-beforeAll(() => {
-  customElements.define(providerTagName, QueryClientProvider)
-})
-
 describe('useIsMutating', () => {
   let queryClient: QueryClient
   let container: HTMLElement
+
+  beforeAll(() => {
+    customElements.define(providerTagName, QueryClientProvider)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()
