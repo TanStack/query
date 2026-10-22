@@ -20,6 +20,7 @@ describe('useMutation', () => {
   beforeEach(() => {
     vi.useFakeTimers()
   })
+
   afterEach(() => {
     vi.useRealTimers()
   })

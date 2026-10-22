@@ -114,10 +114,12 @@ describe('timeoutManager', () => {
 
   describe('exported functions', () => {
     let provider: ReturnType<typeof createMockProvider>
+
     beforeEach(() => {
       provider = createMockProvider()
       timeoutManager.setTimeoutProvider(provider)
     })
+
     afterEach(() => {
       timeoutManager.setTimeoutProvider(defaultTimeoutProvider)
     })
