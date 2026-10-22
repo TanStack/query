@@ -5,16 +5,22 @@ import SvelteQueryDevtools from '../src/Devtools.svelte'
 import Wrapper from './Wrapper.svelte'
 import type { TanstackQueryDevtools } from '@tanstack/query-devtools'
 
-const setButtonPositionMock = vi.fn()
-const setPositionMock = vi.fn()
-const setInitialIsOpenMock = vi.fn()
-const setErrorTypesMock = vi.fn()
-const setThemeMock = vi.fn()
+const mountMock = vi.fn<TanstackQueryDevtools['mount']>()
+const unmountMock = vi.fn<TanstackQueryDevtools['unmount']>()
+const setButtonPositionMock =
+  vi.fn<TanstackQueryDevtools['setButtonPosition']>()
+const setPositionMock = vi.fn<TanstackQueryDevtools['setPosition']>()
+const setInitialIsOpenMock = vi.fn<TanstackQueryDevtools['setInitialIsOpen']>()
+const setErrorTypesMock = vi.fn<TanstackQueryDevtools['setErrorTypes']>()
+const setThemeMock = vi.fn<TanstackQueryDevtools['setTheme']>()
 
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the mocked devtools classes have '#private' fields, and this environment cannot load the real Solid module
 vi.mock('@tanstack/query-devtools', () => ({
-  TanstackQueryDevtools: vi.fn(function (this: TanstackQueryDevtools) {
-    this.mount = vi.fn()
-    this.unmount = vi.fn()
+  TanstackQueryDevtools: vi.fn<(this: TanstackQueryDevtools) => void>(function (
+    this: TanstackQueryDevtools,
+  ) {
+    this.mount = mountMock
+    this.unmount = unmountMock
     this.setButtonPosition = setButtonPositionMock
     this.setPosition = setPositionMock
     this.setInitialIsOpen = setInitialIsOpenMock
@@ -36,6 +42,7 @@ describe('SvelteQueryDevtools', () => {
     })
 
     expect(
+      // oxlint-disable-next-line testing-library/no-node-access -- the devtools mount container has no role or text to query by
       container.querySelector('.tsqd-parent-container'),
     ).toBeInTheDocument()
   })

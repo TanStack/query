@@ -663,13 +663,13 @@ describe('streamedQuery', () => {
 
     const unsubscribe = observer.subscribe(vi.fn())
     await vi.advanceTimersByTimeAsync(0)
-    expect(arr).toEqual([1, 2, 3])
-    expect(observer.getCurrentResult().data).toEqual([1, 2, 3])
+    expect(arr).toStrictEqual([1, 2, 3])
+    expect(observer.getCurrentResult().data).toStrictEqual([1, 2, 3])
 
     void observer.refetch()
     await vi.advanceTimersByTimeAsync(0)
-    expect(arr).toEqual([1, 2, 3, 1, 2, 3])
-    expect(observer.getCurrentResult().data).toEqual([1, 2, 3])
+    expect(arr).toStrictEqual([1, 2, 3, 1, 2, 3])
+    expect(observer.getCurrentResult().data).toStrictEqual([1, 2, 3])
 
     unsubscribe()
   })

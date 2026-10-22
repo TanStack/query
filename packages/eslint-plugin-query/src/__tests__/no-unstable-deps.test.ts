@@ -1,4 +1,5 @@
 import { RuleTester } from '@typescript-eslint/rule-tester'
+import { describe } from 'vitest'
 import {
   reactHookNames,
   rule,
@@ -436,21 +437,11 @@ const testCases = (reactHookName: string) => [
   },
 ]
 
-reactHookNames.forEach((reactHookName) => {
-  testCases(reactHookName).forEach(
-    ({ reactHookInvocation, reactHookAlias, reactHookImport }) => {
-      ruleTester.run('no-unstable-deps', rule, {
-        valid: baseTestCases.valid({
-          reactHookImport,
-          reactHookInvocation,
-          reactHookAlias,
-        }),
-        invalid: baseTestCases.invalid({
-          reactHookImport,
-          reactHookInvocation,
-          reactHookAlias,
-        }),
-      })
-    },
-  )
+describe.each(reactHookNames)('%s', (reactHookName) => {
+  describe.each(testCases(reactHookName))('$reactHookImport', (testCase) => {
+    ruleTester.run('no-unstable-deps', rule, {
+      valid: baseTestCases.valid(testCase),
+      invalid: baseTestCases.invalid(testCase),
+    })
+  })
 })

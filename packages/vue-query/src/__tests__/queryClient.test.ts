@@ -7,7 +7,7 @@ import { MutationCache } from '../mutationCache'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { queryOptions } from '../queryOptions'
 
-vi.mock('@tanstack/query-core', async () => {
+vi.mock(import('@tanstack/query-core'), async () => {
   const actual = await vi.importActual<{
     QueryClient: typeof QueryClientOrigin
   }>('@tanstack/query-core')
@@ -287,7 +287,10 @@ describe('QueryCache', () => {
         queryKey: queryKeyRef,
       })
 
-      expect(invalidateQueries).toHaveBeenCalled()
+      expect(invalidateQueries).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref, refetchType: 'none' },
+        {},
+      )
       expect(refetchQueries).not.toHaveBeenCalled()
       await vi.advanceTimersByTimeAsync(0)
       expect(refetchQueries).toHaveBeenCalledWith(
@@ -333,7 +336,10 @@ describe('QueryCache', () => {
         refetchType: 'none',
       })
 
-      expect(invalidateQueries).toHaveBeenCalled()
+      expect(invalidateQueries).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref, refetchType: 'none' },
+        {},
+      )
       expect(refetchQueries).not.toHaveBeenCalled()
       await vi.advanceTimersByTimeAsync(0)
       expect(refetchQueries).not.toHaveBeenCalled()
@@ -453,6 +459,7 @@ describe('QueryCache', () => {
         }),
       )
     })
+
     it('should properly unwrap parameter using infiniteQueryOptions with unref', () => {
       const queryClient = new QueryClient()
 
@@ -490,7 +497,7 @@ describe('QueryCache', () => {
         select: ref(select),
       })
 
-      expect(QueryClientOrigin.prototype.infiniteQuery).toBeCalledWith(
+      expect(QueryClientOrigin.prototype.infiniteQuery).toHaveBeenCalledWith(
         expect.objectContaining({
           queryKey: queryKeyUnref,
           initialPageParam: 0,
