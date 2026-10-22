@@ -238,6 +238,7 @@ const ToggleValueButton = (props: {
       )}
       title={'Toggle value'}
       aria-label={'Toggle value'}
+      aria-pressed={props.value}
       onClick={() => {
         const oldData = props.activeQuery.state.data
         const newData = updateNestedDataByPath(

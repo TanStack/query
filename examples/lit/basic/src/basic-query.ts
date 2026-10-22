@@ -5,7 +5,6 @@ import {
   createQueryController,
 } from '@tanstack/lit-query'
 import { fetchTodosFromServer, resetTodoApi } from './todoApi'
-import type { TodosResponse } from './todoApi'
 
 resetTodoApi()
 
@@ -29,7 +28,7 @@ class BasicQueryProvider extends QueryClientProvider {
 customElements.define('basic-query-provider', BasicQueryProvider)
 
 class BasicQueryExample extends LitElement {
-  private readonly todos = createQueryController<TodosResponse, Error>(this, {
+  private readonly todos = createQueryController(this, {
     queryKey: ['todos'],
     queryFn: fetchTodosFromServer,
   })
@@ -61,7 +60,7 @@ class BasicQueryExample extends LitElement {
         ${
           query.isError
             ? html`<p data-testid="basic-error">
-                Error: ${String(query.error)}
+                Error: ${query.error.message}
               </p>`
             : null
         }

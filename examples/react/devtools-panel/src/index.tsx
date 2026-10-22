@@ -30,6 +30,7 @@ function Example() {
       const response = await fetch(
         'https://api.github.com/repos/TanStack/query',
       )
+      if (!response.ok) throw new Error('Failed to fetch repo data')
       return await response.json()
     },
   })

@@ -19,14 +19,14 @@ import {
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import type { UseSuspenseQueryOptions } from '..'
 import { ErrorBoundary } from './ErrorBoundary'
 import { renderWithClient } from './utils'
+import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from '..'
 
 describe('useSuspenseQueries', () => {
   let queryClient: QueryClient
-  const onSuspend = vi.fn()
-  const onQueriesResolution = vi.fn()
+  const onSuspend = vi.fn<() => void>()
+  const onQueriesResolution = vi.fn<(result: unknown) => void>()
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -74,7 +74,7 @@ describe('useSuspenseQueries', () => {
       </Suspense>,
     )
 
-    expect(onSuspend).toHaveBeenCalledOnce()
+    expect(onSuspend).toHaveBeenCalledTimes(1)
   })
 
   it('should resolve queries', async () => {
@@ -186,7 +186,7 @@ describe('useSuspenseQueries', () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1000)
     })
-    expect(onSuspend).toHaveBeenCalled()
+    expect(onSuspend).toHaveBeenCalledWith()
     // the test for onQueriesResolution is React-specific and not applicable to Preact
   })
 
@@ -245,7 +245,12 @@ describe('useSuspenseQueries', () => {
   })
 
   it('should only call combine after resolving', async () => {
-    const spy = vi.fn()
+    const spy =
+      vi.fn<
+        (
+          result: Array<UseSuspenseQueryResult<{ value: number }, Error>>,
+        ) => void
+      >()
     const key = queryKey()
 
     function Page() {
@@ -276,7 +281,11 @@ describe('useSuspenseQueries', () => {
     await vi.advanceTimersByTimeAsync(30)
     expect(rendered.getByText('data')).toBeInTheDocument()
 
-    expect(spy).toHaveBeenCalled()
+    expect(spy).toHaveBeenCalledWith([
+      expect.objectContaining({ data: { value: 10 } }),
+      expect.objectContaining({ data: { value: 20 } }),
+      expect.objectContaining({ data: { value: 30 } }),
+    ])
   })
 
   it('should handle duplicate query keys without infinite loops', async () => {
@@ -333,7 +342,7 @@ describe('useSuspenseQueries', () => {
     )
 
     await vi.advanceTimersByTimeAsync(localDuration)
-    expect(onSuspend).toHaveBeenCalled()
+    expect(onSuspend).toHaveBeenCalledWith()
     await vi.advanceTimersByTimeAsync(100)
     expect(onQueriesResolution).toHaveBeenCalledTimes(1)
     expect(onQueriesResolution).toHaveBeenLastCalledWith({
@@ -396,7 +405,7 @@ describe('useSuspenseQueries', () => {
     await vi.advanceTimersByTimeAsync(20)
     expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
 
-    expect(results).toEqual(['loading', '1', '2'])
+    expect(results).toStrictEqual(['loading', '1', '2'])
   })
 
   it('should not unmount before all promises fetched', async () => {
@@ -453,7 +462,7 @@ describe('useSuspenseQueries', () => {
     await vi.advanceTimersByTimeAsync(20)
     expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
 
-    expect(refs.length).toBe(2)
+    expect(refs).toHaveLength(2)
     expect(refs[0]).toBe(refs[1])
   })
 
@@ -518,7 +527,7 @@ describe('useSuspenseQueries', () => {
   it('should throw error when a queryFn rejects with a falsy error', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -557,7 +566,7 @@ describe('useSuspenseQueries', () => {
   it('should throw error when queryKey changes and new query fails', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page({ fail }: { fail: boolean }) {
@@ -759,7 +768,7 @@ describe('useSuspenseQueries', () => {
   it('should show error boundary even with gcTime:0 (#7853)', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
     let count = 0
 
@@ -859,7 +868,7 @@ describe('useSuspenseQueries', () => {
       expect(queryClient.getQueryData(key)).toBe('data')
       // wait for gc
       await vi.advanceTimersByTimeAsync(1000)
-      expect(queryClient.getQueryData(key)).toBe(undefined)
+      expect(queryClient.getQueryData(key)).toBeUndefined()
     })
   })
 
@@ -905,7 +914,7 @@ describe('useSuspenseQueries', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -941,7 +950,7 @@ describe('useSuspenseQueries', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const key = queryKey()
 
     function Page() {
@@ -1078,8 +1087,12 @@ describe('useSuspenseQueries', () => {
     queryClient.setQueryData(key1, 'cached1')
     queryClient.setQueryData(key2, 'cached2')
 
-    const queryFn1 = vi.fn(() => sleep(20).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data2'),
+    )
 
     function Page() {
       const [result1, result2] = useSuspenseQueries({
@@ -1132,7 +1145,9 @@ describe('useSuspenseQueries', () => {
     // Make key1 fresh again by resetting its data
     queryClient.setQueryData(key1, 'cached1')
 
-    const queryFn1 = vi.fn(() => sleep(20).then(() => 'data1'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data1'),
+    )
 
     function Page() {
       const [result1, result2] = useSuspenseQueries({
@@ -1198,7 +1213,9 @@ describe('useSuspenseQueries', () => {
     // Make key2 fresh again by resetting its data
     queryClient.setQueryData(key2, 'cached2')
 
-    const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data2'),
+    )
 
     function Page() {
       const [result1, result2] = useSuspenseQueries({

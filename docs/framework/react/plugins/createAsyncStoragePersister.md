@@ -7,25 +7,25 @@ title: createAsyncStoragePersister
 
 This utility comes as a separate package and is available under the `'@tanstack/query-async-storage-persister'` import.
 
-```bash
+```sh
 npm install @tanstack/query-async-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/query-async-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/query-async-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/query-async-storage-persister @tanstack/react-query-persist-client
 ```
 

@@ -220,6 +220,7 @@ describe('queryOptions', () => {
 
     const data = new QueryClient().getQueryData(options.queryKey)
     expectTypeOf(data).toEqualTypeOf<unknown>()
+    expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<unknown>()
   })
 
   it('should allow undefined response in initialData', () => {

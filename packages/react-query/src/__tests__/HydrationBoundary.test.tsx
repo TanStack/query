@@ -31,6 +31,7 @@ describe('React hydration', () => {
     stringifiedState = JSON.stringify(dehydrated)
     queryClient.clear()
   })
+
   afterEach(() => {
     vi.useRealTimers()
   })
@@ -497,7 +498,7 @@ describe('React hydration', () => {
   })
 
   it('should not refetch when query has enabled set to false', async () => {
-    const queryFn = vi.fn()
+    const queryFn = vi.fn<() => Promise<Array<string>>>()
     const queryClient = new QueryClient()
 
     function Page() {
@@ -526,7 +527,7 @@ describe('React hydration', () => {
   })
 
   it('should not refetch when query has staleTime set to Infinity', async () => {
-    const queryFn = vi.fn()
+    const queryFn = vi.fn<() => Promise<Array<string>>>()
     const queryClient = new QueryClient()
 
     function Page() {

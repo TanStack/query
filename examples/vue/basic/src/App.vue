@@ -1,30 +1,14 @@
-<script lang="ts">
-import { defineComponent, ref } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 import Posts from './Posts.vue'
 import Post from './Post.vue'
 
-export default defineComponent({
-  name: 'App',
-  components: { Posts, Post, VueQueryDevtools },
-  setup() {
-    const visitedPosts = ref(new Set())
-    const isVisited = (id: number) => visitedPosts.value.has(id)
-
-    const postId = ref(-1)
-    const setPostId = (id: number) => {
-      visitedPosts.value.add(id)
-      postId.value = id
-    }
-
-    return {
-      isVisited,
-      postId,
-      setPostId,
-    }
-  },
-})
+const postId = ref(-1)
+const setPostId = (id: number) => {
+  postId.value = id
+}
 </script>
 
 <template>
@@ -40,6 +24,6 @@ export default defineComponent({
     </strong>
   </p>
   <Post v-if="postId > -1" :postId="postId" @setPostId="setPostId" />
-  <Posts v-else :isVisited="isVisited" @setPostId="setPostId" />
+  <Posts v-else @setPostId="setPostId" />
   <VueQueryDevtools />
 </template>

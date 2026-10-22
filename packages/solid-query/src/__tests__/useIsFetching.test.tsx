@@ -119,7 +119,7 @@ describe('useIsFetching', () => {
 
     // unlike react, Updating renderSecond wont cause a rerender for FirstQuery
     await vi.advanceTimersByTimeAsync(300)
-    expect(isFetchingArray).toEqual([0, 1, 2, 1, 0])
+    expect(isFetchingArray).toStrictEqual([0, 1, 2, 1, 0])
   })
 
   it('should be able to filter', async () => {
@@ -180,7 +180,7 @@ describe('useIsFetching', () => {
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
 
     // at no point should we have isFetching: 2
-    expect(isFetchingArray).toEqual(expect.not.arrayContaining([2]))
+    expect(isFetchingArray).toStrictEqual(expect.not.arrayContaining([2]))
   })
 
   it('should show the correct fetching state when mounted after a query', async () => {
@@ -230,7 +230,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    const rendered = render(() => <Page></Page>)
+    const rendered = render(() => <Page />)
 
     expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -245,7 +245,7 @@ describe('useIsFetching', () => {
     const [client, setClient] = createSignal(queryClient1)
     const queryCache1 = queryClient1.getQueryCache()
     const originalSubscribe1 = queryCache1.subscribe.bind(queryCache1)
-    const unsubscribe1 = vi.fn()
+    const unsubscribe1 = vi.fn<() => void>()
 
     vi.spyOn(queryCache1, 'subscribe').mockImplementation((listener) => {
       const cleanup = originalSubscribe1(listener)
