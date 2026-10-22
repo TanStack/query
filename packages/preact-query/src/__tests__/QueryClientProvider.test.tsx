@@ -1,6 +1,6 @@
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/preact'
-import { afterEach, beforeEach, describe, expect, vi, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
   QueryCache,
@@ -148,7 +148,7 @@ describe('QueryClientProvider', () => {
     it('should throw an error if no query client has been set', () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       function Page() {
         useQueryClient()

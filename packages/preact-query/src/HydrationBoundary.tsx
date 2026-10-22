@@ -1,15 +1,15 @@
 import { hydrate } from '@tanstack/query-core'
+import { Fragment } from 'preact'
+import { useEffect, useMemo, useRef } from 'preact/hooks'
+
+import { useQueryClient } from './QueryClientProvider'
+import type { ComponentChildren } from 'preact'
 import type {
   DehydratedState,
   HydrateOptions,
   OmitKeyof,
   QueryClient,
 } from '@tanstack/query-core'
-import { Fragment } from 'preact'
-import type { ComponentChildren } from 'preact'
-import { useEffect, useMemo, useRef } from 'preact/hooks'
-
-import { useQueryClient } from './QueryClientProvider'
 
 /**
  * The props accepted by `HydrationBoundary`.
@@ -121,6 +121,7 @@ export const HydrationBoundary = ({
       // State is supplied from the outside and we might as well fail
       // gracefully if it has the wrong shape, so while we type `queries`
       // as required, we still provide a fallback.
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
       const queries = state.queries || []
 
       const newQueries: DehydratedState['queries'] = []

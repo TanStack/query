@@ -114,5 +114,5 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
     onCleanup(() => devtools.unmount())
   })
 
-  return <div class="tsqd-parent-container" ref={ref}></div>
+  return <div class="tsqd-parent-container" ref={ref} />
 }

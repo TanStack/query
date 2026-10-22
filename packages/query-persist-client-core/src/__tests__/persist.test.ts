@@ -54,7 +54,7 @@ describe('persist', () => {
       })
 
       const queryKey = ['test']
-      const queryFn = vi.fn().mockReturnValue(1)
+      const queryFn = vi.fn<() => number>().mockReturnValue(1)
       const observer = new QueriesObserver(queryClient, [{ queryKey, queryFn }])
       const unsubscribeObserver = observer.subscribe(vi.fn())
       observer
@@ -107,11 +107,11 @@ describe('persist', () => {
     it('should rethrow exceptions in `restoreClient`', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const consoleWarnMock = vi
         .spyOn(console, 'warn')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const restoreError = new Error('Error restoring client')
 
@@ -135,11 +135,11 @@ describe('persist', () => {
     it('should rethrow exceptions in `removeClient` before `restoreClient`', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const consoleWarnMock = vi
         .spyOn(console, 'warn')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const restoreError = new Error('Error restoring client')
       const removeError = new Error('Error removing client')
@@ -264,7 +264,13 @@ describe('persist', () => {
       await restorePromise
 
       queryClient.setQueryData(['key'], 'data')
-      expect(persister.persistClient).toHaveBeenCalled()
+      expect(persister.persistClient).toHaveBeenCalledWith(
+        expect.objectContaining({
+          clientState: expect.objectContaining({
+            queries: [expect.objectContaining({ queryKey: ['key'] })],
+          }),
+        }),
+      )
 
       unsubscribe()
     })

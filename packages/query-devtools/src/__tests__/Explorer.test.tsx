@@ -7,7 +7,7 @@ import type { Query } from '@tanstack/query-core'
 
 // `goober` compiles every `css\`...\`` template literal at mount time;
 // replace it with a no-op factory so label/role-based assertions stay fast.
-vi.mock('goober', () => {
+vi.mock(import('goober'), () => {
   let counter = 0
   const css = Object.assign(() => `tsqd-${++counter}`, {
     bind: () => css,
@@ -84,7 +84,9 @@ describe('Explorer', () => {
       const rendered = renderExplorer({ label: 'data', value: {} })
 
       expect(rendered.getByText('data:')).toBeInTheDocument()
-      expect(rendered.queryByRole('button', { expanded: false })).toBeNull()
+      expect(
+        rendered.queryByRole('button', { expanded: false }),
+      ).not.toBeInTheDocument()
     })
 
     it('should render an array with an expander showing the item count', () => {
@@ -95,8 +97,8 @@ describe('Explorer', () => {
 
       const expander = rendered.getByRole('button', { expanded: false })
       expect(expander).toBeInTheDocument()
-      expect(expander.textContent).toContain('list')
-      expect(expander.textContent).toContain('3 items')
+      expect(expander).toHaveTextContent('list')
+      expect(expander).toHaveTextContent('3 items')
     })
 
     it('should render children under their index labels when the array expander is clicked', () => {
@@ -148,8 +150,8 @@ describe('Explorer', () => {
       })
 
       expect(
-        rendered.getByRole('button', { expanded: false }).textContent,
-      ).toContain('(Iterable)')
+        rendered.getByRole('button', { expanded: false }),
+      ).toHaveTextContent('(Iterable)')
     })
 
     it('should render iterable children under their numeric index when expanded', () => {
@@ -181,7 +183,9 @@ describe('Explorer', () => {
 
   describe('action menu', () => {
     it('should copy the serialized value to the clipboard when the copy button is clicked', () => {
-      const writeText = vi.fn().mockResolvedValue(undefined)
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockResolvedValue(undefined)
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       queryClient.setQueryData(['data'], { name: 'Anna' })
 
@@ -189,7 +193,7 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -198,13 +202,15 @@ describe('Explorer', () => {
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
       expect(writeText).toHaveBeenCalledTimes(1)
       const [arg] = writeText.mock.calls[0]!
-      expect(JSON.parse(arg as string)).toMatchObject({
+      expect(JSON.parse(arg)).toMatchObject({
         json: { name: 'Anna' },
       })
     })
 
     it('should switch the copy button to an error state when clipboard write fails', async () => {
-      const writeText = vi.fn().mockRejectedValue(new Error('denied'))
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockRejectedValue(new Error('denied'))
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       const consoleErrorMock = vi
         .spyOn(console, 'error')
@@ -215,7 +221,7 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -233,7 +239,9 @@ describe('Explorer', () => {
     })
 
     it('should reset the copy button to the idle state 1500ms after a successful copy', async () => {
-      const writeText = vi.fn().mockResolvedValue(undefined)
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockResolvedValue(undefined)
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       queryClient.setQueryData(['data'], { name: 'Anna' })
 
@@ -241,7 +249,7 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -259,7 +267,9 @@ describe('Explorer', () => {
     })
 
     it('should reset the copy button to the idle state 1500ms after a failed copy', async () => {
-      const writeText = vi.fn().mockRejectedValue(new Error('denied'))
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockRejectedValue(new Error('denied'))
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       vi.spyOn(console, 'error').mockImplementation(() => {})
       queryClient.setQueryData(['data'], { name: 'Anna' })
@@ -268,7 +278,7 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -292,14 +302,14 @@ describe('Explorer', () => {
         label: 'list',
         value: ['a', 'b', 'c'],
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
       })
 
       fireEvent.click(rendered.getByLabelText('Remove all items'))
-      expect(queryClient.getQueryData(['data'])).toEqual([])
+      expect(queryClient.getQueryData(['data'])).toStrictEqual([])
     })
 
     it('should delete the entry at the current "dataPath" when the delete button is clicked', () => {
@@ -310,7 +320,7 @@ describe('Explorer', () => {
         value: ['a', 'b', 'c'],
         editable: true,
         itemsDeletable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -318,7 +328,7 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByLabelText('Delete item'))
-      expect(queryClient.getQueryData(['data'])).toEqual(['a', 'c'])
+      expect(queryClient.getQueryData(['data'])).toStrictEqual(['a', 'c'])
     })
 
     it('should toggle a boolean value via "setQueryData" when the toggle button is clicked', () => {
@@ -328,7 +338,7 @@ describe('Explorer', () => {
         label: 'flag',
         value: true,
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -336,8 +346,31 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByLabelText('Toggle value'))
-      expect(queryClient.getQueryData(['data'])).toEqual({ flag: false })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ flag: false })
     })
+
+    it.each([true, false])(
+      'should expose "aria-pressed" on the toggle button when the value is %s',
+      (value) => {
+        queryClient.setQueryData(['data'], { flag: value })
+
+        const rendered = renderExplorer({
+          label: 'flag',
+          value,
+          editable: true,
+          // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+          activeQuery: queryClient
+            .getQueryCache()
+            .find({ queryKey: ['data'] }) as Query,
+          dataPath: ['flag'],
+        })
+
+        expect(rendered.getByLabelText('Toggle value')).toHaveAttribute(
+          'aria-pressed',
+          String(value),
+        )
+      },
+    )
 
     it('should not render action buttons when "editable" is false', () => {
       queryClient.setQueryData(['data'], ['a'])
@@ -346,14 +379,18 @@ describe('Explorer', () => {
         label: 'list',
         value: ['a'],
         editable: false,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
       })
 
-      expect(rendered.queryByLabelText('Copy object to clipboard')).toBeNull()
-      expect(rendered.queryByLabelText('Remove all items')).toBeNull()
+      expect(
+        rendered.queryByLabelText('Copy object to clipboard'),
+      ).not.toBeInTheDocument()
+      expect(
+        rendered.queryByLabelText('Remove all items'),
+      ).not.toBeInTheDocument()
     })
 
     it('should not render "ClearArrayButton" when value is not an array', () => {
@@ -363,13 +400,15 @@ describe('Explorer', () => {
         label: 'user',
         value: { name: 'Anna' },
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
       })
 
-      expect(rendered.queryByLabelText('Remove all items')).toBeNull()
+      expect(
+        rendered.queryByLabelText('Remove all items'),
+      ).not.toBeInTheDocument()
       expect(
         rendered.getByLabelText('Copy object to clipboard'),
       ).toBeInTheDocument()
@@ -395,7 +434,7 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
-      expect(rendered.queryByText('0:')).toBeNull()
+      expect(rendered.queryByText('0:')).not.toBeInTheDocument()
     })
 
     it('should reveal the items of a page when the page header is clicked', () => {
@@ -423,7 +462,7 @@ describe('Explorer', () => {
       expect(rendered.getByText('"item-100"')).toBeInTheDocument()
 
       fireEvent.click(rendered.getByText('[0...99]'))
-      expect(rendered.queryByText('"item-0"')).toBeNull()
+      expect(rendered.queryByText('"item-0"')).not.toBeInTheDocument()
       expect(rendered.getByText('"item-100"')).toBeInTheDocument()
     })
 
@@ -439,7 +478,7 @@ describe('Explorer', () => {
         value,
         defaultExpanded: ['Data'],
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -460,7 +499,7 @@ describe('Explorer', () => {
         label: 'name',
         value: 'Anna',
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -471,7 +510,7 @@ describe('Explorer', () => {
       expect(input).toHaveAttribute('type', 'text')
 
       fireEvent.change(input, { target: { value: 'Bob' } })
-      expect(queryClient.getQueryData(['data'])).toEqual({ name: 'Bob' })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ name: 'Bob' })
     })
 
     it('should write the new number value via "setQueryData" when a number input is changed', () => {
@@ -481,7 +520,7 @@ describe('Explorer', () => {
         label: 'count',
         value: 1,
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -494,7 +533,7 @@ describe('Explorer', () => {
       fireEvent.change(input, {
         target: { value: '42', valueAsNumber: 42 },
       })
-      expect(queryClient.getQueryData(['data'])).toEqual({ count: 42 })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ count: 42 })
     })
 
     it('should render "ToggleValueButton" inline for a boolean primitive row', () => {
@@ -504,7 +543,7 @@ describe('Explorer', () => {
         label: 'flag',
         value: false,
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -522,7 +561,7 @@ describe('Explorer', () => {
         value: 'Anna',
         editable: true,
         itemsDeletable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -541,7 +580,7 @@ describe('Explorer', () => {
         value,
         defaultExpanded: ['Data'],
         editable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -549,11 +588,11 @@ describe('Explorer', () => {
 
       const ageRow = rendered.getByText('age:').parentElement!
       fireEvent.click(within(ageRow).getByLabelText('Delete item'))
-      expect(queryClient.getQueryData(['data'])).toEqual({ name: 'Anna' })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ name: 'Anna' })
 
       const nameRow = rendered.getByText('name:').parentElement!
       fireEvent.click(within(nameRow).getByLabelText('Delete item'))
-      expect(queryClient.getQueryData(['data'])).toEqual({})
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({})
     })
   })
 
@@ -569,7 +608,7 @@ describe('Explorer', () => {
             value,
             defaultExpanded: ['Data'],
             editable: true,
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+            // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
             activeQuery: queryClient
               .getQueryCache()
               .find({ queryKey: ['data'] }) as Query,
@@ -607,7 +646,7 @@ describe('Explorer', () => {
                   defaultExpanded={['Data']}
                   editable={true}
                   activeQuery={
-                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+                    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
                     queryClient
                       .getQueryCache()
                       .find({ queryKey: ['data'] }) as Query

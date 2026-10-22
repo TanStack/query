@@ -56,7 +56,7 @@ describe('createQueries', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(result[1].data).toBe(2)
 
-      expect(results.length).toBe(3)
+      expect(results).toHaveLength(3)
       expect(results[0]).toMatchObject([
         { data: undefined },
         { data: undefined },
@@ -92,7 +92,7 @@ describe('createQueries', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(result[0].data).toBe(1)
 
-      expect(results.length).toBe(2)
+      expect(results).toHaveLength(2)
       expect(results[0]).toMatchObject([{ data: undefined }])
       expect(results[1]).toMatchObject([{ data: 1 }])
 
@@ -102,7 +102,7 @@ describe('createQueries', () => {
       expect(result[0].data).toBe(2)
 
       // Only one render for data update, no render for isFetching transition
-      expect(results.length).toBe(3)
+      expect(results).toHaveLength(3)
       expect(results[2]).toMatchObject([{ data: 2 }])
     }),
   )
@@ -175,7 +175,7 @@ describe('createQueries', () => {
       )
 
       // Initially both queries are loading
-      expect(queries).toEqual({
+      expect(queries).toStrictEqual({
         combined: true,
         res: '',
       })
@@ -190,7 +190,7 @@ describe('createQueries', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(queries.res).toBe('first result,second result')
 
-      expect(queries).toEqual({
+      expect(queries).toStrictEqual({
         combined: true,
         res: 'first result,second result',
       })
@@ -295,13 +295,17 @@ describe('createQueries', () => {
       await queries.refetch()
 
       // No further re-render because data didn't change
-      expect(results.length).toBe(length)
+      expect(results).toHaveLength(length)
     }),
   )
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data2'),
+    )
 
     const rendered = render(IsRestoring, {
       props: { queryClient, queryFn1, queryFn2 },
@@ -328,8 +332,12 @@ describe('createQueries', () => {
   })
 
   it('should not fetch queries with different durations for the duration of the restoring period when isRestoring is true', async () => {
-    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data2'),
+    )
 
     const rendered = render(IsRestoring, {
       props: { queryClient, queryFn1, queryFn2 },

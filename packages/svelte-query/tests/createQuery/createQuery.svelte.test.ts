@@ -48,7 +48,7 @@ describe('createQuery', () => {
         () => queryClient,
       )
 
-      expect(query).toEqual({
+      expect(query).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: null,
@@ -78,7 +78,7 @@ describe('createQuery', () => {
 
       resolve('resolved')
       await vi.advanceTimersByTimeAsync(0)
-      expect(query).toEqual({
+      expect(query).toStrictEqual({
         data: 'resolved',
         dataUpdatedAt: expect.any(Number),
         error: null,
@@ -133,7 +133,7 @@ describe('createQuery', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(query.isError).toBe(true)
 
-      expect(states[0]).toEqual({
+      expect(states[0]).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: null,
@@ -161,7 +161,7 @@ describe('createQuery', () => {
         fetchStatus: 'fetching',
       })
 
-      expect(states[1]).toEqual({
+      expect(states[1]).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: null,
@@ -189,7 +189,7 @@ describe('createQuery', () => {
         fetchStatus: 'fetching',
       })
 
-      expect(states[2]).toEqual({
+      expect(states[2]).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: new Error('rejected #2'),
@@ -505,7 +505,7 @@ describe('createQuery', () => {
       await vi.advanceTimersByTimeAsync(100)
     })()
 
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     expect(states[0]).toMatchObject({
       isPending: true,
       isSuccess: false,
@@ -530,7 +530,7 @@ describe('createQuery', () => {
 
   it('should fetch when refetchOnMount is false and nothing has been fetched yet', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'test')
+    const queryFn = vi.fn<() => string>(() => 'test')
 
     const rendered = render(Base, {
       props: {
@@ -552,7 +552,7 @@ describe('createQuery', () => {
 
   it('should not fetch when refetchOnMount is false and data has been fetched already', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => 'test')
+    const queryFn = vi.fn<() => string>(() => 'test')
 
     queryClient.setQueryData(key, 'prefetched')
 
@@ -751,7 +751,7 @@ describe('createQuery', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(query.data?.[1]?.done).toBe(true)
 
-      expect(states.length).toBe(4)
+      expect(states).toHaveLength(4)
 
       const todos = states[1]?.data
       const todo1 = todos?.[0]
@@ -761,8 +761,8 @@ describe('createQuery', () => {
       const newTodo1 = newTodos?.[0]
       const newTodo2 = newTodos?.[1]
 
-      expect(todos).toEqual(result1)
-      expect(newTodos).toEqual(result2)
+      expect(todos).toStrictEqual(result1)
+      expect(newTodos).toStrictEqual(result2)
       expect(newTodos).not.toBe(todos)
       expect(newTodo1).toBe(todo1)
       expect(newTodo2).not.toBe(todo2)
@@ -825,7 +825,7 @@ describe('createQuery', () => {
 
   it('should not update disabled query when refetching with refetchQueries', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 1))
+    const queryFn = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 1))
 
     const rendered = render(Base, {
       props: {
@@ -850,7 +850,7 @@ describe('createQuery', () => {
 
   it('should not refetch disabled query when invalidated with invalidateQueries', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 1))
+    const queryFn = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 1))
 
     const rendered = render(Base, {
       props: {
@@ -1180,7 +1180,7 @@ describe('createQuery', () => {
       }, 10)
 
       await vi.advanceTimersByTimeAsync(10)
-      expect(states.length).toBe(2)
+      expect(states).toHaveLength(2)
 
       expect(states[0]).toMatchObject({
         data: undefined,
@@ -1231,8 +1231,8 @@ describe('createQuery', () => {
 
       // Wait for refetch to complete
       await vi.advanceTimersByTimeAsync(20)
-      expect(states.length).toBe(2)
-      expect(states[0]).toBe(undefined)
+      expect(states).toHaveLength(2)
+      expect(states[0]).toBeUndefined()
       expect(states[1]).toBe('test')
     }),
   )
@@ -1297,7 +1297,7 @@ describe('createQuery', () => {
       expect(query.data).toBe('test')
 
       expect(renderCount).toBe(2)
-      expect(states.length).toBe(2)
+      expect(states).toHaveLength(2)
       expect(states[0]).toMatchObject({ data: undefined })
       expect(states[1]).toMatchObject({ data: 'test' })
     }),
@@ -1381,7 +1381,7 @@ describe('createQuery', () => {
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
     const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue('data')
+    const queryFn = vi.fn<() => string>().mockReturnValue('data')
 
     const rendered = render(Base, {
       props: {
@@ -1577,7 +1577,7 @@ describe('createQuery', () => {
     const key = queryKey()
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     const rendered = render(Base, {
       props: {
@@ -1873,13 +1873,13 @@ describe('createQuery', () => {
 
       expect(
         queryClient1.getQueryCache().find({ queryKey: key })?.queryKey,
-      ).toEqual(key)
+      ).toStrictEqual(key)
 
       currentClient = queryClient2
       flushSync()
       expect(
         queryClient2.getQueryCache().find({ queryKey: key })?.queryKey,
-      ).toEqual(key)
+      ).toStrictEqual(key)
     }),
   )
 
@@ -1942,7 +1942,9 @@ describe('createQuery', () => {
   })
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     const rendered = render(IsRestoring, {
       props: { queryClient, queryFn },

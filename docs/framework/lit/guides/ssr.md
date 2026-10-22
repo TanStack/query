@@ -60,7 +60,8 @@ The server passes the same client into the Lit element with a property binding. 
 
 ```ts
 import '@lit-labs/ssr-client/lit-element-hydrate-support.js'
-import { QueryClient, hydrate, type DehydratedState } from '@tanstack/lit-query'
+import { QueryClient, hydrate } from '@tanstack/lit-query'
+import type { DehydratedState } from '@tanstack/lit-query'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -78,7 +79,8 @@ queryClient.mount()
 hydrate(queryClient, dehydratedState)
 
 const appElement = document.querySelector('ssr-app') as
-  (HTMLElement & { queryClient?: QueryClient }) | null
+  | (HTMLElement & { queryClient?: QueryClient })
+  | null
 
 if (!appElement) {
   throw new Error('Expected the SSR app element to exist before hydration.')
@@ -106,12 +108,10 @@ The SSR example creates its controller only after a `queryClient` property is av
 
 ```ts
 import { LitElement } from 'lit'
-import {
-  createQueryController,
-  type QueryClient,
-  type QueryResultAccessor,
-} from '@tanstack/lit-query'
-import { createDataQueryOptions, type DataResponse } from './api.js'
+import { createQueryController } from '@tanstack/lit-query'
+import { createDataQueryOptions } from './api.js'
+import type { QueryClient, QueryResultAccessor } from '@tanstack/lit-query'
+import type { DataResponse } from './api.js'
 
 class SsrApp extends LitElement {
   static properties = {
