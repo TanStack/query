@@ -35,6 +35,7 @@ function PrintStateComponent({ componentName, result }: any): any {
 
 describe('Server side rendering with de/rehydration', () => {
   let previousIsReactActEnvironment: unknown
+
   beforeAll(() => {
     // @ts-expect-error we expect IS_REACT_ACT_ENVIRONMENT to exist
     previousIsReactActEnvironment = globalThis.IS_REACT_ACT_ENVIRONMENT = true
@@ -49,7 +50,7 @@ describe('Server side rendering with de/rehydration', () => {
 
   it('should not mismatch on success', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
     const key = queryKey()
@@ -127,9 +128,9 @@ describe('Server side rendering with de/rehydration', () => {
 
   it('should not mismatch on error', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
-    const fetchDataError = vi.fn(() => {
+    const fetchDataError = vi.fn<() => never>(() => {
       throw new Error('fetchDataError')
     })
     const key = queryKey()
@@ -209,7 +210,7 @@ describe('Server side rendering with de/rehydration', () => {
 
   it('should not mismatch on queries that were not prefetched', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
     const key = queryKey()

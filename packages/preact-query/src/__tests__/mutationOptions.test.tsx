@@ -240,12 +240,12 @@ describe('mutationOptions', () => {
     const rendered = renderWithClient(queryClient, <Mutation />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    expect(isMutatingArray[0]).toEqual(0)
+    expect(isMutatingArray[0]).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutatingArray[1]).toEqual(1)
+    expect(isMutatingArray[1]).toBe(1)
     await vi.advanceTimersByTimeAsync(501)
-    expect(isMutatingArray[2]).toEqual(0)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[2]).toBe(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (without mutationKey in mutationOptions)', async () => {
@@ -271,12 +271,12 @@ describe('mutationOptions', () => {
     const rendered = renderWithClient(queryClient, <Mutation />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    expect(isMutatingArray[0]).toEqual(0)
+    expect(isMutatingArray[0]).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutatingArray[1]).toEqual(1)
+    expect(isMutatingArray[1]).toBe(1)
     await vi.advanceTimersByTimeAsync(501)
-    expect(isMutatingArray[2]).toEqual(0)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[2]).toBe(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating', async () => {
@@ -310,12 +310,12 @@ describe('mutationOptions', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
-    expect(isMutatingArray[0]).toEqual(0)
+    expect(isMutatingArray[0]).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutatingArray[1]).toEqual(2)
+    expect(isMutatingArray[1]).toBe(2)
     await vi.advanceTimersByTimeAsync(501)
-    expect(isMutatingArray[2]).toEqual(0)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[2]).toBe(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (filter mutationOpts1.mutationKey)', async () => {
@@ -351,12 +351,12 @@ describe('mutationOptions', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
-    expect(isMutatingArray[0]).toEqual(0)
+    expect(isMutatingArray[0]).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutatingArray[1]).toEqual(1)
+    expect(isMutatingArray[1]).toBe(1)
     await vi.advanceTimersByTimeAsync(501)
-    expect(isMutatingArray[2]).toEqual(0)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[2]).toBe(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
   })
 
   it('should return the number of fetching mutations when used with useMutationState (with mutationKey in mutationOptions)', async () => {

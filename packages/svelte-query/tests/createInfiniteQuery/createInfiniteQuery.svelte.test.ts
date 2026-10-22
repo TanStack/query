@@ -38,7 +38,7 @@ describe('createInfiniteQuery', () => {
 
     expect(states.value).toHaveLength(2)
 
-    expect(states.value[0]).toEqual({
+    expect(states.value[0]).toStrictEqual({
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -74,7 +74,7 @@ describe('createInfiniteQuery', () => {
       fetchStatus: 'fetching',
     })
 
-    expect(states.value[1]).toEqual({
+    expect(states.value[1]).toStrictEqual({
       data: { pages: [0], pageParams: [0] },
       dataUpdatedAt: expect.any(Number),
       error: null,
@@ -124,7 +124,7 @@ describe('createInfiniteQuery', () => {
     expect(rendered.getByText('Status: success')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(states.value.every((state) => state.status === 'success')).toBe(true)
-    expect(states.value[0]?.data).toEqual({ pages: [0], pageParams: [0] })
+    expect(states.value[0]?.data).toStrictEqual({ pages: [0], pageParams: [0] })
   })
 
   it('should keep initialData visible alongside the error when a refetch fails', async () => {
@@ -155,8 +155,9 @@ describe('createInfiniteQuery', () => {
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
     const key = queryKey()
     const postId = ref<string | undefined>(undefined)
-    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
-      sleep(10).then(() => `comments for 1 page ${pageParam}`),
+    const queryFn = vi.fn<(context: { pageParam: number }) => Promise<string>>(
+      ({ pageParam }: { pageParam: number }) =>
+        sleep(10).then(() => `comments for 1 page ${pageParam}`),
     )
 
     const rendered = render(Options, {

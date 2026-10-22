@@ -17,11 +17,11 @@ function stubPipWindow(overrides: FakePipWindowOverrides = {}) {
     document: pipDocument,
     innerWidth: overrides.innerWidth ?? 800,
     innerHeight: overrides.innerHeight ?? 600,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    close: vi.fn(),
+    addEventListener: vi.fn<(type: string, listener: () => void) => void>(),
+    removeEventListener: vi.fn<(type: string, listener: () => void) => void>(),
+    close: vi.fn<Window['close']>(),
   }
-  const open = vi.fn(() => fakeWindow)
+  const open = vi.fn<() => typeof fakeWindow>(() => fakeWindow)
   vi.stubGlobal('open', open)
   return { pipDocument, fakeWindow, open }
 }
@@ -262,7 +262,7 @@ describe('PiPContext', () => {
         { disabled: true },
       )
 
-      expect(observed).toEqual([fakeWindow, null])
+      expect(observed).toStrictEqual([fakeWindow, null])
       expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
         'false',
       )
@@ -295,7 +295,7 @@ describe('PiPContext', () => {
       )
 
       expect(fakeWindow.close).toHaveBeenCalledTimes(1)
-      expect(observed).toEqual([fakeWindow, null])
+      expect(observed).toStrictEqual([fakeWindow, null])
     })
 
     it('should call "close" only once when "closePipWindow" runs twice in a row', () => {
@@ -338,7 +338,11 @@ describe('PiPContext', () => {
         initialStorage: { 'TanstackQueryDevtools.pip_open': 'true' },
       })
 
-      expect(open).toHaveBeenCalled()
+      expect(open).toHaveBeenCalledWith(
+        '',
+        'TSQD-Devtools-Panel',
+        'width=1024,height=500,popup',
+      )
     })
 
     it('should not auto-open a PiP window when "disabled" is true', () => {
@@ -397,8 +401,8 @@ describe('PiPContext', () => {
   describe('"#_goober" MutationObserver', () => {
     function stubMutationObserver() {
       let observerCallback: MutationCallback | undefined
-      const observeSpy = vi.fn()
-      const disconnectSpy = vi.fn()
+      const observeSpy = vi.fn<MutationObserver['observe']>()
+      const disconnectSpy = vi.fn<MutationObserver['disconnect']>()
       class FakeMutationObserver {
         observe = observeSpy
         disconnect = disconnectSpy
