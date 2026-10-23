@@ -42,6 +42,96 @@ describe('persist', () => {
 
       unsubscribe()
     })
+
+    it('should catch a rejecting persister without an unhandled rejection', async () => {
+      const consoleErrorMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined)
+
+      const persistError = new Error('quota exceeded')
+      const persister = createSpyPersister()
+      persister.persistClient = vi.fn(() => Promise.reject(persistError))
+
+      const unhandledRejections: Array<unknown> = []
+      const onUnhandledRejection = (reason: unknown) => {
+        unhandledRejections.push(reason)
+      }
+      process.on('unhandledRejection', onUnhandledRejection)
+
+      const unsubscribe = persistQueryClientSubscribe({
+        queryClient,
+        persister,
+      })
+
+      try {
+        // added, then updated
+        queryClient.setQueryData(['a'], 1)
+        await vi.waitFor(() => {
+          expect(consoleErrorMock).toHaveBeenCalledTimes(2)
+        })
+
+        expect(consoleErrorMock).toHaveBeenNthCalledWith(1, persistError)
+        expect(consoleErrorMock).toHaveBeenNthCalledWith(2, persistError)
+        expect(consoleWarnMock).toHaveBeenCalledTimes(2)
+        expect(unhandledRejections).toHaveLength(0)
+      } finally {
+        unsubscribe()
+        process.off('unhandledRejection', onUnhandledRejection)
+        consoleErrorMock.mockRestore()
+        consoleWarnMock.mockRestore()
+      }
+    })
+
+    it('should catch a throwing dehydrate callback without an unhandled rejection', async () => {
+      const consoleErrorMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined)
+
+      const dehydrateError = new Error('shouldDehydrateQuery failed')
+      const persister = createSpyPersister()
+
+      const unhandledRejections: Array<unknown> = []
+      const onUnhandledRejection = (reason: unknown) => {
+        unhandledRejections.push(reason)
+      }
+      process.on('unhandledRejection', onUnhandledRejection)
+
+      const unsubscribe = persistQueryClientSubscribe({
+        queryClient,
+        persister,
+        dehydrateOptions: {
+          shouldDehydrateQuery: () => {
+            throw dehydrateError
+          },
+        },
+      })
+
+      try {
+        queryClient.setQueryData(['a'], 1)
+        await vi.waitFor(() => {
+          expect(consoleErrorMock).toHaveBeenCalledTimes(2)
+        })
+
+        expect(persister.persistClient).not.toHaveBeenCalled()
+        expect(consoleErrorMock).toHaveBeenNthCalledWith(1, dehydrateError)
+        expect(consoleErrorMock).toHaveBeenNthCalledWith(2, dehydrateError)
+        expect(consoleWarnMock).toHaveBeenCalledTimes(2)
+        expect(unhandledRejections).toHaveLength(0)
+      } finally {
+        unsubscribe()
+        process.off('unhandledRejection', onUnhandledRejection)
+        consoleErrorMock.mockRestore()
+        consoleWarnMock.mockRestore()
+      }
+    })
   })
 
   describe('persistQueryClientSave', () => {
