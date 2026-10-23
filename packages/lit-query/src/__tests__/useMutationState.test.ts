@@ -8,7 +8,7 @@ import {
   vi,
 } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createMutationController } from '../createMutationController.js'
@@ -87,7 +87,7 @@ describe('useMutationState', () => {
   })
 
   it('should not request another update when mutation cache emits with unchanged selected state', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
     const mutation = queryClient.getMutationCache().build(queryClient, {
       mutationKey,
     })
@@ -140,7 +140,7 @@ describe('useMutationState', () => {
   })
 
   it('should keep the pre-connect placeholder empty until a provider binds', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
 
     class Consumer extends LitElement {
       readonly mutationKey = mutationKey
@@ -180,7 +180,7 @@ describe('useMutationState', () => {
   })
 
   it('should prefer an explicit client over the provider context', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
     const providerClient = new QueryClient()
 
     const provider = document.createElement(
@@ -362,12 +362,12 @@ describe('useMutationState', () => {
   it('should return the states of all mutations when options are omitted', async () => {
     class Producer extends LitElement {
       readonly mutation1 = createMutationController(this, {
-        mutationKey: queryKey(),
+        mutationKey: createKey(),
         mutationFn: () => sleep(10).then(() => 'data1'),
       })
 
       readonly mutation2 = createMutationController(this, {
-        mutationKey: queryKey(),
+        mutationKey: createKey(),
         mutationFn: () => sleep(10).then(() => 'data2'),
       })
     }
@@ -407,8 +407,8 @@ describe('useMutationState', () => {
   })
 
   it('should select and filter by mutation key/status in useMutationState', async () => {
-    const mutationKey1 = queryKey()
-    const mutationKey2 = queryKey()
+    const mutationKey1 = createKey()
+    const mutationKey2 = createKey()
     let activeFilter: { mutationKey?: ReadonlyArray<string> } = {
       mutationKey: mutationKey1,
     }
@@ -474,7 +474,7 @@ describe('useMutationState', () => {
   })
 
   it('should refresh useMutationState when the select closure changes on host update', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
     let label = 'before'
 
     class Host extends LitElement {
@@ -526,7 +526,7 @@ describe('useMutationState', () => {
   })
 
   it('should fail after the handshake and recover under a provider', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
 
     class Consumer extends LitElement {
       readonly mutationKey = mutationKey
@@ -564,7 +564,7 @@ describe('useMutationState', () => {
   })
 
   it('should not throw on an already-connected host with an explicit client', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
 
     class Producer extends LitElement {
       readonly mutation = createMutationController(

@@ -8,7 +8,7 @@ import {
   vi,
 } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import { createQueryController } from '../createQueryController.js'
 import {
@@ -195,7 +195,7 @@ describe('QueryClientProvider/context', () => {
   })
 
   it('should tear down the mounted client before surfacing the error when a connected client is updated to an invalid value', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mount = vi.spyOn(queryClient, 'mount')
     const unmount = vi.spyOn(queryClient, 'unmount')
 

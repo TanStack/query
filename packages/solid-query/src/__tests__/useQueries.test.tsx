@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
 import * as QueryCore from '@tanstack/query-core'
 import { createRenderEffect, createSignal } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   IsRestoringProvider,
   QueriesObserver,
@@ -29,8 +29,8 @@ describe('useQueries', () => {
   })
 
   it('should return the correct states', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const results: Array<Array<UseQueryResult>> = []
 
     function Page() {
@@ -74,7 +74,7 @@ describe('useQueries', () => {
 
   // oxlint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
-    const key1 = queryKey()
+    const key1 = createKey()
 
     // We have to mock the QueriesObserver to not unsubscribe
     // the listener when the component is unmounted
@@ -131,7 +131,7 @@ describe('useQueries', () => {
   })
 
   it('should use provided custom queryClient', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = () => sleep(10).then(() => 'custom client')
 
     function Page() {
@@ -157,8 +157,8 @@ describe('useQueries', () => {
   })
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => Promise<string>>(() =>
       sleep(10).then(() => 'data1'),
     )
