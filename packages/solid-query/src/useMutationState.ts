@@ -141,6 +141,11 @@ export function useMutationState<
   )
 
   createEffect(() => {
+    const nextResult = getResult(mutationCache(), options())
+    setResult((prev) => replaceEqualDeep(prev, nextResult))
+  })
+
+  createEffect(() => {
     const unsubscribe = mutationCache().subscribe(() => {
       const nextResult = replaceEqualDeep(
         result(),
