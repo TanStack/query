@@ -343,7 +343,6 @@ describe('React hydration', () => {
       }),
     )
 
-    hydrateSpy.mockRestore()
     queryClient.clear()
   })
 
@@ -367,7 +366,6 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(hydrateSpy).toHaveBeenCalledTimes(0)
 
-    hydrateSpy.mockRestore()
     queryClient.clear()
   })
 
@@ -391,7 +389,6 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(hydrateSpy).toHaveBeenCalledTimes(0)
 
-    hydrateSpy.mockRestore()
     queryClient.clear()
   })
 
@@ -415,7 +412,6 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(hydrateSpy).toHaveBeenCalledTimes(0)
 
-    hydrateSpy.mockRestore()
     queryClient.clear()
   })
 
@@ -492,7 +488,6 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('new')).toBeInTheDocument()
 
-    hydrateSpy.mockRestore()
     prefetchQueryClient.clear()
     clientQueryClient.clear()
   })

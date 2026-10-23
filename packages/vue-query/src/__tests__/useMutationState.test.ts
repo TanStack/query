@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue-demi'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useMutationState } from '../useMutationState'
 import { useQueryClient } from '../useQueryClient'
@@ -17,7 +17,7 @@ describe('useMutationState', () => {
   })
 
   it('should return variables after calling mutate 1', () => {
-    const key = queryKey()
+    const key = createKey()
     const variables = 'foo123'
 
     const { mutate } = useMutation({
@@ -38,7 +38,7 @@ describe('useMutationState', () => {
   it('should return variables after calling mutate 2', () => {
     const queryClient = useQueryClient()
     queryClient.clear()
-    const key = queryKey()
+    const key = createKey()
     const variables = 'bar234'
 
     const { mutate } = useMutation({
@@ -54,7 +54,7 @@ describe('useMutationState', () => {
   })
 
   it('should work with options getter and be reactive', async () => {
-    const key = queryKey()
+    const key = createKey()
     const keyRef = ref('useMutationStateGetter2')
     const variables = 'foo123'
 
