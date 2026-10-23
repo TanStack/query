@@ -1,4 +1,4 @@
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/preact'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -24,8 +24,8 @@ describe('useQueries', () => {
   })
 
   it('should return the correct states', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const results: Array<Array<UseQueryResult>> = []
 
     function Page() {
@@ -65,7 +65,7 @@ describe('useQueries', () => {
   })
 
   it('should not optimistically show fetching when unsubscribed', () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => Promise<string>>(() => Promise.resolve('data'))
 
     function Page() {
@@ -93,7 +93,7 @@ describe('useQueries', () => {
   })
 
   it('should track results', async () => {
-    const key1 = queryKey()
+    const key1 = createKey()
     const results: Array<Array<UseQueryResult>> = []
     let count = 0
 
@@ -140,13 +140,11 @@ describe('useQueries', () => {
   })
 
   it("should throw error if in one of queries' queryFn throws and throwOnError is in use", async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
-    const key4 = queryKey()
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
+    const key1 = createKey()
+    const key2 = createKey()
+    const key3 = createKey()
+    const key4 = createKey()
 
     function Page() {
       useQueries({
@@ -202,17 +200,14 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('single query error')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it("should throw error if in one of queries' queryFn throws and throwOnError function resolves to true", async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
-    const key4 = queryKey()
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
+    const key1 = createKey()
+    const key2 = createKey()
+    const key3 = createKey()
+    const key4 = createKey()
 
     function Page() {
       useQueries({
@@ -270,14 +265,11 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('single query error')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it("should throw error if in one of queries' queryFn rejects with a falsy error and throwOnError is in use", async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
-    const key = queryKey()
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
+    const key = createKey()
 
     function Page() {
       useQueries({
@@ -307,11 +299,10 @@ describe('useQueries', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it('should use provided custom queryClient', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = async () => {
       return Promise.resolve('custom client')
     }
@@ -339,8 +330,8 @@ describe('useQueries', () => {
   })
 
   it('should combine queries', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     function Page() {
       const queries = useQueries(
@@ -383,7 +374,7 @@ describe('useQueries', () => {
   })
 
   it('should not return new instances when called without queries', async () => {
-    const key = queryKey()
+    const key = createKey()
     const ids: Array<number> = []
     let resultChanged = 0
 
@@ -455,8 +446,8 @@ describe('useQueries', () => {
   })
 
   it('should only call combine with query results', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     function Page() {
       const result = useQueries({
@@ -491,8 +482,8 @@ describe('useQueries', () => {
   })
 
   it('should track property access through combine function', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     let count = 0
     const results: Array<unknown> = []
 
@@ -588,7 +579,7 @@ describe('useQueries', () => {
   })
 
   it('should synchronously track properties of all observer even if a property (isLoading) is only accessed on one observer (#7000)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const ids = [1, 2]
 
     function Page() {
@@ -628,7 +619,7 @@ describe('useQueries', () => {
   })
 
   it('should not have stale closures with combine (#6648)', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [count, setCount] = useState(0)
@@ -671,8 +662,8 @@ describe('useQueries', () => {
   })
 
   it('should optimize combine if it is a stable reference', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const client = new QueryClient()
 
@@ -750,8 +741,8 @@ describe('useQueries', () => {
   })
 
   it('should re-run combine if the functional reference changes', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const client = new QueryClient()
 
@@ -817,8 +808,8 @@ describe('useQueries', () => {
   })
 
   it('should not re-render if combine returns a stable reference', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const client = new QueryClient()
 
@@ -871,9 +862,9 @@ describe('useQueries', () => {
   })
 
   it('should re-render once combine returns a different reference', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
+    const key3 = createKey()
 
     const client = new QueryClient()
 
@@ -926,9 +917,9 @@ describe('useQueries', () => {
   })
 
   it('should track properties correctly with combine', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
+    const key3 = createKey()
 
     const client = new QueryClient()
 
@@ -992,8 +983,8 @@ describe('useQueries', () => {
   })
 
   it('should not re-run stable combine on unrelated re-render', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const client = new QueryClient()
 
@@ -1066,8 +1057,8 @@ describe('useQueries', () => {
 
   it('should not cause infinite re-renders when removing last query', async () => {
     let renderCount = 0
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     function Page() {
       const [queries, setQueries] = useState([
@@ -1135,8 +1126,8 @@ describe('useQueries', () => {
   })
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => Promise<string>>(() =>
       sleep(10).then(() => 'data1'),
     )
@@ -1192,8 +1183,8 @@ describe('useQueries', () => {
   })
 
   it('should not fetch queries with different durations for the duration of the restoring period when isRestoring is true', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => Promise<string>>(() =>
       sleep(10).then(() => 'data1'),
     )

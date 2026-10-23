@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import type { InfiniteData } from '@tanstack/query-core'
@@ -76,7 +76,7 @@ describe('infiniteQueryOptions', () => {
   it('should infer defined types', () => {
     const options = infiniteQueryOptions({
       getNextPageParam: () => 10,
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => ({ wow: true }),
       initialData: {
         pageParams: [undefined],
@@ -109,7 +109,7 @@ describe('infiniteQueryOptions', () => {
   it('should work without defined types', () => {
     const options = infiniteQueryOptions({
       getNextPageParam: () => undefined,
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => ({ wow: true }),
       initialPageParam: 0,
     })
@@ -139,7 +139,7 @@ describe('infiniteQueryOptions', () => {
 
   it('keeps data possibly undefined when initialData is a ternary that can be undefined', () => {
     const options = infiniteQueryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve({ example: true }),
       initialData:
         Math.random() > 0.5

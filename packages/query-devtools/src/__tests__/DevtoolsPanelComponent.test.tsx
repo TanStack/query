@@ -71,7 +71,6 @@ describe('DevtoolsPanelComponent', () => {
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
     document.documentElement.style.fontSize = previousRootFontSize
