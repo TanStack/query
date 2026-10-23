@@ -10,15 +10,15 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/query-async-storage-persister": "^5.104.5",
-    "@tanstack/react-query": "^5.104.5",
-    "@tanstack/react-query-devtools": "^5.104.5",
-    "@tanstack/react-query-persist-client": "^5.104.5",
+    "@tanstack/query-async-storage-persister": "^5.104.6",
+    "@tanstack/react-query": "^5.104.6",
+    "@tanstack/react-query-devtools": "^5.104.6",
+    "@tanstack/react-query-persist-client": "^5.104.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.104.5",
+    "@tanstack/eslint-plugin-query": "^5.104.6",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.71.1",

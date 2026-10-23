@@ -1,5 +1,13 @@
 # @tanstack/angular-query-experimental
 
+## 5.104.6
+
+### Patch Changes
+
+- [#12315](https://github.com/TanStack/query/pull/12315) [`9e42537`](https://github.com/TanStack/query/commit/9e4253766f8015d1372bcd515f50103fd067a42d) - fix(angular-query-experimental/withDevtools): forward an unset 'theme' to the devtools so removing it falls back to the theme selected in the devtools Settings menu
+- Updated dependencies []:
+  - @tanstack/query-core@5.104.6
+
 ## 5.104.5
 
 ### Patch Changes
