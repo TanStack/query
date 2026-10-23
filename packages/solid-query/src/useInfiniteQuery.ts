@@ -23,7 +23,7 @@ import type {
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
- * This overload is selected when `initialData` is set.
+ * This overload is selected when `initialData` is known to be defined.
  * @param options - An accessor returning the {@link DefinedInitialDataInfiniteOptions} to use — everything you
  * can pass to `useInfiniteQuery`, with `initialData` set.
  * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
