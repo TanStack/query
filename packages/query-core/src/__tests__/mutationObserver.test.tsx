@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { MutationObserver, QueryClient } from '..'
 import type { MutationFunctionContext, MutationObserverResult } from '..'
 
@@ -135,7 +135,7 @@ describe('mutationObserver', () => {
   })
 
   it('should reset the observer when changing mutation keys', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutation = new MutationObserver(queryClient, {
       mutationKey: [...key, '1'],
       mutationFn: (text: string) => sleep(5).then(() => text),
@@ -166,7 +166,7 @@ describe('mutationObserver', () => {
   })
 
   it('should not affect already existing mutations when changing mutation keys', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationObserver = new MutationObserver(queryClient, {
       mutationKey: [...key, '1'],
       mutationFn: (text: string) => sleep(5).then(() => text),

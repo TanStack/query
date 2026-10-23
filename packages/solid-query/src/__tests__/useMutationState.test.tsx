@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent } from '@solidjs/testing-library'
 import { createEffect, createSignal } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, useMutation, useMutationState } from '..'
 import { renderWithClient } from './utils'
 
@@ -19,7 +19,7 @@ describe('useMutationState', () => {
   })
 
   it('should return all mutation states when called without options', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
 
     function States() {
       const mutationStates = useMutationState()
@@ -61,8 +61,8 @@ describe('useMutationState', () => {
   })
 
   it('should update when the filters change', async () => {
-    const mutationKey1 = queryKey()
-    const mutationKey2 = queryKey()
+    const mutationKey1 = createKey()
+    const mutationKey2 = createKey()
     const [mutationKey, setMutationKey] = createSignal(mutationKey1)
 
     function States() {
@@ -141,7 +141,7 @@ describe('useMutationState', () => {
 
   it('should return variables after calling mutate', async () => {
     const variables: Array<Array<unknown>> = []
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
 
     function Variables() {
       const states = useMutationState(() => ({

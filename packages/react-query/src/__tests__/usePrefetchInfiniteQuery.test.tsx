@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 import { act, fireEvent } from '@testing-library/react'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -37,7 +37,7 @@ describe('usePrefetchInfiniteQuery', () => {
     ]
 
     const queryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: vi
         .fn<(context: { pageParam: number }) => Promise<string>>()
         .mockImplementation(({ pageParam }) =>
@@ -100,7 +100,7 @@ describe('usePrefetchInfiniteQuery', () => {
     ]
 
     const queryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: vi
         .fn<(context: { pageParam: number }) => Promise<string>>()
         .mockImplementation(({ pageParam }) =>
@@ -155,7 +155,7 @@ describe('usePrefetchInfiniteQuery', () => {
     const data = ['Infinite Page 1', 'Infinite Page 2', 'Infinite Page 3']
 
     const queryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: vi
         .fn<(context: { pageParam: number }) => Promise<string>>()
         .mockImplementation(({ pageParam }) =>

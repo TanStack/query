@@ -9,7 +9,7 @@ import {
   ref,
 } from 'vue-demi'
 import { noop } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
 import type { MutationFunctionContext } from '@tanstack/query-core'
@@ -91,7 +91,7 @@ describe('useMutation', () => {
   })
 
   it('should work with options getter and be reactive', async () => {
-    const key = queryKey()
+    const key = createKey()
     const result = 'Mock data'
     const keyRef = ref('key01')
     const mutationFn = vi.fn<(params: string) => Promise<string>>(
@@ -124,8 +124,8 @@ describe('useMutation', () => {
   })
 
   it('should update reactive options', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryClient = useQueryClient()
     const mutationCache = queryClient.getMutationCache()
     const options = reactive({
@@ -186,8 +186,8 @@ describe('useMutation', () => {
   })
 
   it('should allow for non-options object (mutationFn or mutationKey) passed as arg1 & arg2 to trigger reactive updates', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const mutationKeyRef = ref<Array<string>>(key1)
     const mutationFn = ref((params: string) => sleep(0).then(() => params))
     const queryClient = useQueryClient()
@@ -558,7 +558,7 @@ describe('useMutation', () => {
   })
 
   it('should stop listening to changes on onScopeDispose', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryClient = useQueryClient()
     const onScopeDisposeMock = vi.mocked(onScopeDispose)
     onScopeDisposeMock.mockImplementationOnce((fn) => fn())
@@ -613,18 +613,13 @@ describe('useMutation', () => {
       .spyOn(console, 'warn')
       .mockImplementation(() => {})
 
-    try {
-      useMutation({
-        mutationFn: (params: string) => sleep(0).then(() => params),
-      })
+    useMutation({
+      mutationFn: (params: string) => sleep(0).then(() => params),
+    })
 
-      expect(consoleWarnMock).toHaveBeenCalledWith(
-        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
-      )
-    } finally {
-      consoleWarnMock.mockRestore()
-      vi.unstubAllEnvs()
-    }
+    expect(consoleWarnMock).toHaveBeenCalledWith(
+      'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+    )
   })
 
   describe('throwOnError', () => {
@@ -660,7 +655,6 @@ describe('useMutation', () => {
         expect(throwOnError).toHaveBeenCalledTimes(1)
         expect(throwOnError).toHaveBeenCalledWith(Error('Some error'))
         expect(consoleErrorMock).toHaveBeenCalledWith(Error('Some error'))
-        consoleErrorMock.mockRestore()
       },
     )
 
@@ -695,7 +689,7 @@ describe('useMutation', () => {
 
   describe('optimistic updates', () => {
     it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
-      const key = queryKey()
+      const key = createKey()
       const queryClient = useQueryClient()
       queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
@@ -730,7 +724,7 @@ describe('useMutation', () => {
     })
 
     it('should keep the optimistic update in place when the mutation succeeds', async () => {
-      const key = queryKey()
+      const key = createKey()
       const queryClient = useQueryClient()
       queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
@@ -838,7 +832,7 @@ describe('useMutation', () => {
   })
 
   it('should give mutationFn the same QueryClient instance via context', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryClient = useQueryClient()
     queryClient.setQueryData(key, 'tag-from-this-client')
 
@@ -878,7 +872,7 @@ describe('useMutation', () => {
   })
 
   it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryClient = useQueryClient()
     queryClient.setQueryData(key, 'data')
 
