@@ -6887,7 +6887,7 @@ describe('useQuery', () => {
       const { status, error } = useQuery({
         queryKey: key,
         queryFn,
-        throwOnError: (error) => error.message.includes('404'),
+        throwOnError: (err) => err.message.includes('404'),
         retryOnMount: true,
         staleTime: Infinity,
         retry: false,
