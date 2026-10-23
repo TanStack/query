@@ -2541,6 +2541,68 @@ describe('queryClient', () => {
       expect(queryClient.getQueryState(key)?.dataUpdateCount).toBe(1)
     })
 
+    it('should consistently reject an in-flight fetchQuery with CancelledError when invalidated, with or without an active observer', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+      queryClient.setQueryData(key1, 'initial-data')
+      queryClient.setQueryData(key2, 'initial-data')
+      const queryFn1 = vi.fn(() => sleep(20).then(() => 'fresh-data-1'))
+      const queryFn2 = vi.fn(() => sleep(20).then(() => 'fresh-data-2'))
+
+      // key1 has an active observer, key2 does not
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key1,
+        queryFn: queryFn1,
+        staleTime: Infinity,
+      })
+      const unsubscribe = observer.subscribe(() => undefined)
+
+      const promise1 = queryClient.fetchQuery({
+        queryKey: key1,
+        queryFn: queryFn1,
+        staleTime: 0,
+      })
+      const promise2 = queryClient.fetchQuery({
+        queryKey: key2,
+        queryFn: queryFn2,
+        staleTime: 0,
+      })
+      // attach handlers early to avoid unhandled rejections
+      const settled1 = promise1.then(
+        () => 'resolved' as const,
+        (error: unknown) => error,
+      )
+      const settled2 = promise2.then(
+        () => 'resolved' as const,
+        (error: unknown) => error,
+      )
+
+      await vi.advanceTimersByTimeAsync(10)
+      queryClient.invalidateQueries({ queryKey: key1 })
+      queryClient.invalidateQueries({ queryKey: key2 })
+      await vi.advanceTimersByTimeAsync(100)
+
+      const [result1, result2] = await Promise.all([settled1, settled2])
+      unsubscribe()
+
+      // both reject with CancelledError, regardless of the observer
+      expect(result1).toBeInstanceOf(CancelledError)
+      expect(result2).toBeInstanceOf(CancelledError)
+
+      // the active query is still refetched with fresh data, the inactive
+      // one keeps its data
+      expect(queryClient.getQueryData(key1)).toBe('fresh-data-1')
+      expect(queryClient.getQueryData(key2)).toBe('initial-data')
+
+      // both queries settle back to idle: the silently cancelled fetch must
+      // not leave the non-refetched query stuck at fetchStatus 'fetching'
+      expect(queryClient.getQueryState(key1)?.fetchStatus).toBe('idle')
+      expect(queryClient.getQueryState(key2)?.fetchStatus).toBe('idle')
+      expect(queryClient.isFetching()).toBe(0)
+      // the non-refetched query is still marked as invalidated
+      expect(queryClient.getQueryState(key2)?.isInvalidated).toBe(true)
+    })
+
     it('should cancel ongoing fetches if cancelRefetch option is set (default value)', async () => {
       const key = createKey()
       const abortFn = vi.fn<(event: Event) => void>()
