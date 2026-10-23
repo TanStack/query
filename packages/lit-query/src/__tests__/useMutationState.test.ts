@@ -88,7 +88,7 @@ describe('useMutationState', () => {
 
   it('should not request another update when mutation cache emits with unchanged selected state', async () => {
     const mutationKey = createKey()
-    const mutation = queryClient.getMutationCache().build(queryClient, {
+    const existingMutation = queryClient.getMutationCache().build(queryClient, {
       mutationKey,
     })
 
@@ -127,7 +127,7 @@ describe('useMutationState', () => {
       for (let i = 0; i < 5; i += 1) {
         queryClient.getMutationCache().notify({
           type: 'updated',
-          mutation,
+          mutation: existingMutation,
           action: { type: 'pause' } as never,
         })
         await vi.advanceTimersByTimeAsync(0)

@@ -308,11 +308,11 @@ describe('useMutationState', () => {
       const queryClient = new QueryClient()
       const key = createKey()
       const cache = queryClient.getMutationCache()
-      const mutation = cache.build(queryClient, {
+      const existingMutation = cache.build(queryClient, {
         mutationKey: key,
         meta: { time: 0 },
       })
-      const state = mutation.state
+      const state = existingMutation.state
       const filters = { mutationKey: key }
       const select = (mutation: Mutation) =>
         resultType === 'Date'
@@ -336,7 +336,10 @@ describe('useMutationState', () => {
         ),
       ).toBeInTheDocument()
 
-      mutation.setOptions({ ...mutation.options, meta: { time: 1000 } })
+      existingMutation.setOptions({
+        ...existingMutation.options,
+        meta: { time: 1000 },
+      })
       rendered.rerender(<Page />)
       expect(
         rendered.getByText(
@@ -345,7 +348,7 @@ describe('useMutationState', () => {
             : 'result: [{"time":1000}]',
         ),
       ).toBeInTheDocument()
-      expect(mutation.state).toBe(state)
+      expect(existingMutation.state).toBe(state)
       expect(onCacheChange).not.toHaveBeenCalled()
       unsubscribe()
     },
