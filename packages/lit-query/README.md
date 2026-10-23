@@ -25,7 +25,7 @@ it in production while the API is early.
 ## Install
 
 ```bash
-npm install @tanstack/lit-query @tanstack/query-core lit
+npm install @tanstack/lit-query
 ```
 
 For local development in this repository:
