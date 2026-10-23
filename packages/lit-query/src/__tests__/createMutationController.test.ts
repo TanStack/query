@@ -8,7 +8,7 @@ import {
   vi,
 } from 'vitest'
 import { QueryClient, noop } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createMutationController } from '../createMutationController.js'
@@ -39,7 +39,7 @@ describe('createMutationController', () => {
   })
 
   it('should resolve from the pre-connect placeholder state on the first provider connection', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Consumer extends LitElement {
       readonly mutationKey = key
@@ -87,7 +87,7 @@ describe('createMutationController', () => {
   })
 
   it('should prefer an explicit client over the provider context', async () => {
-    const key = queryKey()
+    const key = createKey()
     const providerClient = new QueryClient()
 
     const provider = document.createElement(
@@ -192,7 +192,7 @@ describe('createMutationController', () => {
   })
 
   it('should be able to use mutation defaults', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     queryClient.setMutationDefaults(key, {
       mutationFn: (text: string) => sleep(10).then(() => text),
@@ -823,7 +823,7 @@ describe('createMutationController', () => {
   })
 
   it('should become a deterministic missing-client state when the provider is missing', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Consumer extends LitElement {
       readonly mutationKey = key
@@ -863,7 +863,7 @@ describe('createMutationController', () => {
   })
 
   it('should recover without reconstruction when a valid provider is adopted later', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Consumer extends LitElement {
       readonly mutationKey = key
@@ -915,7 +915,7 @@ describe('createMutationController', () => {
     host.mutation = createMutationController(
       host,
       {
-        mutationKey: queryKey(),
+        mutationKey: createKey(),
         mutationFn: (value: number) => sleep(10).then(() => value * 2),
       },
       queryClient,
@@ -937,7 +937,7 @@ describe('createMutationController', () => {
   })
 
   it('should defer explicit-client mutation accessors until host fields are initialized', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class DeferredExplicitMutationHost extends LitElement {
       readonly mutation = createMutationController(
@@ -978,7 +978,7 @@ describe('createMutationController', () => {
   })
 
   it('should switch mutation controller to new provider client while connected', async () => {
-    const key = queryKey()
+    const key = createKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -1073,7 +1073,7 @@ describe('createMutationController', () => {
   })
 
   it('should reparent mutation controller under a different provider and bind the new nearest client', async () => {
-    const key = queryKey()
+    const key = createKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 

@@ -3,7 +3,7 @@
   import { createInfiniteQuery } from '../../src/index.js'
   import { setQueryClientContext } from '../../src/context.js'
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
-  import { queryKey, sleep } from '@tanstack/query-test-utils'
+  import { createKey, sleep } from '@tanstack/query-test-utils'
 
   type Props = {
     queryClient: QueryClient
@@ -15,7 +15,7 @@
   setQueryClientContext(queryClient)
 
   const query = createInfiniteQuery(() => ({
-    queryKey: queryKey(),
+    queryKey: createKey(),
     queryFn: () => sleep(10).then(() => ({ count: 1 })),
     select: (data) => ({
       pages: data.pages.map((x) => `count: ${x.count}`),

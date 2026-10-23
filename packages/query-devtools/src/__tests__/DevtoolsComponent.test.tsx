@@ -56,7 +56,6 @@ describe('DevtoolsComponent', () => {
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
   })

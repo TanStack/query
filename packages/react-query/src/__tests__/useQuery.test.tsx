@@ -3,8 +3,8 @@ import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import {
+  createKey,
   mockVisibilityState,
-  queryKey,
   sleep,
 } from '@tanstack/query-test-utils'
 import {
@@ -51,7 +51,7 @@ describe('useQuery', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should allow to set default data value', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const { data = 'default' } = useQuery({
@@ -74,7 +74,7 @@ describe('useQuery', () => {
   })
 
   it('should return the correct states for a successful query', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
@@ -161,7 +161,7 @@ describe('useQuery', () => {
   })
 
   it('should return the correct states for an unsuccessful query', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const states: Array<UseQueryResult> = []
     let index = 0
@@ -277,7 +277,7 @@ describe('useQuery', () => {
   })
 
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     await queryClient
       .query({
@@ -312,7 +312,7 @@ describe('useQuery', () => {
   })
 
   it('should not cancel an ongoing fetch when refetch is called with cancelRefetch=false if we have data already', async () => {
-    const key = queryKey()
+    const key = createKey()
     let fetchCount = 0
 
     function Page() {
@@ -347,7 +347,7 @@ describe('useQuery', () => {
   })
 
   it('should cancel an ongoing fetch when refetch is called (cancelRefetch=true) if we have data already', async () => {
-    const key = queryKey()
+    const key = createKey()
     let fetchCount = 0
 
     function Page() {
@@ -382,7 +382,7 @@ describe('useQuery', () => {
   })
 
   it('should not cancel an ongoing fetch when refetch is called (cancelRefetch=true) if we do not have data yet', async () => {
-    const key = queryKey()
+    const key = createKey()
     let fetchCount = 0
 
     function Page() {
@@ -416,7 +416,7 @@ describe('useQuery', () => {
   })
 
   it('should be able to watch a query without providing a query function', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     queryClient.setQueryDefaults(key, { queryFn: () => 'data' })
@@ -436,7 +436,7 @@ describe('useQuery', () => {
   })
 
   it('should pick up a query when re-mounting with gcTime 0', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
@@ -507,7 +507,7 @@ describe('useQuery', () => {
   })
 
   it('should not get into an infinite loop when removing a query with gcTime 0 and rerendering', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
@@ -576,7 +576,7 @@ describe('useQuery', () => {
   })
 
   it('should fetch when refetchOnMount is false and nothing has been fetched yet', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
@@ -598,7 +598,7 @@ describe('useQuery', () => {
   })
 
   it('should not fetch when refetchOnMount is false and data has been fetched already', () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     queryClient.setQueryData(key, 'prefetched')
@@ -620,7 +620,7 @@ describe('useQuery', () => {
   })
 
   it('should be able to select a part of the data with select', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
@@ -645,7 +645,7 @@ describe('useQuery', () => {
   })
 
   it('should be able to select a part of the data with select in object syntax', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
@@ -670,7 +670,7 @@ describe('useQuery', () => {
   })
 
   it('should throw an error when a selector throws', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
     const error = new Error('Select Error')
 
@@ -699,7 +699,7 @@ describe('useQuery', () => {
   })
 
   it('should not re-run a stable select when it re-renders if selector throws an error', async () => {
-    const key = queryKey()
+    const key = createKey()
     const error = new Error('Select Error')
     let runs = 0
 
@@ -739,7 +739,7 @@ describe('useQuery', () => {
   })
 
   it('should track properties and only re-render when a tracked property changes', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
     let count = 0
 
@@ -779,7 +779,7 @@ describe('useQuery', () => {
   })
 
   it('should always re-render if we are tracking props but not using any', async () => {
-    const key = queryKey()
+    const key = createKey()
     let renderCount = 0
     const states: Array<UseQueryResult<string>> = []
 
@@ -809,7 +809,7 @@ describe('useQuery', () => {
   })
 
   it('should be able to remove a query', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0
 
@@ -857,7 +857,7 @@ describe('useQuery', () => {
   })
 
   it('should create a new query when refetching a removed query', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0
 
@@ -905,7 +905,7 @@ describe('useQuery', () => {
   })
 
   it('should share equal data structures between query results', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const result1 = [
       { id: '1', done: false },
@@ -973,7 +973,7 @@ describe('useQuery', () => {
   })
 
   it('should use query function from hook when the existing query does not have a query function', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     queryClient.setQueryData(key, 'set')
 
@@ -1008,7 +1008,7 @@ describe('useQuery', () => {
   })
 
   it('should update query stale state and refetch when invalidated with invalidateQueries', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     function Page() {
@@ -1054,7 +1054,7 @@ describe('useQuery', () => {
   })
 
   it('should not update disabled query when refetching with refetchQueries', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0
 
@@ -1093,7 +1093,7 @@ describe('useQuery', () => {
   })
 
   it('should not refetch disabled query when invalidated with invalidateQueries', () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0
 
@@ -1131,7 +1131,7 @@ describe('useQuery', () => {
   })
 
   it('should not fetch when switching to a disabled query', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
 
     function Page() {
@@ -1187,7 +1187,7 @@ describe('useQuery', () => {
   })
 
   it('should keep the previous data when placeholderData is set', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
 
     function Page() {
@@ -1249,7 +1249,7 @@ describe('useQuery', () => {
   })
 
   it('should keep the previous data when placeholderData is set and select fn transform is used', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
 
     function Page() {
@@ -1315,7 +1315,7 @@ describe('useQuery', () => {
 
   it('should keep the previous queryKey (from prevQuery) between multiple pending queries when placeholderData is set and select fn transform is used', async () => {
     const keys: Array<ReadonlyArray<unknown> | null> = []
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
 
     function Page() {
@@ -1364,7 +1364,7 @@ describe('useQuery', () => {
   })
 
   it('should show placeholderData between multiple pending queries when select fn transform is used', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
 
     function Page() {
@@ -1444,7 +1444,7 @@ describe('useQuery', () => {
   })
 
   it('should transition to error state when placeholderData is set', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
 
     function Page({ count }: { count: number }) {
@@ -1539,7 +1539,7 @@ describe('useQuery', () => {
   })
 
   it('should not show initial data from next query if placeholderData is set', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<DefinedUseQueryResult<number>> = []
 
     function Page() {
@@ -1607,7 +1607,7 @@ describe('useQuery', () => {
   })
 
   it('should keep the previous data on disabled query when placeholderData is set', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
 
     function Page() {
@@ -1695,7 +1695,7 @@ describe('useQuery', () => {
   })
 
   it('should keep the previous data on disabled query when placeholderData is set and switching query key multiple times', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
 
     queryClient.setQueryData([key, 10], 10)
@@ -1775,7 +1775,7 @@ describe('useQuery', () => {
   })
 
   it('should use the correct query function when components use different configurations', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
 
     function FirstComponent() {
@@ -1835,7 +1835,7 @@ describe('useQuery', () => {
   })
 
   it('should be able to set different stale times for a query', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states1: Array<UseQueryResult<string>> = []
     const states2: Array<UseQueryResult<string>> = []
 
@@ -1928,7 +1928,7 @@ describe('useQuery', () => {
   })
 
   it('should re-render when a query becomes stale', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
@@ -1951,7 +1951,7 @@ describe('useQuery', () => {
   })
 
   it('should re-render disabled observers when other observers trigger a query (#8741)', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const useUserInfoQuery = ({
       id,
@@ -2010,7 +2010,7 @@ describe('useQuery', () => {
 
   describe('notifyOnChangeProps', () => {
     it('should not re-render when it should only re-render only data change and the selected data did not change', async () => {
-      const key = queryKey()
+      const key = createKey()
       const states: Array<UseQueryResult<string>> = []
 
       function Page() {
@@ -2049,7 +2049,7 @@ describe('useQuery', () => {
     })
 
     it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
-      const key = queryKey()
+      const key = createKey()
       const states: Array<UseQueryResult<string>> = []
 
       function Page() {
@@ -2102,7 +2102,7 @@ describe('useQuery', () => {
     // See https://github.com/TanStack/query/discussions/5588
     describe('function', () => {
       it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
-        const key = queryKey()
+        const key = createKey()
         const states: Array<UseQueryResult<string>> = []
 
         function Page() {
@@ -2150,7 +2150,7 @@ describe('useQuery', () => {
       })
 
       it('should not re-render when change props are not actively being tracked', async () => {
-        const key = queryKey()
+        const key = createKey()
         const states: Array<UseQueryResult<string>> = []
 
         function Page() {
@@ -2252,8 +2252,8 @@ describe('useQuery', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/137
   it('should not override initial data in dependent queries', () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     function Page() {
       const first = useQuery({
@@ -2289,7 +2289,7 @@ describe('useQuery', () => {
   })
 
   it('should update query options', () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryFn = () => sleep(10).then(() => 'data1')
 
@@ -2305,7 +2305,7 @@ describe('useQuery', () => {
   })
 
   it('should batch re-renders', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     let renders = 0
 
@@ -2333,7 +2333,7 @@ describe('useQuery', () => {
   })
 
   it('should render latest data even if react has discarded certain renders', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [_newState, setNewState] = React.useState('state')
@@ -2356,8 +2356,8 @@ describe('useQuery', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/170
   it('should start with status pending, fetchStatus idle if enabled is false', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     function Page() {
       const first = useQuery({
@@ -2401,7 +2401,7 @@ describe('useQuery', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/144
   it('should be in "pending" state by default', () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const { status } = useQuery({
@@ -2418,7 +2418,7 @@ describe('useQuery', () => {
   })
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
       .mockReturnValue('data')
@@ -2450,7 +2450,7 @@ describe('useQuery', () => {
   })
 
   it('should not refetch stale query on focus when `refetchOnWindowFocus` is set to `false`', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0
 
@@ -2480,7 +2480,7 @@ describe('useQuery', () => {
   })
 
   it('should not refetch stale query on focus when `refetchOnWindowFocus` is set to a function that returns `false`', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0
 
@@ -2510,7 +2510,7 @@ describe('useQuery', () => {
   })
 
   it('should not refetch fresh query on focus when `refetchOnWindowFocus` is set to `true`', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0
 
@@ -2540,7 +2540,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch fresh query on focus when `refetchOnWindowFocus` is set to `always`', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0
 
@@ -2576,7 +2576,7 @@ describe('useQuery', () => {
   })
 
   it('should calculate focus behavior for `refetchOnWindowFocus` depending on function', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0
 
@@ -2626,7 +2626,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch fresh query when refetchOnMount is set to always', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     await queryClient
@@ -2664,7 +2664,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch stale query when refetchOnMount is set to true', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     await queryClient
@@ -2704,10 +2704,8 @@ describe('useQuery', () => {
   })
 
   it('should set status to error if queryFn throws', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
-    const key = queryKey()
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
+    const key = createKey()
 
     function Page() {
       const { status, error } = useQuery({
@@ -2731,14 +2729,11 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error')).toBeInTheDocument()
     expect(rendered.getByText('Error test')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it('should throw error if queryFn throws and throwOnError is in use', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
-    const key = queryKey()
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
+    const key = createKey()
 
     function Page() {
       const { status, error } = useQuery<unknown, string>({
@@ -2765,14 +2760,11 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it('should throw error if queryFn rejects with a falsy error and throwOnError is in use', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
-    const key = queryKey()
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
+    const key = createKey()
 
     function Page() {
       const { status } = useQuery({
@@ -2794,11 +2786,10 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it('should update with data if we observe no properties and throwOnError', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     let result: UseQueryResult<string> | undefined
 
@@ -2825,7 +2816,7 @@ describe('useQuery', () => {
   })
 
   it('should set status to error instead of throwing when error should not be thrown', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const { status, error } = useQuery({
@@ -2857,11 +2848,9 @@ describe('useQuery', () => {
   })
 
   it('should throw error instead of setting status when error should be thrown', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const { status, error } = useQuery<unknown, Error>({
@@ -2897,11 +2886,10 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('Remote Error')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it('should continue retries when observers unmount and remount while waiting for a retry (#3031)', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     function Page() {
@@ -2957,7 +2945,7 @@ describe('useQuery', () => {
   })
 
   it('should restart when observers unmount and remount while waiting for a retry when query was cancelled in between (#3031)', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     function Page() {
@@ -3017,7 +3005,7 @@ describe('useQuery', () => {
   })
 
   it('should always fetch if refetchOnMount is set to always', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     await queryClient
@@ -3069,7 +3057,7 @@ describe('useQuery', () => {
   })
 
   it('should fetch if initial data is set', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<DefinedUseQueryResult<string>> = []
 
     function Page() {
@@ -3100,7 +3088,7 @@ describe('useQuery', () => {
   })
 
   it('should not fetch if initial data is set with a stale time', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<DefinedUseQueryResult<string>> = []
 
     function Page() {
@@ -3131,7 +3119,7 @@ describe('useQuery', () => {
   })
 
   it('should fetch if initial data updated at is older than stale time', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<DefinedUseQueryResult<string>> = []
 
     const oneSecondAgo = Date.now() - 1000
@@ -3170,7 +3158,7 @@ describe('useQuery', () => {
   })
 
   it('should fetch if "initial data updated at" is exactly 0', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<DefinedUseQueryResult<string>> = []
 
     function Page() {
@@ -3202,7 +3190,7 @@ describe('useQuery', () => {
   })
 
   it('should keep initial data when the query key changes', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<DefinedUseQueryResult<{ count: number }>> = []
 
     function Page() {
@@ -3235,7 +3223,7 @@ describe('useQuery', () => {
   })
 
   it('should keep initialData visible alongside the error when a refetch fails', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<DefinedUseQueryResult<string>> = []
 
     function Page() {
@@ -3259,7 +3247,7 @@ describe('useQuery', () => {
   })
 
   it('should retry specified number of times', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
     queryFn.mockRejectedValue(new Error('Error test Barrett'))
@@ -3295,7 +3283,7 @@ describe('useQuery', () => {
   })
 
   it('should not retry if retry function `false`', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
 
@@ -3336,7 +3324,7 @@ describe('useQuery', () => {
   })
 
   it('should extract retryDelay from error', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     type DelayError = { delay: number }
 
@@ -3374,7 +3362,7 @@ describe('useQuery', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/160
   it('should continue retry after focus regain', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     // make page unfocused
     const visibilityMock = mockVisibilityState('hidden')
@@ -3444,7 +3432,7 @@ describe('useQuery', () => {
   })
 
   it('should fetch on mount when a query was already created with setQueryData', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     queryClient.setQueryData(key, 'prefetched')
@@ -3474,7 +3462,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch after focus regain', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     // make page unfocused
@@ -3536,7 +3524,7 @@ describe('useQuery', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/195
   it('should refetch if stale after a prefetch', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     const queryFn = vi.fn<(...args: Array<unknown>) => string>()
@@ -3571,7 +3559,7 @@ describe('useQuery', () => {
   })
 
   it('should not refetch if not stale after a prefetch', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockReturnValue('data')
@@ -3604,7 +3592,7 @@ describe('useQuery', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/190
   it('should reset failureCount on successful fetch', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     let counter = 0
 
@@ -3642,7 +3630,7 @@ describe('useQuery', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/199
   it('should use prefetched data for dependent query', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     function Page() {
@@ -3696,7 +3684,7 @@ describe('useQuery', () => {
   })
 
   it('should support dependent queries via the enable config option', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [shouldFetch, setShouldFetch] = React.useState(false)
@@ -3732,7 +3720,7 @@ describe('useQuery', () => {
   })
 
   it('should mark query as fetching, when using initialData', async () => {
-    const key = queryKey()
+    const key = createKey()
     const results: Array<DefinedUseQueryResult<string>> = []
 
     function Page() {
@@ -3757,7 +3745,7 @@ describe('useQuery', () => {
   })
 
   it('should initialize state properly, when initialData is falsy', async () => {
-    const key = queryKey()
+    const key = createKey()
     const results: Array<DefinedUseQueryResult<number>> = []
 
     function Page() {
@@ -3779,7 +3767,7 @@ describe('useQuery', () => {
   })
 
   it('should show the correct data when switching keys with initialData, placeholderData & staleTime', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const ALL_TODOS = [
       { name: 'todo A', priority: 'high' },
@@ -3840,7 +3828,7 @@ describe('useQuery', () => {
 
   // // See https://github.com/tannerlinsley/react-query/issues/214
   it('should persist data when enabled is changed to false', async () => {
-    const key = queryKey()
+    const key = createKey()
     const results: Array<DefinedUseQueryResult<string>> = []
 
     function Page() {
@@ -3889,7 +3877,7 @@ describe('useQuery', () => {
   })
 
   it('should support enabled:false in query object syntax', () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockReturnValue('data')
 
@@ -3911,7 +3899,7 @@ describe('useQuery', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/360
   it('should init to status:pending, fetchStatus:idle when enabled is false', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const query = useQuery({
@@ -3936,7 +3924,7 @@ describe('useQuery', () => {
   })
 
   it('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const query = useQuery({
@@ -3959,7 +3947,7 @@ describe('useQuery', () => {
   })
 
   it('should schedule garbage collection, if gcTimeout is not set to infinity', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const query = useQuery({
@@ -3986,7 +3974,7 @@ describe('useQuery', () => {
   })
 
   it('should not cause memo churn when data does not change', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
       .mockReturnValue('data')
@@ -4037,7 +4025,7 @@ describe('useQuery', () => {
   })
 
   it('should update data upon interval changes', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     function Page() {
@@ -4069,7 +4057,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch in an interval depending on function result', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
     const states: Array<UseQueryResult<number>> = []
 
@@ -4134,7 +4122,7 @@ describe('useQuery', () => {
   })
 
   it('should not interval fetch with a refetchInterval of 0', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => number>(() => 1)
 
     function Page() {
@@ -4186,7 +4174,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch if any query instance becomes enabled', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
@@ -4220,7 +4208,7 @@ describe('useQuery', () => {
   })
 
   it('should use placeholder data while the query loads', async () => {
-    const key1 = queryKey()
+    const key1 = createKey()
 
     const states: Array<UseQueryResult<string>> = []
 
@@ -4261,7 +4249,7 @@ describe('useQuery', () => {
   })
 
   it('should use placeholder data even for disabled queries', async () => {
-    const key1 = queryKey()
+    const key1 = createKey()
 
     const states: Array<{ state: UseQueryResult<string>; count: number }> = []
 
@@ -4323,7 +4311,7 @@ describe('useQuery', () => {
   })
 
   it('should run placeholder data through select', async () => {
-    const key1 = queryKey()
+    const key1 = createKey()
 
     const states: Array<UseQueryResult<string>> = []
 
@@ -4365,7 +4353,7 @@ describe('useQuery', () => {
   })
 
   it('should run placeholder data function result through select', async () => {
-    const key1 = queryKey()
+    const key1 = createKey()
 
     const states: Array<UseQueryResult<string>> = []
     let placeholderFunctionRunCount = 0
@@ -4420,7 +4408,7 @@ describe('useQuery', () => {
   })
 
   it('should only run select when dependencies change if memoized', async () => {
-    const key1 = queryKey()
+    const key1 = createKey()
 
     let selectRun = 0
 
@@ -4463,7 +4451,7 @@ describe('useQuery', () => {
   })
 
   it('should always return the correct state from select', async () => {
-    const key1 = queryKey()
+    const key1 = createKey()
 
     function Page() {
       const [count, inc] = React.useReducer((prev) => prev + 1, 2)
@@ -4510,7 +4498,7 @@ describe('useQuery', () => {
   })
 
   it('should structurally share data in select', async () => {
-    const key1 = queryKey()
+    const key1 = createKey()
     const states: Array<Array<number>> = []
 
     function Page() {
@@ -4554,7 +4542,7 @@ describe('useQuery', () => {
   })
 
   it('should cancel the query function when there are no more subscriptions', async () => {
-    const key = queryKey()
+    const key = createKey()
     let cancelFn: Mock = vi.fn<(event: Event) => void>()
 
     const queryFn = ({ signal }: { signal?: AbortSignal }) => {
@@ -4592,7 +4580,7 @@ describe('useQuery', () => {
   })
 
   it('should cancel the query if the signal was consumed and there are no more subscriptions', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     const queryFn: QueryFunction<string, [typeof key, number]> = async (
@@ -4656,7 +4644,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch when quickly switching to a failed query', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     const queryFn = () => sleep(50).then(() => 'OK')
@@ -4704,7 +4692,7 @@ describe('useQuery', () => {
   })
 
   it('should update query state and refetch when reset with resetQueries', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0
 
@@ -4775,7 +4763,7 @@ describe('useQuery', () => {
   })
 
   it('should update query state and not refetch when resetting a disabled query with resetQueries', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0
 
@@ -4853,7 +4841,7 @@ describe('useQuery', () => {
   })
 
   it('should only call the query hash function once each render', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     let hashes = 0
     let renders = 0
@@ -4879,7 +4867,7 @@ describe('useQuery', () => {
   })
 
   it('should hash query keys that contain bigints given a supported query hash function', async () => {
-    const key = [queryKey(), 1n]
+    const key = [createKey(), 1n]
 
     function queryKeyHashFn(x: any) {
       return JSON.stringify(x, (_, value) => {
@@ -4902,7 +4890,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<(...args: Array<unknown>) => unknown>(() =>
       sleep(10).then(() => Promise.reject(new Error('Suspense Error Bingo'))),
     )
@@ -5078,7 +5066,7 @@ describe('useQuery', () => {
   })
 
   it('should have no error in pending state when refetching after error occurred', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
     const error = new Error('oops')
 
@@ -5154,7 +5142,7 @@ describe('useQuery', () => {
     it('should not start fetching online queries if you are offline', async () => {
       const onlineMock = mockOnlineManagerIsOnline(false)
 
-      const key = queryKey()
+      const key = createKey()
       const states: Array<any> = []
 
       function Page() {
@@ -5189,11 +5177,10 @@ describe('useQuery', () => {
       expect(rendered.getByText('data: data')).toBeInTheDocument()
 
       expect(states).toStrictEqual(['paused', 'fetching', 'idle'])
-      onlineMock.mockRestore()
     })
 
     it('should not refetch online queries if you are offline', async () => {
-      const key = queryKey()
+      const key = createKey()
       let count = 0
 
       function Page() {
@@ -5250,12 +5237,10 @@ describe('useQuery', () => {
       rendered.getByText('failureReason: null')
 
       expect(rendered.getByText('data: data2')).toBeInTheDocument()
-
-      onlineMock.mockRestore()
     })
 
     it('should not refetch online queries if you are offline and refocus', async () => {
-      const key = queryKey()
+      const key = createKey()
       let count = 0
 
       function Page() {
@@ -5288,7 +5273,7 @@ describe('useQuery', () => {
       await vi.advanceTimersByTimeAsync(11)
       rendered.getByText('data: data1')
 
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
       fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
       await vi.advanceTimersByTimeAsync(0)
       rendered.getByText('status: success, fetchStatus: paused')
@@ -5298,11 +5283,10 @@ describe('useQuery', () => {
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.queryByText('data: data2')).not.toBeInTheDocument()
       expect(count).toBe(1)
-      onlineMock.mockRestore()
     })
 
     it('should not refetch online queries while already paused', async () => {
-      const key = queryKey()
+      const key = createKey()
       let count = 0
 
       function Page() {
@@ -5330,7 +5314,7 @@ describe('useQuery', () => {
         )
       }
 
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
       const rendered = renderWithClient(queryClient, <Page />)
 
@@ -5343,11 +5327,10 @@ describe('useQuery', () => {
       rendered.getByText('status: pending, fetchStatus: paused')
 
       expect(count).toBe(0)
-      onlineMock.mockRestore()
     })
 
     it('should not refetch online queries while already paused if data is in the cache', async () => {
-      const key = queryKey()
+      const key = createKey()
       let count = 0
 
       function Page() {
@@ -5376,7 +5359,7 @@ describe('useQuery', () => {
         )
       }
 
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
       const rendered = renderWithClient(queryClient, <Page />)
 
@@ -5390,11 +5373,10 @@ describe('useQuery', () => {
       rendered.getByText('status: success, fetchStatus: paused')
 
       expect(count).toBe(0)
-      onlineMock.mockRestore()
     })
 
     it('should not get online queries stuck in fetching state when pausing multiple times', async () => {
-      const key = queryKey()
+      const key = createKey()
       let count = 0
 
       function Page() {
@@ -5448,12 +5430,10 @@ describe('useQuery', () => {
       expect(rendered.getByText('data: data1')).toBeInTheDocument()
 
       expect(count).toBe(1)
-
-      onlineMock.mockRestore()
     })
 
     it('should pause retries of online queries if you are offline', async () => {
-      const key = queryKey()
+      const key = createKey()
       let count = 0
 
       function Page() {
@@ -5501,12 +5481,10 @@ describe('useQuery', () => {
       rendered.getByText('failureReason: failed3')
 
       expect(count).toBe(3)
-
-      onlineMock.mockRestore()
     })
 
     it('should not fetch online queries if paused initial load and we go online after unmount', async () => {
-      const key = queryKey()
+      const key = createKey()
       let count = 0
 
       function Component() {
@@ -5558,12 +5536,10 @@ describe('useQuery', () => {
       })
 
       expect(count).toBe(0)
-
-      onlineMock.mockRestore()
     })
 
     it('should re-fetch online queries if paused and we go online even if already unmounted (because not cancelled)', async () => {
-      const key = queryKey()
+      const key = createKey()
       let count = 0
 
       queryClient.setQueryData(key, 'initial')
@@ -5618,12 +5594,10 @@ describe('useQuery', () => {
 
       // give it a bit more time to make sure queryFn is not called again
       expect(count).toBe(1)
-
-      onlineMock.mockRestore()
     })
 
     it('should not fetch online queries if paused and we go online when cancelled and no refetchOnReconnect', async () => {
-      const key = queryKey()
+      const key = createKey()
       let count = 0
 
       function Page() {
@@ -5671,12 +5645,10 @@ describe('useQuery', () => {
       rendered.getByText('status: pending, fetchStatus: idle')
 
       expect(count).toBe(0)
-
-      onlineMock.mockRestore()
     })
 
     it('should fetch online queries if paused and we go online even if already unmounted when refetch was not cancelled', async () => {
-      const key = queryKey()
+      const key = createKey()
       let count = 0
 
       function Component() {
@@ -5737,16 +5709,14 @@ describe('useQuery', () => {
       })
 
       expect(count).toBe(2)
-
-      onlineMock.mockRestore()
     })
   })
 
   describe('networkMode always', () => {
     it('should start fetching always queries even if you are offline', async () => {
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
-      const key = queryKey()
+      const key = createKey()
       let count = 0
 
       function Page() {
@@ -5775,14 +5745,12 @@ describe('useQuery', () => {
       await vi.advanceTimersByTimeAsync(11)
       rendered.getByText('status: success, isPaused: false')
       expect(rendered.getByText('data: data 1')).toBeInTheDocument()
-
-      onlineMock.mockRestore()
     })
 
     it('should not pause retries of always queries', async () => {
-      const onlineMock = mockOnlineManagerIsOnline(false)
+      mockOnlineManagerIsOnline(false)
 
-      const key = queryKey()
+      const key = createKey()
       let count = 0
 
       function Page() {
@@ -5817,8 +5785,6 @@ describe('useQuery', () => {
       expect(rendered.getByText('error: error 2')).toBeInTheDocument()
 
       expect(count).toBe(2)
-
-      onlineMock.mockRestore()
     })
   })
 
@@ -5826,7 +5792,7 @@ describe('useQuery', () => {
     it('should start fetching offlineFirst queries if you are offline, but pause retries', async () => {
       const onlineMock = mockOnlineManagerIsOnline(false)
 
-      const key = queryKey()
+      const key = createKey()
       let count = 0
 
       function Page() {
@@ -5871,13 +5837,12 @@ describe('useQuery', () => {
       rendered.getByText('failureReason: failed3')
 
       expect(count).toBe(3)
-      onlineMock.mockRestore()
     })
   })
 
   describe('subscribed', () => {
     it('should be able to toggle subscribed', async () => {
-      const key = queryKey()
+      const key = createKey()
       const queryFn = vi.fn<() => Promise<string>>(() =>
         Promise.resolve('data'),
       )
@@ -5924,7 +5889,7 @@ describe('useQuery', () => {
     })
 
     it('should not optimistically show fetching when unsubscribed', async () => {
-      const key = queryKey()
+      const key = createKey()
       const queryFn = vi.fn<() => Promise<string>>(() =>
         Promise.resolve('data'),
       )
@@ -5962,7 +5927,7 @@ describe('useQuery', () => {
     })
 
     it('should not be attached to the query when subscribed is false', async () => {
-      const key = queryKey()
+      const key = createKey()
       const queryFn = vi.fn<() => Promise<string>>(() =>
         Promise.resolve('data'),
       )
@@ -5993,7 +5958,7 @@ describe('useQuery', () => {
     })
 
     it('should not re-render when data is added to the cache when subscribed is false', async () => {
-      const key = queryKey()
+      const key = createKey()
       let renders = 0
 
       function Page() {
@@ -6029,7 +5994,7 @@ describe('useQuery', () => {
   })
 
   it('should have status=error on mount when a query has failed', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<unknown>> = []
     const error = new Error('oops')
 
@@ -6063,7 +6028,7 @@ describe('useQuery', () => {
   })
 
   it('should respect updatedAt in setQueryData', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const state = useQuery({ queryKey: key, queryFn: () => 'data' })
@@ -6096,7 +6061,7 @@ describe('useQuery', () => {
   })
 
   it('should increase errorUpdateCount on each fetch failure', async () => {
-    const key = queryKey()
+    const key = createKey()
     const error = new Error('oops')
 
     function Page() {
@@ -6131,7 +6096,7 @@ describe('useQuery', () => {
   })
 
   it('should use provided custom queryClient', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = async () => {
       return Promise.resolve('custom client')
     }
@@ -6155,7 +6120,7 @@ describe('useQuery', () => {
   })
 
   it('should be notified of updates between create and subscribe', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const { data, status } = useQuery({
@@ -6188,7 +6153,7 @@ describe('useQuery', () => {
   })
 
   it('should reuse same data object reference when queryKey changes back to some cached data', async () => {
-    const key = queryKey()
+    const key = createKey()
     const spy = vi.fn<(data: unknown) => void>()
 
     async function fetchNumber(id: number) {
@@ -6255,7 +6220,7 @@ describe('useQuery', () => {
   })
 
   it('should reuse same data object reference when queryKey changes and placeholderData is present', async () => {
-    const key = queryKey()
+    const key = createKey()
     const spy = vi.fn<(data: unknown) => void>()
 
     async function fetchNumber(id: number) {
@@ -6325,7 +6290,7 @@ describe('useQuery', () => {
   })
 
   it('should not cause an infinite render loop when using unstable callback ref', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Test() {
       const [_ref, setRef] = React.useState<HTMLDivElement | null>()
@@ -6345,7 +6310,7 @@ describe('useQuery', () => {
   })
 
   it('should keep the previous data when placeholderData is set and cache is used', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number | undefined>> = []
     const steps = [0, 1, 0, 2]
 
@@ -6440,11 +6405,9 @@ describe('useQuery', () => {
   // For Project without TS, when migrating from v4 to v5, make sure invalid calls due to bad parameters are tracked.
   it('should throw in case of bad arguments to enhance DevX', () => {
     // Mock console error to avoid noise when test is run
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
-    const key = queryKey()
+    const key = createKey()
     const queryFn = () => 'data'
 
     function Page() {
@@ -6455,11 +6418,10 @@ describe('useQuery', () => {
     }
 
     expect(() => render(<Page />)).toThrow('Bad argument type')
-    consoleErrorMock.mockRestore()
   })
 
   it('should respect skipToken and refetch when skipToken is taken away', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page({ enabled }: { enabled: boolean }) {
       const { data, status } = useQuery({
@@ -6506,7 +6468,7 @@ describe('useQuery', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockReturnValue(undefined)
-    const key = queryKey()
+    const key = createKey()
 
     function App() {
       const query = useQuery({
@@ -6530,11 +6492,10 @@ describe('useQuery', () => {
 
     // no warnings expected about skipToken / missing queryFn
     expect(consoleErrorMock).toHaveBeenCalledTimes(0)
-    consoleErrorMock.mockRestore()
   })
 
   it('should return correct optimistic result when fetching after error', async () => {
-    const key = queryKey()
+    const key = createKey()
     const error = new Error('oh no')
 
     const results: Array<UseQueryResult<string>> = []
@@ -6632,7 +6593,7 @@ describe('useQuery', () => {
   })
 
   it('should pick up an initialPromise', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const serverQueryClient = new QueryClient({
       defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
@@ -6686,7 +6647,7 @@ describe('useQuery', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockReturnValue(undefined)
-    const key = queryKey()
+    const key = createKey()
 
     const serverQueryClient = new QueryClient({
       defaultOptions: {
@@ -6743,13 +6704,11 @@ describe('useQuery', () => {
     expect(consoleErrorMock).toHaveBeenCalledWith(
       `A query that was dehydrated as pending ended up rejecting. [${query?.queryHash}]: Error: server error; The error will be redacted in production builds`,
     )
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should console.error when there is no queryFn', () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
-    const key = queryKey()
+    const key = createKey()
 
     function Example() {
       useQuery({ queryKey: key })
@@ -6762,12 +6721,10 @@ describe('useQuery', () => {
     expect(consoleErrorMock).toHaveBeenCalledWith(
       `[${queryClient.getQueryCache().find({ queryKey: key })?.queryHash}]: No queryFn was passed as an option, and no default queryFn was found. The queryFn parameter is only optional when using a default queryFn. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
     )
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should retry on mount when throwOnError returns false', async () => {
-    const key = queryKey()
+    const key = createKey()
     let fetchCount = 0
     const queryFn = vi.fn<() => Promise<never>>().mockImplementation(() => {
       fetchCount++
@@ -6815,7 +6772,7 @@ describe('useQuery', () => {
   })
 
   it('should retry on mount when throwOnError returns false for a falsy error', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => Promise<never>>(() => Promise.reject())
 
     function Component() {
@@ -6844,7 +6801,7 @@ describe('useQuery', () => {
   })
 
   it('should not retry on mount when throwOnError function returns true', async () => {
-    const key = queryKey()
+    const key = createKey()
     let fetchCount = 0
     const queryFn = vi.fn<() => Promise<never>>().mockImplementation(() => {
       fetchCount++
@@ -6918,7 +6875,7 @@ describe('useQuery', () => {
   })
 
   it('should handle throwOnError function based on actual error state', async () => {
-    const key = queryKey()
+    const key = createKey()
     let fetchCount = 0
     const queryFn = vi.fn<() => Promise<never>>().mockImplementation(() => {
       fetchCount++
@@ -6930,7 +6887,7 @@ describe('useQuery', () => {
       const { status, error } = useQuery({
         queryKey: key,
         queryFn,
-        throwOnError: (error) => error.message.includes('404'),
+        throwOnError: (err) => err.message.includes('404'),
         retryOnMount: true,
         staleTime: Infinity,
         retry: false,
@@ -6968,7 +6925,7 @@ describe('useQuery', () => {
   })
 
   it('should pass the query to retryOnMount callback', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi
       .fn<() => Promise<never>>()
       .mockRejectedValue(new Error('oops'))
@@ -7006,7 +6963,7 @@ describe('useQuery', () => {
   })
 
   it('should not call retryOnMount callback when the query has data', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
     const retryOnMount = vi.fn<() => boolean>(() => false)
     const queryFn = vi
@@ -7059,7 +7016,7 @@ describe('useQuery', () => {
   })
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => Promise<string>>(() =>
       sleep(10).then(() => 'data'),
     )

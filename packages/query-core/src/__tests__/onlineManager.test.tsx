@@ -21,8 +21,6 @@ describe('onlineManager', () => {
     navigatorSpy.mockReturnValue(undefined)
 
     expect(onlineManager.isOnline()).toBe(true)
-
-    navigatorSpy.mockRestore()
   })
 
   it('should return true from isOnline if navigator.onLine is true', () => {
@@ -30,8 +28,6 @@ describe('onlineManager', () => {
     navigatorSpy.mockReturnValue(true)
 
     expect(onlineManager.isOnline()).toBe(true)
-
-    navigatorSpy.mockRestore()
   })
 
   it('should use online boolean arg in setEventListener', () => {
@@ -75,8 +71,6 @@ describe('onlineManager', () => {
 
     unsubscribe()
     expect(removeEventListenerSpy).not.toHaveBeenCalled()
-
-    windowSpy.mockRestore()
   })
 
   it('should not call cleanup (removeEventListener) if window.addEventListener is not defined', () => {
@@ -116,8 +110,6 @@ describe('onlineManager', () => {
     expect(removeEventListenerSpy).toHaveBeenCalledTimes(2)
 
     unsubscribe()
-    addEventListenerSpy.mockRestore()
-    removeEventListenerSpy.mockRestore()
   })
 
   it('should call removeEventListener when last listener unsubscribes', () => {

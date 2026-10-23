@@ -6,7 +6,7 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core'
 import { render } from '@testing-library/angular'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectIsFetching,
@@ -34,7 +34,7 @@ describe('injectIsFetching', () => {
   })
 
   it('should return the number of fetching queries', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     @Component({
       template: `<div>fetching: {{ isFetching() }}</div>`,
@@ -59,8 +59,8 @@ describe('injectIsFetching', () => {
   })
 
   it('should be able to filter by queryKey', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     @Component({
       template: `<div>fetching: {{ isFetching() }}</div>`,
