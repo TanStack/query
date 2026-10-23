@@ -127,9 +127,6 @@ describe('persist', () => {
       expect(consoleErrorMock).toHaveBeenCalledTimes(1)
       expect(consoleWarnMock).toHaveBeenCalledTimes(1)
       expect(consoleErrorMock).toHaveBeenNthCalledWith(1, restoreError)
-
-      consoleErrorMock.mockRestore()
-      consoleWarnMock.mockRestore()
     })
 
     it('should rethrow exceptions in `removeClient` before `restoreClient`', async () => {
@@ -157,9 +154,6 @@ describe('persist', () => {
       expect(consoleErrorMock).toHaveBeenCalledTimes(1)
       expect(consoleWarnMock).toHaveBeenCalledTimes(1)
       expect(consoleErrorMock).toHaveBeenNthCalledWith(1, restoreError)
-
-      consoleErrorMock.mockRestore()
-      consoleWarnMock.mockRestore()
     })
 
     it('should rethrow error in `removeClient`', async () => {
