@@ -1,4 +1,4 @@
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { act } from '@testing-library/preact'
 import { hydrate as preactHydrate, render } from 'preact'
 import { renderToString } from 'preact-render-to-string'
@@ -38,8 +38,8 @@ function PrintStateComponent({ componentName, result }: any): any {
 }
 
 describe('Server side rendering with de/rehydration', () => {
-  const successKey = queryKey()
-  const errorKey = queryKey()
+  const successKey = createKey()
+  const errorKey = createKey()
 
   beforeAll(() => {
     vi.useFakeTimers()
@@ -123,7 +123,6 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleErrorMock.mockRestore()
   })
 
   it('should not mismatch on error', async () => {
@@ -204,7 +203,6 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleErrorMock.mockRestore()
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
@@ -272,6 +270,5 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleErrorMock.mockRestore()
   })
 })

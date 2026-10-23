@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { onScopeDispose, reactive, ref } from 'vue-demi'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useIsMutating } from '../useMutationState'
 import { useQueryClient } from '../useQueryClient'
@@ -40,7 +40,7 @@ describe('useIsMutating', () => {
     const onScopeDisposeMock = vi.mocked(onScopeDispose)
     onScopeDisposeMock.mockImplementation((fn) => fn())
 
-    const key = queryKey()
+    const key = createKey()
     const queryClient = useQueryClient()
     const mutation = useMutation({
       mutationKey: key,
@@ -67,8 +67,8 @@ describe('useIsMutating', () => {
   })
 
   it('should properly update filters', async () => {
-    const key = queryKey()
-    const filterKey = queryKey()
+    const key = createKey()
+    const filterKey = createKey()
     const filter = reactive({ mutationKey: filterKey })
     const { mutate } = useMutation({
       mutationKey: key,
@@ -86,7 +86,7 @@ describe('useIsMutating', () => {
   })
 
   it('should work with options getter and be reactive', async () => {
-    const key = queryKey()
+    const key = createKey()
     const keyRef = ref('isMutatingGetter2')
     const { mutate } = useMutation({
       mutationKey: key,
@@ -106,8 +106,8 @@ describe('useIsMutating', () => {
   })
 
   it('should accept filters wrapped in a ref', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const mutation1 = useMutation({
       mutationKey: key1,
       mutationFn: (params: string) => sleep(10).then(() => params),

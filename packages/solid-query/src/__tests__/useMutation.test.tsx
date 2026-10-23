@@ -6,7 +6,7 @@ import {
   createSignal,
 } from 'solid-js'
 import { fireEvent, render } from '@solidjs/testing-library'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { MutationCache, QueryCache, QueryClient, useMutation } from '..'
 import {
   mockOnlineManagerIsOnline,
@@ -61,9 +61,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to reset `error`', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const mutation = useMutation<string, Error>(() => ({
@@ -95,8 +93,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
     expect(rendered.queryByRole('heading')).not.toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should call mutate callbacks when useMutation has no callbacks', async () => {
@@ -704,7 +700,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to use mutation defaults', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     queryClient.setMutationDefaults(key, {
       mutationFn: (text: string) => sleep(10).then(() => text),
@@ -933,8 +929,6 @@ describe('useMutation', () => {
     expect(
       rendered.getByText('data: 1, status: success, isPaused: false'),
     ).toBeInTheDocument()
-
-    onlineMock.mockRestore()
   })
 
   it('should be able to retry a mutation when online', async () => {
@@ -1043,9 +1037,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to throw an error when throwOnError is set to true', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const mutation = useMutation<string, Error>(() => ({
@@ -1079,14 +1071,10 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error')).toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should be able to throw an error when throwOnError is a function that returns true', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     let boundary = false
     function Page() {
@@ -1131,8 +1119,6 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should pass meta to mutation on success', async () => {
@@ -1250,7 +1236,7 @@ describe('useMutation', () => {
           context: MutationFunctionContext,
         ) => void
       >()
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
     let count = 0
 
     function Page() {
@@ -1598,7 +1584,7 @@ describe('useMutation', () => {
   })
 
   it('should run mutations in the new queryClient when queryClient changes', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryClient1 = new QueryClient()
     const queryClient2 = new QueryClient()
@@ -1652,7 +1638,7 @@ describe('useMutation', () => {
   })
 
   it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
     function Page() {
@@ -1690,7 +1676,7 @@ describe('useMutation', () => {
   })
 
   it('should keep the optimistic update in place when the mutation succeeds', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
     function Page() {
@@ -1892,7 +1878,7 @@ describe('useMutation', () => {
   })
 
   it('should give mutationFn the same QueryClient instance via context', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'tag-from-this-client')
 
     function Page() {
@@ -1949,7 +1935,7 @@ describe('useMutation', () => {
   })
 
   it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'data')
 
     function Page() {
