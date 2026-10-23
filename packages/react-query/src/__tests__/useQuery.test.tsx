@@ -7054,4 +7054,45 @@ describe('useQuery', () => {
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(queryFn).toHaveBeenCalledTimes(0)
   })
+
+  it('should not fetch the previous key when a hidden Activity with a changed key is revealed', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn((filter: string) => sleep(10).then(() => filter))
+
+    function Page({ filter }: { filter: string }) {
+      const { data } = useQuery({
+        queryKey: [...key, filter],
+        queryFn: () => queryFn(filter),
+      })
+
+      return <div>data: {data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Activity mode="visible">
+        <Page filter="a" />
+      </React.Activity>,
+    )
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data: a')).toBeInTheDocument()
+
+    rendered.rerender(
+      <React.Activity mode="hidden">
+        <Page filter="b" />
+      </React.Activity>,
+    )
+    await vi.advanceTimersByTimeAsync(11)
+
+    rendered.rerender(
+      <React.Activity mode="visible">
+        <Page filter="b" />
+      </React.Activity>,
+    )
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data: b')).toBeInTheDocument()
+
+    expect(queryFn.mock.calls).toEqual([['a'], ['b']])
+  })
 })
