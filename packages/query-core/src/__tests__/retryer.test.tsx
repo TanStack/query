@@ -299,4 +299,43 @@ describe('createRetryer', () => {
     await expect(promise).resolves.toBe('from fn')
     expect(fn).toHaveBeenCalledTimes(1)
   })
+
+  it('should reject with the thrown error when the retry function throws', async () => {
+    const callbackError = new Error('retry threw')
+    const fn = vi.fn().mockRejectedValue(new Error('failed'))
+    const retryer = createRetryer({
+      fn,
+      retry: () => {
+        throw callbackError
+      },
+      networkMode: 'online',
+      canRun: () => true,
+    })
+
+    const promise = retryer.start()
+    await vi.advanceTimersByTimeAsync(0)
+    await expect(promise).rejects.toBe(callbackError)
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(retryer.status()).toBe('rejected')
+  })
+
+  it('should reject with the thrown error when the retryDelay function throws', async () => {
+    const callbackError = new Error('retryDelay threw')
+    const fn = vi.fn().mockRejectedValue(new Error('failed'))
+    const retryer = createRetryer({
+      fn,
+      retry: 1,
+      retryDelay: () => {
+        throw callbackError
+      },
+      networkMode: 'online',
+      canRun: () => true,
+    })
+
+    const promise = retryer.start()
+    await vi.advanceTimersByTimeAsync(0)
+    await expect(promise).rejects.toBe(callbackError)
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(retryer.status()).toBe('rejected')
+  })
 })

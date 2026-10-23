@@ -250,14 +250,22 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
         // Do we need to retry the request?
         const retry = config.retry ?? (isServerEnvironment() ? 0 : 3)
         const retryDelay = config.retryDelay ?? defaultRetryDelay
-        const delay =
-          typeof retryDelay === 'function'
-            ? retryDelay(failureCount, error)
-            : retryDelay
-        const shouldRetry =
-          retry === true ||
-          (typeof retry === 'number' && failureCount < retry) ||
-          (typeof retry === 'function' && retry(failureCount, error))
+        let delay: number
+        let shouldRetry: boolean
+        try {
+          delay =
+            typeof retryDelay === 'function'
+              ? retryDelay(failureCount, error)
+              : retryDelay
+          shouldRetry =
+            retry === true ||
+            (typeof retry === 'number' && failureCount < retry) ||
+            (typeof retry === 'function' && retry(failureCount, error))
+        } catch (callbackError) {
+          // Reject with the callback's error so the retryer does not stay pending forever
+          reject(callbackError)
+          return
+        }
 
         if (isRetryCancelled || !shouldRetry) {
           // We are done if the query does not need to be retried
