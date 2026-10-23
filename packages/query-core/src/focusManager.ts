@@ -1,4 +1,5 @@
 import { Subscribable } from './subscribable'
+import { noop } from './utils'
 
 type Listener = (focused: boolean) => void
 
@@ -78,13 +79,14 @@ export class FocusManager extends Subscribable<Listener> {
   setEventListener(setup: SetupFn): void {
     this.#setup = setup
     this.#cleanup?.()
-    this.#cleanup = setup((focused) => {
-      if (typeof focused === 'boolean') {
-        this.setFocused(focused)
-      } else {
-        this.onFocus()
-      }
-    })
+    this.#cleanup =
+      setup((focused) => {
+        if (typeof focused === 'boolean') {
+          this.setFocused(focused)
+        } else {
+          this.onFocus()
+        }
+      }) ?? noop
   }
 
   /**
