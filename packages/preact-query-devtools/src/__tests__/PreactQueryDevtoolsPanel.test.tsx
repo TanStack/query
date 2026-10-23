@@ -204,7 +204,6 @@ describe('PreactQueryDevtoolsPanel', () => {
         await import('..')
       expect(ProductionDevtoolsPanel({})).toBeNull()
     } finally {
-      vi.unstubAllEnvs()
       vi.resetModules()
     }
   })

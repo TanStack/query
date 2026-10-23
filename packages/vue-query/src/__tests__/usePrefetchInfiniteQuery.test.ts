@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick, ref } from 'vue-demi'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { usePrefetchInfiniteQuery } from '../usePrefetchInfiniteQuery'
 
@@ -20,7 +20,7 @@ describe('usePrefetchInfiniteQuery', () => {
       Promise.resolve({ data: 'prefetched', currentPage: 1 })
     const getNextPageParam = () => undefined
 
-    const key = queryKey()
+    const key = createKey()
 
     usePrefetchInfiniteQuery(
       {
@@ -47,7 +47,7 @@ describe('usePrefetchInfiniteQuery', () => {
     const queryFn = () =>
       Promise.resolve({ data: 'prefetched', currentPage: 1 })
 
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, {
       pages: [{ data: 'existing', currentPage: 1 }],
       pageParams: [1],
@@ -70,7 +70,7 @@ describe('usePrefetchInfiniteQuery', () => {
     const queryClient = new QueryClient()
     const infiniteQuerySpy = vi.spyOn(queryClient, 'infiniteQuery')
     const nestedRef = ref('value')
-    const key = queryKey()
+    const key = createKey()
     const queryFn = () =>
       Promise.resolve({ data: 'prefetched', currentPage: 1 })
     const getNextPageParam = () => undefined
@@ -97,7 +97,7 @@ describe('usePrefetchInfiniteQuery', () => {
     const queryClient = new QueryClient()
     const infiniteQuerySpy = vi.spyOn(queryClient, 'infiniteQuery')
     const keyRef = ref('first')
-    const key = queryKey()
+    const key = createKey()
     const queryFn = () =>
       Promise.resolve({ data: keyRef.value, currentPage: 1 })
     const getNextPageParam = () => undefined
@@ -137,24 +137,18 @@ describe('usePrefetchInfiniteQuery', () => {
       .spyOn(console, 'warn')
       .mockImplementation(() => {})
 
-    try {
-      usePrefetchInfiniteQuery(
-        {
-          queryKey: queryKey(),
-          queryFn: () =>
-            Promise.resolve({ data: 'prefetched', currentPage: 1 }),
-          initialPageParam: 1,
-          getNextPageParam: () => undefined,
-        },
-        new QueryClient(),
-      )
+    usePrefetchInfiniteQuery(
+      {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ data: 'prefetched', currentPage: 1 }),
+        initialPageParam: 1,
+        getNextPageParam: () => undefined,
+      },
+      new QueryClient(),
+    )
 
-      expect(consoleWarnMock).toHaveBeenCalledWith(
-        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
-      )
-    } finally {
-      consoleWarnMock.mockRestore()
-      vi.unstubAllEnvs()
-    }
+    expect(consoleWarnMock).toHaveBeenCalledWith(
+      'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+    )
   })
 })

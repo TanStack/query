@@ -2,7 +2,7 @@ import {
   PERSISTER_KEY_PREFIX,
   experimental_createQueryPersister,
 } from '@tanstack/query-persist-client-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useState } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -25,7 +25,7 @@ describe('fine grained persister', () => {
   })
 
   it('should restore query state from persister and not refetch', async () => {
-    const key = queryKey()
+    const key = createKey()
     const hash = hashKey(key)
     const spy = vi.fn<() => Promise<string>>(() =>
       Promise.resolve('Works from queryFn'),
@@ -80,7 +80,7 @@ describe('fine grained persister', () => {
   })
 
   it('should restore query state from persister and refetch', async () => {
-    const key = queryKey()
+    const key = createKey()
     const hash = hashKey(key)
     const spy = vi.fn<() => Promise<string>>(() =>
       sleep(5).then(() => 'Works from queryFn'),
@@ -136,7 +136,7 @@ describe('fine grained persister', () => {
   })
 
   it('should store query state to persister after fetch', async () => {
-    const key = queryKey()
+    const key = createKey()
     const hash = hashKey(key)
     const spy = vi.fn<() => Promise<string>>(() =>
       Promise.resolve('Works from queryFn'),
