@@ -128,6 +128,19 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
+  it('should return the proper type when passed to getQueryState', () => {
+    const key = createKey()
+    const { queryKey: tagged } = queryOptions({
+      queryKey: key,
+      queryFn: () => Promise.resolve(5),
+    })
+
+    const queryClient = new QueryClient()
+    const state = queryClient.getQueryState(tagged)
+
+    expectTypeOf(state?.data).toEqualTypeOf<number | undefined>()
+  })
+
   it('should properly type updaterFn when passed to setQueryData', () => {
     const key = createKey()
     const { queryKey: tagged } = queryOptions({
