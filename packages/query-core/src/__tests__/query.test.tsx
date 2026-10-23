@@ -13,6 +13,8 @@ import {
   dehydrate,
   hydrate,
   noop,
+  skipToken,
+  timeoutManager,
 } from '..'
 import { hashQueryKeyByOptions } from '../utils'
 import { mockOnlineManagerIsOnline, setIsServer } from './utils'
@@ -38,6 +40,76 @@ describe('query', () => {
   afterEach(() => {
     queryClient.clear()
     vi.useRealTimers()
+  })
+
+  describe('garbage collection after removal', () => {
+    it.each([false, true])(
+      'does not reschedule GC on unsubscribe (replacement: %s)',
+      (replace) => {
+        const key = queryKey()
+        const gcTime = 30_000
+        const observer = new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn: skipToken,
+          initialData: 'data',
+          gcTime,
+          staleTime: Infinity,
+        })
+        const unsubscribe = observer.subscribe(noop)
+        const oldQuery = observer.getCurrentQuery()
+        queryClient.removeQueries({ queryKey: key })
+        if (replace) {
+          queryClient.setQueryData(key, 'replacement')
+        }
+        const schedule = vi.spyOn(timeoutManager, 'setTimeout')
+        schedule.mockClear()
+
+        unsubscribe()
+
+        expect(oldQuery.getObserversCount()).toBe(0)
+        expect(queryCache.get(oldQuery.queryHash)).not.toBe(oldQuery)
+        expect(schedule).not.toHaveBeenCalledWith(expect.any(Function), gcTime)
+        expect(queryClient.getQueryData(key)).toBe(
+          replace ? 'replacement' : undefined,
+        )
+        schedule.mockRestore()
+      },
+    )
+
+    it.each([false, true])(
+      'does not reschedule GC when cancellation settles (replacement: %s)',
+      async (replace) => {
+        const key = queryKey()
+        const gcTime = 30_000
+        let resolve!: (data: string) => void
+        const request = new Promise<string>((done) => {
+          resolve = done
+        })
+        const fetch = queryClient
+          .query({
+            queryKey: key,
+            queryFn: () => request,
+            gcTime,
+          })
+          .catch(noop)
+        queryClient.removeQueries({ queryKey: key })
+        if (replace) {
+          queryClient.setQueryData(key, 'replacement')
+        }
+        const schedule = vi.spyOn(timeoutManager, 'setTimeout')
+        schedule.mockClear()
+
+        await fetch
+        resolve('late data')
+        await Promise.resolve()
+
+        expect(schedule).not.toHaveBeenCalledWith(expect.any(Function), gcTime)
+        expect(queryClient.getQueryData(key)).toBe(
+          replace ? 'replacement' : undefined,
+        )
+        schedule.mockRestore()
+      },
+    )
   })
 
   it('should use the longest garbage collection time it has seen', async () => {
