@@ -1,4 +1,4 @@
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MutationCache, QueryClient, focusManager, onlineManager } from '..'
 import { MutationObserver } from '../mutationObserver'
@@ -36,7 +36,7 @@ describe('mutation', () => {
   })
 
   it('should be able to set defaults with setMutationDefaults', async () => {
-    const key = queryKey()
+    const key = createKey()
     const fn =
       vi.fn<
         (
@@ -243,7 +243,7 @@ describe('mutation', () => {
   })
 
   it('should be able to restore a mutation', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const onMutate =
       vi.fn<(variables: string, context: MutationFunctionContext) => void>()
@@ -474,7 +474,7 @@ describe('mutation', () => {
   })
 
   it('should not continue a retry while the window is not focused', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     focusManager.setFocused(false)
@@ -516,8 +516,8 @@ describe('mutation', () => {
 
   describe('scoped mutations', () => {
     it('should run mutations in the same scope in serial', async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
 
       const results: Array<string> = []
 
@@ -576,8 +576,8 @@ describe('mutation', () => {
     })
 
     it('should start the next mutation in the same scope while the window is not focused', async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
 
       const results: Array<string> = []
 
@@ -639,8 +639,8 @@ describe('mutation', () => {
     })
 
     it('should not start the next mutation in the same scope while offline', async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
 
       const results: Array<string> = []
 
@@ -708,8 +708,8 @@ describe('mutation', () => {
     })
 
     it('should not start the next mutation in the same scope when paused mutations are resumed while the previous one is running', async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
 
       const results: Array<string> = []
 
@@ -770,8 +770,8 @@ describe('mutation', () => {
   })
 
   it('should run mutations without scope in parallel', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const results: Array<string> = []
 
@@ -892,7 +892,7 @@ describe('mutation', () => {
 
   describe('callback return types', () => {
     it('should handle all sync callback patterns', async () => {
-      const key = queryKey()
+      const key = createKey()
       const results: Array<string> = []
 
       executeMutation(
@@ -928,7 +928,7 @@ describe('mutation', () => {
     })
 
     it('should handle all async callback patterns', async () => {
-      const key = queryKey()
+      const key = createKey()
       const results: Array<string> = []
 
       executeMutation(
@@ -964,7 +964,7 @@ describe('mutation', () => {
     })
 
     it('should handle Promise.all() and Promise.allSettled() patterns', async () => {
-      const key = queryKey()
+      const key = createKey()
       const results: Array<string> = []
 
       executeMutation(
@@ -1003,7 +1003,7 @@ describe('mutation', () => {
     })
 
     it('should handle mixed sync/async patterns and return value isolation', async () => {
-      const key = queryKey()
+      const key = createKey()
       const results: Array<string> = []
 
       const mutationPromise = executeMutation(
@@ -1049,7 +1049,7 @@ describe('mutation', () => {
     })
 
     it('should handle error cases with all callback patterns', async () => {
-      const key = queryKey()
+      const key = createKey()
       const results: Array<string> = []
 
       const newMutationError = new Error('mutation-error')
@@ -1113,7 +1113,7 @@ describe('mutation', () => {
       })
       queryClient.mount()
 
-      const key = queryKey()
+      const key = createKey()
       const results: Array<string> = []
 
       let mutationError: Error | undefined
@@ -1158,7 +1158,7 @@ describe('mutation', () => {
     })
 
     it('should trigger onError callback on error by mutations onSuccess', async () => {
-      const key = queryKey()
+      const key = createKey()
       const results: Array<string> = []
 
       const newMutationError = new Error('mutation-error')
@@ -1227,7 +1227,7 @@ describe('mutation', () => {
         process.off('unhandledRejection', unhandledRejectionFn)
       })
 
-      const key = queryKey()
+      const key = createKey()
       const results: Array<string> = []
 
       let mutationError: Error | undefined
@@ -1290,7 +1290,7 @@ describe('mutation', () => {
         process.off('unhandledRejection', unhandledRejectionFn)
       })
 
-      const key = queryKey()
+      const key = createKey()
       const results: Array<string> = []
 
       const newMutationError = new Error('mutation-error')
@@ -1371,7 +1371,7 @@ describe('mutation', () => {
       })
       queryClient.mount()
 
-      const key = queryKey()
+      const key = createKey()
       const results: Array<string> = []
 
       const newMutationError = new Error('mutation-error')

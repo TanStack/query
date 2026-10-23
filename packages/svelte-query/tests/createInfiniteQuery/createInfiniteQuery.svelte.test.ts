@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient, skipToken } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { ref } from '../utils.svelte.js'
 import Base from './Base.svelte'
 import Select from './Select.svelte'
@@ -129,7 +129,7 @@ describe('createInfiniteQuery', () => {
   })
 
   it('should keep initialData visible alongside the error when a refetch fails', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const rendered = render(Options, {
       props: {
@@ -154,7 +154,7 @@ describe('createInfiniteQuery', () => {
   })
 
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
-    const key = queryKey()
+    const key = createKey()
     const postId = ref<string | undefined>(undefined)
     const queryFn = vi.fn<(context: { pageParam: number }) => Promise<string>>(
       ({ pageParam }: { pageParam: number }) =>
@@ -233,7 +233,7 @@ describe('createInfiniteQuery', () => {
   })
 
   it('should throw error to the nearest svelte:boundary when throwOnError is true', async () => {
-    const key = queryKey()
+    const key = createKey()
     const consoleMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const rendered = render(ErrorBoundary, {
@@ -260,7 +260,7 @@ describe('createInfiniteQuery', () => {
   })
 
   it('should throw error to the nearest svelte:boundary when throwOnError function returns true', async () => {
-    const key = queryKey()
+    const key = createKey()
     const consoleMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const rendered = render(ErrorBoundary, {
@@ -287,7 +287,7 @@ describe('createInfiniteQuery', () => {
   })
 
   it('should not throw to the nearest svelte:boundary when throwOnError function returns false', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const rendered = render(ErrorBoundary, {
       props: {
@@ -310,7 +310,7 @@ describe('createInfiniteQuery', () => {
   })
 
   it('should throw error to the nearest svelte:boundary when queryFn rejects with a falsy error and throwOnError is in use', async () => {
-    const key = queryKey()
+    const key = createKey()
     const consoleMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const rendered = render(ErrorBoundary, {

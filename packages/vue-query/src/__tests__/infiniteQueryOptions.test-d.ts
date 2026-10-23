@@ -1,7 +1,7 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { dataTagSymbol } from '@tanstack/query-core'
 import { reactive } from 'vue-demi'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { QueryClient } from '../queryClient'
 import { useInfiniteQuery } from '../useInfiniteQuery'
@@ -18,7 +18,7 @@ export const exportedInfiniteQueryOptions = infiniteQueryOptions({
 
 describe('infiniteQueryOptions', () => {
   it('should not allow excess properties', () => {
-    const key = queryKey()
+    const key = createKey()
     assertType(
       infiniteQueryOptions({
         queryKey: key,
@@ -32,7 +32,7 @@ describe('infiniteQueryOptions', () => {
   })
 
   it('should infer types for callbacks', () => {
-    const key = queryKey()
+    const key = createKey()
     infiniteQueryOptions({
       queryKey: key,
       queryFn: () => Promise.resolve('data'),
@@ -46,7 +46,7 @@ describe('infiniteQueryOptions', () => {
   })
 
   it('should work when passed to useInfiniteQuery', () => {
-    const key = queryKey()
+    const key = createKey()
     const options = infiniteQueryOptions({
       queryKey: key,
       queryFn: () => Promise.resolve('string'),
@@ -97,7 +97,7 @@ describe('infiniteQueryOptions', () => {
   })
 
   it('should tag the queryKey with the result type of the QueryFn', () => {
-    const key = queryKey()
+    const key = createKey()
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: key,
       queryFn: () => Promise.resolve('string'),
@@ -109,7 +109,7 @@ describe('infiniteQueryOptions', () => {
   })
 
   it('should tag the queryKey even if no promise is returned', () => {
-    const key = queryKey()
+    const key = createKey()
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: key,
       queryFn: () => 'string',
@@ -121,7 +121,7 @@ describe('infiniteQueryOptions', () => {
   })
 
   it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
-    const key = queryKey()
+    const key = createKey()
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: key,
       queryFn: () => Promise.resolve('string'),
@@ -134,7 +134,7 @@ describe('infiniteQueryOptions', () => {
   })
 
   it('should return the proper type when passed to getQueryData', () => {
-    const key = queryKey()
+    const key = createKey()
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: key,
       queryFn: () => Promise.resolve('string'),
@@ -151,7 +151,7 @@ describe('infiniteQueryOptions', () => {
   })
 
   it('should properly type when passed to setQueryData', () => {
-    const key = queryKey()
+    const key = createKey()
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: key,
       queryFn: () => Promise.resolve('string'),
