@@ -146,6 +146,6 @@ createQuery(() => ({
 ```
 
 - Errors can be caught and reset using Svelte's native `<svelte:boundary>` component.
-  Set `throwOnError` option to `true` to make sure errors are thrown to the `<svelte:boundary>` component.
+  Set `throwOnError` option to `true` on `createQuery`/`createInfiniteQuery` to make sure errors are thrown to the `<svelte:boundary>` component.
 
 - Since property tracking is handled through Svelte's fine-grained reactivity, options like `notifyOnChangeProps` are not needed
