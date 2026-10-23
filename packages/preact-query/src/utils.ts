@@ -36,6 +36,7 @@ export function useSyncExternalStore(
     if (didSnapshotChange(_instance)) {
       forceUpdate({ _instance })
     }
+    // oxlint-disable-next-line react/exhaustive-deps -- '_instance' never changes, matching the upstream implementation
   }, [subscribe, value, getSnapshot])
 
   useEffect(() => {
@@ -48,6 +49,7 @@ export function useSyncExternalStore(
         forceUpdate({ _instance })
       }
     })
+    // oxlint-disable-next-line react/exhaustive-deps -- '_instance' never changes, matching the upstream implementation
   }, [subscribe])
 
   return value
