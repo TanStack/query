@@ -8,7 +8,7 @@ import {
   vi,
 } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createQueriesController } from '../createQueriesController.js'
@@ -41,7 +41,7 @@ describe('createQueriesController', () => {
   })
 
   it('should resolve from the pre-connect placeholder state on the first provider connection', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Consumer extends LitElement {
       readonly queryKeys = [
@@ -103,7 +103,7 @@ describe('createQueriesController', () => {
   })
 
   it('should prefer an explicit client over the provider context', async () => {
-    const key = queryKey()
+    const key = createKey()
     const providerClient = new QueryClient()
 
     const provider = document.createElement(
@@ -168,8 +168,8 @@ describe('createQueriesController', () => {
   })
 
   it('should combine multiple query results', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     class Host extends LitElement {
       readonly queries = createQueriesController(
@@ -209,7 +209,7 @@ describe('createQueriesController', () => {
   })
 
   it('should not have stale closures with combine (#6648)', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       static override properties = { count: { type: Number } }
@@ -257,7 +257,7 @@ describe('createQueriesController', () => {
   })
 
   it('should not request another update when stable function query options refresh during host update', async () => {
-    const key = queryKey()
+    const key = createKey()
     let callCount = 0
 
     class Host extends LitElement {
@@ -317,7 +317,7 @@ describe('createQueriesController', () => {
   })
 
   it('should not request an update for refetch-only state changes when data was read and result refetch is invoked', async () => {
-    const key = queryKey()
+    const key = createKey()
     let resolveRefetch: (() => void) | undefined
 
     class Host extends LitElement {
@@ -384,7 +384,7 @@ describe('createQueriesController', () => {
       return originalDefaultQueryOptions.call(queryClient, options as never)
     }) as typeof queryClient.defaultQueryOptions
 
-    const key = queryKey()
+    const key = createKey()
     let resolveRefetch: (() => void) | undefined
 
     class Host extends LitElement {
@@ -437,7 +437,7 @@ describe('createQueriesController', () => {
   })
 
   it('should refresh suppressed query results on the next accessor read when a newly read property changed', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       updatesRequested = 0
@@ -489,7 +489,7 @@ describe('createQueriesController', () => {
   })
 
   it('should return the same result between reads when nothing changed', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly queries = createQueriesController(
@@ -517,9 +517,9 @@ describe('createQueriesController', () => {
   })
 
   it('should support dynamic add/remove and keep partial failure stability', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
+    const key3 = createKey()
     let includeThird = false
     let includeFailing = true
 
@@ -612,7 +612,7 @@ describe('createQueriesController', () => {
   })
 
   it('should preserve the documented result order mapping when queries are reordered', async () => {
-    const key = queryKey()
+    const key = createKey()
     let order: Array<'first' | 'second'> = ['first', 'second']
 
     class Host extends LitElement {
@@ -651,7 +651,7 @@ describe('createQueriesController', () => {
   })
 
   it('should return stable per-index results for duplicate query keys', async () => {
-    const key = queryKey()
+    const key = createKey()
     let callCount = 0
 
     class Host extends LitElement {
@@ -711,7 +711,7 @@ describe('createQueriesController', () => {
   })
 
   it('should not process detached updates when disconnected while in-flight', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       updatesRequested = 0
@@ -750,7 +750,7 @@ describe('createQueriesController', () => {
   })
 
   it('should fail after the handshake when the provider is missing and recover when a provider is adopted later', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Consumer extends LitElement {
       readonly queryKeys = [
@@ -807,7 +807,7 @@ describe('createQueriesController', () => {
   })
 
   it('should reject placeholder refetch of raw query results after the missing-client handshake', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Consumer extends LitElement {
       readonly queryKeys = [
@@ -842,7 +842,7 @@ describe('createQueriesController', () => {
   })
 
   it('should defer placeholder accessors in the constructor until host fields are initialized', () => {
-    const key = queryKey()
+    const key = createKey()
 
     class DeferredFieldsQueriesHost extends LitElement {
       readonly queries = createQueriesController(this, () => ({
@@ -867,7 +867,7 @@ describe('createQueriesController', () => {
   })
 
   it('should re-surface permanent placeholder combine errors after initialization', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly queries = createQueriesController(this, {
@@ -896,7 +896,7 @@ describe('createQueriesController', () => {
   })
 
   it('should materialize defined initialData in placeholder combine before a client is available', () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly queries = createQueriesController(this, {
@@ -921,7 +921,7 @@ describe('createQueriesController', () => {
   })
 
   it('should call initialData and initialDataUpdatedAt functions in placeholder combine before a client is available', () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly queries = createQueriesController(this, {
@@ -950,7 +950,7 @@ describe('createQueriesController', () => {
   })
 
   it('should apply select to initialData in placeholder combine before a client is available', () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly queries = createQueriesController(this, {
@@ -976,7 +976,7 @@ describe('createQueriesController', () => {
   })
 
   it('should defer dynamic accessors in the explicit-client constructor until host fields are initialized', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class DeferredExplicitQueriesHost extends LitElement {
       readonly queries = createQueriesController(
@@ -1011,7 +1011,7 @@ describe('createQueriesController', () => {
   })
 
   it('should defer static combine callbacks in the explicit-client constructor until host fields are initialized', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class DeferredExplicitCombineQueriesHost extends LitElement {
       readonly queries = createQueriesController(
@@ -1052,7 +1052,7 @@ describe('createQueriesController', () => {
   })
 
   it('should re-surface permanent static combine errors in the explicit-client constructor after initialization', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class InvalidExplicitCombineQueriesHost extends LitElement {
       readonly queries = createQueriesController(
@@ -1086,7 +1086,7 @@ describe('createQueriesController', () => {
   })
 
   it('should reuse hydrated data on an already-connected host without an eager refetch', async () => {
-    const key = queryKey()
+    const key = createKey()
     let queryFnCalls = 0
 
     queryClient.setQueryData(key, 'hydrated-value')
@@ -1130,8 +1130,8 @@ describe('createQueriesController', () => {
   })
 
   it('should not throw for a queries controller on an already-connected host with an explicit client', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     queryClient.setQueryData(key1, 'alpha')
     queryClient.setQueryData(key2, 'beta')
 
@@ -1184,7 +1184,7 @@ describe('createQueriesController', () => {
   })
 
   it('should switch queries controller to new provider client while connected', async () => {
-    const key = queryKey()
+    const key = createKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -1257,7 +1257,7 @@ describe('createQueriesController', () => {
   })
 
   it('should reparent queries controller under a different provider without cross-tree leakage', async () => {
-    const key = queryKey()
+    const key = createKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
