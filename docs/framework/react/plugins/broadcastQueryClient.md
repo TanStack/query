@@ -26,6 +26,8 @@ broadcastQueryClient({
 })
 ```
 
+Creating a query in another tab does not overwrite an existing local query with an empty initial state. This preserves local errors and active fetches. If the local query has no data, it can still adopt an added query's state when that state has a positive `dataUpdatedAt` or `errorUpdatedAt`.
+
 ## API
 
 ### `broadcastQueryClient`

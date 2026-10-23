@@ -1,6 +1,6 @@
 import { BroadcastChannel } from 'broadcast-channel'
 import type { BroadcastChannelOptions } from 'broadcast-channel'
-import type { QueryClient, QueryKey } from '@tanstack/query-core'
+import type { QueryClient, QueryKey, QueryState } from '@tanstack/query-core'
 
 /**
  * Metadata describing a broadcast that failed to be delivered to other tabs.
@@ -192,8 +192,13 @@ export function broadcastQueryClient({
         }
       } else if (type === 'added') {
         if (query) {
-          if (query.state.data === undefined) {
-            query.setState(state)
+          const incoming = state as QueryState
+          // An empty added state must not erase a local error or active fetch.
+          if (
+            query.state.data === undefined &&
+            (incoming.dataUpdatedAt > 0 || incoming.errorUpdatedAt > 0)
+          ) {
+            query.setState(incoming)
           }
           return
         }
