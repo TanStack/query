@@ -407,11 +407,13 @@ export function replaceEqualDeep(a: any, b: any, depth = 0): any {
 
   for (let i = 0; i < bSize; i++) {
     const key: any = array ? i : bItems[i]
-    const aItem = a[key]
+    // `a.__proto__` is the prototype of `a` unless it has an own `__proto__` key
+    const aItem =
+      key === '__proto__' && !hasOwn.call(a, key) ? undefined : a[key]
     const bItem = b[key]
 
     if (aItem === bItem) {
-      copy[key] = aItem
+      setCopyItem(copy, key, aItem)
       if (array ? i < aSize : hasOwn.call(a, key)) equalItems++
       continue
     }
@@ -422,16 +424,36 @@ export function replaceEqualDeep(a: any, b: any, depth = 0): any {
       typeof aItem !== 'object' ||
       typeof bItem !== 'object'
     ) {
-      copy[key] = bItem
+      setCopyItem(copy, key, bItem)
       continue
     }
 
     const v = replaceEqualDeep(aItem, bItem, depth + 1)
-    copy[key] = v
+    setCopyItem(copy, key, v)
     if (v === aItem) equalItems++
   }
 
   return aSize === bSize && equalItems === aSize ? a : copy
+}
+
+/**
+ * Sets `copy[key]` as an own property. A plain assignment to `__proto__` would change the prototype
+ * of `copy` instead, e.g. for data from `JSON.parse('{"__proto__": {}}')`.
+ * @param copy - The array or object being built by {@link replaceEqualDeep}.
+ * @param key - The index or key to set.
+ * @param value - The value to set.
+ */
+function setCopyItem(copy: any, key: PropertyKey, value: unknown): void {
+  if (key === '__proto__') {
+    Object.defineProperty(copy, key, {
+      value,
+      enumerable: true,
+      writable: true,
+      configurable: true,
+    })
+  } else {
+    copy[key] = value
+  }
 }
 
 /**

@@ -470,6 +470,32 @@ describe('core/utils', () => {
 
       expect(resultNode).toBe(nextNode)
     })
+
+    it('should keep an own `__proto__` key as data instead of setting the prototype', () => {
+      const prev = JSON.parse('{"__proto__":{"admin":true},"count":1}')
+      const next = JSON.parse('{"__proto__":{"admin":true},"count":2}')
+      const result = replaceEqualDeep(prev, next)
+
+      expect(result).not.toBe(prev)
+      expect(Object.getPrototypeOf(result)).toBe(Object.prototype)
+      expect(Object.keys(result)).toStrictEqual(['__proto__', 'count'])
+      expect(Object.getOwnPropertyDescriptor(result, '__proto__')?.value).toBe(
+        prev['__proto__'],
+      )
+      expect(result.admin).toBeUndefined()
+      expect(JSON.stringify(result)).toBe(JSON.stringify(next))
+    })
+
+    it('should not take the previous prototype for a new `__proto__` key', () => {
+      const prev = { count: 1 }
+      const next = JSON.parse('{"__proto__":{},"count":1}')
+      const result = replaceEqualDeep(prev, next)
+
+      expect(Object.getPrototypeOf(result)).toBe(Object.prototype)
+      expect(Object.getOwnPropertyDescriptor(result, '__proto__')?.value).toBe(
+        next['__proto__'],
+      )
+    })
   })
 
   describe('matchMutation', () => {
