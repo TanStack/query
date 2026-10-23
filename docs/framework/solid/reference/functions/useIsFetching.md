@@ -11,10 +11,10 @@ redirect_from:
 function useIsFetching(filters?: Accessor<QueryFilters<readonly unknown[]>>, queryClient?: Accessor<QueryClient>): Accessor<number>;
 ```
 
-Defined in: [packages/solid-query/src/useIsFetching.ts:27](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsFetching.ts#L27)
+Defined in: [packages/solid-query/src/useIsFetching.ts:28](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsFetching.ts#L28)
 
 The `useIsFetching` primitive returns the `number` of the queries that your application is loading or fetching
-in the background (useful for app-wide loading indicators).
+in the background by default (useful for app-wide loading indicators).
 
 ## Parameters
 
@@ -23,6 +23,8 @@ in the background (useful for app-wide loading indicators).
 `Accessor`\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\>
 
 An accessor returning the [QueryFilters](../interfaces/QueryFilters.md) to narrow down the matched queries.
+`fetchStatus` defaults to `'fetching'` when omitted or `undefined`; set it to `'paused'` or `'idle'` to count
+queries in that status instead.
 
 <a id="filters-properties"></a>
 
@@ -41,8 +43,7 @@ will be used.
 
 `Accessor`\<`number`\>
 
-An accessor for the `number` of the queries that your application is currently loading or fetching
-in the background.
+An accessor for the `number` of matching queries with the requested `fetchStatus`.
 
 ## Example
 

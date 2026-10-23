@@ -8,7 +8,7 @@ import type { ReactiveControllerHost } from 'lit'
  * Accessor returned by `useIsFetching`.
  *
  * Call the accessor or read its `current` property to get the number of
- * currently fetching queries that match the filters.
+ * queries that match the filters, defaulting to currently fetching queries.
  */
 export type IsFetchingAccessor = ValueAccessor<number> & { destroy: () => void }
 
@@ -111,17 +111,18 @@ class IsFetchingController extends BaseController<number> {
 
 /**
  * Creates a Lit reactive controller that tracks how many matching queries are
- * currently fetching.
+ * currently fetching by default.
  *
  * When `filters` is a function, it is re-read during host updates so the count
  * can follow reactive host state. If `queryClient` is omitted, the controller
  * resolves the client from the nearest connected `QueryClientProvider`.
  * @param host - The Lit reactive controller host that owns the cache
  * subscription.
- * @param filters - Query filters, or a getter that returns query filters.
+ * @param filters - Query filters, or a getter that returns query filters. `fetchStatus` defaults to
+ * `'fetching'` when omitted or `undefined`; set it to `'paused'` or `'idle'` to count queries in that status instead.
  * @param queryClient - Optional explicit query client. Provide this for
  * controllers that should not resolve a client from Lit context.
- * @returns An accessor for the current number of matching fetching queries.
+ * @returns An accessor for the number of matching queries with the requested `fetchStatus`.
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'
