@@ -113,6 +113,15 @@ describe('SvelteQueryDevtools', () => {
     expect(setThemeMock).toHaveBeenCalledWith('dark')
   })
 
+  it('should forward an undefined "theme" to the devtools instance when the prop is omitted', async () => {
+    render(SvelteQueryDevtools, {
+      props: { client: queryClient },
+    })
+
+    await vi.dynamicImportSettled()
+    expect(setThemeMock).toHaveBeenCalledWith(undefined)
+  })
+
   it('should forward a "position" change to the devtools instance after mount', async () => {
     const { rerender } = render(SvelteQueryDevtools, {
       props: { client: queryClient, position: 'bottom' },
