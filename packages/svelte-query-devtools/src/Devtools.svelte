@@ -67,7 +67,7 @@
     styleNonce = undefined,
     shadowDOMTarget = undefined,
     hideDisabledQueries = false,
-    theme = 'system',
+    theme,
   }: DevtoolsOptions = $props()
 
   let ref: HTMLDivElement
