@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { computed, isVue2, isVue3, ref } from 'vue-demi'
 import { skipToken } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 
@@ -17,7 +17,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should properly execute infinite query', async () => {
-    const key = queryKey()
+    const key = createKey()
     const { data, fetchNextPage, status } = useInfiniteQuery({
       queryKey: key,
       queryFn: ({ pageParam }) =>
@@ -45,7 +45,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should properly execute infinite query using infiniteQueryOptions', async () => {
-    const key = queryKey()
+    const key = createKey()
     const options = infiniteQueryOptions({
       queryKey: key,
       queryFn: ({ pageParam }) =>
@@ -75,7 +75,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should react to maxPages changing via a whole-options getter', async () => {
-    const key = queryKey()
+    const key = createKey()
     const maxPages = ref(1)
     const { data, fetchNextPage } = useInfiniteQuery(() => ({
       queryKey: key,
@@ -103,7 +103,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should reflect hasNextPage becoming false once the last page is reached', async () => {
-    const key = queryKey()
+    const key = createKey()
     const { hasNextPage, fetchNextPage, isFetching } = useInfiniteQuery({
       queryKey: key,
       queryFn: ({ pageParam }) =>
@@ -123,7 +123,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should keep initialData visible alongside the error when a refetch fails', async () => {
-    const key = queryKey()
+    const key = createKey()
     const { data, status, isError } = useInfiniteQuery({
       queryKey: key,
       queryFn: () =>
@@ -144,7 +144,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
-    const key = queryKey()
+    const key = createKey()
     const postId = ref<string>()
     const queryFn = vi.fn<(context: { pageParam: number }) => Promise<string>>(
       ({ pageParam }: { pageParam: number }) =>
@@ -174,7 +174,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should skip the query while a computed queryFn resolves to skipToken, and run it once defined', async () => {
-    const key = queryKey()
+    const key = createKey()
     const postId = ref<number>()
     const queryFn = vi.fn<(context: { pageParam: number }) => Promise<string>>(
       ({ pageParam }: { pageParam: number }) =>
@@ -206,7 +206,7 @@ describe('useInfiniteQuery', () => {
         const consoleErrorMock = vi
           .spyOn(console, 'error')
           .mockReturnValue(undefined)
-        const key = queryKey()
+        const key = createKey()
         const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
         useInfiniteQuery({
           queryKey: key,
@@ -234,7 +234,7 @@ describe('useInfiniteQuery', () => {
     it.runIf(isVue3)(
       'should throw from error watcher when throwOnError returns true, which Vue 3 surfaces as an unhandled rejection',
       async ({ onTestFinished }) => {
-        const key = queryKey()
+        const key = createKey()
         const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
         useInfiniteQuery({
           queryKey: key,
@@ -273,7 +273,7 @@ describe('useInfiniteQuery', () => {
     it('should throw from suspense without rethrowing from the error watcher when throwOnError is true', async ({
       onTestFinished,
     }) => {
-      const key = queryKey()
+      const key = createKey()
       const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
       const query = useInfiniteQuery({
         queryKey: key,

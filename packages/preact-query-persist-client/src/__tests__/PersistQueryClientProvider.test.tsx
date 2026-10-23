@@ -1,6 +1,6 @@
 import { act, render } from '@testing-library/preact'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, noop, useQuery } from '@tanstack/preact-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
@@ -38,7 +38,7 @@ describe('PersistQueryClientProvider (preact)', () => {
   })
 
   it('should restore cache from persister and refetch', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     const queryClient = new QueryClient()

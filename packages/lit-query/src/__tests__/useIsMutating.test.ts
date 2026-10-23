@@ -8,7 +8,7 @@ import {
   vi,
 } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createMutationController } from '../createMutationController.js'
@@ -40,7 +40,7 @@ describe('useIsMutating', () => {
   })
 
   it('should keep the pre-connect placeholder zero until a provider binds', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
 
     class Consumer extends LitElement {
       readonly mutationKey = mutationKey
@@ -80,7 +80,7 @@ describe('useIsMutating', () => {
   })
 
   it('should prefer an explicit client over the provider context', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
     const providerClient = new QueryClient()
 
     const provider = document.createElement(
@@ -217,12 +217,12 @@ describe('useIsMutating', () => {
   it('should count all mutating mutations when filters are omitted', async () => {
     class Producer extends LitElement {
       readonly mutation1 = createMutationController(this, {
-        mutationKey: queryKey(),
+        mutationKey: createKey(),
         mutationFn: () => sleep(10).then(() => 'data1'),
       })
 
       readonly mutation2 = createMutationController(this, {
-        mutationKey: queryKey(),
+        mutationKey: createKey(),
         mutationFn: () => sleep(10).then(() => 'data2'),
       })
     }
@@ -259,8 +259,8 @@ describe('useIsMutating', () => {
   })
 
   it('should be able to filter', async () => {
-    const mutationKey1 = queryKey()
-    const mutationKey2 = queryKey()
+    const mutationKey1 = createKey()
+    const mutationKey2 = createKey()
 
     class Host extends LitElement {
       readonly mutationA = createMutationController(
@@ -317,9 +317,9 @@ describe('useIsMutating', () => {
   })
 
   it('should apply updated filters on host updates', async () => {
-    const mutationKey1 = queryKey()
-    const mutationKey2 = queryKey()
-    const unmatchedMutationKey = queryKey()
+    const mutationKey1 = createKey()
+    const mutationKey2 = createKey()
+    const unmatchedMutationKey = createKey()
     let activeFilter: { mutationKey?: ReadonlyArray<string> } = {
       mutationKey: mutationKey1,
     }
@@ -385,7 +385,7 @@ describe('useIsMutating', () => {
   })
 
   it('should fail after the handshake and recover under a provider', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
 
     class Consumer extends LitElement {
       readonly mutationKey = mutationKey
@@ -420,7 +420,7 @@ describe('useIsMutating', () => {
   })
 
   it('should not throw on an already-connected host with an explicit client', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
 
     class Producer extends LitElement {
       readonly mutation = createMutationController(

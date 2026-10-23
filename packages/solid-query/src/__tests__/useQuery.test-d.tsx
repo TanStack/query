@@ -1,10 +1,10 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { queryOptions, useQuery } from '../index'
 import type { OmitKeyof, QueryFunction, UseQueryOptions } from '..'
 
 describe('useQuery', () => {
-  const key = queryKey()
+  const key = createKey()
 
   it('should default to unknown when the query function is unspecified', () => {
     const noQueryFn = useQuery(() => ({ queryKey: key }))
@@ -188,7 +188,7 @@ describe('useQuery', () => {
     describe('Config object overload', () => {
       it('should always define TData when initialData is provided as an object', () => {
         const { data } = useQuery(() => ({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         }))
@@ -198,7 +198,7 @@ describe('useQuery', () => {
 
       it('should define TData when passed through queryOptions', () => {
         const options = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         })
@@ -209,7 +209,7 @@ describe('useQuery', () => {
 
       it('should always define TData when initialData is provided as a function which ALWAYS returns the data', () => {
         const { data } = useQuery(() => ({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => ({ wow: true }),
           initialData: () => ({ wow: true }),
         }))
@@ -219,7 +219,7 @@ describe('useQuery', () => {
 
       it('should have undefined in the TData union when initialData is NOT provided', () => {
         const { data } = useQuery(() => ({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => ({ wow: true }),
         }))
 
@@ -228,7 +228,7 @@ describe('useQuery', () => {
 
       it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
         const { data } = useQuery(() => ({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => ({ wow: true }),
           initialData: () => undefined as { wow: boolean } | undefined,
         }))
@@ -240,7 +240,7 @@ describe('useQuery', () => {
     describe('Query key overload', () => {
       it('should always define TData when initialData is provided', () => {
         const { data } = useQuery(() => ({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         }))
@@ -250,7 +250,7 @@ describe('useQuery', () => {
 
       it('should have undefined in the TData union when initialData is NOT provided', () => {
         const { data } = useQuery(() => ({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => ({ wow: true }),
         }))
 
@@ -261,7 +261,7 @@ describe('useQuery', () => {
     describe('Query key and func', () => {
       it('should always define TData when initialData is provided', () => {
         const { data } = useQuery(() => ({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         }))
@@ -271,7 +271,7 @@ describe('useQuery', () => {
 
       it('should have undefined in the TData union when initialData is NOT provided', () => {
         const { data } = useQuery(() => ({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => ({ wow: true }),
         }))
 
