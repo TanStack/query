@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueriesObserver, QueryClient, QueryObserver } from '..'
 import type { QueryObserverResult } from '..'
 
@@ -18,8 +18,8 @@ describe('queriesObserver', () => {
   })
 
   it('should return an array with all query results', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
@@ -37,8 +37,8 @@ describe('queriesObserver', () => {
   })
 
   it('should return current queries via getQueries', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
@@ -58,8 +58,8 @@ describe('queriesObserver', () => {
   })
 
   it('should update when a query updates', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
@@ -103,8 +103,8 @@ describe('queriesObserver', () => {
   })
 
   it('should return current observers via getObservers', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
@@ -124,8 +124,8 @@ describe('queriesObserver', () => {
   })
 
   it('should update when a query is removed', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
@@ -175,8 +175,8 @@ describe('queriesObserver', () => {
   })
 
   it('should update when a query changed position', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
@@ -224,8 +224,8 @@ describe('queriesObserver', () => {
   })
 
   it('should not update when nothing has changed', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
@@ -269,8 +269,8 @@ describe('queriesObserver', () => {
   })
 
   it('should trigger all fetches when subscribed', () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
@@ -286,7 +286,7 @@ describe('queriesObserver', () => {
   })
 
   it('should not destroy the observer if there is still a subscription', async () => {
-    const key1 = queryKey()
+    const key1 = createKey()
     const observer = new QueriesObserver(queryClient, [
       {
         queryKey: key1,
@@ -315,8 +315,8 @@ describe('queriesObserver', () => {
   })
 
   it('should handle duplicate query keys in different positions', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
 
@@ -384,8 +384,8 @@ describe('queriesObserver', () => {
   })
 
   it('should notify when results change during early return', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
 
@@ -443,8 +443,8 @@ describe('queriesObserver', () => {
       results,
     }))
 
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
 
@@ -475,7 +475,7 @@ describe('queriesObserver', () => {
   })
 
   it('should skip combine notifications while suspense queries have no data', () => {
-    const key = queryKey()
+    const key = createKey()
     const combine = vi.fn<
       (results: Array<QueryObserverResult>) => Array<unknown>
     >((results: Array<QueryObserverResult>) =>
@@ -510,7 +510,7 @@ describe('queriesObserver', () => {
   })
 
   it('should skip combine notifications after suspense is enabled without structural changes', () => {
-    const key = queryKey()
+    const key = createKey()
     const combine = vi.fn<
       (results: Array<QueryObserverResult>) => Array<unknown>
     >((results: Array<QueryObserverResult>) =>
@@ -565,8 +565,8 @@ describe('queriesObserver', () => {
       results,
     }))
 
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
 
@@ -614,8 +614,8 @@ describe('queriesObserver', () => {
       results,
     }))
 
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
 
@@ -655,8 +655,8 @@ describe('queriesObserver', () => {
       total: results.length * 4,
     }))
 
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
 
@@ -688,7 +688,7 @@ describe('queriesObserver', () => {
       count: results.length,
     }))
 
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => number>().mockReturnValue(1)
 
     const observer = new QueriesObserver<{ count: number }>(
@@ -707,7 +707,7 @@ describe('queriesObserver', () => {
   })
 
   it('should return observer result directly when notifyOnChangeProps is set', () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => number>().mockReturnValue(1)
 
     const observer = new QueriesObserver(queryClient, [
@@ -726,8 +726,6 @@ describe('queriesObserver', () => {
     expect(trackedResults).toHaveLength(1)
     // trackResult should NOT be called when notifyOnChangeProps is set
     expect(trackResultSpy).not.toHaveBeenCalled()
-
-    trackResultSpy.mockRestore()
   })
 
   it('should return cached combined result when nothing has changed', () => {
@@ -737,7 +735,7 @@ describe('queriesObserver', () => {
       count: results.length,
     }))
 
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => number>().mockReturnValue(1)
 
     const queries = [{ queryKey: key, queryFn }]
@@ -773,7 +771,7 @@ describe('queriesObserver', () => {
       const combine = vi.fn<
         () => string | number | bigint | boolean | null | undefined
       >(() => value)
-      const key = queryKey()
+      const key = createKey()
       const queries = [{ queryKey: key, queryFn: () => 1 }]
       const observer = new QueriesObserver<typeof value>(queryClient, queries, {
         combine,
@@ -796,8 +794,8 @@ describe('queriesObserver', () => {
   )
 
   it('should track properties on all observers when trackResult is called', () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = () => 'data1'
     const queryFn2 = () => 'data2'
 
@@ -831,14 +829,12 @@ describe('queriesObserver', () => {
     void trackedResults[1]!.status
 
     expect(trackPropSpy).toHaveBeenCalledTimes(4)
-
-    trackPropSpy.mockRestore()
   })
 
   it('should subscribe to new observers when a query is added while subscribed', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
+    const key3 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const queryFn3 = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 3))
