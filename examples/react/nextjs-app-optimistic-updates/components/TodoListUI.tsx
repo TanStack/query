@@ -20,7 +20,7 @@ export default function TodoListUI() {
       queryClient.invalidateQueries({ queryKey: todosQueryOptions.queryKey }),
   })
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     const text = inputValue.trim()
     if (!text) return
