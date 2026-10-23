@@ -2605,6 +2605,28 @@ describe('queryClient', () => {
 
       unsubscribe()
     })
+
+    it('should refetch static queries without data after invalidation', async () => {
+      const key = queryKey()
+      const queryFn = vi
+        .fn<(...args: Array<unknown>) => Promise<string>>()
+        .mockRejectedValueOnce(new Error('error'))
+        .mockResolvedValue('data')
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        staleTime: 'static',
+        retry: false,
+      })
+      const unsubscribe = observer.subscribe(() => undefined)
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(queryClient.getQueryState(key)?.status).toBe('error')
+      await queryClient.invalidateQueries({ queryKey: key })
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(queryClient.getQueryData(key)).toBe('data')
+      unsubscribe()
+    })
   })
 
   describe('resetQueries', () => {
@@ -2740,6 +2762,25 @@ describe('queryClient', () => {
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(0)
       expect(didSkipTokenRun).toBe(false)
+    })
+
+    it('should refetch active queries with a static staleTime', async () => {
+      const key = queryKey()
+      const queryFn = vi
+        .fn<(...args: Array<unknown>) => string>()
+        .mockReturnValue('data')
+      await queryClient.query({ queryKey: key, queryFn })
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        staleTime: 'static',
+      })
+      const unsubscribe = observer.subscribe(() => undefined)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      await queryClient.resetQueries({ queryKey: key })
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(queryClient.getQueryData(key)).toBe('data')
+      unsubscribe()
     })
   })
 
