@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '..'
 import {
   addConsumeAwareSignal,
@@ -474,7 +474,7 @@ describe('core/utils', () => {
 
   describe('matchMutation', () => {
     it('should return false if mutationKey options is undefined', () => {
-      const filters = { mutationKey: queryKey() }
+      const filters = { mutationKey: createKey() }
       const queryClient = new QueryClient()
       const mutation = new Mutation({
         client: queryClient,
@@ -666,8 +666,6 @@ describe('core/utils', () => {
       await expect(resolved(context)).rejects.toThrow(
         'Missing queryFn: \'["skip"]\'',
       )
-
-      consoleErrorMock.mockRestore()
     })
   })
 
@@ -692,7 +690,7 @@ describe('core/utils', () => {
   describe('addConsumeAwareSignal', () => {
     it('should expose the signal on the query context while preserving its properties', () => {
       const controller = new AbortController()
-      const key = queryKey()
+      const key = createKey()
       const context = addConsumeAwareSignal(
         { queryKey: key, meta: undefined },
         () => controller.signal,
@@ -723,7 +721,7 @@ describe('core/utils', () => {
       const controller = new AbortController()
       let cancelled = false
       const context = addConsumeAwareSignal(
-        { queryKey: queryKey() },
+        { queryKey: createKey() },
         () => controller.signal,
         () => (cancelled = true),
       )
@@ -739,7 +737,7 @@ describe('core/utils', () => {
       const controller = new AbortController()
       const addEventListener = vi.spyOn(controller.signal, 'addEventListener')
       const context = addConsumeAwareSignal(
-        { queryKey: queryKey() },
+        { queryKey: createKey() },
         () => controller.signal,
         vi.fn(),
       )

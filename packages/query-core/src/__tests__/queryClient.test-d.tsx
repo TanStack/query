@@ -1,5 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { skipToken } from '../utils'
 import type { MutationFilters, QueryFilters, Updater } from '../utils'
@@ -421,7 +421,7 @@ describe('queryClient', () => {
     it('should allow passing pages', async () => {
       // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       const data = await new QueryClient().fetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve('string'),
         getNextPageParam: () => 1,
         initialPageParam: 1,
