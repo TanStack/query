@@ -1883,7 +1883,7 @@ describe("useQueries's in Suspense mode", () => {
     expect(rendered.getByText('q1: data1, q2: data2')).toBeInTheDocument()
   })
 
-  it('should not suspend when all queries have staleTime: Infinity and cached data', async () => {
+  it('should not suspend when all queries have staleTime: Infinity and cached data', () => {
     const key1 = createKey()
     const key2 = createKey()
 
