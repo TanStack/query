@@ -27,10 +27,10 @@ export const Examples = () => {
   queryClient.getQueryDefaults('todos')
   queryClient.getQueryState('todos')
   queryClient.isFetching('todos')
-  queryClient.setMutationDefaults('todos', { mutationFn: async () => null })
+  queryClient.setMutationDefaults('todos', { mutationFn: () => Promise.resolve(null) })
   queryClient.setQueriesData('todos', () => null)
   queryClient.setQueryData('todos', () => null)
-  queryClient.setQueryDefaults('todos', { queryFn: async () => null })
+  queryClient.setQueryDefaults('todos', { queryFn: () => Promise.resolve(null) })
   queryClient.cancelQueries('todos')
   queryClient.fetchInfiniteQuery('todos')
   queryClient.fetchQuery('todos')
@@ -48,12 +48,12 @@ export const Examples = () => {
   useRenamedQueryClient().getQueryState('todos')
   useRenamedQueryClient().isFetching('todos')
   useRenamedQueryClient().setMutationDefaults('todos', {
-    mutationFn: async () => null,
+    mutationFn: () => Promise.resolve(null),
   })
   useRenamedQueryClient().setQueriesData('todos', () => null)
   useRenamedQueryClient().setQueryData('todos', () => null)
   useRenamedQueryClient().setQueryDefaults('todos', {
-    queryFn: async () => null,
+    queryFn: () => Promise.resolve(null),
   })
   useRenamedQueryClient().cancelQueries('todos')
   useRenamedQueryClient().fetchInfiniteQuery('todos')

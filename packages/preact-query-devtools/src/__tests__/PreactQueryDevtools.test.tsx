@@ -245,7 +245,6 @@ describe('PreactQueryDevtools', () => {
       const { PreactQueryDevtools: ProductionDevtools } = await import('..')
       expect(ProductionDevtools({})).toBeNull()
     } finally {
-      vi.unstubAllEnvs()
       vi.resetModules()
     }
   })

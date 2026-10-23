@@ -1360,7 +1360,6 @@ describe('Utils tests', () => {
     })
 
     afterEach(() => {
-      vi.unstubAllGlobals()
       vi.useRealTimers()
     })
 

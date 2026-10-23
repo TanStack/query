@@ -292,6 +292,10 @@ export default defineConfig({
         // `toHaveTextContent` matches substrings, so exact `textContent` checks stay as `toBe`
         'jest-dom/prefer-to-have-text-content': 'off',
         ...pluginTestingLibrary.configs['flat/dom'].rules,
+        'testing-library/no-debugging-utils': 'error',
+        'testing-library/no-dom-import': 'error',
+        'testing-library/no-manual-cleanup': 'error',
+        'testing-library/no-render-in-lifecycle': 'error',
         // Tests name the render result `rendered` and query through it
         'testing-library/prefer-screen-queries': 'off',
         'vitest/consistent-each-for': [
@@ -302,10 +306,6 @@ export default defineConfig({
         'vitest/consistent-test-it': [
           'error',
           { fn: 'it', withinDescribe: 'it' },
-        ],
-        'vitest/no-standalone-expect': [
-          'error',
-          { additionalTestBlockFunctions: ['itIf'] },
         ],
         'vitest/consistent-vitest-vi': 'error',
         'vitest/hoisted-apis-on-top': 'error',

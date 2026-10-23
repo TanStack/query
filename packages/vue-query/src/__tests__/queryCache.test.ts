@@ -1,10 +1,10 @@
-import { beforeAll, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue-demi'
 import { QueryCache as QueryCacheOrigin } from '@tanstack/query-core'
 import { QueryCache } from '../queryCache'
 
 describe('QueryCache', () => {
-  beforeAll(() => {
+  beforeEach(() => {
     vi.spyOn(QueryCacheOrigin.prototype, 'find')
     vi.spyOn(QueryCacheOrigin.prototype, 'findAll')
   })

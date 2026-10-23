@@ -3,7 +3,7 @@ import { render, screen } from '@solidjs/testing-library'
 import { QueryClient, noop, useQueries, useQuery } from '@tanstack/solid-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { createEffect, createSignal, onMount } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 import type {
   PersistedClient,
@@ -56,7 +56,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should restore cache from persister', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -137,7 +137,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should also put useQueries into idle state', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -223,7 +223,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should show initialData while restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -309,7 +309,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should not refetch after restoring when data is fresh', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -394,7 +394,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should call onSuccess after successful restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryClient = new QueryClient()
     void queryClient
@@ -447,7 +447,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should remove cache after non-successful restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
@@ -493,11 +493,10 @@ describe('PersistQueryClientProvider', () => {
 
     expect(consoleErrorMock).toHaveBeenCalledTimes(1)
     expect(consoleErrorMock).toHaveBeenNthCalledWith(1, error)
-    consoleErrorMock.mockRestore()
   })
 
   it('should be able to persist into multiple clients', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
