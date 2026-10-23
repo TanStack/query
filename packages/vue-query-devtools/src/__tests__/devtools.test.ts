@@ -58,6 +58,12 @@ describe('VueQueryDevtools', () => {
     vi.clearAllMocks()
   })
 
+  it('should forward an undefined "theme" to the devtools instance when the prop is omitted', () => {
+    renderDevtools({ client: queryClient })
+
+    expect(setThemeMock).toHaveBeenCalledWith(undefined)
+  })
+
   it('should forward a "buttonPosition" change to the devtools instance after mount', async () => {
     const props = renderDevtools({
       client: queryClient,
