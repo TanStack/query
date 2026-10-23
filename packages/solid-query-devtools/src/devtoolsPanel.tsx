@@ -87,7 +87,7 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
   })
 
   createEffect(() => {
-    devtools.setTheme(props.theme || 'system')
+    devtools.setTheme(props.theme)
   })
 
   onMount(() => {
