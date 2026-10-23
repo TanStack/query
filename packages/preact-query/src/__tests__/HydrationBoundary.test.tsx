@@ -1,5 +1,5 @@
 import * as coreModule from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/preact'
 import { Suspense, startTransition } from 'preact/compat'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -15,9 +15,9 @@ import {
 import type { hydrate } from '@tanstack/query-core'
 
 describe('Preact hydration', () => {
-  const stringKey = queryKey()
-  const addedKey = queryKey()
-  const promiseKey = queryKey()
+  const stringKey = createKey()
+  const addedKey = createKey()
+  const promiseKey = createKey()
   let stringifiedState: string
 
   beforeEach(async () => {

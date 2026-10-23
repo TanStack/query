@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 import { act, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -30,7 +30,7 @@ describe('usePrefetchQuery', () => {
 
   it('should prefetch query if query state does not exist', async () => {
     const queryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: vi.fn<() => Promise<string>>(() =>
         sleep(10).then(() => 'prefetchQuery'),
       ),
@@ -66,7 +66,7 @@ describe('usePrefetchQuery', () => {
 
   it('should not prefetch query if query state exists', async () => {
     const queryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: vi.fn<() => Promise<string>>(() =>
         sleep(10).then(() => 'The usePrefetchQuery hook is smart!'),
       ),
@@ -107,7 +107,7 @@ describe('usePrefetchQuery', () => {
     )
 
     const queryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn,
     }
 
@@ -151,7 +151,7 @@ describe('usePrefetchQuery', () => {
     )
 
     const queryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn,
     }
 
@@ -190,7 +190,7 @@ describe('usePrefetchQuery', () => {
     )
 
     const queryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn,
     }
 
@@ -245,21 +245,21 @@ describe('usePrefetchQuery', () => {
 
   it('should not create a suspense waterfall if prefetch is fired', async () => {
     const firstQueryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: vi.fn<() => Promise<string>>(() =>
         sleep(10).then(() => 'Prefetch is nice!'),
       ),
     }
 
     const secondQueryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: vi.fn<() => Promise<string>>(() =>
         sleep(10).then(() => 'Prefetch is really nice!!'),
       ),
     }
 
     const thirdQueryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: vi.fn<() => Promise<string>>(() =>
         sleep(10).then(() => 'Prefetch does not create waterfalls!!'),
       ),

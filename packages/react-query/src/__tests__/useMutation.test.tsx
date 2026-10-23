@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { MutationCache, QueryCache, QueryClient, useMutation } from '..'
 import {
   mockOnlineManagerIsOnline,
@@ -981,7 +981,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to use mutation defaults', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     queryClient.setMutationDefaults(key, {
       mutationFn: (text: string) => sleep(10).then(() => text),
@@ -1206,7 +1206,7 @@ describe('useMutation', () => {
 
   it('should be able to retry a mutation when online', async () => {
     const onlineMock = mockOnlineManagerIsOnline(false)
-    const key = queryKey()
+    const key = createKey()
 
     let count = 0
 
@@ -1572,7 +1572,7 @@ describe('useMutation', () => {
           context: MutationFunctionContext,
         ) => void
       >()
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
     let count = 0
 
     function Page() {
@@ -2294,7 +2294,7 @@ describe('useMutation', () => {
   })
 
   it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
     function Page() {
@@ -2332,7 +2332,7 @@ describe('useMutation', () => {
   })
 
   it('should keep the optimistic update in place when the mutation succeeds', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
     function Page() {
@@ -2534,7 +2534,7 @@ describe('useMutation', () => {
   })
 
   it('should give mutationFn the same QueryClient instance via context', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'tag-from-this-client')
 
     function Page() {
@@ -2591,7 +2591,7 @@ describe('useMutation', () => {
   })
 
   it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'data')
 
     function Page() {

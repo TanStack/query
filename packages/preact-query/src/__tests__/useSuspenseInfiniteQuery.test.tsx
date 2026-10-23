@@ -1,4 +1,4 @@
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { Suspense } from 'preact/compat'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -27,7 +27,7 @@ describe('useSuspenseInfiniteQuery', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useSuspenseInfiniteQuery({
@@ -63,7 +63,7 @@ describe('useSuspenseInfiniteQuery', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockReturnValue(undefined)
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useSuspenseInfiniteQuery({
@@ -97,7 +97,7 @@ describe('useSuspenseInfiniteQuery', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockReturnValue(undefined)
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useSuspenseInfiniteQuery({

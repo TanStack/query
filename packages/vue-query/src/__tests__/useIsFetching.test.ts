@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { onScopeDispose, reactive, ref } from 'vue-demi'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { useIsFetching } from '../useIsFetching'
 
@@ -16,8 +16,8 @@ describe('useIsFetching', () => {
   })
 
   it('should properly return isFetching state', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const { isFetching: isFetchingQuery } = useQuery({
       queryKey: key1,
       queryFn: () => sleep(0).then(() => 'Some data'),
@@ -36,7 +36,7 @@ describe('useIsFetching', () => {
   })
 
   it('should stop listening to changes on onScopeDispose', async () => {
-    const key = queryKey()
+    const key = createKey()
     const onScopeDisposeMock = vi.mocked(onScopeDispose)
     onScopeDisposeMock.mockImplementation((fn) => fn())
 
@@ -59,7 +59,7 @@ describe('useIsFetching', () => {
   })
 
   it('should properly update filters', async () => {
-    const key = queryKey()
+    const key = createKey()
     const filter = reactive({ stale: false, queryKey: key })
     useQuery({
       queryKey: key,
@@ -75,7 +75,7 @@ describe('useIsFetching', () => {
   })
 
   it('should work with options getter and be reactive', async () => {
-    const key = queryKey()
+    const key = createKey()
     const staleRef = ref(false)
     useQuery({
       queryKey: key,
