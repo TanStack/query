@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
 import * as QueryCore from '@tanstack/query-core'
 import { createRenderEffect, createSignal } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   IsRestoringProvider,
   QueriesObserver,
@@ -29,8 +29,8 @@ describe('useQueries', () => {
   })
 
   it('should return the correct states', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const results: Array<Array<UseQueryResult>> = []
 
     function Page() {
@@ -74,7 +74,7 @@ describe('useQueries', () => {
 
   // oxlint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
-    const key1 = queryKey()
+    const key1 = createKey()
 
     // We have to mock the QueriesObserver to not unsubscribe
     // the listener when the component is unmounted
@@ -85,14 +85,12 @@ describe('useQueries', () => {
       }
     }
 
-    const QueriesObserverSpy = vi
-      .spyOn(QueryCore, 'QueriesObserver')
-      .mockImplementation(function (
-        client: InstanceType<typeof QueryCore.QueryClient>,
-        queries: Array<QueryCore.QueryObserverOptions>,
-      ) {
-        return new QueriesObserverMock(client, queries)
-      })
+    vi.spyOn(QueryCore, 'QueriesObserver').mockImplementation(function (
+      client: InstanceType<typeof QueryCore.QueryClient>,
+      queries: Array<QueryCore.QueryObserverOptions>,
+    ) {
+      return new QueriesObserverMock(client, queries)
+    })
 
     function Queries() {
       useQueries(() => ({
@@ -130,11 +128,10 @@ describe('useQueries', () => {
     // "Warning: Can't perform a React state update on an unmounted component"
 
     await vi.advanceTimersByTimeAsync(20)
-    QueriesObserverSpy.mockRestore()
   })
 
   it('should use provided custom queryClient', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = () => sleep(10).then(() => 'custom client')
 
     function Page() {
@@ -160,8 +157,8 @@ describe('useQueries', () => {
   })
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = vi.fn<() => Promise<string>>(() =>
       sleep(10).then(() => 'data1'),
     )
@@ -216,7 +213,7 @@ describe('useQueries', () => {
   })
 
   it('should keep updating a destructured result', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [query] = useQueries(() => ({
@@ -240,7 +237,7 @@ describe('useQueries', () => {
   })
 
   it('should keep updating a destructured result when combine returns the results', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [query] = useQueries(() => ({
@@ -265,7 +262,7 @@ describe('useQueries', () => {
   })
 
   it('should drop the results of removed queries', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [count, setCount] = createSignal(2)
@@ -297,7 +294,7 @@ describe('useQueries', () => {
   })
 
   it('should return the object that combine returns', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const combined = useQueries(() => ({
@@ -326,7 +323,7 @@ describe('useQueries', () => {
   })
 
   it('should drop the keys that combine no longer returns', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const combined = useQueries(() => ({
@@ -352,7 +349,7 @@ describe('useQueries', () => {
   it('should report the paused fetchStatus while offline', async ({
     onTestFinished,
   }) => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [id, setId] = createSignal(0)

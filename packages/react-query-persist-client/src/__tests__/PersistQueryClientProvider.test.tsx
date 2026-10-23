@@ -3,7 +3,7 @@ import * as React from 'react'
 import { act, fireEvent, render } from '@testing-library/react'
 import { QueryClient, noop, useQueries, useQuery } from '@tanstack/react-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 import type {
   PersistedClient,
@@ -60,7 +60,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should restore cache from persister', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     const queryClient = new QueryClient()
@@ -138,7 +138,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should subscribe correctly in StrictMode', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryClient = new QueryClient()
     void queryClient
@@ -207,7 +207,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should also put useQueries into idle state', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult> = []
 
     const queryClient = new QueryClient()
@@ -289,7 +289,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should show initialData while restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<DefinedUseQueryResult<string>> = []
 
     const queryClient = new QueryClient()
@@ -371,7 +371,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should not refetch after restoring when data is fresh', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     const queryClient = new QueryClient()
@@ -446,7 +446,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should call onSuccess after successful restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryClient = new QueryClient()
     void queryClient
@@ -499,7 +499,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should await onSuccess after successful restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryClient = new QueryClient()
     void queryClient
@@ -566,9 +566,9 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should remove cache after non-successful restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
     const consoleErrorMock = vi.spyOn(console, 'error')
-    const consoleWarnMock = vi.spyOn(console, 'warn').mockReturnValue(undefined)
+    vi.spyOn(console, 'warn').mockReturnValue(undefined)
     consoleErrorMock.mockReturnValue(undefined)
 
     const queryClient = new QueryClient()
@@ -612,12 +612,10 @@ describe('PersistQueryClientProvider', () => {
 
     expect(consoleErrorMock).toHaveBeenCalledTimes(1)
     expect(consoleErrorMock).toHaveBeenNthCalledWith(1, error)
-    consoleErrorMock.mockRestore()
-    consoleWarnMock.mockRestore()
   })
 
   it('should be able to persist into multiple clients', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult> = []
 
     const queryClient = new QueryClient()
@@ -756,7 +754,7 @@ describe('PersistQueryClientProvider', () => {
       }
     }
 
-    const key = queryKey()
+    const key = createKey()
 
     const queryClient = new QueryClient()
     void queryClient
