@@ -539,8 +539,8 @@ describe('createQueryController', () => {
         this,
         () => ({
           queryKey: [...key, keyId],
-          queryFn: ({ queryKey }) => {
-            const id = queryKey[1] as number
+          queryFn: (context) => {
+            const id = context.queryKey[1] as number
             seenKeys.push(id)
             return sleep(10).then(() => `user-${id}`)
           },
@@ -796,8 +796,8 @@ describe('createQueryController', () => {
         this,
         () => ({
           queryKey: [...key, keyId],
-          queryFn: async ({ queryKey }) => {
-            const id = queryKey[1] as number
+          queryFn: async (context) => {
+            const id = context.queryKey[1] as number
             if (id === 1) {
               return sleep(10).then(() => 'value-1')
             }
@@ -902,8 +902,8 @@ describe('createQueryController', () => {
         this,
         () => ({
           queryKey: [...key, keyId],
-          queryFn: async ({ queryKey }) => {
-            const id = queryKey[1] as string
+          queryFn: async (context) => {
+            const id = context.queryKey[1] as string
             return new Promise<string>((resolve) => {
               if (id === 'old') {
                 resolveOld = resolve
@@ -958,15 +958,19 @@ describe('createQueryController', () => {
         this,
         () => ({
           queryKey: [...key, keyId],
-          queryFn: async ({ signal, queryKey }) => {
-            const id = queryKey[1] as 'old' | 'new'
+          queryFn: async (context) => {
+            const id = context.queryKey[1] as 'old' | 'new'
             if (id === 'old') {
-              oldSignal = signal
+              oldSignal = context.signal
               return new Promise<string>((resolve) => {
                 resolveOld = resolve
-                signal.addEventListener('abort', () => resolve('old-aborted'), {
-                  once: true,
-                })
+                context.signal.addEventListener(
+                  'abort',
+                  () => resolve('old-aborted'),
+                  {
+                    once: true,
+                  },
+                )
               })
             }
 
@@ -1007,8 +1011,8 @@ describe('createQueryController', () => {
         this,
         () => ({
           queryKey: [...key, keyId],
-          queryFn: ({ queryKey }) => {
-            const id = queryKey[1] as number
+          queryFn: (context) => {
+            const id = context.queryKey[1] as number
             return sleep(Math.max(1, 20 - id)).then(() => `result-${id}`)
           },
         }),
