@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isVue2, isVue3, ref } from 'vue-demi'
 import { environmentManager } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { VueQueryPlugin } from '../vueQueryPlugin'
 import { VUE_QUERY_CLIENT } from '../utils'
@@ -346,7 +346,7 @@ describe('VueQueryPlugin', () => {
     })
 
     it('should delay useQuery subscription and not call fetcher if data is not stale', async () => {
-      const key = queryKey()
+      const key = createKey()
       const appMock = getAppMock()
       const customClient = new QueryClient({
         defaultOptions: {
@@ -392,8 +392,8 @@ describe('VueQueryPlugin', () => {
     })
 
     it('should delay useQueries subscription and not call fetcher if data is not stale', async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
       const appMock = getAppMock()
       const customClient = new QueryClient({
         defaultOptions: {

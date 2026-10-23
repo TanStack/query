@@ -6,7 +6,7 @@ import {
   createSignal,
 } from 'solid-js'
 import { fireEvent, render } from '@solidjs/testing-library'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { MutationCache, QueryCache, QueryClient, useMutation } from '..'
 import {
   mockOnlineManagerIsOnline,
@@ -700,7 +700,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to use mutation defaults', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     queryClient.setMutationDefaults(key, {
       mutationFn: (text: string) => sleep(10).then(() => text),
@@ -1236,7 +1236,7 @@ describe('useMutation', () => {
           context: MutationFunctionContext,
         ) => void
       >()
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
     let count = 0
 
     function Page() {
@@ -1584,7 +1584,7 @@ describe('useMutation', () => {
   })
 
   it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
     function Page() {
@@ -1622,7 +1622,7 @@ describe('useMutation', () => {
   })
 
   it('should keep the optimistic update in place when the mutation succeeds', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
     function Page() {
@@ -1824,7 +1824,7 @@ describe('useMutation', () => {
   })
 
   it('should give mutationFn the same QueryClient instance via context', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'tag-from-this-client')
 
     function Page() {
@@ -1881,7 +1881,7 @@ describe('useMutation', () => {
   })
 
   it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'data')
 
     function Page() {

@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { broadcastQueryClient } from '..'
 import type { BroadcastErrorEvent } from '..'
 import type { QueryCache } from '@tanstack/query-core'
@@ -65,8 +65,8 @@ describe('broadcastQueryClient', () => {
 
   describe('incoming message handling', () => {
     it('should keep broadcasting local changes after applying an incoming message throws', () => {
-      const remoteKey = queryKey()
-      const localKey = queryKey()
+      const remoteKey = createKey()
+      const localKey = createKey()
 
       broadcastQueryClient({
         queryClient,
@@ -101,8 +101,8 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should keep broadcasting local changes after query.setState throws for an existing query', () => {
-      const existingKey = queryKey()
-      const localKey = queryKey()
+      const existingKey = createKey()
+      const localKey = createKey()
 
       broadcastQueryClient({
         queryClient,
@@ -137,7 +137,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should not overwrite an existing query with data when an "added" message arrives for it', () => {
-      const existingKey = queryKey()
+      const existingKey = createKey()
 
       broadcastQueryClient({
         queryClient,
@@ -165,7 +165,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should adopt an "added" message\'s state for an existing query that has no data yet', () => {
-      const existingKey = queryKey()
+      const existingKey = createKey()
 
       broadcastQueryClient({
         queryClient,
@@ -204,7 +204,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should not cause an unhandled rejection when onBroadcastError itself throws', async () => {
-      const key = queryKey()
+      const key = createKey()
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
@@ -242,7 +242,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should warn in dev when onBroadcastError itself throws', async () => {
-      const key = queryKey()
+      const key = createKey()
       process.env['NODE_ENV'] = 'development'
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       const callbackError = new Error('boom')
@@ -269,7 +269,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should not cause an unhandled rejection when async onBroadcastError rejects', async () => {
-      const key = queryKey()
+      const key = createKey()
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
@@ -307,7 +307,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should warn in dev when async onBroadcastError rejects', async () => {
-      const key = queryKey()
+      const key = createKey()
       process.env['NODE_ENV'] = 'development'
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       const asyncError = new Error('async boom')
@@ -332,7 +332,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should call onBroadcastError when postMessage fails', async () => {
-      const key = queryKey()
+      const key = createKey()
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
@@ -359,7 +359,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should warn in dev when postMessage fails and onBroadcastError is not provided', async () => {
-      const key = queryKey()
+      const key = createKey()
       process.env['NODE_ENV'] = 'development'
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
@@ -382,7 +382,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should not warn in production when postMessage fails', async () => {
-      const key = queryKey()
+      const key = createKey()
       process.env['NODE_ENV'] = 'production'
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)

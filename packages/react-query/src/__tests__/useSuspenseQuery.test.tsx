@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -36,7 +36,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should render the correct amount of times in Suspense mode', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseSuspenseQueryResult<number>> = []
 
     let count = 0
@@ -56,7 +56,10 @@ describe('useSuspenseQuery', () => {
 
       return (
         <div>
-          <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+          <button
+            aria-label="toggle"
+            onClick={() => setStateKey(createKey())}
+          />
           data: {String(state.data)}
         </div>
       )
@@ -85,7 +88,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should return the correct states for a successful infinite query', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseSuspenseInfiniteQueryResult<InfiniteData<number>>> =
       []
 
@@ -139,7 +142,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should not call the queryFn twice when used in Suspense mode', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryFn = vi.fn<() => Promise<string>>(() =>
       sleep(10).then(() => 'data'),
@@ -166,7 +169,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should remove query instance when component unmounted', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useSuspenseQuery({
@@ -216,7 +219,7 @@ describe('useSuspenseQuery', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockReturnValue(undefined)
-    const key = queryKey()
+    const key = createKey()
 
     let succeed = false
 
@@ -279,7 +282,7 @@ describe('useSuspenseQuery', () => {
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
     vi.spyOn(console, 'error').mockReturnValue(undefined)
-    const key = queryKey()
+    const key = createKey()
 
     let succeed = false
 
@@ -343,7 +346,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should set staleTime when having passed a function', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     function Component() {
@@ -380,8 +383,8 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should suspend when switching to a new query', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     function Component(props: { queryKey: Array<string> }) {
       const result = useSuspenseQuery({
@@ -424,7 +427,7 @@ describe('useSuspenseQuery', () => {
 
   it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
     vi.spyOn(console, 'error').mockReturnValue(undefined)
-    const key = queryKey()
+    const key = createKey()
 
     let succeed = false
 
@@ -489,7 +492,7 @@ describe('useSuspenseQuery', () => {
 
   it('should throw errors to the error boundary by default', async () => {
     vi.spyOn(console, 'error').mockReturnValue(undefined)
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useSuspenseQuery({
@@ -526,7 +529,7 @@ describe('useSuspenseQuery', () => {
 
   it('should throw select errors to the error boundary by default', async () => {
     vi.spyOn(console, 'error').mockReturnValue(undefined)
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useSuspenseQuery({
@@ -566,7 +569,7 @@ describe('useSuspenseQuery', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockReturnValue(undefined)
-    const key = queryKey()
+    const key = createKey()
 
     let succeed = true
 
@@ -700,7 +703,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
-    const key = queryKey()
+    const key = createKey()
     let state: UseSuspenseQueryResult<number, Error | null> | null = null
 
     let count = 0
@@ -743,7 +746,7 @@ describe('useSuspenseQuery', () => {
   it('should not throw background errors to the error boundary', async () => {
     vi.spyOn(console, 'error').mockReturnValue(undefined)
     let succeed = true
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const result = useSuspenseQuery({
@@ -799,7 +802,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should still suspense if queryClient has placeholderData config', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
@@ -823,7 +826,10 @@ describe('useSuspenseQuery', () => {
 
       return (
         <div>
-          <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+          <button
+            aria-label="toggle"
+            onClick={() => setStateKey(createKey())}
+          />
           data: {String(state.data)}
         </div>
       )
@@ -850,7 +856,7 @@ describe('useSuspenseQuery', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useSuspenseQuery({
@@ -878,7 +884,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should properly refresh data when refetchInterval is set', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     function Page() {
@@ -916,7 +922,7 @@ describe('useSuspenseQuery', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockReturnValue(undefined)
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useSuspenseQuery({
@@ -948,7 +954,7 @@ describe('useSuspenseQuery', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockReturnValue(undefined)
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useSuspenseQuery({
@@ -972,7 +978,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should release suspense when setQueryData is called while fetch is in-flight', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Content() {
       const { data } = useSuspenseQuery({
@@ -1005,7 +1011,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should release suspense when streamedQuery receives first chunk', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     async function* numberGenerator() {
       await sleep(10)
@@ -1041,7 +1047,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should release suspense when setQueryData is called before component mounts', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'preloaded')
 
     function Page() {
@@ -1064,7 +1070,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should NOT release suspense when setQueryData is called with undefined', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Content() {
       const { data } = useSuspenseQuery({

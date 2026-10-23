@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -32,7 +32,7 @@ describe('QueryErrorResetBoundary', () => {
   describe('useQuery', () => {
     it('should retry fetch if the reset error boundary has been reset', async () => {
       vi.spyOn(console, 'error').mockReturnValue(undefined)
-      const key = queryKey()
+      const key = createKey()
 
       let succeed = false
 
@@ -89,7 +89,7 @@ describe('QueryErrorResetBoundary', () => {
 
     it('should not throw error if query is disabled', async () => {
       vi.spyOn(console, 'error').mockReturnValue(undefined)
-      const key = queryKey()
+      const key = createKey()
 
       let succeed = false
 
@@ -153,7 +153,7 @@ describe('QueryErrorResetBoundary', () => {
     it('should not throw error if query is disabled, and refetch if query becomes enabled again', async () => {
       vi.spyOn(console, 'error').mockReturnValue(undefined)
 
-      const key = queryKey()
+      const key = createKey()
 
       let succeed = false
 
@@ -217,7 +217,7 @@ describe('QueryErrorResetBoundary', () => {
     it('should throw error if query is disabled and manually refetch', async () => {
       vi.spyOn(console, 'error').mockReturnValue(undefined)
 
-      const key = queryKey()
+      const key = createKey()
 
       function Page() {
         const { data, refetch, status, fetchStatus } = useQuery<string>({
@@ -281,7 +281,7 @@ describe('QueryErrorResetBoundary', () => {
     it('should not retry fetch if the reset error boundary has not been reset', async () => {
       vi.spyOn(console, 'error').mockReturnValue(undefined)
 
-      const key = queryKey()
+      const key = createKey()
 
       let succeed = false
 
@@ -338,7 +338,7 @@ describe('QueryErrorResetBoundary', () => {
     it('should retry fetch if the reset error boundary has been reset and the query contains data from a previous fetch', async () => {
       vi.spyOn(console, 'error').mockReturnValue(undefined)
 
-      const key = queryKey()
+      const key = createKey()
 
       let succeed = false
 
@@ -398,7 +398,7 @@ describe('QueryErrorResetBoundary', () => {
     it('should not retry fetch if the reset error boundary has not been reset after a previous reset', async () => {
       vi.spyOn(console, 'error').mockReturnValue(undefined)
 
-      const key = queryKey()
+      const key = createKey()
 
       let succeed = false
       let shouldReset = false
@@ -476,7 +476,7 @@ describe('QueryErrorResetBoundary', () => {
     it('should throw again on error after the reset error boundary has been reset', async () => {
       vi.spyOn(console, 'error').mockReturnValue(undefined)
 
-      const key = queryKey()
+      const key = createKey()
       let fetchCount = 0
 
       function Page() {
@@ -538,7 +538,7 @@ describe('QueryErrorResetBoundary', () => {
     it('should never render the component while the query is in error state', async () => {
       vi.spyOn(console, 'error').mockReturnValue(undefined)
 
-      const key = queryKey()
+      const key = createKey()
       let fetchCount = 0
       let renders = 0
 
@@ -630,7 +630,7 @@ describe('QueryErrorResetBoundary', () => {
     it('should show error boundary when using tracked queries even though we do not track the error field', async () => {
       vi.spyOn(console, 'error').mockReturnValue(undefined)
 
-      const key = queryKey()
+      const key = createKey()
 
       let succeed = false
 
@@ -686,7 +686,7 @@ describe('QueryErrorResetBoundary', () => {
     })
 
     it('should refetch after error when staleTime is Infinity and previous data exists (#9728)', async () => {
-      const key = queryKey()
+      const key = createKey()
       const queryFn = vi.fn<() => Promise<string>>()
       let count = 0
 
@@ -767,7 +767,7 @@ describe('QueryErrorResetBoundary', () => {
   describe('useQueries', () => {
     it('should retry fetch if the reset error boundary has been reset', async () => {
       vi.spyOn(console, 'error').mockReturnValue(undefined)
-      const key = queryKey()
+      const key = createKey()
 
       let succeed = false
 
@@ -828,7 +828,7 @@ describe('QueryErrorResetBoundary', () => {
     })
 
     it('should retry fetch with suspense if the reset error boundary has been reset', async () => {
-      const key = queryKey()
+      const key = createKey()
       vi.spyOn(console, 'error').mockReturnValue(undefined)
 
       let succeed = false

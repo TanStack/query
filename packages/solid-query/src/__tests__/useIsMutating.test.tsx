@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, useIsMutating, useMutation } from '..'
 import { renderWithClient, setActTimeout } from './utils'
 
@@ -21,8 +21,8 @@ describe('useIsMutating', () => {
 
   it('should return the number of fetching mutations', async () => {
     const isMutatingArray: Array<number> = []
-    const mutationKey1 = queryKey()
-    const mutationKey2 = queryKey()
+    const mutationKey1 = createKey()
+    const mutationKey2 = createKey()
 
     function IsMutating() {
       const isMutating = useIsMutating()
@@ -71,8 +71,8 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by mutationKey', async () => {
     const isMutatingArray: Array<number> = []
-    const mutationKey1 = queryKey()
-    const mutationKey2 = queryKey()
+    const mutationKey1 = createKey()
+    const mutationKey2 = createKey()
 
     function IsMutating() {
       const isMutating = useIsMutating(() => ({ mutationKey: mutationKey1 }))
@@ -111,8 +111,8 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by predicate', async () => {
     const isMutatingArray: Array<number> = []
-    const mutationKey1 = queryKey()
-    const mutationKey2 = queryKey()
+    const mutationKey1 = createKey()
+    const mutationKey2 = createKey()
 
     function IsMutating() {
       const isMutating = useIsMutating(() => ({
@@ -154,7 +154,7 @@ describe('useIsMutating', () => {
 
   it('should use provided custom queryClient', async () => {
     const customClient = new QueryClient()
-    const mutationKey1 = queryKey()
+    const mutationKey1 = createKey()
 
     function Page() {
       const isMutating = useIsMutating(undefined, () => customClient)
@@ -253,7 +253,7 @@ describe('useIsMutating', () => {
     // Create the client after mocking MutationCache so it uses the mock,
     // not the centralized client from beforeEach
     const spiedClient = new QueryClient()
-    const mutationKey1 = queryKey()
+    const mutationKey1 = createKey()
 
     function IsMutating() {
       useIsMutating()
