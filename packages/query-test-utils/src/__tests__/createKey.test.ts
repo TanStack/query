@@ -4,7 +4,7 @@ import { createKey } from '../createKey'
 describe('createKey', () => {
   it('should return a key', () => {
     const key = createKey()
-    expect(key).toStrictEqual(['query_1'])
+    expect(key).toStrictEqual(['key-1'])
   })
 
   it('should return a new key each time', () => {
