@@ -10,12 +10,12 @@
     "test:types": "svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^6.3.5",
-    "@tanstack/svelte-query-devtools": "^6.3.5"
+    "@tanstack/svelte-query": "^6.3.6",
+    "@tanstack/svelte-query-devtools": "^6.3.6"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
-    "@tanstack/eslint-plugin-query": "^5.104.5",
+    "@tanstack/eslint-plugin-query": "^5.104.6",
     "@tsconfig/svelte": "^5.0.4",
     "@typescript-eslint/parser": "^8.71.1",
     "eslint-plugin-svelte": "^3.23.0",
