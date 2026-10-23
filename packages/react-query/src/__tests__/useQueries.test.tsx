@@ -1,9 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { IsRestoringProvider, QueryCache, QueryClient, useQueries } from '..'
+import {
+  IsRestoringProvider,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+  useQueries,
+} from '..'
 import { renderWithClient } from './utils'
 import type { QueryObserverResult, UseQueryResult } from '..'
 
@@ -1292,5 +1298,118 @@ describe('useQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
+  })
+
+  it('should read from the new client when the QueryClientProvider client changes', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryClient2 = new QueryClient()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'fetched'),
+    )
+    queryClient.setQueryData(key1, 'a1')
+    queryClient.setQueryData(key2, 'a2')
+    queryClient2.setQueryData(key1, 'b1')
+    queryClient2.setQueryData(key2, 'b2')
+    const renderedData: Array<string> = []
+
+    function Page() {
+      const [result1, result2] = useQueries({
+        queries: [
+          { queryKey: key1, queryFn, staleTime: Infinity },
+          { queryKey: key2, queryFn, staleTime: Infinity },
+        ],
+      })
+      const data = `${result1.data}, ${result2.data}`
+      renderedData.push(data)
+
+      return <div>data: {data}</div>
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+    expect(rendered.getByText('data: a1, a2')).toBeInTheDocument()
+
+    const rendersBeforeSwitch = renderedData.length
+    rendered.rerender(
+      <QueryClientProvider client={queryClient2}>
+        <Page />
+      </QueryClientProvider>,
+    )
+    expect(rendered.getByText('data: b1, b2')).toBeInTheDocument()
+    expect(
+      renderedData
+        .slice(rendersBeforeSwitch)
+        .every((data) => data === 'b1, b2'),
+    ).toBe(true)
+    expect(queryCache.find({ queryKey: key1 })?.getObserversCount()).toBe(0)
+    expect(
+      queryClient2
+        .getQueryCache()
+        .find({ queryKey: key1 })
+        ?.getObserversCount(),
+    ).toBe(1)
+
+    act(() => {
+      queryClient2.setQueryData(key2, 'b2-updated')
+    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: b1, b2-updated')).toBeInTheDocument()
+
+    act(() => {
+      queryClient.setQueryData(key1, 'a1-updated')
+    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: b1, b2-updated')).toBeInTheDocument()
+    expect(queryFn).not.toHaveBeenCalled()
+
+    queryClient2.clear()
+  })
+
+  it('should read from the new client when the queryClient argument changes', async () => {
+    const key = queryKey()
+    const queryClient2 = new QueryClient()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'fetched'),
+    )
+    queryClient.setQueryData(key, 'data1')
+    queryClient2.setQueryData(key, 'data2')
+    const renderedData: Array<string | undefined> = []
+
+    function Page({ client }: { client: QueryClient }) {
+      const [result] = useQueries(
+        { queries: [{ queryKey: key, queryFn, staleTime: Infinity }] },
+        client,
+      )
+      renderedData.push(result.data)
+
+      return <div>data: {result.data}</div>
+    }
+
+    const rendered = render(<Page client={queryClient} />)
+    expect(rendered.getByText('data: data1')).toBeInTheDocument()
+
+    const rendersBeforeSwitch = renderedData.length
+    rendered.rerender(<Page client={queryClient2} />)
+    expect(rendered.getByText('data: data2')).toBeInTheDocument()
+    expect(renderedData.slice(rendersBeforeSwitch)).not.toContain('data1')
+
+    act(() => {
+      queryClient2.setQueryData(key, 'data2-updated')
+    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: data2-updated')).toBeInTheDocument()
+
+    act(() => {
+      queryClient.setQueryData(key, 'data1-updated')
+    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: data2-updated')).toBeInTheDocument()
+    expect(queryFn).not.toHaveBeenCalled()
+
+    queryClient2.clear()
   })
 })

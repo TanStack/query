@@ -9,6 +9,7 @@ import {
 } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './IsRestoringProvider'
+import { useClientObserver } from './useClientObserver'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
   ensurePreventErrorBoundaryRetry,
@@ -415,10 +416,11 @@ export function useQueries<
 
   useClearResetErrorBoundary(errorResetBoundary)
 
-  const [observer] = React.useState(
-    () =>
+  const observer = useClientObserver(
+    client,
+    (observerClient) =>
       new QueriesObserver<TCombinedResult>(
-        client,
+        observerClient,
         defaultedQueries,
         options as QueriesObserverOptions<TCombinedResult>,
       ),

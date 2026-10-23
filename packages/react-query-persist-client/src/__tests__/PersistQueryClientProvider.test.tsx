@@ -693,8 +693,11 @@ describe('PersistQueryClientProvider', () => {
 
     const rendered = render(<App />)
 
+    // the persisted state is restored into the first client only, and `Page`
+    // follows the second client, so it fetches with `queryFn2` instead of
+    // showing the restored data
     await act(() => vi.advanceTimersByTimeAsync(10))
-    expect(rendered.getByText('hydrated')).toBeInTheDocument()
+    expect(rendered.getByText('fetchStatus: fetching')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('queryFn2')).toBeInTheDocument()
 
@@ -702,37 +705,21 @@ describe('PersistQueryClientProvider', () => {
     expect(queryFn2).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledTimes(1)
 
-    expect(states).toHaveLength(5)
-
-    expect(states[0]).toMatchObject({
-      status: 'pending',
-      fetchStatus: 'idle',
-      data: undefined,
-    })
-
-    expect(states[1]).toMatchObject({
-      status: 'pending',
-      fetchStatus: 'idle',
-      data: undefined,
-    })
-
-    expect(states[2]).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: 'hydrated',
-    })
-
-    expect(states[3]).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: 'hydrated',
-    })
-
-    expect(states[4]).toMatchObject({
-      status: 'success',
-      fetchStatus: 'idle',
-      data: 'queryFn2',
-    })
+    expect(
+      states.map(({ status, fetchStatus, data }) => ({
+        status,
+        fetchStatus,
+        data,
+      })),
+    ).toStrictEqual([
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      // the render that switches to the observer of the second client runs twice
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'success', fetchStatus: 'idle', data: 'queryFn2' },
+    ])
   })
 
   it('should only restore once in StrictMode', async () => {
