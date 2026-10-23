@@ -22,12 +22,13 @@ export abstract class Removable {
 
   /**
    * Schedules the entry to be removed from its cache after `gcTime`, replacing any timeout scheduled
-   * before. Nothing is scheduled if `gcTime` is `Infinity`.
+   * before. Nothing is scheduled if `gcTime` is `Infinity` or on the server, where the cache is
+   * discarded together with the request.
    */
   protected scheduleGc(): void {
     this.clearGcTimeout()
 
-    if (isValidTimeout(this.gcTime)) {
+    if (!isServerEnvironment() && isValidTimeout(this.gcTime)) {
       this.#gcTimeout = timeoutManager.setTimeout(() => {
         this.optionalRemove()
       }, this.gcTime)
