@@ -162,6 +162,7 @@ export default defineConfig({
             'datatag', // Query options tagging
             'extralight', // Our public interface
             'jscodeshift',
+            'netinfo', // @react-native-community/netinfo package name
             'refetched', // Query refetch operations
             'refetches', // Query refetch operations
             'retryer', // Our public interface
