@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { hydrateRoot } from 'react-dom/client'
 import { act } from 'react'
 import * as ReactDOMServer from 'react-dom/server'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -53,7 +53,7 @@ describe('Server side rendering with de/rehydration', () => {
     consoleErrorMock.mockReturnValue(undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
-    const key = queryKey()
+    const key = createKey()
 
     // -- Shared part --
     function SuccessComponent() {
@@ -123,7 +123,6 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleErrorMock.mockRestore()
   })
 
   it('should not mismatch on error', async () => {
@@ -133,7 +132,7 @@ describe('Server side rendering with de/rehydration', () => {
     const fetchDataError = vi.fn<() => never>(() => {
       throw new Error('fetchDataError')
     })
-    const key = queryKey()
+    const key = createKey()
 
     // -- Shared part --
     function ErrorComponent() {
@@ -205,7 +204,6 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleErrorMock.mockRestore()
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
@@ -213,7 +211,7 @@ describe('Server side rendering with de/rehydration', () => {
     consoleErrorMock.mockReturnValue(undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
-    const key = queryKey()
+    const key = createKey()
 
     // -- Shared part --
     function SuccessComponent() {
@@ -274,6 +272,5 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleErrorMock.mockRestore()
   })
 })

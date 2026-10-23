@@ -107,7 +107,6 @@ describe('Devtools', () => {
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
     onlineManager.setOnline(true)

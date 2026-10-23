@@ -180,8 +180,6 @@ describe('withDevtools feature', () => {
       'Install @tanstack/query-devtools or reinstall without --omit=optional.',
       expect.objectContaining({ message: 'No QueryClient found' }),
     )
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should not continue loading devtools after injector is destroyed', async () => {
