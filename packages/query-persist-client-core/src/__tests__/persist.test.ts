@@ -42,6 +42,72 @@ describe('persist', () => {
 
       unsubscribe()
     })
+
+    it('should catch and log errors in `persistClient`', async () => {
+      const consoleErrorMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined)
+
+      const persistError = new Error('Error persisting client')
+      const persister = createSpyPersister()
+      persister.persistClient = vi.fn(() => Promise.reject(persistError))
+
+      const unsubscribe = persistQueryClientSubscribe({
+        queryClient,
+        persister,
+      })
+
+      // Triggers 2 saves: the query being added and its data being updated
+      queryClient.setQueryData(['key'], 'data')
+      await vi.waitFor(() => expect(consoleErrorMock).toHaveBeenCalledTimes(2))
+
+      expect(persister.persistClient).toHaveBeenCalledTimes(2)
+      expect(consoleErrorMock).toHaveBeenNthCalledWith(1, persistError)
+      expect(consoleErrorMock).toHaveBeenNthCalledWith(2, persistError)
+      expect(consoleWarnMock).toHaveBeenCalledTimes(2)
+
+      unsubscribe()
+      consoleErrorMock.mockRestore()
+      consoleWarnMock.mockRestore()
+    })
+
+    it('should catch and log errors thrown while dehydrating', async () => {
+      const consoleErrorMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined)
+
+      const dehydrateError = new Error('Error dehydrating query')
+      const persister = createSpyPersister()
+
+      const unsubscribe = persistQueryClientSubscribe({
+        queryClient,
+        persister,
+        dehydrateOptions: {
+          shouldDehydrateQuery: () => {
+            throw dehydrateError
+          },
+        },
+      })
+
+      // Triggers 2 saves: the query being added and its data being updated
+      queryClient.setQueryData(['key'], 'data')
+      await vi.waitFor(() => expect(consoleErrorMock).toHaveBeenCalledTimes(2))
+
+      expect(persister.persistClient).not.toHaveBeenCalled()
+      expect(consoleErrorMock).toHaveBeenNthCalledWith(1, dehydrateError)
+      expect(consoleErrorMock).toHaveBeenNthCalledWith(2, dehydrateError)
+      expect(consoleWarnMock).toHaveBeenCalledTimes(2)
+
+      unsubscribe()
+      consoleErrorMock.mockRestore()
+      consoleWarnMock.mockRestore()
+    })
   })
 
   describe('persistQueryClientSave', () => {
