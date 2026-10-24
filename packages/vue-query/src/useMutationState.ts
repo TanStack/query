@@ -34,10 +34,12 @@ export type UseIsMutatingFilters =
  *
  * `filters` may be a plain object, `MaybeRefDeep`, or a reactive getter (`() => ({ ... })`) — pass a getter if
  * the filters themselves depend on other reactive state.
- * @param filters - The {@link MutationFilters} to narrow down the matched mutations.
+ * @param filters - The {@link MutationFilters} to narrow down the matched mutations. Passing a `status` overrides
+ * the default of `'pending'`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
- * @returns A `ref` to the `number` of the mutations that your application currently has `pending`.
+ * @returns A `ref` to the `number` of the mutations matching the filters, filtered to `status: 'pending'` unless
+ * `filters.status` says otherwise.
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -68,10 +70,15 @@ export function useIsMutating(
 
   const mutationState = useMutationState(
     {
-      filters: computed(() => ({
-        ...cloneDeepUnref(typeof filters === 'function' ? filters() : filters),
-        status: 'pending' as const,
-      })),
+      filters: computed(() => {
+        const resolvedFilters = cloneDeepUnref(
+          typeof filters === 'function' ? filters() : filters,
+        )
+        return {
+          ...resolvedFilters,
+          status: resolvedFilters.status ?? ('pending' as const),
+        }
+      }),
     },
     client,
   )

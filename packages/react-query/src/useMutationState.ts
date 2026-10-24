@@ -14,10 +14,12 @@ import type {
 /**
  * The `useIsMutating` hook returns the `number` of mutations that your application currently has `pending`
  * (useful for app-wide loading indicators).
- * @param filters - The {@link MutationFilters} to narrow down the matched mutations.
+ * @param filters - The {@link MutationFilters} to narrow down the matched mutations. Passing a `status` overrides
+ * the default of `'pending'`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns Will be the `number` of the mutations that your application currently has `pending`.
+ * @returns Will be the `number` of the mutations matching the filters, filtered to `status: 'pending'` unless
+ * `filters.status` says otherwise.
  * @example
  * ```tsx
  * import { useIsMutating } from '@tanstack/react-query'
@@ -36,7 +38,7 @@ export function useIsMutating(
 ): number {
   const client = useQueryClient(queryClient)
   return useMutationState(
-    { filters: { ...filters, status: 'pending' } },
+    { filters: { ...filters, status: filters?.status ?? 'pending' } },
     client,
   ).length
 }

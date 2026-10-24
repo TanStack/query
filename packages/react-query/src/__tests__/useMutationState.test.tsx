@@ -101,6 +101,52 @@ describe('useIsMutating', () => {
     await vi.advanceTimersByTimeAsync(1000)
   })
 
+  it('should honour a status filter instead of only counting pending mutations', async () => {
+    const queryClient = new QueryClient()
+
+    function IsMutating() {
+      const isMutatingPending = useIsMutating({ status: 'pending' })
+      const isMutatingSuccess = useIsMutating({ status: 'success' })
+      const isMutatingError = useIsMutating({ status: 'error' })
+      return (
+        <div>
+          <div>pending: {isMutatingPending}</div>
+          <div>success: {isMutatingSuccess}</div>
+          <div>error: {isMutatingError}</div>
+        </div>
+      )
+    }
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: () => sleep(10).then(() => 'data'),
+      })
+
+      return (
+        <div>
+          <IsMutating />
+          <button onClick={() => mutate()}>mutate</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    expect(rendered.getByText('pending: 0')).toBeInTheDocument()
+    expect(rendered.getByText('success: 0')).toBeInTheDocument()
+    expect(rendered.getByText('error: 0')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'mutate' }))
+    await vi.advanceTimersByTimeAsync(1)
+    expect(rendered.getByText('pending: 1')).toBeInTheDocument()
+    expect(rendered.getByText('success: 0')).toBeInTheDocument()
+    expect(rendered.getByText('error: 0')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('pending: 0')).toBeInTheDocument()
+    expect(rendered.getByText('success: 1')).toBeInTheDocument()
+    expect(rendered.getByText('error: 0')).toBeInTheDocument()
+  })
+
   it('should filter correctly by mutationKey', async () => {
     const queryClient = new QueryClient()
     const key1 = createKey()
