@@ -1,8 +1,10 @@
+import * as React from 'react'
 import {
   MutationCache,
   QueryClient,
   onlineManager,
   useIsRestoring,
+  useMutation,
   useQuery,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -17,7 +19,6 @@ import {
   useMatch,
 } from '@tanstack/react-location'
 
-import { useMovie } from './movies'
 import { moviesMutations, moviesQueries } from './services/movies/queries'
 
 const persister = createAsyncStoragePersister({
@@ -147,7 +148,51 @@ function Detail() {
   const {
     params: { movieId },
   } = useMatch()
-  const { comment, setComment, updateMovie, movieQuery } = useMovie(movieId)
+  const movieQuery = useQuery(moviesQueries.detail(movieId))
+
+  const [commentDraft, setCommentDraft] = React.useState<string | undefined>()
+
+  const updateMovie = useMutation({
+    ...moviesMutations.update(),
+    mutationKey: moviesQueries.detail(movieId).queryKey,
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({
+        queryKey: moviesQueries.detail(movieId).queryKey,
+      })
+      const { queryKey } = moviesQueries.detail(movieId)
+      const previousData = queryClient.getQueryData(queryKey)
+
+      // remove local state so that server state is taken instead
+      setCommentDraft(undefined)
+
+      queryClient.setQueryData(
+        queryKey,
+        (old) =>
+          old && {
+            ...old,
+            movie: {
+              ...old.movie,
+              comment: variables.comment,
+            },
+          },
+      )
+
+      return { previousData }
+    },
+    onError: (_, __, onMutateResult) => {
+      queryClient.setQueryData(
+        moviesQueries.detail(movieId).queryKey,
+        onMutateResult?.previousData,
+      )
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: moviesQueries.detail(movieId).queryKey,
+      })
+    },
+  })
+
+  const comment = commentDraft ?? movieQuery.data?.movie.comment
 
   if (movieQuery.isLoading) {
     return 'Loading...'
@@ -186,7 +231,7 @@ function Detail() {
             <textarea
               name="comment"
               value={comment}
-              onChange={(event) => setComment(event.target.value)}
+              onChange={(event) => setCommentDraft(event.target.value)}
             />
           </label>
         </p>
