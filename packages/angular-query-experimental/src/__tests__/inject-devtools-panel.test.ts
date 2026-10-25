@@ -1,5 +1,7 @@
 import {
   ElementRef,
+  EnvironmentInjector,
+  createEnvironmentInjector,
   provideZonelessChangeDetection,
   signal,
 } from '@angular/core'
@@ -224,5 +226,61 @@ describe('injectDevtoolsPanel', () => {
     expect(mockDevtoolsPanelInstance.setTheme).toHaveBeenLastCalledWith(
       undefined,
     )
+  })
+
+  it('should create TanstackQueryDevtoolsPanel once with the latest options when they change while loading', async () => {
+    const theme = signal<Theme>('light')
+
+    TestBed.runInInjectionContext(() => {
+      return injectDevtoolsPanel(() => ({
+        hostElement: TestBed.inject(ElementRef),
+        theme: theme(),
+      }))
+    })
+
+    TestBed.tick()
+    theme.set('dark')
+    TestBed.tick()
+    await vi.dynamicImportSettled()
+    TestBed.tick()
+    expect(mocks.mockTanstackQueryDevtoolsPanel).toHaveBeenCalledTimes(1)
+    expect(mocks.mockTanstackQueryDevtoolsPanel).toHaveBeenCalledWith(
+      expect.objectContaining({ theme: 'dark' }),
+    )
+    expect(mockDevtoolsPanelInstance.mount).toHaveBeenCalledTimes(1)
+  })
+
+  it('should not create TanstackQueryDevtoolsPanel when hostElement is removed while loading', async () => {
+    const hostElement = signal<ElementRef | undefined>(mockElementRef)
+
+    TestBed.runInInjectionContext(() => {
+      return injectDevtoolsPanel(() => ({
+        hostElement: hostElement(),
+      }))
+    })
+
+    TestBed.tick()
+    hostElement.set(undefined)
+    TestBed.tick()
+    await vi.dynamicImportSettled()
+    TestBed.tick()
+    expect(mocks.mockTanstackQueryDevtoolsPanel).not.toHaveBeenCalled()
+    expect(mockDevtoolsPanelInstance.mount).not.toHaveBeenCalled()
+  })
+
+  it('should not create TanstackQueryDevtoolsPanel when the injector is destroyed while loading', async () => {
+    const injector = createEnvironmentInjector(
+      [],
+      TestBed.inject(EnvironmentInjector),
+    )
+
+    injectDevtoolsPanel(() => ({ hostElement: mockElementRef }), { injector })
+
+    TestBed.tick()
+    injector.destroy()
+    await vi.dynamicImportSettled()
+    TestBed.tick()
+    expect(mocks.mockTanstackQueryDevtoolsPanel).not.toHaveBeenCalled()
+    expect(mockDevtoolsPanelInstance.mount).not.toHaveBeenCalled()
   })
 })

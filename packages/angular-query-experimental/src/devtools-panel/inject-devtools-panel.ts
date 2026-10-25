@@ -7,6 +7,7 @@ import {
   effect,
   inject,
   runInInjectionContext,
+  signal,
   untracked,
 } from '@angular/core'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
@@ -44,6 +45,10 @@ export const injectDevtoolsPanel: InjectDevtoolsPanel = (
 
     const queryOptions = computed(injectDevtoolsPanelFn)
     let devtools: TanstackQueryDevtoolsPanel | null = null
+    let devtoolsImport: Promise<void> | null = null
+    const devtoolsPanelClass = signal<typeof TanstackQueryDevtoolsPanel | null>(
+      null,
+    )
 
     const destroy = () => {
       devtools?.unmount()
@@ -66,35 +71,41 @@ export const injectDevtoolsPanel: InjectDevtoolsPanel = (
         onClose,
         hostElement,
       } = queryOptions()
+      const DevtoolsPanel = devtoolsPanelClass()
 
       untracked(() => {
         if (!client) throw new Error('No QueryClient found')
         if (!devtools && hostElement) {
-          import('@tanstack/query-devtools')
-            .then((queryDevtools) => {
-              devtools = new queryDevtools.TanstackQueryDevtoolsPanel({
-                client,
-                queryFlavor: 'Angular Query',
-                version: '5',
-                buttonPosition: 'bottom-left',
-                position: 'bottom',
-                initialIsOpen: true,
-                errorTypes,
-                styleNonce,
-                shadowDOMTarget,
-                hideDisabledQueries,
-                theme,
-                onClose,
-                onlineManager,
+          if (!DevtoolsPanel) {
+            devtoolsImport ??= import('@tanstack/query-devtools')
+              .then((queryDevtools) => {
+                devtoolsPanelClass.set(queryDevtools.TanstackQueryDevtoolsPanel)
               })
-              devtools.mount(hostElement.nativeElement)
-            })
-            .catch((error) => {
-              console.error(
-                'Install @tanstack/query-devtools or reinstall without --omit=optional.',
-                error,
-              )
-            })
+              .catch((error) => {
+                console.error(
+                  'Install @tanstack/query-devtools or reinstall without --omit=optional.',
+                  error,
+                )
+              })
+            return
+          }
+
+          devtools = new DevtoolsPanel({
+            client,
+            queryFlavor: 'Angular Query',
+            version: '5',
+            buttonPosition: 'bottom-left',
+            position: 'bottom',
+            initialIsOpen: true,
+            errorTypes,
+            styleNonce,
+            shadowDOMTarget,
+            hideDisabledQueries,
+            theme,
+            onClose,
+            onlineManager,
+          })
+          devtools.mount(hostElement.nativeElement)
         } else if (devtools && hostElement) {
           devtools.setClient(client)
           devtools.setErrorTypes(errorTypes)
