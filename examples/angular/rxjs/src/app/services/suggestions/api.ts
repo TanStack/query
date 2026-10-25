@@ -1,15 +1,12 @@
 import { HttpClient } from '@angular/common/http'
 import { Injectable, inject } from '@angular/core'
 import { of } from 'rxjs'
-
-interface SuggestionsResponse {
-  suggestions: Array<string>
-}
+import type { SuggestionsResponse } from './types'
 
 @Injectable({
   providedIn: 'root',
 })
-export class AutocompleteService {
+export class SuggestionsAPI {
   readonly #http = inject(HttpClient)
 
   getSuggestions = (term: string = '') =>
