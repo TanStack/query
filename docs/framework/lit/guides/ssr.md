@@ -32,7 +32,7 @@ async function renderPage() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 30_000,
+        staleTime: 30 * 1000,
       },
     },
   })
@@ -66,7 +66,7 @@ import type { DehydratedState } from '@tanstack/lit-query'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 30_000,
+      staleTime: 30 * 1000,
     },
   },
 })
