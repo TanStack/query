@@ -8,7 +8,7 @@ import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { For, Match, Switch, createSignal } from 'solid-js'
 import { render } from 'solid-js/web'
 import { postsQueries } from './services/posts/queries'
-import type { Accessor, Component, Setter } from 'solid-js'
+import type { Component, Setter } from 'solid-js'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,12 +18,8 @@ const queryClient = new QueryClient({
   },
 })
 
-function createPosts() {
-  return useQuery(() => postsQueries.list())
-}
-
 function Posts(props: { setPostId: Setter<number> }) {
-  const state = createPosts()
+  const state = useQuery(() => postsQueries.list())
 
   return (
     <div>
@@ -71,12 +67,8 @@ function Posts(props: { setPostId: Setter<number> }) {
   )
 }
 
-function createPost(postId: Accessor<number>) {
-  return useQuery(() => postsQueries.detail(postId()))
-}
-
 function Post(props: { postId: number; setPostId: Setter<number> }) {
-  const state = createPost(() => props.postId)
+  const state = useQuery(() => postsQueries.detail(props.postId))
 
   return (
     <div>
