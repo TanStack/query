@@ -207,7 +207,7 @@ Almost everyone gets `cacheTime` wrong. It sounds like "the amount of time that 
 `gc` is referring to "garbage collect" time. It's a bit more technical, but also a quite [well known abbreviation](<https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)>) in computer science.
 
 ```tsx
-const MINUTE = 1000 * 60;
+const MINUTE = 60 * 1000;
 
 const queryClient = new QueryClient({
   defaultOptions: {

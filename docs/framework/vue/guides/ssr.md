@@ -32,7 +32,7 @@ export default defineNuxtPlugin((nuxt) => {
 
   // Modify your Vue Query global settings here
   const queryClient = new QueryClient({
-    defaultOptions: { queries: { staleTime: 5000 } },
+    defaultOptions: { queries: { staleTime: 5 * 1000 } },
   })
   const options: VueQueryPluginOptions = { queryClient }
 
@@ -82,7 +82,7 @@ import { VueQueryPlugin, QueryClient, hydrate } from '@tanstack/vue-query'
 export default (context) => {
   // Modify your Vue Query global settings here
   const queryClient = new QueryClient({
-    defaultOptions: { queries: { staleTime: 5000 } },
+    defaultOptions: { queries: { staleTime: 5 * 1000 } },
   })
 
   if (process.server) {
