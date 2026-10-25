@@ -77,7 +77,7 @@ function App() {
       <h2>Character fetcher</h2>
       <div>
         <label style={{ display: 'block' }}>
-          Character ids (numberic, comma seprated)
+          Character ids (numeric, comma separated)
         </label>
         <input
           style={{ display: 'inline-block' }}
