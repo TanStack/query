@@ -73,9 +73,7 @@ describe('useQueries', () => {
   })
 
   it('should not change state if unmounted', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    const states: Array<UseQueryResult['status']> = []
     const key1 = createKey()
 
     // We have to mock the QueriesObserver to not unsubscribe
@@ -95,7 +93,7 @@ describe('useQueries', () => {
     })
 
     function Queries() {
-      useQueries(() => ({
+      const queries = useQueries(() => ({
         queries: [
           {
             queryKey: key1,
@@ -103,6 +101,9 @@ describe('useQueries', () => {
           },
         ],
       }))
+      createRenderEffect(() => {
+        states.push(queries[0].status)
+      })
 
       return (
         <div>
@@ -123,11 +124,14 @@ describe('useQueries', () => {
     }
 
     const rendered = renderWithClient(queryClient, () => <Page />)
+    expect(states).toStrictEqual(['pending'])
 
     fireEvent.click(rendered.getByText('unmount'))
+    expect(queryClient.getQueryState(key1)?.status).toBe('pending')
 
     await vi.advanceTimersByTimeAsync(20)
-    expect(consoleErrorMock).not.toHaveBeenCalled()
+    expect(queryClient.getQueryState(key1)?.status).toBe('success')
+    expect(states).toStrictEqual(['pending'])
   })
 
   it('should use provided custom queryClient', async () => {
