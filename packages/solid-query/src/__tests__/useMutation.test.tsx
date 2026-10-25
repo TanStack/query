@@ -1015,8 +1015,10 @@ describe('useMutation', () => {
     })
   })
 
-  // oxlint-disable-next-line vitest/expect-expect
-  it('should not change state if unmounted', () => {
+  it('should not change state if unmounted', async () => {
+    const consoleErrorMock = vi
+      .spyOn(console, 'error')
+      .mockReturnValue(undefined)
     function Mutates() {
       const mutation = useMutation(() => ({ mutationFn: () => sleep(10) }))
       return <button onClick={() => mutation.mutate()}>mutate</button>
@@ -1034,6 +1036,8 @@ describe('useMutation', () => {
     const rendered = renderWithClient(queryClient, () => <Page />)
     fireEvent.click(rendered.getByText('mutate'))
     fireEvent.click(rendered.getByText('unmount'))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consoleErrorMock).not.toHaveBeenCalled()
   })
 
   it('should be able to throw an error when throwOnError is set to true', async () => {
