@@ -279,7 +279,7 @@ An identity function, in the context of TanStack Query, refers to a function tha
 useQuery({
   queryKey,
   queryFn,
-  placeholderData: (previousData, previousQuery) => previousData, // identity function with the same behaviour as `keepPreviousData`
+  placeholderData: (previousData, previousQuery) => previousData, // identity function with the same behavior as `keepPreviousData`
 })
 ```
 
@@ -345,7 +345,7 @@ The v5 includes a new `maxPages` option for infinite queries to limit the number
 
 ### New `dehydrate` API
 
-The options you can pass to `dehydrate` have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behaviour, instead of using the removed boolean options `dehydrateMutations` and `dehydrateQueries` you can implement the function equivalents `shouldDehydrateQuery` or `shouldDehydrateMutation` instead. To get the old behaviour of not hydrating queries/mutations at all, pass in `() => false`.
+The options you can pass to `dehydrate` have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behavior, instead of using the removed boolean options `dehydrateMutations` and `dehydrateQueries` you can implement the function equivalents `shouldDehydrateQuery` or `shouldDehydrateMutation` instead. To get the old behavior of not hydrating queries/mutations at all, pass in `() => false`.
 
 ```tsx
 - dehydrateMutations?: boolean // [!code --]

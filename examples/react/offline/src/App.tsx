@@ -117,7 +117,7 @@ function List() {
       <div>
         <h1>Movies</h1>
         <p>
-          Try to mock offline behaviour with the button in the devtools. You can
+          Try to mock offline behavior with the button in the devtools. You can
           navigate around as long as there is already data in the cache. You'll
           get a refetch as soon as you go online again.
         </p>
@@ -180,7 +180,7 @@ function Detail() {
         <Link to="..">Back</Link>
         <h1>Movie: {movieQuery.data.movie.title}</h1>
         <p>
-          Try to mock offline behaviour with the button in the devtools, then
+          Try to mock offline behavior with the button in the devtools, then
           update the comment. The optimistic update will succeed, but the actual
           mutation will be paused and resumed once you go online again.
         </p>
