@@ -72,8 +72,10 @@ describe('useQueries', () => {
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
-  // oxlint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
+    const consoleErrorMock = vi
+      .spyOn(console, 'error')
+      .mockReturnValue(undefined)
     const key1 = createKey()
 
     // We have to mock the QueriesObserver to not unsubscribe
@@ -124,10 +126,8 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByText('unmount'))
 
-    // Should not display the console error
-    // "Warning: Can't perform a React state update on an unmounted component"
-
     await vi.advanceTimersByTimeAsync(20)
+    expect(consoleErrorMock).not.toHaveBeenCalled()
   })
 
   it('should use provided custom queryClient', async () => {

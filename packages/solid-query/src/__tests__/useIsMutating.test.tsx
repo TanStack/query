@@ -235,8 +235,10 @@ describe('useIsMutating', () => {
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
-  // oxlint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
+    const consoleErrorMock = vi
+      .spyOn(console, 'error')
+      .mockReturnValue(undefined)
     // We have to mock the MutationCache to not unsubscribe
     // the listener when the component is unmounted
     class MutationCacheMock extends QueryCore.MutationCache {
@@ -286,9 +288,7 @@ describe('useIsMutating', () => {
 
     fireEvent.click(rendered.getByText('unmount'))
 
-    // Should not display the console error
-    // "Warning: Can't perform a React state update on an unmounted component"
-
     await vi.advanceTimersByTimeAsync(20)
+    expect(consoleErrorMock).not.toHaveBeenCalled()
   })
 })
