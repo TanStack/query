@@ -409,8 +409,7 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
-        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-        initialValue: {} as Record<number, boolean>,
+        initialValue: {},
       }),
     })
 
@@ -443,11 +442,10 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
-        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
         initialValue: {
           10: true,
           11: true,
-        } as Record<number, boolean>,
+        },
       }),
     })
 
