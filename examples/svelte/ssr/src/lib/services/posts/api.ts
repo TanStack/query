@@ -1,6 +1,6 @@
 import type { Post } from './types'
 
-export const api = (customFetch = fetch) => ({
+export const postsAPI = (customFetch = fetch) => ({
   getPosts: async (limit: number) => {
     const response = await customFetch(
       'https://jsonplaceholder.typicode.com/posts',
@@ -9,7 +9,7 @@ export const api = (customFetch = fetch) => ({
     const data = (await response.json()) as Array<Post>
     return data.filter((x) => x.id <= limit)
   },
-  getPostById: async (id: number): Promise<Post> => {
+  getPost: async (id: number): Promise<Post> => {
     const response = await customFetch(
       `https://jsonplaceholder.typicode.com/posts/${id}`,
     )
