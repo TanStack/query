@@ -7,18 +7,10 @@ import {
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { For, Match, Show, Switch, createSignal } from 'solid-js'
 import { render } from 'solid-js/web'
-import { gql, request } from 'graphql-request'
+import { postsQueries } from './services/posts/queries'
 import type { Accessor, Setter } from 'solid-js'
 
-const endpoint = 'https://graphqlzero.almansi.me/api'
-
 const queryClient = new QueryClient()
-
-type Post = {
-  id: string
-  title: string
-  body: string
-}
 
 function App() {
   const [postId, setPostId] = createSignal<string | null>(null)
@@ -44,27 +36,7 @@ function App() {
 }
 
 function createPosts() {
-  return useQuery(() => ({
-    queryKey: ['posts'],
-    queryFn: async () => {
-      const {
-        posts: { data },
-      } = await request<{ posts: { data: Array<Post> } }>(
-        endpoint,
-        gql`
-          query {
-            posts {
-              data {
-                id
-                title
-              }
-            }
-          }
-        `,
-      )
-      return data
-    },
-  }))
+  return useQuery(() => postsQueries.list())
 }
 
 function Posts(props: { setPostId: Setter<string | null> }) {
@@ -91,7 +63,9 @@ function Posts(props: { setPostId: Setter<string | null> }) {
                         style={
                           // We can find the existing query data here to show bold links for
                           // ones that are cached
-                          queryClient.getQueryData(['post', post.id])
+                          queryClient.getQueryData(
+                            postsQueries.detail(post.id).queryKey,
+                          )
                             ? {
                                 'font-weight': 'bold',
                                 color: 'green',
@@ -115,26 +89,7 @@ function Posts(props: { setPostId: Setter<string | null> }) {
 }
 
 function createPost(postId: Accessor<string>) {
-  return useQuery(() => ({
-    queryKey: ['post', postId()],
-    queryFn: async () => {
-      const { post } = await request<{ post: Post }>(
-        endpoint,
-        gql`
-          query Post($id: ID!) {
-            post(id: $id) {
-              id
-              title
-              body
-            }
-          }
-        `,
-        { id: postId() },
-      )
-
-      return post
-    },
-  }))
+  return useQuery(() => postsQueries.detail(postId()))
 }
 
 function Post(props: { postId: string; setPostId: Setter<string | null> }) {
