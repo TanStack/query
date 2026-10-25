@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { useQuery, useQueryClient } from '@tanstack/vue-query'
-import { postQueryOptions, postsQueryOptions } from './api'
+import { postsQueries } from './services/posts/queries'
 
 defineEmits<{ setPostId: [id: number] }>()
 
 const queryClient = useQueryClient()
 
-const { isPending, isError, isFetching, data, error } =
-  useQuery(postsQueryOptions())
+const { isPending, isError, isFetching, data, error } = useQuery(
+  postsQueries.list(),
+)
 </script>
 
 <template>
@@ -22,7 +23,7 @@ const { isPending, isError, isFetching, data, error } =
           href="#"
           :class="{
             visited: queryClient.getQueryData(
-              postQueryOptions(item.id).queryKey,
+              postsQueries.detail(item.id).queryKey,
             ),
           }"
           >{{ item.title }}</a
