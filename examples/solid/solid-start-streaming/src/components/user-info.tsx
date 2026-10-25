@@ -3,7 +3,7 @@ import { createSignal, untrack } from 'solid-js'
 import { Example } from './example'
 import { QueryBoundary } from './query-boundary'
 import type { Component } from 'solid-js'
-import { fetchUser } from '~/utils/api'
+import { usersQueries } from '~/services/users/queries'
 
 export interface UserInfoProps {
   deferStream?: boolean
@@ -15,12 +15,10 @@ export interface UserInfoProps {
 
 export const userInfoQueryOpts = (options?: UserInfoProps) =>
   queryOptions({
-    queryKey: ['user', options?.sleep, options?.simulateError],
-    queryFn: () =>
-      fetchUser({
-        sleep: options?.sleep,
-        simulateError: options?.simulateError,
-      }),
+    ...usersQueries.detail({
+      sleep: options?.sleep,
+      simulateError: options?.simulateError,
+    }),
     deferStream: options?.deferStream,
     staleTime: options?.staleTime,
     gcTime: options?.gcTime,

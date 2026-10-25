@@ -3,12 +3,12 @@ import { Suspense, createSignal } from 'solid-js'
 import { NoHydration } from 'solid-js/web'
 import { Title } from '@solidjs/meta'
 import type { UseQueryResult } from '@tanstack/solid-query'
-import { fetchUser } from '~/utils/api'
+import { usersAPI } from '~/services/users/api'
 
 export default function Hydration() {
   const query = useQuery(() => ({
     queryKey: ['user'],
-    queryFn: () => fetchUser({ sleep: 500 }),
+    queryFn: () => usersAPI.getUser({ sleep: 500 }),
     deferStream: true,
   }))
 
