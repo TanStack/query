@@ -1,5 +1,5 @@
-import { skipToken, useInfiniteQuery } from '@tanstack/react-query'
-import { search } from './algolia'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { productsQueries } from './services/products/queries'
 
 export type UseAlgoliaOptions = {
   indexName: string
@@ -17,14 +17,7 @@ export default function useAlgolia<TData>({
   gcTime,
 }: UseAlgoliaOptions) {
   return useInfiniteQuery({
-    queryKey: ['algolia', indexName, query, hitsPerPage],
-    queryFn: query
-      ? ({ pageParam }) =>
-          search<TData>({ indexName, query, pageParam, hitsPerPage })
-      : skipToken,
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, _allPages, lastPageParam) =>
-      lastPageParam + 1 < lastPage.nbPages ? lastPageParam + 1 : undefined,
+    ...productsQueries.search<TData>({ indexName, query, hitsPerPage }),
     select: (data) => data.pages.flatMap((page) => page.hits),
     staleTime,
     gcTime,
