@@ -630,8 +630,7 @@ describe('matchMutation', () => {
 
 describe('replaceEqualDeep', () => {
   it('should return the type of b and not relate it to a', () => {
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    const result = replaceEqualDeep({ a: 1 } as unknown, { b: '1' })
+    const result = replaceEqualDeep({ a: 1 }, { b: '1' })
     expectTypeOf(result).toEqualTypeOf<{ b: string }>()
 
     expectTypeOf(replaceEqualDeep<number>)
@@ -643,10 +642,8 @@ describe('replaceEqualDeep', () => {
   })
 
   it('should accept the depth argument optionally', () => {
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    expectTypeOf(replaceEqualDeep(1 as unknown, 2)).toEqualTypeOf<number>()
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    expectTypeOf(replaceEqualDeep(1 as unknown, 2, 0)).toEqualTypeOf<number>()
+    expectTypeOf(replaceEqualDeep(1, 2)).toEqualTypeOf<number>()
+    expectTypeOf(replaceEqualDeep(1, 2, 0)).toEqualTypeOf<number>()
   })
 })
 

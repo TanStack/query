@@ -74,13 +74,11 @@ const typedFilterKey = typedQueryFilters.queryKey!
 const typedMutationKey = typedMutationOptions.mutationKey!
 
 const untypedQueryOptions: EnsureQueryDataOptions = {
-  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-  queryKey: ['key'] as any,
+  queryKey: ['key'],
 }
 
 const untypedFetchInfiniteQueryOptions: FetchInfiniteQueryOptions = {
-  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-  queryKey: ['key'] as any,
+  queryKey: ['key'],
   pages: 5,
   getNextPageParam: (lastPage) => {
     expectTypeOf(lastPage).toEqualTypeOf<unknown>()
@@ -548,10 +546,7 @@ describe('queryClient', () => {
         initialPageParam: 1,
         getNextPageParam: () => 2,
         select: (data) => ({
-          pages: data.pages.map(
-            // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-            (x) => `count: ${(x as { count: number }).count}`,
-          ),
+          pages: data.pages.map((x) => `count: ${x.count}`),
         }),
       })
 
