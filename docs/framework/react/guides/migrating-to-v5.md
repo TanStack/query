@@ -455,16 +455,16 @@ For example:
 ```ts
 + queryClient.setQueryDefaults(['todo'], {   // [!code ++]
 +   retry: false,  // [!code ++]
-+   staleTime: 60_000,  // [!code ++]
++   staleTime: 60 * 1000,  // [!code ++]
 + })  // [!code ++]
 queryClient.setQueryDefaults(['todo', 'detail'], {
 +   retry: true,  // [!code --]
-  retryDelay: 1_000,
-  staleTime: 10_000,
+  retryDelay: 1000,
+  staleTime: 10 * 1000,
 })
 - queryClient.setQueryDefaults(['todo'], { // [!code --]
 -   retry: false, // [!code --]
--   staleTime: 60_000, // [!code --]
+-   staleTime: 60 * 1000, // [!code --]
 - }) // [!code --]
 ```
 

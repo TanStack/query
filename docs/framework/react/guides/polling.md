@@ -11,7 +11,7 @@ title: Polling
 useQuery({
   queryKey: ['prices'],
   queryFn: fetchPrices,
-  refetchInterval: 5_000, // every 5 seconds
+  refetchInterval: 5 * 1000, // every 5 seconds
 })
 ```
 
@@ -32,7 +32,7 @@ useQuery({
   refetchInterval: (query) => {
     // Stop polling once the job finishes
     if (query.state.data?.status === 'complete') return false
-    return 2_000
+    return 2 * 1000
   },
 })
 ```
@@ -51,7 +51,7 @@ By default, polling pauses when the browser tab loses focus. For dashboards or a
 useQuery({
   queryKey: ['portfolio'],
   queryFn: fetchPortfolio,
-  refetchInterval: 30_000,
+  refetchInterval: 30 * 1000,
   refetchIntervalInBackground: true,
 })
 ```
@@ -70,7 +70,7 @@ useQuery({
   queryFn: () => fetchPrice(tokenAddress),
   refetchInterval: () => {
     if (!tokenAddress || isPaused) return false
-    return 15_000
+    return 15 * 1000
   },
 })
 ```
@@ -87,7 +87,7 @@ TanStack Query detects connectivity by listening to the browser's `online` and `
 useQuery({
   queryKey: ['chainStatus'],
   queryFn: fetchChainStatus,
-  refetchInterval: 10_000,
+  refetchInterval: 10 * 1000,
   networkMode: 'always',
 })
 ```
@@ -98,7 +98,7 @@ For more on network modes, see [Network Mode](./network-mode.md).
 
 ## Note on deduplication
 
-Each `QueryObserver` (each component using `useQuery` with `refetchInterval`) runs its own timer. Two components subscribed to the same key with `refetchInterval: 5000` each fire their timer every 5 seconds. What gets deduplicated is concurrent in-flight fetches: if two timers fire at the same time, only one network request goes out. The timers are observer-level; the deduplication is query-level.
+Each `QueryObserver` (each component using `useQuery` with `refetchInterval`) runs its own timer. Two components subscribed to the same key with `refetchInterval: 5 * 1000` each fire their timer every 5 seconds. What gets deduplicated is concurrent in-flight fetches: if two timers fire at the same time, only one network request goes out. The timers are observer-level; the deduplication is query-level.
 
 [//]: # 'ReactNative'
 
