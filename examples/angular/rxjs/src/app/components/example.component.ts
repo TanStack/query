@@ -33,6 +33,6 @@ export class ExampleComponent {
   readonly query = injectQuery(() => ({
     ...this.#suggestionsQueries.list(this.term()),
     placeholderData: keepPreviousData,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 5 * 60 * 1000, // 5 minutes
   }))
 }
