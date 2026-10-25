@@ -1016,11 +1016,12 @@ describe('useMutation', () => {
   })
 
   it('should not change state if unmounted', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    const states: Array<UseMutationResult['status']> = []
     function Mutates() {
       const mutation = useMutation(() => ({ mutationFn: () => sleep(10) }))
+      createRenderEffect(() => {
+        states.push(mutation.status)
+      })
       return <button onClick={() => mutation.mutate()}>mutate</button>
     }
     function Page() {
@@ -1035,9 +1036,19 @@ describe('useMutation', () => {
 
     const rendered = renderWithClient(queryClient, () => <Page />)
     fireEvent.click(rendered.getByText('mutate'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(states).toStrictEqual(['idle', 'pending'])
+
     fireEvent.click(rendered.getByText('unmount'))
+    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+      'pending',
+    )
+
     await vi.advanceTimersByTimeAsync(10)
-    expect(consoleErrorMock).not.toHaveBeenCalled()
+    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+      'success',
+    )
+    expect(states).toStrictEqual(['idle', 'pending'])
   })
 
   it('should be able to throw an error when throwOnError is set to true', async () => {
