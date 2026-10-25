@@ -17,13 +17,8 @@ import {
   useMatch,
 } from '@tanstack/react-location'
 
-import * as api from './api'
-import {
-  movieKeys,
-  movieQueryOptions,
-  updateMovieMutationOptions,
-  useMovie,
-} from './movies'
+import { useMovie } from './movies'
+import { moviesMutations, moviesQueries } from './services/movies/queries'
 
 const persister = createAsyncStoragePersister({
   storage: window.localStorage,
@@ -48,8 +43,8 @@ const queryClient = new QueryClient({
 })
 
 // we need a default mutation function so that paused mutations can resume after a page reload
-queryClient.setMutationDefaults(movieKeys.all(), {
-  ...updateMovieMutationOptions(),
+queryClient.setMutationDefaults(moviesQueries.all(), {
+  ...moviesMutations.update(),
   onSuccess: (data) => {
     toast.success(data.message)
   },
@@ -87,11 +82,11 @@ function Movies() {
           path: ':movieId',
           element: <Detail />,
           loader: async ({ params: { movieId } }) =>
-            queryClient.getQueryData(movieQueryOptions(movieId).queryKey) ??
+            queryClient.getQueryData(moviesQueries.detail(movieId).queryKey) ??
             // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
             // we just let the Detail component handle it
             (onlineManager.isOnline() && !isRestoring
-              ? queryClient.query(movieQueryOptions(movieId))
+              ? queryClient.query(moviesQueries.detail(movieId))
               : {}),
         },
       ]}
@@ -103,10 +98,7 @@ function Movies() {
 }
 
 function List() {
-  const moviesQuery = useQuery({
-    queryKey: movieKeys.list(),
-    queryFn: api.fetchMovies,
-  })
+  const moviesQuery = useQuery(moviesQueries.list())
 
   if (moviesQuery.isLoading) {
     return 'Loading...'
