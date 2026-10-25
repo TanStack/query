@@ -5,8 +5,9 @@ import {
   createMutationController,
   createQueryController,
 } from '@tanstack/lit-query'
-import { addTodoOnServer, fetchTodosFromServer, resetTodoApi } from './todoApi'
-import type { TodosResponse } from './todoApi'
+import { resetTodoApi } from './services/todos/api'
+import { todosMutations, todosQueries } from './services/todos/queries'
+import type { TodosResponse } from './services/todos/types'
 
 resetTodoApi()
 
@@ -37,30 +38,29 @@ class MutationExample extends LitElement {
 
   private nextTitle = 'Created from mutation example'
 
-  private readonly todos = createQueryController(this, {
-    queryKey: ['todos'],
-    queryFn: fetchTodosFromServer,
-  })
+  private readonly todos = createQueryController(this, todosQueries.list())
 
   private readonly addTodo = createMutationController(this, {
-    mutationKey: ['create-todo'],
-    mutationFn: addTodoOnServer,
+    ...todosMutations.create(),
     onSuccess: (created) => {
-      queryClient.setQueryData<TodosResponse>(['todos'], (existing) => {
-        if (!existing) {
+      queryClient.setQueryData<TodosResponse>(
+        todosQueries.list().queryKey,
+        (existing) => {
+          if (!existing) {
+            return {
+              items: [created],
+              requestCount: 0,
+              source: 'cache',
+            }
+          }
+
           return {
-            items: [created],
-            requestCount: 0,
+            items: [...existing.items, created],
+            requestCount: existing.requestCount,
             source: 'cache',
           }
-        }
-
-        return {
-          items: [...existing.items, created],
-          requestCount: existing.requestCount,
-          source: 'cache',
-        }
-      })
+        },
+      )
     },
   })
 
