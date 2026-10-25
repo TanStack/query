@@ -2,6 +2,7 @@ import React from 'react'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { todosMutations, todosQueries } from '../services/todos/queries'
 
 export default function Example() {
   const queryClient = useQueryClient()
@@ -9,30 +10,21 @@ export default function Example() {
   const [value, setValue] = React.useState('')
 
   const { status, data, error, isFetching } = useQuery({
-    queryKey: ['todos'],
-    queryFn: async (): Promise<Array<string>> => {
-      const response = await fetch('/api/data')
-      if (!response.ok) throw new Error('Failed to fetch todos')
-      return await response.json()
-    },
+    ...todosQueries.list(),
     // Refetch the data every second
     refetchInterval: intervalMs,
   })
 
   const addMutation = useMutation({
-    mutationFn: async (add: string) => {
-      const response = await fetch(`/api/data?add=${add}`)
-      if (!response.ok) throw new Error('Failed to add todo')
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+    ...todosMutations.create(),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: todosQueries.all() }),
   })
 
   const clearMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`/api/data?clear=1`)
-      if (!response.ok) throw new Error('Failed to clear todos')
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+    ...todosMutations.deleteAll(),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: todosQueries.all() }),
   })
 
   if (status === 'pending') return <h1>Loading...</h1>
