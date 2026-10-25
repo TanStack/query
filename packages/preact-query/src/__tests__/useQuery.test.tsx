@@ -3961,7 +3961,7 @@ describe('useQuery', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: () => 'fetched data',
-        gcTime: 1000 * 60 * 10, // 10 Minutes
+        gcTime: 10 * 60 * 1000, // 10 Minutes
       })
       return <div>{query.data}</div>
     }
@@ -3979,7 +3979,7 @@ describe('useQuery', () => {
 
     expect(setTimeoutSpy).toHaveBeenLastCalledWith(
       expect.any(Function),
-      1000 * 60 * 10,
+      10 * 60 * 1000,
     )
   })
 
