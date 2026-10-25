@@ -1,21 +1,16 @@
 import { HttpClient } from '@angular/common/http'
 import { Injectable, inject } from '@angular/core'
+import type { Post } from './types'
 
 @Injectable({
   providedIn: 'root',
 })
-export class PostsService {
+export class PostsAPI {
   readonly #http = inject(HttpClient)
 
-  postById$ = (postId: number) =>
-    this.#http.get<Post>(`https://jsonplaceholder.typicode.com/posts/${postId}`)
-
-  allPosts$ = () =>
+  getPosts = () =>
     this.#http.get<Array<Post>>('https://jsonplaceholder.typicode.com/posts')
-}
 
-export interface Post {
-  id: number
-  title: string
-  body: string
+  getPost = (id: number) =>
+    this.#http.get<Post>(`https://jsonplaceholder.typicode.com/posts/${id}`)
 }
