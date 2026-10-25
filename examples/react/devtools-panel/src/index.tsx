@@ -6,6 +6,7 @@ import {
   useQuery,
 } from '@tanstack/react-query'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
+import { reposQueries } from './services/repos/queries'
 
 const queryClient = new QueryClient()
 
@@ -24,16 +25,7 @@ export default function App() {
 }
 
 function Example() {
-  const { isPending, error, data, isFetching } = useQuery({
-    queryKey: ['repoData'],
-    queryFn: async () => {
-      const response = await fetch(
-        'https://api.github.com/repos/TanStack/query',
-      )
-      if (!response.ok) throw new Error('Failed to fetch repo data')
-      return await response.json()
-    },
-  })
+  const { isPending, error, data, isFetching } = useQuery(reposQueries.detail())
 
   if (isPending) return 'Loading...'
 

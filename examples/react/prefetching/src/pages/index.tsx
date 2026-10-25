@@ -2,8 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import { noop, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { characterQueryOptions, charactersQueryOptions } from '../api'
-import type { Character } from '../api'
+import { charactersQueries } from '../services/characters/queries'
+import type { Character } from '../services/characters/types'
 
 function CharacterItem({
   char,
@@ -15,7 +15,7 @@ function CharacterItem({
   const queryClient = useQueryClient()
 
   const { data } = useQuery({
-    ...characterQueryOptions(char.id),
+    ...charactersQueries.detail(char.id),
     enabled: false,
   })
 
@@ -27,7 +27,7 @@ function CharacterItem({
       onMouseEnter={() => {
         queryClient
           .query({
-            ...characterQueryOptions(char.id),
+            ...charactersQueries.detail(char.id),
             staleTime: 10 * 1000, // only prefetch if older than 10 seconds
           })
           .catch(noop)
@@ -52,9 +52,9 @@ function CharacterItem({
 export default function Example() {
   const [selectedChar, setSelectedChar] = React.useState(1)
 
-  const charactersQuery = useQuery(charactersQueryOptions)
+  const charactersQuery = useQuery(charactersQueries.list())
 
-  const characterQuery = useQuery(characterQueryOptions(selectedChar))
+  const characterQuery = useQuery(charactersQueries.detail(selectedChar))
 
   return (
     <div className="App">
