@@ -4,10 +4,12 @@ import type { Post } from './types'
 const endpoint = 'https://graphqlzero.almansi.me/api'
 
 export const postsAPI = {
-  getPosts: async (): Promise<Array<Post>> => {
+  getPosts: async (): Promise<Array<Pick<Post, 'id' | 'title'>>> => {
     const {
       posts: { data },
-    } = await request<{ posts: { data: Array<Post> } }>(
+    } = await request<{
+      posts: { data: Array<Pick<Post, 'id' | 'title'>> }
+    }>(
       endpoint,
       gql`
         query {
