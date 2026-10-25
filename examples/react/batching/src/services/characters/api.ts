@@ -1,14 +1,5 @@
 import { AsyncBatcher } from '@tanstack/react-pacer/async-batcher'
-
-interface CharacterT {
-  id: number
-  name: string
-  status: string
-  species: string
-  type: string
-  gender: string
-  image: string
-}
+import type { CharacterT } from './types'
 
 type CharacterRequest = {
   deferred: PromiseWithResolvers<CharacterT | null>
@@ -51,10 +42,12 @@ const characterBatcher = new AsyncBatcher<CharacterRequest>(
   },
 )
 
-export const loadCharacter = (id: number) => {
-  const deferred = Promise.withResolvers<CharacterT | null>()
+export const charactersAPI = {
+  getCharacter: (id: number) => {
+    const deferred = Promise.withResolvers<CharacterT | null>()
 
-  characterBatcher.addItem({ deferred, id })
+    characterBatcher.addItem({ deferred, id })
 
-  return deferred.promise
+    return deferred.promise
+  },
 }

@@ -8,7 +8,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import './style.css'
 import { useState } from 'react'
-import { chatQueryOptions } from './chat'
+import { messagesQueries } from './services/messages/queries'
 import { Message } from './message'
 
 const queryClient = new QueryClient()
@@ -27,7 +27,7 @@ function ChatMessage({ id, question }: { id: string; question: string }) {
     error,
     data = [],
     isFetching,
-  } = useQuery(chatQueryOptions(id, question))
+  } = useQuery(messagesQueries.detail(id, question))
 
   if (error) return 'An error has occurred: ' + error.message
 
