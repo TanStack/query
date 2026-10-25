@@ -117,8 +117,6 @@ describe('QueryFilters', () => {
     >()
   })
 
-  // we test that there are not type errors here
-  // oxlint-disable-next-line vitest/expect-expect
   it('should work with unions of different lengths', () => {
     type Key =
       | readonly ['foo']
@@ -127,7 +125,9 @@ describe('QueryFilters', () => {
 
     const queryKey: Key = ['foo', 'bar'] as any as Key
 
-    new QueryClient().invalidateQueries({ queryKey })
+    expectTypeOf(new QueryClient().invalidateQueries).toBeCallableWith({
+      queryKey,
+    })
   })
 
   it('should error on invalid query keys', () => {
