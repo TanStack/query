@@ -6,7 +6,7 @@
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
-    "test:eslint": "eslint ./app",
+    "test:eslint": "eslint ./app ./services",
     "test:types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
