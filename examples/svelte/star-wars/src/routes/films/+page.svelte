@@ -1,9 +1,9 @@
 <script lang="ts">
   import { resolve } from '$app/paths'
-  import { filmsQueryOptions } from '$lib/api'
+  import { filmsQueries } from '$lib/services/films/queries'
   import { createQuery } from '@tanstack/svelte-query'
 
-  const query = createQuery(() => filmsQueryOptions)
+  const query = createQuery(() => filmsQueries.list())
 </script>
 
 {#if query.status === 'pending'}
