@@ -18,7 +18,7 @@ import {
 } from 'solid-js'
 import { isServer } from 'solid-js/web'
 import { getSearchParams, properCase } from '../utils'
-import { pokemonQueryOptions, pokemonsQueryOptions } from '../lib/api'
+import { pokemonsQueries } from '../services/pokemons/queries'
 import { Link } from './Link'
 
 const PokemonIdContext = createContext<() => string>()
@@ -88,10 +88,10 @@ const PokemonDetails = () => {
 }
 
 const PokemonDex = (props: { id: string }) => {
-  const pokemon = useQuery(() => pokemonQueryOptions(props.id))
+  const pokemon = useQuery(() => pokemonsQueries.detail(props.id))
 
   const pokemon_stats = useQuery(() => ({
-    ...pokemonQueryOptions(props.id),
+    ...pokemonsQueries.detail(props.id),
     select(data) {
       const nameMap = {
         hp: 'HP',
@@ -190,7 +190,7 @@ const SideNav = () => {
   const id = usePokemonID()
 
   const pokemonsList = useQuery(() => ({
-    ...pokemonsQueryOptions,
+    ...pokemonsQueries.list(),
     select(data) {
       return data.results.map((p) => {
         const regex = /\/pokemon\/(\d+)\/$/
