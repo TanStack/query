@@ -24,7 +24,7 @@ import { render } from '@lit-labs/ssr'
 import { collectResult } from '@lit-labs/ssr/lib/render-result.js'
 import { html } from 'lit'
 import { QueryClient, dehydrate, noop } from '@tanstack/lit-query'
-import { createDataQueryOptions } from './api.js'
+import { dataQueries } from './services/data/queries.js'
 import './app.js'
 
 async function renderPage() {
@@ -37,7 +37,7 @@ async function renderPage() {
     },
   })
 
-  await queryClient.query(createDataQueryOptions(apiBaseUrl)).catch(noop)
+  await queryClient.query(dataQueries.detail(apiBaseUrl)).catch(noop)
 
   const appHtml = await collectResult(
     render(
@@ -109,9 +109,9 @@ The SSR example creates its controller only after a `queryClient` property is av
 ```ts
 import { LitElement } from 'lit'
 import { createQueryController } from '@tanstack/lit-query'
-import { createDataQueryOptions } from './api.js'
+import { dataQueries } from './services/data/queries.js'
 import type { QueryClient, QueryResultAccessor } from '@tanstack/lit-query'
-import type { DataResponse } from './api.js'
+import type { DataResponse } from './services/data/types.js'
 
 class SsrApp extends LitElement {
   static properties = {
@@ -127,7 +127,7 @@ class SsrApp extends LitElement {
     if (!this.dataQuery && this.queryClient) {
       this.dataQuery = createQueryController(
         this,
-        createDataQueryOptions(this.apiBaseUrl),
+        dataQueries.detail(this.apiBaseUrl),
         this.queryClient,
       )
     }
