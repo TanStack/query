@@ -4,6 +4,7 @@ import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { postsQueries } from './services/posts/queries'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,21 +18,8 @@ const persister = createAsyncStoragePersister({
   storage: window.localStorage,
 })
 
-type Post = {
-  id: number
-  title: string
-  body: string
-}
-
 function usePosts() {
-  return useQuery({
-    queryKey: ['posts'],
-    queryFn: async (): Promise<Array<Post>> => {
-      const response = await fetch('https://jsonplaceholder.typicode.com/posts')
-      if (!response.ok) throw new Error('Failed to fetch posts')
-      return await response.json()
-    },
-  })
+  return useQuery(postsQueries.list())
 }
 
 function Posts({
@@ -61,7 +49,9 @@ function Posts({
                     style={
                       // We can access the query data here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData(['post', post.id])
+                      queryClient.getQueryData(
+                        postsQueries.detail(post.id).queryKey,
+                      )
                         ? {
                             fontWeight: 'bold',
                             color: 'green',
@@ -82,19 +72,8 @@ function Posts({
   )
 }
 
-const getPostById = async (id: number): Promise<Post> => {
-  const response = await fetch(
-    `https://jsonplaceholder.typicode.com/posts/${id}`,
-  )
-  if (!response.ok) throw new Error('Failed to fetch post')
-  return await response.json()
-}
-
 function usePost(postId: number) {
-  return useQuery({
-    queryKey: ['post', postId],
-    queryFn: () => getPostById(postId),
-  })
+  return useQuery(postsQueries.detail(postId))
 }
 
 function Post({
