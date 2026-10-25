@@ -287,9 +287,8 @@ describe('streamedQuery', () => {
       queryFn: streamedQuery({
         streamFn: (context) => {
           // just consume the signal
-          // oxlint-disable-next-line typescript/no-unnecessary-condition
-          const numbers = context.signal ? 3 : 0
-          return createAsyncNumberGenerator(numbers)
+          void context.signal
+          return createAsyncNumberGenerator(3)
         },
         refetchMode: 'append',
       }),
@@ -338,9 +337,8 @@ describe('streamedQuery', () => {
       queryFn: streamedQuery({
         streamFn: (context) => {
           // just consume the signal
-          // oxlint-disable-next-line typescript/no-unnecessary-condition
-          const numbers = context.signal ? 3 : 0
-          return createAsyncNumberGenerator(numbers)
+          void context.signal
+          return createAsyncNumberGenerator(3)
         },
       }),
     })
@@ -479,7 +477,7 @@ describe('streamedQuery', () => {
       queryFn: streamedQuery<number, string | null>({
         initialValue: 'initial',
         reducer: () => null,
-        // oxlint-disable-next-line typescript/require-await
+        // oxlint-disable-next-line typescript/require-await -- 'streamFn' needs an async iterable, and this generator has nothing to await
         streamFn: async function* () {
           yield 1
         },
@@ -500,7 +498,7 @@ describe('streamedQuery', () => {
       retry: false,
       queryFn: streamedQuery({
         refetchMode: 'reset',
-        // oxlint-disable-next-line typescript/require-await
+        // oxlint-disable-next-line typescript/require-await -- 'streamFn' needs an async iterable, and this generator has nothing to await
         streamFn: async function* () {
           if (shouldError) {
             throw error
@@ -647,7 +645,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        // oxlint-disable-next-line typescript/require-await
+        // oxlint-disable-next-line typescript/require-await -- 'streamFn' needs an async iterable, and this generator has nothing to await
         streamFn: async function* () {
           const v = [1, 2, 3]
           yield* v
