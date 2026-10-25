@@ -4,8 +4,8 @@ import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/solid-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 
-import * as api from './api'
-import { movieKeys, updateMovieMutationOptions, useMovie } from './movies'
+import { useMovie } from './movies'
+import { moviesMutations, moviesQueries } from './services/movies/queries'
 
 const persister = createAsyncStoragePersister({
   storage: window.localStorage,
@@ -28,8 +28,8 @@ const queryClient = new QueryClient({
 })
 
 // we need a default mutation function so that paused mutations can resume after a page reload
-queryClient.setMutationDefaults(movieKeys.all(), {
-  ...updateMovieMutationOptions(),
+queryClient.setMutationDefaults(moviesQueries.all(), {
+  ...moviesMutations.update(),
   onSuccess: (data) => {
     showNotification(data.message, 'success')
   },
@@ -89,10 +89,7 @@ function Movies() {
 }
 
 function List(props: { onSelectMovie: (movieId: string) => void }) {
-  const moviesQuery = useQuery(() => ({
-    queryKey: movieKeys.list(),
-    queryFn: api.fetchMovies,
-  }))
+  const moviesQuery = useQuery(() => moviesQueries.list())
 
   return (
     <Switch>
