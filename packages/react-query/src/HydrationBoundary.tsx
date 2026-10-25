@@ -150,7 +150,7 @@ export const HydrationBoundary = ({
         if (newQueries.length > 0) {
           // It's actually fine to call this with queries/state that already exists
           // in the cache, or is older. hydrate() is idempotent for queries.
-          // oxlint-disable-next-line react-hooks-js/refs
+          // oxlint-disable-next-line react-hooks-js/refs -- new queries are hydrated during render on purpose, and 'options' is read through a ref so that a new 'options' object does not rerun this memo
           hydrate(client, { queries: newQueries }, optionsRef.current)
         }
         if (existingQueries.length > 0) {

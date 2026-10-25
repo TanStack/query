@@ -1205,7 +1205,7 @@ describe('useInfiniteQuery', () => {
     const renderStream =
       createRenderStream<UseInfiniteQueryResult<InfiniteData<number>>>()
 
-    // oxlint-disable-next-line @eslint-react/no-nested-component-definitions
+    // oxlint-disable-next-line @eslint-react/no-nested-component-definitions -- false positive: the rule treats this test callback as a hook because it calls 'vi.useRealTimers()', which 'createRenderStream' needs
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
