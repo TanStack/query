@@ -18,17 +18,13 @@ const persister = createAsyncStoragePersister({
   storage: window.localStorage,
 })
 
-function usePosts() {
-  return useQuery(postsQueries.list())
-}
-
 function Posts({
   setPostId,
 }: {
   setPostId: React.Dispatch<React.SetStateAction<number>>
 }) {
   const queryClient = useQueryClient()
-  const { status, data, error, isFetching } = usePosts()
+  const { status, data, error, isFetching } = useQuery(postsQueries.list())
 
   return (
     <div>
@@ -72,10 +68,6 @@ function Posts({
   )
 }
 
-function usePost(postId: number) {
-  return useQuery(postsQueries.detail(postId))
-}
-
 function Post({
   postId,
   setPostId,
@@ -83,7 +75,9 @@ function Post({
   postId: number
   setPostId: React.Dispatch<React.SetStateAction<number>>
 }) {
-  const { status, data, error, isFetching } = usePost(postId)
+  const { status, data, error, isFetching } = useQuery(
+    postsQueries.detail(postId),
+  )
 
   return (
     <div>
