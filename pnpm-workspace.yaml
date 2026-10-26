@@ -14,8 +14,8 @@ trustPolicyExclude:
 
 catalog:
   typescript: 6.0.3
-  '@typescript-eslint/parser': ^8.71.1
-  '@typescript-eslint/rule-tester': ^8.71.1
+  '@typescript-eslint/parser': ^8.72.0
+  '@typescript-eslint/rule-tester': ^8.72.0
   eslint: ^9.36.0
 
   # react
