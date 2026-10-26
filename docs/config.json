@@ -7014,6 +7014,42 @@
             {
               "label": "Offline Queries and Mutations",
               "to": "framework/preact/examples/offline"
+            },
+            {
+              "label": "Suspense",
+              "to": "framework/preact/examples/suspense"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/preact/examples/batching"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "framework/preact/examples/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/preact/examples/optimistic-updates"
+            },
+            {
+              "label": "Pagination",
+              "to": "framework/preact/examples/pagination"
+            },
+            {
+              "label": "Load-More & Infinite Scroll",
+              "to": "framework/preact/examples/load-more-infinite-scroll"
+            },
+            {
+              "label": "Infinite query with Max pages",
+              "to": "framework/preact/examples/infinite-query-with-max-pages"
+            },
+            {
+              "label": "Prefetching",
+              "to": "framework/preact/examples/prefetching"
+            },
+            {
+              "label": "SSR",
+              "to": "framework/preact/examples/ssr"
             }
           ]
         }
