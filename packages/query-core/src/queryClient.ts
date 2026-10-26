@@ -470,7 +470,7 @@ export class QueryClient {
         .map((query) => query.cancel(defaultedCancelOptions)),
     )
 
-    return Promise.all(promises).then(noop).catch(noop)
+    return Promise.all(promises).then(noop, noop)
   }
 
   /**
@@ -692,7 +692,7 @@ export class QueryClient {
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void> {
     // oxlint-disable-next-line tanstack-query/no-restricted-syntax
-    return this.fetchQuery(options).then(noop).catch(noop)
+    return this.fetchQuery(options).then(noop, noop)
   }
 
   /**
@@ -794,7 +794,7 @@ export class QueryClient {
     >,
   ): Promise<void> {
     // oxlint-disable-next-line tanstack-query/no-restricted-syntax
-    return this.fetchInfiniteQuery(options).then(noop).catch(noop)
+    return this.fetchInfiniteQuery(options).then(noop, noop)
   }
 
   /**
@@ -966,18 +966,16 @@ export class QueryClient {
   getQueryDefaults(
     queryKey: QueryKey,
   ): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
-    const defaults = [...this.#queryDefaults.values()]
-
     const result: OmitKeyof<
       QueryObserverOptions<any, any, any, any, any>,
       'queryKey'
     > = {}
 
-    defaults.forEach((queryDefault) => {
+    for (const queryDefault of this.#queryDefaults.values()) {
       if (partialMatchKey(queryKey, queryDefault.queryKey)) {
         Object.assign(result, queryDefault.defaultOptions)
       }
-    })
+    }
     return result
   }
 
@@ -1026,18 +1024,16 @@ export class QueryClient {
   getMutationDefaults(
     mutationKey: MutationKey,
   ): OmitKeyof<MutationObserverOptions<any, any, any, any>, 'mutationKey'> {
-    const defaults = [...this.#mutationDefaults.values()]
-
     const result: OmitKeyof<
       MutationObserverOptions<any, any, any, any>,
       'mutationKey'
     > = {}
 
-    defaults.forEach((queryDefault) => {
+    for (const queryDefault of this.#mutationDefaults.values()) {
       if (partialMatchKey(mutationKey, queryDefault.mutationKey)) {
         Object.assign(result, queryDefault.defaultOptions)
       }
-    })
+    }
 
     return result
   }
