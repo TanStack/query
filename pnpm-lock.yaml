@@ -993,6 +993,40 @@ importers:
         specifier: ^8.3.1
         version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
+  examples/preact/auto-refetching:
+    dependencies:
+      '@tanstack/preact-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query
+      '@tanstack/preact-query-devtools':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query-devtools
+      msw:
+        specifier: ^2.15.0
+        version: 2.15.0(@types/node@24.19.2)(typescript@5.9.3)
+      preact:
+        specifier: ^11.0.1
+        version: 11.0.1(preact-render-to-string@6.8.0)
+    devDependencies:
+      '@preact/preset-vite':
+        specifier: ^2.10.6
+        version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-config-preact:
+        specifier: ^2.0.0
+        version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
   examples/preact/basic:
     dependencies:
       '@tanstack/preact-query':
@@ -1200,6 +1234,77 @@ importers:
         specifier: ^8.3.1
         version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
+  examples/preact/infinite-query-with-max-pages:
+    dependencies:
+      '@tanstack/preact-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query
+      '@tanstack/preact-query-devtools':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query-devtools
+      msw:
+        specifier: ^2.15.0
+        version: 2.15.0(@types/node@24.19.2)(typescript@5.9.3)
+      preact:
+        specifier: ^11.0.1
+        version: 11.0.1(preact-render-to-string@6.8.0)
+    devDependencies:
+      '@preact/preset-vite':
+        specifier: ^2.10.6
+        version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-config-preact:
+        specifier: ^2.0.0
+        version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
+  examples/preact/load-more-infinite-scroll:
+    dependencies:
+      '@tanstack/preact-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query
+      '@tanstack/preact-query-devtools':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query-devtools
+      msw:
+        specifier: ^2.15.0
+        version: 2.15.0(@types/node@24.19.2)(typescript@5.9.3)
+      preact:
+        specifier: ^11.0.1
+        version: 11.0.1(preact-render-to-string@6.8.0)
+      preact-iso:
+        specifier: ^2.12.2
+        version: 2.12.2(preact-render-to-string@6.8.0)(preact@11.0.1)
+    devDependencies:
+      '@preact/preset-vite':
+        specifier: ^2.10.6
+        version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-config-preact:
+        specifier: ^2.0.0
+        version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
   examples/preact/offline:
     dependencies:
       '@tanstack/preact-query':
@@ -1249,6 +1354,40 @@ importers:
         specifier: ^8.3.1
         version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
+  examples/preact/pagination:
+    dependencies:
+      '@tanstack/preact-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query
+      '@tanstack/preact-query-devtools':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query-devtools
+      msw:
+        specifier: ^2.15.0
+        version: 2.15.0(@types/node@24.19.2)(typescript@5.9.3)
+      preact:
+        specifier: ^11.0.1
+        version: 11.0.1(preact-render-to-string@6.8.0)
+    devDependencies:
+      '@preact/preset-vite':
+        specifier: ^2.10.6
+        version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-config-preact:
+        specifier: ^2.0.0
+        version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
   examples/preact/playground:
     dependencies:
       '@tanstack/preact-query':
@@ -1260,6 +1399,40 @@ importers:
       preact:
         specifier: ^11.0.1
         version: 11.0.1(preact-render-to-string@6.8.0)
+    devDependencies:
+      '@preact/preset-vite':
+        specifier: ^2.10.6
+        version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-config-preact:
+        specifier: ^2.0.0
+        version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
+  examples/preact/prefetching:
+    dependencies:
+      '@tanstack/preact-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query
+      '@tanstack/preact-query-devtools':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query-devtools
+      preact:
+        specifier: ^11.0.1
+        version: 11.0.1(preact-render-to-string@6.8.0)
+      preact-iso:
+        specifier: ^2.12.2
+        version: 2.12.2(preact-render-to-string@6.8.0)(preact@11.0.1)
     devDependencies:
       '@preact/preset-vite':
         specifier: ^2.10.6
