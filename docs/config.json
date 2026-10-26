@@ -7014,6 +7014,14 @@
             {
               "label": "Offline Queries and Mutations",
               "to": "framework/preact/examples/offline"
+            },
+            {
+              "label": "Suspense",
+              "to": "framework/preact/examples/suspense"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/preact/examples/batching"
             }
           ]
         }
