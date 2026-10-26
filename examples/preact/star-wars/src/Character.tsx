@@ -53,10 +53,7 @@ function Film({ filmId }: { filmId: string }) {
 
   if (status === 'success') {
     return (
-      <a
-        className="text-blue-500 hover:underline"
-        href={`/films/${filmId}`}
-      >
+      <a className="text-blue-500 hover:underline" href={`/films/${filmId}`}>
         <h6 className="text-lg">
           {data.episode_id}. {data.title}
         </h6>
