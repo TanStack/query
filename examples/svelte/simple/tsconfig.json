@@ -21,8 +21,7 @@
     "src/**/*.ts",
     "src/**/*.js",
     "src/**/*.svelte",
-    "vite.config.ts",
-    "eslint.config.js",
-    "svelte.config.js"
+    "*.config.ts",
+    "*.config.js"
   ]
 }

@@ -15,6 +15,12 @@
     "incremental": true,
     "target": "ES2017"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "eslint.config.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "*.config.ts",
+    "*.config.js"
+  ],
   "exclude": ["node_modules"]
 }

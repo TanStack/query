@@ -11,5 +11,5 @@
     "jsx": "react-jsx",
     "strict": true
   },
-  "include": ["src", "eslint.config.js"]
+  "include": ["src", "*.config.ts", "*.config.js"]
 }

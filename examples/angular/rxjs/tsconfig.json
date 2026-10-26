@@ -22,7 +22,7 @@
     "useDefineForClassFields": false,
     "lib": ["ES2022", "dom"]
   },
-  "include": ["src", "eslint.config.js"],
+  "include": ["src", "*.config.ts", "*.config.js"],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,

@@ -24,9 +24,10 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "eslint.config.js",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    "*.config.ts",
+    "*.config.js"
   ],
   "exclude": ["node_modules"]
 }
