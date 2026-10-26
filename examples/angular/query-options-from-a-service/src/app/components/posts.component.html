@@ -13,7 +13,7 @@
           <a
             routerLink="post/{{ post.id }}"
             [style]="
-              queryClient.getQueryData(queries.post(post.id).queryKey)
+              queryClient.getQueryData(postsQueries.detail(post.id).queryKey)
                 ? {
                     fontWeight: 'bold',
                     color: 'green',

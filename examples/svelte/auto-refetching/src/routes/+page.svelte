@@ -4,7 +4,7 @@
     createQuery,
     createMutation,
   } from '@tanstack/svelte-query'
-  import { addTodo, clearTodos, todosQueryOptions } from '$lib/api'
+  import { todosMutations, todosQueries } from '$lib/services/todos/queries'
 
   let intervalMs = $state(1000)
   let value = $state<string>('')
@@ -12,21 +12,21 @@
   const client = useQueryClient()
 
   const todos = createQuery(() => ({
-    ...todosQueryOptions,
+    ...todosQueries.list(),
     // Refetch the data every second
     refetchInterval: intervalMs,
   }))
 
   const addMutation = createMutation(() => ({
-    mutationFn: addTodo,
+    ...todosMutations.create(),
     onSuccess: () =>
-      client.invalidateQueries({ queryKey: todosQueryOptions.queryKey }),
+      client.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
   }))
 
   const clearMutation = createMutation(() => ({
-    mutationFn: clearTodos,
+    ...todosMutations.deleteAll(),
     onSuccess: () =>
-      client.invalidateQueries({ queryKey: todosQueryOptions.queryKey }),
+      client.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
   }))
 </script>
 

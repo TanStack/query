@@ -24,8 +24,8 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
     indexName: 'bestbuy',
     query,
     hitsPerPage: 5,
-    staleTime: 1000 * 30, // 30s
-    gcTime: 1000 * 60 * 15, // 15m
+    staleTime: 30 * 1000, // 30s
+    gcTime: 15 * 60 * 1000, // 15m
   })
 
   if (!query) return null

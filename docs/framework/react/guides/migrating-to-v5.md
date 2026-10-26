@@ -207,7 +207,7 @@ Almost everyone gets `cacheTime` wrong. It sounds like "the amount of time that 
 `gc` is referring to "garbage collect" time. It's a bit more technical, but also a quite [well known abbreviation](<https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)>) in computer science.
 
 ```tsx
-const MINUTE = 1000 * 60;
+const MINUTE = 60 * 1000;
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -279,7 +279,7 @@ An identity function, in the context of TanStack Query, refers to a function tha
 useQuery({
   queryKey,
   queryFn,
-  placeholderData: (previousData, previousQuery) => previousData, // identity function with the same behaviour as `keepPreviousData`
+  placeholderData: (previousData, previousQuery) => previousData, // identity function with the same behavior as `keepPreviousData`
 })
 ```
 
@@ -345,7 +345,7 @@ The v5 includes a new `maxPages` option for infinite queries to limit the number
 
 ### New `dehydrate` API
 
-The options you can pass to `dehydrate` have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behaviour, instead of using the removed boolean options `dehydrateMutations` and `dehydrateQueries` you can implement the function equivalents `shouldDehydrateQuery` or `shouldDehydrateMutation` instead. To get the old behaviour of not hydrating queries/mutations at all, pass in `() => false`.
+The options you can pass to `dehydrate` have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behavior, instead of using the removed boolean options `dehydrateMutations` and `dehydrateQueries` you can implement the function equivalents `shouldDehydrateQuery` or `shouldDehydrateMutation` instead. To get the old behavior of not hydrating queries/mutations at all, pass in `() => false`.
 
 ```tsx
 - dehydrateMutations?: boolean // [!code --]
@@ -455,16 +455,16 @@ For example:
 ```ts
 + queryClient.setQueryDefaults(['todo'], {   // [!code ++]
 +   retry: false,  // [!code ++]
-+   staleTime: 60_000,  // [!code ++]
++   staleTime: 60 * 1000,  // [!code ++]
 + })  // [!code ++]
 queryClient.setQueryDefaults(['todo', 'detail'], {
 +   retry: true,  // [!code --]
-  retryDelay: 1_000,
-  staleTime: 10_000,
+  retryDelay: 1000,
+  staleTime: 10 * 1000,
 })
 - queryClient.setQueryDefaults(['todo'], { // [!code --]
 -   retry: false, // [!code --]
--   staleTime: 60_000, // [!code --]
+-   staleTime: 60 * 1000, // [!code --]
 - }) // [!code --]
 ```
 

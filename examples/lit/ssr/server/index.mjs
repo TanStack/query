@@ -13,11 +13,8 @@ import {
   SSR_PORT,
   SSR_PUBLIC_ORIGIN,
 } from '../config/ports.js'
-import {
-  DEFAULT_MESSAGE,
-  QUERY_STALE_TIME,
-  createDataQueryOptions,
-} from '../src/api.js'
+import { DEFAULT_MESSAGE } from '../src/services/data/api.js'
+import { QUERY_STALE_TIME, dataQueries } from '../src/services/data/queries.js'
 import {
   getSsrQueryControllerCreationCount,
   resetSsrQueryControllerCreationCount,
@@ -187,7 +184,7 @@ async function serveAsset(pathname, res) {
 async function renderPage(res) {
   const queryClient = createBrowserQueryClient()
   resetSsrQueryControllerCreationCount(queryClient)
-  const dataQueryOptions = createDataQueryOptions(SSR_PUBLIC_ORIGIN)
+  const dataQueryOptions = dataQueries.detail(SSR_PUBLIC_ORIGIN)
   await queryClient.query(dataQueryOptions).catch((error) => {
     throw new Error(
       'SSR prefetch did not complete successfully. Refusing to render loading HTML.',

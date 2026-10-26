@@ -31,7 +31,7 @@ Prefetching a query uses the `query` method. This method by default will
 For prefetching you often want to modify these defaults:
 
 - Out of the box, `query` uses the default `staleTime` configured for the `queryClient` to determine whether existing data in the cache is fresh or needs to be fetched again
-- You can also pass a specific `staleTime` like this: `query({ queryKey: ['todos'], queryFn: fn, staleTime: 5000 })`
+- You can also pass a specific `staleTime` like this: `query({ queryKey: ['todos'], queryFn: fn, staleTime: 5 * 1000 })`
   - This `staleTime` is only used for that query fetch, you still need to set it for any `useQuery` call as well
   - If you want to always return data if it's available in the cache regardless of the default `staleTime`, you can pass `"static"` in for `staleTime`.
   - Tip: If you are prefetching on the server, set a default `staleTime` higher than `0` for that `queryClient` to avoid having to pass in a specific `staleTime` to each prefetch call
@@ -98,7 +98,7 @@ function ShowDetailsButton() {
       queryFn: getDetailsData,
       // Prefetch only fires when data is older than the staleTime,
       // so in a case like this you definitely want to set one
-      staleTime: 60000,
+      staleTime: 60 * 1000,
     }).catch(noop)
   }
 

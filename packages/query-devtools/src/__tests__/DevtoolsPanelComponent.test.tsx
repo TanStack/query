@@ -7,15 +7,15 @@ import DevtoolsPanelComponent from '../DevtoolsPanelComponent'
 // `@solid-primitives/transition-group`, whose `exports` field points at
 // `src/index.ts` (not published) under a `@solid-primitives/source` condition
 // that Vite can't fall through, so we stub it with a transparent pass-through.
-vi.mock('solid-transition-group', () => ({
-  TransitionGroup: (props: { children: unknown }) => props.children,
+vi.mock(import('solid-transition-group'), () => ({
+  TransitionGroup: (props) => props.children,
 }))
 
 // `goober` compiles every `css\`...\`` template literal at mount time
 // (template parsing + class hashing + style serialization), which
 // dominates mount cost and produces no value for label/role-based
 // assertions, so we replace it with a no-op factory.
-vi.mock('goober', () => {
+vi.mock(import('goober'), () => {
   let counter = 0
   const css = Object.assign(() => `tsqd-${++counter}`, {
     bind: () => css,
@@ -26,7 +26,7 @@ vi.mock('goober', () => {
 describe('DevtoolsPanelComponent', () => {
   const storage: { [key: string]: string } = {}
   let queryClient: QueryClient
-  let previousRootFontSize = ''
+  let previousRootFontSize: string
 
   beforeEach(() => {
     previousRootFontSize = document.documentElement.style.fontSize
@@ -51,19 +51,19 @@ describe('DevtoolsPanelComponent', () => {
         matches: false,
         media: query,
         onchange: null,
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        dispatchEvent: vi.fn(),
+        addEventListener: vi.fn<MediaQueryList['addEventListener']>(),
+        removeEventListener: vi.fn<MediaQueryList['removeEventListener']>(),
+        addListener: vi.fn<MediaQueryList['addListener']>(),
+        removeListener: vi.fn<MediaQueryList['removeListener']>(),
+        dispatchEvent: vi.fn<MediaQueryList['dispatchEvent']>(),
       })),
     )
     vi.stubGlobal(
       'ResizeObserver',
       class {
-        observe = vi.fn()
-        unobserve = vi.fn()
-        disconnect = vi.fn()
+        observe = vi.fn<ResizeObserver['observe']>()
+        unobserve = vi.fn<ResizeObserver['unobserve']>()
+        disconnect = vi.fn<ResizeObserver['disconnect']>()
       },
     )
     queryClient = new QueryClient()
@@ -71,7 +71,6 @@ describe('DevtoolsPanelComponent', () => {
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
     document.documentElement.style.fontSize = previousRootFontSize
@@ -125,7 +124,7 @@ describe('DevtoolsPanelComponent', () => {
   })
 
   it('should call "onClose" when the close button is clicked', () => {
-    const onClose = vi.fn()
+    const onClose = vi.fn<() => void>()
     const rendered = render(() => (
       <DevtoolsPanelComponent
         client={queryClient}

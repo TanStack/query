@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '..'
 import {
   addConsumeAwareSignal,
@@ -26,14 +26,14 @@ describe('core/utils', () => {
   describe('hashQueryKeyByOptions', () => {
     it('should use custom hash function when provided in options', () => {
       const key = ['test', { a: 1, b: 2 }]
-      const customHashFn = vi.fn(() => 'custom-hash')
+      const customHashFn = vi.fn<() => string>(() => 'custom-hash')
 
       const result = hashQueryKeyByOptions(key, {
         queryKeyHashFn: customHashFn,
       })
 
       expect(customHashFn).toHaveBeenCalledWith(key)
-      expect(result).toEqual('custom-hash')
+      expect(result).toBe('custom-hash')
     })
 
     it('should use default hash function when no options provided', () => {
@@ -41,7 +41,7 @@ describe('core/utils', () => {
       const defaultResult = hashKey(key)
       const result = hashQueryKeyByOptions(key)
 
-      expect(result).toEqual(defaultResult)
+      expect(result).toStrictEqual(defaultResult)
     })
   })
 
@@ -62,6 +62,7 @@ describe('core/utils', () => {
       expect(shallowEqualObjects({ a: 1 }, undefined)).toBe(false)
     })
   })
+
   describe('isPlainObject', () => {
     it('should return `true` for a plain object', () => {
       expect(isPlainObject({})).toBe(true)
@@ -197,9 +198,10 @@ describe('core/utils', () => {
       expect(replaceEqualDeep('1', '1')).toBe('1')
       expect(replaceEqualDeep(true, true)).toBe(true)
       expect(replaceEqualDeep(false, false)).toBe(false)
-      expect(replaceEqualDeep(null, null)).toBe(null)
-      expect(replaceEqualDeep(undefined, undefined)).toBe(undefined)
+      expect(replaceEqualDeep(null, null)).toBeNull()
+      expect(replaceEqualDeep(undefined, undefined)).toBeUndefined()
     })
+
     it('should return the next value when the previous value is a different value', () => {
       const date1 = new Date()
       const date2 = new Date()
@@ -215,14 +217,14 @@ describe('core/utils', () => {
     it('should return the next value when the previous value is a different type', () => {
       const array = [1]
       const object = { a: 'a' }
-      expect(replaceEqualDeep(0, undefined)).toBe(undefined)
+      expect(replaceEqualDeep(0, undefined)).toBeUndefined()
       expect(replaceEqualDeep(undefined, 0)).toBe(0)
-      expect(replaceEqualDeep(2, undefined)).toBe(undefined)
+      expect(replaceEqualDeep(2, undefined)).toBeUndefined()
       expect(replaceEqualDeep(undefined, 2)).toBe(2)
-      expect(replaceEqualDeep(undefined, null)).toBe(null)
-      expect(replaceEqualDeep(null, undefined)).toBe(undefined)
-      expect(replaceEqualDeep({}, undefined)).toBe(undefined)
-      expect(replaceEqualDeep([], undefined)).toBe(undefined)
+      expect(replaceEqualDeep(undefined, null)).toBeNull()
+      expect(replaceEqualDeep(null, undefined)).toBeUndefined()
+      expect(replaceEqualDeep({}, undefined)).toBeUndefined()
+      expect(replaceEqualDeep([], undefined)).toBeUndefined()
       expect(replaceEqualDeep(array, object)).toBe(object)
       expect(replaceEqualDeep(object, array)).toBe(array)
     })
@@ -237,7 +239,7 @@ describe('core/utils', () => {
       const prev = [1, 2]
       const next = [1, 2, 3]
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
     })
@@ -246,7 +248,7 @@ describe('core/utils', () => {
       const prev = [1, 2, 3]
       const next = [1, 2]
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
     })
@@ -273,7 +275,7 @@ describe('core/utils', () => {
       const prev = { a: { b: 'b' }, c: 'c' }
       const next = { a: { b: 'b' }, c: 'd' }
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
       expect(result.a).toBe(prev.a)
@@ -284,7 +286,7 @@ describe('core/utils', () => {
       const prev = [1, { a: 'a' }, { b: { b: 'b' } }, [1]] as const
       const next = [1, { a: 'a' }, { b: { b: 'c' } }, [1]] as const
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
       expect(result[0]).toBe(prev[0])
@@ -298,7 +300,7 @@ describe('core/utils', () => {
       const prev = [{ a: 'a' }, { b: 'b' }, { c: 'c' }]
       const next = [{ a: 'a' }, { b: 'b' }]
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
       expect(result[0]).toBe(prev[0])
@@ -310,7 +312,7 @@ describe('core/utils', () => {
       const prev = [{ a: 'a' }, { b: 'b' }]
       const next = [{ a: 'a' }, { b: 'b' }, { c: 'c' }]
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
       expect(result[0]).toBe(prev[0])
@@ -367,7 +369,7 @@ describe('core/utils', () => {
         otherTodo: { id: '2', meta: { createdAt: 0 }, state: { done: true } },
       }
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
       expect(result.todo).not.toBe(prev.todo)
@@ -393,7 +395,7 @@ describe('core/utils', () => {
         ],
       }
       const result = replaceEqualDeep(prev, next)
-      expect(result).toEqual(next)
+      expect(result).toStrictEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
       expect(result.todos).not.toBe(prev.todos)
@@ -472,7 +474,7 @@ describe('core/utils', () => {
 
   describe('matchMutation', () => {
     it('should return false if mutationKey options is undefined', () => {
-      const filters = { mutationKey: queryKey() }
+      const filters = { mutationKey: createKey() }
       const queryClient = new QueryClient()
       const mutation = new Mutation({
         client: queryClient,
@@ -496,27 +498,27 @@ describe('core/utils', () => {
     it('should add item to the end of the array', () => {
       const items = [1, 2, 3]
       const newItems = addToEnd(items, 4)
-      expect(newItems).toEqual([1, 2, 3, 4])
+      expect(newItems).toStrictEqual([1, 2, 3, 4])
     })
 
     it('should not exceed max if provided', () => {
       const items = [1, 2, 3]
       const newItems = addToEnd(items, 4, 3)
-      expect(newItems).toEqual([2, 3, 4])
+      expect(newItems).toStrictEqual([2, 3, 4])
     })
 
     it('should add item to the end of the array when max = 0', () => {
       const items = [1, 2, 3]
       const item = 4
       const max = 0
-      expect(addToEnd(items, item, max)).toEqual([1, 2, 3, 4])
+      expect(addToEnd(items, item, max)).toStrictEqual([1, 2, 3, 4])
     })
 
     it('should add item to the end of the array when max is undefined', () => {
       const items = [1, 2, 3]
       const item = 4
       const max = undefined
-      expect(addToEnd(items, item, max)).toEqual([1, 2, 3, 4])
+      expect(addToEnd(items, item, max)).toStrictEqual([1, 2, 3, 4])
     })
   })
 
@@ -525,7 +527,7 @@ describe('core/utils', () => {
       const items = [1, 2, 3]
       const item = 4
       const newItems = addToStart(items, item)
-      expect(newItems).toEqual([4, 1, 2, 3])
+      expect(newItems).toStrictEqual([4, 1, 2, 3])
     })
 
     it('should respect the max argument', () => {
@@ -533,7 +535,7 @@ describe('core/utils', () => {
       const item = 4
       const max = 2
       const newItems = addToStart(items, item, max)
-      expect(newItems).toEqual([4, 1, 2])
+      expect(newItems).toStrictEqual([4, 1, 2])
     })
 
     it('should not remove any items if max = 0', () => {
@@ -541,7 +543,7 @@ describe('core/utils', () => {
       const item = 4
       const max = 0
       const newItems = addToStart(items, item, max)
-      expect(newItems).toEqual([4, 1, 2, 3])
+      expect(newItems).toStrictEqual([4, 1, 2, 3])
     })
 
     it('should not remove any items if max is undefined', () => {
@@ -549,15 +551,15 @@ describe('core/utils', () => {
       const item = 4
       const max = 0
       const newItems = addToStart(items, item, max)
-      expect(newItems).toEqual([4, 1, 2, 3])
+      expect(newItems).toStrictEqual([4, 1, 2, 3])
     })
   })
 
   describe('hashKey', () => {
     it('should hash primitives correctly', () => {
-      expect(hashKey(['test'])).toEqual(JSON.stringify(['test']))
-      expect(hashKey([123])).toEqual(JSON.stringify([123]))
-      expect(hashKey([null])).toEqual(JSON.stringify([null]))
+      expect(hashKey(['test'])).toStrictEqual(JSON.stringify(['test']))
+      expect(hashKey([123])).toStrictEqual(JSON.stringify([123]))
+      expect(hashKey([null])).toStrictEqual(JSON.stringify([null]))
     })
 
     it('should hash objects with sorted keys consistently', () => {
@@ -567,29 +569,29 @@ describe('core/utils', () => {
       const hash1 = hashKey(key1)
       const hash2 = hashKey(key2)
 
-      expect(hash1).toEqual(hash2)
-      expect(hash1).toEqual(JSON.stringify([{ a: 1, b: 2 }]))
+      expect(hash1).toStrictEqual(hash2)
+      expect(hash1).toStrictEqual(JSON.stringify([{ a: 1, b: 2 }]))
     })
 
     it('should hash arrays consistently', () => {
       const arr1 = [{ b: 2, a: 1 }, 'test', 123]
       const arr2 = [{ a: 1, b: 2 }, 'test', 123]
 
-      expect(hashKey(arr1)).toEqual(hashKey(arr2))
+      expect(hashKey(arr1)).toStrictEqual(hashKey(arr2))
     })
 
     it('should handle nested objects with sorted keys', () => {
       const nested1 = [{ a: { d: 4, c: 3 }, b: 2 }]
       const nested2 = [{ b: 2, a: { c: 3, d: 4 } }]
 
-      expect(hashKey(nested1)).toEqual(hashKey(nested2))
+      expect(hashKey(nested1)).toStrictEqual(hashKey(nested2))
     })
 
     it('should hash undefined object properties the same as missing properties', () => {
       const withUndefined = ['todos', { filters: undefined }]
       const withoutProperty = ['todos', {}]
 
-      expect(hashKey(withUndefined)).toEqual(hashKey(withoutProperty))
+      expect(hashKey(withUndefined)).toStrictEqual(hashKey(withoutProperty))
     })
   })
 
@@ -649,7 +651,7 @@ describe('core/utils', () => {
     it('should return a function that rejects with missing queryFn error when queryFn is set to skipToken', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const resolved = ensureQueryFn({
         queryFn: skipToken,
@@ -664,8 +666,6 @@ describe('core/utils', () => {
       await expect(resolved(context)).rejects.toThrow(
         'Missing queryFn: \'["skip"]\'',
       )
-
-      consoleErrorMock.mockRestore()
     })
   })
 
@@ -690,7 +690,7 @@ describe('core/utils', () => {
   describe('addConsumeAwareSignal', () => {
     it('should expose the signal on the query context while preserving its properties', () => {
       const controller = new AbortController()
-      const key = queryKey()
+      const key = createKey()
       const context = addConsumeAwareSignal(
         { queryKey: key, meta: undefined },
         () => controller.signal,
@@ -704,7 +704,7 @@ describe('core/utils', () => {
     it('should call onCancelled immediately when the signal is already aborted on first access', () => {
       const controller = new AbortController()
       controller.abort()
-      const onCancelled = vi.fn()
+      const onCancelled = vi.fn<VoidFunction>()
       const object = addConsumeAwareSignal(
         {},
         () => controller.signal,
@@ -721,7 +721,7 @@ describe('core/utils', () => {
       const controller = new AbortController()
       let cancelled = false
       const context = addConsumeAwareSignal(
-        { queryKey: queryKey() },
+        { queryKey: createKey() },
         () => controller.signal,
         () => (cancelled = true),
       )
@@ -737,7 +737,7 @@ describe('core/utils', () => {
       const controller = new AbortController()
       const addEventListener = vi.spyOn(controller.signal, 'addEventListener')
       const context = addConsumeAwareSignal(
-        { queryKey: queryKey() },
+        { queryKey: createKey() },
         () => controller.signal,
         vi.fn(),
       )

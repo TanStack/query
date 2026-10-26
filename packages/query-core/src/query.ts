@@ -359,7 +359,7 @@ export class Query<
 
     this.updateGcTime(this.options.gcTime)
 
-    // oxlint-disable-next-line typescript/no-unnecessary-condition
+    // oxlint-disable-next-line typescript/no-unnecessary-condition -- the constructor calls 'setOptions' before it assigns 'state'
     if (this.state && this.state.data === undefined) {
       const defaultState = getDefaultState(this.options)
       if (defaultState.data !== undefined) {
@@ -555,7 +555,7 @@ export class Query<
    * @see {@link Query#isStale}
    * @example
    * ```ts
-   * const isStale = query.isStaleByTime(1000 * 60)
+   * const isStale = query.isStaleByTime(60 * 1000)
    * ```
    */
   isStaleByTime(staleTime: StaleTime = 0): boolean {

@@ -20,7 +20,7 @@ import NewContact, { action as newAction } from './routes/new'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 10,
+      staleTime: 10 * 1000,
     },
   },
 })

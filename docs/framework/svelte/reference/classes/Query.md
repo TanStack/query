@@ -472,7 +472,7 @@ The time, in milliseconds, after which data is considered stale, or
 #### Example
 
 ```ts
-const isStale = query.isStaleByTime(1000 * 60)
+const isStale = query.isStaleByTime(60 * 1000)
 ```
 
 ***

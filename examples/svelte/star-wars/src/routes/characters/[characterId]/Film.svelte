@@ -1,11 +1,11 @@
 <script lang="ts">
   import { resolve } from '$app/paths'
-  import { filmQueryOptions } from '$lib/api'
+  import { filmsQueries } from '$lib/services/films/queries'
   import { createQuery } from '@tanstack/svelte-query'
 
   let { filmId }: { filmId: string } = $props()
 
-  const query = createQuery(() => filmQueryOptions(filmId))
+  const query = createQuery(() => filmsQueries.detail(filmId))
 </script>
 
 {#if query.status === 'success'}

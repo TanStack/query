@@ -42,7 +42,7 @@ describe('useQueries with persist and memoized combine', () => {
       defaultOptions: {
         queries: {
           staleTime: 30000,
-          gcTime: 1000 * 60 * 60 * 24,
+          gcTime: 24 * 60 * 60 * 1000,
         },
       },
     })

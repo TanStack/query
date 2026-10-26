@@ -1,5 +1,17 @@
 # @tanstack/angular-query-experimental
 
+## 5.105.0
+
+### Minor Changes
+
+- [#12316](https://github.com/TanStack/query/pull/12316) [`8f9dfcb`](https://github.com/TanStack/query/commit/8f9dfcb30ce901b867b06ba08feba28daf5d9fb4) - feat(angular-query-experimental/injectDevtoolsPanel): add the 'theme' and 'hideDisabledQueries' options
+
+### Patch Changes
+
+- [#12315](https://github.com/TanStack/query/pull/12315) [`9e42537`](https://github.com/TanStack/query/commit/9e4253766f8015d1372bcd515f50103fd067a42d) - fix(angular-query-experimental/withDevtools): forward an unset 'theme' to the devtools so removing it falls back to the theme selected in the devtools Settings menu
+- Updated dependencies []:
+  - @tanstack/query-core@5.105.0
+
 ## 5.104.5
 
 ### Patch Changes

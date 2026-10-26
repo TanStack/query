@@ -15,7 +15,7 @@ import {
 } from '@angular/common/http/testing'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/angular'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
 import {
   QueryCache,
@@ -25,6 +25,7 @@ import {
   provideTanStackQuery,
 } from '..'
 import { setSignalInputs } from './test-utils'
+import type { Query } from '..'
 
 describe('injectQuery', () => {
   let queryCache: QueryCache
@@ -47,7 +48,7 @@ describe('injectQuery', () => {
   })
 
   it('should return pending status initially', () => {
-    const key = queryKey()
+    const key = createKey()
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         queryKey: key,
@@ -63,7 +64,7 @@ describe('injectQuery', () => {
   })
 
   it('should resolve to success and update signal: injectQuery()', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     @Component({
       template: `
@@ -95,7 +96,7 @@ describe('injectQuery', () => {
   })
 
   it('should reject and update signal', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     @Component({
       template: `
@@ -133,7 +134,7 @@ describe('injectQuery', () => {
   })
 
   it('should be able to select a part of the data with select', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     @Component({
       template: `<div>data: {{ query.data() ?? 'none' }}</div>`,
@@ -155,7 +156,7 @@ describe('injectQuery', () => {
   })
 
   it('should show placeholderData until queryFn resolves and then expose real data', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     @Component({
       template: `
@@ -185,10 +186,12 @@ describe('injectQuery', () => {
   })
 
   it('should update query on options contained signal change', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const key = signal(key1)
-    const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'Some data'),
+    )
 
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
@@ -215,8 +218,10 @@ describe('injectQuery', () => {
   })
 
   it('should only run query once enabled signal is set to true', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'Some data'),
+    )
     const enabled = signal(false)
 
     const query = TestBed.runInInjectionContext(() => {
@@ -237,8 +242,10 @@ describe('injectQuery', () => {
   })
 
   it('should not fetch while the enabled signal is false, and fetch again once it is truthy', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'Some data'),
+    )
     const filter = signal('a')
 
     const query = TestBed.runInInjectionContext(() => {
@@ -264,8 +271,8 @@ describe('injectQuery', () => {
   })
 
   it('should properly execute dependent queries', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const query1 = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
@@ -274,9 +281,9 @@ describe('injectQuery', () => {
       }))
     })
 
-    const dependentQueryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(1000).then(() => 'Some data'))
+    const dependentQueryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(1000).then(() => 'Some data'),
+    )
 
     const query2 = TestBed.runInInjectionContext(() => {
       return injectQuery(
@@ -288,15 +295,15 @@ describe('injectQuery', () => {
       )
     })
 
-    expect(query1.data()).toStrictEqual(undefined)
-    expect(query2.fetchStatus()).toStrictEqual('idle')
+    expect(query1.data()).toBeUndefined()
+    expect(query2.fetchStatus()).toBe('idle')
     expect(dependentQueryFn).not.toHaveBeenCalled()
     await vi.advanceTimersByTimeAsync(11)
-    expect(query1.data()).toStrictEqual('Some data')
-    expect(query2.fetchStatus()).toStrictEqual('fetching')
+    expect(query1.data()).toBe('Some data')
+    expect(query2.fetchStatus()).toBe('fetching')
     await vi.advanceTimersByTimeAsync(1002)
-    expect(query2.fetchStatus()).toStrictEqual('idle')
-    expect(query2.status()).toStrictEqual('success')
+    expect(query2.fetchStatus()).toBe('idle')
+    expect(query2.status()).toBe('success')
     expect(dependentQueryFn).toHaveBeenCalledTimes(1)
     expect(dependentQueryFn).toHaveBeenCalledWith(
       expect.objectContaining({ queryKey: key2 }),
@@ -304,8 +311,10 @@ describe('injectQuery', () => {
   })
 
   it('should use the current value for the queryKey when refetch is called', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'Some data'),
+    )
     const keySignal = signal('key11')
 
     const query = TestBed.runInInjectionContext(() => {
@@ -343,7 +352,7 @@ describe('injectQuery', () => {
   })
 
   it('should keep initialData visible alongside the error when a refetch fails', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     @Component({
       template: `
@@ -373,8 +382,8 @@ describe('injectQuery', () => {
 
   describe('throwOnError', () => {
     it('should evaluate throwOnError when query is expected to throw', async () => {
-      const key = queryKey()
-      const throwOnError = vi.fn()
+      const key = createKey()
+      const throwOnError = vi.fn<(error: Error, query: Query) => boolean>()
       TestBed.runInInjectionContext(() => {
         return injectQuery(() => ({
           queryKey: key,
@@ -396,7 +405,7 @@ describe('injectQuery', () => {
     })
 
     it('should throw when throwOnError is true', async () => {
-      const key = queryKey()
+      const key = createKey()
       TestBed.runInInjectionContext(() => {
         return injectQuery(() => ({
           queryKey: key,
@@ -410,7 +419,7 @@ describe('injectQuery', () => {
     })
 
     it('should throw when throwOnError function returns true', async () => {
-      const key = queryKey()
+      const key = createKey()
       TestBed.runInInjectionContext(() => {
         return injectQuery(() => ({
           queryKey: key,
@@ -445,17 +454,17 @@ describe('injectQuery', () => {
 
     fixture.detectChanges()
     await vi.advanceTimersByTimeAsync(0)
-    expect(fixture.componentInstance.query.data()).toEqual(
+    expect(fixture.componentInstance.query.data()).toBe(
       'signal-input-required-test',
     )
   })
 
   describe('isRestoring', () => {
     it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-      const key = queryKey()
-      const queryFn = vi
-        .fn()
-        .mockImplementation(() => sleep(10).then(() => 'data'))
+      const key = createKey()
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'data'),
+      )
 
       TestBed.configureTestingModule({
         providers: [provideIsRestoring(signal(true).asReadonly())],
@@ -483,7 +492,7 @@ describe('injectQuery', () => {
 
   describe('injection context', () => {
     it('should throw NG0203 with descriptive error outside injection context', () => {
-      const key = queryKey()
+      const key = createKey()
       expect(() => {
         injectQuery(() => ({
           queryKey: key,
@@ -493,7 +502,7 @@ describe('injectQuery', () => {
     })
 
     it('should be usable outside injection context when passing an injector', () => {
-      const key = queryKey()
+      const key = createKey()
       const query = injectQuery(
         () => ({
           queryKey: key,
@@ -508,7 +517,7 @@ describe('injectQuery', () => {
     })
 
     it('should complete queries before whenStable() resolves', async () => {
-      const key = queryKey()
+      const key = createKey()
       const app = TestBed.inject(ApplicationRef)
 
       const query = TestBed.runInInjectionContext(() =>
@@ -538,7 +547,7 @@ describe('injectQuery', () => {
       const httpTestingController = TestBed.inject(HttpTestingController)
 
       // Create a query using HttpClient
-      const key = queryKey()
+      const key = createKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: key,
@@ -563,7 +572,7 @@ describe('injectQuery', () => {
 
       // Query should be complete after whenStable() thanks to PendingTasks integration
       expect(query.status()).toBe('success')
-      expect(query.data()).toEqual({ message: 'http test data' })
+      expect(query.data()).toStrictEqual({ message: 'http test data' })
 
       httpTestingController.verify()
     })
@@ -572,7 +581,7 @@ describe('injectQuery', () => {
       const app = TestBed.inject(ApplicationRef)
       let callCount = 0
 
-      const key = queryKey()
+      const key = createKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: key,
@@ -607,7 +616,7 @@ describe('injectQuery', () => {
       const enabledSignal = signal(false)
       let callCount = 0
 
-      const key = queryKey()
+      const key = createKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: key,
@@ -637,7 +646,7 @@ describe('injectQuery', () => {
 
     it('should handle query invalidation with synchronous data', async () => {
       const app = TestBed.inject(ApplicationRef)
-      const testKey = queryKey()
+      const testKey = createKey()
       let callCount = 0
 
       const query = TestBed.runInInjectionContext(() =>

@@ -1,40 +1,12 @@
 'use client'
-import { environmentManager, useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
+import { waitQueries } from '../services/wait/queries'
 
 export const runtime = 'edge' // 'nodejs' (default) | 'edge'
 
-function getBaseURL() {
-  if (!environmentManager.isServer()) {
-    return ''
-  }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`
-  }
-  return 'http://localhost:3000'
-}
-const baseUrl = getBaseURL()
-function useWaitQuery(props: { wait: number }) {
-  const query = useSuspenseQuery({
-    queryKey: ['wait', props.wait],
-    queryFn: async () => {
-      const path = `/api/wait?wait=${props.wait}`
-      const url = baseUrl + path
-
-      const response = await fetch(url, {
-        cache: 'no-store',
-      })
-      if (!response.ok) throw new Error('Failed to fetch data')
-      const res: string = await response.json()
-      return res
-    },
-  })
-
-  return [query.data, query] as const
-}
-
 function MyComponent(props: { wait: number }) {
-  const [data] = useWaitQuery(props)
+  const { data } = useSuspenseQuery(waitQueries.detail(props.wait))
 
   return <div>result: {data}</div>
 }

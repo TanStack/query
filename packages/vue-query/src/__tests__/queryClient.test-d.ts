@@ -1,8 +1,8 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { ref } from 'vue-demi'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
-import type { DataTag, InfiniteData } from '@tanstack/query-core'
+import type { DataTag, InfiniteData, QueryState } from '@tanstack/query-core'
 
 describe('getQueryData', () => {
   it('should be typed if key is tagged', () => {
@@ -34,6 +34,51 @@ describe('getQueryData', () => {
       // @ts-expect-error TS2345: Argument of type 'string' is not assignable to parameter of type 'QueryKey'
       { queryKey: 'key' },
     ])
+  })
+})
+
+describe('getQueryState', () => {
+  it('should be typed if key is tagged', () => {
+    const key = ['key'] as DataTag<Array<string>, number>
+    const queryClient = new QueryClient()
+    const state = queryClient.getQueryState(key)
+
+    expectTypeOf(state).toEqualTypeOf<QueryState<number, Error> | undefined>()
+  })
+
+  it('should be typed including error if key is tagged', () => {
+    type CustomError = Error & { customError: string }
+    const key = ['key'] as DataTag<Array<string>, number, CustomError>
+    const queryClient = new QueryClient()
+    const state = queryClient.getQueryState(key)
+
+    expectTypeOf(state).toEqualTypeOf<
+      QueryState<number, CustomError> | undefined
+    >()
+  })
+
+  it('should infer unknown if key is not tagged', () => {
+    const key = ['key'] as const
+    const queryClient = new QueryClient()
+    const state = queryClient.getQueryState(key)
+
+    expectTypeOf(state).toEqualTypeOf<QueryState<unknown, Error> | undefined>()
+  })
+
+  it('should infer passed generic if passed', () => {
+    const key = ['key'] as const
+    const queryClient = new QueryClient()
+    const state = queryClient.getQueryState<number>(key)
+
+    expectTypeOf(state).toEqualTypeOf<QueryState<number, Error> | undefined>()
+  })
+
+  it('should accept a ref key', () => {
+    const key = ref(['key'])
+    const queryClient = new QueryClient()
+    const state = queryClient.getQueryState<number>(key)
+
+    expectTypeOf(state).toEqualTypeOf<QueryState<number, Error> | undefined>()
   })
 })
 
@@ -115,7 +160,7 @@ describe('setQueryData', () => {
 
 describe('fetchInfiniteQuery', () => {
   it('should allow passing pages', async () => {
-    const key = queryKey()
+    const key = createKey()
     // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchInfiniteQuery({
       queryKey: key,
@@ -129,7 +174,7 @@ describe('fetchInfiniteQuery', () => {
   })
 
   it('should not allow passing getNextPageParam without pages', () => {
-    const key = queryKey()
+    const key = createKey()
     assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
       {
         queryKey: key,
@@ -141,7 +186,7 @@ describe('fetchInfiniteQuery', () => {
   })
 
   it('should not allow passing pages without getNextPageParam', () => {
-    const key = queryKey()
+    const key = createKey()
     assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
       // @ts-expect-error Property 'getNextPageParam' is missing
       {

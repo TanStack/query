@@ -1,11 +1,11 @@
 <script lang="ts">
   import { resolve } from '$app/paths'
   import { createQuery } from '@tanstack/svelte-query'
-  import { postQueryOptions } from './queries'
+  import { postsQueries } from './services/posts/queries'
 
   const { postId }: { postId: number } = $props()
 
-  const post = createQuery(() => postQueryOptions(postId))
+  const post = createQuery(() => postsQueries.detail(postId))
 </script>
 
 <div>
