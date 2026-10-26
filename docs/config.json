@@ -6978,6 +6978,22 @@
             {
               "label": "Basic w/ GraphQL-Request",
               "to": "framework/preact/examples/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/preact/examples/default-query-function"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/preact/examples/playground"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/preact/examples/algolia"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/preact/examples/chat"
             }
           ]
         }

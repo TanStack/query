@@ -962,6 +962,37 @@ importers:
         specifier: ^8.3.1
         version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
+  examples/preact/algolia:
+    dependencies:
+      '@algolia/client-search':
+        specifier: 5.59.0
+        version: 5.59.0
+      '@tanstack/preact-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query
+      preact:
+        specifier: ^11.0.1
+        version: 11.0.1(preact-render-to-string@6.8.0)
+    devDependencies:
+      '@preact/preset-vite':
+        specifier: ^2.10.6
+        version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-config-preact:
+        specifier: ^2.0.0
+        version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
   examples/preact/basic:
     dependencies:
       '@tanstack/preact-query':
@@ -1013,6 +1044,105 @@ importers:
       graphql-request:
         specifier: ^7.1.2
         version: 7.4.0(graphql@16.13.2)
+      preact:
+        specifier: ^11.0.1
+        version: 11.0.1(preact-render-to-string@6.8.0)
+    devDependencies:
+      '@preact/preset-vite':
+        specifier: ^2.10.6
+        version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-config-preact:
+        specifier: ^2.0.0
+        version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
+  examples/preact/chat:
+    dependencies:
+      '@tanstack/preact-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query
+      '@tanstack/preact-query-devtools':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query-devtools
+      preact:
+        specifier: ^11.0.1
+        version: 11.0.1(preact-render-to-string@6.8.0)
+    devDependencies:
+      '@preact/preset-vite':
+        specifier: ^2.10.6
+        version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tailwindcss/vite':
+        specifier: ^4.3.3
+        version: 4.3.3(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-config-preact:
+        specifier: ^2.0.0
+        version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      tailwindcss:
+        specifier: ^4.3.3
+        version: 4.3.3
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
+  examples/preact/default-query-function:
+    dependencies:
+      '@tanstack/preact-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query
+      '@tanstack/preact-query-devtools':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query-devtools
+      preact:
+        specifier: ^11.0.1
+        version: 11.0.1(preact-render-to-string@6.8.0)
+    devDependencies:
+      '@preact/preset-vite':
+        specifier: ^2.10.6
+        version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-config-preact:
+        specifier: ^2.0.0
+        version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
+  examples/preact/playground:
+    dependencies:
+      '@tanstack/preact-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query
+      '@tanstack/preact-query-devtools':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query-devtools
       preact:
         specifier: ^11.0.1
         version: 11.0.1(preact-render-to-string@6.8.0)
@@ -23943,6 +24073,13 @@ snapshots:
       '@tailwindcss/oxide': 4.3.3
       tailwindcss: 4.3.3
       vite: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
+
+  '@tailwindcss/vite@4.3.3(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))':
+    dependencies:
+      '@tailwindcss/node': 4.3.3
+      '@tailwindcss/oxide': 4.3.3
+      tailwindcss: 4.3.3
+      vite: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
   '@tanstack/devtools-event-client@0.5.0': {}
 
