@@ -847,6 +847,45 @@ describe('queryClient', () => {
   })
 
   describe('isFetching', () => {
+    it('should reject a fetchStatus filter', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
+        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'fetching' }),
+      ).toEqualTypeOf<number>()
+      expectTypeOf(
+        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
+        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'paused' }),
+      ).toEqualTypeOf<number>()
+      expectTypeOf(
+        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
+        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'idle' }),
+      ).toEqualTypeOf<number>()
+    })
+
+    it('should accept the other query filters', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        queryClient.isFetching({
+          queryKey: ['key'],
+          exact: true,
+          type: 'active',
+          stale: true,
+          predicate: (query) => query.state.data !== undefined,
+        }),
+      ).toEqualTypeOf<number>()
+    })
+
+    it('should allow fetchStatus in query cache filters', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        queryClient.getQueryCache().findAll({ fetchStatus: 'paused' }),
+      ).toBeArray()
+    })
+
     it('should return a number', () => {
       const queryClient = new QueryClient()
 

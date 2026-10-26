@@ -65,7 +65,9 @@ export class QueryClient extends QC {
    */
   isRestoring?: Ref<boolean> = ref(false)
 
-  override isFetching(filters: MaybeRefDeep<QueryFilters> = {}): number {
+  override isFetching(
+    filters: MaybeRefDeep<Omit<QueryFilters, 'fetchStatus'>> = {},
+  ): number {
     return super.isFetching(cloneDeepUnref(filters))
   }
 
