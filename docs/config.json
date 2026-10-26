@@ -7004,16 +7004,16 @@
               "to": "framework/preact/examples/devtools-panel"
             },
             {
-              "label": "Suspense",
-              "to": "framework/preact/examples/suspense"
-            },
-            {
               "label": "Star Wars",
               "to": "framework/preact/examples/star-wars"
             },
             {
               "label": "Rick And Morty",
               "to": "framework/preact/examples/rick-morty"
+            },
+            {
+              "label": "Offline Queries and Mutations",
+              "to": "framework/preact/examples/offline"
             }
           ]
         }
