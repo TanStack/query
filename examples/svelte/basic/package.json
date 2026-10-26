@@ -20,7 +20,7 @@
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tanstack/eslint-plugin-query": "^5.104.5",
-    "@typescript-eslint/parser": "^8.71.1",
+    "@typescript-eslint/parser": "^8.72.0",
     "eslint-plugin-svelte": "^3.23.0",
     "svelte": "^5.57.1",
     "svelte-check": "^4.7.6",
