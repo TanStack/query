@@ -7046,6 +7046,10 @@
             {
               "label": "Prefetching",
               "to": "framework/preact/examples/prefetching"
+            },
+            {
+              "label": "SSR",
+              "to": "framework/preact/examples/ssr"
             }
           ]
         }
