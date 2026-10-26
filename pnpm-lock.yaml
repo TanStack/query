@@ -1166,6 +1166,55 @@ importers:
         specifier: ^8.3.1
         version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
+  examples/preact/offline:
+    dependencies:
+      '@tanstack/preact-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query
+      '@tanstack/preact-query-devtools':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query-devtools
+      '@tanstack/preact-query-persist-client':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query-persist-client
+      '@tanstack/query-async-storage-persister':
+        specifier: ^5.105.0
+        version: link:../../../packages/query-async-storage-persister
+      '@zag-js/preact':
+        specifier: ^1.46.0
+        version: 1.46.0(preact@11.0.1)
+      '@zag-js/toast':
+        specifier: ^1.46.0
+        version: 1.46.0
+      msw:
+        specifier: ^2.15.0
+        version: 2.15.0(@types/node@24.19.2)(typescript@5.9.3)
+      preact:
+        specifier: ^11.0.1
+        version: 11.0.1(preact-render-to-string@6.8.0)
+      preact-iso:
+        specifier: ^2.12.2
+        version: 2.12.2(preact-render-to-string@6.8.0)(preact@11.0.1)
+    devDependencies:
+      '@preact/preset-vite':
+        specifier: ^2.10.6
+        version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-config-preact:
+        specifier: ^2.0.0
+        version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
   examples/preact/playground:
     dependencies:
       '@tanstack/preact-query':
@@ -1190,6 +1239,46 @@ importers:
       eslint-config-preact:
         specifier: ^2.0.0
         version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
+  examples/preact/rick-morty:
+    dependencies:
+      '@tanstack/preact-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query
+      '@tanstack/preact-query-devtools':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query-devtools
+      preact:
+        specifier: ^11.0.1
+        version: 11.0.1(preact-render-to-string@6.8.0)
+      preact-iso:
+        specifier: ^2.12.2
+        version: 2.12.2(preact-render-to-string@6.8.0)(preact@11.0.1)
+    devDependencies:
+      '@preact/preset-vite':
+        specifier: ^2.10.6
+        version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tailwindcss/vite':
+        specifier: ^4.3.3
+        version: 4.3.3(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-config-preact:
+        specifier: ^2.0.0
+        version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      tailwindcss:
+        specifier: ^4.3.3
+        version: 4.3.3
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -1255,6 +1344,46 @@ importers:
       vite:
         specifier: ^8.3.1
         version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
+
+  examples/preact/star-wars:
+    dependencies:
+      '@tanstack/preact-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query
+      '@tanstack/preact-query-devtools':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query-devtools
+      preact:
+        specifier: ^11.0.1
+        version: 11.0.1(preact-render-to-string@6.8.0)
+      preact-iso:
+        specifier: ^2.12.2
+        version: 2.12.2(preact-render-to-string@6.8.0)(preact@11.0.1)
+    devDependencies:
+      '@preact/preset-vite':
+        specifier: ^2.10.6
+        version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tailwindcss/vite':
+        specifier: ^4.3.3
+        version: 4.3.3(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-config-preact:
+        specifier: ^2.0.0
+        version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      tailwindcss:
+        specifier: ^4.3.3
+        version: 4.3.3
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
   examples/react/algolia:
     dependencies:
@@ -10650,6 +10779,38 @@ packages:
   '@yuku-toolchain/types@0.10.2':
     resolution: {integrity: sha512-sSeo4SSSToiS+sSD+bwn/s94EEcaLJ7tG5LCp8gFYC1G5VzxzX7fqB6m9RU1yMD8KTpu6zdU/I1NlQf8hVBJ9Q==}
 
+  '@zag-js/anatomy@1.46.0':
+    resolution: {integrity: sha512-geWPKs9FtZ3FihwOyW/swG3IlJxqGydiAEUHRjBq3q45IarxV4gJZfpvWGlv20mVjOhbWkNEG+CDPsUGw4ixow==}
+
+  '@zag-js/core@1.46.0':
+    resolution: {integrity: sha512-zwiTDz9iBi1a/CyzdaeI8TlBADmeLCDNONh930a7x32TpduN8LiY26X58zrgimvCowOu7YIFNzI/vqW7Wp1phA==}
+
+  '@zag-js/dismissable@1.46.0':
+    resolution: {integrity: sha512-HramN58RwrpuSEdrN7XecL7g5wvwck3HJE81s7zli2qP/kIaVLodE5qbzR/PW4715daM1rO+Ptsd96dkeBzICQ==}
+
+  '@zag-js/dom-query@1.46.0':
+    resolution: {integrity: sha512-ibkO0VkQ2rLaclrO/O7kunvvwK8ZiW2L78arxsPYOEWmTqdNM6eQh721l9jGREUggh8nGsydNaoJH7lP3z1DUg==}
+
+  '@zag-js/interact-outside@1.46.0':
+    resolution: {integrity: sha512-gzOj8zNvZzrF8l7ikYcYmdOlhLXEBGm7Qsp++hE/in47Nhi1uHWlamW21orqYdNF8Y250qrK24vIr0ZW4xTPcw==}
+
+  '@zag-js/preact@1.46.0':
+    resolution: {integrity: sha512-o6jxX06Gz6ZNzVlVGN6PW3zw7PxTryHDs/JNg7lKVMV9h0fNH6C0pRkTP0AK8as0VSVjpH+EycxkNyfrwat2ag==}
+    peerDependencies:
+      preact: '>=10.0.0'
+
+  '@zag-js/store@1.46.0':
+    resolution: {integrity: sha512-NXjE6pITQaORVDxSX5nriNMtIBJGpq92ni3YvcZ1f37CZO2qXumOnYzyWWJNSwDMpfqEmPh83cW0Nxse7AUILA==}
+
+  '@zag-js/toast@1.46.0':
+    resolution: {integrity: sha512-7EL8nm6Z1P64XEUqHT3DPHKi/F+0UR9fJeL6ELgnqpDMYwOPNCxTXnh26vIV0g9UWyorMdgZMqljAchMPF5xMQ==}
+
+  '@zag-js/types@1.46.0':
+    resolution: {integrity: sha512-HwIvuXCGx/wgCNNXYvKyCJ62e/QmIi02v9GsA0icFxDKxv6i7J2mZmAQ/vF5Nmh3q80Nj5CZ1DdQ7bXYt/Yzww==}
+
+  '@zag-js/utils@1.46.0':
+    resolution: {integrity: sha512-SOKa832hWCoXaYB2Pcdb0c+ZcyNSuAAPpL5YRnVHskuc0BEsHPWOhxSIxuGF1gvz4RsfBKiAHrDoFDl8JLSOEg==}
+
   '@zkochan/js-yaml@0.0.7':
     resolution: {integrity: sha512-nrUSn7hzt7J6JWgWGz78ZYI8wj+gdIJdk0Ynjpp8l+trkn58Uqsf6RYrYkEK+3X18EX+TNdtJI0WxAtc+L84SQ==}
     hasBin: true
@@ -15749,6 +15910,12 @@ packages:
     resolution: {integrity: sha512-dM0jVuXJPsDN6DvRpea484tCUaMiXWjuCn++HGTqUWzGDjv5tZkEZldAJ/UMlqRYGFrD/etByo4/xOuC/snX2A==}
     engines: {node: '>=20'}
 
+  preact-iso@2.12.2:
+    resolution: {integrity: sha512-qit+qSMiZ41K0EQkLNa3MSxnWVCm5yXvy9m3CcGf/zF1QhVJzSwVCbpiz52VSbWpg8v8nYNIYDrXJZPNFpM1uw==}
+    peerDependencies:
+      preact: '>=10 || >= 11.0.0-0'
+      preact-render-to-string: '>=6.4.0'
+
   preact-render-to-string@6.8.0:
     resolution: {integrity: sha512-2qiMrReQz+MZ5+/bT27kbVnFE7QNCC2fku/Tnc2H5bFUS3I3ASbRy0q72XLZ+2p2KyDE5xMfvSEtkmVo6TRNyA==}
     peerDependencies:
@@ -15865,6 +16032,9 @@ packages:
   proxy-addr@2.0.7:
     resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
     engines: {node: '>= 0.10'}
+
+  proxy-compare@3.0.1:
+    resolution: {integrity: sha512-V9plBAt3qjMlS1+nC8771KNf6oJ12gExvaxnNzN/9yVRLdTv/lc+oJlnSzrdYDAvBfTStPCoiaCOTmTs0adv7Q==}
 
   proxy-from-env@2.1.0:
     resolution: {integrity: sha512-cJ+oHTW1VAEa8cJslgmUZrc+sjRKgAKl3Zyse6+PV38hZe/V6Z14TbCuXcan9F9ghlz4QrFr2c92TNF82UkYHA==}
@@ -25929,6 +26099,55 @@ snapshots:
 
   '@yuku-toolchain/types@0.10.2': {}
 
+  '@zag-js/anatomy@1.46.0': {}
+
+  '@zag-js/core@1.46.0':
+    dependencies:
+      '@zag-js/dom-query': 1.46.0
+      '@zag-js/utils': 1.46.0
+
+  '@zag-js/dismissable@1.46.0':
+    dependencies:
+      '@zag-js/dom-query': 1.46.0
+      '@zag-js/interact-outside': 1.46.0
+      '@zag-js/utils': 1.46.0
+
+  '@zag-js/dom-query@1.46.0':
+    dependencies:
+      '@zag-js/types': 1.46.0
+
+  '@zag-js/interact-outside@1.46.0':
+    dependencies:
+      '@zag-js/dom-query': 1.46.0
+      '@zag-js/utils': 1.46.0
+
+  '@zag-js/preact@1.46.0(preact@11.0.1)':
+    dependencies:
+      '@zag-js/core': 1.46.0
+      '@zag-js/store': 1.46.0
+      '@zag-js/types': 1.46.0
+      '@zag-js/utils': 1.46.0
+      preact: 11.0.1(preact-render-to-string@6.8.0)
+
+  '@zag-js/store@1.46.0':
+    dependencies:
+      proxy-compare: 3.0.1
+
+  '@zag-js/toast@1.46.0':
+    dependencies:
+      '@zag-js/anatomy': 1.46.0
+      '@zag-js/core': 1.46.0
+      '@zag-js/dismissable': 1.46.0
+      '@zag-js/dom-query': 1.46.0
+      '@zag-js/types': 1.46.0
+      '@zag-js/utils': 1.46.0
+
+  '@zag-js/types@1.46.0':
+    dependencies:
+      csstype: 3.2.3
+
+  '@zag-js/utils@1.46.0': {}
+
   '@zkochan/js-yaml@0.0.7':
     dependencies:
       argparse: 2.0.1
@@ -31465,6 +31684,31 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
+  msw@2.15.0(@types/node@24.19.2)(typescript@5.9.3):
+    dependencies:
+      '@inquirer/confirm': 6.3.2(@types/node@24.19.2)
+      '@mswjs/interceptors': 0.41.3
+      '@open-draft/deferred-promise': 3.0.0
+      '@types/statuses': 2.0.6
+      cookie: 1.1.1
+      graphql: 16.13.2
+      headers-polyfill: 5.0.1
+      is-node-process: 1.2.0
+      outvariant: 1.4.3
+      path-to-regexp: 6.3.0
+      picocolors: 1.1.1
+      rettime: 0.11.11
+      statuses: 2.0.2
+      strict-event-emitter: 0.5.1
+      tough-cookie: 6.0.1
+      type-fest: 5.5.0
+      until-async: 3.0.2
+      yargs: 17.7.2
+    optionalDependencies:
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - '@types/node'
+
   msw@2.15.0(@types/node@24.19.2)(typescript@6.0.3):
     dependencies:
       '@inquirer/confirm': 6.3.2(@types/node@24.19.2)
@@ -32784,6 +33028,11 @@ snapshots:
 
   powershell-utils@0.1.0: {}
 
+  preact-iso@2.12.2(preact-render-to-string@6.8.0)(preact@11.0.1):
+    dependencies:
+      preact: 11.0.1(preact-render-to-string@6.8.0)
+      preact-render-to-string: 6.8.0(preact@11.0.1)
+
   preact-render-to-string@6.8.0(preact@11.0.1):
     dependencies:
       preact: 11.0.1(preact-render-to-string@6.8.0)
@@ -32881,6 +33130,8 @@ snapshots:
     dependencies:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1
+
+  proxy-compare@3.0.1: {}
 
   proxy-from-env@2.1.0: {}
 
