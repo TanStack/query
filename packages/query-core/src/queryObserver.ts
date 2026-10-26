@@ -478,12 +478,10 @@ export class QueryObserver<
    * console.log(result.data)
    * ```
    */
-  refetch({ ...options }: RefetchOptions = {}): Promise<
-    QueryObserverResult<TData, TError>
-  > {
-    return this.fetch({
-      ...options,
-    })
+  refetch(
+    options: RefetchOptions = {},
+  ): Promise<QueryObserverResult<TData, TError>> {
+    return this.fetch(options)
   }
 
   /**

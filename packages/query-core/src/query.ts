@@ -17,7 +17,6 @@ import type {
   DefaultError,
   FetchStatus,
   InitialDataFunction,
-  OmitKeyof,
   QueryFunctionContext,
   QueryKey,
   QueryMeta,
@@ -427,7 +426,7 @@ export class Query<
   cancel(options?: CancelOptions): Promise<void> {
     const promise = this.#retryer?.promise
     this.#retryer?.cancel(options)
-    return promise ? promise.then(noop).catch(noop) : Promise.resolve()
+    return promise ? promise.then(noop, noop) : Promise.resolve()
   }
 
   /**
@@ -764,20 +763,12 @@ export class Query<
       const queryFn = ensureQueryFn(this.options, fetchOptions)
 
       // Create query function context
-      const createQueryFnContext = (): QueryFunctionContext<TQueryKey> => {
-        const queryFnContext: OmitKeyof<
-          QueryFunctionContext<TQueryKey>,
-          'signal'
-        > = {
-          client: this.#client,
-          queryKey: this.queryKey,
-          meta: this.meta,
-        }
-        addSignalProperty(queryFnContext)
-        return queryFnContext as QueryFunctionContext<TQueryKey>
-      }
-
-      const queryFnContext = createQueryFnContext()
+      const queryFnContext = {
+        client: this.#client,
+        queryKey: this.queryKey,
+        meta: this.meta,
+      } as QueryFunctionContext<TQueryKey>
+      addSignalProperty(queryFnContext)
 
       this.#abortSignalConsumed = false
       if (this.options.persister) {
@@ -792,29 +783,15 @@ export class Query<
     }
 
     // Trigger behavior hook
-    const createFetchContext = (): FetchContext<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey
-    > => {
-      const context: OmitKeyof<
-        FetchContext<TQueryFnData, TError, TData, TQueryKey>,
-        'signal'
-      > = {
-        fetchOptions,
-        options: this.options,
-        queryKey: this.queryKey,
-        client: this.#client,
-        state: this.state,
-        fetchFn,
-      }
-
-      addSignalProperty(context)
-      return context as FetchContext<TQueryFnData, TError, TData, TQueryKey>
-    }
-
-    const context = createFetchContext()
+    const context = {
+      fetchOptions,
+      options: this.options,
+      queryKey: this.queryKey,
+      client: this.#client,
+      state: this.state,
+      fetchFn,
+    } as FetchContext<TQueryFnData, TError, TData, TQueryKey>
+    addSignalProperty(context)
 
     const behavior =
       this.#queryType === 'infinite'
