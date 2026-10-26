@@ -1,24 +1,8 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
+  import { reposQueries } from './services/repos/queries'
 
-  type Repo = {
-    full_name: string
-    description: string
-    subscribers_count: number
-    stargazers_count: number
-    forks_count: number
-  }
-
-  const query = createQuery<Repo>(() => ({
-    queryKey: ['repoData'],
-    queryFn: async () => {
-      const response = await fetch(
-        'https://api.github.com/repos/TanStack/query',
-      )
-      if (!response.ok) throw new Error('Failed to fetch repo data')
-      return await response.json()
-    },
-  }))
+  const query = createQuery(() => reposQueries.detail())
 </script>
 
 <h1>Simple</h1>
