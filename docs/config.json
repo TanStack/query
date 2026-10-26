@@ -6994,6 +6994,14 @@
             {
               "label": "Chat example (streaming)",
               "to": "framework/preact/examples/chat"
+            },
+            {
+              "label": "Shadow DOM",
+              "to": "framework/preact/examples/shadow-dom"
+            },
+            {
+              "label": "Devtools Embedded Panel",
+              "to": "framework/preact/examples/devtools-panel"
             }
           ]
         }
