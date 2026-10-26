@@ -7028,6 +7028,10 @@
               "to": "framework/preact/examples/auto-refetching"
             },
             {
+              "label": "Optimistic Updates",
+              "to": "framework/preact/examples/optimistic-updates"
+            },
+            {
               "label": "Pagination",
               "to": "framework/preact/examples/pagination"
             },
