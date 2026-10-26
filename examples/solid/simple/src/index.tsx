@@ -7,6 +7,7 @@ import {
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { Match, Switch } from 'solid-js'
 import { render } from 'solid-js/web'
+import { reposQueries } from './services/repos/queries'
 
 const queryClient = new QueryClient()
 
@@ -20,16 +21,7 @@ export default function App() {
 }
 
 function Example() {
-  const state = useQuery(() => ({
-    queryKey: ['repoData'],
-    queryFn: async () => {
-      const response = await fetch(
-        'https://api.github.com/repos/TanStack/query',
-      )
-      if (!response.ok) throw new Error('Failed to fetch repo data')
-      return await response.json()
-    },
-  }))
+  const state = useQuery(() => reposQueries.detail())
 
   return (
     <Switch>
@@ -39,11 +31,11 @@ function Example() {
       </Match>
       <Match when={state.data !== undefined}>
         <div>
-          <h1>{state.data.name}</h1>
-          <p>{state.data.description}</p>
-          <strong>👀 {state.data.subscribers_count}</strong>{' '}
-          <strong>✨ {state.data.stargazers_count}</strong>{' '}
-          <strong>🍴 {state.data.forks_count}</strong>
+          <h1>{state.data?.name}</h1>
+          <p>{state.data?.description}</p>
+          <strong>👀 {state.data?.subscribers_count}</strong>{' '}
+          <strong>✨ {state.data?.stargazers_count}</strong>{' '}
+          <strong>🍴 {state.data?.forks_count}</strong>
           <div>{state.isFetching ? 'Updating...' : ''}</div>
         </div>
       </Match>
