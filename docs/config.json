@@ -6963,6 +6963,19 @@
               "to": "framework/angular/examples/devtools-panel"
             }
           ]
+        },
+        {
+          "label": "preact",
+          "children": [
+            {
+              "label": "Simple",
+              "to": "framework/preact/examples/simple"
+            },
+            {
+              "label": "Basic",
+              "to": "framework/preact/examples/basic"
+            }
+          ]
         }
       ]
     },
