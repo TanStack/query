@@ -9,7 +9,7 @@ import svelteConfig from './svelte.config.js'
 
 export default defineConfig([
   ...tanstackConfig,
-  ...pluginQuery.configs['flat/recommended'],
+  ...pluginQuery.configs['flat/recommended-strict'],
   ...pluginSvelte.configs.recommended,
   {
     files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],

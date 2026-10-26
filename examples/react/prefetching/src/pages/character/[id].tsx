@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@tanstack/react-query'
-import { characterQueryOptions } from '../../api'
+import { charactersQueries } from '../../services/characters/queries'
 
 export default function CharacterPage() {
   const router = useRouter()
@@ -10,7 +10,7 @@ export default function CharacterPage() {
     typeof router.query.id === 'string' ? Number(router.query.id) : undefined
 
   const { status, data, error, isFetching } = useQuery(
-    characterQueryOptions(id),
+    charactersQueries.detail(id),
   )
 
   return (

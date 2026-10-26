@@ -61,7 +61,7 @@ export interface InjectIsFetchingOptions {
  * ```
  */
 export function injectIsFetching(
-  filters?: QueryFilters,
+  filters?: Omit<QueryFilters, 'fetchStatus'>,
   options?: InjectIsFetchingOptions,
 ): Signal<number> {
   !options?.injector && assertInInjectionContext(injectIsFetching)

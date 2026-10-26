@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { provideZonelessChangeDetection } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   injectIsMutating,
   injectMutation,
@@ -31,7 +31,7 @@ describe('mutationOptions', () => {
   })
 
   it('should return the object received as a parameter without any modification (with mutationKey in mutationOptions)', () => {
-    const key = queryKey()
+    const key = createKey()
     const object: CreateMutationOptions = {
       mutationKey: key,
       mutationFn: () => sleep(10).then(() => 5),
@@ -49,7 +49,7 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with injectIsMutating (with mutationKey in mutationOptions)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(50).then(() => 'data'),
@@ -91,7 +91,7 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with injectIsMutating', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(50).then(() => 'data1'),
@@ -120,7 +120,7 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with injectIsMutating (filter mutationOpts1.mutationKey)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(50).then(() => 'data1'),
@@ -149,7 +149,7 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (with mutationKey in mutationOptions)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(500).then(() => 'data'),
@@ -185,7 +185,7 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(500).then(() => 'data1'),
@@ -209,7 +209,7 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (filter mutationOpts1.mutationKey)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(500).then(() => 'data1'),
@@ -239,7 +239,7 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with injectMutationState (with mutationKey in mutationOptions)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(10).then(() => 'data'),
@@ -252,11 +252,11 @@ describe('mutationOptions', () => {
       })),
     ])
 
-    expect(mutationState().length).toBe(0)
+    expect(mutationState()).toHaveLength(0)
 
     mutation.mutate()
     await vi.advanceTimersByTimeAsync(11)
-    expect(mutationState().length).toBe(1)
+    expect(mutationState()).toHaveLength(1)
     expect(mutationState()[0]?.data).toBe('data')
   })
 
@@ -272,16 +272,16 @@ describe('mutationOptions', () => {
       })),
     ])
 
-    expect(mutationState().length).toBe(0)
+    expect(mutationState()).toHaveLength(0)
 
     mutation.mutate()
     await vi.advanceTimersByTimeAsync(11)
-    expect(mutationState().length).toBe(1)
+    expect(mutationState()).toHaveLength(1)
     expect(mutationState()[0]?.data).toBe('data')
   })
 
   it('should return the number of fetching mutations when used with injectMutationState', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(10).then(() => 'data1'),
@@ -300,18 +300,18 @@ describe('mutationOptions', () => {
       ],
     )
 
-    expect(mutationState().length).toBe(0)
+    expect(mutationState()).toHaveLength(0)
 
     mutation1.mutate()
     mutation2.mutate()
     await vi.advanceTimersByTimeAsync(11)
-    expect(mutationState().length).toBe(2)
+    expect(mutationState()).toHaveLength(2)
     expect(mutationState()[0]?.data).toBe('data1')
     expect(mutationState()[1]?.data).toBe('data2')
   })
 
   it('should return the number of fetching mutations when used with injectMutationState (filter mutationOpts1.mutationKey)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(10).then(() => 'data1'),
@@ -333,12 +333,12 @@ describe('mutationOptions', () => {
       ],
     )
 
-    expect(mutationState().length).toBe(0)
+    expect(mutationState()).toHaveLength(0)
 
     mutation1.mutate()
     mutation2.mutate()
     await vi.advanceTimersByTimeAsync(11)
-    expect(mutationState().length).toBe(1)
+    expect(mutationState()).toHaveLength(1)
     expect(mutationState()[0]?.data).toBe('data1')
   })
 })

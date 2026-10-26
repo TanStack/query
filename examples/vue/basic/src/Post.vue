@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
-import { postQueryOptions } from './api'
+import { postsQueries } from './services/posts/queries'
 
 const props = defineProps<{ postId: number }>()
 defineEmits<{ setPostId: [id: number] }>()
 
 const { isPending, isError, isFetching, data, error } = useQuery(() =>
-  postQueryOptions(props.postId),
+  postsQueries.detail(props.postId),
 )
 </script>
 

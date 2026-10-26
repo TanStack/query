@@ -148,9 +148,7 @@ export class QueryClient {
    * }
    * ```
    */
-  isFetching<TQueryFilters extends QueryFilters<any> = QueryFilters>(
-    filters?: TQueryFilters,
-  ): number {
+  isFetching(filters?: Omit<QueryFilters, 'fetchStatus'>): number {
     return this.#queryCache.findAll({ ...filters, fetchStatus: 'fetching' })
       .length
   }

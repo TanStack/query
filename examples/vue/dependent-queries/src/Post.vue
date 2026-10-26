@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
-import { authorQueryOptions, postQueryOptions } from './api'
+import { authorsQueries } from './services/authors/queries'
+import { postsQueries } from './services/posts/queries'
 
 const props = defineProps<{ postId: number }>()
 defineEmits<{ setPostId: [id: number] }>()
@@ -12,11 +13,11 @@ const {
   isFetching,
   data: post,
   error,
-} = useQuery(() => postQueryOptions(props.postId))
+} = useQuery(() => postsQueries.detail(props.postId))
 
 const authorId = computed(() => post.value?.userId)
 
-const { data: author } = useQuery(() => authorQueryOptions(authorId.value))
+const { data: author } = useQuery(() => authorsQueries.detail(authorId.value))
 </script>
 
 <template>

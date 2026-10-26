@@ -2,12 +2,11 @@ import ReactDOM from 'react-dom/client'
 import {
   QueryClient,
   QueryClientProvider,
-  queryOptions,
   useQueries,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useState } from 'react'
-import { loadCharacter } from './character-loader'
+import { charactersQueries } from './services/characters/queries'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,16 +16,9 @@ const queryClient = new QueryClient({
   },
 })
 
-const characterQueryOptions = (id: number) =>
-  queryOptions({
-    queryKey: ['character', id],
-    queryFn: () => loadCharacter(id),
-    staleTime: 60 * 1000,
-  })
-
 function Characters({ ids }: { ids: Array<number> }) {
   const characters = useQueries({
-    queries: ids.map((id) => characterQueryOptions(id)),
+    queries: ids.map((id) => charactersQueries.detail(id)),
   })
 
   return characters.map((character, index) => {
@@ -77,7 +69,7 @@ function App() {
       <h2>Character fetcher</h2>
       <div>
         <label style={{ display: 'block' }}>
-          Character ids (numberic, comma seprated)
+          Character ids (numeric, comma separated)
         </label>
         <input
           style={{ display: 'inline-block' }}

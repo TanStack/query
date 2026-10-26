@@ -7,7 +7,7 @@ import {
 } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { injectQuery } from '@tanstack/angular-query-experimental'
-import { QueriesService } from '../services/queries-service'
+import { PostsQueries } from '../services/posts/queries'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,11 +16,13 @@ import { QueriesService } from '../services/queries-service'
   imports: [RouterLink],
 })
 export default class PostComponent {
-  private readonly queries = inject(QueriesService)
+  readonly #postsQueries = inject(PostsQueries)
 
   readonly postId = input.required({
     transform: numberAttribute,
   })
 
-  readonly postQuery = injectQuery(() => this.queries.post(this.postId()))
+  readonly postQuery = injectQuery(() =>
+    this.#postsQueries.detail(this.postId()),
+  )
 }

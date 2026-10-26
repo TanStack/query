@@ -1,11 +1,15 @@
 import { For, Match, Show, Switch, createSignal } from 'solid-js'
-import { MutationCache, QueryClient, useQuery } from '@tanstack/solid-query'
+import {
+  MutationCache,
+  QueryClient,
+  useMutation,
+  useQuery,
+} from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/solid-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 
-import * as api from './api'
-import { movieKeys, updateMovieMutationOptions, useMovie } from './movies'
+import { moviesMutations, moviesQueries } from './services/movies/queries'
 
 const persister = createAsyncStoragePersister({
   storage: window.localStorage,
@@ -14,7 +18,7 @@ const persister = createAsyncStoragePersister({
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
       staleTime: 2000,
       retry: 0,
     },
@@ -28,8 +32,8 @@ const queryClient = new QueryClient({
 })
 
 // we need a default mutation function so that paused mutations can resume after a page reload
-queryClient.setMutationDefaults(movieKeys.all(), {
-  ...updateMovieMutationOptions(),
+queryClient.setMutationDefaults(moviesQueries.all(), {
+  ...moviesMutations.update(),
   onSuccess: (data) => {
     showNotification(data.message, 'success')
   },
@@ -89,10 +93,7 @@ function Movies() {
 }
 
 function List(props: { onSelectMovie: (movieId: string) => void }) {
-  const moviesQuery = useQuery(() => ({
-    queryKey: movieKeys.list(),
-    queryFn: api.fetchMovies,
-  }))
+  const moviesQuery = useQuery(() => moviesQueries.list())
 
   return (
     <Switch>
@@ -141,9 +142,51 @@ function List(props: { onSelectMovie: (movieId: string) => void }) {
 }
 
 function Detail(props: { movieId: string; onBack: () => void }) {
-  const { comment, setComment, updateMovie, movieQuery } = useMovie(
-    () => props.movieId,
-  )
+  const movieQuery = useQuery(() => moviesQueries.detail(props.movieId))
+
+  const [commentDraft, setCommentDraft] = createSignal<string | undefined>()
+
+  const updateMovie = useMutation(() => ({
+    ...moviesMutations.update(),
+    mutationKey: moviesQueries.detail(props.movieId).queryKey,
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({
+        queryKey: moviesQueries.detail(props.movieId).queryKey,
+      })
+      const { queryKey } = moviesQueries.detail(props.movieId)
+      const previousData = queryClient.getQueryData(queryKey)
+
+      // remove local state so that server state is taken instead
+      setCommentDraft(undefined)
+
+      queryClient.setQueryData(
+        queryKey,
+        (old) =>
+          old && {
+            ...old,
+            movie: {
+              ...old.movie,
+              comment: variables.comment,
+            },
+          },
+      )
+
+      return { previousData }
+    },
+    onError: (_, __, onMutateResult) => {
+      queryClient.setQueryData(
+        moviesQueries.detail(props.movieId).queryKey,
+        onMutateResult?.previousData,
+      )
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: moviesQueries.detail(props.movieId).queryKey,
+      })
+    },
+  }))
+
+  const comment = () => commentDraft() ?? movieQuery.data?.movie.comment
 
   function submitForm(event: SubmitEvent) {
     event.preventDefault()
@@ -189,7 +232,7 @@ function Detail(props: { movieId: string; onBack: () => void }) {
               <textarea
                 name="comment"
                 value={comment() ?? ''}
-                onInput={(event) => setComment(event.currentTarget.value)}
+                onInput={(event) => setCommentDraft(event.currentTarget.value)}
               />
             </label>
           </p>

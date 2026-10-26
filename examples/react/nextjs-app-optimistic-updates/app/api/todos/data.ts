@@ -1,8 +1,6 @@
-export interface Todo {
-  id: string
-  text: string
-  createdAt: number
-}
+import type { Todo } from '../../../services/todos/types'
+
+export type { Todo }
 
 export const todos: Array<Todo> = [
   {

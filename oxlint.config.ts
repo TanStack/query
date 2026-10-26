@@ -1,6 +1,8 @@
 import { fileURLToPath } from 'node:url'
 import pluginVitest from '@vitest/eslint-plugin'
+import pluginJestDom from 'eslint-plugin-jest-dom'
 import pluginJsdoc from 'eslint-plugin-jsdoc'
+import pluginTestingLibrary from 'eslint-plugin-testing-library'
 import { defineConfig } from 'oxlint'
 
 /**
@@ -160,6 +162,7 @@ export default defineConfig({
             'datatag', // Query options tagging
             'extralight', // Our public interface
             'jscodeshift',
+            'netinfo', // @react-native-community/netinfo package name
             'refetched', // Query refetch operations
             'refetches', // Query refetch operations
             'retryer', // Our public interface
@@ -281,19 +284,85 @@ export default defineConfig({
       jsPlugins: [
         // Unlike the native rule, also checks `expectTypeOf` calls
         { name: 'vitest-js', specifier: '@vitest/eslint-plugin' },
+        { name: 'jest-dom', specifier: 'eslint-plugin-jest-dom' },
+        { name: 'testing-library', specifier: 'eslint-plugin-testing-library' },
       ],
       rules: {
         ...pluginVitest.configs.recommended.rules,
+        ...pluginJestDom.configs['flat/recommended'].rules,
+        // `toHaveTextContent` matches substrings, so exact `textContent` checks stay as `toBe`
+        'jest-dom/prefer-to-have-text-content': 'off',
+        ...pluginTestingLibrary.configs['flat/dom'].rules,
+        'testing-library/no-debugging-utils': 'error',
+        'testing-library/no-dom-import': 'error',
+        'testing-library/no-manual-cleanup': 'error',
+        'testing-library/no-render-in-lifecycle': 'error',
+        // Tests name the render result `rendered` and query through it
+        'testing-library/prefer-screen-queries': 'off',
+        'vitest/consistent-each-for': [
+          'error',
+          { describe: 'each', it: 'each' },
+        ],
+        'vitest/consistent-test-filename': 'error',
         'vitest/consistent-test-it': [
           'error',
           { fn: 'it', withinDescribe: 'it' },
         ],
-        'vitest/no-standalone-expect': [
-          'error',
-          { additionalTestBlockFunctions: ['itIf'] },
-        ],
+        'vitest/consistent-vitest-vi': 'error',
+        'vitest/hoisted-apis-on-top': 'error',
+        'vitest/max-nested-describe': 'error',
+        'vitest/no-alias-methods': 'error',
+        'vitest/no-conditional-tests': 'error',
+        'vitest/no-duplicate-hooks': 'error',
+        'vitest/no-large-snapshots': 'error',
+        'vitest/no-test-prefixes': 'error',
+        'vitest/no-test-return-statement': 'error',
+        'vitest/prefer-called-times': 'error',
+        'vitest/prefer-called-with': 'error',
+        'vitest/prefer-comparison-matcher': 'error',
+        'vitest/prefer-each': 'error',
+        'vitest/prefer-equality-matcher': 'error',
+        'vitest/prefer-expect-resolves': 'error',
+        'vitest/prefer-expect-type-of': 'error',
+        'vitest/prefer-hooks-in-order': 'error',
+        'vitest/prefer-hooks-on-top': 'error',
+        'vitest/prefer-import-in-mock': 'error',
+        'vitest/prefer-importing-vitest-globals': 'error',
+        'vitest/prefer-lowercase-title': ['error', { ignore: ['describe'] }],
+        'vitest/prefer-mock-promise-shorthand': 'error',
+        'vitest/prefer-mock-return-shorthand': 'error',
+        'vitest/prefer-snapshot-hint': 'error',
+        'vitest/prefer-spy-on': 'error',
+        'vitest/prefer-strict-boolean-matchers': 'error',
+        'vitest/prefer-strict-equal': 'error',
+        'vitest/prefer-to-be': 'error',
+        'vitest/prefer-to-be-object': 'error',
+        'vitest/prefer-to-contain': 'error',
+        'vitest/prefer-to-have-been-called-times': 'error',
+        'vitest/prefer-to-have-length': 'error',
+        'vitest/prefer-todo': 'error',
+        'vitest/require-awaited-expect-poll': 'error',
+        'vitest/require-hook': 'error',
+        'vitest/require-mock-type-parameters': 'error',
+        'vitest/require-to-throw-message': 'error',
+        'vitest/require-top-level-describe': 'error',
         'vitest/valid-expect': 'off',
+        'vitest-js/no-conditional-in-test': 'error',
+        'vitest-js/padding-around-after-all-blocks': 'error',
+        'vitest-js/padding-around-after-each-blocks': 'error',
+        'vitest-js/padding-around-before-all-blocks': 'error',
+        'vitest-js/padding-around-before-each-blocks': 'error',
+        'vitest-js/padding-around-describe-blocks': 'error',
+        'vitest-js/padding-around-test-blocks': 'error',
+        'vitest-js/prefer-vi-mocked': 'error',
         'vitest-js/valid-expect': 'error',
+      },
+    },
+    {
+      files: ['**/*.test-d.ts*'],
+      rules: {
+        // Type tests narrow results with `if` to check the type of each state
+        'vitest-js/no-conditional-in-test': 'off',
       },
     },
   ],

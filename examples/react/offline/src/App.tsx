@@ -1,8 +1,10 @@
+import * as React from 'react'
 import {
   MutationCache,
   QueryClient,
   onlineManager,
   useIsRestoring,
+  useMutation,
   useQuery,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -17,13 +19,7 @@ import {
   useMatch,
 } from '@tanstack/react-location'
 
-import * as api from './api'
-import {
-  movieKeys,
-  movieQueryOptions,
-  updateMovieMutationOptions,
-  useMovie,
-} from './movies'
+import { moviesMutations, moviesQueries } from './services/movies/queries'
 
 const persister = createAsyncStoragePersister({
   storage: window.localStorage,
@@ -34,7 +30,7 @@ const location = new ReactLocation()
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
       staleTime: 2000,
       retry: 0,
     },
@@ -48,8 +44,8 @@ const queryClient = new QueryClient({
 })
 
 // we need a default mutation function so that paused mutations can resume after a page reload
-queryClient.setMutationDefaults(movieKeys.all(), {
-  ...updateMovieMutationOptions(),
+queryClient.setMutationDefaults(moviesQueries.all(), {
+  ...moviesMutations.update(),
   onSuccess: (data) => {
     toast.success(data.message)
   },
@@ -87,11 +83,11 @@ function Movies() {
           path: ':movieId',
           element: <Detail />,
           loader: async ({ params: { movieId } }) =>
-            queryClient.getQueryData(movieQueryOptions(movieId).queryKey) ??
+            queryClient.getQueryData(moviesQueries.detail(movieId).queryKey) ??
             // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
             // we just let the Detail component handle it
             (onlineManager.isOnline() && !isRestoring
-              ? queryClient.query(movieQueryOptions(movieId))
+              ? queryClient.query(moviesQueries.detail(movieId))
               : {}),
         },
       ]}
@@ -103,10 +99,7 @@ function Movies() {
 }
 
 function List() {
-  const moviesQuery = useQuery({
-    queryKey: movieKeys.list(),
-    queryFn: api.fetchMovies,
-  })
+  const moviesQuery = useQuery(moviesQueries.list())
 
   if (moviesQuery.isLoading) {
     return 'Loading...'
@@ -117,7 +110,7 @@ function List() {
       <div>
         <h1>Movies</h1>
         <p>
-          Try to mock offline behaviour with the button in the devtools. You can
+          Try to mock offline behavior with the button in the devtools. You can
           navigate around as long as there is already data in the cache. You'll
           get a refetch as soon as you go online again.
         </p>
@@ -155,7 +148,51 @@ function Detail() {
   const {
     params: { movieId },
   } = useMatch()
-  const { comment, setComment, updateMovie, movieQuery } = useMovie(movieId)
+  const movieQuery = useQuery(moviesQueries.detail(movieId))
+
+  const [commentDraft, setCommentDraft] = React.useState<string | undefined>()
+
+  const updateMovie = useMutation({
+    ...moviesMutations.update(),
+    mutationKey: moviesQueries.detail(movieId).queryKey,
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({
+        queryKey: moviesQueries.detail(movieId).queryKey,
+      })
+      const { queryKey } = moviesQueries.detail(movieId)
+      const previousData = queryClient.getQueryData(queryKey)
+
+      // remove local state so that server state is taken instead
+      setCommentDraft(undefined)
+
+      queryClient.setQueryData(
+        queryKey,
+        (old) =>
+          old && {
+            ...old,
+            movie: {
+              ...old.movie,
+              comment: variables.comment,
+            },
+          },
+      )
+
+      return { previousData }
+    },
+    onError: (_, __, onMutateResult) => {
+      queryClient.setQueryData(
+        moviesQueries.detail(movieId).queryKey,
+        onMutateResult?.previousData,
+      )
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: moviesQueries.detail(movieId).queryKey,
+      })
+    },
+  })
+
+  const comment = commentDraft ?? movieQuery.data?.movie.comment
 
   if (movieQuery.isLoading) {
     return 'Loading...'
@@ -180,7 +217,7 @@ function Detail() {
         <Link to="..">Back</Link>
         <h1>Movie: {movieQuery.data.movie.title}</h1>
         <p>
-          Try to mock offline behaviour with the button in the devtools, then
+          Try to mock offline behavior with the button in the devtools, then
           update the comment. The optimistic update will succeed, but the actual
           mutation will be paused and resumed once you go online again.
         </p>
@@ -194,7 +231,7 @@ function Detail() {
             <textarea
               name="comment"
               value={comment}
-              onChange={(event) => setComment(event.target.value)}
+              onChange={(event) => setCommentDraft(event.target.value)}
             />
           </label>
         </p>

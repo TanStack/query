@@ -125,7 +125,7 @@ function isCacheEventType(eventType: NotifyEventType) {
 export async function persistQueryClientRestore({
   queryClient,
   persister,
-  maxAge = 1000 * 60 * 60 * 24,
+  maxAge = 24 * 60 * 60 * 1000,
   buster = '',
   hydrateOptions,
 }: PersistedQueryClientRestoreOptions) {

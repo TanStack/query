@@ -8,7 +8,7 @@ title: useIsFetching
 ```ts
 function useIsFetching(
    host: ReactiveControllerHost,
-   filters?: Accessor<QueryFilters<readonly unknown[]>>,
+   filters?: Accessor<Omit<QueryFilters<readonly unknown[]>, "fetchStatus">>,
    queryClient?: QueryClient
 ): IsFetchingAccessor;
 ```
@@ -33,7 +33,7 @@ subscription.
 
 ### filters?
 
-[`Accessor`](../type-aliases/Accessor.md)\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\> = `{}`
+[`Accessor`](../type-aliases/Accessor.md)\<`Omit`\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>, `"fetchStatus"`\>\> = `{}`
 
 Query filters, or a getter that returns query filters.
 
