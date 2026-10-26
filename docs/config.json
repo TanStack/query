@@ -6974,6 +6974,10 @@
             {
               "label": "Basic",
               "to": "framework/preact/examples/basic"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/preact/examples/basic-graphql-request"
             }
           ]
         }
