@@ -996,16 +996,16 @@ importers:
   examples/preact/basic:
     dependencies:
       '@tanstack/preact-query':
-        specifier: ^5.104.5
+        specifier: ^5.105.0
         version: link:../../../packages/preact-query
       '@tanstack/preact-query-devtools':
-        specifier: ^5.104.5
+        specifier: ^5.105.0
         version: link:../../../packages/preact-query-devtools
       '@tanstack/preact-query-persist-client':
-        specifier: ^5.104.5
+        specifier: ^5.105.0
         version: link:../../../packages/preact-query-persist-client
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.104.5
+        specifier: ^5.105.0
         version: link:../../../packages/query-async-storage-persister
       preact:
         specifier: ^11.0.1
@@ -1015,7 +1015,7 @@ importers:
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.104.5
+        specifier: ^5.105.0
         version: link:../../../packages/eslint-plugin-query
       eslint:
         specifier: ^9.36.0
