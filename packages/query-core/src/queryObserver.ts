@@ -801,20 +801,22 @@ export class QueryObserver<
         return true
       }
 
-      const includedProps = new Set(
-        notifyOnChangePropsValue ?? this.#trackedProps,
-      )
-
-      if (this.options.throwOnError) {
-        includedProps.add('error')
+      if (
+        this.options.throwOnError &&
+        this.#currentResult.error !== prevResult.error
+      ) {
+        return true
       }
 
-      return Object.keys(this.#currentResult).some((key) => {
-        const typedKey = key as keyof QueryObserverResult
-        const changed = this.#currentResult[typedKey] !== prevResult[typedKey]
-
-        return changed && includedProps.has(typedKey)
-      })
+      for (const key of notifyOnChangePropsValue ?? this.#trackedProps) {
+        if (
+          this.#currentResult[key as keyof QueryObserverResult] !==
+          prevResult[key as keyof QueryObserverResult]
+        ) {
+          return true
+        }
+      }
+      return false
     }
 
     const notifyListeners = shouldNotifyListeners()
