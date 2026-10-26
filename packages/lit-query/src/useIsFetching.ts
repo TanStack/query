@@ -18,7 +18,7 @@ class IsFetchingController extends BaseController<number> {
 
   constructor(
     host: ReactiveControllerHost,
-    private readonly filters: Accessor<QueryFilters> = {},
+    private readonly filters: Accessor<Omit<QueryFilters, 'fetchStatus'>> = {},
     queryClient?: QueryClient,
   ) {
     super(host, 0, queryClient)
@@ -140,7 +140,7 @@ class IsFetchingController extends BaseController<number> {
  */
 export function useIsFetching(
   host: ReactiveControllerHost,
-  filters: Accessor<QueryFilters> = {},
+  filters: Accessor<Omit<QueryFilters, 'fetchStatus'>> = {},
   queryClient?: QueryClient,
 ): IsFetchingAccessor {
   const controller = new IsFetchingController(host, filters, queryClient)

@@ -1,4 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { ref } from 'vue-demi'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import type { DataTag, InfiniteData } from '@tanstack/query-core'
@@ -254,5 +255,27 @@ describe('infiniteQuery', () => {
       initialPageParam: 1,
       getNextPageParam: () => undefined,
     })
+  })
+})
+
+describe('isFetching', () => {
+  it('should accept reactive filters without fetchStatus', () => {
+    const queryClient = new QueryClient()
+
+    expectTypeOf(
+      queryClient.isFetching(ref({ queryKey: ['key'], exact: true })),
+    ).toEqualTypeOf<number>()
+    expectTypeOf(
+      queryClient.isFetching({ queryKey: ref(['key']) }),
+    ).toEqualTypeOf<number>()
+  })
+
+  it('should reject a fetchStatus filter', () => {
+    const queryClient = new QueryClient()
+
+    expectTypeOf(
+      // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
+      queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'paused' }),
+    ).toEqualTypeOf<number>()
   })
 })
