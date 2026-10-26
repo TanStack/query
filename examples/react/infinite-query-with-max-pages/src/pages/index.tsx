@@ -1,22 +1,9 @@
 import React from 'react'
-import {
-  QueryClient,
-  QueryClientProvider,
-  useInfiniteQuery,
-} from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { projectsQueries } from '../services/projects/queries'
 
-const queryClient = new QueryClient()
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Example />
-    </QueryClientProvider>
-  )
-}
-
-function Example() {
+export default function Example() {
   const {
     status,
     data,
@@ -28,17 +15,7 @@ function Example() {
     fetchPreviousPage,
     hasNextPage,
     hasPreviousPage,
-  } = useInfiniteQuery({
-    queryKey: ['projects'],
-    queryFn: async ({ pageParam }) => {
-      const response = await fetch(`/api/projects?cursor=${pageParam}`)
-      return await response.json()
-    },
-    initialPageParam: 0,
-    getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
-    getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
-    maxPages: 3,
-  })
+  } = useInfiniteQuery(projectsQueries.infinite())
 
   return (
     <div>

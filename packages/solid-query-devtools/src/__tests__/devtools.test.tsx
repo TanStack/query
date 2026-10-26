@@ -118,11 +118,11 @@ describe('SolidQueryDevtools', () => {
     expect(setTheme).toHaveBeenCalledWith('dark')
   })
 
-  it('should default "theme" to "system" when the prop is omitted', () => {
+  it('should forward an undefined "theme" to the devtools instance when the prop is omitted', () => {
     const setTheme = vi.spyOn(TanstackQueryDevtools.prototype, 'setTheme')
     render(() => <SolidQueryDevtools client={queryClient} />)
 
-    expect(setTheme).toHaveBeenCalledWith('system')
+    expect(setTheme).toHaveBeenCalledWith(undefined)
   })
 
   it('should forward the resolved "QueryClient" via "setClient"', () => {
@@ -224,11 +224,11 @@ describe('SolidQueryDevtools', () => {
     ))
     unmountComponent()
 
-    expect(unmount).toHaveBeenCalled()
+    expect(unmount).toHaveBeenCalledWith()
   })
 
   it('should return null in non-development environments', async () => {
-    vi.doMock('solid-js/web', async (importOriginal) => {
+    vi.doMock(import('solid-js/web'), async (importOriginal) => {
       const actual = await importOriginal()
       return Object.assign({}, actual, { isDev: false })
     })

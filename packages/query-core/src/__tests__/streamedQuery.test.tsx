@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { streamedQuery } from '../streamedQuery'
 import { QueryClient, QueryObserver } from '..'
 
@@ -30,7 +30,7 @@ describe('streamedQuery', () => {
   }
 
   it('should stream data from an AsyncIterable', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
@@ -67,7 +67,7 @@ describe('streamedQuery', () => {
   })
 
   it('should allow Arrays to be returned from the stream', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
@@ -115,7 +115,7 @@ describe('streamedQuery', () => {
   })
 
   it('should handle empty streams', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -141,7 +141,7 @@ describe('streamedQuery', () => {
   })
 
   it('should replace on refetch', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
@@ -186,7 +186,7 @@ describe('streamedQuery', () => {
   })
 
   it('should support refetchMode append', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
@@ -232,7 +232,7 @@ describe('streamedQuery', () => {
   })
 
   it('should support refetchMode replace', async () => {
-    const key = queryKey()
+    const key = createKey()
     let offset = 0
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -281,15 +281,14 @@ describe('streamedQuery', () => {
   })
 
   it('should abort ongoing stream when refetch happens', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
         streamFn: (context) => {
           // just consume the signal
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-          const numbers = context.signal ? 3 : 0
-          return createAsyncNumberGenerator(numbers)
+          void context.signal
+          return createAsyncNumberGenerator(3)
         },
         refetchMode: 'append',
       }),
@@ -332,15 +331,14 @@ describe('streamedQuery', () => {
   })
 
   it('should abort when unsubscribed', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
         streamFn: (context) => {
           // just consume the signal
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-          const numbers = context.signal ? 3 : 0
-          return createAsyncNumberGenerator(numbers)
+          void context.signal
+          return createAsyncNumberGenerator(3)
         },
       }),
     })
@@ -368,7 +366,7 @@ describe('streamedQuery', () => {
   })
 
   it('should not abort when signal not consumed', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
@@ -399,7 +397,7 @@ describe('streamedQuery', () => {
   })
 
   it('should support custom reducer', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -409,8 +407,7 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-        initialValue: {} as Record<number, boolean>,
+        initialValue: {},
       }),
     })
 
@@ -434,7 +431,7 @@ describe('streamedQuery', () => {
   })
 
   it('should support custom reducer with initialValue', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
@@ -443,11 +440,10 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         initialValue: {
           10: true,
           11: true,
-        } as Record<number, boolean>,
+        },
       }),
     })
 
@@ -473,13 +469,13 @@ describe('streamedQuery', () => {
   })
 
   it('should preserve null returned by a custom reducer', async () => {
-    const key = queryKey()
+    const key = createKey()
     const data = await queryClient.query({
       queryKey: key,
       queryFn: streamedQuery<number, string | null>({
         initialValue: 'initial',
         reducer: () => null,
-        // eslint-disable-next-line @typescript-eslint/require-await
+        // oxlint-disable-next-line typescript/require-await -- 'streamFn' needs an async iterable, and this generator has nothing to await
         streamFn: async function* () {
           yield 1
         },
@@ -490,7 +486,7 @@ describe('streamedQuery', () => {
   })
 
   it('should keep error state on reset refetch when initialData is defined', async () => {
-    const key = queryKey()
+    const key = createKey()
     let shouldError = false
     const error = new Error('stream failed')
 
@@ -500,7 +496,7 @@ describe('streamedQuery', () => {
       retry: false,
       queryFn: streamedQuery({
         refetchMode: 'reset',
-        // eslint-disable-next-line @typescript-eslint/require-await
+        // oxlint-disable-next-line typescript/require-await -- 'streamFn' needs an async iterable, and this generator has nothing to await
         streamFn: async function* () {
           if (shouldError) {
             throw error
@@ -540,7 +536,7 @@ describe('streamedQuery', () => {
   })
 
   it('should treat a fetch after an initial error as a refetch for reset mode', async () => {
-    const key = queryKey()
+    const key = createKey()
     let shouldError = true
     const error = new Error('stream failed')
 
@@ -590,7 +586,7 @@ describe('streamedQuery', () => {
   })
 
   it('should reset to initialData on refetch after an initial error', async () => {
-    const key = queryKey()
+    const key = createKey()
     let shouldError = true
     const error = new Error('stream failed')
 
@@ -641,13 +637,13 @@ describe('streamedQuery', () => {
   })
 
   it('should not call reducer twice when refetchMode is replace', async () => {
-    const key = queryKey()
+    const key = createKey()
     const arr: Array<number> = []
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        // eslint-disable-next-line @typescript-eslint/require-await
+        // oxlint-disable-next-line typescript/require-await -- 'streamFn' needs an async iterable, and this generator has nothing to await
         streamFn: async function* () {
           const v = [1, 2, 3]
           yield* v
@@ -663,13 +659,13 @@ describe('streamedQuery', () => {
 
     const unsubscribe = observer.subscribe(vi.fn())
     await vi.advanceTimersByTimeAsync(0)
-    expect(arr).toEqual([1, 2, 3])
-    expect(observer.getCurrentResult().data).toEqual([1, 2, 3])
+    expect(arr).toStrictEqual([1, 2, 3])
+    expect(observer.getCurrentResult().data).toStrictEqual([1, 2, 3])
 
     void observer.refetch()
     await vi.advanceTimersByTimeAsync(0)
-    expect(arr).toEqual([1, 2, 3, 1, 2, 3])
-    expect(observer.getCurrentResult().data).toEqual([1, 2, 3])
+    expect(arr).toStrictEqual([1, 2, 3, 1, 2, 3])
+    expect(observer.getCurrentResult().data).toStrictEqual([1, 2, 3])
 
     unsubscribe()
   })

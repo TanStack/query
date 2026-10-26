@@ -1,32 +1,14 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { useQuery } from '@tanstack/vue-query'
+<script setup lang="ts">
+import { useQuery, useQueryClient } from '@tanstack/vue-query'
+import { postsQueries } from './services/posts/queries'
 
-import type { Post } from './types'
+defineEmits<{ setPostId: [id: number] }>()
 
-const fetcher = async (): Promise<Post[]> =>
-  await fetch('https://jsonplaceholder.typicode.com/posts').then((response) =>
-    response.json(),
-  )
+const queryClient = useQueryClient()
 
-export default defineComponent({
-  name: 'PostsList',
-  props: {
-    isVisited: {
-      type: Function,
-      required: true,
-    },
-  },
-  emits: ['setPostId'],
-  setup() {
-    const { isPending, isError, isFetching, data, error, refetch } = useQuery({
-      queryKey: ['posts'],
-      queryFn: fetcher,
-    })
-
-    return { isPending, isError, isFetching, data, error, refetch }
-  },
-})
+const { isPending, isError, isFetching, data, error } = useQuery(
+  postsQueries.list(),
+)
 </script>
 
 <template>
@@ -39,15 +21,25 @@ export default defineComponent({
         <a
           @click="$emit('setPostId', item.id)"
           href="#"
-          :class="{ visited: isVisited(item.id) }"
+          :class="{
+            visited: queryClient.getQueryData(
+              postsQueries.detail(item.id).queryKey,
+            ),
+          }"
           >{{ item.title }}</a
         >
       </li>
     </ul>
+    <div v-if="isFetching" class="update">Background Updating...</div>
   </div>
 </template>
 
 <style scoped>
+.update {
+  font-weight: bold;
+  color: green;
+}
+
 .visited {
   font-weight: bold;
   color: green;

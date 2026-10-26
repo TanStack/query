@@ -4,11 +4,12 @@ import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { postsQueries } from './services/posts/queries'
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 })
@@ -17,29 +18,13 @@ const persister = createAsyncStoragePersister({
   storage: window.localStorage,
 })
 
-type Post = {
-  id: number
-  title: string
-  body: string
-}
-
-function usePosts() {
-  return useQuery({
-    queryKey: ['posts'],
-    queryFn: async (): Promise<Array<Post>> => {
-      const response = await fetch('https://jsonplaceholder.typicode.com/posts')
-      return await response.json()
-    },
-  })
-}
-
 function Posts({
   setPostId,
 }: {
   setPostId: React.Dispatch<React.SetStateAction<number>>
 }) {
   const queryClient = useQueryClient()
-  const { status, data, error, isFetching } = usePosts()
+  const { status, data, error, isFetching } = useQuery(postsQueries.list())
 
   return (
     <div>
@@ -60,7 +45,9 @@ function Posts({
                     style={
                       // We can access the query data here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData(['post', post.id])
+                      queryClient.getQueryData(
+                        postsQueries.detail(post.id).queryKey,
+                      )
                         ? {
                             fontWeight: 'bold',
                             color: 'green',
@@ -81,21 +68,6 @@ function Posts({
   )
 }
 
-const getPostById = async (id: number): Promise<Post> => {
-  const response = await fetch(
-    `https://jsonplaceholder.typicode.com/posts/${id}`,
-  )
-  return await response.json()
-}
-
-function usePost(postId: number) {
-  return useQuery({
-    queryKey: ['post', postId],
-    queryFn: () => getPostById(postId),
-    enabled: !!postId,
-  })
-}
-
 function Post({
   postId,
   setPostId,
@@ -103,7 +75,9 @@ function Post({
   postId: number
   setPostId: React.Dispatch<React.SetStateAction<number>>
 }) {
-  const { status, data, error, isFetching } = usePost(postId)
+  const { status, data, error, isFetching } = useQuery(
+    postsQueries.detail(postId),
+  )
 
   return (
     <div>
@@ -112,7 +86,7 @@ function Post({
           Back
         </a>
       </div>
-      {!postId || status === 'pending' ? (
+      {status === 'pending' ? (
         'Loading...'
       ) : status === 'error' ? (
         <span>Error: {error.message}</span>

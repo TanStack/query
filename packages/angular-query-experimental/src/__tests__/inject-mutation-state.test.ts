@@ -8,7 +8,7 @@ import {
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectMutation,
@@ -37,7 +37,7 @@ describe('injectMutationState', () => {
 
   describe('injectMutationState', () => {
     it('should return variables after calling mutate 1', () => {
-      const mutationKey = queryKey()
+      const mutationKey = createKey()
       const variables = 'foo123'
 
       const mutation = TestBed.runInInjectionContext(() => {
@@ -56,12 +56,12 @@ describe('injectMutationState', () => {
         }))
       })
 
-      expect(mutationState()).toEqual([variables])
+      expect(mutationState()).toStrictEqual([variables])
     })
 
     it('should update injectMutationState when reactive options change', () => {
-      const mutationKey1 = queryKey()
-      const mutationKey2 = queryKey()
+      const mutationKey1 = createKey()
+      const mutationKey2 = createKey()
       const variables1 = 'foo123'
       const variables2 = 'bar234'
 
@@ -90,15 +90,15 @@ describe('injectMutationState', () => {
         }))
       })
 
-      expect(mutationState()).toEqual([variables1])
+      expect(mutationState()).toStrictEqual([variables1])
 
       filterKey.set(mutationKey2)
-      expect(mutationState()).toEqual([variables2])
+      expect(mutationState()).toStrictEqual([variables2])
     })
 
     it('should return variables after calling mutate 2', () => {
       queryClient.clear()
-      const mutationKey = queryKey()
+      const mutationKey = createKey()
       const variables = 'bar234'
 
       const mutation = TestBed.runInInjectionContext(() => {
@@ -114,7 +114,7 @@ describe('injectMutationState', () => {
         return injectMutationState()
       })
 
-      expect(mutationState()[0]?.variables).toEqual(variables)
+      expect(mutationState()[0]?.variables).toStrictEqual(variables)
     })
 
     it('should support required signal inputs', async () => {
@@ -165,13 +165,13 @@ describe('injectMutationState', () => {
       let spans = debugElement
         .queryAll(By.css('span'))
         .map((span) => span.nativeNode.textContent)
-      expect(spans).toEqual(['pending', 'pending'])
+      expect(spans).toStrictEqual(['pending', 'pending'])
       await vi.advanceTimersByTimeAsync(11)
       fixture.detectChanges()
       spans = debugElement
         .queryAll(By.css('span'))
         .map((span) => span.nativeNode.textContent)
-      expect(spans).toEqual(['success', 'error'])
+      expect(spans).toStrictEqual(['success', 'error'])
     })
 
     describe('injection context', () => {

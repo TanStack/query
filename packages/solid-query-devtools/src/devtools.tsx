@@ -17,14 +17,12 @@ interface DevtoolsOptions {
   /**
    * The position of the TanStack logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
-   *
    * @defaultValue bottom-right
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
    * The position of the Solid Query devtools panel.
    * 'top' | 'bottom' | 'left' | 'right'
-   *
    * @defaultValue bottom
    */
   position?: DevtoolsPosition
@@ -41,7 +39,8 @@ interface DevtoolsOptions {
    */
   styleNonce?: string
   /**
-   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
+   * within the shadow DOM instead of within the head tag in the light DOM.
    */
   shadowDOMTarget?: ShadowRoot
   /**
@@ -50,12 +49,18 @@ interface DevtoolsOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   *
-   * @defaultValue system
+   * This overrides the theme selected in the devtools Settings menu. When omitted, the
+   * selected theme is used, or `'system'` if none is selected.
    */
   theme?: Theme
 }
 
+/**
+ * Renders the TanStack Query devtools, with a toggle button that opens them, for the given or
+ * nearest `QueryClient`.
+ * @param props - The devtools options.
+ * @returns The element the devtools are mounted in.
+ */
 export default function SolidQueryDevtools(props: DevtoolsOptions) {
   const queryClient = useQueryClient(props.client)
   const client = createMemo(() => queryClient)
@@ -102,7 +107,7 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
   })
 
   createEffect(() => {
-    devtools.setTheme(props.theme || 'system')
+    devtools.setTheme(props.theme)
   })
 
   onMount(() => {
@@ -110,5 +115,5 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
     onCleanup(() => devtools.unmount())
   })
 
-  return <div class="tsqd-parent-container" ref={ref}></div>
+  return <div class="tsqd-parent-container" ref={ref} />
 }

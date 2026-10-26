@@ -4,36 +4,33 @@
     createQuery,
     createMutation,
   } from '@tanstack/svelte-query'
+  import { todosMutations, todosQueries } from '$lib/services/todos/queries'
 
   let intervalMs = $state(1000)
   let value = $state<string>('')
 
   const client = useQueryClient()
 
-  const endpoint = '/api/data'
-
-  const todos = createQuery<{ items: string[] }>(() => ({
-    queryKey: ['refetch'],
-    queryFn: async () => await fetch(endpoint).then((r) => r.json()),
+  const todos = createQuery(() => ({
+    ...todosQueries.list(),
     // Refetch the data every second
     refetchInterval: intervalMs,
   }))
 
   const addMutation = createMutation(() => ({
-    mutationFn: (value: string) =>
-      fetch(`${endpoint}?add=${encodeURIComponent(value)}`).then((r) =>
-        r.json(),
-      ),
-    onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
+    ...todosMutations.create(),
+    onSuccess: () =>
+      client.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
   }))
 
   const clearMutation = createMutation(() => ({
-    mutationFn: () => fetch(`${endpoint}?clear=1`).then((r) => r.json()),
-    onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
+    ...todosMutations.deleteAll(),
+    onSuccess: () =>
+      client.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
   }))
 </script>
 
-<h1>Auto Refetch with stale-time set to {intervalMs}ms</h1>
+<h1>Auto Refetch with refetchInterval set to {intervalMs}ms</h1>
 
 <p>
   This example is best experienced on your own machine, where you can open
@@ -42,9 +39,9 @@
 </p>
 
 <label>
-  Query Interval speed (ms):{' '}
+  Query Interval speed (ms):
   <div class="flex">
-    <input bind:value={intervalMs} type="number" step="100" />{' '}
+    <input bind:value={intervalMs} type="number" step="100" />
 
     <span
       style="display:inline-block; 
@@ -80,7 +77,7 @@
 {/if}
 {#if todos.isSuccess}
   <ul>
-    {#each todos.data.items as item}
+    {#each todos.data.items as item (item)}
       <li>{item}</li>
     {/each}
   </ul>

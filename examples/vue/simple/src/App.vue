@@ -1,37 +1,17 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+import { reposQueries } from './services/repos/queries'
 
-export default defineComponent({
-  name: 'App',
-  components: { VueQueryDevtools },
-  setup() {
-    const { data, error, isFetching, isPending } = useQuery({
-      queryKey: ['repoData'],
-      async queryFn() {
-        return await fetch('https://api.github.com/repos/Tanstack/query').then(
-          (response) => response.json(),
-        )
-      },
-    })
-
-    return {
-      data,
-      error,
-      isFetching,
-      isPending,
-    }
-  },
-})
+const { data, error, isFetching, isPending } = useQuery(reposQueries.detail())
 </script>
 
 <template>
   <template v-if="isPending"> Loading... </template>
   <template v-else-if="error">
-    'An error has occurred: {{ error.message }}
+    An error has occurred: {{ error.message }}
   </template>
-  <template v-else>
+  <template v-else-if="data">
     <h1>{{ data.name }}</h1>
     <p>{{ data.description }}</p>
     <strong>👀 {{ data.subscribers_count }}</strong>

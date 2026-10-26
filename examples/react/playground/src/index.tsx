@@ -8,38 +8,49 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { serverConfig } from './services/todos/api'
+import { todosMutations, todosQueries } from './services/todos/queries'
+import type { Todo } from './services/todos/types'
 import './styles.css'
 
-let id = 0
-let list = [
-  'apple',
-  'banana',
-  'pineapple',
-  'grapefruit',
-  'dragonfruit',
-  'grapes',
-].map((d) => ({ id: id++, name: d, notes: 'These are some notes' }))
+const initialStaleTime = 1000
+const initialGcTime = 3000
 
-type Todos = typeof list
-type Todo = Todos[0]
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: initialStaleTime,
+      gcTime: initialGcTime,
+    },
+  },
+})
 
-let errorRate = 0.05
-let queryTimeMin = 1000
-let queryTimeMax = 2000
-
-const queryClient = new QueryClient()
+function onNumberChange(setValue: (value: number) => void) {
+  return (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.valueAsNumber
+    if (!Number.isNaN(value)) {
+      setValue(value)
+    }
+  }
+}
 
 function Root() {
-  const [staleTime, setStaleTime] = React.useState(1000)
-  const [gcTime, setGcTime] = React.useState(3000)
-  const [localErrorRate, setErrorRate] = React.useState(errorRate)
-  const [localFetchTimeMin, setLocalFetchTimeMin] = React.useState(queryTimeMin)
-  const [localFetchTimeMax, setLocalFetchTimeMax] = React.useState(queryTimeMax)
+  const [staleTime, setStaleTime] = React.useState(initialStaleTime)
+  const [gcTime, setGcTime] = React.useState(initialGcTime)
+  const [localErrorRate, setLocalErrorRate] = React.useState(
+    serverConfig.errorRate,
+  )
+  const [localFetchTimeMin, setLocalFetchTimeMin] = React.useState(
+    serverConfig.queryTimeMin,
+  )
+  const [localFetchTimeMax, setLocalFetchTimeMax] = React.useState(
+    serverConfig.queryTimeMax,
+  )
 
   React.useEffect(() => {
-    errorRate = localErrorRate
-    queryTimeMin = localFetchTimeMin
-    queryTimeMax = localFetchTimeMax
+    serverConfig.errorRate = localErrorRate
+    serverConfig.queryTimeMin = localFetchTimeMin
+    serverConfig.queryTimeMax = localFetchTimeMax
   }, [localErrorRate, localFetchTimeMax, localFetchTimeMin])
 
   React.useEffect(() => {
@@ -63,8 +74,8 @@ function Root() {
           type="number"
           min="0"
           step="1000"
-          value={staleTime}
-          onChange={(e) => setStaleTime(parseFloat(e.target.value))}
+          defaultValue={staleTime}
+          onChange={onNumberChange(setStaleTime)}
           style={{ width: '100px' }}
         />
       </div>
@@ -74,8 +85,8 @@ function Root() {
           type="number"
           min="0"
           step="1000"
-          value={gcTime}
-          onChange={(e) => setGcTime(parseFloat(e.target.value))}
+          defaultValue={gcTime}
+          onChange={onNumberChange(setGcTime)}
           style={{ width: '100px' }}
         />
       </div>
@@ -87,8 +98,8 @@ function Root() {
           min="0"
           max="1"
           step=".05"
-          value={localErrorRate}
-          onChange={(e) => setErrorRate(parseFloat(e.target.value))}
+          defaultValue={localErrorRate}
+          onChange={onNumberChange(setLocalErrorRate)}
           style={{ width: '100px' }}
         />
       </div>
@@ -98,8 +109,8 @@ function Root() {
           type="number"
           min="1"
           step="500"
-          value={localFetchTimeMin}
-          onChange={(e) => setLocalFetchTimeMin(parseFloat(e.target.value))}
+          defaultValue={localFetchTimeMin}
+          onChange={onNumberChange(setLocalFetchTimeMin)}
           style={{ width: '60px' }}
         />{' '}
       </div>
@@ -109,8 +120,8 @@ function Root() {
           type="number"
           min="1"
           step="500"
-          value={localFetchTimeMax}
-          onChange={(e) => setLocalFetchTimeMax(parseFloat(e.target.value))}
+          defaultValue={localFetchTimeMax}
+          onChange={onNumberChange(setLocalFetchTimeMax)}
           style={{ width: '60px' }}
         />
       </div>
@@ -126,7 +137,6 @@ function App() {
   const queryClient = useQueryClient()
   const [editingIndex, setEditingIndex] = React.useState<number | null>(null)
   const [views, setViews] = React.useState(['', 'fruit', 'grape'])
-  // const [views, setViews] = React.useState([""]);
 
   return (
     <div className="App">
@@ -139,13 +149,7 @@ function App() {
       <hr />
       {views.map((view, index) => (
         <div key={index}>
-          <Todos
-            initialFilter={view}
-            setEditingIndex={setEditingIndex}
-            onRemove={() => {
-              setViews((old) => [...old, ''])
-            }}
-          />
+          <Todos initialFilter={view} setEditingIndex={setEditingIndex} />
           <br />
         </div>
       ))}
@@ -160,6 +164,7 @@ function App() {
       {editingIndex !== null ? (
         <>
           <EditTodo
+            key={editingIndex}
             editingIndex={editingIndex}
             setEditingIndex={setEditingIndex}
           />
@@ -180,10 +185,9 @@ function Todos({
 }) {
   const [filter, setFilter] = React.useState(initialFilter)
 
-  const { status, data, isFetching, error, failureCount, refetch } = useQuery({
-    queryKey: ['todos', { filter }],
-    queryFn: fetchTodos,
-  })
+  const { status, data, isFetching, error, failureCount, refetch } = useQuery(
+    todosQueries.list(filter),
+  )
 
   return (
     <div>
@@ -204,16 +208,12 @@ function Todos({
       ) : (
         <>
           <ul>
-            {data
-              ? data.map((todo) => (
-                  <li key={todo.id}>
-                    {todo.name}{' '}
-                    <button onClick={() => setEditingIndex(todo.id)}>
-                      Edit
-                    </button>
-                  </li>
-                ))
-              : null}
+            {data.map((todo) => (
+              <li key={todo.id}>
+                {todo.name}{' '}
+                <button onClick={() => setEditingIndex(todo.id)}>Edit</button>
+              </li>
+            ))}
           </ul>
           <div>
             {isFetching ? (
@@ -239,34 +239,21 @@ function EditTodo({
 }) {
   const queryClient = useQueryClient()
 
-  // Don't attempt to query until editingIndex is truthy
-  const { status, data, isFetching, error, failureCount, refetch } = useQuery({
-    queryKey: ['todo', { id: editingIndex }],
-    queryFn: () => fetchTodoById({ id: editingIndex }),
-  })
+  const { status, data, isFetching, failureCount, refetch } = useQuery(
+    todosQueries.detail(editingIndex),
+  )
 
-  const [todo, setTodo] = React.useState(data || {})
-
-  React.useEffect(() => {
-    if (editingIndex !== null && data) {
-      setTodo(data)
-    } else {
-      setTodo({})
-    }
-  }, [data, editingIndex])
+  const [draft, setDraft] = React.useState<Partial<Omit<Todo, 'id'>>>({})
 
   const saveMutation = useMutation({
-    mutationFn: patchTodo,
-    onSuccess: (data) => {
+    ...todosMutations.update(),
+    onSuccess: (todo) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
-      queryClient.setQueryData(['todo', { id: editingIndex }], data)
+      queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
+      queryClient.setQueryData(todosQueries.detail(editingIndex).queryKey, todo)
+      setDraft({})
     },
   })
-
-  const onSave = () => {
-    saveMutation.mutate(todo)
-  }
 
   const disableEditSave =
     status === 'pending' || saveMutation.status === 'pending'
@@ -284,7 +271,7 @@ function EditTodo({
       </div>
       {status === 'pending' ? (
         <span>Loading... (Attempt: {failureCount + 1})</span>
-      ) : error ? (
+      ) : status === 'error' ? (
         <span>
           Error! <button onClick={() => refetch()}>Retry</button>
         </span>
@@ -293,10 +280,9 @@ function EditTodo({
           <label>
             Name:{' '}
             <input
-              value={todo.name}
+              value={draft.name ?? data.name}
               onChange={(e) =>
-                e.persist() ||
-                setTodo((old) => ({ ...old, name: e.target.value }))
+                setDraft((old) => ({ ...old, name: e.target.value }))
               }
               disabled={disableEditSave}
             />
@@ -304,16 +290,18 @@ function EditTodo({
           <label>
             Notes:{' '}
             <input
-              value={todo.notes}
+              value={draft.notes ?? data.notes}
               onChange={(e) =>
-                e.persist() ||
-                setTodo((old) => ({ ...old, notes: e.target.value }))
+                setDraft((old) => ({ ...old, notes: e.target.value }))
               }
               disabled={disableEditSave}
             />
           </label>
           <div>
-            <button onClick={onSave} disabled={disableEditSave}>
+            <button
+              onClick={() => saveMutation.mutate({ ...data, ...draft })}
+              disabled={disableEditSave}
+            >
               Save
             </button>
           </div>
@@ -322,7 +310,9 @@ function EditTodo({
               ? 'Saving...'
               : saveMutation.status === 'error'
                 ? saveMutation.error.message
-                : 'Saved!'}
+                : saveMutation.status === 'success'
+                  ? 'Saved!'
+                  : null}
           </div>
           <div>
             {isFetching ? (
@@ -344,9 +334,9 @@ function AddTodo() {
   const [name, setName] = React.useState('')
 
   const addMutation = useMutation({
-    mutationFn: postTodo,
+    ...todosMutations.create(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
+      queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
     },
   })
 
@@ -370,91 +360,12 @@ function AddTodo() {
           ? 'Saving...'
           : addMutation.status === 'error'
             ? addMutation.error.message
-            : 'Saved!'}
+            : addMutation.status === 'success'
+              ? 'Saved!'
+              : null}
       </div>
     </div>
   )
-}
-
-function fetchTodos({ signal, queryKey: [, { filter }] }): Promise<Todos> {
-  console.info('fetchTodos', { filter })
-
-  if (signal) {
-    signal.addEventListener('abort', () => {
-      console.info('cancelled', filter)
-    })
-  }
-
-  return new Promise((resolve, reject) => {
-    setTimeout(
-      () => {
-        if (Math.random() < errorRate) {
-          return reject(
-            new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2)),
-          )
-        }
-        resolve(list.filter((d) => d.name.includes(filter)))
-      },
-      queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin),
-    )
-  })
-}
-
-function fetchTodoById({ id }: { id: number }): Promise<Todo> {
-  console.info('fetchTodoById', { id })
-  return new Promise((resolve, reject) => {
-    setTimeout(
-      () => {
-        if (Math.random() < errorRate) {
-          return reject(
-            new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
-          )
-        }
-        resolve(list.find((d) => d.id === id))
-      },
-      queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin),
-    )
-  })
-}
-
-function postTodo({ name, notes }: Omit<Todo, 'id'>) {
-  console.info('postTodo', { name, notes })
-  return new Promise((resolve, reject) => {
-    setTimeout(
-      () => {
-        if (Math.random() < errorRate) {
-          return reject(
-            new Error(JSON.stringify({ postTodo: { name, notes } }, null, 2)),
-          )
-        }
-        const todo = { name, notes, id: id++ }
-        list = [...list, todo]
-        resolve(todo)
-      },
-      queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin),
-    )
-  })
-}
-
-function patchTodo(todo?: Todo): Promise<Todo> {
-  console.info('patchTodo', todo)
-  return new Promise((resolve, reject) => {
-    setTimeout(
-      () => {
-        if (Math.random() < errorRate) {
-          return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)))
-        }
-        list = list.map((d) => {
-          if (d.id === todo.id) {
-            return todo
-          }
-          return d
-        })
-        resolve(todo)
-      },
-      queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin),
-    )
-  })
 }
 
 const rootElement = document.getElementById('root')

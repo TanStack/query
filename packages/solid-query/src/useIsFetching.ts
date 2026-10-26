@@ -7,13 +7,11 @@ import type { Accessor } from 'solid-js'
 /**
  * The `useIsFetching` primitive returns the `number` of the queries that your application is loading or fetching
  * in the background (useful for app-wide loading indicators).
- *
  * @param filters - An accessor returning the {@link QueryFilters} to narrow down the matched queries.
  * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns An accessor for the `number` of the queries that your application is currently loading or fetching
  * in the background.
- *
  * @example
  * ```tsx
  * import { useIsFetching } from '@tanstack/solid-query'
@@ -27,7 +25,7 @@ import type { Accessor } from 'solid-js'
  * ```
  */
 export function useIsFetching(
-  filters?: Accessor<QueryFilters>,
+  filters?: Accessor<Omit<QueryFilters, 'fetchStatus'>>,
   queryClient?: Accessor<QueryClient>,
 ): Accessor<number> {
   const resolveClient = useQueryClientResolver(queryClient)

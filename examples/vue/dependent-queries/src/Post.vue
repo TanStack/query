@@ -1,51 +1,23 @@
-<script lang="ts">
-import { computed, defineComponent } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
+import { authorsQueries } from './services/authors/queries'
+import { postsQueries } from './services/posts/queries'
 
-import { Author, Post } from './types'
+const props = defineProps<{ postId: number }>()
+defineEmits<{ setPostId: [id: number] }>()
 
-const fetchPost = async (id: number): Promise<Post> =>
-  await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(
-    (response) => response.json(),
-  )
+const {
+  isPending,
+  isError,
+  isFetching,
+  data: post,
+  error,
+} = useQuery(() => postsQueries.detail(props.postId))
 
-const fetchAuthor = async (id: number): Promise<Author> =>
-  await fetch(`https://jsonplaceholder.typicode.com/users/${id}`).then(
-    (response) => response.json(),
-  )
+const authorId = computed(() => post.value?.userId)
 
-export default defineComponent({
-  name: 'PostDetails',
-  props: {
-    postId: {
-      type: Number,
-      required: true,
-    },
-  },
-  emits: ['setPostId'],
-  setup(props) {
-    const {
-      isPending,
-      isError,
-      isFetching,
-      data: post,
-      error,
-    } = useQuery({
-      queryKey: ['post', () => props.postId],
-      queryFn: () => fetchPost(props.postId),
-    })
-
-    const authorId = computed(() => post.value?.userId)
-
-    const { data: author } = useQuery({
-      queryKey: ['author', authorId],
-      queryFn: ({ queryKey: [, id] }) => fetchAuthor(id),
-      enabled: computed(() => !!authorId.value),
-    })
-
-    return { isPending, isError, isFetching, post, error, author }
-  },
-})
+const { data: author } = useQuery(() => authorsQueries.detail(authorId.value))
 </script>
 
 <template>

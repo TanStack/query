@@ -11,7 +11,7 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import { fetchProjects } from './queries'
+import { projectsQueries } from './services/projects/queries'
 
 import Button from './components/Button'
 
@@ -43,17 +43,10 @@ function Example() {
     <>
       <Button
         onClick={() => {
-          setShowProjects((old) => {
-            if (!old) {
-              queryClient
-                .query({
-                  queryKey: ['projects'],
-                  queryFn: fetchProjects,
-                })
-                .catch(noop)
-            }
-            return !old
-          })
+          if (!showProjects) {
+            queryClient.query(projectsQueries.list()).catch(noop)
+          }
+          setShowProjects((old) => !old)
         }}
       >
         {showProjects ? 'Hide Projects' : 'Show Projects'}

@@ -1,10 +1,4 @@
 import { noop, notifyManager } from '@tanstack/query-core'
-import type {
-  QueryClient,
-  QueryKey,
-  QueryObserver,
-  QueryObserverResult,
-} from '@tanstack/query-core'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 
 import { useIsRestoring } from './IsRestoringProvider'
@@ -20,9 +14,28 @@ import {
   fetchOptimistic,
   shouldSuspend,
 } from './suspense'
-import type { UseBaseQueryOptions } from './types'
 import { useSyncExternalStore } from './utils'
+import type { UseBaseQueryOptions } from './types'
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 
+/**
+ * Base implementation shared by `useQuery`, `useInfiniteQuery`, `useSuspenseQuery`, and
+ * `useSuspenseInfiniteQuery`.
+ * @param options - The options passed to the calling hook.
+ * @param Observer - The observer class from query-core (`QueryObserver` or
+ * `InfiniteQueryObserver`).
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest
+ * context will be used.
+ * @returns The query result, tracking which properties are read unless `notifyOnChangeProps` is
+ * set.
+ * @throws {Error} If `options` is not an object (outside production), or the query error when it should be
+ * thrown to the nearest error boundary (see `throwOnError`). While suspending, it throws a promise instead.
+ */
 export function useBaseQuery<
   TQueryFnData,
   TError,
@@ -67,10 +80,14 @@ export function useBaseQuery<
     }
   }
 
+  const subscribed = options.subscribed !== false
+
   // Make sure results are optimistically set in fetching state before subscribing or updating options
   defaultedOptions._optimisticResults = isRestoring
     ? 'isRestoring'
-    : 'optimistic'
+    : subscribed
+      ? 'optimistic'
+      : undefined
 
   ensureSuspenseTimers(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
@@ -88,7 +105,7 @@ export function useBaseQuery<
   // note: this must be called before useSyncExternalStore
   const result = observer.getOptimisticResult(defaultedOptions)
 
-  const shouldSubscribe = !isRestoring && options.subscribed !== false
+  const shouldSubscribe = !isRestoring && subscribed
   useSyncExternalStore(
     useCallback(
       (onStoreChange) => {

@@ -1,13 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Output,
   inject,
+  output,
 } from '@angular/core'
 import { QueryClient, injectQuery } from '@tanstack/angular-query-experimental'
-import { lastValueFrom } from 'rxjs'
-import { PostsService } from '../services/posts-service'
+import { PostsQueries } from '../services/posts/queries'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,13 +13,9 @@ import { PostsService } from '../services/posts-service'
   templateUrl: './posts.component.html',
 })
 export class PostsComponent {
-  queryClient = inject(QueryClient)
-  #postsService = inject(PostsService)
+  readonly queryClient = inject(QueryClient)
+  readonly postsQueries = inject(PostsQueries)
+  readonly setPostId = output<number>()
 
-  @Output() setPostId = new EventEmitter<number>()
-
-  postsQuery = injectQuery(() => ({
-    queryKey: ['posts'],
-    queryFn: () => lastValueFrom(this.#postsService.allPosts$()),
-  }))
+  readonly postsQuery = injectQuery(() => this.postsQueries.list())
 }

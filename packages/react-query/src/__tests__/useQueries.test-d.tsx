@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { skipToken } from '..'
 import { useQueries } from '../useQueries'
 import { queryOptions } from '../queryOptions'
@@ -9,9 +9,9 @@ import type { QueryFunctionContext } from '@tanstack/query-core'
 
 describe('useQueries', () => {
   describe('config object overload', () => {
-    it('TData should always be defined when initialData is provided as an object', () => {
+    it('should always define TData when initialData is provided as an object', () => {
       const query1 = {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => {
           return {
             wow: true,
@@ -23,13 +23,13 @@ describe('useQueries', () => {
       }
 
       const query2 = {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => 'Query Data',
         initialData: 'initial data',
       }
 
       const query3 = {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => 'Query Data',
       }
 
@@ -44,9 +44,9 @@ describe('useQueries', () => {
       expectTypeOf(query3Data).toEqualTypeOf<string | undefined>()
     })
 
-    it('TData should be defined when passed through queryOptions', () => {
+    it('should define TData when passed through queryOptions', () => {
       const options = queryOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => {
           return {
             wow: true,
@@ -65,13 +65,13 @@ describe('useQueries', () => {
 
     it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQueries', () => {
       const query1 = queryOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(1),
         select: (data) => data > 1,
       })
 
       const query2 = {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(1),
         select: (data: number) => data > 1,
       }
@@ -84,11 +84,11 @@ describe('useQueries', () => {
       expectTypeOf(query2Data).toEqualTypeOf<boolean | undefined>()
     })
 
-    it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+    it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
       const queryResults = useQueries({
         queries: [
           {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => {
               return {
                 wow: true,
@@ -115,7 +115,7 @@ describe('useQueries', () => {
             queries: [
               {
                 ...options,
-                queryKey: queryKey(),
+                queryKey: createKey(),
                 queryFn: () => Promise.resolve('data'),
               },
             ],
@@ -129,11 +129,11 @@ describe('useQueries', () => {
       })
     })
 
-    it('TData should have correct type when conditional skipToken is passed', () => {
+    it('should have correct TData type when conditional skipToken is passed', () => {
       const queryResults = useQueries({
         queries: [
           {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
           },
         ],
@@ -149,14 +149,14 @@ describe('useQueries', () => {
       const Queries1 = {
         get: () =>
           queryOptions({
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve(1),
           }),
       }
       const Queries2 = {
         get: () =>
           queryOptions({
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve(true),
           }),
       }
@@ -177,9 +177,9 @@ describe('useQueries', () => {
 
   describe('type parameters', () => {
     it('should handle type parameter - tuple of tuples', () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
+      const key3 = createKey()
 
       // @ts-expect-error (Page component is not rendered)
       function Page() {
@@ -290,9 +290,9 @@ describe('useQueries', () => {
     })
 
     it('should handle type parameter - tuple of objects', () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
+      const key3 = createKey()
 
       // @ts-expect-error (Page component is not rendered)
       function Page() {
@@ -451,7 +451,7 @@ describe('useQueries', () => {
         const result4 = useQueries({
           queries: [
             queryOptions({
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => 'string',
               select: (a) => {
                 expectTypeOf(a).toEqualTypeOf<string>()
@@ -459,7 +459,7 @@ describe('useQueries', () => {
               },
             }),
             queryOptions({
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => 'string',
               select: (a) => {
                 expectTypeOf(a).toEqualTypeOf<string>()
@@ -476,11 +476,11 @@ describe('useQueries', () => {
     })
 
     it('should handle array literal without type parameter to infer result type', () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
-      const key4 = queryKey()
-      const key5 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
+      const key3 = createKey()
+      const key4 = createKey()
+      const key5 = createKey()
 
       type BizError = { code: number }
       const throwOnError = (_error: BizError) => true
@@ -805,7 +805,7 @@ describe('useQueries', () => {
                 queryFn:
                   fn && fn !== skipToken
                     ? (ctx: QueryFunctionContext<TQueryKey>) => {
-                        // eslint-disable-next-line vitest/valid-expect
+                        // oxlint-disable-next-line vitest-js/valid-expect -- matchers cannot compare against an unresolved type parameter, so the type argument checks that 'ctx.queryKey' is assignable to 'TQueryKey'
                         expectTypeOf<TQueryKey>(ctx.queryKey)
                         return fn.call({}, ctx)
                       }
@@ -878,11 +878,11 @@ describe('useQueries', () => {
     // https://github.com/TanStack/query/issues/6556
 
     describe('without queryOptions (inline query object)', () => {
-      it('leaves the select argument as `unknown` without an annotation', () => {
+      it('should leave the select argument as `unknown` without an annotation', () => {
         useQueries({
           queries: [
             {
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => Promise.resolve(1),
               select: (data) => {
                 expectTypeOf(data).toBeUnknown()
@@ -894,11 +894,11 @@ describe('useQueries', () => {
         })
       })
 
-      it('infers the result when the select parameter is annotated', () => {
+      it('should infer the result when the select parameter is annotated', () => {
         const queryResults = useQueries({
           queries: [
             {
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => Promise.resolve(1),
               select: (data: number) => data.toFixed(),
             },
@@ -909,18 +909,18 @@ describe('useQueries', () => {
     })
 
     describe('with queryOptions passed directly', () => {
-      it('without select, infers the queryFn data as the result', () => {
+      it('should infer the queryFn data as the result without select', () => {
         const options = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
         })
         const queryResults = useQueries({ queries: [options] })
         expectTypeOf(queryResults[0].data).toEqualTypeOf<number | undefined>()
       })
 
-      it('with select, infers the select argument and the result', () => {
+      it('should infer the select argument and the result with select', () => {
         const options = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
           select: (data) => {
             expectTypeOf(data).toEqualTypeOf<number>()
@@ -931,9 +931,9 @@ describe('useQueries', () => {
         expectTypeOf(queryResults[0].data).toEqualTypeOf<string | undefined>()
       })
 
-      it('infers select when a base queryOptions is re-wrapped with queryOptions', () => {
+      it('should infer select when a base queryOptions is re-wrapped with queryOptions', () => {
         const baseOptions = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
         })
         const queryResults = useQueries({
@@ -952,9 +952,9 @@ describe('useQueries', () => {
         expectTypeOf(queryResults[1].data).toEqualTypeOf<number | undefined>()
       })
 
-      it('infers an overriding select when a queryOptions with a select is re-wrapped with queryOptions', () => {
+      it('should infer an overriding select when a queryOptions with a select is re-wrapped with queryOptions', () => {
         const baseOptions = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
           select: (data) => data + 1,
         })
@@ -974,9 +974,9 @@ describe('useQueries', () => {
     })
 
     describe('with queryOptions spread into an inline query object', () => {
-      it('without select in the factory, leaves an unannotated select as `unknown`', () => {
+      it('should leave an unannotated select as `unknown` without select in the factory', () => {
         const options = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
         })
         useQueries({
@@ -993,9 +993,9 @@ describe('useQueries', () => {
         })
       })
 
-      it('without select in the factory, an annotated select compiles', () => {
+      it('should compile an annotated select without select in the factory', () => {
         const options = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
         })
         const queryResults = useQueries({
@@ -1004,9 +1004,9 @@ describe('useQueries', () => {
         expectTypeOf(queryResults[0].data).toEqualTypeOf<string | undefined>()
       })
 
-      it('with select in the factory, leaves an unannotated overriding select as `unknown`', () => {
+      it('should leave an unannotated overriding select as `unknown` with select in the factory', () => {
         const options = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
           select: (data) => data + 1,
         })
@@ -1024,9 +1024,9 @@ describe('useQueries', () => {
         })
       })
 
-      it('with select in the factory, an annotated overriding select compiles', () => {
+      it('should compile an annotated overriding select with select in the factory', () => {
         const options = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
           select: (data) => data + 1,
         })

@@ -4,7 +4,7 @@ This example demonstrates **optimistic updates** with TanStack Query v5 in a Nex
 
 ## What it shows
 
-A todo list where items appear in the UI immediately after submission — before the server confirms. The server randomly fails ~30% of the time so you can observe automatic rollback behaviour.
+A todo list where items appear in the UI immediately after submission — before the server confirms. The server randomly fails ~30% of the time so you can observe automatic rollback behavior.
 
 Two approaches are shown side by side via a tab toggle:
 

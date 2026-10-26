@@ -1,4 +1,11 @@
-import { ErrorBoundary, Match, Suspense, Switch, children } from 'solid-js'
+import {
+  ErrorBoundary,
+  Match,
+  Suspense,
+  Switch,
+  children,
+  untrack,
+} from 'solid-js'
 import type { UseQueryResult } from '@tanstack/solid-query'
 import type { JSX } from 'solid-js'
 
@@ -11,7 +18,7 @@ export interface QueryBoundaryProps<T = unknown> {
   loadingFallback?: JSX.Element
 
   /**
-   * Triggered when fetching is complete, but the returned data was falsey.
+   * Triggered when fetching is complete, but the returned data was falsy.
    */
   notFoundFallback?: JSX.Element
 
@@ -21,7 +28,7 @@ export interface QueryBoundaryProps<T = unknown> {
   errorFallback?: (err: Error, retry: () => void) => JSX.Element
 
   /**
-   * Triggered when fetching is complete, and the returned data is not falsey.
+   * Triggered when fetching is complete, and the returned data is not falsy.
    */
   children: (data: Exclude<T, null | false | undefined>) => JSX.Element
 }
@@ -31,26 +38,21 @@ export interface QueryBoundaryProps<T = unknown> {
  * children (as a render prop) in a type-safe way.
  */
 export function QueryBoundary<T>(props: QueryBoundaryProps<T>) {
+  const retry = async (reset: () => void) => {
+    await untrack(() => props.query).refetch()
+    reset()
+  }
+
   return (
     <Suspense fallback={props.loadingFallback}>
       <ErrorBoundary
         fallback={(err: Error, reset) =>
           props.errorFallback ? (
-            props.errorFallback(err, async () => {
-              await props.query.refetch()
-              reset()
-            })
+            props.errorFallback(err, () => retry(reset))
           ) : (
             <div>
               <div class="error">{err.message}</div>
-              <button
-                onClick={async () => {
-                  await props.query.refetch()
-                  reset()
-                }}
-              >
-                retry
-              </button>
+              <button onClick={() => retry(reset)}>retry</button>
             </div>
           )
         }

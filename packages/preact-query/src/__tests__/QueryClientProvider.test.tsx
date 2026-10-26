@@ -1,6 +1,6 @@
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/preact'
-import { afterEach, beforeEach, describe, expect, vi, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
   QueryCache,
@@ -19,8 +19,8 @@ describe('QueryClientProvider', () => {
     vi.useRealTimers()
   })
 
-  it('sets a specific cache for all queries to use', async () => {
-    const key = queryKey()
+  it('should set a specific cache for all queries to use', async () => {
+    const key = createKey()
 
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
@@ -50,9 +50,9 @@ describe('QueryClientProvider', () => {
     expect(queryCache.find({ queryKey: key })?.state.data).toBe('test')
   })
 
-  it('allows multiple caches to be partitioned', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+  it('should allow multiple caches to be partitioned', async () => {
+    const key1 = createKey()
+    const key2 = createKey()
 
     const queryCache1 = new QueryCache()
     const queryCache2 = new QueryCache()
@@ -106,8 +106,8 @@ describe('QueryClientProvider', () => {
     expect(queryCache2.find({ queryKey: key2 })?.state.data).toBe('test2')
   })
 
-  it("uses defaultOptions for queries when they don't provide their own config", async () => {
-    const key = queryKey()
+  it("should use defaultOptions for queries when they don't provide their own config", async () => {
+    const key = createKey()
 
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({
@@ -146,9 +146,7 @@ describe('QueryClientProvider', () => {
 
   describe('useQueryClient', () => {
     it('should throw an error if no query client has been set', () => {
-      const consoleErrorMock = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+      vi.spyOn(console, 'error').mockReturnValue(undefined)
 
       function Page() {
         useQueryClient()
@@ -158,8 +156,6 @@ describe('QueryClientProvider', () => {
       expect(() => render(<Page />)).toThrow(
         'No QueryClient set, use QueryClientProvider to set one',
       )
-
-      consoleErrorMock.mockRestore()
     })
   })
 })

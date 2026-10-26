@@ -1,32 +1,13 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
+import { postsQueries } from './services/posts/queries'
 
-import { Post } from './types'
+const props = defineProps<{ postId: number }>()
+defineEmits<{ setPostId: [id: number] }>()
 
-const fetcher = async (id: number): Promise<Post> =>
-  await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(
-    (response) => response.json(),
-  )
-
-export default defineComponent({
-  name: 'PostDetails',
-  props: {
-    postId: {
-      type: Number,
-      required: true,
-    },
-  },
-  emits: ['setPostId'],
-  setup(props) {
-    const { isPending, isError, isFetching, data, error } = useQuery({
-      queryKey: ['post', () => props.postId],
-      queryFn: () => fetcher(props.postId),
-    })
-
-    return { isPending, isError, isFetching, data, error }
-  },
-})
+const { isPending, isError, isFetching, data, error } = useQuery(() =>
+  postsQueries.detail(props.postId),
+)
 </script>
 
 <template>

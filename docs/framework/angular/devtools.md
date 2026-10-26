@@ -161,7 +161,67 @@ Of these options `loadDevtools`, `client`, `position`, `errorTypes`, `buttonPosi
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
 - `hideDisabledQueries?: boolean`
+  - Defaults to `false`.
   - Set this to true to hide disabled queries from the devtools panel.
 - `theme?: "light" | "dark" | "system"`
-  - Defaults to `system`.
-  - Set this to change the theme of the devtools panel.
+  - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
+  - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
+
+## Embedded Mode
+
+Embedded mode will show the development tools as a fixed element in your application, so you can use our panel in your own development tools.
+
+Use `injectDevtoolsPanel` to render the devtools panel inside an element of your component. Like `withDevtools`, it is only included in development mode bundles. To use it in production builds, import it from `@tanstack/angular-query-experimental/devtools-panel/production`.
+
+```angular-ts
+import { Component, signal, viewChild } from '@angular/core'
+import { injectDevtoolsPanel } from '@tanstack/angular-query-experimental/devtools-panel'
+import type { ElementRef } from '@angular/core'
+
+@Component({
+  selector: 'app-root',
+  template: `
+    <button type="button" (click)="isOpen.set(!isOpen())">
+      {{ isOpen() ? 'Close' : 'Open' }} the devtools panel
+    </button>
+    @if (isOpen()) {
+      <div #div style="height: 500px"></div>
+    }
+  `,
+})
+export class AppComponent {
+  readonly isOpen = signal(false)
+  readonly divEl = viewChild<ElementRef>('div')
+
+  readonly devtools = injectDevtoolsPanel(() => ({
+    hostElement: this.divEl(),
+    onClose: () => this.isOpen.set(false),
+  }))
+}
+```
+
+`injectDevtoolsPanel` must be called in an injection context, or be given an `Injector` through the `injector` option in its second argument: `injectDevtoolsPanel(() => ({ ... }), { injector })`.
+
+### Options
+
+Of these options `hostElement`, `client`, `errorTypes`, `onClose`, and `theme` support reactivity through signals.
+
+- `hostElement?: ElementRef`
+  - The element to render the devtools panel in. When it is `undefined` or `null`, the devtools panel is not created, or is destroyed if it exists.
+- `onClose?: () => void`
+  - Callback function that is called when the devtools panel is closed
+- `client?: QueryClient`,
+  - Use this to use a custom QueryClient. Otherwise, the QueryClient provided through `provideTanStackQuery` will be injected.
+- `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
+  - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
+- `styleNonce?: string`
+  - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+- `shadowDOMTarget?: ShadowRoot`
+  - Default behavior will apply the devtool's styles to the head tag within the DOM.
+  - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `hideDisabledQueries?: boolean`
+  - Defaults to `false`.
+  - Set this to true to hide disabled queries from the devtools panel.
+- `theme?: "light" | "dark" | "system"`
+  - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
+  - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.

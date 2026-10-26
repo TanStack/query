@@ -107,28 +107,26 @@ describe('Utils tests', () => {
     describe('map', () => {
       it('should update data correctly', () => {
         const oldData = new Map([
-          ['en', 'hello'],
-          ['fr', 'bonjour'],
+          ['en-US', 'elevator'],
+          ['en-GB', 'lift'],
         ])
 
-        /* eslint-disable cspell/spellchecker */
-        const newData = updateNestedDataByPath(oldData, ['fr'], 'salut')
+        const newData = updateNestedDataByPath(oldData, ['en-GB'], 'elevator')
         expect(newData).not.toBe(oldData) // should not be the same reference
 
         expect(oldData).toMatchInlineSnapshot(`
           Map {
-            "en" => "hello",
-            "fr" => "bonjour",
+            "en-US" => "elevator",
+            "en-GB" => "lift",
           }
         `)
         expect(newData).toMatchInlineSnapshot(`
           Map {
-            "en" => "hello",
-            "fr" => "salut",
+            "en-US" => "elevator",
+            "en-GB" => "elevator",
           }
         `)
       })
-      /* eslint-enable */
     })
 
     describe('empty path', () => {
@@ -171,32 +169,31 @@ describe('Utils tests', () => {
       it('should return primitive data as-is when it is not an Object/Array/Map/Set', () => {
         expect(updateNestedDataByPath(42, ['x'], 'new')).toBe(42)
         expect(updateNestedDataByPath('hello', ['x'], 'new')).toBe('hello')
-        expect(updateNestedDataByPath(null, ['x'], 'new')).toBe(null)
+        expect(updateNestedDataByPath(null, ['x'], 'new')).toBeNull()
       })
     })
 
     describe('nested data', () => {
       it('should update data correctly', () => {
-        /* eslint-disable cspell/spellchecker */
         const oldData = new Map([
           [
-            'pumpkin-pie',
+            'chocolate-chip-cookies',
             {
               id: 1,
-              title: 'Pumpkin pie',
-              ingredients: new Set(['pumpkin', 'sugar', 'spices']),
+              title: 'Chocolate chip cookies',
+              ingredients: new Set(['flour', 'sugar', 'chocolate chips']),
               steps: ['mix', 'bake', 'eat'],
               translations: new Map([
-                ['en', 'Pumpkin pie'],
-                ['fr', 'Tarte à la citrouille'],
+                ['en-US', 'Chocolate chip cookies'],
+                ['en-GB', 'Chocolate chip biscuits'],
               ]),
             },
           ],
           [
-            'spaghetti-bolonese',
+            'spaghetti-bolognese',
             {
               id: 2,
-              title: 'Spaghetti bolonese',
+              title: 'Spaghetti bolognese',
               ingredients: new Set([
                 'spaghetti',
                 'tomato sauce',
@@ -204,8 +201,8 @@ describe('Utils tests', () => {
               ]),
               steps: ['cook', 'eat'],
               translations: new Map([
-                ['en', 'Spaghetti bolonese'],
-                ['fr', 'Spaghetti bolonaise'],
+                ['en-US', 'Spaghetti with meat sauce'],
+                ['en-GB', 'Spaghetti bolognese'],
               ]),
             },
           ],
@@ -213,48 +210,48 @@ describe('Utils tests', () => {
 
         const updatedObject = updateNestedDataByPath(
           oldData,
-          ['pumpkin-pie', 'title'],
-          'Pumpkin pie with whipped cream',
+          ['chocolate-chip-cookies', 'title'],
+          'Chocolate chip cookies with sea salt',
         )
 
         const updatedArray = updateNestedDataByPath(
           oldData,
-          ['spaghetti-bolonese', 'steps', '0'],
+          ['spaghetti-bolognese', 'steps', '0'],
           'prepare',
         )
 
         const updatedSet = updateNestedDataByPath(
           oldData,
-          ['pumpkin-pie', 'ingredients', '1'],
+          ['chocolate-chip-cookies', 'ingredients', '1'],
           'honey',
         )
 
         const updatedMap = updateNestedDataByPath(
           oldData,
-          ['pumpkin-pie', 'translations', 'en'],
-          'Best pie ever',
+          ['chocolate-chip-cookies', 'translations', 'en-US'],
+          'Best cookies ever',
         )
         expect(oldData).toMatchInlineSnapshot(`
           Map {
-            "pumpkin-pie" => {
+            "chocolate-chip-cookies" => {
               "id": 1,
               "ingredients": Set {
-                "pumpkin",
+                "flour",
                 "sugar",
-                "spices",
+                "chocolate chips",
               },
               "steps": [
                 "mix",
                 "bake",
                 "eat",
               ],
-              "title": "Pumpkin pie",
+              "title": "Chocolate chip cookies",
               "translations": Map {
-                "en" => "Pumpkin pie",
-                "fr" => "Tarte à la citrouille",
+                "en-US" => "Chocolate chip cookies",
+                "en-GB" => "Chocolate chip biscuits",
               },
             },
-            "spaghetti-bolonese" => {
+            "spaghetti-bolognese" => {
               "id": 2,
               "ingredients": Set {
                 "spaghetti",
@@ -265,10 +262,10 @@ describe('Utils tests', () => {
                 "cook",
                 "eat",
               ],
-              "title": "Spaghetti bolonese",
+              "title": "Spaghetti bolognese",
               "translations": Map {
-                "en" => "Spaghetti bolonese",
-                "fr" => "Spaghetti bolonaise",
+                "en-US" => "Spaghetti with meat sauce",
+                "en-GB" => "Spaghetti bolognese",
               },
             },
           }
@@ -276,25 +273,25 @@ describe('Utils tests', () => {
 
         expect(updatedObject).toMatchInlineSnapshot(`
           Map {
-            "pumpkin-pie" => {
+            "chocolate-chip-cookies" => {
               "id": 1,
               "ingredients": Set {
-                "pumpkin",
+                "flour",
                 "sugar",
-                "spices",
+                "chocolate chips",
               },
               "steps": [
                 "mix",
                 "bake",
                 "eat",
               ],
-              "title": "Pumpkin pie with whipped cream",
+              "title": "Chocolate chip cookies with sea salt",
               "translations": Map {
-                "en" => "Pumpkin pie",
-                "fr" => "Tarte à la citrouille",
+                "en-US" => "Chocolate chip cookies",
+                "en-GB" => "Chocolate chip biscuits",
               },
             },
-            "spaghetti-bolonese" => {
+            "spaghetti-bolognese" => {
               "id": 2,
               "ingredients": Set {
                 "spaghetti",
@@ -305,10 +302,10 @@ describe('Utils tests', () => {
                 "cook",
                 "eat",
               ],
-              "title": "Spaghetti bolonese",
+              "title": "Spaghetti bolognese",
               "translations": Map {
-                "en" => "Spaghetti bolonese",
-                "fr" => "Spaghetti bolonaise",
+                "en-US" => "Spaghetti with meat sauce",
+                "en-GB" => "Spaghetti bolognese",
               },
             },
           }
@@ -316,25 +313,25 @@ describe('Utils tests', () => {
 
         expect(updatedArray).toMatchInlineSnapshot(`
           Map {
-            "pumpkin-pie" => {
+            "chocolate-chip-cookies" => {
               "id": 1,
               "ingredients": Set {
-                "pumpkin",
+                "flour",
                 "sugar",
-                "spices",
+                "chocolate chips",
               },
               "steps": [
                 "mix",
                 "bake",
                 "eat",
               ],
-              "title": "Pumpkin pie",
+              "title": "Chocolate chip cookies",
               "translations": Map {
-                "en" => "Pumpkin pie",
-                "fr" => "Tarte à la citrouille",
+                "en-US" => "Chocolate chip cookies",
+                "en-GB" => "Chocolate chip biscuits",
               },
             },
-            "spaghetti-bolonese" => {
+            "spaghetti-bolognese" => {
               "id": 2,
               "ingredients": Set {
                 "spaghetti",
@@ -345,10 +342,10 @@ describe('Utils tests', () => {
                 "prepare",
                 "eat",
               ],
-              "title": "Spaghetti bolonese",
+              "title": "Spaghetti bolognese",
               "translations": Map {
-                "en" => "Spaghetti bolonese",
-                "fr" => "Spaghetti bolonaise",
+                "en-US" => "Spaghetti with meat sauce",
+                "en-GB" => "Spaghetti bolognese",
               },
             },
           }
@@ -356,25 +353,25 @@ describe('Utils tests', () => {
 
         expect(updatedSet).toMatchInlineSnapshot(`
           Map {
-            "pumpkin-pie" => {
+            "chocolate-chip-cookies" => {
               "id": 1,
               "ingredients": Set {
-                "pumpkin",
+                "flour",
                 "honey",
-                "spices",
+                "chocolate chips",
               },
               "steps": [
                 "mix",
                 "bake",
                 "eat",
               ],
-              "title": "Pumpkin pie",
+              "title": "Chocolate chip cookies",
               "translations": Map {
-                "en" => "Pumpkin pie",
-                "fr" => "Tarte à la citrouille",
+                "en-US" => "Chocolate chip cookies",
+                "en-GB" => "Chocolate chip biscuits",
               },
             },
-            "spaghetti-bolonese" => {
+            "spaghetti-bolognese" => {
               "id": 2,
               "ingredients": Set {
                 "spaghetti",
@@ -385,10 +382,10 @@ describe('Utils tests', () => {
                 "cook",
                 "eat",
               ],
-              "title": "Spaghetti bolonese",
+              "title": "Spaghetti bolognese",
               "translations": Map {
-                "en" => "Spaghetti bolonese",
-                "fr" => "Spaghetti bolonaise",
+                "en-US" => "Spaghetti with meat sauce",
+                "en-GB" => "Spaghetti bolognese",
               },
             },
           }
@@ -396,25 +393,25 @@ describe('Utils tests', () => {
 
         expect(updatedMap).toMatchInlineSnapshot(`
           Map {
-            "pumpkin-pie" => {
+            "chocolate-chip-cookies" => {
               "id": 1,
               "ingredients": Set {
-                "pumpkin",
+                "flour",
                 "sugar",
-                "spices",
+                "chocolate chips",
               },
               "steps": [
                 "mix",
                 "bake",
                 "eat",
               ],
-              "title": "Pumpkin pie",
+              "title": "Chocolate chip cookies",
               "translations": Map {
-                "en" => "Best pie ever",
-                "fr" => "Tarte à la citrouille",
+                "en-US" => "Best cookies ever",
+                "en-GB" => "Chocolate chip biscuits",
               },
             },
-            "spaghetti-bolonese" => {
+            "spaghetti-bolognese" => {
               "id": 2,
               "ingredients": Set {
                 "spaghetti",
@@ -425,15 +422,14 @@ describe('Utils tests', () => {
                 "cook",
                 "eat",
               ],
-              "title": "Spaghetti bolonese",
+              "title": "Spaghetti bolognese",
               "translations": Map {
-                "en" => "Spaghetti bolonese",
-                "fr" => "Spaghetti bolonaise",
+                "en-US" => "Spaghetti with meat sauce",
+                "en-GB" => "Spaghetti bolognese",
               },
             },
           }
         `)
-        /* eslint-enable */
       })
     })
   })
@@ -556,32 +552,31 @@ describe('Utils tests', () => {
       it('should return primitive data as-is when it is not an Object/Array/Map/Set', () => {
         expect(deleteNestedDataByPath(42, ['x'])).toBe(42)
         expect(deleteNestedDataByPath('hello', ['x'])).toBe('hello')
-        expect(deleteNestedDataByPath(null, ['x'])).toBe(null)
+        expect(deleteNestedDataByPath(null, ['x'])).toBeNull()
       })
     })
 
     describe('nested data', () => {
       it('should delete nested items correctly', () => {
-        /* eslint-disable cspell/spellchecker */
         const oldData = new Map([
           [
-            'pumpkin-pie',
+            'chocolate-chip-cookies',
             {
               id: 1,
-              title: 'Pumpkin pie',
-              ingredients: new Set(['pumpkin', 'sugar', 'spices']),
+              title: 'Chocolate chip cookies',
+              ingredients: new Set(['flour', 'sugar', 'chocolate chips']),
               steps: ['mix', 'bake', 'eat'],
               translations: new Map([
-                ['en', 'Pumpkin pie'],
-                ['fr', 'Tarte à la citrouille'],
+                ['en-US', 'Chocolate chip cookies'],
+                ['en-GB', 'Chocolate chip biscuits'],
               ]),
             },
           ],
           [
-            'spaghetti-bolonese',
+            'spaghetti-bolognese',
             {
               id: 2,
-              title: 'Spaghetti bolonese',
+              title: 'Spaghetti bolognese',
               ingredients: new Set([
                 'spaghetti',
                 'tomato sauce',
@@ -589,56 +584,56 @@ describe('Utils tests', () => {
               ]),
               steps: ['cook', 'eat'],
               translations: new Map([
-                ['en', 'Spaghetti bolonese'],
-                ['fr', 'Spaghetti bolonaise'],
+                ['en-US', 'Spaghetti with meat sauce'],
+                ['en-GB', 'Spaghetti bolognese'],
               ]),
             },
           ],
         ])
 
         const deletedFromSet = deleteNestedDataByPath(oldData, [
-          'spaghetti-bolonese',
+          'spaghetti-bolognese',
           'ingredients',
           '0',
         ])
 
         const deletedFromArray = deleteNestedDataByPath(oldData, [
-          'pumpkin-pie',
+          'chocolate-chip-cookies',
           'steps',
           '1',
         ])
 
         const deletedFromObject = deleteNestedDataByPath(oldData, [
-          'pumpkin-pie',
+          'chocolate-chip-cookies',
           'title',
         ])
 
         const deletedFromMap = deleteNestedDataByPath(oldData, [
-          'spaghetti-bolonese',
+          'spaghetti-bolognese',
           'translations',
-          'fr',
+          'en-GB',
         ])
         expect(oldData).toMatchInlineSnapshot(`
           Map {
-            "pumpkin-pie" => {
+            "chocolate-chip-cookies" => {
               "id": 1,
               "ingredients": Set {
-                "pumpkin",
+                "flour",
                 "sugar",
-                "spices",
+                "chocolate chips",
               },
               "steps": [
                 "mix",
                 "bake",
                 "eat",
               ],
-              "title": "Pumpkin pie",
+              "title": "Chocolate chip cookies",
               "translations": Map {
-                "en" => "Pumpkin pie",
-                "fr" => "Tarte à la citrouille",
+                "en-US" => "Chocolate chip cookies",
+                "en-GB" => "Chocolate chip biscuits",
               },
             },
-            "spaghetti-bolonese" => {
+            "spaghetti-bolognese" => {
               "id": 2,
               "ingredients": Set {
                 "spaghetti",
@@ -649,10 +644,10 @@ describe('Utils tests', () => {
                 "cook",
                 "eat",
               ],
-              "title": "Spaghetti bolonese",
+              "title": "Spaghetti bolognese",
               "translations": Map {
-                "en" => "Spaghetti bolonese",
-                "fr" => "Spaghetti bolonaise",
+                "en-US" => "Spaghetti with meat sauce",
+                "en-GB" => "Spaghetti bolognese",
               },
             },
           }
@@ -660,25 +655,25 @@ describe('Utils tests', () => {
 
         expect(deletedFromSet).toMatchInlineSnapshot(`
           Map {
-            "pumpkin-pie" => {
+            "chocolate-chip-cookies" => {
               "id": 1,
               "ingredients": Set {
-                "pumpkin",
+                "flour",
                 "sugar",
-                "spices",
+                "chocolate chips",
               },
               "steps": [
                 "mix",
                 "bake",
                 "eat",
               ],
-              "title": "Pumpkin pie",
+              "title": "Chocolate chip cookies",
               "translations": Map {
-                "en" => "Pumpkin pie",
-                "fr" => "Tarte à la citrouille",
+                "en-US" => "Chocolate chip cookies",
+                "en-GB" => "Chocolate chip biscuits",
               },
             },
-            "spaghetti-bolonese" => {
+            "spaghetti-bolognese" => {
               "id": 2,
               "ingredients": Set {
                 "tomato sauce",
@@ -688,10 +683,10 @@ describe('Utils tests', () => {
                 "cook",
                 "eat",
               ],
-              "title": "Spaghetti bolonese",
+              "title": "Spaghetti bolognese",
               "translations": Map {
-                "en" => "Spaghetti bolonese",
-                "fr" => "Spaghetti bolonaise",
+                "en-US" => "Spaghetti with meat sauce",
+                "en-GB" => "Spaghetti bolognese",
               },
             },
           }
@@ -699,24 +694,24 @@ describe('Utils tests', () => {
 
         expect(deletedFromArray).toMatchInlineSnapshot(`
           Map {
-            "pumpkin-pie" => {
+            "chocolate-chip-cookies" => {
               "id": 1,
               "ingredients": Set {
-                "pumpkin",
+                "flour",
                 "sugar",
-                "spices",
+                "chocolate chips",
               },
               "steps": [
                 "mix",
                 "eat",
               ],
-              "title": "Pumpkin pie",
+              "title": "Chocolate chip cookies",
               "translations": Map {
-                "en" => "Pumpkin pie",
-                "fr" => "Tarte à la citrouille",
+                "en-US" => "Chocolate chip cookies",
+                "en-GB" => "Chocolate chip biscuits",
               },
             },
-            "spaghetti-bolonese" => {
+            "spaghetti-bolognese" => {
               "id": 2,
               "ingredients": Set {
                 "spaghetti",
@@ -727,10 +722,10 @@ describe('Utils tests', () => {
                 "cook",
                 "eat",
               ],
-              "title": "Spaghetti bolonese",
+              "title": "Spaghetti bolognese",
               "translations": Map {
-                "en" => "Spaghetti bolonese",
-                "fr" => "Spaghetti bolonaise",
+                "en-US" => "Spaghetti with meat sauce",
+                "en-GB" => "Spaghetti bolognese",
               },
             },
           }
@@ -738,12 +733,12 @@ describe('Utils tests', () => {
 
         expect(deletedFromObject).toMatchInlineSnapshot(`
           Map {
-            "pumpkin-pie" => {
+            "chocolate-chip-cookies" => {
               "id": 1,
               "ingredients": Set {
-                "pumpkin",
+                "flour",
                 "sugar",
-                "spices",
+                "chocolate chips",
               },
               "steps": [
                 "mix",
@@ -751,11 +746,11 @@ describe('Utils tests', () => {
                 "eat",
               ],
               "translations": Map {
-                "en" => "Pumpkin pie",
-                "fr" => "Tarte à la citrouille",
+                "en-US" => "Chocolate chip cookies",
+                "en-GB" => "Chocolate chip biscuits",
               },
             },
-            "spaghetti-bolonese" => {
+            "spaghetti-bolognese" => {
               "id": 2,
               "ingredients": Set {
                 "spaghetti",
@@ -766,10 +761,10 @@ describe('Utils tests', () => {
                 "cook",
                 "eat",
               ],
-              "title": "Spaghetti bolonese",
+              "title": "Spaghetti bolognese",
               "translations": Map {
-                "en" => "Spaghetti bolonese",
-                "fr" => "Spaghetti bolonaise",
+                "en-US" => "Spaghetti with meat sauce",
+                "en-GB" => "Spaghetti bolognese",
               },
             },
           }
@@ -777,25 +772,25 @@ describe('Utils tests', () => {
 
         expect(deletedFromMap).toMatchInlineSnapshot(`
           Map {
-            "pumpkin-pie" => {
+            "chocolate-chip-cookies" => {
               "id": 1,
               "ingredients": Set {
-                "pumpkin",
+                "flour",
                 "sugar",
-                "spices",
+                "chocolate chips",
               },
               "steps": [
                 "mix",
                 "bake",
                 "eat",
               ],
-              "title": "Pumpkin pie",
+              "title": "Chocolate chip cookies",
               "translations": Map {
-                "en" => "Pumpkin pie",
-                "fr" => "Tarte à la citrouille",
+                "en-US" => "Chocolate chip cookies",
+                "en-GB" => "Chocolate chip biscuits",
               },
             },
-            "spaghetti-bolonese" => {
+            "spaghetti-bolognese" => {
               "id": 2,
               "ingredients": Set {
                 "spaghetti",
@@ -806,14 +801,13 @@ describe('Utils tests', () => {
                 "cook",
                 "eat",
               ],
-              "title": "Spaghetti bolonese",
+              "title": "Spaghetti bolognese",
               "translations": Map {
-                "en" => "Spaghetti bolonese",
+                "en-US" => "Spaghetti with meat sauce",
               },
             },
           }
         `)
-        /* eslint-enable */
       })
     })
   })
@@ -1323,26 +1317,26 @@ describe('Utils tests', () => {
 
     function setupMatchMediaMock(initialMatches: boolean) {
       const listeners = new Set<MatchMediaListener>()
-      const matchMedia: typeof window.matchMedia = vi.fn(
-        (query: string): MediaQueryList => ({
-          matches: initialMatches,
-          media: query,
-          onchange: null,
-          addEventListener: vi.fn(
-            (_event: string, listener: MatchMediaListener) => {
-              listeners.add(listener)
-            },
-          ) as MediaQueryList['addEventListener'],
-          removeEventListener: vi.fn(
-            (_event: string, listener: MatchMediaListener) => {
-              listeners.delete(listener)
-            },
-          ) as MediaQueryList['removeEventListener'],
-          dispatchEvent: vi.fn(() => true),
-          addListener: vi.fn(),
-          removeListener: vi.fn(),
-        }),
-      )
+      const matchMedia: typeof window.matchMedia = vi.fn<
+        (query: string) => MediaQueryList
+      >((query: string): MediaQueryList => ({
+        matches: initialMatches,
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn<
+          (_event: string, listener: MatchMediaListener) => void
+        >((_event: string, listener: MatchMediaListener) => {
+          listeners.add(listener)
+        }) as MediaQueryList['addEventListener'],
+        removeEventListener: vi.fn<
+          (_event: string, listener: MatchMediaListener) => void
+        >((_event: string, listener: MatchMediaListener) => {
+          listeners.delete(listener)
+        }) as MediaQueryList['removeEventListener'],
+        dispatchEvent: vi.fn<() => boolean>(() => true),
+        addListener: vi.fn<MediaQueryList['addListener']>(),
+        removeListener: vi.fn<MediaQueryList['removeListener']>(),
+      }))
       vi.stubGlobal('matchMedia', matchMedia)
       return {
         matchMedia,
@@ -1360,7 +1354,6 @@ describe('Utils tests', () => {
     })
 
     afterEach(() => {
-      vi.unstubAllGlobals()
       vi.useRealTimers()
     })
 

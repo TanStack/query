@@ -41,8 +41,8 @@ describe('useQueries with persist and memoized combine', () => {
     const queryClient = new QueryClient({
       defaultOptions: {
         queries: {
-          staleTime: 30_000,
-          gcTime: 1000 * 60 * 60 * 24,
+          staleTime: 30000,
+          gcTime: 24 * 60 * 60 * 1000,
         },
       },
     })
@@ -99,7 +99,7 @@ describe('useQueries with persist and memoized combine', () => {
         queries: [1, 2, 3].map((id) => ({
           queryKey: ['post', id],
           queryFn: () => sleep(100).then(() => id),
-          staleTime: 30_000,
+          staleTime: 30000,
         })),
         combine: React.useCallback(
           (results: Array<QueryObserverResult<number, Error>>) => ({

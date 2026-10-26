@@ -5,7 +5,7 @@ import {
   dataTagSymbol,
   skipToken,
 } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { queryOptions } from '../queryOptions'
 import type { InitialDataFunction } from '@tanstack/query-core'
@@ -21,16 +21,17 @@ describe('queryOptions', () => {
   it('should not allow excess properties', () => {
     assertType(
       queryOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error this is a good error, because stallTime does not exist!
         stallTime: 1000,
       }),
     )
   })
+
   it('should infer types for callbacks', () => {
     queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
       staleTime: 1000,
       select: (data) => {
@@ -38,15 +39,17 @@ describe('queryOptions', () => {
       },
     })
   })
+
   it('should work when passed to useQuery', () => {
     const options = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
     })
 
     const { data } = useQuery(() => options)
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
+
   it('should work when passed to query', async () => {
     const options = queryOptions({
       queryKey: ['key'],
@@ -56,6 +59,7 @@ describe('queryOptions', () => {
     const data = await new QueryClient().query(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
+
   it('should work when passed to query with select', async () => {
     const options = queryOptions({
       queryKey: ['key'],
@@ -66,6 +70,7 @@ describe('queryOptions', () => {
     const data = await new QueryClient().query(options)
     expectTypeOf(data).toEqualTypeOf<string>()
   })
+
   it('should work when passed to query with enabled: false', async () => {
     const options = queryOptions({
       queryKey: ['key'],
@@ -76,6 +81,7 @@ describe('queryOptions', () => {
     const data = await new QueryClient().query(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
+
   it('should work when passed to query with skipToken', async () => {
     const options = queryOptions({
       queryKey: ['key'],
@@ -85,59 +91,66 @@ describe('queryOptions', () => {
     const data = await new QueryClient().query(options)
     expectTypeOf(data).toEqualTypeOf<unknown>()
   })
+
   it('should work when passed to fetchQuery', async () => {
     const options = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
     })
 
-    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
+
   it('should tag the queryKey with the result type of the QueryFn', () => {
     const { queryKey: tagged } = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
     })
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<number>()
   })
+
   it('should tag the queryKey even if no promise is returned', () => {
     const { queryKey: tagged } = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => 5,
     })
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<number>()
   })
+
   it('should tag the queryKey with unknown if there is no queryFn', () => {
     const { queryKey: tagged } = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
     })
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<unknown>()
   })
+
   it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
     const { queryKey: tagged } = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
       select: (data) => data.toString(),
     })
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<number>()
   })
+
   it('should tag the queryKey with the default error type', () => {
     const { queryKey: tagged } = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(1),
     })
 
     expectTypeOf(tagged[dataTagErrorSymbol]).toEqualTypeOf<Error>()
   })
+
   it('should return the proper type when passed to getQueryData', () => {
     const { queryKey: tagged } = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
     })
 
@@ -145,9 +158,10 @@ describe('queryOptions', () => {
     const data = queryClient.getQueryData(tagged)
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
+
   it('should return the proper type when passed to getQueryState', () => {
     const { queryKey: tagged } = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
     })
 
@@ -155,9 +169,10 @@ describe('queryOptions', () => {
     const state = queryClient.getQueryState(tagged)
     expectTypeOf(state?.data).toEqualTypeOf<number | undefined>()
   })
+
   it('should properly type updaterFn when passed to setQueryData', () => {
     const { queryKey: tagged } = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
     })
 
@@ -168,9 +183,10 @@ describe('queryOptions', () => {
     })
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
+
   it('should properly type value when passed to setQueryData', () => {
     const { queryKey: tagged } = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
     })
 
@@ -187,7 +203,7 @@ describe('queryOptions', () => {
 
   it('should infer even if there is a conditional skipToken', () => {
     const options = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
     })
 
@@ -198,18 +214,19 @@ describe('queryOptions', () => {
 
   it('should infer to unknown if we disable a query with just a skipToken', () => {
     const options = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: skipToken,
     })
 
     const queryClient = new QueryClient()
     const data = queryClient.getQueryData(options.queryKey)
     expectTypeOf(data).toEqualTypeOf<unknown>()
+    expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<unknown>()
   })
 
   it('should allow optional initialData object', () => {
     const options = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve('something string'),
       initialData: Math.random() > 0.5 ? 'initial string' : undefined,
     })

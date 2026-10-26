@@ -25,8 +25,11 @@ import type { CreateBaseQueryOptions } from './types'
 
 /**
  * Base implementation for `injectQuery` and `injectInfiniteQuery`.
- * @param optionsFn
- * @param Observer
+ * @param optionsFn - A function that returns the query options. It is re-run when the signals it
+ * reads change.
+ * @param Observer - The observer class from query-core (`QueryObserver` or `InfiniteQueryObserver`).
+ * @returns The query result, with each value field exposed as a computed signal. Functions such as
+ * `refetch` stay callable functions.
  */
 export function createBaseQuery<
   TQueryFnData,
@@ -165,7 +168,7 @@ export function createBaseQuery<
       const originalRefetch = result.refetch
       return {
         ...result,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion -- keeps the declared 'refetch' type, which the wrapper would widen to 'RefetchOptions | undefined'
         refetch: ((...args: Parameters<typeof originalRefetch>) => {
           observer.setOptions(defaultedOptionsSignal())
           return originalRefetch(...args)

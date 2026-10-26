@@ -1,7 +1,10 @@
+// @ts-check
+
 import pluginQuery from '@tanstack/eslint-plugin-query'
 import tseslint from 'typescript-eslint'
+import { defineConfig } from 'eslint/config'
 
-export default [
+export default defineConfig([
   ...tseslint.configs.recommended,
   ...pluginQuery.configs['flat/recommended-strict'],
   {
@@ -18,4 +21,4 @@ export default [
       ],
     },
   },
-]
+])

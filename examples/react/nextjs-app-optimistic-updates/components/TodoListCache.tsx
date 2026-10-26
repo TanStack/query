@@ -1,31 +1,17 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { Todo } from '@/app/api/todos/data'
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
+import { todosMutations, todosQueries } from '../services/todos/queries'
+import type { Todo } from '../services/todos/types'
 
 interface MutationContext {
   previousTodos: Array<Todo> | undefined
   optimisticId: string
-}
-
-async function fetchTodos(): Promise<Array<Todo>> {
-  const res = await fetch('/api/todos')
-  if (!res.ok) throw new Error('Failed to fetch todos')
-  return res.json()
-}
-
-async function addTodo(text: string): Promise<Todo> {
-  const res = await fetch('/api/todos', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text }),
-  })
-  if (!res.ok) {
-    const err = (await res.json()) as { error: string }
-    throw new Error(err.error)
-  }
-  return res.json()
 }
 
 export default function TodoListCache() {
@@ -33,18 +19,19 @@ export default function TodoListCache() {
   const [inputValue, setInputValue] = useState('')
   const [lastError, setLastError] = useState<string | null>(null)
 
-  const { data: todos = [] } = useQuery({
-    queryKey: ['todos'],
-    queryFn: fetchTodos,
-  })
+  const { data: todos } = useSuspenseQuery(todosQueries.list())
 
   const addTodoMutation = useMutation<Todo, Error, string, MutationContext>({
-    mutationFn: addTodo,
+    ...todosMutations.create(),
     onMutate: async (text) => {
       setLastError(null)
-      await queryClient.cancelQueries({ queryKey: ['todos'] })
+      await queryClient.cancelQueries({
+        queryKey: todosQueries.list().queryKey,
+      })
 
-      const previousTodos = queryClient.getQueryData<Array<Todo>>(['todos'])
+      const previousTodos = queryClient.getQueryData(
+        todosQueries.list().queryKey,
+      )
 
       const optimisticId = `optimistic-${Date.now()}`
       const optimisticTodo: Todo = {
@@ -53,7 +40,7 @@ export default function TodoListCache() {
         createdAt: Date.now(),
       }
 
-      queryClient.setQueryData<Array<Todo>>(['todos'], (old = []) => [
+      queryClient.setQueryData(todosQueries.list().queryKey, (old = []) => [
         ...old,
         optimisticTodo,
       ])
@@ -63,16 +50,18 @@ export default function TodoListCache() {
     onError: (_err, _text, context) => {
       setLastError(_err.message)
       if (context?.previousTodos !== undefined) {
-        queryClient.setQueryData(['todos'], context.previousTodos)
+        queryClient.setQueryData(
+          todosQueries.list().queryKey,
+          context.previousTodos,
+        )
       } else if (context?.optimisticId) {
-        queryClient.setQueryData<Array<Todo>>(['todos'], (old = []) =>
+        queryClient.setQueryData(todosQueries.list().queryKey, (old = []) =>
           old.filter((todo) => todo.id !== context.optimisticId),
         )
       }
     },
-    onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: ['todos'] })
-    },
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
   })
 
   function handleSubmit(e: React.FormEvent) {

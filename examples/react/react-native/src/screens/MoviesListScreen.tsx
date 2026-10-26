@@ -7,8 +7,8 @@ import { Divider } from '../components/Divider'
 import { ListItem } from '../components/ListItem'
 import { useRefreshByUser } from '../hooks/useRefreshByUser'
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus'
-import { fetchMovies } from '../lib/api'
-import type { Movie, MovieDetails } from '../lib/api'
+import { moviesQueries } from '../services/movies/queries'
+import type { Movie } from '../services/movies/types'
 import type { MoviesStackNavigator } from '../navigation/types'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
@@ -22,24 +22,23 @@ type Props = {
 }
 
 export function MoviesListScreen({ navigation }: Props) {
-  const { isPending, error, data, refetch } = useQuery<Movie[], Error>({
-    queryKey: ['movies'],
-    queryFn: fetchMovies,
-  })
+  const { isPending, isError, error, data, refetch } = useQuery(
+    moviesQueries.list(),
+  )
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
-  useRefreshOnFocus(refetch)
+  useRefreshOnFocus()
 
   const onListItemPress = React.useCallback(
-    (movie: MovieDetails) => {
+    (movie: Movie) => {
       navigation.navigate('MovieDetails', {
-        movie,
+        title: movie.title,
       })
     },
     [navigation],
   )
 
   const renderItem = React.useCallback(
-    ({ item }: { item: MovieDetails }) => {
+    ({ item }: { item: Movie }) => {
       return <ListItem item={item} onPress={onListItemPress} />
     },
     [onListItemPress],
@@ -47,7 +46,7 @@ export function MoviesListScreen({ navigation }: Props) {
 
   if (isPending) return <LoadingIndicator />
 
-  if (error) return <ErrorMessage message={error.message}></ErrorMessage>
+  if (isError) return <ErrorMessage message={error.message}></ErrorMessage>
   return (
     <FlatList
       data={data}

@@ -134,6 +134,10 @@
               "to": "framework/svelte/ssr"
             },
             {
+              "label": "Testing",
+              "to": "framework/svelte/testing"
+            },
+            {
               "label": "Migrate from v5 to v6",
               "to": "framework/svelte/migrate-from-v5-to-v6"
             }
@@ -822,6 +826,10 @@
             {
               "label": "SSR",
               "to": "framework/lit/guides/ssr"
+            },
+            {
+              "label": "Testing",
+              "to": "framework/lit/guides/testing"
             }
           ]
         },
@@ -6953,6 +6961,95 @@
             {
               "label": "Devtools embedded panel",
               "to": "framework/angular/examples/devtools-panel"
+            }
+          ]
+        },
+        {
+          "label": "preact",
+          "children": [
+            {
+              "label": "Simple",
+              "to": "framework/preact/examples/simple"
+            },
+            {
+              "label": "Basic",
+              "to": "framework/preact/examples/basic"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/preact/examples/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/preact/examples/default-query-function"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/preact/examples/playground"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/preact/examples/algolia"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/preact/examples/chat"
+            },
+            {
+              "label": "Shadow DOM",
+              "to": "framework/preact/examples/shadow-dom"
+            },
+            {
+              "label": "Devtools Embedded Panel",
+              "to": "framework/preact/examples/devtools-panel"
+            },
+            {
+              "label": "Star Wars",
+              "to": "framework/preact/examples/star-wars"
+            },
+            {
+              "label": "Rick And Morty",
+              "to": "framework/preact/examples/rick-morty"
+            },
+            {
+              "label": "Offline Queries and Mutations",
+              "to": "framework/preact/examples/offline"
+            },
+            {
+              "label": "Suspense",
+              "to": "framework/preact/examples/suspense"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/preact/examples/batching"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "framework/preact/examples/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/preact/examples/optimistic-updates"
+            },
+            {
+              "label": "Pagination",
+              "to": "framework/preact/examples/pagination"
+            },
+            {
+              "label": "Load-More & Infinite Scroll",
+              "to": "framework/preact/examples/load-more-infinite-scroll"
+            },
+            {
+              "label": "Infinite query with Max pages",
+              "to": "framework/preact/examples/infinite-query-with-max-pages"
+            },
+            {
+              "label": "Prefetching",
+              "to": "framework/preact/examples/prefetching"
+            },
+            {
+              "label": "SSR",
+              "to": "framework/preact/examples/ssr"
             }
           ]
         }

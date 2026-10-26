@@ -1,15 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { injectQuery } from '@tanstack/angular-query-experimental'
-import { HttpClient } from '@angular/common/http'
-import { lastValueFrom } from 'rxjs'
-
-interface Response {
-  name: string
-  description: string
-  subscribers_count: number
-  stargazers_count: number
-  forks_count: number
-}
+import { ReposQueries } from '../services/repos/queries'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,13 +25,7 @@ interface Response {
   `,
 })
 export class ExampleQueryComponent {
-  readonly #http = inject(HttpClient)
+  readonly #reposQueries = inject(ReposQueries)
 
-  readonly query = injectQuery(() => ({
-    queryKey: ['repoData'],
-    queryFn: () =>
-      lastValueFrom(
-        this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
-      ),
-  }))
+  readonly query = injectQuery(() => this.#reposQueries.detail())
 }

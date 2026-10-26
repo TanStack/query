@@ -4,14 +4,14 @@ import { Subscribable } from '../subscribable'
 type Listener = () => void
 
 class SubscribableTest extends Subscribable<Listener> {
-  onSubscribeSpy = vi.fn()
-  onUnsubscribeSpy = vi.fn()
+  onSubscribeSpy = vi.fn<() => void>()
+  onUnsubscribeSpy = vi.fn<() => void>()
 
-  protected onSubscribe(): void {
+  protected override onSubscribe(): void {
     this.onSubscribeSpy()
   }
 
-  protected onUnsubscribe(): void {
+  protected override onUnsubscribe(): void {
     this.onUnsubscribeSpy()
   }
 }

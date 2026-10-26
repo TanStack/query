@@ -63,7 +63,6 @@ In the example below, you can see TanStack Query in its most basic and simple fo
 ```angular-ts
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { CommonModule } from '@angular/common'
 import { injectQuery } from '@tanstack/angular-query-experimental'
 import { lastValueFrom } from 'rxjs'
 
@@ -74,7 +73,7 @@ import { lastValueFrom } from 'rxjs'
     @if (repoDataQuery.isPending()) {
       Loading...
     }
-    @if (repoDataQuery.error()) {
+    @if (repoDataQuery.isError()) {
       An error has occurred: {{ repoDataQuery.error().message }}
     }
     @if (repoDataQuery.data(); as data) {
@@ -93,12 +92,12 @@ export class SimpleExampleComponent {
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(
-        this.http.get<Response>('https://api.github.com/repos/tanstack/query'),
+        this.http.get<Repo>('https://api.github.com/repos/TanStack/query'),
       ),
   }))
 }
 
-interface Response {
+interface Repo {
   name: string
   description: string
   subscribers_count: number

@@ -1,4 +1,5 @@
 import { RuleTester } from '@typescript-eslint/rule-tester'
+import { describe } from 'vitest'
 import {
   reactHookNames,
   rule,
@@ -420,37 +421,27 @@ const baseTestCases = {
 
 const testCases = (reactHookName: string) => [
   {
-    reactHookImport: 'import * as React from "React";',
+    reactHookImport: 'import * as React from "react";',
     reactHookInvocation: `React.${reactHookName}`,
     reactHookAlias: reactHookName,
   },
   {
-    reactHookImport: `import { ${reactHookName} } from "React";`,
+    reactHookImport: `import { ${reactHookName} } from "react";`,
     reactHookInvocation: reactHookName,
     reactHookAlias: reactHookName,
   },
   {
-    reactHookImport: `import { ${reactHookName} as useAlias } from "React";`,
+    reactHookImport: `import { ${reactHookName} as useAlias } from "react";`,
     reactHookInvocation: 'useAlias',
     reactHookAlias: 'useAlias',
   },
 ]
 
-reactHookNames.forEach((reactHookName) => {
-  testCases(reactHookName).forEach(
-    ({ reactHookInvocation, reactHookAlias, reactHookImport }) => {
-      ruleTester.run('no-unstable-deps', rule, {
-        valid: baseTestCases.valid({
-          reactHookImport,
-          reactHookInvocation,
-          reactHookAlias,
-        }),
-        invalid: baseTestCases.invalid({
-          reactHookImport,
-          reactHookInvocation,
-          reactHookAlias,
-        }),
-      })
-    },
-  )
+describe.each(reactHookNames)('%s', (reactHookName) => {
+  describe.each(testCases(reactHookName))('$reactHookImport', (testCase) => {
+    ruleTester.run('no-unstable-deps', rule, {
+      valid: baseTestCases.valid(testCase),
+      invalid: baseTestCases.invalid(testCase),
+    })
+  })
 })

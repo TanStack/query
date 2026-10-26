@@ -13,25 +13,25 @@ title: Devtools
 
 The devtools are a separate package that you need to install:
 
-```bash
+```sh
 npm i @tanstack/svelte-query-devtools
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/svelte-query-devtools
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/svelte-query-devtools
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/svelte-query-devtools
 ```
 
@@ -79,6 +79,9 @@ Place the following code as high in your Svelte app as you can. The closer it is
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `hideDisabledQueries?: boolean`
+  - Defaults to `false`.
+  - Set this to true to hide disabled queries from the devtools panel.
 - `theme?: Theme`
-  - Defaults to `system`.
-  - Set this to change the theme of the devtools panel.
+  - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
+  - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.

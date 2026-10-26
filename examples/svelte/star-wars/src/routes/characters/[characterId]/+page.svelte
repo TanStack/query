@@ -2,13 +2,12 @@
   import { createQuery } from '@tanstack/svelte-query'
   import Homeworld from './Homeworld.svelte'
   import Film from './Film.svelte'
-  import { getCharacter } from '$lib/api'
-  import { page } from '$app/state'
+  import { charactersQueries } from '$lib/services/characters/queries'
+  import type { PageProps } from './$types'
 
-  const query = createQuery(() => ({
-    queryKey: ['character', page.params.characterId],
-    queryFn: () => getCharacter(page.params.characterId),
-  }))
+  let { params }: PageProps = $props()
+
+  const query = createQuery(() => charactersQueries.detail(params.characterId))
 </script>
 
 {#if query.status === 'pending'}
@@ -31,7 +30,7 @@
   <p><strong>Mass</strong>: {query.data.mass}</p>
   <p><strong>Homeworld</strong>: <Homeworld {homeworldId} /></p>
   <h4 class="text-2xl pt-4">Films</h4>
-  {#each query.data.films as film}
+  {#each query.data.films as film (film)}
     {@const filmUrlParts = film.split('/').filter(Boolean)}
     {@const filmId = filmUrlParts[filmUrlParts.length - 1]}
     <Film {filmId} />

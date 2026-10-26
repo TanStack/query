@@ -6,15 +6,16 @@ import {
   timeoutManager,
 } from '../timeoutManager'
 import type { MockInstance } from 'vitest'
+import type { TimeoutCallback, TimeoutProvider } from '../timeoutManager'
 
 describe('timeoutManager', () => {
   function createMockProvider(name: string = 'custom') {
     return {
       __TEST_ONLY__name: name,
-      setTimeout: vi.fn(() => 123),
-      clearTimeout: vi.fn(),
-      setInterval: vi.fn(() => 456),
-      clearInterval: vi.fn(),
+      setTimeout: vi.fn<TimeoutProvider<number>['setTimeout']>(() => 123),
+      clearTimeout: vi.fn<TimeoutProvider<number>['clearTimeout']>(),
+      setInterval: vi.fn<TimeoutProvider<number>['setInterval']>(() => 456),
+      clearInterval: vi.fn<TimeoutProvider<number>['clearInterval']>(),
     }
   }
 
@@ -35,13 +36,13 @@ describe('timeoutManager', () => {
       manager = new TimeoutManager()
     })
 
-    it('by default proxies calls to globalThis setTimeout/clearTimeout', () => {
+    it('should proxy calls to globalThis setTimeout/clearTimeout by default', () => {
       const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout')
       const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout')
       const setIntervalSpy = vi.spyOn(globalThis, 'setInterval')
       const clearIntervalSpy = vi.spyOn(globalThis, 'clearInterval')
 
-      const callback = vi.fn()
+      const callback = vi.fn<TimeoutCallback>()
       const timeoutId = manager.setTimeout(callback, 100)
       expect(setTimeoutSpy).toHaveBeenCalledWith(callback, 100)
       clearTimeout(Number(timeoutId))
@@ -58,11 +59,11 @@ describe('timeoutManager', () => {
     })
 
     describe('setTimeoutProvider', () => {
-      it('proxies calls to the configured timeout provider', () => {
+      it('should proxy calls to the configured timeout provider', () => {
         const customProvider = createMockProvider()
         manager.setTimeoutProvider(customProvider)
 
-        const callback = vi.fn()
+        const callback = vi.fn<TimeoutCallback>()
 
         manager.setTimeout(callback, 100)
         expect(customProvider.setTimeout).toHaveBeenCalledWith(callback, 100)
@@ -77,7 +78,7 @@ describe('timeoutManager', () => {
         expect(customProvider.clearInterval).toHaveBeenCalledWith(888)
       })
 
-      it('warns when switching providers after making call', () => {
+      it('should warn when switching providers after making call', () => {
         // 1. switching before making any calls does not warn
         const customProvider = createMockProvider()
         manager.setTimeoutProvider(customProvider)
@@ -113,10 +114,12 @@ describe('timeoutManager', () => {
 
   describe('exported functions', () => {
     let provider: ReturnType<typeof createMockProvider>
+
     beforeEach(() => {
       provider = createMockProvider()
       timeoutManager.setTimeoutProvider(provider)
     })
+
     afterEach(() => {
       timeoutManager.setTimeoutProvider(defaultTimeoutProvider)
     })
@@ -125,7 +128,7 @@ describe('timeoutManager', () => {
       it('should use globalThis setTimeout with 0 delay', () => {
         const spy = vi.spyOn(globalThis, 'setTimeout')
 
-        const callback = vi.fn()
+        const callback = vi.fn<TimeoutCallback>()
         systemSetTimeoutZero(callback)
 
         expect(spy).toHaveBeenCalledWith(callback, 0)

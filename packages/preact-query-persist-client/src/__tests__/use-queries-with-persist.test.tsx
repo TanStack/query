@@ -1,24 +1,14 @@
-/** @jsxRuntime automatic */
-/** @jsxImportSource preact */
-import '@testing-library/jest-dom/vitest'
-
-import type { QueryObserverResult } from '../../../query-core/src'
-import { notifyManager } from '../../../query-core/src'
-import type {
-  PersistedClient,
-  Persister,
-} from '../../../query-persist-client-core/src'
-import { act, cleanup, render } from '@testing-library/preact'
-import { QueryClient, useQueries } from '../../../preact-query/src'
+import { act, render } from '@testing-library/preact'
 import { useCallback } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
-
-import { PersistQueryClientProvider } from './testPersistProvider'
-
-notifyManager.setNotifyFunction((fn) => {
-  act(fn)
-})
+import { QueryClient, useQueries } from '@tanstack/preact-query'
+import { PersistQueryClientProvider } from '@tanstack/preact-query-persist-client'
+import type {
+  PersistedClient,
+  Persister,
+} from '@tanstack/query-persist-client-core'
+import type { QueryObserverResult } from '@tanstack/preact-query'
 
 describe('useQueries with persist and memoized combine (preact)', () => {
   const storage: Record<string, string> = {}
@@ -43,17 +33,16 @@ describe('useQueries with persist and memoized combine (preact)', () => {
   })
 
   afterEach(() => {
-    cleanup()
     Object.keys(storage).forEach((key) => delete storage[key])
     vi.useRealTimers()
   })
 
-  it('updates UI when combine is memoized with persisted results', async () => {
+  it('should update UI when combine is memoized with persisted results', async () => {
     const queryClient = new QueryClient({
       defaultOptions: {
         queries: {
-          staleTime: 30_000,
-          gcTime: 1000 * 60 * 60 * 24,
+          staleTime: 30000,
+          gcTime: 24 * 60 * 60 * 1000,
         },
       },
     })
@@ -111,7 +100,7 @@ describe('useQueries with persist and memoized combine (preact)', () => {
         queries: [1, 2, 3].map((id) => ({
           queryKey: ['post', id],
           queryFn: () => sleep(100).then(() => id),
-          staleTime: 30_000,
+          staleTime: 30000,
         })),
         combine: useCallback(
           (results: Array<QueryObserverResult<number, Error>>) => ({

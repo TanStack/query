@@ -5,55 +5,27 @@
     createQuery,
     createMutation,
   } from '@tanstack/svelte-query'
-
-  type Todo = {
-    id: string
-    text: string
-  }
-
-  type Todos = {
-    items: readonly Todo[]
-    ts: number
-  }
+  import { todosMutations, todosQueries } from '$lib/services/todos/queries'
 
   let text = $state<string>('')
 
   const client = useQueryClient()
 
-  const endpoint = '/api/data'
-
-  const fetchTodos = async (): Promise<Todos> =>
-    await fetch(endpoint).then((r) => r.json())
-
-  const createTodo = async (text: string): Promise<Todo> =>
-    await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        text,
-      }),
-    }).then((res) => res.json())
-
-  const todos = createQuery<Todos>(() => ({
-    queryKey: ['optimistic'],
-    queryFn: fetchTodos,
-  }))
+  const todos = createQuery(() => todosQueries.list())
 
   const addTodoMutation = createMutation(() => ({
-    mutationFn: createTodo,
+    ...todosMutations.create(),
     onMutate: async (newTodo: string) => {
       text = ''
       // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      await client.cancelQueries({ queryKey: ['optimistic'] })
+      await client.cancelQueries({ queryKey: todosQueries.list().queryKey })
 
       // Snapshot the previous value
-      const previousTodos = client.getQueryData<Todos>(['optimistic'])
+      const previousTodos = client.getQueryData(todosQueries.list().queryKey)
 
       // Optimistically update to the new value
       if (previousTodos) {
-        client.setQueryData<Todos>(['optimistic'], {
+        client.setQueryData(todosQueries.list().queryKey, {
           ...previousTodos,
           items: [
             ...previousTodos.items,
@@ -64,15 +36,18 @@
 
       return { previousTodos }
     },
-    // If the mutation fails, use the context returned from onMutate to roll back
-    onError: (err: any, variables: any, context: any) => {
-      if (context?.previousTodos) {
-        client.setQueryData<Todos>(['optimistic'], context.previousTodos)
+    // If the mutation fails, use the result returned from onMutate to roll back
+    onError: (_err, _variables, onMutateResult) => {
+      if (onMutateResult?.previousTodos) {
+        client.setQueryData(
+          todosQueries.list().queryKey,
+          onMutateResult.previousTodos,
+        )
       }
     },
     // Always refetch after error or success:
     onSettled: () => {
-      client.invalidateQueries({ queryKey: ['optimistic'] })
+      client.invalidateQueries({ queryKey: todosQueries.list().queryKey })
     },
   }))
 </script>
@@ -111,15 +86,13 @@
     Updated At: {new Date(todos.data.ts).toLocaleTimeString()}
   </div>
   <ul>
-    {#each todos.data.items as todo}
+    {#each todos.data.items as todo (todo.id)}
       <li>{todo.text}</li>
     {/each}
   </ul>
 {/if}
 {#if todos.isFetching}
-  <div style="color:darkgreen; font-weight:700">
-    'Background Updating...' : ' '
-  </div>
+  <div style="color:darkgreen; font-weight:700">Background Updating...</div>
 {/if}
 
 <style>

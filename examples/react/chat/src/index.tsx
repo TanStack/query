@@ -8,7 +8,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import './style.css'
 import { useState } from 'react'
-import { chatQueryOptions } from './chat'
+import { messagesQueries } from './services/messages/queries'
 import { Message } from './message'
 
 const queryClient = new QueryClient()
@@ -22,8 +22,12 @@ export default function App() {
   )
 }
 
-function ChatMessage({ question }: { question: string }) {
-  const { error, data = [], isFetching } = useQuery(chatQueryOptions(question))
+function ChatMessage({ id, question }: { id: string; question: string }) {
+  const {
+    error,
+    data = [],
+    isFetching,
+  } = useQuery(messagesQueries.detail(id, question))
 
   if (error) return 'An error has occurred: ' + error.message
 
@@ -39,11 +43,16 @@ function ChatMessage({ question }: { question: string }) {
 }
 
 function Example() {
-  const [questions, setQuestions] = useState<Array<string>>([])
+  const [questions, setQuestions] = useState<
+    Array<{ id: string; question: string }>
+  >([])
   const [currentQuestion, setCurrentQuestion] = useState('')
 
   const submitMessage = () => {
-    setQuestions([...questions, currentQuestion])
+    setQuestions([
+      ...questions,
+      { id: crypto.randomUUID(), question: currentQuestion },
+    ])
     setCurrentQuestion('')
   }
 
@@ -53,25 +62,26 @@ function Example() {
         TanStack Chat Example
       </h1>
       <div className="overflow-y-auto mb-4 space-y-4">
-        {questions.map((question) => (
-          <ChatMessage key={question} question={question} />
+        {questions.map(({ id, question }) => (
+          <ChatMessage key={id} id={id} question={question} />
         ))}
       </div>
 
-      <div className="flex items-center space-x-2">
+      <form
+        className="flex items-center space-x-2"
+        onSubmit={(e) => {
+          e.preventDefault()
+          submitMessage()
+        }}
+      >
         <input
           className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100"
           value={currentQuestion}
           onChange={(e) => setCurrentQuestion(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              submitMessage()
-            }
-          }}
           placeholder="Type your message..."
         />
         <button
-          onClick={submitMessage}
+          type="submit"
           disabled={!currentQuestion.trim()}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-2xl shadow-md transition"
         >
@@ -83,15 +93,15 @@ function Example() {
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
             <path d="m21.854 2.147-10.94 10.939" />
           </svg>
         </button>
-      </div>
+      </form>
     </div>
   )
 }

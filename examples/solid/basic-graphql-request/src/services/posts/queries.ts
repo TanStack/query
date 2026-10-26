@@ -1,0 +1,16 @@
+import { queryOptions } from '@tanstack/solid-query'
+import { postsAPI } from './api'
+
+export const postsQueries = {
+  all: () => ['posts'] as const,
+  list: () =>
+    queryOptions({
+      queryKey: [...postsQueries.all(), 'list'] as const,
+      queryFn: () => postsAPI.getPosts(),
+    }),
+  detail: (id: string) =>
+    queryOptions({
+      queryKey: [...postsQueries.all(), 'detail', id] as const,
+      queryFn: () => postsAPI.getPost(id),
+    }),
+}
