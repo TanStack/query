@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { filmsQueries } from './services/films/queries'
 

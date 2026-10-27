@@ -5,12 +5,12 @@ import {
   useLoaderData,
   useNavigation,
   useSubmit,
-} from 'react-router-dom'
+} from 'react-router'
 import { useDebounce } from 'rooks'
 import { useIsFetching, useSuspenseQuery } from '@tanstack/react-query'
 import { contactsQueries } from '../services/contacts/queries'
 import type { QueryClient } from '@tanstack/react-query'
-import type { LoaderFunctionArgs } from 'react-router-dom'
+import type { LoaderFunctionArgs } from 'react-router'
 
 export const loader =
   (queryClient: QueryClient) =>
@@ -22,9 +22,7 @@ export const loader =
   }
 
 export default function Root() {
-  const { q } = useLoaderData() as Awaited<
-    ReturnType<ReturnType<typeof loader>>
-  >
+  const { q } = useLoaderData<ReturnType<typeof loader>>()
   const { data: contacts } = useSuspenseQuery(contactsQueries.list(q))
   const searching = useIsFetching({ queryKey: contactsQueries.lists() }) > 0
   const navigation = useNavigation()
