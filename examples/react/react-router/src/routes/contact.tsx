@@ -1,8 +1,8 @@
-import { Form, Link, useFetcher, useLoaderData } from 'react-router-dom'
+import { Form, Link, useFetcher, useLoaderData } from 'react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { contactsAPI } from '../services/contacts/api'
 import { contactsQueries } from '../services/contacts/queries'
-import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router-dom'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router'
 import type { Contact } from '../services/contacts/types'
 import type { QueryClient } from '@tanstack/react-query'
 
@@ -34,9 +34,7 @@ export const action =
   }
 
 export default function Contact() {
-  const { contactId } = useLoaderData() as Awaited<
-    ReturnType<ReturnType<typeof loader>>
-  >
+  const { contactId } = useLoaderData<ReturnType<typeof loader>>()
   const { data: contact } = useSuspenseQuery(contactsQueries.detail(contactId))
 
   return (
