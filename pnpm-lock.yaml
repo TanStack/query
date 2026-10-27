@@ -1638,6 +1638,64 @@ importers:
         specifier: ^8.3.1
         version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
+  examples/preact/ssr-streaming:
+    dependencies:
+      '@tanstack/preact-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query
+      '@tanstack/preact-query-devtools':
+        specifier: ^5.105.0
+        version: link:../../../packages/preact-query-devtools
+      compression:
+        specifier: ^1.8.1
+        version: 1.8.1(supports-color@10.2.2)
+      devalue:
+        specifier: ^6.0.3
+        version: 6.0.3
+      express:
+        specifier: ^5.3.0
+        version: 5.3.0(supports-color@10.2.2)
+      preact:
+        specifier: ^11.0.1
+        version: 11.0.1(preact-render-to-string@6.8.0)
+      preact-render-to-string:
+        specifier: ^6.8.0
+        version: 6.8.0(preact@11.0.1)
+      sirv:
+        specifier: ^3.0.2
+        version: 3.0.2
+    devDependencies:
+      '@preact/preset-vite':
+        specifier: ^2.10.6
+        version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      '@types/compression':
+        specifier: ^1.8.1
+        version: 1.8.1
+      '@types/express':
+        specifier: ^5.0.6
+        version: 5.0.6
+      '@types/node':
+        specifier: ^24.19.2
+        version: 24.19.2
+      cross-env:
+        specifier: ^10.1.0
+        version: 10.1.0
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-config-preact:
+        specifier: ^2.0.0
+        version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
   examples/preact/star-wars:
     dependencies:
       '@tanstack/preact-query':
