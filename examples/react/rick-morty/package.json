@@ -14,7 +14,7 @@
     "@tanstack/react-query-devtools": "^5.105.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "react-router": "^7.18.4"
+    "react-router": "^8.5.0"
   },
   "devDependencies": {
     "@eslint-react/eslint-plugin": "^5.21.0",
