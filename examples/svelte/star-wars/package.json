@@ -22,7 +22,7 @@
     "@typescript-eslint/parser": "^8.72.0",
     "eslint-plugin-svelte": "^3.23.0",
     "svelte": "^5.57.1",
-    "svelte-check": "^4.7.6",
+    "svelte-check": "^4.7.7",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "vite": "^8.3.1"
