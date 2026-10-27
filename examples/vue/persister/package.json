@@ -17,7 +17,7 @@
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.105.0",
     "@vitejs/plugin-vue": "^6.0.9",
-    "typescript": "5.8.3",
+    "typescript": "^6.0.3",
     "vite": "^8.3.1"
   }
 }
