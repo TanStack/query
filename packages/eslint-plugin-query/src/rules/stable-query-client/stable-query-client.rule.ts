@@ -36,7 +36,6 @@ export const rule = createRule({
         if (
           node.callee.type !== AST_NODE_TYPES.Identifier ||
           node.callee.name !== 'QueryClient' ||
-          node.parent.type !== AST_NODE_TYPES.VariableDeclarator ||
           !helpers.isSpecificTanstackQueryImport(
             node.callee,
             '@tanstack/react-query',
@@ -45,26 +44,43 @@ export const rule = createRule({
           return
         }
 
-        const fnAncestor = ASTUtils.getFunctionAncestor(
-          context.sourceCode,
-          node,
-        )
+        const fnAncestor = context.sourceCode
+          .getAncestors(node)
+          .reverse()
+          .find((ancestor) =>
+            ASTUtils.isNodeOfOneOf(ancestor, [
+              AST_NODE_TYPES.FunctionDeclaration,
+              AST_NODE_TYPES.FunctionExpression,
+              AST_NODE_TYPES.ArrowFunctionExpression,
+            ]),
+          )
+        const fnName =
+          fnAncestor?.parent.type === AST_NODE_TYPES.VariableDeclarator &&
+          fnAncestor.parent.id.type === AST_NODE_TYPES.Identifier
+            ? fnAncestor.parent.id
+            : fnAncestor?.id
         const isReactServerComponent = fnAncestor?.async === true
 
         if (
-          !ASTUtils.isValidReactComponentOrHookName(fnAncestor?.id) ||
+          !ASTUtils.isValidReactComponentOrHookName(fnName) ||
           isReactServerComponent
         ) {
           return
         }
 
         context.report({
-          node: node.parent,
+          node:
+            node.parent.type === AST_NODE_TYPES.VariableDeclarator
+              ? node.parent
+              : node,
           messageId: 'unstable',
           fix: (() => {
             const { parent } = node
 
-            if (parent.id.type !== AST_NODE_TYPES.Identifier) {
+            if (
+              parent.type !== AST_NODE_TYPES.VariableDeclarator ||
+              parent.id.type !== AST_NODE_TYPES.Identifier
+            ) {
               return
             }
 
