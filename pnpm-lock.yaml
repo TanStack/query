@@ -231,10 +231,10 @@ catalogs:
       specifier: ^11.0.1
       version: 11.0.1
     react:
-      specifier: ^19.2.7
+      specifier: ^19.3.1
       version: 19.3.1
     react-dom:
-      specifier: ^19.2.7
+      specifier: ^19.3.1
       version: 19.3.1
     solid-js:
       specifier: ^1.9.15
@@ -1782,10 +1782,10 @@ importers:
         specifier: ^5.105.0
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -1822,10 +1822,10 @@ importers:
         specifier: ^16.0.7
         version: 16.2.2(@babel/core@7.29.7(supports-color@10.2.2))(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.90.0)
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -1862,10 +1862,10 @@ importers:
         specifier: ^5.105.0
         version: link:../../../packages/react-query-persist-client
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -1905,10 +1905,10 @@ importers:
         specifier: ^7.1.2
         version: 7.4.0(graphql@16.13.2)
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -1945,10 +1945,10 @@ importers:
         specifier: ^5.105.0
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -1982,10 +1982,10 @@ importers:
         specifier: ^5.105.0
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -2025,10 +2025,10 @@ importers:
         specifier: ^5.105.0
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -2062,10 +2062,10 @@ importers:
         specifier: ^5.105.0
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -2105,10 +2105,10 @@ importers:
         specifier: ^5.105.0
         version: link:../../../packages/react-query-persist-client
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@tanstack/eslint-plugin-query':
@@ -2145,7 +2145,7 @@ importers:
         specifier: ^5.105.0
         version: link:../../../packages/react-query
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
     devDependencies:
       '@tanstack/eslint-plugin-query':
@@ -2173,10 +2173,10 @@ importers:
         specifier: ^16.0.7
         version: 16.2.2(@babel/core@7.29.7(supports-color@10.2.2))(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.90.0)
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -2210,10 +2210,10 @@ importers:
         specifier: ^16.0.7
         version: 16.2.2(@babel/core@7.29.7(supports-color@10.2.2))(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.90.0)
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
       react-intersection-observer:
         specifier: ^11.0.1
@@ -2250,10 +2250,10 @@ importers:
         specifier: ^16.0.7
         version: 16.2.2(@babel/core@7.29.7(supports-color@10.2.2))(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.90.0)
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -2287,10 +2287,10 @@ importers:
         specifier: ^16.0.7
         version: 16.2.2(@babel/core@7.29.7(supports-color@7.2.0))(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.90.0)
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -2324,10 +2324,10 @@ importers:
         specifier: ^16.0.7
         version: 16.2.2(@babel/core@7.29.7(supports-color@10.2.2))(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.90.0)
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -2364,10 +2364,10 @@ importers:
         specifier: ^16.0.7
         version: 16.2.2(@babel/core@7.29.7(supports-color@10.2.2))(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.90.0)
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -2410,10 +2410,10 @@ importers:
         specifier: ^2.15.0
         version: 2.15.0(@types/node@24.19.2)(typescript@5.8.3)
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
       react-hot-toast:
         specifier: ^2.6.1
@@ -2453,10 +2453,10 @@ importers:
         specifier: ^16.0.7
         version: 16.2.2(@babel/core@7.29.7(supports-color@10.2.2))(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.90.0)
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -2487,10 +2487,10 @@ importers:
         specifier: ^5.105.0
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -2527,10 +2527,10 @@ importers:
         specifier: ^16.0.7
         version: 16.2.2(@babel/core@7.29.7(supports-color@10.2.2))(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.90.0)
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -2579,7 +2579,7 @@ importers:
         specifier: ^57.0.1
         version: 57.0.1(expo@57.0.24)(react-native@0.86.3(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.3.0)(react@19.3.1)(supports-color@10.2.2))(react@19.3.1)
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-native:
         specifier: ^0.86.3
@@ -2637,10 +2637,10 @@ importers:
         specifier: ^8.3.0
         version: 8.3.0
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
       react-router:
         specifier: ^7.18.4
@@ -2686,10 +2686,10 @@ importers:
         specifier: ^5.105.0
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
       react-router:
         specifier: ^7.18.4
@@ -2732,10 +2732,10 @@ importers:
         specifier: ^5.105.0
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -2769,10 +2769,10 @@ importers:
         specifier: ^5.105.0
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
@@ -2806,10 +2806,10 @@ importers:
         specifier: ^5.105.0
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
       react-router:
         specifier: ^7.18.4
@@ -2855,10 +2855,10 @@ importers:
         specifier: ^4.7.0
         version: 4.7.0
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
       react-error-boundary:
         specifier: ^4.1.2
@@ -3655,10 +3655,10 @@ importers:
         specifier: ^15.4.8
         version: 15.5.14(@babel/core@7.29.7(supports-color@7.2.0))(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.90.0)
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
       tupleson:
         specifier: 0.23.1
@@ -3686,10 +3686,10 @@ importers:
         specifier: ^16.0.7
         version: 16.2.2(@babel/core@7.29.7(supports-color@7.2.0))(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.90.0)
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
       tupleson:
         specifier: 0.23.1
@@ -3724,10 +3724,10 @@ importers:
         specifier: ^6.1.1
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
       vite:
         specifier: ^8.3.1
@@ -3742,10 +3742,10 @@ importers:
         specifier: workspace:*
         version: link:../../packages/react-query-devtools
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@babel/core':
@@ -3779,10 +3779,10 @@ importers:
         specifier: workspace:*
         version: link:../../packages/react-query-devtools
       react:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1
       react-dom:
-        specifier: ^19.2.7
+        specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
       '@babel/core':

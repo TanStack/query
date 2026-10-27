@@ -25,8 +25,8 @@ catalog:
   '@types/react-dom': ^19.3.0
   '@vitejs/plugin-react': ^6.1.1
   eslint-plugin-react-hooks: ^7.1.1
-  react: ^19.2.7
-  react-dom: ^19.2.7
+  react: ^19.3.1
+  react-dom: ^19.3.1
 
   # preact
   '@preact/preset-vite': ^2.10.6

@@ -20,7 +20,7 @@
     "expo": "^57.0.24",
     "expo-constants": "^57.0.19",
     "expo-status-bar": "^57.0.1",
-    "react": "^19.2.7",
+    "react": "^19.3.1",
     "react-native": "^0.86.3",
     "react-native-gesture-handler": "^2.32.0",
     "react-native-paper": "^5.15.0",
