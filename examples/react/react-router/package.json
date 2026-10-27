@@ -27,7 +27,7 @@
     "@types/react-dom": "^19.3.0",
     "@types/sort-by": "^1.2.3",
     "@vitejs/plugin-react": "^6.1.1",
-    "typescript": "5.8.3",
+    "typescript": "^6.0.3",
     "vite": "^8.3.1"
   }
 }

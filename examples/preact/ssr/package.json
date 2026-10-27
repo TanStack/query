@@ -28,7 +28,7 @@
     "cross-env": "^10.1.0",
     "eslint": "^9.36.0",
     "eslint-config-preact": "^2.0.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "vite": "^8.3.1"
   }
 }
