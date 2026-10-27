@@ -19,7 +19,7 @@
     "@preact/preset-vite": "^2.10.6",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/eslint-plugin-query": "^5.105.0",
-    "eslint": "^9.36.0",
+    "eslint": "^9.39.5",
     "eslint-config-preact": "^2.0.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",

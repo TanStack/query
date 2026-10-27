@@ -11,7 +11,7 @@
     "test:eslint": "eslint ./src"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^5.90.2",
+    "@tanstack/vue-query": "^5.105.0",
     "vue": "2.7.16",
     "vue-template-compiler": "2.7.16"
   },

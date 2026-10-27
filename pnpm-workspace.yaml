@@ -16,10 +16,10 @@ catalog:
   typescript: 6.0.3
   '@typescript-eslint/parser': ^8.72.0
   '@typescript-eslint/rule-tester': ^8.72.0
-  eslint: ^9.36.0
+  eslint: ^9.39.5
 
   # react
-  '@eslint-react/eslint-plugin': ^5.23.3
+  '@eslint-react/eslint-plugin': ^5.28.8
   '@testing-library/react': ^16.1.0
   '@types/react': ^19.3.0
   '@types/react-dom': ^19.3.0
@@ -46,7 +46,7 @@ catalog:
   '@testing-library/svelte': ^5.2.8
   eslint-plugin-svelte: ^3.23.0
   svelte: ^5.57.1
-  svelte-check: ^4.4.5
+  svelte-check: ^4.7.7
 
   # vue
   unplugin-vue: ^8.0.0
