@@ -11,12 +11,11 @@
   },
   "dependencies": {
     "@tanstack/lit-query": "^0.2.31",
-    "@tanstack/query-core": "^5.105.0",
     "lit": "^3.3.3"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.105.0",
-    "typescript": "5.8.3",
+    "typescript": "^6.0.3",
     "vite": "^8.3.1"
   }
 }

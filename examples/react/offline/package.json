@@ -16,17 +16,17 @@
     "@tanstack/react-query-devtools": "^5.105.0",
     "@tanstack/react-query-persist-client": "^5.105.0",
     "msw": "^2.15.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "react-hot-toast": "^2.6.1"
   },
   "devDependencies": {
     "@eslint-react/eslint-plugin": "^5.21.0",
     "@tanstack/eslint-plugin-query": "^5.105.0",
-    "@types/react": "^19.2.7",
-    "@types/react-dom": "^19.2.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
-    "typescript": "5.8.3",
+    "typescript": "^6.0.3",
     "vite": "^8.3.1"
   },
   "msw": {

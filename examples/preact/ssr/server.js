@@ -57,7 +57,7 @@ app.use('*all', async (req, res) => {
     const e = /** @type {Error} */ (error)
     vite?.ssrFixStacktrace(e)
     console.log(e.stack)
-    res.status(500).end(e.stack)
+    res.status(500).end(isProduction ? 'Internal Server Error' : e.stack)
   }
 })
 
