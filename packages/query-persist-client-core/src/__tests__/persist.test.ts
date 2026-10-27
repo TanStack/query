@@ -46,14 +46,14 @@ describe('persist', () => {
     it('should catch and log errors in `persistClient`', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
       const consoleWarnMock = vi
         .spyOn(console, 'warn')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const persistError = new Error('Error persisting client')
       const persister = createSpyPersister()
-      persister.persistClient = vi.fn(() => Promise.reject(persistError))
+      vi.spyOn(persister, 'persistClient').mockRejectedValue(persistError)
 
       const unsubscribe = persistQueryClientSubscribe({
         queryClient,
@@ -77,10 +77,10 @@ describe('persist', () => {
     it('should catch and log errors thrown while dehydrating', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
       const consoleWarnMock = vi
         .spyOn(console, 'warn')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const dehydrateError = new Error('Error dehydrating query')
       const persister = createSpyPersister()
