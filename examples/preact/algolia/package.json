@@ -12,6 +12,7 @@
   "dependencies": {
     "@algolia/client-search": "5.59.0",
     "@tanstack/preact-query": "^5.105.0",
+    "@tanstack/preact-query-devtools": "^5.105.0",
     "preact": "^11.0.1"
   },
   "devDependencies": {

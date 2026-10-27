@@ -11,7 +11,6 @@
   "dependencies": {
     "@lit-labs/ssr": "^3.3.0",
     "@tanstack/lit-query": "^0.2.31",
-    "@tanstack/query-core": "^5.105.0",
     "lit": "^3.3.3"
   },
   "devDependencies": {
