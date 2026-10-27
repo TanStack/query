@@ -7050,6 +7050,10 @@
             {
               "label": "SSR",
               "to": "framework/preact/examples/ssr"
+            },
+            {
+              "label": "SSR with streaming",
+              "to": "framework/preact/examples/ssr-streaming"
             }
           ]
         }
