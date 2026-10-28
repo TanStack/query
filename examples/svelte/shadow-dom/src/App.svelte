@@ -3,7 +3,7 @@
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
   import DogList from './lib/DogList.svelte'
 
-  const { shadowRoot }: { shadowRoot: ShadowRoot } = $props()
+  let { shadowRoot }: { shadowRoot: ShadowRoot } = $props()
 
   const queryClient = new QueryClient()
 </script>

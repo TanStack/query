@@ -2,7 +2,7 @@
   import { createQuery } from '@tanstack/svelte-query'
   import type { Post } from './types'
 
-  const {
+  let {
     postId,
     setPostId,
   }: { postId: number; setPostId: (postId: number) => void } = $props()

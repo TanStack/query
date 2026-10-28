@@ -3,7 +3,7 @@
   import { messagesQueries } from './services/messages/queries'
   import Message from './Message.svelte'
 
-  const { id, question }: { id: string; question: string } = $props()
+  let { id, question }: { id: string; question: string } = $props()
 
   const query = createQuery(() => messagesQueries.detail(id, question))
 </script>
