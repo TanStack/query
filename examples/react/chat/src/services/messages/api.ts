@@ -4,15 +4,27 @@ const answers = [
 ]
 
 export const messagesAPI = {
-  getAnswer: (_question: string) => {
+  getAnswer: (_question: string, signal: AbortSignal) => {
     return {
       async *[Symbol.asyncIterator]() {
         const answer = answers[Math.floor(Math.random() * answers.length)]
         let index = 0
         while (index < answer.length) {
-          await new Promise((resolve) =>
-            setTimeout(resolve, 100 + Math.random() * 300),
-          )
+          await new Promise<void>((resolve) => {
+            const onAbort = () => {
+              clearTimeout(timeout)
+              resolve()
+            }
+            const timeout = setTimeout(
+              () => {
+                signal.removeEventListener('abort', onAbort)
+                resolve()
+              },
+              100 + Math.random() * 300,
+            )
+            signal.addEventListener('abort', onAbort, { once: true })
+          })
+          if (signal.aborted) return
           yield answer[index++]
         }
       },
