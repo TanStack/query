@@ -1,6 +1,6 @@
 import { Show } from 'solid-js'
 import { A, action, useParams, useSubmission } from '@solidjs/router'
-import { useQuery } from '@tanstack/solid-query'
+import { noop, useQuery } from '@tanstack/solid-query'
 import { queryClient } from '../queryClient'
 import { contactsAPI } from '../services/contacts/api'
 import { contactsQueries } from '../services/contacts/queries'
@@ -10,7 +10,7 @@ import type { Contact } from '../services/contacts/types'
 
 export const preload = ({ params }: RoutePreloadFuncArgs) => {
   if (!params.contactId) return
-  void queryClient.prefetchQuery(contactsQueries.detail(params.contactId))
+  queryClient.query(contactsQueries.detail(params.contactId)).catch(noop)
 }
 
 export const toggleFavorite = action(
