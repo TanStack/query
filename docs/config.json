@@ -6877,6 +6877,22 @@
             {
               "label": "Batching",
               "to": "framework/solid/examples/batching"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "framework/solid/examples/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/solid/examples/optimistic-updates"
+            },
+            {
+              "label": "Pagination",
+              "to": "framework/solid/examples/pagination"
+            },
+            {
+              "label": "Prefetching",
+              "to": "framework/solid/examples/prefetching"
             }
           ]
         },
