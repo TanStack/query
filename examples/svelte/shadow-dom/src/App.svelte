@@ -13,7 +13,7 @@
 </script>
 
 <QueryClientProvider client={queryClient}>
-  <div style="width: 100vw; padding: 30px">
+  <div style="padding: 30px">
     <h2>Dog Breeds</h2>
     <DogList />
   </div>

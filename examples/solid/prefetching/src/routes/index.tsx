@@ -15,32 +15,27 @@ function CharacterItem(props: {
     enabled: false,
   }))
 
+  const prefetch = () => {
+    queryClient
+      .query({
+        ...charactersQueries.detail(props.char.id),
+        staleTime: 10 * 1000, // only prefetch if older than 10 seconds
+      })
+      .catch(noop)
+  }
+
   return (
-    <li
-      onClick={() => {
-        props.onSelect(props.char.id)
-      }}
-      onMouseEnter={() => {
-        queryClient
-          .query({
-            ...charactersQueries.detail(props.char.id),
-            staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-          })
-          .catch(noop)
-      }}
-    >
-      <div
-        style={
-          characterQuery.isSuccess
-            ? {
-                'font-weight': 'bold',
-              }
-            : {}
-        }
+    <li onMouseEnter={prefetch} onFocusIn={prefetch}>
+      <button
+        type="button"
+        style={characterQuery.isSuccess ? { 'font-weight': 'bold' } : {}}
+        onClick={() => {
+          props.onSelect(props.char.id)
+        }}
       >
-        {props.char.id} - {props.char.name}{' '}
-        <A href={`/character/${props.char.id}`}>details</A>
-      </div>
+        {props.char.id} - {props.char.name}
+      </button>{' '}
+      <A href={`/character/${props.char.id}`}>details</A>
     </li>
   )
 }

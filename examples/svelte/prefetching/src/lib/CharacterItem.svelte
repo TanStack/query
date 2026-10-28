@@ -13,24 +13,26 @@
     ...charactersQueries.detail(char.id),
     enabled: false,
   }))
-</script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
-<li
-  onclick={() => {
-    onSelect(char.id)
-  }}
-  onmouseenter={() => {
+  const prefetch = () => {
     queryClient
       .query({
         ...charactersQueries.detail(char.id),
         staleTime: 10 * 1000, // only prefetch if older than 10 seconds
       })
       .catch(noop)
-  }}
->
-  <div style={query.data ? 'font-weight: bold' : ''}>
+  }
+</script>
+
+<li onmouseenter={prefetch} onfocusin={prefetch}>
+  <button
+    type="button"
+    style={query.data ? 'font-weight: bold' : ''}
+    onclick={() => {
+      onSelect(char.id)
+    }}
+  >
     {char.id} - {char.name}
-    <a href={resolve('/character/[id]', { id: String(char.id) })}>details</a>
-  </div>
+  </button>
+  <a href={resolve('/character/[id]', { id: String(char.id) })}>details</a>
 </li>
