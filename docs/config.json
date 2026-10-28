@@ -6946,6 +6946,18 @@
             {
               "label": "Chat example (streaming)",
               "to": "framework/vue/examples/chat"
+            },
+            {
+              "label": "Star Wars",
+              "to": "framework/vue/examples/star-wars"
+            },
+            {
+              "label": "Rick And Morty",
+              "to": "framework/vue/examples/rick-morty"
+            },
+            {
+              "label": "Vue Router",
+              "to": "framework/vue/examples/vue-router"
             }
           ]
         },
