@@ -5,8 +5,8 @@
  * - POST: Adds a new task to sessionStorage.
  * Simulated responses include a delay to mimic network latency.
  */
-import { HttpResponse } from '@angular/common/http'
-import { delay, of } from 'rxjs'
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http'
+import { delay, of, switchMap, throwError, timer } from 'rxjs'
 import type {
   HttpEvent,
   HttpHandlerFn,
@@ -18,8 +18,8 @@ import type { Observable } from 'rxjs'
 export const mockInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
-): Observable<HttpEvent<any>> => {
-  const respondWith = (status: number, body: any) =>
+): Observable<HttpEvent<unknown>> => {
+  const respondWith = (status: number, body: unknown) =>
     of(new HttpResponse({ status, body })).pipe(delay(1000))
   if (req.url === '/api/tasks') {
     switch (req.method) {
@@ -30,7 +30,7 @@ export const mockInterceptor: HttpInterceptorFn = (
             sessionStorage.getItem('optimistic-updates-tasks') || '[]',
           ),
         )
-      case 'POST':
+      case 'POST': {
         const tasks = JSON.parse(
           sessionStorage.getItem('optimistic-updates-tasks') || '[]',
         )
@@ -43,12 +43,22 @@ export const mockInterceptor: HttpInterceptorFn = (
           status: 'success',
           task: req.body,
         })
+      }
     }
   }
   if (req.url === '/api/tasks-wrong-url') {
-    return respondWith(500, {
-      status: 'error',
-    })
+    return timer(1000).pipe(
+      switchMap(() =>
+        throwError(
+          () =>
+            new HttpErrorResponse({
+              status: 500,
+              url: req.url,
+              error: { status: 'error' },
+            }),
+        ),
+      ),
+    )
   }
 
   return next(req)

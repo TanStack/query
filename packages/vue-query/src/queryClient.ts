@@ -14,6 +14,7 @@ import type {
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
   InferDataFromTag,
+  InferErrorFromTag,
   InfiniteData,
   InfiniteQueryExecuteOptions,
   InvalidateOptions,
@@ -64,7 +65,9 @@ export class QueryClient extends QC {
    */
   isRestoring?: Ref<boolean> = ref(false)
 
-  override isFetching(filters: MaybeRefDeep<QueryFilters> = {}): number {
+  override isFetching(
+    filters: MaybeRefDeep<Omit<QueryFilters, 'fetchStatus'>> = {},
+  ): number {
     return super.isFetching(cloneDeepUnref(filters))
   }
 
@@ -78,6 +81,7 @@ export class QueryClient extends QC {
   >(
     queryKey: TTaggedQueryKey,
   ): InferDataFromTag<TData, TTaggedQueryKey> | undefined
+  /** {@inheritDoc QueryClient.getQueryData:0} */
   override getQueryData<TData = unknown>(
     queryKey: MaybeRefDeep<QueryKey>,
   ): TData | undefined
@@ -88,6 +92,12 @@ export class QueryClient extends QC {
   }
 
   /**
+   * Returns the cached data of a query, or fetches it if there is none. With `revalidateIfStale`,
+   * stale cached data is also refetched in the background.
+   * @param options - The query options. If the query has no cached data yet, it is fetched with
+   * these options.
+   * @returns A promise that resolves to the cached data, or to the fetched data if nothing was
+   * cached yet.
    * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
    */
   override ensureQueryData<
@@ -98,6 +108,10 @@ export class QueryClient extends QC {
   >(
     options: EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<TData>
+  /**
+   * {@inheritDoc QueryClient.ensureQueryData:0}
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   */
   override ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
@@ -118,7 +132,7 @@ export class QueryClient extends QC {
       EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<TData> {
-    // eslint-disable-next-line no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.ensureQueryData(cloneDeepUnref(options))
   }
 
@@ -140,6 +154,7 @@ export class QueryClient extends QC {
     >,
     options?: MaybeRefDeep<SetDataOptions>,
   ): NoInfer<TInferredQueryFnData> | undefined
+  /** {@inheritDoc QueryClient.setQueryData:0} */
   override setQueryData<TQueryFnData, TData = NoUnknown<TQueryFnData>>(
     queryKey: MaybeRefDeep<QueryKey>,
     updater: Updater<NoInfer<TData> | undefined, NoInfer<TData> | undefined>,
@@ -169,6 +184,18 @@ export class QueryClient extends QC {
     )
   }
 
+  override getQueryState<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
+  >(
+    queryKey: TTaggedQueryKey,
+  ): QueryState<TInferredQueryFnData, TInferredError> | undefined
+  override getQueryState<TData = unknown, TError = DefaultError>(
+    queryKey: MaybeRefDeep<QueryKey>,
+  ): QueryState<TData, TError> | undefined
   override getQueryState<TData = unknown, TError = DefaultError>(
     queryKey: MaybeRefDeep<QueryKey>,
   ): QueryState<TData, TError> | undefined {
@@ -237,7 +264,7 @@ export class QueryClient extends QC {
       type: filtersCloned.refetchType ?? filtersCloned.type ?? 'active',
     }
 
-    // (dosipiuk): We need to delay `refetchQueries` execution to next macro task for all reactive values to be updated.
+    // We need to delay `refetchQueries` execution to next macro task for all reactive values to be updated.
     // This ensures that `context` in `queryFn` while `invalidating` along reactive variable change has correct
     return nextTick().then(() => {
       return super.refetchQueries(refetchFilters, optionsCloned)
@@ -277,6 +304,7 @@ export class QueryClient extends QC {
       TPageParam
     >,
   ): Promise<TData>
+  /** {@inheritDoc QueryClient.query:0} */
   override query<
     TQueryFnData,
     TError = DefaultError,
@@ -319,6 +347,12 @@ export class QueryClient extends QC {
   }
 
   /**
+   * Fetches and caches a query, or returns its cached data if it isn't stale. Unlike in observers,
+   * the fetch isn't retried unless `retry` is set.
+   * @param options - The query options, including the `queryKey` and the `queryFn` used if the
+   * query needs to fetch.
+   * @returns A promise that resolves to the cached or fetched data, or rejects with the fetch
+   * error.
    * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
    */
   override fetchQuery<
@@ -336,6 +370,10 @@ export class QueryClient extends QC {
       TPageParam
     >,
   ): Promise<TData>
+  /**
+   * {@inheritDoc QueryClient.fetchQuery:0}
+   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   */
   override fetchQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -366,11 +404,16 @@ export class QueryClient extends QC {
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
     >,
   ): Promise<TData> {
-    // eslint-disable-next-line no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.fetchQuery(cloneDeepUnref(options))
   }
 
   /**
+   * Fetches and caches a query like {@link QueryClient#fetchQuery}, but ignores the result and any
+   * error.
+   * @param options - The query options, including the `queryKey` and the `queryFn` used if the
+   * query needs to fetch.
+   * @returns A promise that resolves once the fetch settles. It never rejects.
    * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */
   override prefetchQuery<
@@ -381,6 +424,10 @@ export class QueryClient extends QC {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void>
+  /**
+   * {@inheritDoc QueryClient.prefetchQuery:0}
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   override prefetchQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -401,7 +448,7 @@ export class QueryClient extends QC {
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<void> {
-    // eslint-disable-next-line no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.prefetchQuery(cloneDeepUnref(options))
   }
 
@@ -426,6 +473,7 @@ export class QueryClient extends QC {
       ? InfiniteData<TQueryFnData, TPageParam>
       : TData
   >
+  /** {@inheritDoc QueryClient.infiniteQuery:0} */
   override infiniteQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -472,6 +520,11 @@ export class QueryClient extends QC {
   }
 
   /**
+   * Fetches and caches an infinite query, or returns its cached data if it isn't stale.
+   * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
+   * `initialPageParam`.
+   * @returns A promise that resolves to the cached or fetched {@link InfiniteData}, or rejects with
+   * the fetch error.
    * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
    */
   override fetchInfiniteQuery<
@@ -489,6 +542,10 @@ export class QueryClient extends QC {
       TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>>
+  /**
+   * {@inheritDoc QueryClient.fetchInfiniteQuery:0}
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
+   */
   override fetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -523,11 +580,16 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
-    // eslint-disable-next-line no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.fetchInfiniteQuery(cloneDeepUnref(options))
   }
 
   /**
+   * Fetches and caches an infinite query like {@link QueryClient#fetchInfiniteQuery}, but ignores
+   * the result and any error.
+   * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
+   * `initialPageParam`.
+   * @returns A promise that resolves once the fetch settles. It never rejects.
    * @deprecated use void queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */
   override prefetchInfiniteQuery<
@@ -545,6 +607,10 @@ export class QueryClient extends QC {
       TPageParam
     >,
   ): Promise<void>
+  /**
+   * {@inheritDoc QueryClient.prefetchInfiniteQuery:0}
+   * @deprecated use void queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   override prefetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -579,7 +645,7 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<void> {
-    // eslint-disable-next-line no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.prefetchInfiniteQuery(cloneDeepUnref(options))
   }
 

@@ -17,7 +17,11 @@ const userId = computed(() => user.value?.id)
 const enabled = computed(() => !!user.value?.id)
 
 // Then get the user's projects
-const { isIdle, data: projects } = useQuery({
+const {
+  status,
+  fetchStatus,
+  data: projects,
+} = useQuery({
   queryKey: ['projects', userId],
   queryFn: () => getProjectsByUser(userId.value),
   enabled, // The query will not execute until `enabled == true`
@@ -36,7 +40,7 @@ const { data: userIds } = useQuery({
 })
 
 const queries = computed(() => {
-  return userIds.value.length
+  return userIds.value?.length
     ? userIds.value.map((id) => {
         return {
           queryKey: ['messages', id],

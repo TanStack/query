@@ -30,5 +30,6 @@ export default defineConfig({
     },
     typecheck: { enabled: true },
     restoreMocks: true,
+    unstubEnvs: true,
   },
 })

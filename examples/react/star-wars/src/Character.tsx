@@ -1,15 +1,14 @@
-import { useParams, Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import { getCharacter, getFilm, getPlanet } from './api'
+import { filmsQueries } from './services/films/queries'
+import { charactersQueries } from './services/characters/queries'
+import { planetsQueries } from './services/planets/queries'
 
 export default function Character() {
-  let params = useParams()
+  const params = useParams()
   const characterId = params.characterId!
 
-  const { status, data } = useQuery({
-    queryKey: ['character', characterId],
-    queryFn: () => getCharacter(characterId),
-  })
+  const { status, data } = useQuery(charactersQueries.detail(characterId))
 
   if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>
@@ -40,7 +39,7 @@ export default function Character() {
       </p>
 
       <h4 className="text-2xl pt-4">Films</h4>
-      {data.films.map((film: any) => {
+      {data.films.map((film) => {
         const filmUrlParts = film.split('/').filter(Boolean)
         const filmId = filmUrlParts[filmUrlParts.length - 1]
         return <Film filmId={filmId} key={`${filmId}`} />
@@ -50,10 +49,7 @@ export default function Character() {
 }
 
 function Film({ filmId }: { filmId: string }) {
-  const { data, status } = useQuery({
-    queryKey: ['film', filmId],
-    queryFn: () => getFilm(filmId),
-  })
+  const { data, status } = useQuery(filmsQueries.detail(filmId))
 
   if (status === 'success') {
     return (
@@ -70,10 +66,7 @@ function Film({ filmId }: { filmId: string }) {
 }
 
 function Homeworld({ homeworldId }: { homeworldId: string }) {
-  const { data, status } = useQuery({
-    queryKey: ['homeworld', homeworldId],
-    queryFn: () => getPlanet(homeworldId),
-  })
+  const { data, status } = useQuery(planetsQueries.detail(homeworldId))
 
   if (status === 'pending') return <span>Loading...</span>
   if (status === 'error') return <span>Error :(</span>

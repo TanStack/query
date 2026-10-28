@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { QueryClient } from '../QueryClient'
 import type { InfiniteData } from '@tanstack/query-core'
@@ -8,7 +8,7 @@ describe('useInfiniteQuery', () => {
   describe('pageParam', () => {
     it('should define type of param passed to queryFunctionContext with initialPageParam', () => {
       useInfiniteQuery(() => ({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           expectTypeOf(pageParam).toEqualTypeOf<number>()
         },
@@ -19,7 +19,7 @@ describe('useInfiniteQuery', () => {
 
     it('should pass direction to queryFn of useInfiniteQuery', () => {
       useInfiniteQuery(() => ({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ direction }) => {
           expectTypeOf(direction).toEqualTypeOf<'forward' | 'backward'>()
         },
@@ -30,9 +30,9 @@ describe('useInfiniteQuery', () => {
 
     it('should define type of param passed to queryFunctionContext with initialPageParam for fetchInfiniteQuery', () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.fetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           expectTypeOf(pageParam).toEqualTypeOf<number>()
         },
@@ -42,9 +42,9 @@ describe('useInfiniteQuery', () => {
 
     it('should define type of param passed to queryFunctionContext with initialPageParam for prefetchInfiniteQuery', () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           expectTypeOf(pageParam).toEqualTypeOf<number>()
         },
@@ -56,7 +56,7 @@ describe('useInfiniteQuery', () => {
   describe('initialData', () => {
     it('should always define TData when initialData is provided', () => {
       const { data } = useInfiniteQuery(() => ({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return pageParam * 5
         },
@@ -70,7 +70,7 @@ describe('useInfiniteQuery', () => {
 
     it('should have undefined in the TData union when initialData is NOT provided', () => {
       const { data } = useInfiniteQuery(() => ({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return pageParam * 5
         },
@@ -87,7 +87,7 @@ describe('useInfiniteQuery', () => {
   describe('select', () => {
     it('should still return paginated data if no select result', () => {
       const infiniteQuery = useInfiniteQuery(() => ({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return pageParam * 5
         },
@@ -103,7 +103,7 @@ describe('useInfiniteQuery', () => {
 
     it('should be able to transform data to arbitrary result', () => {
       const infiniteQuery = useInfiniteQuery(() => ({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return pageParam * 5
         },
@@ -122,7 +122,7 @@ describe('useInfiniteQuery', () => {
   describe('getNextPageParam / getPreviousPageParam', () => {
     it('should get typed params', () => {
       const infiniteQuery = useInfiniteQuery(() => ({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return String(pageParam)
         },
@@ -168,7 +168,7 @@ describe('useInfiniteQuery', () => {
         isLoadingError,
         isRefetchError,
       } = useInfiniteQuery(() => ({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return pageParam * 5
         },
@@ -189,7 +189,7 @@ describe('useInfiniteQuery', () => {
 
       const infiniteQuery = useInfiniteQuery(
         () => ({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: ({ pageParam }) => {
             return pageParam * 5
           },

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useIsFetching, useQuery } from '..'
 import { renderWithClient, setActTimeout } from './utils'
 
@@ -22,7 +22,7 @@ describe('useIsFetching', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function IsFetching() {
       const isFetching = useIsFetching()
@@ -62,8 +62,8 @@ describe('useIsFetching', () => {
   })
 
   it('should not update state while rendering', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const isFetchingArray: Array<number> = []
 
@@ -119,12 +119,12 @@ describe('useIsFetching', () => {
 
     // unlike react, Updating renderSecond wont cause a rerender for FirstQuery
     await vi.advanceTimersByTimeAsync(300)
-    expect(isFetchingArray).toEqual([0, 1, 2, 1, 0])
+    expect(isFetchingArray).toStrictEqual([0, 1, 2, 1, 0])
   })
 
   it('should be able to filter', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const isFetchingArray: Array<number> = []
 
@@ -180,11 +180,11 @@ describe('useIsFetching', () => {
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
 
     // at no point should we have isFetching: 2
-    expect(isFetchingArray).toEqual(expect.not.arrayContaining([2]))
+    expect(isFetchingArray).toStrictEqual(expect.not.arrayContaining([2]))
   })
 
   it('should show the correct fetching state when mounted after a query', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useQuery(() => ({
@@ -210,7 +210,7 @@ describe('useIsFetching', () => {
 
   it('should use provided custom queryClient', async () => {
     const customClient = new QueryClient()
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useQuery(
@@ -230,7 +230,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    const rendered = render(() => <Page></Page>)
+    const rendered = render(() => <Page />)
 
     expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -240,12 +240,12 @@ describe('useIsFetching', () => {
   it('should resubscribe when a custom queryClient changes', async () => {
     const queryClient1 = new QueryClient()
     const queryClient2 = new QueryClient()
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const [client, setClient] = createSignal(queryClient1)
     const queryCache1 = queryClient1.getQueryCache()
     const originalSubscribe1 = queryCache1.subscribe.bind(queryCache1)
-    const unsubscribe1 = vi.fn()
+    const unsubscribe1 = vi.fn<() => void>()
 
     vi.spyOn(queryCache1, 'subscribe').mockImplementation((listener) => {
       const cleanup = originalSubscribe1(listener)

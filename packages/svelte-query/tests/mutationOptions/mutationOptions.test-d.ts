@@ -1,6 +1,6 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import {
   createMutation,
   mutationOptions,
@@ -20,7 +20,7 @@ import type {
 
 describe('mutationOptions', () => {
   it('should not allow excess properties', () => {
-    const key = queryKey()
+    const key = createKey()
 
     // @ts-expect-error this is a good error, because onMutates does not exist!
     mutationOptions({
@@ -34,7 +34,7 @@ describe('mutationOptions', () => {
   })
 
   it('should infer types for callbacks', () => {
-    const key = queryKey()
+    const key = createKey()
 
     mutationOptions({
       mutationFn: () => Promise.resolve(5),
@@ -46,7 +46,7 @@ describe('mutationOptions', () => {
   })
 
   it('should infer types for onError callback', () => {
-    const key = queryKey()
+    const key = createKey()
 
     mutationOptions({
       mutationFn: () => {
@@ -60,7 +60,7 @@ describe('mutationOptions', () => {
   })
 
   it('should infer types for variables', () => {
-    const key = queryKey()
+    const key = createKey()
 
     mutationOptions<number, DefaultError, { id: string }>({
       mutationFn: (vars) => {
@@ -72,7 +72,7 @@ describe('mutationOptions', () => {
   })
 
   it('should infer result type correctly', () => {
-    const key = queryKey()
+    const key = createKey()
 
     mutationOptions<number, DefaultError, void, { name: string }>({
       mutationFn: () => Promise.resolve(5),
@@ -87,7 +87,7 @@ describe('mutationOptions', () => {
   })
 
   it('should infer context type correctly', () => {
-    const key = queryKey()
+    const key = createKey()
 
     mutationOptions<number>({
       mutationFn: (_variables, context) => {
@@ -129,7 +129,7 @@ describe('mutationOptions', () => {
   })
 
   it('should infer all types when not explicitly provided', () => {
-    const key = queryKey()
+    const key = createKey()
 
     expectTypeOf(
       mutationOptions({
@@ -158,7 +158,7 @@ describe('mutationOptions', () => {
   })
 
   it('should work when used with createMutation', () => {
-    const key = queryKey()
+    const key = createKey()
 
     const mutation = createMutation(() =>
       mutationOptions({
@@ -185,7 +185,7 @@ describe('mutationOptions', () => {
   })
 
   it('should work when used with useIsMutating', () => {
-    const key = queryKey()
+    const key = createKey()
 
     const isMutating = useIsMutating(
       mutationOptions({
@@ -204,7 +204,7 @@ describe('mutationOptions', () => {
   })
 
   it('should work when used with queryClient.isMutating', () => {
-    const key = queryKey()
+    const key = createKey()
     const queryClient = new QueryClient()
 
     const isMutating = queryClient.isMutating(
@@ -224,7 +224,7 @@ describe('mutationOptions', () => {
   })
 
   it('should work when used with useMutationState', () => {
-    const key = queryKey()
+    const key = createKey()
 
     const mutationState = useMutationState({
       filters: mutationOptions({

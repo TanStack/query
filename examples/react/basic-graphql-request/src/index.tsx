@@ -7,20 +7,12 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { gql, request } from 'graphql-request'
-
-const endpoint = 'https://graphqlzero.almansi.me/api'
+import { postsQueries } from './services/posts/queries'
 
 const queryClient = new QueryClient()
 
-type Post = {
-  id: number
-  title: string
-  body: string
-}
-
 function App() {
-  const [postId, setPostId] = React.useState(-1)
+  const [postId, setPostId] = React.useState<string | null>(null)
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -34,7 +26,7 @@ function App() {
           loading sequences)
         </strong>
       </p>
-      {postId > -1 ? (
+      {postId !== null ? (
         <Post postId={postId} setPostId={setPostId} />
       ) : (
         <Posts setPostId={setPostId} />
@@ -44,37 +36,13 @@ function App() {
   )
 }
 
-function usePosts() {
-  return useQuery({
-    queryKey: ['posts'],
-    queryFn: async () => {
-      const {
-        posts: { data },
-      } = await request<{ posts: { data: Array<Post> } }>(
-        endpoint,
-        gql`
-          query {
-            posts {
-              data {
-                id
-                title
-              }
-            }
-          }
-        `,
-      )
-      return data
-    },
-  })
-}
-
 function Posts({
   setPostId,
 }: {
-  setPostId: React.Dispatch<React.SetStateAction<number>>
+  setPostId: React.Dispatch<React.SetStateAction<string | null>>
 }) {
   const queryClient = useQueryClient()
-  const { status, data, error, isFetching } = usePosts()
+  const { status, data, error, isFetching } = useQuery(postsQueries.list())
 
   return (
     <div>
@@ -95,7 +63,9 @@ function Posts({
                     style={
                       // We can find the existing query data here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData(['post', post.id])
+                      queryClient.getQueryData(
+                        postsQueries.detail(post.id).queryKey,
+                      )
                         ? {
                             fontWeight: 'bold',
                             color: 'green',
@@ -116,46 +86,25 @@ function Posts({
   )
 }
 
-function usePost(postId: number) {
-  return useQuery({
-    queryKey: ['post', postId],
-    queryFn: async () => {
-      const { post } = await request<{ post: Post }>(
-        endpoint,
-        gql`
-        query {
-          post(id: ${postId}) {
-            id
-            title
-            body
-          }
-        }
-        `,
-      )
-
-      return post
-    },
-    enabled: !!postId,
-  })
-}
-
 function Post({
   postId,
   setPostId,
 }: {
-  postId: number
-  setPostId: React.Dispatch<React.SetStateAction<number>>
+  postId: string
+  setPostId: React.Dispatch<React.SetStateAction<string | null>>
 }) {
-  const { status, data, error, isFetching } = usePost(postId)
+  const { status, data, error, isFetching } = useQuery(
+    postsQueries.detail(postId),
+  )
 
   return (
     <div>
       <div>
-        <a onClick={() => setPostId(-1)} href="#">
+        <a onClick={() => setPostId(null)} href="#">
           Back
         </a>
       </div>
-      {!postId || status === 'pending' ? (
+      {status === 'pending' ? (
         'Loading...'
       ) : status === 'error' ? (
         <span>Error: {error.message}</span>

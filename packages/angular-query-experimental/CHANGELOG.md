@@ -1,5 +1,46 @@
 # @tanstack/angular-query-experimental
 
+## 5.105.0
+
+### Minor Changes
+
+- [#12316](https://github.com/TanStack/query/pull/12316) [`8f9dfcb`](https://github.com/TanStack/query/commit/8f9dfcb30ce901b867b06ba08feba28daf5d9fb4) - feat(angular-query-experimental/injectDevtoolsPanel): add the 'theme' and 'hideDisabledQueries' options
+
+### Patch Changes
+
+- [#12315](https://github.com/TanStack/query/pull/12315) [`9e42537`](https://github.com/TanStack/query/commit/9e4253766f8015d1372bcd515f50103fd067a42d) - fix(angular-query-experimental/withDevtools): forward an unset 'theme' to the devtools so removing it falls back to the theme selected in the devtools Settings menu
+- Updated dependencies []:
+  - @tanstack/query-core@5.105.0
+
+## 5.104.5
+
+### Patch Changes
+
+- Updated dependencies [[`f608f93`](https://github.com/TanStack/query/commit/f608f933a36da30670082e90d0a56b2569290563)]:
+  - @tanstack/query-core@5.104.5
+
+## 5.104.4
+
+### Patch Changes
+
+- [#11251](https://github.com/TanStack/query/pull/11251) [`fc3a384`](https://github.com/TanStack/query/commit/fc3a3848f25adec750e6ee6d3abf9280c7e3a990) - fix({preact,solid,svelte,angular-query-experimental}): switch to 'export type *' for type-only re-exports
+- Updated dependencies [[`1fee044`](https://github.com/TanStack/query/commit/1fee0443dbeb346b8401557ca286a66cdec7ad71), [`fce89dd`](https://github.com/TanStack/query/commit/fce89ddf7a35b14252096ff64a1217efd81b415c)]:
+  - @tanstack/query-core@5.104.4
+
+## 5.104.3
+
+### Patch Changes
+
+- Updated dependencies [[`0f15bc9`](https://github.com/TanStack/query/commit/0f15bc925db5813be6a17527988ec7d7b3c8cfc0)]:
+  - @tanstack/query-core@5.104.3
+
+## 5.104.2
+
+### Patch Changes
+
+- Updated dependencies [[`03e8c39`](https://github.com/TanStack/query/commit/03e8c3955ddbf20f0a07b79982b52dfad8df5323)]:
+  - @tanstack/query-core@5.104.2
+
 ## 5.104.1
 
 ### Patch Changes

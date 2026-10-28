@@ -1,7 +1,6 @@
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { act } from '@testing-library/preact'
 import { hydrate as preactHydrate, render } from 'preact'
-import type { VNode } from 'preact'
 import { renderToString } from 'preact-render-to-string'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
@@ -15,6 +14,7 @@ import {
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
+import type { VNode } from 'preact'
 
 const PreactHydrate = (element: VNode, container: Element) => {
   act(() => {
@@ -38,8 +38,8 @@ function PrintStateComponent({ componentName, result }: any): any {
 }
 
 describe('Server side rendering with de/rehydration', () => {
-  const successKey = queryKey()
-  const errorKey = queryKey()
+  const successKey = createKey()
+  const errorKey = createKey()
 
   beforeAll(() => {
     vi.useFakeTimers()
@@ -51,7 +51,7 @@ describe('Server side rendering with de/rehydration', () => {
 
   it('should not mismatch on success', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
 
@@ -123,14 +123,13 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleErrorMock.mockRestore()
   })
 
   it('should not mismatch on error', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
-    const fetchDataError = vi.fn(() => {
+    const fetchDataError = vi.fn<() => never>(() => {
       throw new Error('fetchDataError')
     })
 
@@ -204,12 +203,11 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleErrorMock.mockRestore()
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
-    consoleErrorMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockReturnValue(undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
 
@@ -272,6 +270,5 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleErrorMock.mockRestore()
   })
 })

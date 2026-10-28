@@ -1,23 +1,34 @@
 import { QueryClient } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { broadcastQueryClient } from '..'
 import type { BroadcastErrorEvent } from '..'
 import type { QueryCache } from '@tanstack/query-core'
+import type { BroadcastChannel } from 'broadcast-channel'
 
-const mockPostMessage = vi.fn().mockResolvedValue(undefined)
-const mockClose = vi.fn()
+const mockPostMessage = vi
+  .fn<BroadcastChannel['postMessage']>()
+  .mockResolvedValue(undefined)
+const mockClose = vi.fn<BroadcastChannel['close']>()
 let lastCreatedChannel: { onmessage: ((action: any) => void) | null }
 
-vi.mock('broadcast-channel', async (importOriginal) => {
+vi.mock(import('broadcast-channel'), async (importOriginal) => {
   const actual = await importOriginal()
   return {
-    ...(actual as object),
+    ...actual,
     BroadcastChannel: class MockBroadcastChannel {
+      readonly id = 0
+      readonly name: string
+      readonly options = {}
+      readonly type = 'simulate'
+      readonly isClosed = false
       onmessage = null
       postMessage = mockPostMessage
       close = mockClose
-      constructor() {
+      addEventListener = vi.fn<BroadcastChannel['addEventListener']>()
+      removeEventListener = vi.fn<BroadcastChannel['removeEventListener']>()
+      constructor(name: string) {
+        this.name = name
         lastCreatedChannel = this
       }
     },
@@ -54,8 +65,8 @@ describe('broadcastQueryClient', () => {
 
   describe('incoming message handling', () => {
     it('should keep broadcasting local changes after applying an incoming message throws', () => {
-      const remoteKey = queryKey()
-      const localKey = queryKey()
+      const remoteKey = createKey()
+      const localKey = createKey()
 
       broadcastQueryClient({
         queryClient,
@@ -84,12 +95,14 @@ describe('broadcastQueryClient', () => {
       // A later local change must still be broadcast to other tabs, instead
       // of being silently swallowed because the transaction flag got stuck.
       queryClient.setQueryData(localKey, { value: 1 })
-      expect(mockPostMessage).toHaveBeenCalled()
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        expect.objectContaining({ queryKey: localKey }),
+      )
     })
 
     it('should keep broadcasting local changes after query.setState throws for an existing query', () => {
-      const existingKey = queryKey()
-      const localKey = queryKey()
+      const existingKey = createKey()
+      const localKey = createKey()
 
       broadcastQueryClient({
         queryClient,
@@ -118,11 +131,13 @@ describe('broadcastQueryClient', () => {
       mockPostMessage.mockClear()
 
       queryClient.setQueryData(localKey, { value: 1 })
-      expect(mockPostMessage).toHaveBeenCalled()
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        expect.objectContaining({ queryKey: localKey }),
+      )
     })
 
     it('should not overwrite an existing query with data when an "added" message arrives for it', () => {
-      const existingKey = queryKey()
+      const existingKey = createKey()
 
       broadcastQueryClient({
         queryClient,
@@ -143,14 +158,14 @@ describe('broadcastQueryClient', () => {
         queryKey: existingKey,
         state: { status: 'pending', data: undefined },
       })
-      expect(queryClient.getQueryData(existingKey)).toEqual({
+      expect(queryClient.getQueryData(existingKey)).toStrictEqual({
         value: 'resolved',
       })
       expect(queryClient.getQueryState(existingKey)?.status).toBe('success')
     })
 
     it('should adopt an "added" message\'s state for an existing query that has no data yet', () => {
-      const existingKey = queryKey()
+      const existingKey = createKey()
 
       broadcastQueryClient({
         queryClient,
@@ -171,7 +186,7 @@ describe('broadcastQueryClient', () => {
         queryKey: existingKey,
         state: { status: 'success', data: { value: 'from other tab' } },
       })
-      expect(queryClient.getQueryData(existingKey)).toEqual({
+      expect(queryClient.getQueryData(existingKey)).toStrictEqual({
         value: 'from other tab',
       })
     })
@@ -189,7 +204,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should not cause an unhandled rejection when onBroadcastError itself throws', async () => {
-      const key = queryKey()
+      const key = createKey()
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
@@ -200,7 +215,7 @@ describe('broadcastQueryClient', () => {
       process.on('unhandledRejection', onUnhandledRejection)
 
       try {
-        const onBroadcastError = vi.fn().mockImplementation(() => {
+        const onBroadcastError = vi.fn<() => never>().mockImplementation(() => {
           throw new Error('boom')
         })
 
@@ -227,7 +242,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should warn in dev when onBroadcastError itself throws', async () => {
-      const key = queryKey()
+      const key = createKey()
       process.env['NODE_ENV'] = 'development'
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       const callbackError = new Error('boom')
@@ -237,28 +252,24 @@ describe('broadcastQueryClient', () => {
         .spyOn(console, 'warn')
         .mockImplementation(() => {})
 
-      try {
-        broadcastQueryClient({
-          queryClient,
-          broadcastChannel: 'test_channel',
-          onBroadcastError: () => {
-            throw callbackError
-          },
-        })
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+        onBroadcastError: () => {
+          throw callbackError
+        },
+      })
 
-        queryClient.setQueryData(key, { value: 1 })
-        await sleep(0)
-        expect(consoleWarnMock).toHaveBeenCalledWith(
-          expect.stringContaining('onBroadcastError threw while handling'),
-          callbackError,
-        )
-      } finally {
-        consoleWarnMock.mockRestore()
-      }
+      queryClient.setQueryData(key, { value: 1 })
+      await sleep(0)
+      expect(consoleWarnMock).toHaveBeenCalledWith(
+        expect.stringContaining('onBroadcastError threw while handling'),
+        callbackError,
+      )
     })
 
     it('should not cause an unhandled rejection when async onBroadcastError rejects', async () => {
-      const key = queryKey()
+      const key = createKey()
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
@@ -270,7 +281,7 @@ describe('broadcastQueryClient', () => {
 
       try {
         const onBroadcastError = vi
-          .fn()
+          .fn<() => Promise<never>>()
           .mockRejectedValueOnce(new Error('async boom'))
 
         broadcastQueryClient({
@@ -296,7 +307,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should warn in dev when async onBroadcastError rejects', async () => {
-      const key = queryKey()
+      const key = createKey()
       process.env['NODE_ENV'] = 'development'
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       const asyncError = new Error('async boom')
@@ -306,30 +317,29 @@ describe('broadcastQueryClient', () => {
         .spyOn(console, 'warn')
         .mockImplementation(() => {})
 
-      try {
-        broadcastQueryClient({
-          queryClient,
-          broadcastChannel: 'test_channel',
-          onBroadcastError: () => Promise.reject(asyncError),
-        })
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+        onBroadcastError: () => Promise.reject(asyncError),
+      })
 
-        queryClient.setQueryData(key, { value: 1 })
-        await sleep(10)
-        expect(consoleWarnMock).toHaveBeenCalledWith(
-          expect.stringContaining('onBroadcastError threw while handling'),
-          asyncError,
-        )
-      } finally {
-        consoleWarnMock.mockRestore()
-      }
+      queryClient.setQueryData(key, { value: 1 })
+      await sleep(10)
+      expect(consoleWarnMock).toHaveBeenCalledWith(
+        expect.stringContaining('onBroadcastError threw while handling'),
+        asyncError,
+      )
     })
 
     it('should call onBroadcastError when postMessage fails', async () => {
-      const key = queryKey()
+      const key = createKey()
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
-      const onBroadcastError = vi.fn()
+      const onBroadcastError =
+        vi.fn<
+          (error: unknown, event: BroadcastErrorEvent) => void | Promise<void>
+        >()
       broadcastQueryClient({
         queryClient,
         broadcastChannel: 'test_channel',
@@ -349,7 +359,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should warn in dev when postMessage fails and onBroadcastError is not provided', async () => {
-      const key = queryKey()
+      const key = createKey()
       process.env['NODE_ENV'] = 'development'
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
@@ -358,25 +368,21 @@ describe('broadcastQueryClient', () => {
         .spyOn(console, 'warn')
         .mockImplementation(() => {})
 
-      try {
-        broadcastQueryClient({
-          queryClient,
-          broadcastChannel: 'test_channel',
-        })
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
 
-        queryClient.setQueryData(key, { value: 1 })
-        await sleep(0)
-        expect(consoleWarnMock).toHaveBeenCalledWith(
-          expect.stringContaining('cross-tab sync for this query was skipped'),
-          cloneError,
-        )
-      } finally {
-        consoleWarnMock.mockRestore()
-      }
+      queryClient.setQueryData(key, { value: 1 })
+      await sleep(0)
+      expect(consoleWarnMock).toHaveBeenCalledWith(
+        expect.stringContaining('cross-tab sync for this query was skipped'),
+        cloneError,
+      )
     })
 
     it('should not warn in production when postMessage fails', async () => {
-      const key = queryKey()
+      const key = createKey()
       process.env['NODE_ENV'] = 'production'
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
@@ -385,18 +391,14 @@ describe('broadcastQueryClient', () => {
         .spyOn(console, 'warn')
         .mockImplementation(() => {})
 
-      try {
-        broadcastQueryClient({
-          queryClient,
-          broadcastChannel: 'test_channel',
-        })
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
 
-        queryClient.setQueryData(key, { value: 1 })
-        await sleep(0)
-        expect(consoleWarnMock).not.toHaveBeenCalled()
-      } finally {
-        consoleWarnMock.mockRestore()
-      }
+      queryClient.setQueryData(key, { value: 1 })
+      await sleep(0)
+      expect(consoleWarnMock).not.toHaveBeenCalled()
     })
   })
 })

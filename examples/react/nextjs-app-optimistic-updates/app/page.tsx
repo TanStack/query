@@ -1,5 +1,6 @@
 import React from 'react'
 import { HydrationBoundary, dehydrate, noop } from '@tanstack/react-query'
+import { todosQueries } from '../services/todos/queries'
 import { getQueryClient } from '@/app/get-query-client'
 import { getTodos } from '@/app/api/todos/data'
 import ApproachTabs from '@/components/ApproachTabs'
@@ -9,7 +10,7 @@ export default function Home() {
 
   void queryClient
     .query({
-      queryKey: ['todos'],
+      ...todosQueries.list(),
       queryFn: getTodos,
     })
     .catch(noop)
@@ -22,7 +23,9 @@ export default function Home() {
         ~30% of the time so you can observe automatic rollback.
       </p>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <ApproachTabs />
+        <React.Suspense fallback={<p>Loading todos…</p>}>
+          <ApproachTabs />
+        </React.Suspense>
       </HydrationBoundary>
     </main>
   )

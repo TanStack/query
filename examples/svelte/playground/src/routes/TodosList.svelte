@@ -1,44 +1,20 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import {
-    errorRate,
-    queryTimeMin,
-    queryTimeMax,
-    list,
-    editingIndex,
-  } from '$lib/stores.svelte'
-  import type { Todos } from '$lib/stores.svelte'
+  import { editingIndex } from '$lib/stores.svelte'
+  import { todosQueries } from '$lib/services/todos/queries'
 
-  let { initialFilter }: { initialFilter: string } = $props()
-
-  let filter = $state(initialFilter)
-
-  const fetchTodos = async ({ filter }: { filter: string }): Promise<Todos> => {
-    return new Promise((resolve, reject) => {
-      setTimeout(
-        () => {
-          if (Math.random() < errorRate.value) {
-            return reject(
-              new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2)),
-            )
-          }
-          resolve(list.value.filter((d) => d.name.includes(filter)))
-        },
-        queryTimeMin.value +
-          Math.random() * (queryTimeMax.value - queryTimeMin.value),
-      )
-    })
+  type Props = {
+    initialFilter: string
   }
 
-  const query = createQuery(() => ({
-    queryKey: ['todos', { filter: filter }],
-    queryFn: () => fetchTodos({ filter: filter }),
-  }))
+  let { initialFilter: filter }: Props = $props()
+
+  const query = createQuery(() => todosQueries.list(filter))
 </script>
 
 <div>
   <label>
-    Filter:{' '}
+    Filter:
     <input bind:value={filter} />
   </label>
 </div>
@@ -54,9 +30,9 @@
 {:else}
   <ul>
     {#if query.data}
-      {#each query.data as todo}
+      {#each query.data as todo (todo.id)}
         <li>
-          {todo.name}{' '}
+          {todo.name}
           <button onclick={() => (editingIndex.value = todo.id)}> Edit </button>
         </li>
       {/each}

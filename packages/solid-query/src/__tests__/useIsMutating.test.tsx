@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, useIsMutating, useMutation } from '..'
 import { renderWithClient, setActTimeout } from './utils'
 
@@ -21,8 +21,8 @@ describe('useIsMutating', () => {
 
   it('should return the number of fetching mutations', async () => {
     const isMutatingArray: Array<number> = []
-    const mutationKey1 = queryKey()
-    const mutationKey2 = queryKey()
+    const mutationKey1 = createKey()
+    const mutationKey2 = createKey()
 
     function IsMutating() {
       const isMutating = useIsMutating()
@@ -66,13 +66,13 @@ describe('useIsMutating', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(150)
-    expect(isMutatingArray).toEqual([0, 1, 2, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 2, 1, 0])
   })
 
   it('should filter correctly by mutationKey', async () => {
     const isMutatingArray: Array<number> = []
-    const mutationKey1 = queryKey()
-    const mutationKey2 = queryKey()
+    const mutationKey1 = createKey()
+    const mutationKey2 = createKey()
 
     function IsMutating() {
       const isMutating = useIsMutating(() => ({ mutationKey: mutationKey1 }))
@@ -106,13 +106,13 @@ describe('useIsMutating', () => {
 
     // Unlike React, IsMutating Wont re-render twice with mutation2
     await vi.advanceTimersByTimeAsync(100)
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should filter correctly by predicate', async () => {
     const isMutatingArray: Array<number> = []
-    const mutationKey1 = queryKey()
-    const mutationKey2 = queryKey()
+    const mutationKey1 = createKey()
+    const mutationKey2 = createKey()
 
     function IsMutating() {
       const isMutating = useIsMutating(() => ({
@@ -149,12 +149,12 @@ describe('useIsMutating', () => {
 
     // Again, No unnecessary re-renders like React
     await vi.advanceTimersByTimeAsync(100)
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should use provided custom queryClient', async () => {
     const customClient = new QueryClient()
-    const mutationKey1 = queryKey()
+    const mutationKey1 = createKey()
 
     function Page() {
       const isMutating = useIsMutating(undefined, () => customClient)
@@ -179,7 +179,7 @@ describe('useIsMutating', () => {
       )
     }
 
-    const rendered = render(() => <Page></Page>)
+    const rendered = render(() => <Page />)
 
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -194,7 +194,7 @@ describe('useIsMutating', () => {
     const [client, setClient] = createSignal(queryClient1)
     const mutationCache1 = queryClient1.getMutationCache()
     const originalSubscribe1 = mutationCache1.subscribe.bind(mutationCache1)
-    const unsubscribe1 = vi.fn()
+    const unsubscribe1 = vi.fn<() => void>()
 
     vi.spyOn(mutationCache1, 'subscribe').mockImplementation((listener) => {
       const cleanup = originalSubscribe1(listener)
@@ -235,8 +235,8 @@ describe('useIsMutating', () => {
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
-  // eslint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
+    const states: Array<number> = []
     // We have to mock the MutationCache to not unsubscribe
     // the listener when the component is unmounted
     class MutationCacheMock extends QueryCore.MutationCache {
@@ -246,19 +246,20 @@ describe('useIsMutating', () => {
       }
     }
 
-    const MutationCacheSpy = vi
-      .spyOn(QueryCore, 'MutationCache')
-      .mockImplementation((fn) => {
-        return new MutationCacheMock(fn)
-      })
+    vi.spyOn(QueryCore, 'MutationCache').mockImplementation((fn) => {
+      return new MutationCacheMock(fn)
+    })
 
     // Create the client after mocking MutationCache so it uses the mock,
     // not the centralized client from beforeEach
     const spiedClient = new QueryClient()
-    const mutationKey1 = queryKey()
+    const mutationKey1 = createKey()
 
     function IsMutating() {
-      useIsMutating()
+      const isMutating = useIsMutating()
+      createRenderEffect(() => {
+        states.push(isMutating())
+      })
       return null
     }
 
@@ -285,13 +286,17 @@ describe('useIsMutating', () => {
     }
 
     const rendered = renderWithClient(spiedClient, () => <Page />)
+    expect(states).toStrictEqual([0, 1])
 
     fireEvent.click(rendered.getByText('unmount'))
-
-    // Should not display the console error
-    // "Warning: Can't perform a React state update on an unmounted component"
+    expect(spiedClient.getMutationCache().getAll()[0]?.state.status).toBe(
+      'pending',
+    )
 
     await vi.advanceTimersByTimeAsync(20)
-    MutationCacheSpy.mockRestore()
+    expect(spiedClient.getMutationCache().getAll()[0]?.state.status).toBe(
+      'success',
+    )
+    expect(states).toStrictEqual([0, 1])
   })
 })

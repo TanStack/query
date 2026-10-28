@@ -1,15 +1,15 @@
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 
 import { skipToken, useSuspenseQueries } from '..'
-import type { OmitKeyof } from '..'
 import { queryOptions } from '../queryOptions'
+import type { OmitKeyof } from '..'
 import type { UseQueryOptions, UseSuspenseQueryResult } from '../types'
 
 describe('UseSuspenseQueries config object overload', () => {
   it('should always define TData', () => {
     const query1 = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => {
         return {
           wow: true,
@@ -21,7 +21,7 @@ describe('UseSuspenseQueries config object overload', () => {
     }
 
     const query2 = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => 'Query Data',
     }
 
@@ -36,7 +36,7 @@ describe('UseSuspenseQueries config object overload', () => {
 
   it('should define TData when passed through queryOptions', () => {
     const options = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => {
         return {
           wow: true,
@@ -52,13 +52,13 @@ describe('UseSuspenseQueries config object overload', () => {
 
   it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
     const query1 = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(1),
       select: (data) => data > 1,
     })
 
     const query2 = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(1),
       select: (data: number) => data > 1,
     }
@@ -75,7 +75,7 @@ describe('UseSuspenseQueries config object overload', () => {
     const queryResults = useSuspenseQueries({
       queries: [
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => {
             return {
               wow: true,
@@ -96,7 +96,7 @@ describe('UseSuspenseQueries config object overload', () => {
       useSuspenseQueries({
         queries: [
           {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             // @ts-expect-error
             queryFn: skipToken,
           },
@@ -108,7 +108,7 @@ describe('UseSuspenseQueries config object overload', () => {
       useSuspenseQueries({
         queries: [
           {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             // @ts-expect-error
             queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
           },
@@ -121,7 +121,7 @@ describe('UseSuspenseQueries config object overload', () => {
     const queryResults = useSuspenseQueries({
       queries: [
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           // @ts-expect-error
           queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
         },
@@ -147,7 +147,7 @@ describe('UseSuspenseQueries config object overload', () => {
           queries: [
             {
               ...options,
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => Promise.resolve('data'),
             },
           ],
@@ -165,14 +165,14 @@ describe('UseSuspenseQueries config object overload', () => {
     const Queries1 = {
       get: () =>
         queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
         }),
     }
     const Queries2 = {
       get: () =>
         queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(true),
         }),
     }
@@ -200,7 +200,7 @@ describe('UseSuspenseQueries config object overload', () => {
 
   it('should work with queryOptions with initialData on useSuspenseQueries', () => {
     const query1 = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => 'Query Data',
       initialData: 'initial data',
     })
@@ -217,7 +217,7 @@ describe('UseSuspenseQueries config object overload', () => {
         queries: [
           // @ts-expect-error
           queryOptions({
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
           }),
         ],
@@ -229,7 +229,7 @@ describe('UseSuspenseQueries config object overload', () => {
         queries: [
           // @ts-expect-error
           queryOptions({
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
             initialData: 5,
           }),
@@ -244,7 +244,7 @@ describe('UseSuspenseQueries config object overload', () => {
         queries: [
           {
             ...queryOptions({
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => 'Query Data',
             }),
             select(data: string) {

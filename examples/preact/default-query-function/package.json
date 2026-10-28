@@ -1,0 +1,25 @@
+{
+  "name": "@tanstack/query-example-preact-default-query-function",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/preact-query": "^5.105.0",
+    "@tanstack/preact-query-devtools": "^5.105.0",
+    "preact": "^11.0.1"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.6",
+    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "eslint": "^9.39.5",
+    "eslint-config-preact": "^2.0.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.1"
+  }
+}

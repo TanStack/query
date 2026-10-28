@@ -248,7 +248,7 @@ export const rule = createRule({
         if (
           node.specifiers.length > 0 &&
           node.importKind === 'value' &&
-          node.source.value === 'React'
+          node.source.value === 'react'
         ) {
           node.specifiers.forEach((specifier) => {
             if (

@@ -30,6 +30,5 @@ export default defineConfig({
     },
     typecheck: { enabled: true },
     restoreMocks: true,
-    retry: process.env.CI ? 3 : 0,
   },
 })

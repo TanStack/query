@@ -1,26 +1,8 @@
 <script lang="ts">
   import { createInfiniteQuery } from '@tanstack/svelte-query'
+  import { planetsQueries } from './services/planets/queries'
 
-  const endPoint = 'https://swapi.dev/api'
-
-  const fetchPlanets = async ({ pageParam = 1 }) =>
-    await fetch(`${endPoint}/planets/?page=${pageParam}`).then((r) => r.json())
-
-  const query = createInfiniteQuery(() => ({
-    queryKey: ['planets'],
-    queryFn: ({ pageParam }) => fetchPlanets({ pageParam }),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      if (lastPage.next) {
-        const nextUrl = new URLSearchParams(new URL(lastPage.next).search)
-        const nextCursor = nextUrl.get('page')
-        if (nextCursor) {
-          return +nextCursor
-        }
-      }
-      return undefined
-    },
-  }))
+  const query = createInfiniteQuery(() => planetsQueries.list())
 </script>
 
 {#if query.isPending}
@@ -31,8 +13,8 @@
 {/if}
 {#if query.isSuccess}
   <div>
-    {#each query.data.pages as { results }}
-      {#each results as planet}
+    {#each query.data.pages as { next, results } (next)}
+      {#each results as planet (planet.url)}
         <div class="card">
           <div class="card-body">
             <h2 class="card-title">Planet Name: {planet.name}</h2>
@@ -47,7 +29,7 @@
       onclick={() => query.fetchNextPage()}
       disabled={!query.hasNextPage || query.isFetchingNextPage}
     >
-      {#if query.isFetching}
+      {#if query.isFetchingNextPage}
         Loading more...
       {:else if query.hasNextPage}
         Load More

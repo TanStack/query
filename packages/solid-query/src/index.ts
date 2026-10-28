@@ -9,7 +9,7 @@ import { useQueries } from './useQueries'
 export * from '@tanstack/query-core'
 
 // Solid Query
-export * from './types'
+export type * from './types'
 
 export type {
   DefinedUseBaseQueryResult,

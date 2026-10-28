@@ -1,24 +1,11 @@
 import React from 'react'
 import Link from 'next/link'
 import { useInView } from 'react-intersection-observer'
-import {
-  useInfiniteQuery,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { projectsQueries } from '../services/projects/queries'
 
-const queryClient = new QueryClient()
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Example />
-    </QueryClientProvider>
-  )
-}
-
-function Example() {
+export default function Example() {
   const { ref, inView } = useInView()
 
   const {
@@ -32,22 +19,7 @@ function Example() {
     fetchPreviousPage,
     hasNextPage,
     hasPreviousPage,
-  } = useInfiniteQuery({
-    queryKey: ['projects'],
-    queryFn: async ({
-      pageParam,
-    }): Promise<{
-      data: Array<{ name: string; id: number }>
-      previousId: number
-      nextId: number
-    }> => {
-      const response = await fetch(`/api/projects?cursor=${pageParam}`)
-      return await response.json()
-    },
-    initialPageParam: 0,
-    getPreviousPageParam: (firstPage) => firstPage.previousId,
-    getNextPageParam: (lastPage) => lastPage.nextId,
-  })
+  } = useInfiniteQuery(projectsQueries.infinite())
 
   React.useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {

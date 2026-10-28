@@ -7,30 +7,33 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject",
-    "type:check": "tsc --noEmit"
+    "prebuild": "expo prebuild",
+    "test:eslint": "eslint ./App.tsx ./src",
+    "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@react-native-community/netinfo": "^12.0.1",
-    "@react-navigation/native": "^6.1.18",
-    "@react-navigation/stack": "^6.4.1",
-    "@tanstack/react-query": "^5.104.1",
-    "@tanstack/react-query-devtools": "^5.104.1",
-    "expo": "^57.0.24",
-    "expo-constants": "^57.0.19",
-    "expo-status-bar": "^57.0.1",
-    "react": "^19.0.0",
-    "react-native": "^0.86.3",
-    "react-native-gesture-handler": "^2.32.0",
-    "react-native-paper": "^5.15.0",
-    "react-native-reanimated": "^4.5.1",
-    "react-native-safe-area-context": "^5.7.0",
-    "react-native-screens": "^4.26.2",
-    "react-native-web": "^0.21.2"
+    "@react-native-community/netinfo": "12.0.1",
+    "@react-navigation/native": "^7.5.1",
+    "@react-navigation/stack": "^7.12.1",
+    "@tanstack/react-query": "^5.105.0",
+    "@tanstack/react-query-devtools": "^5.105.0",
+    "expo": "~58.0.19",
+    "expo-constants": "~58.0.13",
+    "expo-splash-screen": "~58.0.11",
+    "expo-status-bar": "~58.0.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-native": "0.88.0",
+    "react-native-gesture-handler": "~3.3.0",
+    "react-native-paper": "^5.15.3",
+    "react-native-safe-area-context": "~5.10.1",
+    "react-native-screens": "~4.30.0",
+    "react-native-web": "~0.21.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.9",
-    "@expo/config": "^57.0.9",
-    "typescript": "5.8.3"
+    "@eslint-react/eslint-plugin": "^5.28.8",
+    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@types/react": "^19.3.0",
+    "typescript": "~6.0.3"
   }
 }

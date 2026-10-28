@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
 import * as QueryCore from '@tanstack/query-core'
 import { createRenderEffect, createSignal } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   IsRestoringProvider,
   QueriesObserver,
@@ -29,8 +29,8 @@ describe('useQueries', () => {
   })
 
   it('should return the correct states', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const results: Array<Array<UseQueryResult>> = []
 
     function Page() {
@@ -66,15 +66,15 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(100)
     expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
 
-    expect(results.length).toBe(3)
+    expect(results).toHaveLength(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
     expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
-  // eslint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
-    const key1 = queryKey()
+    const states: Array<UseQueryResult['status']> = []
+    const key1 = createKey()
 
     // We have to mock the QueriesObserver to not unsubscribe
     // the listener when the component is unmounted
@@ -85,17 +85,15 @@ describe('useQueries', () => {
       }
     }
 
-    const QueriesObserverSpy = vi
-      .spyOn(QueryCore, 'QueriesObserver')
-      .mockImplementation(function (
-        client: InstanceType<typeof QueryCore.QueryClient>,
-        queries: Array<QueryCore.QueryObserverOptions>,
-      ) {
-        return new QueriesObserverMock(client, queries)
-      })
+    vi.spyOn(QueryCore, 'QueriesObserver').mockImplementation(function (
+      client: InstanceType<typeof QueryCore.QueryClient>,
+      queries: Array<QueryCore.QueryObserverOptions>,
+    ) {
+      return new QueriesObserverMock(client, queries)
+    })
 
     function Queries() {
-      useQueries(() => ({
+      const queries = useQueries(() => ({
         queries: [
           {
             queryKey: key1,
@@ -103,6 +101,9 @@ describe('useQueries', () => {
           },
         ],
       }))
+      createRenderEffect(() => {
+        states.push(queries[0].status)
+      })
 
       return (
         <div>
@@ -123,18 +124,18 @@ describe('useQueries', () => {
     }
 
     const rendered = renderWithClient(queryClient, () => <Page />)
+    expect(states).toStrictEqual(['pending'])
 
     fireEvent.click(rendered.getByText('unmount'))
-
-    // Should not display the console error
-    // "Warning: Can't perform a React state update on an unmounted component"
+    expect(queryClient.getQueryState(key1)?.status).toBe('pending')
 
     await vi.advanceTimersByTimeAsync(20)
-    QueriesObserverSpy.mockRestore()
+    expect(queryClient.getQueryState(key1)?.status).toBe('success')
+    expect(states).toStrictEqual(['pending'])
   })
 
   it('should use provided custom queryClient', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = () => sleep(10).then(() => 'custom client')
 
     function Page() {
@@ -160,10 +161,14 @@ describe('useQueries', () => {
   })
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data2'),
+    )
 
     function Page() {
       const results = useQueries(() => ({

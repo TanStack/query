@@ -1,6 +1,7 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
-import * as prettier from 'prettier'
+import { format } from 'oxfmt'
+import oxfmtConfig from '../oxfmt.config.ts'
 
 /** Pairs of package labels and their corresponding paths */
 type LabelerPair = [string, string]
@@ -52,24 +53,20 @@ async function generateLabelerYaml(pairs: Array<LabelerPair>): Promise<string> {
     })
     .join('\n')
 
-  // Get the location of the Prettier config file
-  const prettierConfigPath = await prettier.resolveConfigFile()
-  if (!prettierConfigPath) {
+  // `format()` does not discover config files itself, so pass the config explicitly.
+  console.info('using resolved oxfmt config:', oxfmtConfig)
+
+  // Format the YAML string using oxfmt
+  const { code: formattedStr, errors } = await format(
+    'labeler-config.yml',
+    formattedPairs,
+    oxfmtConfig,
+  )
+  if (errors.length > 0) {
     throw new Error(
-      'No Prettier config file found. Please ensure you have a Prettier config file in your project.',
+      `Failed to format labeler config: ${errors.map((e) => e.message).join(', ')}`,
     )
   }
-  console.info('using prettier config file at:', prettierConfigPath)
-
-  // Resolve the Prettier config
-  const prettierConfig = await prettier.resolveConfig(prettierConfigPath)
-  console.info('using resolved prettier config:', prettierConfig)
-
-  // Format the YAML string using Prettier
-  const formattedStr = await prettier.format(formattedPairs, {
-    parser: 'yaml',
-    ...prettierConfig,
-  })
 
   return formattedStr
 }

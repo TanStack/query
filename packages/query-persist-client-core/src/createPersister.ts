@@ -137,7 +137,7 @@ export const PERSISTER_KEY_PREFIX = 'tanstack-query'
 export function experimental_createQueryPersister<TStorageValue = string>({
   storage,
   buster = '',
-  maxAge = 1000 * 60 * 60 * 24,
+  maxAge = 24 * 60 * 60 * 1000,
   serialize = JSON.stringify as Required<
     StoragePersisterOptions<TStorageValue>
   >['serialize'],
@@ -146,7 +146,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   >['deserialize'],
   prefix = PERSISTER_KEY_PREFIX,
   refetchOnRestore = true,
-  filters,
+  filters: persistFilters,
 }: StoragePersisterOptions<TStorageValue>) {
   /**
    * Checks the fields used to filter, expire, and restore a deserialized query.
@@ -283,7 +283,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   async function persistQuery(query: Query) {
     if (storage != null) {
       const storageKey = `${prefix}-${query.queryHash}`
-      storage.setItem(
+      await storage.setItem(
         storageKey,
         await serialize({
           state: query.state,
@@ -308,7 +308,9 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     ctx: QueryFunctionContext<TQueryKey>,
     query: Query,
   ) {
-    const matchesFilter = filters ? matchQuery(filters, query) : true
+    const matchesFilter = persistFilters
+      ? matchQuery(persistFilters, query)
+      : true
 
     // Try to restore only if we do not have any data in the cache and we have persister defined
     if (matchesFilter && query.state.data === undefined && storage != null) {

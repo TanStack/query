@@ -12,11 +12,12 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core'
 import { render } from '@testing-library/angular'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { withPersistQueryClient } from '../with-persist-query-client'
 import type {
   PersistedClient,
   Persister,
+  Promisable,
 } from '@tanstack/query-persist-client-core'
 
 const createMockPersister = (): Persister => {
@@ -64,7 +65,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should restore cache from persister', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -156,7 +157,7 @@ describe('withPersistQueryClient', () => {
   )
 
   it('should show initialData while restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -248,7 +249,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should not refetch after restoring when data is fresh', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -336,7 +337,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should call onSuccess after successful restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryClient = new QueryClient()
     void queryClient
       .query({
@@ -367,7 +368,7 @@ describe('withPersistQueryClient', () => {
       }))
     }
 
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<() => void>()
 
     const rendered = await render(Page, {
       providers: [
@@ -393,15 +394,15 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should remove cache after non-successful restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const queryClient = new QueryClient()
-    const removeClient = vi.fn()
+    const removeClient = vi.fn<() => Promisable<void>>()
     const [error, persister] = createMockErrorPersister(removeClient)
-    const onSuccess = vi.fn()
-    const onError = vi.fn()
+    const onSuccess = vi.fn<() => void>()
+    const onError = vi.fn<() => void>()
 
     @Component({
       template: `
@@ -443,6 +444,5 @@ describe('withPersistQueryClient', () => {
 
     expect(consoleErrorMock).toHaveBeenCalledTimes(1)
     expect(consoleErrorMock).toHaveBeenNthCalledWith(1, error)
-    consoleErrorMock.mockRestore()
   })
 })

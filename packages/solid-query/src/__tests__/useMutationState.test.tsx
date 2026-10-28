@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent } from '@solidjs/testing-library'
 import { createEffect } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, useMutation, useMutationState } from '..'
 import { renderWithClient } from './utils'
 
@@ -19,7 +19,7 @@ describe('useMutationState', () => {
   })
 
   it('should return all mutation states when called without options', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
 
     function States() {
       const mutationStates = useMutationState()
@@ -30,7 +30,7 @@ describe('useMutationState', () => {
     function Mutate() {
       const mutation = useMutation(() => ({
         mutationKey,
-        mutationFn: (input: number) => sleep(150).then(() => 'data' + input),
+        mutationFn: (input: number) => sleep(150).then(() => `data${input}`),
       }))
 
       return (
@@ -62,7 +62,7 @@ describe('useMutationState', () => {
 
   it('should return variables after calling mutate', async () => {
     const variables: Array<Array<unknown>> = []
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
 
     function Variables() {
       const states = useMutationState(() => ({
@@ -80,7 +80,7 @@ describe('useMutationState', () => {
     function Mutate() {
       const mutation = useMutation(() => ({
         mutationKey,
-        mutationFn: (input: number) => sleep(150).then(() => 'data' + input),
+        mutationFn: (input: number) => sleep(150).then(() => `data${input}`),
       }))
 
       return (
@@ -108,6 +108,6 @@ describe('useMutationState', () => {
     await vi.advanceTimersByTimeAsync(150)
     expect(rendered.getByText('data: data1')).toBeInTheDocument()
 
-    expect(variables).toEqual([[], [1], []])
+    expect(variables).toStrictEqual([[], [1], []])
   })
 })

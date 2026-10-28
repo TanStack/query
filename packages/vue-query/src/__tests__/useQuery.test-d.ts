@@ -1,6 +1,6 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { queryOptions, skipToken, useQuery } from '..'
 import type { Ref } from 'vue-demi'
 import type { OmitKeyof, UseQueryOptions, UseQueryReturnType } from '..'
@@ -8,7 +8,7 @@ import type { OmitKeyof, UseQueryOptions, UseQueryReturnType } from '..'
 describe('useQuery', () => {
   describe('Config object overload', () => {
     it('should always define TData when initialData is provided as an object', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const { data } = reactive(
         useQuery({
@@ -28,7 +28,7 @@ describe('useQuery', () => {
     })
 
     it('should define TData when passed through queryOptions', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const options = queryOptions({
         queryKey: key,
@@ -47,7 +47,7 @@ describe('useQuery', () => {
     })
 
     it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const options = queryOptions({
         queryKey: key,
@@ -65,7 +65,7 @@ describe('useQuery', () => {
     })
 
     it('should always define TData when initialData is provided as a function which ALWAYS returns the data', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const { data } = reactive(
         useQuery({
@@ -85,7 +85,7 @@ describe('useQuery', () => {
     })
 
     it('should have undefined in the TData union when initialData is NOT provided', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const { data } = reactive(
         useQuery({
@@ -102,7 +102,7 @@ describe('useQuery', () => {
     })
 
     it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const { data } = reactive(
         useQuery({
@@ -120,7 +120,7 @@ describe('useQuery', () => {
     })
 
     it('should narrow TData after an isSuccess check when initialData is provided as a function which can return undefined', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const { data, isSuccess } = reactive(
         useQuery({
@@ -140,7 +140,7 @@ describe('useQuery', () => {
     })
 
     it('should not have undefined in data when initialData is provided', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const { data } = reactive(
         useQuery({
@@ -155,7 +155,7 @@ describe('useQuery', () => {
 
   describe('generic queryFn', () => {
     it('should infer the result type from a generic query function', () => {
-      const key = queryKey()
+      const key = createKey()
 
       function queryFn<T = string>(): Promise<T> {
         return Promise.resolve({} as T)
@@ -198,7 +198,7 @@ describe('useQuery', () => {
 
   describe('custom composable', () => {
     it('should allow custom composable using UseQueryOptions', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const useCustomQuery = (
         options?: OmitKeyof<
@@ -222,7 +222,7 @@ describe('useQuery', () => {
 
   describe('structuralSharing', () => {
     it('should be able to use structuralSharing with unknown types', () => {
-      const key = queryKey()
+      const key = createKey()
 
       // https://github.com/TanStack/query/issues/6525#issuecomment-1938411343
       useQuery({
@@ -239,7 +239,7 @@ describe('useQuery', () => {
 
   describe('Discriminated union return type', () => {
     it('should have possibly undefined data by default', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const query = reactive(
         useQuery({
@@ -252,7 +252,7 @@ describe('useQuery', () => {
     })
 
     it('should have defined data when query is success', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const query = reactive(
         useQuery({
@@ -267,7 +267,7 @@ describe('useQuery', () => {
     })
 
     it('should have null error when query is success', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const query = reactive(
         useQuery({
@@ -282,7 +282,7 @@ describe('useQuery', () => {
     })
 
     it('should have undefined data when query is pending', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const query = reactive(
         useQuery({
@@ -297,7 +297,7 @@ describe('useQuery', () => {
     })
 
     it('should have defined error when query is error', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const query = reactive(
         useQuery({
@@ -312,7 +312,7 @@ describe('useQuery', () => {
     })
 
     it('should have data as a union of refs without reactive()', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const query = useQuery({
         queryKey: key,
@@ -323,7 +323,7 @@ describe('useQuery', () => {
     })
 
     it('should narrow data.value on an undefined check without reactive()', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const { data } = useQuery({
         queryKey: key,
@@ -340,7 +340,7 @@ describe('useQuery', () => {
   describe('accept ref options', () => {
     it('should accept ref options', () => {
       const options = ref({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => sleep(0).then(() => 'Some data'),
       })
 
@@ -353,7 +353,7 @@ describe('useQuery', () => {
 
     it('should accept computed options', () => {
       const options = computed(() => ({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => sleep(0).then(() => 'Some data'),
       }))
 
@@ -367,7 +367,7 @@ describe('useQuery', () => {
     it('should accept computed query options', () => {
       const options = computed(() =>
         queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => sleep(0).then(() => 'Some data'),
         }),
       )
@@ -417,7 +417,7 @@ describe('useQuery', () => {
   describe('select', () => {
     it('should narrow data to the type select returns', () => {
       const { data } = useQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => sleep(0).then(() => ['a', 'b', 'c']),
         select: (posts) => posts.length,
       })

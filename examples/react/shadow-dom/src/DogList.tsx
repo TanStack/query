@@ -1,22 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-
-type DogsResp = {
-  message: {
-    [dog: string]: Array<string>
-  }
-}
+import { dogsQueries } from './services/dogs/queries'
 
 export const DogList = () => {
-  const { data, status } = useQuery<DogsResp>({
-    queryKey: ['dogs'],
-    queryFn: async () => {
-      const resp = await fetch('https://dog.ceo/api/breeds/list/all')
-      if (resp.ok) {
-        return resp.json()
-      }
-      throw new Error('something went wrong')
-    },
-  })
+  const { data, status } = useQuery(dogsQueries.list())
 
   if (status === 'pending') return 'Loading...'
 

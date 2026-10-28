@@ -1,15 +1,24 @@
 <script lang="ts">
-  import type { MutationKey, QueryClient } from '@tanstack/query-core'
+  import type {
+    MutationFunctionContext,
+    MutationKey,
+    QueryClient,
+  } from '@tanstack/query-core'
   import { createMutation, setQueryClientContext } from '../../src/index.js'
   import { sleep } from '@tanstack/query-test-utils'
 
   type Props = {
     queryClient: QueryClient
     mutationKey?: MutationKey
-    onSuccessMock: (...args: Array<unknown>) => void
+    onSuccessMock: (
+      data: string,
+      variables: string,
+      onMutateResult: { startedWith: string },
+      context: MutationFunctionContext,
+    ) => void
   }
 
-  const { queryClient, mutationKey, onSuccessMock }: Props = $props()
+  let { queryClient, mutationKey, onSuccessMock }: Props = $props()
 
   setQueryClientContext(queryClient)
 

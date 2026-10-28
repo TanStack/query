@@ -16,7 +16,7 @@
   },
   "scripts": {
     "clean": "premove ./coverage ./dist-ts",
-    "test:eslint": "eslint --concurrency=auto ./src",
+    "test:oxlint": "oxlint ./src",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch"
   },

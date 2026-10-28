@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/solid-query'
-import { createSignal } from 'solid-js'
+import { queryOptions, useQuery } from '@tanstack/solid-query'
+import { createSignal, untrack } from 'solid-js'
 import { Example } from './example'
 import { QueryBoundary } from './query-boundary'
 import type { Component } from 'solid-js'
-import { fetchUser } from '~/utils/api'
+import { usersQueries } from '~/services/users/queries'
 
 export interface UserInfoProps {
   deferStream?: boolean
@@ -13,17 +13,22 @@ export interface UserInfoProps {
   gcTime?: number
 }
 
-export const userInfoQueryOpts = (props?: UserInfoProps) => ({
-  queryKey: ['user'],
-  queryFn: () => fetchUser(props),
-  deferStream: props?.deferStream,
-  staleTime: props?.staleTime,
-  gcTime: props?.gcTime,
-  throwOnError: true,
-})
+export const userInfoQueryOpts = (options?: UserInfoProps) =>
+  queryOptions({
+    ...usersQueries.detail({
+      sleep: options?.sleep,
+      simulateError: options?.simulateError,
+    }),
+    deferStream: options?.deferStream,
+    staleTime: options?.staleTime,
+    gcTime: options?.gcTime,
+    throwOnError: true,
+  })
 
 export const UserInfo: Component<UserInfoProps> = (props) => {
-  const [simulateError, setSimulateError] = createSignal(props.simulateError)
+  const [simulateError, setSimulateError] = createSignal(
+    untrack(() => props.simulateError),
+  )
 
   const query = useQuery(() =>
     userInfoQueryOpts({ ...props, simulateError: simulateError() }),

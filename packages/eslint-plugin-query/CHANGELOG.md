@@ -1,5 +1,29 @@
 # @tanstack/eslint-plugin-query
 
+## 5.105.0
+
+No changes in this release.
+
+## 5.104.5
+
+No changes in this release.
+
+## 5.104.4
+
+### Patch Changes
+
+- [#12044](https://github.com/TanStack/query/pull/12044) [`a5f1b09`](https://github.com/TanStack/query/commit/a5f1b092bb7b733b85f50575b93e2e3b1db3d09c) - refactor(eslint-plugin-query/exhaustive-deps): remove the unused `fixable` from the rule metadata, as the rule only provides suggestions
+
+- [#11889](https://github.com/TanStack/query/pull/11889) [`1cf6eb4`](https://github.com/TanStack/query/commit/1cf6eb4e9e3f5ce8937d6f0313c8b822812c7a00) - Detect unstable query dependencies in aliased React hooks imported from `react`.
+
+## 5.104.3
+
+No changes in this release.
+
+## 5.104.2
+
+No changes in this release.
+
 ## 5.104.1
 
 No changes in this release.

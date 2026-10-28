@@ -4,6 +4,7 @@ import {
   QueryClient,
   onlineManager,
   useIsRestoring,
+  useMutation,
   useQuery,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -18,8 +19,7 @@ import {
   useMatch,
 } from '@tanstack/react-location'
 
-import * as api from './api'
-import { movieKeys, useMovie } from './movies'
+import { moviesMutations, moviesQueries } from './services/movies/queries'
 
 const persister = createAsyncStoragePersister({
   storage: window.localStorage,
@@ -30,16 +30,13 @@ const location = new ReactLocation()
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
       staleTime: 2000,
       retry: 0,
     },
   },
-  // configure global cache callbacks to show toast notifications
+  // configure global cache callbacks to show error toast notifications
   mutationCache: new MutationCache({
-    onSuccess: (data) => {
-      toast.success(data.message)
-    },
     onError: (error) => {
       toast.error(error.message)
     },
@@ -47,11 +44,10 @@ const queryClient = new QueryClient({
 })
 
 // we need a default mutation function so that paused mutations can resume after a page reload
-queryClient.setMutationDefaults(movieKeys.all(), {
-  mutationFn: async ({ id, comment }) => {
-    // to avoid clashes with our optimistic update when an offline mutation continues
-    await queryClient.cancelQueries({ queryKey: movieKeys.detail(id) })
-    return api.updateMovie(id, comment)
+queryClient.setMutationDefaults(moviesQueries.all(), {
+  ...moviesMutations.update(),
+  onSuccess: (data) => {
+    toast.success(data.message)
   },
 })
 
@@ -86,17 +82,13 @@ function Movies() {
         {
           path: ':movieId',
           element: <Detail />,
-          errorElement: <MovieError />,
-          loader: ({ params: { movieId } }) =>
-            queryClient.getQueryData(movieKeys.detail(movieId)) ??
+          loader: async ({ params: { movieId } }) =>
+            queryClient.getQueryData(moviesQueries.detail(movieId).queryKey) ??
             // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
             // we just let the Detail component handle it
             (onlineManager.isOnline() && !isRestoring
-              ? queryClient.query({
-                  queryKey: movieKeys.detail(movieId),
-                  queryFn: () => api.fetchMovie(movieId),
-                })
-              : undefined),
+              ? queryClient.query(moviesQueries.detail(movieId))
+              : {}),
         },
       ]}
     >
@@ -107,10 +99,7 @@ function Movies() {
 }
 
 function List() {
-  const moviesQuery = useQuery({
-    queryKey: movieKeys.list(),
-    queryFn: api.fetchMovies,
-  })
+  const moviesQuery = useQuery(moviesQueries.list())
 
   if (moviesQuery.isLoading) {
     return 'Loading...'
@@ -121,14 +110,14 @@ function List() {
       <div>
         <h1>Movies</h1>
         <p>
-          Try to mock offline behaviour with the button in the devtools. You can
+          Try to mock offline behavior with the button in the devtools. You can
           navigate around as long as there is already data in the cache. You'll
           get a refetch as soon as you go online again.
         </p>
         <ul>
           {moviesQuery.data.movies.map((movie) => (
             <li key={movie.id}>
-              <Link to={`./${movie.id}`} preload>
+              <Link to={`./${movie.id}`} preload={1}>
                 {movie.title}
               </Link>
             </li>
@@ -142,27 +131,68 @@ function List() {
     )
   }
 
+  if (moviesQuery.isError) {
+    return (
+      <div>
+        <h1>Couldn't load movies!</h1>
+        <div>{moviesQuery.error.message}</div>
+      </div>
+    )
+  }
+
   // query will be in 'idle' fetchStatus while restoring from localStorage
   return null
-}
-
-function MovieError() {
-  const { error } = useMatch()
-
-  return (
-    <div>
-      <Link to="..">Back</Link>
-      <h1>Couldn't load movie!</h1>
-      <div>{error.message}</div>
-    </div>
-  )
 }
 
 function Detail() {
   const {
     params: { movieId },
   } = useMatch()
-  const { comment, setComment, updateMovie, movieQuery } = useMovie(movieId)
+  const movieQuery = useQuery(moviesQueries.detail(movieId))
+
+  const [commentDraft, setCommentDraft] = React.useState<string | undefined>()
+
+  const updateMovie = useMutation({
+    ...moviesMutations.update(),
+    mutationKey: moviesQueries.detail(movieId).queryKey,
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({
+        queryKey: moviesQueries.detail(movieId).queryKey,
+      })
+      const { queryKey } = moviesQueries.detail(movieId)
+      const previousData = queryClient.getQueryData(queryKey)
+
+      // remove local state so that server state is taken instead
+      setCommentDraft(undefined)
+
+      queryClient.setQueryData(
+        queryKey,
+        (old) =>
+          old && {
+            ...old,
+            movie: {
+              ...old.movie,
+              comment: variables.comment,
+            },
+          },
+      )
+
+      return { previousData }
+    },
+    onError: (_, __, onMutateResult) => {
+      queryClient.setQueryData(
+        moviesQueries.detail(movieId).queryKey,
+        onMutateResult?.previousData,
+      )
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: moviesQueries.detail(movieId).queryKey,
+      })
+    },
+  })
+
+  const comment = commentDraft ?? movieQuery.data?.movie.comment
 
   if (movieQuery.isLoading) {
     return 'Loading...'
@@ -170,6 +200,10 @@ function Detail() {
 
   function submitForm(event: any) {
     event.preventDefault()
+
+    if (comment === undefined) {
+      return
+    }
 
     updateMovie.mutate({
       id: movieId,
@@ -183,7 +217,7 @@ function Detail() {
         <Link to="..">Back</Link>
         <h1>Movie: {movieQuery.data.movie.title}</h1>
         <p>
-          Try to mock offline behaviour with the button in the devtools, then
+          Try to mock offline behavior with the button in the devtools, then
           update the comment. The optimistic update will succeed, but the actual
           mutation will be paused and resumed once you go online again.
         </p>
@@ -197,7 +231,7 @@ function Detail() {
             <textarea
               name="comment"
               value={comment}
-              onChange={(event) => setComment(event.target.value)}
+              onChange={(event) => setCommentDraft(event.target.value)}
             />
           </label>
         </p>
@@ -212,6 +246,16 @@ function Detail() {
             : updateMovie.isPending && 'updating...'}
         </div>
       </form>
+    )
+  }
+
+  if (movieQuery.isError) {
+    return (
+      <div>
+        <Link to="..">Back</Link>
+        <h1>Couldn't load movie!</h1>
+        <div>{movieQuery.error.message}</div>
+      </div>
     )
   }
 

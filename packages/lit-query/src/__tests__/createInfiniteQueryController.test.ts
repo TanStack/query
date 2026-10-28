@@ -1,6 +1,14 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { QueryClient, skipToken } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
@@ -10,11 +18,14 @@ import type { InfiniteData, QueryFunctionContext } from '@tanstack/query-core'
 import type { Mock } from 'vitest'
 
 const providerTagName = generateElementName()
-customElements.define(providerTagName, QueryClientProvider)
 
 describe('createInfiniteQueryController', () => {
   let queryClient: QueryClient
   let container: HTMLElement
+
+  beforeAll(() => {
+    customElements.define(providerTagName, QueryClientProvider)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -30,7 +41,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should resolve from the pre-connect placeholder state on the first provider connection', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Consumer extends LitElement {
       readonly queryKey = key
@@ -76,7 +87,7 @@ describe('createInfiniteQueryController', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().isSuccess).toBe(true)
-    expect(consumer.infinite().data?.pages).toEqual([0])
+    expect(consumer.infinite().data?.pages).toStrictEqual([0])
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')
 
     consumer.infinite.destroy()
@@ -84,7 +95,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should prefer an explicit client over the provider context', async () => {
-    const key = queryKey()
+    const key = createKey()
     const providerClient = new QueryClient()
 
     const provider = document.createElement(
@@ -124,12 +135,12 @@ describe('createInfiniteQueryController', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().isSuccess).toBe(true)
-    expect(consumer.infinite().data?.pages).toEqual([0])
+    expect(consumer.infinite().data?.pages).toStrictEqual([0])
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')
     expect(
       queryClient.getQueryCache().find({ queryKey: consumer.queryKey })?.state
         .data,
-    ).toEqual({ pages: [0], pageParams: [0] })
+    ).toStrictEqual({ pages: [0], pageParams: [0] })
     expect(
       providerClient.getQueryCache().find({ queryKey: consumer.queryKey }),
     ).toBeUndefined()
@@ -139,7 +150,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should fetch the initial page', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly infinite = createInfiniteQueryController(
@@ -170,12 +181,12 @@ describe('createInfiniteQueryController', () => {
     expect(host.shadowRoot).toHaveTextContent('pages: none')
     await vi.advanceTimersByTimeAsync(10)
     expect(infinite().isSuccess).toBe(true)
-    expect(infinite().data?.pages).toEqual([0])
+    expect(infinite().data?.pages).toStrictEqual([0])
     expect(host.shadowRoot).toHaveTextContent('pages: 0')
   })
 
   it('should append the next page with fetchNextPage', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly infinite = createInfiniteQueryController(
@@ -207,12 +218,12 @@ describe('createInfiniteQueryController', () => {
     const fetchNextPagePromise = infinite.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     await fetchNextPagePromise
-    expect(infinite().data?.pages).toEqual([0, 1])
+    expect(infinite().data?.pages).toStrictEqual([0, 1])
     expect(host.shadowRoot).toHaveTextContent('pages: 0, 1')
   })
 
   it('should prepend the previous page with fetchPreviousPage', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly infinite = createInfiniteQueryController(
@@ -244,20 +255,20 @@ describe('createInfiniteQueryController', () => {
     const fetchPreviousPagePromise = infinite.fetchPreviousPage()
     await vi.advanceTimersByTimeAsync(10)
     await fetchPreviousPagePromise
-    expect(infinite().data?.pages).toEqual([-1, 0])
+    expect(infinite().data?.pages).toStrictEqual([-1, 0])
     expect(host.shadowRoot).toHaveTextContent('pages: -1, 0')
   })
 
   it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used', async () => {
-    const key = queryKey()
+    const key = createKey()
     const start = 10
     const onAborts: Array<Mock<(...args: Array<any>) => any>> = []
     const abortListeners: Array<Mock<(...args: Array<any>) => any>> = []
     const fetchPage = vi.fn<
       (context: QueryFunctionContext<typeof key, number>) => Promise<number>
     >(async ({ pageParam, signal }) => {
-      const onAbort = vi.fn()
-      const abortListener = vi.fn()
+      const onAbort = vi.fn<(event: Event) => void>()
+      const abortListener = vi.fn<(event: Event) => void>()
       onAborts.push(onAbort)
       abortListeners.push(abortListener)
       signal.onabort = onAbort
@@ -300,8 +311,8 @@ describe('createInfiniteQueryController', () => {
 
     let callIndex = 0
     const firstCtx = fetchPage.mock.calls[callIndex]![0]
-    expect(firstCtx.pageParam).toEqual(start)
-    expect(firstCtx.queryKey).toEqual(key)
+    expect(firstCtx.pageParam).toStrictEqual(start)
+    expect(firstCtx.queryKey).toStrictEqual(key)
     expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
     expect(firstCtx.signal.aborted).toBe(false)
     expect(onAborts[callIndex]).not.toHaveBeenCalled()
@@ -310,7 +321,7 @@ describe('createInfiniteQueryController', () => {
     callIndex = 1
     const secondCtx = fetchPage.mock.calls[callIndex]![0]
     expect(secondCtx.pageParam).toBe(11)
-    expect(secondCtx.queryKey).toEqual(key)
+    expect(secondCtx.queryKey).toStrictEqual(key)
     expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
     expect(secondCtx.signal.aborted).toBe(false)
     expect(onAborts[callIndex]).not.toHaveBeenCalled()
@@ -318,7 +329,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should not request another update when stable function options refresh during host update', async () => {
-    const key = queryKey()
+    const key = createKey()
     let callCount = 0
 
     class Host extends LitElement {
@@ -368,7 +379,7 @@ describe('createInfiniteQueryController', () => {
         await host.updateComplete
       }
       expect(host.updatesRequested).toBe(5)
-      expect(infinite().data?.pages).toEqual([0])
+      expect(infinite().data?.pages).toStrictEqual([0])
       expect(callCount).toBe(1)
     } finally {
       infinite.destroy()
@@ -376,7 +387,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should not request an update for refetch-only state changes when only data was read', async () => {
-    const key = queryKey()
+    const key = createKey()
     let resolveRefetch: (() => void) | undefined
 
     class Host extends LitElement {
@@ -416,7 +427,7 @@ describe('createInfiniteQueryController', () => {
     try {
       container.append(host)
       await host.updateComplete
-      expect(infinite().data?.pages).toEqual(['stable-page'])
+      expect(infinite().data?.pages).toStrictEqual(['stable-page'])
       await vi.advanceTimersByTimeAsync(0)
 
       host.updatesRequested = 0
@@ -436,7 +447,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should refresh a suppressed result on the next accessor read when a newly read property changed', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       updatesRequested = 0
@@ -482,7 +493,7 @@ describe('createInfiniteQueryController', () => {
         pageParams: [0],
       })
       await vi.advanceTimersByTimeAsync(0)
-      expect(infinite().data?.pages).toEqual(['updated-page'])
+      expect(infinite().data?.pages).toStrictEqual(['updated-page'])
       expect(host.updatesRequested).toBe(0)
     } finally {
       infinite.destroy()
@@ -490,7 +501,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should return the same result between reads when nothing changed', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly infinite = createInfiniteQueryController(
@@ -516,7 +527,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should preserve prior pages consistently when fetching the next page fails', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly infinite = createInfiniteQueryController(
@@ -553,28 +564,28 @@ describe('createInfiniteQueryController', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(infinite().isSuccess).toBe(true)
-    expect(infinite().data?.pages).toEqual([0])
+    expect(infinite().data?.pages).toStrictEqual([0])
     expect(host.shadowRoot).toHaveTextContent('pages: 0, error: none')
 
     const nextPagePromise = infinite.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     const nextPageResult = await nextPagePromise
     expect(nextPageResult.isFetchNextPageError).toBe(true)
-    expect(nextPageResult.error).toEqual(new Error('next-page-failed'))
+    expect(nextPageResult.error).toStrictEqual(new Error('next-page-failed'))
     expect(infinite().isFetchNextPageError).toBe(true)
-    expect(infinite().data?.pages).toEqual([0])
+    expect(infinite().data?.pages).toStrictEqual([0])
     expect(host.shadowRoot).toHaveTextContent(
       'pages: 0, error: next-page-failed',
     )
   })
 
   it('should cancel the query function when there are no more subscriptions', async () => {
-    const key = queryKey()
-    let cancelFn: Mock = vi.fn()
+    const key = createKey()
+    let cancelFn: Mock = vi.fn<(event: Event) => void>()
 
     const queryFn = ({ signal }: { signal?: AbortSignal }) => {
       const promise = new Promise<string>((resolve, reject) => {
-        cancelFn = vi.fn(() => reject('Cancelled'))
+        cancelFn = vi.fn<() => void>(() => reject('Cancelled'))
         signal?.addEventListener('abort', cancelFn)
         sleep(1000).then(() => resolve('OK'))
       })
@@ -607,13 +618,16 @@ describe('createInfiniteQueryController', () => {
     expect(host.shadowRoot).toHaveTextContent('status: pending')
 
     host.remove()
-    expect(cancelFn).toHaveBeenCalled()
+    expect(cancelFn).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'abort' }),
+    )
   })
 
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
-      sleep(10).then(() => `comments for 1 page ${pageParam}`),
+    const key = createKey()
+    const queryFn = vi.fn<(context: { pageParam: number }) => Promise<string>>(
+      ({ pageParam }: { pageParam: number }) =>
+        sleep(10).then(() => `comments for 1 page ${pageParam}`),
     )
 
     class Host extends LitElement {
@@ -657,7 +671,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should fail deterministically and align imperative methods when the provider is missing', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Consumer extends LitElement {
       readonly queryKey = key
@@ -708,7 +722,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should reuse hydrated data on an already-connected host without an eager refetch', async () => {
-    const key = queryKey()
+    const key = createKey()
     let queryFnCalls = 0
 
     queryClient.setQueryData(key, { pages: [0], pageParams: [0] })
@@ -742,7 +756,7 @@ describe('createInfiniteQueryController', () => {
     )
     const infinite = host.infinite
     await vi.advanceTimersByTimeAsync(0)
-    expect(infinite().data?.pages).toEqual([0])
+    expect(infinite().data?.pages).toStrictEqual([0])
     expect(queryFnCalls).toBe(0)
     expect(host.shadowRoot).toHaveTextContent('pages: 0')
 
@@ -750,7 +764,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should not throw for an infinite query controller on an already-connected host with an explicit client', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, {
       pages: [0],
       pageParams: [0],
@@ -779,15 +793,15 @@ describe('createInfiniteQueryController', () => {
     )
     const infinite = host.infinite
     expect(infinite().isSuccess).toBe(true)
-    expect(infinite().data?.pages).toEqual([0])
+    expect(infinite().data?.pages).toStrictEqual([0])
     await vi.advanceTimersByTimeAsync(10)
-    expect(infinite().data?.pages).toEqual([0])
+    expect(infinite().data?.pages).toStrictEqual([0])
 
     infinite.destroy()
   })
 
   it('should defer explicit-client infinite accessors until host fields are initialized', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class DeferredExplicitInfiniteHost extends LitElement {
       readonly infinite = createInfiniteQueryController(
@@ -816,19 +830,19 @@ describe('createInfiniteQueryController', () => {
 
     container.append(host)
     await vi.advanceTimersByTimeAsync(10)
-    expect(host.infinite().data?.pages).toEqual([0])
+    expect(host.infinite().data?.pages).toStrictEqual([0])
     expect(
       queryClient
         .getQueryCache()
         .findAll({ queryKey: key })
         .map((query) => query.queryKey),
-    ).toEqual([[...key, 'alpha']])
+    ).toStrictEqual([[...key, 'alpha']])
 
     host.infinite.destroy()
   })
 
   it('should switch infinite query controller to new provider client while connected', async () => {
-    const key = queryKey()
+    const key = createKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -866,7 +880,7 @@ describe('createInfiniteQueryController', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().isSuccess).toBe(true)
-    expect(consumer.infinite().data?.pages).toEqual([0])
+    expect(consumer.infinite().data?.pages).toStrictEqual([0])
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')
     const cacheAEntryBeforeSwitch = clientA
       .getQueryCache()
@@ -886,25 +900,25 @@ describe('createInfiniteQueryController', () => {
         ?.getObserversCount(),
     ).toBe(1)
     expect(consumer.infinite().isSuccess).toBe(true)
-    expect(consumer.infinite().data?.pages).toEqual([0])
+    expect(consumer.infinite().data?.pages).toStrictEqual([0])
     expect(consumer.infinite().hasNextPage).toBe(true)
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')
     const cacheAEntryAfterSwitch = clientA
       .getQueryCache()
       .find({ queryKey: consumer.queryKey })
-    expect(cacheAEntryAfterSwitch?.getObserversCount() ?? 0).toBe(0)
+    expect(cacheAEntryAfterSwitch?.getObserversCount()).toBe(0)
 
     void consumer.infinite.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.infinite().data?.pages).toEqual([0, 1])
+    expect(consumer.infinite().data?.pages).toStrictEqual([0, 1])
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0, 1')
 
     consumer.infinite.destroy()
     provider.remove()
   })
 
-  it('should reparent infinite query controller under a different provider and bind the new nearest client', async () => {
-    const key = queryKey()
+  it('should reconnect infinite query controller under a different provider and bind the new nearest client', async () => {
+    const key = createKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -953,7 +967,7 @@ describe('createInfiniteQueryController', () => {
       clientA
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount() ?? 0,
+        ?.getObserversCount(),
     ).toBe(0)
 
     providerA.remove()
@@ -964,14 +978,14 @@ describe('createInfiniteQueryController', () => {
     expect(consumer.shadowRoot).toHaveTextContent('pages: none')
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().isSuccess).toBe(true)
-    expect(consumer.infinite().data?.pages).toEqual([0])
+    expect(consumer.infinite().data?.pages).toStrictEqual([0])
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')
     expect(consumer.pageCalls).toBe(2)
     expect(
       clientA
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount() ?? 0,
+        ?.getObserversCount(),
     ).toBe(0)
     expect(
       clientB

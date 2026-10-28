@@ -40,7 +40,7 @@ describe('ASTUtils', () => {
         sourceCode,
         node: operation,
       }),
-    ).toEqual([reference])
+    ).toStrictEqual([reference])
   })
 })
 

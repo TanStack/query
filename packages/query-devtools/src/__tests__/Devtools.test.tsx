@@ -24,15 +24,15 @@ import type { QueryDevtoolsProps } from '../contexts'
 // `@solid-primitives/transition-group`, whose `exports` field points at
 // `src/index.ts` (not published) under a `@solid-primitives/source` condition
 // that Vite can't fall through, so we stub it with a transparent pass-through.
-vi.mock('solid-transition-group', () => ({
-  TransitionGroup: (props: { children: unknown }) => props.children,
+vi.mock(import('solid-transition-group'), () => ({
+  TransitionGroup: (props) => props.children,
 }))
 
 // `goober` compiles every `css\`...\`` template literal at mount time
 // (template parsing + class hashing + style serialization), which
 // dominates mount cost and produces no value for label/role-based
 // assertions, so we replace it with a no-op factory.
-vi.mock('goober', () => {
+vi.mock(import('goober'), () => {
   let counter = 0
   const css = Object.assign(() => `tsqd-${++counter}`, {
     bind: () => css,
@@ -43,8 +43,8 @@ vi.mock('goober', () => {
 describe('Devtools', () => {
   const storage: { [key: string]: string } = {}
   let queryClient: QueryClient
-  let previousRootFontSize = ''
-  let resizeObservers: Array<ResizeObserver> = []
+  let previousRootFontSize: string
+  let resizeObservers: Array<ResizeObserver>
 
   beforeEach(() => {
     resizeObservers = []
@@ -71,11 +71,11 @@ describe('Devtools', () => {
         matches: false,
         media: query,
         onchange: null,
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        dispatchEvent: vi.fn(),
+        addEventListener: vi.fn<MediaQueryList['addEventListener']>(),
+        removeEventListener: vi.fn<MediaQueryList['removeEventListener']>(),
+        addListener: vi.fn<MediaQueryList['addListener']>(),
+        removeListener: vi.fn<MediaQueryList['removeListener']>(),
+        dispatchEvent: vi.fn<MediaQueryList['dispatchEvent']>(),
       })),
     )
     vi.stubGlobal(
@@ -86,7 +86,7 @@ describe('Devtools', () => {
           this.callback = callback
           resizeObservers.push(this)
         }
-        observe = vi.fn((target: Element) => {
+        observe = vi.fn<(target: Element) => void>((target: Element) => {
           this.callback(
             [
               {
@@ -94,12 +94,11 @@ describe('Devtools', () => {
                 contentRect: { width: 1000, height: 500 } as DOMRectReadOnly,
               } as ResizeObserverEntry,
             ],
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-            this as unknown as ResizeObserver,
+            this,
           )
         })
-        unobserve = vi.fn()
-        disconnect = vi.fn()
+        unobserve = vi.fn<ResizeObserver['unobserve']>()
+        disconnect = vi.fn<ResizeObserver['disconnect']>()
       },
     )
     queryClient = new QueryClient()
@@ -107,7 +106,6 @@ describe('Devtools', () => {
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
     onlineManager.setOnline(true)
@@ -218,6 +216,7 @@ describe('Devtools', () => {
               />
             ))
       }
+
       it('should keep cache notifications and cleanup independent for the same query key', () => {
         const secondClient = new QueryClient()
         queryClient.setQueryData(['shared-key'], 'first-data')
@@ -353,6 +352,83 @@ describe('Devtools', () => {
         expect(panel.getByDisplayValue('new-update')).toBeInTheDocument()
         rendered.unmount()
         secondClient.clear()
+      })
+
+      it('should switch mutation cache subscriptions when the client changes', async () => {
+        const secondClient = new QueryClient()
+        const [client, setClient] = createSignal(queryClient)
+        const Component =
+          mode === 'full' ? DevtoolsComponent : DevtoolsPanelComponent
+        const rendered = render(() => (
+          <Component
+            client={client()}
+            onlineManager={onlineManager}
+            queryFlavor="TanStack Query"
+            version="5"
+            initialIsOpen
+          />
+        ))
+        const panel = within(rendered.container)
+        fireEvent.click(panel.getByText('Mutations'))
+        setClient(secondClient)
+
+        await secondClient
+          .getMutationCache()
+          .build(secondClient, {
+            mutationKey: ['switch-mutation'],
+            mutationFn: () => Promise.resolve('new-result'),
+          })
+          .execute({})
+        await vi.advanceTimersByTimeAsync(0)
+        expect(panel.getAllByLabelText(/Mutation submitted at/)).toHaveLength(1)
+        rendered.unmount()
+        secondClient.clear()
+      })
+
+      it('should drop queued mutation cache updates from the previous client', async () => {
+        const secondClient = new QueryClient()
+        const [client, setClient] = createSignal(queryClient)
+        const Component =
+          mode === 'full' ? DevtoolsComponent : DevtoolsPanelComponent
+        const rendered = render(() => (
+          <Component
+            client={client()}
+            onlineManager={onlineManager}
+            queryFlavor="TanStack Query"
+            version="5"
+            initialIsOpen
+          />
+        ))
+        const panel = within(rendered.container)
+        fireEvent.click(panel.getByText('Mutations'))
+
+        void queryClient
+          .getMutationCache()
+          .build(queryClient, {
+            mutationKey: ['previous-mutation'],
+            mutationFn: () => new Promise(noop),
+          })
+          .execute({})
+        setClient(secondClient)
+
+        await vi.advanceTimersByTimeAsync(0)
+        expect(panel.getByLabelText('Pending: 0')).toBeInTheDocument()
+        rendered.unmount()
+        secondClient.clear()
+      })
+
+      it('should toggle the supplied online manager when the offline button is clicked', () => {
+        const Manager =
+          onlineManager.constructor as new () => typeof onlineManager
+        const manager = new Manager()
+        const panel = within(mount(queryClient, manager).container)
+
+        fireEvent.click(panel.getByLabelText('Mock offline behavior'))
+        expect(manager.isOnline()).toBe(false)
+        expect(onlineManager.isOnline()).toBe(true)
+        expect(
+          panel.getByLabelText('Unset offline mocking behavior'),
+        ).toHaveAttribute('aria-pressed', 'true')
       })
 
       it('should keep query selection independent between clients', () => {
@@ -536,7 +612,7 @@ describe('Devtools', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
       fireEvent.click(rendered.getByText('Mutations'))
 
-      const listener = vi.fn()
+      const listener = vi.fn<EventListener>()
       window.addEventListener('@tanstack/query-devtools-event', listener)
 
       try {
@@ -682,16 +758,28 @@ describe('Devtools', () => {
         document: pipDocument,
         innerWidth: 800,
         innerHeight: 600,
-        addEventListener: vi.fn((event: string, handler: EventListener) => {
+        addEventListener: vi.fn<
+          (event: string, handler: EventListener) => void
+        >((event: string, handler: EventListener) => {
           listeners.set(event, handler)
         }),
-        removeEventListener: vi.fn((event: string) => {
+        removeEventListener: vi.fn<(event: string) => void>((event: string) => {
           listeners.delete(event)
         }),
-        close: vi.fn(),
+        close: vi.fn<() => void>(),
         ...overrides,
       }
-      const open = vi.fn(() => fakeWindow)
+      const open = vi.fn<
+        () => Pick<
+          Window,
+          | 'close'
+          | 'addEventListener'
+          | 'removeEventListener'
+          | 'document'
+          | 'innerWidth'
+          | 'innerHeight'
+        >
+      >(() => fakeWindow)
       vi.stubGlobal('open', open)
       return {
         pipDocument,
@@ -800,7 +888,7 @@ describe('Devtools', () => {
           constructor(callback: ResizeObserverCallback) {
             this.callback = callback
           }
-          observe = vi.fn((target: Element) => {
+          observe = vi.fn<(target: Element) => void>((target: Element) => {
             this.callback(
               [
                 {
@@ -808,12 +896,11 @@ describe('Devtools', () => {
                   contentRect: { width: 500, height: 500 } as DOMRectReadOnly,
                 } as ResizeObserverEntry,
               ],
-              // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-              this as unknown as ResizeObserver,
+              this,
             )
           })
-          unobserve = vi.fn()
-          disconnect = vi.fn()
+          unobserve = vi.fn<ResizeObserver['unobserve']>()
+          disconnect = vi.fn<ResizeObserver['disconnect']>()
         },
       )
 
@@ -837,7 +924,7 @@ describe('Devtools', () => {
           constructor(callback: ResizeObserverCallback) {
             this.callback = callback
           }
-          observe = vi.fn((target: Element) => {
+          observe = vi.fn<(target: Element) => void>((target: Element) => {
             this.callback(
               [
                 {
@@ -845,12 +932,11 @@ describe('Devtools', () => {
                   contentRect: { width: 500, height: 500 } as DOMRectReadOnly,
                 } as ResizeObserverEntry,
               ],
-              // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-              this as unknown as ResizeObserver,
+              this,
             )
           })
-          unobserve = vi.fn()
-          disconnect = vi.fn()
+          unobserve = vi.fn<ResizeObserver['unobserve']>()
+          disconnect = vi.fn<ResizeObserver['disconnect']>()
         },
       )
 
@@ -924,7 +1010,7 @@ describe('Devtools', () => {
       queryClient.setQueryData(['action-refetch'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
-      const listener = vi.fn()
+      const listener = vi.fn<EventListener>()
       window.addEventListener('@tanstack/query-devtools-event', listener)
 
       try {
@@ -966,7 +1052,9 @@ describe('Devtools', () => {
     })
 
     it('should restore the previous query options when "Restore Loading" is clicked after "Trigger Loading"', async () => {
-      const queryFn = vi.fn(() => Promise.resolve('original'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('original'),
+      )
       void queryClient
         .query({
           queryKey: ['action-restore-loading'],
@@ -1090,7 +1178,9 @@ describe('Devtools', () => {
         target: { value: JSON.stringify({ name: 'b' }) },
       })
       fireEvent.submit(textarea.closest('form')!)
-      expect(queryClient.getQueryData(['edit-save'])).toEqual({ name: 'b' })
+      expect(queryClient.getQueryData(['edit-save'])).toStrictEqual({
+        name: 'b',
+      })
     })
 
     it('should set an error state when the edited data is invalid JSON', () => {
@@ -1119,7 +1209,7 @@ describe('Devtools', () => {
       expect(rendered.getByText('Invalid Value')).toBeInTheDocument()
 
       fireEvent.focus(textarea)
-      expect(rendered.queryByText('Invalid Value')).toBeNull()
+      expect(rendered.queryByText('Invalid Value')).not.toBeInTheDocument()
     })
 
     it('should return to the data view when the editor "Cancel" button is clicked', () => {
@@ -1133,7 +1223,9 @@ describe('Devtools', () => {
       ).toBeInTheDocument()
 
       fireEvent.click(rendered.getByText('Cancel'))
-      expect(rendered.queryByLabelText('Edit query data as JSON')).toBeNull()
+      expect(
+        rendered.queryByLabelText('Edit query data as JSON'),
+      ).not.toBeInTheDocument()
       expect(rendered.getByLabelText('Bulk Edit Data')).toBeInTheDocument()
     })
   })
@@ -1225,6 +1317,56 @@ describe('Devtools', () => {
         ).not.toBeInTheDocument()
         expect(
           rendered.getByLabelText(/Query key \["hide-test-active"\]/),
+        ).toBeInTheDocument()
+      } finally {
+        unsubscribe()
+      }
+    })
+
+    it('should hide disabled queries when the "hideDisabledQueries" prop is true', () => {
+      const disabled = new QueryObserver(queryClient, {
+        queryKey: ['hide-prop-disabled'],
+        queryFn: () => 'x',
+        enabled: false,
+      })
+      const unsubscribe = disabled.subscribe(() => {})
+      queryClient.setQueryData(['hide-prop-disabled'], 'x')
+      queryClient.setQueryData(['hide-prop-active'], 'y')
+
+      try {
+        const rendered = renderDevtools({
+          initialIsOpen: true,
+          hideDisabledQueries: true,
+        })
+
+        expect(
+          rendered.queryByLabelText(/Query key \["hide-prop-disabled"\]/),
+        ).not.toBeInTheDocument()
+        expect(
+          rendered.getByLabelText(/Query key \["hide-prop-active"\]/),
+        ).toBeInTheDocument()
+      } finally {
+        unsubscribe()
+      }
+    })
+
+    it('should prefer the "hideDisabledQueries" setting in localStorage over the prop', () => {
+      const disabled = new QueryObserver(queryClient, {
+        queryKey: ['hide-override-disabled'],
+        queryFn: () => 'x',
+        enabled: false,
+      })
+      const unsubscribe = disabled.subscribe(() => {})
+      queryClient.setQueryData(['hide-override-disabled'], 'x')
+
+      try {
+        const rendered = renderDevtools(
+          { initialIsOpen: true, hideDisabledQueries: true },
+          { 'TanstackQueryDevtools.hideDisabledQueries': 'false' },
+        )
+
+        expect(
+          rendered.getByLabelText(/Query key \["hide-override-disabled"\]/),
         ).toBeInTheDocument()
       } finally {
         unsubscribe()
@@ -1343,7 +1485,7 @@ describe('Devtools', () => {
         themeMenu?.querySelectorAll<HTMLElement>('[role="menuitemradio"]') ??
           [],
       ).find((el) => String(el.textContent).includes('Light'))
-      expect(lightItem).not.toBeUndefined()
+      expect(lightItem).toBeDefined()
       fireEvent.keyDown(lightItem!, { key: 'Enter' })
       expect(
         localStorage.getItem('TanstackQueryDevtools.theme_preference'),

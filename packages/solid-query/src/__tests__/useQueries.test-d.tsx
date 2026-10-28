@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { skipToken } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { queryOptions, useQueries } from '..'
 import { QueryClient } from '../QueryClient'
 import type * as QueryCore from '@tanstack/query-core'
@@ -16,7 +16,7 @@ import type { QueryOptions } from '../types'
 describe('useQueries', () => {
   it('should have undefined in the TData union even when initialData is provided as an object', () => {
     const query1 = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => {
         return {
           wow: true,
@@ -28,13 +28,13 @@ describe('useQueries', () => {
     }
 
     const query2 = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => 'Query Data',
       initialData: 'initial data',
     }
 
     const query3 = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => 'Query Data',
     }
 
@@ -53,7 +53,7 @@ describe('useQueries', () => {
 
   it('should have undefined in the TData union when passed through queryOptions', () => {
     const options = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => {
         return {
           wow: true,
@@ -74,7 +74,7 @@ describe('useQueries', () => {
     const queryResults = useQueries(() => ({
       queries: [
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => {
             return {
               wow: true,
@@ -100,15 +100,15 @@ describe('useQueries', () => {
     >(() => ({
       queries: [
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
         },
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
         },
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(true),
           select: () => 'selected',
         },
@@ -127,15 +127,15 @@ describe('useQueries', () => {
     >(() => ({
       queries: [
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
         },
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
         },
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(true),
           select: () => 'selected',
         },
@@ -150,13 +150,13 @@ describe('useQueries', () => {
 
   it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQueries', () => {
     const query1 = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(1),
       select: (data) => data > 1,
     })
 
     const query2 = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(1),
       select: (data: number) => data > 1,
     }
@@ -180,7 +180,7 @@ describe('useQueries', () => {
           queries: [
             {
               ...options,
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => Promise.resolve('data'),
             },
           ],
@@ -206,7 +206,7 @@ describe('useQueries', () => {
     const queryResults = useQueries(() => ({
       queries: [
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           throwOnError: (_error: CustomError) => false,
         },
@@ -220,7 +220,7 @@ describe('useQueries', () => {
     const queryResults = useQueries(() => ({
       queries: [
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
         },
       ],
@@ -236,14 +236,14 @@ describe('useQueries', () => {
     const Queries1 = {
       get: () =>
         queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
         }),
     }
     const Queries2 = {
       get: () =>
         queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(true),
         }),
     }
@@ -265,7 +265,7 @@ describe('useQueries', () => {
       () => ({
         queries: [
           {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve('data'),
           },
         ],
@@ -280,11 +280,11 @@ describe('useQueries', () => {
     useQueries(() => ({
       queries: [
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
         },
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('hello'),
         },
       ],
@@ -298,9 +298,9 @@ describe('useQueries', () => {
 
   describe('type parameters', () => {
     it('should handle type parameter - tuple of tuples', () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
+      const key3 = createKey()
 
       // @ts-expect-error (Page component is not rendered)
       function Page() {
@@ -407,9 +407,9 @@ describe('useQueries', () => {
     })
 
     it('should handle type parameter - tuple of objects', () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
+      const key3 = createKey()
 
       // @ts-expect-error (Page component is not rendered)
       function Page() {
@@ -562,10 +562,10 @@ describe('useQueries', () => {
     })
 
     it('should handle array literal without type parameter to infer result type', () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
-      const key4 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
+      const key3 = createKey()
+      const key4 = createKey()
 
       // @ts-expect-error (Page component is not rendered)
       function Page() {
@@ -826,7 +826,7 @@ describe('useQueries', () => {
                 queryKey: key,
                 queryFn: fn
                   ? (ctx: QueryFunctionContext<TQueryKey>) => {
-                      // eslint-disable-next-line vitest/valid-expect
+                      // oxlint-disable-next-line vitest-js/valid-expect -- matchers cannot compare against an unresolved type parameter, so the type argument checks that 'ctx.queryKey' is assignable to 'TQueryKey'
                       expectTypeOf<TQueryKey>(ctx.queryKey)
                       return (
                         fn as QueryFunction<TQueryFnData, TQueryKey>

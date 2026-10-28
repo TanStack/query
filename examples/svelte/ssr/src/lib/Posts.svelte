@@ -1,18 +1,13 @@
 <script lang="ts">
+  import { resolve } from '$app/paths'
   import { useQueryClient, createQuery } from '@tanstack/svelte-query'
-  import { api } from './api'
+  import { postsQueries } from './services/posts/queries'
 
   const client = useQueryClient()
 
   const limit = 10
 
-  const posts = createQuery<
-    { id: number; title: string; body: string }[],
-    Error
-  >(() => ({
-    queryKey: ['posts', limit],
-    queryFn: () => api().getPosts(limit),
-  }))
+  const posts = createQuery(() => postsQueries.list(limit))
 </script>
 
 <div>
@@ -23,13 +18,13 @@
       <span>Error: {posts.error.message}</span>
     {:else}
       <ul>
-        {#each posts.data as post}
+        {#each posts.data as post (post.id)}
           <article>
             <a
-              href={`/${post.id}`}
+              href={resolve('/[postId]', { postId: String(post.id) })}
               style={// We can use the queryCache here to show bold links for
               // ones that are cached
-              client.getQueryData(['post', post.id])
+              client.getQueryData(postsQueries.detail(post.id).queryKey)
                 ? 'font-weight: bold; color: indianred'
                 : 'cursor: pointer'}
             >

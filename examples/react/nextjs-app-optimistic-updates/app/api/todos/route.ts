@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { todos, getTodos, type Todo } from './data'
+import { getTodos, todos } from './data'
+import type { Todo } from './data'
 
 export async function GET() {
   return NextResponse.json(await getTodos())
@@ -17,8 +18,8 @@ export async function POST(request: Request) {
     body !== null &&
     typeof body === 'object' &&
     'text' in body &&
-    typeof (body as { text: unknown }).text === 'string'
-      ? (body as { text: string }).text.trim()
+    typeof body.text === 'string'
+      ? body.text.trim()
       : ''
 
   if (!text) {

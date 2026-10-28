@@ -2,12 +2,11 @@ import ReactDOM from 'react-dom/client'
 import {
   QueryClient,
   QueryClientProvider,
-  queryOptions,
   useQueries,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useState } from 'react'
-import { loadCharacter } from './character-loader'
+import { charactersQueries } from './services/characters/queries'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,16 +16,9 @@ const queryClient = new QueryClient({
   },
 })
 
-const characterQueryOptions = (id: number) =>
-  queryOptions({
-    queryKey: ['character', id],
-    queryFn: () => loadCharacter(id),
-    staleTime: 60 * 1000,
-  })
-
 function Characters({ ids }: { ids: Array<number> }) {
   const characters = useQueries({
-    queries: ids.map((id) => characterQueryOptions(id)),
+    queries: ids.map((id) => charactersQueries.detail(id)),
   })
 
   return characters.map((character, index) => {
@@ -53,7 +45,7 @@ function Characters({ ids }: { ids: Array<number> }) {
             {character.data.name} (#{character.data.id})
           </h5>
           <p style={{ marginTop: 0, marginBottom: 2 }}>
-            Status: {character.status}
+            Status: {character.data.status}
           </p>
           <p style={{ marginTop: 0, marginBottom: 2 }}>
             Species: {character.data.species}
@@ -77,21 +69,18 @@ function App() {
       <h2>Character fetcher</h2>
       <div>
         <label style={{ display: 'block' }}>
-          Character ids (numberic, comma seprated)
+          Character ids (numeric, comma separated)
         </label>
         <input
           style={{ display: 'inline-block' }}
           placeholder="ids"
           onChange={(event) => {
-            const text = event.target.value.replace(' ', '')
-            const ids = text.split(',').map((id) => parseInt(id, 10))
-            const allValid = ids.reduce(
-              (valid, id) => valid && !isNaN(id),
-              true,
-            )
+            const parsedIds = event.target.value
+              .split(',')
+              .map((id) => id.trim())
 
-            if (allValid) {
-              setIds(ids)
+            if (parsedIds.every((id) => /^\d+$/.test(id))) {
+              setIds(parsedIds.map(Number))
               setError('')
             } else {
               setError('Invalid.. only use numbers and comma')
@@ -104,6 +93,7 @@ function App() {
 
       <button
         type="button"
+        disabled={!!error}
         onClick={() => {
           setIdsToLoad(ids)
         }}

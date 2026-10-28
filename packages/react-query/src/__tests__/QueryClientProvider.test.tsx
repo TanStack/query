@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/react'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -19,7 +19,7 @@ describe('QueryClientProvider', () => {
   })
 
   it('should set a specific cache for all queries to use', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
@@ -50,8 +50,8 @@ describe('QueryClientProvider', () => {
   })
 
   it('should allow multiple caches to be partitioned', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const queryCache1 = new QueryCache()
     const queryCache2 = new QueryCache()
@@ -106,7 +106,7 @@ describe('QueryClientProvider', () => {
   })
 
   it("should use defaultOptions for queries when they don't provide their own config", async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({
@@ -145,9 +145,7 @@ describe('QueryClientProvider', () => {
 
   describe('useQueryClient', () => {
     it('should throw an error if no query client has been set', () => {
-      const consoleErrorMock = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+      vi.spyOn(console, 'error').mockReturnValue(undefined)
 
       function Page() {
         useQueryClient()
@@ -157,8 +155,6 @@ describe('QueryClientProvider', () => {
       expect(() => render(<Page />)).toThrow(
         'No QueryClient set, use QueryClientProvider to set one',
       )
-
-      consoleErrorMock.mockRestore()
     })
   })
 })

@@ -23,6 +23,11 @@ export default defineConfig({
     watch: false,
     environment: 'jsdom',
     setupFiles: ['./tests/test-setup.ts'],
+    coverage: {
+      enabled: !!process.env.CI,
+      provider: 'istanbul',
+      include: ['src/**/*'],
+    },
     typecheck: { enabled: true },
     restoreMocks: true,
   },

@@ -1,5 +1,8 @@
 {
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
-  "extends": ["plugin:@tanstack/query/recommended"]
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@tanstack/query/recommended"
+  ]
 }

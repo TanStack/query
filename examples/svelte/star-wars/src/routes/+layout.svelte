@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { resolve } from '$app/paths'
   import '../app.css'
   import { browser } from '$app/environment'
   import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
+  import type { LayoutProps } from './$types'
 
-  const { children } = $props()
+  let { children }: LayoutProps = $props()
 
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -23,9 +25,11 @@
   <nav
     class="bg-gray-300 w-full flex flex-row gap-6 justify-center items-center h-12"
   >
-    <a class="uppercase hover:underline" href="/">Home</a>
-    <a class="uppercase hover:underline" href="/films">Films</a>
-    <a class="uppercase hover:underline" href="/characters">Characters</a>
+    <a class="uppercase hover:underline" href={resolve('/')}>Home</a>
+    <a class="uppercase hover:underline" href={resolve('/films')}>Films</a>
+    <a class="uppercase hover:underline" href={resolve('/characters')}
+      >Characters</a
+    >
   </nav>
   <div class="p-2">
     {@render children()}

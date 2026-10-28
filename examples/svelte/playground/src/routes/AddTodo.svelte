@@ -1,48 +1,15 @@
 <script lang="ts">
   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
-  import {
-    errorRate,
-    queryTimeMin,
-    queryTimeMax,
-    list,
-    id,
-  } from '$lib/stores.svelte'
-  import type { Todo } from '$lib/stores.svelte'
+  import { todosMutations, todosQueries } from '$lib/services/todos/queries'
 
   const queryClient = useQueryClient()
 
   let name = $state('')
 
-  const postTodo = async ({ name, notes }: Omit<Todo, 'id'>) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(
-        () => {
-          if (Math.random() < errorRate.value) {
-            return reject(
-              new Error(
-                JSON.stringify(
-                  { postTodo: { name: $state.snapshot(name), notes } },
-                  null,
-                  2,
-                ),
-              ),
-            )
-          }
-          const todo = { name, notes, id: id.value }
-          id.value = id.value + 1
-          list.value.push(todo)
-          resolve(todo)
-        },
-        queryTimeMin.value +
-          Math.random() * (queryTimeMax.value - queryTimeMin.value),
-      )
-    })
-  }
-
   const addMutation = createMutation(() => ({
-    mutationFn: postTodo,
+    ...todosMutations.create(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
+      queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
     },
   }))
 </script>
@@ -62,6 +29,8 @@
       ? 'Saving...'
       : addMutation.status === 'error'
         ? addMutation.error.message
-        : 'Saved!'}
+        : addMutation.status === 'success'
+          ? 'Saved!'
+          : null}
   </div>
 </div>

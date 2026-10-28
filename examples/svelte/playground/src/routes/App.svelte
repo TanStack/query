@@ -17,7 +17,7 @@
   <br />
   <hr />
 
-  {#each views.value as view}
+  {#each views.value as view, index (index)}
     <div>
       <TodosList initialFilter={view} />
       <br />
@@ -34,7 +34,9 @@
   <hr />
 
   {#if editingIndex.value !== null}
-    <EditTodo />
+    {#key editingIndex.value}
+      <EditTodo id={editingIndex.value} />
+    {/key}
     <hr />
   {/if}
 

@@ -2,6 +2,7 @@ import { describe, expectTypeOf, it } from 'vitest'
 import { reactive } from 'vue-demi'
 import { sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
+import type { MutationResult, UseMutationReturnType } from '..'
 import type {
   MutationFunctionContext,
   MutationKey,
@@ -152,5 +153,21 @@ describe('useMutation', () => {
         >()
       },
     })
+  })
+
+  it('should return the result typed with the exported MutationResult', () => {
+    const mutation = useMutation({
+      mutationFn: (params: string) => sleep(0).then(() => params),
+    })
+
+    expectTypeOf(mutation).toEqualTypeOf<
+      UseMutationReturnType<
+        string,
+        Error,
+        string,
+        unknown,
+        MutationResult<string, Error, string, unknown>
+      >
+    >()
   })
 })

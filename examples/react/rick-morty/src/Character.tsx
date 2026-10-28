@@ -1,15 +1,14 @@
-import { useParams, Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import { getCharacter, getEpisode, getLocation } from './api'
+import { charactersQueries } from './services/characters/queries'
+import { episodesQueries } from './services/episodes/queries'
+import { locationsQueries } from './services/locations/queries'
 
 function Character() {
-  let params = useParams()
+  const params = useParams()
   const characterId = params.characterId!
 
-  const { status, data } = useQuery({
-    queryKey: ['character', characterId],
-    queryFn: () => getCharacter(characterId),
-  })
+  const { status, data } = useQuery(charactersQueries.detail(characterId))
 
   if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>
@@ -33,11 +32,12 @@ function Character() {
         <strong>Origin</strong>: {data.origin.name}
       </p>
       <p>
-        <strong>Location</strong>: <Location locationId={locationId} />
+        <strong>Location</strong>:{' '}
+        {locationId ? <Location locationId={locationId} /> : data.location.name}
       </p>
 
       <h4 className="text-2xl pt-4">Episodes</h4>
-      {data.episode.map((episode: any) => {
+      {data.episode.map((episode) => {
         const episodeUrlParts = episode.split('/').filter(Boolean)
         const episodeId = episodeUrlParts[episodeUrlParts.length - 1]
         return <Episode episodeId={episodeId} key={`${episodeId}`} />
@@ -47,10 +47,7 @@ function Character() {
 }
 
 function Episode({ episodeId }: { episodeId: string }) {
-  const { data, status } = useQuery({
-    queryKey: ['episode', episodeId],
-    queryFn: () => getEpisode(episodeId),
-  })
+  const { data, status } = useQuery(episodesQueries.detail(episodeId))
 
   if (status === 'success') {
     return (
@@ -69,10 +66,7 @@ function Episode({ episodeId }: { episodeId: string }) {
 }
 
 function Location({ locationId }: { locationId: string }) {
-  const { data, status } = useQuery({
-    queryKey: ['location', locationId],
-    queryFn: () => getLocation(locationId),
-  })
+  const { data, status } = useQuery(locationsQueries.detail(locationId))
 
   if (status === 'pending') return <span>Loading...</span>
   if (status === 'error') return <span>Error :(</span>

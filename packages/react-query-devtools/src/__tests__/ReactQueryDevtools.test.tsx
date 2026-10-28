@@ -4,17 +4,21 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import type { ReactQueryDevtools as ReactQueryDevtoolsComponent } from '../ReactQueryDevtools'
 
-const mountMock = vi.fn()
-const unmountMock = vi.fn()
-const setClientMock = vi.fn()
-const setButtonPositionMock = vi.fn()
-const setPositionMock = vi.fn()
-const setInitialIsOpenMock = vi.fn()
-const setErrorTypesMock = vi.fn()
-const setThemeMock = vi.fn()
+const mountMock = vi.fn<TanstackQueryDevtools['mount']>()
+const unmountMock = vi.fn<TanstackQueryDevtools['unmount']>()
+const setClientMock = vi.fn<TanstackQueryDevtools['setClient']>()
+const setButtonPositionMock =
+  vi.fn<TanstackQueryDevtools['setButtonPosition']>()
+const setPositionMock = vi.fn<TanstackQueryDevtools['setPosition']>()
+const setInitialIsOpenMock = vi.fn<TanstackQueryDevtools['setInitialIsOpen']>()
+const setErrorTypesMock = vi.fn<TanstackQueryDevtools['setErrorTypes']>()
+const setThemeMock = vi.fn<TanstackQueryDevtools['setTheme']>()
 
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the mocked devtools classes have '#private' fields, and this environment cannot load the real Solid module
 vi.mock('@tanstack/query-devtools', () => ({
-  TanstackQueryDevtools: vi.fn(function (this: TanstackQueryDevtools) {
+  TanstackQueryDevtools: vi.fn<(this: TanstackQueryDevtools) => void>(function (
+    this: TanstackQueryDevtools,
+  ) {
     this.mount = mountMock
     this.unmount = unmountMock
     this.setClient = setClientMock
@@ -50,14 +54,14 @@ describe('ReactQueryDevtools', () => {
         </QueryClientProvider>,
       ),
     ).not.toThrow()
-    expect(mountMock).toHaveBeenCalled()
+    expect(mountMock).toHaveBeenCalledWith(expect.any(HTMLDivElement))
   })
 
   it('should not throw an error if query client is provided via props', () => {
     expect(() =>
       render(<ReactQueryDevtools client={queryClient} />),
     ).not.toThrow()
-    expect(mountMock).toHaveBeenCalled()
+    expect(mountMock).toHaveBeenCalledWith(expect.any(HTMLDivElement))
   })
 
   it('should forward "buttonPosition" to the devtools instance', () => {
@@ -149,6 +153,16 @@ describe('ReactQueryDevtools', () => {
     )
   })
 
+  it('should create the devtools instance only once across re-renders', () => {
+    const { rerender } = render(
+      <ReactQueryDevtools client={queryClient} position="bottom" />,
+    )
+
+    rerender(<ReactQueryDevtools client={queryClient} position="top" />)
+
+    expect(TanstackQueryDevtools).toHaveBeenCalledTimes(1)
+  })
+
   it('should forward a "buttonPosition" change to the devtools instance after mount', () => {
     const { rerender } = render(
       <ReactQueryDevtools client={queryClient} buttonPosition="bottom-right" />,
@@ -215,7 +229,7 @@ describe('ReactQueryDevtools', () => {
     const { unmount } = render(<ReactQueryDevtools client={queryClient} />)
     unmount()
 
-    expect(unmountMock).toHaveBeenCalled()
+    expect(unmountMock).toHaveBeenCalledWith()
   })
 
   it('should return null in non-development environments', async () => {
@@ -226,7 +240,6 @@ describe('ReactQueryDevtools', () => {
       const { ReactQueryDevtools: ProductionDevtools } = await import('..')
       expect(ProductionDevtools({})).toBeNull()
     } finally {
-      vi.unstubAllEnvs()
       vi.resetModules()
     }
   })

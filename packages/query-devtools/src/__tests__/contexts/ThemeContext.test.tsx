@@ -39,10 +39,10 @@ describe('ThemeContext', () => {
         </ThemeContext.Provider>
       ))
 
-      expect(observed).toEqual(['dark'])
+      expect(observed).toStrictEqual(['dark'])
 
       setTheme('light')
-      expect(observed).toEqual(['dark', 'light'])
+      expect(observed).toStrictEqual(['dark', 'light'])
     })
   })
 })

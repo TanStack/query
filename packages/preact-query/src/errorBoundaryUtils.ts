@@ -1,4 +1,5 @@
 import { shouldThrowError } from '@tanstack/query-core'
+import { useEffect } from 'preact/hooks'
 import type {
   DefaultedQueryObserverOptions,
   Query,
@@ -6,7 +7,6 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
-import { useEffect } from 'preact/hooks'
 
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
@@ -36,8 +36,12 @@ export const ensurePreventErrorBoundaryRetry = <
   query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
 ) => {
   const throwOnError =
-    query?.state.error && typeof options.throwOnError === 'function'
-      ? shouldThrowError(options.throwOnError, [query.state.error, query])
+    query?.state.status === 'error' &&
+    typeof options.throwOnError === 'function'
+      ? shouldThrowError(options.throwOnError, [
+          query.state.error as TError,
+          query,
+        ])
       : options.throwOnError
 
   if (options.suspense || throwOnError) {

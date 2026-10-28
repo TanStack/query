@@ -134,6 +134,10 @@
               "to": "framework/svelte/ssr"
             },
             {
+              "label": "Testing",
+              "to": "framework/svelte/testing"
+            },
+            {
               "label": "Migrate from v5 to v6",
               "to": "framework/svelte/migrate-from-v5-to-v6"
             }
@@ -822,6 +826,10 @@
             {
               "label": "SSR",
               "to": "framework/lit/guides/ssr"
+            },
+            {
+              "label": "Testing",
+              "to": "framework/lit/guides/testing"
             }
           ]
         },
@@ -6829,6 +6837,62 @@
             {
               "label": "Offline Queries and Mutations",
               "to": "framework/solid/examples/offline"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/solid/examples/playground"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/solid/examples/algolia"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/solid/examples/chat"
+            },
+            {
+              "label": "Shadow DOM",
+              "to": "framework/solid/examples/shadow-dom"
+            },
+            {
+              "label": "Devtools Embedded Panel",
+              "to": "framework/solid/examples/devtools-panel"
+            },
+            {
+              "label": "Star Wars",
+              "to": "framework/solid/examples/star-wars"
+            },
+            {
+              "label": "Rick And Morty",
+              "to": "framework/solid/examples/rick-morty"
+            },
+            {
+              "label": "Solid Router",
+              "to": "framework/solid/examples/solid-router"
+            },
+            {
+              "label": "Suspense",
+              "to": "framework/solid/examples/suspense"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/solid/examples/batching"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "framework/solid/examples/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/solid/examples/optimistic-updates"
+            },
+            {
+              "label": "Pagination",
+              "to": "framework/solid/examples/pagination"
+            },
+            {
+              "label": "Prefetching",
+              "to": "framework/solid/examples/prefetching"
             }
           ]
         },
@@ -6854,6 +6918,34 @@
             {
               "label": "Persister",
               "to": "framework/vue/examples/persister"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/vue/examples/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/vue/examples/default-query-function"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/vue/examples/playground"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/vue/examples/algolia"
+            },
+            {
+              "label": "Shadow DOM",
+              "to": "framework/vue/examples/shadow-dom"
+            },
+            {
+              "label": "Devtools Embedded Panel",
+              "to": "framework/vue/examples/devtools-panel"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/vue/examples/chat"
             }
           ]
         },
@@ -6891,6 +6983,54 @@
             {
               "label": "Infinite Queries",
               "to": "framework/svelte/examples/load-more-infinite-scroll"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/svelte/examples/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/svelte/examples/default-query-function"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/svelte/examples/algolia"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/svelte/examples/chat"
+            },
+            {
+              "label": "Shadow DOM",
+              "to": "framework/svelte/examples/shadow-dom"
+            },
+            {
+              "label": "Rick And Morty",
+              "to": "framework/svelte/examples/rick-morty"
+            },
+            {
+              "label": "SvelteKit",
+              "to": "framework/svelte/examples/sveltekit"
+            },
+            {
+              "label": "Offline Queries and Mutations",
+              "to": "framework/svelte/examples/offline"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/svelte/examples/batching"
+            },
+            {
+              "label": "Pagination",
+              "to": "framework/svelte/examples/pagination"
+            },
+            {
+              "label": "Infinite query with Max pages",
+              "to": "framework/svelte/examples/infinite-query-with-max-pages"
+            },
+            {
+              "label": "Prefetching",
+              "to": "framework/svelte/examples/prefetching"
             }
           ]
         },
@@ -6953,6 +7093,99 @@
             {
               "label": "Devtools embedded panel",
               "to": "framework/angular/examples/devtools-panel"
+            }
+          ]
+        },
+        {
+          "label": "preact",
+          "children": [
+            {
+              "label": "Simple",
+              "to": "framework/preact/examples/simple"
+            },
+            {
+              "label": "Basic",
+              "to": "framework/preact/examples/basic"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/preact/examples/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/preact/examples/default-query-function"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/preact/examples/playground"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/preact/examples/algolia"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/preact/examples/chat"
+            },
+            {
+              "label": "Shadow DOM",
+              "to": "framework/preact/examples/shadow-dom"
+            },
+            {
+              "label": "Devtools Embedded Panel",
+              "to": "framework/preact/examples/devtools-panel"
+            },
+            {
+              "label": "Star Wars",
+              "to": "framework/preact/examples/star-wars"
+            },
+            {
+              "label": "Rick And Morty",
+              "to": "framework/preact/examples/rick-morty"
+            },
+            {
+              "label": "Offline Queries and Mutations",
+              "to": "framework/preact/examples/offline"
+            },
+            {
+              "label": "Suspense",
+              "to": "framework/preact/examples/suspense"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/preact/examples/batching"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "framework/preact/examples/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/preact/examples/optimistic-updates"
+            },
+            {
+              "label": "Pagination",
+              "to": "framework/preact/examples/pagination"
+            },
+            {
+              "label": "Load-More & Infinite Scroll",
+              "to": "framework/preact/examples/load-more-infinite-scroll"
+            },
+            {
+              "label": "Infinite query with Max pages",
+              "to": "framework/preact/examples/infinite-query-with-max-pages"
+            },
+            {
+              "label": "Prefetching",
+              "to": "framework/preact/examples/prefetching"
+            },
+            {
+              "label": "SSR",
+              "to": "framework/preact/examples/ssr"
+            },
+            {
+              "label": "SSR with streaming",
+              "to": "framework/preact/examples/ssr-streaming"
             }
           ]
         }

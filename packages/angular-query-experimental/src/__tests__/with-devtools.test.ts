@@ -17,36 +17,40 @@ import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
+  TanstackQueryDevtools,
   Theme,
 } from '@tanstack/query-devtools'
 import type { DevtoolsOptions } from '../devtools'
 
 const mockDevtoolsInstance = {
-  mount: vi.fn(),
-  unmount: vi.fn(),
-  setClient: vi.fn(),
-  setPosition: vi.fn(),
-  setErrorTypes: vi.fn(),
-  setButtonPosition: vi.fn(),
-  setInitialIsOpen: vi.fn(),
-  setTheme: vi.fn(),
+  mount: vi.fn<TanstackQueryDevtools['mount']>(),
+  unmount: vi.fn<TanstackQueryDevtools['unmount']>(),
+  setClient: vi.fn<TanstackQueryDevtools['setClient']>(),
+  setPosition: vi.fn<TanstackQueryDevtools['setPosition']>(),
+  setErrorTypes: vi.fn<TanstackQueryDevtools['setErrorTypes']>(),
+  setButtonPosition: vi.fn<TanstackQueryDevtools['setButtonPosition']>(),
+  setInitialIsOpen: vi.fn<TanstackQueryDevtools['setInitialIsOpen']>(),
+  setTheme: vi.fn<TanstackQueryDevtools['setTheme']>(),
 }
 
 function MockTanstackQueryDevtools() {
   return mockDevtoolsInstance
 }
 
-const mockTanstackQueryDevtools = vi.fn(MockTanstackQueryDevtools)
+const mockTanstackQueryDevtools = vi.fn<typeof MockTanstackQueryDevtools>(
+  MockTanstackQueryDevtools,
+)
 
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the mocked devtools classes have '#private' fields, and this environment cannot load the real Solid module
 vi.mock('@tanstack/query-devtools', () => ({
   TanstackQueryDevtools: mockTanstackQueryDevtools,
 }))
 
-vi.mock('@angular/core', async () => {
+vi.mock(import('@angular/core'), async () => {
   const actual = await vi.importActual('@angular/core')
   return {
     ...actual,
-    isDevMode: vi.fn(),
+    isDevMode: vi.fn<() => boolean>(),
   }
 })
 
@@ -157,7 +161,7 @@ describe('withDevtools feature', () => {
   it("should throw 'No QueryClient found' when 'loadDevtools' is 'true' and no 'QueryClient' is provided", async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
 
     TestBed.configureTestingModule({
       providers: [
@@ -176,8 +180,6 @@ describe('withDevtools feature', () => {
       'Install @tanstack/query-devtools or reinstall without --omit=optional.',
       expect.objectContaining({ message: 'No QueryClient found' }),
     )
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should not continue loading devtools after injector is destroyed', async () => {
@@ -437,6 +439,34 @@ describe('withDevtools feature', () => {
     expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledWith('dark')
   })
 
+  it('should update theme to undefined when it is removed', async () => {
+    const theme = signal<Theme | undefined>('dark')
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+            theme: theme(),
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
+    TestBed.tick()
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(0)
+
+    theme.set(undefined)
+    TestBed.tick()
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledWith(undefined)
+  })
+
   it('should destroy devtools', async () => {
     const loadDevtools = signal(true)
 
@@ -480,7 +510,12 @@ describe('withDevtools feature', () => {
     await vi.advanceTimersByTimeAsync(0)
     TestBed.tick()
     await vi.dynamicImportSettled()
-    expect(mockTanstackQueryDevtools).toHaveBeenCalled()
+    expect(mockTanstackQueryDevtools).toHaveBeenCalledWith(
+      expect.objectContaining({
+        client: expect.any(QueryClient),
+        queryFlavor: 'Angular Query',
+      }),
+    )
     expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
     expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(0)
 
@@ -537,7 +572,9 @@ describe('withDevtools feature', () => {
       const mockService2 = { value: 'service2' }
       const mockService1Token = new InjectionToken('MockService1')
       const mockService2Token = new InjectionToken('MockService2')
-      const withDevtoolsFn = vi.fn().mockReturnValue({ loadDevtools: true })
+      const withDevtoolsFn = vi
+        .fn<() => { loadDevtools: boolean }>()
+        .mockReturnValue({ loadDevtools: true })
 
       TestBed.configureTestingModule({
         providers: [
@@ -565,7 +602,9 @@ describe('withDevtools feature', () => {
     })
 
     it('should work with empty deps array', async () => {
-      const withDevtoolsFn = vi.fn().mockReturnValue({ loadDevtools: true })
+      const withDevtoolsFn = vi
+        .fn<() => { loadDevtools: boolean }>()
+        .mockReturnValue({ loadDevtools: true })
 
       TestBed.configureTestingModule({
         providers: [

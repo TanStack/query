@@ -8,13 +8,12 @@ import {
   useIsMutating,
 } from '@tanstack/lit-query'
 import {
-  addTodoOnServer,
   failNextFetchRequest,
   failNextMutationRequest,
-  fetchTodosFromServer,
   resetTodoApi,
-} from './todoApi'
-import type { Todo, TodosResponse } from './todoApi'
+} from './services/todos/api'
+import { todosMutations, todosQueries } from './services/todos/queries'
+import type { Todo, TodosResponse } from './services/todos/types'
 
 resetTodoApi()
 
@@ -51,46 +50,38 @@ class TanstackLitQueryDemo extends LitElement {
   private nextTodoTitle = 'Add mutation assertion'
   private cacheSeedCount = 0
 
-  private readonly todosQuery = createQueryController<TodosResponse, Error>(
-    this,
-    {
-      queryKey: ['todos'],
-      queryFn: fetchTodosFromServer,
-    },
-  )
+  private readonly todosQuery = createQueryController(this, todosQueries.list())
 
-  private readonly createTodoMutation = createMutationController<
-    Todo,
-    Error,
-    string
-  >(this, {
-    mutationKey: ['create-todo'],
-    mutationFn: addTodoOnServer,
+  private readonly createTodoMutation = createMutationController(this, {
+    ...todosMutations.create(),
     onSuccess: (createdTodo) => {
-      demoQueryClient.setQueryData<TodosResponse>(['todos'], (existing) => {
-        if (!existing) {
+      demoQueryClient.setQueryData<TodosResponse>(
+        todosQueries.list().queryKey,
+        (existing) => {
+          if (!existing) {
+            return {
+              items: [createdTodo],
+              requestCount: 0,
+              source: 'cache',
+            }
+          }
+
           return {
-            items: [createdTodo],
-            requestCount: 0,
+            items: [...existing.items, createdTodo],
+            requestCount: existing.requestCount,
             source: 'cache',
           }
-        }
-
-        return {
-          items: [...existing.items, createdTodo],
-          requestCount: existing.requestCount,
-          source: 'cache',
-        }
-      })
+        },
+      )
     },
   })
 
   private readonly isFetching = useIsFetching(this, {
-    queryKey: ['todos'],
+    queryKey: todosQueries.all(),
   })
 
   private readonly isMutating = useIsMutating(this, {
-    mutationKey: ['create-todo'],
+    mutationKey: todosMutations.create().mutationKey,
   })
 
   protected override createRenderRoot(): HTMLElement | DocumentFragment {
@@ -113,7 +104,7 @@ class TanstackLitQueryDemo extends LitElement {
   }
 
   private async invalidateTodos(): Promise<void> {
-    await demoQueryClient.invalidateQueries({ queryKey: ['todos'] })
+    await demoQueryClient.invalidateQueries({ queryKey: todosQueries.all() })
   }
 
   private seedCacheOnlyTodo(): void {
@@ -124,21 +115,24 @@ class TanstackLitQueryDemo extends LitElement {
       title: `Seeded cache todo ${this.cacheSeedCount}`,
     }
 
-    demoQueryClient.setQueryData<TodosResponse>(['todos'], (existing) => {
-      if (!existing) {
+    demoQueryClient.setQueryData<TodosResponse>(
+      todosQueries.list().queryKey,
+      (existing) => {
+        if (!existing) {
+          return {
+            items: [seedTodo],
+            requestCount: 0,
+            source: 'cache',
+          }
+        }
+
         return {
-          items: [seedTodo],
-          requestCount: 0,
+          items: [...existing.items, seedTodo],
+          requestCount: existing.requestCount,
           source: 'cache',
         }
-      }
-
-      return {
-        items: [...existing.items, seedTodo],
-        requestCount: existing.requestCount,
-        source: 'cache',
-      }
-    })
+      },
+    )
   }
 
   private forceNextFetchFailure(): void {
@@ -154,7 +148,7 @@ class TanstackLitQueryDemo extends LitElement {
     this.cacheSeedCount = 0
     this.nextTodoTitle = 'Add mutation assertion'
 
-    await demoQueryClient.resetQueries({ queryKey: ['todos'] })
+    await demoQueryClient.resetQueries({ queryKey: todosQueries.all() })
     this.createTodoMutation.reset()
   }
 
@@ -237,13 +231,13 @@ class TanstackLitQueryDemo extends LitElement {
 
         ${
           query.isError
-            ? html`<div data-testid="query-error">${String(query.error)}</div>`
+            ? html`<div data-testid="query-error">${query.error.message}</div>`
             : null
         }
         ${
           mutation.isError
             ? html`<div data-testid="mutation-error">
-                ${String(mutation.error)}
+                ${mutation.error.message}
               </div>`
             : null
         }

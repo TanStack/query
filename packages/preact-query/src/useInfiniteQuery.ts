@@ -1,4 +1,5 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
+import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   InfiniteData,
@@ -16,7 +17,6 @@ import type {
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
 } from './types'
-import { useBaseQuery } from './useBaseQuery'
 
 /**
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of

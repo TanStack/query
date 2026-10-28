@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient } from '..'
 import type {
   DefaultError,
@@ -283,7 +283,7 @@ describe('queryCache', () => {
       const query = queryCache.build<{ value: string }, CustomError>(
         queryClient,
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         },
       )
@@ -331,7 +331,7 @@ describe('queryCache', () => {
     })
 
     it('should default its type parameters', () => {
-      const query = queryCache.build(queryClient, { queryKey: queryKey() })
+      const query = queryCache.build(queryClient, { queryKey: createKey() })
 
       expectTypeOf(query.state).toEqualTypeOf<
         QueryState<unknown, DefaultError>
@@ -401,7 +401,7 @@ describe('queryCache', () => {
     it('should carry its type parameters into the query it returns', () => {
       expectTypeOf(
         queryCache.find<{ value: string }, CustomError>({
-          queryKey: queryKey(),
+          queryKey: createKey(),
         }),
       ).toEqualTypeOf<
         | Query<{ value: string }, CustomError, { value: string }, QueryKey>
@@ -420,7 +420,7 @@ describe('queryCache', () => {
     })
 
     it('should default its type parameters', () => {
-      expectTypeOf(queryCache.find({ queryKey: queryKey() })).toEqualTypeOf<
+      expectTypeOf(queryCache.find({ queryKey: createKey() })).toEqualTypeOf<
         Query<unknown, DefaultError, unknown, QueryKey> | undefined
       >()
     })
@@ -428,14 +428,14 @@ describe('queryCache', () => {
 
   describe('findAll', () => {
     it('should return an array of fully defaulted queries', () => {
-      expectTypeOf(queryCache.findAll({ queryKey: queryKey() })).toEqualTypeOf<
+      expectTypeOf(queryCache.findAll({ queryKey: createKey() })).toEqualTypeOf<
         Array<Query<unknown, DefaultError, unknown, QueryKey>>
       >()
     })
 
     it('should accept filters or nothing', () => {
       queryCache.findAll()
-      queryCache.findAll({ queryKey: queryKey() })
+      queryCache.findAll({ queryKey: createKey() })
       queryCache.findAll({ stale: true })
       // @ts-expect-error stale must be a boolean
       queryCache.findAll({ stale: 'yes' })

@@ -1,12 +1,9 @@
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import { getEpisodes } from './api'
+import { episodesQueries } from './services/episodes/queries'
 
 export default function Episodes() {
-  const { data, status } = useQuery({
-    queryKey: ['episodes'],
-    queryFn: () => getEpisodes(),
-  })
+  const { data, status } = useQuery(episodesQueries.list())
 
   if (status === 'pending') {
     return <p>Loading...</p>
@@ -18,14 +15,14 @@ export default function Episodes() {
   return (
     <div>
       <h2 className="text-4xl">Episodes</h2>
-      {data.results.map((episode: any) => (
+      {data.results.map((episode) => (
         <article key={episode.id}>
           <RouterLink
             className="text-blue-500 hover:underline"
             to={`/episodes/${episode.id}`}
           >
             <h6 className="text-xl">
-              {episode.episode} - {episode.name} <em>{episode.airDate}</em>
+              {episode.episode} - {episode.name} <em>{episode.air_date}</em>
             </h6>
           </RouterLink>
         </article>

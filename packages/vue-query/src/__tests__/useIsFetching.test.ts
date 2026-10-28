@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { onScopeDispose, reactive, ref } from 'vue-demi'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { useIsFetching } from '../useIsFetching'
 
-vi.mock('../useQueryClient')
+vi.mock(import('../useQueryClient'))
 
 describe('useIsFetching', () => {
   beforeEach(() => {
@@ -16,8 +16,8 @@ describe('useIsFetching', () => {
   })
 
   it('should properly return isFetching state', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const { isFetching: isFetchingQuery } = useQuery({
       queryKey: key1,
       queryFn: () => sleep(0).then(() => 'Some data'),
@@ -28,15 +28,15 @@ describe('useIsFetching', () => {
     })
     const isFetching = useIsFetching()
 
-    expect(isFetchingQuery.value).toStrictEqual(true)
-    expect(isFetching.value).toStrictEqual(2)
+    expect(isFetchingQuery.value).toBe(true)
+    expect(isFetching.value).toBe(2)
     await vi.advanceTimersByTimeAsync(0)
-    expect(isFetchingQuery.value).toStrictEqual(false)
-    expect(isFetching.value).toStrictEqual(0)
+    expect(isFetchingQuery.value).toBe(false)
+    expect(isFetching.value).toBe(0)
   })
 
   it('should stop listening to changes on onScopeDispose', async () => {
-    const key = queryKey()
+    const key = createKey()
     const onScopeDisposeMock = vi.mocked(onScopeDispose)
     onScopeDisposeMock.mockImplementation((fn) => fn())
 
@@ -46,20 +46,20 @@ describe('useIsFetching', () => {
     })
     const isFetching = useIsFetching()
 
-    expect(status.value).toStrictEqual('pending')
-    expect(isFetching.value).toStrictEqual(1)
+    expect(status.value).toBe('pending')
+    expect(isFetching.value).toBe(1)
     await vi.advanceTimersByTimeAsync(0)
-    expect(status.value).toStrictEqual('pending')
-    expect(isFetching.value).toStrictEqual(1)
+    expect(status.value).toBe('pending')
+    expect(isFetching.value).toBe(1)
     await vi.advanceTimersByTimeAsync(0)
-    expect(status.value).toStrictEqual('pending')
-    expect(isFetching.value).toStrictEqual(1)
+    expect(status.value).toBe('pending')
+    expect(isFetching.value).toBe(1)
 
     onScopeDisposeMock.mockReset()
   })
 
   it('should properly update filters', async () => {
-    const key = queryKey()
+    const key = createKey()
     const filter = reactive({ stale: false, queryKey: key })
     useQuery({
       queryKey: key,
@@ -67,15 +67,15 @@ describe('useIsFetching', () => {
     })
     const isFetching = useIsFetching(filter)
 
-    expect(isFetching.value).toStrictEqual(0)
+    expect(isFetching.value).toBe(0)
 
     filter.stale = true
     await vi.advanceTimersByTimeAsync(0)
-    expect(isFetching.value).toStrictEqual(1)
+    expect(isFetching.value).toBe(1)
   })
 
   it('should work with options getter and be reactive', async () => {
-    const key = queryKey()
+    const key = createKey()
     const staleRef = ref(false)
     useQuery({
       queryKey: key,
@@ -86,11 +86,11 @@ describe('useIsFetching', () => {
       queryKey: key,
     }))
 
-    expect(isFetching.value).toStrictEqual(0)
+    expect(isFetching.value).toBe(0)
 
     staleRef.value = true
     await vi.advanceTimersByTimeAsync(0)
-    expect(isFetching.value).toStrictEqual(1)
+    expect(isFetching.value).toBe(1)
   })
 
   it('should warn when used outside of setup function in development mode', () => {
@@ -99,15 +99,10 @@ describe('useIsFetching', () => {
       .spyOn(console, 'warn')
       .mockImplementation(() => {})
 
-    try {
-      useIsFetching()
+    useIsFetching()
 
-      expect(consoleWarnMock).toHaveBeenCalledWith(
-        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
-      )
-    } finally {
-      consoleWarnMock.mockRestore()
-      vi.unstubAllEnvs()
-    }
+    expect(consoleWarnMock).toHaveBeenCalledWith(
+      'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+    )
   })
 })

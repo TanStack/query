@@ -33,10 +33,10 @@ describe('QueryDevtoolsContext', () => {
       </QueryDevtoolsContext.Provider>
     ))
 
-    expect(observed).toEqual([initialClient])
+    expect(observed).toStrictEqual([initialClient])
 
     setClient(nextClient)
-    expect(observed).toEqual([initialClient, nextClient])
+    expect(observed).toStrictEqual([initialClient, nextClient])
 
     initialClient.clear()
     nextClient.clear()

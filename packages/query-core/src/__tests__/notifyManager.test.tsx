@@ -13,21 +13,25 @@ describe('notifyManager', () => {
 
   it('should use default notifyFn', async () => {
     const notifyManagerTest = createNotifyManager()
-    const callbackSpy = vi.fn()
+    const callbackSpy = vi.fn<() => void>()
     notifyManagerTest.schedule(callbackSpy)
     await vi.advanceTimersByTimeAsync(0)
-    expect(callbackSpy).toHaveBeenCalled()
+    expect(callbackSpy).toHaveBeenCalledWith()
   })
 
   it('should use default batchNotifyFn', async () => {
     const notifyManagerTest = createNotifyManager()
-    const callbackScheduleSpy = vi.fn().mockImplementation(() => sleep(20))
-    const callbackBatchLevel2Spy = vi.fn().mockImplementation(() => {
-      notifyManagerTest.schedule(callbackScheduleSpy)
-    })
-    const callbackBatchLevel1Spy = vi.fn().mockImplementation(() => {
-      notifyManagerTest.batch(callbackBatchLevel2Spy)
-    })
+    const callbackScheduleSpy = vi.fn<() => Promise<void>>(() => sleep(20))
+    const callbackBatchLevel2Spy = vi
+      .fn<() => void>()
+      .mockImplementation(() => {
+        notifyManagerTest.schedule(callbackScheduleSpy)
+      })
+    const callbackBatchLevel1Spy = vi
+      .fn<() => void>()
+      .mockImplementation(() => {
+        notifyManagerTest.batch(callbackBatchLevel2Spy)
+      })
     notifyManagerTest.batch(callbackBatchLevel1Spy)
 
     await vi.advanceTimersByTimeAsync(0)
@@ -37,23 +41,25 @@ describe('notifyManager', () => {
   })
 
   it('should use a custom scheduler when configured', async () => {
-    const customCallback = vi.fn((cb) => queueMicrotask(cb))
+    const customCallback = vi.fn<(callback: () => void) => void>((cb) =>
+      queueMicrotask(cb),
+    )
 
     const notifyManagerTest = createNotifyManager()
-    const notifySpy = vi.fn()
+    const notifySpy = vi.fn<(callback: () => void) => void>()
     notifyManagerTest.setScheduler(customCallback)
     notifyManagerTest.setNotifyFunction(notifySpy)
 
     notifyManagerTest.batch(() => notifyManagerTest.schedule(vi.fn))
 
-    expect(customCallback).toHaveBeenCalledOnce()
+    expect(customCallback).toHaveBeenCalledTimes(1)
     await vi.advanceTimersByTimeAsync(0)
     expect(notifySpy).toHaveBeenCalledTimes(1)
   })
 
   it('should notify if error is thrown', async () => {
     const notifyManagerTest = createNotifyManager()
-    const notifySpy = vi.fn()
+    const notifySpy = vi.fn<(callback: () => void) => void>()
 
     notifyManagerTest.setNotifyFunction(notifySpy)
 
@@ -70,9 +76,9 @@ describe('notifyManager', () => {
 
   it('should use custom batch notify function', async () => {
     const notifyManagerTest = createNotifyManager()
-    const batchNotifySpy = vi.fn((cb) => cb())
-    const callbackSpy1 = vi.fn()
-    const callbackSpy2 = vi.fn()
+    const batchNotifySpy = vi.fn<(callback: () => void) => void>((cb) => cb())
+    const callbackSpy1 = vi.fn<() => void>()
+    const callbackSpy2 = vi.fn<() => void>()
 
     notifyManagerTest.setBatchNotifyFunction(batchNotifySpy)
 
@@ -82,14 +88,14 @@ describe('notifyManager', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(batchNotifySpy).toHaveBeenCalled()
-    expect(callbackSpy1).toHaveBeenCalled()
-    expect(callbackSpy2).toHaveBeenCalled()
+    expect(batchNotifySpy).toHaveBeenCalledWith(expect.any(Function))
+    expect(callbackSpy1).toHaveBeenCalledWith()
+    expect(callbackSpy2).toHaveBeenCalledWith()
   })
 
   it('should batch calls correctly', async () => {
     const notifyManagerTest = createNotifyManager()
-    const callbackSpy = vi.fn()
+    const callbackSpy = vi.fn<(a: number, b: string) => void>()
 
     const batchedFn = notifyManagerTest.batchCalls((a: number, b: string) => {
       callbackSpy(a, b)

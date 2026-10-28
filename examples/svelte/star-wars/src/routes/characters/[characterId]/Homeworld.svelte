@@ -1,13 +1,14 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import { getPlanet } from '$lib/api'
+  import { planetsQueries } from '$lib/services/planets/queries'
 
-  let { homeworldId }: { homeworldId: string } = $props()
+  type Props = {
+    homeworldId: string
+  }
 
-  const query = createQuery(() => ({
-    queryKey: ['homeworld', homeworldId],
-    queryFn: () => getPlanet(homeworldId),
-  }))
+  let { homeworldId }: Props = $props()
+
+  const query = createQuery(() => planetsQueries.detail(homeworldId))
 </script>
 
 {#if query.status === 'pending'}

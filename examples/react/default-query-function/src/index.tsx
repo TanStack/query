@@ -20,6 +20,7 @@ const defaultQueryFn = async ({ queryKey }: { queryKey: QueryKey }) => {
   const response = await fetch(
     `https://jsonplaceholder.typicode.com${queryKey[0]}`,
   )
+  if (!response.ok) throw new Error('Failed to fetch data')
   return await response.json()
 }
 

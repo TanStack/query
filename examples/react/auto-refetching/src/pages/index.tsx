@@ -1,47 +1,30 @@
 import React from 'react'
 
-import {
-  QueryClient,
-  QueryClientProvider,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { todosMutations, todosQueries } from '../services/todos/queries'
 
-const queryClient = new QueryClient()
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Example />
-    </QueryClientProvider>
-  )
-}
-
-function Example() {
+export default function Example() {
   const queryClient = useQueryClient()
   const [intervalMs, setIntervalMs] = React.useState(1000)
   const [value, setValue] = React.useState('')
 
   const { status, data, error, isFetching } = useQuery({
-    queryKey: ['todos'],
-    queryFn: async (): Promise<Array<string>> => {
-      const response = await fetch('/api/data')
-      return await response.json()
-    },
+    ...todosQueries.list(),
     // Refetch the data every second
     refetchInterval: intervalMs,
   })
 
   const addMutation = useMutation({
-    mutationFn: (add: string) => fetch(`/api/data?add=${add}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+    ...todosMutations.create(),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: todosQueries.all() }),
   })
 
   const clearMutation = useMutation({
-    mutationFn: () => fetch(`/api/data?clear=1`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+    ...todosMutations.deleteAll(),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: todosQueries.all() }),
   })
 
   if (status === 'pending') return <h1>Loading...</h1>
@@ -49,7 +32,7 @@ function Example() {
 
   return (
     <div>
-      <h1>Auto Refetch with stale-time set to {intervalMs}ms</h1>
+      <h1>Auto Refetch with refetchInterval set to {intervalMs}ms</h1>
       <p>
         This example is best experienced on your own machine, where you can open
         multiple tabs to the same localhost server and see your changes

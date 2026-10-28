@@ -8,7 +8,13 @@ describe('watchChanges', () => {
     'should skip the first run and only call the effect on subsequent changes',
     withEffectRoot(() => {
       const source = ref(0)
-      const effect = vi.fn()
+      const effect =
+        vi.fn<
+          (
+            values: number | Array<number>,
+            previousValues: number | Array<number | undefined> | undefined,
+          ) => void
+        >()
 
       watchChanges(() => source.value, 'pre', effect)
 
@@ -26,7 +32,13 @@ describe('watchChanges', () => {
     'should run with the "post" flush timing',
     withEffectRoot(() => {
       const source = ref(0)
-      const effect = vi.fn()
+      const effect =
+        vi.fn<
+          (
+            values: number | Array<number>,
+            previousValues: number | Array<number | undefined> | undefined,
+          ) => void
+        >()
 
       watchChanges(() => source.value, 'post', effect)
 
@@ -44,7 +56,13 @@ describe('watchChanges', () => {
     withEffectRoot(() => {
       const a = ref(1)
       const b = ref(2)
-      const effect = vi.fn()
+      const effect =
+        vi.fn<
+          (
+            values: number | Array<number>,
+            previousValues: number | Array<number | undefined> | undefined,
+          ) => void
+        >()
 
       watchChanges([() => a.value, () => b.value], 'pre', effect)
 
@@ -61,8 +79,8 @@ describe('watchChanges', () => {
     'should run the returned cleanup before the next effect run',
     withEffectRoot(() => {
       const source = ref(0)
-      const cleanup = vi.fn()
-      const effect = vi.fn(() => cleanup)
+      const cleanup = vi.fn<() => void>()
+      const effect = vi.fn<() => () => void>(() => cleanup)
 
       watchChanges(() => source.value, 'pre', effect)
 
@@ -73,7 +91,7 @@ describe('watchChanges', () => {
 
       source.value = 2
       flushSync()
-      expect(cleanup).toHaveBeenCalledOnce()
+      expect(cleanup).toHaveBeenCalledTimes(1)
     }),
   )
 })

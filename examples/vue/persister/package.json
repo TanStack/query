@@ -5,19 +5,19 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src"
   },
   "dependencies": {
-    "@tanstack/query-core": "^5.104.1",
-    "@tanstack/query-persist-client-core": "^5.104.1",
-    "@tanstack/query-sync-storage-persister": "^5.104.1",
-    "@tanstack/vue-query": "^5.104.1",
+    "@tanstack/query-persist-client-core": "^5.105.0",
+    "@tanstack/vue-query": "^5.105.0",
     "idb-keyval": "^6.3.0",
     "vue": "^3.5.43"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.105.0",
     "@vitejs/plugin-vue": "^6.0.9",
-    "typescript": "5.8.3",
+    "typescript": "^6.0.3",
     "vite": "^8.3.1"
   }
 }

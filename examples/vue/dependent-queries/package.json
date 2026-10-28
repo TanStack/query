@@ -5,15 +5,19 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src",
+    "test:types": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^5.104.1",
+    "@tanstack/vue-query": "^5.105.0",
     "vue": "^3.5.43"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.105.0",
     "@vitejs/plugin-vue": "^6.0.9",
-    "typescript": "5.8.3",
-    "vite": "^8.3.1"
+    "typescript": "^6.0.3",
+    "vite": "^8.3.1",
+    "vue-tsc": "^3.3.13"
   }
 }

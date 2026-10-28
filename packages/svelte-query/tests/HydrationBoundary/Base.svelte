@@ -23,10 +23,6 @@
   }))
 </script>
 
-<HydrationBoundary
-  state={dehydratedState}
-  options={undefined}
-  queryClient={undefined}
->
+<HydrationBoundary state={dehydratedState}>
   <div>data: {query.data ?? 'undefined'}</div>
 </HydrationBoundary>

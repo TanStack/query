@@ -49,7 +49,8 @@ interface DevtoolsOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * @defaultValue system
+   * This overrides the theme selected in the devtools Settings menu. When omitted, the
+   * selected theme is used, or `'system'` if none is selected.
    */
   theme?: Theme
 }
@@ -106,7 +107,7 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
   })
 
   createEffect(() => {
-    devtools.setTheme(props.theme || 'system')
+    devtools.setTheme(props.theme)
   })
 
   onMount(() => {
@@ -114,5 +115,5 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
     onCleanup(() => devtools.unmount())
   })
 
-  return <div class="tsqd-parent-container" ref={ref}></div>
+  return <div class="tsqd-parent-container" ref={ref} />
 }

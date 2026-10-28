@@ -28,7 +28,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".eslintrc.cjs",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules"]

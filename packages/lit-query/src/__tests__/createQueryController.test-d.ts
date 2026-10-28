@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { createQueryController } from '../createQueryController.js'
@@ -17,7 +17,7 @@ describe('createQueryController', () => {
   it('should default data to unknown when the query function is not specified', () => {
     const query = createQueryController(
       new Host(),
-      { queryKey: queryKey() },
+      { queryKey: createKey() },
       new QueryClient(),
     )
 
@@ -28,7 +28,7 @@ describe('createQueryController', () => {
   it('should infer the result type from the query function', () => {
     const query = createQueryController(
       new Host(),
-      { queryKey: queryKey(), queryFn: () => 'test' },
+      { queryKey: createKey(), queryFn: () => 'test' },
       new QueryClient(),
     )
 
@@ -39,7 +39,7 @@ describe('createQueryController', () => {
   it('should be possible to specify the result type', () => {
     const query = createQueryController<string>(
       new Host(),
-      { queryKey: queryKey(), queryFn: () => 'test' },
+      { queryKey: createKey(), queryFn: () => 'test' },
       new QueryClient(),
     )
 
@@ -50,7 +50,7 @@ describe('createQueryController', () => {
   it('should be possible to specify the error type', () => {
     const query = createQueryController<string, Error>(
       new Host(),
-      { queryKey: queryKey(), queryFn: () => 'test' },
+      { queryKey: createKey(), queryFn: () => 'test' },
       new QueryClient(),
     )
 
@@ -62,7 +62,7 @@ describe('createQueryController', () => {
     const unionTypeSync = createQueryController(
       new Host(),
       {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => (Math.random() > 0.5 ? ('a' as const) : ('b' as const)),
       },
       new QueryClient(),
@@ -72,7 +72,7 @@ describe('createQueryController', () => {
     const unionTypeAsync = createQueryController<'a' | 'b'>(
       new Host(),
       {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
       },
       new QueryClient(),
@@ -85,7 +85,7 @@ describe('createQueryController', () => {
       createQueryController<number>(
         new Host(),
         // @ts-expect-error
-        { queryKey: queryKey(), queryFn: () => 'test' },
+        { queryKey: createKey(), queryFn: () => 'test' },
         new QueryClient(),
       ),
     )
@@ -98,7 +98,7 @@ describe('createQueryController', () => {
 
     const query = createQueryController(
       new Host(),
-      { queryKey: queryKey(), queryFn: () => queryFn() },
+      { queryKey: createKey(), queryFn: () => queryFn() },
       new QueryClient(),
     )
 
@@ -194,7 +194,7 @@ describe('createQueryController', () => {
   it('should return the correct states for a successful query', () => {
     const query = createQueryController<string, Error>(
       new Host(),
-      { queryKey: queryKey(), queryFn: () => Promise.resolve('test') },
+      { queryKey: createKey(), queryFn: () => Promise.resolve('test') },
       new QueryClient(),
     )
     const state = query()
@@ -218,7 +218,7 @@ describe('createQueryController', () => {
   it('should type refetch with correct return type', () => {
     const query = createQueryController(
       new Host(),
-      { queryKey: queryKey(), queryFn: () => Promise.resolve('test') },
+      { queryKey: createKey(), queryFn: () => Promise.resolve('test') },
       new QueryClient(),
     )
 
@@ -230,7 +230,7 @@ describe('createQueryController', () => {
   it('should type suspense with correct return type', () => {
     const query = createQueryController(
       new Host(),
-      { queryKey: queryKey(), queryFn: () => Promise.resolve('test') },
+      { queryKey: createKey(), queryFn: () => Promise.resolve('test') },
       new QueryClient(),
     )
 
@@ -243,7 +243,7 @@ describe('createQueryController', () => {
     describe('Config object overload', () => {
       it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into createQueryController', () => {
         const options = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
         })
         const query = createQueryController(
@@ -258,7 +258,7 @@ describe('createQueryController', () => {
       it('should have undefined in the TData union when initialData is NOT provided', () => {
         const query = createQueryController(
           new Host(),
-          { queryKey: queryKey(), queryFn: () => ({ wow: true }) },
+          { queryKey: createKey(), queryFn: () => ({ wow: true }) },
           new QueryClient(),
         )
 
@@ -269,7 +269,7 @@ describe('createQueryController', () => {
         const query = createQueryController(
           new Host(),
           {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => ({ wow: true }),
             initialData: () => undefined as { wow: boolean } | undefined,
           },
@@ -283,7 +283,7 @@ describe('createQueryController', () => {
         const query = createQueryController(
           new Host(),
           {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => ({ wow: true }),
             initialData: () => undefined as { wow: boolean } | undefined,
           },
@@ -298,12 +298,13 @@ describe('createQueryController', () => {
 
       it('should preserve discriminated-union narrowing', () => {
         type Result =
-          { type: 'first'; first: string } | { type: 'second'; second: string }
+          | { type: 'first'; first: string }
+          | { type: 'second'; second: string }
 
         const query = createQueryController(
           new Host(),
           {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: (): Result => ({ type: 'first', first: 'a' }),
           },
           new QueryClient(),
@@ -329,7 +330,7 @@ describe('createQueryController', () => {
             new Host(),
             {
               ...options,
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => Promise.resolve('data'),
             },
             new QueryClient(),
@@ -346,7 +347,7 @@ describe('createQueryController', () => {
         createQueryController(
           new Host(),
           {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => 5,
             structuralSharing: (oldData, newData) => {
               expectTypeOf(oldData).toBeUnknown()

@@ -1,3 +1,3 @@
 export { sleep } from './sleep'
-export { queryKey } from './queryKey'
+export { createKey } from './createKey'
 export { mockVisibilityState } from './mockVisibilityState'

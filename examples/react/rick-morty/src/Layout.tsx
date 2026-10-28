@@ -1,4 +1,4 @@
-import { Route, Link as RouterLink, Routes } from 'react-router-dom'
+import { Route, Link as RouterLink, Routes } from 'react-router'
 import Episodes from './Episodes'
 import Episode from './Episode'
 import Characters from './Characters'
@@ -21,14 +21,10 @@ export default function Layout() {
       </nav>
       <div className="p-2">
         <Routes>
-          <Route exact path="/episodes" element={<Episodes />} />
-          <Route exact path="/episodes/:episodeId" element={<Episode />} />
-          <Route exact path="/characters" element={<Characters />} />
-          <Route
-            exact
-            path="/characters/:characterId"
-            element={<Character />}
-          />
+          <Route path="/episodes" element={<Episodes />} />
+          <Route path="/episodes/:episodeId" element={<Episode />} />
+          <Route path="/characters" element={<Characters />} />
+          <Route path="/characters/:characterId" element={<Character />} />
           <Route path="/" element={<Home />} />
         </Routes>
       </div>

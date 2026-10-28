@@ -426,7 +426,8 @@ export class QueryObserver<
 
     let unsubscribe = () => {}
     let resolveEarly:
-      ((result: QueryObserverResult<TData, TError>) => void) | undefined
+      | ((result: QueryObserverResult<TData, TError>) => void)
+      | undefined
 
     const cachePromise = new Promise<QueryObserverResult<TData, TError>>(
       (resolve) => {
@@ -446,7 +447,7 @@ export class QueryObserver<
 
     return Promise.race([
       query
-        .fetch()
+        .fetch(defaultedOptions)
         .then(() => {
           const result = this.createResult(query, defaultedOptions)
           // Settle the subscriber promise so both branches always settle.
@@ -598,7 +599,8 @@ export class QueryObserver<
     const prevQuery = this.#currentQuery
     const prevOptions = this.options
     const prevResult = this.#currentResult as
-      QueryObserverResult<TData, TError> | undefined
+      | QueryObserverResult<TData, TError>
+      | undefined
     const prevResultState = this.#currentResultState
     const prevResultOptions = this.#currentResultOptions
     const queryChange = query !== prevQuery
@@ -762,7 +764,8 @@ export class QueryObserver<
    */
   updateResult(): void {
     const prevResult = this.#currentResult as
-      QueryObserverResult<TData, TError> | undefined
+      | QueryObserverResult<TData, TError>
+      | undefined
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
 
@@ -798,20 +801,22 @@ export class QueryObserver<
         return true
       }
 
-      const includedProps = new Set(
-        notifyOnChangePropsValue ?? this.#trackedProps,
-      )
-
-      if (this.options.throwOnError) {
-        includedProps.add('error')
+      if (
+        this.options.throwOnError &&
+        this.#currentResult.error !== prevResult.error
+      ) {
+        return true
       }
 
-      return Object.keys(this.#currentResult).some((key) => {
-        const typedKey = key as keyof QueryObserverResult
-        const changed = this.#currentResult[typedKey] !== prevResult[typedKey]
-
-        return changed && includedProps.has(typedKey)
-      })
+      for (const key of notifyOnChangePropsValue ?? this.#trackedProps) {
+        if (
+          this.#currentResult[key as keyof QueryObserverResult] !==
+          prevResult[key as keyof QueryObserverResult]
+        ) {
+          return true
+        }
+      }
+      return false
     }
 
     const notifyListeners = shouldNotifyListeners()
@@ -840,7 +845,8 @@ export class QueryObserver<
     }
 
     const prevQuery = this.#currentQuery as
-      Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined
+      | Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      | undefined
     this.#currentQuery = query
     this.#currentQueryInitialState = query.state
 

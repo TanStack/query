@@ -1,20 +1,22 @@
 <script lang="ts">
-  import { getCharacter } from '$lib/api'
+  import { resolve } from '$app/paths'
+  import { charactersQueries } from '$lib/services/characters/queries'
   import { createQuery } from '@tanstack/svelte-query'
 
-  let { characterId }: { characterId: string } = $props()
+  type Props = {
+    characterId: string
+  }
 
-  const query = createQuery(() => ({
-    queryKey: ['character', characterId],
-    queryFn: () => getCharacter(characterId),
-  }))
+  let { characterId }: Props = $props()
+
+  const query = createQuery(() => charactersQueries.detail(characterId))
 </script>
 
 {#if query.status === 'success'}
   <article>
     <a
       class="text-blue-500 hover:underline"
-      href={`/characters/${characterId}`}
+      href={resolve('/characters/[characterId]', { characterId })}
     >
       <h6 class="text-lg">{query.data.name}</h6>
     </a>

@@ -1,6 +1,5 @@
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent } from '@testing-library/preact'
-import type { VNode } from 'preact'
 import { Suspense } from 'preact/compat'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -12,6 +11,7 @@ import {
   useSuspenseInfiniteQuery,
 } from '..'
 import { renderWithClient } from './utils'
+import type { JSX, VNode } from 'preact'
 
 describe('usePrefetchInfiniteQuery', () => {
   let queryCache: QueryCache
@@ -29,7 +29,9 @@ describe('usePrefetchInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
-  const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
+  const Fallback = vi
+    .fn<() => JSX.Element>()
+    .mockReturnValue(<div>Loading...</div>)
 
   it('should prefetch an infinite query if query state does not exist', async () => {
     const data = [
@@ -39,7 +41,7 @@ describe('usePrefetchInfiniteQuery', () => {
     ]
 
     const queryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: vi
         .fn<(context: { pageParam: number }) => Promise<string>>()
         .mockImplementation(({ pageParam }) =>
@@ -99,7 +101,7 @@ describe('usePrefetchInfiniteQuery', () => {
     ]
 
     const queryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: vi
         .fn<(context: { pageParam: number }) => Promise<string>>()
         .mockImplementation(({ pageParam }) =>
@@ -154,7 +156,7 @@ describe('usePrefetchInfiniteQuery', () => {
     const data = ['Infinite Page 1', 'Infinite Page 2', 'Infinite Page 3']
 
     const queryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: vi
         .fn<(context: { pageParam: number }) => Promise<string>>()
         .mockImplementation(({ pageParam }) =>

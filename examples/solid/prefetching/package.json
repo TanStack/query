@@ -1,0 +1,25 @@
+{
+  "name": "@tanstack/query-example-solid-prefetching",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "start": "node .output/server/index.mjs",
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@solidjs/router": "^1.0.0",
+    "@solidjs/start": "^2.1.0",
+    "@tanstack/solid-query": "^5.105.0",
+    "solid-js": "^1.9.15"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "eslint-plugin-solid": "^0.18.1",
+    "nitro": "^3.0.260903-beta",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.1"
+  }
+}

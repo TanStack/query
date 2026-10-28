@@ -14,28 +14,28 @@ trustPolicyExclude:
 
 catalog:
   typescript: 6.0.3
-  '@typescript-eslint/parser': ^8.71.0
-  '@typescript-eslint/rule-tester': ^8.71.0
-  eslint: ^9.36.0
+  '@typescript-eslint/parser': ^8.72.0
+  '@typescript-eslint/rule-tester': ^8.72.0
+  eslint: ^9.39.5
 
   # react
-  '@eslint-react/eslint-plugin': ^5.23.3
+  '@eslint-react/eslint-plugin': ^5.28.8
   '@testing-library/react': ^16.1.0
-  '@types/react': ^19.2.7
-  '@types/react-dom': ^19.2.3
+  '@types/react': ^19.3.0
+  '@types/react-dom': ^19.3.0
   '@vitejs/plugin-react': ^6.1.1
   eslint-plugin-react-hooks: ^7.1.1
-  react: ^19.2.1
-  react-dom: ^19.2.1
+  react: ^19.3.1
+  react-dom: ^19.3.1
 
   # preact
   '@preact/preset-vite': ^2.10.6
   '@testing-library/preact': ^3.2.4
-  eslint-config-preact: ^2.0.0
-  preact: ^10.29.8
+  preact: ^11.0.1
 
   # solid
   '@solidjs/testing-library': ^0.8.10
+  eslint-plugin-solid: ^0.18.1
   solid-js: ^1.9.15
   unplugin-solid: ^2.0.0
   vite-plugin-solid: ^2.11.14
@@ -46,10 +46,9 @@ catalog:
   '@testing-library/svelte': ^5.2.8
   eslint-plugin-svelte: ^3.23.0
   svelte: ^5.57.1
-  svelte-check: ^4.4.5
+  svelte-check: ^4.7.7
 
   # vue
-  eslint-plugin-vue: ^10.11.1
   unplugin-vue: ^8.0.0
   vue: ^3.5.43
 
@@ -78,8 +77,10 @@ overrides:
   'chokidar': '5.0.0'
   '@types/react': 'catalog:'
   '@types/react-dom': 'catalog:'
-  '@types/node': '^22.15.3'
+  '@types/node': '^24.19.2'
   esbuild: '^0.28.2'
+  '@solidjs/start@2>seroval': '1.7.1' # 1.7.2 was published without provenance (trustPolicy)
+  '@solidjs/start@2>seroval-plugins': '1.7.1' # 1.7.2 was published without provenance (trustPolicy)
 
 allowBuilds:
   # root dependency
