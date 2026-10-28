@@ -6983,6 +6983,14 @@
             {
               "label": "SvelteKit",
               "to": "framework/svelte/examples/sveltekit"
+            },
+            {
+              "label": "Offline Queries and Mutations",
+              "to": "framework/svelte/examples/offline"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/svelte/examples/batching"
             }
           ]
         },
