@@ -6837,6 +6837,26 @@
             {
               "label": "Offline Queries and Mutations",
               "to": "framework/solid/examples/offline"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/solid/examples/playground"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/solid/examples/algolia"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/solid/examples/chat"
+            },
+            {
+              "label": "Shadow DOM",
+              "to": "framework/solid/examples/shadow-dom"
+            },
+            {
+              "label": "Devtools Embedded Panel",
+              "to": "framework/solid/examples/devtools-panel"
             }
           ]
         },

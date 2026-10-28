@@ -1,0 +1,59 @@
+.App {
+  font-family: sans-serif;
+  font-size: 14px;
+  padding: 20px;
+}
+
+.loading {
+  padding-top: 20px;
+  padding-left: 20px;
+  color: darkmagenta;
+}
+
+.search-status {
+  padding-top: 20px;
+  padding-left: 20px;
+  color: gray;
+}
+
+.search-result {
+  padding-left: 20px;
+  padding-top: 20px;
+}
+
+.search-more {
+  display: block;
+  margin-left: 20px;
+  margin-top: 20px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: blue;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.search-more:disabled {
+  color: gray;
+  cursor: default;
+}
+
+.product {
+  padding-bottom: 5px;
+}
+
+.product-name {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.product-description {
+  font-size: 12px;
+}
+
+.product-price {
+  font-size: 12px;
+  font-weight: bold;
+}
