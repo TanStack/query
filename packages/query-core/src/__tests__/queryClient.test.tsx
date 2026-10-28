@@ -197,6 +197,20 @@ describe('queryClient', () => {
   })
 
   describe('setQueryData', () => {
+    it('should keep separate cache entries for keys with different __proto__ values', () => {
+      const key = createKey()
+      const keyA = [key, JSON.parse('{"__proto__":"a"}')]
+      const keyB = [key, JSON.parse('{"__proto__":"b"}')]
+
+      queryClient.setQueryData(keyA, 'data-a')
+      expect(queryClient.getQueryData(keyB)).toBeUndefined()
+
+      queryClient.setQueryData(keyB, 'data-b')
+      expect(queryClient.getQueryData(keyA)).toBe('data-a')
+      expect(queryClient.getQueryData(keyB)).toBe('data-b')
+      expect(queryCache.getAll()).toHaveLength(2)
+    })
+
     it('should not crash if query could not be found', () => {
       const key = createKey()
       const user = { userId: 1 }

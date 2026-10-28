@@ -193,6 +193,61 @@ describe('core/utils', () => {
   })
 
   describe('replaceEqualDeep', () => {
+    it.each(['"a"', 'null', '42', '{"admin":true}'])(
+      'should preserve an own __proto__ property with value %s when copying an object',
+      (value) => {
+        const prev = JSON.parse(`{"__proto__":${value},"count":1}`)
+        const next = JSON.parse(`{"__proto__":${value},"count":2}`)
+        const result = replaceEqualDeep(prev, next)
+
+        expect(result).toStrictEqual(next)
+        expect(Object.getPrototypeOf(result)).toBe(Object.prototype)
+        expect(
+          Object.getOwnPropertyDescriptor(result, '__proto__'),
+        ).toStrictEqual({
+          value: prev['__proto__'],
+          enumerable: true,
+          writable: true,
+          configurable: true,
+        })
+        expect(result['__proto__']).toBe(prev['__proto__'])
+        expect(result.admin).toBeUndefined()
+        expect(JSON.stringify(result)).toBe(JSON.stringify(next))
+      },
+    )
+
+    it('should not share the previous prototype with a new __proto__ property', () => {
+      const prev = { count: 1 }
+      const next = JSON.parse('{"__proto__":{},"count":1}')
+      const result = replaceEqualDeep(prev, next)
+
+      expect(result).toStrictEqual(next)
+      expect(Object.getPrototypeOf(result)).toBe(Object.prototype)
+      expect(result['__proto__']).toBe(next['__proto__'])
+    })
+
+    it('should share equal children inside a changed __proto__ property', () => {
+      const prev = JSON.parse(
+        '{"__proto__":{"unchanged":{"value":1},"changed":1}}',
+      )
+      const next = JSON.parse(
+        '{"__proto__":{"unchanged":{"value":1},"changed":2}}',
+      )
+      const result = replaceEqualDeep(prev, next)
+
+      expect(result).toStrictEqual(next)
+      expect(Object.getPrototypeOf(result)).toBe(Object.prototype)
+      expect(result['__proto__']).not.toBe(prev['__proto__'])
+      expect(result['__proto__'].unchanged).toBe(prev['__proto__'].unchanged)
+    })
+
+    it('should share equal objects with an own __proto__ property', () => {
+      const prev = JSON.parse('{"__proto__":{"value":1}}')
+      const next = JSON.parse('{"__proto__":{"value":1}}')
+
+      expect(replaceEqualDeep(prev, next)).toBe(prev)
+    })
+
     it('should return the previous value when the next value is an equal primitive', () => {
       expect(replaceEqualDeep(1, 1)).toBe(1)
       expect(replaceEqualDeep('1', '1')).toBe('1')
@@ -556,6 +611,27 @@ describe('core/utils', () => {
   })
 
   describe('hashKey', () => {
+    it.each(['"a"', 'null', '42', '{"nested":true}'])(
+      'should preserve an own __proto__ property with value %s',
+      (value) => {
+        const key = ['test', JSON.parse(`{"__proto__":${value}}`)]
+
+        expect(hashKey(key)).toBe(JSON.stringify(key))
+        expect(hashKey(key)).not.toBe(hashKey(['test', {}]))
+      },
+    )
+
+    it('should sort nested objects with an own __proto__ property', () => {
+      const key = ['test', JSON.parse('{"z":1,"__proto__":{"b":2,"a":1}}')]
+      const sortedKey = [
+        'test',
+        JSON.parse('{"__proto__":{"a":1,"b":2},"z":1}'),
+      ]
+
+      expect(hashKey(key)).toBe(hashKey(sortedKey))
+      expect(hashKey(key)).toBe(JSON.stringify(sortedKey))
+    })
+
     it('should hash primitives correctly', () => {
       expect(hashKey(['test'])).toStrictEqual(JSON.stringify(['test']))
       expect(hashKey([123])).toStrictEqual(JSON.stringify([123]))

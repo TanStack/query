@@ -328,7 +328,7 @@ export function hashKey(queryKey: QueryKey | MutationKey): string {
           .reduce((result, key) => {
             result[key] = val[key]
             return result
-          }, {} as any)
+          }, Object.create(null))
       : val,
   )
 }
@@ -407,8 +407,18 @@ export function replaceEqualDeep(a: any, b: any, depth = 0): any {
 
   for (let i = 0; i < bSize; i++) {
     const key: any = array ? i : bItems[i]
-    const aItem = a[key]
+    const aItem =
+      key === '__proto__' && !hasOwn.call(a, key) ? undefined : a[key]
     const bItem = b[key]
+
+    // Create an own data property so assignments do not invoke the prototype setter.
+    if (key === '__proto__') {
+      Object.defineProperty(copy, key, {
+        enumerable: true,
+        writable: true,
+        configurable: true,
+      })
+    }
 
     if (aItem === bItem) {
       copy[key] = aItem
