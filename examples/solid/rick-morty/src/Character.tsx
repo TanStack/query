@@ -44,7 +44,9 @@ function Character() {
               </p>
               <p>
                 <strong>Location</strong>:{' '}
-                <Location locationId={locationId()} />
+                <Show when={locationId()} fallback={data().location.name}>
+                  {(id) => <Location locationId={id()} />}
+                </Show>
               </p>
 
               <h4 class="text-2xl pt-4">Episodes</h4>

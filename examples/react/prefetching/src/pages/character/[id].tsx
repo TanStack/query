@@ -6,16 +6,21 @@ import { charactersQueries } from '../../services/characters/queries'
 
 export default function CharacterPage() {
   const router = useRouter()
-  const id =
-    typeof router.query.id === 'string' ? Number(router.query.id) : undefined
+  const id = Number(router.query.id)
+  const isValidId =
+    typeof router.query.id === 'string' &&
+    /^\d+$/.test(router.query.id) &&
+    id > 0
 
   const { status, data, error, isFetching } = useQuery(
-    charactersQueries.detail(id),
+    charactersQueries.detail(isValidId ? id : undefined),
   )
 
   return (
     <div style={{ textAlign: 'center' }}>
-      {status === 'pending' ? (
+      {router.isReady && !isValidId ? (
+        'Invalid character ID'
+      ) : status === 'pending' ? (
         'Loading...'
       ) : status === 'error' ? (
         <span>Error: {error.message}</span>

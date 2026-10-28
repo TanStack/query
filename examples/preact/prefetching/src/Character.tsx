@@ -3,15 +3,19 @@ import { useQuery } from '@tanstack/preact-query'
 import { charactersQueries } from './services/characters/queries'
 
 export default function CharacterPage() {
-  const id = Number(useRoute().params.id)
+  const { params } = useRoute()
+  const id = Number(params.id)
+  const isValidId = /^\d+$/.test(params.id) && id > 0
 
   const { status, data, error, isFetching } = useQuery(
-    charactersQueries.detail(id),
+    charactersQueries.detail(isValidId ? id : undefined),
   )
 
   return (
     <div style={{ textAlign: 'center' }}>
-      {status === 'pending' ? (
+      {!isValidId ? (
+        'Invalid character ID'
+      ) : status === 'pending' ? (
         'Loading...'
       ) : status === 'error' ? (
         <span>Error: {error.message}</span>

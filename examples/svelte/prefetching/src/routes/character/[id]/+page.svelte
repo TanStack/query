@@ -6,13 +6,18 @@
 
   let { params }: PageProps = $props()
 
+  const id = $derived(Number(params.id))
+  const isValidId = $derived(/^\d+$/.test(params.id) && id > 0)
+
   const query = createQuery(() =>
-    charactersQueries.detail(Number(params.id) || undefined),
+    charactersQueries.detail(isValidId ? id : undefined),
   )
 </script>
 
 <div style="text-align: center">
-  {#if query.status === 'pending'}
+  {#if !isValidId}
+    Invalid character ID
+  {:else if query.status === 'pending'}
     Loading...
   {:else if query.status === 'error'}
     <span>Error: {query.error.message}</span>

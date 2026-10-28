@@ -6,5 +6,5 @@ export type Project = {
 export type ProjectDetail = {
   forks_count: number
   stargazers_count: number
-  watchers_count: number
+  subscribers_count: number
 }

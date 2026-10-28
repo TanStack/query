@@ -27,7 +27,14 @@
     <p><strong>Status</strong>: {query.data.status}</p>
     <p><strong>Species</strong>: {query.data.species}</p>
     <p><strong>Origin</strong>: {query.data.origin.name}</p>
-    <p><strong>Location</strong>: <Location {locationId} /></p>
+    <p>
+      <strong>Location</strong>:
+      {#if locationId}
+        <Location {locationId} />
+      {:else}
+        {query.data.location.name}
+      {/if}
+    </p>
 
     <h4 class="text-2xl pt-4">Episodes</h4>
     {#each query.data.episode as episode (episode)}

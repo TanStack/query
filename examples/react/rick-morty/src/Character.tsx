@@ -32,7 +32,8 @@ function Character() {
         <strong>Origin</strong>: {data.origin.name}
       </p>
       <p>
-        <strong>Location</strong>: <Location locationId={locationId} />
+        <strong>Location</strong>:{' '}
+        {locationId ? <Location locationId={locationId} /> : data.location.name}
       </p>
 
       <h4 className="text-2xl pt-4">Episodes</h4>

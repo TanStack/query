@@ -23,7 +23,7 @@ export default function Project({
       <div>
         <p>forks: {data.forks_count}</p>
         <p>stars: {data.stargazers_count}</p>
-        <p>watchers: {data.watchers_count}</p>
+        <p>watchers: {data.subscribers_count}</p>
       </div>
       <br />
       <br />
