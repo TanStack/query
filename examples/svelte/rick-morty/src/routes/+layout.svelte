@@ -4,8 +4,9 @@
   import { browser } from '$app/environment'
   import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
+  import type { LayoutProps } from './$types'
 
-  let { children } = $props()
+  let { children }: LayoutProps = $props()
 
   const queryClient = new QueryClient({
     defaultOptions: {

@@ -3,7 +3,11 @@
   import { createQuery } from '@tanstack/svelte-query'
   import { postsQueries } from './services/posts/queries'
 
-  const { postId }: { postId: number } = $props()
+  type Props = {
+    postId: number
+  }
+
+  let { postId }: Props = $props()
 
   const post = createQuery(() => postsQueries.detail(postId))
 </script>

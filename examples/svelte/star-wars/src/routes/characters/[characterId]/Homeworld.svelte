@@ -2,7 +2,11 @@
   import { createQuery } from '@tanstack/svelte-query'
   import { planetsQueries } from '$lib/services/planets/queries'
 
-  let { homeworldId }: { homeworldId: string } = $props()
+  type Props = {
+    homeworldId: string
+  }
+
+  let { homeworldId }: Props = $props()
 
   const query = createQuery(() => planetsQueries.detail(homeworldId))
 </script>

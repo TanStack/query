@@ -2,7 +2,11 @@
   import { locationsQueries } from '$lib/services/locations/queries'
   import { createQuery } from '@tanstack/svelte-query'
 
-  let { locationId }: { locationId: string } = $props()
+  type Props = {
+    locationId: string
+  }
+
+  let { locationId }: Props = $props()
 
   const query = createQuery(() => locationsQueries.detail(locationId))
 </script>

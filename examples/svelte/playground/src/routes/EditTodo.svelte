@@ -8,7 +8,11 @@
   import { todosMutations, todosQueries } from '$lib/services/todos/queries'
   import type { Todo } from '$lib/services/todos/types'
 
-  let { id }: { id: number } = $props()
+  type Props = {
+    id: number
+  }
+
+  let { id }: Props = $props()
 
   const queryClient = useQueryClient()
 

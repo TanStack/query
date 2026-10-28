@@ -8,7 +8,11 @@
     salePrice: number
   }
 
-  let { query = '' }: { query: string } = $props()
+  type Props = {
+    query: string
+  }
+
+  let { query = '' }: Props = $props()
 
   const searchQuery = createInfiniteQuery(() => ({
     ...productsQueries.search<Product>({

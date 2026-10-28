@@ -3,8 +3,9 @@
   import { PersistQueryClientProvider } from '@tanstack/svelte-query-persist-client'
   import { Toaster } from 'svelte-sonner'
   import { persister, queryClient } from '$lib/queryClient'
+  import type { LayoutProps } from './$types'
 
-  let { children } = $props()
+  let { children }: LayoutProps = $props()
 </script>
 
 <svelte:head>

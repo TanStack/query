@@ -2,7 +2,11 @@
   import { createQueries } from '@tanstack/svelte-query'
   import { charactersQueries } from './services/characters/queries'
 
-  let { ids }: { ids: Array<number> } = $props()
+  type Props = {
+    ids: Array<number>
+  }
+
+  let { ids }: Props = $props()
 
   const characters = createQueries(() => ({
     queries: ids.map((id) => charactersQueries.detail(id)),

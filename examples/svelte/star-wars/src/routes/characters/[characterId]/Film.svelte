@@ -3,7 +3,11 @@
   import { filmsQueries } from '$lib/services/films/queries'
   import { createQuery } from '@tanstack/svelte-query'
 
-  let { filmId }: { filmId: string } = $props()
+  type Props = {
+    filmId: string
+  }
+
+  let { filmId }: Props = $props()
 
   const query = createQuery(() => filmsQueries.detail(filmId))
 </script>

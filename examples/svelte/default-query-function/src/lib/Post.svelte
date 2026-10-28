@@ -2,10 +2,12 @@
   import { createQuery } from '@tanstack/svelte-query'
   import type { Post } from './types'
 
-  let {
-    postId,
-    setPostId,
-  }: { postId: number; setPostId: (postId: number) => void } = $props()
+  type Props = {
+    postId: number
+    setPostId: (postId: number) => void
+  }
+
+  let { postId, setPostId }: Props = $props()
 
   // You can even leave out the queryFn and just go straight into options
   const query = createQuery<Post>(() => ({

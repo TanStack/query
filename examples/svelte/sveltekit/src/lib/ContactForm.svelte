@@ -4,7 +4,11 @@
   import { useQueryClient } from '@tanstack/svelte-query'
   import type { Contact } from '$lib/services/contacts/types'
 
-  let { contact }: { contact?: Contact } = $props()
+  type Props = {
+    contact?: Contact
+  }
+
+  let { contact }: Props = $props()
 
   const queryClient = useQueryClient()
 </script>
