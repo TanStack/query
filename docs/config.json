@@ -6991,6 +6991,18 @@
             {
               "label": "Batching",
               "to": "framework/svelte/examples/batching"
+            },
+            {
+              "label": "Pagination",
+              "to": "framework/svelte/examples/pagination"
+            },
+            {
+              "label": "Infinite query with Max pages",
+              "to": "framework/svelte/examples/infinite-query-with-max-pages"
+            },
+            {
+              "label": "Prefetching",
+              "to": "framework/svelte/examples/prefetching"
             }
           ]
         },

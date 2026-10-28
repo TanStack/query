@@ -3855,6 +3855,46 @@ importers:
         specifier: ^8.3.1
         version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
+  examples/svelte/infinite-query-with-max-pages:
+    dependencies:
+      '@tanstack/svelte-query':
+        specifier: ^6.3.6
+        version: link:../../../packages/svelte-query
+      '@tanstack/svelte-query-devtools':
+        specifier: ^6.3.6
+        version: link:../../../packages/svelte-query-devtools
+    devDependencies:
+      '@sveltejs/adapter-auto':
+        specifier: ^7.0.1
+        version: 7.0.1(@sveltejs/kit@2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)))(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)))
+      '@sveltejs/kit':
+        specifier: ^2.70.3
+        version: 2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)))(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@sveltejs/vite-plugin-svelte':
+        specifier: ^7.3.1
+        version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      '@typescript-eslint/parser':
+        specifier: ^8.72.0
+        version: 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint-plugin-svelte:
+        specifier: ^3.23.0
+        version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
+      svelte:
+        specifier: ^5.57.1
+        version: 5.57.1(@typescript-eslint/types@8.58.1)
+      svelte-check:
+        specifier: ^4.7.7
+        version: 4.7.7(picomatch@4.0.7)(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
   examples/svelte/load-more-infinite-scroll:
     dependencies:
       '@tanstack/svelte-query':
@@ -3987,6 +4027,46 @@ importers:
         specifier: ^8.3.1
         version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
+  examples/svelte/pagination:
+    dependencies:
+      '@tanstack/svelte-query':
+        specifier: ^6.3.6
+        version: link:../../../packages/svelte-query
+      '@tanstack/svelte-query-devtools':
+        specifier: ^6.3.6
+        version: link:../../../packages/svelte-query-devtools
+    devDependencies:
+      '@sveltejs/adapter-auto':
+        specifier: ^7.0.1
+        version: 7.0.1(@sveltejs/kit@2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)))(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)))
+      '@sveltejs/kit':
+        specifier: ^2.70.3
+        version: 2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)))(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@sveltejs/vite-plugin-svelte':
+        specifier: ^7.3.1
+        version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      '@typescript-eslint/parser':
+        specifier: ^8.72.0
+        version: 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint-plugin-svelte:
+        specifier: ^3.23.0
+        version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
+      svelte:
+        specifier: ^5.57.1
+        version: 5.57.1(@typescript-eslint/types@8.58.1)
+      svelte-check:
+        specifier: ^4.7.7
+        version: 4.7.7(picomatch@4.0.7)(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
   examples/svelte/playground:
     dependencies:
       '@tanstack/svelte-query':
@@ -4026,6 +4106,46 @@ importers:
       vite:
         specifier: ^8.3.1
         version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
+
+  examples/svelte/prefetching:
+    dependencies:
+      '@tanstack/svelte-query':
+        specifier: ^6.3.6
+        version: link:../../../packages/svelte-query
+      '@tanstack/svelte-query-devtools':
+        specifier: ^6.3.6
+        version: link:../../../packages/svelte-query-devtools
+    devDependencies:
+      '@sveltejs/adapter-auto':
+        specifier: ^7.0.1
+        version: 7.0.1(@sveltejs/kit@2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)))(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)))
+      '@sveltejs/kit':
+        specifier: ^2.70.3
+        version: 2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)))(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@sveltejs/vite-plugin-svelte':
+        specifier: ^7.3.1
+        version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      '@typescript-eslint/parser':
+        specifier: ^8.72.0
+        version: 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint-plugin-svelte:
+        specifier: ^3.23.0
+        version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
+      svelte:
+        specifier: ^5.57.1
+        version: 5.57.1(@typescript-eslint/types@8.58.1)
+      svelte-check:
+        specifier: ^4.7.7
+        version: 4.7.7(picomatch@4.0.7)(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
   examples/svelte/rick-morty:
     dependencies:
