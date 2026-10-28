@@ -6,7 +6,7 @@ import { charactersQueries } from '~/services/characters/queries'
 export default function CharacterPage() {
   const params = useParams<{ id: string }>()
   const id = () => Number(params.id)
-  const isValidId = () => Number.isInteger(id()) && id() > 0
+  const isValidId = () => /^\d+$/.test(params.id) && id() > 0
 
   const characterQuery = useQuery(() => ({
     ...charactersQueries.detail(isValidId() ? id() : undefined),

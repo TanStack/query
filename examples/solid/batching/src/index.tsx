@@ -97,6 +97,7 @@ function App() {
 
       <button
         type="button"
+        disabled={!!error()}
         onClick={() => {
           setIdsToLoad(ids())
         }}

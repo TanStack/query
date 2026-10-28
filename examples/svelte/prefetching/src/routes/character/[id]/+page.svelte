@@ -7,7 +7,7 @@
   let { params }: PageProps = $props()
 
   const id = $derived(Number(params.id))
-  const isValidId = $derived(Number.isInteger(id) && id > 0)
+  const isValidId = $derived(/^\d+$/.test(params.id) && id > 0)
 
   const query = createQuery(() =>
     charactersQueries.detail(isValidId ? id : undefined),

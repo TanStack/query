@@ -48,6 +48,7 @@
 
     <button
       type="button"
+      disabled={!!error}
       onclick={() => {
         idsToLoad = ids
       }}
