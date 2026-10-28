@@ -14,7 +14,10 @@ export default function TodoListCache() {
   const [inputValue, setInputValue] = createSignal('')
   const [lastError, setLastError] = createSignal<string | null>(null)
 
-  const todosQuery = useQuery(() => todosQueries.list())
+  const todosQuery = useQuery(() => ({
+    ...todosQueries.list(),
+    throwOnError: true,
+  }))
 
   const addTodoMutation = useMutation<Todo, Error, string, MutationContext>(
     () => ({

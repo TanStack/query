@@ -15,6 +15,24 @@ import {
 import { projectsQueries } from '~/services/projects/queries'
 
 export default function Example() {
+  return (
+    <div>
+      <p>
+        In this example, each page of data remains visible as the next page is
+        fetched. The buttons and capability to proceed to the next page are also
+        suppressed until the next page cursor is known. Each page is cached as a
+        normal query too, so when going to previous pages, you'll see them
+        instantaneously while they are also refetched invisibly in the
+        background.
+      </p>
+      <ErrorBoundary fallback={(error) => <div>Error: {error.message}</div>}>
+        <Projects />
+      </ErrorBoundary>
+    </div>
+  )
+}
+
+function Projects() {
   const queryClient = useQueryClient()
   const [page, setPage] = createSignal(0)
 
@@ -32,28 +50,18 @@ export default function Example() {
   })
 
   return (
-    <div>
-      <p>
-        In this example, each page of data remains visible as the next page is
-        fetched. The buttons and capability to proceed to the next page are also
-        suppressed until the next page cursor is known. Each page is cached as a
-        normal query too, so when going to previous pages, you'll see them
-        instantaneously while they are also refetched invisibly in the
-        background.
-      </p>
-      <ErrorBoundary fallback={(error) => <div>Error: {error.message}</div>}>
-        <Suspense fallback={<div>Loading...</div>}>
-          {
-            // `data` will either resolve to the latest page's data
-            // or if fetching a new page, the last successful page's data
-          }
-          <div>
-            <For each={projectsQuery.data?.projects}>
-              {(project) => <p>{project.name}</p>}
-            </For>
-          </div>
-        </Suspense>
-      </ErrorBoundary>
+    <>
+      <Suspense fallback={<div>Loading...</div>}>
+        {
+          // `data` will either resolve to the latest page's data
+          // or if fetching a new page, the last successful page's data
+        }
+        <div>
+          <For each={projectsQuery.data?.projects}>
+            {(project) => <p>{project.name}</p>}
+          </For>
+        </div>
+      </Suspense>
       <div>Current Page: {page() + 1}</div>
       <button
         onClick={() => setPage((old) => Math.max(old - 1, 0))}
@@ -79,6 +87,6 @@ export default function Example() {
       <Show when={projectsQuery.isFetching}>
         <span> Loading...</span>
       </Show>{' '}
-    </div>
+    </>
   )
 }

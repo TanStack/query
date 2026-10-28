@@ -7,7 +7,10 @@ export default function TodoListUI() {
   const queryClient = useQueryClient()
   const [inputValue, setInputValue] = createSignal('')
 
-  const todosQuery = useQuery(() => todosQueries.list())
+  const todosQuery = useQuery(() => ({
+    ...todosQueries.list(),
+    throwOnError: true,
+  }))
 
   const addTodoMutation = useMutation(() => ({
     ...todosMutations.create(),

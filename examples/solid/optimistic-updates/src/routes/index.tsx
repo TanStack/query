@@ -1,4 +1,4 @@
-import { Suspense } from 'solid-js'
+import { ErrorBoundary, Suspense } from 'solid-js'
 import ApproachTabs from '~/components/ApproachTabs'
 
 export default function Home() {
@@ -11,9 +11,13 @@ export default function Home() {
         Add todos to see optimistic updates in action. The server randomly fails
         ~30% of the time so you can observe automatic rollback.
       </p>
-      <Suspense fallback={<p>Loading todos…</p>}>
-        <ApproachTabs />
-      </Suspense>
+      <ErrorBoundary
+        fallback={(error) => <p style={{ color: 'red' }}>{error.message}</p>}
+      >
+        <Suspense fallback={<p>Loading todos…</p>}>
+          <ApproachTabs />
+        </Suspense>
+      </ErrorBoundary>
     </main>
   )
 }
