@@ -1,0 +1,37 @@
+{
+  "name": "@tanstack/query-example-svelte-offline",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:eslint": "svelte-kit sync && eslint ./src",
+    "test:types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+  },
+  "dependencies": {
+    "@tanstack/query-async-storage-persister": "^5.105.0",
+    "@tanstack/svelte-query": "^6.3.6",
+    "@tanstack/svelte-query-devtools": "^6.3.6",
+    "@tanstack/svelte-query-persist-client": "^6.3.6",
+    "msw": "^2.15.0",
+    "svelte-sonner": "^1.2.2"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^7.0.1",
+    "@sveltejs/kit": "^2.70.3",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@typescript-eslint/parser": "^8.72.0",
+    "eslint-plugin-svelte": "^3.23.0",
+    "svelte": "^5.57.1",
+    "svelte-check": "^4.7.7",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.1"
+  },
+  "msw": {
+    "workerDirectory": [
+      "static"
+    ]
+  }
+}
