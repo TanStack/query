@@ -6857,6 +6857,18 @@
             {
               "label": "Devtools Embedded Panel",
               "to": "framework/solid/examples/devtools-panel"
+            },
+            {
+              "label": "Star Wars",
+              "to": "framework/solid/examples/star-wars"
+            },
+            {
+              "label": "Rick And Morty",
+              "to": "framework/solid/examples/rick-morty"
+            },
+            {
+              "label": "Solid Router",
+              "to": "framework/solid/examples/solid-router"
             }
           ]
         },
