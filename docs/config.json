@@ -6869,6 +6869,14 @@
             {
               "label": "Solid Router",
               "to": "framework/solid/examples/solid-router"
+            },
+            {
+              "label": "Suspense",
+              "to": "framework/solid/examples/suspense"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/solid/examples/batching"
             }
           ]
         },

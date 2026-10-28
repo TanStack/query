@@ -3016,6 +3016,37 @@ importers:
         specifier: ^2.11.14
         version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
 
+  examples/solid/batching:
+    dependencies:
+      '@tanstack/solid-pacer':
+        specifier: ^0.24.0
+        version: 0.24.0(solid-js@1.9.15)
+      '@tanstack/solid-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: ^5.105.0
+        version: link:../../../packages/solid-query-devtools
+      solid-js:
+        specifier: ^1.9.15
+        version: 1.9.15
+    devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      eslint-plugin-solid:
+        specifier: ^0.18.1
+        version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+      vite-plugin-solid:
+        specifier: ^2.11.14
+        version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+
   examples/solid/chat:
     dependencies:
       '@tanstack/solid-query':
@@ -3368,6 +3399,37 @@ importers:
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+      vite-plugin-solid:
+        specifier: ^2.11.14
+        version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.1(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+
+  examples/solid/suspense:
+    dependencies:
+      '@tanstack/solid-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: ^5.105.0
+        version: link:../../../packages/solid-query-devtools
+      font-awesome:
+        specifier: ^4.7.0
+        version: 4.7.0
+      solid-js:
+        specifier: ^1.9.15
+        version: 1.9.15
+    devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      eslint-plugin-solid:
+        specifier: ^0.18.1
+        version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -10233,6 +10295,17 @@ packages:
   '@tanstack/server-functions-plugin@1.121.21':
     resolution: {integrity: sha512-a05fzK+jBGacsSAc1vE8an7lpBh4H0PyIEcivtEyHLomgSeElAJxm9E2It/0nYRZ5Lh23m0okbhzJNaYWZpAOg==}
     engines: {node: '>=12'}
+
+  '@tanstack/solid-pacer@0.24.0':
+    resolution: {integrity: sha512-1N7pBIpYAIKVw2l0/ltimCydVzvXEUnawRV/zUN09EriwpGhNIHTIL7pY2q3TIOAIF3jdSlHyPLlJQNhTtlVTQ==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      solid-js: '>=1.9.5'
+
+  '@tanstack/solid-store@0.11.2':
+    resolution: {integrity: sha512-lscar3xeRKfs/RQBcZjR9NG55sfMP5Pb8S/URohUqcnSB8Yu19JLE/hPjfSd7pKmCpjYq1ZbjqtpIc5bDE1lAQ==}
+    peerDependencies:
+      solid-js: ^1.6.0
 
   '@tanstack/store@0.11.1':
     resolution: {integrity: sha512-mzTOBhypOuDJAy/D8n2MfUZ1HFkXnmSETviRyhqEC8LUE7/IZQExOTxMANj3KjTofYTkFNpBY67qaVrT41YccA==}
@@ -24977,6 +25050,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - vite
+
+  '@tanstack/solid-pacer@0.24.0(solid-js@1.9.15)':
+    dependencies:
+      '@tanstack/pacer': 0.23.1
+      '@tanstack/solid-store': 0.11.2(solid-js@1.9.15)
+      solid-js: 1.9.15
+
+  '@tanstack/solid-store@0.11.2(solid-js@1.9.15)':
+    dependencies:
+      '@tanstack/store': 0.11.2
+      solid-js: 1.9.15
 
   '@tanstack/store@0.11.1': {}
 
