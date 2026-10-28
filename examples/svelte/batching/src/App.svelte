@@ -16,12 +16,10 @@
   let error = $state('')
 
   const handleInput = (value: string) => {
-    const text = value.replace(' ', '')
-    const parsedIds = text.split(',').map((id) => parseInt(id, 10))
-    const allValid = parsedIds.reduce((valid, id) => valid && !isNaN(id), true)
+    const parsedIds = value.split(',').map((id) => id.trim())
 
-    if (allValid) {
-      ids = parsedIds
+    if (parsedIds.every((id) => /^\d+$/.test(id))) {
+      ids = parsedIds.map(Number)
       error = ''
     } else {
       error = 'Invalid.. only use numbers and comma'

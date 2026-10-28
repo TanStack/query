@@ -75,15 +75,12 @@ function App() {
           style={{ display: 'inline-block' }}
           placeholder="ids"
           onChange={(event) => {
-            const text = event.target.value.replace(' ', '')
-            const parsedIds = text.split(',').map((id) => parseInt(id, 10))
-            const allValid = parsedIds.reduce(
-              (valid, id) => valid && !isNaN(id),
-              true,
-            )
+            const parsedIds = event.target.value
+              .split(',')
+              .map((id) => id.trim())
 
-            if (allValid) {
-              setIds(parsedIds)
+            if (parsedIds.every((id) => /^\d+$/.test(id))) {
+              setIds(parsedIds.map(Number))
               setError('')
             } else {
               setError('Invalid.. only use numbers and comma')
