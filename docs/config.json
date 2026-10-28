@@ -6955,6 +6955,26 @@
             {
               "label": "Infinite Queries",
               "to": "framework/svelte/examples/load-more-infinite-scroll"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/svelte/examples/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/svelte/examples/default-query-function"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/svelte/examples/algolia"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/svelte/examples/chat"
+            },
+            {
+              "label": "Shadow DOM",
+              "to": "framework/svelte/examples/shadow-dom"
             }
           ]
         },
