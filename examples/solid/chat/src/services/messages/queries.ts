@@ -10,7 +10,7 @@ export const messagesQueries = {
     queryOptions({
       queryKey: [...messagesQueries.all(), 'detail', id, question] as const,
       queryFn: streamedQuery({
-        streamFn: () => messagesAPI.getAnswer(question),
+        streamFn: ({ signal }) => messagesAPI.getAnswer(question, signal),
       }),
       staleTime: Infinity,
     }),
