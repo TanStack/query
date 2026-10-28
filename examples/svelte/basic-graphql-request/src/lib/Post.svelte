@@ -2,10 +2,12 @@
   import { createQuery } from '@tanstack/svelte-query'
   import { postsQueries } from './services/posts/queries'
 
-  let {
-    postId,
-    setPostId,
-  }: { postId: string; setPostId: (postId: string | null) => void } = $props()
+  type Props = {
+    postId: string
+    setPostId: (postId: string | null) => void
+  }
+
+  let { postId, setPostId }: Props = $props()
 
   const query = createQuery(() => postsQueries.detail(postId))
 </script>

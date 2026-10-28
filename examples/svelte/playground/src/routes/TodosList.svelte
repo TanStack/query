@@ -3,7 +3,11 @@
   import { editingIndex } from '$lib/stores.svelte'
   import { todosQueries } from '$lib/services/todos/queries'
 
-  let { initialFilter: filter }: { initialFilter: string } = $props()
+  type Props = {
+    initialFilter: string
+  }
+
+  let { initialFilter: filter }: Props = $props()
 
   const query = createQuery(() => todosQueries.list(filter))
 </script>

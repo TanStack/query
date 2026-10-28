@@ -3,7 +3,11 @@
   import { episodesQueries } from '$lib/services/episodes/queries'
   import { createQuery } from '@tanstack/svelte-query'
 
-  let { episodeId }: { episodeId: string } = $props()
+  type Props = {
+    episodeId: string
+  }
+
+  let { episodeId }: Props = $props()
 
   const query = createQuery(() => episodesQueries.detail(episodeId))
 </script>
