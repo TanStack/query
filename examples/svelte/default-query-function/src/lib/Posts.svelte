@@ -24,7 +24,10 @@
         {#each query.data as post (post.id)}
           <p>
             <a
-              onclick={() => setPostId(post.id)}
+              onclick={(e) => {
+                e.preventDefault()
+                setPostId(post.id)
+              }}
               href="#{post.id}"
               style={// We can use the queryCache here to show bold links for
               // ones that are cached

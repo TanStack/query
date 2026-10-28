@@ -12,7 +12,15 @@
 
 <div>
   <div>
-    <a onclick={() => setPostId(null)} href="#posts">Back</a>
+    <a
+      href="#posts"
+      onclick={(e) => {
+        e.preventDefault()
+        setPostId(null)
+      }}
+    >
+      Back
+    </a>
   </div>
   {#if query.status === 'pending'}
     Loading...
