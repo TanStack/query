@@ -6918,6 +6918,34 @@
             {
               "label": "Persister",
               "to": "framework/vue/examples/persister"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/vue/examples/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/vue/examples/default-query-function"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/vue/examples/playground"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/vue/examples/algolia"
+            },
+            {
+              "label": "Shadow DOM",
+              "to": "framework/vue/examples/shadow-dom"
+            },
+            {
+              "label": "Devtools Embedded Panel",
+              "to": "framework/vue/examples/devtools-panel"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/vue/examples/chat"
             }
           ]
         },
