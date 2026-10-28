@@ -15,7 +15,6 @@ render(
     <QueryClientProvider client={queryClient}>
       <div
         style={{
-          width: '100vw',
           padding: '30px',
         }}
       >
