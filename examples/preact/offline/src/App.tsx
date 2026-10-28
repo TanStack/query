@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks'
 import {
   MutationCache,
   QueryClient,
+  noop,
   onlineManager,
   useIsRestoring,
   useMutation,
@@ -93,7 +94,9 @@ function List() {
                   // do not prefetch if we are offline or hydrating because it returns a promise that is pending until we go online again
                   // we just let the Detail component handle it
                   if (onlineManager.isOnline() && !isRestoring) {
-                    queryClient.prefetchQuery(moviesQueries.detail(movie.id))
+                    queryClient
+                      .query(moviesQueries.detail(movie.id))
+                      .catch(noop)
                   }
                 }}
               >
