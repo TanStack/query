@@ -6975,6 +6975,14 @@
             {
               "label": "Shadow DOM",
               "to": "framework/svelte/examples/shadow-dom"
+            },
+            {
+              "label": "Rick And Morty",
+              "to": "framework/svelte/examples/rick-morty"
+            },
+            {
+              "label": "SvelteKit",
+              "to": "framework/svelte/examples/sveltekit"
             }
           ]
         },
