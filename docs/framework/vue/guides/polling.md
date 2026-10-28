@@ -7,3 +7,5 @@ replace: { '@tanstack/react-query': '@tanstack/vue-query' }
 
 [//]: # 'ReactNative'
 [//]: # 'ReactNative'
+[//]: # 'ReRenders'
+[//]: # 'ReRenders'
