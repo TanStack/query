@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "dependencies": {
+    "waku": "^1.0.0-rc.4",
+    "@tanstack/react-query": "^5.0.0",
+    "react": "^19.0.0"
+  }
+}
