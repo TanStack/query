@@ -24,7 +24,7 @@ const getCharacterId = (url: string) => {
     <EpisodeCharacter
       v-for="character in data.characters"
       :key="getCharacterId(character)"
-      :characterId="getCharacterId(character)"
+      :character-id="getCharacterId(character)"
     />
   </div>
 </template>

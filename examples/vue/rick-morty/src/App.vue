@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
-import Layout from './Layout.vue'
+import AppLayout from './AppLayout.vue'
 </script>
 
 <template>
-  <Layout />
-  <VueQueryDevtools initialIsOpen />
+  <AppLayout />
+  <VueQueryDevtools initial-is-open />
 </template>

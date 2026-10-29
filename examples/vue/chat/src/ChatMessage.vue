@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/vue-query'
 import { messagesQueries } from './services/messages/queries'
 
-import Message from './Message.vue'
+import MessageBubble from './MessageBubble.vue'
 
 const props = defineProps<{ id: string; question: string }>()
 
@@ -14,9 +14,9 @@ const { error, data, isFetching } = useQuery(() =>
 <template>
   <template v-if="error">An error has occurred: {{ error.message }}</template>
   <div v-else>
-    <Message :message="{ content: question, isQuestion: true }" />
-    <Message
-      :inProgress="isFetching"
+    <MessageBubble :message="{ content: question, isQuestion: true }" />
+    <MessageBubble
+      :in-progress="isFetching"
       :message="{ content: (data ?? []).join(' '), isQuestion: false }"
     />
   </div>

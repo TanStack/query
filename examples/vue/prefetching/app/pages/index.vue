@@ -51,7 +51,7 @@ const {
         Error: {{ characterError?.message }}
       </span>
       <pre v-else>{{ JSON.stringify(character, null, 2) }}</pre>
-      <VueQueryDevtools initialIsOpen />
+      <VueQueryDevtools initial-is-open />
     </template>
   </div>
 </template>

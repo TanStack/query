@@ -4,5 +4,5 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 <template>
   <RouterView />
-  <VueQueryDevtools buttonPosition="bottom-right" />
+  <VueQueryDevtools button-position="bottom-right" />
 </template>

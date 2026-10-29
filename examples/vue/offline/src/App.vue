@@ -8,5 +8,5 @@ import { Toaster } from 'vue-sonner'
     <RouterView />
   </div>
   <Toaster />
-  <VueQueryDevtools initialIsOpen />
+  <VueQueryDevtools initial-is-open />
 </template>

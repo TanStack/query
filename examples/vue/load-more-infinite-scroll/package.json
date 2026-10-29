@@ -19,7 +19,10 @@
     "vue-router": "^5.4.0"
   },
   "devDependencies": {
+    "@nuxt/eslint": "^1.17.0",
     "@tanstack/eslint-plugin-query": "^5.105.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.12.0",
     "typescript": "^6.0.3",
     "vue-tsc": "^3.3.13"
   }

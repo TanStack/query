@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, nextTick, ref, watch } from 'vue'
 import { isPendingKey } from '../transition'
-import Spinner from './Spinner.vue'
+import BaseSpinner from './BaseSpinner.vue'
 
 const emit = defineEmits<{ click: [] }>()
 
@@ -28,6 +28,6 @@ const handleClick = async () => {
 <template>
   <button :disabled="isLoading" @click="handleClick">
     <slot />
-    <Spinner v-if="isLoading" />
+    <BaseSpinner v-if="isLoading" />
   </button>
 </template>

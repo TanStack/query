@@ -59,6 +59,6 @@ watchEffect(() => {
     <!-- indicator since our `status === 'pending'` state won't be triggered -->
     <span v-if="isFetching"> Loading...</span>
     {{ ' ' }}
-    <VueQueryDevtools initialIsOpen />
+    <VueQueryDevtools initial-is-open />
   </div>
 </template>
