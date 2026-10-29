@@ -704,7 +704,7 @@ describe('core/utils', () => {
     it('should call onCancelled immediately when the signal is already aborted on first access', () => {
       const controller = new AbortController()
       controller.abort()
-      const onCancelled = vi.fn<VoidFunction>()
+      const onCancelled = vi.fn<() => void>()
       const object = addConsumeAwareSignal(
         {},
         () => controller.signal,

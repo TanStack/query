@@ -834,7 +834,7 @@ describe('addConsumeAwareSignal', () => {
   it('should only accept an onCancelled callback taking no arguments', () => {
     expectTypeOf(addConsumeAwareSignal<{ a: number }>)
       .parameter(2)
-      .toEqualTypeOf<VoidFunction>()
+      .toEqualTypeOf<() => void>()
   })
 })
 
