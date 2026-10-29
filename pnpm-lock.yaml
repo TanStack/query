@@ -1037,6 +1037,34 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
+  examples/lit/rick-morty:
+    dependencies:
+      '@lit-labs/router':
+        specifier: ^0.1.4
+        version: 0.1.4
+      '@tanstack/lit-query':
+        specifier: ^0.2.31
+        version: link:../../../packages/lit-query
+      lit:
+        specifier: ^3.3.3
+        version: 3.3.3
+    devDependencies:
+      '@tailwindcss/vite':
+        specifier: ^4.3.3
+        version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      tailwindcss:
+        specifier: ^4.3.3
+        version: 4.3.3
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
   examples/lit/simple:
     dependencies:
       '@tanstack/lit-query':
@@ -1083,6 +1111,34 @@ importers:
       vite:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
+
+  examples/lit/star-wars:
+    dependencies:
+      '@lit-labs/router':
+        specifier: ^0.1.4
+        version: 0.1.4
+      '@tanstack/lit-query':
+        specifier: ^0.2.31
+        version: link:../../../packages/lit-query
+      lit:
+        specifier: ^3.3.3
+        version: 3.3.3
+    devDependencies:
+      '@tailwindcss/vite':
+        specifier: ^4.3.3
+        version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      tailwindcss:
+        specifier: ^4.3.3
+        version: 4.3.3
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
   examples/preact/algolia:
     dependencies:
@@ -9463,6 +9519,9 @@ packages:
     peerDependencies:
       '@inquirer/prompts': '>= 3 < 8'
       listr2: 9.0.1
+
+  '@lit-labs/router@0.1.4':
+    resolution: {integrity: sha512-xURH6fOPE0MYfXa1nyl+qTIhZRVWkFa2oggTRodKAI2q/HjA2Va7HEKe7fMm8DdnFE+zEI2aUGnStawKpVh3lQ==}
 
   '@lit-labs/ssr-client@1.1.8':
     resolution: {integrity: sha512-PjGh81oKsoI64m3IDjTqqjhC7dr2uC/o0jrllUb5gRAyp/RlAHxapgJrjq9kWz97faCHLQ8jUlTi6tGm+8fgyA==}
@@ -27050,6 +27109,10 @@ snapshots:
       listr2: 9.0.1
     transitivePeerDependencies:
       - '@types/node'
+
+  '@lit-labs/router@0.1.4':
+    dependencies:
+      lit: 3.3.3
 
   '@lit-labs/ssr-client@1.1.8':
     dependencies:

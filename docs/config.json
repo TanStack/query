@@ -7124,6 +7124,14 @@
             {
               "label": "Chat example (streaming)",
               "to": "framework/lit/examples/chat"
+            },
+            {
+              "label": "Star Wars",
+              "to": "framework/lit/examples/star-wars"
+            },
+            {
+              "label": "Rick And Morty",
+              "to": "framework/lit/examples/rick-morty"
             }
           ]
         },
