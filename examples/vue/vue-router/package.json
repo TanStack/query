@@ -24,7 +24,7 @@
     "@types/sort-by": "^1.2.3",
     "@vitejs/plugin-vue": "^6.0.9",
     "typescript": "^6.0.3",
-    "vite": "^8.3.1",
+    "vite": "^8.3.5",
     "vue-tsc": "^3.3.13"
   }
 }
