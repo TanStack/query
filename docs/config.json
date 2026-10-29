@@ -7132,6 +7132,14 @@
             {
               "label": "Rick And Morty",
               "to": "framework/lit/examples/rick-morty"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/lit/examples/batching"
+            },
+            {
+              "label": "Offline Queries and Mutations",
+              "to": "framework/lit/examples/offline"
             }
           ]
         },
