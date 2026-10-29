@@ -39,6 +39,8 @@ const todosQuery = createQuery(() => ({
 
 ```svelte
 <script lang="ts">
+  import { createQuery } from '@tanstack/svelte-query'
+  
   const todosQuery = createQuery(() => ({
     queryKey: ['todos'],
     queryFn: () => fetchTodos(),

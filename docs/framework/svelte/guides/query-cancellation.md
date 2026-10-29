@@ -110,7 +110,7 @@ const client = new GraphQLClient(endpoint)
 const todosQuery = createQuery(() => ({
   queryKey: ['todos'],
   queryFn: ({ signal }) => {
-    client.request({ document: query, signal })
+    return client.request({ document: query, signal })
   },
 }))
 ```

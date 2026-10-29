@@ -167,6 +167,7 @@ todos.forEach((todo) => {
 const mutation = createMutation(() => ({ mutationFn: addTodo }))
 
 try {
+  const todo = { title: 'Do Laundry' }
   const todo = await mutation.mutateAsync(todo)
   console.log(todo)
 } catch (error) {
@@ -203,7 +204,10 @@ queryClient.setMutationDefaults(['addTodo'], {
     const optimisticTodo = { id: uuid(), title: variables.title }
 
     // Add optimistic todo to todos list
-    context.client.setQueryData(['todos'], (old) => [...old, optimisticTodo])
+    context.client.setQueryData(['todos'], (old) => [
+      ...(old ?? []),
+      optimisticTodo,
+    ])
 
     // Return a result with the optimistic todo
     return { optimisticTodo }
