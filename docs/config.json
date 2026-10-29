@@ -6912,8 +6912,12 @@
               "to": "framework/vue/examples/2.7-basic"
             },
             {
-              "label": "Nuxt 3",
-              "to": "framework/vue/examples/nuxt3"
+              "label": "Simple (Nuxt 3)",
+              "to": "framework/vue/examples/simple-nuxt3"
+            },
+            {
+              "label": "Simple (Nuxt 4)",
+              "to": "framework/vue/examples/simple-nuxt4"
             },
             {
               "label": "Persister",
