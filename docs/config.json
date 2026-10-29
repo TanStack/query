@@ -6970,6 +6970,30 @@
             {
               "label": "Batching",
               "to": "framework/vue/examples/batching"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "framework/vue/examples/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/vue/examples/optimistic-updates"
+            },
+            {
+              "label": "Pagination",
+              "to": "framework/vue/examples/pagination"
+            },
+            {
+              "label": "Load-More & Infinite Scroll",
+              "to": "framework/vue/examples/load-more-infinite-scroll"
+            },
+            {
+              "label": "Infinite query with Max pages",
+              "to": "framework/vue/examples/infinite-query-with-max-pages"
+            },
+            {
+              "label": "Prefetching",
+              "to": "framework/vue/examples/prefetching"
             }
           ]
         },
