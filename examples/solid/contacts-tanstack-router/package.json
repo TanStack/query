@@ -1,0 +1,31 @@
+{
+  "name": "@tanstack/query-example-solid-contacts-tanstack-router",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@solid-primitives/scheduled": "^1.5.3",
+    "@tanstack/solid-query": "^5.105.0",
+    "@tanstack/solid-query-devtools": "^5.105.0",
+    "@tanstack/solid-router": "^1.170.43",
+    "localforage": "^1.10.0",
+    "match-sorter": "^8.3.0",
+    "solid-js": "^1.9.15",
+    "sort-by": "^1.2.0"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@tanstack/router-plugin": "^1.168.48",
+    "@types/sort-by": "^1.2.3",
+    "eslint-plugin-solid": "^0.18.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5",
+    "vite-plugin-solid": "^2.11.14"
+  }
+}

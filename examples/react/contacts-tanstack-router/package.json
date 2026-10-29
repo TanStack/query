@@ -1,0 +1,34 @@
+{
+  "name": "@tanstack/query-example-react-contacts-tanstack-router",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.105.0",
+    "@tanstack/react-query-devtools": "^5.105.0",
+    "@tanstack/react-router": "^1.170.46",
+    "localforage": "^1.10.0",
+    "match-sorter": "^8.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "rooks": "^9.9.0",
+    "sort-by": "^1.2.0"
+  },
+  "devDependencies": {
+    "@eslint-react/eslint-plugin": "^5.28.8",
+    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@tanstack/router-plugin": "^1.168.48",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/sort-by": "^1.2.3",
+    "@vitejs/plugin-react": "^6.1.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5"
+  }
+}
