@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-solid-auto-refetching",
+  "name": "@tanstack/query-example-solid-auto-refetching-solid-start",
   "private": true,
   "type": "module",
   "scripts": {

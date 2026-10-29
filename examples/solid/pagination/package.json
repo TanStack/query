@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-solid-pagination",
+  "name": "@tanstack/query-example-solid-pagination-solid-start",
   "private": true,
   "type": "module",
   "scripts": {

@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-angular-devtools-panel",
+  "name": "@tanstack/query-example-angular-devtools-panel-angular-router",
   "type": "module",
   "scripts": {
     "ng": "ng",

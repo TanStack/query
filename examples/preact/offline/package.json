@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-preact-offline",
+  "name": "@tanstack/query-example-preact-offline-preact-iso",
   "private": true,
   "type": "module",
   "scripts": {

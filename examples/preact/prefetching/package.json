@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-preact-prefetching",
+  "name": "@tanstack/query-example-preact-prefetching-preact-iso",
   "private": true,
   "type": "module",
   "scripts": {

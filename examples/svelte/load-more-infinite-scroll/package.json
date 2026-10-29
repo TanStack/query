@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-svelte-load-more-infinite-scroll",
+  "name": "@tanstack/query-example-svelte-load-more-infinite-scroll-sveltekit",
   "private": true,
   "type": "module",
   "scripts": {

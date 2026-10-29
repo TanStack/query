@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-vue-rick-morty",
+  "name": "@tanstack/query-example-vue-rick-morty-vue-router",
   "private": true,
   "type": "module",
   "scripts": {

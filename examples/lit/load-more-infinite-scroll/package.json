@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-lit-load-more-infinite-scroll",
+  "name": "@tanstack/query-example-lit-load-more-infinite-scroll-lit-labs-router",
   "private": true,
   "type": "module",
   "scripts": {

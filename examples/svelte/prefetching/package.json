@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-svelte-prefetching",
+  "name": "@tanstack/query-example-svelte-prefetching-sveltekit",
   "private": true,
   "type": "module",
   "scripts": {

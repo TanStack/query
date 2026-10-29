@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-vue-pagination",
+  "name": "@tanstack/query-example-vue-pagination-nuxt",
   "private": true,
   "type": "module",
   "scripts": {

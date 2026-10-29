@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-angular-query-options-from-a-service",
+  "name": "@tanstack/query-example-angular-query-options-from-a-service-angular-router",
   "type": "module",
   "scripts": {
     "ng": "ng",

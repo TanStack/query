@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-react-pagination",
+  "name": "@tanstack/query-example-react-pagination-nextjs",
   "private": true,
   "type": "module",
   "scripts": {

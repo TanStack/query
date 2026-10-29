@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-svelte-star-wars",
+  "name": "@tanstack/query-example-svelte-star-wars-sveltekit",
   "private": true,
   "type": "module",
   "scripts": {

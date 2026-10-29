@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-lit-offline",
+  "name": "@tanstack/query-example-lit-offline-lit-labs-router",
   "private": true,
   "type": "module",
   "scripts": {

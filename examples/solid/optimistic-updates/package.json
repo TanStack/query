@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-solid-optimistic-updates",
+  "name": "@tanstack/query-example-solid-optimistic-updates-solid-start",
   "private": true,
   "type": "module",
   "scripts": {

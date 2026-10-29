@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-svelte-basic",
+  "name": "@tanstack/query-example-svelte-basic-sveltekit",
   "private": true,
   "type": "module",
   "scripts": {

@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-react-auto-refetching",
+  "name": "@tanstack/query-example-react-auto-refetching-nextjs",
   "private": true,
   "type": "module",
   "scripts": {

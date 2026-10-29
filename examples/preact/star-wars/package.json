@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-preact-star-wars",
+  "name": "@tanstack/query-example-preact-star-wars-preact-iso",
   "private": true,
   "type": "module",
   "scripts": {
