@@ -6958,6 +6958,18 @@
             {
               "label": "Vue Router",
               "to": "framework/vue/examples/vue-router"
+            },
+            {
+              "label": "Offline Queries and Mutations",
+              "to": "framework/vue/examples/offline"
+            },
+            {
+              "label": "Suspense",
+              "to": "framework/vue/examples/suspense"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/vue/examples/batching"
             }
           ]
         },
