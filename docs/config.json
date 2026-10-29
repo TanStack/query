@@ -6718,23 +6718,23 @@
               "to": "framework/react/examples/basic-graphql-request"
             },
             {
-              "label": "Auto Refetching / Polling / Realtime (Next.js)",
+              "label": "Auto Refetching / Polling / Realtime (Next.js Pages Router)",
               "to": "framework/react/examples/auto-refetching"
             },
             {
-              "label": "Optimistic Updates (Next.js)",
+              "label": "Optimistic Updates (Next.js App Router)",
               "to": "framework/react/examples/nextjs-app-optimistic-updates"
             },
             {
-              "label": "Pagination (Next.js)",
+              "label": "Pagination (Next.js Pages Router)",
               "to": "framework/react/examples/pagination"
             },
             {
-              "label": "Load-More & Infinite Scroll (Next.js)",
+              "label": "Load-More & Infinite Scroll (Next.js Pages Router)",
               "to": "framework/react/examples/load-more-infinite-scroll"
             },
             {
-              "label": "Infinite query with Max pages (Next.js)",
+              "label": "Infinite query with Max pages (Next.js Pages Router)",
               "to": "framework/react/examples/infinite-query-with-max-pages"
             },
             {
@@ -6750,7 +6750,7 @@
               "to": "framework/react/examples/playground"
             },
             {
-              "label": "Prefetching (Next.js)",
+              "label": "Prefetching (Next.js Pages Router)",
               "to": "framework/react/examples/prefetching"
             },
             {
@@ -6827,7 +6827,7 @@
               "to": "framework/solid/examples/default-query-function"
             },
             {
-              "label": "Solid Start",
+              "label": "SolidStart 1",
               "to": "framework/solid/examples/solid-start-streaming"
             },
             {
@@ -6879,19 +6879,19 @@
               "to": "framework/solid/examples/batching"
             },
             {
-              "label": "Auto Refetching / Polling / Realtime (SolidStart)",
+              "label": "Auto Refetching / Polling / Realtime (SolidStart 2)",
               "to": "framework/solid/examples/auto-refetching"
             },
             {
-              "label": "Optimistic Updates (SolidStart)",
+              "label": "Optimistic Updates (SolidStart 2)",
               "to": "framework/solid/examples/optimistic-updates"
             },
             {
-              "label": "Pagination (SolidStart)",
+              "label": "Pagination (SolidStart 2)",
               "to": "framework/solid/examples/pagination"
             },
             {
-              "label": "Prefetching (SolidStart)",
+              "label": "Prefetching (SolidStart 2)",
               "to": "framework/solid/examples/prefetching"
             }
           ]
@@ -6976,27 +6976,27 @@
               "to": "framework/vue/examples/batching"
             },
             {
-              "label": "Auto Refetching / Polling / Realtime (Nuxt)",
+              "label": "Auto Refetching / Polling / Realtime (Nuxt 4)",
               "to": "framework/vue/examples/auto-refetching"
             },
             {
-              "label": "Optimistic Updates (Nuxt)",
+              "label": "Optimistic Updates (Nuxt 4)",
               "to": "framework/vue/examples/optimistic-updates"
             },
             {
-              "label": "Pagination (Nuxt)",
+              "label": "Pagination (Nuxt 4)",
               "to": "framework/vue/examples/pagination"
             },
             {
-              "label": "Load-More & Infinite Scroll (Nuxt)",
+              "label": "Load-More & Infinite Scroll (Nuxt 4)",
               "to": "framework/vue/examples/load-more-infinite-scroll"
             },
             {
-              "label": "Infinite query with Max pages (Nuxt)",
+              "label": "Infinite query with Max pages (Nuxt 4)",
               "to": "framework/vue/examples/infinite-query-with-max-pages"
             },
             {
-              "label": "Prefetching (Nuxt)",
+              "label": "Prefetching (Nuxt 4)",
               "to": "framework/vue/examples/prefetching"
             }
           ]

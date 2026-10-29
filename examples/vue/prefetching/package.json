@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-vue-prefetching-nuxt",
+  "name": "@tanstack/query-example-vue-prefetching-nuxt4",
   "private": true,
   "type": "module",
   "scripts": {
