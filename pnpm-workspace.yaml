@@ -70,7 +70,6 @@ packages:
   - 'examples/svelte/*'
   - 'examples/vue/*'
   - '!examples/vue/2*'
-  - '!examples/vue/nuxt*'
 
 overrides:
   'chokidar': '5.0.0'
