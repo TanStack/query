@@ -16,6 +16,6 @@
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.105.0",
     "typescript": "^6.0.3",
-    "vite": "^8.3.1"
+    "vite": "^8.3.5"
   }
 }
