@@ -7100,6 +7100,30 @@
             {
               "label": "SSR",
               "to": "framework/lit/examples/ssr"
+            },
+            {
+              "label": "Simple",
+              "to": "framework/lit/examples/simple"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/lit/examples/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/lit/examples/default-query-function"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/lit/examples/playground"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/lit/examples/algolia"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/lit/examples/chat"
             }
           ]
         },

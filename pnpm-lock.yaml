@@ -889,6 +889,28 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
+  examples/lit/algolia:
+    dependencies:
+      '@algolia/client-search':
+        specifier: 5.59.0
+        version: 5.59.0
+      '@tanstack/lit-query':
+        specifier: ^0.2.31
+        version: link:../../../packages/lit-query
+      lit:
+        specifier: ^3.3.3
+        version: 3.3.3
+    devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
   examples/lit/basic:
     dependencies:
       '@tanstack/lit-query':
@@ -908,6 +930,75 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
+  examples/lit/basic-graphql-request:
+    dependencies:
+      '@tanstack/lit-query':
+        specifier: ^0.2.31
+        version: link:../../../packages/lit-query
+      graphql:
+        specifier: ^16.9.0
+        version: 16.13.2
+      graphql-request:
+        specifier: ^7.1.2
+        version: 7.4.0(graphql@16.13.2)
+      lit:
+        specifier: ^3.3.3
+        version: 3.3.3
+    devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
+  examples/lit/chat:
+    dependencies:
+      '@tanstack/lit-query':
+        specifier: ^0.2.31
+        version: link:../../../packages/lit-query
+      lit:
+        specifier: ^3.3.3
+        version: 3.3.3
+    devDependencies:
+      '@tailwindcss/vite':
+        specifier: ^4.3.3
+        version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      tailwindcss:
+        specifier: ^4.3.3
+        version: 4.3.3
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
+  examples/lit/default-query-function:
+    dependencies:
+      '@tanstack/lit-query':
+        specifier: ^0.2.31
+        version: link:../../../packages/lit-query
+      lit:
+        specifier: ^3.3.3
+        version: 3.3.3
+    devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
   examples/lit/pagination:
     dependencies:
       '@tanstack/lit-query':
@@ -926,6 +1017,44 @@ importers:
       vite:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
+
+  examples/lit/playground:
+    dependencies:
+      '@tanstack/lit-query':
+        specifier: ^0.2.31
+        version: link:../../../packages/lit-query
+      lit:
+        specifier: ^3.3.3
+        version: 3.3.3
+    devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
+  examples/lit/simple:
+    dependencies:
+      '@tanstack/lit-query':
+        specifier: ^0.2.31
+        version: link:../../../packages/lit-query
+      lit:
+        specifier: ^3.3.3
+        version: 3.3.3
+    devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
   examples/lit/ssr:
     dependencies:
