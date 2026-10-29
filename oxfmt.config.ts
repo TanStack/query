@@ -15,6 +15,7 @@ export default defineConfig({
     '**/coverage',
     '**/dist',
     '**/query-codemods/**/__testfixtures__',
+    '**/routeTree.gen.ts',
     '.changeset/*.md',
     'pnpm-lock.yaml',
     '**/tsconfig.vitest-temp.json',
