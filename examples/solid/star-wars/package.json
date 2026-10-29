@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-solid-star-wars",
+  "name": "@tanstack/query-example-solid-star-wars-solid-router",
   "private": true,
   "type": "module",
   "scripts": {

@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-vue-offline",
+  "name": "@tanstack/query-example-vue-offline-vue-router",
   "private": true,
   "type": "module",
   "scripts": {

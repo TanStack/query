@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-vue-star-wars",
+  "name": "@tanstack/query-example-vue-star-wars-vue-router",
   "private": true,
   "type": "module",
   "scripts": {

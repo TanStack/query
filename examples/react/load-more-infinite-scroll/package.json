@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-react-load-more-infinite-scroll",
+  "name": "@tanstack/query-example-react-load-more-infinite-scroll-nextjs-pages-router",
   "private": true,
   "type": "module",
   "scripts": {

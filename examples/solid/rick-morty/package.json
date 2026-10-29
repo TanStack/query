@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-solid-rick-morty",
+  "name": "@tanstack/query-example-solid-rick-morty-solid-router",
   "private": true,
   "type": "module",
   "scripts": {

@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-svelte-pagination",
+  "name": "@tanstack/query-example-svelte-pagination-sveltekit",
   "private": true,
   "type": "module",
   "scripts": {

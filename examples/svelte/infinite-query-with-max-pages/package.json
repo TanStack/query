@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-svelte-infinite-query-with-max-pages",
+  "name": "@tanstack/query-example-svelte-infinite-query-with-max-pages-sveltekit",
   "private": true,
   "type": "module",
   "scripts": {
