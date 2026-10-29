@@ -163,6 +163,7 @@ export default defineConfig({
             'extralight', // Our public interface
             'jscodeshift',
             'netinfo', // @react-native-community/netinfo package name
+            'quasis', // ESTree property of template literals
             'refetched', // Query refetch operations
             'refetches', // Query refetch operations
             'retryer', // Our public interface
@@ -174,6 +175,7 @@ export default defineConfig({
             'tsdown', // We use tsdown as builder
             'typecheck', // Field of vite.config.ts
             'vue-demi', // dependency of @tanstack/vue-query
+            'waku', // Framework the require-route-prefetch rule supports
             'ɵkind', // Angular specific
             'ɵproviders', // Angular specific
           ],

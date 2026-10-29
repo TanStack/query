@@ -1,0 +1,1 @@
+export { productOptions } from './products'
