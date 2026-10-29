@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { noop, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { projectsQueries } from '../services/projects/queries'
-import Button from './Button.vue'
-import Spinner from './Spinner.vue'
+import BaseButton from './BaseButton.vue'
+import BaseSpinner from './BaseSpinner.vue'
 
 const emit = defineEmits<{ setActiveProject: [project: string] }>()
 
@@ -23,9 +23,9 @@ const loadProject = (project: string) => {
 
 <template>
   <div>
-    <h1>TanStack Repositories <Spinner v-if="isFetching" /></h1>
+    <h1>TanStack Repositories <BaseSpinner v-if="isFetching" /></h1>
     <p v-for="project in data" :key="project.full_name">
-      <Button @click="loadProject(project.full_name)">Load</Button>
+      <BaseButton @click="loadProject(project.full_name)">Load</BaseButton>
       {{ project.name }}
     </p>
   </div>

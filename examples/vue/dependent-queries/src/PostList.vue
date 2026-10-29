@@ -19,13 +19,13 @@ const { isPending, isError, isFetching, data, error } = useQuery(
     <ul>
       <li v-for="item in data" :key="item.id">
         <a
-          @click="$emit('setPostId', item.id)"
           href="#"
           :class="{
             visited: queryClient.getQueryData(
               postsQueries.detail(item.id).queryKey,
             ),
           }"
+          @click="$emit('setPostId', item.id)"
           >{{ item.title }}</a
         >
       </li>

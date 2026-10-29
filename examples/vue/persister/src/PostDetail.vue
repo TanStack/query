@@ -12,7 +12,7 @@ const { isPending, isError, isFetching, data, error } = useQuery(() =>
 
 <template>
   <h1>Post {{ postId }}</h1>
-  <a @click="$emit('setPostId', -1)" href="#"> Back </a>
+  <a href="#" @click="$emit('setPostId', -1)"> Back </a>
   <div v-if="isPending" class="update">Loading...</div>
   <div v-else-if="isError">An error has occurred: {{ error }}</div>
   <div v-else-if="data">

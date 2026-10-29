@@ -83,6 +83,6 @@ watchEffect(() => {
     </template>
     <hr />
     <NuxtLink to="/about">Go to another page</NuxtLink>
-    <VueQueryDevtools initialIsOpen />
+    <VueQueryDevtools initial-is-open />
   </div>
 </template>

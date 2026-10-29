@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import ErrorPage from '../ErrorPage.vue'
-import Favorite from '../Favorite.vue'
+import FavoriteButton from '../FavoriteButton.vue'
 import { contactsAPI } from '../services/contacts/api'
 import { contactsQueries } from '../services/contacts/queries'
 
@@ -45,7 +45,7 @@ const onDestroy = (contactId: string) => {
         </template>
         <i v-else>No Name</i>
         {{ ' ' }}
-        <Favorite :contact="contact" />
+        <FavoriteButton :contact="contact" />
       </h1>
 
       <p v-if="contact.twitter">

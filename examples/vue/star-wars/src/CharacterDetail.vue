@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import CharacterFilm from './CharacterFilm.vue'
-import Homeworld from './Homeworld.vue'
+import CharacterHomeworld from './CharacterHomeworld.vue'
 import { charactersQueries } from './services/characters/queries'
 
 const props = defineProps<{ characterId: string }>()
@@ -33,14 +33,14 @@ const homeworldId = computed(() =>
     <p><strong>Mass</strong>: {{ data.mass }}</p>
     <p>
       <strong>Homeworld</strong>:
-      <Homeworld v-if="homeworldId" :homeworldId="homeworldId" />
+      <CharacterHomeworld v-if="homeworldId" :homeworld-id="homeworldId" />
     </p>
 
     <h4 class="text-2xl pt-4">Films</h4>
     <CharacterFilm
       v-for="film in data.films"
       :key="getId(film)"
-      :filmId="getId(film)"
+      :film-id="getId(film)"
     />
   </div>
 </template>

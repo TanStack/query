@@ -72,6 +72,6 @@ const onSubmit = () => {
     <div>
       <button @click="clearTodos()">Clear All</button>
     </div>
-    <VueQueryDevtools initialIsOpen />
+    <VueQueryDevtools initial-is-open />
   </div>
 </template>

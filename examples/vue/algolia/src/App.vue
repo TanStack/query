@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
-import Search from './Search.vue'
+import SearchBox from './SearchBox.vue'
 </script>
 
 <template>
   <div class="App">
     <h1>TanStack Query with Algolia</h1>
-    <Search />
+    <SearchBox />
   </div>
-  <VueQueryDevtools initialIsOpen />
+  <VueQueryDevtools initial-is-open />
 </template>

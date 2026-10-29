@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import CharacterEpisode from './CharacterEpisode.vue'
-import Location from './Location.vue'
+import LocationDetail from './LocationDetail.vue'
 import { charactersQueries } from './services/characters/queries'
 
 const props = defineProps<{ characterId: string }>()
@@ -32,7 +32,7 @@ const locationId = computed(() =>
     <p><strong>Origin</strong>: {{ data.origin.name }}</p>
     <p>
       <strong>Location</strong>:
-      <Location v-if="locationId" :locationId="locationId" />
+      <LocationDetail v-if="locationId" :location-id="locationId" />
       <template v-else>{{ data.location.name }}</template>
     </p>
 
@@ -40,7 +40,7 @@ const locationId = computed(() =>
     <CharacterEpisode
       v-for="episode in data.episode"
       :key="getId(episode)"
-      :episodeId="getId(episode)"
+      :episode-id="getId(episode)"
     />
   </div>
 </template>

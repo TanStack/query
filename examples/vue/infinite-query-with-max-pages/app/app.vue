@@ -73,6 +73,6 @@ const {
       </div>
     </template>
     <hr />
-    <VueQueryDevtools initialIsOpen />
+    <VueQueryDevtools initial-is-open />
   </div>
 </template>
