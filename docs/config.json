@@ -7140,6 +7140,26 @@
             {
               "label": "Offline Queries and Mutations",
               "to": "framework/lit/examples/offline"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "framework/lit/examples/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/lit/examples/optimistic-updates"
+            },
+            {
+              "label": "Load-More & Infinite Scroll",
+              "to": "framework/lit/examples/load-more-infinite-scroll"
+            },
+            {
+              "label": "Infinite query with Max pages",
+              "to": "framework/lit/examples/infinite-query-with-max-pages"
+            },
+            {
+              "label": "Prefetching",
+              "to": "framework/lit/examples/prefetching"
             }
           ]
         },
