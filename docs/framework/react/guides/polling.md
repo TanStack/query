@@ -100,6 +100,16 @@ For more on network modes, see [Network Mode](./network-mode.md).
 
 Each `QueryObserver` (each component using `useQuery` with `refetchInterval`) runs its own timer. Two components subscribed to the same key with `refetchInterval: 5 * 1000` each fire their timer every 5 seconds. What gets deduplicated is concurrent in-flight fetches: if two timers fire at the same time, only one network request goes out. The timers are observer-level; the deduplication is query-level.
 
+[//]: # 'ReRenders'
+
+## Note on re-renders
+
+When a polling response contains the same data as before, a component that only reads `data` will not re-render. Structural sharing preserves the `data` reference, and tracked properties prevent re-renders caused by changes to properties the component doesn't use (see [Render Optimizations](./render-optimizations.md)). However, reading a property like `isFetching`, which changes on every polling cycle, will trigger re-renders.
+
+As a result, values calculated from the current time during render won't update as long as the data remains unchanged. For example, a message that should appear after 30 seconds, such as "This is taking longer than expected," may never appear. Time-dependent UI state should be updated using a separate timer.
+
+[//]: # 'ReRenders'
+
 [//]: # 'ReactNative'
 
 ## Non-browser environments
