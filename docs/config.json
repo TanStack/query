@@ -6726,8 +6726,8 @@
           "to": "eslint/prefer-query-options"
         },
         {
-          "label": "Require Route Prefetch",
-          "to": "eslint/require-route-prefetch"
+          "label": "Require Prefetch",
+          "to": "eslint/require-prefetch"
         }
       ]
     },
