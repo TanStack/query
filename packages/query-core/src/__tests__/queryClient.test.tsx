@@ -452,6 +452,26 @@ describe('queryClient', () => {
       await vi.advanceTimersByTimeAsync(5)
       expect(queryClient.isMutating()).toBe(0)
     })
+
+    it('should honour a status filter instead of only counting pending mutations', async () => {
+      new MutationObserver(queryClient, {
+        mutationFn: () => sleep(10).then(() => 'data'),
+      }).mutate()
+
+      expect(queryClient.isMutating()).toBe(1)
+      expect(queryClient.isMutating({ status: undefined })).toBe(1)
+      expect(queryClient.isMutating({ status: 'pending' })).toBe(1)
+      expect(queryClient.isMutating({ status: 'success' })).toBe(0)
+      expect(queryClient.isMutating({ status: 'error' })).toBe(0)
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(queryClient.isMutating()).toBe(0)
+      expect(queryClient.isMutating({ status: undefined })).toBe(0)
+      expect(queryClient.isMutating({ status: 'pending' })).toBe(0)
+      expect(queryClient.isMutating({ status: 'success' })).toBe(1)
+      expect(queryClient.isMutating({ status: 'error' })).toBe(0)
+    })
   })
 
   describe('getQueryData', () => {

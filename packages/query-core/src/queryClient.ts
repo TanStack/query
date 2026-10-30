@@ -157,8 +157,9 @@ export class QueryClient {
    * Returns the number of mutations in the cache that are currently pending, optionally
    * matching a set of filters.
    * @param filters - Narrows down which pending mutations are counted. Without filters, every
-   * pending mutation is counted.
-   * @returns The number of matching mutations whose `status` is `'pending'`.
+   * pending mutation is counted. Passing a `status` overrides the default of `'pending'`.
+   * @returns The number of matching mutations, filtered to `status: 'pending'` unless
+   * `filters.status` says otherwise.
    * @example
    * ```ts
    * if (queryClient.isMutating()) {
@@ -169,7 +170,10 @@ export class QueryClient {
   isMutating<
     TMutationFilters extends MutationFilters<any, any> = MutationFilters,
   >(filters?: TMutationFilters): number {
-    return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
+    return this.#mutationCache.findAll({
+      ...filters,
+      status: filters?.status ?? 'pending',
+    }).length
   }
 
   /**
