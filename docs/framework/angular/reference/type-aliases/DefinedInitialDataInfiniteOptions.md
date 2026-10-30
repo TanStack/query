@@ -9,10 +9,10 @@ title: DefinedInitialDataInfiniteOptions
 type DefinedInitialDataInfiniteOptions<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown> = CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:106](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L106)
+Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:107](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L107)
 
-The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
-never `undefined` (unless a `select` changes `TData` to include `undefined`).
+The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is known to be
+defined — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ## Type Parameters
 
@@ -54,8 +54,7 @@ The type of the parameter passed to `queryFn` to fetch a given page.
 ```ts
 initialData: 
   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-  | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
-  | undefined;
+  | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>);
 ```
 
 If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
