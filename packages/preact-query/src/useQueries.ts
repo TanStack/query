@@ -379,6 +379,13 @@ export function useQueries<
       (options as QueriesObserverOptions<TCombinedResult>).combine,
     )
 
+  useEffect(() => {
+    observer.setQueries(
+      defaultedQueries,
+      options as QueriesObserverOptions<TCombinedResult>,
+    )
+  }, [defaultedQueries, options, observer])
+
   const shouldSubscribe = !isRestoring && subscribed
   useSyncExternalStore(
     useCallback(
@@ -390,13 +397,6 @@ export function useQueries<
     ),
     () => observer.getCurrentResult(),
   )
-
-  useEffect(() => {
-    observer.setQueries(
-      defaultedQueries,
-      options as QueriesObserverOptions<TCombinedResult>,
-    )
-  }, [defaultedQueries, options, observer])
 
   const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result),
