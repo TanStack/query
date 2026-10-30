@@ -61,7 +61,7 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
-  it('keeps initialData required when it is defined', () => {
+  it('should keep initialData required when it is defined', () => {
     const options = infiniteQueryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve({ example: true }),
@@ -73,7 +73,7 @@ describe('infiniteQueryOptions', () => {
     expectTypeOf<undefined>().not.toExtend<typeof options.initialData>()
   })
 
-  it('keeps data possibly undefined when initialData is a ternary that can be undefined', () => {
+  it('should keep data possibly undefined when initialData is a ternary that can be undefined', () => {
     const options = infiniteQueryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve({ example: true }),

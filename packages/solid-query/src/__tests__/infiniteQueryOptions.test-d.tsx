@@ -137,7 +137,7 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
-  it('keeps data possibly undefined when initialData is a ternary that can be undefined', () => {
+  it('should keep data possibly undefined when initialData is a ternary that can be undefined', () => {
     const options = infiniteQueryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve({ example: true }),
