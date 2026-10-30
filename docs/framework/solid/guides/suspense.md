@@ -14,7 +14,7 @@ import { Suspense } from 'solid-js'
 </Suspense>
 ```
 
-You can use async `suspense` function that is provided by `solid-query`.
+Then read the query's `data` inside that boundary. The `data` property is a Solid resource, so reading it suspends the component until the query has data.
 
 ```tsx
 import { useQuery } from '@tanstack/solid-query'

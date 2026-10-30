@@ -6,6 +6,19 @@ const ruleTester = new RuleTester()
 
 ruleTester.run('stable-query-client', rule, {
   valid: [
+    ...[
+      'const Component = () => { const [client] = React.useState(() => new QueryClient()); return client; }',
+      'const useClient = () => React.useState(() => new QueryClient());',
+      'const Component = function() { const [client] = React.useState(() => new QueryClient()); return client; }',
+      'function Component() { const [client] = React.useState(() => { const client = new QueryClient(); return client; }); return client; }',
+      'const Component = () => { const [client] = React.useState(() => { const client = new QueryClient(); return client; }); return client; }',
+      'function Component() { function createClient() { const client = new QueryClient(); return client; } return createClient; }',
+      'const createClient = () => { const client = new QueryClient(); return client; }',
+      'const ServerComponent = async () => { const client = new QueryClient(); return client; }',
+      'const client = new QueryClient();',
+    ].map((code) => ({
+      code: `import { QueryClient } from "@tanstack/react-query";\n${code}`,
+    })),
     {
       name: 'QueryClient is stable when wrapped in React.useState',
       code: normalizeIndent`
@@ -119,6 +132,27 @@ ruleTester.run('stable-query-client', rule, {
     },
   ],
   invalid: [
+    ...['Component', 'useClient'].flatMap((name) =>
+      ['() =>', 'function()'].map((fn) => ({
+        code: `import { QueryClient } from "@tanstack/react-query";
+const ${name} = ${fn} { const client = new QueryClient(); return client; }`,
+        output: `import { QueryClient } from "@tanstack/react-query";
+const ${name} = ${fn} { const [client] = React.useState(() => new QueryClient()); return client; }`,
+        errors: [{ messageId: 'unstable' as const }],
+      })),
+    ),
+    ...[
+      'function Component() { return <QueryClientProvider client={new QueryClient()} />; }',
+      'const Component = () => { return <QueryClientProvider client={new QueryClient()} />; }',
+      'const Component = () => <QueryClientProvider client={new QueryClient()} />;',
+      'const useClient = () => new QueryClient();',
+    ].map((code) => ({
+      filename: 'test.tsx',
+      languageOptions: { parserOptions: { ecmaFeatures: { jsx: true } } },
+      code: `import { QueryClient, QueryClientProvider } from "@tanstack/react-query";\n${code}`,
+      output: null,
+      errors: [{ messageId: 'unstable' as const }],
+    })),
     {
       name: 'QueryClient is not stable when it is not wrapped in React.useState in component',
       code: normalizeIndent`

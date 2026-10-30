@@ -32,7 +32,7 @@ export function Blink({
   const [shouldShow, setShouldShow] = React.useState<boolean>(true)
 
   React.useEffect(() => {
-    // oxlint-disable-next-line react-hooks-js/set-state-in-effect
+    // oxlint-disable-next-line react-hooks-js/set-state-in-effect -- shows the children again whenever they or 'duration' change, before the timeout hides them
     setShouldShow(true)
     const timeout = setActTimeout(() => setShouldShow(false), duration)
     return () => {

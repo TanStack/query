@@ -7,8 +7,8 @@ title: UseIsFetchingFilters
 
 ```ts
 type UseIsFetchingFilters = 
-  | MaybeRefDeep<QueryFilters>
-  | (() => MaybeRefDeep<QueryFilters>);
+  | MaybeRefDeep<Omit<QueryFilters, "fetchStatus">>
+  | (() => MaybeRefDeep<Omit<QueryFilters, "fetchStatus">>);
 ```
 
 Defined in: [packages/vue-query/src/useIsFetching.ts:13](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useIsFetching.ts#L13)

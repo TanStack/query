@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import './styles.css'
 import Search from './Search'
@@ -12,6 +13,7 @@ export default function App() {
         <h1>TanStack Query with Algolia</h1>
         <Search />
       </div>
+      <ReactQueryDevtools initialIsOpen />
     </QueryClientProvider>
   )
 }

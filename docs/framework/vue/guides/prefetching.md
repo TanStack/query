@@ -24,7 +24,7 @@ const prefetchTodos = async () => {
 [//]: # 'ExamplePrefetching'
 
 - If **fresh** data for this query is already in the cache, the data will not be fetched
-- If a `staleTime` is passed e.g. `queryClient.query({ queryKey: ['todos'], queryFn: fn, staleTime: 5000 })` and the data is older than the specified `staleTime`, the query will be fetched
+- If a `staleTime` is passed e.g. `queryClient.query({ queryKey: ['todos'], queryFn: fn, staleTime: 5 * 1000 })` and the data is older than the specified `staleTime`, the query will be fetched
 - As `useQuery` will retry fetches and handle errors, you can use `void` to ignore the promise from `query` and `.catch(noop)` to ignore errors.
 - If you want to always return cached data when it exists, use `staleTime: 'static'`
 - If no instances of `useQuery` appear for a prefetched query, it will be deleted and garbage collected after the time specified in `gcTime`.

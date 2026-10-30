@@ -2,8 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import { noop, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { characterQueryOptions, charactersQueryOptions } from '../api'
-import type { Character } from '../api'
+import { charactersQueries } from '../services/characters/queries'
+import type { Character } from '../services/characters/types'
 
 function CharacterItem({
   char,
@@ -15,36 +15,31 @@ function CharacterItem({
   const queryClient = useQueryClient()
 
   const { data } = useQuery({
-    ...characterQueryOptions(char.id),
+    ...charactersQueries.detail(char.id),
     enabled: false,
   })
 
+  const prefetch = () => {
+    queryClient
+      .query({
+        ...charactersQueries.detail(char.id),
+        staleTime: 10 * 1000, // only prefetch if older than 10 seconds
+      })
+      .catch(noop)
+  }
+
   return (
-    <li
-      onClick={() => {
-        onSelect(char.id)
-      }}
-      onMouseEnter={() => {
-        queryClient
-          .query({
-            ...characterQueryOptions(char.id),
-            staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-          })
-          .catch(noop)
-      }}
-    >
-      <div
-        style={
-          data
-            ? {
-                fontWeight: 'bold',
-              }
-            : {}
-        }
+    <li onMouseEnter={prefetch} onFocus={prefetch}>
+      <button
+        type="button"
+        style={data ? { fontWeight: 'bold' } : {}}
+        onClick={() => {
+          onSelect(char.id)
+        }}
       >
-        {char.id} - {char.name}{' '}
-        <Link href={`/character/${char.id}`}>details</Link>
-      </div>
+        {char.id} - {char.name}
+      </button>{' '}
+      <Link href={`/character/${char.id}`}>details</Link>
     </li>
   )
 }
@@ -52,9 +47,9 @@ function CharacterItem({
 export default function Example() {
   const [selectedChar, setSelectedChar] = React.useState(1)
 
-  const charactersQuery = useQuery(charactersQueryOptions)
+  const charactersQuery = useQuery(charactersQueries.list())
 
-  const characterQuery = useQuery(characterQueryOptions(selectedChar))
+  const characterQuery = useQuery(charactersQueries.detail(selectedChar))
 
   return (
     <div className="App">

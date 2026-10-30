@@ -2,12 +2,12 @@
   import { createQuery } from '@tanstack/svelte-query'
   import Homeworld from './Homeworld.svelte'
   import Film from './Film.svelte'
-  import { characterQueryOptions } from '$lib/api'
+  import { charactersQueries } from '$lib/services/characters/queries'
   import type { PageProps } from './$types'
 
   let { params }: PageProps = $props()
 
-  const query = createQuery(() => characterQueryOptions(params.characterId))
+  const query = createQuery(() => charactersQueries.detail(params.characterId))
 </script>
 
 {#if query.status === 'pending'}
