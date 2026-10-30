@@ -47,6 +47,9 @@ import type {
  * `getQueryData` that take the `queryKey` array as their own argument do not unwrap getter entries there,
  * and the getter function itself ends up in the cache key.
  *
+ * `query`, `fetchQuery`, and `prefetchQuery` also accept {@link UseQueryOptions}. Observer-only options in
+ * it, such as `enabled`, are accepted but ignored.
+ *
  * Install one on your app with `VueQueryPlugin`, or retrieve it with `useQueryClient`.
  */
 export class QueryClient extends QC {
