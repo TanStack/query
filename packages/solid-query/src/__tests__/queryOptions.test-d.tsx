@@ -112,6 +112,18 @@ describe('queryOptions', () => {
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<number>()
   })
 
+  it('should keep data possibly undefined and tag the queryKey with the result type of the QueryFn when initialData may be undefined', () => {
+    const options = queryOptions({
+      queryKey: createKey(),
+      queryFn: () => Promise.resolve(5),
+      initialData: Math.random() > 0.5 ? 5 : undefined,
+    })
+    const { data } = useQuery(() => options)
+
+    expectTypeOf(data).toEqualTypeOf<number | undefined>()
+    expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<number>()
+  })
+
   it('should tag the queryKey even if no promise is returned', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: createKey(),
