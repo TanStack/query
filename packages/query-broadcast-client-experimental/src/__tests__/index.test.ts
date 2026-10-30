@@ -164,6 +164,80 @@ describe('broadcastQueryClient', () => {
       expect(queryClient.getQueryState(existingKey)?.status).toBe('success')
     })
 
+    it('should preserve an existing query error when an empty "added" message arrives', async () => {
+      const existingKey = queryKey()
+      const error = new Error('down')
+
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
+
+      const existingQuery = queryCache.build(queryClient, {
+        queryKey: existingKey,
+      })
+      const emptyState = existingQuery.state
+
+      await expect(
+        queryClient.query({
+          queryKey: existingKey,
+          queryFn: () => Promise.reject(error),
+          retry: false,
+        }),
+      ).rejects.toBe(error)
+      const errorState = existingQuery.state
+      expect(errorState.errorUpdatedAt).toBeGreaterThan(0)
+
+      lastCreatedChannel.onmessage?.({
+        type: 'added',
+        queryHash: existingQuery.queryHash,
+        queryKey: existingKey,
+        state: emptyState,
+      })
+
+      expect(existingQuery.state).toBe(errorState)
+      expect(existingQuery.state).toMatchObject({
+        status: 'error',
+        fetchStatus: 'idle',
+        data: undefined,
+        error,
+      })
+    })
+
+    it('should preserve an existing fetch when an empty "added" message arrives', async () => {
+      const existingKey = queryKey()
+
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
+
+      const existingQuery = queryCache.build(queryClient, {
+        queryKey: existingKey,
+      })
+      const emptyState = existingQuery.state
+      const promise = queryClient.query({
+        queryKey: existingKey,
+        queryFn: async () => {
+          await sleep(10)
+          return 'local data'
+        },
+      })
+      const fetchingState = existingQuery.state
+      expect(fetchingState.fetchStatus).toBe('fetching')
+
+      lastCreatedChannel.onmessage?.({
+        type: 'added',
+        queryHash: existingQuery.queryHash,
+        queryKey: existingKey,
+        state: emptyState,
+      })
+
+      expect(existingQuery.state).toBe(fetchingState)
+      expect(existingQuery.state.fetchStatus).toBe('fetching')
+      await expect(promise).resolves.toBe('local data')
+    })
+
     it('should adopt an "added" message\'s state for an existing query that has no data yet', () => {
       const existingKey = createKey()
 
@@ -184,11 +258,44 @@ describe('broadcastQueryClient', () => {
         type: 'added',
         queryHash: existingQuery.queryHash,
         queryKey: existingKey,
-        state: { status: 'success', data: { value: 'from other tab' } },
+        state: {
+          status: 'success',
+          data: { value: 'from other tab' },
+          dataUpdatedAt: Date.now(),
+        },
       })
       expect(queryClient.getQueryData(existingKey)).toStrictEqual({
         value: 'from other tab',
       })
+    })
+
+    it('should adopt a settled error from an "added" message for an existing query without data', () => {
+      const existingKey = queryKey()
+      const error = new Error('remote error')
+
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
+
+      const existingQuery = queryCache.build(queryClient, {
+        queryKey: existingKey,
+      })
+      const state = {
+        ...existingQuery.state,
+        status: 'error' as const,
+        error,
+        errorUpdatedAt: Date.now(),
+      }
+
+      lastCreatedChannel.onmessage?.({
+        type: 'added',
+        queryHash: existingQuery.queryHash,
+        queryKey: existingKey,
+        state,
+      })
+
+      expect(existingQuery.state).toStrictEqual(state)
     })
   })
 
