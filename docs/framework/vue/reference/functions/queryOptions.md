@@ -37,8 +37,8 @@ You can generally pass everything to `queryOptions` that you can also pass to `u
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
 is the query key to generate options for.
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
-a `select` changes `TData` to include `undefined`).
+This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+`undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -64,8 +64,8 @@ a `select` changes `TData` to include `undefined`).
 
 [`DefinedInitialQueryOptions`](../type-aliases/DefinedInitialQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
-The [DefinedInitialQueryOptions](../type-aliases/DefinedInitialQueryOptions.md) to use — everything you can pass to `useQuery`, with
-`initialData` set.
+The [DefinedInitialQueryOptions](../type-aliases/DefinedInitialQueryOptions.md) to use — everything you can pass to `useQuery`,
+with `initialData` known to be defined.
 
 ### Returns
 

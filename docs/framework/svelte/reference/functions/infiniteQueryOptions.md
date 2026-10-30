@@ -62,7 +62,7 @@ This overload is selected when `initialData` is known to be defined.
 [`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
 The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
-`createInfiniteQuery`, with `initialData` set.
+`createInfiniteQuery`, with `initialData` known to be defined.
 
 ### Returns
 

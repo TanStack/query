@@ -31,8 +31,8 @@ You can generally pass everything to `queryOptions` that you can also pass to `c
 can be shared across `createQuery` calls and imperative APIs such as `queryClient.query`. `options.queryKey`
 is required and is the query key to generate options for.
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
-a `select` changes `TData` to include `undefined`).
+This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+`undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -59,7 +59,7 @@ a `select` changes `TData` to include `undefined`).
 [`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `createQuery`,
-with `initialData` set.
+with `initialData` known to be defined.
 
 ### Returns
 

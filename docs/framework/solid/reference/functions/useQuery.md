@@ -32,8 +32,8 @@ Defined in: [packages/solid-query/src/useQuery.ts:57](https://github.com/TanStac
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
-a `select` changes `TData` to include `undefined`).
+This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+`undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -60,7 +60,7 @@ a `select` changes `TData` to include `undefined`).
 [`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 An accessor returning the [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can
-pass to `useQuery`, with `initialData` set.
+pass to `useQuery`, with `initialData` known to be defined.
 
 #### queryClient?
 

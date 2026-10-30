@@ -62,8 +62,8 @@ This overload is selected when `initialData` is known to be defined.
 
 [`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
-An accessor returning the [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfiniteOptions.md) to use — everything you
-can pass to `useInfiniteQuery`, with `initialData` set.
+An accessor returning the [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfiniteOptions.md) to use — everything
+you can pass to `useInfiniteQuery`, with `initialData` known to be defined.
 
 #### queryClient?
 

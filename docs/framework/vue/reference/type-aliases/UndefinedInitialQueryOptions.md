@@ -11,8 +11,8 @@ type UndefinedInitialQueryOptions<TQueryFnData = unknown, TError = DefaultError,
 
 Defined in: [packages/vue-query/src/queryOptions.ts:173](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L173)
 
-The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
-`undefined` while the query is `pending`.
+The options accepted by the `queryOptions` overload selected when `initialData` is omitted or may be
+`undefined` — `data` may be `undefined` while the query is `pending`.
 
 ## Type Parameters
 

@@ -11,8 +11,8 @@ type UndefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultError, 
 
 Defined in: [packages/angular-query-experimental/src/query-options.ts:21](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L21)
 
-The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
-`undefined` while the query is `pending`.
+The options accepted by the `queryOptions` overload selected when `initialData` is omitted or may be
+`undefined` — `data` may be `undefined` while the query is `pending`.
 
 ## Type Parameters
 
