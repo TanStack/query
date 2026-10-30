@@ -8,7 +8,9 @@ title: CreateBaseMutationResult
 ```ts
 type CreateBaseMutationResult<TData = unknown, TError = DefaultError, TVariables = unknown, TOnMutateResult = unknown> = Override<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>, {
   mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>;
-}> & object;
+}> & {
+  mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult>;
+};
 ```
 
 Defined in: [packages/angular-query-experimental/src/types.ts:281](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L281)
