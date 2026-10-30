@@ -43,6 +43,8 @@ export const rule = createRule({
         "The query '{{options}}' used by '{{hook}}'{{location}} is prefetched in {{site}}, but the component isn't rendered inside a '<HydrationBoundary state={dehydrate(queryClient)}>', so the prefetched data doesn't reach the client.",
       loaderNotDehydrated:
         "The query '{{options}}' used by '{{hook}}'{{location}} is only prefetched in a server 'loader' that doesn't call 'dehydrate(queryClient)', so the prefetched data doesn't reach the client. Return the dehydrated state and render it in a '<HydrationBoundary>', or prefetch in 'clientLoader'.",
+      loaderNotHydrated:
+        "The query '{{options}}' used by '{{hook}}'{{location}} is prefetched in a server 'loader' that calls 'dehydrate(queryClient)', but no '<HydrationBoundary>' renders this route's dehydrated state, so the prefetched data doesn't reach the client. Render the loader's dehydrated state in a '<HydrationBoundary>', or prefetch in 'clientLoader'.",
       clientQueryOptions:
         "'{{name}}' is imported from '{{file}}', which has a 'use client' directive, so on the server it is a client reference and can't be called. Move the query options to a module without 'use client'.",
       searchParamsMismatch:

@@ -13,8 +13,11 @@ import type { ModuleExport, ModuleFile, ModuleGraph } from './module-graph'
 export type Provenance =
   /** A value the routing environment provides, such as route params or search params. */
   | { type: 'binding'; name: string }
-  /** A module-level value, identified by the module that declares it and its exported name. */
-  | { type: 'static'; module: string; name: string }
+  /**
+   * A module-level value, identified by the module that declares it and its exported name, and the
+   * first `'use client'` file it was re-exported through, which isn't part of its identity.
+   */
+  | { type: 'static'; module: string; name: string; clientModule?: string }
   /** A global, such as `Number` or `undefined`. */
   | { type: 'global'; name: string }
   | { type: 'literal'; value: string }
@@ -259,7 +262,9 @@ function getPartialProvenance(
  * @returns The serialized provenance.
  */
 export function serializeProvenance(provenance: Provenance): string {
-  return JSON.stringify(provenance)
+  return JSON.stringify(provenance, (key, value: unknown) =>
+    key === 'clientModule' ? undefined : value,
+  )
 }
 
 /**
@@ -279,7 +284,12 @@ function member(object: Provenance, property: string): Provenance | null {
   }
   // `import * as queries from './queries'` then `queries.postOptions`
   if (object.type === 'static' && object.name === '*') {
-    return { type: 'static', module: object.module, name: property }
+    return {
+      type: 'static',
+      module: object.module,
+      name: property,
+      ...(object.clientModule && { clientModule: object.clientModule }),
+    }
   }
   return { type: 'member', object, property }
 }

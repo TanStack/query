@@ -313,26 +313,116 @@ export function isInsideHydrationBoundary(
   ) {
     if (
       current.type === AST_NODE_TYPES.JSXElement &&
-      current.openingElement.name.type === AST_NODE_TYPES.JSXIdentifier
+      isHydrationBoundary(env, current)
     ) {
-      const definition = findVariable(
-        env.graph,
-        current,
-        current.openingElement.name.name,
-      )?.defs[0]
-      if (
-        definition?.type === 'ImportBinding' &&
-        definition.parent.type === AST_NODE_TYPES.ImportDeclaration &&
-        definition.parent.source.value === querySource &&
-        definition.node.type === AST_NODE_TYPES.ImportSpecifier &&
-        definition.node.imported.type === AST_NODE_TYPES.Identifier &&
-        definition.node.imported.name === 'HydrationBoundary'
-      ) {
-        return true
-      }
+      return true
     }
   }
   return false
+}
+
+/**
+ * Checks whether a JSX element renders TanStack Query's `<HydrationBoundary>`.
+ * @param env - The routing environment, used to resolve the element's name.
+ * @param element - The JSX element.
+ * @returns `true` for a `HydrationBoundary` imported from TanStack Query.
+ */
+function isHydrationBoundary(
+  env: ProvenanceEnvironment,
+  element: TSESTree.JSXElement,
+): boolean {
+  const name = element.openingElement.name
+  if (name.type !== AST_NODE_TYPES.JSXIdentifier) {
+    return false
+  }
+  const definition = findVariable(env.graph, element, name.name)?.defs[0]
+  return (
+    definition?.type === 'ImportBinding' &&
+    definition.parent.type === AST_NODE_TYPES.ImportDeclaration &&
+    definition.parent.source.value === querySource &&
+    definition.node.type === AST_NODE_TYPES.ImportSpecifier &&
+    definition.node.imported.type === AST_NODE_TYPES.Identifier &&
+    definition.node.imported.name === 'HydrationBoundary'
+  )
+}
+
+/**
+ * Finds the dehydrated state a component, or a component it renders or a hook it calls, hydrates:
+ * the `state` of each `<HydrationBoundary>` and the state passed to each `hydrate()` call from
+ * TanStack Query.
+ * @param env - The routing environment.
+ * @param root - The component to start from.
+ * @returns The provenance of each state, `null` for states that can't be tracked.
+ */
+export function findHydratedStates(
+  env: ProvenanceEnvironment,
+  root: RenderRoot<undefined>,
+): Array<Provenance | null> {
+  const states: Array<Provenance | null> = []
+  walkRenderTree(env, root, {
+    enter: (frame) => {
+      walk(env.graph, frame.fn.body, (node) => {
+        if (
+          node.type === AST_NODE_TYPES.JSXElement &&
+          isHydrationBoundary(env, node)
+        ) {
+          states.push(getStateAttribute(env, node.openingElement))
+        } else if (
+          node.type === AST_NODE_TYPES.CallExpression &&
+          node.callee.type === AST_NODE_TYPES.Identifier &&
+          isQueryImport(env, node.callee, 'hydrate')
+        ) {
+          const state = node.arguments[1]
+          states.push(state ? getProvenance(state, env) : null)
+        }
+      })
+      return undefined
+    },
+    query: () => {},
+  })
+  return states
+}
+
+/**
+ * Reads the `state` a `<HydrationBoundary>` receives.
+ * @param env - The routing environment.
+ * @param element - The opening element of the boundary.
+ * @returns The provenance of the state, or `null` if it can't be tracked.
+ */
+function getStateAttribute(
+  env: ProvenanceEnvironment,
+  element: TSESTree.JSXOpeningElement,
+): Provenance | null {
+  for (const attribute of element.attributes) {
+    if (attribute.type === AST_NODE_TYPES.JSXSpreadAttribute) {
+      return null
+    }
+    if (
+      attribute.name.type === AST_NODE_TYPES.JSXIdentifier &&
+      attribute.name.name === 'state' &&
+      attribute.value?.type === AST_NODE_TYPES.JSXExpressionContainer &&
+      attribute.value.expression.type !== AST_NODE_TYPES.JSXEmptyExpression
+    ) {
+      return getProvenance(attribute.value.expression, env)
+    }
+  }
+  return null
+}
+
+/**
+ * Checks whether an identifier refers to an export of TanStack Query.
+ * @param env - The routing environment.
+ * @param node - The identifier.
+ * @param name - The exported name.
+ * @returns `true` if the identifier is that export, imported from TanStack Query.
+ */
+function isQueryImport(
+  env: ProvenanceEnvironment,
+  node: TSESTree.Identifier,
+  name: string,
+): boolean {
+  const imported = getImport(env.graph, node)
+  return imported?.source === querySource && imported.name === name
 }
 
 /**
@@ -442,7 +532,7 @@ export function getJsxProps(
  * @param args - The values of the parameters.
  * @param run - The function to run.
  */
-function withBindings(
+export function withBindings(
   env: ProvenanceEnvironment,
   fn: FunctionNode,
   args: Array<Provenance | null>,

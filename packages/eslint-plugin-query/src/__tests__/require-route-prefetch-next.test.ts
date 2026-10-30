@@ -105,6 +105,95 @@ ruleTester.run('require-route-prefetch (Next.js)', rule, {
       `,
     },
     {
+      name: 'a layout passes its children to a server component that prefetches and dehydrates around them',
+      filename: nextProject({
+        'app/layout.tsx': code`
+          import { Suspense } from 'react'
+          import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
+          import { userOptions } from './queries'
+
+          export default function RootLayout({ children }) {
+            return (
+              <html>
+                <body>
+                  <Suspense>
+                    <AppShell>{children}</AppShell>
+                  </Suspense>
+                </body>
+              </html>
+            )
+          }
+
+          async function AppShell({ children }) {
+            const queryClient = new QueryClient()
+            void queryClient.query(userOptions)
+            return (
+              <HydrationBoundary state={dehydrate(queryClient)}>
+                <main>{children}</main>
+              </HydrationBoundary>
+            )
+          }
+        `,
+        'app/account/user-menu.tsx': code`
+          'use client'
+          import { useSuspenseQuery } from '@tanstack/react-query'
+          import { userOptions } from '../queries'
+
+          export const UserMenu = () => {
+            useSuspenseQuery(userOptions)
+            return null
+          }
+        `,
+      })('app/account/page.tsx'),
+      code: code`
+        import { UserMenu } from './user-menu'
+
+        export default function Page() {
+          return <UserMenu />
+        }
+      `,
+    },
+    {
+      name: 'a layout prefetches and passes its children as a prop to a component with the boundary',
+      filename: nextProject({
+        'app/layout.tsx': code`
+          import { QueryClient, dehydrate } from '@tanstack/react-query'
+          import { Hydrate } from './hydrate'
+          import { userOptions } from './queries'
+
+          export default function RootLayout({ children }) {
+            const queryClient = new QueryClient()
+            void queryClient.query(userOptions)
+            return <Hydrate state={dehydrate(queryClient)} children={children} />
+          }
+        `,
+        'app/hydrate.tsx': code`
+          import { HydrationBoundary } from '@tanstack/react-query'
+
+          export function Hydrate({ state, children }) {
+            return <HydrationBoundary state={state}>{children}</HydrationBoundary>
+          }
+        `,
+        'app/account/user-menu.tsx': code`
+          'use client'
+          import { useSuspenseQuery } from '@tanstack/react-query'
+          import { userOptions } from '../queries'
+
+          export const UserMenu = () => {
+            useSuspenseQuery(userOptions)
+            return null
+          }
+        `,
+      })('app/account/page.tsx'),
+      code: code`
+        import { UserMenu } from './user-menu'
+
+        export default function Page() {
+          return <UserMenu />
+        }
+      `,
+    },
+    {
       name: 'a layout above the page prefetches and dehydrates around its children',
       filename: nextProject({
         'app/layout.tsx': code`
@@ -494,6 +583,163 @@ ruleTester.run('require-route-prefetch (Next.js)', rule, {
         }
       `,
       errors: [{ messageId: 'notDehydrated', line: 18 }],
+    },
+    {
+      name: 'a layout passes its children to a server component that prefetches outside its boundary',
+      filename: nextProject({
+        'app/posts/layout.tsx': code`
+          import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
+          import { postOptions } from '../queries'
+
+          export default function Layout({ children }) {
+            return <Shell>{children}</Shell>
+          }
+
+          async function Shell({ children }) {
+            const queryClient = new QueryClient()
+            await queryClient.query(postOptions('1'))
+            return (
+              <div>
+                <HydrationBoundary state={dehydrate(queryClient)}>
+                  <nav />
+                </HydrationBoundary>
+                {children}
+              </div>
+            )
+          }
+        `,
+      })('app/posts/[id]/page.tsx'),
+      code: code`
+        import { PostInfo } from './post-info'
+
+        export default function Page() {
+          return <PostInfo id="1" />
+        }
+      `,
+      errors: [
+        {
+          messageId: 'notDehydrated',
+          data: {
+            hook: 'useSuspenseQuery',
+            method: 'query',
+            options: 'postOptions(id)',
+            location: " in './post-info.tsx'",
+            site: "'../layout.tsx'",
+          },
+        },
+      ],
+    },
+    {
+      name: 'a layout passes its children to an imported component that prefetches outside its boundary',
+      filename: nextProject({
+        'app/posts/layout.tsx': code`
+          import { Shell } from './shell'
+
+          export default function Layout({ children }) {
+            return <Shell>{children}</Shell>
+          }
+        `,
+        'app/posts/shell.tsx': code`
+          import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
+          import { postOptions } from '../queries'
+
+          export async function Shell({ children }) {
+            const queryClient = new QueryClient()
+            await queryClient.query(postOptions('1'))
+            return (
+              <div>
+                <HydrationBoundary state={dehydrate(queryClient)}>
+                  <nav />
+                </HydrationBoundary>
+                {children}
+              </div>
+            )
+          }
+        `,
+      })('app/posts/[id]/page.tsx'),
+      code: code`
+        import { PostInfo } from './post-info'
+
+        export default function Page() {
+          return <PostInfo id="1" />
+        }
+      `,
+      errors: [
+        {
+          messageId: 'notDehydrated',
+          data: {
+            hook: 'useSuspenseQuery',
+            method: 'query',
+            options: 'postOptions(id)',
+            location: " in './post-info.tsx'",
+            site: "'../shell.tsx'",
+          },
+        },
+      ],
+    },
+    {
+      name: "query options re-exported from a 'use client' module",
+      filename: nextProject({
+        'app/posts/[id]/client-queries.ts': code`
+          'use client'
+          export { postOptions } from '../../queries'
+        `,
+      })('app/posts/[id]/page.tsx'),
+      code: code`
+        import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
+        import { postOptions } from './client-queries'
+        import { PostInfo } from './post-info'
+
+        export default async function Page({ params }) {
+          const { id } = await params
+          const queryClient = new QueryClient()
+          void queryClient.query(postOptions(id))
+          return (
+            <HydrationBoundary state={dehydrate(queryClient)}>
+              <PostInfo id={id} />
+            </HydrationBoundary>
+          )
+        }
+      `,
+      errors: [
+        {
+          messageId: 'clientQueryOptions',
+          line: 8,
+          data: { name: 'postOptions', file: './client-queries.ts' },
+        },
+      ],
+    },
+    {
+      name: "query options re-exported with export * from a 'use client' module",
+      filename: nextProject({
+        'app/posts/[id]/client-queries.ts': code`
+          'use client'
+          export * from '../../queries'
+        `,
+      })('app/posts/[id]/page.tsx'),
+      code: code`
+        import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
+        import { postOptions } from './client-queries'
+        import { PostInfo } from './post-info'
+
+        export default async function Page({ params }) {
+          const { id } = await params
+          const queryClient = new QueryClient()
+          void queryClient.query(postOptions(id))
+          return (
+            <HydrationBoundary state={dehydrate(queryClient)}>
+              <PostInfo id={id} />
+            </HydrationBoundary>
+          )
+        }
+      `,
+      errors: [
+        {
+          messageId: 'clientQueryOptions',
+          line: 8,
+          data: { name: 'postOptions', file: './client-queries.ts' },
+        },
+      ],
     },
     {
       name: "query options imported from a 'use client' module",
