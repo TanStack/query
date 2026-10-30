@@ -9,7 +9,7 @@ title: DefinedInitialDataInfiniteOptions
 type DefinedInitialDataInfiniteOptions<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown> = UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:52](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L52)
+Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:53](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L53)
 
 The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is known to be
 defined — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).

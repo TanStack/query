@@ -27,7 +27,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function infiniteQueryOptions<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
-Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:107](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L107)
+Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:108](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L108)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -105,7 +105,7 @@ const { data, isError, error } = useInfiniteQuery(projectsOptions)
 function infiniteQueryOptions<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
-Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:154](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L154)
+Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:155](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L155)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.

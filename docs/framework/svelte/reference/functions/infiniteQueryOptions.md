@@ -25,7 +25,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function infiniteQueryOptions<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:98](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L98)
+Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:99](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L99)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `createInfiniteQuery`.
 These options can be shared across `createInfiniteQuery` calls and imperative APIs such as
@@ -113,7 +113,7 @@ visible alongside the error:
 function infiniteQueryOptions<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:163](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L163)
+Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:164](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L164)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `createInfiniteQuery`.
 These options can be shared across `createInfiniteQuery` calls and imperative APIs such as

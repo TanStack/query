@@ -93,12 +93,13 @@ like `queryClient.infiniteQuery`.
 function createInfiniteQuery<TQueryFnData = unknown, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: Accessor<UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: Accessor<QueryClient>): CreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:69](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L69)
+Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:70](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L70)
 
 The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
 
-This overload is selected when `initialData` is omitted or may be `undefined`.
+This overload is selected when `initialData` is omitted, may be `undefined`, or is a function that may
+return `undefined`.
 
 ### Type Parameters
 
@@ -158,7 +159,7 @@ like `queryClient.infiniteQuery`.
 function createInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: Accessor<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: Accessor<QueryClient>): CreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:181](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L181)
+Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:182](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L182)
 
 The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.

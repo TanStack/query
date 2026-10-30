@@ -29,7 +29,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryDefinedReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:73](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L73)
+Defined in: [packages/vue-query/src/useQuery.ts:74](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L74)
 
 This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
 `undefined` (unless a `select` changes `TData` to include `undefined`).
@@ -112,7 +112,7 @@ const { data, isError, error } = useQuery({
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:212](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L212)
+Defined in: [packages/vue-query/src/useQuery.ts:213](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L213)
 
 `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
 (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
@@ -287,7 +287,7 @@ const { data, isPlaceholderData, isError, error } = useQuery({
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: MaybeRefOrGetter<UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:285](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L285)
+Defined in: [packages/vue-query/src/useQuery.ts:286](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L286)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
