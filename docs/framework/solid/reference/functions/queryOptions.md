@@ -27,7 +27,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/queryOptions.ts:86](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L86)
+Defined in: [packages/solid-query/src/queryOptions.ts:93](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L93)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -108,7 +108,7 @@ function Posts() {
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/queryOptions.ts:134](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L134)
+Defined in: [packages/solid-query/src/queryOptions.ts:141](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L141)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
