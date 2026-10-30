@@ -2510,6 +2510,9 @@ importers:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.105.0
         version: link:../../../packages/eslint-plugin-query
+      '@tanstack/eslint-plugin-query-prefetch':
+        specifier: ^5.105.0
+        version: link:../../../packages/eslint-plugin-query-prefetch
       '@types/react':
         specifier: ^19.3.0
         version: 19.3.0
@@ -6132,6 +6135,22 @@ importers:
       combinate:
         specifier: ^1.1.11
         version: 1.1.11
+      eslint:
+        specifier: 'catalog:'
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
+  packages/eslint-plugin-query-prefetch:
+    dependencies:
+      '@typescript-eslint/utils':
+        specifier: ^8.71.0
+        version: 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+    devDependencies:
+      '@typescript-eslint/rule-tester':
+        specifier: 'catalog:'
+        version: 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       eslint:
         specifier: 'catalog:'
         version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)

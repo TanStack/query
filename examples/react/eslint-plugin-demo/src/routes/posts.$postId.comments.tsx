@@ -10,7 +10,7 @@ export const Route = createFileRoute('/posts/$postId/comments')({
 
 function Comments() {
   const { postId } = Route.useParams()
-  // eslint-disable-next-line @tanstack/query/require-route-prefetch -- The query 'commentsOptions(postId)' used by 'useSuspenseQuery' isn't prefetched in this route's loader, so it only starts fetching after the component renders. Start it in this route's loader by passing the same query options to 'queryClient.query()'.
+  // eslint-disable-next-line @tanstack/query-prefetch/require-prefetch -- The query 'commentsOptions(postId)' used by 'useSuspenseQuery' isn't prefetched in this route's loader, so it only starts fetching after the component renders. Start it in this route's loader by passing the same query options to 'queryClient.query()'.
   const { data } = useSuspenseQuery(commentsOptions(postId))
   return data.length
 }

@@ -175,7 +175,7 @@ export default defineConfig({
             'tsdown', // We use tsdown as builder
             'typecheck', // Field of vite.config.ts
             'vue-demi', // dependency of @tanstack/vue-query
-            'waku', // Framework the require-route-prefetch rule supports
+            'waku', // Framework the require-prefetch rule supports
             'ɵkind', // Angular specific
             'ɵproviders', // Angular specific
           ],

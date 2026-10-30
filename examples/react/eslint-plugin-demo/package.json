@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:eslint": "eslint ./src ./route-prefetch --report-unused-disable-directives-severity error",
-    "demo:route-prefetch": "eslint ./src/require-route-prefetch-demo.tsx ./src/routes ./route-prefetch --no-inline-config",
+    "test:eslint": "eslint ./src ./require-prefetch --report-unused-disable-directives-severity error",
+    "demo:require-prefetch": "eslint ./src/require-prefetch-demo.tsx ./src/routes ./require-prefetch --no-inline-config",
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@tanstack/eslint-plugin-query-prefetch": "^5.105.0",
     "@types/react": "^19.3.0",
     "eslint": "^9.39.5",
     "typescript": "^6.0.3",

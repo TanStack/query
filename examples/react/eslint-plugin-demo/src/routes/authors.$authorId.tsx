@@ -5,6 +5,6 @@ import { Author } from '../components/author'
 // The rule reports at the `component` option, since the query is in
 // ../components/author.tsx.
 export const Route = createFileRoute('/authors/$authorId')({
-  // eslint-disable-next-line @tanstack/query/require-route-prefetch -- The query 'authorOptions(authorId)' used by 'useSuspenseQuery' in '../components/author.tsx' isn't prefetched in this route's loader, so it only starts fetching after the component renders. Start it in this route's loader by passing the same query options to 'queryClient.query()'.
+  // eslint-disable-next-line @tanstack/query-prefetch/require-prefetch -- The query 'authorOptions(authorId)' used by 'useSuspenseQuery' in '../components/author.tsx' isn't prefetched in this route's loader, so it only starts fetching after the component renders. Start it in this route's loader by passing the same query options to 'queryClient.query()'.
   component: Author,
 })

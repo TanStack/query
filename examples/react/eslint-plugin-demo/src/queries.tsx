@@ -22,7 +22,7 @@ function fetchTodo(id: string): Promise<{ id: string; title: string }> {
   throw new Error('not implemented')
 }
 
-// Used by require-route-prefetch-demo.tsx
+// Used by require-prefetch-demo.tsx
 export const postOptions = (postId: string) =>
   queryOptions({
     queryKey: ['posts', postId],

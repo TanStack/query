@@ -179,4 +179,7 @@ A JSON config cannot import the configs of our plugin, so add the plugin to `jsP
 - [@tanstack/query/no-void-query-fn](./no-void-query-fn.md)
 - [@tanstack/query/mutation-property-order](./mutation-property-order.md)
 - [@tanstack/query/prefer-query-options](./prefer-query-options.md)
-- [@tanstack/query/require-route-prefetch](./require-route-prefetch.md)
+
+## Other plugins
+
+- [@tanstack/eslint-plugin-query-prefetch](./require-prefetch.md): requires routes to prefetch the queries they render
