@@ -192,7 +192,7 @@ export function broadcastQueryClient({
         }
       } else if (type === 'added') {
         if (query) {
-          if (query.state.data === undefined) {
+          if (query.state.data === undefined && state.status !== 'pending') {
             query.setState(state)
           }
           return
