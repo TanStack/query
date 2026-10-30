@@ -478,6 +478,10 @@ export class QueryClient {
    * Unless `filters.refetchType` is `'none'`, matching queries are then refetched via
    * {@link QueryClient#refetchQueries}, using `filters.refetchType` if set, otherwise
    * `filters.type`, otherwise `'active'`.
+   *
+   * Any in-flight fetch of a matching query is silently cancelled first, so imperative callers
+   * (e.g. `fetchQuery`) consistently observe a `CancelledError` instead of only when an active
+   * observer triggers a refetch.
    * @param filters - The filters that select which queries to invalidate, plus `refetchType` to
    * control which of them to refetch afterwards. Without filters, every query is invalidated.
    * @param options - Passed to {@link QueryClient#refetchQueries}, e.g. `cancelRefetch` and
@@ -496,6 +500,10 @@ export class QueryClient {
     return notifyManager.batch(() => {
       this.#queryCache.findAll(filters).forEach((query) => {
         query.invalidate()
+        // Silently cancel any in-flight fetch so that imperative callers (e.g. `fetchQuery`)
+        // consistently observe the cancellation, whether or not an active observer triggers a
+        // refetch below.
+        query.cancel({ silent: true })
       })
 
       if (filters?.refetchType === 'none') {
