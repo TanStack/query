@@ -317,14 +317,14 @@ describe('useQuery', () => {
     })
 
     it('should infer TData from select when reconcile is defined before select', () => {
-      const { data } = useQuery(() => ({
+      const query = useQuery(() => ({
         queryKey: createKey(),
         queryFn: () => ({ wow: true }),
         reconcile: (oldData, newData) => oldData ?? newData,
         select: (data) => data.wow,
       }))
 
-      expectTypeOf(data).toEqualTypeOf<boolean | undefined>()
+      expectTypeOf(query.data).toEqualTypeOf<boolean | undefined>()
     })
 
     it('should infer TData from select when spreading the result of queryOptions', () => {
@@ -332,12 +332,12 @@ describe('useQuery', () => {
         queryKey: createKey(),
         queryFn: () => ({ wow: true }),
       })
-      const { data } = useQuery(() => ({
+      const query = useQuery(() => ({
         ...options,
         select: (data) => data.wow,
       }))
 
-      expectTypeOf(data).toEqualTypeOf<boolean | undefined>()
+      expectTypeOf(query.data).toEqualTypeOf<boolean | undefined>()
     })
   })
 
