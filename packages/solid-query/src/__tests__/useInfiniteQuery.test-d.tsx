@@ -153,6 +153,23 @@ describe('useInfiniteQuery', () => {
 
       expectTypeOf(infiniteQuery.data).toEqualTypeOf<'selected' | undefined>()
     })
+
+    it('should infer TData from select when spreading the result of infiniteQueryOptions', () => {
+      const options = infiniteQueryOptions({
+        queryKey: createKey(),
+        queryFn: ({ pageParam }) => {
+          return pageParam * 5
+        },
+        initialPageParam: 1,
+        getNextPageParam: () => undefined,
+      })
+      const infiniteQuery = useInfiniteQuery(() => ({
+        ...options,
+        select: (data) => data.pages.length,
+      }))
+
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<number | undefined>()
+    })
   })
 
   describe('getNextPageParam / getPreviousPageParam', () => {

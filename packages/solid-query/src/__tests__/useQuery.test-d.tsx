@@ -304,18 +304,40 @@ describe('useQuery', () => {
   })
 
   describe('reconcile', () => {
-    it('should infer the parameters of a reconcile function from the query function', () => {
-      const { data } = useQuery(() => ({
+    it('should be able to use reconcile with unknown types', () => {
+      useQuery(() => ({
         queryKey: createKey(),
         queryFn: () => ({ wow: true }),
         reconcile: (oldData, newData) => {
-          expectTypeOf(oldData).toEqualTypeOf<{ wow: boolean } | undefined>()
-          expectTypeOf(newData).toEqualTypeOf<{ wow: boolean }>()
+          expectTypeOf(oldData).toBeUnknown()
+          expectTypeOf(newData).toBeUnknown()
           return newData
         },
       }))
+    })
 
-      expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+    it('should infer TData from select when reconcile is defined before select', () => {
+      const { data } = useQuery(() => ({
+        queryKey: createKey(),
+        queryFn: () => ({ wow: true }),
+        reconcile: (oldData, newData) => oldData ?? newData,
+        select: (data) => data.wow,
+      }))
+
+      expectTypeOf(data).toEqualTypeOf<boolean | undefined>()
+    })
+
+    it('should infer TData from select when spreading the result of queryOptions', () => {
+      const options = queryOptions({
+        queryKey: createKey(),
+        queryFn: () => ({ wow: true }),
+      })
+      const { data } = useQuery(() => ({
+        ...options,
+        select: (data) => data.wow,
+      }))
+
+      expectTypeOf(data).toEqualTypeOf<boolean | undefined>()
     })
   })
 
