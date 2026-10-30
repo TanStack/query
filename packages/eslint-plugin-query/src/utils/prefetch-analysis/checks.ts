@@ -30,6 +30,7 @@ type MessageId =
   | 'inlineQueryOptions'
   | 'notDehydrated'
   | 'loaderNotDehydrated'
+  | 'loaderNotHydrated'
   | 'clientQueryOptions'
   | 'searchParamsMismatch'
 
@@ -61,9 +62,16 @@ export interface LoaderCheck {
      * dehydrates the query client.
      */
     server?: boolean
+    /** The route the function belongs to, whose dehydrated state has to be hydrated. */
+    route?: string
   }>
   /** The route's component. */
   root: RenderRoot<undefined>
+  /**
+   * Checks whether the dehydrated state a route's server loader returns is rendered in a
+   * `<HydrationBoundary>`, if the router needs one.
+   */
+  isHydrated?: (route: string) => boolean
 }
 
 /**
@@ -113,19 +121,43 @@ export function runLoaderCheck(
   check: LoaderCheck,
   report: (report: Report) => void,
 ): void {
-  const prefetched = new Map<string, { dehydrated: boolean }>()
+  // Whether each query is prefetched on the client, and the routes whose server loaders prefetch
+  // and dehydrate it, `null` for a loader whose route isn't known.
+  const prefetched = new Map<
+    string,
+    { client: boolean; dehydratedBy: Array<string | null> }
+  >()
 
   for (const site of check.sites) {
-    const dehydrated = site.server ? callsDehydrate(env, site.fn) : true
+    const client = site.server !== true
+    const dehydrated = !client && callsDehydrate(env, site.fn)
     for (const prefetch of collectPrefetches(env, site.fn, site.args)) {
       const key = getQueryKey(prefetch.source)
       if (key !== null) {
-        const previous = prefetched.get(key.key)
-        prefetched.set(key.key, {
-          dehydrated: dehydrated || previous?.dehydrated === true,
-        })
+        const entry = prefetched.get(key.key) ?? {
+          client: false,
+          dehydratedBy: [],
+        }
+        entry.client ||= client
+        if (dehydrated) {
+          entry.dehydratedBy.push(site.route ?? null)
+        }
+        prefetched.set(key.key, entry)
       }
     }
+  }
+
+  const hydrated = new Map<string, boolean>()
+  const isHydrated = (route: string | null) => {
+    if (route === null || check.isHydrated === undefined) {
+      return true
+    }
+    let result = hydrated.get(route)
+    if (result === undefined) {
+      result = check.isHydrated(route)
+      hydrated.set(route, result)
+    }
+    return result
   }
 
   walkRenderTree(env, check.root, {
@@ -136,8 +168,13 @@ export function runLoaderCheck(
       const found = key && prefetched.get(key.key)
 
       if (found) {
-        if (!found.dehydrated) {
+        if (found.client) {
+          return
+        }
+        if (found.dehydratedBy.length === 0) {
           report({ node: target, messageId: 'loaderNotDehydrated', data })
+        } else if (!found.dehydratedBy.some(isHydrated)) {
+          report({ node: target, messageId: 'loaderNotHydrated', data })
         }
       } else if (usage.source.type === 'tracked') {
         report({ node: target, messageId: 'missingPrefetch', data })
@@ -342,7 +379,11 @@ function checkServerPrefetch(
     return
   }
   const factory = getFactory(prefetch.source.provenance)
-  if (factory === null || !env.graph.isClientModule(factory.module)) {
+  const clientModule =
+    factory &&
+    (factory.clientModule ??
+      (env.graph.isClientModule(factory.module) ? factory.module : null))
+  if (!clientModule) {
     return
   }
   report({
@@ -350,7 +391,7 @@ function checkServerPrefetch(
     messageId: 'clientQueryOptions',
     data: {
       name: factory.name,
-      file: getRelativePath(env.graph, factory.module),
+      file: getRelativePath(env.graph, clientModule),
     },
   })
 }
@@ -363,7 +404,7 @@ function checkServerPrefetch(
  */
 function getFactory(
   provenance: Provenance,
-): { module: string; name: string } | null {
+): { module: string; name: string; clientModule?: string } | null {
   let current = provenance
   for (;;) {
     if (current.type === 'call') {

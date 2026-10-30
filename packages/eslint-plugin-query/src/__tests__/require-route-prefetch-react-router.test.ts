@@ -204,8 +204,27 @@ ruleTester.run('require-route-prefetch (React Router)', rule, {
       `,
     },
     {
-      name: 'framework mode: dehydrate called in a helper function',
-      filename: frameworkProject()('app/routes/post.tsx'),
+      name: 'framework mode: dehydrate called in a helper function, root renders the boundary',
+      filename: frameworkProject({
+        'app/root.tsx': code`
+          import { Outlet, useMatches } from 'react-router'
+          import { HydrationBoundary } from '@tanstack/react-query'
+
+          export function Layout({ children }) {
+            return <html><body>{children}</body></html>
+          }
+
+          export default function App() {
+            const matches = useMatches()
+            const state = matches.at(-1)?.loaderData?.dehydratedState
+            return (
+              <HydrationBoundary state={state}>
+                <Outlet />
+              </HydrationBoundary>
+            )
+          }
+        `,
+      })('app/routes/post.tsx'),
       code: code`
         import { useParams } from 'react-router'
         import { QueryClient, dehydrate, useSuspenseQuery } from '@tanstack/react-query'
@@ -287,6 +306,160 @@ ruleTester.run('require-route-prefetch (React Router)', rule, {
         export default function Post() {
           const { postId } = useParams()
           useSuspenseQuery(postOptions(postId))
+          return null
+        }
+      `,
+    },
+    {
+      name: 'framework mode: a component the route renders renders the boundary',
+      filename: frameworkProject({
+        'app/components/hydrate.tsx': code`
+          import { HydrationBoundary } from '@tanstack/react-query'
+
+          export function Hydrate({ state, children }) {
+            return <HydrationBoundary state={state}>{children}</HydrationBoundary>
+          }
+        `,
+      })('app/routes/post.tsx'),
+      code: code`
+        import { useParams } from 'react-router'
+        import { QueryClient, dehydrate, useSuspenseQuery } from '@tanstack/react-query'
+        import { Hydrate } from '../components/hydrate'
+        import { postOptions } from '../queries'
+
+        export async function loader({ params }) {
+          const queryClient = new QueryClient()
+          await queryClient.prefetchQuery(postOptions(params.postId))
+          return { dehydratedState: dehydrate(queryClient) }
+        }
+
+        export default function PostRoute({ loaderData }) {
+          return (
+            <Hydrate state={loaderData.dehydratedState}>
+              <Post />
+            </Hydrate>
+          )
+        }
+
+        function Post() {
+          const { postId } = useParams()
+          useSuspenseQuery(postOptions(postId))
+          return null
+        }
+      `,
+    },
+    {
+      name: 'framework mode: server loader dehydrates without a boundary, clientLoader also prefetches',
+      filename: frameworkProject()('app/routes/post.tsx'),
+      code: code`
+        import { useParams } from 'react-router'
+        import { QueryClient, dehydrate, useSuspenseQuery } from '@tanstack/react-query'
+        import { postOptions, queryClient } from '../queries'
+
+        export async function loader({ params }) {
+          const serverClient = new QueryClient()
+          await serverClient.prefetchQuery(postOptions(params.postId))
+          return { dehydratedState: dehydrate(serverClient) }
+        }
+
+        export async function clientLoader({ params }) {
+          await queryClient.ensureQueryData(postOptions(params.postId))
+        }
+
+        export default function Post() {
+          const { postId } = useParams()
+          useSuspenseQuery(postOptions(postId))
+          return null
+        }
+      `,
+    },
+    {
+      name: 'framework mode: root renders its own boundary, the route renders one with useLoaderData',
+      filename: frameworkProject({
+        'app/root.tsx': code`
+          import { Outlet } from 'react-router'
+          import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
+
+          export async function loader() {
+            const queryClient = new QueryClient()
+            return { dehydratedState: dehydrate(queryClient) }
+          }
+
+          export default function App({ loaderData }) {
+            return (
+              <HydrationBoundary state={loaderData.dehydratedState}>
+                <Outlet />
+              </HydrationBoundary>
+            )
+          }
+        `,
+        'app/routes/post-boundary.tsx': code`
+          import { useLoaderData } from 'react-router'
+          import { HydrationBoundary } from '@tanstack/react-query'
+
+          export function PostBoundary({ children }) {
+            const { dehydratedState } = useLoaderData()
+            return <HydrationBoundary state={dehydratedState}>{children}</HydrationBoundary>
+          }
+        `,
+      })('app/routes/post.tsx'),
+      code: code`
+        import { useParams } from 'react-router'
+        import { QueryClient, dehydrate, useSuspenseQuery } from '@tanstack/react-query'
+        import { postOptions } from '../queries'
+        import { PostBoundary } from './post-boundary'
+
+        export async function loader({ params }) {
+          const queryClient = new QueryClient()
+          await queryClient.prefetchQuery(postOptions(params.postId))
+          return { dehydratedState: dehydrate(queryClient) }
+        }
+
+        export default function PostRoute() {
+          return (
+            <PostBoundary>
+              <Post />
+            </PostBoundary>
+          )
+        }
+
+        function Post() {
+          const { postId } = useParams()
+          useSuspenseQuery(postOptions(postId))
+          return null
+        }
+      `,
+    },
+    {
+      name: "framework mode: the root's loader prefetches for a route without a loader, and root renders its state",
+      filename: frameworkProject({
+        'app/root.tsx': code`
+          import { Outlet } from 'react-router'
+          import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
+          import { searchOptions } from './queries'
+
+          export async function loader() {
+            const queryClient = new QueryClient()
+            await queryClient.prefetchQuery(searchOptions(null))
+            return { dehydratedState: dehydrate(queryClient) }
+          }
+
+          export default function App({ loaderData }) {
+            return (
+              <HydrationBoundary state={loaderData.dehydratedState}>
+                <Outlet />
+              </HydrationBoundary>
+            )
+          }
+        `,
+      })('app/routes/settings.tsx'),
+      code: code`
+        import { useQuery } from '@tanstack/react-query'
+        import { searchOptions } from '../queries'
+        import type { Route } from './+types/settings'
+
+        export default function Settings() {
+          useQuery(searchOptions(null))
           return null
         }
       `,
@@ -512,6 +685,119 @@ ruleTester.run('require-route-prefetch (React Router)', rule, {
         }
       `,
       errors: [{ messageId: 'loaderNotDehydrated', line: 13 }],
+    },
+    {
+      name: 'framework mode: server loader dehydrates, but no route renders a boundary',
+      filename: frameworkProject({
+        'app/root.tsx': code`
+          import { Outlet } from 'react-router'
+
+          export default function App() {
+            return <Outlet />
+          }
+        `,
+      })('app/routes/post.tsx'),
+      code: code`
+        import { useParams } from 'react-router'
+        import { QueryClient, dehydrate, useSuspenseQuery } from '@tanstack/react-query'
+        import { postOptions } from '../queries'
+
+        export async function loader({ params }) {
+          const queryClient = new QueryClient()
+          await queryClient.prefetchQuery(postOptions(params.postId))
+          return { dehydratedState: dehydrate(queryClient) }
+        }
+
+        export default function Post() {
+          const { postId } = useParams()
+          useSuspenseQuery(postOptions(postId))
+          return null
+        }
+      `,
+      errors: [{ messageId: 'loaderNotHydrated', line: 13 }],
+    },
+    {
+      name: "framework mode: only the root's boundary renders, with the root's loader data",
+      filename: frameworkProject({
+        'app/root.tsx': code`
+          import { Outlet } from 'react-router'
+          import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
+
+          export async function loader() {
+            const queryClient = new QueryClient()
+            return { dehydratedState: dehydrate(queryClient) }
+          }
+
+          export default function App({ loaderData }) {
+            return (
+              <HydrationBoundary state={loaderData.dehydratedState}>
+                <Outlet />
+              </HydrationBoundary>
+            )
+          }
+        `,
+      })('app/routes/post.tsx'),
+      code: code`
+        import { useParams } from 'react-router'
+        import { QueryClient, dehydrate, useSuspenseQuery } from '@tanstack/react-query'
+        import { postOptions } from '../queries'
+
+        export async function loader({ params }) {
+          const queryClient = new QueryClient()
+          await queryClient.prefetchQuery(postOptions(params.postId))
+          return { dehydratedState: dehydrate(queryClient) }
+        }
+
+        export default function Post() {
+          const { postId } = useParams()
+          useSuspenseQuery(postOptions(postId))
+          return null
+        }
+      `,
+      errors: [{ messageId: 'loaderNotHydrated', line: 13 }],
+    },
+    {
+      name: "framework mode: the route's boundary reads the root's data with useRouteLoaderData('root')",
+      filename: frameworkProject({
+        'app/root.tsx': code`
+          import { Outlet } from 'react-router'
+
+          export async function loader() {
+            return { dehydratedState: null }
+          }
+
+          export default function App() {
+            return <Outlet />
+          }
+        `,
+      })('app/routes/post.tsx'),
+      code: code`
+        import { useParams, useRouteLoaderData } from 'react-router'
+        import { HydrationBoundary, QueryClient, dehydrate, useSuspenseQuery } from '@tanstack/react-query'
+        import { postOptions } from '../queries'
+
+        export async function loader({ params }) {
+          const queryClient = new QueryClient()
+          await queryClient.prefetchQuery(postOptions(params.postId))
+          return { dehydratedState: dehydrate(queryClient) }
+        }
+
+        export default function PostRoute() {
+          const rootData = useRouteLoaderData('root')
+          return (
+            <HydrationBoundary state={rootData.dehydratedState}>
+              <Post />
+            </HydrationBoundary>
+          )
+        }
+
+        function Post() {
+          const { postId } = useParams()
+          useSuspenseQuery(postOptions(postId))
+          return null
+        }
+      `,
+      errors: [{ messageId: 'loaderNotHydrated', line: 22 }],
     },
     {
       name: 'framework mode: search param prefetched under another name',

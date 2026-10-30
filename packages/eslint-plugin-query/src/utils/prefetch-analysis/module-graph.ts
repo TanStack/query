@@ -53,6 +53,11 @@ export interface ModuleExport {
   module: string
   /** The exported name, `default`, or `*` for a namespace import. */
   name: string
+  /**
+   * The first file with a `'use client'` directive the export was re-exported through, if any, which
+   * makes it a client reference for the server components that import it from there.
+   */
+  clientModule?: string
 }
 
 interface Parser {
@@ -461,6 +466,11 @@ export class ModuleGraph {
       return exported
     }
     seen.add(key)
+    // An export followed out of a `'use client'` file stays a client reference for the server.
+    const follow = (next: ModuleExport): ModuleExport =>
+      file.directive === 'use client'
+        ? { ...next, clientModule: file.path }
+        : next
 
     for (const statement of file.source.ast.body) {
       if (
@@ -470,7 +480,9 @@ export class ModuleGraph {
       ) {
         const module = this.moduleId(statement.source.value, file.path)
         if (this.findExport(module, exported.name) !== null) {
-          return this.canonicalize({ module, name: exported.name }, seen)
+          return follow(
+            this.canonicalize({ module, name: exported.name }, seen),
+          )
         }
       }
 
@@ -482,12 +494,14 @@ export class ModuleGraph {
           continue
         }
         if (statement.source !== null) {
-          return this.canonicalize(
-            {
-              module: this.moduleId(statement.source.value, file.path),
-              name: getName(specifier.local),
-            },
-            seen,
+          return follow(
+            this.canonicalize(
+              {
+                module: this.moduleId(statement.source.value, file.path),
+                name: getName(specifier.local),
+              },
+              seen,
+            ),
           )
         }
         if (specifier.local.type !== AST_NODE_TYPES.Identifier) {
@@ -498,7 +512,7 @@ export class ModuleGraph {
           specifier.local,
         )
         if (variable?.defs[0]?.type === 'ImportBinding') {
-          return this.identify(variable)
+          return follow(this.identify(variable))
         }
       }
     }

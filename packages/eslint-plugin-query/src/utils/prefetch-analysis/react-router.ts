@@ -12,9 +12,14 @@ import {
   serializeProvenance,
   unwrapComponent,
 } from './provenance'
-import { getJsxProps, resolveJsxComponent } from './render-tree'
+import {
+  findHydratedStates,
+  getJsxProps,
+  resolveJsxComponent,
+} from './render-tree'
 import type { TSESTree } from '@typescript-eslint/utils'
 import type { LoaderCheck } from './checks'
+import type { RenderRoot } from './render-tree'
 import type { ModuleGraph } from './module-graph'
 import type {
   Provenance,
@@ -99,9 +104,12 @@ export function getReactRouterFrameworkCheck(
     return null
   }
 
-  const loaderSites = (loaders: RouteModuleLoaders): LoaderCheck['sites'] => [
+  const loaderSites = (
+    loaders: RouteModuleLoaders,
+    route: string,
+  ): LoaderCheck['sites'] => [
     ...(loaders.loader
-      ? [{ fn: loaders.loader.fn, args: [loaderArgs], server: true }]
+      ? [{ fn: loaders.loader.fn, args: [loaderArgs], server: true, route }]
       : []),
     ...(loaders.clientLoader
       ? [{ fn: loaders.clientLoader.fn, args: [loaderArgs] }]
@@ -117,9 +125,9 @@ export function getReactRouterFrameworkCheck(
   ]
   const sites = [
     ...parents.flatMap((parent) =>
-      loaderSites(getRouteModuleLoaders(graph, parent)),
+      loaderSites(getRouteModuleLoaders(graph, parent), parent),
     ),
-    ...loaderSites(own),
+    ...loaderSites(own, filePath),
   ]
 
   const dataLoader = own.clientLoader ?? own.loader
@@ -146,8 +154,162 @@ export function getReactRouterFrameworkCheck(
         via: component,
         state: undefined,
       },
+      isHydrated: (route) =>
+        hydratesRouteState(
+          graph,
+          route,
+          [filePath, ...parents],
+          component,
+          (id) =>
+            id === 'root'
+              ? (config?.root ?? null)
+              : appDir && findModule(path.join(appDir, id)),
+        ),
     },
   }
+}
+
+/** The prefix of the bindings that stand for the loader data of a route module. */
+const loaderDataPrefix = 'loaderData:'
+
+/**
+ * Checks whether the rendered routes render a route's dehydrated state in a `<HydrationBoundary>`. A
+ * boundary whose state is read from another route's loader data doesn't count, but one whose state
+ * can't be traced to a route, like state merged from `useMatches()`, does.
+ * @param graph - The module graph.
+ * @param route - The route module whose server loader dehydrates.
+ * @param modules - The route module being checked and the route modules that render around it.
+ * @param via - The node problems are reported at, in the file being linted.
+ * @param resolveRouteId - Finds the route module of a route ID, as passed to `useRouteLoaderData()`.
+ * @returns `true` if a boundary may render the route's dehydrated state.
+ */
+function hydratesRouteState(
+  graph: ModuleGraph,
+  route: string,
+  modules: Array<string>,
+  via: TSESTree.Node,
+  resolveRouteId: (id: string) => string | null,
+): boolean {
+  return modules.some((module) => {
+    // `loaderData` and `useLoaderData()` give the data of the route module that renders them.
+    const loaderData: Provenance = {
+      type: 'binding',
+      name: loaderDataPrefix + module,
+    }
+    const env = createLoaderDataEnvironment(graph, loaderData, resolveRouteId)
+    return getRouteComponents(graph, module, loaderData, via).some((root) =>
+      findHydratedStates(env, root).some((state) => {
+        const routes = state && getLoaderDataRoutes(state)
+        return !routes || routes.size === 0 || routes.has(route)
+      }),
+    )
+  })
+}
+
+/**
+ * Creates an environment in which `useLoaderData()` gives a route module's loader data, and
+ * `useRouteLoaderData()` with a literal route ID gives the loader data of that route.
+ * @param graph - The module graph.
+ * @param loaderData - The binding `useLoaderData()` resolves to.
+ * @param resolveRouteId - Finds the route module of a route ID.
+ * @returns An environment that only resolves these hooks.
+ */
+function createLoaderDataEnvironment(
+  graph: ModuleGraph,
+  loaderData: Provenance,
+  resolveRouteId: (id: string) => string | null,
+): ProvenanceEnvironment {
+  return {
+    graph,
+    parameterBindings: new Map(),
+    resolveCall: (node) => {
+      if (node.callee.type !== AST_NODE_TYPES.Identifier) {
+        return undefined
+      }
+      const imported = getImport(graph, node.callee)
+      if (imported === null || !routerSources.includes(imported.source)) {
+        return undefined
+      }
+      if (imported.name === 'useLoaderData') {
+        return loaderData
+      }
+      if (imported.name === 'useRouteLoaderData') {
+        const [id] = node.arguments
+        const module =
+          id?.type === AST_NODE_TYPES.Literal && typeof id.value === 'string'
+            ? resolveRouteId(id.value)
+            : null
+        return module === null
+          ? null
+          : { type: 'binding', name: loaderDataPrefix + module }
+      }
+      return undefined
+    },
+  }
+}
+
+/**
+ * Lists the route modules whose loader data a value is read from.
+ * @param provenance - The provenance of a hydrated state.
+ * @returns The paths of the route modules.
+ */
+function getLoaderDataRoutes(provenance: Provenance): Set<string> {
+  const routes = new Set<string>()
+  const visit = (current: Provenance | null) => {
+    switch (current?.type) {
+      case 'binding':
+        if (current.name.startsWith(loaderDataPrefix)) {
+          routes.add(current.name.slice(loaderDataPrefix.length))
+        }
+        break
+      case 'member':
+        visit(current.object)
+        break
+      case 'call':
+        visit(current.callee)
+        current.args.forEach(visit)
+        break
+      case 'object':
+        current.properties.forEach(([, value]) => visit(value))
+        break
+      case 'operation':
+        current.operands.forEach(visit)
+        break
+      default:
+        break
+    }
+  }
+  visit(provenance)
+  return routes
+}
+
+/**
+ * Finds the components a route module renders: its default export, and the `Layout` export of the
+ * root route.
+ * @param graph - The module graph.
+ * @param module - The route module's path.
+ * @param loaderData - The value of the components' `loaderData` prop.
+ * @param via - The node problems are reported at, in the file being linted.
+ * @returns The components, to walk from.
+ */
+function getRouteComponents(
+  graph: ModuleGraph,
+  module: string,
+  loaderData: Provenance,
+  via: TSESTree.Node,
+): Array<RenderRoot<undefined>> {
+  const props: Provenance = {
+    type: 'object',
+    open: true,
+    properties: [['loaderData', loaderData]],
+  }
+  return ['default', 'Layout'].flatMap((name) => {
+    const found = graph.findExport(module, name)
+    const fn = unwrapComponent(found?.node)
+    return fn && found
+      ? [{ fn, file: found.file, args: [props], via, state: undefined }]
+      : []
+  })
 }
 
 /**
@@ -332,17 +494,12 @@ interface RouteConfig {
  * @returns The root route module and the route modules with their parents.
  */
 function readRouteConfig(graph: ModuleGraph, appDir: string): RouteConfig {
-  const find = (name: string) =>
-    ['.tsx', '.ts', '.jsx', '.js']
-      .map((extension) => path.join(appDir, name + extension))
-      .find((file) => fs.existsSync(file))
-
   const config: RouteConfig = {
-    root: find('root'),
+    root: findModule(path.join(appDir, 'root')) ?? undefined,
     routes: new Map(),
     complete: false,
   }
-  const routesFile = find('routes')
+  const routesFile = findModule(path.join(appDir, 'routes'))
   const found = routesFile ? graph.findExport(routesFile, 'default') : null
   if (found === null) {
     return config
@@ -397,6 +554,20 @@ function readRouteConfig(graph: ModuleGraph, appDir: string): RouteConfig {
   visit(found.node, [])
   config.complete = complete
   return config
+}
+
+/**
+ * Finds the file of a module path without its extension, like a route ID relative to the app
+ * directory.
+ * @param base - The absolute path without an extension.
+ * @returns The file's path, or `null` if no file has one of the script extensions.
+ */
+function findModule(base: string): string | null {
+  return (
+    ['.tsx', '.ts', '.jsx', '.js']
+      .map((extension) => base + extension)
+      .find((file) => fs.existsSync(file)) ?? null
+  )
 }
 
 /**

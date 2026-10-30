@@ -138,6 +138,23 @@ export default function Post({ params }: Route.ComponentProps) {
 }
 ```
 
+```tsx
+/* eslint "@tanstack/query/require-route-prefetch": "error" */
+// app/routes/post.tsx
+
+export async function loader({ params }: Route.LoaderArgs) {
+  const queryClient = new QueryClient()
+  await queryClient.prefetchQuery(postQueryOptions(params.postId))
+  // Dehydrated, but no route renders it in a HydrationBoundary, so the client fetches it again
+  return { dehydratedState: dehydrate(queryClient) }
+}
+
+export default function Post({ params }: Route.ComponentProps) {
+  const { data } = useSuspenseQuery(postQueryOptions(params.postId))
+  // ...
+}
+```
+
 Examples of **correct** code for this rule:
 
 ```tsx
@@ -168,7 +185,7 @@ const router = createBrowserRouter([
 ])
 ```
 
-In framework mode, the route modules listed in `app/routes.ts` are checked, if the project depends on `@react-router/dev`. Files that export a `loader` or `clientLoader` or import their route types from `./+types/` are checked too, as are the files of `app/routes` that `@react-router/fs-routes` treats as routes when `routes.ts` doesn't list its routes statically. The loaders of `app/root.tsx` and of the parent routes declared in `routes.ts` count for every route below them, since React Router runs them in parallel.
+In framework mode, the route modules listed in `app/routes.ts` are checked, if the project depends on `@react-router/dev`. Files that export a `loader` or `clientLoader` or import their route types from `./+types/` are checked too, as are the files of `app/routes` that `@react-router/fs-routes` treats as routes when `routes.ts` doesn't list its routes statically. The loaders of `app/root.tsx` and of the parent routes declared in `routes.ts` count for every route below them, since React Router runs them in parallel. A server `loader` has to return `dehydrate(queryClient)`, and the route's component, the components it renders, or the component or `Layout` of `app/root.tsx` or a parent route has to render that loader's state in a `<HydrationBoundary>` (or pass it to `hydrate()`). A boundary that reads another route's `loaderData`, `useLoaderData()`, or `useRouteLoaderData()` with a literal route ID, like the root's own boundary for a route's loader, doesn't count. State that can't be traced to one route, like state merged from `useMatches()` in `app/root.tsx`, counts for every route.
 
 In data mode, the routes passed to `createBrowserRouter`, `createHashRouter`, and `createMemoryRouter` are checked, including routes arrays from other files, `lazy: () => import('./route')` modules, and components wrapped in elements like `<Suspense>`. The loaders of parent routes count for their child routes. Values can be read with `useParams()`, `useSearchParams()` (matching `new URL(request.url).searchParams` in the loader), `useLoaderData()`, or the `params` and `loaderData` props of a route module's component.
 
@@ -230,7 +247,9 @@ The rule also reports prefetches on the server whose query options are imported 
 - Prefetches that aren't awaited only reach the client if the query client dehydrates pending queries, e.g. with `shouldDehydrateQuery: (query) => defaultShouldDehydrateQuery(query) || query.state.status === 'pending'`. The rule can't check how the query client is configured.
 - Only imports of files of the project are followed: relative imports, the `paths` of the nearest `tsconfig.json`, and re-exports. Components from packages are not checked.
 - The rule reports problems in the file being linted, so a query in an imported component is reported at the element or route option that leads to it. When only the imported file changes, ESLint caching doesn't re-lint the route.
-- Next.js and Waku layouts only count for the pages below them if they render `children` inside a `<HydrationBoundary>`. Waku slices are rendered on their own, so layouts don't count for them.
+- Next.js and Waku layouts count for the pages below them, including the server components they pass `children` to, like `<AppShell>{children}</AppShell>`. Their prefetches count as dehydrated if `children` are rendered inside a `<HydrationBoundary>`, in the layout or in one of those components, or if a server component further down renders a `<HydrationBoundary>` around the client component, since server components usually share one query client per request (see `getQueryClient()` in the [Advanced Server Rendering guide](../framework/react/guides/advanced-ssr.md)). Waku slices are rendered on their own, so layouts don't count for them.
+- The rule checks that a loader or server component calls `dehydrate()`, but not that it dehydrates the query client it prefetched into. `dehydrate(getQueryClient())` only works if `getQueryClient()` returns the same client on the server, e.g. with React's `cache()`.
+- For React Router, a `<HydrationBoundary>` whose state can't be traced to a route's loader data, e.g. one read with `useMatches()`, the `matches` prop, `useRouteLoaderData()` with a route ID that isn't a literal or isn't a file path, or a hook from a package, counts as rendering every route's dehydrated state.
 - Waku pages and Next.js pages with `'use client'` are not checked.
 - Values read with TanStack Router's `strict: false` can't be traced to a route, so queries that use them are not reported.
 
