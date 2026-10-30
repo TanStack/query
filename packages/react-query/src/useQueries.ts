@@ -431,6 +431,14 @@ export function useQueries<
       (options as QueriesObserverOptions<TCombinedResult>).combine,
     )
 
+  // Update queries before subscribing so that an Activity reveal uses the latest queries.
+  React.useEffect(() => {
+    observer.setQueries(
+      defaultedQueries,
+      options as QueriesObserverOptions<TCombinedResult>,
+    )
+  }, [defaultedQueries, options, observer])
+
   const shouldSubscribe = !isRestoring && subscribed
   React.useSyncExternalStore(
     React.useCallback(
@@ -443,13 +451,6 @@ export function useQueries<
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
   )
-
-  React.useEffect(() => {
-    observer.setQueries(
-      defaultedQueries,
-      options as QueriesObserverOptions<TCombinedResult>,
-    )
-  }, [defaultedQueries, options, observer])
 
   const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result),
