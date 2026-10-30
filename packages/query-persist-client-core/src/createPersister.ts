@@ -40,6 +40,29 @@ export interface PersistedQuery {
  */
 export type MaybePromise<T> = T | Promise<T>
 
+function isPersistedQuery(value: unknown): value is PersistedQuery {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+
+  const { state } = value as { state?: unknown }
+  return typeof state === 'object' && state !== null
+}
+
+/**
+ * Checks whether a persisted query carries the fields needed to restore it or to match it against a
+ * filter. The persister always writes both, so a missing or wrong-typed one means the entry is not
+ * a stored query.
+ * @param persistedQuery - The persisted query to check.
+ * @returns `true` if `queryKey` is a query key and `queryHash` is a hash.
+ */
+function hasRestorableShape(persistedQuery: PersistedQuery) {
+  return (
+    Array.isArray(persistedQuery.queryKey) &&
+    typeof persistedQuery.queryHash === 'string'
+  )
+}
+
 /**
  * A key-value storage, such as `localStorage` or `AsyncStorage`, whose methods may be synchronous
  * or return promises.
@@ -170,6 +193,28 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     return true
   }
 
+  async function deserializeStoredQuery(
+    store: AsyncStorage<TStorageValue>,
+    storageKey: string,
+    stored: TStorageValue,
+  ) {
+    let persistedQuery: PersistedQuery
+    try {
+      persistedQuery = await deserialize(stored)
+    } catch {
+      await store.removeItem(storageKey)
+      return
+    }
+
+    // `null`, `{}` and `{"state":null}` are valid JSON but not a stored query
+    if (!isPersistedQuery(persistedQuery)) {
+      await store.removeItem(storageKey)
+      return
+    }
+
+    return persistedQuery
+  }
+
   /**
    * Reads the persisted data of a query from storage. Expired, busted, or unreadable entries are
    * removed instead.
@@ -187,11 +232,12 @@ export function experimental_createQueryPersister<TStorageValue = string>({
       try {
         const storedData = await storage.getItem(storageKey)
         if (storedData != null) {
-          let persistedQuery: PersistedQuery
-          try {
-            persistedQuery = await deserialize(storedData)
-          } catch {
-            await storage.removeItem(storageKey)
+          const persistedQuery = await deserializeStoredQuery(
+            storage,
+            storageKey,
+            storedData,
+          )
+          if (!persistedQuery) {
             return
           }
 
@@ -333,10 +379,15 @@ export function experimental_createQueryPersister<TStorageValue = string>({
       const entries = await storage.entries()
       for (const [key, value] of entries) {
         if (key.startsWith(storageKeyPrefix)) {
-          let persistedQuery: PersistedQuery
-          try {
-            persistedQuery = await deserialize(value)
-          } catch {
+          const persistedQuery = await deserializeStoredQuery(
+            storage,
+            key,
+            value,
+          )
+          if (!persistedQuery) {
+            continue
+          }
+          if (!hasRestorableShape(persistedQuery)) {
             await storage.removeItem(key)
             continue
           }
@@ -371,14 +422,21 @@ export function experimental_createQueryPersister<TStorageValue = string>({
       const entries = await storage.entries()
       for (const [key, value] of entries) {
         if (key.startsWith(storageKeyPrefix)) {
-          let persistedQuery: PersistedQuery
-          try {
-            persistedQuery = await deserialize(value)
-          } catch {
-            await storage.removeItem(key)
+          const persistedQuery = await deserializeStoredQuery(
+            storage,
+            key,
+            value,
+          )
+          if (!persistedQuery) {
             continue
           }
           if (isExpiredOrBusted(persistedQuery)) {
+            await storage.removeItem(key)
+            continue
+          }
+
+          // `setQueryData` needs the key, and the `exact` filter needs the hash
+          if (!hasRestorableShape(persistedQuery)) {
             await storage.removeItem(key)
             continue
           }
@@ -431,10 +489,16 @@ export function experimental_createQueryPersister<TStorageValue = string>({
             continue
           }
 
-          let persistedQuery: PersistedQuery
-          try {
-            persistedQuery = await deserialize(value)
-          } catch {
+          const persistedQuery = await deserializeStoredQuery(
+            storage,
+            key,
+            value,
+          )
+          if (!persistedQuery) {
+            continue
+          }
+          // `partialMatchKey` needs the key, and the `exact` filter needs the hash
+          if (!hasRestorableShape(persistedQuery)) {
             await storage.removeItem(key)
             continue
           }

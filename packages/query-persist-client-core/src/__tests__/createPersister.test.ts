@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, test, vi } from 'vitest'
 import { Query, QueryClient, hashKey } from '@tanstack/query-core'
 import {
   PERSISTER_KEY_PREFIX,
@@ -668,6 +668,41 @@ describe('createPersister', () => {
       await persister.persisterGc()
       await expect(storage.entries()).resolves.toHaveLength(1)
     })
+    test.each(['null', '{}', '{"state":null}'])(
+      'should remove malformed entry %s',
+      async (malformed) => {
+        const storage = getFreshStorage()
+        const { persister, storageKey } = setupPersister(['foo'], { storage })
+        await storage.setItem(storageKey, malformed)
+
+        await persister.persisterGc()
+
+        expect(await storage.getItem(storageKey)).toBeUndefined()
+      },
+    )
+
+    it('should remove entries that are missing their query fields', async () => {
+      const storage = getFreshStorage()
+      const { persister } = setupPersister(['foo'], { storage })
+
+      const freshState = { data: 'foo', dataUpdatedAt: Date.now() }
+      const entries = [
+        { buster: '', state: freshState },
+        { buster: '', queryKey: 'foo', queryHash: 'x', state: freshState },
+        { buster: '', queryKey: ['foo'], queryHash: 42, state: freshState },
+      ]
+      for (const [index, entry] of entries.entries()) {
+        await storage.setItem(
+          `${PERSISTER_KEY_PREFIX}-malformed-${index}`,
+          JSON.stringify(entry),
+        )
+      }
+      expect(await storage.entries()).toHaveLength(3)
+
+      await persister.persisterGc()
+
+      expect(await storage.entries()).toHaveLength(0)
+    })
   })
 
   describe('restoreQueries', () => {
@@ -687,6 +722,69 @@ describe('createPersister', () => {
 
       await persister.restoreQueries(client)
       await expect(storage.entries()).resolves.toHaveLength(0)
+    })
+
+    test.each(['null', '{}', '{"state":null}'])(
+      'should remove malformed entry %s and keep restoring',
+      async (malformed) => {
+        const storage = getFreshStorage()
+        const { persister, client, queryKey } = setupPersister(['foo'], {
+          storage,
+        })
+        const malformedKey = `${PERSISTER_KEY_PREFIX}-malformed`
+        await storage.setItem(malformedKey, malformed)
+
+        client.setQueryData(queryKey, 'foo')
+        await persister.persistQueryByKey(queryKey, client)
+        client.clear()
+
+        await persister.restoreQueries(client)
+
+        expect(await storage.getItem(malformedKey)).toBeUndefined()
+        expect(client.getQueryData(queryKey)).toEqual('foo')
+      },
+    )
+
+    it('should restore a query whose data is null', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo'], {
+        storage,
+      })
+      client.setQueryData(queryKey, null)
+
+      await persister.persistQueryByKey(queryKey, client)
+      client.clear()
+
+      await persister.restoreQueries(client)
+
+      // a null `data` is a real cached value, not a malformed entry
+      expect(await storage.entries()).toHaveLength(1)
+      expect(client.getQueryData(queryKey)).toBeNull()
+    })
+
+    it('should not restore a fresh entry that is missing its query key', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo'], {
+        storage,
+      })
+      const malformedKey = `${PERSISTER_KEY_PREFIX}-malformed`
+      await storage.setItem(
+        malformedKey,
+        JSON.stringify({
+          state: { data: 'bar', dataUpdatedAt: Date.now() },
+          buster: '',
+        }),
+      )
+
+      client.setQueryData(queryKey, 'foo')
+      await persister.persistQueryByKey(queryKey, client)
+      client.clear()
+
+      await persister.restoreQueries(client)
+
+      expect(await storage.getItem(malformedKey)).toBeUndefined()
+      expect(client.getQueryData(queryKey)).toEqual('foo')
+      expect(client.getQueryCache().getAll()).toHaveLength(1)
     })
 
     it('should properly restore queries from cache without filters', async () => {
@@ -904,6 +1002,24 @@ describe('createPersister', () => {
 
       await persister.removeQueries({ queryKey: ['foo'] })
       await expect(storage.entries()).resolves.toHaveLength(0)
+    })
+
+    it('should remove entries that are missing their query fields', async () => {
+      const storage = getFreshStorage()
+      const { persister, queryKey } = setupPersister(['foo'], { storage })
+
+      await storage.setItem(
+        `${PERSISTER_KEY_PREFIX}-malformed`,
+        JSON.stringify({
+          state: { data: 'foo', dataUpdatedAt: Date.now() },
+          buster: '',
+        }),
+      )
+      expect(await storage.entries()).toHaveLength(1)
+
+      await persister.removeQueries({ queryKey, exact: false })
+
+      expect(await storage.entries()).toHaveLength(0)
     })
   })
 })
