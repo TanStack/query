@@ -88,7 +88,7 @@ export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
  * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
  * individual entries — the array itself can't be a bare getter.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to
- * `useInfiniteQuery`, with `initialData` set.
+ * `useInfiniteQuery`, with `initialData` known to be defined.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,

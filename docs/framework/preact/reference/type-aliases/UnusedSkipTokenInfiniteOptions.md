@@ -9,11 +9,11 @@ title: UnusedSkipTokenInfiniteOptions
 type UnusedSkipTokenInfiniteOptions<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown> = OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object;
 ```
 
-Defined in: [packages/preact-query/src/infiniteQueryOptions.ts:63](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L63)
+Defined in: [packages/preact-query/src/infiniteQueryOptions.ts:64](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L64)
 
-The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted or may
-be `undefined` and `queryFn` is not `skipToken` — same as [UndefinedInitialDataInfiniteOptions](UndefinedInitialDataInfiniteOptions.md), but
-`queryFn` may not be `skipToken`.
+The options accepted by the `infiniteQueryOptions` overload selected when `queryFn` is not `skipToken` and
+`initialData` is omitted, may be `undefined`, or is a function that may return `undefined` — same as
+[UndefinedInitialDataInfiniteOptions](UndefinedInitialDataInfiniteOptions.md), but `queryFn` may not be `skipToken`.
 
 ## Type Parameters
 
@@ -56,8 +56,8 @@ The type of the parameter passed to `queryFn` to fetch a given page.
 optional queryFn?: Exclude<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken | undefined>;
 ```
 
-`skipToken` is not allowed as a value here — this overload is selected when `initialData` is omitted or
-may be `undefined`. If you don't intend to run the query yet, set `enabled: false` — omitting `queryFn`
-alone still triggers a fetch that fails with "Missing queryFn" unless `enabled` is `false` or a default
-query function has been defined. A default query function only supplies `queryFn`; it doesn't defer the
-fetch on its own.
+`skipToken` is not allowed as a value here — this overload is selected when `initialData` is omitted, may
+be `undefined`, or is a function that may return `undefined`. If you don't intend to run the query yet,
+set `enabled: false` — omitting `queryFn` alone still triggers a fetch that fails with "Missing queryFn"
+unless `enabled` is `false` or a default query function has been defined. A default query function only
+supplies `queryFn`; it doesn't defer the fetch on its own.

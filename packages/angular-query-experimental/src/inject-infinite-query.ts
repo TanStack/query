@@ -44,8 +44,9 @@ export interface InjectInfiniteQueryOptions {
  * `injectInfiniteQueryFn`, so the resulting `data` signal is never `undefined` (unless a `select` changes
  * `TData` to include `undefined`).
  * @param injectInfiniteQueryFn - A function returning the {@link DefinedInitialDataInfiniteOptions} to use —
- * everything you can pass to `injectInfiniteQuery`, with `initialData` set. Similar to `computed` from
- * Angular, this function runs in the reactive context, so signals read inside it drive the query.
+ * everything you can pass to `injectInfiniteQuery`, with `initialData` known to be defined. Similar to
+ * `computed` from Angular, this function runs in the reactive context, so signals read inside it drive the
+ * query.
  * @param options - Additional configuration.
  * @returns The same signals as `injectQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
  * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data().pages` and

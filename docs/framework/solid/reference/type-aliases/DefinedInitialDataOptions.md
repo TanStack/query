@@ -9,10 +9,10 @@ title: DefinedInitialDataOptions
 type DefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = Accessor<QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object>;
 ```
 
-Defined in: [packages/solid-query/src/queryOptions.ts:43](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L43)
+Defined in: [packages/solid-query/src/queryOptions.ts:44](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L44)
 
-The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
-`undefined` (unless a `select` changes `TData` to include `undefined`).
+The options accepted by the `queryOptions` overload selected when `initialData` is known to be defined —
+`data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ## Type Parameters
 

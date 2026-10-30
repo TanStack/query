@@ -27,14 +27,14 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/queryOptions.ts:93](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L93)
+Defined in: [packages/solid-query/src/queryOptions.ts:94](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L94)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
 is the query key to generate options for.
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
-a `select` changes `TData` to include `undefined`).
+This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+`undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -60,7 +60,7 @@ a `select` changes `TData` to include `undefined`).
 
 [`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object`
 
-The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`, with `initialData` set.
+The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`, with `initialData` known to be defined.
 
 ### Returns
 
@@ -108,7 +108,7 @@ function Posts() {
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/queryOptions.ts:141](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L141)
+Defined in: [packages/solid-query/src/queryOptions.ts:142](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L142)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and

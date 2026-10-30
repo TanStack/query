@@ -9,12 +9,13 @@ title: UndefinedInitialDataOptions
 type UndefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = Accessor<QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object>;
 ```
 
-Defined in: [packages/solid-query/src/queryOptions.ts:21](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L21)
+Defined in: [packages/solid-query/src/queryOptions.ts:22](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L22)
 
-The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
-`undefined` while the query is `pending`. `queryOptions` itself accepts and returns a plain object (its
-parameter type is `ReturnType<UndefinedInitialDataOptions<...>>`, i.e. this `Accessor` called); Solid's
-reactivity applies where the result is consumed instead, e.g. `useQuery(() => options)`.
+The options accepted by the `queryOptions` overload selected when `initialData` is omitted, may be
+`undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is
+`pending`. `queryOptions` itself accepts and returns a plain object (its parameter type is
+`ReturnType<UndefinedInitialDataOptions<...>>`, i.e. this `Accessor` called); Solid's reactivity applies
+where the result is consumed instead, e.g. `useQuery(() => options)`.
 
 ## Type Parameters
 
