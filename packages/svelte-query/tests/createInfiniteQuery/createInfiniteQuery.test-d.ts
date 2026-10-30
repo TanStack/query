@@ -55,7 +55,7 @@ describe('createInfiniteQuery', () => {
 
   describe('initialData', () => {
     it('should always define TData when initialData is provided', () => {
-      const { data } = createInfiniteQuery(() => ({
+      const infiniteQuery = createInfiniteQuery(() => ({
         queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return pageParam * 5
@@ -66,7 +66,9 @@ describe('createInfiniteQuery', () => {
       }))
 
       // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
-      expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<
+        InfiniteData<number, unknown>
+      >()
     })
 
     it('should always define TData when initialData is provided through infiniteQueryOptions', () => {
@@ -79,14 +81,16 @@ describe('createInfiniteQuery', () => {
         getNextPageParam: () => undefined,
         initialData: { pages: [5], pageParams: [1] },
       })
-      const { data } = createInfiniteQuery(() => options)
+      const infiniteQuery = createInfiniteQuery(() => options)
 
       // known issue: type of pageParams is unknown when returned from createInfiniteQuery
-      expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<
+        InfiniteData<number, unknown>
+      >()
     })
 
     it('should have undefined in the TData union when initialData is NOT provided', () => {
-      const { data } = createInfiniteQuery(() => ({
+      const infiniteQuery = createInfiniteQuery(() => ({
         queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return pageParam * 5
@@ -95,7 +99,7 @@ describe('createInfiniteQuery', () => {
         getNextPageParam: () => undefined,
       }))
 
-      expectTypeOf(data).toEqualTypeOf<
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<
         InfiniteData<number, unknown> | undefined
       >()
     })
