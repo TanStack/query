@@ -9,8 +9,9 @@ import type {
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 
 /**
- * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted or may
- * be `undefined` — `data` may be `undefined` while the query is `pending`.
+ * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted, may be
+ * `undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is
+ * `pending`.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,

@@ -163,8 +163,9 @@ type WithDefinedInitialData<TQueryFnData> = {
 }
 
 /**
- * The options accepted by the `queryOptions` overload selected when `initialData` is omitted or may be
- * `undefined` — `data` may be `undefined` while the query is `pending`.
+ * The options accepted by the `queryOptions` overload selected when `initialData` is omitted, may be
+ * `undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is
+ * `pending`.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
@@ -195,8 +196,9 @@ export type DefinedInitialQueryOptions<
   WithDefinedInitialData<TQueryFnData>
 
 /**
- * The options returned by the `queryOptions` overload selected when `initialData` is omitted or may be
- * `undefined`, with the `queryKey` tagged with the query's data and error types.
+ * The options returned by the `queryOptions` overload selected when `initialData` is omitted, may be
+ * `undefined`, or is a function that may return `undefined`, with the `queryKey` tagged with the query's data
+ * and error types.
  */
 export type UndefinedInitialQueryOptionsWithDataTag<
   TQueryFnData = unknown,

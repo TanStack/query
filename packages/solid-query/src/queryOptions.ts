@@ -9,11 +9,11 @@ import type { QueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 
 /**
- * The options accepted by the `queryOptions` overload selected when `initialData` is omitted or may be
- * `undefined` — `data` may be `undefined` while the query is `pending`. `queryOptions` itself accepts and
- * returns a plain object (its parameter type is `ReturnType<UndefinedInitialDataOptions<...>>`, i.e. this
- * `Accessor` called); Solid's reactivity applies where the result is consumed instead, e.g.
- * `useQuery(() => options)`.
+ * The options accepted by the `queryOptions` overload selected when `initialData` is omitted, may be
+ * `undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is
+ * `pending`. `queryOptions` itself accepts and returns a plain object (its parameter type is
+ * `ReturnType<UndefinedInitialDataOptions<...>>`, i.e. this `Accessor` called); Solid's reactivity applies
+ * where the result is consumed instead, e.g. `useQuery(() => options)`.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.

@@ -9,8 +9,9 @@ import type {
 import type { CreateInfiniteQueryOptions } from './types.js'
 
 /**
- * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted or may
- * be `undefined` — `data` may be `undefined` while the query is `pending`.
+ * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted, may be
+ * `undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is
+ * `pending`.
  */
 export type UndefinedInitialDataInfiniteOptions<
   TQueryFnData = unknown,

@@ -57,8 +57,8 @@ export function useQuery<
 ): DefinedUseQueryResult<TData, TError>
 
 /**
- * This overload is selected when `initialData` is omitted or may be `undefined`, so the resulting `data`
- * can be `undefined`.
+ * This overload is selected when `initialData` is omitted, may be `undefined`, or is a function that may
+ * return `undefined`, so the resulting `data` can be `undefined`.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.

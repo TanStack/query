@@ -11,8 +11,9 @@ import type {
 import type { UseQueryOptions } from './types'
 
 /**
- * The options accepted by the `queryOptions` overload selected when `initialData` is omitted or may be
- * `undefined` — `data` may be `undefined` while the query is `pending`.
+ * The options accepted by the `queryOptions` overload selected when `initialData` is omitted, may be
+ * `undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is
+ * `pending`.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
@@ -38,9 +39,9 @@ export type UndefinedInitialDataOptions<
 }
 
 /**
- * The options accepted by the `queryOptions` overload selected when `initialData` is omitted or may be
- * `undefined` and `queryFn` is not `skipToken` — same as {@link UndefinedInitialDataOptions}, but `queryFn`
- * may not be `skipToken`.
+ * The options accepted by the `queryOptions` overload selected when `queryFn` is not `skipToken` and
+ * `initialData` is omitted, may be `undefined`, or is a function that may return `undefined` — same as
+ * {@link UndefinedInitialDataOptions}, but `queryFn` may not be `skipToken`.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
@@ -56,11 +57,11 @@ export type UnusedSkipTokenOptions<
   'queryFn'
 > & {
   /**
-   * `skipToken` is not allowed as a value here — this overload is selected when `initialData` is omitted or
-   * may be `undefined`. If you don't intend to run the query yet, set `enabled: false` — omitting `queryFn`
-   * alone still triggers a fetch that fails with "Missing queryFn" unless `enabled` is `false` or a default
-   * query function has been defined. A default query function only supplies `queryFn`; it doesn't defer the
-   * fetch on its own.
+   * `skipToken` is not allowed as a value here — this overload is selected when `initialData` is omitted, may
+   * be `undefined`, or is a function that may return `undefined`. If you don't intend to run the query yet,
+   * set `enabled: false` — omitting `queryFn` alone still triggers a fetch that fails with "Missing queryFn"
+   * unless `enabled` is `false` or a default query function has been defined. A default query function only
+   * supplies `queryFn`; it doesn't defer the fetch on its own.
    */
   queryFn?: Exclude<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
