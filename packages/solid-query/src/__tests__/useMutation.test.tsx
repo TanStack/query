@@ -1598,6 +1598,60 @@ describe('useMutation', () => {
     ).toBeInTheDocument()
   })
 
+  it('should run mutations in the new queryClient when queryClient changes', async () => {
+    const key = createKey()
+
+    const queryClient1 = new QueryClient()
+    const queryClient2 = new QueryClient()
+
+    function Page(props: { client: () => QueryClient }) {
+      const mutation = useMutation(
+        () => ({
+          mutationKey: key,
+          mutationFn: (text: string) => sleep(10).then(() => text),
+        }),
+        props.client,
+      )
+
+      return (
+        <div>
+          <button onClick={() => mutation.mutate('data')}>mutate</button>
+          <div>status: {mutation.status}</div>
+        </div>
+      )
+    }
+
+    const [client, setClient] = createSignal(queryClient1)
+
+    const rendered = render(() => <Page client={client} />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('status: pending')).toBeInTheDocument()
+
+    setClient(queryClient2)
+    expect(rendered.getByText('status: idle')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('status: idle')).toBeInTheDocument()
+    expect(
+      queryClient1.getMutationCache().find({ mutationKey: key })?.state.status,
+    ).toBe('success')
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('status: success')).toBeInTheDocument()
+    expect(
+      queryClient2.getMutationCache().findAll({ mutationKey: key }),
+    ).toHaveLength(1)
+    expect(
+      queryClient1.getMutationCache().findAll({ mutationKey: key }),
+    ).toHaveLength(1)
+
+    queryClient1.clear()
+    queryClient2.clear()
+  })
+
   it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
     const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
