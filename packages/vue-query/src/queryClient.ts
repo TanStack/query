@@ -313,16 +313,18 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: MaybeRefDeep<
-      QueryExecuteOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryData,
-        TQueryKey,
-        TPageParam
-      >
-    >,
+    options:
+      | MaybeRefDeep<
+          QueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey,
+            TPageParam
+          >
+        >
+      | UseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   ): Promise<TData>
   override query<
     TQueryFnData,
@@ -385,6 +387,7 @@ export class QueryClient extends QC {
       | MaybeRefDeep<
           FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
         >
+      | UseQueryOptions<TQueryFnData, TError, unknown, TData, TQueryKey>
       | (() => FetchQueryOptions<
           TQueryFnData,
           TError,
@@ -434,9 +437,9 @@ export class QueryClient extends QC {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
-    >,
+    options:
+      | MaybeRefDeep<FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>>
+      | UseQueryOptions<TQueryFnData, TError, unknown, TData, TQueryKey>,
   ): Promise<void>
   override prefetchQuery<
     TQueryFnData = unknown,

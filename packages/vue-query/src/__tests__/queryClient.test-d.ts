@@ -3,6 +3,7 @@ import { ref } from 'vue-demi'
 import { createKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import type { DataTag, InfiniteData, QueryState } from '@tanstack/query-core'
+import type { UseQueryOptions } from '../queryOptions'
 
 describe('getQueryData', () => {
   it('should be typed if key is tagged', () => {
@@ -227,6 +228,21 @@ describe('query', () => {
         queryFn: () => Promise.resolve('string'),
       }),
     ])
+  })
+
+  it('should accept options typed as UseQueryOptions', () => {
+    const options = {} as UseQueryOptions<number>
+    const queryClient = new QueryClient()
+
+    expectTypeOf(queryClient.query(options)).toEqualTypeOf<Promise<number>>()
+    expectTypeOf(
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- deprecated method must still accept UseQueryOptions
+      queryClient.fetchQuery(options),
+    ).toEqualTypeOf<Promise<number>>()
+    expectTypeOf(
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- deprecated method must still accept UseQueryOptions
+      queryClient.prefetchQuery(options),
+    ).toEqualTypeOf<Promise<void>>()
   })
 })
 
