@@ -24,8 +24,8 @@ export type UndefinedInitialDataOptions<
 }
 
 /**
- * The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
- * `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * The options accepted by the `queryOptions` overload selected when `initialData` is known to be defined —
+ * `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
  */
 export type DefinedInitialDataOptions<
   TQueryFnData = unknown,
@@ -43,10 +43,10 @@ export type DefinedInitialDataOptions<
  * can be shared across `createQuery` calls and imperative APIs such as `queryClient.query`. `options.queryKey`
  * is required and is the query key to generate options for.
  *
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
- * a `select` changes `TData` to include `undefined`).
+ * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `createQuery`,
- * with `initialData` set.
+ * with `initialData` known to be defined.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  * @see {@link createQuery} to run a query with these options.
  * @example

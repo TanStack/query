@@ -13,9 +13,9 @@ import type {
 } from './types'
 
 /**
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
- * a `select` changes `TData` to include `undefined`).
- * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` set.
+ * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` known to be defined.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current query result, typed so that `status` is `success` — or `error` if a fetch attempt

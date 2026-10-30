@@ -137,7 +137,7 @@ export type DefinedInitialDataInfiniteOptions<
  *
  * This overload is selected when `initialData` is known to be defined.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to
- * `injectInfiniteQuery`, with `initialData` set.
+ * `injectInfiniteQuery`, with `initialData` known to be defined.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  * @remarks See {@link injectInfiniteQuery} for examples that fetch further pages, from a button click or
  * automatically as the user scrolls.

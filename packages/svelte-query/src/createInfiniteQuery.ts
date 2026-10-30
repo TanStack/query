@@ -24,7 +24,8 @@ import type {
  *
  * This overload is selected when `initialData` is known to be defined.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to
- * `createInfiniteQuery`, with `initialData` set, wrapped in an {@link Accessor} so options can be reactive.
+ * `createInfiniteQuery`, with `initialData` known to be defined, wrapped in an {@link Accessor} so options
+ * can be reactive.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current query result, plus `fetchNextPage`/`fetchPreviousPage`/`hasNextPage`/`hasPreviousPage`

@@ -18,10 +18,10 @@ import type {
  * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
  * The query runs when the options call for it — `enabled: false` skips the initial fetch.
  *
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
- * a `select` changes `TData` to include `undefined`).
+ * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
  * @param options - An accessor returning the {@link DefinedInitialDataOptions} to use — everything you can
- * pass to `useQuery`, with `initialData` set.
+ * pass to `useQuery`, with `initialData` known to be defined.
  * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns The current query result, as a Solid store, typed so that `status` is `success` — or `error` if a

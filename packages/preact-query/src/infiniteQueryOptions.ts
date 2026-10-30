@@ -130,7 +130,7 @@ export type DefinedInitialDataInfiniteOptions<
  * `options.queryKey` is required and is the query key to generate options for.
  *
  * This overload is selected when `initialData` is known to be defined.
- * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
+ * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` known to be defined.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  * @remarks See {@link useInfiniteQuery} for examples that fetch further pages, from a button click or
  * automatically as the user scrolls.
