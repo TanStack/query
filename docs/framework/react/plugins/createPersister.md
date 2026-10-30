@@ -107,6 +107,7 @@ If `query` is `expired`, `busted` or `malformed` it would be removed from the st
 ### `persisterGc(): Promise<void>`
 
 This function can be used to sporadically clean up storage from `expired`, `busted` or `malformed` entries.
+Entries that deserialize to `null` or have a missing or `null` state are removed, and cleanup continues with the remaining entries.
 
 For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.  
 For example `Object.entries(localStorage)` for `localStorage` or `entries` from `idb-keyval`.
@@ -115,6 +116,8 @@ For example `Object.entries(localStorage)` for `localStorage` or `entries` from 
 
 This function can be used to restore queries that are currently stored by persister.  
 For example when your app is starting up in offline mode, or you want all or only specific data from previous session to be immediately available without intermediate `loading` state.
+
+Entries that deserialize to `null` or have a missing or `null` state are removed, and restoration continues with the remaining entries. Queries with `null` data are valid and can still be restored.
 
 The filter object supports the following properties:
 
