@@ -46,7 +46,10 @@ export interface QueryObserverOptions<
   reconcile?:
     | string
     | false
-    | ((oldData: TData | undefined, newData: TData) => TData)
+    | ((
+        oldData: NoInfer<TData> | undefined,
+        newData: NoInfer<TData>,
+      ) => NoInfer<TData>)
 }
 
 /**
@@ -82,7 +85,10 @@ export interface InfiniteQueryObserverOptions<
   reconcile?:
     | string
     | false
-    | ((oldData: TData | undefined, newData: TData) => TData)
+    | ((
+        oldData: NoInfer<TData> | undefined,
+        newData: NoInfer<TData>,
+      ) => NoInfer<TData>)
 }
 
 /**

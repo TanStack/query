@@ -1,6 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
+import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { QueryClient } from '../QueryClient'
 import type { InfiniteData } from '@tanstack/query-core'
 
@@ -77,6 +78,41 @@ describe('useInfiniteQuery', () => {
         initialPageParam: 1,
         getNextPageParam: () => undefined,
       }))
+
+      expectTypeOf(data).toEqualTypeOf<
+        InfiniteData<number, unknown> | undefined
+      >()
+    })
+  })
+
+  describe('infiniteQueryOptions called inline in the accessor', () => {
+    it('should always define TData when initialData is provided', () => {
+      const { data } = useInfiniteQuery(() =>
+        infiniteQueryOptions({
+          queryKey: createKey(),
+          queryFn: ({ pageParam }) => {
+            return pageParam * 5
+          },
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+          initialData: { pages: [5], pageParams: [1] },
+        }),
+      )
+
+      expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
+    })
+
+    it('should have undefined in the TData union when initialData is NOT provided', () => {
+      const { data } = useInfiniteQuery(() =>
+        infiniteQueryOptions({
+          queryKey: createKey(),
+          queryFn: ({ pageParam }) => {
+            return pageParam * 5
+          },
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+        }),
+      )
 
       expectTypeOf(data).toEqualTypeOf<
         InfiniteData<number, unknown> | undefined

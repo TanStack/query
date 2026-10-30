@@ -207,6 +207,18 @@ describe('useQuery', () => {
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       })
 
+      it('should define TData when queryOptions is called inline in the accessor', () => {
+        const { data } = useQuery(() =>
+          queryOptions({
+            queryKey: createKey(),
+            queryFn: () => ({ wow: true }),
+            initialData: { wow: true },
+          }),
+        )
+
+        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+      })
+
       it('should always define TData when initialData is provided as a function which ALWAYS returns the data', () => {
         const { data } = useQuery(() => ({
           queryKey: createKey(),
@@ -222,6 +234,17 @@ describe('useQuery', () => {
           queryKey: createKey(),
           queryFn: () => ({ wow: true }),
         }))
+
+        expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+      })
+
+      it('should have undefined in the TData union when queryOptions is called inline in the accessor without initialData', () => {
+        const { data } = useQuery(() =>
+          queryOptions({
+            queryKey: createKey(),
+            queryFn: () => ({ wow: true }),
+          }),
+        )
 
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
@@ -277,6 +300,22 @@ describe('useQuery', () => {
 
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
+    })
+  })
+
+  describe('reconcile', () => {
+    it('should infer the parameters of a reconcile function from the query function', () => {
+      const { data } = useQuery(() => ({
+        queryKey: createKey(),
+        queryFn: () => ({ wow: true }),
+        reconcile: (oldData, newData) => {
+          expectTypeOf(oldData).toEqualTypeOf<{ wow: boolean } | undefined>()
+          expectTypeOf(newData).toEqualTypeOf<{ wow: boolean }>()
+          return newData
+        },
+      }))
+
+      expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
     })
   })
 
