@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-svelte-auto-refetching",
+  "name": "@tanstack/query-example-svelte-auto-refetching-sveltekit",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,19 +10,19 @@
     "test:types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^6.3.5",
-    "@tanstack/svelte-query-devtools": "^6.3.5"
+    "@tanstack/svelte-query": "^6.3.6",
+    "@tanstack/svelte-query-devtools": "^6.3.6"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^7.0.1",
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
-    "@tanstack/eslint-plugin-query": "^5.104.5",
-    "@typescript-eslint/parser": "^8.71.1",
+    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@typescript-eslint/parser": "^8.72.0",
     "eslint-plugin-svelte": "^3.23.0",
     "svelte": "^5.57.1",
-    "svelte-check": "^4.7.6",
-    "typescript": "5.8.3",
-    "vite": "^8.3.1"
+    "svelte-check": "^4.7.7",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5"
   }
 }

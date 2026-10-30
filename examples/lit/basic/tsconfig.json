@@ -11,5 +11,5 @@
     "allowJs": true,
     "useDefineForClassFields": false
   },
-  "include": ["src/**/*.ts", "vite.config.ts", "eslint.config.js"]
+  "include": ["src/**/*.ts", "config/port.js", "*.config.ts", "*.config.js"]
 }

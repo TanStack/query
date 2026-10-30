@@ -1412,13 +1412,13 @@ describe('useInfiniteQuery', () => {
     const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).not.toHaveBeenCalled()
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
     expect(rendered.getByText('pages: none')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: 'set postId' }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(
       rendered.getByText('pages: comments for 1 page 0'),

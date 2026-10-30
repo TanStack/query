@@ -18,7 +18,7 @@
     ) => void
   }
 
-  const { queryClient, mutationKey, onSuccessMock }: Props = $props()
+  let { queryClient, mutationKey, onSuccessMock }: Props = $props()
 
   setQueryClientContext(queryClient)
 

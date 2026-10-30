@@ -1,0 +1,27 @@
+{
+  "name": "@tanstack/query-example-vue-algolia",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src",
+    "test:types": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@algolia/client-search": "5.59.0",
+    "@tanstack/vue-query": "^5.105.0",
+    "@tanstack/vue-query-devtools": "^6.3.6",
+    "vue": "^3.5.43"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@vitejs/plugin-vue": "^6.0.9",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.12.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5",
+    "vue-tsc": "^3.3.13"
+  }
+}

@@ -6,21 +6,21 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { projectsQueryOptions } from '../lib/api'
+import { projectsQueries } from '../services/projects/queries'
 
 export default function Example() {
   const queryClient = useQueryClient()
   const [page, setPage] = React.useState(0)
 
   const { status, data, error, isFetching, isPlaceholderData } = useQuery({
-    ...projectsQueryOptions(page),
+    ...projectsQueries.list(page),
     placeholderData: keepPreviousData,
   })
 
   // Prefetch the next page!
   React.useEffect(() => {
     if (!isPlaceholderData && data?.hasMore) {
-      queryClient.query(projectsQueryOptions(page + 1)).catch(noop)
+      queryClient.query(projectsQueries.list(page + 1)).catch(noop)
     }
   }, [data, isPlaceholderData, page, queryClient])
 

@@ -225,7 +225,7 @@ export class Component {
 Further, the `queryKey` returned from `queryOptions` knows about the `queryFn` associated with it, and we can leverage that type information to make functions like `queryClient.getQueryData` aware of those types as well:
 
 ```ts
-data = this.queryClient.getQueryData(groupOptions().queryKey)
+data = this.queryClient.getQueryData(this.queries.post(1).queryKey)
 // ^? data: Post | undefined
 ```
 
@@ -241,7 +241,7 @@ Similarly to `queryOptions`, you can use `mutationOptions` to extract mutation o
 
 ```ts
 export class QueriesService {
-  private http = inject(HttpClient)
+  private queryClient = inject(QueryClient)
 
   updatePost(id: number) {
     return mutationOptions({

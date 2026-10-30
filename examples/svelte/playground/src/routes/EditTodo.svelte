@@ -4,79 +4,28 @@
     createQuery,
     createMutation,
   } from '@tanstack/svelte-query'
-  import {
-    errorRate,
-    queryTimeMin,
-    queryTimeMax,
-    list,
-    editingIndex,
-  } from '$lib/stores.svelte'
-  import type { Todo } from '$lib/stores.svelte'
+  import { editingIndex } from '$lib/stores.svelte'
+  import { todosMutations, todosQueries } from '$lib/services/todos/queries'
+  import type { Todo } from '$lib/services/todos/types'
 
-  let { id }: { id: number } = $props()
+  type Props = {
+    id: number
+  }
+
+  let { id }: Props = $props()
 
   const queryClient = useQueryClient()
 
-  const fetchTodoById = async ({ id }: { id: number }): Promise<Todo> => {
-    return new Promise((resolve, reject) => {
-      setTimeout(
-        () => {
-          if (Math.random() < errorRate.value) {
-            return reject(
-              new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
-            )
-          }
-          const todo = $state.snapshot(list.value.find((d) => d.id === id))
-          if (!todo) {
-            return reject(
-              new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
-            )
-          }
-          resolve(todo)
-        },
-        queryTimeMin.value +
-          Math.random() * (queryTimeMax.value - queryTimeMin.value),
-      )
-    })
-  }
-
-  function patchTodo(todo: Todo): Promise<Todo> {
-    console.info('patchTodo', todo)
-    return new Promise((resolve, reject) => {
-      setTimeout(
-        () => {
-          if (Math.random() < errorRate.value) {
-            return reject(
-              new Error(JSON.stringify({ patchTodo: todo }, null, 2)),
-            )
-          }
-          list.value = list.value.map((d) => {
-            if (d.id === todo.id) {
-              return $state.snapshot(todo)
-            }
-            return d
-          })
-          resolve(todo)
-        },
-        queryTimeMin.value +
-          Math.random() * (queryTimeMax.value - queryTimeMin.value),
-      )
-    })
-  }
-
-  const query = createQuery(() => ({
-    queryKey: ['todo', { id }],
-    queryFn: () => fetchTodoById({ id }),
-  }))
+  const query = createQuery(() => todosQueries.detail(id))
 
   let draft = $state<Partial<Omit<Todo, 'id'>>>({})
 
   const saveMutation = createMutation(() => ({
-    mutationFn: patchTodo,
+    ...todosMutations.update(),
     onSuccess: (data) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
-      queryClient.setQueryData(['todo', { id }], data)
+      queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
+      queryClient.setQueryData(todosQueries.detail(id).queryKey, data)
       draft = {}
     },
   }))
