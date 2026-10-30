@@ -149,7 +149,7 @@ export class QueryClient extends QC {
   >(
     queryKey: TTaggedQueryKey,
     updater: Updater<
-      NoInfer<TInferredQueryFnData> | undefined,
+      InferDataFromTag<NoInfer<TQueryFnData>, TTaggedQueryKey> | undefined,
       NoInfer<TInferredQueryFnData> | undefined
     >,
     options?: MaybeRefDeep<SetDataOptions>,
