@@ -513,8 +513,9 @@ export class QueryClient {
 
   /**
    * Refetches queries matching the given filters, regardless of whether they are stale. Without
-   * filters, every query in the cache is refetched. Queries that are disabled, or static (only
-   * have observers with a static `staleTime`), are never refetched.
+   * filters, every query in the cache is refetched. Disabled queries are never refetched, and
+   * static queries (with an observer whose `staleTime` is `'static'`) are skipped when they
+   * already have data.
    *
    * By default (`cancelRefetch: true`), a currently running fetch is cancelled before the new
    * one starts. The returned promise resolves once all matching queries have settled; it does
@@ -541,7 +542,11 @@ export class QueryClient {
     const promises = notifyManager.batch(() =>
       this.#queryCache
         .findAll(filters)
-        .filter((query) => !query.isDisabled() && !query.isStatic())
+        .filter(
+          (query) =>
+            !query.isDisabled() &&
+            !(query.isStatic() && query.state.data !== undefined),
+        )
         .map((query) => {
           let promise = query.fetch(undefined, fetchOptions)
           if (!fetchOptions.throwOnError) {
