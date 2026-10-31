@@ -491,10 +491,8 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 In case you are creating the `QueryClient` for every request, Preact Query creates the isolated cache for this client, which is preserved in memory for the `gcTime` period. That may lead to high memory consumption on server in case of high number of requests during that period.
 
-On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
+On the server, no garbage collection timers are scheduled, whatever the `gcTime`, and `gcTime` defaults to `Infinity`. Memory is cleared automatically once the request has finished and the `QueryClient` is no longer referenced.
 
 Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you require a shorter `gcTime`, we recommend setting it to `2 * 1000` to allow sufficient time for the app to reference the data.
 
 To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client.
-
-Alternatively, you can set a smaller `gcTime`.

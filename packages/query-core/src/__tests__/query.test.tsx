@@ -1000,6 +1000,25 @@ describe('query', () => {
     }
   })
 
+  it('should not remove a query with an explicit gcTime on the server', async () => {
+    const resetIsServer = setIsServer(true)
+
+    try {
+      const key = queryKey()
+      queryCache.build(queryClient, {
+        queryKey: key,
+        queryFn: () => 'data',
+        gcTime: 10,
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(queryCache.find({ queryKey: key })).toBeDefined()
+    } finally {
+      resetIsServer()
+    }
+  })
+
   it('should call initialDataUpdatedAt in constructor if defined as a function', async () => {
     const key = createKey()
 

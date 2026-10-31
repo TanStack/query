@@ -128,6 +128,20 @@ describe('Removable', () => {
       expect(provider.setTimeout).not.toHaveBeenCalled()
     })
 
+    it('should not schedule on the server even with an explicit gcTime', () => {
+      const resetIsServer = setIsServer(true)
+      try {
+        const removable = new RemovableTest()
+        removable.callUpdateGcTime(1000)
+
+        removable.callScheduleGc()
+
+        expect(provider.setTimeout).not.toHaveBeenCalled()
+      } finally {
+        resetIsServer()
+      }
+    })
+
     it('should clear a previously scheduled timeout before scheduling a new one', () => {
       const removable = new RemovableTest()
       removable.callUpdateGcTime(1000)
