@@ -54,7 +54,7 @@ export default [
 
 ### Parsing imported files
 
-To follow imports, the rule reuses the files ESLint has already linted and parses the others with the parser of the file being linted. If the optional peer dependency [`oxc-parser`](https://www.npmjs.com/package/oxc-parser) is installed, the rule parses them with it instead, which is faster:
+To follow imports, the rule reuses the files ESLint has already linted, if they match the files on disk, and parses the others with the parser of the file being linted. If the optional peer dependency [`oxc-parser`](https://www.npmjs.com/package/oxc-parser) 0.150.0 or later is installed, the rule parses them with it instead, which is faster:
 
 ```sh
 npm i -D oxc-parser
