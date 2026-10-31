@@ -181,6 +181,11 @@ others:
       description: 'Easy to build APIs that are end-to-end type-safe and adhere to OpenAPI standards.',
     },
     {
+      title: 'query_kit',
+      url: 'https://query-kit.dualmeta.io/',
+      description: "A port of TanStack Query's query-core to Dart, with a Flutter binding: caching, background refetching, mutations and infinite queries, checked against TanStack Query's own test suite.",
+    },
+    {
       title: 'Rapini',
       url: 'https://github.com/rametta/rapini',
       description: '🥬 OpenAPI to React Query (or SWR) & Axios',
