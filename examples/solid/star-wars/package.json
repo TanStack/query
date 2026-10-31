@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-solid-star-wars",
+  "name": "@tanstack/query-example-solid-star-wars-solid-router",
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,7 +21,7 @@
     "eslint-plugin-solid": "^0.18.1",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
-    "vite": "^8.3.1",
+    "vite": "^8.3.5",
     "vite-plugin-solid": "^2.11.14"
   }
 }

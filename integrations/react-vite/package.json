@@ -11,6 +11,6 @@
     "@vitejs/plugin-react": "^6.1.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "vite": "^8.3.1"
+    "vite": "^8.3.5"
   }
 }

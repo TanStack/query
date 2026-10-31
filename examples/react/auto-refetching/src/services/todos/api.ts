@@ -5,7 +5,7 @@ export const todosAPI = {
     return await response.json()
   },
   createTodo: async (add: string) => {
-    const response = await fetch(`/api/data?add=${add}`)
+    const response = await fetch(`/api/data?add=${encodeURIComponent(add)}`)
     if (!response.ok) throw new Error('Failed to add todo')
   },
   deleteTodos: async () => {

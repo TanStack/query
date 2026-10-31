@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-preact-prefetching",
+  "name": "@tanstack/query-example-preact-prefetching-preact-iso",
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,6 +21,6 @@
     "eslint": "^9.39.5",
     "eslint-config-preact": "^2.0.0",
     "typescript": "^6.0.3",
-    "vite": "^8.3.1"
+    "vite": "^8.3.5"
   }
 }

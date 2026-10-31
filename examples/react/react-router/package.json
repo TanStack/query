@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-react-router",
+  "name": "@tanstack/query-example-react-react-router",
   "private": true,
   "type": "module",
   "scripts": {
@@ -28,6 +28,6 @@
     "@types/sort-by": "^1.2.3",
     "@vitejs/plugin-react": "^6.1.1",
     "typescript": "^6.0.3",
-    "vite": "^8.3.1"
+    "vite": "^8.3.5"
   }
 }

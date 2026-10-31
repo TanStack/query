@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-react-star-wars",
+  "name": "@tanstack/query-example-react-star-wars-react-router",
   "private": true,
   "type": "module",
   "scripts": {
@@ -25,6 +25,6 @@
     "@vitejs/plugin-react": "^6.1.1",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
-    "vite": "^8.3.1"
+    "vite": "^8.3.5"
   }
 }

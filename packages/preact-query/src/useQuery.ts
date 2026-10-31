@@ -13,9 +13,9 @@ import type {
 } from './types'
 
 /**
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
- * a `select` changes `TData` to include `undefined`).
- * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` set.
+ * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` known to be defined.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
@@ -57,8 +57,8 @@ export function useQuery<
 ): DefinedUseQueryResult<TData, TError>
 
 /**
- * This overload is selected when `initialData` is omitted or may be `undefined`, so the resulting `data`
- * can be `undefined`.
+ * This overload is selected when `initialData` is omitted, may be `undefined`, or is a function that may
+ * return `undefined`, so the resulting `data` can be `undefined`.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.

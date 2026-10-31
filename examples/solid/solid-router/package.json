@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-solid-router",
+  "name": "@tanstack/query-example-solid-solid-router",
   "private": true,
   "type": "module",
   "scripts": {
@@ -24,7 +24,7 @@
     "@types/sort-by": "^1.2.3",
     "eslint-plugin-solid": "^0.18.1",
     "typescript": "^6.0.3",
-    "vite": "^8.3.1",
+    "vite": "^8.3.5",
     "vite-plugin-solid": "^2.11.14"
   }
 }

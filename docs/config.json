@@ -6718,23 +6718,23 @@
               "to": "framework/react/examples/basic-graphql-request"
             },
             {
-              "label": "Auto Refetching / Polling / Realtime",
+              "label": "Auto Refetching / Polling / Realtime (Next.js Pages Router)",
               "to": "framework/react/examples/auto-refetching"
             },
             {
-              "label": "Optimistic Updates",
+              "label": "Optimistic Updates (Next.js App Router)",
               "to": "framework/react/examples/nextjs-app-optimistic-updates"
             },
             {
-              "label": "Pagination",
+              "label": "Pagination (Next.js Pages Router)",
               "to": "framework/react/examples/pagination"
             },
             {
-              "label": "Load-More & Infinite Scroll",
+              "label": "Load-More & Infinite Scroll (Next.js Pages Router)",
               "to": "framework/react/examples/load-more-infinite-scroll"
             },
             {
-              "label": "Infinite query with Max pages",
+              "label": "Infinite query with Max pages (Next.js Pages Router)",
               "to": "framework/react/examples/infinite-query-with-max-pages"
             },
             {
@@ -6750,15 +6750,15 @@
               "to": "framework/react/examples/playground"
             },
             {
-              "label": "Prefetching",
+              "label": "Prefetching (Next.js Pages Router)",
               "to": "framework/react/examples/prefetching"
             },
             {
-              "label": "Star Wars",
+              "label": "Star Wars (React Router)",
               "to": "framework/react/examples/star-wars"
             },
             {
-              "label": "Rick And Morty",
+              "label": "Rick And Morty (React Router)",
               "to": "framework/react/examples/rick-morty"
             },
             {
@@ -6827,7 +6827,7 @@
               "to": "framework/solid/examples/default-query-function"
             },
             {
-              "label": "Solid Start",
+              "label": "SolidStart 1",
               "to": "framework/solid/examples/solid-start-streaming"
             },
             {
@@ -6859,11 +6859,11 @@
               "to": "framework/solid/examples/devtools-panel"
             },
             {
-              "label": "Star Wars",
+              "label": "Star Wars (Solid Router)",
               "to": "framework/solid/examples/star-wars"
             },
             {
-              "label": "Rick And Morty",
+              "label": "Rick And Morty (Solid Router)",
               "to": "framework/solid/examples/rick-morty"
             },
             {
@@ -6879,19 +6879,19 @@
               "to": "framework/solid/examples/batching"
             },
             {
-              "label": "Auto Refetching / Polling / Realtime",
+              "label": "Auto Refetching / Polling / Realtime (SolidStart 2)",
               "to": "framework/solid/examples/auto-refetching"
             },
             {
-              "label": "Optimistic Updates",
+              "label": "Optimistic Updates (SolidStart 2)",
               "to": "framework/solid/examples/optimistic-updates"
             },
             {
-              "label": "Pagination",
+              "label": "Pagination (SolidStart 2)",
               "to": "framework/solid/examples/pagination"
             },
             {
-              "label": "Prefetching",
+              "label": "Prefetching (SolidStart 2)",
               "to": "framework/solid/examples/prefetching"
             }
           ]
@@ -6912,8 +6912,12 @@
               "to": "framework/vue/examples/2.7-basic"
             },
             {
-              "label": "Nuxt 3",
-              "to": "framework/vue/examples/nuxt3"
+              "label": "Simple (Nuxt 3)",
+              "to": "framework/vue/examples/simple-nuxt3"
+            },
+            {
+              "label": "Simple (Nuxt 4)",
+              "to": "framework/vue/examples/simple-nuxt4"
             },
             {
               "label": "Persister",
@@ -6946,6 +6950,54 @@
             {
               "label": "Chat example (streaming)",
               "to": "framework/vue/examples/chat"
+            },
+            {
+              "label": "Star Wars (Vue Router)",
+              "to": "framework/vue/examples/star-wars"
+            },
+            {
+              "label": "Rick And Morty (Vue Router)",
+              "to": "framework/vue/examples/rick-morty"
+            },
+            {
+              "label": "Vue Router",
+              "to": "framework/vue/examples/vue-router"
+            },
+            {
+              "label": "Offline Queries and Mutations (Vue Router)",
+              "to": "framework/vue/examples/offline"
+            },
+            {
+              "label": "Suspense",
+              "to": "framework/vue/examples/suspense"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/vue/examples/batching"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime (Nuxt 4)",
+              "to": "framework/vue/examples/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates (Nuxt 4)",
+              "to": "framework/vue/examples/optimistic-updates"
+            },
+            {
+              "label": "Pagination (Nuxt 4)",
+              "to": "framework/vue/examples/pagination"
+            },
+            {
+              "label": "Load-More & Infinite Scroll (Nuxt 4)",
+              "to": "framework/vue/examples/load-more-infinite-scroll"
+            },
+            {
+              "label": "Infinite query with Max pages (Nuxt 4)",
+              "to": "framework/vue/examples/infinite-query-with-max-pages"
+            },
+            {
+              "label": "Prefetching (Nuxt 4)",
+              "to": "framework/vue/examples/prefetching"
             }
           ]
         },
@@ -6957,31 +7009,31 @@
               "to": "framework/svelte/examples/simple"
             },
             {
-              "label": "Basic",
+              "label": "Basic (SvelteKit)",
               "to": "framework/svelte/examples/basic"
             },
             {
-              "label": "Auto Refetching / Polling / Realtime",
+              "label": "Auto Refetching / Polling / Realtime (SvelteKit)",
               "to": "framework/svelte/examples/auto-refetching"
             },
             {
-              "label": "SSR",
+              "label": "SSR (SvelteKit)",
               "to": "framework/svelte/examples/ssr"
             },
             {
-              "label": "Optimistic Updates",
+              "label": "Optimistic Updates (SvelteKit)",
               "to": "framework/svelte/examples/optimistic-updates"
             },
             {
-              "label": "Playground",
+              "label": "Playground (SvelteKit)",
               "to": "framework/svelte/examples/playground"
             },
             {
-              "label": "Star Wars",
+              "label": "Star Wars (SvelteKit)",
               "to": "framework/svelte/examples/star-wars"
             },
             {
-              "label": "Infinite Queries",
+              "label": "Infinite Queries (SvelteKit)",
               "to": "framework/svelte/examples/load-more-infinite-scroll"
             },
             {
@@ -7005,7 +7057,7 @@
               "to": "framework/svelte/examples/shadow-dom"
             },
             {
-              "label": "Rick And Morty",
+              "label": "Rick And Morty (SvelteKit)",
               "to": "framework/svelte/examples/rick-morty"
             },
             {
@@ -7013,7 +7065,7 @@
               "to": "framework/svelte/examples/sveltekit"
             },
             {
-              "label": "Offline Queries and Mutations",
+              "label": "Offline Queries and Mutations (SvelteKit)",
               "to": "framework/svelte/examples/offline"
             },
             {
@@ -7021,15 +7073,15 @@
               "to": "framework/svelte/examples/batching"
             },
             {
-              "label": "Pagination",
+              "label": "Pagination (SvelteKit)",
               "to": "framework/svelte/examples/pagination"
             },
             {
-              "label": "Infinite query with Max pages",
+              "label": "Infinite query with Max pages (SvelteKit)",
               "to": "framework/svelte/examples/infinite-query-with-max-pages"
             },
             {
-              "label": "Prefetching",
+              "label": "Prefetching (SvelteKit)",
               "to": "framework/svelte/examples/prefetching"
             }
           ]
@@ -7048,6 +7100,66 @@
             {
               "label": "SSR",
               "to": "framework/lit/examples/ssr"
+            },
+            {
+              "label": "Simple",
+              "to": "framework/lit/examples/simple"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/lit/examples/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/lit/examples/default-query-function"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/lit/examples/playground"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/lit/examples/algolia"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/lit/examples/chat"
+            },
+            {
+              "label": "Star Wars (@lit-labs/router)",
+              "to": "framework/lit/examples/star-wars"
+            },
+            {
+              "label": "Rick And Morty (@lit-labs/router)",
+              "to": "framework/lit/examples/rick-morty"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/lit/examples/batching"
+            },
+            {
+              "label": "Offline Queries and Mutations (@lit-labs/router)",
+              "to": "framework/lit/examples/offline"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "framework/lit/examples/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/lit/examples/optimistic-updates"
+            },
+            {
+              "label": "Load-More & Infinite Scroll (@lit-labs/router)",
+              "to": "framework/lit/examples/load-more-infinite-scroll"
+            },
+            {
+              "label": "Infinite query with Max pages",
+              "to": "framework/lit/examples/infinite-query-with-max-pages"
+            },
+            {
+              "label": "Prefetching (@lit-labs/router)",
+              "to": "framework/lit/examples/prefetching"
             }
           ]
         },
@@ -7087,11 +7199,11 @@
               "to": "framework/angular/examples/rxjs"
             },
             {
-              "label": "Query options from a service",
+              "label": "Query options from a service (Angular Router)",
               "to": "framework/angular/examples/query-options-from-a-service"
             },
             {
-              "label": "Devtools embedded panel",
+              "label": "Devtools embedded panel (Angular Router)",
               "to": "framework/angular/examples/devtools-panel"
             }
           ]
@@ -7136,15 +7248,15 @@
               "to": "framework/preact/examples/devtools-panel"
             },
             {
-              "label": "Star Wars",
+              "label": "Star Wars (preact-iso)",
               "to": "framework/preact/examples/star-wars"
             },
             {
-              "label": "Rick And Morty",
+              "label": "Rick And Morty (preact-iso)",
               "to": "framework/preact/examples/rick-morty"
             },
             {
-              "label": "Offline Queries and Mutations",
+              "label": "Offline Queries and Mutations (preact-iso)",
               "to": "framework/preact/examples/offline"
             },
             {
@@ -7168,7 +7280,7 @@
               "to": "framework/preact/examples/pagination"
             },
             {
-              "label": "Load-More & Infinite Scroll",
+              "label": "Load-More & Infinite Scroll (preact-iso)",
               "to": "framework/preact/examples/load-more-infinite-scroll"
             },
             {
@@ -7176,7 +7288,7 @@
               "to": "framework/preact/examples/infinite-query-with-max-pages"
             },
             {
-              "label": "Prefetching",
+              "label": "Prefetching (preact-iso)",
               "to": "framework/preact/examples/prefetching"
             },
             {
