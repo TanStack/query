@@ -544,7 +544,10 @@ export class QueryClient {
         .filter((query) => !query.isDisabled() && !query.isStatic())
         .map((query) => {
           let promise = query.fetch(undefined, fetchOptions)
-          if (!fetchOptions.throwOnError) {
+          if (
+            !fetchOptions.throwOnError ||
+            query.state.fetchStatus === 'paused'
+          ) {
             promise = promise.catch(noop)
           }
           return query.state.fetchStatus === 'paused'
