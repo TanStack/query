@@ -1,22 +1,7 @@
 import React from 'react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-
-type ProjectsPage = {
-  data: Array<{ name: string; id: number }>
-  previousId: number | null
-  nextId: number | null
-}
-
-const fetchProjects = async ({
-  pageParam,
-}: {
-  pageParam: number
-}): Promise<ProjectsPage> => {
-  const response = await fetch(`/api/projects?cursor=${pageParam}`)
-  if (!response.ok) throw new Error('Failed to fetch projects')
-  return await response.json()
-}
+import { projectsQueries } from '../services/projects/queries'
 
 export default function Example() {
   const {
@@ -30,14 +15,7 @@ export default function Example() {
     fetchPreviousPage,
     hasNextPage,
     hasPreviousPage,
-  } = useInfiniteQuery({
-    queryKey: ['projects'],
-    queryFn: fetchProjects,
-    initialPageParam: 0,
-    getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
-    getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
-    maxPages: 3,
-  })
+  } = useInfiniteQuery(projectsQueries.infinite())
 
   return (
     <div>

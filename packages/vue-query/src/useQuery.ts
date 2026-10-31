@@ -15,8 +15,9 @@ import type {
 } from './queryOptions'
 
 /**
- * The result of `useQuery` when `initialData` is omitted or may be `undefined` — `data` may be `undefined`
- * while the query is `pending`. See {@link UseBaseQueryReturnType}.
+ * The result of `useQuery` when `initialData` is omitted, may be `undefined`, or is a function that may
+ * return `undefined` — `data` may be `undefined` while the query is `pending`. See
+ * {@link UseBaseQueryReturnType}.
  */
 export type UseQueryReturnType<TData, TError> = UseBaseQueryReturnType<
   TData,
@@ -34,15 +35,15 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
 >
 
 /**
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
- * a `select` changes `TData` to include `undefined`).
+ * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
  *
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
  * (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
  * reactive getters as individual entries. Other options are read once when passed as a plain value, and stay
  * reactive when passed as a `ref` or a `computed`.
- * @param options - The {@link DefinedInitialQueryOptions} to use — everything you can pass to `useQuery`, with
- * `initialData` set.
+ * @param options - The {@link DefinedInitialQueryOptions} to use — everything you can pass to `useQuery`,
+ * with `initialData` known to be defined.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns The current query result, typed so that `data` is never `undefined` (unless a `select` changes

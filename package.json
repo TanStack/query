@@ -87,7 +87,7 @@
     "typescript59": "npm:typescript@5.9",
     "typescript70": "npm:typescript@7.0",
     "typescript71": "npm:typescript@7.1.0-dev.20261009.1",
-    "vite": "^8.3.1",
+    "vite": "^8.3.5",
     "vitest": "^5.0.5"
   }
 }

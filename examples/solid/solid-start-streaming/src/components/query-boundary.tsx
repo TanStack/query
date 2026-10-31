@@ -18,7 +18,7 @@ export interface QueryBoundaryProps<T = unknown> {
   loadingFallback?: JSX.Element
 
   /**
-   * Triggered when fetching is complete, but the returned data was falsey.
+   * Triggered when fetching is complete, but the returned data was falsy.
    */
   notFoundFallback?: JSX.Element
 
@@ -28,7 +28,7 @@ export interface QueryBoundaryProps<T = unknown> {
   errorFallback?: (err: Error, retry: () => void) => JSX.Element
 
   /**
-   * Triggered when fetching is complete, and the returned data is not falsey.
+   * Triggered when fetching is complete, and the returned data is not falsy.
    */
   children: (data: Exclude<T, null | false | undefined>) => JSX.Element
 }

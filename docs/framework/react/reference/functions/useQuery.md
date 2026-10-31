@@ -15,8 +15,8 @@ function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, 
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-- [`DefinedInitialDataOptions` → `DefinedUseQueryResult`](#call-signature-1): This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
-- [`UndefinedInitialDataOptions` → `UseQueryResult`](#call-signature-2): This overload is selected when `initialData` is omitted or may be `undefined`, so the resulting `data` can be `undefined`.
+- [`DefinedInitialDataOptions` → `DefinedUseQueryResult`](#call-signature-1): This overload is selected when `initialData` is known to be defined, so the resulting `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+- [`UndefinedInitialDataOptions` → `UseQueryResult`](#call-signature-2): This overload is selected when `initialData` is omitted, may be `undefined`, or is a function that may return `undefined`, so the resulting `data` can be `undefined`.
 - [`UseQueryOptions` → `UseQueryResult`](#call-signature-3): Fallback overload for options whose `initialData` presence isn't statically known — for example, an object typed as [UseQueryOptions](../interfaces/UseQueryOptions.md) rather than an object literal. Prefer one of the other overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
@@ -31,8 +31,8 @@ function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, 
 
 Defined in: [packages/react-query/src/useQuery.ts:49](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L49)
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
-a `select` changes `TData` to include `undefined`).
+This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+`undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -58,7 +58,7 @@ a `select` changes `TData` to include `undefined`).
 
 [`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
-The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`, with `initialData` set.
+The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`, with `initialData` known to be defined.
 
 #### queryClient?
 
@@ -114,8 +114,8 @@ function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, 
 
 Defined in: [packages/react-query/src/useQuery.ts:116](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L116)
 
-This overload is selected when `initialData` is omitted or may be `undefined`, so the resulting `data`
-can be `undefined`.
+This overload is selected when `initialData` is omitted, may be `undefined`, or is a function that may
+return `undefined`, so the resulting `data` can be `undefined`.
 
 ### Type Parameters
 
