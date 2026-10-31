@@ -6778,8 +6778,12 @@
               "to": "framework/react/examples/react-native"
             },
             {
-              "label": "React Router",
+              "label": "Contacts (React Router)",
               "to": "framework/react/examples/react-router"
+            },
+            {
+              "label": "Contacts (TanStack Router)",
+              "to": "framework/react/examples/contacts-tanstack-router"
             },
             {
               "label": "Offline Queries and Mutations",
@@ -6867,8 +6871,12 @@
               "to": "framework/solid/examples/rick-morty"
             },
             {
-              "label": "Solid Router",
+              "label": "Contacts (Solid Router)",
               "to": "framework/solid/examples/solid-router"
+            },
+            {
+              "label": "Contacts (TanStack Router)",
+              "to": "framework/solid/examples/contacts-tanstack-router"
             },
             {
               "label": "Suspense",
@@ -6960,8 +6968,12 @@
               "to": "framework/vue/examples/rick-morty"
             },
             {
-              "label": "Vue Router",
+              "label": "Contacts (Vue Router)",
               "to": "framework/vue/examples/vue-router"
+            },
+            {
+              "label": "Contacts (TanStack Router)",
+              "to": "framework/vue/examples/contacts-tanstack-router"
             },
             {
               "label": "Offline Queries and Mutations (Vue Router)",
