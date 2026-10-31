@@ -59,6 +59,7 @@
     "@typescript-eslint/utils": "^8.71.0"
   },
   "devDependencies": {
+    "@typescript-eslint/parser": "catalog:",
     "@typescript-eslint/rule-tester": "catalog:",
     "eslint": "catalog:",
     "typescript": "catalog:"
