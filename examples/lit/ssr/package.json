@@ -10,15 +10,14 @@
   },
   "dependencies": {
     "@lit-labs/ssr": "^3.3.0",
-    "@tanstack/lit-query": "^0.2.30",
-    "@tanstack/query-core": "^5.104.5",
+    "@tanstack/lit-query": "^0.2.31",
     "lit": "^3.3.3"
   },
   "devDependencies": {
     "@lit-labs/ssr-client": "^1.1.7",
-    "@tanstack/eslint-plugin-query": "^5.104.5",
+    "@tanstack/eslint-plugin-query": "^5.105.0",
     "tsx": "^4.19.0",
-    "typescript": "5.8.3",
-    "vite": "^8.3.1"
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5"
   }
 }

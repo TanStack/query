@@ -9,10 +9,11 @@ title: UndefinedInitialDataOptions
 type UndefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object;
 ```
 
-Defined in: [packages/svelte-query/src/queryOptions.ts:14](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/queryOptions.ts#L14)
+Defined in: [packages/svelte-query/src/queryOptions.ts:15](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/queryOptions.ts#L15)
 
-The options accepted by the `queryOptions` overload selected when `initialData` is omitted or may be
-`undefined` — `data` may be `undefined` while the query is `pending`.
+The options accepted by the `queryOptions` overload selected when `initialData` is omitted, may be
+`undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is
+`pending`.
 
 ## Type Parameters
 

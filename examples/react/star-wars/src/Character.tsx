@@ -1,16 +1,14 @@
-import { Link as RouterLink, useParams } from 'react-router-dom'
+import { Link as RouterLink, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import {
-  characterQueryOptions,
-  filmQueryOptions,
-  homeworldQueryOptions,
-} from './api'
+import { filmsQueries } from './services/films/queries'
+import { charactersQueries } from './services/characters/queries'
+import { planetsQueries } from './services/planets/queries'
 
 export default function Character() {
   const params = useParams()
   const characterId = params.characterId!
 
-  const { status, data } = useQuery(characterQueryOptions(characterId))
+  const { status, data } = useQuery(charactersQueries.detail(characterId))
 
   if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>
@@ -51,7 +49,7 @@ export default function Character() {
 }
 
 function Film({ filmId }: { filmId: string }) {
-  const { data, status } = useQuery(filmQueryOptions(filmId))
+  const { data, status } = useQuery(filmsQueries.detail(filmId))
 
   if (status === 'success') {
     return (
@@ -68,7 +66,7 @@ function Film({ filmId }: { filmId: string }) {
 }
 
 function Homeworld({ homeworldId }: { homeworldId: string }) {
-  const { data, status } = useQuery(homeworldQueryOptions(homeworldId))
+  const { data, status } = useQuery(planetsQueries.detail(homeworldId))
 
   if (status === 'pending') return <span>Loading...</span>
   if (status === 'error') return <span>Error :(</span>

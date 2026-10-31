@@ -7,8 +7,8 @@ import { Divider } from '../components/Divider'
 import { ListItem } from '../components/ListItem'
 import { useRefreshByUser } from '../hooks/useRefreshByUser'
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus'
-import { fetchMovies } from '../lib/api'
-import type { Movie } from '../lib/api'
+import { moviesQueries } from '../services/movies/queries'
+import type { Movie } from '../services/movies/types'
 import type { MoviesStackNavigator } from '../navigation/types'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
@@ -22,13 +22,9 @@ type Props = {
 }
 
 export function MoviesListScreen({ navigation }: Props) {
-  const { isPending, isError, error, data, refetch } = useQuery<
-    Array<Movie>,
-    Error
-  >({
-    queryKey: ['movies'],
-    queryFn: fetchMovies,
-  })
+  const { isPending, isError, error, data, refetch } = useQuery(
+    moviesQueries.list(),
+  )
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
   useRefreshOnFocus()
 

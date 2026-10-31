@@ -78,7 +78,7 @@ export class PaginationExampleComponent {
     queryKey: ['projects', this.page()],
     queryFn: () => lastValueFrom(fetchProjects(this.page())),
     placeholderData: keepPreviousData,
-    staleTime: 5000,
+    staleTime: 5 * 1000,
   }))
 
   constructor() {

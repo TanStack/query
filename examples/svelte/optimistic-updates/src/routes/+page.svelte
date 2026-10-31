@@ -5,27 +5,27 @@
     createQuery,
     createMutation,
   } from '@tanstack/svelte-query'
-  import { createTodo, todosQueryOptions } from '$lib/api'
+  import { todosMutations, todosQueries } from '$lib/services/todos/queries'
 
   let text = $state<string>('')
 
   const client = useQueryClient()
 
-  const todos = createQuery(() => todosQueryOptions)
+  const todos = createQuery(() => todosQueries.list())
 
   const addTodoMutation = createMutation(() => ({
-    mutationFn: createTodo,
+    ...todosMutations.create(),
     onMutate: async (newTodo: string) => {
       text = ''
       // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      await client.cancelQueries({ queryKey: todosQueryOptions.queryKey })
+      await client.cancelQueries({ queryKey: todosQueries.list().queryKey })
 
       // Snapshot the previous value
-      const previousTodos = client.getQueryData(todosQueryOptions.queryKey)
+      const previousTodos = client.getQueryData(todosQueries.list().queryKey)
 
       // Optimistically update to the new value
       if (previousTodos) {
-        client.setQueryData(todosQueryOptions.queryKey, {
+        client.setQueryData(todosQueries.list().queryKey, {
           ...previousTodos,
           items: [
             ...previousTodos.items,
@@ -40,14 +40,14 @@
     onError: (_err, _variables, onMutateResult) => {
       if (onMutateResult?.previousTodos) {
         client.setQueryData(
-          todosQueryOptions.queryKey,
+          todosQueries.list().queryKey,
           onMutateResult.previousTodos,
         )
       }
     },
     // Always refetch after error or success:
     onSettled: () => {
-      client.invalidateQueries({ queryKey: todosQueryOptions.queryKey })
+      client.invalidateQueries({ queryKey: todosQueries.list().queryKey })
     },
   }))
 </script>

@@ -100,7 +100,7 @@ function todosOptions() {
   return queryOptions({
     queryKey: ['todos'],
     queryFn: fetchTodos,
-    staleTime: 5_000,
+    staleTime: 5 * 1000,
   })
 }
 

@@ -10,15 +10,15 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/preact-query": "^5.104.5",
+    "@tanstack/preact-query": "^5.105.0",
     "preact": "^11.0.1"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.6",
-    "@tanstack/eslint-plugin-query": "^5.104.5",
-    "eslint": "^9.36.0",
+    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "eslint": "^9.39.5",
     "eslint-config-preact": "^2.0.0",
-    "typescript": "^5.9.3",
-    "vite": "^8.3.1"
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5"
   }
 }

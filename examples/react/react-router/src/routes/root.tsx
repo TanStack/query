@@ -5,38 +5,26 @@ import {
   useLoaderData,
   useNavigation,
   useSubmit,
-} from 'react-router-dom'
+} from 'react-router'
 import { useDebounce } from 'rooks'
-import {
-  queryOptions,
-  useIsFetching,
-  useSuspenseQuery,
-} from '@tanstack/react-query'
-import { getContacts } from '../contacts'
+import { useIsFetching, useSuspenseQuery } from '@tanstack/react-query'
+import { contactsQueries } from '../services/contacts/queries'
 import type { QueryClient } from '@tanstack/react-query'
-import type { LoaderFunctionArgs } from 'react-router-dom'
-
-const contactListQuery = (q?: string) =>
-  queryOptions({
-    queryKey: ['contacts', 'list', q ?? 'all'],
-    queryFn: () => getContacts(q),
-  })
+import type { LoaderFunctionArgs } from 'react-router'
 
 export const loader =
   (queryClient: QueryClient) =>
   async ({ request }: LoaderFunctionArgs) => {
     const url = new URL(request.url)
     const q = url.searchParams.get('q') ?? ''
-    await queryClient.query({ ...contactListQuery(q), staleTime: 'static' })
+    await queryClient.query({ ...contactsQueries.list(q), staleTime: 'static' })
     return { q }
   }
 
 export default function Root() {
-  const { q } = useLoaderData() as Awaited<
-    ReturnType<ReturnType<typeof loader>>
-  >
-  const { data: contacts } = useSuspenseQuery(contactListQuery(q))
-  const searching = useIsFetching({ queryKey: ['contacts', 'list'] }) > 0
+  const { q } = useLoaderData<ReturnType<typeof loader>>()
+  const { data: contacts } = useSuspenseQuery(contactsQueries.list(q))
+  const searching = useIsFetching({ queryKey: contactsQueries.lists() }) > 0
   const navigation = useNavigation()
   const submit = useSubmit()
 

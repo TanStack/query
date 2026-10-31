@@ -266,9 +266,8 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
-          await mutateAsync('todo', {
+          await mutation.mutateAsync('todo', {
             onSuccess: () => {
               callbacks.push('mutateAsync.onSuccess')
             },
@@ -303,10 +302,9 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
-            await mutateAsync('todo', {
+            await mutation.mutateAsync('todo', {
               onError: () => {
                 callbacks.push('mutateAsync.onError')
               },
@@ -339,9 +337,8 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
-          await mutateAsync('todo', {
+          await mutation.mutateAsync('todo', {
             onSuccess: () => {
               callbacks.push('mutateAsync.onSuccess')
             },
@@ -370,10 +367,9 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
-            await mutateAsync('todo', {
+            await mutation.mutateAsync('todo', {
               onError: () => {
                 callbacks.push('mutateAsync.onError')
               },
@@ -400,9 +396,8 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
-          await mutateAsync('todo', {
+          await mutation.mutateAsync('todo', {
             onSettled: () => {
               callbacks.push('mutateAsync.onSettled')
             },
@@ -620,10 +615,9 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
-            const result = await mutateAsync('todo', {
+            const result = await mutation.mutateAsync('todo', {
               onSuccess: () => {
                 callbacks.push('mutateAsync.onSuccess')
               },
@@ -667,10 +661,9 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
-            await mutateAsync('todo', {
+            await mutation.mutateAsync('todo', {
               onError: () => {
                 callbacks.push('mutateAsync.onError')
               },
@@ -718,9 +711,8 @@ describe('useMutation', () => {
       })
 
       createEffect(() => {
-        const { mutate } = mutation
         setActTimeout(() => {
-          mutate('todo')
+          mutation.mutate('todo')
         }, 10)
       })
 
@@ -750,9 +742,8 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutate } = mutation
         setActTimeout(() => {
-          mutate('todo')
+          mutation.mutate('todo')
         }, 10)
       })
 
@@ -956,10 +947,9 @@ describe('useMutation', () => {
       })
 
       createEffect(() => {
-        const { mutate } = mutation
         setActTimeout(() => {
           window.dispatchEvent(new Event('offline'))
-          mutate('todo')
+          mutation.mutate('todo')
         }, 10)
       })
 
@@ -1015,10 +1005,13 @@ describe('useMutation', () => {
     })
   })
 
-  // oxlint-disable-next-line vitest/expect-expect
-  it('should not change state if unmounted', () => {
+  it('should not change state if unmounted', async () => {
+    const states: Array<UseMutationResult['status']> = []
     function Mutates() {
       const mutation = useMutation(() => ({ mutationFn: () => sleep(10) }))
+      createRenderEffect(() => {
+        states.push(mutation.status)
+      })
       return <button onClick={() => mutation.mutate()}>mutate</button>
     }
     function Page() {
@@ -1033,7 +1026,19 @@ describe('useMutation', () => {
 
     const rendered = renderWithClient(queryClient, () => <Page />)
     fireEvent.click(rendered.getByText('mutate'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(states).toStrictEqual(['idle', 'pending'])
+
     fireEvent.click(rendered.getByText('unmount'))
+    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+      'pending',
+    )
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+      'success',
+    )
+    expect(states).toStrictEqual(['idle', 'pending'])
   })
 
   it('should be able to throw an error when throwOnError is set to true', async () => {

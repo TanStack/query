@@ -30,11 +30,13 @@ export interface InjectQueryOptions {
 }
 
 /**
- * This overload is selected when `initialData` is set on the options returned by `injectQueryFn`, so the
- * resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * This overload is selected when `initialData` is known to be defined on the options returned by
+ * `injectQueryFn`, so the resulting `data` signal is never `undefined` (unless a `select` changes `TData` to
+ * include `undefined`).
  * @param injectQueryFn - A function returning the {@link DefinedInitialDataOptions} to use — everything you
- * can pass to `injectQuery`, with `initialData` set. Similar to `computed` from Angular, this function runs
- * in the reactive context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive the query.
+ * can pass to `injectQuery`, with `initialData` known to be defined. Similar to `computed` from Angular, this
+ * function runs in the reactive context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive the
+ * query.
  * @param options - Additional configuration
  * @returns The query result, typed so that `data` is never `undefined` (unless a `select` changes `TData` to
  * include `undefined`).

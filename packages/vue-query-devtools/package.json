@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query-devtools",
-  "version": "6.3.5",
+  "version": "6.3.6",
   "description": "Developer tools to interact with and visualize the TanStack/vue-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -23,6 +23,8 @@
     "test:types:ts58": "node -e \"process.argv.splice(1, 0, ''); require('vue-tsc').run(require.resolve('typescript58/lib/tsc'))\" -- --project tsconfig.legacy.json --outDir .cache/test-types/ts58 --tsBuildInfoFile .cache/test-types/ts58.tsbuildinfo",
     "test:types:ts59": "node -e \"process.argv.splice(1, 0, ''); require('vue-tsc').run(require.resolve('typescript59/lib/tsc'))\" -- --project tsconfig.legacy.json --outDir .cache/test-types/ts59 --tsBuildInfoFile .cache/test-types/ts59.tsbuildinfo",
     "test:types:tscurrent": "vue-tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
     "build": "tsdown"
   },

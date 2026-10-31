@@ -1,12 +1,12 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
   import Character from './Character.svelte'
-  import { filmQueryOptions } from '$lib/api'
+  import { filmsQueries } from '$lib/services/films/queries'
   import type { PageProps } from './$types'
 
   let { params }: PageProps = $props()
 
-  const query = createQuery(() => filmQueryOptions(params.filmId))
+  const query = createQuery(() => filmsQueries.detail(params.filmId))
 </script>
 
 {#if query.status === 'pending'}
