@@ -11,15 +11,15 @@
     "test:types": "nuxt typecheck"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^5.105.0",
-    "@tanstack/vue-query-devtools": "^6.3.6",
+    "@tanstack/vue-query": "^5.105.1",
+    "@tanstack/vue-query-devtools": "^6.3.7",
     "nuxt": "4.6.2",
     "vue": "^3.5.44",
     "vue-router": "^5.4.0"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.17.0",
-    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@tanstack/eslint-plugin-query": "^5.105.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.12.0",
     "typescript": "^6.0.3",

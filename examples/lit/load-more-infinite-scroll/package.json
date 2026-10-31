@@ -11,12 +11,12 @@
   },
   "dependencies": {
     "@lit-labs/router": "^0.1.4",
-    "@tanstack/lit-query": "^0.2.31",
+    "@tanstack/lit-query": "^0.2.32",
     "lit": "^3.3.3",
     "msw": "^2.15.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@tanstack/eslint-plugin-query": "^5.105.1",
     "typescript": "^6.0.3",
     "vite": "^8.3.5"
   },

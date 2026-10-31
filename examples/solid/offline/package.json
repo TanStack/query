@@ -10,15 +10,15 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/query-async-storage-persister": "^5.105.0",
-    "@tanstack/solid-query": "^5.105.0",
-    "@tanstack/solid-query-devtools": "^5.105.0",
-    "@tanstack/solid-query-persist-client": "^5.105.0",
+    "@tanstack/query-async-storage-persister": "^5.105.1",
+    "@tanstack/solid-query": "^5.105.1",
+    "@tanstack/solid-query-devtools": "^5.105.1",
+    "@tanstack/solid-query-persist-client": "^5.105.1",
     "msw": "^2.15.0",
     "solid-js": "^1.9.15"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@tanstack/eslint-plugin-query": "^5.105.1",
     "eslint-plugin-solid": "^0.18.1",
     "typescript": "^6.0.3",
     "vite": "^8.3.5",
