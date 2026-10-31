@@ -89,6 +89,81 @@ const extensions = [
 ]
 
 const parsedFiles = new WeakMap<object, Map<string, CachedFile>>()
+
+/**
+ * How long, in milliseconds, file system lookups are reused before files are checked again, so
+ * long-running processes like editors see files that change while linting other files.
+ */
+const maxLookupAge = 1000
+
+/**
+ * File system lookups shared by the files linted in one run, so each file is checked once per run
+ * instead of each time the analysis follows an import of it.
+ */
+interface Lookups {
+  /** When the lookups were started, from `performance.now()`. */
+  startedAt: number
+  /** The files linted with these lookups. */
+  linted: Set<string>
+  /** The size and modification time of each checked path, or `null` if it isn't a file. */
+  stats: Map<string, { mtimeMs: number; size: number } | null>
+  /** The file each import path resolved to. */
+  resolved: Map<string, string | null>
+}
+
+let lookups: Lookups = createLookups()
+
+/**
+ * Starts linting a file with the file system lookups of the current run. A run ends, and files are
+ * checked again, when a file is linted a second time (as editors do when it changes) or after
+ * `maxLookupAge`.
+ * @param filePath - The absolute path of the file being linted.
+ */
+function startLint(filePath: string): void {
+  if (
+    lookups.linted.has(filePath) ||
+    performance.now() - lookups.startedAt > maxLookupAge
+  ) {
+    lookups = createLookups()
+  }
+  lookups.linted.add(filePath)
+}
+
+/**
+ * Creates empty file system lookups for a new run.
+ * @returns Lookups with nothing checked yet.
+ */
+function createLookups(): Lookups {
+  return {
+    startedAt: performance.now(),
+    linted: new Set(),
+    stats: new Map(),
+    resolved: new Map(),
+  }
+}
+
+/**
+ * Returns the size and modification time of a file, checking it once per run.
+ * @param filePath - The absolute path.
+ * @returns The file's size and modification time, or `null` if it isn't a file.
+ */
+function statFile(filePath: string): { mtimeMs: number; size: number } | null {
+  const cached = lookups.stats.get(filePath)
+  if (cached !== undefined) {
+    return cached
+  }
+  let result: { mtimeMs: number; size: number } | null = null
+  try {
+    const stat = fs.statSync(filePath)
+    if (stat.isFile()) {
+      result = { mtimeMs: stat.mtimeMs, size: stat.size }
+    }
+  } catch {
+    // Not a file.
+  }
+  lookups.stats.set(filePath, result)
+  return result
+}
 const tsconfigs = new Map<string, TsconfigPaths | null>()
 const packageDependencies = new Map<string, Set<string> | null>()
 
@@ -121,6 +196,7 @@ export class ModuleGraph {
       directive: getDirective(context.sourceCode.ast),
     }
     this.files.set(context.sourceCode.ast, this.current)
+    startLint(this.current.path)
     this.parser = getParser(context)
     this.parserOptions = {
       ...context.languageOptions.parserOptions,
@@ -207,10 +283,8 @@ export class ModuleGraph {
       return null
     }
 
-    let stat: fs.Stats
-    try {
-      stat = fs.statSync(filePath)
-    } catch {
+    const stat = statFile(filePath)
+    if (stat === null) {
       return null
     }
 
@@ -713,6 +787,10 @@ function getExportedName(
  * @returns The file's path, or `null` if no file exists.
  */
 function resolveFile(base: string): string | null {
+  const cached = lookups.resolved.get(base)
+  if (cached !== undefined) {
+    return cached
+  }
   const withoutJsExtension = base.replace(/\.(m|c)?jsx?$/, '')
   const candidates = [
     base,
@@ -720,16 +798,10 @@ function resolveFile(base: string): string | null {
     ...extensions.map((extension) => withoutJsExtension + extension),
     ...extensions.map((extension) => path.join(base, `index${extension}`)),
   ]
-  for (const candidate of candidates) {
-    try {
-      if (fs.statSync(candidate).isFile()) {
-        return candidate
-      }
-    } catch {
-      // Try the next candidate.
-    }
-  }
-  return null
+  const resolved =
+    candidates.find((candidate) => statFile(candidate) !== null) ?? null
+  lookups.resolved.set(base, resolved)
+  return resolved
 }
 
 /**
