@@ -274,7 +274,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
         sleep(delay)
           // Pause if the document is not visible or when the device is offline
           .then(() => {
-            return canContinue() ? undefined : pause(canContinue)
+            return isResolved() || canContinue() ? undefined : pause(canContinue)
           })
           .then(() => {
             if (isRetryCancelled) {
