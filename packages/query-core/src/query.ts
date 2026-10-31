@@ -391,6 +391,15 @@ export class Query<
   ): TData {
     const data = replaceData(this.state.data, newData, this.options)
 
+    if (
+      options?.manual &&
+      this.state.status === 'success' &&
+      data === this.state.data &&
+      options?.updatedAt === undefined
+    ) {
+      return data
+    }
+
     // Set data and mark it as cached
     this.#dispatch({
       data,

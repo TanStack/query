@@ -277,6 +277,43 @@ describe('queryClient', () => {
       expect(queryClient.getQueryData(key)).toBe('qux')
     })
 
+    it('should not dispatch a success event if manual setQueryData result is structurally identical', () => {
+      const key = createKey()
+      let successEvents = 0
+      queryCache.subscribe((event) => {
+        if (event.type === 'updated' && event.action.type === 'success') {
+          successEvents++
+        }
+      })
+
+      const base = { id: '1', name: 'item', meta: { tag: 'a', n: 1 } }
+      queryClient.setQueryData(key, base)
+      expect(successEvents).toBe(1)
+      expect(queryCache.find({ queryKey: key })!.state.dataUpdateCount).toBe(1)
+
+      queryClient.setQueryData(key, { ...base, meta: { ...base.meta } })
+      expect(successEvents).toBe(1)
+      expect(queryCache.find({ queryKey: key })!.state.dataUpdateCount).toBe(1)
+    })
+
+    it('should dispatch if manual setQueryData specifies an explicit updatedAt even with identical data', () => {
+      const key = createKey()
+      let successEvents = 0
+      queryCache.subscribe((event) => {
+        if (event.type === 'updated' && event.action.type === 'success') {
+          successEvents++
+        }
+      })
+
+      const base = { id: '1' }
+      queryClient.setQueryData(key, base)
+      expect(successEvents).toBe(1)
+
+      queryClient.setQueryData(key, { id: '1' }, { updatedAt: 12345 })
+      expect(successEvents).toBe(2)
+      expect(queryCache.find({ queryKey: key })!.state.dataUpdatedAt).toBe(12345)
+    })
+
     it('should accept an update function', () => {
       const key = createKey()
 
