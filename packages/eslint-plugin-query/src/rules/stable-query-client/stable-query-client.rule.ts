@@ -84,10 +84,7 @@ export const rule = createRule({
               return
             }
 
-            // we need the fallbacks for backwards compat with eslint < 8.37.0
-            // oxlint-disable-next-line typescript/no-unnecessary-condition
-            const sourceCode = context.sourceCode ?? context.getSourceCode()
-            const nodeText = sourceCode.getText(node)
+            const nodeText = context.sourceCode.getText(node)
             const variableName = parent.id.name
 
             return (fixer: TSESLint.RuleFixer) => {
