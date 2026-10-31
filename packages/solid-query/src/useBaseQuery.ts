@@ -20,6 +20,7 @@ import type { QueryClient } from './QueryClient'
 import type {
   DefaultedQueryObserverOptions,
   Query,
+  QueryCacheNotifyEvent,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
@@ -27,6 +28,32 @@ import type {
 } from '@tanstack/query-core'
 
 const isServer = typeof window === 'undefined'
+
+/**
+ * The cache events that describe a change to the query itself. The observer
+ * events say nothing about the query — an observer attaching or detaching
+ * leaves the entry untouched, and "results updated" covers re-derivations
+ * such as staleness — so they only warrant a bump when the reader's own
+ * result actually moved. Bumping for the rest re-runs every derived read
+ * with nothing new to show, which is how a nested observer under a `Show`
+ * gets driven into a remount loop (see #12466).
+ */
+const QUERY_STATE_EVENT_TYPES: ReadonlySet<QueryCacheNotifyEvent['type']> =
+  new Set(['added', 'removed', 'updated'])
+
+/** The scalar fields a reader derives from its result, for change detection. */
+function resultSignature(result: QueryObserverResult<any, any>): string {
+  return [
+    result.status,
+    result.fetchStatus,
+    result.isStale,
+    result.isPlaceholderData,
+    result.dataUpdatedAt,
+    result.errorUpdatedAt,
+    result.dataUpdateCount,
+    result.errorUpdateCount,
+  ].join('|')
+}
 
 /**
  * A read of a pending-idle query (disabled, or reset with nothing in flight)
@@ -197,7 +224,20 @@ export function useBaseQueryLayer<
   const [primed, setPrimed] = createSignal(!hydratedMount, {
     ownedWrite: true,
   })
-  const onCacheEvent = (event: { query: { queryHash: string } }) => {
+  /**
+   * The last observer-event signature this hook bumped for, so a replay of
+   * the same result stays quiet. Reset with the observer itself.
+   */
+  let lastEventSignature: string | null = null
+  const onCacheEvent = (event: QueryCacheNotifyEvent) => {
+    const queryChanged = QUERY_STATE_EVENT_TYPES.has(event.type)
+    if (!queryChanged) {
+      const current = resultSignature(observer.getCurrentResult())
+      if (current === lastEventSignature) {
+        return
+      }
+      lastEventSignature = current
+    }
     // Match the committed options hash OR the latest computed one (they
     // diverge during a hold — see `latestHash`).
     if (
@@ -262,6 +302,7 @@ export function useBaseQueryLayer<
     observerSub?.()
     observerSub = null
     observer = new Observer(c, untrack(defaultedOptions))
+    lastEventSignature = null
     if (shouldAttach && !disposed && !untrack(isRestoring)) {
       observerSub = observer.subscribe(noop)
     }
