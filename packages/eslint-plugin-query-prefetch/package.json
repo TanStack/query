@@ -56,19 +56,26 @@
     "!src/__tests__"
   ],
   "dependencies": {
-    "@typescript-eslint/utils": "^8.71.0"
+    "@typescript-eslint/scope-manager": "^8.71.0",
+    "@typescript-eslint/utils": "^8.71.0",
+    "@typescript-eslint/visitor-keys": "^8.71.0"
   },
   "devDependencies": {
     "@typescript-eslint/parser": "catalog:",
     "@typescript-eslint/rule-tester": "catalog:",
     "eslint": "catalog:",
+    "oxc-parser": "^0.150.0",
     "typescript": "catalog:"
   },
   "peerDependencies": {
     "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+    "oxc-parser": ">=0.150.0",
     "typescript": "^5.6.0 || ^6.0.0 || ^7.0.0"
   },
   "peerDependenciesMeta": {
+    "oxc-parser": {
+      "optional": true
+    },
     "typescript": {
       "optional": true
     }

@@ -6144,9 +6144,15 @@ importers:
 
   packages/eslint-plugin-query-prefetch:
     dependencies:
+      '@typescript-eslint/scope-manager':
+        specifier: ^8.71.0
+        version: 8.72.0
       '@typescript-eslint/utils':
         specifier: ^8.71.0
         version: 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@typescript-eslint/visitor-keys':
+        specifier: ^8.71.0
+        version: 8.72.0
     devDependencies:
       '@typescript-eslint/parser':
         specifier: 'catalog:'
@@ -6157,6 +6163,9 @@ importers:
       eslint:
         specifier: 'catalog:'
         version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
+      oxc-parser:
+        specifier: ^0.150.0
+        version: 0.150.0
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
