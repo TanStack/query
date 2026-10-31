@@ -13,6 +13,23 @@ describe('onlineManager', () => {
     vi.useRealTimers()
   })
 
+  it('should initialize a listener without cleanup once until the last unsubscribe', () => {
+    const setup = vi.fn<() => undefined>().mockReturnValue(undefined)
+
+    onlineManager.setEventListener(setup)
+    const unsubscribe1 = onlineManager.subscribe(() => undefined)
+    const unsubscribe2 = onlineManager.subscribe(() => undefined)
+    expect(setup).toHaveBeenCalledTimes(1)
+
+    unsubscribe1()
+    expect(setup).toHaveBeenCalledTimes(1)
+    unsubscribe2()
+
+    const unsubscribe3 = onlineManager.subscribe(() => undefined)
+    expect(setup).toHaveBeenCalledTimes(2)
+    unsubscribe3()
+  })
+
   it('should return true from isOnline if navigator is undefined', () => {
     const navigatorSpy = vi.spyOn(globalThis, 'navigator', 'get')
 

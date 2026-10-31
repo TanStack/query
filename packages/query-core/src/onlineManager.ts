@@ -1,4 +1,5 @@
 import { Subscribable } from './subscribable'
+import { noop } from './utils'
 
 type Listener = (online: boolean) => void
 type SetupFn = (setOnline: Listener) => (() => void) | undefined
@@ -76,7 +77,7 @@ export class OnlineManager extends Subscribable<Listener> {
   setEventListener(setup: SetupFn): void {
     this.#setup = setup
     this.#cleanup?.()
-    this.#cleanup = setup(this.setOnline.bind(this))
+    this.#cleanup = setup(this.setOnline.bind(this)) ?? noop
   }
 
   /**

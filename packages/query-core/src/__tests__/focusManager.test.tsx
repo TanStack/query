@@ -14,6 +14,43 @@ describe('focusManager', () => {
     vi.useRealTimers()
   })
 
+  it('should initialize a listener without cleanup once until the last unsubscribe', () => {
+    const setup = vi.fn<() => undefined>().mockReturnValue(undefined)
+
+    focusManager.setEventListener(setup)
+    const unsubscribe1 = focusManager.subscribe(() => undefined)
+    const unsubscribe2 = focusManager.subscribe(() => undefined)
+    expect(setup).toHaveBeenCalledTimes(1)
+
+    unsubscribe1()
+    expect(setup).toHaveBeenCalledTimes(1)
+    unsubscribe2()
+
+    const unsubscribe3 = focusManager.subscribe(() => undefined)
+    expect(setup).toHaveBeenCalledTimes(2)
+    unsubscribe3()
+  })
+
+  it('should notify each subscriber once per event when setup returns no cleanup', () => {
+    const source = new EventTarget()
+    const listener1 = vi.fn<(focused: boolean) => void>()
+    const listener2 = vi.fn<(focused: boolean) => void>()
+
+    focusManager.setEventListener((onFocus) => {
+      source.addEventListener('focus', () => onFocus())
+      return undefined
+    })
+    const unsubscribe1 = focusManager.subscribe(listener1)
+    const unsubscribe2 = focusManager.subscribe(listener2)
+
+    source.dispatchEvent(new Event('focus'))
+    expect(listener1).toHaveBeenCalledExactlyOnceWith(true)
+    expect(listener2).toHaveBeenCalledExactlyOnceWith(true)
+
+    unsubscribe1()
+    unsubscribe2()
+  })
+
   it('should call previous remove handler when replacing an event listener', () => {
     const remove1Spy = vi.fn<() => void>()
     const remove2Spy = vi.fn<() => void>()
