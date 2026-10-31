@@ -2,10 +2,10 @@
 
 import React from 'react'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { pokemonOptions } from '@/app/pokemon'
+import { pokemonsQueries } from '../services/pokemons/queries'
 
 export function PokemonInfo() {
-  const { data } = useSuspenseQuery(pokemonOptions)
+  const { data } = useSuspenseQuery(pokemonsQueries.detail(25))
 
   return (
     <div>

@@ -9,7 +9,7 @@
     shouldSucceed: boolean
   }
 
-  const { queryClient, queryKey, shouldSucceed }: Props = $props()
+  let { queryClient, queryKey, shouldSucceed }: Props = $props()
 
   setQueryClientContext(queryClient)
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useQuery, useQueryClient } from '@tanstack/vue-query'
-import { postQueryOptions, postsQueryOptions } from './api'
+import { postsQueries } from './services/posts/queries'
 
 export default defineComponent({
   name: 'PostsList',
@@ -9,12 +9,13 @@ export default defineComponent({
   setup() {
     const queryClient = useQueryClient()
 
-    const { isPending, isError, isFetching, data, error } =
-      useQuery(postsQueryOptions())
+    const { isPending, isError, isFetching, data, error } = useQuery(
+      postsQueries.list(),
+    )
 
     return {
       queryClient,
-      postQueryOptions,
+      postsQueries,
       isPending,
       isError,
       isFetching,
@@ -38,7 +39,7 @@ export default defineComponent({
             href="#"
             :class="{
               visited: queryClient.getQueryData(
-                postQueryOptions(item.id).queryKey,
+                postsQueries.detail(item.id).queryKey,
               ),
             }"
             >{{ item.title }}</a

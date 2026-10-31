@@ -1,11 +1,15 @@
 <script lang="ts">
   import { resolve } from '$app/paths'
-  import { characterQueryOptions } from '$lib/api'
+  import { charactersQueries } from '$lib/services/characters/queries'
   import { createQuery } from '@tanstack/svelte-query'
 
-  let { characterId }: { characterId: string } = $props()
+  type Props = {
+    characterId: string
+  }
 
-  const query = createQuery(() => characterQueryOptions(characterId))
+  let { characterId }: Props = $props()
+
+  const query = createQuery(() => charactersQueries.detail(characterId))
 </script>
 
 {#if query.status === 'success'}

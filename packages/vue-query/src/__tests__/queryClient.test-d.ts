@@ -302,3 +302,25 @@ describe('infiniteQuery', () => {
     })
   })
 })
+
+describe('isFetching', () => {
+  it('should accept reactive filters without fetchStatus', () => {
+    const queryClient = new QueryClient()
+
+    expectTypeOf(
+      queryClient.isFetching(ref({ queryKey: ['key'], exact: true })),
+    ).toEqualTypeOf<number>()
+    expectTypeOf(
+      queryClient.isFetching({ queryKey: ref(['key']) }),
+    ).toEqualTypeOf<number>()
+  })
+
+  it('should reject a fetchStatus filter', () => {
+    const queryClient = new QueryClient()
+
+    expectTypeOf(
+      // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
+      queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'paused' }),
+    ).toEqualTypeOf<number>()
+  })
+})

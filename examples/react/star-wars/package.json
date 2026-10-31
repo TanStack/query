@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-react-star-wars",
+  "name": "@tanstack/query-example-react-star-wars-react-router",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,22 +10,21 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.104.5",
-    "@tanstack/react-query-devtools": "^5.104.5",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router": "^6.25.1",
-    "react-router-dom": "^6.25.1"
+    "@tanstack/react-query": "^5.105.0",
+    "@tanstack/react-query-devtools": "^5.105.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router": "^8.5.0"
   },
   "devDependencies": {
-    "@eslint-react/eslint-plugin": "^5.21.0",
+    "@eslint-react/eslint-plugin": "^5.28.8",
     "@tailwindcss/vite": "^4.3.3",
-    "@tanstack/eslint-plugin-query": "^5.104.5",
-    "@types/react": "^19.2.7",
-    "@types/react-dom": "^19.2.3",
+    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
     "tailwindcss": "^4.3.3",
-    "typescript": "5.8.3",
-    "vite": "^8.3.1"
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5"
   }
 }

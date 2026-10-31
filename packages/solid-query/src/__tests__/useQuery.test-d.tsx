@@ -187,13 +187,13 @@ describe('useQuery', () => {
   describe('initialData', () => {
     describe('Config object overload', () => {
       it('should always define TData when initialData is provided as an object', () => {
-        const { data } = useQuery(() => ({
+        const query = useQuery(() => ({
           queryKey: createKey(),
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
       })
 
       it('should define TData when passed through queryOptions', () => {
@@ -202,80 +202,80 @@ describe('useQuery', () => {
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         })
-        const { data } = useQuery(() => options)
+        const query = useQuery(() => options)
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
       })
 
       it('should always define TData when initialData is provided as a function which ALWAYS returns the data', () => {
-        const { data } = useQuery(() => ({
+        const query = useQuery(() => ({
           queryKey: createKey(),
           queryFn: () => ({ wow: true }),
           initialData: () => ({ wow: true }),
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
       })
 
       it('should have undefined in the TData union when initialData is NOT provided', () => {
-        const { data } = useQuery(() => ({
+        const query = useQuery(() => ({
           queryKey: createKey(),
           queryFn: () => ({ wow: true }),
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
 
       it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
-        const { data } = useQuery(() => ({
+        const query = useQuery(() => ({
           queryKey: createKey(),
           queryFn: () => ({ wow: true }),
           initialData: () => undefined as { wow: boolean } | undefined,
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
     })
 
     describe('Query key overload', () => {
       it('should always define TData when initialData is provided', () => {
-        const { data } = useQuery(() => ({
+        const query = useQuery(() => ({
           queryKey: createKey(),
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
       })
 
       it('should have undefined in the TData union when initialData is NOT provided', () => {
-        const { data } = useQuery(() => ({
+        const query = useQuery(() => ({
           queryKey: createKey(),
           queryFn: () => ({ wow: true }),
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
     })
 
     describe('Query key and func', () => {
       it('should always define TData when initialData is provided', () => {
-        const { data } = useQuery(() => ({
+        const query = useQuery(() => ({
           queryKey: createKey(),
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
       })
 
       it('should have undefined in the TData union when initialData is NOT provided', () => {
-        const { data } = useQuery(() => ({
+        const query = useQuery(() => ({
           queryKey: createKey(),
           queryFn: () => ({ wow: true }),
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
     })
   })
@@ -313,7 +313,7 @@ describe('useQuery', () => {
       function Test<TDataType extends DataType>(props: {
         dataType: TDataType
       }) {
-        const { data } = useQuery(() => ({
+        const query = useQuery(() => ({
           queryKey: ['test'],
           queryFn: () => getData(props.dataType),
         }))
@@ -321,7 +321,7 @@ describe('useQuery', () => {
         // Regression guard: this call must compile. With the previous
         // hand-rolled NoInfer, `data` failed to flow back into the generic
         // indexed-access parameter `DataTypeToEntity[TDataType]`.
-        return data ? getLabel(props.dataType, data) : null
+        return query.data ? getLabel(props.dataType, query.data) : null
       }
 
       expectTypeOf(Test).toBeFunction()

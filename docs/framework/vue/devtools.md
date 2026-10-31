@@ -84,8 +84,8 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
   - Defaults to `false`.
   - Set this to true to hide disabled queries from the devtools panel.
 - `theme?: "light" | "dark" | "system"`
-  - Defaults to `system`.
-  - Set this to change the theme of the devtools panel.
+  - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
+  - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
 
 ## Embedded Mode
 
@@ -132,8 +132,8 @@ const isOpen = ref(false)
   - Defaults to `false`.
   - Set this to true to hide disabled queries from the devtools panel.
 - `theme?: "light" | "dark" | "system"`
-  - Defaults to `system`.
-  - Set this to change the theme of the devtools panel.
+  - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
+  - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
 
 ## Traditional Devtools
 
