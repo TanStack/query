@@ -46,7 +46,7 @@ export interface QueryObserverOptions<
   reconcile?:
     | string
     | false
-    | ((oldData: TData | undefined, newData: TData) => TData)
+    | ((oldData: unknown | undefined, newData: unknown) => unknown)
 }
 
 /**
@@ -82,7 +82,7 @@ export interface InfiniteQueryObserverOptions<
   reconcile?:
     | string
     | false
-    | ((oldData: TData | undefined, newData: TData) => TData)
+    | ((oldData: unknown | undefined, newData: unknown) => unknown)
 }
 
 /**

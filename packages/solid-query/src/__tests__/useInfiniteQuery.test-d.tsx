@@ -1,6 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
+import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { QueryClient } from '../QueryClient'
 import type { InfiniteData } from '@tanstack/query-core'
 
@@ -86,6 +87,43 @@ describe('useInfiniteQuery', () => {
     })
   })
 
+  describe('infiniteQueryOptions called inline in the accessor', () => {
+    it('should always define TData when initialData is provided', () => {
+      const infiniteQuery = useInfiniteQuery(() =>
+        infiniteQueryOptions({
+          queryKey: createKey(),
+          queryFn: ({ pageParam }) => {
+            return pageParam * 5
+          },
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+          initialData: { pages: [5], pageParams: [1] },
+        }),
+      )
+
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<
+        InfiniteData<number, unknown>
+      >()
+    })
+
+    it('should have undefined in the TData union when initialData is NOT provided', () => {
+      const infiniteQuery = useInfiniteQuery(() =>
+        infiniteQueryOptions({
+          queryKey: createKey(),
+          queryFn: ({ pageParam }) => {
+            return pageParam * 5
+          },
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+        }),
+      )
+
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<
+        InfiniteData<number, unknown> | undefined
+      >()
+    })
+  })
+
   describe('select', () => {
     it('should still return paginated data if no select result', () => {
       const infiniteQuery = useInfiniteQuery(() => ({
@@ -118,6 +156,23 @@ describe('useInfiniteQuery', () => {
       }))
 
       expectTypeOf(infiniteQuery.data).toEqualTypeOf<'selected' | undefined>()
+    })
+
+    it('should infer TData from select when spreading the result of infiniteQueryOptions', () => {
+      const options = infiniteQueryOptions({
+        queryKey: createKey(),
+        queryFn: ({ pageParam }) => {
+          return pageParam * 5
+        },
+        initialPageParam: 1,
+        getNextPageParam: () => undefined,
+      })
+      const infiniteQuery = useInfiniteQuery(() => ({
+        ...options,
+        select: (data) => data.pages.length,
+      }))
+
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<number | undefined>()
     })
   })
 
