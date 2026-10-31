@@ -4957,4 +4957,42 @@ describe('useQuery', () => {
     queryClient1.clear()
     queryClient2.clear()
   })
+
+  it('does not bump version or re-run projection on observerAdded / observerRemoved cache events (#12466)', async () => {
+    const key = queryKey()
+    let mounts = 0
+
+    function Child() {
+      mounts++
+      useQuery(() => ({
+        queryKey: key,
+        queryFn: () => 'data',
+      }))
+      return <div>child</div>
+    }
+
+    function Page() {
+      const query = useQuery(() => ({
+        queryKey: key,
+        queryFn: () => 'data',
+      }))
+
+      return (
+        <div>
+          <span>{query.data}</span>
+          <Child />
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('child')).toBeInTheDocument()
+    expect(mounts).toBe(1)
+  })
 })
