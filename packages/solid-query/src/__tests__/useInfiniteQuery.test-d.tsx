@@ -56,7 +56,7 @@ describe('useInfiniteQuery', () => {
 
   describe('initialData', () => {
     it('should always define TData when initialData is provided', () => {
-      const { data } = useInfiniteQuery(() => ({
+      const infiniteQuery = useInfiniteQuery(() => ({
         queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return pageParam * 5
@@ -66,11 +66,13 @@ describe('useInfiniteQuery', () => {
         initialData: { pages: [5], pageParams: [1] },
       }))
 
-      expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<
+        InfiniteData<number, unknown>
+      >()
     })
 
     it('should have undefined in the TData union when initialData is NOT provided', () => {
-      const { data } = useInfiniteQuery(() => ({
+      const infiniteQuery = useInfiniteQuery(() => ({
         queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return pageParam * 5
@@ -79,7 +81,7 @@ describe('useInfiniteQuery', () => {
         getNextPageParam: () => undefined,
       }))
 
-      expectTypeOf(data).toEqualTypeOf<
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<
         InfiniteData<number, unknown> | undefined
       >()
     })
@@ -215,12 +217,7 @@ describe('useInfiniteQuery', () => {
 
   describe('error booleans', () => {
     it('should not be permanently `false`', () => {
-      const {
-        isFetchNextPageError,
-        isFetchPreviousPageError,
-        isLoadingError,
-        isRefetchError,
-      } = useInfiniteQuery(() => ({
+      const infiniteQuery = useInfiniteQuery(() => ({
         queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return pageParam * 5
@@ -229,10 +226,12 @@ describe('useInfiniteQuery', () => {
         getNextPageParam: () => undefined,
       }))
 
-      expectTypeOf(isFetchNextPageError).toEqualTypeOf<boolean>()
-      expectTypeOf(isFetchPreviousPageError).toEqualTypeOf<boolean>()
-      expectTypeOf(isLoadingError).toEqualTypeOf<boolean>()
-      expectTypeOf(isRefetchError).toEqualTypeOf<boolean>()
+      expectTypeOf(infiniteQuery.isFetchNextPageError).toEqualTypeOf<boolean>()
+      expectTypeOf(
+        infiniteQuery.isFetchPreviousPageError,
+      ).toEqualTypeOf<boolean>()
+      expectTypeOf(infiniteQuery.isLoadingError).toEqualTypeOf<boolean>()
+      expectTypeOf(infiniteQuery.isRefetchError).toEqualTypeOf<boolean>()
     })
   })
 
