@@ -46,8 +46,8 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
     })
 
-    const { data } = useQuery(() => options)
-    expectTypeOf(data).toEqualTypeOf<number | undefined>()
+    const query = useQuery(() => options)
+    expectTypeOf(query.data).toEqualTypeOf<number | undefined>()
   })
 
   it('should work when passed to query', async () => {
@@ -118,9 +118,9 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
       initialData: Math.random() > 0.5 ? 5 : undefined,
     })
-    const { data } = useQuery(() => options)
+    const query = useQuery(() => options)
 
-    expectTypeOf(data).toEqualTypeOf<number | undefined>()
+    expectTypeOf(query.data).toEqualTypeOf<number | undefined>()
     expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<number>()
   })
 
