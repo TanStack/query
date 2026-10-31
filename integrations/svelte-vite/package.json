@@ -10,6 +10,6 @@
     "@tanstack/svelte-query": "workspace:*",
     "@tanstack/svelte-query-devtools": "workspace:*",
     "svelte": "^5.57.1",
-    "vite": "^8.3.1"
+    "vite": "^8.3.5"
   }
 }

@@ -1,11 +1,12 @@
-import { Link as RouterLink, useParams } from 'react-router-dom'
+import { Link as RouterLink, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import { characterQueryOptions, filmQueryOptions } from './api'
+import { filmsQueries } from './services/films/queries'
+import { charactersQueries } from './services/characters/queries'
 
 export default function Film() {
   const { filmId } = useParams()
 
-  const { data, status } = useQuery(filmQueryOptions(filmId))
+  const { data, status } = useQuery(filmsQueries.detail(filmId))
 
   if (!filmId) {
     return <p>Invalid film ID</p>
@@ -31,7 +32,7 @@ export default function Film() {
 }
 
 function Character({ characterId }: { characterId: string }) {
-  const { data, status } = useQuery(characterQueryOptions(characterId))
+  const { data, status } = useQuery(charactersQueries.detail(characterId))
 
   if (status !== 'success') {
     return null

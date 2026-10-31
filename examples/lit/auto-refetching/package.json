@@ -1,0 +1,27 @@
+{
+  "name": "@tanstack/query-example-lit-auto-refetching",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/lit-query": "^0.2.31",
+    "lit": "^3.3.3",
+    "msw": "^2.15.0"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
+}

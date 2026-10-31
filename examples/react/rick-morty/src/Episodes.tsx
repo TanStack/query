@@ -1,9 +1,9 @@
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import { episodesQueryOptions } from './api'
+import { episodesQueries } from './services/episodes/queries'
 
 export default function Episodes() {
-  const { data, status } = useQuery(episodesQueryOptions)
+  const { data, status } = useQuery(episodesQueries.list())
 
   if (status === 'pending') {
     return <p>Loading...</p>

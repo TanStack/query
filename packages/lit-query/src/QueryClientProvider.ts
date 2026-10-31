@@ -120,7 +120,7 @@ export class QueryClientProvider extends LitElement {
     }
 
     const nextClient = this.client
-    // oxlint-disable-next-line typescript/no-unnecessary-condition -- 'client' is typed as required but can be unset at runtime
+    // oxlint-disable-next-line typescript/no-unnecessary-condition -- 'client' is undefined until it is assigned
     if (!nextClient) {
       if (this.isConnected) {
         this.unmountClient(this.mountedClient)
@@ -183,7 +183,7 @@ export class QueryClientProvider extends LitElement {
   }
 
   private requireClient(): QueryClient {
-    // oxlint-disable-next-line typescript/no-unnecessary-condition -- 'client' is typed as required but can be unset at runtime
+    // oxlint-disable-next-line typescript/no-unnecessary-condition -- 'client' is undefined until it is assigned
     if (!this.client) {
       throw createMissingQueryClientError()
     }

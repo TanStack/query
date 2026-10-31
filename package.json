@@ -59,8 +59,8 @@
     "@tanstack/typedoc-config": "0.3.5",
     "@testing-library/jest-dom": "^6.8.0",
     "@types/node": "^24.19.2",
-    "@vitest/coverage-istanbul": "4.1.11",
-    "@vitest/eslint-plugin": "^1.6.27",
+    "@vitest/coverage-istanbul": "5.0.5",
+    "@vitest/eslint-plugin": "^1.6.28",
     "eslint": "catalog:",
     "eslint-plugin-import-x": "^4.17.1",
     "eslint-plugin-jest-dom": "^5.10.1",
@@ -87,7 +87,7 @@
     "typescript59": "npm:typescript@5.9",
     "typescript70": "npm:typescript@7.0",
     "typescript71": "npm:typescript@7.1.0-dev.20261009.1",
-    "vite": "^8.3.1",
-    "vitest": "^4.1.11"
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
   }
 }
