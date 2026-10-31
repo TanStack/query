@@ -5,8 +5,9 @@
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
   import { PersistQueryClientProvider } from '@tanstack/svelte-query-persist-client'
   import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
+  import type { LayoutProps } from './$types'
 
-  const { children } = $props()
+  let { children }: LayoutProps = $props()
 
   const queryClient = new QueryClient({
     defaultOptions: {

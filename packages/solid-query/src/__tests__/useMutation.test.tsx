@@ -266,9 +266,8 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
-          await mutateAsync('todo', {
+          await mutation.mutateAsync('todo', {
             onSuccess: () => {
               callbacks.push('mutateAsync.onSuccess')
             },
@@ -303,10 +302,9 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
-            await mutateAsync('todo', {
+            await mutation.mutateAsync('todo', {
               onError: () => {
                 callbacks.push('mutateAsync.onError')
               },
@@ -339,9 +337,8 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
-          await mutateAsync('todo', {
+          await mutation.mutateAsync('todo', {
             onSuccess: () => {
               callbacks.push('mutateAsync.onSuccess')
             },
@@ -370,10 +367,9 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
-            await mutateAsync('todo', {
+            await mutation.mutateAsync('todo', {
               onError: () => {
                 callbacks.push('mutateAsync.onError')
               },
@@ -400,9 +396,8 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
-          await mutateAsync('todo', {
+          await mutation.mutateAsync('todo', {
             onSettled: () => {
               callbacks.push('mutateAsync.onSettled')
             },
@@ -620,10 +615,9 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
-            const result = await mutateAsync('todo', {
+            const result = await mutation.mutateAsync('todo', {
               onSuccess: () => {
                 callbacks.push('mutateAsync.onSuccess')
               },
@@ -667,10 +661,9 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
-            await mutateAsync('todo', {
+            await mutation.mutateAsync('todo', {
               onError: () => {
                 callbacks.push('mutateAsync.onError')
               },
@@ -718,9 +711,8 @@ describe('useMutation', () => {
       })
 
       createEffect(() => {
-        const { mutate } = mutation
         setActTimeout(() => {
-          mutate('todo')
+          mutation.mutate('todo')
         }, 10)
       })
 
@@ -750,9 +742,8 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutate } = mutation
         setActTimeout(() => {
-          mutate('todo')
+          mutation.mutate('todo')
         }, 10)
       })
 
@@ -956,10 +947,9 @@ describe('useMutation', () => {
       })
 
       createEffect(() => {
-        const { mutate } = mutation
         setActTimeout(() => {
           window.dispatchEvent(new Event('offline'))
-          mutate('todo')
+          mutation.mutate('todo')
         }, 10)
       })
 

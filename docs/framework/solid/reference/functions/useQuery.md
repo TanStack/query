@@ -10,12 +10,12 @@ redirect_from:
 ## Overview
 
 ```ts
-function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): DefinedUseQueryResult<TData, TError>;
+function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
 ```
 
-- [`UndefinedInitialDataOptions` → `UseQueryResult`](#call-signature-1): Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key. The query runs when the options call for it — `enabled: false` skips the initial fetch.
-- [`DefinedInitialDataOptions` → `DefinedUseQueryResult`](#call-signature-2): Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key. The query runs when the options call for it — `enabled: false` skips the initial fetch.
+- [`DefinedInitialDataOptions` → `DefinedUseQueryResult`](#call-signature-1): Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key. The query runs when the options call for it — `enabled: false` skips the initial fetch.
+- [`UndefinedInitialDataOptions` → `UseQueryResult`](#call-signature-2): Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key. The query runs when the options call for it — `enabled: false` skips the initial fetch.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 
@@ -24,10 +24,99 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 ## Call Signature
 
 ```ts
+function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): DefinedUseQueryResult<TData, TError>;
+```
+
+Defined in: [packages/solid-query/src/useQuery.ts:57](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L57)
+
+Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+The query runs when the options call for it — `enabled: false` skips the initial fetch.
+
+This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+`undefined` (unless a `select` changes `TData` to include `undefined`).
+
+### Type Parameters
+
+#### TQueryFnData
+
+`TQueryFnData` = `unknown`
+
+#### TError
+
+`TError` = `Error`
+
+#### TData
+
+`TData` = `TQueryFnData`
+
+#### TQueryKey
+
+`TQueryKey` *extends* readonly `unknown`[] = readonly `unknown`[]
+
+### Parameters
+
+#### options
+
+[`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+
+An accessor returning the [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can
+pass to `useQuery`, with `initialData` known to be defined.
+
+#### queryClient?
+
+() => [`QueryClient`](../classes/QueryClient.md)
+
+An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
+will be used.
+
+### Returns
+
+[`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`TData`, `TError`\>
+
+The current query result, as a Solid store, typed so that `status` is `success` — or `error` if a
+fetch attempt fails while keeping the existing data (`status` never resolves to `pending` in this overload's
+type, since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for
+convenience.
+
+### See
+
+[queryOptions](queryOptions.md) to share these options between `useQuery` and imperative APIs like `queryClient.query`.
+
+### Example
+
+```tsx
+import { For } from 'solid-js'
+import { useQuery } from '@tanstack/solid-query'
+
+function Posts() {
+  // `postsQuery.data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
+  // list stays visible alongside the error.
+  const postsQuery = useQuery(() => ({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+    initialData: [],
+  }))
+
+  return (
+    <div>
+      {postsQuery.isError ? <span>Error: {postsQuery.error.message}</span> : null}
+      <ul>
+        <For each={postsQuery.data}>{(post) => <li>{post.title}</li>}</For>
+      </ul>
+    </div>
+  )
+}
+```
+
+<a id="call-signature-2"></a>
+
+## Call Signature
+
+```ts
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/useQuery.ts:178](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L178)
+Defined in: [packages/solid-query/src/useQuery.ts:228](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L228)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
@@ -229,105 +318,16 @@ function Posts() {
 }
 ```
 
-<a id="call-signature-2"></a>
-
-## Call Signature
-
-```ts
-function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): DefinedUseQueryResult<TData, TError>;
-```
-
-Defined in: [packages/solid-query/src/useQuery.ts:228](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L228)
-
-Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
-The query runs when the options call for it — `enabled: false` skips the initial fetch.
-
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
-a `select` changes `TData` to include `undefined`).
-
-### Type Parameters
-
-#### TQueryFnData
-
-`TQueryFnData` = `unknown`
-
-#### TError
-
-`TError` = `Error`
-
-#### TData
-
-`TData` = `TQueryFnData`
-
-#### TQueryKey
-
-`TQueryKey` *extends* readonly `unknown`[] = readonly `unknown`[]
-
-### Parameters
-
-#### options
-
-[`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
-
-An accessor returning the [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can
-pass to `useQuery`, with `initialData` set.
-
-#### queryClient?
-
-() => [`QueryClient`](../classes/QueryClient.md)
-
-An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
-will be used.
-
-### Returns
-
-[`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`TData`, `TError`\>
-
-The current query result, as a Solid store, typed so that `status` is `success` — or `error` if a
-fetch attempt fails while keeping the existing data (`status` never resolves to `pending` in this overload's
-type, since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for
-convenience.
-
-### See
-
-[queryOptions](queryOptions.md) to share these options between `useQuery` and imperative APIs like `queryClient.query`.
-
-### Example
-
-```tsx
-import { For } from 'solid-js'
-import { useQuery } from '@tanstack/solid-query'
-
-function Posts() {
-  // `postsQuery.data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
-  // list stays visible alongside the error.
-  const postsQuery = useQuery(() => ({
-    queryKey: ['posts'],
-    queryFn: fetchPosts,
-    initialData: [],
-  }))
-
-  return (
-    <div>
-      {postsQuery.isError ? <span>Error: {postsQuery.error.message}</span> : null}
-      <ul>
-        <For each={postsQuery.data}>{(post) => <li>{post.title}</li>}</For>
-      </ul>
-    </div>
-  )
-}
-```
-
 <a id="parameters-summary"></a>
 
 ## Parameters
 
 ### options
 
-[`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
-An accessor returning the [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can
-pass to `useQuery`, with `initialData` set.
+An accessor returning the [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can
+pass to `useQuery`.
 
 <a id="options-properties"></a>
 
@@ -346,12 +346,11 @@ will be used.
 
 ## Returns
 
-[`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`TData`, `TError`\>
+[`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result, as a Solid store, typed so that `status` is `success` — or `error` if a
-fetch attempt fails while keeping the existing data (`status` never resolves to `pending` in this overload's
-type, since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for
-convenience.
+The current query result, as a Solid store. `status` is `pending` if there is no cached data to
+display, `error` if the last fetch attempt failed, or `success` if the query has data to display.
+`isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 <a id="result-properties"></a>
 

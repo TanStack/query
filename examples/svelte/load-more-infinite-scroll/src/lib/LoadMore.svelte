@@ -1,8 +1,8 @@
 <script lang="ts">
   import { createInfiniteQuery } from '@tanstack/svelte-query'
-  import { planetsInfiniteQueryOptions } from './api'
+  import { planetsQueries } from './services/planets/queries'
 
-  const query = createInfiniteQuery(() => planetsInfiniteQueryOptions)
+  const query = createInfiniteQuery(() => planetsQueries.list())
 </script>
 
 {#if query.isPending}

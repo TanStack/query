@@ -49,13 +49,13 @@ import { experimental_createQueryPersister } from '@tanstack/query-persist-clien
 
 const persister = experimental_createQueryPersister({
   storage: localStorage,
-  maxAge: 1000 * 60 * 60 * 12, // 12 hours
+  maxAge: 12 * 60 * 60 * 1000, // 12 hours
 })
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 30, // 30 seconds
+      gcTime: 30 * 1000, // 30 seconds
       persister: persister.persisterFn,
     },
   },
@@ -78,7 +78,7 @@ This utility might be used along `setQueryData` to persist optimistic update to 
 ```tsx
 const persister = experimental_createQueryPersister({
   storage: localStorage,
-  maxAge: 1000 * 60 * 60 * 12, // 12 hours
+  maxAge: 12 * 60 * 60 * 1000, // 12 hours
 })
 
 const queryClient = useQueryClient()
@@ -100,6 +100,8 @@ useMutation({
 
 This function would attempt to retrieve persisted query by `queryHash`.  
 If `query` is `expired`, `busted` or `malformed` it would be removed from the storage instead, and `undefined` would be returned.
+
+Persisted entries must have a string `queryHash`, an array `queryKey`, and a `state` object with a finite numeric `dataUpdatedAt`. Entries that do not meet these requirements are removed during retrieval, garbage collection, restoration, and filtered removal, without interrupting processing of other entries. `null` remains valid query data.
 
 ### `persisterGc(): Promise<void>`
 
@@ -207,7 +209,7 @@ The default options are:
 ```tsx
 {
   prefix = 'tanstack-query',
-  maxAge = 1000 * 60 * 60 * 24,
+  maxAge = 24 * 60 * 60 * 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
   refetchOnRestore = true,

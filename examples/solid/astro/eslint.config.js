@@ -8,6 +8,6 @@ import { defineConfig } from 'eslint/config'
 export default defineConfig([
   { ignores: ['src/env.d.ts'] },
   ...tanstackConfig,
-  ...pluginQuery.configs['flat/recommended'],
+  ...pluginQuery.configs['flat/recommended-strict'],
   pluginSolid,
 ])

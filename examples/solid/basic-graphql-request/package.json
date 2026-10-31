@@ -10,17 +10,17 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^5.104.5",
-    "@tanstack/solid-query-devtools": "^5.104.5",
+    "@tanstack/solid-query": "^5.105.0",
+    "@tanstack/solid-query-devtools": "^5.105.0",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.2",
     "solid-js": "^1.9.15"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.104.5",
+    "@tanstack/eslint-plugin-query": "^5.105.0",
     "eslint-plugin-solid": "^0.18.1",
-    "typescript": "5.8.3",
-    "vite": "^8.3.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5",
     "vite-plugin-solid": "^2.11.14"
   }
 }
