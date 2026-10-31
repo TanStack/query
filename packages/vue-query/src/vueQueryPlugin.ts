@@ -112,6 +112,22 @@ export const VueQueryPlugin = {
       persisterUnmount()
     }
 
+    /**
+     * Disposes the QueryClient completely, clearing all caches and observers.
+     * This is the critical fix for SSR memory leaks — call this at the end of
+     * each request/response cycle in SSR (e.g., in Nuxt's `app:rendered` or
+     * a custom middleware). Without this, the QueryClient and all its queries
+     * remain in memory, causing a linear memory leak with each request.
+     */
+    const dispose = () => {
+      client.dispose()
+    }
+
+    // Expose dispose on the app for SSR frameworks to call
+    app.$queryClientDispose = dispose
+    // Also expose the client directly for flexibility
+    app.$queryClient = client
+
     if (app.onUnmount) {
       app.onUnmount(cleanup)
     } else {

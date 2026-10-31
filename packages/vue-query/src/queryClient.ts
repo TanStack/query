@@ -65,6 +65,26 @@ export class QueryClient extends QC {
    */
   isRestoring?: Ref<boolean> = ref(false)
 
+  /**
+   * Completely disposes the QueryClient, clearing all queries, mutations, and observers.
+   * This is essential for SSR environments where a new QueryClient is created per request
+   * and must be fully cleaned up to prevent memory leaks.
+   * Call this when the request/response cycle is complete.
+   */
+  dispose(): void {
+    // 1. Cancel all outgoing queries to prevent dangling promises
+    this.cancelQueries()
+    
+    // 2. Clear all queries from the cache (removes data, observers, and state)
+    this.queryCache.clear()
+    
+    // 3. Clear all mutations from the cache
+    this.mutationCache.clear()
+    
+    // 4. Unmount the client (removes internal observers and marks as unmounted)
+    this.unmount()
+  }
+
   override isFetching(
     filters: MaybeRefDeep<Omit<QueryFilters, 'fetchStatus'>> = {},
   ): number {
