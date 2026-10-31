@@ -74,13 +74,11 @@ const typedFilterKey = typedQueryFilters.queryKey!
 const typedMutationKey = typedMutationOptions.mutationKey!
 
 const untypedQueryOptions: EnsureQueryDataOptions = {
-  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-  queryKey: ['key'] as any,
+  queryKey: ['key'],
 }
 
 const untypedFetchInfiniteQueryOptions: FetchInfiniteQueryOptions = {
-  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-  queryKey: ['key'] as any,
+  queryKey: ['key'],
   pages: 5,
   getNextPageParam: (lastPage) => {
     expectTypeOf(lastPage).toEqualTypeOf<unknown>()
@@ -548,10 +546,7 @@ describe('queryClient', () => {
         initialPageParam: 1,
         getNextPageParam: () => 2,
         select: (data) => ({
-          pages: data.pages.map(
-            // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-            (x) => `count: ${(x as { count: number }).count}`,
-          ),
+          pages: data.pages.map((x) => `count: ${x.count}`),
         }),
       })
 
@@ -852,6 +847,45 @@ describe('queryClient', () => {
   })
 
   describe('isFetching', () => {
+    it('should reject a fetchStatus filter', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
+        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'fetching' }),
+      ).toEqualTypeOf<number>()
+      expectTypeOf(
+        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
+        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'paused' }),
+      ).toEqualTypeOf<number>()
+      expectTypeOf(
+        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
+        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'idle' }),
+      ).toEqualTypeOf<number>()
+    })
+
+    it('should accept the other query filters', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        queryClient.isFetching({
+          queryKey: ['key'],
+          exact: true,
+          type: 'active',
+          stale: true,
+          predicate: (query) => query.state.data !== undefined,
+        }),
+      ).toEqualTypeOf<number>()
+    })
+
+    it('should allow fetchStatus in query cache filters', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        queryClient.getQueryCache().findAll({ fetchStatus: 'paused' }),
+      ).toBeArray()
+    })
+
     it('should return a number', () => {
       const queryClient = new QueryClient()
 

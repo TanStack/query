@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useInView } from 'react-intersection-observer'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { projectsInfiniteQueryOptions } from '../lib/api'
+import { projectsQueries } from '../services/projects/queries'
 
 export default function Example() {
   const { ref, inView } = useInView()
@@ -19,7 +19,7 @@ export default function Example() {
     fetchPreviousPage,
     hasNextPage,
     hasPreviousPage,
-  } = useInfiniteQuery(projectsInfiniteQueryOptions)
+  } = useInfiniteQuery(projectsQueries.infinite())
 
   React.useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {

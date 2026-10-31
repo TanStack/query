@@ -6,8 +6,8 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from '@tanstack/react-query'
-import type { Todo } from '@/app/api/todos/data'
-import { addTodo, todosQueryOptions } from '@/app/todos'
+import { todosMutations, todosQueries } from '../services/todos/queries'
+import type { Todo } from '../services/todos/types'
 
 interface MutationContext {
   previousTodos: Array<Todo> | undefined
@@ -19,15 +19,19 @@ export default function TodoListCache() {
   const [inputValue, setInputValue] = useState('')
   const [lastError, setLastError] = useState<string | null>(null)
 
-  const { data: todos } = useSuspenseQuery(todosQueryOptions)
+  const { data: todos } = useSuspenseQuery(todosQueries.list())
 
   const addTodoMutation = useMutation<Todo, Error, string, MutationContext>({
-    mutationFn: addTodo,
+    ...todosMutations.create(),
     onMutate: async (text) => {
       setLastError(null)
-      await queryClient.cancelQueries({ queryKey: todosQueryOptions.queryKey })
+      await queryClient.cancelQueries({
+        queryKey: todosQueries.list().queryKey,
+      })
 
-      const previousTodos = queryClient.getQueryData(todosQueryOptions.queryKey)
+      const previousTodos = queryClient.getQueryData(
+        todosQueries.list().queryKey,
+      )
 
       const optimisticId = `optimistic-${Date.now()}`
       const optimisticTodo: Todo = {
@@ -36,7 +40,7 @@ export default function TodoListCache() {
         createdAt: Date.now(),
       }
 
-      queryClient.setQueryData(todosQueryOptions.queryKey, (old = []) => [
+      queryClient.setQueryData(todosQueries.list().queryKey, (old = []) => [
         ...old,
         optimisticTodo,
       ])
@@ -47,17 +51,17 @@ export default function TodoListCache() {
       setLastError(_err.message)
       if (context?.previousTodos !== undefined) {
         queryClient.setQueryData(
-          todosQueryOptions.queryKey,
+          todosQueries.list().queryKey,
           context.previousTodos,
         )
       } else if (context?.optimisticId) {
-        queryClient.setQueryData(todosQueryOptions.queryKey, (old = []) =>
+        queryClient.setQueryData(todosQueries.list().queryKey, (old = []) =>
           old.filter((todo) => todo.id !== context.optimisticId),
         )
       }
     },
     onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: todosQueryOptions.queryKey }),
+      queryClient.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
   })
 
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {

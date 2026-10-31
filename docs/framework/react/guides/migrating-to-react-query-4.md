@@ -205,7 +205,7 @@ queryClient.refetchQueries({ queryKey: ['todos'] })
 queryClient.refetchQueries({ queryKey: ['todos'] })
 ```
 
-You can opt-out of this behaviour by explicitly passing `cancelRefetch:false`:
+You can opt-out of this behavior by explicitly passing `cancelRefetch:false`:
 
 ```
 queryClient.refetchQueries({ queryKey: ['todos'] })
@@ -213,7 +213,7 @@ queryClient.refetchQueries({ queryKey: ['todos'] })
 queryClient.refetchQueries({ queryKey: ['todos'] }, { cancelRefetch: false })
 ```
 
-> Note: There is no change in behaviour for automatically triggered fetches, e.g. because a query mounts or because of a window focus refetch.
+> Note: There is no change in behavior for automatically triggered fetches, e.g. because a query mounts or because of a window focus refetch.
 
 ### Query Filters
 

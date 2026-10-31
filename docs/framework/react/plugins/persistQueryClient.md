@@ -27,7 +27,7 @@ Due to a JavaScript limitation, the maximum allowed `gcTime` is about [24 days](
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 })
@@ -99,7 +99,7 @@ You can use this to restore the cache at moment(s) you choose.
 persistQueryClientRestore({
   queryClient,
   persister,
-  maxAge = 1000 * 60 * 60 * 24, // 24 hours
+  maxAge = 24 * 60 * 60 * 1000, // 24 hours
   buster = '',
   hydrateOptions = undefined,
 })
@@ -118,7 +118,7 @@ This functionality is preserved from version 3.x.
 persistQueryClient({
   queryClient,
   persister,
-  maxAge = 1000 * 60 * 60 * 24, // 24 hours
+  maxAge = 24 * 60 * 60 * 1000, // 24 hours
   buster = '',
   hydrateOptions = undefined,
   dehydrateOptions = undefined,
@@ -189,7 +189,7 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 })

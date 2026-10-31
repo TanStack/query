@@ -1,9 +1,9 @@
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import { filmsQueryOptions } from './api'
+import { filmsQueries } from './services/films/queries'
 
 export default function Films() {
-  const { data, status } = useQuery(filmsQueryOptions)
+  const { data, status } = useQuery(filmsQueries.list())
 
   if (status === 'pending') {
     return <p>Loading...</p>

@@ -7,8 +7,7 @@ import {
 } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { injectQuery } from '@tanstack/angular-query-experimental'
-import { lastValueFrom } from 'rxjs'
-import { PostsService } from '../services/posts-service'
+import { PostsQueries } from '../services/posts/queries'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,7 +16,7 @@ import { PostsService } from '../services/posts-service'
   imports: [RouterLink],
 })
 export default class PostComponent {
-  readonly #postsService = inject(PostsService)
+  readonly #postsQueries = inject(PostsQueries)
 
   // The Angular router will automatically bind postId
   // as `withComponentInputBinding` is added to `provideRouter`.
@@ -26,10 +25,7 @@ export default class PostComponent {
     transform: numberAttribute,
   })
 
-  readonly postQuery = injectQuery(() => ({
-    queryKey: ['post', this.postId()],
-    queryFn: () => {
-      return lastValueFrom(this.#postsService.postById$(this.postId()))
-    },
-  }))
+  readonly postQuery = injectQuery(() =>
+    this.#postsQueries.detail(this.postId()),
+  )
 }

@@ -1,12 +1,13 @@
-import { Link as RouterLink, useParams } from 'react-router-dom'
+import { Link as RouterLink, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import { characterQueryOptions, episodeQueryOptions } from './api'
+import { charactersQueries } from './services/characters/queries'
+import { episodesQueries } from './services/episodes/queries'
 
 function Episode() {
   const params = useParams()
   const episodeId = params.episodeId!
 
-  const { data, status } = useQuery(episodeQueryOptions(episodeId))
+  const { data, status } = useQuery(episodesQueries.detail(episodeId))
 
   if (status === 'pending') return <p>Loading...</p>
 
@@ -28,7 +29,7 @@ function Episode() {
 }
 
 function Character({ characterId }: { characterId: string }) {
-  const { data, status } = useQuery(characterQueryOptions(characterId))
+  const { data, status } = useQuery(charactersQueries.detail(characterId))
 
   if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>

@@ -52,13 +52,13 @@ import { experimental_createQueryPersister } from '@tanstack/query-persist-clien
 
 const persister = experimental_createQueryPersister({
   storage: AsyncStorage,
-  maxAge: 1000 * 60 * 60 * 12, // 12 hours
+  maxAge: 12 * 60 * 60 * 1000, // 12 hours
 })
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 30, // 30 seconds
+      gcTime: 30 * 1000, // 30 seconds
       persister: persister.persisterFn,
     },
   },
@@ -81,7 +81,7 @@ This utility might be used along `setQueryData` to persist optimistic update to 
 ```tsx
 const persister = experimental_createQueryPersister({
   storage: AsyncStorage,
-  maxAge: 1000 * 60 * 60 * 12, // 12 hours
+  maxAge: 12 * 60 * 60 * 1000, // 12 hours
 })
 
 const queryClient = useQueryClient()
@@ -210,7 +210,7 @@ The default options are:
 ```tsx
 {
   prefix = 'tanstack-query',
-  maxAge = 1000 * 60 * 60 * 24,
+  maxAge = 24 * 60 * 60 * 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
   refetchOnRestore = true,
