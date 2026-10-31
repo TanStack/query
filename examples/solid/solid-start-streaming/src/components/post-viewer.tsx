@@ -3,7 +3,7 @@ import { For, createSignal, resetErrorBoundaries, untrack } from 'solid-js'
 import { Example } from './example'
 import { QueryBoundary } from './query-boundary'
 import type { Component } from 'solid-js'
-import { fetchPost } from '~/utils/api'
+import { postsQueries } from '~/services/posts/queries'
 
 export interface PostViewerProps {
   deferStream?: boolean
@@ -21,13 +21,11 @@ export const PostViewer: Component<PostViewerProps> = (props) => {
     simulateError() || (simulateError() !== false && postId() === 5)
 
   const query = useQuery(() => ({
-    queryKey: ['posts', postId(), props.sleep, shouldSimulateError()],
-    queryFn: () =>
-      fetchPost({
-        postId: postId(),
-        sleep: props.sleep,
-        simulateError: shouldSimulateError(),
-      }),
+    ...postsQueries.detail({
+      postId: postId(),
+      sleep: props.sleep,
+      simulateError: shouldSimulateError(),
+    }),
     deferStream: props.deferStream,
     throwOnError: true,
   }))

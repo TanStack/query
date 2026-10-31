@@ -1,0 +1,24 @@
+{
+  "name": "@tanstack/query-example-solid-playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/solid-query": "^5.105.0",
+    "@tanstack/solid-query-devtools": "^5.105.0",
+    "solid-js": "^1.9.15"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "eslint-plugin-solid": "^0.18.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5",
+    "vite-plugin-solid": "^2.11.14"
+  }
+}

@@ -33,27 +33,27 @@ describe('notifyManager', () => {
 
   describe('batch', () => {
     it('should pass the return type of the callback through', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
-      expectTypeOf(notifyManagerTest.batch(() => 5)).toEqualTypeOf<number>()
+      expectTypeOf(localNotifyManager.batch(() => 5)).toEqualTypeOf<number>()
       expectTypeOf(
-        notifyManagerTest.batch(() => 'im happy' as const),
+        localNotifyManager.batch(() => 'im happy' as const),
       ).toEqualTypeOf<'im happy'>()
-      expectTypeOf(notifyManagerTest.batch(() => ({ a: 1 }))).toEqualTypeOf<{
+      expectTypeOf(localNotifyManager.batch(() => ({ a: 1 }))).toEqualTypeOf<{
         a: number
       }>()
     })
 
     it('should be void when the callback returns nothing', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
-      expectTypeOf(notifyManagerTest.batch(() => {})).toEqualTypeOf<void>()
+      expectTypeOf(localNotifyManager.batch(() => {})).toEqualTypeOf<void>()
     })
 
     it('should only accept a callback taking no arguments', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
-      expectTypeOf(notifyManagerTest.batch).parameters.toEqualTypeOf<
+      expectTypeOf(localNotifyManager.batch).parameters.toEqualTypeOf<
         [callback: () => unknown]
       >()
     })
@@ -61,13 +61,13 @@ describe('notifyManager', () => {
 
   describe('batchCalls', () => {
     it('should catch improper signatures of the wrapped function', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
       // we define some fn with its signature:
       const fn: (a: string, b: number) => string = (a, b) => a + b
 
       // now someFn expect to be called with args [a: string, b: number]
-      const someFn = notifyManagerTest.batchCalls(fn)
+      const someFn = localNotifyManager.batchCalls(fn)
 
       expectTypeOf(someFn).parameters.toEqualTypeOf<Parameters<typeof fn>>()
       assertType<Parameters<typeof someFn>>(['im happy', 4])
@@ -79,26 +79,26 @@ describe('notifyManager', () => {
     })
 
     it('should discard the return type of the wrapped function', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
       const fn: (a: string) => string = (a) => a
-      const someFn = notifyManagerTest.batchCalls(fn)
+      const someFn = localNotifyManager.batchCalls(fn)
 
       expectTypeOf(someFn).returns.toEqualTypeOf<void>()
     })
 
     it('should accept a callback without parameters', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
-      const someFn = notifyManagerTest.batchCalls(() => {})
+      const someFn = localNotifyManager.batchCalls(() => {})
 
       expectTypeOf(someFn).parameters.toEqualTypeOf<[]>()
     })
 
     it('should preserve optional parameters', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
-      const someFn = notifyManagerTest.batchCalls(
+      const someFn = localNotifyManager.batchCalls(
         (_a: string, _b?: number) => {},
       )
 
@@ -106,9 +106,9 @@ describe('notifyManager', () => {
     })
 
     it('should preserve rest parameters', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
-      const someFn = notifyManagerTest.batchCalls(
+      const someFn = localNotifyManager.batchCalls(
         (..._args: Array<number>) => {},
       )
 
@@ -116,90 +116,92 @@ describe('notifyManager', () => {
     })
 
     it('should constrain its type argument to an argument tuple', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
       expectTypeOf(
-        notifyManagerTest.batchCalls<[a: string, b: number]>((_a, _b) => {}),
+        localNotifyManager.batchCalls<[a: string, b: number]>((_a, _b) => {}),
       ).parameters.toEqualTypeOf<[a: string, b: number]>()
 
       // @ts-expect-error a non-array type does not satisfy Array<unknown>
-      notifyManagerTest.batchCalls<string>(() => {})
+      localNotifyManager.batchCalls<string>(() => {})
     })
   })
 
   describe('schedule', () => {
     it('should only accept a callback taking no arguments', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
-      expectTypeOf(notifyManagerTest.schedule).parameters.toEqualTypeOf<
+      expectTypeOf(localNotifyManager.schedule).parameters.toEqualTypeOf<
         [callback: () => void]
       >()
     })
 
     it('should return void', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
-      expectTypeOf(notifyManagerTest.schedule).returns.toEqualTypeOf<void>()
+      expectTypeOf(localNotifyManager.schedule).returns.toEqualTypeOf<void>()
     })
   })
 
   describe('setNotifyFunction', () => {
     it('should only accept a function taking a callback', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
       expectTypeOf(
-        notifyManagerTest.setNotifyFunction,
+        localNotifyManager.setNotifyFunction,
       ).parameters.toEqualTypeOf<[fn: (callback: () => void) => void]>()
     })
 
     it('should return void', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
       expectTypeOf(
-        notifyManagerTest.setNotifyFunction,
+        localNotifyManager.setNotifyFunction,
       ).returns.toEqualTypeOf<void>()
     })
   })
 
   describe('setBatchNotifyFunction', () => {
     it('should only accept a function taking a callback', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
       expectTypeOf(
-        notifyManagerTest.setBatchNotifyFunction,
+        localNotifyManager.setBatchNotifyFunction,
       ).parameters.toEqualTypeOf<[fn: (callback: () => void) => void]>()
     })
 
     it('should return void', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
       expectTypeOf(
-        notifyManagerTest.setBatchNotifyFunction,
+        localNotifyManager.setBatchNotifyFunction,
       ).returns.toEqualTypeOf<void>()
     })
   })
 
   describe('setScheduler', () => {
     it('should only accept a function taking a callback', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
-      expectTypeOf(notifyManagerTest.setScheduler).parameters.toEqualTypeOf<
+      expectTypeOf(localNotifyManager.setScheduler).parameters.toEqualTypeOf<
         [fn: (callback: () => void) => void]
       >()
     })
 
     it('should accept the exported defaultScheduler', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
       expectTypeOf(defaultScheduler).toEqualTypeOf<
-        Parameters<typeof notifyManagerTest.setScheduler>[0]
+        Parameters<typeof localNotifyManager.setScheduler>[0]
       >()
     })
 
     it('should return void', () => {
-      const notifyManagerTest = createNotifyManager()
+      const localNotifyManager = createNotifyManager()
 
-      expectTypeOf(notifyManagerTest.setScheduler).returns.toEqualTypeOf<void>()
+      expectTypeOf(
+        localNotifyManager.setScheduler,
+      ).returns.toEqualTypeOf<void>()
     })
   })
 })

@@ -1,9 +1,9 @@
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import { charactersQueryOptions } from './api'
+import { charactersQueries } from './services/characters/queries'
 
 export default function Characters() {
-  const { status, data } = useQuery(charactersQueryOptions)
+  const { status, data } = useQuery(charactersQueries.list())
 
   if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>

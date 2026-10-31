@@ -1,5 +1,12 @@
 # @tanstack/query-devtools
 
+## 5.105.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.105.0
+
 ## 5.104.5
 
 ### Patch Changes

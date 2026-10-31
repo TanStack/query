@@ -1,13 +1,13 @@
 <script lang="ts">
   import { resolve } from '$app/paths'
   import { useQueryClient, createQuery } from '@tanstack/svelte-query'
-  import { postQueryOptions, postsQueryOptions } from './queries'
+  import { postsQueries } from './services/posts/queries'
 
   const client = useQueryClient()
 
   const limit = 10
 
-  const posts = createQuery(() => postsQueryOptions(limit))
+  const posts = createQuery(() => postsQueries.list(limit))
 </script>
 
 <div>
@@ -24,7 +24,7 @@
               href={resolve('/[postId]', { postId: String(post.id) })}
               style={// We can use the queryCache here to show bold links for
               // ones that are cached
-              client.getQueryData(postQueryOptions(post.id).queryKey)
+              client.getQueryData(postsQueries.detail(post.id).queryKey)
                 ? 'font-weight: bold; color: indianred'
                 : 'cursor: pointer'}
             >

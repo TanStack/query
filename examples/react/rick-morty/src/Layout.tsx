@@ -1,4 +1,4 @@
-import { Route, Link as RouterLink, Routes } from 'react-router-dom'
+import { Route, Link as RouterLink, Routes } from 'react-router'
 import Episodes from './Episodes'
 import Episode from './Episode'
 import Characters from './Characters'
