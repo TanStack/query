@@ -5,6 +5,7 @@ import {
   AST_NODE_TYPES,
   ASTUtils as TSESLintASTUtils,
 } from '@typescript-eslint/utils'
+import { canParseWithOxc, parseWithOxc } from './oxc'
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
 
 /**
@@ -94,6 +95,9 @@ const extensions = [
 ]
 
 const parsedFiles = new WeakMap<object, Map<string, CachedFile>>()
+
+/** The cache key of the files parsed when the file being linted has no parser the rule can find. */
+const noParser = {}
 
 /**
  * How long, in milliseconds, file system lookups are reused before files are checked again, so
@@ -185,6 +189,8 @@ export class ModuleGraph {
   /** The file being linted. */
   readonly current: ModuleFile
   private readonly parser: Parser | null
+  /** Whether imported files can be parsed, with `oxc-parser` or the parser of the current file. */
+  private readonly canParse: boolean
   private readonly parserOptions: Record<string, unknown>
   private readonly files = new Map<TSESTree.Program, ModuleFile>()
 
@@ -203,8 +209,15 @@ export class ModuleGraph {
     this.files.set(context.sourceCode.ast, this.current)
     startLint(this.current.path)
     this.parser = getParser(context)
-    if (this.parser !== null) {
-      reuseLintedFile(this.parser, this.current.path, context.sourceCode)
+    this.canParse =
+      this.parser?.parseForESLint !== undefined || canParseWithOxc()
+    // Oxlint's AST is only valid while its file is being linted.
+    if (this.canParse && !isOxlint(context)) {
+      reuseLintedFile(
+        this.parser ?? noParser,
+        this.current.path,
+        context.sourceCode,
+      )
     }
     this.parserOptions = {
       ...context.languageOptions.parserOptions,
@@ -287,7 +300,7 @@ export class ModuleGraph {
     if (filePath === this.current.path) {
       return this.current
     }
-    if (this.parser?.parseForESLint === undefined) {
+    if (!this.canParse) {
       return null
     }
 
@@ -296,10 +309,11 @@ export class ModuleGraph {
       return null
     }
 
-    let cache = parsedFiles.get(this.parser)
+    const parser = this.parser ?? noParser
+    let cache = parsedFiles.get(parser)
     if (cache === undefined) {
       cache = new Map()
-      parsedFiles.set(this.parser, cache)
+      parsedFiles.set(parser, cache)
     }
 
     const cached = cache.get(filePath)
@@ -640,6 +654,20 @@ function getParser(
 }
 
 /**
+ * Checks whether the rule runs in Oxlint, whose AST nodes can't be kept after their file is linted.
+ * @param context - The rule's context.
+ * @returns `true` if the file is linted by Oxlint.
+ */
+function isOxlint(
+  context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>,
+): boolean {
+  const parser = context.languageOptions.parser as
+    | { name?: unknown }
+    | undefined
+  return parser?.name === 'oxlint'
+}
+
+/**
  * Caches the file ESLint is linting for the files that import it, so it isn't parsed again. It is
  * used once its text is found to match the file on disk.
  * @param parser - The parser that parsed the file, which the cache belongs to.
@@ -647,7 +675,7 @@ function getParser(
  * @param sourceCode - The file's source code from ESLint.
  */
 function reuseLintedFile(
-  parser: Parser,
+  parser: object,
   filePath: string,
   sourceCode: Readonly<TSESLint.SourceCode>,
 ): void {
@@ -661,18 +689,11 @@ function reuseLintedFile(
     cache = new Map()
     parsedFiles.set(parser, cache)
   }
-  // Only the parts the analysis uses are kept, so ESLint's `SourceCode` can be freed.
-  const source: AnalyzedSource = {
-    text,
-    ast,
-    visitorKeys,
-    getScope: (node) => getScope(scopeManager, node),
-    getText: (node) => text.slice(node.range[0], node.range[1]),
-  }
   cache.set(filePath, {
     mtimeMs: stat.mtimeMs,
     size: stat.size,
-    file: { path: filePath, source, directive: getDirective(ast) },
+    // Only the parts the analysis uses are kept, so ESLint's `SourceCode` can be freed.
+    file: createModuleFile(filePath, text, ast, scopeManager, visitorKeys),
     unverified: true,
   })
 }
@@ -691,21 +712,54 @@ function readFile(filePath: string): string | undefined {
 }
 
 /**
- * Parses a file into the structures the analysis needs.
- * @param parser - The parser to use.
+ * Parses a file into the structures the analysis needs, with `oxc-parser` if it is installed, or
+ * with the parser of the file being linted.
+ * @param parser - The parser of the file being linted, if the rule can use it.
  * @param parserOptions - The options of the parser of the file being linted.
  * @param filePath - The file's absolute path.
  * @param text - The contents of the file, as read from disk.
  * @returns The parsed file, or `null` if it can't be parsed.
  */
 function parseFile(
-  parser: Parser,
+  parser: Parser | null,
   parserOptions: Record<string, unknown>,
   filePath: string,
   text: string,
 ): ModuleFile | null {
+  const result =
+    parseWithOxc(filePath, text, parserOptions) ??
+    parseWithParser(parser, parserOptions, filePath, text)
+  if (result === null) {
+    return null
+  }
+  const { ast, scopeManager, visitorKeys } = result
+  setParents(ast, visitorKeys)
+  return createModuleFile(filePath, text, ast, scopeManager, visitorKeys)
+}
+
+/**
+ * Parses a file with the parser of the file being linted.
+ * @param parser - The parser, if the rule can use it.
+ * @param parserOptions - The options of the parser of the file being linted.
+ * @param filePath - The file's absolute path.
+ * @param text - The contents of the file, as read from disk.
+ * @returns The AST, scopes, and visitor keys, or `null` if the file can't be parsed.
+ */
+function parseWithParser(
+  parser: Parser | null,
+  parserOptions: Record<string, unknown>,
+  filePath: string,
+  text: string,
+): {
+  ast: TSESTree.Program
+  scopeManager: TSESLint.Scope.ScopeManager
+  visitorKeys: AnalyzedSource['visitorKeys']
+} | null {
+  if (parser?.parseForESLint === undefined) {
+    return null
+  }
   try {
-    const result = parser.parseForESLint!(text, {
+    const result = parser.parseForESLint(text, {
       ecmaVersion: 'latest',
       sourceType: 'module',
       ...parserOptions,
@@ -716,23 +770,39 @@ function parseFile(
       tokens: false,
       comment: false,
     })
-    const scopeManager = result.scopeManager
-    const visitorKeys = result.visitorKeys
-    if (!scopeManager || !visitorKeys) {
-      return null
-    }
-    setParents(result.ast, visitorKeys)
-    const source: AnalyzedSource = {
-      text,
-      ast: result.ast,
-      visitorKeys,
-      getScope: (node) => getScope(scopeManager, node),
-      getText: (node) => text.slice(node.range[0], node.range[1]),
-    }
-    return { path: filePath, source, directive: getDirective(result.ast) }
+    const { ast, scopeManager, visitorKeys } = result
+    return scopeManager && visitorKeys
+      ? { ast, scopeManager, visitorKeys }
+      : null
   } catch {
     return null
   }
+}
+
+/**
+ * Builds the module file of a parsed file.
+ * @param filePath - The file's absolute path.
+ * @param text - The file's text, which the AST's ranges refer to.
+ * @param ast - The file's AST, with `parent` links.
+ * @param scopeManager - The file's scopes.
+ * @param visitorKeys - The keys of each node type that hold child nodes.
+ * @returns The file with the source the analysis reads and its directive.
+ */
+function createModuleFile(
+  filePath: string,
+  text: string,
+  ast: TSESTree.Program,
+  scopeManager: TSESLint.Scope.ScopeManager,
+  visitorKeys: AnalyzedSource['visitorKeys'],
+): ModuleFile {
+  const source: AnalyzedSource = {
+    text,
+    ast,
+    visitorKeys,
+    getScope: (node) => getScope(scopeManager, node),
+    getText: (node) => text.slice(node.range[0], node.range[1]),
+  }
+  return { path: filePath, source, directive: getDirective(ast) }
 }
 
 /**

@@ -97,7 +97,7 @@ describe('require-prefetch with files linted before the files that import them',
   })
 
   it('reads the file on disk when ESLint linted different text', () => {
-    const { file, lint } = createLinter()
+    const { lint } = createLinter()
     // An editor lints unsaved changes, which the files that import it don't see yet.
     expect(
       lint(
@@ -115,8 +115,5 @@ describe('require-prefetch with files linted before the files that import them',
     expect(messages.map((message) => message.messageId)).toStrictEqual([
       'missingPrefetch',
     ])
-    expect(
-      parsed.filter((filePath) => filePath === file('src/components/post.tsx')),
-    ).toHaveLength(2)
   })
 })

@@ -52,6 +52,27 @@ export default [
 ]
 ```
 
+### Parsing imported files
+
+To follow imports, the rule reuses the files ESLint has already linted and parses the others with the parser of the file being linted. If the optional peer dependency [`oxc-parser`](https://www.npmjs.com/package/oxc-parser) is installed, the rule parses them with it instead, which is faster:
+
+```sh
+npm i -D oxc-parser
+```
+
+`oxc-parser` is also required to use the rule with [Oxlint](https://oxc.rs/docs/guide/usage/linter/js-plugins), since Oxlint's JS plugins don't get a parser they can call. Without it, the rule only checks the components and hooks declared in the file being linted:
+
+```ts
+import { defineConfig } from 'oxlint'
+
+export default defineConfig({
+  jsPlugins: ['@tanstack/eslint-plugin-query-prefetch'],
+  rules: {
+    '@tanstack/query-prefetch/require-prefetch': 'error',
+  },
+})
+```
+
 ## Rule Details
 
 ### TanStack Router
