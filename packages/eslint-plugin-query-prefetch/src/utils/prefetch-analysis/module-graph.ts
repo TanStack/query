@@ -75,6 +75,11 @@ interface CachedFile {
   mtimeMs: number
   size: number
   file: ModuleFile | null
+  /**
+   * Whether the file comes from ESLint linting it and its text hasn't been compared with the file
+   * on disk yet, which differs when an editor lints unsaved changes or `--fix` lints fixed text.
+   */
+  unverified?: boolean
 }
 
 const extensions = [
@@ -198,6 +203,9 @@ export class ModuleGraph {
     this.files.set(context.sourceCode.ast, this.current)
     startLint(this.current.path)
     this.parser = getParser(context)
+    if (this.parser !== null) {
+      reuseLintedFile(this.parser, this.current.path, context.sourceCode)
+    }
     this.parserOptions = {
       ...context.languageOptions.parserOptions,
       // Imported files are only parsed, so they don't need type information.
@@ -295,18 +303,32 @@ export class ModuleGraph {
     }
 
     const cached = cache.get(filePath)
+    let text: string | undefined
     if (
       cached !== undefined &&
       cached.mtimeMs === stat.mtimeMs &&
       cached.size === stat.size
     ) {
-      if (cached.file !== null) {
-        this.files.set(cached.file.source.ast, cached.file)
+      if (cached.unverified) {
+        text = readFile(filePath)
+        // ESLint removes the byte order mark before parsing.
+        if (text?.replace(/^\uFEFF/, '') === cached.file?.source.text) {
+          cached.unverified = false
+        }
       }
-      return cached.file
+      if (!cached.unverified) {
+        if (cached.file !== null) {
+          this.files.set(cached.file.source.ast, cached.file)
+        }
+        return cached.file
+      }
     }
 
-    const file = parseFile(this.parser, this.parserOptions, filePath)
+    text ??= readFile(filePath)
+    const file =
+      text === undefined
+        ? null
+        : parseFile(this.parser, this.parserOptions, filePath, text)
     cache.set(filePath, { mtimeMs: stat.mtimeMs, size: stat.size, file })
     if (file !== null) {
       this.files.set(file.source.ast, file)
@@ -618,19 +640,71 @@ function getParser(
 }
 
 /**
+ * Caches the file ESLint is linting for the files that import it, so it isn't parsed again. It is
+ * used once its text is found to match the file on disk.
+ * @param parser - The parser that parsed the file, which the cache belongs to.
+ * @param filePath - The file's absolute path.
+ * @param sourceCode - The file's source code from ESLint.
+ */
+function reuseLintedFile(
+  parser: Parser,
+  filePath: string,
+  sourceCode: Readonly<TSESLint.SourceCode>,
+): void {
+  const stat = statFile(filePath)
+  const { scopeManager, visitorKeys, ast, text } = sourceCode
+  if (stat === null || scopeManager === null) {
+    return
+  }
+  let cache = parsedFiles.get(parser)
+  if (cache === undefined) {
+    cache = new Map()
+    parsedFiles.set(parser, cache)
+  }
+  // Only the parts the analysis uses are kept, so ESLint's `SourceCode` can be freed.
+  const source: AnalyzedSource = {
+    text,
+    ast,
+    visitorKeys,
+    getScope: (node) => getScope(scopeManager, node),
+    getText: (node) => text.slice(node.range[0], node.range[1]),
+  }
+  cache.set(filePath, {
+    mtimeMs: stat.mtimeMs,
+    size: stat.size,
+    file: { path: filePath, source, directive: getDirective(ast) },
+    unverified: true,
+  })
+}
+
+/**
+ * Reads a file of the project.
+ * @param filePath - The file's absolute path.
+ * @returns The file's text, or `undefined` if it can't be read.
+ */
+function readFile(filePath: string): string | undefined {
+  try {
+    return fs.readFileSync(filePath, 'utf8')
+  } catch {
+    return undefined
+  }
+}
+
+/**
  * Parses a file into the structures the analysis needs.
  * @param parser - The parser to use.
  * @param parserOptions - The options of the parser of the file being linted.
  * @param filePath - The file's absolute path.
- * @returns The parsed file, or `null` if it can't be read or parsed.
+ * @param text - The contents of the file, as read from disk.
+ * @returns The parsed file, or `null` if it can't be parsed.
  */
 function parseFile(
   parser: Parser,
   parserOptions: Record<string, unknown>,
   filePath: string,
+  text: string,
 ): ModuleFile | null {
   try {
-    const text = fs.readFileSync(filePath, 'utf8')
     const result = parser.parseForESLint!(text, {
       ecmaVersion: 'latest',
       sourceType: 'module',
