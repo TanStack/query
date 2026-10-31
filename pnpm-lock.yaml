@@ -6141,9 +6141,6 @@ importers:
       '@tanstack/query-core':
         specifier: workspace:*
         version: link:../query-core
-      lit:
-        specifier: ^3.3.3
-        version: 3.3.3
     devDependencies:
       '@lit-labs/ssr':
         specifier: ^3.3.1
@@ -6151,6 +6148,9 @@ importers:
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
+      lit:
+        specifier: ^3.3.3
+        version: 3.3.3
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
