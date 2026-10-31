@@ -54,7 +54,9 @@ interface DevtoolsOptions {
   theme?: Theme
 }
 
-export default function SolidQueryDevtools(props: DevtoolsOptions): JSX.Element {
+export default function SolidQueryDevtools(
+  props: DevtoolsOptions,
+): JSX.Element {
   const queryClient = useQueryClient(props.client)
   const client = createMemo(() => queryClient)
   let ref!: HTMLDivElement
