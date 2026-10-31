@@ -20,6 +20,7 @@ import {
   fetchOptimistic,
   shouldSuspend,
 } from './suspense'
+import { usePauseManager } from './PauseManagerProvider'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
@@ -387,6 +388,7 @@ export function useQueries<
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
   const subscribed = options.subscribed !== false
+  const pauseManager = usePauseManager()
 
   const defaultedQueries = React.useMemo(
     () =>
@@ -434,11 +436,34 @@ export function useQueries<
   const shouldSubscribe = !isRestoring && subscribed
   React.useSyncExternalStore(
     React.useCallback(
-      (onStoreChange) =>
-        shouldSubscribe
-          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
-          : noop,
-      [observer, shouldSubscribe],
+      (onStoreChange) => {
+        if (!shouldSubscribe) {
+          return noop
+        }
+        const notify = notifyManager.batchCalls(onStoreChange)
+        let isPaused = pauseManager?.isPaused()
+        let hasPendingChanges = false
+        const unsubscribeObserver = observer.subscribe(() => {
+          if (isPaused) {
+            hasPendingChanges = true
+          } else {
+            notify()
+          }
+        })
+        const unsubscribePaused = pauseManager?.subscribe((paused) => {
+          isPaused = paused
+          if (hasPendingChanges && !paused) {
+            hasPendingChanges = false
+            notify()
+          }
+        })
+
+        return () => {
+          unsubscribeObserver()
+          unsubscribePaused?.()
+        }
+      },
+      [observer, shouldSubscribe, pauseManager],
     ),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
