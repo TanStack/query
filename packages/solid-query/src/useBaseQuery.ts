@@ -20,6 +20,7 @@ import type { QueryClient } from './QueryClient'
 import type {
   DefaultedQueryObserverOptions,
   Query,
+  QueryCacheNotifyEvent,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
@@ -197,7 +198,15 @@ export function useBaseQueryLayer<
   const [primed, setPrimed] = createSignal(!hydratedMount, {
     ownedWrite: true,
   })
-  const onCacheEvent = (event: { query: { queryHash: string } }) => {
+  const onCacheEvent = (event: QueryCacheNotifyEvent) => {
+    if (
+      event.type !== 'added' &&
+      event.type !== 'removed' &&
+      event.type !== 'updated'
+    ) {
+      return
+    }
+
     // Match the committed options hash OR the latest computed one (they
     // diverge during a hold — see `latestHash`).
     if (
