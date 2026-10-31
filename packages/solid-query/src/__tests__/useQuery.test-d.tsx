@@ -208,7 +208,7 @@ describe('useQuery', () => {
       })
 
       it('should define TData when queryOptions is called inline in the accessor', () => {
-        const { data } = useQuery(() =>
+        const query = useQuery(() =>
           queryOptions({
             queryKey: createKey(),
             queryFn: () => ({ wow: true }),
@@ -216,7 +216,7 @@ describe('useQuery', () => {
           }),
         )
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
       })
 
       it('should always define TData when initialData is provided as a function which ALWAYS returns the data', () => {
@@ -239,14 +239,14 @@ describe('useQuery', () => {
       })
 
       it('should have undefined in the TData union when queryOptions is called inline in the accessor without initialData', () => {
-        const { data } = useQuery(() =>
+        const query = useQuery(() =>
           queryOptions({
             queryKey: createKey(),
             queryFn: () => ({ wow: true }),
           }),
         )
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
 
       it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {

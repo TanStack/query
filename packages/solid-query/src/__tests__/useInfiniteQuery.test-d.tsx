@@ -89,7 +89,7 @@ describe('useInfiniteQuery', () => {
 
   describe('infiniteQueryOptions called inline in the accessor', () => {
     it('should always define TData when initialData is provided', () => {
-      const { data } = useInfiniteQuery(() =>
+      const infiniteQuery = useInfiniteQuery(() =>
         infiniteQueryOptions({
           queryKey: createKey(),
           queryFn: ({ pageParam }) => {
@@ -101,11 +101,13 @@ describe('useInfiniteQuery', () => {
         }),
       )
 
-      expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<
+        InfiniteData<number, unknown>
+      >()
     })
 
     it('should have undefined in the TData union when initialData is NOT provided', () => {
-      const { data } = useInfiniteQuery(() =>
+      const infiniteQuery = useInfiniteQuery(() =>
         infiniteQueryOptions({
           queryKey: createKey(),
           queryFn: ({ pageParam }) => {
@@ -116,7 +118,7 @@ describe('useInfiniteQuery', () => {
         }),
       )
 
-      expectTypeOf(data).toEqualTypeOf<
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<
         InfiniteData<number, unknown> | undefined
       >()
     })
