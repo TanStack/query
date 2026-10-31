@@ -16,10 +16,10 @@ import type {
  * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
  * The query runs when the options call for it — `enabled: false` skips the initial fetch.
  *
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
- * a `select` changes `TData` to include `undefined`).
+ * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `createQuery`,
- * with `initialData` set, wrapped in an {@link Accessor} so options can be reactive.
+ * with `initialData` known to be defined, wrapped in an {@link Accessor} so options can be reactive.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current query result, typed so that `status` is `success` — or `error` if a fetch attempt

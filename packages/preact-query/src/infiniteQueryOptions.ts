@@ -12,8 +12,9 @@ import type {
 import type { UseInfiniteQueryOptions } from './types'
 
 /**
- * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted or may
- * be `undefined` — `data` may be `undefined` while the query is `pending`.
+ * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted, may be
+ * `undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is
+ * `pending`.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
@@ -50,9 +51,9 @@ export type UndefinedInitialDataInfiniteOptions<
 }
 
 /**
- * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted or may
- * be `undefined` and `queryFn` is not `skipToken` — same as {@link UndefinedInitialDataInfiniteOptions}, but
- * `queryFn` may not be `skipToken`.
+ * The options accepted by the `infiniteQueryOptions` overload selected when `queryFn` is not `skipToken` and
+ * `initialData` is omitted, may be `undefined`, or is a function that may return `undefined` — same as
+ * {@link UndefinedInitialDataInfiniteOptions}, but `queryFn` may not be `skipToken`.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
@@ -71,11 +72,11 @@ export type UnusedSkipTokenInfiniteOptions<
   'queryFn'
 > & {
   /**
-   * `skipToken` is not allowed as a value here — this overload is selected when `initialData` is omitted or
-   * may be `undefined`. If you don't intend to run the query yet, set `enabled: false` — omitting `queryFn`
-   * alone still triggers a fetch that fails with "Missing queryFn" unless `enabled` is `false` or a default
-   * query function has been defined. A default query function only supplies `queryFn`; it doesn't defer the
-   * fetch on its own.
+   * `skipToken` is not allowed as a value here — this overload is selected when `initialData` is omitted, may
+   * be `undefined`, or is a function that may return `undefined`. If you don't intend to run the query yet,
+   * set `enabled: false` — omitting `queryFn` alone still triggers a fetch that fails with "Missing queryFn"
+   * unless `enabled` is `false` or a default query function has been defined. A default query function only
+   * supplies `queryFn`; it doesn't defer the fetch on its own.
    */
   queryFn?: Exclude<
     UseInfiniteQueryOptions<
@@ -130,7 +131,7 @@ export type DefinedInitialDataInfiniteOptions<
  * `options.queryKey` is required and is the query key to generate options for.
  *
  * This overload is selected when `initialData` is known to be defined.
- * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
+ * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` known to be defined.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  * @remarks See {@link useInfiniteQuery} for examples that fetch further pages, from a button click or
  * automatically as the user scrolls.

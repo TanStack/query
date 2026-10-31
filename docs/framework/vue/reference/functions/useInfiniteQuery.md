@@ -70,7 +70,7 @@ individual entries — the array itself can't be a bare getter.
 `MaybeRefOrGetter`\<[`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>\>
 
 The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
-`useInfiniteQuery`, with `initialData` set.
+`useInfiniteQuery`, with `initialData` known to be defined.
 
 #### queryClient?
 
