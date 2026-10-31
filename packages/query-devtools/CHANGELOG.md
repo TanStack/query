@@ -1,5 +1,12 @@
 # @tanstack/query-devtools
 
+## 5.105.1
+
+### Patch Changes
+
+- Updated dependencies [[`6f8a48d`](https://github.com/TanStack/query/commit/6f8a48d543b499b6d9b0e95050c28183c8c18ae0), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/query-core@5.105.1
+
 ## 5.105.0
 
 ### Patch Changes

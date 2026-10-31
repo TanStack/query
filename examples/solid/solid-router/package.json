@@ -12,15 +12,15 @@
   "dependencies": {
     "@solid-primitives/scheduled": "^1.5.3",
     "@solidjs/router": "^1.0.0",
-    "@tanstack/solid-query": "^5.105.0",
-    "@tanstack/solid-query-devtools": "^5.105.0",
+    "@tanstack/solid-query": "^5.105.1",
+    "@tanstack/solid-query-devtools": "^5.105.1",
     "localforage": "^1.10.0",
     "match-sorter": "^8.3.0",
     "solid-js": "^1.9.15",
     "sort-by": "^1.2.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@tanstack/eslint-plugin-query": "^5.105.1",
     "@types/sort-by": "^1.2.3",
     "eslint-plugin-solid": "^0.18.1",
     "typescript": "^6.0.3",

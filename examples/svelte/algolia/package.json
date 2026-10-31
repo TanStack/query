@@ -11,12 +11,12 @@
   },
   "dependencies": {
     "@algolia/client-search": "5.59.0",
-    "@tanstack/svelte-query": "^6.3.6",
-    "@tanstack/svelte-query-devtools": "^6.3.6"
+    "@tanstack/svelte-query": "^6.3.7",
+    "@tanstack/svelte-query-devtools": "^6.3.7"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
-    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@tanstack/eslint-plugin-query": "^5.105.1",
     "@tsconfig/svelte": "^5.0.4",
     "@typescript-eslint/parser": "^8.72.0",
     "eslint-plugin-svelte": "^3.23.0",
