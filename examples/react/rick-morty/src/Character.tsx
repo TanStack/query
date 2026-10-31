@@ -1,16 +1,14 @@
-import { Link as RouterLink, useParams } from 'react-router-dom'
+import { Link as RouterLink, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import {
-  characterQueryOptions,
-  episodeQueryOptions,
-  locationQueryOptions,
-} from './api'
+import { charactersQueries } from './services/characters/queries'
+import { episodesQueries } from './services/episodes/queries'
+import { locationsQueries } from './services/locations/queries'
 
 function Character() {
   const params = useParams()
   const characterId = params.characterId!
 
-  const { status, data } = useQuery(characterQueryOptions(characterId))
+  const { status, data } = useQuery(charactersQueries.detail(characterId))
 
   if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>
@@ -34,7 +32,8 @@ function Character() {
         <strong>Origin</strong>: {data.origin.name}
       </p>
       <p>
-        <strong>Location</strong>: <Location locationId={locationId} />
+        <strong>Location</strong>:{' '}
+        {locationId ? <Location locationId={locationId} /> : data.location.name}
       </p>
 
       <h4 className="text-2xl pt-4">Episodes</h4>
@@ -48,7 +47,7 @@ function Character() {
 }
 
 function Episode({ episodeId }: { episodeId: string }) {
-  const { data, status } = useQuery(episodeQueryOptions(episodeId))
+  const { data, status } = useQuery(episodesQueries.detail(episodeId))
 
   if (status === 'success') {
     return (
@@ -67,7 +66,7 @@ function Episode({ episodeId }: { episodeId: string }) {
 }
 
 function Location({ locationId }: { locationId: string }) {
-  const { data, status } = useQuery(locationQueryOptions(locationId))
+  const { data, status } = useQuery(locationsQueries.detail(locationId))
 
   if (status === 'pending') return <span>Loading...</span>
   if (status === 'error') return <span>Error :(</span>

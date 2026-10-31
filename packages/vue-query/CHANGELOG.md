@@ -1,5 +1,13 @@
 # @tanstack/vue-query
 
+## 5.105.0
+
+### Patch Changes
+
+- [#11921](https://github.com/TanStack/query/pull/11921) [`c5de051`](https://github.com/TanStack/query/commit/c5de051d61f1ed20e5266b4086349589d51e2950) - fix(vue-query/queryClient): infer the data and error types of 'getQueryState' from a tagged query key
+- Updated dependencies []:
+  - @tanstack/query-core@5.105.0
+
 ## 5.104.5
 
 ### Patch Changes

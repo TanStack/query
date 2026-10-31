@@ -137,7 +137,7 @@ export const PERSISTER_KEY_PREFIX = 'tanstack-query'
 export function experimental_createQueryPersister<TStorageValue = string>({
   storage,
   buster = '',
-  maxAge = 1000 * 60 * 60 * 24,
+  maxAge = 24 * 60 * 60 * 1000,
   serialize = JSON.stringify as Required<
     StoragePersisterOptions<TStorageValue>
   >['serialize'],

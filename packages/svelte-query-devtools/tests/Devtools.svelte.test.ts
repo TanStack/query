@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/svelte-query'
 import SvelteQueryDevtools from '../src/Devtools.svelte'
@@ -30,13 +30,17 @@ vi.mock('@tanstack/query-devtools', () => ({
 }))
 
 describe('SvelteQueryDevtools', () => {
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    queryClient = new QueryClient()
+  })
+
   afterEach(() => {
     vi.clearAllMocks()
   })
 
   it('should render the parent container without throwing in non-development environments', () => {
-    const queryClient = new QueryClient()
-
     const { container } = render(SvelteQueryDevtools, {
       props: { client: queryClient },
     })
@@ -54,21 +58,16 @@ describe('SvelteQueryDevtools', () => {
   })
 
   it('should not throw an error if query client is provided via context', () => {
-    const queryClient = new QueryClient()
-
     expect(() => render(Wrapper, { props: { queryClient } })).not.toThrow()
   })
 
   it('should not throw an error if query client is provided via props', () => {
-    const queryClient = new QueryClient()
-
     expect(() =>
       render(SvelteQueryDevtools, { props: { client: queryClient } }),
     ).not.toThrow()
   })
 
   it('should forward the initial "position" to the devtools instance', async () => {
-    const queryClient = new QueryClient()
     render(SvelteQueryDevtools, {
       props: { client: queryClient, position: 'left' },
     })
@@ -78,7 +77,6 @@ describe('SvelteQueryDevtools', () => {
   })
 
   it('should forward the initial "buttonPosition" to the devtools instance', async () => {
-    const queryClient = new QueryClient()
     render(SvelteQueryDevtools, {
       props: { client: queryClient, buttonPosition: 'top-left' },
     })
@@ -88,7 +86,6 @@ describe('SvelteQueryDevtools', () => {
   })
 
   it('should forward the initial "initialIsOpen" to the devtools instance', async () => {
-    const queryClient = new QueryClient()
     render(SvelteQueryDevtools, {
       props: { client: queryClient, initialIsOpen: true },
     })
@@ -98,7 +95,6 @@ describe('SvelteQueryDevtools', () => {
   })
 
   it('should forward the initial "errorTypes" to the devtools instance', async () => {
-    const queryClient = new QueryClient()
     const errorTypes = [{ name: 'Error', initializer: () => new Error() }]
     render(SvelteQueryDevtools, {
       props: { client: queryClient, errorTypes },
@@ -109,7 +105,6 @@ describe('SvelteQueryDevtools', () => {
   })
 
   it('should forward the initial "theme" to the devtools instance', async () => {
-    const queryClient = new QueryClient()
     render(SvelteQueryDevtools, {
       props: { client: queryClient, theme: 'dark' },
     })
@@ -118,8 +113,16 @@ describe('SvelteQueryDevtools', () => {
     expect(setThemeMock).toHaveBeenCalledWith('dark')
   })
 
+  it('should forward an undefined "theme" to the devtools instance when the prop is omitted', async () => {
+    render(SvelteQueryDevtools, {
+      props: { client: queryClient },
+    })
+
+    await vi.dynamicImportSettled()
+    expect(setThemeMock).toHaveBeenCalledWith(undefined)
+  })
+
   it('should forward a "position" change to the devtools instance after mount', async () => {
-    const queryClient = new QueryClient()
     const { rerender } = render(SvelteQueryDevtools, {
       props: { client: queryClient, position: 'bottom' },
     })
@@ -133,7 +136,6 @@ describe('SvelteQueryDevtools', () => {
   })
 
   it('should forward a "buttonPosition" change to the devtools instance after mount', async () => {
-    const queryClient = new QueryClient()
     const { rerender } = render(SvelteQueryDevtools, {
       props: { client: queryClient, buttonPosition: 'bottom-right' },
     })
@@ -147,7 +149,6 @@ describe('SvelteQueryDevtools', () => {
   })
 
   it('should forward an "initialIsOpen" change to the devtools instance after mount', async () => {
-    const queryClient = new QueryClient()
     const { rerender } = render(SvelteQueryDevtools, {
       props: { client: queryClient, initialIsOpen: false },
     })
@@ -161,7 +162,6 @@ describe('SvelteQueryDevtools', () => {
   })
 
   it('should forward an "errorTypes" change to the devtools instance after mount', async () => {
-    const queryClient = new QueryClient()
     const { rerender } = render(SvelteQueryDevtools, {
       props: { client: queryClient, errorTypes: [] },
     })
@@ -176,7 +176,6 @@ describe('SvelteQueryDevtools', () => {
   })
 
   it('should forward a "theme" change to the devtools instance after mount', async () => {
-    const queryClient = new QueryClient()
     const { rerender } = render(SvelteQueryDevtools, {
       props: { client: queryClient, theme: 'light' },
     })

@@ -816,11 +816,9 @@ describe('useQuery', () => {
         }
       })
 
-      const { refetch } = state
-
       return (
         <div>
-          <button onClick={() => refetch()}>refetch</button>
+          <button onClick={() => state.refetch()}>refetch</button>
           <h2>Data: {JSON.stringify(state.data)}</h2>
         </div>
       )
@@ -882,11 +880,9 @@ describe('useQuery', () => {
         states.push({ ...state })
       })
 
-      const { refetch } = state
-
       return (
         <div>
-          <button onClick={() => refetch()}>refetch</button>
+          <button onClick={() => state.refetch()}>refetch</button>
           data: {String(state.data?.[1]?.done)}
         </div>
       )
@@ -1748,12 +1744,12 @@ describe('useQuery', () => {
     const key = createKey()
 
     function Page() {
-      const { status } = useQuery(() => ({
+      const query = useQuery(() => ({
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'test'),
       }))
 
-      return <div>status: {status}</div>
+      return <div>status: {query.status}</div>
     }
 
     const rendered = renderWithClient(queryClient, () => <Page />)
@@ -1768,7 +1764,7 @@ describe('useQuery', () => {
       .mockReturnValue('data')
 
     function Page() {
-      const { data = 'default' } = useQuery(() => ({
+      const query = useQuery(() => ({
         queryKey: key,
         queryFn,
         enabled: false,
@@ -1776,7 +1772,7 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <h1>{data}</h1>
+          <h1>{query.data ?? 'default'}</h1>
         </div>
       )
     }
@@ -3412,13 +3408,13 @@ describe('useQuery', () => {
     queryFn.mockReturnValue('data')
 
     function Page() {
-      const { fetchStatus } = useQuery(() => ({
+      const query = useQuery(() => ({
         queryKey: key,
         queryFn,
         enabled: false,
       }))
 
-      return <div>fetchStatus: {fetchStatus}</div>
+      return <div>fetchStatus: {query.fetchStatus}</div>
     }
 
     const rendered = renderWithClient(queryClient, () => <Page />)
@@ -3483,7 +3479,7 @@ describe('useQuery', () => {
       const query = useQuery(() => ({
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'fetched data'),
-        gcTime: 1000 * 60 * 10, // 10 Minutes
+        gcTime: 10 * 60 * 1000, // 10 Minutes
       }))
       return <div>{query.data}</div>
     }
@@ -3498,7 +3494,7 @@ describe('useQuery', () => {
 
     expect(setTimeoutSpy).toHaveBeenLastCalledWith(
       expect.any(Function),
-      1000 * 60 * 10,
+      10 * 60 * 1000,
     )
   })
 
@@ -4353,11 +4349,9 @@ describe('useQuery', () => {
         states.push({ ...state })
       })
 
-      const { refetch } = state
-
       return (
         <div>
-          <button onClick={() => refetch()}>refetch</button>
+          <button onClick={() => state.refetch()}>refetch</button>
           <button onClick={() => queryClient.resetQueries({ queryKey: key })}>
             reset
           </button>

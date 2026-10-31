@@ -1,37 +1,15 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import {
-    errorRate,
-    queryTimeMin,
-    queryTimeMax,
-    list,
-    editingIndex,
-  } from '$lib/stores.svelte'
-  import type { Todos } from '$lib/stores.svelte'
+  import { editingIndex } from '$lib/stores.svelte'
+  import { todosQueries } from '$lib/services/todos/queries'
 
-  let { initialFilter: filter }: { initialFilter: string } = $props()
-
-  const fetchTodos = async ({ filter }: { filter: string }): Promise<Todos> => {
-    return new Promise((resolve, reject) => {
-      setTimeout(
-        () => {
-          if (Math.random() < errorRate.value) {
-            return reject(
-              new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2)),
-            )
-          }
-          resolve(list.value.filter((d) => d.name.includes(filter)))
-        },
-        queryTimeMin.value +
-          Math.random() * (queryTimeMax.value - queryTimeMin.value),
-      )
-    })
+  type Props = {
+    initialFilter: string
   }
 
-  const query = createQuery(() => ({
-    queryKey: ['todos', { filter: filter }],
-    queryFn: () => fetchTodos({ filter: filter }),
-  }))
+  let { initialFilter: filter }: Props = $props()
+
+  const query = createQuery(() => todosQueries.list(filter))
 </script>
 
 <div>
