@@ -1,3 +1,4 @@
+import { queryOptions as coreQueryOptions } from '@tanstack/query-core'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
 import {
@@ -79,6 +80,19 @@ describe('queryOptions', () => {
 
     const { data } = injectQuery(() => options)
     expectTypeOf(data).toEqualTypeOf<Signal<number | undefined>>()
+  })
+
+  it('should work when core queryOptions are passed to injectQuery', () => {
+    const key = createKey()
+    const options = coreQueryOptions({
+      queryKey: key,
+      queryFn: () => Promise.resolve({ id: '1', title: 'Do Laundry' }),
+    })
+
+    const { data } = injectQuery(() => options)
+    expectTypeOf(data).toEqualTypeOf<
+      Signal<{ id: string; title: string } | undefined>
+    >()
   })
 
   it('should work when passed to fetchQuery', () => {

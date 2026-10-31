@@ -1,5 +1,6 @@
 import {
   QueryClient,
+  infiniteQueryOptions as coreInfiniteQueryOptions,
   dataTagErrorSymbol,
   dataTagSymbol,
   skipToken,
@@ -18,6 +19,38 @@ import type {
 class Host extends LitElement {}
 
 describe('infiniteQueryOptions', () => {
+  it('should infer data from core infiniteQueryOptions', () => {
+    const options = coreInfiniteQueryOptions({
+      queryKey: createKey(),
+      initialPageParam: 0,
+      queryFn: ({ pageParam }) => Promise.resolve(pageParam),
+      getNextPageParam: () => undefined,
+    })
+    const query = createInfiniteQueryController(
+      new Host(),
+      () => options,
+      new QueryClient(),
+    )
+    expectTypeOf(query().data).toEqualTypeOf<InfiniteData<number> | undefined>()
+  })
+
+  it('should preserve selected data and initialData from core infiniteQueryOptions', () => {
+    const options = coreInfiniteQueryOptions({
+      queryKey: createKey(),
+      initialPageParam: 0,
+      queryFn: ({ pageParam }) => Promise.resolve(pageParam),
+      getNextPageParam: () => undefined,
+      initialData: { pages: [1], pageParams: [0] },
+      select: (data) => data.pages.length,
+    })
+    const query = createInfiniteQueryController(
+      new Host(),
+      () => options,
+      new QueryClient(),
+    )
+    expectTypeOf(query().data).toEqualTypeOf<number | undefined>()
+  })
+
   it('should not allow excess properties', () => {
     assertType(
       infiniteQueryOptions({
