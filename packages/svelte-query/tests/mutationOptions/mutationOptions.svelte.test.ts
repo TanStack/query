@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { mutationOptions } from '../../src/index.js'
 import Base from './Base.svelte'
 import Multi from './Multi.svelte'
@@ -37,7 +37,7 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (with mutationKey in mutationOptions)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(50).then(() => 'data'),
@@ -52,7 +52,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(51)
+    await vi.advanceTimersByTimeAsync(50)
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
   })
 
@@ -70,12 +70,12 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(51)
+    await vi.advanceTimersByTimeAsync(50)
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
   })
 
   it('should return the number of fetching mutations when used with useIsMutating', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(50).then(() => 'data1'),
@@ -98,12 +98,12 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 2')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(51)
+    await vi.advanceTimersByTimeAsync(50)
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (filter mutationOpts1.mutationKey)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(50).then(() => 'data1'),
@@ -127,12 +127,12 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(51)
+    await vi.advanceTimersByTimeAsync(50)
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (with mutationKey in mutationOptions)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(500).then(() => 'data'),
@@ -151,7 +151,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('clientIsMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(501)
+    await vi.advanceTimersByTimeAsync(500)
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
   })
 
@@ -169,12 +169,12 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('clientIsMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(501)
+    await vi.advanceTimersByTimeAsync(500)
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(500).then(() => 'data1'),
@@ -197,12 +197,12 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('clientIsMutating: 2')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(501)
+    await vi.advanceTimersByTimeAsync(500)
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (filter mutationOpts1.mutationKey)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(500).then(() => 'data1'),
@@ -226,12 +226,12 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('clientIsMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(501)
+    await vi.advanceTimersByTimeAsync(500)
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
   })
 
   it('should return mutation states when used with useMutationState (with mutationKey in mutationOptions)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(10).then(() => 'data'),
@@ -253,7 +253,7 @@ describe('mutationOptions', () => {
     expect(rendered.getByText('mutationState: []')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('mutationState: ["data"]')).toBeInTheDocument()
   })
 
@@ -275,12 +275,12 @@ describe('mutationOptions', () => {
     expect(rendered.getByText('mutationState: []')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('mutationState: ["data"]')).toBeInTheDocument()
   })
 
   it('should return mutation states when used with useMutationState', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(10).then(() => 'data1'),
@@ -304,14 +304,14 @@ describe('mutationOptions', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(
       rendered.getByText('mutationState: ["data1","data2"]'),
     ).toBeInTheDocument()
   })
 
   it('should return mutation states when used with useMutationState (filter mutationOpts1.mutationKey)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,
       mutationFn: () => sleep(10).then(() => 'data1'),
@@ -338,7 +338,7 @@ describe('mutationOptions', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('mutationState: ["data1"]')).toBeInTheDocument()
   })
 })

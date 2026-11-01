@@ -1,8 +1,7 @@
 import preact from '@preact/preset-vite'
 import { defineConfig } from 'vitest/config'
-import type { UserConfig as ViteUserConfig } from 'vite'
-
 import packageJson from './package.json'
+import type { UserConfig as ViteUserConfig } from 'vite'
 
 export default defineConfig({
   plugins: [preact() as ViteUserConfig['plugins']],
@@ -24,13 +23,12 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
     coverage: {
-      enabled: true,
+      enabled: !!process.env.CI,
       provider: 'istanbul',
       include: ['src/**/*'],
       exclude: ['src/__tests__/**'],
     },
     typecheck: { enabled: true },
     restoreMocks: true,
-    retry: process.env.CI ? 3 : 0,
   },
 })

@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isReactive, ref } from 'vue-demi'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useIsMutating, useMutationState } from '../useMutationState'
 import { useQueryClient } from '../useQueryClient'
 import { mutationOptions } from '../mutationOptions'
 
-vi.mock('../useQueryClient')
+vi.mock(import('../useQueryClient'))
 
 describe('mutationOptions', () => {
   beforeEach(() => {
@@ -14,8 +14,8 @@ describe('mutationOptions', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     useQueryClient().clear()
+    vi.useRealTimers()
   })
 
   it('should return the object received as a parameter without any modification (with mutationKey in mutationOptions)', () => {
@@ -24,7 +24,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 5),
     } as const
 
-    expect(mutationOptions(object)).toStrictEqual(object)
+    expect(mutationOptions(object)).toBe(object)
   })
 
   it('should return the object received as a parameter without any modification (without mutationKey in mutationOptions)', () => {
@@ -32,7 +32,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 5),
     } as const
 
-    expect(mutationOptions(object)).toStrictEqual(object)
+    expect(mutationOptions(object)).toBe(object)
   })
 
   it('should return the getter received as a parameter without any modification (with mutationKey in mutationOptions)', () => {
@@ -63,8 +63,7 @@ describe('mutationOptions', () => {
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-
-    expect(data.value).toEqual('data')
+    expect(data.value).toBe('data')
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (with mutationKey in mutationOptions)', async () => {
@@ -85,7 +84,7 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(50)
     isMutatingArray.push(isMutating.value)
 
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (without mutationKey in mutationOptions)', async () => {
@@ -105,7 +104,7 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(50)
     isMutatingArray.push(isMutating.value)
 
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should return the number of fetching mutations when used with useIsMutating', async () => {
@@ -131,7 +130,7 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(50)
     isMutatingArray.push(isMutating.value)
 
-    expect(isMutatingArray).toEqual([0, 2, 0])
+    expect(isMutatingArray).toStrictEqual([0, 2, 0])
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (filter mutationOpts1.mutationKey)', async () => {
@@ -159,7 +158,7 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(50)
     isMutatingArray.push(isMutating.value)
 
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (getter with mutationKey in mutationOptions)', async () => {
@@ -177,10 +176,9 @@ describe('mutationOptions', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutating.value).toEqual(1)
-
+    expect(isMutating.value).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
-    expect(isMutating.value).toEqual(0)
+    expect(isMutating.value).toBe(0)
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (getter without mutationKey in mutationOptions)', async () => {
@@ -200,7 +198,7 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(50)
     isMutatingArray.push(isMutating.value)
 
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (getter)', async () => {
@@ -226,7 +224,7 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(50)
     isMutatingArray.push(isMutating.value)
 
-    expect(isMutatingArray).toEqual([0, 2, 0])
+    expect(isMutatingArray).toStrictEqual([0, 2, 0])
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (getter, filter mutationOpts1.mutationKey)', async () => {
@@ -256,7 +254,7 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(50)
     isMutatingArray.push(isMutating.value)
 
-    expect(isMutatingArray).toEqual([0, 1, 0])
+    expect(isMutatingArray).toStrictEqual([0, 1, 0])
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (with mutationKey in mutationOptions)', async () => {
@@ -279,9 +277,9 @@ describe('mutationOptions', () => {
     mutate()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -305,9 +303,9 @@ describe('mutationOptions', () => {
     mutate()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -337,9 +335,9 @@ describe('mutationOptions', () => {
     mutate2()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(2)
+    expect(Math.max(...isMutatingArray)).toBe(2)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -377,9 +375,9 @@ describe('mutationOptions', () => {
     mutate2()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -406,9 +404,9 @@ describe('mutationOptions', () => {
     mutate()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -432,9 +430,9 @@ describe('mutationOptions', () => {
     mutate()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -464,9 +462,9 @@ describe('mutationOptions', () => {
     mutate2()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(2)
+    expect(Math.max(...isMutatingArray)).toBe(2)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -506,9 +504,9 @@ describe('mutationOptions', () => {
     mutate2()
     await vi.advanceTimersByTimeAsync(0)
     // Use Math.max because subscribe callback count is implementation-dependent
-    expect(Math.max(...isMutatingArray)).toEqual(1)
+    expect(Math.max(...isMutatingArray)).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
 
     unsubscribe()
   })
@@ -525,11 +523,11 @@ describe('mutationOptions', () => {
       select: (mutation) => mutation.state.data,
     })
 
-    expect(states.value).toEqual([])
+    expect(states.value).toStrictEqual([])
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.value).toEqual(['data'])
+    expect(states.value).toStrictEqual(['data'])
   })
 
   it('should return mutation states when used with useMutationState (without mutationKey in mutationOptions)', async () => {
@@ -543,11 +541,11 @@ describe('mutationOptions', () => {
       select: (mutation) => mutation.state.data,
     })
 
-    expect(states.value).toEqual([])
+    expect(states.value).toStrictEqual([])
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.value).toEqual(['data'])
+    expect(states.value).toStrictEqual(['data'])
   })
 
   it('should return mutation states when used with useMutationState', async () => {
@@ -566,12 +564,12 @@ describe('mutationOptions', () => {
       select: (mutation) => mutation.state.data,
     })
 
-    expect(states.value).toEqual([])
+    expect(states.value).toStrictEqual([])
 
     mutate1()
     mutate2()
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.value).toEqual(['data1', 'data2'])
+    expect(states.value).toStrictEqual(['data1', 'data2'])
   })
 
   it('should return mutation states when used with useMutationState (filter mutationOpts1.mutationKey)', async () => {
@@ -590,12 +588,12 @@ describe('mutationOptions', () => {
       select: (mutation) => mutation.state.data,
     })
 
-    expect(states.value).toEqual([])
+    expect(states.value).toStrictEqual([])
 
     mutate1()
     mutate2()
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.value).toEqual(['data1'])
+    expect(states.value).toStrictEqual(['data1'])
   })
 
   it('should return mutation states when used with useMutationState (getter with mutationKey in mutationOptions)', async () => {
@@ -614,7 +612,7 @@ describe('mutationOptions', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(states.value).toEqual(['foo'])
+    expect(states.value).toStrictEqual(['foo'])
   })
 
   it('should return mutation states when used with useMutationState (getter without mutationKey in mutationOptions)', async () => {
@@ -628,11 +626,11 @@ describe('mutationOptions', () => {
       select: (mutation) => mutation.state.data,
     })
 
-    expect(states.value).toEqual([])
+    expect(states.value).toStrictEqual([])
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.value).toEqual(['data'])
+    expect(states.value).toStrictEqual(['data'])
   })
 
   it('should return mutation states when used with useMutationState (getter)', async () => {
@@ -651,12 +649,12 @@ describe('mutationOptions', () => {
       select: (mutation) => mutation.state.data,
     })
 
-    expect(states.value).toEqual([])
+    expect(states.value).toStrictEqual([])
 
     mutate1()
     mutate2()
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.value).toEqual(['data1', 'data2'])
+    expect(states.value).toStrictEqual(['data1', 'data2'])
   })
 
   it('should return mutation states when used with useMutationState (getter, filter mutationOpts1.mutationKey)', async () => {
@@ -677,12 +675,12 @@ describe('mutationOptions', () => {
       select: (mutation) => mutation.state.data,
     })
 
-    expect(states.value).toEqual([])
+    expect(states.value).toStrictEqual([])
 
     mutate1()
     mutate2()
     await vi.advanceTimersByTimeAsync(10)
-    expect(states.value).toEqual(['data1'])
+    expect(states.value).toStrictEqual(['data1'])
   })
 
   it('should return data in a shallow ref when shallow is true', async () => {
@@ -696,8 +694,7 @@ describe('mutationOptions', () => {
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-
-    expect(data.value).toEqual({ nested: { count: 0 } })
+    expect(data.value).toStrictEqual({ nested: { count: 0 } })
     expect(isReactive(data.value?.nested)).toBe(false)
   })
 
@@ -712,27 +709,27 @@ describe('mutationOptions', () => {
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-
-    expect(data.value).toEqual({ nested: { count: 0 } })
+    expect(data.value).toStrictEqual({ nested: { count: 0 } })
     expect(isReactive(data.value?.nested)).toBe(false)
   })
 
   it('should reactively update mutationKey when ref changes in getter', async () => {
-    const key = queryKey()
+    const key = createKey()
     const keyRef = ref('key01')
-    const fnMock = vi.fn((params: string) => sleep(10).then(() => params))
+    const mutationFn = vi.fn<(params: string) => Promise<string>>(
+      (params: string) => sleep(10).then(() => params),
+    )
     const mutationOpts = mutationOptions(() => ({
       mutationKey: [...key, keyRef.value],
-      mutationFn: fnMock,
+      mutationFn,
     }))
 
     const mutation = useMutation(mutationOpts)
 
     mutation.mutate('data')
     await vi.advanceTimersByTimeAsync(10)
-
-    expect(fnMock).toHaveBeenCalledTimes(1)
-    expect(fnMock).toHaveBeenNthCalledWith(
+    expect(mutationFn).toHaveBeenCalledTimes(1)
+    expect(mutationFn).toHaveBeenNthCalledWith(
       1,
       'data',
       expect.objectContaining({ mutationKey: [...key, 'key01'] }),
@@ -742,9 +739,8 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(0)
     mutation.mutate('data')
     await vi.advanceTimersByTimeAsync(10)
-
-    expect(fnMock).toHaveBeenCalledTimes(2)
-    expect(fnMock).toHaveBeenNthCalledWith(
+    expect(mutationFn).toHaveBeenCalledTimes(2)
+    expect(mutationFn).toHaveBeenNthCalledWith(
       2,
       'data',
       expect.objectContaining({ mutationKey: [...key, 'key02'] }),

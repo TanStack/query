@@ -1,7 +1,7 @@
 import {
   QueryClient,
   defaultShouldDehydrateQuery,
-  isServer,
+  environmentManager,
 } from '@tanstack/react-query'
 
 function makeQueryClient() {
@@ -15,6 +15,8 @@ function makeQueryClient() {
         shouldDehydrateQuery: (query) =>
           defaultShouldDehydrateQuery(query) ||
           query.state.status === 'pending',
+        // Next.js redacts errors itself and needs the originals to detect dynamic pages
+        shouldRedactErrors: () => false,
       },
     },
   })
@@ -23,7 +25,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 export function getQueryClient() {
-  if (isServer) {
+  if (environmentManager.isServer()) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {

@@ -1,0 +1,24 @@
+[data-scope='toast'][data-part='root'] {
+  translate: var(--x) var(--y);
+  scale: var(--scale);
+  z-index: var(--z-index);
+  height: var(--height);
+  opacity: var(--opacity);
+  will-change: translate, opacity, scale;
+  transition:
+    translate 400ms,
+    scale 400ms,
+    opacity 400ms;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+[data-scope='toast'][data-part='root'][data-type='success'] {
+  border-left: 4px solid #61d345;
+}
+
+[data-scope='toast'][data-part='root'][data-type='error'] {
+  border-left: 4px solid #ff4b4b;
+}

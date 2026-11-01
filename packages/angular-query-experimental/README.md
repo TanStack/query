@@ -1,4 +1,18 @@
-![TanStack Query Header](https://github.com/TanStack/query/raw/main/media/repo-header.png)
+<picture>
+  <source
+    media="(prefers-color-scheme: dark)"
+    srcset="https://tanstack.com/api/readme/query.png?framework=angular&theme=dark"
+  />
+  <source
+    media="(prefers-color-scheme: light)"
+    srcset="https://tanstack.com/api/readme/query.png?framework=angular"
+  />
+  <img
+    src="https://tanstack.com/api/readme/query.png?framework=angular"
+    alt="TanStack Angular Query"
+    width="900"
+  />
+</picture>
 
 [![npm version](https://img.shields.io/npm/v/@tanstack/angular-query-experimental)](https://www.npmjs.com/package/@tanstack/angular-query-experimental)
 [![npm license](https://img.shields.io/npm/l/@tanstack/angular-query-experimental)](https://github.com/TanStack/query/blob/main/LICENSE)

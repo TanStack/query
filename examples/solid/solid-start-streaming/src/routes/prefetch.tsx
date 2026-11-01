@@ -1,13 +1,14 @@
-import { useQueryClient } from '@tanstack/solid-query'
-import { isServer } from 'solid-js/web'
+import { noop, useQueryClient } from '@tanstack/solid-query'
 import { Title } from '@solidjs/meta'
 import { UserInfo, userInfoQueryOpts } from '~/components/user-info'
 
 export const route = {
-  load: () => {
+  preload: () => {
     const queryClient = useQueryClient()
     // Prefetching the user info and caching it for 15 seconds.
-    queryClient.prefetchQuery(userInfoQueryOpts({ sleep: 500, gcTime: 15000 }))
+    queryClient
+      .query(userInfoQueryOpts({ sleep: 500, gcTime: 15000 }))
+      .catch(noop)
   },
 }
 

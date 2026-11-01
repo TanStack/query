@@ -1,3 +1,12 @@
+/**
+ * Sorts the items covered by the order rules into the required order, keeping the other items in
+ * place.
+ * @param data - The items to sort.
+ * @param orderRules - Pairs of groups: items whose `key` is in the first group must come before
+ * those in the second.
+ * @param key - The property of each item to compare against the groups.
+ * @returns The sorted items, or `null` if they were already in order.
+ */
 export function sortDataByOrder<T, TKey extends keyof T>(
   data: Array<T> | ReadonlyArray<T>,
   orderRules: ReadonlyArray<

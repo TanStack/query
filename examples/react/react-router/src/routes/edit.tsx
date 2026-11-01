@@ -1,14 +1,11 @@
-import {
-  Form,
-  useLoaderData,
-  redirect,
-  useNavigate,
-  ActionFunctionArgs,
-} from 'react-router-dom'
-
-import { Contact, updateContact } from '../contacts'
-import { QueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { contactDetailQuery, loader } from './contact'
+import { Form, redirect, useLoaderData, useNavigate } from 'react-router'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { contactsAPI } from '../services/contacts/api'
+import { contactsQueries } from '../services/contacts/queries'
+import type { ActionFunctionArgs } from 'react-router'
+import type { Contact } from '../services/contacts/types'
+import type { QueryClient } from '@tanstack/react-query'
+import type { loader } from './contact'
 
 export const action =
   (queryClient: QueryClient) =>
@@ -18,16 +15,14 @@ export const action =
     if (!params.contactId) {
       throw new Error('No contact ID provided')
     }
-    await updateContact(params.contactId, updates)
-    queryClient.invalidateQueries({ queryKey: ['contacts'] })
+    await contactsAPI.updateContact(params.contactId, updates)
+    queryClient.invalidateQueries({ queryKey: contactsQueries.all() })
     return redirect(`/contacts/${params.contactId}`)
   }
 
 export default function Edit() {
-  const { contactId } = useLoaderData() as Awaited<
-    ReturnType<ReturnType<typeof loader>>
-  >
-  const { data: contact } = useSuspenseQuery(contactDetailQuery(contactId))
+  const { contactId } = useLoaderData<ReturnType<typeof loader>>()
+  const { data: contact } = useSuspenseQuery(contactsQueries.detail(contactId))
 
   return <ContactForm contact={contact} />
 }

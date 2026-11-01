@@ -31,7 +31,7 @@ The first step of any React Query setup is always to create a `queryClient` and 
 
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
 import {
-  isServer,
+  environmentManager,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
@@ -51,7 +51,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 function getQueryClient() {
-  if (isServer) {
+  if (environmentManager.isServer()) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {
@@ -116,10 +116,12 @@ import {
 export async function getStaticProps() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  })
+  await queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return {
     props: {
@@ -172,10 +174,12 @@ import Posts from './posts'
 export default async function PostsPage() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  })
+  await queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return (
     // Neat! Serialization is now as easy as passing props.
@@ -218,7 +222,7 @@ In the SSR guide, we noted that you could get rid of the boilerplate of having `
 
 > NOTE: If you encounter a type error while using async Server Components with TypeScript versions lower than `5.1.3` and `@types/react` versions lower than `18.2.8`, it is recommended to update to the latest versions of both. Alternatively, you can use the temporary workaround of adding `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [Async Server Component TypeScript Error](https://nextjs.org/docs/app/building-your-application/configuring/typescript#async-server-component-typescript-error) in the Next.js TypeScript docs.
 
-> NOTE: If you encounter an error `Only plain objects, and a few built-ins, can be passed to Server Actions. Classes or null prototypes are not supported.` make sure that you're **not** passing to queryFn a function reference, instead call the function because queryFn args has a bunch of properties and not all of it would be serializable. see [Server Action only works when queryFn isn't a reference](https://github.com/TanStack/query/issues/6264).
+> WARNING: We do **not** recommend using Next.js Server Actions to _fetch_ data in a `queryFn`. When called from the client, Server Actions [run serially, not in parallel](https://react.dev/reference/rsc/use-server#caveats), which conflicts with how React Query fetches and refetches queries. This can leave queries stuck in a pending state or cause the action to never run at all (see [#7934](https://github.com/TanStack/query/issues/7934)). Passing a Server Action reference to `queryFn` can also fail with `Only plain objects, and a few built-ins, can be passed to Server Actions...`, since you have to _call_ the action rather than pass it as a reference (see [#6264](https://github.com/TanStack/query/issues/6264)). For fetching data on the client, `fetch` from an API route or use an RPC layer such as tRPC instead. Server Actions remain a good fit for **mutations** (`useMutation`).
 
 ### Nesting Server Components
 
@@ -237,10 +241,12 @@ import CommentsServerComponent from './comments-server'
 export default async function PostsPage() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  })
+  await queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -261,10 +267,12 @@ import Comments from './comments'
 export default async function CommentsServerComponent() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery({
-    queryKey: ['posts-comments'],
-    queryFn: getComments,
-  })
+  await queryClient
+    .query({
+      queryKey: ['posts-comments'],
+      queryFn: getComments,
+    })
+    .catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -325,8 +333,8 @@ import Posts from './posts'
 export default async function PostsPage() {
   const queryClient = new QueryClient()
 
-  // Note we are now using fetchQuery()
-  const posts = await queryClient.fetchQuery({
+  // Note we are getting the result from query
+  const posts = await queryClient.query({
     queryKey: ['posts'],
     queryFn: getPosts,
   })
@@ -355,7 +363,7 @@ Using React Query with Server Components makes most sense if:
 
 It's hard to give general advice on when it makes sense to pair React Query with Server Components and not. **If you are just starting out with a new Server Components app, we suggest you start out with any tools for data fetching your framework provides you with and avoid bringing in React Query until you actually need it.** This might be never, and that's fine, use the right tool for the job!
 
-If you do use it, a good rule of thumb is to avoid `queryClient.fetchQuery` unless you need to catch errors. If you do use it, don't render its result on the server or pass the result to another component, even a Client Component one.
+If you do use it, a good rule of thumb is to avoid rendering the result of `queryClient.query` on the server or passing it to another component, even a Client Component one.
 
 From the React Query perspective, treat Server Components as a place to prefetch data, nothing more.
 
@@ -376,7 +384,7 @@ We will also need to move the `getQueryClient()` function out of our `app/provid
 ```tsx
 // app/get-query-client.ts
 import {
-  isServer,
+  environmentManager,
   QueryClient,
   defaultShouldDehydrateQuery,
 } from '@tanstack/react-query'
@@ -408,7 +416,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 export function getQueryClient() {
-  if (isServer) {
+  if (environmentManager.isServer()) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {
@@ -437,10 +445,12 @@ export default function PostsPage() {
   const queryClient = getQueryClient()
 
   // look ma, no await
-  queryClient.prefetchQuery({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  })
+  void queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -504,10 +514,12 @@ export default function PostsPage() {
   const queryClient = getQueryClient()
 
   // look ma, no await
-  queryClient.prefetchQuery({
-    queryKey: ['posts'],
-    queryFn: () => getPosts().then(serialize), // <-- serialize the data on the server
-  })
+  void queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: () => getPosts().then(serialize), // <-- serialize the data on the server
+    })
+    .catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -564,7 +576,7 @@ To achieve this, wrap your app in the `ReactQueryStreamedHydration` component:
 'use client'
 
 import {
-  isServer,
+  environmentManager,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
@@ -586,7 +598,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 function getQueryClient() {
-  if (isServer) {
+  if (environmentManager.isServer()) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {

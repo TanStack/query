@@ -3,8 +3,8 @@
 import {
   defaultShouldDehydrateQuery,
   dehydrate,
+  environmentManager,
   hydrate,
-  isServer,
   useQueryClient,
 } from '@tanstack/react-query'
 import * as React from 'react'
@@ -21,8 +21,11 @@ const stream = createHydrationStreamProvider<DehydratedState>()
 
 /**
  * This component is responsible for:
- * - hydrating the query client on the server
- * - dehydrating the query client on the server
+ * - dehydrating the query client on the server.
+ * - hydrating the query client in the browser.
+ * @param props - The `children` to render, an optional custom `queryClient`, the `nonce` for the
+ * inline script, the hydrate and dehydrate `options`, and the data `transformer`.
+ * @returns The `children`, wrapped in the hydration stream provider.
  */
 export function ReactQueryStreamedHydration(props: {
   children: React.ReactNode
@@ -42,7 +45,7 @@ export function ReactQueryStreamedHydration(props: {
   const [trackedKeys] = React.useState(() => new Set<string>())
 
   // <server only>
-  if (isServer) {
+  if (environmentManager.isServer()) {
     // Do we need to care about unsubscribing? I don't think so to be honest
     queryClient.getQueryCache().subscribe((event) => {
       switch (event.type) {

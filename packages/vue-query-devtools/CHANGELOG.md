@@ -1,5 +1,227 @@
 # @tanstack/vue-query-devtools
 
+## 6.3.7
+
+### Patch Changes
+
+- Updated dependencies [[`7ccba6e`](https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/vue-query@5.105.1
+  - @tanstack/query-devtools@5.105.1
+
+## 6.3.6
+
+### Patch Changes
+
+- [#12312](https://github.com/TanStack/query/pull/12312) [`a282bf8`](https://github.com/TanStack/query/commit/a282bf807a29f3b59a706021c1077377326659cc) - fix(vue-query-devtools): stop defaulting the 'theme' prop to 'system' so the theme chosen in the devtools settings applies when the prop is omitted
+- Updated dependencies [[`c5de051`](https://github.com/TanStack/query/commit/c5de051d61f1ed20e5266b4086349589d51e2950)]:
+  - @tanstack/vue-query@5.105.0
+  - @tanstack/query-devtools@5.105.0
+
+## 6.3.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.104.5
+  - @tanstack/vue-query@5.104.5
+
+## 6.3.4
+
+### Patch Changes
+
+- Updated dependencies [[`c8f5eac`](https://github.com/TanStack/query/commit/c8f5eac9df24c3cf987dc23865493ebd0d346caa), [`b61abc2`](https://github.com/TanStack/query/commit/b61abc2033f9e2fbf24d6753baedeaa74b2f1c17)]:
+  - @tanstack/query-devtools@5.104.4
+  - @tanstack/vue-query@5.104.4
+
+## 6.3.3
+
+### Patch Changes
+
+- [#11413](https://github.com/TanStack/query/pull/11413) [`67705fd`](https://github.com/TanStack/query/commit/67705fd6ad164dc8ca99d44374206f62dd6a03f2) - Update floating and embedded devtools when the client prop changes, preserving the initially resolved client as the fallback when the override is removed.
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.104.3
+  - @tanstack/vue-query@5.104.3
+
+## 6.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`69e114a`](https://github.com/TanStack/query/commit/69e114aecfdbd0a05625065aea4e43415fa386b3)]:
+  - @tanstack/vue-query@5.104.2
+  - @tanstack/query-devtools@5.104.2
+
+## 6.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`ec060b6`](https://github.com/TanStack/query/commit/ec060b6f74b2e51f4b0c78932beec656ef6f6878)]:
+  - @tanstack/query-devtools@5.104.1
+  - @tanstack/vue-query@5.104.1
+
+## 6.3.0
+
+### Minor Changes
+
+- [#11650](https://github.com/TanStack/query/pull/11650) [`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e) - Build projects with Vite 8
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/query-devtools@5.104.0
+  - @tanstack/vue-query@5.104.0
+
+## 6.2.5
+
+### Patch Changes
+
+- Updated dependencies [[`d86ac36`](https://github.com/TanStack/query/commit/d86ac36663e3757a0ad35b5ead5f1d25dfb1b15d)]:
+  - @tanstack/query-devtools@5.103.3
+  - @tanstack/vue-query@5.103.3
+
+## 6.2.4
+
+## 6.2.3
+
+## 6.2.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.103.2
+  - @tanstack/vue-query@5.103.2
+
+## 6.2.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.103.1
+  - @tanstack/vue-query@5.103.1
+
+## 6.2.0
+
+### Patch Changes
+
+- Updated dependencies [[`9567367`](https://github.com/TanStack/query/commit/9567367dd916fda01fc0d491348827225a011c49), [`12027ef`](https://github.com/TanStack/query/commit/12027efd5c709b95064848239e67fa7bb0155864), [`2bc8ecf`](https://github.com/TanStack/query/commit/2bc8ecf39bef623ed0680a11898b6e757d7de78b)]:
+  - @tanstack/query-devtools@5.103.0
+  - @tanstack/vue-query@5.103.0
+
+## 6.1.48
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.8
+  - @tanstack/vue-query@5.102.8
+
+## 6.1.47
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.7
+  - @tanstack/vue-query@5.102.7
+
+## 6.1.46
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.6
+  - @tanstack/vue-query@5.102.6
+
+## 6.1.45
+
+### Patch Changes
+
+- Updated dependencies [[`ef1eff1`](https://github.com/TanStack/query/commit/ef1eff1b62a657d6ff6f2af819c1cb8b73ad2af5)]:
+  - @tanstack/query-devtools@5.102.5
+  - @tanstack/vue-query@5.102.5
+
+## 6.1.44
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.4
+  - @tanstack/vue-query@5.102.4
+
+## 6.1.43
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.3
+  - @tanstack/vue-query@5.102.3
+
+## 6.1.42
+
+## 6.1.41
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.2
+  - @tanstack/vue-query@5.102.2
+
+## 6.1.40
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.1
+  - @tanstack/vue-query@5.102.1
+
+## 6.1.39
+
+### Patch Changes
+
+- [#10849](https://github.com/TanStack/query/pull/10849) [`3196e06`](https://github.com/TanStack/query/commit/3196e06b76ce430e35b22798094d4d551ef64c64) - fix(vue-query-devtools): use class instead of className in templates
+
+- Updated dependencies [[`97ce30b`](https://github.com/TanStack/query/commit/97ce30b51e3040752f3f4172e9fd11be4edea774), [`6e3d521`](https://github.com/TanStack/query/commit/6e3d521fe54f78624e53c1c6f9cadd678504bee8), [`294d4e6`](https://github.com/TanStack/query/commit/294d4e62c4f7d674574a4903eef2a1bc3dd1413b), [`2215bb0`](https://github.com/TanStack/query/commit/2215bb031139cdc8a84751b37a485c38ca9d2b6e), [`1ef4208`](https://github.com/TanStack/query/commit/1ef42087c9a266c2137d2ef645cbcc662f60ac93), [`5199f08`](https://github.com/TanStack/query/commit/5199f0884ca59878bd9e5d352606af13bc5f51fb)]:
+  - @tanstack/vue-query@5.102.0
+  - @tanstack/query-devtools@5.102.0
+
+## 6.1.38
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.4
+  - @tanstack/vue-query@5.101.4
+
+## 6.1.37
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.3
+  - @tanstack/vue-query@5.101.3
+
+## 6.1.36
+
+### Patch Changes
+
+- Updated dependencies [[`f5bf180`](https://github.com/TanStack/query/commit/f5bf180d933d8b8d9d9e7b845e55b26a3a413b07), [`25cdd97`](https://github.com/TanStack/query/commit/25cdd975fed4703d2ca5b600ca5ccd2b600b3dd8), [`ecd89c8`](https://github.com/TanStack/query/commit/ecd89c8faf7acc226f00633ea3a761d3ab842c1d), [`01c7634`](https://github.com/TanStack/query/commit/01c763444e3cf3dfa9744f13911aa1533cac3c29), [`49012db`](https://github.com/TanStack/query/commit/49012dbd5192dfe483d3b108b72ffaa7f2849e0f)]:
+  - @tanstack/query-devtools@5.101.2
+  - @tanstack/vue-query@5.101.2
+
+## 6.1.35
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.1
+  - @tanstack/vue-query@5.101.1
+
+## 6.1.34
+
+### Patch Changes
+
+- Updated dependencies [[`3042860`](https://github.com/TanStack/query/commit/3042860e3c8731c94ca4dec0e277e415d0484fce), [`e631dc3`](https://github.com/TanStack/query/commit/e631dc3fa17bff71f413246b7a770a730016d346), [`1348095`](https://github.com/TanStack/query/commit/134809544c27cc033ef696d79e3fe4bf75d1e6a8)]:
+  - @tanstack/query-devtools@5.101.0
+  - @tanstack/vue-query@5.101.0
+
 ## 6.1.33
 
 ### Patch Changes

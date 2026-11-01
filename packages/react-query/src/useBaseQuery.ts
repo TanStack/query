@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { environmentManager, noop, notifyManager } from '@tanstack/query-core'
+import { noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -14,7 +14,6 @@ import {
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
-  willFetch,
 } from './suspense'
 import type {
   QueryClient,
@@ -24,6 +23,19 @@ import type {
 } from '@tanstack/query-core'
 import type { UseBaseQueryOptions } from './types'
 
+/**
+ * Base implementation shared by `useQuery`, `useInfiniteQuery`, `useSuspenseQuery`, and
+ * `useSuspenseInfiniteQuery`.
+ * @param options - The options passed to the calling hook.
+ * @param Observer - The observer class from query-core (`QueryObserver` or
+ * `InfiniteQueryObserver`).
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest
+ * context will be used.
+ * @returns The query result, tracking which properties are read unless `notifyOnChangeProps` is
+ * set.
+ * @throws {Error} If `options` is not an object (outside production), or the query error when it should be
+ * thrown to the nearest error boundary (see `throwOnError`). While suspending, it throws a promise instead.
+ */
 export function useBaseQuery<
   TQueryFnData,
   TError,
@@ -53,18 +65,12 @@ export function useBaseQuery<
   const errorResetBoundary = useQueryErrorResetBoundary()
   const client = useQueryClient(queryClient)
   const defaultedOptions = client.defaultQueryOptions(options)
-  ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
-    defaultedOptions,
-  )
 
   const query = client
     .getQueryCache()
-    .get<
-      TQueryFnData,
-      TError,
-      TQueryData,
-      TQueryKey
-    >(defaultedOptions.queryHash)
+    .get<TQueryFnData, TError, TQueryData, TQueryKey>(
+      defaultedOptions.queryHash,
+    )
 
   if (process.env.NODE_ENV !== 'production') {
     if (!defaultedOptions.queryFn) {
@@ -86,11 +92,6 @@ export function useBaseQuery<
   ensureSuspenseTimers(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
   useClearResetErrorBoundary(errorResetBoundary)
-
-  // this needs to be invoked before creating the Observer because that can create a cache entry
-  const isNewCacheEntry = !client
-    .getQueryCache()
-    .get(defaultedOptions.queryHash)
 
   const [observer] = React.useState(
     () =>
@@ -143,28 +144,6 @@ export function useBaseQuery<
     })
   ) {
     throw result.error
-  }
-
-  ;(client.getDefaultOptions().queries as any)?._experimental_afterQuery?.(
-    defaultedOptions,
-    result,
-  )
-
-  if (
-    defaultedOptions.experimental_prefetchInRender &&
-    !environmentManager.isServer() &&
-    willFetch(result, isRestoring)
-  ) {
-    const promise = isNewCacheEntry
-      ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
-        fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
-      : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
-        query?.promise
-
-    promise?.catch(noop).finally(() => {
-      // `.updateResult()` will trigger `.#currentThenable` to finalize
-      observer.updateResult()
-    })
   }
 
   // Handle result property usage tracking

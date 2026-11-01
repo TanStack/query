@@ -1,4 +1,5 @@
-import useAlgolia from './useAlgolia'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { productsQueries } from './services/products/queries'
 
 type Product = {
   name: string
@@ -12,24 +13,30 @@ type SearchResultsProps = {
 
 export default function SearchResults({ query = '' }: SearchResultsProps) {
   const {
-    hits,
+    data: hits,
+    error,
     isLoading,
     isFetching,
     status,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useAlgolia<Product>({
-    indexName: 'bestbuy',
-    query,
-    hitsPerPage: 5,
-    staleTime: 1000 * 30, // 30s
-    gcTime: 1000 * 60 * 15, // 15m
+  } = useInfiniteQuery({
+    ...productsQueries.search<Product>({
+      indexName: 'bestbuy',
+      query,
+      hitsPerPage: 5,
+    }),
+    select: (data) => data.pages.flatMap((page) => page.hits),
+    staleTime: 30 * 1000, // 30s
+    gcTime: 15 * 60 * 1000, // 15m
   })
 
   if (!query) return null
 
   if (isLoading) return <div className="loading">Loading...</div>
+
+  if (status === 'error') return <div>Error: {error.message}</div>
 
   return (
     <div>
@@ -59,9 +66,14 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
           )}
         </div>
         {hasNextPage && (
-          <div className="search-more" onClick={() => fetchNextPage()}>
+          <button
+            type="button"
+            className="search-more"
+            onClick={() => fetchNextPage()}
+            disabled={isFetching}
+          >
             more
-          </div>
+          </button>
         )}
         {isFetchingNextPage && (
           <div className="search-status">Fetching next page...</div>

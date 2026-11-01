@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   injectQuery,
+  noop,
   provideTanStackQuery,
 } from '@tanstack/angular-query-experimental'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
@@ -11,11 +12,12 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core'
 import { render } from '@testing-library/angular'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { withPersistQueryClient } from '../with-persist-query-client'
 import type {
   PersistedClient,
   Persister,
+  Promisable,
 } from '@tanstack/query-persist-client-core'
 
 const createMockPersister = (): Persister => {
@@ -63,7 +65,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should restore cache from persister', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -71,10 +73,12 @@ describe('withPersistQueryClient', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -123,7 +127,6 @@ describe('withPersistQueryClient', () => {
     await vi.advanceTimersByTimeAsync(10)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetched')).toBeInTheDocument()
@@ -150,11 +153,11 @@ describe('withPersistQueryClient', () => {
   })
 
   it.todo(
-    '(Once injectQueries is functional) verify that injectQueries transitions to an idle state',
+    'should transition injectQueries to an idle state (once injectQueries is functional)',
   )
 
   it('should show initialData while restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -162,10 +165,12 @@ describe('withPersistQueryClient', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -218,7 +223,6 @@ describe('withPersistQueryClient', () => {
     await vi.advanceTimersByTimeAsync(10)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetched')).toBeInTheDocument()
@@ -245,7 +249,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should not refetch after restoring when data is fresh', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -253,10 +257,12 @@ describe('withPersistQueryClient', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -279,11 +285,11 @@ describe('withPersistQueryClient', () => {
     class Page {
       state = injectQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          fetched = true
-          return 'fetched'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            fetched = true
+            return 'fetched'
+          }),
         staleTime: Infinity,
       }))
 
@@ -331,12 +337,14 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should call onSuccess after successful restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -360,7 +368,7 @@ describe('withPersistQueryClient', () => {
       }))
     }
 
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<() => void>()
 
     const rendered = await render(Page, {
       providers: [
@@ -380,22 +388,21 @@ describe('withPersistQueryClient', () => {
     rendered.fixture.detectChanges()
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
     expect(onSuccess).toHaveBeenCalledTimes(1)
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetched')).toBeInTheDocument()
   })
 
   it('should remove cache after non-successful restoring', async () => {
-    const key = queryKey()
-    const onErrorMock = vi
+    const key = createKey()
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const queryClient = new QueryClient()
-    const removeClient = vi.fn()
+    const removeClient = vi.fn<() => Promisable<void>>()
     const [error, persister] = createMockErrorPersister(removeClient)
-    const onSuccess = vi.fn()
-    const onError = vi.fn()
+    const onSuccess = vi.fn<() => void>()
+    const onError = vi.fn<() => void>()
 
     @Component({
       template: `
@@ -431,13 +438,11 @@ describe('withPersistQueryClient', () => {
     expect(removeClient).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledTimes(0)
     expect(onError).toHaveBeenCalledTimes(1)
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetched')).toBeInTheDocument()
 
-    expect(onErrorMock).toHaveBeenCalledTimes(1)
-    expect(onErrorMock).toHaveBeenNthCalledWith(1, error)
-    onErrorMock.mockRestore()
+    expect(consoleErrorMock).toHaveBeenCalledTimes(1)
+    expect(consoleErrorMock).toHaveBeenNthCalledWith(1, error)
   })
 })

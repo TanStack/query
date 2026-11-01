@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import Base from './Base.svelte'
 import Select from './Select.svelte'
 import type { Mutation } from '@tanstack/query-core'
@@ -20,14 +20,14 @@ describe('useMutationState', () => {
   })
 
   it('should run few mutation functions and check from useMutationState', async () => {
-    const successKey = queryKey()
-    const errorKey = queryKey()
-    const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
-    const errorMutationFn = vi
-      .fn()
-      .mockImplementation(() =>
-        sleep(20).then(() => Promise.reject(new Error('error'))),
-      )
+    const successKey = createKey()
+    const errorKey = createKey()
+    const successMutationFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
+    const errorMutationFn = vi.fn<() => Promise<never>>(() =>
+      sleep(20).then(() => Promise.reject(new Error('error'))),
+    )
 
     const rendered = render(Base, {
       props: {
@@ -44,25 +44,25 @@ describe('useMutationState', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /Success/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(successMutationFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('Data: ["success"]')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Error/i }))
-    await vi.advanceTimersByTimeAsync(21)
+    await vi.advanceTimersByTimeAsync(20)
     expect(errorMutationFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('Data: ["success","error"]')).toBeInTheDocument()
   })
 
   it('should select specific type of mutation ( i.e: error only )', async () => {
-    const successKey = queryKey()
-    const errorKey = queryKey()
-    const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
-    const errorMutationFn = vi
-      .fn()
-      .mockImplementation(() =>
-        sleep(20).then(() => Promise.reject(new Error('error'))),
-      )
+    const successKey = createKey()
+    const errorKey = createKey()
+    const successMutationFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
+    const errorMutationFn = vi.fn<() => Promise<never>>(() =>
+      sleep(20).then(() => Promise.reject(new Error('error'))),
+    )
 
     const rendered = render(Base, {
       props: {
@@ -82,18 +82,18 @@ describe('useMutationState', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /Success/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(successMutationFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('Data: []')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Error/i }))
-    await vi.advanceTimersByTimeAsync(21)
+    await vi.advanceTimersByTimeAsync(20)
     expect(errorMutationFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('Data: ["error"]')).toBeInTheDocument()
   })
 
   it('should return selected value when using select option', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
 
     const rendered = render(Select, {
       props: {
@@ -114,20 +114,19 @@ describe('useMutationState', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Variables: ["pending"]')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Variables: ["success"]')).toBeInTheDocument()
   })
 
   it('should select specific mutation using mutation key', async () => {
-    const successKey = queryKey()
-    const errorKey = queryKey()
-    const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
-    const errorMutationFn = vi
-      .fn()
-      .mockImplementation(() =>
-        sleep(20).then(() => Promise.reject(new Error('error'))),
-      )
+    const successKey = createKey()
+    const errorKey = createKey()
+    const successMutationFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
+    const errorMutationFn = vi.fn<() => Promise<never>>(() =>
+      sleep(20).then(() => Promise.reject(new Error('error'))),
+    )
 
     const rendered = render(Base, {
       props: {
@@ -147,13 +146,47 @@ describe('useMutationState', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /Success/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(successMutationFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('Data: ["success"]')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Error/i }))
-    await vi.advanceTimersByTimeAsync(21)
+    await vi.advanceTimersByTimeAsync(20)
     expect(errorMutationFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('Data: ["success"]')).toBeInTheDocument()
+  })
+
+  it('should remove mutations that no longer match the filter', async () => {
+    const firstKey = createKey()
+    const secondKey = createKey()
+    const mutationFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
+
+    const rendered = render(Base, {
+      props: {
+        queryClient,
+        successMutationOpts: () => ({
+          mutationKey: firstKey,
+          mutationFn,
+        }),
+        errorMutationOpts: () => ({
+          mutationKey: secondKey,
+          mutationFn,
+        }),
+        mutationStateOpts: {
+          filters: { status: 'pending' },
+        },
+      },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /Success/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /Error/i }))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(
+      rendered.getByText('Data: ["pending","pending"]'),
+    ).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('Data: []')).toBeInTheDocument()
   })
 })

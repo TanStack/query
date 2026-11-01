@@ -86,6 +86,11 @@ utilities:
       url: 'https://github.com/lukemorales/query-key-factory',
       description: 'A library for creating typesafe standardized query keys, useful for cache management in @tanstack/query',
     },
+    {
+      title: 'Query Key Kit',
+      url: 'https://github.com/amjadiqbal/query-key-kit',
+      description: 'Typed query-key hierarchy and scoped invalidation helpers for TanStack Query v5, returning queryOptions()-shaped objects with DataTag keys. Same API as query-key-factory (see the migration notes); framework-agnostic (built on query-core types).',
+    },
 
     {
       title: 'React Query Kit',
@@ -141,6 +146,11 @@ others:
       description: 'Generate SDKs for all your APIs',
     },
     {
+      title: '@codewithagents/openapi-react-query',
+      url: 'https://github.com/codewithagents/openapi-zod-ts',
+      description: 'Generate fully typed TanStack/React Query v5 hooks from an OpenAPI 3.1 spec, with Zod v4 runtime validation and an end-to-end pipeline (client, mocks, server).',
+    },
+    {
       title: 'OpenAPI codegen',
       url: 'https://github.com/fabien0102/openapi-codegen',
       description: 'A tool for generating code based on an OpenAPI schema.',
@@ -179,6 +189,11 @@ others:
       title: 'React Query Visualizer',
       url: 'https://marketplace.visualstudio.com/items?itemName=fe-dudu.react-query-visualizer',
       description: 'VS Code extension for TanStack Query (React Query): visualize query keys, cache invalidation/refetch flows, and file impact graph',
+    },
+    {
+      title: 'StitchAPI',
+      url: 'https://stitchapi.dev',
+      description: 'Gives TanStack Query a typed, validated, streaming-first queryFn: stitchQueryOptions supplies the fetcher, so Query keeps owning caching and revalidation. Bindings for React, Vue, Svelte, Solid, and Angular.',
     },
     {
       title: 'Tanstack Query Visualizer',

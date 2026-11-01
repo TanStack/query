@@ -7,12 +7,12 @@ describe('signalProxy', () => {
   const proxy = signalProxy(inputSignal)
 
   it('should have computed fields', () => {
-    expect(proxy.baz()).toEqual('qux')
+    expect(proxy.baz()).toBe('qux')
     expect(isSignal(proxy.baz)).toBe(true)
   })
 
   it('should pass through functions as-is', () => {
-    expect(proxy.fn()).toEqual('bar')
+    expect(proxy.fn()).toBe('bar')
     expect(isSignal(proxy.fn)).toBe(false)
   })
 
@@ -22,6 +22,6 @@ describe('signalProxy', () => {
   })
 
   it('should support "Object.keys"', () => {
-    expect(Object.keys(proxy)).toEqual(['fn', 'baz'])
+    expect(Object.keys(proxy)).toStrictEqual(['fn', 'baz'])
   })
 })

@@ -3,11 +3,10 @@ import { fireEvent, render, within } from '@solidjs/testing-library'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
 import Explorer from '../Explorer'
 import { QueryDevtoolsContext, ThemeContext } from '../contexts'
-import type { Query } from '@tanstack/query-core'
 
 // `goober` compiles every `css\`...\`` template literal at mount time;
 // replace it with a no-op factory so label/role-based assertions stay fast.
-vi.mock('goober', () => {
+vi.mock(import('goober'), () => {
   let counter = 0
   const css = Object.assign(() => `tsqd-${++counter}`, {
     bind: () => css,
@@ -24,11 +23,15 @@ describe('Explorer', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
-  function renderExplorer(props: Parameters<typeof Explorer>[0]) {
+  function renderExplorer(
+    props: Parameters<typeof Explorer>[0],
+    options: { theme?: 'dark' | 'light' } = {},
+  ) {
+    const theme = options.theme ?? 'dark'
     return render(() => (
       <QueryDevtoolsContext.Provider
         value={{
@@ -38,7 +41,7 @@ describe('Explorer', () => {
           onlineManager,
         }}
       >
-        <ThemeContext.Provider value={() => 'dark'}>
+        <ThemeContext.Provider value={() => theme}>
           <Explorer {...props} />
         </ThemeContext.Provider>
       </QueryDevtoolsContext.Provider>
@@ -80,7 +83,9 @@ describe('Explorer', () => {
       const rendered = renderExplorer({ label: 'data', value: {} })
 
       expect(rendered.getByText('data:')).toBeInTheDocument()
-      expect(rendered.queryByRole('button', { expanded: false })).toBeNull()
+      expect(
+        rendered.queryByRole('button', { expanded: false }),
+      ).not.toBeInTheDocument()
     })
 
     it('should render an array with an expander showing the item count', () => {
@@ -91,8 +96,8 @@ describe('Explorer', () => {
 
       const expander = rendered.getByRole('button', { expanded: false })
       expect(expander).toBeInTheDocument()
-      expect(expander.textContent).toContain('list')
-      expect(expander.textContent).toContain('3 items')
+      expect(expander).toHaveTextContent('list')
+      expect(expander).toHaveTextContent('3 items')
     })
 
     it('should render children under their index labels when the array expander is clicked', () => {
@@ -102,7 +107,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
-
       expect(rendered.getByText('0:')).toBeInTheDocument()
       expect(rendered.getByText('1:')).toBeInTheDocument()
       expect(rendered.getByText('"a"')).toBeInTheDocument()
@@ -116,7 +120,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
-
       expect(rendered.getByText('name:')).toBeInTheDocument()
       expect(rendered.getByText('"Anna"')).toBeInTheDocument()
       expect(rendered.getByText('age:')).toBeInTheDocument()
@@ -135,7 +138,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
-
       expect(rendered.getByText('first:')).toBeInTheDocument()
       expect(rendered.getByText('second:')).toBeInTheDocument()
     })
@@ -147,8 +149,8 @@ describe('Explorer', () => {
       })
 
       expect(
-        rendered.getByRole('button', { expanded: false }).textContent,
-      ).toContain('(Iterable)')
+        rendered.getByRole('button', { expanded: false }),
+      ).toHaveTextContent('(Iterable)')
     })
 
     it('should render iterable children under their numeric index when expanded', () => {
@@ -158,7 +160,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
-
       expect(rendered.getByText('0:')).toBeInTheDocument()
       expect(rendered.getByText('1:')).toBeInTheDocument()
     })
@@ -181,7 +182,9 @@ describe('Explorer', () => {
 
   describe('action menu', () => {
     it('should copy the serialized value to the clipboard when the copy button is clicked', () => {
-      const writeText = vi.fn().mockResolvedValue(undefined)
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockResolvedValue(undefined)
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       queryClient.setQueryData(['data'], { name: 'Anna' })
 
@@ -189,24 +192,23 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
       })
 
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
-
       expect(writeText).toHaveBeenCalledTimes(1)
       const [arg] = writeText.mock.calls[0]!
-      expect(JSON.parse(arg as string)).toMatchObject({
+      expect(JSON.parse(arg)).toMatchObject({
         json: { name: 'Anna' },
       })
     })
 
     it('should switch the copy button to an error state when clipboard write fails', async () => {
-      const writeText = vi.fn().mockRejectedValue(new Error('denied'))
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockRejectedValue(new Error('denied'))
       vi.stubGlobal('navigator', { clipboard: { writeText } })
-      const consoleError = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => {})
       queryClient.setQueryData(['data'], { name: 'Anna' })
@@ -215,25 +217,24 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
       })
 
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
       await vi.advanceTimersByTimeAsync(0)
-
       expect(
         rendered.getByLabelText('Error copying object to clipboard'),
       ).toBeInTheDocument()
-      expect(consoleError).toHaveBeenCalledWith(
+      expect(consoleErrorMock).toHaveBeenCalledWith(
         'Failed to copy: ',
-        expect.any(Error),
+        new Error('denied'),
       )
     })
 
     it('should reset the copy button to the idle state 1500ms after a successful copy', async () => {
-      const writeText = vi.fn().mockResolvedValue(undefined)
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockResolvedValue(undefined)
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       queryClient.setQueryData(['data'], { name: 'Anna' })
 
@@ -241,27 +242,24 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
       })
 
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
       await vi.advanceTimersByTimeAsync(0)
-
       expect(
         rendered.getByLabelText('Object copied to clipboard'),
       ).toBeInTheDocument()
-
       await vi.advanceTimersByTimeAsync(1500)
-
       expect(
         rendered.getByLabelText('Copy object to clipboard'),
       ).toBeInTheDocument()
     })
 
     it('should reset the copy button to the idle state 1500ms after a failed copy', async () => {
-      const writeText = vi.fn().mockRejectedValue(new Error('denied'))
+      const writeText = vi
+        .fn<Clipboard['writeText']>()
+        .mockRejectedValue(new Error('denied'))
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       vi.spyOn(console, 'error').mockImplementation(() => {})
       queryClient.setQueryData(['data'], { name: 'Anna' })
@@ -270,20 +268,15 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
       })
 
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
       await vi.advanceTimersByTimeAsync(0)
-
       expect(
         rendered.getByLabelText('Error copying object to clipboard'),
       ).toBeInTheDocument()
-
       await vi.advanceTimersByTimeAsync(1500)
-
       expect(
         rendered.getByLabelText('Copy object to clipboard'),
       ).toBeInTheDocument()
@@ -296,14 +289,11 @@ describe('Explorer', () => {
         label: 'list',
         value: ['a', 'b', 'c'],
         editable: true,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
       })
 
       fireEvent.click(rendered.getByLabelText('Remove all items'))
-
-      expect(queryClient.getQueryData(['data'])).toEqual([])
+      expect(queryClient.getQueryData(['data'])).toStrictEqual([])
     })
 
     it('should delete the entry at the current "dataPath" when the delete button is clicked', () => {
@@ -314,15 +304,12 @@ describe('Explorer', () => {
         value: ['a', 'b', 'c'],
         editable: true,
         itemsDeletable: true,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
         dataPath: ['1'],
       })
 
       fireEvent.click(rendered.getByLabelText('Delete item'))
-
-      expect(queryClient.getQueryData(['data'])).toEqual(['a', 'c'])
+      expect(queryClient.getQueryData(['data'])).toStrictEqual(['a', 'c'])
     })
 
     it('should toggle a boolean value via "setQueryData" when the toggle button is clicked', () => {
@@ -332,16 +319,33 @@ describe('Explorer', () => {
         label: 'flag',
         value: true,
         editable: true,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
         dataPath: ['flag'],
       })
 
       fireEvent.click(rendered.getByLabelText('Toggle value'))
-
-      expect(queryClient.getQueryData(['data'])).toEqual({ flag: false })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ flag: false })
     })
+
+    it.each([true, false])(
+      'should expose "aria-pressed" on the toggle button when the value is %s',
+      (value) => {
+        queryClient.setQueryData(['data'], { flag: value })
+
+        const rendered = renderExplorer({
+          label: 'flag',
+          value,
+          editable: true,
+          activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+          dataPath: ['flag'],
+        })
+
+        expect(rendered.getByLabelText('Toggle value')).toHaveAttribute(
+          'aria-pressed',
+          String(value),
+        )
+      },
+    )
 
     it('should not render action buttons when "editable" is false', () => {
       queryClient.setQueryData(['data'], ['a'])
@@ -350,13 +354,15 @@ describe('Explorer', () => {
         label: 'list',
         value: ['a'],
         editable: false,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
       })
 
-      expect(rendered.queryByLabelText('Copy object to clipboard')).toBeNull()
-      expect(rendered.queryByLabelText('Remove all items')).toBeNull()
+      expect(
+        rendered.queryByLabelText('Copy object to clipboard'),
+      ).not.toBeInTheDocument()
+      expect(
+        rendered.queryByLabelText('Remove all items'),
+      ).not.toBeInTheDocument()
     })
 
     it('should not render "ClearArrayButton" when value is not an array', () => {
@@ -366,12 +372,12 @@ describe('Explorer', () => {
         label: 'user',
         value: { name: 'Anna' },
         editable: true,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
       })
 
-      expect(rendered.queryByLabelText('Remove all items')).toBeNull()
+      expect(
+        rendered.queryByLabelText('Remove all items'),
+      ).not.toBeInTheDocument()
       expect(
         rendered.getByLabelText('Copy object to clipboard'),
       ).toBeInTheDocument()
@@ -386,7 +392,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
-
       expect(rendered.getByText('[0...99]')).toBeInTheDocument()
       expect(rendered.getByText('[100...199]')).toBeInTheDocument()
     })
@@ -398,8 +403,7 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
-
-      expect(rendered.queryByText('0:')).toBeNull()
+      expect(rendered.queryByText('0:')).not.toBeInTheDocument()
     })
 
     it('should reveal the items of a page when the page header is clicked', () => {
@@ -410,7 +414,6 @@ describe('Explorer', () => {
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
       fireEvent.click(rendered.getByText('[0...99]'))
-
       expect(rendered.getByText('0:')).toBeInTheDocument()
       expect(rendered.getByText('"item-0"')).toBeInTheDocument()
     })
@@ -424,13 +427,11 @@ describe('Explorer', () => {
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
       fireEvent.click(rendered.getByText('[0...99]'))
       fireEvent.click(rendered.getByText('[100...199]'))
-
       expect(rendered.getByText('"item-0"')).toBeInTheDocument()
       expect(rendered.getByText('"item-100"')).toBeInTheDocument()
 
       fireEvent.click(rendered.getByText('[0...99]'))
-
-      expect(rendered.queryByText('"item-0"')).toBeNull()
+      expect(rendered.queryByText('"item-0"')).not.toBeInTheDocument()
       expect(rendered.getByText('"item-100"')).toBeInTheDocument()
     })
 
@@ -446,13 +447,10 @@ describe('Explorer', () => {
         value,
         defaultExpanded: ['Data'],
         editable: true,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
       })
 
       fireEvent.click(rendered.getByText('[0...99]'))
-
       expect(
         rendered.getAllByLabelText('Remove all items').length,
       ).toBeGreaterThan(1)
@@ -467,9 +465,7 @@ describe('Explorer', () => {
         label: 'name',
         value: 'Anna',
         editable: true,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
         dataPath: ['name'],
       })
 
@@ -477,8 +473,7 @@ describe('Explorer', () => {
       expect(input).toHaveAttribute('type', 'text')
 
       fireEvent.change(input, { target: { value: 'Bob' } })
-
-      expect(queryClient.getQueryData(['data'])).toEqual({ name: 'Bob' })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ name: 'Bob' })
     })
 
     it('should write the new number value via "setQueryData" when a number input is changed', () => {
@@ -488,9 +483,7 @@ describe('Explorer', () => {
         label: 'count',
         value: 1,
         editable: true,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
         dataPath: ['count'],
       })
 
@@ -500,8 +493,7 @@ describe('Explorer', () => {
       fireEvent.change(input, {
         target: { value: '42', valueAsNumber: 42 },
       })
-
-      expect(queryClient.getQueryData(['data'])).toEqual({ count: 42 })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ count: 42 })
     })
 
     it('should render "ToggleValueButton" inline for a boolean primitive row', () => {
@@ -511,9 +503,7 @@ describe('Explorer', () => {
         label: 'flag',
         value: false,
         editable: true,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
         dataPath: ['flag'],
       })
 
@@ -528,9 +518,7 @@ describe('Explorer', () => {
         value: 'Anna',
         editable: true,
         itemsDeletable: true,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
         dataPath: ['name'],
       })
 
@@ -546,20 +534,78 @@ describe('Explorer', () => {
         value,
         defaultExpanded: ['Data'],
         editable: true,
-        activeQuery: queryClient
-          .getQueryCache()
-          .find({ queryKey: ['data'] }) as Query,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
       })
 
       const ageRow = rendered.getByText('age:').parentElement!
       fireEvent.click(within(ageRow).getByLabelText('Delete item'))
-
-      expect(queryClient.getQueryData(['data'])).toEqual({ name: 'Anna' })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({ name: 'Anna' })
 
       const nameRow = rendered.getByText('name:').parentElement!
       fireEvent.click(within(nameRow).getByLabelText('Delete item'))
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({})
+    })
+  })
 
-      expect(queryClient.getQueryData(['data'])).toEqual({})
+  describe('theme', () => {
+    it('should render without throwing under the "light" theme', () => {
+      const value = { items: ['a'], flag: true }
+      queryClient.setQueryData(['data'], value)
+
+      expect(() =>
+        renderExplorer(
+          {
+            label: 'Data',
+            value,
+            defaultExpanded: ['Data'],
+            editable: true,
+            activeQuery: queryClient
+              .getQueryCache()
+              .find({ queryKey: ['data'] }),
+          },
+          { theme: 'light' },
+        ),
+      ).not.toThrow()
+    })
+  })
+
+  describe('"shadowDOMTarget"', () => {
+    it('should render without throwing when a "shadowDOMTarget" is provided', () => {
+      const host = document.createElement('div')
+      document.body.appendChild(host)
+      const shadowRoot = host.attachShadow({ mode: 'open' })
+      const value = { items: ['a'], flag: true }
+      queryClient.setQueryData(['data'], value)
+
+      try {
+        expect(() =>
+          render(() => (
+            <QueryDevtoolsContext.Provider
+              value={{
+                client: queryClient,
+                queryFlavor: 'TanStack Query',
+                version: '5',
+                onlineManager,
+                shadowDOMTarget: shadowRoot,
+              }}
+            >
+              <ThemeContext.Provider value={() => 'dark'}>
+                <Explorer
+                  label="Data"
+                  value={value}
+                  defaultExpanded={['Data']}
+                  editable={true}
+                  activeQuery={queryClient
+                    .getQueryCache()
+                    .find({ queryKey: ['data'] })}
+                />
+              </ThemeContext.Provider>
+            </QueryDevtoolsContext.Provider>
+          )),
+        ).not.toThrow()
+      } finally {
+        host.remove()
+      }
     })
   })
 })

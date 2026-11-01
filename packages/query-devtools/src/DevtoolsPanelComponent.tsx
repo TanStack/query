@@ -1,5 +1,8 @@
 import { createLocalStorage } from '@solid-primitives/storage'
 import { createMemo } from 'solid-js'
+import { DevtoolsOfflineProvider } from './providers/DevtoolsOfflineProvider'
+import { DevtoolsSubscriptionsProvider } from './providers/DevtoolsSubscriptionsProvider'
+import { DevtoolsStateProvider } from './providers/DevtoolsStateProvider'
 import { ContentView, ParentPanel } from './Devtools'
 import { getPreferredColorScheme } from './utils'
 import { THEME_PREFERENCE } from './constants'
@@ -24,22 +27,28 @@ const DevtoolsPanelComponent: DevtoolsComponentType = (props) => {
 
   return (
     <QueryDevtoolsContext.Provider value={props}>
-      <PiPProvider
-        disabled
-        localStore={localStore}
-        setLocalStore={setLocalStore}
-      >
-        <ThemeContext.Provider value={theme}>
-          <ParentPanel>
-            <ContentView
+      <DevtoolsStateProvider>
+        <DevtoolsOfflineProvider>
+          <DevtoolsSubscriptionsProvider>
+            <PiPProvider
+              disabled
               localStore={localStore}
               setLocalStore={setLocalStore}
-              onClose={props.onClose}
-              showPanelViewOnly
-            />
-          </ParentPanel>
-        </ThemeContext.Provider>
-      </PiPProvider>
+            >
+              <ThemeContext.Provider value={theme}>
+                <ParentPanel>
+                  <ContentView
+                    localStore={localStore}
+                    setLocalStore={setLocalStore}
+                    onClose={props.onClose}
+                    showPanelViewOnly
+                  />
+                </ParentPanel>
+              </ThemeContext.Provider>
+            </PiPProvider>
+          </DevtoolsSubscriptionsProvider>
+        </DevtoolsOfflineProvider>
+      </DevtoolsStateProvider>
     </QueryDevtoolsContext.Provider>
   )
 }

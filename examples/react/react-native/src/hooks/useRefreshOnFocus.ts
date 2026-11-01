@@ -1,16 +1,19 @@
 import * as React from 'react'
 import { useFocusEffect } from '@react-navigation/native'
+import { useQueryClient } from '@tanstack/react-query'
 
-export function useRefreshOnFocus(refetch: () => void) {
-  const enabledRef = React.useRef(false)
+export function useRefreshOnFocus() {
+  const queryClient = useQueryClient()
+  const firstTimeRef = React.useRef(true)
 
   useFocusEffect(
     React.useCallback(() => {
-      if (enabledRef.current) {
-        refetch()
-      } else {
-        enabledRef.current = true
+      if (firstTimeRef.current) {
+        firstTimeRef.current = false
+        return
       }
-    }, [refetch]),
+
+      queryClient.refetchQueries({ stale: true, type: 'active' })
+    }, [queryClient]),
   )
 }

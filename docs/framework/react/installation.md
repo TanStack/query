@@ -9,26 +9,32 @@ or a good ol' `<script>` via
 
 ### NPM
 
-```bash
+```sh
 npm i @tanstack/react-query
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/react-query
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/react-query
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/react-query
+```
+
+or
+
+```sh
+deno add @tanstack/react-query
 ```
 
 [//]: # 'Compatibility'
@@ -76,24 +82,24 @@ Opera >= 77
 
 It is recommended to also use our [ESLint Plugin Query](../../eslint/eslint-plugin-query.md) to help you catch bugs and inconsistencies while you code. You can install it via:
 
-```bash
+```sh
 npm i -D @tanstack/eslint-plugin-query
 ```
 
 or
 
-```bash
+```sh
 pnpm add -D @tanstack/eslint-plugin-query
 ```
 
 or
 
-```bash
+```sh
 yarn add -D @tanstack/eslint-plugin-query
 ```
 
 or
 
-```bash
+```sh
 bun add -D @tanstack/eslint-plugin-query
 ```

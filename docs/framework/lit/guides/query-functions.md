@@ -54,7 +54,7 @@ TanStack Query passes a context object to every query function. It includes:
 
 ```ts
 createQueryController(this, {
-  queryKey: ['todos', { status: 'open' }],
+  queryKey: ['todos', { status: 'open' }] as const,
   queryFn: async ({ queryKey, signal }) => {
     const [, filters] = queryKey
     const response = await fetch(`/api/todos?status=${filters.status}`, {

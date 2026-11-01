@@ -1,21 +1,18 @@
-import {
-  QueryObserver,
-  type DefaultError,
-  type DefaultedQueryObserverOptions,
-  type QueryKey,
-  type QueryObserverOptions,
-  type QueryObserverResult,
-} from '@tanstack/query-core'
-import type { QueryClient } from '@tanstack/query-core'
-import type { ReactiveControllerHost } from 'lit'
-import {
-  createValueAccessor,
-  readAccessor,
-  type Accessor,
-  type ValueAccessor,
-} from './accessor.js'
+import { QueryObserver } from '@tanstack/query-core'
+import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
+import { QueryObserverResultTracker } from './queryObserverResultTracker.js'
+import type { Accessor, ValueAccessor } from './accessor.js'
+import type {
+  DefaultError,
+  DefaultedQueryObserverOptions,
+  QueryClient,
+  QueryKey,
+  QueryObserverOptions,
+  QueryObserverResult,
+} from '@tanstack/query-core'
+import type { ReactiveControllerHost } from 'lit'
 
 /**
  * Options accepted by `createQueryController`.
@@ -49,6 +46,11 @@ export type QueryResultAccessor<TData, TError> = ValueAccessor<
   destroy: () => void
 }
 
+/**
+ * Returns the result used while no `QueryClient` is available: `'pending'` and idle, with methods
+ * that reject with the missing client error.
+ * @returns A new result object in that state.
+ */
 function createPendingQueryResult<TData, TError>(): QueryObserverResult<
   TData,
   TError
@@ -83,7 +85,6 @@ function createPendingQueryResult<TData, TError>(): QueryObserverResult<
       TData,
       TError
     >['refetch'],
-    promise: Promise.resolve(undefined as never),
   } as unknown as QueryObserverResult<TData, TError>
 }
 
@@ -100,6 +101,9 @@ class QueryController<
   private observer:
     | QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>
     | undefined
+  private readonly resultTracker = new QueryObserverResultTracker<
+    QueryObserverResult<TData, TError>
+  >()
   private unsubscribe: (() => void) | undefined
   private queryClient: QueryClient | undefined
 
@@ -126,10 +130,10 @@ class QueryController<
     const observer = new QueryObserver(initialClient, defaulted)
     this.queryClient = initialClient
     this.observer = observer
-    this.result = observer.getOptimisticResult(defaulted)
+    this.assignObserverResult(observer.getOptimisticResult(defaulted))
   }
 
-  protected onConnected(): void {
+  protected override onConnected(): void {
     if (!this.syncClient()) {
       return
     }
@@ -138,16 +142,16 @@ class QueryController<
     this.subscribe()
     this.observer?.updateResult()
     if (this.observer) {
-      this.setResult(this.observer.getCurrentResult())
+      this.setObserverResult(this.observer.getCurrentResult())
     }
   }
 
-  protected onDisconnected(): void {
+  protected override onDisconnected(): void {
     this.unsubscribeObserver()
     this.syncClient()
   }
 
-  protected onHostUpdate(): void {
+  protected override onHostUpdate(): void {
     if (typeof this.options !== 'function') {
       return
     }
@@ -155,7 +159,7 @@ class QueryController<
     this.refreshOptions()
   }
 
-  protected onQueryClientChanged(): void {
+  protected override onQueryClientChanged(): void {
     if (!this.syncClient()) {
       return
     }
@@ -168,16 +172,16 @@ class QueryController<
     this.subscribe()
     this.observer?.updateResult()
     if (this.observer) {
-      this.setResult(this.observer.getCurrentResult())
+      this.setObserverResult(this.observer.getCurrentResult())
     }
   }
 
   refetch: QueryObserverResult<TData, TError>['refetch'] = (...args) => {
-    if (!this.refreshOptions()) {
+    if (!this.applyOptions() || !this.observer) {
       return Promise.reject(createMissingQueryClientError())
     }
 
-    return this.result.refetch(...args)
+    return this.observer.refetch(...args)
   }
 
   suspense = async (): Promise<QueryObserverResult<TData, TError>> => {
@@ -195,6 +199,14 @@ class QueryController<
     return optimistic
   }
 
+  readCurrent(): QueryObserverResult<TData, TError> {
+    if (this.observer) {
+      this.assignObserverResult(this.observer.getCurrentResult())
+    }
+
+    return this.current
+  }
+
   private subscribe(): void {
     if (!this.observer) {
       return
@@ -205,7 +217,7 @@ class QueryController<
     }
 
     this.unsubscribe = this.observer.subscribe((next) => {
-      this.setResult(next)
+      this.setObserverResult(next)
     })
   }
 
@@ -220,6 +232,7 @@ class QueryController<
       this.unsubscribeObserver()
       this.queryClient = undefined
       this.observer = undefined
+      this.resultTracker.reset()
       this.setResult(createPendingQueryResult())
       return false
     }
@@ -232,19 +245,43 @@ class QueryController<
     this.queryClient = nextClient
     const options = this.defaultOptions()
     this.observer = new QueryObserver(this.queryClient, options)
-    this.setResult(this.observer.getOptimisticResult(options))
+    this.setObserverResult(this.observer.getOptimisticResult(options))
     return true
   }
 
-  private refreshOptions(): boolean {
+  private applyOptions(): boolean {
     if (!this.syncClient() || !this.observer) {
       return false
     }
 
     const options = this.defaultOptions(this.queryClient)
     this.observer.setOptions(options)
-    this.setResult(this.observer.getCurrentResult())
     return true
+  }
+
+  private refreshOptions(): boolean {
+    if (!this.applyOptions() || !this.observer) {
+      return false
+    }
+
+    this.setObserverResult(this.observer.getCurrentResult())
+    return true
+  }
+
+  private assignObserverResult(
+    result: QueryObserverResult<TData, TError>,
+  ): void {
+    const trackedResult = this.resultTracker.update(this.observer, result)
+    if (trackedResult) {
+      this.result = trackedResult
+    }
+  }
+
+  private setObserverResult(result: QueryObserverResult<TData, TError>): void {
+    const trackedResult = this.resultTracker.update(this.observer, result)
+    if (trackedResult) {
+      this.setResult(trackedResult)
+    }
   }
 
   private defaultOptions(
@@ -264,13 +301,7 @@ class QueryController<
     this.queryClient = resolvedClient
     const defaulted = resolvedClient.defaultQueryOptions(
       readAccessor(this.options),
-    ) as DefaultedQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
+    )
     ;(defaulted as { _optimisticResults?: 'optimistic' })._optimisticResults =
       'optimistic'
     return defaulted
@@ -286,14 +317,12 @@ class QueryController<
  *
  * If `queryClient` is omitted, the controller resolves the client from the
  * nearest connected `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the query
  * subscription.
  * @param options - Query observer options, or a getter that returns options.
  * @param queryClient - Optional explicit query client. Provide this for
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the latest query result with query helper methods.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'
@@ -332,7 +361,7 @@ export function createQueryController<
   const controller = new QueryController(host, options, queryClient)
 
   return Object.assign(
-    createValueAccessor(() => controller.current),
+    createValueAccessor(() => controller.readCurrent()),
     {
       refetch: controller.refetch,
       suspense: controller.suspense,

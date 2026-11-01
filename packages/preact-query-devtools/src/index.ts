@@ -15,4 +15,7 @@ export const PreactQueryDevtoolsPanel: (typeof DevtoolsPanel)['PreactQueryDevtoo
       }
     : DevtoolsPanel.PreactQueryDevtoolsPanel
 
+/**
+ * The props of `PreactQueryDevtoolsPanel`, which renders the devtools panel inline.
+ */
 export type DevtoolsPanelOptions = DevtoolsPanel.DevtoolsPanelOptions

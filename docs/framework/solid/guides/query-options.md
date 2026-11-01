@@ -32,7 +32,7 @@ useQuery(() => groupOptions(1))
 useQueries(() => ({
   queries: [groupOptions(1), groupOptions(2)],
 }))
-queryClient.prefetchQuery(groupOptions(23))
+queryClient.query(groupOptions(23))
 queryClient.setQueryData(groupOptions(42).queryKey, newGroups)
 ```
 
