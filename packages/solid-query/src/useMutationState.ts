@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
+import { createEffect, createMemo, createSignal, onCleanup, untrack } from 'solid-js'
 import { replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClientResolver } from './QueryClientProvider'
 import type {
@@ -137,7 +137,7 @@ export function useMutationState<
   const mutationCache = createMemo(() => client().getMutationCache())
 
   const [result, setResult] = createSignal(
-    getResult(mutationCache(), options()),
+    untrack(() => getResult(mutationCache(), options())),
   )
 
   createEffect(() => {
