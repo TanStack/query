@@ -1,8 +1,8 @@
 {
-  "name": "react-webpack-4",
+  "name": "@tanstack/query-integration-react-webpack-5",
   "private": true,
   "scripts": {
-    "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --mode production"
+    "build": "webpack --mode production"
   },
   "dependencies": {
     "@tanstack/react-query": "workspace:*",
@@ -14,9 +14,9 @@
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.25.9",
-    "babel-loader": "^8.3.0",
-    "html-webpack-plugin": "^4.5.2",
-    "webpack": "^4.44.2",
-    "webpack-cli": "^4.10.0"
+    "babel-loader": "^9.2.1",
+    "html-webpack-plugin": "^5.6.8",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4"
   }
 }

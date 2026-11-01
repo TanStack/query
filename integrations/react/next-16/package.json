@@ -1,5 +1,5 @@
 {
-  "name": "react-next-16",
+  "name": "@tanstack/query-integration-react-next-16",
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
