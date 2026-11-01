@@ -32,8 +32,8 @@ Defined in: [packages/svelte-query/src/createQuery.ts:53](https://github.com/Tan
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
-a `select` changes `TData` to include `undefined`).
+This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+`undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -60,7 +60,7 @@ a `select` changes `TData` to include `undefined`).
 [`Accessor`](../type-aliases/Accessor.md)\<[`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
 
 The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `createQuery`,
-with `initialData` set, wrapped in an [Accessor](../type-aliases/Accessor.md) so options can be reactive.
+with `initialData` known to be defined, wrapped in an [Accessor](../type-aliases/Accessor.md) so options can be reactive.
 
 #### queryClient?
 

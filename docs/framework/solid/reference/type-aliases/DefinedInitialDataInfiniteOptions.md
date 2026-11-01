@@ -12,10 +12,10 @@ type DefinedInitialDataInfiniteOptions<TQueryFnData, TError = DefaultError, TDat
 }>;
 ```
 
-Defined in: [packages/solid-query/src/infiniteQueryOptions.ts:46](https://github.com/TanStack/query/blob/main/packages/solid-query/src/infiniteQueryOptions.ts#L46)
+Defined in: [packages/solid-query/src/infiniteQueryOptions.ts:52](https://github.com/TanStack/query/blob/main/packages/solid-query/src/infiniteQueryOptions.ts#L52)
 
-The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
-never `undefined` (unless a `select` changes `TData` to include `undefined`).
+The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is known to be
+defined — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ## Type Parameters
 

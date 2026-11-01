@@ -14,7 +14,10 @@
   "include": [
     "config/**/*.d.ts",
     "src/**/*.ts",
-    "vite.config.ts",
-    "eslint.config.js"
+    "config/ports.js",
+    "scripts/dev.mjs",
+    "server/index.mjs",
+    "*.config.ts",
+    "*.config.js"
   ]
 }

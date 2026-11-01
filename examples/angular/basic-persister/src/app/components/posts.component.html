@@ -14,7 +14,7 @@
             href="#"
             (click)="setPostId.emit(post.id)"
             [style]="
-              queryClient.getQueryData(['post', post.id])
+              queryClient.getQueryData(postsQueries.detail(post.id).queryKey)
                 ? {
                     fontWeight: 'bold',
                     color: 'green',

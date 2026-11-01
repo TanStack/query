@@ -12,10 +12,11 @@ type UndefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultError, 
 };
 ```
 
-Defined in: [packages/react-query/src/queryOptions.ts:21](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L21)
+Defined in: [packages/react-query/src/queryOptions.ts:22](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L22)
 
-The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
-`undefined` while the query is `pending`.
+The options accepted by the `queryOptions` overload selected when `initialData` is omitted, may be
+`undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is
+`pending`.
 
 ## Type Parameters
 

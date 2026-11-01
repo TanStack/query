@@ -12,7 +12,7 @@ type DefinedInitialDataInfiniteOptions<TQueryFnData = unknown, TError = DefaultE
 };
 ```
 
-Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:40](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L40)
+Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:41](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L41)
 
 The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is known to be
 defined — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
