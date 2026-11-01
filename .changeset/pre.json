@@ -47,6 +47,7 @@
     "solid-query-flight-metadata",
     "solid-query-native-rewrite",
     "solid-query-public-hydration-api",
+    "solid-query-transition-cache-events",
     "solid-rc-6-floor",
     "solid-rc-upgrade",
     "solid-rc9",
