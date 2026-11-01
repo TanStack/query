@@ -730,7 +730,7 @@ export function addConsumeAwareSignal<T extends object>(
   let signal: AbortSignal | undefined
 
   Object.defineProperties(object, {
-    [fetchSignal]: { value: internalSignal, enumerable: true },
+    [fetchSignal]: { value: internalSignal },
     signal: {
       enumerable: true,
       get: () => {
