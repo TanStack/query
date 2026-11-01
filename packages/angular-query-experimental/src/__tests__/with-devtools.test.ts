@@ -158,7 +158,7 @@ describe('withDevtools feature', () => {
     },
   )
 
-  it("should throw 'No QueryClient found' when 'loadDevtools' is 'true' and no 'QueryClient' is provided", async () => {
+  it("should throw 'No QueryClient found' before loading the devtools when 'loadDevtools' is 'true' and no 'QueryClient' is provided", async () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
@@ -169,9 +169,8 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    TestBed.tick()
-    await vi.dynamicImportSettled()
     expect(() => TestBed.tick()).toThrow('No QueryClient found')
+    await vi.dynamicImportSettled()
     expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
   })
 

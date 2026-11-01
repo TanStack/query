@@ -151,6 +151,8 @@ export const withDevtools: WithDevtools = (
                 return
               }
 
+              const resolvedClient = getResolvedQueryClient()
+
               if (!Devtools) {
                 devtoolsImport ??= import('@tanstack/query-devtools')
                   .then((queryDevtools) => {
@@ -168,7 +170,7 @@ export const withDevtools: WithDevtools = (
               // Create devtools
               devtools = new Devtools({
                 ...devtoolsOptions(),
-                client: getResolvedQueryClient(),
+                client: resolvedClient,
                 queryFlavor: 'Angular Query',
                 version: '5',
                 onlineManager,
