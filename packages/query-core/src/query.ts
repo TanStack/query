@@ -752,7 +752,7 @@ export class Query<
     // is read.
     const addSignalProperty = (object: object) => {
       Object.defineProperties(object, {
-        [fetchSignal]: { value: abortController.signal },
+        [fetchSignal]: { value: abortController.signal, enumerable: true },
         signal: {
           enumerable: true,
           get: () => {

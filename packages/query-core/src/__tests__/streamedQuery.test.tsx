@@ -397,7 +397,7 @@ describe('streamedQuery', () => {
   })
 
   it.each(['append', 'replace'] as const)(
-    'should stop %s writes after explicit cancellation without consuming the signal',
+    'should stop %s writes after explicit cancellation when the stream ignores the signal',
     async (refetchMode) => {
       const key = createKey()
       queryClient.setQueryData(key, [99])
@@ -407,6 +407,7 @@ describe('streamedQuery', () => {
           streamFn: () => createAsyncNumberGenerator(3),
           refetchMode,
         }),
+        persister: (queryFn, context) => queryFn({ ...context }),
       })
 
       const unsubscribe = observer.subscribe(vi.fn())
@@ -521,7 +522,7 @@ describe('streamedQuery', () => {
           delayIn === 'persister'
             ? async (fn, context) => {
                 await sleep(50)
-                return fn(context)
+                return fn({ ...context })
               }
             : undefined,
       })
