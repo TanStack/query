@@ -4,7 +4,12 @@ import {
   QueryClient,
   QueryObserver,
   dehydrate,
+  environmentManager,
+  experimental_fromHandle,
+  experimental_prefetchHandle,
+  experimental_waterfallHandle,
   hydrate,
+  isServer,
   noop,
   onlineManager,
 } from '@tanstack/query-core'
@@ -19,6 +24,7 @@ import DevtoolsPanelComponent from '../DevtoolsPanelComponent'
 import { Devtools } from '../Devtools'
 import { PiPProvider, QueryDevtoolsContext, ThemeContext } from '../contexts'
 import type { QueryDevtoolsProps } from '../contexts'
+import type { DehydratedState } from '@tanstack/query-core'
 
 // `solid-transition-group` internally imports from
 // `@solid-primitives/transition-group`, whose `exports` field points at
@@ -39,6 +45,22 @@ vi.mock(import('goober'), () => {
   })
   return { css, glob: () => {}, setup: () => {} }
 })
+
+const serverEnvironment = (): Disposable => {
+  environmentManager.setIsServer(() => true)
+  return {
+    [Symbol.dispose]: () => {
+      environmentManager.setIsServer(() => isServer)
+    },
+  }
+}
+
+const clearOnDispose = (client: QueryClient): QueryClient & Disposable =>
+  Object.assign(client, {
+    [Symbol.dispose]: () => {
+      client.clear()
+    },
+  })
 
 describe('Devtools', () => {
   const storage: { [key: string]: string } = {}
@@ -721,6 +743,82 @@ describe('Devtools', () => {
 
       expect(rendered.getByText('static')).toBeInTheDocument()
       expect(rendered.getByLabelText(/, static/)).toBeInTheDocument()
+    })
+
+    it('should render a "waterfall" indicator for a query fetched by the reader of a waterfallHandle', () => {
+      const waterfallQuery = (input: { id: number }) => ({
+        queryKey: ['waterfall-q', input.id],
+        queryFn: () => 'x',
+      })
+      const handle = experimental_waterfallHandle(waterfallQuery, { id: 1 })
+      const unsubscribe = new QueryObserver(
+        queryClient,
+        experimental_fromHandle(waterfallQuery, handle),
+      ).subscribe(noop)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(rendered.getByText('waterfall')).toBeInTheDocument()
+      expect(rendered.getByLabelText(/, waterfall/)).toBeInTheDocument()
+      unsubscribe()
+    })
+
+    it('should show how a query was started and that it was never read', async () => {
+      const handle = experimental_prefetchHandle(
+        queryClient,
+        (input: { id: number }) => ({
+          queryKey: ['prefetched-q', input.id],
+          queryFn: () => 'x',
+        }),
+        { id: 1 },
+      )
+      await vi.advanceTimersByTimeAsync(0)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText('Query key ["prefetched-q",1]'))
+
+      expect(rendered.getByText('prefetchHandle (client)')).toBeInTheDocument()
+      expect(rendered.getByRole('note')).toHaveTextContent(
+        'Prefetched, never read',
+      )
+
+      const unsubscribe = new QueryObserver(queryClient, {
+        queryKey: handle.queryKey,
+        queryFn: () => 'x',
+      }).subscribe(noop)
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(rendered.queryByRole('note')).not.toBeInTheDocument()
+      unsubscribe()
+    })
+
+    it('should show where a hydrated query was started', async () => {
+      let dehydrated: DehydratedState
+      {
+        using _server = serverEnvironment()
+        using serverClient = clearOnDispose(new QueryClient())
+        experimental_prefetchHandle(serverClient, () => ({
+          queryKey: ['server-q'],
+          queryFn: () => 'x',
+        }))
+        await vi.advanceTimersByTimeAsync(0)
+        dehydrated = dehydrate(serverClient)
+      }
+      hydrate(queryClient, dehydrated)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText('Query key ["server-q"]'))
+
+      expect(rendered.getByText('prefetchHandle (server)')).toBeInTheDocument()
+    })
+
+    it('should not show start info for queries started by other APIs', () => {
+      queryClient.setQueryData(['plain-q'], 'x')
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText('Query key ["plain-q"]'))
+
+      expect(rendered.queryByText('Started by:')).not.toBeInTheDocument()
+      expect(rendered.queryByText('waterfall')).not.toBeInTheDocument()
     })
 
     it('should render a query row when an object query key is mutated in place', () => {

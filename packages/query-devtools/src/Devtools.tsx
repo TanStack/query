@@ -25,10 +25,12 @@ import {
   convertRemToPixels,
   displayValue,
   getMutationStatusColor,
+  getQueryStartInfo,
   getQueryStatusColor,
   getQueryStatusColorByLabel,
   getQueryStatusLabel,
   getSidedProp,
+  isPrefetchedButNeverRead,
   mutationSortFns,
   sortFns,
 } from './utils'
@@ -1431,6 +1433,15 @@ const QueryRow: Component<{ query: Query }> = (props) => {
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
+  const isWaterfall = createSubscribeToQueryCacheBatcher(
+    (queryCache) => {
+      const query = queryCache().get(props.query.queryHash)
+      return !!query && getQueryStartInfo(query)?.verb === 'waterfallHandle'
+    },
+    true,
+    (e) => e.query.queryHash === props.query.queryHash,
+  )
+
   const observers = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
       queryCache().get(props.query.queryHash)?.getObserversCount() ?? 0,
@@ -1479,7 +1490,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
             styles().selectedQueryRow,
           'tsqd-query-row',
         )}
-        aria-label={`Query key ${props.query.queryHash}${isDisabled() ? ', disabled' : ''}${isStatic() ? ', static' : ''}`}
+        aria-label={`Query key ${props.query.queryHash}${isDisabled() ? ', disabled' : ''}${isStatic() ? ', static' : ''}${isWaterfall() ? ', waterfall' : ''}`}
       >
         <div
           class={cx(getObserverCountColorStyles(), 'tsqd-query-observer-count')}
@@ -1495,6 +1506,15 @@ const QueryRow: Component<{ query: Query }> = (props) => {
         <Show when={isStatic()}>
           <div class="tsqd-query-static-indicator" aria-hidden="true">
             static
+          </div>
+        </Show>
+        <Show when={isWaterfall()}>
+          <div
+            class="tsqd-query-waterfall-indicator"
+            aria-hidden="true"
+            title="Fetched by the reader of a waterfallHandle"
+          >
+            waterfall
           </div>
         </Show>
       </button>
@@ -1941,6 +1961,20 @@ const QueryDetails = () => {
         ?.getObserversCount() ?? 0,
   )
 
+  const startInfo = createSubscribeToQueryCacheBatcher((queryCache) => {
+    const query = queryCache()
+      .getAll()
+      .find((q) => q.queryHash === selectedQueryHash())
+    return query && getQueryStartInfo(query)
+  })
+
+  const neverRead = createSubscribeToQueryCacheBatcher((queryCache) => {
+    const query = queryCache()
+      .getAll()
+      .find((q) => q.queryHash === selectedQueryHash())
+    return !!query && isPrefetchedButNeverRead(query)
+  })
+
   const color = createMemo(() => getQueryStatusColorByLabel(statusLabel()))
 
   const handleRefetch = () => {
@@ -2060,6 +2094,31 @@ const QueryDetails = () => {
               {new Date(activeQueryState()!.dataUpdatedAt).toLocaleTimeString()}
             </span>
           </div>
+          <Show when={startInfo()}>
+            {(start) => (
+              <div class="tsqd-query-details-started-by">
+                <span>Started by:</span>
+                <span>
+                  {start().verb} ({start().environment})
+                </span>
+              </div>
+            )}
+          </Show>
+          <Show when={neverRead()}>
+            <div
+              class={cx(
+                styles().neverReadHint,
+                'tsqd-query-details-never-read',
+              )}
+              role="note"
+            >
+              <span>
+                Prefetched, never read: no component has read this query since{' '}
+                {startInfo()?.verb} started it. Check whether the loader still
+                needs to prefetch it.
+              </span>
+            </div>
+          </Show>
         </div>
         <div
           role="heading"
@@ -3412,6 +3471,17 @@ const stylesFactory = (
         border-bottom: 1px solid ${t(colors.teal[300], colors.teal[700])};
         font-size: ${font.size.xs};
       }
+
+      & .tsqd-query-waterfall-indicator {
+        align-self: stretch;
+        display: flex;
+        align-items: center;
+        padding: 0 ${tokens.size[2]};
+        color: ${t(colors.yellow[800], colors.yellow[300])};
+        background-color: ${t(colors.yellow[100], colors.yellow[900])};
+        border-bottom: 1px solid ${t(colors.yellow[300], colors.yellow[700])};
+        font-size: ${font.size.xs};
+      }
     `,
     selectedQueryRow: css`
       background-color: ${t(colors.gray[200], colors.darkGray[500])};
@@ -3477,6 +3547,10 @@ const stylesFactory = (
         display: flex;
         align-items: center;
       }
+    `,
+    neverReadHint: css`
+      margin-top: ${tokens.size[1.5]};
+      color: ${t(colors.yellow[800], colors.yellow[300])};
     `,
     queryDetailsStatus: css`
       border: 1px solid ${colors.darkGray[200]};

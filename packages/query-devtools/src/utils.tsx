@@ -1,6 +1,10 @@
 import { serialize } from 'superjson'
 import { createSignal, onCleanup, onMount } from 'solid-js'
-import type { Mutation, Query } from '@tanstack/query-core'
+import type {
+  Mutation,
+  Query,
+  experimental_QueryStartInfo as QueryStartInfo,
+} from '@tanstack/query-core'
 import type { DevtoolsPosition } from './contexts'
 
 /**
@@ -19,6 +23,35 @@ export function getQueryStatusLabel(query: Query) {
         : query.isStale()
           ? 'stale'
           : 'fresh'
+}
+
+/**
+ * Returns how a query was started through the experimental handle APIs, if it was. Reads the
+ * registered symbol that `@tanstack/query-core` stores it under, since the devtools bundle their
+ * own copy of that package.
+ * @param query - The query to look up.
+ * @returns The start info, or `undefined` for queries started by other APIs or older versions.
+ */
+export function getQueryStartInfo(query: Query): QueryStartInfo | undefined {
+  return (query as unknown as Record<symbol, QueryStartInfo | undefined>)[
+    Symbol.for('@tanstack/query-core/experimental_start')
+  ]
+}
+
+/**
+ * Whether a query was prefetched through a handle but no component has read it since, which
+ * usually means a loader prefetches data that the page no longer uses.
+ * @param query - The query to check.
+ * @returns `true` for a prefetched query that has never had an observer.
+ */
+export function isPrefetchedButNeverRead(query: Query): boolean {
+  const start = getQueryStartInfo(query)
+  return (
+    !!start &&
+    start.verb !== 'waterfallHandle' &&
+    !start.observed &&
+    query.getObserversCount() === 0
+  )
 }
 
 type QueryStatusLabel = 'fresh' | 'stale' | 'paused' | 'inactive' | 'fetching'

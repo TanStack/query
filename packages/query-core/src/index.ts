@@ -49,6 +49,7 @@ export {
   experimental_ensureHandle,
   experimental_fetchHandle,
   experimental_fromHandle,
+  experimental_getQueryStartInfo,
   experimental_prefetchHandle,
   experimental_waterfallHandle,
 } from './handles'
@@ -57,6 +58,7 @@ export type {
   InferQueryHandleData as experimental_InferQueryHandleData,
   QueryHandle as experimental_QueryHandle,
   QueryHandleFactory as experimental_QueryHandleFactory,
+  QueryStartInfo as experimental_QueryStartInfo,
 } from './handles'
 
 // Types

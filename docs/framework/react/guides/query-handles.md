@@ -104,7 +104,7 @@ Readers get the query's data from the cache. To get defined `data`, read the han
 
 ## Waterfalls: `experimental_waterfallHandle`
 
-Sometimes you only know the input during render, like a search term or a page a user clicks to. `experimental_waterfallHandle` builds the handle for such an input. It doesn't start the query: the component that reads the handle does, when it renders. That makes it a [request waterfall](./request-waterfalls.md), and the name keeps that visible. It is a plain function, not a hook, so you can call it anywhere.
+Sometimes you only know the input during render, like a search term or a page a user clicks to. `experimental_waterfallHandle` builds the handle for such an input. It doesn't start the query: the component that reads the handle does, when it renders. That makes it a [request waterfall](./request-waterfalls.md), and the name keeps that visible. It is a plain function, not a hook, so you can call it anywhere. The devtools mark these queries with a `waterfall` badge.
 
 Pass it an input:
 
@@ -173,6 +173,8 @@ const queryClient = new QueryClient({
 ```
 
 [//]: # 'DehydratePending'
+
+In development, `dehydrate` warns when a server render leaves out a pending query that a handle function started, because the browser would fetch it again.
 
 ### Server `staleTime`
 
@@ -286,3 +288,11 @@ export function dehydrateUnsent(queryClient: QueryClient) {
 Every request the server handles shares the module. Once one request has sent a query, every later request for any user skips it, so their pages arrive without its data and fetch it again in the browser. The set also grows for as long as the server runs.
 
 Each query goes out once, with the state it has when `dehydrate` first includes it. If it changes later in the same request, the change doesn't reach the browser.
+
+## Devtools
+
+In development, the query devtools show how each handle's query started:
+
+- **Started by** shows the function that started the query and whether it ran on the server or in the browser. Queries that `hydrate` restores from a server render keep the server's record.
+- A **waterfall** badge marks queries that a component first fetched by reading a handle from `experimental_waterfallHandle`.
+- **Prefetched, never read** marks queries that a handle function started and no component has read since. That usually means a loader prefetches data the page no longer uses.

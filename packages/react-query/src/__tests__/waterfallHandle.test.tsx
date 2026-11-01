@@ -12,6 +12,7 @@ import {
   QueryClient,
   experimental_fetchHandle,
   experimental_fromHandle,
+  experimental_getQueryStartInfo,
   experimental_prefetchHandle,
   experimental_waterfallHandle,
   queryOptions,
@@ -61,6 +62,12 @@ describe('experimental_waterfallHandle', () => {
     await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('data: page 1')).toBeInTheDocument()
     expect(queryFn).toHaveBeenCalledTimes(1)
+    const query = queryClient
+      .getQueryCache()
+      .find({ queryKey: postsQuery({ page: 1 }).queryKey, exact: true })
+    expect(query && experimental_getQueryStartInfo(query)).toStrictEqual(
+      expect.objectContaining({ verb: 'waterfallHandle', observed: true }),
+    )
   })
 
   it("should keep the loader's handle until the new input maps to another query", async () => {

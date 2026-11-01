@@ -1,7 +1,14 @@
+import { environmentManager } from './environmentManager'
 import { hashQueryKeyByOptions, noop } from './utils'
+import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type { Query } from './query'
-import type { InferDataFromTag, QueryKey, QueryKeyHashFunction } from './types'
+import type {
+  InferDataFromTag,
+  QueryFunctionContext,
+  QueryKey,
+  QueryKeyHashFunction,
+} from './types'
 
 // TYPES
 
@@ -121,6 +128,151 @@ export type InferQueryHandleData<
     ? FactoryData<ReturnType<TFactory>>
     : never
 
+/**
+ * How a query was last started through the handle APIs, as shown by the devtools.
+ */
+export interface QueryStartInfo {
+  /**
+   * The API that started the query.
+   */
+  verb: 'prefetchHandle' | 'ensureHandle' | 'fetchHandle' | 'waterfallHandle'
+  /**
+   * Whether it ran on the server or in the browser.
+   */
+  environment: 'server' | 'client'
+  /**
+   * When it ran, in milliseconds since the epoch.
+   */
+  startedAt: number
+  /**
+   * Whether an observer, like `useQuery`, has read the query since.
+   */
+  observed: boolean
+}
+
+// START INFO
+
+// A registered symbol, so devtools that bundle their own copy of this package still find it
+const startInfoKey = Symbol.for('@tanstack/query-core/experimental_start')
+const watchedCaches = new WeakSet<QueryCache>()
+
+type QueryWithStartInfo = Query<any, any, any, any> & {
+  [startInfoKey]?: QueryStartInfo
+}
+
+/**
+ * Stores how a query was started on the query, hidden from enumeration.
+ * @param query - The query that started.
+ * @param info - How it started.
+ */
+function setStartInfo(
+  query: Query<any, any, any, any>,
+  info: QueryStartInfo,
+): void {
+  Object.defineProperty(query, startInfoKey, {
+    value: info,
+    configurable: true,
+    enumerable: false,
+    writable: true,
+  })
+}
+
+/**
+ * Marks recorded queries as read when an observer subscribes to them.
+ * @param queryCache - The cache to watch, once.
+ */
+function watchObservers(queryCache: QueryCache): void {
+  if (watchedCaches.has(queryCache)) {
+    return
+  }
+  watchedCaches.add(queryCache)
+  queryCache.subscribe((event) => {
+    if (event.type === 'observerAdded') {
+      const info = experimental_getQueryStartInfo(event.query)
+      if (info && !info.observed) {
+        setStartInfo(event.query, { ...info, observed: true })
+      }
+    }
+  })
+}
+
+/**
+ * Records how a query was started, for the devtools. A query that an observer has read stays read.
+ * @internal
+ * @param queryCache - The cache the query belongs to.
+ * @param query - The query that started.
+ * @param info - How it started.
+ */
+export function recordQueryStart(
+  queryCache: QueryCache,
+  query: Query<any, any, any, any>,
+  info: Omit<QueryStartInfo, 'observed'> & { observed?: boolean },
+): void {
+  watchObservers(queryCache)
+  const observed =
+    info.observed ||
+    experimental_getQueryStartInfo(query)?.observed ||
+    query.getObserversCount() > 0
+  setStartInfo(query, { ...info, observed })
+}
+
+/**
+ * Returns how a query was last started through `experimental_prefetchHandle`,
+ * `experimental_ensureHandle` or `experimental_fetchHandle`, or first fetched by a reader of an
+ * `experimental_waterfallHandle` handle, if it was. A query hydrated from a server render in
+ * development keeps the server's record.
+ * @param query - The query to look up.
+ * @returns The start info, or `undefined` if the query wasn't started through those APIs.
+ */
+export function experimental_getQueryStartInfo(
+  query: Query<any, any, any, any>,
+): QueryStartInfo | undefined {
+  return (query as QueryWithStartInfo)[startInfoKey]
+}
+
+const waterfallKey = Symbol.for('@tanstack/query-core/experimental_waterfall')
+
+/**
+ * Marks a handle from `experimental_waterfallHandle`, hidden from enumeration so the handle still
+ * equals and serializes as `{ queryKey, input }`.
+ * @param handle - The handle to mark.
+ * @returns The handle.
+ */
+function markWaterfall<THandle extends object>(handle: THandle): THandle {
+  Object.defineProperty(handle, waterfallKey, { value: true })
+  return handle
+}
+
+/**
+ * Wraps the `queryFn` of a waterfall handle's options so the query's first fetch is recorded with
+ * the verb `waterfallHandle`, since that fetch is the waterfall.
+ * @param options - Options a query factory returned for the handle's input.
+ * @returns The options, with the wrapped `queryFn`.
+ */
+function recordWaterfallStart(
+  options: QueryFactoryOptions & { queryFn?: unknown },
+): QueryFactoryOptions {
+  const queryFn = options.queryFn
+  if (typeof queryFn !== 'function') {
+    return options
+  }
+  return {
+    ...options,
+    queryFn: (context: QueryFunctionContext) => {
+      const queryCache = context.client.getQueryCache()
+      const query = getQuery(context.client, options)
+      if (query && !experimental_getQueryStartInfo(query)) {
+        recordQueryStart(queryCache, query, {
+          verb: 'waterfallHandle',
+          environment: environmentManager.isServer() ? 'server' : 'client',
+          startedAt: Date.now(),
+        })
+      }
+      return queryFn(context)
+    },
+  } as QueryFactoryOptions
+}
+
 // FUNCTIONS
 
 /**
@@ -133,18 +285,30 @@ function isInfiniteOptions(options: QueryFactoryOptions): boolean {
 }
 
 /**
- * Starts a factory's query without waiting.
+ * Starts a factory's query without waiting, and records the start for the devtools.
  * @param client - The client to start the query on.
  * @param options - Options a query factory returned.
+ * @param verb - The API that starts it.
  * @returns The promise of the query's data.
  */
 function startQueryFromFactory(
   client: QueryClient,
   options: QueryFactoryOptions,
+  verb: QueryStartInfo['verb'],
 ): Promise<unknown> {
-  return isInfiniteOptions(options)
+  const promise: Promise<unknown> = isInfiniteOptions(options)
     ? client.infiniteQuery(options as never)
     : client.query(options)
+  const queryCache = client.getQueryCache()
+  const query = getQuery(client, options)
+  if (query) {
+    recordQueryStart(queryCache, query, {
+      verb,
+      environment: environmentManager.isServer() ? 'server' : 'client',
+      startedAt: Date.now(),
+    })
+  }
+  return promise
 }
 
 /**
@@ -201,7 +365,7 @@ export function experimental_prefetchHandle<
   ...input: QueryHandleArgs<TFactory>
 ): QueryHandle<TFactory> {
   const options = factory(...input)
-  void startQueryFromFactory(queryClient, options).catch(noop)
+  void startQueryFromFactory(queryClient, options, 'prefetchHandle').catch(noop)
   return toHandle(options, input[0]) as QueryHandle<TFactory>
 }
 
@@ -228,7 +392,7 @@ export async function experimental_ensureHandle<
   ...input: QueryHandleArgs<TFactory>
 ): Promise<QueryHandle<TFactory>> {
   const options = factory(...input)
-  const promise = startQueryFromFactory(queryClient, options)
+  const promise = startQueryFromFactory(queryClient, options, 'ensureHandle')
   if (getQuery(queryClient, options)?.state.data === undefined) {
     await promise
   } else {
@@ -259,7 +423,7 @@ export async function experimental_fetchHandle<
   ...input: QueryHandleArgs<TFactory>
 ): Promise<QueryHandle<TFactory>> {
   const options = factory(...input)
-  await startQueryFromFactory(queryClient, options)
+  await startQueryFromFactory(queryClient, options, 'fetchHandle')
   return toHandle(options, input[0]) as QueryHandle<TFactory>
 }
 
@@ -325,9 +489,8 @@ export function experimental_waterfallHandle<
     ((input: QueryHandleInput<TFactory>) => QueryHandleInput<TFactory>)?,
   ]
   if (typeof switchInput !== 'function') {
-    return toHandle(
-      factory(inputOrHandle),
-      inputOrHandle,
+    return markWaterfall(
+      toHandle(factory(inputOrHandle), inputOrHandle),
     ) as QueryHandle<TFactory>
   }
   const previous = inputOrHandle as QueryHandle<TFactory>
@@ -339,7 +502,7 @@ export function experimental_waterfallHandle<
   ) {
     return previous
   }
-  return toHandle(options, input) as QueryHandle<TFactory>
+  return markWaterfall(toHandle(options, input)) as QueryHandle<TFactory>
 }
 
 /**
@@ -365,5 +528,9 @@ export function experimental_fromHandle<TFactory extends QueryHandleFactory>(
   factory: TFactory,
   handle: QueryHandle<NoInfer<TFactory>>,
 ): FromHandleOptions<TFactory> {
-  return factory(handle.input) as FromHandleOptions<TFactory>
+  const options =
+    waterfallKey in handle
+      ? recordWaterfallStart(factory(handle.input))
+      : factory(handle.input)
+  return options as FromHandleOptions<TFactory>
 }
