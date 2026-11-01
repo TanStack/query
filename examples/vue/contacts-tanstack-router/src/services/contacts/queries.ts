@@ -8,7 +8,7 @@ export const contactsQueries = {
   lists: () => [...contactsQueries.all(), 'list'] as const,
   list: (q?: string) =>
     queryOptions({
-      queryKey: [...contactsQueries.lists(), q ?? 'all'] as const,
+      queryKey: [...contactsQueries.lists(), { q }] as const,
       queryFn: () => contactsAPI.getContacts(q),
     }),
   detail: (id: string) =>

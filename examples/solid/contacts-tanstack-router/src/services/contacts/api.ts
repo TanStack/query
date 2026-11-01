@@ -29,17 +29,16 @@ const initialData: Array<Contact> = [
 const seed = async () => {
   const contacts = await localforage.getItem<Array<Contact>>('contacts')
   if (!contacts) {
-    set(initialData)
+    await set(initialData)
   }
 }
 
-seed()
+const seeded = seed()
 
 export const contactsAPI = {
   getContacts: async (query?: string) => {
     await fakeNetwork()
-    let contacts = await localforage.getItem<Array<Contact>>('contacts')
-    if (!contacts) contacts = []
+    let contacts = await get()
     if (query) {
       contacts = matchSorter(contacts, query, { keys: ['first', 'last'] })
     }
@@ -58,15 +57,13 @@ export const contactsAPI = {
   },
   getContact: async (id: string) => {
     await fakeNetwork()
-    const contacts = await localforage.getItem<Array<Contact>>('contacts')
-    if (!contacts) return null
+    const contacts = await get()
     const contact = contacts.find((item) => item.id === id)
     return contact ?? null
   },
   updateContact: async (id: string, updates: Partial<Contact>) => {
     await fakeNetwork()
-    const contacts = await localforage.getItem<Array<Contact>>('contacts')
-    if (!contacts) return false
+    const contacts = await get()
     const contact = contacts.find((item) => item.id === id)
     if (!contact) throw new Error(`No contact found for ${id}`)
     Object.assign(contact, updates)
@@ -74,8 +71,7 @@ export const contactsAPI = {
     return contact
   },
   deleteContact: async (id: string) => {
-    const contacts = await localforage.getItem<Array<Contact>>('contacts')
-    if (!contacts) return false
+    const contacts = await get()
     const index = contacts.findIndex((contact) => contact.id === id)
     if (index > -1) {
       contacts.splice(index, 1)
@@ -84,6 +80,11 @@ export const contactsAPI = {
     }
     return false
   },
+}
+
+async function get() {
+  await seeded
+  return (await localforage.getItem<Array<Contact>>('contacts')) ?? []
 }
 
 function set(contacts: Array<Contact>) {
