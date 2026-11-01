@@ -1908,4 +1908,16 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(queryClient.getQueryState(key)?.isInvalidated).toBe(true)
   })
+
+  it('should not throw or trigger untracked reactive read diagnostics on setup', async () => {
+    function Page() {
+      const mutation = useMutation(() => ({
+        mutationFn: async () => 'data',
+      }))
+      return <div>status: {mutation.status}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+    expect(rendered.getByText('status: idle')).toBeInTheDocument()
+  })
 })
