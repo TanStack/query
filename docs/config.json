@@ -6884,6 +6884,10 @@
               "to": "framework/solid/examples/offline-tanstack-router"
             },
             {
+              "label": "Offline Queries and Mutations (Solid Router)",
+              "to": "framework/solid/examples/offline-solid-router"
+            },
+            {
               "label": "Playground",
               "to": "framework/solid/examples/playground"
             },
