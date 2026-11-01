@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-solid-offline",
+  "name": "@tanstack/query-example-solid-offline-tanstack-router",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,11 +14,13 @@
     "@tanstack/solid-query": "^5.105.1",
     "@tanstack/solid-query-devtools": "^5.105.1",
     "@tanstack/solid-query-persist-client": "^5.105.1",
+    "@tanstack/solid-router": "^1.170.43",
     "msw": "^2.15.0",
     "solid-js": "^1.9.15"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.105.1",
+    "@tanstack/router-plugin": "^1.168.48",
     "eslint-plugin-solid": "^0.18.1",
     "typescript": "^6.0.3",
     "vite": "^8.3.5",
