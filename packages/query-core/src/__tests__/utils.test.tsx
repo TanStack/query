@@ -513,7 +513,13 @@ describe('core/utils', () => {
       const item = 4
       const max = 2
       const newItems = addToStart(items, item, max)
-      expect(newItems).toEqual([4, 1, 2])
+      expect(newItems).toEqual([4, 1])
+    })
+
+    it('should not exceed max when items already exceed max', () => {
+      const items = [1, 2, 3, 4, 5]
+      const newItems = addToStart(items, 6, 3)
+      expect(newItems).toEqual([6, 1, 2])
     })
 
     it('should not remove any items if max = 0', () => {

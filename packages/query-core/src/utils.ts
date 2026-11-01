@@ -422,7 +422,7 @@ export function addToEnd<T>(items: Array<T>, item: T, max = 0): Array<T> {
 
 export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
   const newItems = [item, ...items]
-  return max && newItems.length > max ? newItems.slice(0, -1) : newItems
+  return max && newItems.length > max ? newItems.slice(0, max) : newItems
 }
 
 export const skipToken = Symbol()
