@@ -109,7 +109,6 @@ When a polling response contains the same data as before, a component that only 
 As a result, values calculated from the current time during render won't update as long as the data remains unchanged. For example, a message that should appear after 30 seconds, such as "This is taking longer than expected," may never appear. Time-dependent UI state should be updated using a separate timer.
 
 [//]: # 'ReRenders'
-
 [//]: # 'ReactNative'
 
 ## Non-browser environments
