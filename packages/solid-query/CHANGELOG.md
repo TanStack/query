@@ -1,5 +1,11 @@
 # @tanstack/solid-query
 
+## 6.0.0-rc.6
+
+### Patch Changes
+
+- [#12034](https://github.com/TanStack/query/pull/12034) [`6bab31b`](https://github.com/TanStack/query/commit/6bab31bc3746ddfc8d425e3ba92b1179a7a6df3c) - fix: prevent cache notifications during a Solid transition landing from reading a query options memo that has no committed value.
+
 ## 6.0.0-rc.5
 
 ### Patch Changes
