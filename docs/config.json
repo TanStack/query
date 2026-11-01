@@ -6823,8 +6823,8 @@
               "to": "framework/react/examples/contacts-react-router"
             },
             {
-              "label": "Offline Queries and Mutations",
-              "to": "framework/react/examples/offline"
+              "label": "Offline Queries and Mutations (TanStack Router)",
+              "to": "framework/react/examples/offline-tanstack-router"
             },
             {
               "label": "Algolia",
