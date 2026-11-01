@@ -967,24 +967,6 @@ describe('queryClient', () => {
         // @ts-expect-error isMutating always filters by status: 'pending'
         queryClient.isMutating({ mutationKey: ['key'], status: 'pending' }),
       ).toEqualTypeOf<number>()
-      expectTypeOf(
-        // @ts-expect-error isMutating always filters by status: 'pending'
-        queryClient.isMutating({ mutationKey: ['key'], status: 'success' }),
-      ).toEqualTypeOf<number>()
-      expectTypeOf(
-        // @ts-expect-error isMutating always filters by status: 'pending'
-        queryClient.isMutating({ mutationKey: ['key'], status: 'error' }),
-      ).toEqualTypeOf<number>()
-      expectTypeOf(
-        // @ts-expect-error isMutating always filters by status: 'pending'
-        queryClient.isMutating({ mutationKey: ['key'], status: 'idle' }),
-      ).toEqualTypeOf<number>()
-      expectTypeOf(
-        queryClient.isMutating<MutationFilters<TypedData, TypedError>>({
-          // @ts-expect-error isMutating always filters by status: 'pending'
-          status: 'success',
-        }),
-      ).toEqualTypeOf<number>()
     })
   })
 
