@@ -1,4 +1,5 @@
-import useAlgolia from './useAlgolia'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { productsQueries } from './services/products/queries'
 
 type Product = {
   name: string
@@ -20,12 +21,15 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useAlgolia<Product>({
-    indexName: 'bestbuy',
-    query,
-    hitsPerPage: 5,
-    staleTime: 1000 * 30, // 30s
-    gcTime: 1000 * 60 * 15, // 15m
+  } = useInfiniteQuery({
+    ...productsQueries.search<Product>({
+      indexName: 'bestbuy',
+      query,
+      hitsPerPage: 5,
+    }),
+    select: (data) => data.pages.flatMap((page) => page.hits),
+    staleTime: 30 * 1000, // 30s
+    gcTime: 15 * 60 * 1000, // 15m
   })
 
   if (!query) return null

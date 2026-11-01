@@ -1,5 +1,22 @@
 # @tanstack/svelte-query-devtools
 
+## 6.3.7
+
+### Patch Changes
+
+- Updated dependencies [[`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/svelte-query@6.3.7
+  - @tanstack/query-devtools@5.105.1
+
+## 6.3.6
+
+### Patch Changes
+
+- [#12313](https://github.com/TanStack/query/pull/12313) [`aff30e3`](https://github.com/TanStack/query/commit/aff30e36bd392acead10883f15172fff61c65063) - fix(svelte-query-devtools): stop defaulting the 'theme' prop to 'system' so the theme chosen in the devtools settings applies when the prop is omitted
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.105.0
+  - @tanstack/svelte-query@6.3.6
+
 ## 6.3.5
 
 ### Patch Changes

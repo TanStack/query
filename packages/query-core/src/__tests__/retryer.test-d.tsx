@@ -37,7 +37,7 @@ describe('retryer', () => {
     it('should default TData to unknown', () => {
       expectTypeOf(
         createRetryer({
-          // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+          // oxlint-disable-next-line typescript/no-unnecessary-type-assertion -- the assertion makes 'fn' return 'unknown', which is what this test checks
           fn: () => ({}) as unknown,
           networkMode: undefined,
           canRun: () => true,

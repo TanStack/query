@@ -1272,10 +1272,11 @@ describe('useMutation', () => {
     })
   })
 
-  // oxlint-disable-next-line vitest/expect-expect
-  it('should not change state if unmounted', () => {
+  it('should not change state if unmounted', async () => {
+    const states: Array<UseMutationResult['status']> = []
     function Mutates() {
-      const { mutate } = useMutation({ mutationFn: () => sleep(10) })
+      const { mutate, status } = useMutation({ mutationFn: () => sleep(10) })
+      states.push(status)
       return <button onClick={() => mutate()}>mutate</button>
     }
     function Page() {
@@ -1290,7 +1291,19 @@ describe('useMutation', () => {
 
     const { getByText } = renderWithClient(queryClient, <Page />)
     fireEvent.click(getByText('mutate'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(states).toStrictEqual(['idle', 'pending'])
+
     fireEvent.click(getByText('unmount'))
+    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+      'pending',
+    )
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+      'success',
+    )
+    expect(states).toStrictEqual(['idle', 'pending'])
   })
 
   it('should be able to throw an error when throwOnError is set to true', async () => {

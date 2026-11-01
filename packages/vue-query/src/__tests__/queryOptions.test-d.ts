@@ -4,6 +4,7 @@ import { dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
+import { useQueries } from '../useQueries'
 import { useQuery } from '../useQuery'
 import type { InitialDataFunction } from '@tanstack/query-core'
 
@@ -54,6 +55,17 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
+  it('should work when passed to useQueries', () => {
+    const options = queryOptions({
+      queryKey: createKey(),
+      queryFn: () => Promise.resolve(5),
+    })
+
+    const { value: queriesState } = useQueries({ queries: [options] })
+
+    expectTypeOf(queriesState[0].data).toEqualTypeOf<number | undefined>()
+  })
+
   it('should work when passed to query', async () => {
     const options = queryOptions({
       queryKey: ['key'],
@@ -73,6 +85,27 @@ describe('queryOptions', () => {
 
     const data = await new QueryClient().query(options)
     expectTypeOf(data).toEqualTypeOf<string>()
+  })
+
+  it('should work when passed to query with enabled: false', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+      enabled: false,
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<number>()
+  })
+
+  it('should work when passed to query with skipToken', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: skipToken,
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<unknown>()
   })
 
   it('should tag the queryKey with the result type of the QueryFn', () => {
@@ -325,6 +358,26 @@ describe('queryOptions', () => {
     expectTypeOf(options.initialData).toExtend<
       InitialDataFunction<string> | string | undefined
     >()
+  })
+
+  it('should allow undefined response in initialData', () => {
+    assertType((id: string | null) =>
+      queryOptions({
+        queryKey: [...createKey(), id],
+        queryFn: () =>
+          Promise.resolve({
+            id: '1',
+            title: 'Do Laundry',
+          }),
+        initialData: () =>
+          !id
+            ? undefined
+            : {
+                id,
+                title: 'Initial Data',
+              },
+      }),
+    )
   })
 
   it('should allow accessing queryFn and other properties on the returned options object', () => {
