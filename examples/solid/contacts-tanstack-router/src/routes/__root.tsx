@@ -7,7 +7,7 @@ import {
   useNavigate,
   useRouterState,
 } from '@tanstack/solid-router'
-import { debounce } from '@solid-primitives/scheduled'
+import { createDebouncer } from '@tanstack/solid-pacer/debouncer'
 import { useIsFetching, useQuery } from '@tanstack/solid-query'
 import { contactsQueries } from '../services/contacts/queries'
 import type { QueryClient } from '@tanstack/solid-query'
@@ -36,9 +36,12 @@ function Root() {
   const navigate = useNavigate()
   const matchRoute = useMatchRoute()
 
-  const debouncedSearch = debounce((value: string) => {
-    navigate({ to: '.', search: { q: value || undefined } })
-  }, 500)
+  const searchDebouncer = createDebouncer(
+    (value: string) => {
+      navigate({ to: '.', search: { q: value || undefined } })
+    },
+    { wait: 500 },
+  )
 
   return (
     <>
@@ -59,7 +62,9 @@ function Root() {
               autofocus
               value={q() ?? ''}
               class={searching() ? 'loading' : ''}
-              onInput={(event) => debouncedSearch(event.currentTarget.value)}
+              onInput={(event) =>
+                searchDebouncer.maybeExecute(event.currentTarget.value)
+              }
             />
             <div id="search-spinner" aria-hidden hidden={!searching()} />
             <div class="sr-only" aria-live="polite" />

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useDebounceFn } from '@vueuse/core'
+import { useDebouncer } from '@tanstack/vue-pacer/debouncer'
 import { useIsFetching, useQuery } from '@tanstack/vue-query'
 import ErrorPage from '../ErrorPage.vue'
 import { contactsQueries } from '../services/contacts/queries'
@@ -36,9 +36,12 @@ const { data: contacts, error } = useQuery(() => ({
 const fetchingContacts = useIsFetching({ queryKey: contactsQueries.lists() })
 const searching = computed(() => fetchingContacts.value > 0)
 
-const debouncedSearch = useDebounceFn((value: string) => {
-  router.push({ query: value ? { q: value } : {} })
-}, 500)
+const searchDebouncer = useDebouncer(
+  (value: string) => {
+    router.push({ query: value ? { q: value } : {} })
+  },
+  { wait: 500 },
+)
 </script>
 
 <template>
@@ -57,7 +60,7 @@ const debouncedSearch = useDebounceFn((value: string) => {
             name="q"
             autofocus
             :class="searching ? 'loading' : ''"
-            @input="debouncedSearch(search)"
+            @input="searchDebouncer.maybeExecute(search)"
           />
           <div id="search-spinner" aria-hidden="true" :hidden="!searching" />
           <div class="sr-only" aria-live="polite" />
