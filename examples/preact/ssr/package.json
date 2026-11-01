@@ -10,8 +10,8 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/preact-query": "^5.105.0",
-    "@tanstack/preact-query-devtools": "^5.105.0",
+    "@tanstack/preact-query": "^5.105.1",
+    "@tanstack/preact-query-devtools": "^5.105.1",
     "compression": "^1.8.1",
     "devalue": "^6.0.3",
     "express": "^5.3.0",
@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.6",
-    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@tanstack/eslint-plugin-query": "^5.105.1",
     "@types/compression": "^1.8.1",
     "@types/express": "^5.0.6",
     "@types/node": "^24.19.2",
