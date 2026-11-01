@@ -1,5 +1,11 @@
 # @tanstack/eslint-plugin-query
 
+## 5.105.1
+
+### Patch Changes
+
+- [#12409](https://github.com/TanStack/query/pull/12409) [`ec19101`](https://github.com/TanStack/query/commit/ec1910188588b182394a589313678714bc6a1798) - Fix stable-query-client detection for arrow functions, function expressions, and clients created directly in JSX. Keep state initializers and nested helper functions valid.
+
 ## 5.105.0
 
 No changes in this release.
