@@ -528,7 +528,7 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  examples/angular/devtools-panel:
+  examples/angular/devtools-panel-angular-router:
     dependencies:
       '@angular/common':
         specifier: ^20.0.0
@@ -706,7 +706,7 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  examples/angular/query-options-from-a-service:
+  examples/angular/query-options-from-a-service-angular-router:
     dependencies:
       '@angular/common':
         specifier: ^20.0.0
@@ -1063,7 +1063,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/lit/load-more-infinite-scroll:
+  examples/lit/load-more-infinite-scroll-lit-labs-router:
     dependencies:
       '@lit-labs/router':
         specifier: ^0.1.4
@@ -1088,7 +1088,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/lit/offline:
+  examples/lit/offline-lit-labs-router:
     dependencies:
       '@awesome.me/webawesome':
         specifier: ^3.14.0
@@ -1182,7 +1182,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/lit/prefetching:
+  examples/lit/prefetching-lit-labs-router:
     dependencies:
       '@lit-labs/router':
         specifier: ^0.1.4
@@ -1204,7 +1204,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/lit/rick-morty:
+  examples/lit/rick-morty-lit-labs-router:
     dependencies:
       '@lit-labs/router':
         specifier: ^0.1.4
@@ -1279,7 +1279,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
-  examples/lit/star-wars:
+  examples/lit/star-wars-lit-labs-router:
     dependencies:
       '@lit-labs/router':
         specifier: ^0.1.4
@@ -1616,7 +1616,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/preact/load-more-infinite-scroll:
+  examples/preact/load-more-infinite-scroll-preact-iso:
     dependencies:
       '@tanstack/preact-query':
         specifier: ^5.105.1
@@ -1653,7 +1653,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/preact/offline:
+  examples/preact/offline-preact-iso:
     dependencies:
       '@tanstack/preact-query':
         specifier: ^5.105.1
@@ -1801,7 +1801,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/preact/prefetching:
+  examples/preact/prefetching-preact-iso:
     dependencies:
       '@tanstack/preact-query':
         specifier: ^5.105.1
@@ -1835,7 +1835,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/preact/rick-morty:
+  examples/preact/rick-morty-preact-iso:
     dependencies:
       '@tanstack/preact-query':
         specifier: ^5.105.1
@@ -2050,7 +2050,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/preact/star-wars:
+  examples/preact/star-wars-preact-iso:
     dependencies:
       '@tanstack/preact-query':
         specifier: ^5.105.1
@@ -2164,7 +2164,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
-  examples/react/auto-refetching:
+  examples/react/auto-refetching-nextjs-pages-router:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.105.1
@@ -2515,7 +2515,7 @@ importers:
         specifier: ^8.70.1
         version: 8.70.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
 
-  examples/react/infinite-query-with-max-pages:
+  examples/react/infinite-query-with-max-pages-nextjs-pages-router:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.105.1
@@ -2552,7 +2552,7 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
 
-  examples/react/load-more-infinite-scroll:
+  examples/react/load-more-infinite-scroll-nextjs-pages-router:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.105.1
@@ -2795,7 +2795,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
-  examples/react/pagination:
+  examples/react/pagination-nextjs-pages-router:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.105.1
@@ -2869,7 +2869,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
-  examples/react/prefetching:
+  examples/react/prefetching-nextjs-pages-router:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.105.1
@@ -3028,7 +3028,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
-  examples/react/rick-morty:
+  examples/react/rick-morty-react-router:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.105.1
@@ -3148,7 +3148,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
-  examples/react/star-wars:
+  examples/react/star-wars-react-router:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.105.1
@@ -3308,7 +3308,7 @@ importers:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@1.21.7)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
 
-  examples/solid/auto-refetching:
+  examples/solid/auto-refetching-solid-start2:
     dependencies:
       '@solidjs/router':
         specifier: ^1.0.0
@@ -3559,7 +3559,7 @@ importers:
         specifier: ^2.11.14
         version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
 
-  examples/solid/optimistic-updates:
+  examples/solid/optimistic-updates-solid-start2:
     dependencies:
       '@solidjs/router':
         specifier: ^1.0.0
@@ -3590,7 +3590,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/solid/pagination:
+  examples/solid/pagination-solid-start2:
     dependencies:
       '@solidjs/router':
         specifier: ^1.0.0
@@ -3649,7 +3649,7 @@ importers:
         specifier: ^2.11.14
         version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
 
-  examples/solid/prefetching:
+  examples/solid/prefetching-solid-start2:
     dependencies:
       '@solidjs/router':
         specifier: ^1.0.0
@@ -3680,7 +3680,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/solid/rick-morty:
+  examples/solid/rick-morty-solid-router:
     dependencies:
       '@solidjs/router':
         specifier: ^1.0.0
@@ -3850,7 +3850,7 @@ importers:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
 
-  examples/solid/star-wars:
+  examples/solid/star-wars-solid-router:
     dependencies:
       '@solidjs/router':
         specifier: ^1.0.0
@@ -3958,7 +3958,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/svelte/auto-refetching:
+  examples/svelte/auto-refetching-sveltekit:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^6.3.7
@@ -3966,52 +3966,6 @@ importers:
       '@tanstack/svelte-query-devtools':
         specifier: ^6.3.7
         version: link:../../../packages/svelte-query-devtools
-    devDependencies:
-      '@sveltejs/adapter-auto':
-        specifier: ^7.0.1
-        version: 7.0.1(@sveltejs/kit@2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))
-      '@sveltejs/kit':
-        specifier: ^2.70.3
-        version: 2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
-      '@sveltejs/vite-plugin-svelte':
-        specifier: ^7.3.1
-        version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
-      '@tanstack/eslint-plugin-query':
-        specifier: ^5.105.1
-        version: link:../../../packages/eslint-plugin-query
-      '@typescript-eslint/parser':
-        specifier: ^8.72.0
-        version: 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      eslint-plugin-svelte:
-        specifier: ^3.23.0
-        version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
-      svelte:
-        specifier: ^5.57.1
-        version: 5.57.1(@typescript-eslint/types@8.58.1)
-      svelte-check:
-        specifier: ^4.7.7
-        version: 4.7.7(picomatch@4.0.7)(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-      vite:
-        specifier: ^8.3.5
-        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
-
-  examples/svelte/basic:
-    dependencies:
-      '@tanstack/query-async-storage-persister':
-        specifier: ^5.105.1
-        version: link:../../../packages/query-async-storage-persister
-      '@tanstack/svelte-query':
-        specifier: ^6.3.7
-        version: link:../../../packages/svelte-query
-      '@tanstack/svelte-query-devtools':
-        specifier: ^6.3.7
-        version: link:../../../packages/svelte-query-devtools
-      '@tanstack/svelte-query-persist-client':
-        specifier: ^6.3.7
-        version: link:../../../packages/svelte-query-persist-client
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^7.0.1
@@ -4086,6 +4040,52 @@ importers:
       vite:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+
+  examples/svelte/basic-sveltekit:
+    dependencies:
+      '@tanstack/query-async-storage-persister':
+        specifier: ^5.105.1
+        version: link:../../../packages/query-async-storage-persister
+      '@tanstack/svelte-query':
+        specifier: ^6.3.7
+        version: link:../../../packages/svelte-query
+      '@tanstack/svelte-query-devtools':
+        specifier: ^6.3.7
+        version: link:../../../packages/svelte-query-devtools
+      '@tanstack/svelte-query-persist-client':
+        specifier: ^6.3.7
+        version: link:../../../packages/svelte-query-persist-client
+    devDependencies:
+      '@sveltejs/adapter-auto':
+        specifier: ^7.0.1
+        version: 7.0.1(@sveltejs/kit@2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))
+      '@sveltejs/kit':
+        specifier: ^2.70.3
+        version: 2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
+      '@sveltejs/vite-plugin-svelte':
+        specifier: ^7.3.1
+        version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.1
+        version: link:../../../packages/eslint-plugin-query
+      '@typescript-eslint/parser':
+        specifier: ^8.72.0
+        version: 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint-plugin-svelte:
+        specifier: ^3.23.0
+        version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
+      svelte:
+        specifier: ^5.57.1
+        version: 5.57.1(@typescript-eslint/types@8.58.1)
+      svelte-check:
+        specifier: ^4.7.7
+        version: 4.7.7(picomatch@4.0.7)(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
   examples/svelte/batching:
     dependencies:
@@ -4207,7 +4207,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/svelte/infinite-query-with-max-pages:
+  examples/svelte/infinite-query-with-max-pages-sveltekit:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^6.3.7
@@ -4247,7 +4247,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/svelte/load-more-infinite-scroll:
+  examples/svelte/load-more-infinite-scroll-sveltekit:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^6.3.7
@@ -4287,7 +4287,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
-  examples/svelte/offline:
+  examples/svelte/offline-sveltekit:
     dependencies:
       '@tanstack/query-async-storage-persister':
         specifier: ^5.105.1
@@ -4339,7 +4339,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/svelte/optimistic-updates:
+  examples/svelte/optimistic-updates-sveltekit:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^6.3.7
@@ -4379,7 +4379,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
-  examples/svelte/pagination:
+  examples/svelte/pagination-sveltekit:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^6.3.7
@@ -4419,7 +4419,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/svelte/playground:
+  examples/svelte/playground-sveltekit:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^6.3.7
@@ -4459,7 +4459,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
-  examples/svelte/prefetching:
+  examples/svelte/prefetching-sveltekit:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^6.3.7
@@ -4499,7 +4499,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
 
-  examples/svelte/rick-morty:
+  examples/svelte/rick-morty-sveltekit:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^6.3.7
@@ -4619,7 +4619,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
-  examples/svelte/ssr:
+  examples/svelte/ssr-sveltekit:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^6.3.7
@@ -4659,7 +4659,7 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
-  examples/svelte/star-wars:
+  examples/svelte/star-wars-sveltekit:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^6.3.7
@@ -4791,7 +4791,7 @@ importers:
         specifier: ^3.3.13
         version: 3.3.13(typescript@6.0.3)
 
-  examples/vue/auto-refetching:
+  examples/vue/auto-refetching-nuxt4:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.105.1
@@ -5078,7 +5078,7 @@ importers:
         specifier: ^3.3.13
         version: 3.3.13(typescript@6.0.3)
 
-  examples/vue/infinite-query-with-max-pages:
+  examples/vue/infinite-query-with-max-pages-nuxt4:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.105.1
@@ -5115,7 +5115,7 @@ importers:
         specifier: ^3.3.13
         version: 3.3.13(typescript@6.0.3)
 
-  examples/vue/load-more-infinite-scroll:
+  examples/vue/load-more-infinite-scroll-nuxt4:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.105.1
@@ -5155,7 +5155,7 @@ importers:
         specifier: ^3.3.13
         version: 3.3.13(typescript@6.0.3)
 
-  examples/vue/offline:
+  examples/vue/offline-vue-router:
     dependencies:
       '@tanstack/query-async-storage-persister':
         specifier: ^5.105.1
@@ -5204,7 +5204,7 @@ importers:
         specifier: ^3.3.13
         version: 3.3.13(typescript@6.0.3)
 
-  examples/vue/optimistic-updates:
+  examples/vue/optimistic-updates-nuxt4:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.105.1
@@ -5241,7 +5241,7 @@ importers:
         specifier: ^3.3.13
         version: 3.3.13(typescript@6.0.3)
 
-  examples/vue/pagination:
+  examples/vue/pagination-nuxt4:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.105.1
@@ -5346,7 +5346,7 @@ importers:
         specifier: ^3.3.13
         version: 3.3.13(typescript@6.0.3)
 
-  examples/vue/prefetching:
+  examples/vue/prefetching-nuxt4:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.105.1
@@ -5383,7 +5383,7 @@ importers:
         specifier: ^3.3.13
         version: 3.3.13(typescript@6.0.3)
 
-  examples/vue/rick-morty:
+  examples/vue/rick-morty-vue-router:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.105.1
@@ -5568,7 +5568,7 @@ importers:
         specifier: ^3.3.13
         version: 3.3.13(typescript@6.0.3)
 
-  examples/vue/star-wars:
+  examples/vue/star-wars-vue-router:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.105.1
