@@ -1,0 +1,37 @@
+{
+  "name": "@tanstack/query-example-vue-offline-tanstack-router",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src",
+    "test:types": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/query-async-storage-persister": "^5.105.1",
+    "@tanstack/query-persist-client-core": "^5.105.1",
+    "@tanstack/vue-query": "^5.105.1",
+    "@tanstack/vue-query-devtools": "^6.3.7",
+    "@tanstack/vue-router": "^1.170.42",
+    "msw": "^2.15.0",
+    "vue": "^3.5.43",
+    "vue-sonner": "^2.0.9"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.105.1",
+    "@tanstack/router-plugin": "^1.168.48",
+    "@vitejs/plugin-vue": "^6.0.9",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.12.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5",
+    "vue-tsc": "^3.3.13"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
+}

@@ -390,7 +390,7 @@ export default function App() {
 [//]: # 'Example11'
 [//]: # 'OfflineExampleLink'
 
-We also have an extensive [offline example](../examples/offline) that covers both queries and mutations.
+We also have an extensive [offline example](../examples/offline-tanstack-router) that covers both queries and mutations.
 
 [//]: # 'OfflineExampleLink'
 
