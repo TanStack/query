@@ -542,6 +542,14 @@
               "to": "framework/svelte/guides/network-mode"
             },
             {
+              "label": "Parallel Queries",
+              "to": "framework/svelte/guides/parallel-queries"
+            },
+            {
+              "label": "Query Retries",
+              "to": "framework/svelte/guides/query-retries"
+            },
+            {
               "label": "Mutations",
               "to": "framework/svelte/guides/mutations"
             },
