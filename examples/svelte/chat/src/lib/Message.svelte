@@ -1,11 +1,10 @@
 <script lang="ts">
-  let {
-    inProgress,
-    message,
-  }: {
+  type Props = {
     inProgress?: boolean
     message: { content: string; isQuestion: boolean }
-  } = $props()
+  }
+
+  let { inProgress, message }: Props = $props()
 </script>
 
 <div class="flex {message.isQuestion ? 'justify-end' : 'justify-start'}">

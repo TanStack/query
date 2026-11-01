@@ -161,7 +161,7 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const [state] = useQueries(() => ({
+      const queries = useQueries(() => ({
         queries: [
           {
             queryKey: key,
@@ -172,16 +172,16 @@ describe('PersistQueryClientProvider', () => {
 
       createEffect(() =>
         states.push({
-          status: state.status,
-          fetchStatus: state.fetchStatus,
-          data: state.data,
+          status: queries[0].status,
+          fetchStatus: queries[0].fetchStatus,
+          data: queries[0].data,
         }),
       )
 
       return (
         <div>
-          <h1>{state.data}</h1>
-          <h2>fetchStatus: {state.fetchStatus}</h2>
+          <h1>{queries[0].data}</h1>
+          <h2>fetchStatus: {queries[0].fetchStatus}</h2>
         </div>
       )
     }

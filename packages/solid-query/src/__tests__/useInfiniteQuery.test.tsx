@@ -964,12 +964,11 @@ describe('useInfiniteQuery', () => {
       })
 
       createEffect(() => {
-        const { refetch, fetchNextPage } = state
         setActTimeout(() => {
-          refetch()
+          state.refetch()
         }, 100)
         setActTimeout(() => {
-          fetchNextPage()
+          state.fetchNextPage()
         }, 110)
       })
 
@@ -1045,12 +1044,11 @@ describe('useInfiniteQuery', () => {
       }))
 
       createEffect(() => {
-        const { fetchNextPage } = state
         setActTimeout(() => {
-          fetchNextPage()
+          state.fetchNextPage()
         }, 100)
         setActTimeout(() => {
-          fetchNextPage()
+          state.fetchNextPage()
         }, 110)
       })
 
@@ -1122,12 +1120,11 @@ describe('useInfiniteQuery', () => {
       }))
 
       createEffect(() => {
-        const { fetchNextPage } = state
         setActTimeout(() => {
-          fetchNextPage()
+          state.fetchNextPage()
         }, 100)
         setActTimeout(() => {
-          fetchNextPage({ cancelRefetch: false })
+          state.fetchNextPage({ cancelRefetch: false })
         }, 110)
       })
 
@@ -1181,9 +1178,8 @@ describe('useInfiniteQuery', () => {
       })
 
       createEffect(() => {
-        const { fetchNextPage } = state
         setActTimeout(() => {
-          fetchNextPage()
+          state.fetchNextPage()
         }, 10)
       })
 
@@ -1284,14 +1280,13 @@ describe('useInfiniteQuery', () => {
       })
 
       createEffect(() => {
-        const { refetch } = state
         setActTimeout(() => {
           queryClient.setQueryData(key, { pages: [7, 8], pageParams: [7, 8] })
           setFirstPage(7)
         }, 20)
 
         setActTimeout(() => {
-          refetch()
+          state.refetch()
         }, 50)
       })
 
@@ -1451,9 +1446,8 @@ describe('useInfiniteQuery', () => {
       })
 
       createEffect(() => {
-        const { fetchNextPage } = state
         setActTimeout(() => {
-          fetchNextPage()
+          state.fetchNextPage()
         }, 20)
       })
 

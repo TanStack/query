@@ -35,19 +35,19 @@ describe('useIsMutating', () => {
     }
 
     function Mutations() {
-      const { mutate: mutate1 } = useMutation(() => ({
+      const mutation1 = useMutation(() => ({
         mutationKey: mutationKey1,
         mutationFn: () => sleep(150).then(() => 'data'),
       }))
-      const { mutate: mutate2 } = useMutation(() => ({
+      const mutation2 = useMutation(() => ({
         mutationKey: mutationKey2,
         mutationFn: () => sleep(50).then(() => 'data'),
       }))
 
       createEffect(() => {
-        mutate1()
+        mutation1.mutate()
         setActTimeout(() => {
-          mutate2()
+          mutation2.mutate()
         }, 50)
       })
 
@@ -85,18 +85,18 @@ describe('useIsMutating', () => {
     }
 
     function Page() {
-      const { mutate: mutate1 } = useMutation(() => ({
+      const mutation1 = useMutation(() => ({
         mutationKey: mutationKey1,
         mutationFn: () => sleep(100).then(() => 'data'),
       }))
-      const { mutate: mutate2 } = useMutation(() => ({
+      const mutation2 = useMutation(() => ({
         mutationKey: mutationKey2,
         mutationFn: () => sleep(100).then(() => 'data'),
       }))
 
       createEffect(() => {
-        mutate1()
-        mutate2()
+        mutation1.mutate()
+        mutation2.mutate()
       })
 
       return <IsMutating />
@@ -128,18 +128,18 @@ describe('useIsMutating', () => {
     }
 
     function Page() {
-      const { mutate: mutate1 } = useMutation(() => ({
+      const mutation1 = useMutation(() => ({
         mutationKey: mutationKey1,
         mutationFn: () => sleep(100).then(() => 'data'),
       }))
-      const { mutate: mutate2 } = useMutation(() => ({
+      const mutation2 = useMutation(() => ({
         mutationKey: mutationKey2,
         mutationFn: () => sleep(100).then(() => 'data'),
       }))
 
       createEffect(() => {
-        mutate1()
-        mutate2()
+        mutation1.mutate()
+        mutation2.mutate()
       })
 
       return <IsMutating />
@@ -158,7 +158,7 @@ describe('useIsMutating', () => {
 
     function Page() {
       const isMutating = useIsMutating(undefined, () => customClient)
-      const { mutate } = useMutation(
+      const mutation = useMutation(
         () => ({
           mutationKey: mutationKey1,
           mutationFn: () => sleep(20).then(() => 'data'),
@@ -168,7 +168,7 @@ describe('useIsMutating', () => {
 
       createEffect(() => {
         setActTimeout(() => {
-          mutate()
+          mutation.mutate()
         }, 10)
       })
 
@@ -266,13 +266,13 @@ describe('useIsMutating', () => {
     function Page() {
       const [mounted, setMounted] = createSignal(true)
 
-      const { mutate: mutate1 } = useMutation(() => ({
+      const mutation1 = useMutation(() => ({
         mutationKey: mutationKey1,
         mutationFn: () => sleep(10).then(() => 'data'),
       }))
 
       createEffect(() => {
-        mutate1()
+        mutation1.mutate()
       })
 
       return (

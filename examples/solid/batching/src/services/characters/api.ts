@@ -13,6 +13,7 @@ const fetchCharacters = async (ids: ReadonlyArray<number>) => {
   const res = await fetch(
     `https://rickandmortyapi.com/api/character/[${ids.join(',')}]`,
   )
+  if (!res.ok) throw new Error('Failed to fetch characters')
   const characters = (await res.json()) as Array<CharacterT> | CharacterT
 
   const characterMap = new Map<number, CharacterT>()

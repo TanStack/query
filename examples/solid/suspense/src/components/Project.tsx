@@ -25,7 +25,7 @@ export default function Project(props: {
       <div>
         <p>forks: {projectQuery.data?.forks_count}</p>
         <p>stars: {projectQuery.data?.stargazers_count}</p>
-        <p>watchers: {projectQuery.data?.watchers_count}</p>
+        <p>watchers: {projectQuery.data?.subscribers_count}</p>
       </div>
       <br />
       <br />

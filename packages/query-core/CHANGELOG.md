@@ -1,5 +1,13 @@
 # @tanstack/query-core
 
+## 5.105.1
+
+### Patch Changes
+
+- [#12406](https://github.com/TanStack/query/pull/12406) [`6f8a48d`](https://github.com/TanStack/query/commit/6f8a48d543b499b6d9b0e95050c28183c8c18ae0) - Reduce temporary allocations when checking tracked result properties for observer notifications.
+
+- [#12390](https://github.com/TanStack/query/pull/12390) [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf) - Exclude `fetchStatus` from the filters accepted by `QueryClient.isFetching`, `useIsFetching`, and `injectIsFetching`. These APIs always count queries with `fetchStatus: 'fetching'`.
+
 ## 5.105.0
 
 No changes in this release.

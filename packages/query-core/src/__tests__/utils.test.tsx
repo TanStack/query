@@ -50,6 +50,27 @@ describe('core/utils', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toBe(true)
     })
 
+    it('should return `true` when comparing an object with inherited properties to itself', () => {
+      const a = { a: 1 }
+      Object.setPrototypeOf(a, { inherited: 1 })
+
+      expect(shallowEqualObjects(a, a)).toBe(true)
+    })
+
+    it('should ignore inherited properties when comparing equal own properties', () => {
+      const a = { a: 1 }
+      const b = { a: 1 }
+      Object.setPrototypeOf(a, { inherited: 1 })
+
+      expect(shallowEqualObjects(a, b)).toBe(true)
+      expect(shallowEqualObjects(b, a)).toBe(true)
+
+      Object.setPrototypeOf(b, { inherited: 2 })
+
+      expect(shallowEqualObjects(a, b)).toBe(true)
+      expect(shallowEqualObjects(b, a)).toBe(true)
+    })
+
     it('should return `false` for non shallow equal objects', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 2 })).toBe(false)
     })
@@ -60,6 +81,13 @@ describe('core/utils', () => {
 
     it('should return false if b is undefined', () => {
       expect(shallowEqualObjects({ a: 1 }, undefined)).toBe(false)
+    })
+
+    it('should return `false` for same-length objects with different keys', () => {
+      expect(
+        shallowEqualObjects({ a: 1, b: undefined }, { a: 1, c: undefined }),
+      ).toBe(false)
+      expect(shallowEqualObjects({ a: 1, b: 2 }, { a: 1, c: 2 })).toBe(false)
     })
   })
 

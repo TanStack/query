@@ -3,13 +3,17 @@
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
   import DogList from './lib/DogList.svelte'
 
-  let { shadowRoot }: { shadowRoot: ShadowRoot } = $props()
+  type Props = {
+    shadowRoot: ShadowRoot
+  }
+
+  let { shadowRoot }: Props = $props()
 
   const queryClient = new QueryClient()
 </script>
 
 <QueryClientProvider client={queryClient}>
-  <div style="width: 100vw; padding: 30px">
+  <div style="padding: 30px">
     <h2>Dog Breeds</h2>
     <DogList />
   </div>
