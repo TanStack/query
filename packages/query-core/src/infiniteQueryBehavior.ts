@@ -3,8 +3,9 @@ import {
   addToEnd,
   addToStart,
   ensureQueryFn,
-  getFetchSignal,
+  fetchSignal,
 } from './utils'
+import type { FetchSignalContext } from './utils'
 import type { QueryBehavior } from './query'
 import type {
   InfiniteData,
@@ -36,12 +37,13 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
 
       const fetchFn = async () => {
         let cancelled = false
+        const signalContext: FetchSignalContext = context
         const addSignalProperty = (object: object) => {
           addConsumeAwareSignal(
             object,
             () => context.signal,
             () => (cancelled = true),
-            getFetchSignal(context),
+            signalContext[fetchSignal],
           )
         }
 

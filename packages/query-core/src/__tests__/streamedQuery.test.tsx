@@ -537,6 +537,28 @@ describe('streamedQuery', () => {
     },
   )
 
+  it('should honor an overridden signal on a copied context', async () => {
+    const key = createKey()
+    const controller = new AbortController()
+    const queryFn = streamedQuery({
+      streamFn: () => createAsyncNumberGenerator(3),
+    })
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: (context) => queryFn({ ...context, signal: controller.signal }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+    await vi.advanceTimersByTimeAsync(50)
+    expect(queryClient.getQueryData(key)).toStrictEqual([0])
+
+    controller.abort()
+    await vi.advanceTimersByTimeAsync(150)
+
+    expect(queryClient.getQueryData(key)).toStrictEqual([0])
+    unsubscribe()
+  })
+
   it('should keep a custom signal getter lazy', async () => {
     const key = createKey()
     const controller = new AbortController()

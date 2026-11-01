@@ -1,4 +1,5 @@
-import { addConsumeAwareSignal, addToEnd, getFetchSignal } from './utils'
+import { addConsumeAwareSignal, addToEnd, fetchSignal } from './utils'
+import type { FetchSignalContext } from './utils'
 import type {
   OmitKeyof,
   QueryFunction,
@@ -50,10 +51,27 @@ type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
   | ReducibleStreamedQueryParams<TQueryFnData, TData, TQueryKey>
 
 /**
+ * Reads cancellation state without consuming an unknown signal getter.
+ * @param context - A core context or an application-created context.
+ * @returns The internal signal or an own signal data property, if available.
+ */
+function getFetchSignal(context: FetchSignalContext): AbortSignal | undefined {
+  const signal = context[fetchSignal]
+  if (signal) {
+    return signal
+  }
+
+  const descriptor = Object.getOwnPropertyDescriptor(context, 'signal')
+  return descriptor && 'value' in descriptor ? context.signal : undefined
+}
+
+/**
  * This is a helper function to create a query function that streams data from an AsyncIterable.
  * Data will be an Array of all the chunks received.
  * The query will be in a 'pending' state until the first chunk of data is received, but will go to 'success' after that.
  * The query will stay in fetchStatus 'fetching' until the stream ends.
+ * Explicit cancellation stops further cache updates, even if `streamFn` does not read `signal`.
+ * If `streamFn` does not read `signal`, the stream continues after the last observer unsubscribes.
  * @param options - The `streamFn` that returns an AsyncIterable to stream data from, and the optional
  * `refetchMode`, `reducer`, and `initialValue` options.
  * @returns A query function to pass as `queryFn`.

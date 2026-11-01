@@ -700,37 +700,14 @@ export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
   return !!throwOnError
 }
 
-const fetchSignals = new WeakMap<object, AbortSignal>()
+export const fetchSignal = Symbol()
 
-/**
- * Associates a context with its fetch signal without consuming the signal getter.
- * @param context - The fetch or query function context.
- * @param signal - The signal for the fetch, if available.
- */
-export function setFetchSignal(
-  context: object,
-  signal: AbortSignal | undefined,
-): void {
-  if (signal) {
-    fetchSignals.set(context, signal)
-  }
-}
-
-/**
- * Gets a fetch signal without invoking a context's signal getter.
- * @param context - The fetch or query function context.
- * @returns The registered signal or an own signal data property, if available.
- */
-export function getFetchSignal(context: {
+/** Internal view of a context that can expose its signal without consuming it. */
+export type FetchSignalContext = {
+  /** The public signal, whose getter can mark it consumed. */
   readonly signal: AbortSignal
-}): AbortSignal | undefined {
-  const signal = fetchSignals.get(context)
-  if (signal) {
-    return signal
-  }
-
-  const descriptor = Object.getOwnPropertyDescriptor(context, 'signal')
-  return descriptor && 'value' in descriptor ? context.signal : undefined
+  /** The original fetch signal, absent on application-created contexts. */
+  readonly [fetchSignal]?: AbortSignal
 }
 
 /**
@@ -749,26 +726,28 @@ export function addConsumeAwareSignal<T extends object>(
   onCancelled: () => void,
   internalSignal?: AbortSignal,
 ): T & { signal: AbortSignal } {
-  setFetchSignal(object, internalSignal)
   let consumed = false
   let signal: AbortSignal | undefined
 
-  Object.defineProperty(object, 'signal', {
-    enumerable: true,
-    get: () => {
-      signal ??= getSignal()
-      if (consumed) {
+  Object.defineProperties(object, {
+    [fetchSignal]: { value: internalSignal },
+    signal: {
+      enumerable: true,
+      get: () => {
+        signal ??= getSignal()
+        if (consumed) {
+          return signal
+        }
+
+        consumed = true
+        if (signal.aborted) {
+          onCancelled()
+        } else {
+          signal.addEventListener('abort', onCancelled, { once: true })
+        }
+
         return signal
-      }
-
-      consumed = true
-      if (signal.aborted) {
-        onCancelled()
-      } else {
-        signal.addEventListener('abort', onCancelled, { once: true })
-      }
-
-      return signal
+      },
     },
   })
 
