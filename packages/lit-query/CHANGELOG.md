@@ -1,5 +1,15 @@
 # @tanstack/lit-query
 
+## 0.2.32
+
+### Patch Changes
+
+- [#12189](https://github.com/TanStack/query/pull/12189) [`5c5c11c`](https://github.com/TanStack/query/commit/5c5c11c6e729160a856a327af64fe08467cf80f2) - fix(lit-query/package.json): remove '@tanstack/query-core' from 'peerDependencies' and move 'lit' to 'devDependencies'
+
+- [#12390](https://github.com/TanStack/query/pull/12390) [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf) - Exclude `fetchStatus` from the filters accepted by `QueryClient.isFetching`, `useIsFetching`, and `injectIsFetching`. These APIs always count queries with `fetchStatus: 'fetching'`.
+- Updated dependencies [[`6f8a48d`](https://github.com/TanStack/query/commit/6f8a48d543b499b6d9b0e95050c28183c8c18ae0), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/query-core@5.105.1
+
 ## 0.2.31
 
 ### Patch Changes
