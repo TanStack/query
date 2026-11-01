@@ -442,7 +442,7 @@ const articleRoute = new Route({
 })
 ```
 
-Integration with other routers is also possible, see the [react-router](../examples/react-router) for another demonstration.
+Integration with other routers is also possible, see the [contacts-react-router](../examples/contacts-react-router) for another demonstration.
 
 [//]: # 'Router'
 

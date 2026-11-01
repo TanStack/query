@@ -6816,7 +6816,7 @@
             },
             {
               "label": "Contacts (React Router)",
-              "to": "framework/react/examples/react-router"
+              "to": "framework/react/examples/contacts-react-router"
             },
             {
               "label": "Contacts (TanStack Router)",
@@ -6909,7 +6909,7 @@
             },
             {
               "label": "Contacts (Solid Router)",
-              "to": "framework/solid/examples/solid-router"
+              "to": "framework/solid/examples/contacts-solid-router"
             },
             {
               "label": "Contacts (TanStack Router)",
@@ -7006,7 +7006,7 @@
             },
             {
               "label": "Contacts (Vue Router)",
-              "to": "framework/vue/examples/vue-router"
+              "to": "framework/vue/examples/contacts-vue-router"
             },
             {
               "label": "Contacts (TanStack Router)",

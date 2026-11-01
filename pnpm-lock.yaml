@@ -2370,6 +2370,61 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
+  examples/react/contacts-react-router:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.105.1
+        version: link:../../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: ^5.105.1
+        version: link:../../../packages/react-query-devtools
+      localforage:
+        specifier: ^1.10.0
+        version: 1.10.0
+      match-sorter:
+        specifier: ^8.3.0
+        version: 8.3.0
+      react:
+        specifier: ^19.3.1
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.3.1
+        version: 19.3.1(react@19.3.1)
+      react-router:
+        specifier: ^8.5.0
+        version: 8.5.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      rooks:
+        specifier: ^9.9.0
+        version: 9.9.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      sort-by:
+        specifier: ^1.2.0
+        version: 1.2.0
+    devDependencies:
+      '@eslint-react/eslint-plugin':
+        specifier: ^5.28.8
+        version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.1
+        version: link:../../../packages/eslint-plugin-query
+      '@types/react':
+        specifier: ^19.3.0
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.3.0
+        version: 19.3.0(@types/react@19.3.0)
+      '@types/sort-by':
+        specifier: ^1.2.3
+        version: 1.2.3
+      '@vitejs/plugin-react':
+        specifier: ^6.1.1
+        version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
+
   examples/react/contacts-tanstack-router:
     dependencies:
       '@tanstack/react-query':
@@ -3031,61 +3086,6 @@ importers:
         specifier: ~6.0.3
         version: 6.0.3
 
-  examples/react/react-router:
-    dependencies:
-      '@tanstack/react-query':
-        specifier: ^5.105.1
-        version: link:../../../packages/react-query
-      '@tanstack/react-query-devtools':
-        specifier: ^5.105.1
-        version: link:../../../packages/react-query-devtools
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
-      match-sorter:
-        specifier: ^8.3.0
-        version: 8.3.0
-      react:
-        specifier: ^19.3.1
-        version: 19.3.1
-      react-dom:
-        specifier: ^19.3.1
-        version: 19.3.1(react@19.3.1)
-      react-router:
-        specifier: ^8.5.0
-        version: 8.5.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      rooks:
-        specifier: ^9.9.0
-        version: 9.9.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      sort-by:
-        specifier: ^1.2.0
-        version: 1.2.0
-    devDependencies:
-      '@eslint-react/eslint-plugin':
-        specifier: ^5.28.8
-        version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      '@tanstack/eslint-plugin-query':
-        specifier: ^5.105.1
-        version: link:../../../packages/eslint-plugin-query
-      '@types/react':
-        specifier: ^19.3.0
-        version: 19.3.0
-      '@types/react-dom':
-        specifier: ^19.3.0
-        version: 19.3.0(@types/react@19.3.0)
-      '@types/sort-by':
-        specifier: ^1.2.3
-        version: 1.2.3
-      '@vitejs/plugin-react':
-        specifier: ^6.1.1
-        version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-      vite:
-        specifier: ^8.3.5
-        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
-
   examples/react/rick-morty-react-router:
     dependencies:
       '@tanstack/react-query':
@@ -3524,6 +3524,52 @@ importers:
         specifier: ^2.11.14
         version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
 
+  examples/solid/contacts-solid-router:
+    dependencies:
+      '@solid-primitives/scheduled':
+        specifier: ^1.5.3
+        version: 1.5.3(solid-js@1.9.15)
+      '@solidjs/router':
+        specifier: ^1.0.0
+        version: 1.0.0(solid-js@1.9.15)
+      '@tanstack/solid-query':
+        specifier: ^5.105.1
+        version: link:../../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: ^5.105.1
+        version: link:../../../packages/solid-query-devtools
+      localforage:
+        specifier: ^1.10.0
+        version: 1.10.0
+      match-sorter:
+        specifier: ^8.3.0
+        version: 8.3.0
+      solid-js:
+        specifier: ^1.9.15
+        version: 1.9.15
+      sort-by:
+        specifier: ^1.2.0
+        version: 1.2.0
+    devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.1
+        version: link:../../../packages/eslint-plugin-query
+      '@types/sort-by':
+        specifier: ^1.2.3
+        version: 1.2.3
+      eslint-plugin-solid:
+        specifier: ^0.18.1
+        version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+      vite-plugin-solid:
+        specifier: ^2.11.14
+        version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
+
   examples/solid/contacts-tanstack-router:
     dependencies:
       '@solid-primitives/scheduled':
@@ -3879,52 +3925,6 @@ importers:
       vite-plugin-solid:
         specifier: ^2.11.14
         version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
-
-  examples/solid/solid-router:
-    dependencies:
-      '@solid-primitives/scheduled':
-        specifier: ^1.5.3
-        version: 1.5.3(solid-js@1.9.15)
-      '@solidjs/router':
-        specifier: ^1.0.0
-        version: 1.0.0(solid-js@1.9.15)
-      '@tanstack/solid-query':
-        specifier: ^5.105.1
-        version: link:../../../packages/solid-query
-      '@tanstack/solid-query-devtools':
-        specifier: ^5.105.1
-        version: link:../../../packages/solid-query-devtools
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
-      match-sorter:
-        specifier: ^8.3.0
-        version: 8.3.0
-      solid-js:
-        specifier: ^1.9.15
-        version: 1.9.15
-      sort-by:
-        specifier: ^1.2.0
-        version: 1.2.0
-    devDependencies:
-      '@tanstack/eslint-plugin-query':
-        specifier: ^5.105.1
-        version: link:../../../packages/eslint-plugin-query
-      '@types/sort-by':
-        specifier: ^1.2.3
-        version: 1.2.3
-      eslint-plugin-solid:
-        specifier: ^0.18.1
-        version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-      vite:
-        specifier: ^8.3.5
-        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
-      vite-plugin-solid:
-        specifier: ^2.11.14
-        version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
 
   examples/solid/solid-start-streaming:
     dependencies:
@@ -5141,6 +5141,58 @@ importers:
         specifier: ^3.3.13
         version: 3.3.13(typescript@6.0.3)
 
+  examples/vue/contacts-vue-router:
+    dependencies:
+      '@tanstack/vue-query':
+        specifier: ^5.105.1
+        version: link:../../../packages/vue-query
+      '@tanstack/vue-query-devtools':
+        specifier: ^6.3.7
+        version: link:../../../packages/vue-query-devtools
+      '@vueuse/core':
+        specifier: ^15.0.0
+        version: 15.0.0(vue@3.5.44(typescript@6.0.3))
+      localforage:
+        specifier: ^1.10.0
+        version: 1.10.0
+      match-sorter:
+        specifier: ^8.3.0
+        version: 8.3.0
+      sort-by:
+        specifier: ^1.2.0
+        version: 1.2.0
+      vue:
+        specifier: ^3.5.43
+        version: 3.5.44(typescript@6.0.3)
+      vue-router:
+        specifier: ^5.4.0
+        version: 5.4.0(@vue/compiler-sfc@3.5.43)(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.60.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))(webpack@5.105.4)
+    devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.105.1
+        version: link:../../../packages/eslint-plugin-query
+      '@types/sort-by':
+        specifier: ^1.2.3
+        version: 1.2.3
+      '@vitejs/plugin-vue':
+        specifier: ^6.0.9
+        version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint-config-prettier:
+        specifier: ^10.1.8
+        version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
+      eslint-plugin-vue:
+        specifier: ^10.12.0
+        version: 10.12.0(@stylistic/eslint-plugin@5.10.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2)))(@typescript-eslint/parser@8.70.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(vue-eslint-parser@10.4.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2))
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
+      vue-tsc:
+        specifier: ^3.3.13
+        version: 3.3.13(typescript@6.0.3)
+
   examples/vue/default-query-function:
     dependencies:
       '@tanstack/vue-query':
@@ -5791,58 +5843,6 @@ importers:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.105.1
         version: link:../../../packages/eslint-plugin-query
-      '@vitejs/plugin-vue':
-        specifier: ^6.0.9
-        version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
-      eslint-config-prettier:
-        specifier: ^10.1.8
-        version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
-      eslint-plugin-vue:
-        specifier: ^10.12.0
-        version: 10.12.0(@stylistic/eslint-plugin@5.10.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2)))(@typescript-eslint/parser@8.70.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(vue-eslint-parser@10.4.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2))
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-      vite:
-        specifier: ^8.3.5
-        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)
-      vue-tsc:
-        specifier: ^3.3.13
-        version: 3.3.13(typescript@6.0.3)
-
-  examples/vue/vue-router:
-    dependencies:
-      '@tanstack/vue-query':
-        specifier: ^5.105.1
-        version: link:../../../packages/vue-query
-      '@tanstack/vue-query-devtools':
-        specifier: ^6.3.7
-        version: link:../../../packages/vue-query-devtools
-      '@vueuse/core':
-        specifier: ^15.0.0
-        version: 15.0.0(vue@3.5.44(typescript@6.0.3))
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
-      match-sorter:
-        specifier: ^8.3.0
-        version: 8.3.0
-      sort-by:
-        specifier: ^1.2.0
-        version: 1.2.0
-      vue:
-        specifier: ^3.5.43
-        version: 3.5.44(typescript@6.0.3)
-      vue-router:
-        specifier: ^5.4.0
-        version: 5.4.0(@vue/compiler-sfc@3.5.43)(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.60.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))(webpack@5.105.4)
-    devDependencies:
-      '@tanstack/eslint-plugin-query':
-        specifier: ^5.105.1
-        version: link:../../../packages/eslint-plugin-query
-      '@types/sort-by':
-        specifier: ^1.2.3
-        version: 1.2.3
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))

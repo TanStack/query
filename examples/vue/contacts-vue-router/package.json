@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-vue-vue-router",
+  "name": "@tanstack/query-example-vue-contacts-vue-router",
   "private": true,
   "type": "module",
   "scripts": {
