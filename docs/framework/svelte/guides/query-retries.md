@@ -56,11 +56,12 @@ replace:
 ```svelte
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  const result = useQuery({
+
+  const result = createQuery(() => ({
     queryKey: ['todos'],
     queryFn: fetchTodoList,
     retryDelay: 1000, // Will always wait 1000ms to retry, regardless of how many retries
-  })
+  }))
 </script>
 ```
 

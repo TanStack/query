@@ -21,6 +21,7 @@ replace:
 ```svelte
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
+  
   // The following queries will execute in parallel
   const usersQuery = createQuery(() => ({ queryKey: ['users'], queryFn: fetchUsers }))
   const teamsQuery = createQuery(() => ({ queryKey: ['teams'], queryFn: fetchTeams }))
@@ -48,7 +49,7 @@ If the number of queries you need to execute changes, you cannot use manual quer
 <script lang="ts">
   import { createQueries } from '@tanstack/svelte-query'
 
-  const { users }: { users: { id: string } } = $props()
+  const { users }: { users: { id: string }[] } = $props()
   const userQueries = createQueries(() => ({
     queries: users.map((user) => {
       return {
