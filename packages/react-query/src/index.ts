@@ -17,6 +17,7 @@ export type {
 } from './useSuspenseQueries'
 export { usePrefetchQuery } from './usePrefetchQuery'
 export { usePrefetchInfiniteQuery } from './usePrefetchInfiniteQuery'
+export { useWaterfall as experimental_useWaterfall } from './useWaterfall'
 export { queryOptions } from './queryOptions'
 export type {
   DefinedInitialDataOptions,
