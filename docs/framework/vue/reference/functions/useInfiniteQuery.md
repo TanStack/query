@@ -34,8 +34,8 @@ Defined in: [packages/vue-query/src/useInfiniteQuery.ts:127](https://github.com/
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
-a `select` changes `TData` to include `undefined`).
+This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+`undefined` (unless a `select` changes `TData` to include `undefined`).
 
 `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
 (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
@@ -70,7 +70,7 @@ individual entries — the array itself can't be a bare getter.
 `MaybeRefOrGetter`\<[`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>\>
 
 The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
-`useInfiniteQuery`, with `initialData` set.
+`useInfiniteQuery`, with `initialData` known to be defined.
 
 #### queryClient?
 

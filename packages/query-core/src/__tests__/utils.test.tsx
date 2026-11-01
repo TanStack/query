@@ -50,6 +50,27 @@ describe('core/utils', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toBe(true)
     })
 
+    it('should return `true` when comparing an object with inherited properties to itself', () => {
+      const a = { a: 1 }
+      Object.setPrototypeOf(a, { inherited: 1 })
+
+      expect(shallowEqualObjects(a, a)).toBe(true)
+    })
+
+    it('should ignore inherited properties when comparing equal own properties', () => {
+      const a = { a: 1 }
+      const b = { a: 1 }
+      Object.setPrototypeOf(a, { inherited: 1 })
+
+      expect(shallowEqualObjects(a, b)).toBe(true)
+      expect(shallowEqualObjects(b, a)).toBe(true)
+
+      Object.setPrototypeOf(b, { inherited: 2 })
+
+      expect(shallowEqualObjects(a, b)).toBe(true)
+      expect(shallowEqualObjects(b, a)).toBe(true)
+    })
+
     it('should return `false` for non shallow equal objects', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 2 })).toBe(false)
     })
@@ -60,6 +81,13 @@ describe('core/utils', () => {
 
     it('should return false if b is undefined', () => {
       expect(shallowEqualObjects({ a: 1 }, undefined)).toBe(false)
+    })
+
+    it('should return `false` for same-length objects with different keys', () => {
+      expect(
+        shallowEqualObjects({ a: 1, b: undefined }, { a: 1, c: undefined }),
+      ).toBe(false)
+      expect(shallowEqualObjects({ a: 1, b: 2 }, { a: 1, c: 2 })).toBe(false)
     })
   })
 
@@ -507,6 +535,12 @@ describe('core/utils', () => {
       expect(newItems).toStrictEqual([2, 3, 4])
     })
 
+    it('should not exceed max when items already exceed max', () => {
+      const items = [1, 2, 3, 4, 5]
+      const newItems = addToEnd(items, 6, 3)
+      expect(newItems).toStrictEqual([4, 5, 6])
+    })
+
     it('should add item to the end of the array when max = 0', () => {
       const items = [1, 2, 3]
       const item = 4
@@ -535,7 +569,13 @@ describe('core/utils', () => {
       const item = 4
       const max = 2
       const newItems = addToStart(items, item, max)
-      expect(newItems).toStrictEqual([4, 1, 2])
+      expect(newItems).toStrictEqual([4, 1])
+    })
+
+    it('should not exceed max when items already exceed max', () => {
+      const items = [1, 2, 3, 4, 5]
+      const newItems = addToStart(items, 6, 3)
+      expect(newItems).toStrictEqual([6, 1, 2])
     })
 
     it('should not remove any items if max = 0', () => {
@@ -704,7 +744,7 @@ describe('core/utils', () => {
     it('should call onCancelled immediately when the signal is already aborted on first access', () => {
       const controller = new AbortController()
       controller.abort()
-      const onCancelled = vi.fn<VoidFunction>()
+      const onCancelled = vi.fn<() => void>()
       const object = addConsumeAwareSignal(
         {},
         () => controller.signal,
