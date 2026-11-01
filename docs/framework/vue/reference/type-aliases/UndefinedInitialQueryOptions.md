@@ -9,10 +9,11 @@ title: UndefinedInitialQueryOptions
 type UndefinedInitialQueryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & WithUndefinedInitialData<TQueryFnData>;
 ```
 
-Defined in: [packages/vue-query/src/queryOptions.ts:173](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L173)
+Defined in: [packages/vue-query/src/queryOptions.ts:174](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L174)
 
-The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
-`undefined` while the query is `pending`.
+The options accepted by the `queryOptions` overload selected when `initialData` is omitted, may be
+`undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is
+`pending`.
 
 ## Type Parameters
 
