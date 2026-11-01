@@ -32,10 +32,14 @@ describe('test-utils', () => {
         expected: [['a']],
       },
     ]
-    it.each(testCases)('$input $expected', ({ input, expected }) => {
-      const permutations = generatePermutations(input)
-      expect(permutations).toEqual(expected)
-    })
+
+    it.each(testCases)(
+      'should generate permutations of $input',
+      ({ input, expected }) => {
+        const permutations = generatePermutations(input)
+        expect(permutations).toStrictEqual(expected)
+      },
+    )
   })
 
   describe('generatePartialCombinations', () => {
@@ -71,8 +75,9 @@ describe('test-utils', () => {
         minLength: 0,
       },
     ]
+
     it.each(testCases)(
-      '$input $minLength $expected',
+      'should generate combinations of $input with at least $minLength items',
       ({ input, minLength, expected }) => {
         const combinations = generatePartialCombinations(input, minLength)
         expectArrayEqualIgnoreOrder(combinations, expected)
@@ -93,9 +98,13 @@ describe('test-utils', () => {
         ],
       },
     ]
-    it.each(testCases)('$input $expected', ({ data, additional, expected }) => {
-      const combinations = generateInterleavedCombinations(data, additional)
-      expectArrayEqualIgnoreOrder(combinations, expected)
-    })
+
+    it.each(testCases)(
+      'should interleave $additional into $data',
+      ({ data, additional, expected }) => {
+        const combinations = generateInterleavedCombinations(data, additional)
+        expectArrayEqualIgnoreOrder(combinations, expected)
+      },
+    )
   })
 })

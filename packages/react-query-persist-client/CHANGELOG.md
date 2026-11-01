@@ -1,5 +1,194 @@
 # @tanstack/react-query-persist-client
 
+## 5.105.1
+
+### Patch Changes
+
+- Updated dependencies [[`7ccba6e`](https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6), [`db79da7`](https://github.com/TanStack/query/commit/db79da70ede675b8f41c7b2227d0123cfdd14839), [`8be136b`](https://github.com/TanStack/query/commit/8be136b02214fe7b073673fa1cb30110a8de8482), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/react-query@5.105.1
+  - @tanstack/query-persist-client-core@5.105.1
+
+## 5.105.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.105.0
+  - @tanstack/react-query@5.105.0
+
+## 5.104.5
+
+### Patch Changes
+
+- Updated dependencies [[`1f8d134`](https://github.com/TanStack/query/commit/1f8d134ea3fa356072b40c69d5cd0227886b89bd)]:
+  - @tanstack/react-query@5.104.5
+  - @tanstack/query-persist-client-core@5.104.5
+
+## 5.104.4
+
+### Patch Changes
+
+- [#11728](https://github.com/TanStack/query/pull/11728) [`a108398`](https://github.com/TanStack/query/commit/a10839824cecec8ea141330191c2e0ad0ae2b53f) - fix(react-query*): declare '@types/react' as an optional peer dependency
+- Updated dependencies [[`c208861`](https://github.com/TanStack/query/commit/c20886163a3759725cceafb421e864e7d213ec26), [`a108398`](https://github.com/TanStack/query/commit/a10839824cecec8ea141330191c2e0ad0ae2b53f)]:
+  - @tanstack/react-query@5.104.4
+  - @tanstack/query-persist-client-core@5.104.4
+
+## 5.104.3
+
+### Patch Changes
+
+- Updated dependencies [[`ed4d849`](https://github.com/TanStack/query/commit/ed4d849731bfe6404be9d40aec84eda54f958d7f)]:
+  - @tanstack/query-persist-client-core@5.104.3
+  - @tanstack/react-query@5.104.3
+
+## 5.104.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.104.2
+  - @tanstack/react-query@5.104.2
+
+## 5.104.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.104.1
+  - @tanstack/react-query@5.104.1
+
+## 5.104.0
+
+### Minor Changes
+
+- [#11650](https://github.com/TanStack/query/pull/11650) [`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e) - Build projects with Vite 8
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/react-query@5.104.0
+  - @tanstack/query-persist-client-core@5.104.0
+
+## 5.103.3
+
+### Patch Changes
+
+- Updated dependencies [[`1c9693e`](https://github.com/TanStack/query/commit/1c9693eac75495a04ae4328a35818b1fdf264978)]:
+  - @tanstack/react-query@5.103.3
+  - @tanstack/query-persist-client-core@5.103.3
+
+## 5.103.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.103.2
+  - @tanstack/react-query@5.103.2
+
+## 5.103.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.103.1
+  - @tanstack/react-query@5.103.1
+
+## 5.103.0
+
+### Patch Changes
+
+- Updated dependencies [[`4c7cdbb`](https://github.com/TanStack/query/commit/4c7cdbb86d8196e646985cd8a3476d3ac8c12ff5)]:
+  - @tanstack/query-persist-client-core@5.103.0
+  - @tanstack/react-query@5.103.0
+
+## 5.102.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.102.8
+  - @tanstack/react-query@5.102.8
+
+## 5.102.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.102.7
+  - @tanstack/react-query@5.102.7
+
+## 5.102.6
+
+### Patch Changes
+
+- Updated dependencies [[`ac2b612`](https://github.com/TanStack/query/commit/ac2b61230ea35b90b177ba35dc030598bac9c9a6)]:
+  - @tanstack/react-query@5.102.6
+  - @tanstack/query-persist-client-core@5.102.6
+
+## 5.102.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.102.5
+  - @tanstack/react-query@5.102.5
+
+## 5.102.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.102.4
+  - @tanstack/react-query@5.102.4
+
+## 5.102.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.102.3
+  - @tanstack/react-query@5.102.3
+
+## 5.102.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.102.2
+  - @tanstack/react-query@5.102.2
+
+## 5.102.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.102.1
+  - @tanstack/react-query@5.102.1
+
+## 5.102.0
+
+### Patch Changes
+
+- Updated dependencies [[`37127db`](https://github.com/TanStack/query/commit/37127dbe479a4892dbbe28ac8ceabf8832b5f1a3), [`6e3d521`](https://github.com/TanStack/query/commit/6e3d521fe54f78624e53c1c6f9cadd678504bee8), [`294d4e6`](https://github.com/TanStack/query/commit/294d4e62c4f7d674574a4903eef2a1bc3dd1413b), [`cb6c9d3`](https://github.com/TanStack/query/commit/cb6c9d3725db0fed94fb5133820e41b7c326d2ef), [`2215bb0`](https://github.com/TanStack/query/commit/2215bb031139cdc8a84751b37a485c38ca9d2b6e), [`1ef4208`](https://github.com/TanStack/query/commit/1ef42087c9a266c2137d2ef645cbcc662f60ac93), [`fb6c3fa`](https://github.com/TanStack/query/commit/fb6c3fabda4cb6b291cccc6651ed88a7db901915), [`8834267`](https://github.com/TanStack/query/commit/88342670eca6e4949416aab832b1f81cc7b881f8), [`b866a95`](https://github.com/TanStack/query/commit/b866a95adde7e8465462526df5870ebc12340b36), [`e546d03`](https://github.com/TanStack/query/commit/e546d03bef116c66a05dbf42ccfd70b6d8600a8f), [`e674826`](https://github.com/TanStack/query/commit/e6748265c86294704f6c872e6f435d9ec5a92b28)]:
+  - @tanstack/react-query@5.102.0
+  - @tanstack/query-persist-client-core@5.102.0
+
+## 5.101.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.101.4
+  - @tanstack/react-query@5.101.4
+
+## 5.101.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.101.3
+  - @tanstack/react-query@5.101.3
+
 ## 5.101.2
 
 ### Patch Changes

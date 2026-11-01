@@ -11,6 +11,6 @@ replace:
     'useQuery[(]': 'useQuery(() => ',
     'useQueries[(]': 'useQueries(() => ',
     'useInfiniteQuery[(]': 'useInfiniteQuery(() => ',
-    'hook': 'function',
+    'hook': 'primitive',
   }
 ---

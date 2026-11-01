@@ -1,8 +1,7 @@
 // @ts-nocheck
-import fs from 'fs'
+import fs, { globSync } from 'node:fs'
 import path from 'node:path'
-import { globSync } from 'node:fs'
-import { execSync, execFileSync } from 'node:child_process'
+import { execFileSync, execSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 
 const rootDir = path.join(import.meta.dirname, '..')
@@ -54,10 +53,10 @@ async function resolveAuthorForPR(prNumber) {
 }
 
 // Get the previous release commit to diff against.
-// This script runs right after the "ci: changeset release" commit is pushed,
+// This script runs right after the "ci: Version Packages" PR is merged,
 // so HEAD is the release commit.
 const releaseLogs = execSync(
-  'git log --oneline --grep="ci: changeset release" --format=%H',
+  'git log --oneline --grep="^ci: Version Packages" --grep="^ci: changeset release" --format=%H',
 )
   .toString()
   .trim()
@@ -159,7 +158,11 @@ for (const line of commits) {
   const [, hash, email, subject] = match
 
   // Skip release commits
-  if (subject.startsWith('ci: changeset release')) continue
+  if (
+    subject.startsWith('ci: Version Packages') ||
+    subject.startsWith('ci: changeset release')
+  )
+    continue
 
   // Parse conventional commit: type(scope)!: message
   const conventionalMatch = subject.match(/^(\w+)(?:\(([^)]*)\))?(!)?:\s*(.*)$/)
@@ -241,7 +244,7 @@ try {
 
 if (!tagExists) {
   execSync(`git tag -a -m "${tagName}" ${tagName}`)
-  execSync('git push --tags')
+  execSync(`git push origin ${tagName}`)
 }
 
 const prereleaseFlag = isPrerelease ? '--prerelease' : ''

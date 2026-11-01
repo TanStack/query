@@ -8,7 +8,10 @@ ref: docs/framework/react/guides/query-functions.md
 
 ```ts
 injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchAllTodos }))
-injectQuery(() => ({ queryKey: ['todos', todoId], queryFn: () => fetchTodoById(todoId) })
+injectQuery(() => ({
+  queryKey: ['todos', todoId],
+  queryFn: () => fetchTodoById(todoId),
+}))
 injectQuery(() => ({
   queryKey: ['todos', todoId],
   queryFn: async () => {
@@ -26,7 +29,7 @@ injectQuery(() => ({
 [//]: # 'Example2'
 
 ```ts
-todos = injectQuery(() => ({
+todoQuery = injectQuery(() => ({
   queryKey: ['todos', todoId()],
   queryFn: async () => {
     if (somethingGoesWrong) {
@@ -45,7 +48,7 @@ todos = injectQuery(() => ({
 [//]: # 'Example3'
 
 ```ts
-todos = injectQuery(() => ({
+todoQuery = injectQuery(() => ({
   queryKey: ['todos', todoId()],
   queryFn: async () => {
     const response = await fetch('/todos/' + todoId)
@@ -61,7 +64,7 @@ todos = injectQuery(() => ({
 [//]: # 'Example4'
 
 ```ts
-result = injectQuery(() => ({
+todosQuery = injectQuery(() => ({
   queryKey: ['todos', { status: status(), page: page() }],
   queryFn: fetchTodoList,
 }))

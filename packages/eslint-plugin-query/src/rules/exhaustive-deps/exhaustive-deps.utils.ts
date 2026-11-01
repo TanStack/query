@@ -55,14 +55,30 @@ export const ExhaustiveDepsUtils = {
 
     return (
       reference.identifier.name !== 'undefined' &&
+      !ExhaustiveDepsUtils.isFunctionCallTarget(reference.identifier) &&
       reference.identifier.parent.type !== AST_NODE_TYPES.NewExpression &&
       !ExhaustiveDepsUtils.isInstanceOfKind(reference.identifier.parent)
+    )
+  },
+
+  isFunctionCallTarget(
+    identifier: TSESTree.Identifier | TSESTree.JSXIdentifier,
+  ): boolean {
+    const callee = ASTUtils.traverseUpMemberExpression(identifier)
+
+    return (
+      callee.parent !== undefined &&
+      callee.parent.type === AST_NODE_TYPES.CallExpression &&
+      callee.parent.callee === callee
     )
   },
 
   /**
    * Given required refs and existing queryKey entries, compute missing dependency paths
    * respecting allowlisted variables and types.
+   * @param params - The references the query function needs, the allowlisted variables, and the
+   * root identifiers and full paths already in the query key.
+   * @returns The missing dependency paths, without paths whose root is already missing.
    */
   computeFilteredMissingPaths(params: {
     requiredRefs: Array<{
@@ -106,6 +122,8 @@ export const ExhaustiveDepsUtils = {
 
   /**
    * Extract existing queryKey deps as root identifiers and full member paths.
+   * @param params - The source code, the scope manager, and the query key node to scan.
+   * @returns The root identifiers that cover all of their members, and every dependency path.
    */
   collectQueryKeyDeps(params: {
     sourceCode: Readonly<TSESLint.SourceCode>
@@ -117,15 +135,27 @@ export const ExhaustiveDepsUtils = {
     const paths = new Set<string>()
     const visitorKeys = sourceCode.visitorKeys
 
+    /**
+     * Records an identifier that covers all of its members.
+     * @param name - The identifier, normalized before it is recorded.
+     */
     function addRoot(name: string) {
       const cleaned = ExhaustiveDepsUtils.normalizeChain(name)
       roots.add(cleaned)
       paths.add(cleaned)
     }
+    /**
+     * Records a full member path.
+     * @param text - The path, normalized before it is recorded.
+     */
     function addFull(text: string) {
       const cleaned = ExhaustiveDepsUtils.normalizeChain(text)
       paths.add(cleaned)
     }
+    /**
+     * Records a computed reference path as a root or a full path.
+     * @param refPath - The reference path, or `null` to record nothing.
+     */
     function addRefPath(
       refPath: {
         path: string
@@ -143,6 +173,10 @@ export const ExhaustiveDepsUtils = {
       addFull(refPath.path)
     }
 
+    /**
+     * Visits every child node of a node.
+     * @param node - The node whose children are visited.
+     */
     function visitChildren(node: TSESTree.Node): void {
       const keys = (visitorKeys[node.type] ?? []) as ReadonlyArray<
         keyof TSESTree.Node
@@ -166,6 +200,11 @@ export const ExhaustiveDepsUtils = {
       }
     }
 
+    /**
+     * Records the dependencies of a node: identifiers directly, and the external references of
+     * functions. Other nodes are visited recursively.
+     * @param node - The node to visit.
+     */
     function visit(node: TSESTree.Node | null | undefined): void {
       if (!node) return
 
@@ -244,7 +283,9 @@ export const ExhaustiveDepsUtils = {
   },
 
   /**
-   * Checks whether the resolved variable is allowlisted by its type annotation
+   * Checks whether the resolved variable is allowlisted by its type annotation.
+   * @param params - The allowlisted type names, and the variable to check.
+   * @returns `true` if a type referenced in the variable's type annotation is allowlisted.
    */
   variableIsAllowlistedByType(params: {
     allowlistedTypes: Set<string>
@@ -272,7 +313,7 @@ export const ExhaustiveDepsUtils = {
   isInstanceOfKind(node: TSESTree.Node) {
     return (
       node.type === AST_NODE_TYPES.BinaryExpression &&
-      node.operator === 'instanceof'
+      (node as TSESTree.SymmetricBinaryExpression).operator === 'instanceof'
     )
   },
 
@@ -280,6 +321,8 @@ export const ExhaustiveDepsUtils = {
    * Normalizes a chain by removing optional chaining operators
    *
    * Example: `a?.b.c!` -> `a.b.c`
+   * @param text - The source text of the chain.
+   * @returns The chain without optional chaining, non-null assertions, and whitespace.
    */
   normalizeChain(text: string): string {
     return text.replace(/(?:\?(\.)|!)/g, '$1').replace(/\s+/g, '')
@@ -289,6 +332,9 @@ export const ExhaustiveDepsUtils = {
    * Computes the reference path for an identifier
    *
    * Example: `a.b.c!` -> `{ path: 'a.b.c', root: 'a' }`
+   * @param params - The identifier, and the source code to read the chain from.
+   * @returns The dependency `path`, its `root`, and whether the path is the root itself and covers
+   * all of its members. For a method call, the method name is dropped from the path.
    */
   computeRefPath(params: {
     identifier: TSESTree.Identifier
@@ -296,11 +342,7 @@ export const ExhaustiveDepsUtils = {
   }): { path: string; root: string; coversRootMembers: boolean } | null {
     const { identifier, sourceCode } = params
 
-    const fullChainNode = ASTUtils.traverseUpOnly(identifier, [
-      AST_NODE_TYPES.MemberExpression,
-      AST_NODE_TYPES.TSNonNullExpression,
-      AST_NODE_TYPES.Identifier,
-    ])
+    const fullChainNode = ASTUtils.traverseUpMemberExpression(identifier)
 
     const fullText = ExhaustiveDepsUtils.normalizeChain(
       sourceCode.getText(fullChainNode),
@@ -347,6 +389,11 @@ export const ExhaustiveDepsUtils = {
 
     const externalRefs: Array<TSESLint.Scope.Reference> = []
 
+    /**
+     * Collects the read references of a scope and its child scopes that resolve to variables
+     * declared outside the function.
+     * @param scope - The scope to collect from.
+     */
     function collect(scope: TSESLint.Scope.Scope) {
       for (const reference of scope.references) {
         if (!reference.isRead() || reference.resolved === null) {
@@ -381,7 +428,10 @@ export const ExhaustiveDepsUtils = {
   },
 
   /**
-   * Recursively collects type identifiers from a type annotation
+   * Recursively collects type identifiers from a type annotation.
+   * @param typeNode - The type to collect from: type references, unions, intersections, arrays, and
+   * tuples are handled.
+   * @param out - The set the type names are added to.
    */
   collectTypeIdentifiers(typeNode: TSESTree.TypeNode, out: Set<string>): void {
     switch (typeNode.type) {
@@ -414,6 +464,8 @@ export const ExhaustiveDepsUtils = {
   /**
    * Gets the function expression nodes from a queryFn property, handling conditional expressions.
    * When neither branch is skipToken, returns both branches so all deps are scanned.
+   * @param queryFn - The `queryFn` property.
+   * @returns The nodes to scan for dependencies.
    */
   getQueryFnNodes(queryFn: TSESTree.Property): Array<TSESTree.Node> {
     if (queryFn.value.type !== AST_NODE_TYPES.ConditionalExpression) {

@@ -1,4 +1,5 @@
 import { RuleTester } from '@typescript-eslint/rule-tester'
+import { describe } from 'vitest'
 import {
   reactHookNames,
   rule,
@@ -124,6 +125,55 @@ const baseTestCases = {
             function Component() {
               const mutation = useMutation();
               const callback = ${reactHookInvocation}(() => { mutation.mutate() }, [mutation]);
+              return;
+            }
+          `,
+        },
+        {
+          name: `should pass when functions or variables with Object.prototype names are used with ${reactHookAlias}`,
+          code: `
+            ${reactHookImport}
+            import { useQuery } from "@tanstack/react-query";
+
+            function Component() {
+              const toString = () => 'str';
+              const valueOf = 42;
+              const callback = ${reactHookInvocation}(() => { toString() }, [toString, valueOf]);
+              return;
+            }
+          `,
+        },
+        {
+          name: `should pass when custom functions named after Object.prototype methods are invoked`,
+          code: `
+            ${reactHookImport}
+            import { useQuery } from "@tanstack/react-query";
+
+            function toString() {
+              return 'test';
+            }
+
+            function Component() {
+              const res = toString();
+              const callback = ${reactHookInvocation}(() => { res }, [res]);
+              return;
+            }
+          `,
+        },
+        {
+          name: `should pass when a local function named after Object.prototype method is called alongside destructured query result with ${reactHookAlias}`,
+          code: `
+            ${reactHookImport}
+            import { useQuery } from "@tanstack/react-query";
+
+            function toString() {
+              return 'formatted';
+            }
+
+            function Component() {
+              const { data } = useQuery({ queryKey: ['test'], queryFn: () => 'test' });
+              const formatted = toString();
+              const callback = ${reactHookInvocation}(() => { formatted }, [data, formatted]);
               return;
             }
           `,
@@ -371,37 +421,27 @@ const baseTestCases = {
 
 const testCases = (reactHookName: string) => [
   {
-    reactHookImport: 'import * as React from "React";',
+    reactHookImport: 'import * as React from "react";',
     reactHookInvocation: `React.${reactHookName}`,
     reactHookAlias: reactHookName,
   },
   {
-    reactHookImport: `import { ${reactHookName} } from "React";`,
+    reactHookImport: `import { ${reactHookName} } from "react";`,
     reactHookInvocation: reactHookName,
     reactHookAlias: reactHookName,
   },
   {
-    reactHookImport: `import { ${reactHookName} as useAlias } from "React";`,
+    reactHookImport: `import { ${reactHookName} as useAlias } from "react";`,
     reactHookInvocation: 'useAlias',
     reactHookAlias: 'useAlias',
   },
 ]
 
-reactHookNames.forEach((reactHookName) => {
-  testCases(reactHookName).forEach(
-    ({ reactHookInvocation, reactHookAlias, reactHookImport }) => {
-      ruleTester.run('no-unstable-deps', rule, {
-        valid: baseTestCases.valid({
-          reactHookImport,
-          reactHookInvocation,
-          reactHookAlias,
-        }),
-        invalid: baseTestCases.invalid({
-          reactHookImport,
-          reactHookInvocation,
-          reactHookAlias,
-        }),
-      })
-    },
-  )
+describe.each(reactHookNames)('%s', (reactHookName) => {
+  describe.each(testCases(reactHookName))('$reactHookImport', (testCase) => {
+    ruleTester.run('no-unstable-deps', rule, {
+      valid: baseTestCases.valid(testCase),
+      invalid: baseTestCases.invalid(testCase),
+    })
+  })
 })

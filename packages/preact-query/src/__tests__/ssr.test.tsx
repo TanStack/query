@@ -1,12 +1,22 @@
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { renderToString } from 'preact-render-to-string'
 import { useState } from 'preact/hooks'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 
 import {
   QueryCache,
   QueryClient,
   QueryClientProvider,
+  noop,
   useInfiniteQuery,
   useMutationState,
   useQuery,
@@ -14,10 +24,13 @@ import {
 import { setIsServer } from './utils'
 
 describe('Server Side Rendering', () => {
-  setIsServer(true)
-
+  let restoreIsServer: () => void
   let queryCache: QueryCache
   let queryClient: QueryClient
+
+  beforeAll(() => {
+    restoreIsServer = setIsServer(true)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -30,9 +43,15 @@ describe('Server Side Rendering', () => {
     vi.useRealTimers()
   })
 
+  afterAll(() => {
+    restoreIsServer()
+  })
+
   it('should not trigger fetch', () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       const query = useQuery({ queryKey: key, queryFn })
@@ -57,9 +76,9 @@ describe('Server Side Rendering', () => {
   })
 
   it('should add prefetched data to cache', async () => {
-    const key = queryKey()
+    const key = createKey()
 
-    const promise = queryClient.fetchQuery({
+    const promise = queryClient.query({
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
     })
@@ -72,8 +91,10 @@ describe('Server Side Rendering', () => {
   })
 
   it('should return existing data from the cache', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       const query = useQuery({ queryKey: key, queryFn })
@@ -87,7 +108,7 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    void queryClient.query({ queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(
@@ -101,7 +122,7 @@ describe('Server Side Rendering', () => {
   })
 
   it('should add initialData to the cache', () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [page, setPage] = useState(1)
@@ -127,10 +148,10 @@ describe('Server Side Rendering', () => {
 
     const keys = queryCache.getAll().map((query) => query.queryKey)
 
-    expect(keys).toEqual([[key, 1]])
+    expect(keys).toStrictEqual([[key, 1]])
   })
 
-  it('useMutationState should return empty array', () => {
+  it('should return empty array from useMutationState', () => {
     function Page() {
       const mutationState = useMutationState()
 
@@ -146,9 +167,11 @@ describe('Server Side Rendering', () => {
     expect(markup).toContain('mutationState: 0')
   })
 
-  it('useInfiniteQuery should return the correct state', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'page 1'))
+  it('should return the correct state from useInfiniteQuery', async () => {
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'page 1'),
+    )
 
     function Page() {
       const query = useInfiniteQuery({
@@ -166,11 +189,13 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    queryClient.prefetchInfiniteQuery({
-      queryKey: key,
-      queryFn,
-      initialPageParam: 0,
-    })
+    void queryClient
+      .infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(

@@ -1,13 +1,14 @@
-import { describe, expectTypeOf, it } from 'vitest'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { queryOptions, useQuery } from '..'
-import type { OmitKeyof, UseQueryOptions } from '..'
+import { createKey, sleep } from '@tanstack/query-test-utils'
+import { queryOptions, skipToken, useQuery } from '..'
+import type { Ref } from 'vue-demi'
+import type { OmitKeyof, UseQueryOptions, UseQueryReturnType } from '..'
 
 describe('useQuery', () => {
   describe('Config object overload', () => {
-    it('TData should always be defined when initialData is provided as an object', () => {
-      const key = queryKey()
+    it('should always define TData when initialData is provided as an object', () => {
+      const key = createKey()
 
       const { data } = reactive(
         useQuery({
@@ -26,8 +27,8 @@ describe('useQuery', () => {
       expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
     })
 
-    it('TData should be defined when passed through queryOptions', () => {
-      const key = queryKey()
+    it('should define TData when passed through queryOptions', () => {
+      const key = createKey()
 
       const options = queryOptions({
         queryKey: key,
@@ -46,7 +47,7 @@ describe('useQuery', () => {
     })
 
     it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const options = queryOptions({
         queryKey: key,
@@ -63,8 +64,8 @@ describe('useQuery', () => {
       expectTypeOf(query.data).toEqualTypeOf<boolean | undefined>()
     })
 
-    it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
-      const key = queryKey()
+    it('should always define TData when initialData is provided as a function which ALWAYS returns the data', () => {
+      const key = createKey()
 
       const { data } = reactive(
         useQuery({
@@ -83,8 +84,8 @@ describe('useQuery', () => {
       expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
     })
 
-    it('TData should have undefined in the union when initialData is NOT provided', () => {
-      const key = queryKey()
+    it('should have undefined in the TData union when initialData is NOT provided', () => {
+      const key = createKey()
 
       const { data } = reactive(
         useQuery({
@@ -100,8 +101,8 @@ describe('useQuery', () => {
       expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
     })
 
-    it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
-      const key = queryKey()
+    it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
+      const key = createKey()
 
       const { data } = reactive(
         useQuery({
@@ -118,8 +119,8 @@ describe('useQuery', () => {
       expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
     })
 
-    it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
-      const key = queryKey()
+    it('should narrow TData after an isSuccess check when initialData is provided as a function which can return undefined', () => {
+      const key = createKey()
 
       const { data, isSuccess } = reactive(
         useQuery({
@@ -138,8 +139,8 @@ describe('useQuery', () => {
       }
     })
 
-    it('data should not have undefined when initialData is provided', () => {
-      const key = queryKey()
+    it('should not have undefined in data when initialData is provided', () => {
+      const key = createKey()
 
       const { data } = reactive(
         useQuery({
@@ -152,9 +153,52 @@ describe('useQuery', () => {
     })
   })
 
+  describe('generic queryFn', () => {
+    it('should infer the result type from a generic query function', () => {
+      const key = createKey()
+
+      function queryFn<T = string>(): Promise<T> {
+        return Promise.resolve({} as T)
+      }
+
+      const query = reactive(
+        useQuery({
+          queryKey: key,
+          queryFn: () => queryFn(),
+        }),
+      )
+
+      expectTypeOf(query.data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(query.error).toEqualTypeOf<Error | null>()
+    })
+  })
+
+  describe('generic queryKey inference (#8199)', () => {
+    it('should not error when wrapping useQuery in a composable that propagates a generic type to the queryKey', () => {
+      const basket = { fruit: 'apple', vegetable: 'broccoli' } as const
+
+      function getBasket<T extends 'fruit' | 'vegetable'>(type: T) {
+        return basket[type]
+      }
+
+      function useBasket<T extends 'fruit' | 'vegetable'>(type: T) {
+        return useQuery({
+          queryKey: ['basket', type] as const,
+          queryFn({ queryKey: [, t] }) {
+            return getBasket(t)
+          },
+        })
+      }
+
+      assertType<UseQueryReturnType<'apple' | 'broccoli', Error>>(
+        useBasket('fruit'),
+      )
+    })
+  })
+
   describe('custom composable', () => {
     it('should allow custom composable using UseQueryOptions', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const useCustomQuery = (
         options?: OmitKeyof<
@@ -178,7 +222,7 @@ describe('useQuery', () => {
 
   describe('structuralSharing', () => {
     it('should be able to use structuralSharing with unknown types', () => {
-      const key = queryKey()
+      const key = createKey()
 
       // https://github.com/TanStack/query/issues/6525#issuecomment-1938411343
       useQuery({
@@ -194,8 +238,8 @@ describe('useQuery', () => {
   })
 
   describe('Discriminated union return type', () => {
-    it('data should be possibly undefined by default', () => {
-      const key = queryKey()
+    it('should have possibly undefined data by default', () => {
+      const key = createKey()
 
       const query = reactive(
         useQuery({
@@ -207,8 +251,8 @@ describe('useQuery', () => {
       expectTypeOf(query.data).toEqualTypeOf<string | undefined>()
     })
 
-    it('data should be defined when query is success', () => {
-      const key = queryKey()
+    it('should have defined data when query is success', () => {
+      const key = createKey()
 
       const query = reactive(
         useQuery({
@@ -222,8 +266,8 @@ describe('useQuery', () => {
       }
     })
 
-    it('error should be null when query is success', () => {
-      const key = queryKey()
+    it('should have null error when query is success', () => {
+      const key = createKey()
 
       const query = reactive(
         useQuery({
@@ -237,8 +281,8 @@ describe('useQuery', () => {
       }
     })
 
-    it('data should be undefined when query is pending', () => {
-      const key = queryKey()
+    it('should have undefined data when query is pending', () => {
+      const key = createKey()
 
       const query = reactive(
         useQuery({
@@ -252,8 +296,8 @@ describe('useQuery', () => {
       }
     })
 
-    it('error should be defined when query is error', () => {
-      const key = queryKey()
+    it('should have defined error when query is error', () => {
+      const key = createKey()
 
       const query = reactive(
         useQuery({
@@ -266,12 +310,37 @@ describe('useQuery', () => {
         expectTypeOf(query.error).toEqualTypeOf<Error>()
       }
     })
+
+    it('should have data as a union of refs without reactive()', () => {
+      const key = createKey()
+
+      const query = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      expectTypeOf(query.data).toEqualTypeOf<Ref<string> | Ref<undefined>>()
+    })
+
+    it('should narrow data.value on an undefined check without reactive()', () => {
+      const key = createKey()
+
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      if (data.value !== undefined) {
+        expectTypeOf(data.value).toEqualTypeOf<string>()
+        expectTypeOf(data).toEqualTypeOf<Ref<string>>()
+      }
+    })
   })
 
   describe('accept ref options', () => {
     it('should accept ref options', () => {
       const options = ref({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => sleep(0).then(() => 'Some data'),
       })
 
@@ -284,7 +353,7 @@ describe('useQuery', () => {
 
     it('should accept computed options', () => {
       const options = computed(() => ({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => sleep(0).then(() => 'Some data'),
       }))
 
@@ -298,7 +367,7 @@ describe('useQuery', () => {
     it('should accept computed query options', () => {
       const options = computed(() =>
         queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => sleep(0).then(() => 'Some data'),
         }),
       )
@@ -308,6 +377,52 @@ describe('useQuery', () => {
       if (query.isSuccess) {
         expectTypeOf(query.data).toEqualTypeOf<string>()
       }
+    })
+  })
+
+  describe('skipToken', () => {
+    it('should accept skipToken inside a whole-options getter', () => {
+      const id = ref<string | null>('1')
+
+      const query = reactive(
+        useQuery(() => {
+          const current = id.value
+          return {
+            queryKey: ['post', current],
+            queryFn: current
+              ? () => sleep(0).then(() => 'Some data')
+              : skipToken,
+          }
+        }),
+      )
+
+      if (query.isSuccess) {
+        expectTypeOf(query.data).toEqualTypeOf<string>()
+      }
+    })
+  })
+
+  describe('queryKey reactivity rules', () => {
+    it('should accept a bare reactive getter for the whole queryKey array', () => {
+      const id = ref(1)
+      assertType(
+        useQuery({
+          queryKey: () => ['post', id.value],
+          queryFn: () => sleep(0).then(() => 'Some data'),
+        }),
+      )
+    })
+  })
+
+  describe('select', () => {
+    it('should narrow data to the type select returns', () => {
+      const { data } = useQuery({
+        queryKey: createKey(),
+        queryFn: () => sleep(0).then(() => ['a', 'b', 'c']),
+        select: (posts) => posts.length,
+      })
+
+      expectTypeOf(data.value).toEqualTypeOf<number | undefined>()
     })
   })
 })

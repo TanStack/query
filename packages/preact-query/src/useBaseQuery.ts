@@ -1,10 +1,4 @@
-import { environmentManager, noop, notifyManager } from '@tanstack/query-core'
-import type {
-  QueryClient,
-  QueryKey,
-  QueryObserver,
-  QueryObserverResult,
-} from '@tanstack/query-core'
+import { noop, notifyManager } from '@tanstack/query-core'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 
 import { useIsRestoring } from './IsRestoringProvider'
@@ -19,11 +13,29 @@ import {
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
-  willFetch,
 } from './suspense'
-import type { UseBaseQueryOptions } from './types'
 import { useSyncExternalStore } from './utils'
+import type { UseBaseQueryOptions } from './types'
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 
+/**
+ * Base implementation shared by `useQuery`, `useInfiniteQuery`, `useSuspenseQuery`, and
+ * `useSuspenseInfiniteQuery`.
+ * @param options - The options passed to the calling hook.
+ * @param Observer - The observer class from query-core (`QueryObserver` or
+ * `InfiniteQueryObserver`).
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest
+ * context will be used.
+ * @returns The query result, tracking which properties are read unless `notifyOnChangeProps` is
+ * set.
+ * @throws {Error} If `options` is not an object (outside production), or the query error when it should be
+ * thrown to the nearest error boundary (see `throwOnError`). While suspending, it throws a promise instead.
+ */
 export function useBaseQuery<
   TQueryFnData,
   TError,
@@ -54,9 +66,11 @@ export function useBaseQuery<
   const client = useQueryClient(queryClient)
   const defaultedOptions = client.defaultQueryOptions(options)
 
-  ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
-    defaultedOptions,
-  )
+  const query = client
+    .getQueryCache()
+    .get<TQueryFnData, TError, TQueryData, TQueryKey>(
+      defaultedOptions.queryHash,
+    )
 
   if (process.env.NODE_ENV !== 'production') {
     if (!defaultedOptions.queryFn) {
@@ -66,20 +80,19 @@ export function useBaseQuery<
     }
   }
 
+  const subscribed = options.subscribed !== false
+
   // Make sure results are optimistically set in fetching state before subscribing or updating options
   defaultedOptions._optimisticResults = isRestoring
     ? 'isRestoring'
-    : 'optimistic'
+    : subscribed
+      ? 'optimistic'
+      : undefined
 
   ensureSuspenseTimers(defaultedOptions)
-  ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
+  ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
 
   useClearResetErrorBoundary(errorResetBoundary)
-
-  // this needs to be invoked before creating the Observer because that can create a cache entry
-  const isNewCacheEntry = !client
-    .getQueryCache()
-    .get(defaultedOptions.queryHash)
 
   const [observer] = useState(
     () =>
@@ -92,7 +105,11 @@ export function useBaseQuery<
   // note: this must be called before useSyncExternalStore
   const result = observer.getOptimisticResult(defaultedOptions)
 
-  const shouldSubscribe = !isRestoring && options.subscribed !== false
+  useEffect(() => {
+    observer.setOptions(defaultedOptions)
+  }, [defaultedOptions, observer])
+
+  const shouldSubscribe = !isRestoring && subscribed
   useSyncExternalStore(
     useCallback(
       (onStoreChange) => {
@@ -111,10 +128,6 @@ export function useBaseQuery<
     () => observer.getCurrentResult(),
   )
 
-  useEffect(() => {
-    observer.setOptions(defaultedOptions)
-  }, [defaultedOptions, observer])
-
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
     throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
@@ -126,40 +139,11 @@ export function useBaseQuery<
       result,
       errorResetBoundary,
       throwOnError: defaultedOptions.throwOnError,
-      query: client
-        .getQueryCache()
-        .get<
-          TQueryFnData,
-          TError,
-          TQueryData,
-          TQueryKey
-        >(defaultedOptions.queryHash),
+      query,
       suspense: defaultedOptions.suspense,
     })
   ) {
     throw result.error
-  }
-
-  ;(client.getDefaultOptions().queries as any)?._experimental_afterQuery?.(
-    defaultedOptions,
-    result,
-  )
-
-  if (
-    defaultedOptions.experimental_prefetchInRender &&
-    !environmentManager.isServer() &&
-    willFetch(result, isRestoring)
-  ) {
-    const promise = isNewCacheEntry
-      ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
-        fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
-      : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
-        client.getQueryCache().get(defaultedOptions.queryHash)?.promise
-
-    promise?.catch(noop).finally(() => {
-      // `.updateResult()` will trigger `.#currentThenable` to finalize
-      observer.updateResult()
-    })
   }
 
   // Handle result property usage tracking

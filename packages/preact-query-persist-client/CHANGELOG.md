@@ -1,5 +1,190 @@
 # @tanstack/preact-query-persist-client
 
+## 5.105.1
+
+### Patch Changes
+
+- Updated dependencies [[`7ccba6e`](https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6), [`db79da7`](https://github.com/TanStack/query/commit/db79da70ede675b8f41c7b2227d0123cfdd14839), [`8be136b`](https://github.com/TanStack/query/commit/8be136b02214fe7b073673fa1cb30110a8de8482), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/preact-query@5.105.1
+  - @tanstack/query-persist-client-core@5.105.1
+
+## 5.105.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.105.0
+  - @tanstack/query-persist-client-core@5.105.0
+
+## 5.104.5
+
+### Patch Changes
+
+- Updated dependencies [[`1f8d134`](https://github.com/TanStack/query/commit/1f8d134ea3fa356072b40c69d5cd0227886b89bd)]:
+  - @tanstack/preact-query@5.104.5
+  - @tanstack/query-persist-client-core@5.104.5
+
+## 5.104.4
+
+### Patch Changes
+
+- Updated dependencies [[`fc3a384`](https://github.com/TanStack/query/commit/fc3a3848f25adec750e6ee6d3abf9280c7e3a990), [`0addcd2`](https://github.com/TanStack/query/commit/0addcd2a9ae7371dbb7a860277b08ad4c2444975), [`2ce5190`](https://github.com/TanStack/query/commit/2ce51902de300c9639b0594a2e64b53c7bf1fce9)]:
+  - @tanstack/preact-query@5.104.4
+  - @tanstack/query-persist-client-core@5.104.4
+
+## 5.104.3
+
+### Patch Changes
+
+- Updated dependencies [[`ed4d849`](https://github.com/TanStack/query/commit/ed4d849731bfe6404be9d40aec84eda54f958d7f)]:
+  - @tanstack/query-persist-client-core@5.104.3
+  - @tanstack/preact-query@5.104.3
+
+## 5.104.2
+
+### Patch Changes
+
+- [#11711](https://github.com/TanStack/query/pull/11711) [`a94c7ca`](https://github.com/TanStack/query/commit/a94c7caeec624d0714ee00be3a703943ec2ddbeb) - Add Preact v11 to peerDependencies
+- Updated dependencies [[`a94c7ca`](https://github.com/TanStack/query/commit/a94c7caeec624d0714ee00be3a703943ec2ddbeb)]:
+  - @tanstack/preact-query@5.104.2
+  - @tanstack/query-persist-client-core@5.104.2
+
+## 5.104.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.104.1
+  - @tanstack/query-persist-client-core@5.104.1
+
+## 5.104.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.104.0
+  - @tanstack/query-persist-client-core@5.104.0
+
+## 5.103.3
+
+### Patch Changes
+
+- Updated dependencies [[`1c9693e`](https://github.com/TanStack/query/commit/1c9693eac75495a04ae4328a35818b1fdf264978)]:
+  - @tanstack/preact-query@5.103.3
+  - @tanstack/query-persist-client-core@5.103.3
+
+## 5.103.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.103.2
+  - @tanstack/query-persist-client-core@5.103.2
+
+## 5.103.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.103.1
+  - @tanstack/query-persist-client-core@5.103.1
+
+## 5.103.0
+
+### Patch Changes
+
+- Updated dependencies [[`4c7cdbb`](https://github.com/TanStack/query/commit/4c7cdbb86d8196e646985cd8a3476d3ac8c12ff5)]:
+  - @tanstack/query-persist-client-core@5.103.0
+  - @tanstack/preact-query@5.103.0
+
+## 5.102.8
+
+### Patch Changes
+
+- Updated dependencies [[`6c27607`](https://github.com/TanStack/query/commit/6c27607d7ffc87612a8f1222a95f28bf5f9a045e)]:
+  - @tanstack/preact-query@5.102.8
+  - @tanstack/query-persist-client-core@5.102.8
+
+## 5.102.7
+
+### Patch Changes
+
+- Updated dependencies [[`67fddee`](https://github.com/TanStack/query/commit/67fddee6310ca0dd87749ed7a1b4a7178c6e6aae)]:
+  - @tanstack/preact-query@5.102.7
+  - @tanstack/query-persist-client-core@5.102.7
+
+## 5.102.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.102.6
+  - @tanstack/query-persist-client-core@5.102.6
+
+## 5.102.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.102.5
+  - @tanstack/query-persist-client-core@5.102.5
+
+## 5.102.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.102.4
+  - @tanstack/query-persist-client-core@5.102.4
+
+## 5.102.3
+
+### Patch Changes
+
+- Updated dependencies [[`714c285`](https://github.com/TanStack/query/commit/714c2856e09bbaf7448ccc02364887e36c18b37c)]:
+  - @tanstack/preact-query@5.102.3
+  - @tanstack/query-persist-client-core@5.102.3
+
+## 5.102.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.102.2
+  - @tanstack/query-persist-client-core@5.102.2
+
+## 5.102.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.102.1
+  - @tanstack/query-persist-client-core@5.102.1
+
+## 5.102.0
+
+### Patch Changes
+
+- Updated dependencies [[`4e48c58`](https://github.com/TanStack/query/commit/4e48c581b70216e9c66a72cc328b61789194db4f), [`37127db`](https://github.com/TanStack/query/commit/37127dbe479a4892dbbe28ac8ceabf8832b5f1a3), [`6e3d521`](https://github.com/TanStack/query/commit/6e3d521fe54f78624e53c1c6f9cadd678504bee8), [`294d4e6`](https://github.com/TanStack/query/commit/294d4e62c4f7d674574a4903eef2a1bc3dd1413b), [`cb6c9d3`](https://github.com/TanStack/query/commit/cb6c9d3725db0fed94fb5133820e41b7c326d2ef), [`2215bb0`](https://github.com/TanStack/query/commit/2215bb031139cdc8a84751b37a485c38ca9d2b6e), [`4913802`](https://github.com/TanStack/query/commit/49138028953f38097cfac4a6e9843c987705325f), [`1ef4208`](https://github.com/TanStack/query/commit/1ef42087c9a266c2137d2ef645cbcc662f60ac93), [`b866a95`](https://github.com/TanStack/query/commit/b866a95adde7e8465462526df5870ebc12340b36), [`e546d03`](https://github.com/TanStack/query/commit/e546d03bef116c66a05dbf42ccfd70b6d8600a8f)]:
+  - @tanstack/preact-query@5.102.0
+  - @tanstack/query-persist-client-core@5.102.0
+
+## 5.101.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.101.4
+  - @tanstack/query-persist-client-core@5.101.4
+
+## 5.101.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.101.3
+  - @tanstack/query-persist-client-core@5.101.3
+
 ## 5.101.2
 
 ### Patch Changes

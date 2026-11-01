@@ -1,5 +1,5 @@
 node_modules/**/*
-.expo/*
+.expo/
 npm-debug.*
 *.jks
 *.p8
@@ -83,7 +83,7 @@ buck-out/
 /ios/Pods/
 
 # Expo
-.expo/*
+.expo/
 web-build/
 
 # @end expo-cli

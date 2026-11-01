@@ -18,18 +18,18 @@ Because TanStack Query's fetching mechanisms are agnostically built on Promises,
 
 As TanStack Query is a promise based library, observables from `HttpClient` need to be converted to promises. This can be done with the `lastValueFrom` or `firstValueFrom` functions from `rxjs`.
 
-```ts
+```angular-ts
 @Component({
   // ...
 })
 class ExampleComponent {
   private readonly http = inject(HttpClient)
 
-  readonly query = injectQuery(() => ({
+  readonly repoDataQuery = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(
-        this.http.get('https://api.github.com/repos/tanstack/query'),
+        this.http.get('https://api.github.com/repos/TanStack/query'),
       ),
   }))
 }

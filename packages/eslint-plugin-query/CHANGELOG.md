@@ -1,5 +1,89 @@
 # @tanstack/eslint-plugin-query
 
+## 5.105.1
+
+### Patch Changes
+
+- [#12409](https://github.com/TanStack/query/pull/12409) [`ec19101`](https://github.com/TanStack/query/commit/ec1910188588b182394a589313678714bc6a1798) - Fix stable-query-client detection for arrow functions, function expressions, and clients created directly in JSX. Keep state initializers and nested helper functions valid.
+
+## 5.105.0
+
+No changes in this release.
+
+## 5.104.5
+
+No changes in this release.
+
+## 5.104.4
+
+### Patch Changes
+
+- [#12044](https://github.com/TanStack/query/pull/12044) [`a5f1b09`](https://github.com/TanStack/query/commit/a5f1b092bb7b733b85f50575b93e2e3b1db3d09c) - refactor(eslint-plugin-query/exhaustive-deps): remove the unused `fixable` from the rule metadata, as the rule only provides suggestions
+
+- [#11889](https://github.com/TanStack/query/pull/11889) [`1cf6eb4`](https://github.com/TanStack/query/commit/1cf6eb4e9e3f5ce8937d6f0313c8b822812c7a00) - Detect unstable query dependencies in aliased React hooks imported from `react`.
+
+## 5.104.3
+
+No changes in this release.
+
+## 5.104.2
+
+No changes in this release.
+
+## 5.104.1
+
+No changes in this release.
+
+## 5.104.0
+
+### Minor Changes
+
+- [#11650](https://github.com/TanStack/query/pull/11650) [`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e) - Build projects with Vite 8
+
+## 5.103.3
+
+No changes in this release.
+
+## 5.103.2
+
+## 5.103.1
+
+## 5.103.0
+
+## 5.102.8
+
+## 5.102.7
+
+## 5.102.6
+
+## 5.102.5
+
+## 5.102.4
+
+## 5.102.3
+
+## 5.102.2
+
+## 5.102.1
+
+## 5.102.0
+
+### Patch Changes
+
+- [#11212](https://github.com/TanStack/query/pull/11212) [`279bb55`](https://github.com/TanStack/query/commit/279bb5508b81ce0d88b8f0f72441d96abf7ca03c) - TypeScript 7 compatibility
+
+- [#11188](https://github.com/TanStack/query/pull/11188) [`3bc8edf`](https://github.com/TanStack/query/commit/3bc8edfa0199e6467458084e8802a99bce11b958) - Fix false-positive warnings in `no-unstable-deps` rule caused by `Object.prototype` property lookups (`toString`, `valueOf`, etc.).
+
+- [#11115](https://github.com/TanStack/query/pull/11115) [`8582702`](https://github.com/TanStack/query/commit/858270215247d1dbdbe9d9a00068b4ffa5218da6) - Remove unused helper functions from the internal `ASTUtils` object (`getNestedIdentifiers`, `getNestedReturnStatements`, `getClosestVariableDeclarator`, `mapKeyNodeToText`, and `mapKeyNodeToBaseText`). They were not referenced by any rule and are not part of the public API.
+
+## 5.101.4
+
+### Patch Changes
+
+- [#11067](https://github.com/TanStack/query/pull/11067) [`7ac45ed`](https://github.com/TanStack/query/commit/7ac45ed45cbc28a54ac2fcfb1faccfcd87fb7b75) - Relax `exhaustive-deps` so function call targets are not required in query keys while values referenced in nested callbacks are still checked.
+
+## 5.101.3
+
 ## 5.101.2
 
 ## 5.101.1

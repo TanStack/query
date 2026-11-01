@@ -19,6 +19,11 @@ const ESCAPE_LOOKUP: Record<string, string> = {
 
 export const ESCAPE_REGEX = /[&><\u2028\u2029]/g
 
+/**
+ * Escapes the characters of a JSON string that are unsafe to embed in an HTML `<script>` tag.
+ * @param str - The JSON string to escape.
+ * @returns The string with `&`, `<`, `>`, U+2028, and U+2029 replaced by `\uXXXX` escapes.
+ */
 export function htmlEscapeJsonString(str: string): string {
   return str.replace(ESCAPE_REGEX, (match) => ESCAPE_LOOKUP[match]!)
 }
