@@ -94,8 +94,7 @@ describe('Devtools', () => {
                 contentRect: { width: 1000, height: 500 } as DOMRectReadOnly,
               } as ResizeObserverEntry,
             ],
-            // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-            this as unknown as ResizeObserver,
+            this,
           )
         })
         unobserve = vi.fn<ResizeObserver['unobserve']>()
@@ -107,7 +106,6 @@ describe('Devtools', () => {
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
     onlineManager.setOnline(true)
@@ -218,6 +216,7 @@ describe('Devtools', () => {
               />
             ))
       }
+
       it('should keep cache notifications and cleanup independent for the same query key', () => {
         const secondClient = new QueryClient()
         queryClient.setQueryData(['shared-key'], 'first-data')
@@ -897,8 +896,7 @@ describe('Devtools', () => {
                   contentRect: { width: 500, height: 500 } as DOMRectReadOnly,
                 } as ResizeObserverEntry,
               ],
-              // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-              this as unknown as ResizeObserver,
+              this,
             )
           })
           unobserve = vi.fn<ResizeObserver['unobserve']>()
@@ -934,8 +932,7 @@ describe('Devtools', () => {
                   contentRect: { width: 500, height: 500 } as DOMRectReadOnly,
                 } as ResizeObserverEntry,
               ],
-              // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-              this as unknown as ResizeObserver,
+              this,
             )
           })
           unobserve = vi.fn<ResizeObserver['unobserve']>()
@@ -1212,7 +1209,7 @@ describe('Devtools', () => {
       expect(rendered.getByText('Invalid Value')).toBeInTheDocument()
 
       fireEvent.focus(textarea)
-      expect(rendered.queryByText('Invalid Value')).toBeNull()
+      expect(rendered.queryByText('Invalid Value')).not.toBeInTheDocument()
     })
 
     it('should return to the data view when the editor "Cancel" button is clicked', () => {
@@ -1226,7 +1223,9 @@ describe('Devtools', () => {
       ).toBeInTheDocument()
 
       fireEvent.click(rendered.getByText('Cancel'))
-      expect(rendered.queryByLabelText('Edit query data as JSON')).toBeNull()
+      expect(
+        rendered.queryByLabelText('Edit query data as JSON'),
+      ).not.toBeInTheDocument()
       expect(rendered.getByLabelText('Bulk Edit Data')).toBeInTheDocument()
     })
   })
@@ -1323,6 +1322,7 @@ describe('Devtools', () => {
         unsubscribe()
       }
     })
+
     it('should hide disabled queries when the "hideDisabledQueries" prop is true', () => {
       const disabled = new QueryObserver(queryClient, {
         queryKey: ['hide-prop-disabled'],

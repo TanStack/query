@@ -8,7 +8,7 @@ import {
   vi,
 } from 'vitest'
 import { QueryClient, skipToken } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
@@ -18,13 +18,14 @@ import type { InfiniteData, QueryFunctionContext } from '@tanstack/query-core'
 import type { Mock } from 'vitest'
 
 const providerTagName = generateElementName()
-beforeAll(() => {
-  customElements.define(providerTagName, QueryClientProvider)
-})
 
 describe('createInfiniteQueryController', () => {
   let queryClient: QueryClient
   let container: HTMLElement
+
+  beforeAll(() => {
+    customElements.define(providerTagName, QueryClientProvider)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -40,7 +41,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should resolve from the pre-connect placeholder state on the first provider connection', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Consumer extends LitElement {
       readonly queryKey = key
@@ -94,7 +95,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should prefer an explicit client over the provider context', async () => {
-    const key = queryKey()
+    const key = createKey()
     const providerClient = new QueryClient()
 
     const provider = document.createElement(
@@ -149,7 +150,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should fetch the initial page', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly infinite = createInfiniteQueryController(
@@ -185,7 +186,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should append the next page with fetchNextPage', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly infinite = createInfiniteQueryController(
@@ -222,7 +223,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should prepend the previous page with fetchPreviousPage', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly infinite = createInfiniteQueryController(
@@ -259,7 +260,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used', async () => {
-    const key = queryKey()
+    const key = createKey()
     const start = 10
     const onAborts: Array<Mock<(...args: Array<any>) => any>> = []
     const abortListeners: Array<Mock<(...args: Array<any>) => any>> = []
@@ -328,7 +329,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should not request another update when stable function options refresh during host update', async () => {
-    const key = queryKey()
+    const key = createKey()
     let callCount = 0
 
     class Host extends LitElement {
@@ -386,7 +387,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should not request an update for refetch-only state changes when only data was read', async () => {
-    const key = queryKey()
+    const key = createKey()
     let resolveRefetch: (() => void) | undefined
 
     class Host extends LitElement {
@@ -446,7 +447,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should refresh a suppressed result on the next accessor read when a newly read property changed', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       updatesRequested = 0
@@ -500,7 +501,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should return the same result between reads when nothing changed', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly infinite = createInfiniteQueryController(
@@ -526,7 +527,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should preserve prior pages consistently when fetching the next page fails', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Host extends LitElement {
       readonly infinite = createInfiniteQueryController(
@@ -579,7 +580,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should cancel the query function when there are no more subscriptions', async () => {
-    const key = queryKey()
+    const key = createKey()
     let cancelFn: Mock = vi.fn<(event: Event) => void>()
 
     const queryFn = ({ signal }: { signal?: AbortSignal }) => {
@@ -623,7 +624,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<(context: { pageParam: number }) => Promise<string>>(
       ({ pageParam }: { pageParam: number }) =>
         sleep(10).then(() => `comments for 1 page ${pageParam}`),
@@ -670,7 +671,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should fail deterministically and align imperative methods when the provider is missing', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Consumer extends LitElement {
       readonly queryKey = key
@@ -721,7 +722,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should reuse hydrated data on an already-connected host without an eager refetch', async () => {
-    const key = queryKey()
+    const key = createKey()
     let queryFnCalls = 0
 
     queryClient.setQueryData(key, { pages: [0], pageParams: [0] })
@@ -763,7 +764,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should not throw for an infinite query controller on an already-connected host with an explicit client', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, {
       pages: [0],
       pageParams: [0],
@@ -800,7 +801,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should defer explicit-client infinite accessors until host fields are initialized', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class DeferredExplicitInfiniteHost extends LitElement {
       readonly infinite = createInfiniteQueryController(
@@ -841,7 +842,7 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should switch infinite query controller to new provider client while connected', async () => {
-    const key = queryKey()
+    const key = createKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -916,8 +917,8 @@ describe('createInfiniteQueryController', () => {
     provider.remove()
   })
 
-  it('should reparent infinite query controller under a different provider and bind the new nearest client', async () => {
-    const key = queryKey()
+  it('should reconnect infinite query controller under a different provider and bind the new nearest client', async () => {
+    const key = createKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 

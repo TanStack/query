@@ -1,4 +1,4 @@
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/preact'
 import { useEffect, useState } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -84,7 +84,7 @@ describe('useMutation', () => {
 
     const { getByRole, queryByRole } = renderWithClient(queryClient, <Page />)
 
-    expect(queryByRole('heading')).toBeNull()
+    expect(queryByRole('heading')).not.toBeInTheDocument()
 
     fireEvent.click(getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
@@ -94,7 +94,7 @@ describe('useMutation', () => {
 
     fireEvent.click(getByRole('button', { name: /reset/i }))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByRole('heading')).toBeNull()
+    expect(queryByRole('heading')).not.toBeInTheDocument()
   })
 
   it('should call mutate callbacks when useMutation has no callbacks', async () => {
@@ -982,7 +982,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to use mutation defaults', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     queryClient.setMutationDefaults(key, {
       mutationFn: (text: string) => sleep(10).then(() => text),
@@ -1093,7 +1093,6 @@ describe('useMutation', () => {
     ).toBeInTheDocument()
 
     expect(count).toBe(2)
-    onlineMock.mockRestore()
   })
 
   it('should call onMutate even if paused', async () => {
@@ -1152,8 +1151,6 @@ describe('useMutation', () => {
 
     expect(onMutate).toHaveBeenCalledTimes(1)
     expect(count).toBe(1)
-
-    onlineMock.mockRestore()
   })
 
   it('should optimistically go to paused state if offline', async () => {
@@ -1206,13 +1203,11 @@ describe('useMutation', () => {
     expect(
       rendered.getByText('data: 1, status: success, isPaused: false'),
     ).toBeInTheDocument()
-
-    onlineMock.mockRestore()
   })
 
   it('should be able to retry a mutation when online', async () => {
     const onlineMock = mockOnlineManagerIsOnline(false)
-    const key = queryKey()
+    const key = createKey()
 
     let count = 0
 
@@ -1276,14 +1271,13 @@ describe('useMutation', () => {
       failureReason: null,
       data: 'data2',
     })
-
-    onlineMock.mockRestore()
   })
 
-  // oxlint-disable-next-line vitest/expect-expect
-  it('should not change state if unmounted', () => {
+  it('should not change state if unmounted', async () => {
+    const states: Array<UseMutationResult['status']> = []
     function Mutates() {
-      const { mutate } = useMutation({ mutationFn: () => sleep(10) })
+      const { mutate, status } = useMutation({ mutationFn: () => sleep(10) })
+      states.push(status)
       return <button onClick={() => mutate()}>mutate</button>
     }
     function Page() {
@@ -1298,7 +1292,19 @@ describe('useMutation', () => {
 
     const { getByText } = renderWithClient(queryClient, <Page />)
     fireEvent.click(getByText('mutate'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(states).toStrictEqual(['idle', 'pending'])
+
     fireEvent.click(getByText('unmount'))
+    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+      'pending',
+    )
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+      'success',
+    )
+    expect(states).toStrictEqual(['idle', 'pending'])
   })
 
   it('should be able to throw an error when throwOnError is set to true', async () => {
@@ -1323,7 +1329,7 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText, queryByText } = renderWithClient(
+    const { getByText } = renderWithClient(
       queryClient,
       <ErrorBoundary
         fallbackRender={() => (
@@ -1338,17 +1344,13 @@ describe('useMutation', () => {
 
     fireEvent.click(getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('error')).not.toBeNull()
+    expect(getByText('error')).toBeInTheDocument()
 
     expect(consoleErrorMock.mock.calls[0]?.[1]).toBe(err)
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should be able to throw an error when throwOnError is a function that returns true', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
     let boundary = false
     function Page() {
       const { mutate, error } = useMutation<string>({
@@ -1370,7 +1372,7 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText, queryByText } = renderWithClient(
+    const { getByText } = renderWithClient(
       queryClient,
       <ErrorBoundary
         fallbackRender={() => (
@@ -1386,14 +1388,13 @@ describe('useMutation', () => {
     // first error goes to component
     fireEvent.click(getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('mock error')).not.toBeNull()
+    expect(getByText('mock error')).toBeInTheDocument()
 
     // second error goes to boundary
     boundary = true
     fireEvent.click(getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('error boundary')).not.toBeNull()
-    consoleErrorMock.mockRestore()
+    expect(getByText('error boundary')).toBeInTheDocument()
   })
 
   it('should not throw an error when throwOnError is set to false', async () => {
@@ -1497,14 +1498,11 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText, queryByText } = renderWithClient(
-      queryClientMutationMeta,
-      <Page />,
-    )
+    const { getByText } = renderWithClient(queryClientMutationMeta, <Page />)
 
     fireEvent.click(getByText('succeed'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('successTest')).not.toBeNull()
+    expect(getByText('successTest')).toBeInTheDocument()
 
     expect(successMock).toHaveBeenCalledTimes(1)
     expect(successMock).toHaveBeenCalledWith(metaSuccessMessage)
@@ -1539,14 +1537,11 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText, queryByText } = renderWithClient(
-      queryClientMutationMeta,
-      <Page />,
-    )
+    const { getByText } = renderWithClient(queryClientMutationMeta, <Page />)
 
     fireEvent.click(getByText('error'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryByText('errorTest')).not.toBeNull()
+    expect(getByText('errorTest')).toBeInTheDocument()
 
     expect(errorMock).toHaveBeenCalledTimes(1)
     expect(errorMock).toHaveBeenCalledWith(metaErrorMessage)
@@ -1591,7 +1586,7 @@ describe('useMutation', () => {
           context: MutationFunctionContext,
         ) => void
       >()
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
     let count = 0
 
     function Page() {
@@ -2313,7 +2308,7 @@ describe('useMutation', () => {
   })
 
   it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
     function Page() {
@@ -2351,7 +2346,7 @@ describe('useMutation', () => {
   })
 
   it('should keep the optimistic update in place when the mutation succeeds', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
     function Page() {
@@ -2553,7 +2548,7 @@ describe('useMutation', () => {
   })
 
   it('should give mutationFn the same QueryClient instance via context', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'tag-from-this-client')
 
     function Page() {
@@ -2610,7 +2605,7 @@ describe('useMutation', () => {
   })
 
   it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'data')
 
     function Page() {

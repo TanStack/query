@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isReactive, ref } from 'vue-demi'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useIsMutating, useMutationState } from '../useMutationState'
 import { useQueryClient } from '../useQueryClient'
@@ -714,7 +714,7 @@ describe('mutationOptions', () => {
   })
 
   it('should reactively update mutationKey when ref changes in getter', async () => {
-    const key = queryKey()
+    const key = createKey()
     const keyRef = ref('key01')
     const mutationFn = vi.fn<(params: string) => Promise<string>>(
       (params: string) => sleep(10).then(() => params),

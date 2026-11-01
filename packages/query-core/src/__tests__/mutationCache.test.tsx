@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { MutationCache, MutationObserver, QueryClient } from '..'
 import { executeMutation } from './utils'
 import type {
@@ -20,7 +20,7 @@ describe('mutationCache', () => {
 
   describe('MutationCacheConfig error callbacks', () => {
     it('should call onError and onSettled when a mutation errors', async () => {
-      const key = queryKey()
+      const key = createKey()
       const onError =
         vi.fn<
           (
@@ -98,7 +98,7 @@ describe('mutationCache', () => {
     })
 
     it('should be awaited', async () => {
-      const key = queryKey()
+      const key = createKey()
       const states: Array<number> = []
       const onError = () =>
         sleep(10).then(() => {
@@ -140,7 +140,7 @@ describe('mutationCache', () => {
 
   describe('MutationCacheConfig success callbacks', () => {
     it('should call onSuccess and onSettled when a mutation is successful', async () => {
-      const key = queryKey()
+      const key = createKey()
       const onError =
         vi.fn<
           (
@@ -217,7 +217,7 @@ describe('mutationCache', () => {
     })
 
     it('should be awaited', async () => {
-      const key = queryKey()
+      const key = createKey()
       const states: Array<number> = []
       const onSuccess = () =>
         sleep(10).then(() => {
@@ -257,7 +257,7 @@ describe('mutationCache', () => {
 
   describe('MutationCacheConfig.onMutate', () => {
     it('should be called before a mutation executes', () => {
-      const key = queryKey()
+      const key = createKey()
       const onMutate =
         vi.fn<
           (
@@ -289,7 +289,7 @@ describe('mutationCache', () => {
     })
 
     it('should be awaited', async () => {
-      const key = queryKey()
+      const key = createKey()
       const states: Array<number> = []
       const onMutate = () =>
         sleep(10).then(() => {
@@ -317,7 +317,7 @@ describe('mutationCache', () => {
     })
 
     it('should run options.onMutate synchronously when mutationCache.config.onMutate is not defined', () => {
-      const key = queryKey()
+      const key = createKey()
       const states: Array<string> = []
 
       // No onMutate in cache config
@@ -555,7 +555,7 @@ describe('mutationCache', () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
       const original = testCache.build(testClient, {})
-      const key = queryKey()
+      const key = createKey()
       testCache.subscribe((event) => {
         if (event.type === 'removed' && event.mutation === original) {
           testCache.build(testClient, { mutationKey: key })

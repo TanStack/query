@@ -10,7 +10,7 @@ import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
 import { render } from '@testing-library/angular'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { noop } from '@tanstack/query-core'
 import { QueryClient, injectMutation, provideTanStackQuery } from '..'
 import { expectSignals, setFixtureSignalInputs } from './test-utils'
@@ -148,8 +148,8 @@ describe('injectMutation', () => {
     const mutationCache = queryClient.getMutationCache()
     // Signal will be updated before the mutation is called
     // this test confirms that the mutation uses the updated value
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const mutationKey = signal(key1)
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
@@ -546,7 +546,7 @@ describe('injectMutation', () => {
     })
 
     it('should give mutationFn the same QueryClient instance via context', async () => {
-      const key = queryKey()
+      const key = createKey()
       queryClient.setQueryData(key, 'tag-from-this-client')
 
       @Component({
@@ -597,7 +597,7 @@ describe('injectMutation', () => {
     })
 
     it('should let onSuccess invalidate queries via context.client without an injected QueryClient', async () => {
-      const key = queryKey()
+      const key = createKey()
       queryClient.setQueryData(key, 'data')
 
       const mutation = TestBed.runInInjectionContext(() => {
@@ -731,7 +731,7 @@ describe('injectMutation', () => {
 
   describe('throwOnError', () => {
     it('should evaluate throwOnError when mutation is expected to throw', async () => {
-      const key = queryKey()
+      const key = createKey()
       const err = new Error('Expected mock error. All is well!')
       const throwOnError = vi.fn<(error: Error) => boolean>()
       const { mutate } = TestBed.runInInjectionContext(() => {
@@ -753,7 +753,7 @@ describe('injectMutation', () => {
     })
 
     it('should throw when throwOnError is true and mutate is used', async () => {
-      const key = queryKey()
+      const key = createKey()
       const { mutate } = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationKey: key,
@@ -776,7 +776,7 @@ describe('injectMutation', () => {
   })
 
   it('should throw when throwOnError is true', async () => {
-    const key = queryKey()
+    const key = createKey()
     const err = new Error('Expected mock error. All is well!')
     const { mutateAsync } = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
@@ -792,7 +792,7 @@ describe('injectMutation', () => {
   })
 
   it('should throw when throwOnError function returns true', async () => {
-    const key = queryKey()
+    const key = createKey()
     const err = new Error('Expected mock error. All is well!')
     const { mutateAsync } = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
@@ -808,7 +808,7 @@ describe('injectMutation', () => {
   })
 
   it('should resolve mutateAsync with the value returned from mutationFn', async () => {
-    const key = queryKey()
+    const key = createKey()
     const { mutateAsync } = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
         mutationKey: key,
@@ -823,7 +823,7 @@ describe('injectMutation', () => {
 
   describe('injection context', () => {
     it('should throw NG0203 with descriptive error outside injection context', () => {
-      const key = queryKey()
+      const key = createKey()
       expect(() => {
         injectMutation(() => ({
           mutationKey: key,
@@ -833,7 +833,7 @@ describe('injectMutation', () => {
     })
 
     it('should be usable outside injection context when passing an injector', () => {
-      const key = queryKey()
+      const key = createKey()
       expect(() => {
         injectMutation(
           () => ({
@@ -852,7 +852,7 @@ describe('injectMutation', () => {
       let mutationStarted = false
       let mutationCompleted = false
 
-      const key = queryKey()
+      const key = createKey()
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
           mutationKey: key,
@@ -927,7 +927,7 @@ describe('injectMutation', () => {
       const app = TestBed.inject(ApplicationRef)
       let callCount = 0
 
-      const key = queryKey()
+      const key = createKey()
 
       const mutation1 = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
@@ -970,7 +970,7 @@ describe('injectMutation', () => {
 
     it('should handle synchronous mutation with optimistic updates', async () => {
       const app = TestBed.inject(ApplicationRef)
-      const testQueryKey = queryKey()
+      const testQueryKey = createKey()
       let onMutateCalled = false
       let onSuccessCalled = false
 
@@ -1014,7 +1014,7 @@ describe('injectMutation', () => {
     it('should handle synchronous mutation cancellation', async () => {
       const app = TestBed.inject(ApplicationRef)
 
-      const key = queryKey()
+      const key = createKey()
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
           mutationKey: key,
@@ -1042,7 +1042,7 @@ describe('injectMutation', () => {
 
   describe('optimistic updates', () => {
     it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
-      const key = queryKey()
+      const key = createKey()
       queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
       @Component({
@@ -1083,7 +1083,7 @@ describe('injectMutation', () => {
     })
 
     it('should keep the optimistic update in place when the mutation succeeds', async () => {
-      const key = queryKey()
+      const key = createKey()
       queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
       @Component({

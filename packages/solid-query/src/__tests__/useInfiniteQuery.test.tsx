@@ -11,7 +11,7 @@ import {
   createSignal,
   on,
 } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -53,7 +53,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should return the correct states for a successful query', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
@@ -148,7 +148,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should not throw when fetchNextPage returns an error', async () => {
-    const key = queryKey()
+    const key = createKey()
     let noThrow = false
 
     function Page() {
@@ -187,7 +187,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should keep the previous data when placeholderData is set', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<string>>>> =
       []
 
@@ -282,7 +282,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should be able to select a part of the data', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseInfiniteQueryResult<InfiniteData<string>>> = []
 
     function Page() {
@@ -319,7 +319,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should be able to select a new result and not cause infinite renders', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<
       UseInfiniteQueryResult<InfiniteData<{ count: number; id: number }>>
     > = []
@@ -363,7 +363,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should be able to reverse the data', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
       []
 
@@ -432,7 +432,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should be able to fetch a previous page', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
       []
 
@@ -512,7 +512,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should be able to refetch when providing page params automatically', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
       []
 
@@ -632,7 +632,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should return the correct states when refetch fails', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
       []
 
@@ -739,7 +739,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should return the correct states when fetchNextPage fails', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
       []
 
@@ -837,7 +837,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should return the correct states when fetchPreviousPage fails', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
       []
 
@@ -939,7 +939,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should silently cancel any ongoing fetch when fetching more', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
       []
 
@@ -964,12 +964,11 @@ describe('useInfiniteQuery', () => {
       })
 
       createEffect(() => {
-        const { refetch, fetchNextPage } = state
         setActTimeout(() => {
-          refetch()
+          state.refetch()
         }, 100)
         setActTimeout(() => {
-          fetchNextPage()
+          state.fetchNextPage()
         }, 110)
       })
 
@@ -1018,7 +1017,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should silently cancel an ongoing fetchNextPage request when another fetchNextPage is invoked', async () => {
-    const key = queryKey()
+    const key = createKey()
     const start = 10
     const onAborts: Array<Mock<(...args: Array<any>) => any>> = []
     const abortListeners: Array<Mock<(...args: Array<any>) => any>> = []
@@ -1045,12 +1044,11 @@ describe('useInfiniteQuery', () => {
       }))
 
       createEffect(() => {
-        const { fetchNextPage } = state
         setActTimeout(() => {
-          fetchNextPage()
+          state.fetchNextPage()
         }, 100)
         setActTimeout(() => {
-          fetchNextPage()
+          state.fetchNextPage()
         }, 110)
       })
 
@@ -1095,7 +1093,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used', async () => {
-    const key = queryKey()
+    const key = createKey()
     const start = 10
     const onAborts: Array<Mock<(...args: Array<any>) => any>> = []
     const abortListeners: Array<Mock<(...args: Array<any>) => any>> = []
@@ -1122,12 +1120,11 @@ describe('useInfiniteQuery', () => {
       }))
 
       createEffect(() => {
-        const { fetchNextPage } = state
         setActTimeout(() => {
-          fetchNextPage()
+          state.fetchNextPage()
         }, 100)
         setActTimeout(() => {
-          fetchNextPage({ cancelRefetch: false })
+          state.fetchNextPage({ cancelRefetch: false })
         }, 110)
       })
 
@@ -1163,7 +1160,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should keep fetching first page when not loaded yet and triggering fetch more', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
@@ -1181,9 +1178,8 @@ describe('useInfiniteQuery', () => {
       })
 
       createEffect(() => {
-        const { fetchNextPage } = state
         setActTimeout(() => {
-          fetchNextPage()
+          state.fetchNextPage()
         }, 10)
       })
 
@@ -1211,7 +1207,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should stop fetching additional pages when the component is unmounted and AbortSignal is consumed', async () => {
-    const key = queryKey()
+    const key = createKey()
     let fetches = 0
 
     const initialData = { pages: [1, 2, 3, 4], pageParams: [0, 1, 2, 3] }
@@ -1258,7 +1254,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should be able to set new pages with the query client', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
       []
 
@@ -1284,14 +1280,13 @@ describe('useInfiniteQuery', () => {
       })
 
       createEffect(() => {
-        const { refetch } = state
         setActTimeout(() => {
           queryClient.setQueryData(key, { pages: [7, 8], pageParams: [7, 8] })
           setFirstPage(7)
         }, 20)
 
         setActTimeout(() => {
-          refetch()
+          state.refetch()
         }, 50)
       })
 
@@ -1344,7 +1339,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should keep initialData visible alongside the error when a refetch fails', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
       []
 
@@ -1384,7 +1379,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<(context: { pageParam: number }) => Promise<string>>(
       ({ pageParam }: { pageParam: number }) =>
         sleep(10).then(() => `comments for 1 page ${pageParam}`),
@@ -1412,13 +1407,13 @@ describe('useInfiniteQuery', () => {
     const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).not.toHaveBeenCalled()
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
     expect(rendered.getByText('pages: none')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: 'set postId' }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(
       rendered.getByText('pages: comments for 1 page 0'),
@@ -1426,7 +1421,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should only refetch the first page when initialData is provided', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
       []
 
@@ -1451,9 +1446,8 @@ describe('useInfiniteQuery', () => {
       })
 
       createEffect(() => {
-        const { fetchNextPage } = state
         setActTimeout(() => {
-          fetchNextPage()
+          state.fetchNextPage()
         }, 20)
       })
 
@@ -1495,7 +1489,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should set hasNextPage to false if getNextPageParam returns undefined', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
@@ -1534,7 +1528,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should compute hasNextPage correctly using initialData', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
@@ -1574,7 +1568,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should compute hasNextPage correctly for falsy getFetchMore return value using initialData', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
@@ -1614,7 +1608,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should not use selected data when computing hasNextPage', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseInfiniteQueryResult<InfiniteData<string>>> = []
 
     function Page() {
@@ -1657,7 +1651,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should build fresh cursors on refetch', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const genItems = (size: number) =>
       [...new Array(size)].fill(null).map((_, d) => d)
@@ -1796,7 +1790,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should compute hasNextPage correctly for falsy getFetchMore return value on refetching', async () => {
-    const key = queryKey()
+    const key = createKey()
     const MAX = 2
 
     function Page() {
@@ -1911,12 +1905,12 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('Page 0: 3')).toBeInTheDocument()
     expect(rendered.getByText('Page 1: 4')).toBeInTheDocument()
     expect(rendered.getByText('Nothing more to load')).toBeInTheDocument()
-    expect(rendered.queryByText('Item: 29')).toBeNull()
-    expect(rendered.queryByText('Page 2: 5')).toBeNull()
+    expect(rendered.queryByText('Item: 29')).not.toBeInTheDocument()
+    expect(rendered.queryByText('Page 2: 5')).not.toBeInTheDocument()
   })
 
   it('should cancel the query function when there are no more subscriptions', async () => {
-    const key = queryKey()
+    const key = createKey()
     let cancelFn: Mock = vi.fn<(event: Event) => void>()
 
     const queryFn = ({ signal }: { signal?: AbortSignal }) => {
@@ -1958,7 +1952,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should use provided custom queryClient', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const state = useInfiniteQuery(
@@ -1984,7 +1978,7 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should work with infiniteQueryOptions', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const options = infiniteQueryOptions({
       queryKey: key,

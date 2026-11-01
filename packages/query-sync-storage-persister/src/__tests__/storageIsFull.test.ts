@@ -182,6 +182,7 @@ describe('create persister', () => {
       restoredClient2?.clientState.queries.find((q) => q.queryKey[0] === 'B'),
     ).toBeUndefined()
   })
+
   it('should clear storage as default error handling', async () => {
     const queryCache = new QueryCache()
     const mutationCache = new MutationCache()

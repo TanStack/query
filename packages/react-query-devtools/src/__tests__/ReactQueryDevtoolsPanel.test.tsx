@@ -161,6 +161,7 @@ describe('ReactQueryDevtoolsPanel', () => {
       />,
     )
 
+    // oxlint-disable-next-line testing-library/no-node-access -- the devtools mount container has no role or text to query by
     expect(container.querySelector('.tsqd-parent-container')).toHaveStyle({
       height: '500px',
       width: '300px',
@@ -175,6 +176,7 @@ describe('ReactQueryDevtoolsPanel', () => {
       />,
     )
 
+    // oxlint-disable-next-line testing-library/no-node-access -- the devtools mount container has no role or text to query by
     expect(container.querySelector('.tsqd-parent-container')).toHaveStyle({
       height: '300px',
       width: '300px',
@@ -197,7 +199,6 @@ describe('ReactQueryDevtoolsPanel', () => {
         await import('..')
       expect(ProductionDevtoolsPanel({})).toBeNull()
     } finally {
-      vi.unstubAllEnvs()
       vi.resetModules()
     }
   })

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   QueryObserver,
@@ -29,7 +29,7 @@ describe('queryObserver', () => {
   })
 
   it('should trigger a fetch when subscribed', () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
       .mockReturnValue('data')
@@ -40,7 +40,7 @@ describe('queryObserver', () => {
   })
 
   it('should go through a pending state even when the queryFn returns synchronously', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
       .mockReturnValue('data')
@@ -66,7 +66,7 @@ describe('queryObserver', () => {
   })
 
   it('should be able to read latest data after subscribing', () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -89,7 +89,7 @@ describe('queryObserver', () => {
     let key: Array<string>
 
     beforeEach(() => {
-      key = queryKey()
+      key = createKey()
       count = 0
       enabled = false
 
@@ -250,7 +250,7 @@ describe('queryObserver', () => {
   })
 
   it('should be able to read latest data when re-subscribing (but not re-fetching)', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -287,8 +287,8 @@ describe('queryObserver', () => {
   })
 
   it('should notify when switching query', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const results: Array<QueryObserverResult> = []
     const observer = new QueryObserver(queryClient, {
       queryKey: key1,
@@ -309,7 +309,7 @@ describe('queryObserver', () => {
   })
 
   it('should be able to fetch with a selector', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
@@ -325,7 +325,7 @@ describe('queryObserver', () => {
   })
 
   it('should be able to fetch with a selector using the fetch method', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
@@ -336,7 +336,7 @@ describe('queryObserver', () => {
   })
 
   it('should be able to fetch with a selector and object syntax', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
@@ -352,7 +352,7 @@ describe('queryObserver', () => {
   })
 
   it('should run the selector again if the data changed', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -370,7 +370,7 @@ describe('queryObserver', () => {
   })
 
   it('should run the selector again if the selector changed', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
     const results: Array<QueryObserverResult> = []
     const queryFn = () => ({ count: 1 })
@@ -428,7 +428,7 @@ describe('queryObserver', () => {
   })
 
   it('should not run the selector again if the data and selector did not change', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
     const results: Array<QueryObserverResult> = []
     const queryFn = () => ({ count: 1 })
@@ -477,7 +477,7 @@ describe('queryObserver', () => {
   })
 
   it('should not run the selector again if the data did not change', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -495,7 +495,7 @@ describe('queryObserver', () => {
   })
 
   it('should always run the selector again if selector throws an error and selector is not referentially stable', async () => {
-    const key = queryKey()
+    const key = createKey()
     const results: Array<QueryObserverResult> = []
     const queryFn = () => sleep(10).then(() => ({ count: 1 }))
     const observer = new QueryObserver(queryClient, {
@@ -535,7 +535,7 @@ describe('queryObserver', () => {
   })
 
   it('should not have isPlaceholderData true when selector throws on placeholder data', () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = () => sleep(10).then(() => ({ count: 1 }))
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -554,7 +554,7 @@ describe('queryObserver', () => {
   })
 
   it('should return stale data if selector throws an error', async () => {
-    const key = queryKey()
+    const key = createKey()
     const results: Array<QueryObserverResult> = []
     let shouldError = false
     const error = new Error('select error')
@@ -606,8 +606,8 @@ describe('queryObserver', () => {
   })
 
   it('should not leak the select error of the previous query into the result of a different query', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key1,
       queryFn: () => sleep(10).then(() => ({ count: 1 })),
@@ -641,9 +641,9 @@ describe('queryObserver', () => {
   })
 
   it('should not leak a stale select error through the memoized placeholderData path', async () => {
-    const keyA = queryKey()
-    const keyB = queryKey()
-    const keyC = queryKey()
+    const keyA = createKey()
+    const keyB = createKey()
+    const keyC = createKey()
     const placeholder = { count: 0 }
     const observer = new QueryObserver(queryClient, {
       queryKey: keyA,
@@ -692,7 +692,7 @@ describe('queryObserver', () => {
   })
 
   it('should clear the select error when the query is reset', async () => {
-    const key = queryKey()
+    const key = createKey()
     let shouldThrow = true
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -727,7 +727,7 @@ describe('queryObserver', () => {
   })
 
   it('should structurally share the selector', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -741,7 +741,7 @@ describe('queryObserver', () => {
   })
 
   it('should not trigger a fetch when subscribed and disabled', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
       .mockReturnValue('data')
@@ -757,7 +757,7 @@ describe('queryObserver', () => {
   })
 
   it('should not trigger a fetch when subscribed and disabled by callback', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
       .mockReturnValue('data')
@@ -773,7 +773,7 @@ describe('queryObserver', () => {
   })
 
   it('should not trigger a fetch when not subscribed', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
       .mockReturnValue('data')
@@ -784,7 +784,7 @@ describe('queryObserver', () => {
   })
 
   it('should be able to watch a query without defining a query function', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
       .mockReturnValue('data')
@@ -803,7 +803,7 @@ describe('queryObserver', () => {
   })
 
   it('should accept unresolved query config in update function', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
       .mockReturnValue('data')
@@ -826,7 +826,7 @@ describe('queryObserver', () => {
   })
 
   it('should be able to handle multiple subscribers', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
       .mockReturnValue('data')
@@ -856,7 +856,7 @@ describe('queryObserver', () => {
   })
 
   it('should stop retry when unsubscribing', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -875,7 +875,7 @@ describe('queryObserver', () => {
   })
 
   it('should clear interval when unsubscribing to a refetchInterval query', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     const fetchData = () => {
@@ -900,7 +900,7 @@ describe('queryObserver', () => {
   })
 
   it('should refetch at the interval returned when refetchInterval is a function', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -919,7 +919,7 @@ describe('queryObserver', () => {
   })
 
   it('should call refetchInterval with the query when it is a function', async () => {
-    const key = queryKey()
+    const key = createKey()
     const refetchInterval = vi.fn<() => number>(() => 10)
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -936,7 +936,7 @@ describe('queryObserver', () => {
   })
 
   it('should notify listeners when notifyOnChangeProps is a function returning props that changed', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     queryClient.setQueryData(key, 'data')
 
@@ -960,7 +960,7 @@ describe('queryObserver', () => {
   })
 
   it('should not notify listeners when notifyOnChangeProps is a function returning props that did not change', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     queryClient.setQueryData(key, 'data')
 
@@ -984,7 +984,7 @@ describe('queryObserver', () => {
   })
 
   it('should use placeholderData as non-cache data when pending a query with no data', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => 'data',
@@ -1010,7 +1010,7 @@ describe('queryObserver', () => {
   })
 
   it('should structurally share placeholder data', () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       enabled: false,
@@ -1028,7 +1028,7 @@ describe('queryObserver', () => {
   })
 
   it('should throw an error if enabled option type is not valid', () => {
-    const key = queryKey()
+    const key = createKey()
 
     expect(
       () =>
@@ -1042,7 +1042,7 @@ describe('queryObserver', () => {
   })
 
   it('should return the current query from getCurrentQuery', () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -1053,7 +1053,7 @@ describe('queryObserver', () => {
   })
 
   it('should throw an error if throwOnError option is true', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -1072,7 +1072,7 @@ describe('queryObserver', () => {
   })
 
   it('should not refetch in background if refetchIntervalInBackground is false', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
       .mockReturnValue('data')
@@ -1095,7 +1095,7 @@ describe('queryObserver', () => {
   })
 
   it('should not use replaceEqualDeep for select value when structuralSharing option is true', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const data = { value: 'data' }
     const selectedData = { value: 'data' }
@@ -1124,7 +1124,7 @@ describe('queryObserver', () => {
   })
 
   it('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderData is defined', () => {
-    const key = queryKey()
+    const key = createKey()
 
     const data = { value: 'data' }
     const selectedData1 = { value: 'data' }
@@ -1163,8 +1163,8 @@ describe('queryObserver', () => {
     const results: Array<QueryObserverResult> = []
     const keys: Array<ReadonlyArray<unknown> | null> = []
 
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const data1 = { value: 'data1' }
     const data2 = { value: 'data2' }
@@ -1226,8 +1226,8 @@ describe('queryObserver', () => {
   it('should pass the correct previous data to placeholderData function params when select function is used in conjunction', async () => {
     const results: Array<QueryObserverResult> = []
 
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const data1 = { value: 'data1' }
     const data2 = { value: 'data2' }
@@ -1290,8 +1290,8 @@ describe('queryObserver', () => {
   it('should use cached selectResult when switching between queries and placeholderData returns previousData', async () => {
     const results: Array<QueryObserverResult> = []
 
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const data1 = { value: 'data1' }
     const data2 = { value: 'data2' }
@@ -1349,7 +1349,7 @@ describe('queryObserver', () => {
   })
 
   it('should notify cache listeners when setOptions is called', () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -1372,7 +1372,7 @@ describe('queryObserver', () => {
   })
 
   it('should not be stale for disabled observers', () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -1384,7 +1384,7 @@ describe('queryObserver', () => {
   })
 
   it('should not schedule timers for disabled observers', () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'data', {
       updatedAt: Date.now() - 20,
     })
@@ -1409,7 +1409,7 @@ describe('queryObserver', () => {
     const resetIsServer = setIsServer(true)
 
     try {
-      const key = queryKey()
+      const key = createKey()
       queryClient.setQueryData(key, 'data')
 
       const observer = new QueryObserver(queryClient, {
@@ -1431,7 +1431,7 @@ describe('queryObserver', () => {
   })
 
   it('should allow staleTime as a function', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () =>
@@ -1456,7 +1456,7 @@ describe('queryObserver', () => {
   })
 
   it('should not see queries as stale is staleTime is Static', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () =>
@@ -1481,7 +1481,7 @@ describe('queryObserver', () => {
   })
 
   it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is true', () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -1493,7 +1493,7 @@ describe('queryObserver', () => {
   })
 
   it('should return false from shouldFetchOnWindowFocus when refetchOnWindowFocus is false', () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -1505,7 +1505,7 @@ describe('queryObserver', () => {
   })
 
   it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is "always" even if the query is fresh', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     void queryClient
       .query({
@@ -1526,7 +1526,7 @@ describe('queryObserver', () => {
   })
 
   it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is a function returning true', () => {
-    const key = queryKey()
+    const key = createKey()
     const refetchOnWindowFocus = vi.fn<() => boolean>(() => true)
 
     const observer = new QueryObserver(queryClient, {
@@ -1542,7 +1542,7 @@ describe('queryObserver', () => {
   })
 
   it('should return false from shouldFetchOnWindowFocus when refetchOnWindowFocus is a function returning false', () => {
-    const key = queryKey()
+    const key = createKey()
     const refetchOnWindowFocus = vi.fn<() => boolean>(() => false)
 
     const observer = new QueryObserver(queryClient, {
@@ -1558,7 +1558,7 @@ describe('queryObserver', () => {
   })
 
   it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is a function returning "always" even if the query is fresh', async () => {
-    const key = queryKey()
+    const key = createKey()
     const refetchOnWindowFocus = vi.fn<() => 'always'>(() => 'always' as const)
 
     void queryClient
@@ -1583,7 +1583,7 @@ describe('queryObserver', () => {
   })
 
   it('should fetch and return optimistic result via fetchOptimistic', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => 'data',
@@ -1599,7 +1599,7 @@ describe('queryObserver', () => {
   })
 
   it('should use the supplied queryFn via fetchOptimistic after the query is recreated', async () => {
-    const key = queryKey()
+    const key = createKey()
     const error = new Error('401 Unauthorized')
     const queryFn = vi.fn<() => Promise<never>>(() => Promise.reject(error))
     const options = {
@@ -1628,7 +1628,7 @@ describe('queryObserver', () => {
   })
 
   it('should resolve fetchOptimistic with cached data while the fetch continues', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryFn = () => sleep(100).then(() => 'fetched')
 
@@ -1661,7 +1661,7 @@ describe('queryObserver', () => {
   })
 
   it('should track error prop when throwOnError is true', async () => {
-    const key = queryKey()
+    const key = createKey()
     const results: Array<QueryObserverResult> = []
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -1699,7 +1699,7 @@ describe('queryObserver', () => {
   })
 
   it('should not track error prop when throwOnError is not set', async () => {
-    const key = queryKey()
+    const key = createKey()
     const results: Array<QueryObserverResult> = []
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -1732,7 +1732,7 @@ describe('queryObserver', () => {
   })
 
   it('should not refetch on mount when retryOnMount is false and query is in error state', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => Promise<never>>(() => Promise.reject('error'))
 
     // First observer causes query to fail
@@ -1765,7 +1765,7 @@ describe('queryObserver', () => {
   })
 
   it('should not refetchOnMount when set to "always" when staleTime is Static', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => string>(() => 'data')
     queryClient.setQueryData(key, 'initial')
     const observer = new QueryObserver(queryClient, {
@@ -1782,7 +1782,7 @@ describe('queryObserver', () => {
   })
 
   it('should not refetchOnWindowFocus when staleTime is static and query has background error', async () => {
-    const key = queryKey()
+    const key = createKey()
     let callCount = 0
     const queryFn = vi.fn<() => Promise<string>>(() => {
       callCount++
@@ -1821,7 +1821,7 @@ describe('queryObserver', () => {
   })
 
   it('should refetchOnWindowFocus when query has background error and staleTime is not static', async () => {
-    const key = queryKey()
+    const key = createKey()
     let callCount = 0
     const queryFn = vi.fn<() => Promise<string>>(() => {
       callCount++
@@ -1863,7 +1863,7 @@ describe('queryObserver', () => {
   })
 
   it('should set fetchStatus to idle when _optimisticResults is isRestoring', () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => 'data',
@@ -1875,7 +1875,7 @@ describe('queryObserver', () => {
   })
 
   it('should return isEnabled depending on enabled being resolved', () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => 'data',
@@ -1887,7 +1887,7 @@ describe('queryObserver', () => {
   })
 
   it('should return isEnabled as true per default', () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => 'data',
@@ -1898,7 +1898,7 @@ describe('queryObserver', () => {
   })
 
   it('should update currentResult when getOptimisticResult is called with changed data', () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -1925,7 +1925,7 @@ describe('queryObserver', () => {
 
   describe('StrictMode behavior', () => {
     it('should deduplicate calls to queryFn', async () => {
-      const key = queryKey()
+      const key = createKey()
       const queryFn = vi.fn<() => Promise<string>>(() =>
         sleep(50).then(() => 'data'),
       )
@@ -1953,7 +1953,7 @@ describe('queryObserver', () => {
     })
 
     it('should resolve with data when signal was consumed', async () => {
-      const key = queryKey()
+      const key = createKey()
       const queryFn = vi.fn<QueryFunction<string>>(({ signal }) =>
         sleep(50).then(() => 'data' + String(signal)),
       )

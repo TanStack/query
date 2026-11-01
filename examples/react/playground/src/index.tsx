@@ -8,24 +8,10 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { serverConfig } from './services/todos/api'
+import { todosMutations, todosQueries } from './services/todos/queries'
+import type { Todo } from './services/todos/types'
 import './styles.css'
-
-let nextId = 0
-let list = [
-  'apple',
-  'banana',
-  'pineapple',
-  'grapefruit',
-  'dragonfruit',
-  'grapes',
-].map((d) => ({ id: nextId++, name: d, notes: 'These are some notes' }))
-
-type Todos = typeof list
-type Todo = Todos[0]
-
-let errorRate = 0.05
-let queryTimeMin = 1000
-let queryTimeMax = 2000
 
 const initialStaleTime = 1000
 const initialGcTime = 3000
@@ -51,14 +37,20 @@ function onNumberChange(setValue: (value: number) => void) {
 function Root() {
   const [staleTime, setStaleTime] = React.useState(initialStaleTime)
   const [gcTime, setGcTime] = React.useState(initialGcTime)
-  const [localErrorRate, setLocalErrorRate] = React.useState(errorRate)
-  const [localFetchTimeMin, setLocalFetchTimeMin] = React.useState(queryTimeMin)
-  const [localFetchTimeMax, setLocalFetchTimeMax] = React.useState(queryTimeMax)
+  const [localErrorRate, setLocalErrorRate] = React.useState(
+    serverConfig.errorRate,
+  )
+  const [localFetchTimeMin, setLocalFetchTimeMin] = React.useState(
+    serverConfig.queryTimeMin,
+  )
+  const [localFetchTimeMax, setLocalFetchTimeMax] = React.useState(
+    serverConfig.queryTimeMax,
+  )
 
   React.useEffect(() => {
-    errorRate = localErrorRate
-    queryTimeMin = localFetchTimeMin
-    queryTimeMax = localFetchTimeMax
+    serverConfig.errorRate = localErrorRate
+    serverConfig.queryTimeMin = localFetchTimeMin
+    serverConfig.queryTimeMax = localFetchTimeMax
   }, [localErrorRate, localFetchTimeMax, localFetchTimeMin])
 
   React.useEffect(() => {
@@ -193,10 +185,9 @@ function Todos({
 }) {
   const [filter, setFilter] = React.useState(initialFilter)
 
-  const { status, data, isFetching, error, failureCount, refetch } = useQuery({
-    queryKey: ['todos', { filter }],
-    queryFn: ({ signal }) => fetchTodos({ filter, signal }),
-  })
+  const { status, data, isFetching, error, failureCount, refetch } = useQuery(
+    todosQueries.list(filter),
+  )
 
   return (
     <div>
@@ -248,19 +239,18 @@ function EditTodo({
 }) {
   const queryClient = useQueryClient()
 
-  const { status, data, isFetching, failureCount, refetch } = useQuery({
-    queryKey: ['todo', { id: editingIndex }],
-    queryFn: () => fetchTodoById({ id: editingIndex }),
-  })
+  const { status, data, isFetching, failureCount, refetch } = useQuery(
+    todosQueries.detail(editingIndex),
+  )
 
   const [draft, setDraft] = React.useState<Partial<Omit<Todo, 'id'>>>({})
 
   const saveMutation = useMutation({
-    mutationFn: patchTodo,
+    ...todosMutations.update(),
     onSuccess: (todo) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
-      queryClient.setQueryData(['todo', { id: editingIndex }], todo)
+      queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
+      queryClient.setQueryData(todosQueries.detail(editingIndex).queryKey, todo)
       setDraft({})
     },
   })
@@ -344,9 +334,9 @@ function AddTodo() {
   const [name, setName] = React.useState('')
 
   const addMutation = useMutation({
-    mutationFn: postTodo,
+    ...todosMutations.create(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
+      queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
     },
   })
 
@@ -376,95 +366,6 @@ function AddTodo() {
       </div>
     </div>
   )
-}
-
-function fetchTodos({
-  filter,
-  signal,
-}: {
-  filter: string
-  signal: AbortSignal
-}): Promise<Todos> {
-  console.info('fetchTodos', { filter })
-
-  signal.addEventListener('abort', () => {
-    console.info('cancelled', filter)
-  })
-
-  return new Promise((resolve, reject) => {
-    setTimeout(
-      () => {
-        if (Math.random() < errorRate) {
-          return reject(
-            new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2)),
-          )
-        }
-        resolve(list.filter((d) => d.name.includes(filter)))
-      },
-      queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin),
-    )
-  })
-}
-
-function fetchTodoById({ id }: { id: number }): Promise<Todo> {
-  console.info('fetchTodoById', { id })
-  return new Promise((resolve, reject) => {
-    setTimeout(
-      () => {
-        if (Math.random() < errorRate) {
-          return reject(
-            new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
-          )
-        }
-        const todo = list.find((d) => d.id === id)
-        if (!todo) {
-          return reject(new Error(`Todo with id ${id} not found`))
-        }
-        resolve(todo)
-      },
-      queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin),
-    )
-  })
-}
-
-function postTodo({ name, notes }: Omit<Todo, 'id'>): Promise<Todo> {
-  console.info('postTodo', { name, notes })
-  return new Promise((resolve, reject) => {
-    setTimeout(
-      () => {
-        if (Math.random() < errorRate) {
-          return reject(
-            new Error(JSON.stringify({ postTodo: { name, notes } }, null, 2)),
-          )
-        }
-        const todo = { name, notes, id: nextId++ }
-        list = [...list, todo]
-        resolve(todo)
-      },
-      queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin),
-    )
-  })
-}
-
-function patchTodo(todo: Todo): Promise<Todo> {
-  console.info('patchTodo', todo)
-  return new Promise((resolve, reject) => {
-    setTimeout(
-      () => {
-        if (Math.random() < errorRate) {
-          return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)))
-        }
-        list = list.map((d) => {
-          if (d.id === todo.id) {
-            return todo
-          }
-          return d
-        })
-        resolve(todo)
-      },
-      queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin),
-    )
-  })
 }
 
 const rootElement = document.getElementById('root')

@@ -1,4 +1,4 @@
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/preact'
 import { useEffect, useState } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -19,7 +19,7 @@ describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
     const queryClient = new QueryClient()
-    const key = queryKey()
+    const key = createKey()
 
     function IsFetching() {
       const isFetching = useIsFetching()
@@ -62,8 +62,8 @@ describe('useIsFetching', () => {
   it('should not update state while rendering', async () => {
     const queryClient = new QueryClient()
 
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const isFetchingArray: Array<number> = []
 
@@ -130,8 +130,8 @@ describe('useIsFetching', () => {
 
   it('should be able to filter', async () => {
     const queryClient = new QueryClient()
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const isFetchingArray: Array<number> = []
 
@@ -189,7 +189,7 @@ describe('useIsFetching', () => {
 
   it('should show the correct fetching state when mounted after a query', async () => {
     const queryClient = new QueryClient()
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useQuery({
@@ -219,7 +219,7 @@ describe('useIsFetching', () => {
 
     const queryCache = new QueryCache({ onSuccess })
     const queryClient = new QueryClient({ queryCache })
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useQuery(

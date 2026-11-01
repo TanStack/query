@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { skipToken } from '..'
 import { injectQueries } from '../inject-queries'
 import { queryOptions } from '../query-options'
@@ -9,9 +9,9 @@ import type { Signal } from '@angular/core'
 describe('injectQueries', () => {
   describe('config object overload', () => {
     it('should always define TData when initialData is provided as an object', () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
+      const key3 = createKey()
 
       const query1 = {
         queryKey: key1,
@@ -50,7 +50,7 @@ describe('injectQueries', () => {
     })
 
     it('should define TData when passed through queryOptions', () => {
-      const key = queryKey()
+      const key = createKey()
       const options = queryOptions({
         queryKey: key,
         queryFn: () => {
@@ -70,8 +70,8 @@ describe('injectQueries', () => {
     })
 
     it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into injectQuery', () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
 
       const query1 = queryOptions({
         queryKey: key1,
@@ -94,7 +94,7 @@ describe('injectQueries', () => {
     })
 
     it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
-      const key = queryKey()
+      const key = createKey()
       const queryResults = injectQueries(() => ({
         queries: [
           {
@@ -117,7 +117,7 @@ describe('injectQueries', () => {
     describe('custom injectable', () => {
       it('should allow custom hooks using UseQueryOptions', () => {
         type Data = string
-        const key = queryKey()
+        const key = createKey()
 
         const injectCustomQueries = (
           options?: OmitKeyof<CreateQueryOptions<Data>, 'queryKey' | 'queryFn'>,
@@ -141,7 +141,7 @@ describe('injectQueries', () => {
     })
 
     it('should have correct TData type when conditional skipToken is passed', () => {
-      const key = queryKey()
+      const key = createKey()
       const queryResults = injectQueries(() => ({
         queries: [
           {
@@ -160,8 +160,8 @@ describe('injectQueries', () => {
     })
 
     it('should return correct data for dynamic queries with mixed result types', () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
 
       const Queries1 = {
         get: () =>

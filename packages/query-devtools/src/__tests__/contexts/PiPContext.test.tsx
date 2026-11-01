@@ -28,7 +28,6 @@ function stubPipWindow(overrides: FakePipWindowOverrides = {}) {
 
 describe('PiPContext', () => {
   afterEach(() => {
-    vi.unstubAllGlobals()
     localStorage.clear()
   })
 
@@ -181,25 +180,21 @@ describe('PiPContext', () => {
     it('should copy parent stylesheets as "<style>" with the same id into the PiP document head', () => {
       const sourceStyle = document.createElement('style')
       sourceStyle.id = 'tsqd-source'
-      const sheetSpy = stubParentStyleSheet({
+      stubParentStyleSheet({
         cssRules: makeCssRules('.tsqd { color: red; }'),
         ownerNode: sourceStyle,
       })
       const { pipDocument } = stubPipWindow()
 
-      try {
-        renderAndAct((pip) => pip().requestPipWindow(640, 480))
+      renderAndAct((pip) => pip().requestPipWindow(640, 480))
 
-        const copied = pipDocument.head.querySelector('style#tsqd-source')
-        expect(copied).not.toBeNull()
-        expect(copied?.textContent).toBe('.tsqd { color: red; }')
-      } finally {
-        sheetSpy.mockRestore()
-      }
+      const copied = pipDocument.head.querySelector('style#tsqd-source')
+      expect(copied).not.toBeNull()
+      expect(copied?.textContent).toBe('.tsqd { color: red; }')
     })
 
     it('should fall back to a "<link>" for cross-origin stylesheets whose "cssRules" throw', () => {
-      const sheetSpy = stubParentStyleSheet({
+      stubParentStyleSheet({
         get cssRules(): CSSRuleList {
           throw new DOMException('blocked', 'SecurityError')
         },
@@ -209,21 +204,17 @@ describe('PiPContext', () => {
       })
       const { pipDocument } = stubPipWindow()
 
-      try {
-        renderAndAct((pip) => pip().requestPipWindow(640, 480))
+      renderAndAct((pip) => pip().requestPipWindow(640, 480))
 
-        const link = pipDocument.head.querySelector<HTMLLinkElement>(
-          'link[href="https://example.com/external.css"]',
-        )
-        expect(link).not.toBeNull()
-        expect(link?.rel).toBe('stylesheet')
-      } finally {
-        sheetSpy.mockRestore()
-      }
+      const link = pipDocument.head.querySelector<HTMLLinkElement>(
+        'link[href="https://example.com/external.css"]',
+      )
+      expect(link).not.toBeNull()
+      expect(link?.rel).toBe('stylesheet')
     })
 
     it('should skip the "<link>" fallback when the cross-origin stylesheet has no "href"', () => {
-      const sheetSpy = stubParentStyleSheet({
+      stubParentStyleSheet({
         get cssRules(): CSSRuleList {
           throw new DOMException('blocked', 'SecurityError')
         },
@@ -233,14 +224,10 @@ describe('PiPContext', () => {
       })
       const { pipDocument } = stubPipWindow()
 
-      try {
-        renderAndAct((pip) => pip().requestPipWindow(640, 480))
+      renderAndAct((pip) => pip().requestPipWindow(640, 480))
 
-        expect(pipDocument.head.querySelector('link')).toBeNull()
-        expect(pipDocument.head.querySelector('style')).toBeNull()
-      } finally {
-        sheetSpy.mockRestore()
-      }
+      expect(pipDocument.head.querySelector('link')).toBeNull()
+      expect(pipDocument.head.querySelector('style')).toBeNull()
     })
   })
 
@@ -365,21 +352,17 @@ describe('PiPContext', () => {
         .spyOn(console, 'error')
         .mockImplementation(() => {})
 
-      try {
-        renderAndAct(() => {}, {
-          initialStorage: { 'TanstackQueryDevtools.pip_open': 'true' },
-        })
+      renderAndAct(() => {}, {
+        initialStorage: { 'TanstackQueryDevtools.pip_open': 'true' },
+      })
 
-        expect(consoleErrorMock).toHaveBeenCalledWith(
-          'Failed to open popup. Please allow popups for this site to view the devtools in picture-in-picture mode.',
-        )
-        expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
-          'false',
-        )
-        expect(localStorage.getItem('TanstackQueryDevtools.open')).toBe('false')
-      } finally {
-        consoleErrorMock.mockRestore()
-      }
+      expect(consoleErrorMock).toHaveBeenCalledWith(
+        'Failed to open popup. Please allow popups for this site to view the devtools in picture-in-picture mode.',
+      )
+      expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
+        'false',
+      )
+      expect(localStorage.getItem('TanstackQueryDevtools.open')).toBe('false')
     })
 
     it('should re-throw non-"PipOpenError" errors from "window.open" on auto-open', () => {

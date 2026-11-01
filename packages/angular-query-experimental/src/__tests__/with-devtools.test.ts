@@ -180,8 +180,6 @@ describe('withDevtools feature', () => {
       'Install @tanstack/query-devtools or reinstall without --omit=optional.',
       expect.objectContaining({ message: 'No QueryClient found' }),
     )
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should not continue loading devtools after injector is destroyed', async () => {
@@ -439,6 +437,34 @@ describe('withDevtools feature', () => {
     TestBed.tick()
     expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(1)
     expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledWith('dark')
+  })
+
+  it('should update theme to undefined when it is removed', async () => {
+    const theme = signal<Theme | undefined>('dark')
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+            theme: theme(),
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
+    TestBed.tick()
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(0)
+
+    theme.set(undefined)
+    TestBed.tick()
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledWith(undefined)
   })
 
   it('should destroy devtools', async () => {

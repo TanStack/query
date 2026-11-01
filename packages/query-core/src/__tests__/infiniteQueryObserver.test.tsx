@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { InfiniteQueryObserver, QueryClient } from '..'
 import type {
   DefaultedInfiniteQueryObserverOptions,
@@ -23,7 +23,7 @@ describe('InfiniteQueryObserver', () => {
   })
 
   it('should be able to fetch an infinite query with selector', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 1),
@@ -50,7 +50,7 @@ describe('InfiniteQueryObserver', () => {
       it: 'works',
     }
 
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 1))
     const observer = new InfiniteQueryObserver(queryClient, {
       meta,
@@ -76,7 +76,7 @@ describe('InfiniteQueryObserver', () => {
   })
 
   it('should make getNextPageParam and getPreviousPageParam receive current pageParams', async () => {
-    const key = queryKey()
+    const key = createKey()
     let single: Array<string> = []
     let all: Array<string> = []
     const observer = new InfiniteQueryObserver(queryClient, {
@@ -114,7 +114,7 @@ describe('InfiniteQueryObserver', () => {
   })
 
   it('should not invoke getNextPageParam and getPreviousPageParam on empty pages', () => {
-    const key = queryKey()
+    const key = createKey()
 
     const getNextPageParam = vi.fn<GetNextPageParamFunction<number, string>>()
     const getPreviousPageParam =
@@ -145,7 +145,7 @@ describe('InfiniteQueryObserver', () => {
   })
 
   it('should stop refetching if undefined is returned from getNextPageParam', async () => {
-    const key = queryKey()
+    const key = createKey()
     let next: number | undefined = 2
     const queryFn = vi.fn<(...args: Array<any>) => any>(({ pageParam }) =>
       sleep(10).then(() => String(pageParam)),
@@ -175,7 +175,7 @@ describe('InfiniteQueryObserver', () => {
   })
 
   it('should stop refetching if null is returned from getNextPageParam', async () => {
-    const key = queryKey()
+    const key = createKey()
     let next: number | null = 2
     const queryFn = vi.fn<(...args: Array<any>) => any>(({ pageParam }) =>
       sleep(10).then(() => String(pageParam)),
@@ -205,7 +205,7 @@ describe('InfiniteQueryObserver', () => {
   })
 
   it('should set infinite query behavior via getOptimisticResult and return the initial state', () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 1),
@@ -248,7 +248,7 @@ describe('InfiniteQueryObserver', () => {
   })
 
   it('should fetch with the supplied infinite options via fetchOptimistic after the query is recreated', async () => {
-    const key = queryKey()
+    const key = createKey()
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: ({ pageParam }) => sleep(10).then(() => `page-${pageParam}`),

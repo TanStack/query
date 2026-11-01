@@ -18,14 +18,6 @@ import type {
 } from '@tanstack/query-persist-client-core'
 import type { StatusResult } from './utils.svelte.js'
 
-beforeEach(() => {
-  vi.useFakeTimers()
-})
-
-afterEach(() => {
-  vi.useRealTimers()
-})
-
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
 
@@ -61,6 +53,14 @@ const createMockErrorPersister = (
 }
 
 describe('PersistQueryClientProvider', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should restore cache from persister', async () => {
     const states = new StatelessRef<Array<StatusResult<string>>>([])
 
@@ -362,7 +362,7 @@ describe('PersistQueryClientProvider', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockReturnValue(undefined)
-    const consoleWarnMock = vi.spyOn(console, 'warn').mockReturnValue(undefined)
+    vi.spyOn(console, 'warn').mockReturnValue(undefined)
 
     const queryClient = new QueryClient()
     const removeClient = vi.fn<() => Promisable<void>>()
@@ -383,7 +383,5 @@ describe('PersistQueryClientProvider', () => {
     expect(onError).toHaveBeenCalledTimes(1)
     expect(consoleErrorMock).toHaveBeenCalledTimes(1)
     expect(consoleErrorMock).toHaveBeenNthCalledWith(1, error)
-    consoleErrorMock.mockRestore()
-    consoleWarnMock.mockRestore()
   })
 })

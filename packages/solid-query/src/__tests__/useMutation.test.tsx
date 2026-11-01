@@ -6,7 +6,7 @@ import {
   createSignal,
 } from 'solid-js'
 import { fireEvent, render } from '@solidjs/testing-library'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { MutationCache, QueryCache, QueryClient, useMutation } from '..'
 import {
   mockOnlineManagerIsOnline,
@@ -61,9 +61,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to reset `error`', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const mutation = useMutation<string, Error>(() => ({
@@ -85,7 +83,7 @@ describe('useMutation', () => {
 
     const rendered = renderWithClient(queryClient, () => <Page />)
 
-    expect(rendered.queryByRole('heading')).toBeNull()
+    expect(rendered.queryByRole('heading')).not.toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
@@ -94,9 +92,7 @@ describe('useMutation', () => {
     )
 
     fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
-    expect(rendered.queryByRole('heading')).toBeNull()
-
-    consoleErrorMock.mockRestore()
+    expect(rendered.queryByRole('heading')).not.toBeInTheDocument()
   })
 
   it('should call mutate callbacks when useMutation has no callbacks', async () => {
@@ -270,9 +266,8 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
-          await mutateAsync('todo', {
+          await mutation.mutateAsync('todo', {
             onSuccess: () => {
               callbacks.push('mutateAsync.onSuccess')
             },
@@ -307,10 +302,9 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
-            await mutateAsync('todo', {
+            await mutation.mutateAsync('todo', {
               onError: () => {
                 callbacks.push('mutateAsync.onError')
               },
@@ -343,9 +337,8 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
-          await mutateAsync('todo', {
+          await mutation.mutateAsync('todo', {
             onSuccess: () => {
               callbacks.push('mutateAsync.onSuccess')
             },
@@ -374,10 +367,9 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
-            await mutateAsync('todo', {
+            await mutation.mutateAsync('todo', {
               onError: () => {
                 callbacks.push('mutateAsync.onError')
               },
@@ -404,9 +396,8 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
-          await mutateAsync('todo', {
+          await mutation.mutateAsync('todo', {
             onSettled: () => {
               callbacks.push('mutateAsync.onSettled')
             },
@@ -624,10 +615,9 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
-            const result = await mutateAsync('todo', {
+            const result = await mutation.mutateAsync('todo', {
               onSuccess: () => {
                 callbacks.push('mutateAsync.onSuccess')
               },
@@ -671,10 +661,9 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
-            await mutateAsync('todo', {
+            await mutation.mutateAsync('todo', {
               onError: () => {
                 callbacks.push('mutateAsync.onError')
               },
@@ -704,7 +693,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to use mutation defaults', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     queryClient.setMutationDefaults(key, {
       mutationFn: (text: string) => sleep(10).then(() => text),
@@ -722,9 +711,8 @@ describe('useMutation', () => {
       })
 
       createEffect(() => {
-        const { mutate } = mutation
         setActTimeout(() => {
-          mutate('todo')
+          mutation.mutate('todo')
         }, 10)
       })
 
@@ -754,9 +742,8 @@ describe('useMutation', () => {
       }))
 
       createEffect(() => {
-        const { mutate } = mutation
         setActTimeout(() => {
-          mutate('todo')
+          mutation.mutate('todo')
         }, 10)
       })
 
@@ -933,8 +920,6 @@ describe('useMutation', () => {
     expect(
       rendered.getByText('data: 1, status: success, isPaused: false'),
     ).toBeInTheDocument()
-
-    onlineMock.mockRestore()
   })
 
   it('should be able to retry a mutation when online', async () => {
@@ -962,10 +947,9 @@ describe('useMutation', () => {
       })
 
       createEffect(() => {
-        const { mutate } = mutation
         setActTimeout(() => {
           window.dispatchEvent(new Event('offline'))
-          mutate('todo')
+          mutation.mutate('todo')
         }, 10)
       })
 
@@ -1021,10 +1005,13 @@ describe('useMutation', () => {
     })
   })
 
-  // oxlint-disable-next-line vitest/expect-expect
-  it('should not change state if unmounted', () => {
+  it('should not change state if unmounted', async () => {
+    const states: Array<UseMutationResult['status']> = []
     function Mutates() {
       const mutation = useMutation(() => ({ mutationFn: () => sleep(10) }))
+      createRenderEffect(() => {
+        states.push(mutation.status)
+      })
       return <button onClick={() => mutation.mutate()}>mutate</button>
     }
     function Page() {
@@ -1039,13 +1026,23 @@ describe('useMutation', () => {
 
     const rendered = renderWithClient(queryClient, () => <Page />)
     fireEvent.click(rendered.getByText('mutate'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(states).toStrictEqual(['idle', 'pending'])
+
     fireEvent.click(rendered.getByText('unmount'))
+    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+      'pending',
+    )
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+      'success',
+    )
+    expect(states).toStrictEqual(['idle', 'pending'])
   })
 
   it('should be able to throw an error when throwOnError is set to true', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const mutation = useMutation<string, Error>(() => ({
@@ -1078,15 +1075,11 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('error')).not.toBeNull()
-
-    consoleErrorMock.mockRestore()
+    expect(rendered.getByText('error')).toBeInTheDocument()
   })
 
   it('should be able to throw an error when throwOnError is a function that returns true', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     let boundary = false
     function Page() {
@@ -1125,14 +1118,12 @@ describe('useMutation', () => {
     // first error goes to component
     fireEvent.click(rendered.getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('mock error')).not.toBeNull()
+    expect(rendered.getByText('mock error')).toBeInTheDocument()
 
     // second error goes to boundary
     fireEvent.click(rendered.getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('error boundary')).not.toBeNull()
-
-    consoleErrorMock.mockRestore()
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
   })
 
   it('should pass meta to mutation on success', async () => {
@@ -1166,7 +1157,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByText('succeed'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('successTest')).not.toBeNull()
+    expect(rendered.getByText('successTest')).toBeInTheDocument()
 
     expect(successMock).toHaveBeenCalledTimes(1)
     expect(successMock).toHaveBeenCalledWith(metaSuccessMessage)
@@ -1205,7 +1196,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByText('error'))
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('errorTest')).not.toBeNull()
+    expect(rendered.getByText('errorTest')).toBeInTheDocument()
 
     expect(errorMock).toHaveBeenCalledTimes(1)
     expect(errorMock).toHaveBeenCalledWith(metaErrorMessage)
@@ -1250,7 +1241,7 @@ describe('useMutation', () => {
           context: MutationFunctionContext,
         ) => void
       >()
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
     let count = 0
 
     function Page() {
@@ -1598,7 +1589,7 @@ describe('useMutation', () => {
   })
 
   it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
     function Page() {
@@ -1636,7 +1627,7 @@ describe('useMutation', () => {
   })
 
   it('should keep the optimistic update in place when the mutation succeeds', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
     function Page() {
@@ -1838,7 +1829,7 @@ describe('useMutation', () => {
   })
 
   it('should give mutationFn the same QueryClient instance via context', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'tag-from-this-client')
 
     function Page() {
@@ -1895,7 +1886,7 @@ describe('useMutation', () => {
   })
 
   it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'data')
 
     function Page() {

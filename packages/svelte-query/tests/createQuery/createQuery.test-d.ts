@@ -1,10 +1,10 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { createQuery, queryOptions } from '../../src/index.js'
 
 describe('createQuery', () => {
   it('should return the correct states for a successful query', () => {
-    const key = queryKey()
+    const key = createKey()
     const query = createQuery<string, Error>(() => ({
       queryKey: key,
       queryFn: () => Promise.resolve('test'),
@@ -25,111 +25,111 @@ describe('createQuery', () => {
   describe('initialData', () => {
     describe('Config object overload', () => {
       it('should always define TData when initialData is provided as an object', () => {
-        const key = queryKey()
-        const { data } = createQuery(() => ({
+        const key = createKey()
+        const query = createQuery(() => ({
           queryKey: key,
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
       })
 
       it('should define TData when passed through queryOptions', () => {
-        const key = queryKey()
+        const key = createKey()
         const options = queryOptions({
           queryKey: key,
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         })
-        const { data } = createQuery(() => options)
+        const query = createQuery(() => options)
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
       })
 
       it('should always define TData when initialData is provided as a function which ALWAYS returns the data', () => {
-        const key = queryKey()
-        const { data } = createQuery(() => ({
+        const key = createKey()
+        const query = createQuery(() => ({
           queryKey: key,
           queryFn: () => ({ wow: true }),
           initialData: () => ({ wow: true }),
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
       })
 
       it('should have undefined in the TData union when initialData is NOT provided', () => {
-        const key = queryKey()
-        const { data } = createQuery(() => ({
+        const key = createKey()
+        const query = createQuery(() => ({
           queryKey: key,
           queryFn: () => ({ wow: true }),
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
 
       it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
-        const key = queryKey()
-        const { data } = createQuery(() => ({
+        const key = createKey()
+        const query = createQuery(() => ({
           queryKey: key,
           queryFn: () => ({ wow: true }),
           initialData: () => undefined as { wow: boolean } | undefined,
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
     })
 
     describe('Query key overload', () => {
       it('should always define TData when initialData is provided', () => {
-        const key = queryKey()
-        const { data } = createQuery(() => ({
+        const key = createKey()
+        const query = createQuery(() => ({
           queryKey: key,
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
       })
 
       it('should have undefined in the TData union when initialData is NOT provided', () => {
-        const key = queryKey()
-        const { data } = createQuery(() => ({
+        const key = createKey()
+        const query = createQuery(() => ({
           queryKey: key,
           queryFn: () => ({ wow: true }),
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
     })
 
     describe('Query key and func', () => {
       it('should always define TData when initialData is provided', () => {
-        const key = queryKey()
-        const { data } = createQuery(() => ({
+        const key = createKey()
+        const query = createQuery(() => ({
           queryKey: key,
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
       })
 
       it('should have undefined in the TData union when initialData is NOT provided', () => {
-        const key = queryKey()
-        const { data } = createQuery(() => ({
+        const key = createKey()
+        const query = createQuery(() => ({
           queryKey: key,
           queryFn: () => ({ wow: true }),
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
     })
   })
 
   describe('generic queryFn', () => {
     it('should infer the result type from a generic query function', () => {
-      const key = queryKey()
+      const key = createKey()
 
       function queryFn<T = string>(): Promise<T> {
         return Promise.resolve({} as T)

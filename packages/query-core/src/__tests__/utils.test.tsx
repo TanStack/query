@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '..'
 import {
   addConsumeAwareSignal,
@@ -50,6 +50,27 @@ describe('core/utils', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toBe(true)
     })
 
+    it('should return `true` when comparing an object with inherited properties to itself', () => {
+      const a = { a: 1 }
+      Object.setPrototypeOf(a, { inherited: 1 })
+
+      expect(shallowEqualObjects(a, a)).toBe(true)
+    })
+
+    it('should ignore inherited properties when comparing equal own properties', () => {
+      const a = { a: 1 }
+      const b = { a: 1 }
+      Object.setPrototypeOf(a, { inherited: 1 })
+
+      expect(shallowEqualObjects(a, b)).toBe(true)
+      expect(shallowEqualObjects(b, a)).toBe(true)
+
+      Object.setPrototypeOf(b, { inherited: 2 })
+
+      expect(shallowEqualObjects(a, b)).toBe(true)
+      expect(shallowEqualObjects(b, a)).toBe(true)
+    })
+
     it('should return `false` for non shallow equal objects', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 2 })).toBe(false)
     })
@@ -61,7 +82,15 @@ describe('core/utils', () => {
     it('should return false if b is undefined', () => {
       expect(shallowEqualObjects({ a: 1 }, undefined)).toBe(false)
     })
+
+    it('should return `false` for same-length objects with different keys', () => {
+      expect(
+        shallowEqualObjects({ a: 1, b: undefined }, { a: 1, c: undefined }),
+      ).toBe(false)
+      expect(shallowEqualObjects({ a: 1, b: 2 }, { a: 1, c: 2 })).toBe(false)
+    })
   })
+
   describe('isPlainObject', () => {
     it('should return `true` for a plain object', () => {
       expect(isPlainObject({})).toBe(true)
@@ -200,6 +229,7 @@ describe('core/utils', () => {
       expect(replaceEqualDeep(null, null)).toBeNull()
       expect(replaceEqualDeep(undefined, undefined)).toBeUndefined()
     })
+
     it('should return the next value when the previous value is a different value', () => {
       const date1 = new Date()
       const date2 = new Date()
@@ -472,7 +502,7 @@ describe('core/utils', () => {
 
   describe('matchMutation', () => {
     it('should return false if mutationKey options is undefined', () => {
-      const filters = { mutationKey: queryKey() }
+      const filters = { mutationKey: createKey() }
       const queryClient = new QueryClient()
       const mutation = new Mutation({
         client: queryClient,
@@ -505,6 +535,12 @@ describe('core/utils', () => {
       expect(newItems).toStrictEqual([2, 3, 4])
     })
 
+    it('should not exceed max when items already exceed max', () => {
+      const items = [1, 2, 3, 4, 5]
+      const newItems = addToEnd(items, 6, 3)
+      expect(newItems).toStrictEqual([4, 5, 6])
+    })
+
     it('should add item to the end of the array when max = 0', () => {
       const items = [1, 2, 3]
       const item = 4
@@ -533,7 +569,13 @@ describe('core/utils', () => {
       const item = 4
       const max = 2
       const newItems = addToStart(items, item, max)
-      expect(newItems).toStrictEqual([4, 1, 2])
+      expect(newItems).toStrictEqual([4, 1])
+    })
+
+    it('should not exceed max when items already exceed max', () => {
+      const items = [1, 2, 3, 4, 5]
+      const newItems = addToStart(items, 6, 3)
+      expect(newItems).toStrictEqual([6, 1, 2])
     })
 
     it('should not remove any items if max = 0', () => {
@@ -664,8 +706,6 @@ describe('core/utils', () => {
       await expect(resolved(context)).rejects.toThrow(
         'Missing queryFn: \'["skip"]\'',
       )
-
-      consoleErrorMock.mockRestore()
     })
   })
 
@@ -690,7 +730,7 @@ describe('core/utils', () => {
   describe('addConsumeAwareSignal', () => {
     it('should expose the signal on the query context while preserving its properties', () => {
       const controller = new AbortController()
-      const key = queryKey()
+      const key = createKey()
       const context = addConsumeAwareSignal(
         { queryKey: key, meta: undefined },
         () => controller.signal,
@@ -704,7 +744,7 @@ describe('core/utils', () => {
     it('should call onCancelled immediately when the signal is already aborted on first access', () => {
       const controller = new AbortController()
       controller.abort()
-      const onCancelled = vi.fn<VoidFunction>()
+      const onCancelled = vi.fn<() => void>()
       const object = addConsumeAwareSignal(
         {},
         () => controller.signal,
@@ -721,7 +761,7 @@ describe('core/utils', () => {
       const controller = new AbortController()
       let cancelled = false
       const context = addConsumeAwareSignal(
-        { queryKey: queryKey() },
+        { queryKey: createKey() },
         () => controller.signal,
         () => (cancelled = true),
       )
@@ -737,7 +777,7 @@ describe('core/utils', () => {
       const controller = new AbortController()
       const addEventListener = vi.spyOn(controller.signal, 'addEventListener')
       const context = addConsumeAwareSignal(
-        { queryKey: queryKey() },
+        { queryKey: createKey() },
         () => controller.signal,
         vi.fn(),
       )

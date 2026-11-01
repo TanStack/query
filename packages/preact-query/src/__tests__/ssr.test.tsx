@@ -1,4 +1,4 @@
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { renderToString } from 'preact-render-to-string'
 import { useState } from 'preact/hooks'
 import {
@@ -48,7 +48,7 @@ describe('Server Side Rendering', () => {
   })
 
   it('should not trigger fetch', () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => Promise<string>>(() =>
       sleep(10).then(() => 'data'),
     )
@@ -76,7 +76,7 @@ describe('Server Side Rendering', () => {
   })
 
   it('should add prefetched data to cache', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const promise = queryClient.query({
       queryKey: key,
@@ -91,7 +91,7 @@ describe('Server Side Rendering', () => {
   })
 
   it('should return existing data from the cache', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => Promise<string>>(() =>
       sleep(10).then(() => 'data'),
     )
@@ -122,7 +122,7 @@ describe('Server Side Rendering', () => {
   })
 
   it('should add initialData to the cache', () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [page, setPage] = useState(1)
@@ -168,7 +168,7 @@ describe('Server Side Rendering', () => {
   })
 
   it('should return the correct state from useInfiniteQuery', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => Promise<string>>(() =>
       sleep(10).then(() => 'page 1'),
     )

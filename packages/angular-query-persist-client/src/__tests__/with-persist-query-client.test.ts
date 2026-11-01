@@ -12,7 +12,7 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core'
 import { render } from '@testing-library/angular'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { withPersistQueryClient } from '../with-persist-query-client'
 import type {
   PersistedClient,
@@ -65,7 +65,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should restore cache from persister', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -157,7 +157,7 @@ describe('withPersistQueryClient', () => {
   )
 
   it('should show initialData while restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -249,7 +249,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should not refetch after restoring when data is fresh', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -337,7 +337,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should call onSuccess after successful restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryClient = new QueryClient()
     void queryClient
       .query({
@@ -394,7 +394,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should remove cache after non-successful restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockReturnValue(undefined)
@@ -444,6 +444,5 @@ describe('withPersistQueryClient', () => {
 
     expect(consoleErrorMock).toHaveBeenCalledTimes(1)
     expect(consoleErrorMock).toHaveBeenNthCalledWith(1, error)
-    consoleErrorMock.mockRestore()
   })
 })

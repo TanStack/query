@@ -240,7 +240,6 @@ describe('ReactQueryDevtools', () => {
       const { ReactQueryDevtools: ProductionDevtools } = await import('..')
       expect(ProductionDevtools({})).toBeNull()
     } finally {
-      vi.unstubAllEnvs()
       vi.resetModules()
     }
   })

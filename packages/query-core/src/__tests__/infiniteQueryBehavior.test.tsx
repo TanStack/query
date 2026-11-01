@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { CancelledError, InfiniteQueryObserver, QueryClient } from '..'
 import { infiniteQueryBehavior } from '../infiniteQueryBehavior'
 import type {
@@ -27,7 +27,7 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   it('should throw an error if the queryFn is not defined', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
@@ -54,7 +54,7 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   it('should apply the maxPages option to limit the number of pages', async () => {
-    const key = queryKey()
+    const key = createKey()
     let abortSignal: AbortSignal | null = null
 
     const queryFnSpy = vi
@@ -200,7 +200,7 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   it('should support query cancellation', async () => {
-    const key = queryKey()
+    const key = createKey()
     let abortSignal: AbortSignal | null = null
 
     const queryFnSpy = vi
@@ -254,7 +254,7 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   it('should not refetch pages if the query is cancelled', async () => {
-    const key = queryKey()
+    const key = createKey()
     let abortSignal: AbortSignal | null = null
 
     let queryFnSpy = vi
@@ -340,7 +340,7 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   it('should surface the abort reason when cancellation happens between refetched pages', async () => {
-    const key = queryKey()
+    const key = createKey()
     const abortController = new AbortController()
     const queryFn = vi
       .fn<QueryFunction<number, QueryKey, number>>()
@@ -383,7 +383,7 @@ describe('InfiniteQueryBehavior', () => {
 
   it('should not enter an infinite loop when a page errors while retry is on #8046', async () => {
     let errorCount = 0
-    const key = queryKey()
+    const key = createKey()
 
     interface TestResponse {
       data: Array<{ id: string }>
@@ -456,7 +456,7 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   it('should fetch even if initialPageParam is null', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
@@ -482,7 +482,7 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   it('should preserve a null first page parameter when refetching', async () => {
-    const key = queryKey()
+    const key = createKey()
     const pageParams: Array<unknown> = []
     const queryFn = ({ pageParam }: { pageParam: unknown }) => {
       pageParams.push(pageParam)
@@ -506,7 +506,7 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   it('should not fetch next page when getNextPageParam returns null', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
@@ -538,7 +538,7 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   it('should use persister when provided', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     // oxlint-disable-next-line vitest/require-mock-type-parameters -- the persister receives an argument-less fetch function at runtime, which 'QueryPersister' cannot express
     const persisterSpy = vi.fn().mockImplementation(async (fn) => {

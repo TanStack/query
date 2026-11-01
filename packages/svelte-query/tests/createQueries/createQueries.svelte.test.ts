@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/svelte'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, createQueries } from '../../src/index.js'
 import { promiseWithResolvers, ref, withEffectRoot } from '../utils.svelte.js'
 import IsRestoring from './IsRestoring.svelte'
@@ -22,8 +22,8 @@ describe('createQueries', () => {
   it(
     'should return the correct states',
     withEffectRoot(async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
       const results: Array<Array<CreateQueryResult>> = []
       const { promise: promise1, resolve: resolve1 } = promiseWithResolvers()
       const { promise: promise2, resolve: resolve2 } = promiseWithResolvers()
@@ -69,7 +69,7 @@ describe('createQueries', () => {
   it(
     'should track results',
     withEffectRoot(async () => {
-      const key1 = queryKey()
+      const key1 = createKey()
       const results: Array<Array<CreateQueryResult>> = []
       let count = 0
 
@@ -110,7 +110,7 @@ describe('createQueries', () => {
   it(
     'should track queries added to an initially empty array',
     withEffectRoot(async () => {
-      const key1 = queryKey()
+      const key1 = createKey()
       const queries = ref<
         Array<{ queryKey: Array<string>; queryFn: () => Promise<string> }>
       >([])
@@ -142,8 +142,8 @@ describe('createQueries', () => {
   it(
     'should combine queries',
     withEffectRoot(async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
 
       const { promise: promise1, resolve: resolve1 } =
         promiseWithResolvers<string>()
@@ -200,8 +200,8 @@ describe('createQueries', () => {
   it(
     'should track property access through combine function',
     withEffectRoot(async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
       let count = 0
       const results: Array<unknown> = []
 

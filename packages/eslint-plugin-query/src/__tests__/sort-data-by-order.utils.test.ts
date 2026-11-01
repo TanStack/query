@@ -68,6 +68,7 @@ describe('create-route-property-order utils', () => {
         expected: [{ key: 'd' }, { key: 'a' }, { key: 'b' }, { key: 'c' }],
       },
     ] as const
+
     it.each(testCases)(
       'should sort $data by $orderArray using $key',
       ({ data, orderArray, key, expected }) => {

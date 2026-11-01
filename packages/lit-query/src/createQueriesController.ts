@@ -599,13 +599,13 @@ class QueriesController<
     const observers = this.observer.getObservers()
 
     return rawResult.map((result, index) => {
-      const observer = observers[index]
+      const resultObserver = observers[index]
 
-      if (!observer || observer.options.notifyOnChangeProps) {
+      if (!resultObserver || resultObserver.options.notifyOnChangeProps) {
         return result
       }
 
-      return observer.trackResult(result, (accessedProp) => {
+      return resultObserver.trackResult(result, (accessedProp) => {
         observers.forEach((observer) => {
           observer.trackProp(accessedProp)
         })

@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@lit-labs/ssr'
 import { collectResult } from '@lit-labs/ssr/lib/render-result.js'
 import { QueryCache, QueryClient, noop } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { html as staticHtml, unsafeStatic } from 'lit/static-html.js'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
@@ -40,7 +40,7 @@ describe('Server Side Rendering', () => {
   })
 
   it('should not trigger fetch', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => Promise<string>>(() =>
       sleep(10).then(() => 'data'),
     )
@@ -64,7 +64,7 @@ describe('Server Side Rendering', () => {
   })
 
   it('should return existing data from the cache', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => Promise<string>>(() =>
       sleep(10).then(() => 'data'),
     )
@@ -91,7 +91,7 @@ describe('Server Side Rendering', () => {
   })
 
   it('should add initialData to the cache', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Page extends LitElement {
       readonly page = 1
@@ -118,7 +118,7 @@ describe('Server Side Rendering', () => {
   })
 
   it('should return the correct state from createInfiniteQueryController', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = vi.fn<() => Promise<string>>(() =>
       sleep(10).then(() => 'page 1'),
     )
@@ -158,7 +158,7 @@ describe('Server Side Rendering', () => {
   })
 
   it('should return 0 from useIsFetching after prefetch completes', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = () => sleep(10).then(() => 'data')
 
     class Page extends LitElement {
@@ -186,8 +186,8 @@ describe('Server Side Rendering', () => {
   })
 
   it('should return existing data from the cache with createQueriesController', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = () => sleep(10).then(() => 'data1')
     const queryFn2 = () => sleep(10).then(() => 'data2')
 

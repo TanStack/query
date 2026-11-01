@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, QueryObserver, hashKey, noop } from '..'
 import type { DefaultError, Query, QueryCacheNotifyEvent } from '..'
 
@@ -20,7 +20,7 @@ describe('queryCache', () => {
 
   describe('subscribe', () => {
     it('should pass the correct query', () => {
-      const key = queryKey()
+      const key = createKey()
       const subscriber = vi.fn<(event: QueryCacheNotifyEvent) => void>()
       const unsubscribe = queryCache.subscribe(subscriber)
       queryClient.setQueryData(key, 'foo')
@@ -31,7 +31,7 @@ describe('queryCache', () => {
     })
 
     it('should notify listeners when new query is added', async () => {
-      const key = queryKey()
+      const key = createKey()
       const callback = vi.fn<(event: QueryCacheNotifyEvent) => void>()
       queryCache.subscribe(callback)
       void queryClient
@@ -46,7 +46,7 @@ describe('queryCache', () => {
     })
 
     it('should notify query cache when a query becomes stale', async () => {
-      const key = queryKey()
+      const key = createKey()
       const events: Array<string> = []
       const queries: Array<unknown> = []
       const unsubscribe = queryCache.subscribe((event) => {
@@ -85,7 +85,7 @@ describe('queryCache', () => {
     })
 
     it('should include the queryCache and query when notifying listeners', async () => {
-      const key = queryKey()
+      const key = createKey()
       const callback = vi.fn<(event: QueryCacheNotifyEvent) => void>()
       queryCache.subscribe(callback)
       void queryClient
@@ -100,7 +100,7 @@ describe('queryCache', () => {
     })
 
     it('should notify subscribers when new query with initialData is added', async () => {
-      const key = queryKey()
+      const key = createKey()
       const callback = vi.fn<(event: QueryCacheNotifyEvent) => void>()
       queryCache.subscribe(callback)
       void queryClient
@@ -135,9 +135,9 @@ describe('queryCache', () => {
 
       const testClient = new QueryClient({ queryCache: testCache })
 
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
+      const key3 = createKey()
       void testClient
         .query({
           queryKey: key1,
@@ -168,7 +168,7 @@ describe('queryCache', () => {
 
   describe('find', () => {
     it('should filter correctly with find', async () => {
-      const key = queryKey()
+      const key = createKey()
       void queryClient
         .query({
           queryKey: key,
@@ -181,7 +181,7 @@ describe('queryCache', () => {
     })
 
     it('should filter correctly with find when exact is set to false', async () => {
-      const key = queryKey()
+      const key = createKey()
       void queryClient
         .query({
           queryKey: key,
@@ -196,9 +196,9 @@ describe('queryCache', () => {
 
   describe('findAll', () => {
     it('should filter correctly', async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const keyFetching = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
+      const keyFetching = createKey()
       void queryClient
         .query({
           queryKey: key1,
@@ -347,8 +347,8 @@ describe('queryCache', () => {
     })
 
     it('should return all the queries when no filters are defined', async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
       await queryClient
         .query({
           queryKey: key1,
@@ -367,7 +367,7 @@ describe('queryCache', () => {
 
   describe('QueryCacheConfig error callbacks', () => {
     it('should call onError and onSettled when a query errors', async () => {
-      const key = queryKey()
+      const key = createKey()
       const onSuccess =
         vi.fn<
           (data: unknown, query: Query<unknown, unknown, unknown>) => void
@@ -405,7 +405,7 @@ describe('queryCache', () => {
 
   describe('QueryCacheConfig success callbacks', () => {
     it('should call onSuccess and onSettled when a query is successful', async () => {
-      const key = queryKey()
+      const key = createKey()
       const onSuccess =
         vi.fn<
           (data: unknown, query: Query<unknown, unknown, unknown>) => void
@@ -442,7 +442,7 @@ describe('queryCache', () => {
 
   describe('build', () => {
     it('should compute queryHash from queryKey when queryHash is not provided', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const query = queryCache.build(queryClient, {
         queryKey: key,
@@ -452,7 +452,7 @@ describe('queryCache', () => {
     })
 
     it('should use provided queryHash instead of computing it', () => {
-      const key = queryKey()
+      const key = createKey()
       const customHash = 'custom-hash'
 
       const query = queryCache.build(queryClient, {
@@ -467,7 +467,7 @@ describe('queryCache', () => {
 
   describe('QueryCache.remove', () => {
     it('should be a no-op if the query is no longer the cached instance', () => {
-      const key = queryKey()
+      const key = createKey()
 
       const staleQuery = queryCache.build(queryClient, { queryKey: key })
       queryCache.remove(staleQuery)
@@ -489,7 +489,7 @@ describe('queryCache', () => {
 
   describe('QueryCache.add', () => {
     it('should not try to add a query already added to the cache', async () => {
-      const key = queryKey()
+      const key = createKey()
 
       void queryClient
         .query({

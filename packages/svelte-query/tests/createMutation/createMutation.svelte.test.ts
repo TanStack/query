@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushSync } from 'svelte'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient, noop } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { createMutation } from '../../src/index.js'
 import { withEffectRoot } from '../utils.svelte.js'
 import Reset from './Reset.svelte'
@@ -35,7 +35,7 @@ describe('createMutation', () => {
       props: { queryClient },
     })
 
-    expect(rendered.queryByText('Error: undefined')).toBeInTheDocument()
+    expect(rendered.getByText('Error: undefined')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     await vi.advanceTimersByTimeAsync(11)
@@ -276,13 +276,13 @@ describe('createMutation', () => {
       },
     })
 
-    expect(rendered.queryByText('Count: 0')).toBeInTheDocument()
+    expect(rendered.getByText('Count: 0')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(rendered.queryByText('Count: 3')).toBeInTheDocument()
+    expect(rendered.getByText('Count: 3')).toBeInTheDocument()
 
     expect(onSuccessMock).toHaveBeenCalledTimes(3)
     expect(onSuccessMock).toHaveBeenNthCalledWith(1, 1)
@@ -314,7 +314,7 @@ describe('createMutation', () => {
       },
     })
 
-    expect(rendered.queryByText('Data: undefined')).toBeInTheDocument()
+    expect(rendered.getByText('Data: undefined')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     expect(rendered.getByText('Data: undefined')).toBeInTheDocument()
@@ -507,7 +507,7 @@ describe('createMutation', () => {
   )
 
   it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
     const rendered = render(OptimisticUpdate, {
@@ -524,7 +524,7 @@ describe('createMutation', () => {
   })
 
   it('should keep the optimistic update in place when the mutation succeeds', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
     const rendered = render(OptimisticUpdate, {
@@ -589,7 +589,7 @@ describe('createMutation', () => {
   })
 
   it('should give mutationFn the same QueryClient instance via context', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'tag-from-this-client')
 
     const rendered = render(MutationFnContext, {
@@ -602,7 +602,7 @@ describe('createMutation', () => {
   })
 
   it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'data')
 
     const rendered = render(InvalidateFromContext, {

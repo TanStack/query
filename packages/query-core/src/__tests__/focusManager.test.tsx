@@ -3,6 +3,7 @@ import { FocusManager } from '../focusManager'
 
 describe('focusManager', () => {
   let focusManager: FocusManager
+
   beforeEach(() => {
     vi.useFakeTimers()
     vi.resetModules()
@@ -72,8 +73,6 @@ describe('focusManager', () => {
     secondUnsubscribe()
 
     expect(removeEventListenerSpy).not.toHaveBeenCalled()
-
-    windowSpy.mockRestore()
   })
 
   it('should not call cleanup (removeEventListener) if window.addEventListener is not defined', () => {
@@ -109,9 +108,6 @@ describe('focusManager', () => {
 
     // Should unsubscribe our event listener once
     expect(unsubscribeSpy).toHaveBeenCalledTimes(1)
-
-    handlerSpy.mockRestore()
-    unsubscribeSpy.mockRestore()
   })
 
   it('should call removeEventListener when last listener unsubscribes', () => {

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient, skipToken } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { ref } from '../utils.svelte.js'
 import Base from './Base.svelte'
 import Select from './Select.svelte'
@@ -128,7 +128,7 @@ describe('createInfiniteQuery', () => {
   })
 
   it('should keep initialData visible alongside the error when a refetch fails', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const rendered = render(Options, {
       props: {
@@ -153,7 +153,7 @@ describe('createInfiniteQuery', () => {
   })
 
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
-    const key = queryKey()
+    const key = createKey()
     const postId = ref<string | undefined>(undefined)
     const queryFn = vi.fn<(context: { pageParam: number }) => Promise<string>>(
       ({ pageParam }: { pageParam: number }) =>
