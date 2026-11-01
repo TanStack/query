@@ -1,14 +1,21 @@
 /* @refresh reload */
 import { render } from 'solid-js/web'
 import { RouterProvider, createRouter } from '@tanstack/solid-router'
-import { QueryClientProvider } from '@tanstack/solid-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 
 import './index.css'
 
 import ErrorPage from './error-page'
-import { queryClient } from './queryClient'
 import { routeTree } from './routeTree.gen'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 10 * 1000,
+    },
+  },
+})
 
 const router = createRouter({
   routeTree,
