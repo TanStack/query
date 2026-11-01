@@ -31,4 +31,4 @@ bun add @tanstack/svelte-query
 
 Svelte Query is compatible with Svelte v5.25+.
 
-> Wanna give it a spin before you download? Try out the [basic](./examples/basic) example!
+> Wanna give it a spin before you download? Try out the [basic](./examples/basic-sveltekit) example!
