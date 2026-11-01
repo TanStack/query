@@ -5,8 +5,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import { ErrorMessage } from '../components/ErrorMessage'
 import { useRefreshByUser } from '../hooks/useRefreshByUser'
-import { fetchMovie } from '../lib/api'
-import type { Movie, MovieDetails } from '../lib/api'
+import { moviesQueries } from '../services/movies/queries'
+import type { Movie, MovieDetails } from '../services/movies/types'
 import type { MoviesStackNavigator } from '../navigation/types'
 import type { StackNavigationProp } from '@react-navigation/stack'
 import type { RouteProp } from '@react-navigation/native'
@@ -24,14 +24,18 @@ type Props = {
 export function MovieDetailsScreen({ route }: Props) {
   const { title } = route.params
   const queryClient = useQueryClient()
+  const movieDetailQuery = moviesQueries.detail(title)
   const { isPending, isError, error, data, refetch } = useQuery<
-    Movie | MovieDetails
+    Movie | MovieDetails,
+    Error,
+    Movie | MovieDetails,
+    typeof movieDetailQuery.queryKey
   >({
-    queryKey: ['movie', title],
-    queryFn: () => fetchMovie(title),
+    queryKey: movieDetailQuery.queryKey,
+    queryFn: movieDetailQuery.queryFn,
     placeholderData: () =>
       queryClient
-        .getQueryData<Array<Movie>>(['movies'])
+        .getQueryData(moviesQueries.list().queryKey)
         ?.find((movie) => movie.title === title),
   })
 

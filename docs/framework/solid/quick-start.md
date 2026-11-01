@@ -212,6 +212,6 @@ function App() {
 ```
 
 - Errors can be caught and reset using SolidJS' native `ErrorBoundary` component.
-  Set `throwOnError` or the `suspense` option to `true` to make sure errors are thrown to the `ErrorBoundary`
+  Set `throwOnError` to `true` to make sure errors are thrown to the `ErrorBoundary`
 
 - Since Property tracking is handled through Solid's fine grained reactivity, options like `notifyOnChangeProps` are not needed

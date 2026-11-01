@@ -1,5 +1,23 @@
 # @tanstack/vue-query
 
+## 5.105.1
+
+### Patch Changes
+
+- [#11373](https://github.com/TanStack/query/pull/11373) [`7ccba6e`](https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6) - fix({react,preact,angular,solid,vue}-query/infiniteQueryOptions): correct the overload selected for a possibly-undefined 'initialData'
+
+- [#12390](https://github.com/TanStack/query/pull/12390) [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf) - Exclude `fetchStatus` from the filters accepted by `QueryClient.isFetching`, `useIsFetching`, and `injectIsFetching`. These APIs always count queries with `fetchStatus: 'fetching'`.
+- Updated dependencies [[`6f8a48d`](https://github.com/TanStack/query/commit/6f8a48d543b499b6d9b0e95050c28183c8c18ae0), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/query-core@5.105.1
+
+## 5.105.0
+
+### Patch Changes
+
+- [#11921](https://github.com/TanStack/query/pull/11921) [`c5de051`](https://github.com/TanStack/query/commit/c5de051d61f1ed20e5266b4086349589d51e2950) - fix(vue-query/queryClient): infer the data and error types of 'getQueryState' from a tagged query key
+- Updated dependencies []:
+  - @tanstack/query-core@5.105.0
+
 ## 5.104.5
 
 ### Patch Changes
