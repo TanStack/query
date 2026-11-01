@@ -1,5 +1,5 @@
 {
-  "name": "vue-vite",
+  "name": "@tanstack/query-integration-vue-vite",
   "private": true,
   "type": "module",
   "scripts": {

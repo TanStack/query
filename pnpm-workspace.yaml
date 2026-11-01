@@ -61,7 +61,7 @@ catalog:
 
 packages:
   - 'packages/*'
-  - 'integrations/*'
+  - 'integrations/*/*'
   - 'examples/angular/*'
   - 'examples/react/*'
   - 'examples/preact/*'

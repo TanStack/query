@@ -1,5 +1,5 @@
 {
-  "name": "angular-cli-20",
+  "name": "@tanstack/query-integration-angular-cli-20",
   "private": true,
   "scripts": {
     "ng": "ng",
