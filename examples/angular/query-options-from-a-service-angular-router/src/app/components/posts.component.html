@@ -8,8 +8,8 @@
     <div class="todo-container">
       @for (post of postsQuery.data(); track post.id) {
         <p>
-          <!--          We can access the query data here to show bold links for-->
-          <!--          ones that are cached-->
+          <!-- We can access the query data here to show bold links for -->
+          <!-- ones that are cached -->
           <a
             routerLink="post/{{ post.id }}"
             [style]="
