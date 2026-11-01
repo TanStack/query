@@ -48,6 +48,27 @@ describe('core/utils', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toEqual(true)
     })
 
+    it('should return `true` when comparing an object with inherited properties to itself', () => {
+      const a = { a: 1 }
+      Object.setPrototypeOf(a, { inherited: 1 })
+
+      expect(shallowEqualObjects(a, a)).toEqual(true)
+    })
+
+    it('should ignore inherited properties when comparing equal own properties', () => {
+      const a = { a: 1 }
+      const b = { a: 1 }
+      Object.setPrototypeOf(a, { inherited: 1 })
+
+      expect(shallowEqualObjects(a, b)).toEqual(true)
+      expect(shallowEqualObjects(b, a)).toEqual(true)
+
+      Object.setPrototypeOf(b, { inherited: 2 })
+
+      expect(shallowEqualObjects(a, b)).toEqual(true)
+      expect(shallowEqualObjects(b, a)).toEqual(true)
+    })
+
     it('should return `false` for non shallow equal objects', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 2 })).toEqual(false)
     })
@@ -61,10 +82,6 @@ describe('core/utils', () => {
     })
 
     it('should return `false` for same-length objects with different keys', () => {
-      // Both objects have the same number of keys, but the key sets differ.
-      // `b` is missing on the second object and `c` is missing on the first,
-      // so they are not shallowly equal even though both differing values
-      // happen to be `undefined`.
       expect(
         shallowEqualObjects({ a: 1, b: undefined }, { a: 1, c: undefined }),
       ).toEqual(false)
