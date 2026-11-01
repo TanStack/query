@@ -531,6 +531,43 @@
           ]
         },
         {
+          "label": "svelte",
+          "children": [
+            {
+              "label": "Queries",
+              "to": "framework/svelte/guides/queries"
+            },
+            {
+              "label": "Network Mode",
+              "to": "framework/svelte/guides/network-mode"
+            },
+            {
+              "label": "Parallel Queries",
+              "to": "framework/svelte/guides/parallel-queries"
+            },
+            {
+              "label": "Query Retries",
+              "to": "framework/svelte/guides/query-retries"
+            },
+            {
+              "label": "Mutations",
+              "to": "framework/svelte/guides/mutations"
+            },
+            {
+              "label": "Invalidations from Mutations",
+              "to": "framework/svelte/guides/invalidations-from-mutations"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/svelte/guides/optimistic-updates"
+            },
+            {
+              "label": "Query Cancellation",
+              "to": "framework/svelte/guides/query-cancellation"
+            }
+          ]
+        },
+        {
           "label": "vue",
           "children": [
             {
