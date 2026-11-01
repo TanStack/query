@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-solid-offline",
+  "name": "@tanstack/query-example-solid-offline-solid-router",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,6 +10,7 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
+    "@solidjs/router": "^1.0.0",
     "@tanstack/query-async-storage-persister": "^5.105.1",
     "@tanstack/solid-query": "^5.105.1",
     "@tanstack/solid-query-devtools": "^5.105.1",
