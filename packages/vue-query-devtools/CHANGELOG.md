@@ -1,5 +1,22 @@
 # @tanstack/vue-query-devtools
 
+## 6.3.7
+
+### Patch Changes
+
+- Updated dependencies [[`7ccba6e`](https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/vue-query@5.105.1
+  - @tanstack/query-devtools@5.105.1
+
+## 6.3.6
+
+### Patch Changes
+
+- [#12312](https://github.com/TanStack/query/pull/12312) [`a282bf8`](https://github.com/TanStack/query/commit/a282bf807a29f3b59a706021c1077377326659cc) - fix(vue-query-devtools): stop defaulting the 'theme' prop to 'system' so the theme chosen in the devtools settings applies when the prop is omitted
+- Updated dependencies [[`c5de051`](https://github.com/TanStack/query/commit/c5de051d61f1ed20e5266b4086349589d51e2950)]:
+  - @tanstack/vue-query@5.105.0
+  - @tanstack/query-devtools@5.105.0
+
 ## 6.3.5
 
 ### Patch Changes

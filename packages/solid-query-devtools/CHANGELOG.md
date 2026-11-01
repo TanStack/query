@@ -1,5 +1,22 @@
 # @tanstack/solid-query-devtools
 
+## 5.105.1
+
+### Patch Changes
+
+- Updated dependencies [[`7ccba6e`](https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6), [`b9f369a`](https://github.com/TanStack/query/commit/b9f369a23affb4cdc5beefb810456a87cf94e7d5), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/solid-query@5.105.1
+  - @tanstack/query-devtools@5.105.1
+
+## 5.105.0
+
+### Patch Changes
+
+- [#12310](https://github.com/TanStack/query/pull/12310) [`f232b75`](https://github.com/TanStack/query/commit/f232b75e35db8adec04f7f0ff527be5227b53b9b) - fix(solid-query-devtools): stop defaulting the 'theme' prop to 'system' so the theme chosen in the devtools settings applies when the prop is omitted
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.105.0
+  - @tanstack/solid-query@5.105.0
+
 ## 5.104.5
 
 ### Patch Changes

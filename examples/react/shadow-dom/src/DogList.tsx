@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { dogsQueryOptions } from './api'
+import { dogsQueries } from './services/dogs/queries'
 
 export const DogList = () => {
-  const { data, status } = useQuery(dogsQueryOptions)
+  const { data, status } = useQuery(dogsQueries.list())
 
   if (status === 'pending') return 'Loading...'
 

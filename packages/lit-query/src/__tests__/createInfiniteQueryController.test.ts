@@ -917,7 +917,7 @@ describe('createInfiniteQueryController', () => {
     provider.remove()
   })
 
-  it('should reparent infinite query controller under a different provider and bind the new nearest client', async () => {
+  it('should reconnect infinite query controller under a different provider and bind the new nearest client', async () => {
     const key = createKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()

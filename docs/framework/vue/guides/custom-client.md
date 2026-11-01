@@ -16,7 +16,7 @@ If You provide `QueryClientConfig`, `QueryClient` instance will be created inter
 ```tsx
 const vueQueryPluginOptions: VueQueryPluginOptions = {
   queryClientConfig: {
-    defaultOptions: { queries: { staleTime: 3600 } },
+    defaultOptions: { queries: { staleTime: 60 * 60 * 1000 } },
   },
 }
 app.use(VueQueryPlugin, vueQueryPluginOptions)

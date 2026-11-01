@@ -53,7 +53,8 @@
     hideDisabledQueries?: boolean
     /**
      * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-     * Defaults to 'system'.
+     * This overrides the theme selected in the devtools Settings menu. When omitted, the
+     * selected theme is used, or `'system'` if none is selected.
      */
     theme?: Theme
   }
@@ -67,7 +68,7 @@
     styleNonce = undefined,
     shadowDOMTarget = undefined,
     hideDisabledQueries = false,
-    theme = 'system',
+    theme,
   }: DevtoolsOptions = $props()
 
   let ref: HTMLDivElement
