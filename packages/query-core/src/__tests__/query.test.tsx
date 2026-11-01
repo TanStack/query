@@ -501,7 +501,7 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query.state.error).toBeInstanceOf(CancelledError)
 
-    const result = query.fetch()
+    const result = query.fetch(queryClient)
     await vi.advanceTimersByTimeAsync(50)
     await expect(result).resolves.toBe('data')
     expect(query.state.error).toBeNull()
@@ -544,7 +544,7 @@ describe('query', () => {
     let refetch: Promise<unknown> | undefined
     const testCache = new QueryCache({
       onSuccess: (_data, query) => {
-        refetch ??= query.fetch()
+        refetch ??= query.fetch(testClient)
       },
     })
     const testClient = new QueryClient({ queryCache: testCache })
@@ -895,12 +895,12 @@ describe('query', () => {
       updates.push(event.type)
     })
 
-    void query.fetch({
+    void query.fetch(queryClient, {
       queryKey: key,
       queryFn,
     })
 
-    query.fetch({
+    query.fetch(queryClient, {
       queryKey: key,
       queryFn,
     })
@@ -1241,14 +1241,14 @@ describe('query', () => {
     })
 
     const query = new Query({
-      client: queryClient,
+      cache: queryClient.getQueryCache(),
       queryKey: key,
       queryHash: hashQueryKeyByOptions(key),
     })
 
     query.addObserver(observer)
 
-    await query.fetch()
+    await query.fetch(queryClient)
     const result = await query.state.data
     expect(result).toBe('data')
     expect(query.options.queryFn).toBe(queryFn)
@@ -1274,7 +1274,7 @@ describe('query', () => {
     const initialDataFn = vi.fn<() => string>(() => 'initial data')
 
     const query = new Query({
-      client: queryClient,
+      cache: queryClient.getQueryCache(),
       queryKey: key,
       queryHash: hashQueryKeyByOptions(key),
       options: {
@@ -1357,7 +1357,7 @@ describe('query', () => {
     )
 
     const query = new Query({
-      client: queryClient,
+      cache: queryClient.getQueryCache(),
       queryKey: key,
       queryHash: hashQueryKeyByOptions(key),
       options: { queryFn },
@@ -1369,7 +1369,7 @@ describe('query', () => {
     })
 
     query.addObserver(observer1)
-    const promise1 = query.fetch()
+    const promise1 = query.fetch(queryClient)
     await vi.advanceTimersByTimeAsync(10)
 
     query.removeObserver(observer1)
@@ -1381,7 +1381,7 @@ describe('query', () => {
 
     query.addObserver(observer2)
 
-    query.fetch()
+    query.fetch(queryClient)
     await expect(promise1).rejects.toBeInstanceOf(CancelledError)
     await vi.advanceTimersByTimeAsync(50)
     expect(query.state.fetchStatus).toBe('idle')

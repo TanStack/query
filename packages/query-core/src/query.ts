@@ -18,6 +18,7 @@ import type {
   FetchStatus,
   InitialDataFunction,
   OmitKeyof,
+  QueryFunction,
   QueryFunctionContext,
   QueryKey,
   QueryMeta,
@@ -37,11 +38,10 @@ interface QueryConfig<
   TData,
   TQueryKey extends QueryKey = QueryKey,
 > {
-  client: QueryClient
+  cache: QueryCache
   queryKey: TQueryKey
   queryHash: string
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state?: QueryState<TData, TError>
 }
 
@@ -135,11 +135,12 @@ export interface FetchContext<
    */
   signal: AbortSignal
   /**
-   * The options of the query.
+   * The options captured for this fetch execution.
    */
   options: QueryOptions<TQueryFnData, TError, TData, any>
   /**
-   * The `QueryClient` the query belongs to.
+   * The `QueryClient` that started this fetch execution. Callers that join a running fetch
+   * share its client and configuration.
    */
   client: QueryClient
   /**
@@ -264,7 +265,8 @@ export type Action<TData, TError> =
 
 /**
  * Represents a single cached query. A `Query` holds the query's key, options,
- * state (data/error/status), and the observers currently subscribed to it.
+ * state (data/error/status), and the observers currently subscribed to it. The query belongs
+ * to its `QueryCache`, which can be shared by clients. Each fetch receives its initiating client.
  *
  * Instances are created and managed internally by `QueryCache`; application
  * code typically interacts with queries indirectly through `QueryClient` or
@@ -295,21 +297,17 @@ export class Query<
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
   #cache: QueryCache
-  #client: QueryClient
   #retryer?: Retryer<TData>
   observers: Array<QueryObserver<any, any, any, any, any>>
-  #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
 
     this.#abortSignalConsumed = false
-    this.#defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
-    this.#client = config.client
-    this.#cache = this.#client.getQueryCache()
+    this.#cache = config.cache
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
@@ -346,12 +344,12 @@ export class Query<
    * Replaces the query's options and applies their `gcTime`. If the query has no data yet, it gets
    * the `initialData` from the new options, if any.
    * @internal
-   * @param options - The new query options, merged on top of the query's default options.
+   * @param options - The new query options, already resolved through the caller's client.
    */
   setOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
-    this.options = { ...this.#defaultOptions, ...options }
+    this.options = { ...options }
 
     if (options?._type) {
       this.#queryType = options._type
@@ -692,8 +690,15 @@ export class Query<
    *   cancelled first.
    * - If `options` is passed, it replaces the query's current options
    *   before fetching.
+   * The client and fetch configuration stay fixed through retries and infinite query pages.
+   * A query function that was missing at the start can become available later; once selected,
+   * its identity stays fixed for the rest of the execution. Options are shallowly copied;
+   * application objects such as `meta` are not cloned.
+   * @param client - The client that starts a new execution, passed to query functions, behaviors,
+   * and persisters. A caller that joins a running execution uses that execution's client.
    * @param options - Query options that replace the query's current options before fetching. They
    * are not applied when an in-flight fetch is reused.
+   * Omitted options reuse the latest cached configuration without applying this client's defaults.
    * @param fetchOptions - Set `cancelRefetch` to cancel an in-flight fetch first (only if the query
    * already has data), and `meta` to pass extra information to the query's behavior.
    * @returns A promise that resolves with the fetched data, or rejects with the fetch error. If the
@@ -701,6 +706,7 @@ export class Query<
    * instead.
    */
   async fetch(
+    client: QueryClient,
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     fetchOptions?: FetchOptions<TQueryFnData>,
   ): Promise<TData> {
@@ -736,8 +742,46 @@ export class Query<
       }
     }
 
+    const executionOptions: QueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey
+    > & { pages?: number } = { ...this.options }
+    const executionFetchOptions = fetchOptions && {
+      ...fetchOptions,
+      meta: fetchOptions.meta && {
+        ...fetchOptions.meta,
+        fetchMore: fetchOptions.meta.fetchMore && {
+          ...fetchOptions.meta.fetchMore,
+        },
+      },
+    }
+
+    if (!executionOptions.queryFn) {
+      let queryFn: QueryFunction<TQueryFnData, TQueryKey> | undefined
+      executionOptions.queryFn = (context) => {
+        if (!queryFn) {
+          const candidate =
+            typeof this.options.queryFn === 'function'
+              ? this.options.queryFn
+              : this.observers.find(
+                  (observer) => typeof observer.options.queryFn === 'function',
+                )?.options.queryFn
+          if (typeof candidate === 'function') {
+            queryFn = candidate
+          }
+        }
+
+        return ensureQueryFn(
+          { ...executionOptions, queryFn },
+          executionFetchOptions,
+        )(context)
+      }
+    }
+
     if (process.env.NODE_ENV !== 'production') {
-      if (!Array.isArray(this.options.queryKey)) {
+      if (!Array.isArray(executionOptions.queryKey)) {
         console.error(
           `As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']`,
         )
@@ -761,7 +805,7 @@ export class Query<
 
     // Create fetch function
     const fetchFn = () => {
-      const queryFn = ensureQueryFn(this.options, fetchOptions)
+      const queryFn = ensureQueryFn(executionOptions, executionFetchOptions)
 
       // Create query function context
       const createQueryFnContext = (): QueryFunctionContext<TQueryKey> => {
@@ -769,9 +813,9 @@ export class Query<
           QueryFunctionContext<TQueryKey>,
           'signal'
         > = {
-          client: this.#client,
+          client,
           queryKey: this.queryKey,
-          meta: this.meta,
+          meta: executionOptions.meta,
         }
         addSignalProperty(queryFnContext)
         return queryFnContext as QueryFunctionContext<TQueryKey>
@@ -780,8 +824,8 @@ export class Query<
       const queryFnContext = createQueryFnContext()
 
       this.#abortSignalConsumed = false
-      if (this.options.persister) {
-        return this.options.persister(
+      if (executionOptions.persister) {
+        return executionOptions.persister(
           queryFn,
           queryFnContext,
           this as unknown as Query,
@@ -802,10 +846,10 @@ export class Query<
         FetchContext<TQueryFnData, TError, TData, TQueryKey>,
         'signal'
       > = {
-        fetchOptions,
-        options: this.options,
+        fetchOptions: executionFetchOptions,
+        options: executionOptions,
         queryKey: this.queryKey,
-        client: this.#client,
+        client,
         state: this.state,
         fetchFn,
       }
@@ -818,10 +862,13 @@ export class Query<
 
     const behavior =
       this.#queryType === 'infinite'
-        ? (infiniteQueryBehavior(
-            (this.options as { pages?: number }).pages,
-          ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>)
-        : this.options.behavior
+        ? (infiniteQueryBehavior(executionOptions.pages) as QueryBehavior<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryKey
+          >)
+        : executionOptions.behavior
     behavior?.onFetch(context, this as unknown as Query)
 
     // Store state in case the current fetch needs to be reverted
@@ -837,7 +884,7 @@ export class Query<
 
     // Try to fetch the data
     const retryer = (this.#retryer = createRetryer({
-      initialPromise: fetchOptions?.initialPromise as
+      initialPromise: executionFetchOptions?.initialPromise as
         | Promise<TData>
         | undefined,
       fn: context.fetchFn as () => Promise<TData>,

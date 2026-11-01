@@ -1945,7 +1945,7 @@ const QueryDetails = () => {
 
   const handleRefetch = () => {
     sendDevToolsEvent({ type: 'REFETCH', queryHash: activeQuery()?.queryHash })
-    const promise = activeQuery()?.fetch()
+    const promise = activeQuery()?.fetch(queryClient)
     promise?.catch(() => {})
   }
 
@@ -1995,7 +1995,7 @@ const QueryDetails = () => {
     })
 
     if (previousOptions) {
-      activeQueryVal.fetch(previousOptions)
+      activeQueryVal.fetch(queryClient, previousOptions)
     }
   }
 
@@ -2200,7 +2200,7 @@ const QueryDetails = () => {
                 })
                 const __previousQueryOptions = activeQueryVal.options
                 // Trigger a fetch in order to trigger suspense as well.
-                activeQueryVal.fetch({
+                activeQueryVal.fetch(queryClient, {
                   ...__previousQueryOptions,
                   queryFn: () => {
                     return new Promise(() => {

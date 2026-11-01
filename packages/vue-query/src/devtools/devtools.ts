@@ -88,7 +88,7 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
             icon: 'file_download',
             tooltip: 'Refetch',
             action: (queryHash: string) => {
-              queryCache.get(queryHash)?.fetch()
+              queryCache.get(queryHash)?.fetch(queryClient)
             },
           },
           {

@@ -327,7 +327,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
             refetchOnRestore === 'always' ||
             (refetchOnRestore === true && query.isStale())
           ) {
-            query.fetch()
+            query.fetch(ctx.client)
           }
         },
       )

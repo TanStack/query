@@ -447,7 +447,7 @@ export class QueryObserver<
 
     return Promise.race([
       query
-        .fetch(defaultedOptions)
+        .fetch(this.#client, defaultedOptions)
         .then(() => {
           const result = this.createResult(query, defaultedOptions)
           // Settle the subscriber promise so both branches always settle.
@@ -488,6 +488,7 @@ export class QueryObserver<
 
     // Fetch
     let promise: Promise<TQueryData | undefined> = this.#currentQuery.fetch(
+      this.#client,
       this.options,
       fetchOptions,
     )

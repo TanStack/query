@@ -288,7 +288,7 @@ export function dehydrate(
  * Queries not yet in the cache are built from the dehydrated snapshot; queries that already exist are only updated
  * when the dehydrated data is newer than what's already cached. Newly built queries have their `fetchStatus` reset
  * to `'idle'` so they don't hydrate stuck in a fetching state. If a dehydrated query still had an in-flight
- * promise, it is resumed via `query.fetch()` (reusing that promise as `initialPromise`) rather than re-invoking
+ * promise, it is resumed via `query.fetch(client)` (reusing that promise as `initialPromise`) rather than re-invoking
  * `queryFn`.
  * @param client - The client whose cache is restored into.
  * @param dehydratedState - The dehydrated state, e.g. produced by `dehydrate` on the server.
@@ -424,7 +424,7 @@ export function hydrate(
         // This doesn't actually fetch - it just creates a retryer
         // which will re-use the passed `initialPromise`
         query
-          .fetch(undefined, {
+          .fetch(client, undefined, {
             // RSC transformed promises are not thenable
             initialPromise: Promise.resolve(promise).then(deserializeData),
           })

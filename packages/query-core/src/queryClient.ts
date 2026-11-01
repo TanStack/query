@@ -550,7 +550,7 @@ export class QueryClient {
         .findAll(filters)
         .filter((query) => !query.isDisabled() && !query.isStatic())
         .map((query) => {
-          let promise = query.fetch(undefined, fetchOptions)
+          let promise = query.fetch(this, undefined, fetchOptions)
           const isPaused = query.state.fetchStatus === 'paused'
           if (!fetchOptions.throwOnError || isPaused) {
             promise = promise.catch(noop)
@@ -627,7 +627,7 @@ export class QueryClient {
     )
 
     const queryData = isStale
-      ? await query.fetch(defaultedOptions)
+      ? await query.fetch(this, defaultedOptions)
       : (query.state.data as TQueryData)
 
     const select = defaultedOptions.select
@@ -675,7 +675,7 @@ export class QueryClient {
     return query.isStaleByTime(
       resolveQueryValue(defaultedOptions.staleTime, query),
     )
-      ? query.fetch(defaultedOptions)
+      ? query.fetch(this, defaultedOptions)
       : Promise.resolve(query.state.data as TData)
   }
 

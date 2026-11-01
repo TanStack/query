@@ -54,7 +54,7 @@ function setupPersister(
   const persister = experimental_createQueryPersister(persisterOptions)
 
   const query = new Query({
-    client,
+    cache: client.getQueryCache(),
     queryHash,
     queryKey,
   })

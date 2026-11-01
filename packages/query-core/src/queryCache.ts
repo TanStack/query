@@ -150,7 +150,8 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * builds and adds a new one to the cache if none exists yet. Used by framework adapters and
    * plugins (e.g. broadcast/persistence) that need to get-or-create a `Query` directly, bypassing
    * the reactive `QueryObserver` machinery.
-   * @param client - The client the query belongs to, used to default its options.
+   * @param client - The client used to resolve a new query's options. The query belongs to this
+   * cache, which can be shared by multiple clients.
    * @param options - The query options, including the `queryKey`. A new query is created with the
    * options defaulted by {@link QueryClient#defaultQueryOptions}.
    * @param state - The initial state of a newly created query, e.g. when hydrating. Ignored if the
@@ -186,12 +187,11 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
     if (!query) {
       query = new Query({
-        client,
+        cache: this,
         queryKey,
         queryHash,
         options: client.defaultQueryOptions(options),
         state,
-        defaultOptions: client.getQueryDefaults(queryKey),
       })
       this.add(query)
     }

@@ -231,6 +231,8 @@ export type QueryPersister<
  * The object passed to `queryFn`: the `QueryClient`, the `queryKey`, an `AbortSignal` that aborts
  * when the query is cancelled, the query's `meta`, and for infinite queries the `pageParam` of the
  * page being fetched.
+ * `client` is the client that started the fetch execution. Callers that share a running fetch
+ * share its client. Retries and infinite query pages retain that execution's client.
  */
 export type QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,

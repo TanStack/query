@@ -874,6 +874,7 @@ describe('query', () => {
       expectTypeOf(query.fetch).returns.toEqualTypeOf<Promise<number>>()
       expectTypeOf(query.fetch).parameters.toEqualTypeOf<
         [
+          client: QueryClient,
           options?: QueryOptions<
             { value: string },
             CustomError,
@@ -885,7 +886,7 @@ describe('query', () => {
       >()
     })
 
-    it('should accept the query options or nothing', () => {
+    it('requires a client and accepts optional query options', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
@@ -893,19 +894,24 @@ describe('query', () => {
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
+      // @ts-expect-error a fetch requires its initiating client
       query.fetch()
-      query.fetch({
+      // @ts-expect-error query options cannot replace the initiating client
+      query.fetch({ queryKey: createKey() })
+      query.fetch(queryClient)
+      query.fetch(queryClient, {
         queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
-      query.fetch({
+      query.fetch(queryClient, {
         queryKey: createKey(),
         // @ts-expect-error the queryFn must return the query data type
         queryFn: () => 42,
       })
 
+      expectTypeOf(query.fetch).parameter(0).toEqualTypeOf<QueryClient>()
       expectTypeOf(query.fetch)
-        .parameter(0)
+        .parameter(1)
         .toEqualTypeOf<
           | QueryOptions<
               { value: string },
