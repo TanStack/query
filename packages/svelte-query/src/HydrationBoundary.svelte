@@ -14,7 +14,7 @@
     queryClient?: QueryClient
   }
 
-  const { children, state, options, queryClient }: Props = $props()
+  let { children, state, options, queryClient }: Props = $props()
 
   useHydrate(state, options, queryClient)
 </script>

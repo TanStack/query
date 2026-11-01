@@ -162,6 +162,7 @@ export default defineConfig({
             'datatag', // Query options tagging
             'extralight', // Our public interface
             'jscodeshift',
+            'netinfo', // @react-native-community/netinfo package name
             'refetched', // Query refetch operations
             'refetches', // Query refetch operations
             'retryer', // Our public interface
@@ -445,5 +446,53 @@ export const preactConfig = defineConfig({
     'prefer-template': 'warn',
     radix: 'warn',
     'unicode-bom': 'error',
+  },
+})
+
+/**
+ * Native Oxlint equivalent of 'eslint-plugin-vue' 'flat/recommended', applied on top of the root config.
+ *
+ * Only the rules Oxlint implements are ported. Template rules are not, because Oxlint only lints
+ * the `<script>` blocks of `.vue` files.
+ */
+export const vueConfig = defineConfig({
+  plugins: ['import', 'typescript', 'unicorn', 'vitest', 'vue'],
+  rules: {
+    'vue/component-definition-name-casing': 'warn',
+    'vue/no-arrow-functions-in-watch': 'error',
+    'vue/no-async-in-computed-properties': 'error',
+    'vue/no-computed-properties-in-data': 'error',
+    'vue/no-deprecated-data-object-declaration': 'error',
+    'vue/no-deprecated-delete-set': 'error',
+    'vue/no-deprecated-destroyed-lifecycle': 'error',
+    'vue/no-deprecated-events-api': 'error',
+    'vue/no-deprecated-model-definition': 'error',
+    'vue/no-deprecated-props-default-this': 'error',
+    'vue/no-deprecated-vue-config-keycodes': 'error',
+    'vue/no-dupe-keys': 'error',
+    'vue/no-export-in-script-setup': 'error',
+    'vue/no-expose-after-await': 'error',
+    'vue/no-lifecycle-after-await': 'error',
+    'vue/no-multiple-slot-args': 'warn',
+    'vue/no-required-prop-with-default': 'warn',
+    'vue/no-reserved-component-names': 'error',
+    'vue/no-reserved-keys': 'error',
+    'vue/no-reserved-props': 'error',
+    'vue/no-shared-component-data': 'error',
+    'vue/no-side-effects-in-computed-properties': 'error',
+    'vue/no-watch-after-await': 'error',
+    'vue/prefer-import-from-vue': 'error',
+    'vue/prop-name-casing': 'warn',
+    'vue/require-default-prop': 'warn',
+    'vue/require-prop-type-constructor': 'error',
+    'vue/require-prop-types': 'warn',
+    'vue/require-render-return': 'error',
+    'vue/require-slots-as-functions': 'error',
+    'vue/return-in-computed-property': 'error',
+    'vue/return-in-emits-validator': 'error',
+    'vue/valid-define-emits': 'error',
+    'vue/valid-define-options': 'error',
+    'vue/valid-define-props': 'error',
+    'vue/valid-next-tick': 'error',
   },
 })

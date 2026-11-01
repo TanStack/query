@@ -1,5 +1,27 @@
 # @tanstack/angular-query-experimental
 
+## 5.105.1
+
+### Patch Changes
+
+- [#11373](https://github.com/TanStack/query/pull/11373) [`7ccba6e`](https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6) - fix({react,preact,angular,solid,vue}-query/infiniteQueryOptions): correct the overload selected for a possibly-undefined 'initialData'
+
+- [#12390](https://github.com/TanStack/query/pull/12390) [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf) - Exclude `fetchStatus` from the filters accepted by `QueryClient.isFetching`, `useIsFetching`, and `injectIsFetching`. These APIs always count queries with `fetchStatus: 'fetching'`.
+- Updated dependencies [[`6f8a48d`](https://github.com/TanStack/query/commit/6f8a48d543b499b6d9b0e95050c28183c8c18ae0), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/query-core@5.105.1
+
+## 5.105.0
+
+### Minor Changes
+
+- [#12316](https://github.com/TanStack/query/pull/12316) [`8f9dfcb`](https://github.com/TanStack/query/commit/8f9dfcb30ce901b867b06ba08feba28daf5d9fb4) - feat(angular-query-experimental/injectDevtoolsPanel): add the 'theme' and 'hideDisabledQueries' options
+
+### Patch Changes
+
+- [#12315](https://github.com/TanStack/query/pull/12315) [`9e42537`](https://github.com/TanStack/query/commit/9e4253766f8015d1372bcd515f50103fd067a42d) - fix(angular-query-experimental/withDevtools): forward an unset 'theme' to the devtools so removing it falls back to the theme selected in the devtools Settings menu
+- Updated dependencies []:
+  - @tanstack/query-core@5.105.0
+
 ## 5.104.5
 
 ### Patch Changes

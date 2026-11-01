@@ -16,7 +16,7 @@
     ) => void
   }
 
-  const { queryClient, onSuccessMutate }: Props = $props()
+  let { queryClient, onSuccessMutate }: Props = $props()
 
   setQueryClientContext(queryClient)
 
