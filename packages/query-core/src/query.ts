@@ -3,6 +3,7 @@ import {
   noop,
   replaceData,
   resolveQueryValue,
+  setFetchSignal,
   skipToken,
   timeUntilStale,
 } from './utils'
@@ -749,7 +750,8 @@ export class Query<
     // Adds an enumerable signal property to the object that
     // which sets abortSignalConsumed to true when the signal
     // is read.
-    const addSignalProperty = (object: unknown) => {
+    const addSignalProperty = (object: object) => {
+      setFetchSignal(object, abortController.signal)
       Object.defineProperty(object, 'signal', {
         enumerable: true,
         get: () => {

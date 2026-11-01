@@ -700,6 +700,39 @@ export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
   return !!throwOnError
 }
 
+const fetchSignals = new WeakMap<object, AbortSignal>()
+
+/**
+ * Associates a context with its fetch signal without consuming the signal getter.
+ * @param context - The fetch or query function context.
+ * @param signal - The signal for the fetch, if available.
+ */
+export function setFetchSignal(
+  context: object,
+  signal: AbortSignal | undefined,
+): void {
+  if (signal) {
+    fetchSignals.set(context, signal)
+  }
+}
+
+/**
+ * Gets a fetch signal without invoking a context's signal getter.
+ * @param context - The fetch or query function context.
+ * @returns The registered signal or an own signal data property, if available.
+ */
+export function getFetchSignal(context: {
+  readonly signal: AbortSignal
+}): AbortSignal | undefined {
+  const signal = fetchSignals.get(context)
+  if (signal) {
+    return signal
+  }
+
+  const descriptor = Object.getOwnPropertyDescriptor(context, 'signal')
+  return descriptor && 'value' in descriptor ? context.signal : undefined
+}
+
 /**
  * Adds a lazy `signal` getter to an object, such as a query function context. The first time
  * `signal` is read, `onCancelled` is registered for the signal's `abort` event (or called right
@@ -707,13 +740,16 @@ export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
  * @param object - The object to add the `signal` property to.
  * @param getSignal - Returns the `AbortSignal`. Called once, when `signal` is first read.
  * @param onCancelled - Called when the signal is aborted, if `signal` was read.
+ * @param internalSignal - The fetch signal to forward without consuming the getter.
  * @returns The same object, with the `signal` property added.
  */
-export function addConsumeAwareSignal<T>(
+export function addConsumeAwareSignal<T extends object>(
   object: T,
   getSignal: () => AbortSignal,
   onCancelled: () => void,
+  internalSignal?: AbortSignal,
 ): T & { signal: AbortSignal } {
+  setFetchSignal(object, internalSignal)
   let consumed = false
   let signal: AbortSignal | undefined
 

@@ -1,4 +1,4 @@
-import { addConsumeAwareSignal, addToEnd } from './utils'
+import { addConsumeAwareSignal, addToEnd, getFetchSignal } from './utils'
 import type {
   OmitKeyof,
   QueryFunction,
@@ -82,6 +82,11 @@ export function streamedQuery<
   TQueryKey
 > {
   return async (context) => {
+    const signal = getFetchSignal(context)
+    if (signal?.aborted) {
+      return initialValue
+    }
+
     const query = context.client
       .getQueryCache()
       .find({ queryKey: context.queryKey, exact: true })
@@ -108,14 +113,16 @@ export function streamedQuery<
       },
       () => context.signal,
       () => (cancelled = true),
+      signal,
     )
 
+    const isStreamInactive = () => cancelled || signal?.aborted === true
     const stream = await streamFn(streamFnContext)
 
     const isReplaceRefetch = isRefetch && refetchMode === 'replace'
 
     for await (const chunk of stream) {
-      if (cancelled) {
+      if (isStreamInactive()) {
         break
       }
 
@@ -130,7 +137,7 @@ export function streamedQuery<
     }
 
     // finalize result: replace-refetching needs to write to the cache
-    if (isReplaceRefetch && !cancelled) {
+    if (isReplaceRefetch && !isStreamInactive()) {
       context.client.setQueryData<TData>(context.queryKey, result)
     }
 
