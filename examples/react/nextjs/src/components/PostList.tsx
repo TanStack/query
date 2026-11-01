@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
-import { usePosts } from '../hooks/usePosts'
+import { useQuery } from '@tanstack/react-query'
+import { postsQueries } from '../services/posts/queries'
 
 export const PostList = () => {
   const [postCount, setPostCount] = useState(10)
-  const { data, error, isPending, isError, isFetching } = usePosts(postCount)
+  const { data, error, isPending, isError, isFetching } = useQuery(
+    postsQueries.list(postCount),
+  )
 
   if (isPending) return <div>Loading</div>
 

@@ -3953,7 +3953,7 @@ describe('useQuery', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: () => 'fetched data',
-        gcTime: 1000 * 60 * 10, // 10 Minutes
+        gcTime: 10 * 60 * 1000, // 10 Minutes
       })
       return <div>{query.data}</div>
     }
@@ -3969,7 +3969,7 @@ describe('useQuery', () => {
 
     expect(setTimeoutSpy).toHaveBeenLastCalledWith(
       expect.any(Function),
-      1000 * 60 * 10,
+      10 * 60 * 1000,
     )
   })
 
@@ -7053,5 +7053,48 @@ describe('useQuery', () => {
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(queryFn).toHaveBeenCalledTimes(0)
+  })
+
+  it('should not fetch the previous key when a hidden Activity with a changed key is revealed', async () => {
+    const key = createKey()
+    const queryFn = vi.fn<(filter: string) => Promise<string>>((filter) =>
+      sleep(10).then(() => filter),
+    )
+
+    function Page({ filter }: { filter: string }) {
+      const { data } = useQuery({
+        queryKey: [...key, filter],
+        queryFn: () => queryFn(filter),
+      })
+
+      return <div>data: {data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Activity mode="visible">
+        <Page filter="a" />
+      </React.Activity>,
+    )
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data: a')).toBeInTheDocument()
+
+    rendered.rerender(
+      <React.Activity mode="hidden">
+        <Page filter="b" />
+      </React.Activity>,
+    )
+    await vi.advanceTimersByTimeAsync(11)
+
+    rendered.rerender(
+      <React.Activity mode="visible">
+        <Page filter="b" />
+      </React.Activity>,
+    )
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data: b')).toBeInTheDocument()
+
+    expect(queryFn.mock.calls).toStrictEqual([['a'], ['b']])
   })
 })

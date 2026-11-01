@@ -70,10 +70,9 @@ function _cloneDeep<T>(
   }
 
   if (typeof value === 'object' && isPlainObject(value)) {
-    const entries = Object.entries(value).map(([key, val]) => [
-      key,
-      _cloneDeep(val, customize, key, currentLevel + 1),
-    ])
+    const entries = Object.entries(value as Record<string, any>).map(
+      ([key, val]) => [key, _cloneDeep(val, customize, key, currentLevel + 1)],
+    )
     return Object.fromEntries(entries)
   }
 
@@ -146,8 +145,7 @@ export function cloneDeepUnref<T>(
  * @param value - The value to check.
  * @returns `true` if `value` is a plain object.
  */
-// oxlint-disable-next-line typescript/no-wrapper-object-types
-function isPlainObject(value: unknown): value is Object {
+function isPlainObject(value: unknown): value is Record<PropertyKey, unknown> {
   if (Object.prototype.toString.call(value) !== '[object Object]') {
     return false
   }

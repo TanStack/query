@@ -24,7 +24,8 @@ import type {
  *
  * This overload is selected when `initialData` is known to be defined.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to
- * `createInfiniteQuery`, with `initialData` set, wrapped in an {@link Accessor} so options can be reactive.
+ * `createInfiniteQuery`, with `initialData` known to be defined, wrapped in an {@link Accessor} so options
+ * can be reactive.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current query result, plus `fetchNextPage`/`fetchPreviousPage`/`hasNextPage`/`hasPreviousPage`
@@ -55,7 +56,8 @@ export function createInfiniteQuery<
  * The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
- * This overload is selected when `initialData` is omitted or may be `undefined`.
+ * This overload is selected when `initialData` is omitted, may be `undefined`, or is a function that may
+ * return `undefined`.
  * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to
  * `createInfiniteQuery`, wrapped in an {@link Accessor} so options can be reactive.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will

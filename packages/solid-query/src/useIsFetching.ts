@@ -25,7 +25,7 @@ import type { Accessor } from 'solid-js'
  * ```
  */
 export function useIsFetching(
-  filters?: Accessor<QueryFilters>,
+  filters?: Accessor<Omit<QueryFilters, 'fetchStatus'>>,
   queryClient?: Accessor<QueryClient>,
 ): Accessor<number> {
   const resolveClient = useQueryClientResolver(queryClient)
