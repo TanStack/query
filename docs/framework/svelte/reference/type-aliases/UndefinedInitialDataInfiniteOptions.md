@@ -9,10 +9,11 @@ title: UndefinedInitialDataInfiniteOptions
 type UndefinedInitialDataInfiniteOptions<TQueryFnData = unknown, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown> = CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:15](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L15)
+Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:16](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L16)
 
-The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted or may
-be `undefined` — `data` may be `undefined` while the query is `pending`.
+The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted, may be
+`undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is
+`pending`.
 
 ## Type Parameters
 

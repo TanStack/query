@@ -1,4 +1,4 @@
-import type { DevtoolsErrorType } from '@tanstack/query-devtools'
+import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { ElementRef, Injector } from '@angular/core'
 import type { QueryClient } from '@tanstack/query-core'
 
@@ -45,6 +45,16 @@ export interface DevtoolsPanelOptions {
    * within the shadow DOM instead of within the head tag in the light DOM.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * Set this to true to hide disabled queries from the devtools panel.
+   */
+  hideDisabledQueries?: boolean
+  /**
+   * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+   * This overrides the theme selected in the devtools Settings menu. When omitted, the
+   * selected theme is used, or `'system'` if none is selected.
+   */
+  theme?: Theme
 
   /**
    * Callback function that is called when the devtools panel is closed

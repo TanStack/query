@@ -29,7 +29,7 @@ watchEffect(() => {
   devtools.setPosition(props.position || 'bottom')
   devtools.setInitialIsOpen(props.initialIsOpen)
   devtools.setErrorTypes(props.errorTypes || [])
-  devtools.setTheme(props.theme || 'system')
+  devtools.setTheme(props.theme)
 })
 
 onMounted(() => {

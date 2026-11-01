@@ -1,8 +1,8 @@
 import { LitElement, css, html } from 'lit'
 import { createQueryController } from '@tanstack/lit-query'
-import { createDataQueryOptions } from './api.js'
+import { dataQueries } from './services/data/queries.js'
 import type { QueryClient, QueryResultAccessor } from '@tanstack/lit-query'
-import type { DataResponse } from './api.js'
+import type { DataResponse } from './services/data/types.js'
 
 const ssrQueryControllerCreationCounts = new WeakMap<QueryClient, number>()
 
@@ -88,7 +88,7 @@ export class SsrApp extends LitElement {
       incrementSsrQueryControllerCreationCount(this.queryClient)
       this.dataQuery = createQueryController(
         this,
-        createDataQueryOptions(this.apiBaseUrl),
+        dataQueries.detail(this.apiBaseUrl),
         this.queryClient,
       )
     }

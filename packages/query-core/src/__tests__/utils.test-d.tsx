@@ -117,8 +117,6 @@ describe('QueryFilters', () => {
     >()
   })
 
-  // we test that there are not type errors here
-  // oxlint-disable-next-line vitest/expect-expect
   it('should work with unions of different lengths', () => {
     type Key =
       | readonly ['foo']
@@ -127,7 +125,9 @@ describe('QueryFilters', () => {
 
     const queryKey: Key = ['foo', 'bar'] as any as Key
 
-    new QueryClient().invalidateQueries({ queryKey })
+    expectTypeOf(new QueryClient().invalidateQueries).toBeCallableWith({
+      queryKey,
+    })
   })
 
   it('should error on invalid query keys', () => {
@@ -630,8 +630,7 @@ describe('matchMutation', () => {
 
 describe('replaceEqualDeep', () => {
   it('should return the type of b and not relate it to a', () => {
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    const result = replaceEqualDeep({ a: 1 } as unknown, { b: '1' })
+    const result = replaceEqualDeep({ a: 1 }, { b: '1' })
     expectTypeOf(result).toEqualTypeOf<{ b: string }>()
 
     expectTypeOf(replaceEqualDeep<number>)
@@ -643,10 +642,8 @@ describe('replaceEqualDeep', () => {
   })
 
   it('should accept the depth argument optionally', () => {
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    expectTypeOf(replaceEqualDeep(1 as unknown, 2)).toEqualTypeOf<number>()
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    expectTypeOf(replaceEqualDeep(1 as unknown, 2, 0)).toEqualTypeOf<number>()
+    expectTypeOf(replaceEqualDeep(1, 2)).toEqualTypeOf<number>()
+    expectTypeOf(replaceEqualDeep(1, 2, 0)).toEqualTypeOf<number>()
   })
 })
 

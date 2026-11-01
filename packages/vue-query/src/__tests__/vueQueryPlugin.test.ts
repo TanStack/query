@@ -351,7 +351,7 @@ describe('VueQueryPlugin', () => {
       const customClient = new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 1000 * 60 * 60,
+            staleTime: 60 * 60 * 1000,
           },
         },
       })
@@ -398,7 +398,7 @@ describe('VueQueryPlugin', () => {
       const customClient = new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 1000 * 60 * 60,
+            staleTime: 60 * 60 * 1000,
           },
         },
       })

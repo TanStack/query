@@ -1,24 +1,10 @@
-import { Form, Link, useFetcher, useLoaderData } from 'react-router-dom'
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
-import { getContact, updateContact } from '../contacts'
-import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router-dom'
-import type { Contact } from '../contacts'
+import { Form, Link, useFetcher, useLoaderData } from 'react-router'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { contactsAPI } from '../services/contacts/api'
+import { contactsQueries } from '../services/contacts/queries'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router'
+import type { Contact } from '../services/contacts/types'
 import type { QueryClient } from '@tanstack/react-query'
-
-export const contactDetailQuery = (id: string) =>
-  queryOptions({
-    queryKey: ['contacts', 'detail', id],
-    queryFn: async () => {
-      const contact = await getContact(id)
-      if (!contact) {
-        throw new Response('', {
-          status: 404,
-          statusText: 'Not Found',
-        })
-      }
-      return contact
-    },
-  })
 
 export const loader =
   (queryClient: QueryClient) =>
@@ -27,7 +13,7 @@ export const loader =
       throw new Error('No contact ID provided')
     }
     await queryClient.query({
-      ...contactDetailQuery(params.contactId),
+      ...contactsQueries.detail(params.contactId),
       staleTime: 'static',
     })
     return { contactId: params.contactId }
@@ -40,18 +26,16 @@ export const action =
     if (!params.contactId) {
       throw new Error('No contact ID provided')
     }
-    await updateContact(params.contactId, {
+    await contactsAPI.updateContact(params.contactId, {
       favorite: formData.get('favorite') === 'true',
     })
-    await queryClient.invalidateQueries({ queryKey: ['contacts'] })
+    await queryClient.invalidateQueries({ queryKey: contactsQueries.all() })
     return null
   }
 
 export default function Contact() {
-  const { contactId } = useLoaderData() as Awaited<
-    ReturnType<ReturnType<typeof loader>>
-  >
-  const { data: contact } = useSuspenseQuery(contactDetailQuery(contactId))
+  const { contactId } = useLoaderData<ReturnType<typeof loader>>()
+  const { data: contact } = useSuspenseQuery(contactsQueries.detail(contactId))
 
   return (
     <div id="contact">

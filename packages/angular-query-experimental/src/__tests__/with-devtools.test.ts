@@ -439,6 +439,34 @@ describe('withDevtools feature', () => {
     expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledWith('dark')
   })
 
+  it('should update theme to undefined when it is removed', async () => {
+    const theme = signal<Theme | undefined>('dark')
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+            theme: theme(),
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
+    TestBed.tick()
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(0)
+
+    theme.set(undefined)
+    TestBed.tick()
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledWith(undefined)
+  })
+
   it('should destroy devtools', async () => {
     const loadDevtools = signal(true)
 

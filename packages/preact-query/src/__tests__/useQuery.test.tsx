@@ -3961,7 +3961,7 @@ describe('useQuery', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: () => 'fetched data',
-        gcTime: 1000 * 60 * 10, // 10 Minutes
+        gcTime: 10 * 60 * 1000, // 10 Minutes
       })
       return <div>{query.data}</div>
     }
@@ -3979,7 +3979,7 @@ describe('useQuery', () => {
 
     expect(setTimeoutSpy).toHaveBeenLastCalledWith(
       expect.any(Function),
-      1000 * 60 * 10,
+      10 * 60 * 1000,
     )
   })
 
@@ -5893,6 +5893,43 @@ describe('useQuery', () => {
       expect(
         queryClient.getQueryCache().find({ queryKey: key })!.observers,
       ).toHaveLength(1)
+    })
+
+    it('should not fetch the previous key when subscribing in the same render as a key change', async () => {
+      const key = createKey()
+      const queryFn = vi.fn<(filter: string) => Promise<string>>((filter) =>
+        sleep(10).then(() => filter),
+      )
+
+      function Page({
+        filter,
+        subscribed,
+      }: {
+        filter: string
+        subscribed: boolean
+      }) {
+        const { data } = useQuery({
+          queryKey: [...key, filter],
+          queryFn: () => queryFn(filter),
+          subscribed,
+        })
+
+        return <div>data: {data}</div>
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <Page filter="a" subscribed={false} />,
+      )
+
+      await vi.advanceTimersByTimeAsync(11)
+      expect(queryFn).toHaveBeenCalledTimes(0)
+
+      rendered.rerender(<Page filter="b" subscribed={true} />)
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('data: b')).toBeInTheDocument()
+
+      expect(queryFn.mock.calls).toStrictEqual([['b']])
     })
 
     it('should not optimistically show fetching when subscribed is false', () => {
