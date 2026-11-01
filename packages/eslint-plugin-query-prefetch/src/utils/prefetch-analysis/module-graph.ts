@@ -6,6 +6,7 @@ import {
   ASTUtils as TSESLintASTUtils,
 } from '@typescript-eslint/utils'
 import { canParseWithOxc, parseWithOxc } from './oxc'
+import { isNode } from './provenance'
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
 
 /**
@@ -820,13 +821,9 @@ function setParents(
     for (const key of visitorKeys[node.type] ?? []) {
       const child = (node as unknown as Record<string, unknown>)[key]
       for (const value of Array.isArray(child) ? child : [child]) {
-        if (
-          typeof value === 'object' &&
-          value !== null &&
-          typeof (value as { type?: unknown }).type === 'string'
-        ) {
+        if (isNode(value)) {
           ;(value as { parent: TSESTree.Node }).parent = node
-          stack.push(value as TSESTree.Node)
+          stack.push(value)
         }
       }
     }

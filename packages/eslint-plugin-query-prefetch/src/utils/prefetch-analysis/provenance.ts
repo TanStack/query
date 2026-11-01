@@ -405,6 +405,28 @@ export function getImport(
 }
 
 /**
+ * Returns the name a node was imported as from one of some modules, as written in the import.
+ * @param graph - The module graph, used to resolve the identifier.
+ * @param node - The node that may refer to an import, like the callee of a call.
+ * @param sources - The import specifiers of the modules.
+ * @returns The imported name, or `null` if the node isn't an identifier imported from one of the
+ * modules.
+ */
+export function getImportedName(
+  graph: ModuleGraph,
+  node: TSESTree.Node,
+  sources: ReadonlyArray<string>,
+): string | null {
+  if (node.type !== AST_NODE_TYPES.Identifier) {
+    return null
+  }
+  const imported = getImport(graph, node)
+  return imported !== null && sources.includes(imported.source)
+    ? imported.name
+    : null
+}
+
+/**
  * A function and the file that declares it.
  */
 export interface ResolvedFunction {
@@ -438,9 +460,7 @@ export function resolveFunction(
   if (definition?.type === 'Variable' && definition.parent.kind === 'const') {
     const lazyImport = getLazyImport(graph, definition.node.init)
     if (lazyImport !== null) {
-      const found = graph.findExport(lazyImport.module, lazyImport.name)
-      const fn = unwrapComponent(found?.node)
-      return fn && found ? { fn, file: found.file } : null
+      return resolveExportedFunction(graph, lazyImport.module, lazyImport.name)
     }
     const fn = unwrapComponent(definition.node.init)
     return fn && { fn, file: graph.fileOf(fn) }
@@ -448,12 +468,28 @@ export function resolveFunction(
 
   if (definition?.type === 'ImportBinding') {
     const exported = graph.identify(variable)
-    const found = graph.findExport(exported.module, exported.name)
-    const fn = unwrapComponent(found?.node)
-    return fn && found ? { fn, file: found.file } : null
+    return resolveExportedFunction(graph, exported.module, exported.name)
   }
 
   return null
+}
+
+/**
+ * Finds the function a module exports under a name. Functions wrapped in `memo()` or `forwardRef()`
+ * are unwrapped.
+ * @param graph - The module graph, used to load the module.
+ * @param module - A module ID from `moduleId`, or a file's absolute path.
+ * @param name - The exported name, or `default`.
+ * @returns The function and its file, or `null` if the export isn't a function.
+ */
+export function resolveExportedFunction(
+  graph: ModuleGraph,
+  module: string,
+  name: string,
+): ResolvedFunction | null {
+  const found = graph.findExport(module, name)
+  const fn = unwrapComponent(found?.node)
+  return fn && found ? { fn, file: found.file } : null
 }
 
 /**
@@ -553,7 +589,7 @@ export function resolveFunctionValue(
  * @param node - The value, e.g. a variable's initializer or an exported declaration.
  * @returns The function, or `null` if the value isn't one.
  */
-export function unwrapComponent(
+function unwrapComponent(
   node: TSESTree.Node | null | undefined,
 ): FunctionNode | null {
   if (isFunctionNode(node)) {
@@ -572,6 +608,23 @@ export function unwrapComponent(
     }
   }
   return null
+}
+
+/**
+ * Removes type assertions and non-null assertions around a node.
+ * @param node - The node to unwrap.
+ * @returns The node inside the assertions.
+ */
+export function unwrapAssertions(node: TSESTree.Node): TSESTree.Node {
+  while (
+    node.type === AST_NODE_TYPES.TSAsExpression ||
+    node.type === AST_NODE_TYPES.TSSatisfiesExpression ||
+    node.type === AST_NODE_TYPES.TSTypeAssertion ||
+    node.type === AST_NODE_TYPES.TSNonNullExpression
+  ) {
+    node = node.expression
+  }
+  return node
 }
 
 /**
@@ -667,7 +720,7 @@ function isReactUse(
  * @param value - A property value of an AST node.
  * @returns `true` if the value has a string `type`.
  */
-function isNode(value: unknown): value is TSESTree.Node {
+export function isNode(value: unknown): value is TSESTree.Node {
   return (
     typeof value === 'object' &&
     value !== null &&
@@ -746,12 +799,7 @@ function getConstantLiteral(
         ? found?.node
         : null
   }
-  while (
-    init?.type === AST_NODE_TYPES.TSAsExpression ||
-    init?.type === AST_NODE_TYPES.TSSatisfiesExpression
-  ) {
-    init = init.expression
-  }
+  init = init && unwrapAssertions(init)
   if (
     init?.type === AST_NODE_TYPES.Literal &&
     !('regex' in init) &&

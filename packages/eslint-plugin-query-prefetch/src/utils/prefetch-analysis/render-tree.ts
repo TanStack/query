@@ -2,6 +2,7 @@ import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import {
   findVariable,
   getImport,
+  getImportedName,
   getProvenance,
   isHookCall,
   resolveFunction,
@@ -19,6 +20,7 @@ import type { QueryOptionsSource } from './query-options'
 
 /** The package query hooks and `QueryClient` helpers are imported from. */
 const querySource = '@tanstack/react-query'
+const querySources = [querySource]
 
 /** Query hooks, and the `QueryClient` method that prefetches what they use. */
 export const queryHooks: Record<string, string> = {
@@ -266,7 +268,7 @@ export function collectPrefetches(
             prefetches.push({
               call: node,
               options,
-              source: resolveQueryOptions(options, env, isQuerySource),
+              source: resolveQueryOptions(options, env, querySources),
             })
             return
           }
@@ -369,8 +371,7 @@ export function findHydratedStates(
           states.push(getStateAttribute(env, node.openingElement))
         } else if (
           node.type === AST_NODE_TYPES.CallExpression &&
-          node.callee.type === AST_NODE_TYPES.Identifier &&
-          isQueryImport(env, node.callee, 'hydrate')
+          getImportedName(env.graph, node.callee, querySources) === 'hydrate'
         ) {
           const state = node.arguments[1]
           states.push(state ? getProvenance(state, env) : null)
@@ -410,22 +411,6 @@ function getStateAttribute(
 }
 
 /**
- * Checks whether an identifier refers to an export of TanStack Query.
- * @param env - The routing environment.
- * @param node - The identifier.
- * @param name - The exported name.
- * @returns `true` if the identifier is that export, imported from TanStack Query.
- */
-function isQueryImport(
-  env: ProvenanceEnvironment,
-  node: TSESTree.Identifier,
-  name: string,
-): boolean {
-  const imported = getImport(env.graph, node)
-  return imported?.source === querySource && imported.name === name
-}
-
-/**
  * Checks whether a function calls `dehydrate()` from TanStack Query, as a server loader has to for its
  * prefetched queries to reach the client.
  * @param env - The routing environment.
@@ -462,15 +447,6 @@ export function callsDehydrate(
     return found
   }
   return visit(fn, 0)
-}
-
-/**
- * Checks whether an import specifier is TanStack Query's.
- * @param source - The import specifier.
- * @returns `true` for `@tanstack/react-query`.
- */
-function isQuerySource(source: string): boolean {
-  return source === querySource
 }
 
 /**
@@ -585,23 +561,15 @@ function getQueryUsage(
   node: TSESTree.CallExpression,
   env: ProvenanceEnvironment,
 ): QueryUsage | null {
-  if (node.callee.type !== AST_NODE_TYPES.Identifier) {
-    return null
-  }
-  const imported = getImport(env.graph, node.callee)
+  const hook = getImportedName(env.graph, node.callee, querySources)
   const [options] = node.arguments
-  if (
-    imported === null ||
-    !isQuerySource(imported.source) ||
-    !(imported.name in queryHooks) ||
-    options === undefined
-  ) {
+  if (hook === null || !(hook in queryHooks) || options === undefined) {
     return null
   }
   return {
-    hook: imported.name,
+    hook,
     options,
-    source: resolveQueryOptions(options, env, isQuerySource),
+    source: resolveQueryOptions(options, env, querySources),
   }
 }
 

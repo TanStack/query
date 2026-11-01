@@ -3,6 +3,7 @@ import { ASTUtils } from '../ast-utils'
 import {
   findVariable,
   getImport,
+  getImportedName,
   getProvenance,
   getReturnedExpression,
   isFunctionNode,
@@ -321,17 +322,8 @@ function getRouteHookCall(
     return undefined
   }
 
-  if (node.callee.type !== AST_NODE_TYPES.Identifier) {
-    return undefined
-  }
-
-  const imported = getImport(graph, node.callee)
-
-  if (
-    imported === null ||
-    !routerSources.includes(imported.source) ||
-    !routeHooks.includes(imported.name)
-  ) {
+  const hook = getImportedName(graph, node.callee, routerSources)
+  if (hook === null || !routeHooks.includes(hook)) {
     return undefined
   }
 
@@ -346,7 +338,7 @@ function getRouteHookCall(
   if (from?.type === AST_NODE_TYPES.Literal && typeof from.value === 'string') {
     const id = from.value
     return {
-      hook: imported.name,
+      hook,
       route: routes.find((route) => route.id === id) ?? null,
     }
   }
@@ -358,7 +350,7 @@ function getRouteHookCall(
     ['id', 'fullPath'].includes(from.property.name)
   ) {
     const route = findRoute(from.object, routes, graph)
-    return route ? { hook: imported.name, route } : null
+    return route ? { hook, route } : null
   }
 
   return null
@@ -406,17 +398,11 @@ function getRouteApiId(node: TSESTree.Node, graph: ModuleGraph): string | null {
         ? definition.node.init
         : null
   }
-  if (
-    call?.type !== AST_NODE_TYPES.CallExpression ||
-    call.callee.type !== AST_NODE_TYPES.Identifier
-  ) {
+  if (call?.type !== AST_NODE_TYPES.CallExpression) {
     return null
   }
-  const imported = getImport(graph, call.callee)
   const [id] = call.arguments
-  return imported !== null &&
-    routerSources.includes(imported.source) &&
-    imported.name === 'getRouteApi' &&
+  return getImportedName(graph, call.callee, routerSources) === 'getRouteApi' &&
     id?.type === AST_NODE_TYPES.Literal &&
     typeof id.value === 'string'
     ? id.value
@@ -469,15 +455,8 @@ function isRouteFactoryCall(
   graph: ModuleGraph,
 ): boolean {
   const isRouterImport = (callee: TSESTree.Node, names: Array<string>) => {
-    if (callee.type !== AST_NODE_TYPES.Identifier) {
-      return false
-    }
-    const imported = getImport(graph, callee)
-    return (
-      imported !== null &&
-      routerSources.includes(imported.source) &&
-      names.includes(imported.name)
-    )
+    const name = getImportedName(graph, callee, routerSources)
+    return name !== null && names.includes(name)
   }
 
   if (isRouterImport(node.callee, routeFactories)) {

@@ -2,9 +2,10 @@ import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import { ASTUtils } from '../ast-utils'
 import {
   findVariable,
-  getImport,
+  getImportedName,
   getProvenance,
   isModuleLevel,
+  unwrapAssertions,
 } from './provenance'
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
 import type { ModuleGraph } from './module-graph'
@@ -30,20 +31,20 @@ export type QueryOptionsSource =
  * Describes what query options passed to a hook or a `QueryClient` method were built from.
  * @param node - The options argument.
  * @param env - The routing environment.
- * @param isQueryImport - Checks whether an identifier is imported from TanStack Query.
+ * @param querySources - The import specifiers of TanStack Query.
  * @returns The options' source.
  */
 export function resolveQueryOptions(
   node: TSESTree.Node,
   env: ProvenanceEnvironment,
-  isQueryImport: (source: string) => boolean,
+  querySources: ReadonlyArray<string>,
 ): QueryOptionsSource {
-  node = unwrap(node)
+  node = unwrapAssertions(node)
 
   if (node.type === AST_NODE_TYPES.Identifier) {
     const init = getLocalConstInit(env.graph, node)
     if (init !== null) {
-      return resolveQueryOptions(init, env, isQueryImport)
+      return resolveQueryOptions(init, env, querySources)
     }
   }
 
@@ -59,21 +60,14 @@ export function resolveQueryOptions(
       ASTUtils.findPropertyWithIdentifierKey(node.properties, 'queryFn') ===
         undefined
     ) {
-      return resolveQueryOptions(spread.argument, env, isQueryImport)
+      return resolveQueryOptions(spread.argument, env, querySources)
     }
     return inline(node, node, env)
   }
 
-  if (
-    node.type === AST_NODE_TYPES.CallExpression &&
-    node.callee.type === AST_NODE_TYPES.Identifier
-  ) {
-    const imported = getImport(env.graph, node.callee)
-    if (
-      imported !== null &&
-      isQueryImport(imported.source) &&
-      queryOptionsBuilders.includes(imported.name)
-    ) {
+  if (node.type === AST_NODE_TYPES.CallExpression) {
+    const name = getImportedName(env.graph, node.callee, querySources)
+    if (name !== null && queryOptionsBuilders.includes(name)) {
       return inline(node, node.arguments[0], env)
     }
   }
@@ -165,21 +159,4 @@ function getLocalConstInit(
     return null
   }
   return definition.node.init
-}
-
-/**
- * Removes type assertions and non-null assertions around a node.
- * @param node - The node to unwrap.
- * @returns The node inside the assertions.
- */
-function unwrap(node: TSESTree.Node): TSESTree.Node {
-  while (
-    node.type === AST_NODE_TYPES.TSAsExpression ||
-    node.type === AST_NODE_TYPES.TSSatisfiesExpression ||
-    node.type === AST_NODE_TYPES.TSTypeAssertion ||
-    node.type === AST_NODE_TYPES.TSNonNullExpression
-  ) {
-    node = node.expression
-  }
-  return node
 }

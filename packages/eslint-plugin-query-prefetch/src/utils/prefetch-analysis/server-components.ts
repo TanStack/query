@@ -1,6 +1,6 @@
 import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import { descend, getOwnPrefetches, getRelativePath } from './checks'
-import { unwrapComponent, walk } from './provenance'
+import { resolveExportedFunction, walk } from './provenance'
 import {
   collectPrefetches,
   getJsxProps,
@@ -99,9 +99,7 @@ function getDefaultExportedComponent(
   graph: ModuleGraph,
   filePath: string,
 ): ResolvedFunction | null {
-  const found = graph.findExport(filePath, 'default')
-  const fn = unwrapComponent(found?.node)
-  return fn && found ? { fn, file: found.file } : null
+  return resolveExportedFunction(graph, filePath, 'default')
 }
 
 /** How many components a layout's `children` are followed through. */

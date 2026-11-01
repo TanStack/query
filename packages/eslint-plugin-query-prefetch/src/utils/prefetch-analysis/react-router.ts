@@ -2,15 +2,18 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import { ASTUtils } from '../ast-utils'
+import { findWithExtension, moduleExtensions } from './files'
 import {
   findVariable,
   getImport,
+  getImportedName,
   getLazyImport,
   getReturnedExpression,
   getValueProvenance,
+  resolveExportedFunction,
   resolveFunctionValue,
   serializeProvenance,
-  unwrapComponent,
+  unwrapAssertions,
 } from './provenance'
 import {
   findHydratedStates,
@@ -82,9 +85,8 @@ export function getReactRouterFrameworkCheck(
   }
 
   const { path: filePath } = graph.current
-  const defaultExport = graph.findExport(filePath, 'default')
-  const component = unwrapComponent(defaultExport?.node)
-  if (component === null || defaultExport === null) {
+  const component = resolveExportedFunction(graph, filePath, 'default')
+  if (component === null) {
     return null
   }
 
@@ -139,8 +141,7 @@ export function getReactRouterFrameworkCheck(
       site,
       sites,
       root: {
-        fn: component,
-        file: defaultExport.file,
+        ...component,
         args: [
           {
             type: 'object',
@@ -151,7 +152,7 @@ export function getReactRouterFrameworkCheck(
             ],
           },
         ],
-        via: component,
+        via: component.fn,
         state: undefined,
       },
       isHydrated: (route) =>
@@ -159,11 +160,12 @@ export function getReactRouterFrameworkCheck(
           graph,
           route,
           [filePath, ...parents],
-          component,
+          component.fn,
           (id) =>
             id === 'root'
               ? (config?.root ?? null)
-              : appDir && findModule(path.join(appDir, id)),
+              : appDir &&
+                findWithExtension(path.join(appDir, id), moduleExtensions),
         ),
     },
   }
@@ -223,17 +225,11 @@ function createLoaderDataEnvironment(
     graph,
     parameterBindings: new Map(),
     resolveCall: (node) => {
-      if (node.callee.type !== AST_NODE_TYPES.Identifier) {
-        return undefined
-      }
-      const imported = getImport(graph, node.callee)
-      if (imported === null || !routerSources.includes(imported.source)) {
-        return undefined
-      }
-      if (imported.name === 'useLoaderData') {
+      const name = getImportedName(graph, node.callee, routerSources)
+      if (name === 'useLoaderData') {
         return loaderData
       }
-      if (imported.name === 'useRouteLoaderData') {
+      if (name === 'useRouteLoaderData') {
         const [id] = node.arguments
         const module =
           id?.type === AST_NODE_TYPES.Literal && typeof id.value === 'string'
@@ -304,10 +300,9 @@ function getRouteComponents(
     properties: [['loaderData', loaderData]],
   }
   return ['default', 'Layout'].flatMap((name) => {
-    const found = graph.findExport(module, name)
-    const fn = unwrapComponent(found?.node)
-    return fn && found
-      ? [{ fn, file: found.file, args: [props], via, state: undefined }]
+    const component = resolveExportedFunction(graph, module, name)
+    return component
+      ? [{ ...component, args: [props], via, state: undefined }]
       : []
   })
 }
@@ -322,15 +317,8 @@ export function isDataRouterCall(
   node: TSESTree.CallExpression,
   graph: ModuleGraph,
 ): boolean {
-  if (node.callee.type !== AST_NODE_TYPES.Identifier) {
-    return false
-  }
-  const imported = getImport(graph, node.callee)
-  return (
-    imported !== null &&
-    routerSources.includes(imported.source) &&
-    routerFactories.includes(imported.name)
-  )
+  const name = getImportedName(graph, node.callee, routerSources)
+  return name !== null && routerFactories.includes(name)
 }
 
 /**
@@ -402,12 +390,14 @@ export function getReactRouterDataChecks(
           })
         }
       } else if (lazyModule !== null && lazyNode !== undefined) {
-        const found = graph.findExport(lazyModule, 'Component')
-        const component = unwrapComponent(found?.node)
-        if (component !== null && found !== null) {
+        const component = resolveExportedFunction(
+          graph,
+          lazyModule,
+          'Component',
+        )
+        if (component !== null) {
           roots.push({
-            fn: component,
-            file: found.file,
+            ...component,
             args: [],
             via: viaInFile(lazyNode),
             state: undefined,
@@ -495,11 +485,16 @@ interface RouteConfig {
  */
 function readRouteConfig(graph: ModuleGraph, appDir: string): RouteConfig {
   const config: RouteConfig = {
-    root: findModule(path.join(appDir, 'root')) ?? undefined,
+    root:
+      findWithExtension(path.join(appDir, 'root'), moduleExtensions) ??
+      undefined,
     routes: new Map(),
     complete: false,
   }
-  const routesFile = findModule(path.join(appDir, 'routes'))
+  const routesFile = findWithExtension(
+    path.join(appDir, 'routes'),
+    moduleExtensions,
+  )
   const found = routesFile ? graph.findExport(routesFile, 'default') : null
   if (found === null) {
     return config
@@ -507,7 +502,7 @@ function readRouteConfig(graph: ModuleGraph, appDir: string): RouteConfig {
 
   let complete = true
   const visit = (node: TSESTree.Node, parents: Array<string>) => {
-    const array = unwrapExpression(node)
+    const array = unwrapAssertions(node)
     if (array.type !== AST_NODE_TYPES.ArrayExpression) {
       complete = false
       return
@@ -544,7 +539,7 @@ function readRouteConfig(graph: ModuleGraph, appDir: string): RouteConfig {
         .reverse()
         .find(
           (arg) =>
-            unwrapExpression(arg).type === AST_NODE_TYPES.ArrayExpression,
+            unwrapAssertions(arg).type === AST_NODE_TYPES.ArrayExpression,
         )
       if (children !== undefined) {
         visit(children, current)
@@ -554,20 +549,6 @@ function readRouteConfig(graph: ModuleGraph, appDir: string): RouteConfig {
   visit(found.node, [])
   config.complete = complete
   return config
-}
-
-/**
- * Finds the file of a module path without its extension, like a route ID relative to the app
- * directory.
- * @param base - The absolute path without an extension.
- * @returns The file's path, or `null` if no file has one of the script extensions.
- */
-function findModule(base: string): string | null {
-  return (
-    ['.tsx', '.ts', '.jsx', '.js']
-      .map((extension) => base + extension)
-      .find((file) => fs.existsSync(file)) ?? null
-  )
 }
 
 /**
@@ -627,14 +608,7 @@ function createReactRouterEnvironment(
     graph,
     parameterBindings: new Map(),
     resolveCall: (node) => {
-      if (node.callee.type !== AST_NODE_TYPES.Identifier) {
-        return undefined
-      }
-      const imported = getImport(graph, node.callee)
-      if (imported === null || !routerSources.includes(imported.source)) {
-        return undefined
-      }
-      switch (imported.name) {
+      switch (getImportedName(graph, node.callee, routerSources)) {
         case 'useParams':
           return params
         case 'useSearchParams':
@@ -700,7 +674,7 @@ function resolveArray(
   graph: ModuleGraph,
   node: TSESTree.Node | undefined,
 ): TSESTree.ArrayExpression | null {
-  const value = node && unwrapExpression(node)
+  const value = node && unwrapAssertions(node)
   if (value?.type === AST_NODE_TYPES.ArrayExpression) {
     return value
   }
@@ -720,20 +694,4 @@ function resolveArray(
     )
   }
   return null
-}
-
-/**
- * Removes `as`, `satisfies`, and non-null assertions around an expression.
- * @param node - The expression that may be wrapped in assertions.
- * @returns The expression inside the assertions.
- */
-function unwrapExpression(node: TSESTree.Node): TSESTree.Node {
-  while (
-    node.type === AST_NODE_TYPES.TSAsExpression ||
-    node.type === AST_NODE_TYPES.TSSatisfiesExpression ||
-    node.type === AST_NODE_TYPES.TSNonNullExpression
-  ) {
-    node = node.expression
-  }
-  return node
 }

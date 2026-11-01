@@ -1,13 +1,12 @@
-import fs from 'node:fs'
 import path from 'node:path'
-import { AST_NODE_TYPES } from '@typescript-eslint/utils'
-import { getImport } from './provenance'
+import { findOutermostDir, findWithExtension, getDirsFrom } from './files'
+import { getImportedName } from './provenance'
 import { createServerCheck } from './server-components'
 import type { ServerCheck } from './checks'
 import type { ModuleGraph } from './module-graph'
 import type { Provenance, ProvenanceEnvironment } from './provenance'
 
-const navigationSource = 'next/navigation'
+const navigationSources = ['next/navigation']
 
 const params: Provenance = { type: 'binding', name: 'params' }
 const searchParams: Provenance = { type: 'binding', name: 'searchParams' }
@@ -33,7 +32,7 @@ export function getNextCheck(
 ): { env: ProvenanceEnvironment; check: ServerCheck } | null {
   const file = graph.current.path
   const match = entryFile.exec(path.basename(file))
-  const appDir = findAppDir(file)
+  const appDir = findOutermostDir(file, 'app')
   if (
     match === null ||
     appDir === null ||
@@ -69,14 +68,19 @@ export function getNextCheck(
               ]
             : [['params', params]],
       },
-      layouts: findLayouts(appDir, path.dirname(file)).map((layout) => ({
-        path: layout,
-        props: {
-          type: 'object',
-          open: true,
-          properties: [['params', params]],
-        },
-      })),
+      layouts: getDirsFrom(appDir, path.dirname(file))
+        .flatMap(
+          (dir) =>
+            findWithExtension(path.join(dir, 'layout'), layoutExtensions) ?? [],
+        )
+        .map((layout) => ({
+          path: layout,
+          props: {
+            type: 'object',
+            open: true,
+            properties: [['params', params]],
+          },
+        })),
     },
     loosenSearchParams,
   )
@@ -95,17 +99,11 @@ function createNextEnvironment(graph: ModuleGraph): ProvenanceEnvironment {
     graph,
     parameterBindings: new Map(),
     resolveCall: (node) => {
-      if (node.callee.type !== AST_NODE_TYPES.Identifier) {
-        return undefined
-      }
-      const imported = getImport(graph, node.callee)
-      if (imported?.source !== navigationSource) {
-        return undefined
-      }
-      if (imported.name === 'useParams') {
+      const name = getImportedName(graph, node.callee, navigationSources)
+      if (name === 'useParams') {
         return params
       }
-      if (imported.name === 'useSearchParams') {
+      if (name === 'useSearchParams') {
         return urlSearchParams
       }
       return undefined
@@ -162,38 +160,4 @@ function loosenSearchParams(provenance: Provenance): Provenance {
     default:
       return provenance
   }
-}
-
-/**
- * Finds the `app` directory a file is in.
- * @param file - The file's absolute path.
- * @returns The `app` directory, or `null` if the file isn't in one.
- */
-function findAppDir(file: string): string | null {
-  const parts = path.dirname(file).split(path.sep)
-  // The first `app` directory, since routes can have folders named `app` too.
-  const index = parts.indexOf('app')
-  return index === -1 ? null : parts.slice(0, index + 1).join(path.sep)
-}
-
-/**
- * Finds the layouts that render the pages of a directory, outermost first.
- * @param appDir - The `app` directory.
- * @param dir - The directory of the page or layout.
- * @returns The layout files' paths.
- */
-function findLayouts(appDir: string, dir: string): Array<string> {
-  const dirs: Array<string> = []
-  for (let current = dir; ; current = path.dirname(current)) {
-    dirs.unshift(current)
-    if (current === appDir || path.dirname(current) === current) {
-      break
-    }
-  }
-  return dirs.flatMap((current) =>
-    layoutExtensions
-      .map((extension) => path.join(current, `layout${extension}`))
-      .filter((layout) => fs.existsSync(layout))
-      .slice(0, 1),
-  )
 }
