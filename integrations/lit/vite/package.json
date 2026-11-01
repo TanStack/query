@@ -1,5 +1,5 @@
 {
-  "name": "lit-vite",
+  "name": "@tanstack/query-integration-lit-vite",
   "private": true,
   "type": "module",
   "scripts": {

@@ -1,5 +1,5 @@
 {
-  "name": "react-vite",
+  "name": "@tanstack/query-integration-react-vite",
   "private": true,
   "type": "module",
   "scripts": {

@@ -5700,7 +5700,7 @@ importers:
         specifier: ^3.3.13
         version: 3.3.13(typescript@6.0.3)
 
-  integrations/angular-cli-20:
+  integrations/angular/cli-20:
     dependencies:
       '@angular/common':
         specifier: ^20.0.0
@@ -5722,7 +5722,7 @@ importers:
         version: 20.3.18(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
       '@tanstack/angular-query-experimental':
         specifier: ^5.105.1
-        version: link:../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ~7.8.0
         version: 7.8.2
@@ -5746,14 +5746,14 @@ importers:
         specifier: ~5.8.2
         version: 5.8.3
 
-  integrations/lit-vite:
+  integrations/lit/vite:
     dependencies:
       '@tanstack/lit-query':
         specifier: workspace:*
-        version: link:../../packages/lit-query
+        version: link:../../../packages/lit-query
       '@tanstack/query-core':
         specifier: workspace:*
-        version: link:../../packages/query-core
+        version: link:../../../packages/query-core
       lit:
         specifier: ^3.3.3
         version: 3.3.3
@@ -5765,14 +5765,14 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
 
-  integrations/react-next-14:
+  integrations/react/next-14:
     dependencies:
       '@tanstack/react-query':
         specifier: workspace:*
-        version: link:../../packages/react-query
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: workspace:*
-        version: link:../../packages/react-query-devtools
+        version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.33
         version: 14.2.35(@babel/core@7.29.7(supports-color@10.2.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
@@ -5790,17 +5790,17 @@ importers:
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
 
-  integrations/react-next-15:
+  integrations/react/next-15:
     dependencies:
       '@js-temporal/polyfill':
         specifier: ^0.5.1
         version: 0.5.1
       '@tanstack/react-query':
         specifier: workspace:*
-        version: link:../../packages/react-query
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: workspace:*
-        version: link:../../packages/react-query-devtools
+        version: link:../../../packages/react-query-devtools
       next:
         specifier: ^15.4.8
         version: 15.5.14(@babel/core@7.29.7(supports-color@7.2.0))(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.90.0)
@@ -5821,17 +5821,17 @@ importers:
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
 
-  integrations/react-next-16:
+  integrations/react/next-16:
     dependencies:
       '@js-temporal/polyfill':
         specifier: ^0.5.1
         version: 0.5.1
       '@tanstack/react-query':
         specifier: workspace:*
-        version: link:../../packages/react-query
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: workspace:*
-        version: link:../../packages/react-query-devtools
+        version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
         version: 16.2.2(@babel/core@7.29.7(supports-color@7.2.0))(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.90.0)
@@ -5852,24 +5852,24 @@ importers:
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
 
-  integrations/react-nodenext:
+  integrations/react/nodenext:
     dependencies:
       '@tanstack/react-query':
         specifier: workspace:*
-        version: link:../../packages/react-query
+        version: link:../../../packages/react-query
     devDependencies:
       '@types/react':
         specifier: ^19.3.0
         version: 19.3.0
 
-  integrations/react-vite:
+  integrations/react/vite:
     dependencies:
       '@tanstack/react-query':
         specifier: workspace:*
-        version: link:../../packages/react-query
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: workspace:*
-        version: link:../../packages/react-query-devtools
+        version: link:../../../packages/react-query-devtools
       '@vitejs/plugin-react':
         specifier: ^6.1.1
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
@@ -5883,14 +5883,14 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
-  integrations/react-webpack-4:
+  integrations/react/webpack-4:
     dependencies:
       '@tanstack/react-query':
         specifier: workspace:*
-        version: link:../../packages/react-query
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: workspace:*
-        version: link:../../packages/react-query-devtools
+        version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.3.1
         version: 19.3.1
@@ -5920,14 +5920,14 @@ importers:
         specifier: ^4.10.0
         version: 4.10.0(webpack@4.47.0)
 
-  integrations/react-webpack-5:
+  integrations/react/webpack-5:
     dependencies:
       '@tanstack/react-query':
         specifier: workspace:*
-        version: link:../../packages/react-query
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: workspace:*
-        version: link:../../packages/react-query-devtools
+        version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.3.1
         version: 19.3.1
@@ -5957,14 +5957,14 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(webpack@5.105.4)
 
-  integrations/solid-vite:
+  integrations/solid/vite:
     dependencies:
       '@tanstack/solid-query':
         specifier: workspace:*
-        version: link:../../packages/solid-query
+        version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
         specifier: workspace:*
-        version: link:../../packages/solid-query-devtools
+        version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.9.15
         version: 1.9.15
@@ -5975,17 +5975,17 @@ importers:
         specifier: ^2.11.14
         version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
 
-  integrations/svelte-vite:
+  integrations/svelte/vite:
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/svelte-query':
         specifier: workspace:*
-        version: link:../../packages/svelte-query
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: workspace:*
-        version: link:../../packages/svelte-query-devtools
+        version: link:../../../packages/svelte-query-devtools
       svelte:
         specifier: ^5.57.1
         version: 5.57.1(@typescript-eslint/types@8.58.1)
@@ -5993,11 +5993,11 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
-  integrations/vue-declaration-emit:
+  integrations/vue/declaration-emit:
     dependencies:
       '@tanstack/vue-query':
         specifier: workspace:*
-        version: link:../../packages/vue-query
+        version: link:../../../packages/vue-query
       vue:
         specifier: ^3.5.43
         version: 3.5.44(typescript@6.0.3)
@@ -6006,11 +6006,11 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
 
-  integrations/vue-vite:
+  integrations/vue/vite:
     dependencies:
       '@tanstack/vue-query':
         specifier: workspace:*
-        version: link:../../packages/vue-query
+        version: link:../../../packages/vue-query
       vue:
         specifier: ^3.5.43
         version: 3.5.44(typescript@6.0.3)

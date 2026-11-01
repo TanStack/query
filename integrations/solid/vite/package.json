@@ -1,5 +1,5 @@
 {
-  "name": "solid-vite",
+  "name": "@tanstack/query-integration-solid-vite",
   "private": true,
   "type": "module",
   "scripts": {
