@@ -77,8 +77,6 @@ overrides:
   '@types/react-dom': 'catalog:'
   '@types/node': '^24.19.2'
   esbuild: '^0.28.2'
-  '@solidjs/start@2>seroval': '1.7.1' # 1.7.2 was published without provenance (trustPolicy)
-  '@solidjs/start@2>seroval-plugins': '1.7.1' # 1.7.2 was published without provenance (trustPolicy)
 
 allowBuilds:
   # root dependency

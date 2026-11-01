@@ -56,16 +56,15 @@
   ],
   "dependencies": {
     "@lit/context": "^1.1.6",
-    "@tanstack/query-core": "workspace:*",
-    "lit": "^3.3.3"
+    "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
     "@lit-labs/ssr": "^3.3.1",
     "@tanstack/query-test-utils": "workspace:*",
+    "lit": "^3.3.3",
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "@tanstack/query-core": "^5.105.0",
     "lit": ">=2.8.0 <4"
   }
 }
