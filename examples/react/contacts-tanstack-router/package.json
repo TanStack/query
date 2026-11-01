@@ -10,6 +10,7 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
+    "@tanstack/react-pacer": "^0.23.0",
     "@tanstack/react-query": "^5.105.1",
     "@tanstack/react-query-devtools": "^5.105.1",
     "@tanstack/react-router": "^1.170.46",
@@ -17,7 +18,6 @@
     "match-sorter": "^8.3.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "rooks": "^9.9.0",
     "sort-by": "^1.2.0"
   },
   "devDependencies": {

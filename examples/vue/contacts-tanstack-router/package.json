@@ -10,10 +10,10 @@
     "test:types": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@tanstack/vue-pacer": "^0.2.0",
     "@tanstack/vue-query": "^5.105.1",
     "@tanstack/vue-query-devtools": "^6.3.7",
     "@tanstack/vue-router": "^1.170.42",
-    "@vueuse/core": "^15.0.0",
     "localforage": "^1.10.0",
     "match-sorter": "^8.3.0",
     "sort-by": "^1.2.0",

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@algolia/client-search": "5.59.0",
+    "@tanstack/vue-pacer": "^0.2.0",
     "@tanstack/vue-query": "^5.105.1",
     "@tanstack/vue-query-devtools": "^6.3.7",
     "vue": "^3.5.43"

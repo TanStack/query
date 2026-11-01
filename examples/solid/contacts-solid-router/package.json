@@ -10,8 +10,8 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@solid-primitives/scheduled": "^1.5.3",
     "@solidjs/router": "^1.0.0",
+    "@tanstack/solid-pacer": "^0.24.0",
     "@tanstack/solid-query": "^5.105.1",
     "@tanstack/solid-query-devtools": "^5.105.1",
     "localforage": "^1.10.0",
