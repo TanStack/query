@@ -517,13 +517,17 @@ export class QueryClient {
    * have observers with a static `staleTime`), are never refetched.
    *
    * By default (`cancelRefetch: true`), a currently running fetch is cancelled before the new
-   * one starts. The returned promise resolves once all matching queries have settled; it does
-   * not reject on individual query failures unless `throwOnError` is set.
+   * one starts. The returned promise does not reject on individual query failures unless
+   * `throwOnError` is `true`.
+   *
+   * Initially paused fetches do not delay the returned promise. Their later errors are handled
+   * even when `throwOnError` is `true`.
    * @param filters - The filters that select which queries to refetch. Without filters, every query
    * in the cache is included.
    * @param options - Set `cancelRefetch` to `false` to keep a running fetch instead of cancelling
-   * it, and `throwOnError` to `true` to reject when a refetch fails.
-   * @returns A promise that resolves once every matched query has settled.
+   * it, and `throwOnError` to `true` to reject when a refetch that was not initially paused fails.
+   * @returns A promise that resolves once all matching refetches that were not initially paused
+   * have settled.
    * @example
    * ```ts
    * // refetch all active queries partially matching a query key:
@@ -544,12 +548,11 @@ export class QueryClient {
         .filter((query) => !query.isDisabled() && !query.isStatic())
         .map((query) => {
           let promise = query.fetch(undefined, fetchOptions)
-          if (!fetchOptions.throwOnError) {
+          const isPaused = query.state.fetchStatus === 'paused'
+          if (!fetchOptions.throwOnError || isPaused) {
             promise = promise.catch(noop)
           }
-          return query.state.fetchStatus === 'paused'
-            ? Promise.resolve()
-            : promise
+          return isPaused ? Promise.resolve() : promise
         }),
     )
 
