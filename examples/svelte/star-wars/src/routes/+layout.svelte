@@ -1,7 +1,7 @@
 <script lang="ts">
   import { resolve } from '$app/paths'
   import '../app.css'
-  import { browser } from '$app/environment'
+  import { browser } from '$app/env'
   import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
   import type { LayoutProps } from './$types'
