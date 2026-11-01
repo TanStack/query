@@ -71,7 +71,9 @@ export class QueryClient extends QC {
     return super.isFetching(cloneDeepUnref(filters))
   }
 
-  override isMutating(filters: MaybeRefDeep<MutationFilters> = {}): number {
+  override isMutating(
+    filters: MaybeRefDeep<Omit<MutationFilters, 'status'>> = {},
+  ): number {
     return super.isMutating(cloneDeepUnref(filters))
   }
 

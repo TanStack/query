@@ -166,9 +166,7 @@ export class QueryClient {
    * }
    * ```
    */
-  isMutating<
-    TMutationFilters extends MutationFilters<any, any> = MutationFilters,
-  >(filters?: TMutationFilters): number {
+  isMutating(filters?: Omit<MutationFilters<any, any>, 'status'>): number {
     return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
   }
 
