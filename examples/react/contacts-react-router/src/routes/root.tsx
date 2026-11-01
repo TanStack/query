@@ -6,7 +6,7 @@ import {
   useNavigation,
   useSubmit,
 } from 'react-router'
-import { useDebounce } from 'rooks'
+import { useDebouncedCallback } from '@tanstack/react-pacer/debouncer'
 import { useIsFetching, useSuspenseQuery } from '@tanstack/react-query'
 import { contactsQueries } from '../services/contacts/queries'
 import type { QueryClient } from '@tanstack/react-query'
@@ -28,7 +28,7 @@ export default function Root() {
   const navigation = useNavigation()
   const submit = useSubmit()
 
-  const debouncedSubmit = useDebounce(submit, 500)
+  const debouncedSubmit = useDebouncedCallback(submit, { wait: 500 })
 
   return (
     <>

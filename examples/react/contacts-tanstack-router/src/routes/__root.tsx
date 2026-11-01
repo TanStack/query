@@ -6,7 +6,7 @@ import {
   useNavigate,
   useRouterState,
 } from '@tanstack/react-router'
-import { useDebounce } from 'rooks'
+import { useDebouncedCallback } from '@tanstack/react-pacer/debouncer'
 import { useIsFetching, useSuspenseQuery } from '@tanstack/react-query'
 import { contactsQueries } from '../services/contacts/queries'
 import type { QueryClient } from '@tanstack/react-query'
@@ -31,9 +31,12 @@ function Root() {
   const navigate = useNavigate()
   const matchRoute = useMatchRoute()
 
-  const debouncedSearch = useDebounce((value: string) => {
-    navigate({ to: '.', search: { q: value || undefined } })
-  }, 500)
+  const debouncedSearch = useDebouncedCallback(
+    (value: string) => {
+      navigate({ to: '.', search: { q: value || undefined } })
+    },
+    { wait: 500 },
+  )
 
   return (
     <>

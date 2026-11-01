@@ -10,7 +10,7 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@solid-primitives/scheduled": "^1.5.3",
+    "@tanstack/solid-pacer": "^0.24.0",
     "@tanstack/solid-query": "^5.105.1",
     "@tanstack/solid-query-devtools": "^5.105.1",
     "@tanstack/solid-router": "^1.170.43",

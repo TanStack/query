@@ -1,6 +1,6 @@
 import { ErrorBoundary, For, Show, Suspense } from 'solid-js'
 import { A, useIsRouting, useSearchParams } from '@solidjs/router'
-import { debounce } from '@solid-primitives/scheduled'
+import { createDebouncer } from '@tanstack/solid-pacer/debouncer'
 import { noop, useIsFetching, useQuery } from '@tanstack/solid-query'
 import ErrorPage from '../error-page'
 import { queryClient } from '../queryClient'
@@ -24,9 +24,12 @@ export default function Root(props: RouteSectionProps) {
   const searching = () => fetchingContacts() > 0
   const isRouting = useIsRouting()
 
-  const debouncedSearch = debounce((value: string) => {
-    setSearchParams({ q: value || undefined })
-  }, 500)
+  const searchDebouncer = createDebouncer(
+    (value: string) => {
+      setSearchParams({ q: value || undefined })
+    },
+    { wait: 500 },
+  )
 
   return (
     <>
@@ -47,7 +50,9 @@ export default function Root(props: RouteSectionProps) {
               autofocus
               value={q()}
               class={searching() ? 'loading' : ''}
-              onInput={(event) => debouncedSearch(event.currentTarget.value)}
+              onInput={(event) =>
+                searchDebouncer.maybeExecute(event.currentTarget.value)
+              }
             />
             <div id="search-spinner" aria-hidden hidden={!searching()} />
             <div class="sr-only" aria-live="polite" />

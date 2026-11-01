@@ -892,6 +892,9 @@ importers:
       '@algolia/client-search':
         specifier: 5.59.0
         version: 5.59.0
+      '@tanstack/lit-pacer':
+        specifier: ^0.2.0
+        version: 0.2.0(lit@3.3.3)
       '@tanstack/lit-query':
         specifier: ^0.2.32
         version: link:../../../packages/lit-query
@@ -1312,6 +1315,9 @@ importers:
       '@algolia/client-search':
         specifier: 5.59.0
         version: 5.59.0
+      '@tanstack/preact-pacer':
+        specifier: ^0.24.2
+        version: 0.24.2(preact@11.0.1)
       '@tanstack/preact-query':
         specifier: ^5.105.1
         version: link:../../../packages/preact-query
@@ -2129,6 +2135,9 @@ importers:
       '@algolia/client-search':
         specifier: 5.59.0
         version: 5.59.0
+      '@tanstack/react-pacer':
+        specifier: ^0.23.0
+        version: 0.23.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@tanstack/react-query':
         specifier: ^5.105.1
         version: link:../../../packages/react-query
@@ -2372,6 +2381,9 @@ importers:
 
   examples/react/contacts-react-router:
     dependencies:
+      '@tanstack/react-pacer':
+        specifier: ^0.23.0
+        version: 0.23.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@tanstack/react-query':
         specifier: ^5.105.1
         version: link:../../../packages/react-query
@@ -2393,9 +2405,6 @@ importers:
       react-router:
         specifier: ^8.5.0
         version: 8.5.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      rooks:
-        specifier: ^9.9.0
-        version: 9.9.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       sort-by:
         specifier: ^1.2.0
         version: 1.2.0
@@ -2427,6 +2436,9 @@ importers:
 
   examples/react/contacts-tanstack-router:
     dependencies:
+      '@tanstack/react-pacer':
+        specifier: ^0.23.0
+        version: 0.23.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@tanstack/react-query':
         specifier: ^5.105.1
         version: link:../../../packages/react-query
@@ -2448,9 +2460,6 @@ importers:
       react-dom:
         specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
-      rooks:
-        specifier: ^9.9.0
-        version: 9.9.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       sort-by:
         specifier: ^1.2.0
         version: 1.2.0
@@ -3355,6 +3364,9 @@ importers:
       '@algolia/client-search':
         specifier: 5.59.0
         version: 5.59.0
+      '@tanstack/solid-pacer':
+        specifier: ^0.24.0
+        version: 0.24.0(solid-js@1.9.15)
       '@tanstack/solid-query':
         specifier: ^5.105.1
         version: link:../../../packages/solid-query
@@ -3581,12 +3593,12 @@ importers:
 
   examples/solid/contacts-solid-router:
     dependencies:
-      '@solid-primitives/scheduled':
-        specifier: ^1.5.3
-        version: 1.5.3(solid-js@1.9.15)
       '@solidjs/router':
         specifier: ^1.0.0
         version: 1.0.0(solid-js@1.9.15)
+      '@tanstack/solid-pacer':
+        specifier: ^0.24.0
+        version: 0.24.0(solid-js@1.9.15)
       '@tanstack/solid-query':
         specifier: ^5.105.1
         version: link:../../../packages/solid-query
@@ -3627,9 +3639,9 @@ importers:
 
   examples/solid/contacts-tanstack-router:
     dependencies:
-      '@solid-primitives/scheduled':
-        specifier: ^1.5.3
-        version: 1.5.3(solid-js@1.9.15)
+      '@tanstack/solid-pacer':
+        specifier: ^0.24.0
+        version: 0.24.0(solid-js@1.9.15)
       '@tanstack/solid-query':
         specifier: ^5.105.1
         version: link:../../../packages/solid-query
@@ -4131,6 +4143,9 @@ importers:
       '@algolia/client-search':
         specifier: 5.59.0
         version: 5.59.0
+      '@tanstack/svelte-pacer':
+        specifier: ^0.2.0
+        version: 0.2.0(svelte@5.57.1(@typescript-eslint/types@8.58.1))
       '@tanstack/svelte-query':
         specifier: ^6.3.7
         version: link:../../../packages/svelte-query
@@ -4915,6 +4930,9 @@ importers:
 
   examples/svelte/sveltekit:
     dependencies:
+      '@tanstack/svelte-pacer':
+        specifier: ^0.2.0
+        version: 0.2.0(svelte@5.57.1(@typescript-eslint/types@8.58.1))
       '@tanstack/svelte-query':
         specifier: ^6.3.7
         version: link:../../../packages/svelte-query
@@ -4967,6 +4985,9 @@ importers:
       '@algolia/client-search':
         specifier: 5.59.0
         version: 5.59.0
+      '@tanstack/vue-pacer':
+        specifier: ^0.2.0
+        version: 0.2.0(@vue/composition-api@1.7.2(vue@3.5.44(typescript@6.0.3)))(vue@3.5.44(typescript@6.0.3))
       '@tanstack/vue-query':
         specifier: ^5.105.1
         version: link:../../../packages/vue-query
@@ -5189,6 +5210,9 @@ importers:
 
   examples/vue/contacts-tanstack-router:
     dependencies:
+      '@tanstack/vue-pacer':
+        specifier: ^0.2.0
+        version: 0.2.0(@vue/composition-api@1.7.2(vue@3.5.44(typescript@6.0.3)))(vue@3.5.44(typescript@6.0.3))
       '@tanstack/vue-query':
         specifier: ^5.105.1
         version: link:../../../packages/vue-query
@@ -5198,9 +5222,6 @@ importers:
       '@tanstack/vue-router':
         specifier: ^1.170.42
         version: 1.170.42(@vue/composition-api@1.7.2(vue@3.5.44(typescript@6.0.3)))(vue@3.5.44(typescript@6.0.3))
-      '@vueuse/core':
-        specifier: ^15.0.0
-        version: 15.0.0(vue@3.5.44(typescript@6.0.3))
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
@@ -5244,15 +5265,15 @@ importers:
 
   examples/vue/contacts-vue-router:
     dependencies:
+      '@tanstack/vue-pacer':
+        specifier: ^0.2.0
+        version: 0.2.0(@vue/composition-api@1.7.2(vue@3.5.44(typescript@6.0.3)))(vue@3.5.44(typescript@6.0.3))
       '@tanstack/vue-query':
         specifier: ^5.105.1
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
         specifier: ^6.3.7
         version: link:../../../packages/vue-query-devtools
-      '@vueuse/core':
-        specifier: ^15.0.0
-        version: 15.0.0(vue@3.5.44(typescript@6.0.3))
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
@@ -13218,11 +13239,6 @@ packages:
     peerDependencies:
       solid-js: ^1.6.12
 
-  '@solid-primitives/scheduled@1.5.3':
-    resolution: {integrity: sha512-oNwLE6E6lxJAWrc8QXuwM0k2oU1BnANnkChwMw82aK1j3+mWGJkG1IFe5gCwbV+afYmjI76t9JJV3md/8tLw+g==}
-    peerDependencies:
-      solid-js: ^1.6.12
-
   '@solid-primitives/static-store@0.1.4':
     resolution: {integrity: sha512-LgtVaVBtB7EbmS4+M0b8xY5Iq6pUWXBsIC4VgtrFKDGDdyCaDt88sHk0fUlx1Enxm/XZnZyLXJABRoa39RjJqA==}
     peerDependencies:
@@ -13489,6 +13505,17 @@ packages:
   '@tanstack/pacer@0.23.1':
     resolution: {integrity: sha512-ROZj19aPPGYebeRPhFZNRlqNaR2e4vkcLbgiXfbi5uJu8WiW/etsYmkcAcoSQRGOwGZbbioWRX7xssewDRVRhw==}
     engines: {node: '>=20'}
+
+  '@tanstack/preact-pacer@0.24.2':
+    resolution: {integrity: sha512-YE7wnbDP+fpeqPK+2X3PBrLzDfOU+lLMtxmnGpom5JCPUjHq2vPYLRrYe2kAwsSMo7N+cN/c77+IjpILf4NhJA==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      preact: '>=10.0.0'
+
+  '@tanstack/preact-store@0.13.5':
+    resolution: {integrity: sha512-+ONKQNVqoGBpCbvahHjW39d28vwBVNRUa927m5owRQS6fySTORPKbOV6HYBXt0qHxOA8r0llg1Bfy/FKXsj3qw==}
+    peerDependencies:
+      preact: ^10.0.0 || ^11.0.0-0
 
   '@tanstack/react-pacer@0.23.0':
     resolution: {integrity: sha512-Ec3h+kT8kYlpGb1M8F7836q+udE/M2RmE8KLr1rhs+UDBgvxjfmyR2bIUeaDEe9Zn1YXNI986RbErXyr5fEJIg==}
@@ -20291,9 +20318,6 @@ packages:
   perfect-debounce@2.1.0:
     resolution: {integrity: sha512-LjgdTytVFXeUgtHZr9WYViYSM/g8MkcTPYDlPa3cDqMirHjKiSZPYd6DoL7pK8AJQr+uWkQvCjHNdiMqsrJs+g==}
 
-  performance-now@2.1.0:
-    resolution: {integrity: sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==}
-
   piccolore@0.1.3:
     resolution: {integrity: sha512-o8bTeDWjE086iwKrROaDf31K0qC/BENdm15/uH9usSC/uZjJOKb2YGiVHfLY4GhwsERiPI1jmwI2XrA7ACOxVw==}
 
@@ -20837,9 +20861,6 @@ packages:
   radix3@1.1.2:
     resolution: {integrity: sha512-b484I/7b8rDEdSDKckSSBA8knMpcdsXudlE/LNL639wFoHKwLbEkQFZHWEYwDC0wa0FKUcCY+GAF73Z7wxNVFA==}
 
-  raf@3.4.1:
-    resolution: {integrity: sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==}
-
   randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
 
@@ -21327,13 +21348,6 @@ packages:
     resolution: {integrity: sha512-HzD4IdphaPMvuAacnL/vtoq5B8FwqewKvxTtqYibWvP6VDyZ+UsTtlw5F8HIOIIpLQAkN2NOP/0sM3puo9xN/A==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
-
-  rooks@9.9.0:
-    resolution: {integrity: sha512-ygSdaIlRiBNQmaJUYn/f66irkAIvcAFAsxwMFOV8UA9OLg0yokLgUHN73bOsTgSxrZo8+hjbr1Gdo3IYnIHZuw==}
-    engines: {node: '>=v10.24.1'}
-    peerDependencies:
-      react: ^18.0.0 || ^19.0.0
-      react-dom: ^18.0.0 || ^19.0.0
 
   rou3@0.9.2:
     resolution: {integrity: sha512-3SOzvaAg8rkHrXtRjpCvCvbyO5to9oOO27Z/XqHEYXfMRVSw/qMIVdmaOk9W2lcRLtR6dlqTjo9hDeJk70QBYQ==}
@@ -31615,10 +31629,6 @@ snapshots:
       '@solid-primitives/utils': 6.4.1(solid-js@1.9.15)
       solid-js: 1.9.15
 
-  '@solid-primitives/scheduled@1.5.3(solid-js@1.9.15)':
-    dependencies:
-      solid-js: 1.9.15
-
   '@solid-primitives/static-store@0.1.4(solid-js@1.9.15)':
     dependencies:
       '@solid-primitives/utils': 6.4.1(solid-js@1.9.15)
@@ -31971,6 +31981,17 @@ snapshots:
     dependencies:
       '@tanstack/devtools-event-client': 0.5.0
       '@tanstack/store': 0.11.2
+
+  '@tanstack/preact-pacer@0.24.2(preact@11.0.1)':
+    dependencies:
+      '@tanstack/pacer': 0.23.1
+      '@tanstack/preact-store': 0.13.5(preact@11.0.1)
+      preact: 11.0.1(preact-render-to-string@6.8.0)
+
+  '@tanstack/preact-store@0.13.5(preact@11.0.1)':
+    dependencies:
+      '@tanstack/store': 0.11.2
+      preact: 11.0.1(preact-render-to-string@6.8.0)
 
   '@tanstack/react-pacer@0.23.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
@@ -42103,8 +42124,6 @@ snapshots:
 
   perfect-debounce@2.1.0: {}
 
-  performance-now@2.1.0: {}
-
   piccolore@0.1.3: {}
 
   picocolors@1.1.1: {}
@@ -42582,10 +42601,6 @@ snapshots:
   quote-js-string@0.1.0: {}
 
   radix3@1.1.2: {}
-
-  raf@3.4.1:
-    dependencies:
-      performance-now: 2.1.0
 
   randombytes@2.1.0:
     dependencies:
@@ -43306,17 +43321,6 @@ snapshots:
       '@rollup/rollup-win32-x64-gnu': 4.65.1
       '@rollup/rollup-win32-x64-msvc': 4.65.1
       fsevents: 2.3.3
-
-  rooks@9.9.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
-    dependencies:
-      fast-deep-equal: 3.1.3
-      lodash.debounce: 4.0.8
-      raf: 3.4.1
-      react: 19.3.1
-      react-dom: 19.3.1(react@19.3.1)
-      use-sync-external-store: 1.6.0(react@19.3.1)
-    optionalDependencies:
-      '@js-temporal/polyfill': 0.5.1
 
   rou3@0.9.2: {}
 
