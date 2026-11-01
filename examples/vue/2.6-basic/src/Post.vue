@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api'
 import { useQuery } from '@tanstack/vue-query'
-import { postQueryOptions } from './api'
+import { postsQueries } from './services/posts/queries'
 
 export default defineComponent({
   name: 'PostDetails',
@@ -14,7 +14,7 @@ export default defineComponent({
   emits: ['setPostId'],
   setup(props) {
     const { isPending, isError, isFetching, data, error } = useQuery(() =>
-      postQueryOptions(props.postId),
+      postsQueries.detail(props.postId),
     )
 
     return { isPending, isError, isFetching, data, error }

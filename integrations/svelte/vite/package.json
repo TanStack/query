@@ -1,0 +1,15 @@
+{
+  "name": "@tanstack/query-integration-svelte-vite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@tanstack/svelte-query": "workspace:*",
+    "@tanstack/svelte-query-devtools": "workspace:*",
+    "svelte": "^5.57.1",
+    "vite": "^8.3.5"
+  }
+}

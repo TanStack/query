@@ -13,7 +13,7 @@ function injectQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnDat
 function injectQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(injectQueryFn: () => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, options?: InjectQueryOptions): CreateQueryResult<TData, TError>;
 ```
 
-- [`() => DefinedInitialDataOptions` → `DefinedCreateQueryResult`](#call-signature-1): This overload is selected when `initialData` is set on the options returned by `injectQueryFn`, so the resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+- [`() => DefinedInitialDataOptions` → `DefinedCreateQueryResult`](#call-signature-1): This overload is selected when `initialData` is known to be defined on the options returned by `injectQueryFn`, so the resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
 - [`() => UndefinedInitialDataOptions` → `CreateQueryResult`](#call-signature-2): Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 - [`() => CreateQueryOptions` → `CreateQueryResult`](#call-signature-3): This overload accepts the general [CreateQueryOptions](../interfaces/CreateQueryOptions.md) shape rather than the `initialData`-aware overloads above, so whether `data` is defined can't be inferred from the call site — useful when wrapping `injectQuery` in your own helper function that forwards caller-provided options.
 
@@ -27,10 +27,11 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function injectQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(injectQueryFn: () => DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, options?: InjectQueryOptions): DefinedCreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-query.ts:70](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L70)
+Defined in: [packages/angular-query-experimental/src/inject-query.ts:72](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L72)
 
-This overload is selected when `initialData` is set on the options returned by `injectQueryFn`, so the
-resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+This overload is selected when `initialData` is known to be defined on the options returned by
+`injectQueryFn`, so the resulting `data` signal is never `undefined` (unless a `select` changes `TData` to
+include `undefined`).
 
 ### Type Parameters
 
@@ -57,8 +58,9 @@ resulting `data` signal is never `undefined` (unless a `select` changes `TData` 
 () => [`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 A function returning the [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you
-can pass to `injectQuery`, with `initialData` set. Similar to `computed` from Angular, this function runs
-in the reactive context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive the query.
+can pass to `injectQuery`, with `initialData` known to be defined. Similar to `computed` from Angular, this
+function runs in the reactive context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive the
+query.
 
 #### options?
 
@@ -114,7 +116,7 @@ export class Posts {
 function injectQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(injectQueryFn: () => UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, options?: InjectQueryOptions): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-query.ts:156](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L156)
+Defined in: [packages/angular-query-experimental/src/inject-query.ts:158](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L158)
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
@@ -234,7 +236,7 @@ export class Posts {
 function injectQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(injectQueryFn: () => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, options?: InjectQueryOptions): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-query.ts:182](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L182)
+Defined in: [packages/angular-query-experimental/src/inject-query.ts:184](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L184)
 
 This overload accepts the general [CreateQueryOptions](../interfaces/CreateQueryOptions.md) shape rather than the `initialData`-aware
 overloads above, so whether `data` is defined can't be inferred from the call site — useful when wrapping

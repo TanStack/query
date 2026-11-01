@@ -72,8 +72,8 @@ describe('useQueries', () => {
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
-  // oxlint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
+    const states: Array<UseQueryResult['status']> = []
     const key1 = createKey()
 
     // We have to mock the QueriesObserver to not unsubscribe
@@ -93,7 +93,7 @@ describe('useQueries', () => {
     })
 
     function Queries() {
-      useQueries(() => ({
+      const queries = useQueries(() => ({
         queries: [
           {
             queryKey: key1,
@@ -101,6 +101,9 @@ describe('useQueries', () => {
           },
         ],
       }))
+      createRenderEffect(() => {
+        states.push(queries[0].status)
+      })
 
       return (
         <div>
@@ -121,13 +124,14 @@ describe('useQueries', () => {
     }
 
     const rendered = renderWithClient(queryClient, () => <Page />)
+    expect(states).toStrictEqual(['pending'])
 
     fireEvent.click(rendered.getByText('unmount'))
-
-    // Should not display the console error
-    // "Warning: Can't perform a React state update on an unmounted component"
+    expect(queryClient.getQueryState(key1)?.status).toBe('pending')
 
     await vi.advanceTimersByTimeAsync(20)
+    expect(queryClient.getQueryState(key1)?.status).toBe('success')
+    expect(states).toStrictEqual(['pending'])
   })
 
   it('should use provided custom queryClient', async () => {

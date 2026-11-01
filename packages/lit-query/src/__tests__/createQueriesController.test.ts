@@ -1256,7 +1256,7 @@ describe('createQueriesController', () => {
     provider.remove()
   })
 
-  it('should reparent queries controller under a different provider without cross-tree leakage', async () => {
+  it('should reconnect queries controller under a different provider without cross-tree leakage', async () => {
     const key = createKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
