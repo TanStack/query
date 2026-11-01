@@ -2428,10 +2428,10 @@ importers:
   examples/react/contacts-tanstack-router:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.105.0
+        specifier: ^5.105.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.105.0
+        specifier: ^5.105.1
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-router':
         specifier: ^1.170.46
@@ -2459,7 +2459,7 @@ importers:
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.105.0
+        specifier: ^5.105.1
         version: link:../../../packages/eslint-plugin-query
       '@tanstack/router-plugin':
         specifier: ^1.168.48
@@ -3576,10 +3576,10 @@ importers:
         specifier: ^1.5.3
         version: 1.5.3(solid-js@1.9.15)
       '@tanstack/solid-query':
-        specifier: ^5.105.0
+        specifier: ^5.105.1
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.105.0
+        specifier: ^5.105.1
         version: link:../../../packages/solid-query-devtools
       '@tanstack/solid-router':
         specifier: ^1.170.43
@@ -3598,7 +3598,7 @@ importers:
         version: 1.2.0
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.105.0
+        specifier: ^5.105.1
         version: link:../../../packages/eslint-plugin-query
       '@tanstack/router-plugin':
         specifier: ^1.168.48
@@ -5089,10 +5089,10 @@ importers:
   examples/vue/contacts-tanstack-router:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.105.0
+        specifier: ^5.105.1
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^6.3.6
+        specifier: ^6.3.7
         version: link:../../../packages/vue-query-devtools
       '@tanstack/vue-router':
         specifier: ^1.170.42
@@ -5114,7 +5114,7 @@ importers:
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.105.0
+        specifier: ^5.105.1
         version: link:../../../packages/eslint-plugin-query
       '@tanstack/router-plugin':
         specifier: ^1.168.48
@@ -31667,8 +31667,8 @@ snapshots:
     dependencies:
       '@tanstack/history': 1.162.5
       cookie-es: 3.1.1
-      seroval: 1.7.1
-      seroval-plugins: 1.7.1(seroval@1.7.1)
+      seroval: 1.7.5
+      seroval-plugins: 1.7.1(seroval@1.7.5)
 
   '@tanstack/router-generator@1.167.46(supports-color@10.2.2)':
     dependencies:

@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@solid-primitives/scheduled": "^1.5.3",
-    "@tanstack/solid-query": "^5.105.0",
-    "@tanstack/solid-query-devtools": "^5.105.0",
+    "@tanstack/solid-query": "^5.105.1",
+    "@tanstack/solid-query-devtools": "^5.105.1",
     "@tanstack/solid-router": "^1.170.43",
     "localforage": "^1.10.0",
     "match-sorter": "^8.3.0",
@@ -20,7 +20,7 @@
     "sort-by": "^1.2.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@tanstack/eslint-plugin-query": "^5.105.1",
     "@tanstack/router-plugin": "^1.168.48",
     "@types/sort-by": "^1.2.3",
     "eslint-plugin-solid": "^0.18.1",

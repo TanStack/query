@@ -10,8 +10,8 @@
     "test:types": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^5.105.0",
-    "@tanstack/vue-query-devtools": "^6.3.6",
+    "@tanstack/vue-query": "^5.105.1",
+    "@tanstack/vue-query-devtools": "^6.3.7",
     "@tanstack/vue-router": "^1.170.42",
     "@vueuse/core": "^15.0.0",
     "localforage": "^1.10.0",
@@ -20,7 +20,7 @@
     "vue": "^3.5.43"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@tanstack/eslint-plugin-query": "^5.105.1",
     "@tanstack/router-plugin": "^1.168.48",
     "@types/sort-by": "^1.2.3",
     "@vitejs/plugin-vue": "^6.0.9",
