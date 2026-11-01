@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createKey, sleep } from '@tanstack/query-test-utils'
+import { clearOnDispose, createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
@@ -1098,7 +1098,7 @@ describe('dehydration and rehydration', () => {
   })
 
   describe('a hydrated promise that rejects', () => {
-    function dehydrateRejectingQuery(key: Array<string>) {
+    function startRejectingQuery(key: Array<string>) {
       const serverClient = new QueryClient({
         defaultOptions: {
           dehydrate: {
@@ -1115,14 +1115,15 @@ describe('dehydration and rehydration', () => {
           retry: false,
         })
         .catch(noop)
-      return dehydrate(serverClient)
+      return clearOnDispose(serverClient)
     }
 
     it('should retry with the retry options of an observer that mounted before it rejected', async () => {
       const key = createKey()
-      const dehydrated = dehydrateRejectingQuery(key)
+      using serverClient = startRejectingQuery(key)
+      const dehydrated = dehydrate(serverClient)
 
-      const queryClient = new QueryClient()
+      using queryClient = clearOnDispose(new QueryClient())
       hydrate(queryClient, dehydrated)
       const queryFn = vi.fn<() => Promise<string>>(() =>
         sleep(10).then(() => 'client data'),
@@ -1156,9 +1157,10 @@ describe('dehydration and rehydration', () => {
 
     it('should not retry when an observer that mounted before it rejected sets retry to false', async () => {
       const key = createKey()
-      const dehydrated = dehydrateRejectingQuery(key)
+      using serverClient = startRejectingQuery(key)
+      const dehydrated = dehydrate(serverClient)
 
-      const queryClient = new QueryClient()
+      using queryClient = clearOnDispose(new QueryClient())
       hydrate(queryClient, dehydrated)
       const queryFn = vi.fn<() => Promise<string>>(() =>
         sleep(10).then(() => 'client data'),
@@ -1182,13 +1184,16 @@ describe('dehydration and rehydration', () => {
 
     it('should keep the retry options it was hydrated with that an observer does not set', async () => {
       const key = createKey()
-      const dehydrated = dehydrateRejectingQuery(key)
+      using serverClient = startRejectingQuery(key)
+      const dehydrated = dehydrate(serverClient)
 
-      const queryClient = new QueryClient({
-        defaultOptions: {
-          hydrate: { queries: { retry: 1, retryDelay: 5 } },
-        },
-      })
+      using queryClient = clearOnDispose(
+        new QueryClient({
+          defaultOptions: {
+            hydrate: { queries: { retry: 1, retryDelay: 5 } },
+          },
+        }),
+      )
       hydrate(queryClient, dehydrated)
       const queryFn = vi.fn<() => Promise<string>>(() =>
         sleep(10).then(() => 'client data'),
@@ -1211,13 +1216,16 @@ describe('dehydration and rehydration', () => {
 
     it('should retry with the options it was hydrated with when no observer has mounted', async () => {
       const key = createKey()
-      const dehydrated = dehydrateRejectingQuery(key)
+      using serverClient = startRejectingQuery(key)
+      const dehydrated = dehydrate(serverClient)
 
-      const queryClient = new QueryClient({
-        defaultOptions: {
-          hydrate: { queries: { retry: 1, retryDelay: 5 } },
-        },
-      })
+      using queryClient = clearOnDispose(
+        new QueryClient({
+          defaultOptions: {
+            hydrate: { queries: { retry: 1, retryDelay: 5 } },
+          },
+        }),
+      )
       hydrate(queryClient, dehydrated)
 
       await vi.advanceTimersByTimeAsync(10)
