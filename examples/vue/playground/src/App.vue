@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import { serverConfig } from './services/todos/api'
 
-import Todos from './Todos.vue'
+import TodoList from './TodoList.vue'
 import EditTodo from './EditTodo.vue'
 import AddTodo from './AddTodo.vue'
 
@@ -118,7 +118,7 @@ const setEditingIndex = (index: number | null) => {
     <br />
     <hr />
     <div v-for="(view, index) in views" :key="index">
-      <Todos :initialFilter="view" @setEditingIndex="setEditingIndex" />
+      <TodoList :initial-filter="view" @set-editing-index="setEditingIndex" />
       <br />
     </div>
     <button type="button" @click="views = [...views, '']">
@@ -128,13 +128,13 @@ const setEditingIndex = (index: number | null) => {
     <template v-if="editingIndex !== null">
       <EditTodo
         :key="editingIndex"
-        :editingIndex="editingIndex"
-        @setEditingIndex="setEditingIndex"
+        :editing-index="editingIndex"
+        @set-editing-index="setEditingIndex"
       />
       <hr />
     </template>
     <AddTodo />
   </div>
   <br />
-  <VueQueryDevtools initialIsOpen />
+  <VueQueryDevtools initial-is-open />
 </template>

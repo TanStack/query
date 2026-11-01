@@ -1,5 +1,3 @@
-import type { Hit } from '@algolia/client-search'
-
 export type SearchOptions = {
   indexName: string
   query: string
@@ -8,6 +6,6 @@ export type SearchOptions = {
 }
 
 export type SearchResponse<TData> = {
-  hits: Array<Hit<TData>>
+  hits: Array<TData & { objectID: string }>
   nbPages: number
 }

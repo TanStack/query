@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
-import Posts from './Posts.vue'
-import Post from './Post.vue'
+import PostList from './PostList.vue'
+import PostDetail from './PostDetail.vue'
 
 const postId = ref<string | null>(null)
 const setPostId = (id: string | null) => {
@@ -22,7 +22,11 @@ const setPostId = (id: string | null) => {
       sequences)
     </strong>
   </p>
-  <Post v-if="postId !== null" :postId="postId" @setPostId="setPostId" />
-  <Posts v-else @setPostId="setPostId" />
-  <VueQueryDevtools initialIsOpen />
+  <PostDetail
+    v-if="postId !== null"
+    :post-id="postId"
+    @set-post-id="setPostId"
+  />
+  <PostList v-else @set-post-id="setPostId" />
+  <VueQueryDevtools initial-is-open />
 </template>

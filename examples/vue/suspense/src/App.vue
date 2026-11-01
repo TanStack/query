@@ -4,10 +4,14 @@ import { noop, useQueryClient } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import { projectsQueries } from './services/projects/queries'
 import { isPendingKey } from './transition'
-import Button from './components/Button.vue'
+import BaseButton from './components/BaseButton.vue'
 
-const Projects = defineAsyncComponent(() => import('./components/Projects.vue'))
-const Project = defineAsyncComponent(() => import('./components/Project.vue'))
+const ProjectList = defineAsyncComponent(
+  () => import('./components/ProjectList.vue'),
+)
+const ProjectDetail = defineAsyncComponent(
+  () => import('./components/ProjectDetail.vue'),
+)
 
 const queryClient = useQueryClient()
 const showProjects = ref(false)
@@ -33,15 +37,15 @@ const toggleProjects = () => {
 </script>
 
 <template>
-  <Button @click="toggleProjects">
+  <BaseButton @click="toggleProjects">
     {{ showProjects ? 'Hide Projects' : 'Show Projects' }}
-  </Button>
+  </BaseButton>
 
   <hr />
 
   <div v-if="error">
     There was an error!
-    <Button @click="error = null">Try again</Button>
+    <BaseButton @click="error = null">Try again</BaseButton>
     <pre style="white-space: normal">{{ error.message }}</pre>
   </div>
   <Suspense
@@ -50,15 +54,15 @@ const toggleProjects = () => {
     @resolve="isPending = false"
     @fallback="isPending = false"
   >
-    <Project
+    <ProjectDetail
       v-if="activeProject"
       :active-project="activeProject"
       @set-active-project="activeProject = $event"
     />
-    <Projects v-else @set-active-project="activeProject = $event" />
+    <ProjectList v-else @set-active-project="activeProject = $event" />
     <template #fallback>
       <h1>Loading projects...</h1>
     </template>
   </Suspense>
-  <VueQueryDevtools initialIsOpen />
+  <VueQueryDevtools initial-is-open />
 </template>

@@ -12,8 +12,8 @@ defineProps<{ shadowRoot: ShadowRoot }>()
     <DogList />
   </div>
   <VueQueryDevtools
-    :initialIsOpen="false"
-    buttonPosition="bottom-left"
-    :shadowDOMTarget="shadowRoot"
+    :initial-is-open="false"
+    button-position="bottom-left"
+    :shadow-d-o-m-target="shadowRoot"
   />
 </template>

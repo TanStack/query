@@ -25,5 +25,5 @@ const { isPending, error, data, isFetching } = useQuery(reposQueries.detail())
   <button type="button" @click="isOpen = !isOpen">
     {{ isOpen ? 'Close' : 'Open' }} the devtools panel
   </button>
-  <VueQueryDevtoolsPanel v-if="isOpen" :onClose="() => (isOpen = false)" />
+  <VueQueryDevtoolsPanel v-if="isOpen" :on-close="() => (isOpen = false)" />
 </template>

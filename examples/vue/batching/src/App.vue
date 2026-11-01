@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
-import Characters from './Characters.vue'
+import CharacterList from './CharacterList.vue'
 
 const ids = ref<Array<number>>([])
 const idsToLoad = ref<Array<number>>([])
@@ -43,8 +43,8 @@ const handleInput = (event: Event) => {
     </button>
     <div>
       <h4 style="text-align: left">Characters:</h4>
-      <Characters :ids="idsToLoad" />
+      <CharacterList :ids="idsToLoad" />
     </div>
   </div>
-  <VueQueryDevtools initialIsOpen />
+  <VueQueryDevtools initial-is-open />
 </template>
