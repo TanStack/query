@@ -811,7 +811,7 @@ describe('mutation', () => {
   })
 
   it('should unpause a mutation that goes back online while its onMutate runs', async () => {
-    const key = queryKey()
+    const key = createKey()
     const onlineMock = mockOnlineManagerIsOnline(false)
     const mutationFn = vi.fn<() => Promise<string>>(() =>
       sleep(20).then(() => 'data'),
