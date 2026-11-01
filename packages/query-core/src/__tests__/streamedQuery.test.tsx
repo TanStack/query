@@ -793,6 +793,51 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
+  it.each(['append', 'replace'] as const)(
+    'should not write after cancelling the current stream in %s mode',
+    async (refetchMode) => {
+      const key = createKey()
+      let resolveChunk: (value: number) => void = () => undefined
+      const nextChunk = new Promise<number>((resolve) => {
+        resolveChunk = resolve
+      })
+
+      queryClient.setQueryData(key, [0])
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: streamedQuery({
+          refetchMode,
+          streamFn: async function* (context) {
+            void context.signal
+            yield 1
+            yield await nextChunk
+          },
+        }),
+      })
+
+      const unsubscribe = observer.subscribe(vi.fn())
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(observer.getCurrentResult()).toMatchObject({
+        fetchStatus: 'fetching',
+        data: refetchMode === 'append' ? [0, 1] : [0],
+      })
+
+      await queryClient.cancelQueries({ queryKey: key })
+      queryClient.setQueryData(key, [100])
+      resolveChunk(2)
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        fetchStatus: 'idle',
+        data: [100],
+      })
+
+      unsubscribe()
+    },
+  )
+
   it('should not call reducer twice when refetchMode is replace', async () => {
     const key = createKey()
     const arr: Array<number> = []

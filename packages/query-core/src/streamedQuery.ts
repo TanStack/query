@@ -7,16 +7,7 @@ import type {
   QueryKey,
 } from './types'
 
-// Tracks, per Query, which streamedQuery() invocation is the current one.
-// A refetch cancels the previous fetch's AbortSignal, but that only stops an
-// in-flight stream if its streamFn actually reads (consumes) context.signal.
-// Many streamFns can't do that (e.g. a third-party SDK that doesn't accept
-// an AbortSignal), so this provides an unconditional way for an orphaned
-// stream to notice it has been superseded and stop writing to the cache,
-// independent of whether the signal was ever consumed. Keyed by the Query
-// instance (not the query key) so entries are naturally released once the
-// query itself is garbage collected.
-const activeStreamPerQuery = new WeakMap<Query<any, any, any, any>, symbol>()
+const activeStreamPerQuery = new WeakMap<Query, symbol>()
 
 type BaseStreamedQueryParams<TQueryFnData, TQueryKey extends QueryKey> = {
   /** The function that returns an `AsyncIterable` to stream data from. */
@@ -126,15 +117,15 @@ export function streamedQuery<
     if (query) {
       activeStreamPerQuery.set(query, streamToken)
     }
-    const isSuperseded = () =>
-      !!query && activeStreamPerQuery.get(query) !== streamToken
+    const isStreamInactive = () =>
+      cancelled || (!!query && activeStreamPerQuery.get(query) !== streamToken)
 
     const stream = await streamFn(streamFnContext)
 
     const isReplaceRefetch = isRefetch && refetchMode === 'replace'
 
     for await (const chunk of stream) {
-      if (cancelled || isSuperseded()) {
+      if (isStreamInactive()) {
         break
       }
 
@@ -149,7 +140,7 @@ export function streamedQuery<
     }
 
     // finalize result: replace-refetching needs to write to the cache
-    if (isReplaceRefetch && !cancelled && !isSuperseded()) {
+    if (isReplaceRefetch && !isStreamInactive()) {
       context.client.setQueryData<TData>(context.queryKey, result)
     }
 
