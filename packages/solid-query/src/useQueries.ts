@@ -10,6 +10,7 @@ import {
   on,
   onCleanup,
   onMount,
+  untrack,
 } from 'solid-js'
 import { useQueryClientResolver } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
@@ -298,21 +299,27 @@ export function useQueries<
     ),
   )
 
-  const observer = new QueriesObserver(
-    client(),
-    defaultedQueries(),
-    queriesOptions().combine
-      ? ({
-          combine: queriesOptions().combine,
-        } as QueriesObserverOptions<TCombinedResult>)
-      : undefined,
+  const observer = untrack(
+    () =>
+      new QueriesObserver(
+        client(),
+        defaultedQueries(),
+        queriesOptions().combine
+          ? ({
+              combine: queriesOptions().combine,
+            } as QueriesObserverOptions<TCombinedResult>)
+          : undefined,
+      ),
   )
 
   const [state, setState] = createStore<TCombinedResult>(
-    observer.getOptimisticResult(
-      defaultedQueries(),
-      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
-    )[1](),
+    untrack(
+      () =>
+        observer.getOptimisticResult(
+          defaultedQueries(),
+          (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
+        )[1](),
+    ),
   )
 
   createRenderEffect(
