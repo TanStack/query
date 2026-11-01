@@ -2,46 +2,46 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
+import type { ReactQueryDevtoolsPanel as ReactQueryDevtoolsPanelComponent } from '../ReactQueryDevtoolsPanel'
 
-const mountMock = vi.fn()
-const unmountMock = vi.fn()
-const setClientMock = vi.fn()
-const setOnCloseMock = vi.fn()
-const setErrorTypesMock = vi.fn()
-const setThemeMock = vi.fn()
+const mountMock = vi.fn<TanstackQueryDevtoolsPanel['mount']>()
+const unmountMock = vi.fn<TanstackQueryDevtoolsPanel['unmount']>()
+const setClientMock = vi.fn<TanstackQueryDevtoolsPanel['setClient']>()
+const setOnCloseMock = vi.fn<TanstackQueryDevtoolsPanel['setOnClose']>()
+const setErrorTypesMock = vi.fn<TanstackQueryDevtoolsPanel['setErrorTypes']>()
+const setThemeMock = vi.fn<TanstackQueryDevtoolsPanel['setTheme']>()
 
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the mocked devtools classes have '#private' fields, and this environment cannot load the real Solid module
 vi.mock('@tanstack/query-devtools', () => ({
-  TanstackQueryDevtoolsPanel: vi.fn(function (
-    this: TanstackQueryDevtoolsPanel,
-  ) {
-    this.mount = mountMock
-    this.unmount = unmountMock
-    this.setClient = setClientMock
-    this.setOnClose = setOnCloseMock
-    this.setErrorTypes = setErrorTypesMock
-    this.setTheme = setThemeMock
-  }),
+  TanstackQueryDevtoolsPanel: vi.fn<(this: TanstackQueryDevtoolsPanel) => void>(
+    function (this: TanstackQueryDevtoolsPanel) {
+      this.mount = mountMock
+      this.unmount = unmountMock
+      this.setClient = setClientMock
+      this.setOnClose = setOnCloseMock
+      this.setErrorTypes = setErrorTypesMock
+      this.setTheme = setThemeMock
+    },
+  ),
 }))
 
 describe('ReactQueryDevtoolsPanel', () => {
-  beforeEach(() => {
+  let ReactQueryDevtoolsPanel: typeof ReactQueryDevtoolsPanelComponent
+  let queryClient: QueryClient
+
+  beforeEach(async () => {
     vi.clearAllMocks()
+    ;({ ReactQueryDevtoolsPanel } = await import('../ReactQueryDevtoolsPanel'))
+    queryClient = new QueryClient()
   })
 
-  it('should throw an error if no query client has been set', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-
+  it('should throw an error if no query client has been set', () => {
     expect(() => render(<ReactQueryDevtoolsPanel />)).toThrow(
       'No QueryClient set, use QueryClientProvider to set one',
     )
   })
 
-  it('should not throw an error if query client is provided via context', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-    const queryClient = new QueryClient()
-
+  it('should not throw an error if query client is provided via context', () => {
     expect(() =>
       render(
         <QueryClientProvider client={queryClient}>
@@ -49,45 +49,33 @@ describe('ReactQueryDevtoolsPanel', () => {
         </QueryClientProvider>,
       ),
     ).not.toThrow()
-    expect(mountMock).toHaveBeenCalled()
+    expect(mountMock).toHaveBeenCalledWith(expect.any(HTMLDivElement))
   })
 
-  it('should not throw an error if query client is provided via props', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-    const queryClient = new QueryClient()
-
+  it('should not throw an error if query client is provided via props', () => {
     expect(() =>
       render(<ReactQueryDevtoolsPanel client={queryClient} />),
     ).not.toThrow()
-    expect(mountMock).toHaveBeenCalled()
+    expect(mountMock).toHaveBeenCalledWith(expect.any(HTMLDivElement))
   })
 
-  it('should forward "onClose" to the devtools instance', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-    const queryClient = new QueryClient()
-    const onClose = vi.fn()
+  it('should forward "onClose" to the devtools instance', () => {
+    const onClose = vi.fn<() => void>()
 
     render(<ReactQueryDevtoolsPanel client={queryClient} onClose={onClose} />)
 
-    expect(setOnCloseMock).toHaveBeenCalledWith(expect.any(Function))
+    expect(setOnCloseMock).toHaveBeenCalledWith(onClose)
   })
 
-  it('should default "onClose" to a no-op function when the prop is omitted', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-    const queryClient = new QueryClient()
-
+  it('should default "onClose" to a no-op function when the prop is omitted', () => {
     render(<ReactQueryDevtoolsPanel client={queryClient} />)
 
-    expect(setOnCloseMock).toHaveBeenCalledWith(expect.any(Function))
+    const forwarded = setOnCloseMock.mock.calls[0]![0]
+    expect(forwarded).toBeInstanceOf(Function)
+    expect(forwarded()).toBeUndefined()
   })
 
-  it('should forward "errorTypes" to the devtools instance', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-    const queryClient = new QueryClient()
+  it('should forward "errorTypes" to the devtools instance', () => {
     const errorTypes = [
       { name: 'Network', initializer: () => new Error('Network') },
     ]
@@ -99,41 +87,25 @@ describe('ReactQueryDevtoolsPanel', () => {
     expect(setErrorTypesMock).toHaveBeenCalledWith(errorTypes)
   })
 
-  it('should default "errorTypes" to an empty array when the prop is omitted', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-    const queryClient = new QueryClient()
-
+  it('should default "errorTypes" to an empty array when the prop is omitted', () => {
     render(<ReactQueryDevtoolsPanel client={queryClient} />)
 
     expect(setErrorTypesMock).toHaveBeenCalledWith([])
   })
 
-  it('should forward "theme" to the devtools instance', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-    const queryClient = new QueryClient()
-
+  it('should forward "theme" to the devtools instance', () => {
     render(<ReactQueryDevtoolsPanel client={queryClient} theme="dark" />)
 
     expect(setThemeMock).toHaveBeenCalledWith('dark')
   })
 
-  it('should forward the resolved "QueryClient" via "setClient"', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-    const queryClient = new QueryClient()
-
+  it('should forward the resolved "QueryClient" via "setClient"', () => {
     render(<ReactQueryDevtoolsPanel client={queryClient} />)
 
     expect(setClientMock).toHaveBeenCalledWith(queryClient)
   })
 
-  it('should forward "styleNonce" to the devtools constructor', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-    const queryClient = new QueryClient()
-
+  it('should forward "styleNonce" to the devtools constructor', () => {
     render(<ReactQueryDevtoolsPanel client={queryClient} styleNonce="abc" />)
 
     expect(TanstackQueryDevtoolsPanel).toHaveBeenCalledWith(
@@ -141,10 +113,7 @@ describe('ReactQueryDevtoolsPanel', () => {
     )
   })
 
-  it('should forward "shadowDOMTarget" to the devtools constructor', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-    const queryClient = new QueryClient()
+  it('should forward "shadowDOMTarget" to the devtools constructor', () => {
     const shadowDOMTarget = document
       .createElement('div')
       .attachShadow({ mode: 'open' })
@@ -161,11 +130,7 @@ describe('ReactQueryDevtoolsPanel', () => {
     )
   })
 
-  it('should forward "hideDisabledQueries" to the devtools constructor', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-    const queryClient = new QueryClient()
-
+  it('should forward "hideDisabledQueries" to the devtools constructor', () => {
     render(
       <ReactQueryDevtoolsPanel
         client={queryClient}
@@ -178,11 +143,17 @@ describe('ReactQueryDevtoolsPanel', () => {
     )
   })
 
-  it('should preserve the default container height when "style" omits "height"', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-    const queryClient = new QueryClient()
+  it('should create the devtools instance only once across re-renders', () => {
+    const { rerender } = render(
+      <ReactQueryDevtoolsPanel client={queryClient} errorTypes={[]} />,
+    )
 
+    rerender(<ReactQueryDevtoolsPanel client={queryClient} errorTypes={[]} />)
+
+    expect(TanstackQueryDevtoolsPanel).toHaveBeenCalledTimes(1)
+  })
+
+  it('should preserve the default container height when "style" omits "height"', () => {
     const { container } = render(
       <ReactQueryDevtoolsPanel
         client={queryClient}
@@ -190,17 +161,14 @@ describe('ReactQueryDevtoolsPanel', () => {
       />,
     )
 
+    // oxlint-disable-next-line testing-library/no-node-access -- the devtools mount container has no role or text to query by
     expect(container.querySelector('.tsqd-parent-container')).toHaveStyle({
       height: '500px',
       width: '300px',
     })
   })
 
-  it('should let "style" override the default container height on the rendered element', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-    const queryClient = new QueryClient()
-
+  it('should let "style" override the default container height on the rendered element', () => {
     const { container } = render(
       <ReactQueryDevtoolsPanel
         client={queryClient}
@@ -208,21 +176,18 @@ describe('ReactQueryDevtoolsPanel', () => {
       />,
     )
 
+    // oxlint-disable-next-line testing-library/no-node-access -- the devtools mount container has no role or text to query by
     expect(container.querySelector('.tsqd-parent-container')).toHaveStyle({
       height: '300px',
       width: '300px',
     })
   })
 
-  it('should call "unmount" on the devtools instance when the component unmounts', async () => {
-    const { ReactQueryDevtoolsPanel } =
-      await import('../ReactQueryDevtoolsPanel')
-    const queryClient = new QueryClient()
-
+  it('should call "unmount" on the devtools instance when the component unmounts', () => {
     const { unmount } = render(<ReactQueryDevtoolsPanel client={queryClient} />)
     unmount()
 
-    expect(unmountMock).toHaveBeenCalled()
+    expect(unmountMock).toHaveBeenCalledWith()
   })
 
   it('should return null in non-development environments', async () => {
@@ -230,10 +195,10 @@ describe('ReactQueryDevtoolsPanel', () => {
     vi.resetModules()
 
     try {
-      const { ReactQueryDevtoolsPanel } = await import('..')
-      expect(ReactQueryDevtoolsPanel({})).toBeNull()
+      const { ReactQueryDevtoolsPanel: ProductionDevtoolsPanel } =
+        await import('..')
+      expect(ProductionDevtoolsPanel({})).toBeNull()
     } finally {
-      vi.unstubAllEnvs()
       vi.resetModules()
     }
   })

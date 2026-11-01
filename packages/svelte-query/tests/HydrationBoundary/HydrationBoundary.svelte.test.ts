@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/svelte'
-import { QueryClient, dehydrate } from '@tanstack/query-core'
+import { QueryClient, dehydrate, noop } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import Base from './Base.svelte'
 
@@ -12,10 +12,12 @@ describe('HydrationBoundary', () => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
     const dehydrateClient = new QueryClient()
-    dehydrateClient.prefetchQuery({
-      queryKey: ['string'],
-      queryFn: () => sleep(10).then(() => 'stringCached'),
-    })
+    void dehydrateClient
+      .query({
+        queryKey: ['string'],
+        queryFn: () => sleep(10).then(() => 'stringCached'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydrated = dehydrate(dehydrateClient)
     stringifiedState = JSON.stringify(dehydrated)

@@ -1,7 +1,21 @@
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=be2d8a11-9712-4c1d-9963-580b2d4fb133" />
 
 <div align="center">
-  <img src="./media/header_query.png" alt="TanStack Query" />
+  <picture>
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="https://tanstack.com/api/readme/query.png?theme=dark"
+    />
+    <source
+      media="(prefers-color-scheme: light)"
+      srcset="https://tanstack.com/api/readme/query.png"
+    />
+    <img
+      src="https://tanstack.com/api/readme/query.png"
+      alt="TanStack Query"
+      width="900"
+    />
+  </picture>
 </div>
 
 <br />

@@ -1,25 +1,42 @@
-import { isServer } from './utils'
-
-export type IsServerValue = () => boolean
+import { isServer as defaultIsServer } from './utils'
 
 /**
- * Manages environment detection used by TanStack Query internals.
+ * A function that returns whether the code is running on the server.
  */
-export const environmentManager = (() => {
-  let isServerFn: IsServerValue = () => isServer
+export type IsServerValue = () => boolean
 
-  return {
-    /**
-     * Returns whether the current runtime should be treated as a server environment.
-     */
-    isServer(): boolean {
-      return isServerFn()
-    },
-    /**
-     * Overrides the server check globally.
-     */
-    setIsServer(isServerValue: IsServerValue): void {
-      isServerFn = isServerValue
-    },
-  }
-})()
+let isServerFn: IsServerValue = () => defaultIsServer
+
+/**
+ * Returns whether the current runtime should be treated as a server environment.
+ * @returns `true` if the runtime is treated as a server.
+ */
+export const isServer = (): boolean => isServerFn()
+
+/**
+ * Manages how TanStack Query detects whether the current runtime should be treated as
+ * server-side, which disables scheduling refetch timers and changes the default `retry` count
+ * and `gcTime`. By default, the detection treats a missing `window` (or the presence of a
+ * `Deno` global) as server.
+ *
+ * Override this for runtimes where that default detection would give the wrong answer — for
+ * example, a Service Worker, where `window` is undefined even though the environment should
+ * behave like a client.
+ * @example
+ * ```ts
+ * import { environmentManager } from '@tanstack/query-core'
+ *
+ * environmentManager.setIsServer(() => false)
+ * ```
+ */
+export const environmentManager = {
+  isServer,
+  /**
+   * Overrides the server check globally.
+   * @param isServerValue - A function that returns whether the runtime should be treated as a
+   * server.
+   */
+  setIsServer(isServerValue: IsServerValue): void {
+    isServerFn = isServerValue
+  },
+}

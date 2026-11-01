@@ -1,7 +1,11 @@
-import type { MutationState, MutationStatus } from '@tanstack/query-core'
 import { describe, expectTypeOf, it } from 'vitest'
 
 import { useMutationState } from '../useMutationState'
+import type {
+  Mutation,
+  MutationState,
+  MutationStatus,
+} from '@tanstack/query-core'
 
 describe('useMutationState', () => {
   it('should default to QueryState', () => {
@@ -13,6 +17,7 @@ describe('useMutationState', () => {
       Array<MutationState<unknown, Error, unknown, unknown>>
     >()
   })
+
   it('should infer with select', () => {
     const result = useMutationState({
       filters: { status: 'pending' },
@@ -20,5 +25,21 @@ describe('useMutationState', () => {
     })
 
     expectTypeOf(result).toEqualTypeOf<Array<MutationStatus>>()
+  })
+
+  it('should propagate generics to select callback when TResult is typed MutationState', () => {
+    type MyData = { data: Array<string> }
+    type MyError = { code: number; message: string }
+    type MyVars = { id: number }
+
+    useMutationState<MutationState<MyData, MyError, MyVars>>({
+      filters: { mutationKey: ['key'] },
+      select: (mutation) => {
+        expectTypeOf(mutation).toEqualTypeOf<
+          Mutation<MyData, MyError, MyVars, unknown>
+        >()
+        return mutation.state
+      },
+    })
   })
 })

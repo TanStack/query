@@ -5,6 +5,7 @@
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
+    "allowImportingTsExtensions": true,
     "checkJs": true,
     "composite": true,
     "customConditions": ["@tanstack/custom-condition"],
@@ -19,6 +20,7 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noEmit": false,
+    "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
@@ -29,5 +31,5 @@
     "target": "ES2020",
     "types": ["node"]
   },
-  "include": ["*.config.*"]
+  "include": ["*.config.*", "knip.ts"]
 }

@@ -1,13 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
-
-import { Post } from './types'
-
-const fetcher = async (id: number): Promise<Post> =>
-  await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(
-    (response) => response.json(),
-  )
+import { postsQueries } from './services/posts/queries'
 
 export default defineComponent({
   name: 'PostDetails',
@@ -19,10 +13,9 @@ export default defineComponent({
   },
   emits: ['setPostId'],
   setup(props) {
-    const { isPending, isError, isFetching, data, error } = useQuery({
-      queryKey: ['post', () => props.postId],
-      queryFn: () => fetcher(props.postId),
-    })
+    const { isPending, isError, isFetching, data, error } = useQuery(() =>
+      postsQueries.detail(props.postId),
+    )
 
     return { isPending, isError, isFetching, data, error }
   },

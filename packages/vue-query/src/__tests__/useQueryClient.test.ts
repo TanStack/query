@@ -1,20 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import * as VueDemi from 'vue-demi'
+import { hasInjectionContext, inject } from 'vue-demi'
 import { useQueryClient } from '../useQueryClient'
 import { VUE_QUERY_CLIENT } from '../utils'
 
-vi.mock('vue-demi', async () => {
-  const actual = await vi.importActual<typeof VueDemi>('vue-demi')
+vi.mock(import('vue-demi'), async (importOriginal) => {
+  const actual = await importOriginal()
   return {
     ...actual,
+    // oxlint-disable-next-line vitest/require-mock-type-parameters -- 'Mock' keeps only the last overload, so it cannot type the overloaded generic 'inject'
     inject: vi.fn(),
-    hasInjectionContext: vi.fn(() => true),
+    hasInjectionContext: vi.fn<() => boolean>(() => true),
   }
 })
 
 describe('useQueryClient', () => {
-  const injectSpy = vi.mocked(VueDemi.inject)
-  const hasInjectionContextSpy = vi.mocked(VueDemi.hasInjectionContext)
+  const injectSpy = vi.mocked(inject)
+  const hasInjectionContextSpy = vi.mocked(hasInjectionContext)
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -34,7 +35,9 @@ describe('useQueryClient', () => {
   it('should throw an error when queryClient does not exist in the context', () => {
     injectSpy.mockReturnValueOnce(undefined)
 
-    expect(useQueryClient).toThrow()
+    expect(useQueryClient).toThrow(
+      "No 'queryClient' found in Vue context, use 'VueQueryPlugin' to properly initialize the library.",
+    )
     expect(injectSpy).toHaveBeenCalledTimes(1)
     expect(injectSpy).toHaveBeenCalledWith(VUE_QUERY_CLIENT)
   })
@@ -42,7 +45,9 @@ describe('useQueryClient', () => {
   it('should throw an error when used outside of setup function', () => {
     hasInjectionContextSpy.mockReturnValueOnce(false)
 
-    expect(useQueryClient).toThrow()
+    expect(useQueryClient).toThrow(
+      'vue-query hooks can only be used inside setup() function or functions that support injection context.',
+    )
     expect(hasInjectionContextSpy).toHaveBeenCalledTimes(1)
   })
 

@@ -2,13 +2,14 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { hydrateRoot } from 'react-dom/client'
 import { act } from 'react'
 import * as ReactDOMServer from 'react-dom/server'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
   QueryClientProvider,
   dehydrate,
   hydrate,
+  noop,
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
@@ -34,6 +35,7 @@ function PrintStateComponent({ componentName, result }: any): any {
 
 describe('Server side rendering with de/rehydration', () => {
   let previousIsReactActEnvironment: unknown
+
   beforeAll(() => {
     // @ts-expect-error we expect IS_REACT_ACT_ENVIRONMENT to exist
     previousIsReactActEnvironment = globalThis.IS_REACT_ACT_ENVIRONMENT = true
@@ -47,11 +49,11 @@ describe('Server side rendering with de/rehydration', () => {
   })
 
   it('should not mismatch on success', async () => {
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockReturnValue(undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
-    const key = queryKey()
+    const key = createKey()
 
     // -- Shared part --
     function SuccessComponent() {
@@ -71,10 +73,12 @@ describe('Server side rendering with de/rehydration', () => {
     const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
     })
-    await prefetchClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => fetchDataSuccess('success'),
-    })
+    await prefetchClient
+      .query({
+        queryKey: key,
+        queryFn: () => fetchDataSuccess('success'),
+      })
+      .catch(noop)
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = new QueryClient({
@@ -112,24 +116,23 @@ describe('Server side rendering with de/rehydration', () => {
     )
 
     // Check that we have no React hydration mismatches
-    expect(consoleMock).toHaveBeenCalledTimes(0)
+    expect(consoleErrorMock).toHaveBeenCalledTimes(0)
 
     expect(fetchDataSuccess).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(expectedMarkup)
 
     unmount()
     queryClient.clear()
-    consoleMock.mockRestore()
   })
 
   it('should not mismatch on error', async () => {
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockReturnValue(undefined)
 
-    const fetchDataError = vi.fn(() => {
+    const fetchDataError = vi.fn<() => never>(() => {
       throw new Error('fetchDataError')
     })
-    const key = queryKey()
+    const key = createKey()
 
     // -- Shared part --
     function ErrorComponent() {
@@ -149,10 +152,12 @@ describe('Server side rendering with de/rehydration', () => {
     const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
     })
-    await prefetchClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => fetchDataError(),
-    })
+    await prefetchClient
+      .query({
+        queryKey: key,
+        queryFn: () => fetchDataError(),
+      })
+      .catch(noop)
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = new QueryClient({
@@ -188,7 +193,7 @@ describe('Server side rendering with de/rehydration', () => {
       el,
     )
 
-    expect(consoleMock).toHaveBeenCalledTimes(0)
+    expect(consoleErrorMock).toHaveBeenCalledTimes(0)
     expect(fetchDataError).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(expectedMarkup)
     await vi.advanceTimersByTimeAsync(50)
@@ -199,15 +204,14 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleMock.mockRestore()
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockReturnValue(undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
-    const key = queryKey()
+    const key = createKey()
 
     // -- Shared part --
     function SuccessComponent() {
@@ -257,7 +261,7 @@ describe('Server side rendering with de/rehydration', () => {
     )
 
     // Check that we have no React hydration mismatches
-    expect(consoleMock).toHaveBeenCalledTimes(0)
+    expect(consoleErrorMock).toHaveBeenCalledTimes(0)
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(expectedMarkup)
     await vi.advanceTimersByTimeAsync(50)
@@ -268,6 +272,5 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleMock.mockRestore()
   })
 })

@@ -35,7 +35,7 @@ function addTodo() {
 [//]: # 'Example3'
 
 ```vue
-<script>
+<script setup>
 import { useMutation } from '@tanstack/vue-query'
 
 const { error, mutate, reset } = useMutation({
@@ -48,7 +48,7 @@ function addTodo() {
 </script>
 
 <template>
-  <span v-else-if="error">
+  <span v-if="error">
     <span>An error occurred: {{ error.message }}</span>
     <button @click="reset">Reset error</button>
   </span>
@@ -60,24 +60,23 @@ function addTodo() {
 [//]: # 'Example11'
 
 ```js
-const client = new QueryClient({
+const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 })
 
 // we need a default mutation function so that paused mutations can resume after a page reload
-queryClient.setMutationDefaults({
-  mutationKey: ['todos'],
+queryClient.setMutationDefaults(['todos'], {
   mutationFn: ({ id, data }) => {
     return api.updateTodo(id, data)
   },
 })
 
 const vueQueryOptions: VueQueryPluginOptions = {
-  queryClient: client,
+  queryClient,
   clientPersister: (queryClient) => {
     return persistQueryClient({
       queryClient,

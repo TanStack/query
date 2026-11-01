@@ -4,7 +4,7 @@
 export * from '@tanstack/query-core'
 
 // Svelte Query
-export * from './types.js'
+export type * from './types.js'
 export * from './context.js'
 
 export { createQuery } from './createQuery.js'
@@ -16,6 +16,10 @@ export type {
 export { queryOptions } from './queryOptions.js'
 export { createQueries } from './createQueries.svelte.js'
 export { createInfiniteQuery } from './createInfiniteQuery.js'
+export type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infiniteQueryOptions.js'
 export { infiniteQueryOptions } from './infiniteQueryOptions.js'
 export { mutationOptions } from './mutationOptions.js'
 export { createMutation } from './createMutation.svelte.js'

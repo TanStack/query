@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/svelte'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, createQueries } from '../../src/index.js'
-import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
+import { promiseWithResolvers, ref, withEffectRoot } from '../utils.svelte.js'
 import IsRestoring from './IsRestoring.svelte'
 import type { CreateQueryResult } from '../../src/index.js'
 
@@ -22,8 +22,8 @@ describe('createQueries', () => {
   it(
     'should return the correct states',
     withEffectRoot(async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
       const results: Array<Array<CreateQueryResult>> = []
       const { promise: promise1, resolve: resolve1 } = promiseWithResolvers()
       const { promise: promise2, resolve: resolve2 } = promiseWithResolvers()
@@ -56,7 +56,7 @@ describe('createQueries', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(result[1].data).toBe(2)
 
-      expect(results.length).toBe(3)
+      expect(results).toHaveLength(3)
       expect(results[0]).toMatchObject([
         { data: undefined },
         { data: undefined },
@@ -69,7 +69,7 @@ describe('createQueries', () => {
   it(
     'should track results',
     withEffectRoot(async () => {
-      const key1 = queryKey()
+      const key1 = createKey()
       const results: Array<Array<CreateQueryResult>> = []
       let count = 0
 
@@ -92,27 +92,58 @@ describe('createQueries', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(result[0].data).toBe(1)
 
-      expect(results.length).toBe(2)
+      expect(results).toHaveLength(2)
       expect(results[0]).toMatchObject([{ data: undefined }])
       expect(results[1]).toMatchObject([{ data: 1 }])
 
       // Trigger refetch
       result[0].refetch()
-
       await vi.advanceTimersByTimeAsync(0)
       expect(result[0].data).toBe(2)
 
       // Only one render for data update, no render for isFetching transition
-      expect(results.length).toBe(3)
+      expect(results).toHaveLength(3)
       expect(results[2]).toMatchObject([{ data: 2 }])
+    }),
+  )
+
+  it(
+    'should track queries added to an initially empty array',
+    withEffectRoot(async () => {
+      const key1 = createKey()
+      const queries = ref<
+        Array<{ queryKey: Array<string>; queryFn: () => Promise<string> }>
+      >([])
+      const results: Array<Array<CreateQueryResult>> = []
+
+      const result = createQueries(
+        () => ({ queries: queries.value }),
+        () => queryClient,
+      )
+
+      $effect(() => {
+        results.push(result.map((res) => ({ ...res })))
+      })
+
+      await vi.advanceTimersByTimeAsync(0)
+      expect(results).toMatchObject([[]])
+
+      queries.value = [
+        { queryKey: key1, queryFn: () => sleep(10).then(() => 'data1') },
+      ]
+      await vi.advanceTimersByTimeAsync(10)
+      expect(result[0]?.data).toBe('data1')
+      expect(results.at(-1)).toMatchObject([
+        { status: 'success', data: 'data1' },
+      ])
     }),
   )
 
   it(
     'should combine queries',
     withEffectRoot(async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
 
       const { promise: promise1, resolve: resolve1 } =
         promiseWithResolvers<string>()
@@ -144,7 +175,7 @@ describe('createQueries', () => {
       )
 
       // Initially both queries are loading
-      expect(queries).toEqual({
+      expect(queries).toStrictEqual({
         combined: true,
         res: '',
       })
@@ -159,7 +190,7 @@ describe('createQueries', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(queries.res).toBe('first result,second result')
 
-      expect(queries).toEqual({
+      expect(queries).toStrictEqual({
         combined: true,
         res: 'first result,second result',
       })
@@ -169,8 +200,8 @@ describe('createQueries', () => {
   it(
     'should track property access through combine function',
     withEffectRoot(async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
       let count = 0
       const results: Array<unknown> = []
 
@@ -250,7 +281,6 @@ describe('createQueries', () => {
       // Resolve the refetched queries
       resolve3('first result ' + count)
       resolve4('second result ' + count)
-
       await vi.advanceTimersByTimeAsync(0)
       expect(queries.res).toBe('first result 1,second result 1')
 
@@ -265,20 +295,23 @@ describe('createQueries', () => {
       await queries.refetch()
 
       // No further re-render because data didn't change
-      expect(results.length).toBe(length)
+      expect(results).toHaveLength(length)
     }),
   )
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data2'),
+    )
 
     const rendered = render(IsRestoring, {
       props: { queryClient, queryFn1, queryFn2 },
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -287,9 +320,7 @@ describe('createQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -301,15 +332,18 @@ describe('createQueries', () => {
   })
 
   it('should not fetch queries with different durations for the duration of the restoring period when isRestoring is true', async () => {
-    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data2'),
+    )
 
     const rendered = render(IsRestoring, {
       props: { queryClient, queryFn1, queryFn2 },
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -318,9 +352,7 @@ describe('createQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -329,9 +361,7 @@ describe('createQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')

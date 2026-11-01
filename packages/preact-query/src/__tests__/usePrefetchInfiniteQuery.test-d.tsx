@@ -1,12 +1,12 @@
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 
-import { usePrefetchInfiniteQuery } from '..'
+import { skipToken, usePrefetchInfiniteQuery } from '..'
 
 describe('usePrefetchInfiniteQuery', () => {
   it('should return nothing', () => {
     const result = usePrefetchInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
@@ -19,7 +19,7 @@ describe('usePrefetchInfiniteQuery', () => {
     assertType(
       // @ts-expect-error TS2345
       usePrefetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
       }),
     )
@@ -28,7 +28,7 @@ describe('usePrefetchInfiniteQuery', () => {
   it('should not allow refetchInterval, enabled or throwOnError options', () => {
     assertType(
       usePrefetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -39,7 +39,7 @@ describe('usePrefetchInfiniteQuery', () => {
 
     assertType(
       usePrefetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -50,12 +50,33 @@ describe('usePrefetchInfiniteQuery', () => {
 
     assertType(
       usePrefetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
         // @ts-expect-error TS2353
         throwOnError: true,
+      }),
+    )
+  })
+
+  it('should not allow skipToken in queryFn', () => {
+    assertType(
+      usePrefetchInfiniteQuery({
+        queryKey: createKey(),
+        // @ts-expect-error
+        queryFn: skipToken,
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
+      }),
+    )
+    assertType(
+      usePrefetchInfiniteQuery({
+        queryKey: createKey(),
+        // @ts-expect-error
+        queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
       }),
     )
   })
