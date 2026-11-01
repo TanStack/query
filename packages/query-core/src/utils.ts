@@ -712,7 +712,7 @@ export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
 export function addConsumeAwareSignal<T>(
   object: T,
   getSignal: () => AbortSignal,
-  onCancelled: VoidFunction,
+  onCancelled: () => void,
 ): T & { signal: AbortSignal } {
   let consumed = false
   let signal: AbortSignal | undefined
