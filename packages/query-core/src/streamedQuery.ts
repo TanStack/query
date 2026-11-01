@@ -51,21 +51,6 @@ type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
   | ReducibleStreamedQueryParams<TQueryFnData, TData, TQueryKey>
 
 /**
- * Reads cancellation state without consuming an unknown signal getter.
- * @param context - A core context or an application-created context.
- * @returns The internal signal or an own signal data property, if available.
- */
-function getFetchSignal(context: FetchSignalContext): AbortSignal | undefined {
-  const signal = context[fetchSignal]
-  if (signal) {
-    return signal
-  }
-
-  const descriptor = Object.getOwnPropertyDescriptor(context, 'signal')
-  return descriptor && 'value' in descriptor ? context.signal : undefined
-}
-
-/**
  * This is a helper function to create a query function that streams data from an AsyncIterable.
  * Data will be an Array of all the chunks received.
  * The query will be in a 'pending' state until the first chunk of data is received, but will go to 'success' after that.
@@ -100,7 +85,8 @@ export function streamedQuery<
   TQueryKey
 > {
   return async (context) => {
-    const signal = getFetchSignal(context)
+    const signalContext: FetchSignalContext = context
+    const signal = signalContext[fetchSignal]
     if (signal?.aborted) {
       return initialValue
     }
