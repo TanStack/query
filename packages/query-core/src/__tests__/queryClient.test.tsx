@@ -2343,6 +2343,31 @@ describe('queryClient', () => {
       expect(queryFn1).toHaveBeenCalledTimes(1)
     })
 
+    it('should not leave an unhandled rejection when a paused query is cancelled with throwOnError', async ({
+      onTestFinished,
+    }) => {
+      const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
+      process.on('unhandledRejection', unhandledRejectionFn)
+      onTestFinished(() => {
+        process.off('unhandledRejection', unhandledRejectionFn)
+      })
+
+      const key1 = createKey()
+      await queryClient.query({ queryKey: key1, queryFn: () => 'data1' })
+      mockOnlineManagerIsOnline(false)
+
+      await queryClient.refetchQueries(
+        { queryKey: key1 },
+        { throwOnError: true },
+      )
+      expect(queryClient.getQueryState(key1)?.fetchStatus).toBe('paused')
+
+      queryClient.clear()
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(unhandledRejectionFn).not.toHaveBeenCalled()
+    })
+
     it('should refetch if query we are offline but query networkMode is always', async () => {
       const key1 = createKey()
       queryClient.setQueryDefaults(key1, { networkMode: 'always' })
