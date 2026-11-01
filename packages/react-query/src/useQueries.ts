@@ -15,6 +15,8 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
+import { useQueryStrictMode } from './QueryStrictModeContext'
+import { checkQueryStrictMode } from './QueryStrictModeDev'
 import {
   ensureSuspenseTimers,
   fetchOptimistic,
@@ -386,6 +388,12 @@ export function useQueries<
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
+  const strictMode =
+    process.env.NODE_ENV !== 'production'
+      ? // The condition is constant for a build, so the hooks are always called in the same order
+        // eslint-disable-next-line react-hooks-js/rules-of-hooks
+        useQueryStrictMode()
+      : null
   const subscribed = options.subscribed !== false
 
   const defaultedQueries = React.useMemo(
@@ -450,6 +458,21 @@ export function useQueries<
       options as QueriesObserverOptions<TCombinedResult>,
     )
   }, [defaultedQueries, options, observer])
+
+  if (process.env.NODE_ENV !== 'production' && !isRestoring) {
+    optimisticResult.forEach((result, index) => {
+      const opts = defaultedQueries[index]
+      if (opts) {
+        checkQueryStrictMode(
+          strictMode,
+          client.getQueryCache(),
+          opts.queryHash,
+          result,
+          !!opts.suspense,
+        )
+      }
+    })
+  }
 
   const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result),
