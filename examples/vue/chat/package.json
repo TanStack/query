@@ -10,13 +10,13 @@
     "test:types": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^5.105.0",
-    "@tanstack/vue-query-devtools": "^6.3.6",
+    "@tanstack/vue-query": "^5.105.1",
+    "@tanstack/vue-query-devtools": "^6.3.7",
     "vue": "^3.5.43"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
-    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@tanstack/eslint-plugin-query": "^5.105.1",
     "@vitejs/plugin-vue": "^6.0.9",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.12.0",

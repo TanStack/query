@@ -11,13 +11,13 @@
   },
   "dependencies": {
     "@solidjs/router": "^1.0.0",
-    "@tanstack/solid-query": "^5.105.0",
-    "@tanstack/solid-query-devtools": "^5.105.0",
+    "@tanstack/solid-query": "^5.105.1",
+    "@tanstack/solid-query-devtools": "^5.105.1",
     "solid-js": "^1.9.15"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
-    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@tanstack/eslint-plugin-query": "^5.105.1",
     "eslint-plugin-solid": "^0.18.1",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",

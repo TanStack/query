@@ -12,14 +12,14 @@
   "dependencies": {
     "@awesome.me/webawesome": "^3.14.0",
     "@lit-labs/router": "^0.1.4",
-    "@tanstack/lit-query": "^0.2.31",
-    "@tanstack/query-async-storage-persister": "^5.105.0",
-    "@tanstack/query-persist-client-core": "^5.105.0",
+    "@tanstack/lit-query": "^0.2.32",
+    "@tanstack/query-async-storage-persister": "^5.105.1",
+    "@tanstack/query-persist-client-core": "^5.105.1",
     "lit": "^3.3.3",
     "msw": "^2.15.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.105.0",
+    "@tanstack/eslint-plugin-query": "^5.105.1",
     "typescript": "^6.0.3",
     "vite": "^8.3.5"
   },
