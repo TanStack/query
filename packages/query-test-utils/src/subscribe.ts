@@ -1,6 +1,5 @@
 /**
- * Subscribes a listener, like a `QueryObserver`'s, until the returned object is disposed, for a
- * test to hold with `using`.
+ * Subscribes a listener until a test's `using` declaration disposes the result.
  * @param subscribable - What to subscribe to, like a `QueryObserver` or a `QueryCache`.
  * @param listener - The listener to subscribe.
  * @returns A disposable that unsubscribes the listener.

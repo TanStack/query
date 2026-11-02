@@ -2,4 +2,4 @@
 '@tanstack/query-core': patch
 ---
 
-Retry a query that was hydrated while pending and then rejects with the `retry` and `retryDelay` options that are current when it fails. An observer that mounts before the hydrated promise settles now decides whether and when it is retried, instead of the options the query had when it was hydrated.
+When a query that `hydrate` resumed while pending rejects, its retries now use the `retry` and `retryDelay` options the query has at that moment. An observer that mounts before the promise settles now decides whether and when the query retries, not the options from hydration.

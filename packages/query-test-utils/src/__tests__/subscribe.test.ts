@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { subscribe } from '../subscribe'
 
 describe('subscribe', () => {
-  it('should keep the listener subscribed until it is disposed', () => {
+  it('should unsubscribe the listener on dispose', () => {
     const listeners = new Set<() => void>()
     const subscribable = {
       subscribe: (listener: () => void) => {

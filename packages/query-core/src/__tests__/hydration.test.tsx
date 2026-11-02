@@ -1189,7 +1189,7 @@ describe('dehydration and rehydration', () => {
       expect(queryFn).not.toHaveBeenCalled()
     })
 
-    it('should keep the retry options it was hydrated with that an observer does not set', async () => {
+    it('should keep the hydration retry options that an observer does not set', async () => {
       const key = createKey()
       using serverClient = startRejectingQuery(key)
       const dehydrated = dehydrate(serverClient)
@@ -1220,7 +1220,7 @@ describe('dehydration and rehydration', () => {
       })
     })
 
-    it('should retry with the options it was hydrated with when no observer has mounted', async () => {
+    it('should retry with the hydration options when no observer has mounted', async () => {
       const key = createKey()
       using serverClient = startRejectingQuery(key)
       const dehydrated = dehydrate(serverClient)
