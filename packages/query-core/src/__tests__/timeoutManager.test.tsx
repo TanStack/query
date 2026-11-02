@@ -6,15 +6,16 @@ import {
   timeoutManager,
 } from '../timeoutManager'
 import type { MockInstance } from 'vitest'
+import type { TimeoutCallback, TimeoutProvider } from '../timeoutManager'
 
 describe('timeoutManager', () => {
   function createMockProvider(name: string = 'custom') {
     return {
       __TEST_ONLY__name: name,
-      setTimeout: vi.fn(() => 123),
-      clearTimeout: vi.fn(),
-      setInterval: vi.fn(() => 456),
-      clearInterval: vi.fn(),
+      setTimeout: vi.fn<TimeoutProvider<number>['setTimeout']>(() => 123),
+      clearTimeout: vi.fn<TimeoutProvider<number>['clearTimeout']>(),
+      setInterval: vi.fn<TimeoutProvider<number>['setInterval']>(() => 456),
+      clearInterval: vi.fn<TimeoutProvider<number>['clearInterval']>(),
     }
   }
 
@@ -41,7 +42,7 @@ describe('timeoutManager', () => {
       const setIntervalSpy = vi.spyOn(globalThis, 'setInterval')
       const clearIntervalSpy = vi.spyOn(globalThis, 'clearInterval')
 
-      const callback = vi.fn()
+      const callback = vi.fn<TimeoutCallback>()
       const timeoutId = manager.setTimeout(callback, 100)
       expect(setTimeoutSpy).toHaveBeenCalledWith(callback, 100)
       clearTimeout(Number(timeoutId))
@@ -62,7 +63,7 @@ describe('timeoutManager', () => {
         const customProvider = createMockProvider()
         manager.setTimeoutProvider(customProvider)
 
-        const callback = vi.fn()
+        const callback = vi.fn<TimeoutCallback>()
 
         manager.setTimeout(callback, 100)
         expect(customProvider.setTimeout).toHaveBeenCalledWith(callback, 100)
@@ -113,10 +114,12 @@ describe('timeoutManager', () => {
 
   describe('exported functions', () => {
     let provider: ReturnType<typeof createMockProvider>
+
     beforeEach(() => {
       provider = createMockProvider()
       timeoutManager.setTimeoutProvider(provider)
     })
+
     afterEach(() => {
       timeoutManager.setTimeoutProvider(defaultTimeoutProvider)
     })
@@ -125,7 +128,7 @@ describe('timeoutManager', () => {
       it('should use globalThis setTimeout with 0 delay', () => {
         const spy = vi.spyOn(globalThis, 'setTimeout')
 
-        const callback = vi.fn()
+        const callback = vi.fn<TimeoutCallback>()
         systemSetTimeoutZero(callback)
 
         expect(spy).toHaveBeenCalledWith(callback, 0)

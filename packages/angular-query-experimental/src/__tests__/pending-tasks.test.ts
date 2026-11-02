@@ -10,7 +10,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
 import {
   QueryClient,
@@ -55,7 +55,7 @@ describe('PendingTasks Integration', () => {
     it('should handle synchronous queryFn with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
 
-      const key = queryKey()
+      const key = createKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: key,
@@ -81,7 +81,7 @@ describe('PendingTasks Integration', () => {
     it('should handle synchronous error with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
 
-      const key = queryKey()
+      const key = createKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: key,
@@ -97,7 +97,7 @@ describe('PendingTasks Integration', () => {
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
       expect(query.status()).toBe('error')
-      expect(query.error()).toEqual(new Error('instant-error'))
+      expect(query.error()).toStrictEqual(new Error('instant-error'))
     })
 
     it('should handle synchronous mutationFn with whenStable()', async () => {
@@ -146,13 +146,13 @@ describe('PendingTasks Integration', () => {
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
       expect(mutation.isError()).toBe(true)
-      expect(mutation.error()).toEqual(new Error('sync-mutation-error'))
+      expect(mutation.error()).toStrictEqual(new Error('sync-mutation-error'))
     })
   })
 
   describe('Race Conditions', () => {
     it('should handle query that completes during initial subscription', async () => {
-      const key = queryKey()
+      const key = createKey()
       const app = TestBed.inject(ApplicationRef)
       let resolveQuery: (value: string) => void
 
@@ -182,7 +182,7 @@ describe('PendingTasks Integration', () => {
       const app = TestBed.inject(ApplicationRef)
       let callCount = 0
 
-      const key = queryKey()
+      const key = createKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: key,
@@ -210,7 +210,7 @@ describe('PendingTasks Integration', () => {
       const app = TestBed.inject(ApplicationRef)
       let attempt = 0
 
-      const key = queryKey()
+      const key = createKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: key,
@@ -299,7 +299,7 @@ describe('PendingTasks Integration', () => {
       // Angular should become stable even though component was destroyed
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(150)
-      await expect(stablePromise).resolves.toEqual(undefined)
+      await expect(stablePromise).resolves.toBeUndefined()
     })
 
     it('should cleanup pending tasks when component with active mutation is destroyed', async () => {
@@ -314,15 +314,15 @@ describe('PendingTasks Integration', () => {
       // Angular should become stable even though component was destroyed
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(150)
-      await expect(stablePromise).resolves.toEqual(undefined)
+      await expect(stablePromise).resolves.toBeUndefined()
     })
   })
 
   describe('Concurrent Operations', () => {
     it('should handle multiple queries running simultaneously', async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
+      const key3 = createKey()
       const app = TestBed.inject(ApplicationRef)
 
       const query1 = TestBed.runInInjectionContext(() =>
@@ -412,7 +412,7 @@ describe('PendingTasks Integration', () => {
     it('should handle mixed queries and mutations', async () => {
       const app = TestBed.inject(ApplicationRef)
 
-      const key = queryKey()
+      const key = createKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: key,
@@ -454,8 +454,8 @@ describe('PendingTasks Integration', () => {
       const httpClient = TestBed.inject(HttpClient)
       const httpTestingController = TestBed.inject(HttpTestingController)
 
-      const key1 = queryKey()
-      const key2 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
 
       const query1 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
@@ -486,9 +486,9 @@ describe('PendingTasks Integration', () => {
       await vi.advanceTimersByTimeAsync(20)
       await stablePromise
       expect(query1.status()).toBe('success')
-      expect(query1.data()).toEqual({ id: 1 })
+      expect(query1.data()).toStrictEqual({ id: 1 })
       expect(query2.status()).toBe('success')
-      expect(query2.data()).toEqual({ id: 2 })
+      expect(query2.data()).toStrictEqual({ id: 2 })
 
       httpTestingController.verify()
     })
@@ -498,7 +498,7 @@ describe('PendingTasks Integration', () => {
       const httpClient = TestBed.inject(HttpClient)
       const httpTestingController = TestBed.inject(HttpTestingController)
 
-      const key = queryKey()
+      const key = createKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: key,
@@ -527,7 +527,7 @@ describe('PendingTasks Integration', () => {
 
   describe('Edge Cases', () => {
     it('should handle query cancellation mid-flight', async () => {
-      const key = queryKey()
+      const key = createKey()
       const app = TestBed.inject(ApplicationRef)
 
       const query = TestBed.runInInjectionContext(() =>
@@ -559,7 +559,7 @@ describe('PendingTasks Integration', () => {
       const app = TestBed.inject(ApplicationRef)
       let attemptCount = 0
 
-      const key = queryKey()
+      const key = createKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: key,
@@ -585,7 +585,7 @@ describe('PendingTasks Integration', () => {
 
     it('should handle mutation with optimistic updates', async () => {
       const app = TestBed.inject(ApplicationRef)
-      const testQueryKey = queryKey()
+      const testQueryKey = createKey()
 
       queryClient.setQueryData(testQueryKey, 'initial-data')
 

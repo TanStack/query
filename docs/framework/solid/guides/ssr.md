@@ -132,15 +132,15 @@ function Posts() {
 }
 ```
 
-## Prefetching with `route.load`
+## Prefetching with `route.preload`
 
-To prefetch a query from a SolidStart route's `load` function, call `queryClient.query(...)`:
+To prefetch a query from a SolidStart route's `preload` function, call `queryClient.query(...)`:
 
 ```tsx
 import { noop, useQueryClient } from '@tanstack/solid-query'
 
 export const route = {
-  load: () => {
+  preload: () => {
     const queryClient = useQueryClient()
     queryClient.query(postsQueryOptions()).catch(noop)
   },
@@ -154,7 +154,7 @@ export default function Posts() {
 
 `.catch(noop)` keeps a failed prefetch from aborting routing — whatever reads the query afterwards (`useQuery`) will surface the failure on its own. See [Error handling](#error-handling) below for how that failure surfaces differently on the server and the client.
 
-Sharing the query options object (`postsQueryOptions()` above) between `route.load` and the component that reads the data, rather than repeating the `queryKey`/`queryFn` in both places, keeps them from drifting apart — see [`queryOptions`](./query-options.md).
+Sharing the query options object (`postsQueryOptions()` above) between `route.preload` and the component that reads the data, rather than repeating the `queryKey`/`queryFn` in both places, keeps them from drifting apart — see [`queryOptions`](./query-options.md).
 
 ## Streaming with `deferStream`
 
@@ -184,7 +184,7 @@ const query = useQuery(() => ({
 }))
 ```
 
-A `route.load` prefetch isn't affected by this server-only override — `queryClient.query(...)` doesn't take a `throwOnError` option at all, so it simply rejects when the query fails, the same on the server and the client. Catch it (or let it propagate) however fits the route; see [Prefetching with `route.load`](#prefetching-with-routeload) above for the `.catch(noop)` pattern used when a failed prefetch shouldn't abort routing.
+A `route.preload` prefetch isn't affected by this server-only override — `queryClient.query(...)` doesn't take a `throwOnError` option at all, so it simply rejects when the query fails, the same on the server and the client. Catch it (or let it propagate) however fits the route; see [Prefetching with `route.preload`](#prefetching-with-routepreload) above for the `.catch(noop)` pattern used when a failed prefetch shouldn't abort routing.
 
 ## Tips, Tricks and Caveats
 

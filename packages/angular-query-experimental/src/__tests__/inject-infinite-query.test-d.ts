@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expectTypeOf, it, vi } from 'vitest'
 import { provideZonelessChangeDetection } from '@angular/core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectInfiniteQuery,
@@ -29,7 +29,7 @@ describe('injectInfiniteQuery', () => {
   })
 
   it('should narrow type after isSuccess', () => {
-    const key = queryKey()
+    const key = createKey()
     const query = TestBed.runInInjectionContext(() => {
       return injectInfiniteQuery(() => ({
         queryKey: key,
@@ -47,7 +47,7 @@ describe('injectInfiniteQuery', () => {
   })
 
   it('should work when queryFn is skipToken', () => {
-    const key = queryKey()
+    const key = createKey()
     const query = TestBed.runInInjectionContext(() => {
       return injectInfiniteQuery(() => ({
         queryKey: key,

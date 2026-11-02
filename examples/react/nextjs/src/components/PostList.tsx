@@ -1,16 +1,21 @@
 import React, { useState } from 'react'
-import { usePosts } from '../hooks/usePosts'
+import { useQuery } from '@tanstack/react-query'
+import { postsQueries } from '../services/posts/queries'
 
 export const PostList = () => {
   const [postCount, setPostCount] = useState(10)
-  const { data, isPending, isFetching } = usePosts(postCount)
+  const { data, error, isPending, isError, isFetching } = useQuery(
+    postsQueries.list(postCount),
+  )
 
   if (isPending) return <div>Loading</div>
+
+  if (isError) return <div>Error: {error.message}</div>
 
   return (
     <section>
       <ul>
-        {data?.map((post, index) => (
+        {data.map((post, index) => (
           <li key={post.id}>
             {index + 1}. {post.title}
           </li>

@@ -120,21 +120,17 @@ html`
 
 ## Side Effects
 
-Mutation options support `onMutate`, `onError`, `onSuccess`, and `onSettled`. The pagination example passes an explicit `queryClient` to the controller and uses the same in-scope client for optimistic updates and rollback:
+Mutation options support `onMutate`, `onError`, `onSuccess`, and `onSettled`. The pagination example passes an explicit `queryClient` to the controller and uses the same in-scope client for optimistic updates and rollback. Its `mutationKey` and `mutationFn` come from the example's `projectsMutations.updateFavorite()`:
 
 ```ts
 private readonly favoriteMutation = createMutationController(
   this,
   {
-    mutationKey: ['toggle-project-favorite'],
-    mutationFn: async (input) => {
-      const response = await toggleProjectFavoriteOnServer(input)
-      return response.project
-    },
+    ...projectsMutations.updateFavorite(),
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({ queryKey: ['projects'] })
+      await queryClient.cancelQueries({ queryKey: projectsQueries.all() })
       const snapshots = queryClient.getQueriesData<ProjectsPageResponse>({
-        queryKey: ['projects'],
+        queryKey: projectsQueries.all(),
       })
 
       for (const [key, existing] of snapshots) {
@@ -152,13 +148,13 @@ private readonly favoriteMutation = createMutationController(
 
       return { snapshots }
     },
-    onError: (_error, _variables, context) => {
-      for (const [key, snapshot] of context?.snapshots ?? []) {
+    onError: (_error, _variables, onMutateResult) => {
+      for (const [key, snapshot] of onMutateResult?.snapshots ?? []) {
         queryClient.setQueryData(key, snapshot)
       }
     },
     onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['projects'] })
+      await queryClient.invalidateQueries({ queryKey: projectsQueries.all() })
     },
   },
   queryClient,

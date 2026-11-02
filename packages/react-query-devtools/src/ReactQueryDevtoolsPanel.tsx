@@ -45,7 +45,8 @@ export interface DevtoolsPanelOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * @defaultValue system
+   * This overrides the theme selected in the devtools Settings menu. When omitted, the
+   * selected theme is used, or `'system'` if none is selected.
    */
   theme?: Theme
 }
@@ -68,21 +69,22 @@ export function ReactQueryDevtoolsPanel(
     theme,
   } = props
   const [devtools] = React.useState(
-    new TanstackQueryDevtoolsPanel({
-      client: queryClient,
-      queryFlavor: 'React Query',
-      version: '5',
-      onlineManager,
-      buttonPosition: 'bottom-left',
-      position: 'bottom',
-      initialIsOpen: true,
-      errorTypes,
-      styleNonce,
-      shadowDOMTarget,
-      onClose: props.onClose,
-      hideDisabledQueries,
-      theme,
-    }),
+    () =>
+      new TanstackQueryDevtoolsPanel({
+        client: queryClient,
+        queryFlavor: 'React Query',
+        version: '5',
+        onlineManager,
+        buttonPosition: 'bottom-left',
+        position: 'bottom',
+        initialIsOpen: true,
+        errorTypes,
+        styleNonce,
+        shadowDOMTarget,
+        onClose: props.onClose,
+        hideDisabledQueries,
+        theme,
+      }),
   )
 
   React.useEffect(() => {
