@@ -391,6 +391,13 @@ export class Query<
   ): TData {
     const data = replaceData(this.state.data, newData, this.options)
 
+    // Skip no-op manual writes: if the structurally shared result is referentially
+    // identical to the current data, don't dispatch a 'success' event, bump counts,
+    // or update timestamps. This avoids unnecessary broadcast/persist work.
+    if (options?.manual && data === this.state.data) {
+      return data
+    }
+
     // Set data and mark it as cached
     this.#dispatch({
       data,
