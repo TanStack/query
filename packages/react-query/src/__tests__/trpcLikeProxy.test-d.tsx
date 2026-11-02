@@ -40,15 +40,13 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
     assertType(trpc['post.byId'].$ensureInfinite)
   })
 
-  it('should give awaited handles defined data', async () => {
+  it('should give awaited handles the same plain type as prefetched ones', async () => {
     const post = await trpc['post.byId'].$ensure({ id: '1' })
     const feed = await trpc.feed.$ensureInfinite({ limit: 2 }, { pages: 2 })
 
-    expectTypeOf(post.data).toEqualTypeOf<Post>()
+    expectTypeOf(post).toEqualTypeOf(trpc['post.byId'].$prefetch({ id: '1' }))
+    expectTypeOf(post).not.toHaveProperty('data')
     expectTypeOf(post.input).toEqualTypeOf<{ id: string }>()
-    expectTypeOf(feed.data).toEqualTypeOf<
-      InfiniteData<FeedPage, number | null>
-    >()
     expectTypeOf(feed.input).toEqualTypeOf<
       Omit<{ limit: number; cursor?: number | null }, 'cursor'>
     >()
@@ -65,7 +63,12 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
     expectTypeOf(useQuery(trpc.$fromHandle(post)).data).toEqualTypeOf<
       Post | undefined
     >()
-    expectTypeOf(useQuery(trpc.$fromHandle(ensured)).data).toEqualTypeOf<Post>()
+    expectTypeOf(useQuery(trpc.$fromHandle(ensured)).data).toEqualTypeOf<
+      Post | undefined
+    >()
+    expectTypeOf(
+      useSuspenseQuery(trpc.$fromHandle(ensured)).data,
+    ).toEqualTypeOf<Post>()
     expectTypeOf(
       useSuspenseInfiniteQuery(trpc.$fromHandle(feed)).data,
     ).toEqualTypeOf<InfiniteData<FeedPage, unknown>>()

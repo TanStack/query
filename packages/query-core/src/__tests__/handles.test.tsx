@@ -145,7 +145,7 @@ describe('query handles', () => {
   })
 
   describe('experimental_ensureHandle', () => {
-    it('should wait for the data and carry it', async () => {
+    it('should wait for the data and return a plain handle', async () => {
       using _timers = fakeTimers()
       using queryClient = clearOnDispose(new QueryClient())
       const postQuery = createPostQuery()
@@ -159,9 +159,8 @@ describe('query handles', () => {
       expect(handle).toStrictEqual({
         queryKey: postQuery({ id: '1' }).queryKey,
         input: { id: '1' },
-        data: '1',
-        dataUpdatedAt: Date.now(),
       })
+      expect(queryClient.getQueryData(handle.queryKey)).toBe('1')
     })
 
     it('should load the pages an infinite factory asks for', async () => {
@@ -176,11 +175,9 @@ describe('query handles', () => {
         pages: input.pages,
       })
 
-      const handle = await experimental_ensureHandle(queryClient, feedQuery, {
-        pages: 3,
-      })
+      await experimental_ensureHandle(queryClient, feedQuery, { pages: 3 })
 
-      expect(handle.data).toStrictEqual({
+      expect(queryClient.getQueryData(key)).toStrictEqual({
         pages: [10, 20, 30],
         pageParams: [1, 2, 3],
       })
@@ -195,11 +192,11 @@ describe('query handles', () => {
       const postQuery = createPostQuery(queryFn)
       queryClient.setQueryData(postQuery({ id: '1' }).queryKey, 'cached')
 
-      const handle = await experimental_ensureHandle(queryClient, postQuery, {
-        id: '1',
-      })
+      await experimental_ensureHandle(queryClient, postQuery, { id: '1' })
 
-      expect(handle.data).toBe('cached')
+      expect(queryClient.getQueryData(postQuery({ id: '1' }).queryKey)).toBe(
+        'cached',
+      )
       expect(queryFn).toHaveBeenCalledTimes(1)
       await vi.advanceTimersByTimeAsync(10)
       expect(queryClient.getQueryData(postQuery({ id: '1' }).queryKey)).toBe(
@@ -218,7 +215,7 @@ describe('query handles', () => {
       })
       await vi.advanceTimersByTimeAsync(0)
 
-      expect(handle.data).toBe('cached')
+      expect(queryClient.getQueryData(handle.queryKey)).toBe('cached')
     })
 
     it('should reject when the query has no data and fails', async () => {
@@ -245,8 +242,9 @@ describe('query handles', () => {
         id: '1',
       })
       await vi.advanceTimersByTimeAsync(10)
+      const handle = await promise
 
-      await expect(promise).resolves.toMatchObject({ data: '1-new' })
+      expect(queryClient.getQueryData(handle.queryKey)).toBe('1-new')
     })
 
     it('should reject when the fetch fails', async () => {
@@ -272,11 +270,9 @@ describe('query handles', () => {
       })
       queryClient.setQueryData(key, { pages: [10], pageParams: [1] })
 
-      const handle = await experimental_fetchHandle(queryClient, feedQuery, {
-        pages: 2,
-      })
+      await experimental_fetchHandle(queryClient, feedQuery, { pages: 2 })
 
-      expect(handle.data).toStrictEqual({
+      expect(queryClient.getQueryData(key)).toStrictEqual({
         pages: [10, 20],
         pageParams: [1, 2],
       })
@@ -298,10 +294,7 @@ describe('query handles', () => {
       expect(queryFn).toHaveBeenCalledTimes(1)
 
       // staleTime defaults to 0, so the data is already stale
-      const ensured = await experimental_ensureHandle(queryClient, postQuery, {
-        id: '1',
-      })
-      expect(ensured.data).toBe('1')
+      await experimental_ensureHandle(queryClient, postQuery, { id: '1' })
       expect(queryFn).toHaveBeenCalledTimes(2)
       await vi.advanceTimersByTimeAsync(10)
 
@@ -310,7 +303,10 @@ describe('query handles', () => {
       })
       expect(queryFn).toHaveBeenCalledTimes(3)
       await vi.advanceTimersByTimeAsync(10)
-      await expect(fetched).resolves.toMatchObject({ data: '1' })
+      await expect(fetched).resolves.toStrictEqual({
+        queryKey: postQuery({ id: '1' }).queryKey,
+        input: { id: '1' },
+      })
     })
 
     it('should not refetch data that is fresh by staleTime', async () => {
@@ -374,7 +370,7 @@ describe('query handles', () => {
       expect(observer.getCurrentResult().data).toBe(1)
     })
 
-    it("should pass an awaited handle's data on as initialData", async () => {
+    it('should add no initialData for an awaited handle', async () => {
       using _timers = fakeTimers()
       using queryClient = clearOnDispose(new QueryClient())
       const postQuery = createPostQuery()
@@ -386,62 +382,19 @@ describe('query handles', () => {
 
       const options = experimental_fromHandle(postQuery, handle)
 
-      expect(options.initialData).toBe('1')
-      expect(options.initialDataUpdatedAt).toBe(handle.dataUpdatedAt)
+      expect(options).not.toHaveProperty('initialData')
+      expect(options).not.toHaveProperty('initialDataUpdatedAt')
     })
 
-    it("should give a new client the handle's data", () => {
+    it('should leave a reader with no data after the cache is cleared', async () => {
       using _timers = fakeTimers()
       using queryClient = clearOnDispose(new QueryClient())
       const postQuery = createPostQuery()
-      const handle = {
-        queryKey: postQuery({ id: '1' }).queryKey,
-        input: { id: '1' },
-        data: 'from the loader',
-        dataUpdatedAt: Date.now(),
-      }
-
-      const observer = new QueryObserver(queryClient, {
-        ...experimental_fromHandle(postQuery, handle),
-        enabled: false,
+      const promise = experimental_fetchHandle(queryClient, postQuery, {
+        id: '1',
       })
-
-      expect(observer.getCurrentResult()).toMatchObject({
-        status: 'success',
-        data: 'from the loader',
-      })
-    })
-
-    it("should prefer cached data over the handle's data", () => {
-      using _timers = fakeTimers()
-      using queryClient = clearOnDispose(new QueryClient())
-      const postQuery = createPostQuery()
-      const handle = {
-        queryKey: postQuery({ id: '1' }).queryKey,
-        input: { id: '1' },
-        data: 'from the loader',
-        dataUpdatedAt: Date.now() - 1000,
-      }
-      queryClient.setQueryData(handle.queryKey, 'newer')
-
-      const observer = new QueryObserver(
-        queryClient,
-        experimental_fromHandle(postQuery, handle),
-      )
-
-      expect(observer.getCurrentResult().data).toBe('newer')
-    })
-
-    it("should seed the cache from a handle's data again after clear(), like any initialData", () => {
-      using _timers = fakeTimers()
-      using queryClient = clearOnDispose(new QueryClient())
-      const postQuery = createPostQuery()
-      const handle = {
-        queryKey: postQuery({ id: '1' }).queryKey,
-        input: { id: '1' },
-        data: 'from the loader',
-        dataUpdatedAt: Date.now(),
-      }
+      await vi.advanceTimersByTimeAsync(10)
+      const handle = await promise
       const options = {
         ...experimental_fromHandle(postQuery, handle),
         enabled: false,
@@ -450,35 +403,14 @@ describe('query handles', () => {
       using _subscription = subscribe(observer, noop)
 
       queryClient.clear()
-      expect(queryClient.getQueryData(handle.queryKey)).toBeUndefined()
       // The reader renders again
       observer.setOptions(options)
 
-      expect(queryClient.getQueryData(handle.queryKey)).toBe('from the loader')
-    })
-
-    it("should reset the query to a handle's data, like any initialData", async () => {
-      using _timers = fakeTimers()
-      using queryClient = clearOnDispose(new QueryClient())
-      const postQuery = createPostQuery()
-      const handle = {
-        queryKey: postQuery({ id: '1' }).queryKey,
-        input: { id: '1' },
-        data: 'from the loader',
-        dataUpdatedAt: Date.now(),
-      }
-      using _subscription = subscribe(
-        new QueryObserver(queryClient, {
-          ...experimental_fromHandle(postQuery, handle),
-          enabled: false,
-        }),
-        noop,
-      )
-      queryClient.setQueryData(handle.queryKey, 'newer')
-
-      await queryClient.resetQueries({ queryKey: handle.queryKey })
-
-      expect(queryClient.getQueryData(handle.queryKey)).toBe('from the loader')
+      expect(queryClient.getQueryData(handle.queryKey)).toBeUndefined()
+      expect(observer.getCurrentResult()).toMatchObject({
+        status: 'pending',
+        data: undefined,
+      })
     })
   })
 

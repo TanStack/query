@@ -1,12 +1,7 @@
 import { hashQueryKeyByOptions, noop } from './utils'
 import type { QueryClient } from './queryClient'
 import type { Query } from './query'
-import type {
-  InferDataFromTag,
-  InfiniteData,
-  QueryKey,
-  QueryKeyHashFunction,
-} from './types'
+import type { QueryKey, QueryKeyHashFunction } from './types'
 
 // TYPES
 
@@ -42,20 +37,6 @@ type QueryHandleArgs<TFactory extends QueryHandleFactory> =
       ? [input: TInput]
       : [input?: Parameters<TFactory>[0]]
 
-/**
- * The data type of a factory's query, from the tag on its `queryKey`. For an infinite query
- * factory, this is the `InfiniteData` of its pages, with the type of its `initialPageParam`.
- */
-type QueryHandleData<TFactory extends QueryHandleFactory> =
-  ReturnType<TFactory> extends { initialPageParam: infer TPageParam }
-    ? InferDataFromTag<
-        unknown,
-        ReturnType<TFactory>['queryKey']
-      > extends InfiniteData<infer TPage, any>
-      ? InfiniteData<TPage, TPageParam>
-      : InferDataFromTag<unknown, ReturnType<TFactory>['queryKey']>
-    : InferDataFromTag<unknown, ReturnType<TFactory>['queryKey']>
-
 type PlainTuple<
   TQueryKey extends ReadonlyArray<unknown>,
   TRequired extends Array<unknown> = [],
@@ -85,9 +66,11 @@ type QueryHandleKey<TFactory extends QueryHandleFactory> = PlainQueryKey<
 >
 
 /**
- * A small serializable reference to a query, from `experimental_prefetchHandle` or
- * `experimental_waterfallHandle`. Pass it to the component that reads the query, and rebuild the
- * query's options there with `experimental_fromHandle(factory, handle)`.
+ * A small serializable reference to a query, from `experimental_prefetchHandle`,
+ * `experimental_ensureHandle`, `experimental_fetchHandle` or `experimental_waterfallHandle`. Pass
+ * it to the component that reads the query, and rebuild the query's options there with
+ * `experimental_fromHandle(factory, handle)`. It carries no data: readers get the query's data
+ * from the cache.
  *
  * Handles of two factories only mix when their keys have the same type. Declare keys with
  * `as const` to keep factories with the same input and data apart.
@@ -106,37 +89,10 @@ export interface QueryHandle<
 }
 
 /**
- * A handle returned by `experimental_ensureHandle` or `experimental_fetchHandle`, which waited for
- * the query's data. It carries that data, so code that called the verb can use it, and
- * `experimental_fromHandle` passes it on as `initialData` so readers always have data.
+ * The options `experimental_fromHandle` returns: the factory's options for the handle's input.
  */
-export interface QueryHandleWithData<
-  TFactory extends QueryHandleFactory = QueryHandleFactory,
-> extends QueryHandle<TFactory> {
-  /**
-   * The query's data when the verb resolved. Readers get the cache's current data instead.
-   */
-  readonly data: QueryHandleData<TFactory>
-  /**
-   * When `data` last changed. `experimental_fromHandle` passes it on as `initialDataUpdatedAt`.
-   */
-  readonly dataUpdatedAt: number
-}
-
-/**
- * The options `experimental_fromHandle` returns: the factory's options for the handle's input and,
- * for a handle with data, that data as `initialData`.
- */
-export type FromHandleOptions<
-  TFactory extends QueryHandleFactory,
-  THandle extends QueryHandle<TFactory>,
-> =
-  THandle extends QueryHandleWithData<TFactory>
-    ? Omit<ReturnType<TFactory>, 'initialData'> & {
-        initialData: QueryHandleData<TFactory>
-        initialDataUpdatedAt: number
-      }
-    : ReturnType<TFactory>
+export type FromHandleOptions<TFactory extends QueryHandleFactory> =
+  ReturnType<TFactory>
 
 // FUNCTIONS
 
@@ -190,26 +146,6 @@ function toHandle(options: QueryFactoryOptions, input: unknown) {
 }
 
 /**
- * Builds a handle that carries the query's current data.
- * @param client - The client whose cache holds the query.
- * @param options - Options a query factory returned.
- * @param input - The factory's input.
- * @returns A handle with their key, the input and the data.
- */
-function withData(
-  client: QueryClient,
-  options: QueryFactoryOptions,
-  input: unknown,
-) {
-  const state = getQuery(client, options)?.state
-  return {
-    ...toHandle(options, input),
-    data: state?.data,
-    dataUpdatedAt: state?.dataUpdatedAt ?? 0,
-  }
-}
-
-/**
  * Starts a query without waiting and returns a serializable handle for it. A route loader, server
  * component or server render passes the handle to the component that reads the query. Like
  * `queryClient.query`, it fetches only if the cache has no fresh data. It doesn't reject: fetch
@@ -243,17 +179,18 @@ export function experimental_prefetchHandle<
 }
 
 /**
- * Starts a query and waits until the cache has data for it, then returns a handle that carries the
- * data. It resolves at once with cached data, even stale data, and refetches stale data in the
- * background. Rejects if the query has no data and its fetch fails.
+ * Starts a query and waits until the cache has data for it, then returns a serializable handle for
+ * it. It resolves at once with cached data, even stale data, and refetches stale data in the
+ * background. Rejects if the query has no data and its fetch fails. The handle carries no data;
+ * read it with `useSuspenseQuery` to get defined data.
  * @param queryClient - The client to start the query on.
  * @param factory - The query factory, a function of the query's input that returns its options.
  * @param input - The input to pass to the factory, if it takes one.
- * @returns A promise of a handle with the query's key, input and data.
+ * @returns A promise of a handle with the query's key and input.
  * @example
  * ```ts
+ * // in a route loader
  * const viewer = await experimental_ensureHandle(queryClient, viewerQuery)
- * viewer.data.name
  * ```
  */
 export async function experimental_ensureHandle<
@@ -262,7 +199,7 @@ export async function experimental_ensureHandle<
   queryClient: QueryClient,
   factory: TFactory,
   ...input: QueryHandleArgs<TFactory>
-): Promise<QueryHandleWithData<TFactory>> {
+): Promise<QueryHandle<TFactory>> {
   const options = factory(...input)
   const promise = startQueryFromFactory(queryClient, options)
   if (getQuery(queryClient, options)?.state.data === undefined) {
@@ -270,24 +207,21 @@ export async function experimental_ensureHandle<
   } else {
     promise.catch(noop)
   }
-  return withData(
-    queryClient,
-    options,
-    input[0],
-  ) as QueryHandleWithData<TFactory>
+  return toHandle(options, input[0]) as QueryHandle<TFactory>
 }
 
 /**
- * Starts a query and waits for fresh data, then returns a handle that carries the data. Like
- * `queryClient.query`, it uses cached data only if it isn't stale. Rejects if the fetch fails.
+ * Starts a query and waits for fresh data, then returns a serializable handle for it. Like
+ * `queryClient.query`, it uses cached data only if it isn't stale. Rejects if the fetch fails. The
+ * handle carries no data; read it with `useSuspenseQuery` to get defined data.
  * @param queryClient - The client to start the query on.
  * @param factory - The query factory, a function of the query's input that returns its options.
  * @param input - The input to pass to the factory, if it takes one.
- * @returns A promise of a handle with the query's key, input and data.
+ * @returns A promise of a handle with the query's key and input.
  * @example
  * ```ts
+ * // in a route loader
  * const post = await experimental_fetchHandle(queryClient, postQuery, { id })
- * if (!post.data.published) throw redirect({ to: '/' })
  * ```
  */
 export async function experimental_fetchHandle<
@@ -296,14 +230,10 @@ export async function experimental_fetchHandle<
   queryClient: QueryClient,
   factory: TFactory,
   ...input: QueryHandleArgs<TFactory>
-): Promise<QueryHandleWithData<TFactory>> {
+): Promise<QueryHandle<TFactory>> {
   const options = factory(...input)
   await startQueryFromFactory(queryClient, options)
-  return withData(
-    queryClient,
-    options,
-    input[0],
-  ) as QueryHandleWithData<TFactory>
+  return toHandle(options, input[0]) as QueryHandle<TFactory>
 }
 
 /**
@@ -389,11 +319,8 @@ export function experimental_waterfallHandle<
  * Rebuilds a query's options from its handle: the options its factory returns for the handle's
  * input. Pass them to `useQuery`, `useSuspenseQuery`, `useSuspenseInfiniteQuery` or any other API
  * that takes query options, and spread them to add read-site options like `select`. They share the
- * cache entry the handle's verb started.
- *
- * For a handle from `experimental_ensureHandle` or `experimental_fetchHandle`, it passes the
- * handle's data on as `initialData` and `initialDataUpdatedAt`, so readers always have data. Data
- * already in the cache wins over it.
+ * cache entry the handle's verb started. They add no `initialData`, so `useQuery` may return
+ * undefined data, and `useSuspenseQuery` waits for the query's data.
  * @param factory - The factory that started the query.
  * @param handle - The handle the factory's verb returned.
  * @returns The query's options.
@@ -407,18 +334,9 @@ export function experimental_waterfallHandle<
  * }
  * ```
  */
-export function experimental_fromHandle<
-  TFactory extends QueryHandleFactory,
-  THandle extends QueryHandle<TFactory>,
->(factory: TFactory, handle: THandle): FromHandleOptions<TFactory, THandle> {
-  const options = factory(handle.input)
-  if ('data' in handle && handle.data !== undefined) {
-    return {
-      ...options,
-      initialData: handle.data,
-      initialDataUpdatedAt: (handle as unknown as QueryHandleWithData)
-        .dataUpdatedAt,
-    } as FromHandleOptions<TFactory, THandle>
-  }
-  return options as FromHandleOptions<TFactory, THandle>
+export function experimental_fromHandle<TFactory extends QueryHandleFactory>(
+  factory: TFactory,
+  handle: QueryHandle<NoInfer<TFactory>>,
+): FromHandleOptions<TFactory> {
+  return factory(handle.input) as FromHandleOptions<TFactory>
 }

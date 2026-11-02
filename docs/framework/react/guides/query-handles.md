@@ -40,11 +40,13 @@ A handle's type comes from its factory's key. Declare keys with `as const`: two 
 
 Three functions start a query and return its handle. They take the `QueryClient` first, then the factory, then the factory's input:
 
-| Function                      | Waits for                           | Handle carries data |
-| ----------------------------- | ----------------------------------- | ------------------- |
-| `experimental_prefetchHandle` | nothing                             | no                  |
-| `experimental_ensureHandle`   | any data, cached data even if stale | yes                 |
-| `experimental_fetchHandle`    | fresh data                          | yes                 |
+| Function                      | Waits for                           |
+| ----------------------------- | ----------------------------------- |
+| `experimental_prefetchHandle` | nothing                             |
+| `experimental_ensureHandle`   | any data, cached data even if stale |
+| `experimental_fetchHandle`    | fresh data                          |
+
+All three return the same plain handle, without the query's data. When an awaited handle resolves, the cache has the query's data.
 
 All three use the query's `staleTime` like `queryClient.query`: they start a fetch only when the cache has no fresh data, and `experimental_ensureHandle` refetches stale data in the background.
 
@@ -59,12 +61,9 @@ import {
 } from '@tanstack/react-query'
 
 export async function loader({ params }) {
-  // The page can't render without the viewer, so wait for it
-  const viewer = await experimental_ensureHandle(queryClient, viewerQuery)
-  if (!viewer.data.isAdmin) throw redirect('/')
-
   return {
-    viewer,
+    // The page can't render without the viewer, so wait for it
+    viewer: await experimental_ensureHandle(queryClient, viewerQuery),
     // Start the post without waiting, and stream it in
     post: experimental_prefetchHandle(queryClient, postQuery, {
       id: params.id,
@@ -101,11 +100,7 @@ function Post(props: { post: experimental_QueryHandle<typeof postQuery> }) {
 
 The factory types `select`'s argument, as with any `queryOptions` result. Keep options that decide how the query fetches or how long its data stays fresh, like `queryFn` or `staleTime`, on the factory, so the loader and the component agree on them.
 
-Handles from `experimental_ensureHandle` and `experimental_fetchHandle` carry the data they waited for, and `experimental_fromHandle` passes it on as `initialData` with its `initialDataUpdatedAt`. `useQuery` then always has data, even in a client that never saw the loader's cache, and types its `data` as defined. Data already in the cache wins over the handle's data. For a handle from `experimental_prefetchHandle`, `useQuery` data stays possibly `undefined`.
-
-As with any `initialData`, a mounted reader puts the handle's data back in the cache after `queryClient.clear()` or `removeQueries`, and `resetQueries` resets the query to it. The handle lives as long as the router keeps the loader data, so a logout that clears the cache should also drop the loader data, for example by invalidating the route.
-
-If the page sends its loader data and dehydrated state as plain JSON, or `serializeData` copies the data, an awaited handle's data goes out twice: once in the handle and once in the dehydrated state.
+Readers get the query's data from the cache. To get defined `data`, read the handle with `useSuspenseQuery`, which waits for the data. `useQuery` types `data` as possibly `undefined`, as usual, even for a handle a loader waited for: the cache may have lost the data since, for example after `queryClient.clear()`.
 
 ## Waterfalls: `experimental_waterfallHandle`
 

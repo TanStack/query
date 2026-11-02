@@ -114,7 +114,7 @@ describe('experimental_waterfallHandle', () => {
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
-  it("should give useQuery an awaited handle's data on the first render", async () => {
+  it('should give useQuery the cached data of an awaited handle on the first render', async () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
     const { postsQuery } = createPostsQuery()
@@ -123,7 +123,6 @@ describe('experimental_waterfallHandle', () => {
     })
     await vi.advanceTimersByTimeAsync(10)
     const handle = await promise
-    using freshClient = clearOnDispose(new QueryClient())
     const statuses: Array<string> = []
 
     function Posts() {
@@ -134,7 +133,7 @@ describe('experimental_waterfallHandle', () => {
       return <div>data: {data}</div>
     }
 
-    using rendered = unmountOnDispose(renderWithClient(freshClient, <Posts />))
+    using rendered = unmountOnDispose(renderWithClient(queryClient, <Posts />))
 
     expect(rendered.getByText('data: page 1')).toBeInTheDocument()
     expect(statuses[0]).toBe('success')

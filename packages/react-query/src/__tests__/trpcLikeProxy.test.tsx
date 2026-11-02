@@ -61,7 +61,7 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
     await vi.advanceTimersByTimeAsync(10)
     const post = await postPromise
     const comments = serverTrpc['post.comments'].$prefetch({
-      postId: post.data.id,
+      postId: post.input.id,
       page: 1,
     })
     await vi.advanceTimersByTimeAsync(10)

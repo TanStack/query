@@ -11,7 +11,6 @@ import type {
   experimental_FromHandleOptions,
   experimental_QueryHandle,
   experimental_QueryHandleFactory,
-  experimental_QueryHandleWithData,
 } from '..'
 
 // A small tRPC-like options proxy that uses only the public handle APIs
@@ -84,7 +83,7 @@ type DecorateInfiniteProcedure<
         input: Omit<TInput, 'cursor'>,
         opts?: { pages?: number },
       ) => Promise<
-        experimental_QueryHandleWithData<
+        experimental_QueryHandle<
           ProcedureInfiniteQueryOptions<TPath, TInput, TOutput>
         >
       >
@@ -102,12 +101,12 @@ type DecorateProcedure<
   $ensure: (
     input: InputOf<TProcedure>,
   ) => Promise<
-    experimental_QueryHandleWithData<ProcedureQueryOptions<TPath, TProcedure>>
+    experimental_QueryHandle<ProcedureQueryOptions<TPath, TProcedure>>
   >
   $fetch: (
     input: InputOf<TProcedure>,
   ) => Promise<
-    experimental_QueryHandleWithData<ProcedureQueryOptions<TPath, TProcedure>>
+    experimental_QueryHandle<ProcedureQueryOptions<TPath, TProcedure>>
   >
 } & DecorateInfiniteProcedure<TPath, TProcedure>
 
@@ -160,7 +159,7 @@ export type OptionsProxy<TRouter extends AnyRouter> = {
     input: any,
   ) => { queryKey: ReadonlyArray<unknown> }
     ? THandle extends experimental_QueryHandle<TFactory>
-      ? experimental_FromHandleOptions<TFactory, THandle>
+      ? experimental_FromHandleOptions<TFactory>
       : never
     : never
 }
