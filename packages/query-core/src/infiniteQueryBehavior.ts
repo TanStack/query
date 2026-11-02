@@ -28,7 +28,6 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
 ): QueryBehavior<TQueryFnData, TError, InfiniteData<TData, TPageParam>> {
   return {
     onFetch: (context, query) => {
-      const options = context.options as InfiniteQueryPageParamsOptions<TData>
       const direction = context.fetchOptions?.meta?.fetchMore?.direction
       const oldPages = context.state.data?.pages || []
       const oldPageParams = context.state.data?.pageParams || []
@@ -36,6 +35,12 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
       let currentPage = 0
 
       const fetchFn = async () => {
+        // A fetch that resumes a hydrated promise only calls this to retry, and
+        // an observer may have set the query's options since the fetch started
+        const queryOptions = (
+          context.fetchOptions?.initialPromise ? query.options : context.options
+        ) as typeof context.options
+        const options = queryOptions as InfiniteQueryPageParamsOptions<TData>
         let cancelled = false
         const signalContext: FetchSignalContext = context
         const addSignalProperty = (object: object) => {
@@ -47,7 +52,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           )
         }
 
-        const queryFn = ensureQueryFn(context.options, context.fetchOptions)
+        const queryFn = ensureQueryFn(queryOptions, context.fetchOptions)
 
         // Create function to fetch a page
         const fetchPage = async (
@@ -72,7 +77,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
               queryKey: context.queryKey,
               pageParam: param,
               direction: previous ? 'backward' : 'forward',
-              meta: context.options.meta,
+              meta: queryOptions.meta,
             }
             addSignalProperty(queryFnContext)
             return queryFnContext as QueryFunctionContext<QueryKey, unknown>
@@ -82,7 +87,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
 
           const page = await queryFn(queryFnContext)
 
-          const { maxPages } = context.options
+          const { maxPages } = queryOptions
           const addTo = previous ? addToStart : addToEnd
 
           return {

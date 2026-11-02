@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   clearOnDispose,
   createKey,
+  fakeTimers,
   sleep,
   subscribe,
 } from '@tanstack/query-test-utils'
@@ -10,6 +11,7 @@ import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 import { dehydrateQuery } from '../index'
 import { MutationCache } from '../mutationCache'
+import { InfiniteQueryObserver } from '../infiniteQueryObserver'
 import { QueryObserver } from '../queryObserver'
 import { noop } from '../utils'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
@@ -1123,7 +1125,30 @@ describe('dehydration and rehydration', () => {
       return clearOnDispose(serverClient)
     }
 
+    function startRejectingInfiniteQuery(key: Array<string>) {
+      const serverClient = new QueryClient({
+        defaultOptions: {
+          dehydrate: {
+            shouldDehydrateQuery: () => true,
+            shouldRedactErrors: () => false,
+          },
+        },
+      })
+      void serverClient
+        .infiniteQuery({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('server error'))),
+          initialPageParam: 0,
+          getNextPageParam: () => undefined,
+          retry: false,
+        })
+        .catch(noop)
+      return clearOnDispose(serverClient)
+    }
+
     it('should retry with the retry options of an observer that mounted before it rejected', async () => {
+      using _timers = fakeTimers()
       const key = createKey()
       using serverClient = startRejectingQuery(key)
       const dehydrated = dehydrate(serverClient)
@@ -1162,6 +1187,7 @@ describe('dehydration and rehydration', () => {
     })
 
     it('should not retry when an observer that mounted before it rejected sets retry to false', async () => {
+      using _timers = fakeTimers()
       const key = createKey()
       using serverClient = startRejectingQuery(key)
       const dehydrated = dehydrate(serverClient)
@@ -1190,6 +1216,7 @@ describe('dehydration and rehydration', () => {
     })
 
     it('should keep the hydration retry options that an observer does not set', async () => {
+      using _timers = fakeTimers()
       const key = createKey()
       using serverClient = startRejectingQuery(key)
       const dehydrated = dehydrate(serverClient)
@@ -1221,8 +1248,87 @@ describe('dehydration and rehydration', () => {
     })
 
     it('should retry with the hydration options when no observer has mounted', async () => {
+      using _timers = fakeTimers()
       const key = createKey()
       using serverClient = startRejectingQuery(key)
+      const dehydrated = dehydrate(serverClient)
+
+      using queryClient = clearOnDispose(
+        new QueryClient({
+          defaultOptions: {
+            hydrate: { queries: { retry: 1, retryDelay: 5 } },
+          },
+        }),
+      )
+      hydrate(queryClient, dehydrated)
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        status: 'pending',
+        fetchFailureCount: 1,
+      })
+
+      await vi.advanceTimersByTimeAsync(5)
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        status: 'error',
+        error: new Error('server error'),
+        fetchFailureCount: 2,
+        fetchStatus: 'idle',
+      })
+    })
+
+    it('should retry a hydrated infinite query with the queryFn of an observer that mounted before it rejected', async () => {
+      using _timers = fakeTimers()
+      const key = createKey()
+      using serverClient = startRejectingInfiniteQuery(key)
+      const dehydrated = dehydrate(serverClient)
+
+      using queryClient = clearOnDispose(
+        new QueryClient({
+          defaultOptions: { hydrate: { queries: { retry: 0 } } },
+        }),
+      )
+      hydrate(queryClient, dehydrated)
+      const queryFn = vi.fn<
+        (context: { pageParam: number }) => Promise<string>
+      >(({ pageParam }) => sleep(10).then(() => `page ${pageParam}`))
+      using _subscription = subscribe(
+        new InfiniteQueryObserver(queryClient, {
+          queryKey: key,
+          queryFn,
+          initialPageParam: 0,
+          getNextPageParam: () => undefined,
+          retry: 1,
+          retryDelay: 5,
+        }),
+        noop,
+      )
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryFn).not.toHaveBeenCalled()
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        status: 'pending',
+        fetchFailureCount: 1,
+      })
+
+      await vi.advanceTimersByTimeAsync(5)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(queryFn).toHaveBeenCalledWith(
+        expect.objectContaining({ pageParam: 0 }),
+      )
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        status: 'success',
+        data: { pages: ['page 0'], pageParams: [0] },
+        fetchStatus: 'idle',
+      })
+    })
+
+    it('should retry a hydrated infinite query with the hydration options when no observer has mounted', async () => {
+      using _timers = fakeTimers()
+      const key = createKey()
+      using serverClient = startRejectingInfiniteQuery(key)
       const dehydrated = dehydrate(serverClient)
 
       using queryClient = clearOnDispose(

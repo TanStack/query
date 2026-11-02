@@ -829,9 +829,8 @@ export class Query<
         : this.options.behavior
     behavior?.onFetch(context, this as unknown as Query)
 
-    // A fetch that resumes a hydrated promise starts before any observer sets
-    // this query's options, so retry options an observer sets before a failure
-    // win over those from hydration
+    // A hydrated promise starts fetching before any observer mounts. Read the
+    // retry options at each failure, so an observer that mounted since decides
     const getRetryOption = <TKey extends 'retry' | 'retryDelay'>(
       key: TKey,
     ): QueryOptions<TQueryFnData, TError, TData, TQueryKey>[TKey] =>

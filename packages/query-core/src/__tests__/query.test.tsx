@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  clearOnDispose,
   createKey,
+  fakeTimers,
   mockVisibilityState,
   sleep,
 } from '@tanstack/query-test-utils'
@@ -115,19 +117,22 @@ describe('query', () => {
   })
 
   it('should keep the retry options a fetch started with when the options change before a retry', async () => {
+    using _timers = fakeTimers()
+    using client = clearOnDispose(new QueryClient())
     const key = createKey()
     const queryFn = vi
       .fn<() => Promise<string>>()
       .mockRejectedValueOnce(new Error('error'))
       .mockResolvedValue('data')
 
-    void queryClient
+    void client
       .query({ queryKey: key, queryFn, retry: 1, retryDelay: 50 })
       .catch(noop)
     await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(1)
 
-    queryCache
+    client
+      .getQueryCache()
       .find({ queryKey: key })!
       .setOptions({ queryKey: key, queryFn, retry: 1, retryDelay: 5 })
 
@@ -136,7 +141,7 @@ describe('query', () => {
 
     await vi.advanceTimersByTimeAsync(45)
     expect(queryFn).toHaveBeenCalledTimes(2)
-    expect(queryClient.getQueryData(key)).toBe('data')
+    expect(client.getQueryData(key)).toBe('data')
   })
 
   it('should continue retry after reconnect and resolve all promises', async () => {
