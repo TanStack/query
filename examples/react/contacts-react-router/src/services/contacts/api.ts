@@ -1,6 +1,4 @@
-import localforage from 'localforage'
 import { matchSorter } from 'match-sorter'
-import sortBy from 'sort-by'
 import type { Contact } from './types'
 
 const initialData: Array<Contact> = [
@@ -26,23 +24,20 @@ const initialData: Array<Contact> = [
   },
 ]
 
-const seed = async () => {
-  const contacts = await localforage.getItem<Array<Contact>>('contacts')
-  if (!contacts) {
-    await set(initialData)
-  }
+if (!localStorage.getItem('contacts')) {
+  set(initialData)
 }
-
-const seeded = seed()
 
 export const contactsAPI = {
   getContacts: async (query?: string) => {
     await fakeNetwork()
-    let contacts = await get()
+    let contacts = get()
     if (query) {
       contacts = matchSorter(contacts, query, { keys: ['first', 'last'] })
     }
-    return contacts.sort(sortBy('last', 'createdAt'))
+    return contacts.sort((a, b) =>
+      a.last < b.last ? -1 : a.last > b.last ? 1 : a.createdAt - b.createdAt,
+    )
   },
   createContact: async (
     data: Pick<Contact, 'first' | 'last' | 'twitter' | 'avatar' | 'notes'>,
@@ -52,43 +47,43 @@ export const contactsAPI = {
     const contact = { ...data, id, createdAt: Date.now(), favorite: false }
     const contacts = await contactsAPI.getContacts()
     contacts.unshift(contact)
-    await set(contacts)
+    set(contacts)
     return contact
   },
   getContact: async (id: string) => {
     await fakeNetwork()
-    const contacts = await get()
+    const contacts = get()
     const contact = contacts.find((item) => item.id === id)
     return contact ?? null
   },
   updateContact: async (id: string, updates: Partial<Contact>) => {
     await fakeNetwork()
-    const contacts = await get()
+    const contacts = get()
     const contact = contacts.find((item) => item.id === id)
     if (!contact) throw new Error(`No contact found for ${id}`)
     Object.assign(contact, updates)
-    await set(contacts)
+    set(contacts)
     return contact
   },
   deleteContact: async (id: string) => {
-    const contacts = await get()
+    await fakeNetwork()
+    const contacts = get()
     const index = contacts.findIndex((contact) => contact.id === id)
     if (index > -1) {
       contacts.splice(index, 1)
-      await set(contacts)
+      set(contacts)
       return true
     }
     return false
   },
 }
 
-async function get() {
-  await seeded
-  return (await localforage.getItem<Array<Contact>>('contacts')) ?? []
+function get(): Array<Contact> {
+  return JSON.parse(localStorage.getItem('contacts') ?? '[]')
 }
 
 function set(contacts: Array<Contact>) {
-  return localforage.setItem('contacts', contacts)
+  localStorage.setItem('contacts', JSON.stringify(contacts))
 }
 
 async function fakeNetwork() {

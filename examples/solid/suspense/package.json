@@ -12,7 +12,6 @@
   "dependencies": {
     "@tanstack/solid-query": "^5.105.1",
     "@tanstack/solid-query-devtools": "^5.105.1",
-    "font-awesome": "^4.7.0",
     "solid-js": "^1.9.15"
   },
   "devDependencies": {

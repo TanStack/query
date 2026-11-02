@@ -2104,9 +2104,6 @@ importers:
       '@tanstack/preact-query-devtools':
         specifier: ^5.105.1
         version: link:../../../packages/preact-query-devtools
-      font-awesome:
-        specifier: ^4.7.0
-        version: 4.7.0
       preact:
         specifier: ^11.0.1
         version: 11.0.1(preact-render-to-string@6.8.0)
@@ -2390,9 +2387,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.105.1
         version: link:../../../packages/react-query-devtools
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
       match-sorter:
         specifier: ^8.3.0
         version: 8.3.0
@@ -2405,9 +2399,6 @@ importers:
       react-router:
         specifier: ^8.5.0
         version: 8.5.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      sort-by:
-        specifier: ^1.2.0
-        version: 1.2.0
     devDependencies:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
@@ -2421,9 +2412,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
-      '@types/sort-by':
-        specifier: ^1.2.3
-        version: 1.2.3
       '@vitejs/plugin-react':
         specifier: ^6.1.1
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
@@ -2448,9 +2436,6 @@ importers:
       '@tanstack/react-router':
         specifier: ^1.170.46
         version: 1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
       match-sorter:
         specifier: ^8.3.0
         version: 8.3.0
@@ -2460,9 +2445,6 @@ importers:
       react-dom:
         specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
-      sort-by:
-        specifier: ^1.2.0
-        version: 1.2.0
     devDependencies:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
@@ -2479,9 +2461,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
-      '@types/sort-by':
-        specifier: ^1.2.3
-        version: 1.2.3
       '@vitejs/plugin-react':
         specifier: ^6.1.1
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))
@@ -3324,9 +3303,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.105.1
         version: link:../../../packages/react-query-devtools
-      font-awesome:
-        specifier: ^4.7.0
-        version: 4.7.0
       react:
         specifier: ^19.3.1
         version: 19.3.1
@@ -3605,25 +3581,16 @@ importers:
       '@tanstack/solid-query-devtools':
         specifier: ^5.105.1
         version: link:../../../packages/solid-query-devtools
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
       match-sorter:
         specifier: ^8.3.0
         version: 8.3.0
       solid-js:
         specifier: ^1.9.15
         version: 1.9.15
-      sort-by:
-        specifier: ^1.2.0
-        version: 1.2.0
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.105.1
         version: link:../../../packages/eslint-plugin-query
-      '@types/sort-by':
-        specifier: ^1.2.3
-        version: 1.2.3
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -3651,18 +3618,12 @@ importers:
       '@tanstack/solid-router':
         specifier: ^1.170.43
         version: 1.170.43(solid-js@1.9.15)
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
       match-sorter:
         specifier: ^8.3.0
         version: 8.3.0
       solid-js:
         specifier: ^1.9.15
         version: 1.9.15
-      sort-by:
-        specifier: ^1.2.0
-        version: 1.2.0
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.105.1
@@ -3670,9 +3631,6 @@ importers:
       '@tanstack/router-plugin':
         specifier: ^1.168.48
         version: 1.168.48(@tanstack/react-router@1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(supports-color@10.2.2)(vite-plugin-solid@2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))(webpack@5.105.4)
-      '@types/sort-by':
-        specifier: ^1.2.3
-        version: 1.2.3
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -4115,9 +4073,6 @@ importers:
       '@tanstack/solid-query-devtools':
         specifier: ^5.105.1
         version: link:../../../packages/solid-query-devtools
-      font-awesome:
-        specifier: ^4.7.0
-        version: 4.7.0
       solid-js:
         specifier: ^1.9.15
         version: 1.9.15
@@ -4942,9 +4897,6 @@ importers:
       match-sorter:
         specifier: ^8.3.0
         version: 8.3.0
-      sort-by:
-        specifier: ^1.2.0
-        version: 1.2.0
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^7.0.1
@@ -4958,9 +4910,6 @@ importers:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.105.1
         version: link:../../../packages/eslint-plugin-query
-      '@types/sort-by':
-        specifier: ^1.2.3
-        version: 1.2.3
       '@typescript-eslint/parser':
         specifier: ^8.72.0
         version: 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -5222,15 +5171,9 @@ importers:
       '@tanstack/vue-router':
         specifier: ^1.170.42
         version: 1.170.42(@vue/composition-api@1.7.2(vue@3.5.44(typescript@6.0.3)))(vue@3.5.44(typescript@6.0.3))
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
       match-sorter:
         specifier: ^8.3.0
         version: 8.3.0
-      sort-by:
-        specifier: ^1.2.0
-        version: 1.2.0
       vue:
         specifier: ^3.5.43
         version: 3.5.44(typescript@6.0.3)
@@ -5241,9 +5184,6 @@ importers:
       '@tanstack/router-plugin':
         specifier: ^1.168.48
         version: 1.168.48(@tanstack/react-router@1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(supports-color@10.2.2)(vite-plugin-solid@2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1)))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))(webpack@5.105.4)
-      '@types/sort-by':
-        specifier: ^1.2.3
-        version: 1.2.3
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
@@ -5274,15 +5214,9 @@ importers:
       '@tanstack/vue-query-devtools':
         specifier: ^6.3.7
         version: link:../../../packages/vue-query-devtools
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
       match-sorter:
         specifier: ^8.3.0
         version: 8.3.0
-      sort-by:
-        specifier: ^1.2.0
-        version: 1.2.0
       vue:
         specifier: ^3.5.43
         version: 3.5.44(typescript@6.0.3)
@@ -5293,9 +5227,6 @@ importers:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.105.1
         version: link:../../../packages/eslint-plugin-query
-      '@types/sort-by':
-        specifier: ^1.2.3
-        version: 1.2.3
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
@@ -6007,9 +5938,6 @@ importers:
       '@tanstack/vue-query-devtools':
         specifier: ^6.3.7
         version: link:../../../packages/vue-query-devtools
-      font-awesome:
-        specifier: ^4.7.0
-        version: 4.7.0
       vue:
         specifier: ^3.5.43
         version: 3.5.44(typescript@6.0.3)
@@ -13857,9 +13785,6 @@ packages:
   '@types/set-cookie-parser@2.4.10':
     resolution: {integrity: sha512-GGmQVGpQWUe5qglJozEjZV/5dyxbOOZ0LHe/lqyWssB88Y4svNfst0uqBVscdDeIKl5Jy5+aPSvy7mI9tYRguw==}
 
-  '@types/sort-by@1.2.3':
-    resolution: {integrity: sha512-Q8Pg7o2iHWFf7pR4jIGb+ntxwwL7a/WWLFNJj8jEN14tPQdfwZLCqK68q6mo1WONqa68OysEPuFvNA3uGm0crw==}
-
   '@types/source-list-map@0.1.6':
     resolution: {integrity: sha512-5JcVt1u5HDmlXkwOD2nslZVllBBc7HDuOICfiZah2Z0is8M8g+ddAEawbmd3VjedfDHBzxCaXLs07QEmb7y54g==}
 
@@ -17578,10 +17503,6 @@ packages:
       debug:
         optional: true
 
-  font-awesome@4.7.0:
-    resolution: {integrity: sha512-U6kGnykA/6bFmg1M/oT9EkFeIYv7JlX3bozwQJWiiLz6L0w3F5vBVPxHlwyX/vtNq1ckcpRKOB9f2Qal/VtFpg==}
-    engines: {node: '>=0.10.3'}
-
   fontace@0.4.1:
     resolution: {integrity: sha512-lDMvbAzSnHmbYMTEld5qdtvNH2/pWpICOqpean9IgC7vUbUJc3k+k5Dokp85CegamqQpFbXf0rAVkbzpyTA8aw==}
 
@@ -18120,9 +18041,6 @@ packages:
 
   image-meta@0.3.0:
     resolution: {integrity: sha512-IDxPcgtP9oUwUhcUMBfAQo27JTx9j96jFV9kpfavkANF6LvcTWEm1IouSbgMDV3G5Y5jx2SEdnHtecxV2OjGBA==}
-
-  immediate@3.0.6:
-    resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
 
   immutable@5.1.5:
     resolution: {integrity: sha512-t7xcm2siw+hlUM68I+UEOK+z84RzmN59as9DZ7P1l0994DKUWV7UXBMQZVxaoMSRQ+PBZbHCOoBt7a2wxOMt+A==}
@@ -18813,9 +18731,6 @@ packages:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
 
-  lie@3.1.1:
-    resolution: {integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==}
-
   lightningcss-android-arm64@1.32.0:
     resolution: {integrity: sha512-YK7/ClTt4kAK0vo6w3X+Pnm0D2cf2vPHbhOXdoNti1Ga0al1P4TBZhwjATvjNwLEBCnKvjJc2jQgHXH0NEwlAg==}
     engines: {node: '>= 12.0.0'}
@@ -19031,9 +18946,6 @@ packages:
   local-pkg@1.2.1:
     resolution: {integrity: sha512-++gUqRDEvcnN6Zhqrr+y/CkVEHhlrR96vZn3nZZPYzMcBUyBtTKzB9NadClFIsIVSsu+3i9tfk/erqy9kAmt7Q==}
     engines: {node: '>=14'}
-
-  localforage@1.10.0:
-    resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
 
   locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
@@ -19904,10 +19816,6 @@ packages:
   object-keys@1.1.1:
     resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
     engines: {node: '>= 0.4'}
-
-  object-path@0.6.0:
-    resolution: {integrity: sha512-fxrwsCFi3/p+LeLOAwo/wyRMODZxdGBtUlWRzsEpsUVrisZbEfZ21arxLGfaWfcnqb8oHPNihIb4XPE8CQPN5A==}
-    engines: {node: '>=0.8.0'}
 
   object-visit@1.0.1:
     resolution: {integrity: sha512-GBaMwwAVK9qbQN3Scdo0OyvgPW7l3lnaVMj84uTOZlswkX0KpF6fyDBJhtTthf7pymztoN36/KEr1DyhF96zEA==}
@@ -21794,9 +21702,6 @@ packages:
     engines: {node: '>=10'}
     peerDependencies:
       solid-js: ^1.7
-
-  sort-by@1.2.0:
-    resolution: {integrity: sha512-aRyW65r3xMnf4nxJRluCg0H/woJpksU1dQxRtXYzau30sNBOmf5HACpDd9MZDhKh7ALQ5FgSOfMPwZEtUmMqcg==}
 
   source-list-map@2.0.1:
     resolution: {integrity: sha512-qnQ7gVMxGNxsiL4lEuJwe/To8UnK7fAnmbGEEH8RpLouuKbeEm0lhbQVFIrNSuB+G7tVrAlVsZgETT5nljf+Iw==}
@@ -32452,8 +32357,6 @@ snapshots:
     dependencies:
       '@types/node': 24.19.2
 
-  '@types/sort-by@1.2.3': {}
-
   '@types/source-list-map@0.1.6': {}
 
   '@types/stack-utils@2.0.3': {}
@@ -37395,8 +37298,6 @@ snapshots:
     optionalDependencies:
       debug: 4.4.3(supports-color@7.2.0)
 
-  font-awesome@4.7.0: {}
-
   fontace@0.4.1:
     dependencies:
       fontkitten: 1.0.3
@@ -37987,8 +37888,6 @@ snapshots:
   ignore@7.0.5: {}
 
   image-meta@0.3.0: {}
-
-  immediate@3.0.6: {}
 
   immutable@5.1.5: {}
 
@@ -38815,10 +38714,6 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
-  lie@3.1.1:
-    dependencies:
-      immediate: 3.0.6
-
   lightningcss-android-arm64@1.32.0:
     optional: true
 
@@ -39040,10 +38935,6 @@ snapshots:
       mlly: 1.8.2
       pkg-types: 2.4.0
       quansync: 0.2.11
-
-  localforage@1.10.0:
-    dependencies:
-      lie: 3.1.1
 
   locate-character@3.0.0: {}
 
@@ -41480,8 +41371,6 @@ snapshots:
 
   object-keys@1.1.1: {}
 
-  object-path@0.6.0: {}
-
   object-visit@1.0.1:
     dependencies:
       isobject: 3.0.1
@@ -43898,10 +43787,6 @@ snapshots:
   solid-use@0.9.1(solid-js@1.9.15):
     dependencies:
       solid-js: 1.9.15
-
-  sort-by@1.2.0:
-    dependencies:
-      object-path: 0.6.0
 
   source-list-map@2.0.1: {}
 

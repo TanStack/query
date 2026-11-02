@@ -12,7 +12,6 @@
   "dependencies": {
     "@tanstack/vue-query": "^5.105.1",
     "@tanstack/vue-query-devtools": "^6.3.7",
-    "font-awesome": "^4.7.0",
     "vue": "^3.5.43"
   },
   "devDependencies": {
