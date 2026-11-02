@@ -6568,6 +6568,9 @@ importers:
       '@tanstack/query-core':
         specifier: workspace:*
         version: link:../query-core
+      '@tanstack/solid-virtual':
+        specifier: ^3.13.52
+        version: 3.13.52(solid-js@1.9.15)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -13519,6 +13522,11 @@ packages:
     peerDependencies:
       solid-js: ^1.6.0
 
+  '@tanstack/solid-virtual@3.13.52':
+    resolution: {integrity: sha512-1UGzhHfOO5LPxPBK06hiWLC2fUYR0w1DsjJGiCn3BTL7F9B2xosLsozS9qpERhnNF2sn6kQJtHBsyawor20Jmw==}
+    peerDependencies:
+      solid-js: ^1.3.0
+
   '@tanstack/store@0.11.2':
     resolution: {integrity: sha512-sJ4mjol8uQsHV0gOJzzjwXfh2Fwm+Sz0+8deqiTm4jGbMdjzNSW+xZCFm0kUa870uhd8yi+DpKnZb5Kc4apa0Q==}
 
@@ -13536,6 +13544,9 @@ packages:
   '@tanstack/typedoc-config@0.3.5':
     resolution: {integrity: sha512-ssYx7Z7qY0SkDsnblPUVAQn5cZhvgohIJtmEBMA0R61XvnR/5A3bkC8cEYYV/TwAdFQ2ZfPrRxN0ea1z1tKapw==}
     engines: {node: '>=18'}
+
+  '@tanstack/virtual-core@3.19.10':
+    resolution: {integrity: sha512-/ltpH0qUCs5XQYE7fIhgA+aqgC5NzSfLTDQkC+N1wOOdvIYx1FH/kz2LGfSeanNbekqy3WBu6mNIbqXhxE/pew==}
 
   '@tanstack/virtual-file-routes@1.162.0':
     resolution: {integrity: sha512-uhOeFyxLcU41HzvrxsGpiWdcMbScY1EDgbZ5K7DVRMYInbLYWAC0EA/kx9wXAoSM8q82bUG2hRl8+EAjE6XAbA==}
@@ -32042,6 +32053,11 @@ snapshots:
       '@tanstack/store': 0.11.2
       solid-js: 1.9.15
 
+  '@tanstack/solid-virtual@3.13.52(solid-js@1.9.15)':
+    dependencies:
+      '@tanstack/virtual-core': 3.19.10
+      solid-js: 1.9.15
+
   '@tanstack/store@0.11.2': {}
 
   '@tanstack/svelte-pacer@0.2.0(svelte@5.57.1(@typescript-eslint/types@8.58.1))':
@@ -32062,6 +32078,8 @@ snapshots:
       typedoc-plugin-markdown: 4.14.0(typedoc@0.28.20(typescript@6.0.3))
     transitivePeerDependencies:
       - typescript
+
+  '@tanstack/virtual-core@3.19.10': {}
 
   '@tanstack/virtual-file-routes@1.162.0': {}
 
