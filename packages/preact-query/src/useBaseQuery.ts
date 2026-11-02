@@ -22,6 +22,7 @@ import type {
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import { useHydrationSnapshot, getServerSnapshot } from './HydrationContext'
 
 /**
  * Base implementation shared by `useQuery`, `useInfiniteQuery`, `useSuspenseQuery`, and
@@ -106,6 +107,10 @@ export function useBaseQuery<
   const result = observer.getOptimisticResult(defaultedOptions)
 
   const shouldSubscribe = !isRestoring && subscribed
+  
+  // Get the hydration snapshot for getServerSnapshot
+  const hydrationSnapshot = useHydrationSnapshot()
+  const queryHash = defaultedOptions.queryHash
   useSyncExternalStore(
     useCallback(
       (onStoreChange) => {
@@ -122,6 +127,13 @@ export function useBaseQuery<
       [observer, shouldSubscribe],
     ),
     () => observer.getCurrentResult(),
+    () => {
+      const snapshot = getServerSnapshot(hydrationSnapshot, queryHash)
+      if (snapshot) {
+        return { ...result, ...snapshot, isFetching: false }
+      }
+      return observer.getCurrentResult()
+    },
   )
 
   useEffect(() => {

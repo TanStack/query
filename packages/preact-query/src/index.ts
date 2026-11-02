@@ -38,6 +38,13 @@ export type { QueryClientProviderProps } from './QueryClientProvider'
 export type { QueryErrorResetBoundaryProps } from './QueryErrorResetBoundary'
 export { HydrationBoundary } from './HydrationBoundary'
 export type { HydrationBoundaryProps } from './HydrationBoundary'
+export {
+  HydrationSnapshotContext,
+  createSnapshotLayer,
+  getServerSnapshot,
+  useHydrationSnapshot,
+} from './HydrationContext'
+export type { HydrationSnapshotLayer } from './HydrationContext'
 export type {
   QueryErrorClearResetFunction,
   QueryErrorIsResetFunction,

@@ -11,6 +11,8 @@ import type {
   QueryClient,
 } from '@tanstack/query-core'
 
+import { createSnapshotLayer, HydrationSnapshotContext } from './HydrationContext'
+
 /**
  * The props accepted by `HydrationBoundary`.
  */
@@ -96,6 +98,8 @@ export const HydrationBoundary = ({
     optionsRef.current = options
   })
 
+  const parentSnapshot = useContext(HydrationSnapshotContext)
+
   // This useMemo is for performance reasons only, everything inside it must
   // be safe to run in every render and code here should be read as "in render".
   //
@@ -111,7 +115,7 @@ export const HydrationBoundary = ({
   // If the transition is aborted, we will have hydrated any _new_ queries, but
   // we throw away the fresh data for any existing ones to avoid unexpectedly
   // updating the UI.
-  const hydrationQueue: DehydratedState['queries'] | undefined = useMemo(() => {
+  const snapshot = useMemo(() => {
     if (state) {
       if (typeof state !== 'object') {
         return
@@ -152,17 +156,26 @@ export const HydrationBoundary = ({
         hydrate(client, { queries: newQueries }, optionsRef.current)
       }
       if (existingQueries.length > 0) {
-        return existingQueries
+        return { existingQueries, parentSnapshot }
       }
     }
     return undefined
-  }, [client, state])
+  }, [client, state, parentSnapshot])
+
+  // Create the snapshot layer for children
+  const newSnapshot = useMemo(() => {
+    return createSnapshotLayer(parentSnapshot, state, client)
+  }, [parentSnapshot, state, client])
 
   useEffect(() => {
-    if (hydrationQueue) {
-      hydrate(client, { queries: hydrationQueue }, optionsRef.current)
+    if (snapshot?.existingQueries) {
+      hydrate(client, { queries: snapshot.existingQueries }, optionsRef.current)
     }
-  }, [client, hydrationQueue])
+  }, [client, snapshot, optionsRef])
 
-  return <Fragment>{children}</Fragment>
+  return (
+    <HydrationSnapshotContext.Provider value={newSnapshot}>
+      <Fragment>{children}</Fragment>
+    </HydrationSnapshotContext.Provider>
+  )
 }

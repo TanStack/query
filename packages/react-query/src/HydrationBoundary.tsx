@@ -10,6 +10,8 @@ import type {
   QueryClient,
 } from '@tanstack/query-core'
 
+import { createSnapshotLayer, HydrationSnapshotContext } from './HydrationContext'
+
 /**
  * The props accepted by `HydrationBoundary`.
  */
@@ -95,6 +97,8 @@ export const HydrationBoundary = ({
     optionsRef.current = options
   })
 
+  const parentSnapshot = React.useContext(HydrationSnapshotContext)
+
   // This useMemo is for performance reasons only, everything inside it must
   // be safe to run in every render and code here should be read as "in render".
   //
@@ -110,61 +114,68 @@ export const HydrationBoundary = ({
   // If the transition is aborted, we will have hydrated any _new_ queries, but
   // we throw away the fresh data for any existing ones to avoid unexpectedly
   // updating the UI.
-  const hydrationQueue: DehydratedState['queries'] | undefined =
-    React.useMemo(() => {
-      if (state) {
-        if (typeof state !== 'object') {
-          return
-        }
+  const snapshot = React.useMemo(() => {
+    if (state) {
+      if (typeof state !== 'object') {
+        return
+      }
 
-        const queryCache = client.getQueryCache()
-        // State is supplied from the outside and we might as well fail
-        // gracefully if it has the wrong shape, so while we type `queries`
-        // as required, we still provide a fallback.
-        // oxlint-disable-next-line typescript/no-unnecessary-condition
-        const queries = state.queries || []
+      const queryCache = client.getQueryCache()
+      // State is supplied from the outside and we might as well fail
+      // gracefully if it has the wrong shape, so while we type `queries`
+      // as required, we still provide a fallback.
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
+      const queries = state.queries || []
 
-        const newQueries: DehydratedState['queries'] = []
-        const existingQueries: DehydratedState['queries'] = []
-        for (const dehydratedQuery of queries) {
-          const existingQuery = queryCache.get(dehydratedQuery.queryHash)
+      const newQueries: DehydratedState['queries'] = []
+      const existingQueries: DehydratedState['queries'] = []
+      for (const dehydratedQuery of queries) {
+        const existingQuery = queryCache.get(dehydratedQuery.queryHash)
 
-          if (!existingQuery) {
-            newQueries.push(dehydratedQuery)
-          } else {
-            const hydrationIsNewer =
-              dehydratedQuery.state.dataUpdatedAt >
-                existingQuery.state.dataUpdatedAt ||
-              (dehydratedQuery.promise &&
-                existingQuery.state.status !== 'pending' &&
-                existingQuery.state.fetchStatus !== 'fetching' &&
-                dehydratedQuery.dehydratedAt >
-                  existingQuery.state.dataUpdatedAt)
+        if (!existingQuery) {
+          newQueries.push(dehydratedQuery)
+        } else {
+          const hydrationIsNewer =
+            dehydratedQuery.state.dataUpdatedAt >
+              existingQuery.state.dataUpdatedAt ||
+            (dehydratedQuery.promise &&
+              existingQuery.state.status !== 'pending' &&
+              existingQuery.state.fetchStatus !== 'fetching' &&
+              dehydratedQuery.dehydratedAt > existingQuery.state.dataUpdatedAt)
 
-            if (hydrationIsNewer) {
-              existingQueries.push(dehydratedQuery)
-            }
+          if (hydrationIsNewer) {
+            existingQueries.push(dehydratedQuery)
           }
         }
-
-        if (newQueries.length > 0) {
-          // It's actually fine to call this with queries/state that already exists
-          // in the cache, or is older. hydrate() is idempotent for queries.
-          // oxlint-disable-next-line react-hooks-js/refs -- new queries are hydrated during render on purpose, and 'options' is read through a ref so that a new 'options' object does not rerun this memo
-          hydrate(client, { queries: newQueries }, optionsRef.current)
-        }
-        if (existingQueries.length > 0) {
-          return existingQueries
-        }
       }
-      return undefined
-    }, [client, state])
+
+      if (newQueries.length > 0) {
+        // It's actually fine to call this with queries/state that already exists
+        // in the cache, or is older. hydrate() is idempotent for queries.
+        // oxlint-disable-next-line react-hooks-js/refs -- new queries are hydrated during render on purpose, and 'options' is read through a ref so that a new 'options' object does not rerun this memo
+        hydrate(client, { queries: newQueries }, optionsRef.current)
+      }
+      if (existingQueries.length > 0) {
+        return { existingQueries, parentSnapshot }
+      }
+    }
+    return undefined
+  }, [client, state, parentSnapshot])
+
+  // Create the snapshot layer for children
+  const newSnapshot = React.useMemo(() => {
+    return createSnapshotLayer(parentSnapshot, state, client)
+  }, [parentSnapshot, state, client])
 
   React.useEffect(() => {
-    if (hydrationQueue) {
-      hydrate(client, { queries: hydrationQueue }, optionsRef.current)
+    if (snapshot?.existingQueries) {
+      hydrate(client, { queries: snapshot.existingQueries }, optionsRef.current)
     }
-  }, [client, hydrationQueue])
+  }, [client, snapshot, optionsRef])
 
-  return children as React.ReactElement
+  return (
+    <HydrationSnapshotContext.Provider value={newSnapshot}>
+      {children as React.ReactElement}
+    </HydrationSnapshotContext.Provider>
+  )
 }
