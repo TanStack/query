@@ -129,7 +129,8 @@ export type InferQueryHandleData<
     : never
 
 /**
- * How a handle API last started a query, for the devtools to show.
+ * How a handle API last started a query, for the devtools to show. Core only records it in
+ * development.
  */
 export interface QueryStartInfo {
   /**
@@ -198,6 +199,7 @@ function watchObservers(queryCache: QueryCache): void {
 
 /**
  * Records how a query started, for the devtools. A query that an observer has read stays read.
+ * Only call it in development.
  * @internal
  * @param queryCache - The cache the query belongs to.
  * @param query - The query that started.
@@ -221,10 +223,10 @@ export function recordQueryStart(
 /**
  * Returns how a handle API started a query: the last `experimental_prefetchHandle`,
  * `experimental_ensureHandle` or `experimental_fetchHandle` call, or the first fetch by a reader of
- * an `experimental_waterfallHandle` handle. In development, a query that `hydrate` restores from a
- * server render keeps the server's record.
+ * an `experimental_waterfallHandle` handle. A query that `hydrate` restores from a server render
+ * keeps the server's record. Core only records start info in development.
  * @param query - The query to look up.
- * @returns The start info, or `undefined` for queries that other APIs started.
+ * @returns The start info, or `undefined` in production and for queries that other APIs started.
  */
 export function experimental_getQueryStartInfo(
   query: Query<any, any, any, any>,
@@ -242,7 +244,9 @@ const waterfallHandles = new WeakSet<object>()
  * @returns The handle.
  */
 function markWaterfall<THandle extends object>(handle: THandle): THandle {
-  waterfallHandles.add(handle)
+  if (process.env.NODE_ENV !== 'production') {
+    waterfallHandles.add(handle)
+  }
   return handle
 }
 
@@ -288,7 +292,7 @@ function isInfiniteOptions(options: QueryFactoryOptions): boolean {
 }
 
 /**
- * Starts a factory's query without waiting, and records the start for the devtools.
+ * Starts a factory's query without waiting. In development, it records the start for the devtools.
  * @param client - The client to start the query on.
  * @param options - Options a query factory returned.
  * @param verb - The API that starts it.
@@ -302,10 +306,12 @@ function startQueryFromFactory(
   const promise: Promise<unknown> = isInfiniteOptions(options)
     ? client.infiniteQuery(options as never)
     : client.query(options)
-  const queryCache = client.getQueryCache()
-  const query = getQuery(client, options)
+  const query =
+    process.env.NODE_ENV !== 'production'
+      ? getQuery(client, options)
+      : undefined
   if (query) {
-    recordQueryStart(queryCache, query, {
+    recordQueryStart(client.getQueryCache(), query, {
       verb,
       environment: environmentManager.isServer() ? 'server' : 'client',
       startedAt: Date.now(),
@@ -531,8 +537,9 @@ export function experimental_fromHandle<TFactory extends QueryHandleFactory>(
   factory: TFactory,
   handle: QueryHandle<NoInfer<TFactory>>,
 ): FromHandleOptions<TFactory> {
-  const options = waterfallHandles.has(handle)
-    ? recordWaterfallStart(factory(handle.input))
-    : factory(handle.input)
+  const options =
+    process.env.NODE_ENV !== 'production' && waterfallHandles.has(handle)
+      ? recordWaterfallStart(factory(handle.input))
+      : factory(handle.input)
   return options as FromHandleOptions<TFactory>
 }

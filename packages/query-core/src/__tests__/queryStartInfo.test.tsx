@@ -32,6 +32,15 @@ const serverEnvironment = (): Disposable => {
   }
 }
 
+const productionEnvironment = (): Disposable => {
+  vi.stubEnv('NODE_ENV', 'production')
+  return {
+    [Symbol.dispose]: () => {
+      vi.unstubAllEnvs()
+    },
+  }
+}
+
 const getQuery = (
   queryClient: QueryClient,
   queryKey: ReadonlyArray<unknown>,
@@ -180,6 +189,49 @@ describe('query start info', () => {
     expect(
       experimental_getQueryStartInfo(getQuery(queryClient, handle.queryKey)),
     ).toMatchObject({ verb: 'prefetchHandle' })
+  })
+
+  it('should not record anything in production', async () => {
+    using _timers = fakeTimers()
+    using _production = productionEnvironment()
+    using queryClient = clearOnDispose(new QueryClient())
+    const key = createKey()
+    const queryFn = () => sleep(10).then(() => 'data')
+    const postQuery = (input: { id: string }) => ({
+      queryKey: [...key, input.id],
+      queryFn,
+    })
+
+    const prefetched = experimental_prefetchHandle(queryClient, postQuery, {
+      id: '1',
+    })
+    const waterfall = experimental_waterfallHandle(postQuery, { id: '2' })
+    const options = experimental_fromHandle(postQuery, waterfall)
+    using _subscription = subscribe(
+      new QueryObserver(queryClient, options),
+      noop,
+    )
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(options.queryFn).toBe(queryFn)
+    expect(
+      experimental_getQueryStartInfo(
+        getQuery(queryClient, prefetched.queryKey),
+      ),
+    ).toBeUndefined()
+    expect(
+      experimental_getQueryStartInfo(getQuery(queryClient, waterfall.queryKey)),
+    ).toBeUndefined()
+  })
+
+  it('should not watch the cache in production', () => {
+    using _timers = fakeTimers()
+    using _production = productionEnvironment()
+    using queryClient = clearOnDispose(new QueryClient())
+
+    experimental_prefetchHandle(queryClient, createPostQuery(), { id: '1' })
+
+    expect(queryClient.getQueryCache().hasListeners()).toBe(false)
   })
 
   it('should not record queries that other APIs start', async () => {
