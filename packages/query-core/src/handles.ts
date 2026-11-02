@@ -33,6 +33,18 @@ export type QueryHandleInput<TFactory extends QueryHandleFactory> =
   Parameters<TFactory> extends [] ? undefined : Parameters<TFactory>[0]
 
 /**
+ * The arguments the handle functions take after the factory: its input, if it takes one. A
+ * factory's other parameters are left out, because a handle only carries the input, so
+ * `experimental_fromHandle` couldn't pass them on.
+ */
+type QueryHandleArgs<TFactory extends QueryHandleFactory> =
+  Parameters<TFactory> extends []
+    ? []
+    : Parameters<TFactory> extends [infer TInput, ...Array<any>]
+      ? [input: TInput]
+      : [input?: Parameters<TFactory>[0]]
+
+/**
  * The data type of a factory's query, from the tag on its `queryKey`. For an infinite query
  * factory, this is the `InfiniteData` of its pages, with the type of its `initialPageParam`.
  */
@@ -52,14 +64,24 @@ export type QueryHandleData<TFactory extends QueryHandleFactory> =
 export type QueryHandleError<TFactory extends QueryHandleFactory> =
   InferErrorFromTag<DefaultError, ReturnType<TFactory>['queryKey']>
 
-type PlainQueryKey<
+type PlainTuple<
   TQueryKey extends ReadonlyArray<unknown>,
-  TItems extends Array<unknown> = [],
-> = number extends TQueryKey['length']
-  ? ReadonlyArray<TQueryKey[number]>
-  : TItems['length'] extends TQueryKey['length']
-    ? Readonly<TItems>
-    : PlainQueryKey<TQueryKey, [...TItems, TQueryKey[TItems['length']]]>
+  TRequired extends Array<unknown> = [],
+  TOptional extends Array<unknown> = [],
+> = [...TRequired, ...TOptional]['length'] extends TQueryKey['length']
+  ? [...TRequired, ...TOptional, unknown]['length'] extends TQueryKey['length']
+    ? PlainTuple<
+        TQueryKey,
+        TRequired,
+        [...TOptional, TQueryKey[[...TRequired, ...TOptional]['length']]]
+      >
+    : [...TRequired, ...Partial<TOptional>]
+  : PlainTuple<TQueryKey, [...TRequired, TQueryKey[TRequired['length']]]>
+
+type PlainQueryKey<TQueryKey extends ReadonlyArray<unknown>> =
+  number extends TQueryKey['length']
+    ? ReadonlyArray<TQueryKey[number]>
+    : Readonly<PlainTuple<TQueryKey>>
 
 /**
  * The `queryKey` of a factory's query as a plain readonly tuple, without the data tag that
@@ -198,8 +220,8 @@ function withData(
 /**
  * Starts a query without waiting and returns a serializable handle for it. A route loader, server
  * component or server render passes the handle to the component that reads the query. Like
- * `queryClient.query`, it fetches only if the cache has no fresh data. It never throws: errors
- * show up where a component reads the handle.
+ * `queryClient.query`, it fetches only if the cache has no fresh data. It doesn't reject: fetch
+ * errors show up where a component reads the handle.
  * @param queryClient - The client to start the query on.
  * @param factory - The query factory, a function of the query's input that returns its options.
  * @param input - The input to pass to the factory, if it takes one.
@@ -221,7 +243,7 @@ export function experimental_prefetchHandle<
 >(
   queryClient: QueryClient,
   factory: TFactory,
-  ...input: Parameters<TFactory>
+  ...input: QueryHandleArgs<TFactory>
 ): QueryHandle<TFactory> {
   const options = factory(...input)
   void startQueryFromFactory(queryClient, options).catch(noop)
@@ -247,7 +269,7 @@ export async function experimental_ensureHandle<
 >(
   queryClient: QueryClient,
   factory: TFactory,
-  ...input: Parameters<TFactory>
+  ...input: QueryHandleArgs<TFactory>
 ): Promise<QueryHandleWithData<TFactory>> {
   const options = factory(...input)
   const promise = startQueryFromFactory(queryClient, options)
@@ -281,7 +303,7 @@ export async function experimental_fetchHandle<
 >(
   queryClient: QueryClient,
   factory: TFactory,
-  ...input: Parameters<TFactory>
+  ...input: QueryHandleArgs<TFactory>
 ): Promise<QueryHandleWithData<TFactory>> {
   const options = factory(...input)
   await startQueryFromFactory(queryClient, options)
@@ -310,7 +332,7 @@ export async function experimental_fetchHandle<
  */
 export function experimental_waterfallHandle<
   TFactory extends QueryHandleFactory,
->(factory: TFactory, ...input: Parameters<TFactory>): QueryHandle<TFactory>
+>(factory: TFactory, ...input: QueryHandleArgs<TFactory>): QueryHandle<TFactory>
 /**
  * Switches a handle, like one a loader passed down, to a new input, like the next page, and
  * returns the handle for that input. It doesn't start the query: the component that reads the
@@ -318,7 +340,8 @@ export function experimental_waterfallHandle<
  * to the loader through the URL.
  *
  * While the new input maps to the handle's own query, it returns the handle as is, so the first
- * page reads what the loader started.
+ * page reads what the loader started. That also keeps the old input when only fields outside the
+ * key change, so put everything the `queryFn` reads in the key.
  * @param factory - The factory that started the handle's query.
  * @param handle - The handle to switch from.
  * @param switchInput - Returns the new input, given the handle's input.

@@ -64,6 +64,88 @@ describe('query handles', () => {
       )
     })
 
+    it("should not take a factory's other parameters, which the handle can't carry", async () => {
+      const optionsQuery = (
+        input: { id: string },
+        opts?: { staleTime?: number },
+      ) =>
+        queryOptions({
+          queryKey: ['post', input.id] as const,
+          queryFn: () => Promise.resolve(input.id),
+          staleTime: opts?.staleTime,
+        })
+
+      assertType(
+        experimental_prefetchHandle(queryClient, optionsQuery, { id: '1' }),
+      )
+      assertType(
+        experimental_prefetchHandle(
+          queryClient,
+          optionsQuery,
+          { id: '1' },
+          // @ts-expect-error the handle only carries the input
+          { staleTime: 60_000 },
+        ),
+      )
+      assertType(
+        await experimental_ensureHandle(
+          queryClient,
+          optionsQuery,
+          { id: '1' },
+          // @ts-expect-error the handle only carries the input
+          { staleTime: 60_000 },
+        ),
+      )
+      assertType(
+        await experimental_fetchHandle(
+          queryClient,
+          optionsQuery,
+          { id: '1' },
+          // @ts-expect-error the handle only carries the input
+          { staleTime: 60_000 },
+        ),
+      )
+      const opts = { staleTime: 60_000 }
+      // @ts-expect-error the handle only carries the input
+      assertType(experimental_waterfallHandle(optionsQuery, { id: '1' }, opts))
+    })
+
+    it('should take an optional input', () => {
+      const listQuery = (input?: { page: number }) =>
+        queryOptions({
+          queryKey: ['list', input?.page ?? 1] as const,
+          queryFn: () => Promise.resolve([input?.page ?? 1]),
+        })
+
+      assertType(experimental_prefetchHandle(queryClient, listQuery))
+      const handle = experimental_prefetchHandle(queryClient, listQuery, {
+        page: 2,
+      })
+
+      expectTypeOf(handle.input).toEqualTypeOf<{ page: number } | undefined>()
+    })
+
+    it('should keep optional key elements and drop the data tag', () => {
+      const pageQuery = (input: { id: string; page?: number }) =>
+        queryOptions({
+          queryKey: (input.page === undefined
+            ? ['page', input.id]
+            : ['page', input.id, input.page]) as readonly [
+            string,
+            string,
+            number?,
+          ],
+          queryFn: () => Promise.resolve(input.id),
+        })
+      const handle = experimental_prefetchHandle(queryClient, pageQuery, {
+        id: '1',
+      })
+
+      expectTypeOf(handle.queryKey).toEqualTypeOf<
+        readonly [string, string, (number | undefined)?]
+      >()
+    })
+
     it('should return a plain handle with the key and input', () => {
       const handle = experimental_prefetchHandle(queryClient, postQuery, {
         id: '1',

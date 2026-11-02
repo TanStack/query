@@ -8,12 +8,24 @@ import {
 import {
   QueryClient,
   QueryObserver,
+  environmentManager,
   experimental_ensureHandle,
   experimental_fetchHandle,
   experimental_fromHandle,
   experimental_prefetchHandle,
   experimental_waterfallHandle,
 } from '..'
+
+const isServer = environmentManager.isServer()
+
+const serverEnvironment = (): Disposable => {
+  environmentManager.setIsServer(() => true)
+  return {
+    [Symbol.dispose]: () => {
+      environmentManager.setIsServer(() => isServer)
+    },
+  }
+}
 
 describe('query handles', () => {
   const createPostQuery = (
@@ -243,6 +255,85 @@ describe('query handles', () => {
       await expect(
         experimental_fetchHandle(queryClient, postQuery, { id: '1' }),
       ).rejects.toThrow('no')
+    })
+
+    it('should load the pages an infinite factory asks for', async () => {
+      using _timers = fakeTimers()
+      using queryClient = clearOnDispose(new QueryClient())
+      const key = createKey()
+      const feedQuery = (input: { pages: number }) => ({
+        queryKey: key,
+        queryFn: ({ pageParam }: { pageParam: number }) => pageParam * 10,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage: number) => lastPage / 10 + 1,
+        pages: input.pages,
+      })
+      queryClient.setQueryData(key, { pages: [10], pageParams: [1] })
+
+      const handle = await experimental_fetchHandle(queryClient, feedQuery, {
+        pages: 2,
+      })
+
+      expect(handle.data).toStrictEqual({
+        pages: [10, 20],
+        pageParams: [1, 2],
+      })
+    })
+  })
+
+  describe('on a server client', () => {
+    it('should follow staleTime as a browser client does', async () => {
+      using _timers = fakeTimers()
+      using _server = serverEnvironment()
+      using queryClient = clearOnDispose(new QueryClient())
+      const queryFn = vi.fn<(id: string) => Promise<string>>((id) =>
+        sleep(10).then(() => id),
+      )
+      const postQuery = createPostQuery(queryFn)
+
+      experimental_prefetchHandle(queryClient, postQuery, { id: '1' })
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      // staleTime defaults to 0, so the data is already stale
+      const ensured = await experimental_ensureHandle(queryClient, postQuery, {
+        id: '1',
+      })
+      expect(ensured.data).toBe('1')
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      await vi.advanceTimersByTimeAsync(10)
+
+      const fetched = experimental_fetchHandle(queryClient, postQuery, {
+        id: '1',
+      })
+      expect(queryFn).toHaveBeenCalledTimes(3)
+      await vi.advanceTimersByTimeAsync(10)
+      await expect(fetched).resolves.toMatchObject({ data: '1' })
+    })
+
+    it('should not refetch data that is fresh by staleTime', async () => {
+      using _timers = fakeTimers()
+      using _server = serverEnvironment()
+      using queryClient = clearOnDispose(
+        new QueryClient({
+          defaultOptions: { queries: { staleTime: 60 * 1000 } },
+        }),
+      )
+      const queryFn = vi.fn<(id: string) => Promise<string>>((id) =>
+        sleep(10).then(() => id),
+      )
+      const postQuery = createPostQuery(queryFn)
+
+      const first = experimental_fetchHandle(queryClient, postQuery, {
+        id: '1',
+      })
+      await vi.advanceTimersByTimeAsync(10)
+      await first
+      experimental_prefetchHandle(queryClient, postQuery, { id: '1' })
+      await experimental_ensureHandle(queryClient, postQuery, { id: '1' })
+      await experimental_fetchHandle(queryClient, postQuery, { id: '1' })
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
     })
   })
 

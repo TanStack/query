@@ -5,7 +5,7 @@ title: Query Handles (experimental)
 
 > These APIs are experimental. Their names start with `experimental_`, and they can change in a minor release.
 
-A route loader or Server Component knows which data a page needs before the page renders. Query handles let it start those queries early and pass small references to the components that read them, so the components don't repeat the query's options and don't start requests of their own.
+A route loader or Server Component knows which data a page needs before the page renders. Query handles let it start those queries early and pass small references to the components that read them, so the components don't repeat the query's options.
 
 A handle is a plain object with the query's key and its input. It is serializable, so a loader or Server Component can return it.
 
@@ -48,7 +48,7 @@ Three functions start a query and return its handle. They take the `QueryClient`
 
 All three use the query's `staleTime` like `queryClient.query`: they start a fetch only when the cache has no fresh data, and `experimental_ensureHandle` refetches stale data in the background.
 
-`experimental_prefetchHandle` never throws: errors show up where a component reads the handle. The other two reject when the query fails without data, so a loader can redirect or show an error page.
+`experimental_prefetchHandle` doesn't wait and doesn't reject: fetch errors show up where a component reads the handle. The other two reject when the query fails without data, so a loader can redirect or show an error page.
 
 [//]: # 'Loader'
 
@@ -103,6 +103,8 @@ The factory types `select`'s argument, as with any `queryOptions` result. Keep o
 
 Handles from `experimental_ensureHandle` and `experimental_fetchHandle` carry the data they waited for, and `experimental_fromHandle` passes it on as `initialData` with its `initialDataUpdatedAt`. `useQuery` then always has data, even in a client that never saw the loader's cache, and types its `data` as defined. Data already in the cache wins over the handle's data. For a handle from `experimental_prefetchHandle`, `useQuery` data stays possibly `undefined`.
 
+If the page sends its loader data and dehydrated state as plain JSON, or `serializeData` copies the data, an awaited handle's data goes out twice: once in the handle and once in the dehydrated state.
+
 ## Waterfalls: `experimental_waterfallHandle`
 
 Sometimes you only know the input during render, like a search term or a page a user clicks to. `experimental_waterfallHandle` builds the handle for such an input. It doesn't start the query: the component that reads the handle does, when it renders. That makes it a [request waterfall](./request-waterfalls.md), and the name keeps that visible. It is a plain function, not a hook, so you can call it anywhere.
@@ -146,21 +148,23 @@ function Posts(props: { posts: experimental_QueryHandle<typeof postsQuery> }) {
 
 [//]: # 'WaterfallSwitch'
 
-While the switched input maps to the handle's own query, it returns that handle as is, so the first page reads what the loader started. Prefer putting such inputs in the URL so the loader can start them, and use `experimental_waterfallHandle` when that isn't practical.
+While the switched input maps to the handle's own query, it returns that handle as is, so the first page reads what the loader started. That also keeps the old input when only fields outside the key change, so put everything the `queryFn` reads in the key. Prefer putting such inputs in the URL so the loader can start them, and use `experimental_waterfallHandle` when that isn't practical.
 
 The query starts when its reader renders, like any other `useQuery` or `useSuspenseQuery`. `useQuery` doesn't fetch during a server render, while `useSuspenseQuery` does.
 
 ## Server rendering
 
-Handles work with the [hydration APIs](./advanced-ssr.md) like any other query.
+Queries you start with handles work with the [hydration APIs](./advanced-ssr.md) like any other query.
 
 ### Streaming pending queries
 
-`dehydrate` only includes successful queries by default. To stream a query that `experimental_prefetchHandle` started and that is still pending, opt in through `shouldDehydrateQuery`:
+`dehydrate` only includes successful queries by default. To stream a query that `experimental_prefetchHandle` started and that is still pending, opt in through `shouldDehydrateQuery`. A pending query dehydrates to a promise, so the page needs a transport that can send promises, like React Server Components, TanStack Start or React Router:
 
 [//]: # 'DehydratePending'
 
 ```tsx
+import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query'
+
 const queryClient = new QueryClient({
   defaultOptions: {
     dehydrate: {
