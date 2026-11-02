@@ -15,8 +15,19 @@ import type {
 } from './contexts/types'
 import type { Signal } from 'solid-js'
 
+/**
+ * The options for `TanstackQueryDevtools`, which mounts the floating devtools.
+ */
 export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {
+  /**
+   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if
+   * you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   */
   styleNonce?: string
+  /**
+   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
+   * within the shadow DOM instead of within the head tag in the light DOM.
+   */
   shadowDOMTarget?: ShadowRoot
 }
 

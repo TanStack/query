@@ -1,8 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { CancelledError, InfiniteQueryObserver, QueryClient } from '..'
 import { infiniteQueryBehavior } from '../infiniteQueryBehavior'
-import type { InfiniteData, InfiniteQueryObserverResult, QueryCache } from '..'
+import type {
+  InfiniteData,
+  InfiniteQueryObserverResult,
+  QueryCache,
+  QueryFunction,
+  QueryKey,
+} from '..'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
@@ -56,7 +62,7 @@ describe('InfiniteQueryBehavior', () => {
   )
 
   it('should throw an error if the queryFn is not defined', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
@@ -72,7 +78,6 @@ describe('InfiniteQueryBehavior', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-
     await vi.advanceTimersByTimeAsync(0)
     const query = queryCache.find({ queryKey: key })!
     expect(observerResult).toMatchObject({
@@ -84,15 +89,17 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   it('should apply the maxPages option to limit the number of pages', async () => {
-    const key = queryKey()
+    const key = createKey()
     let abortSignal: AbortSignal | null = null
 
-    const queryFnSpy = vi.fn().mockImplementation(({ pageParam, signal }) => {
-      abortSignal = signal
-      return pageParam
-    })
+    const queryFnSpy = vi
+      .fn<QueryFunction<number, QueryKey, number>>()
+      .mockImplementation(({ pageParam, signal }) => {
+        abortSignal = signal
+        return pageParam
+      })
 
-    const observer = new InfiniteQueryObserver<number>(queryClient, {
+    const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: queryFnSpy,
       getNextPageParam: (lastPage) => lastPage + 1,
@@ -116,7 +123,7 @@ describe('InfiniteQueryBehavior', () => {
       data: { pages: [1], pageParams: [1] },
     })
 
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 1,
@@ -129,8 +136,7 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the second page
     await observer.fetchNextPage()
-
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 2,
@@ -148,8 +154,7 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the page before the first page
     await observer.fetchPreviousPage()
-
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 0,
@@ -168,8 +173,7 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the page before
     await observer.fetchPreviousPage()
-
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: -1,
@@ -187,8 +191,7 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the page after
     await observer.fetchNextPage()
-
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 1,
@@ -210,7 +213,7 @@ describe('InfiniteQueryBehavior', () => {
     // Only 2 pages should refetch
     expect(queryFnSpy).toHaveBeenCalledTimes(2)
 
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 0,
@@ -219,7 +222,7 @@ describe('InfiniteQueryBehavior', () => {
       signal: abortSignal,
     })
 
-    expect(queryFnSpy).toHaveBeenNthCalledWith(2, {
+    expect(queryFnSpy.mock.calls[1]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 1,
@@ -232,16 +235,18 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   it('should support query cancellation', async () => {
-    const key = queryKey()
+    const key = createKey()
     let abortSignal: AbortSignal | null = null
 
-    const queryFnSpy = vi.fn().mockImplementation(({ pageParam, signal }) => {
-      abortSignal = signal
-      sleep(10)
-      return pageParam
-    })
+    const queryFnSpy = vi
+      .fn<QueryFunction<number, QueryKey, number>>()
+      .mockImplementation(({ pageParam, signal }) => {
+        abortSignal = signal
+        sleep(10)
+        return pageParam
+      })
 
-    const observer = new InfiniteQueryObserver<number>(queryClient, {
+    const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: queryFnSpy,
       getNextPageParam: (lastPage) => lastPage + 1,
@@ -271,7 +276,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenCalledTimes(1)
 
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 1,
@@ -284,15 +289,17 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   it('should not refetch pages if the query is cancelled', async () => {
-    const key = queryKey()
+    const key = createKey()
     let abortSignal: AbortSignal | null = null
 
-    let queryFnSpy = vi.fn().mockImplementation(({ pageParam, signal }) => {
-      abortSignal = signal
-      return pageParam
-    })
+    let queryFnSpy = vi
+      .fn<QueryFunction<number, QueryKey, number>>()
+      .mockImplementation(({ pageParam, signal }) => {
+        abortSignal = signal
+        return pageParam
+      })
 
-    const observer = new InfiniteQueryObserver<number>(queryClient, {
+    const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: queryFnSpy,
       getNextPageParam: (lastPage) => lastPage + 1,
@@ -319,7 +326,6 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the second page
     await observer.fetchNextPage()
-
     expect(observerResult).toMatchObject({
       isFetching: false,
       data: { pages: [1, 2], pageParams: [1, 2] },
@@ -327,7 +333,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenCalledTimes(1)
 
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 2,
@@ -336,11 +342,13 @@ describe('InfiniteQueryBehavior', () => {
       signal: abortSignal,
     })
 
-    queryFnSpy = vi.fn().mockImplementation(({ pageParam = 1, signal }) => {
-      abortSignal = signal
-      sleep(10)
-      return pageParam
-    })
+    queryFnSpy = vi
+      .fn<QueryFunction<number, QueryKey, number>>()
+      .mockImplementation(({ pageParam = 1, signal }) => {
+        abortSignal = signal
+        sleep(10)
+        return pageParam
+      })
 
     // Refetch the query
     observer.refetch()
@@ -352,9 +360,7 @@ describe('InfiniteQueryBehavior', () => {
     // Cancel the query
     const query = observer.getCurrentQuery()
     await query.cancel()
-
     vi.advanceTimersByTime(10)
-
     expect(observerResult).toMatchObject({
       isFetching: false,
       isError: true,
@@ -369,17 +375,19 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   it('should surface the abort reason when cancellation happens between refetched pages', async () => {
-    const key = queryKey()
+    const key = createKey()
     const abortController = new AbortController()
-    const queryFn = vi.fn().mockImplementation(({ pageParam, signal }) => {
-      void signal.aborted
+    const queryFn = vi
+      .fn<QueryFunction<number, QueryKey, number>>()
+      .mockImplementation(({ pageParam, signal }) => {
+        void signal.aborted
 
-      if (pageParam === 1) {
-        abortController.abort()
-      }
+        if (pageParam === 1) {
+          abortController.abort()
+        }
 
-      return pageParam
-    })
+        return pageParam
+      })
 
     const behavior = infiniteQueryBehavior<number, Error, number, number>()
     const context = {
@@ -410,7 +418,7 @@ describe('InfiniteQueryBehavior', () => {
 
   it('should not enter an infinite loop when a page errors while retry is on #8046', async () => {
     let errorCount = 0
-    const key = queryKey()
+    const key = createKey()
 
     interface TestResponse {
       data: Array<{ id: string }>
@@ -457,19 +465,19 @@ describe('InfiniteQueryBehavior', () => {
     const fetchPage1Promise = observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     const page1Data = await fetchPage1Promise
-    expect(page1Data.data?.pageParams).toEqual([1])
+    expect(page1Data.data?.pageParams).toStrictEqual([1])
 
     // Fetch Page 2, as per the queryFn, this will reject 2 times then resolves
     const fetchPage2Promise = observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(70)
     const page2Data = await fetchPage2Promise
-    expect(page2Data.data?.pageParams).toEqual([1, 2])
+    expect(page2Data.data?.pageParams).toStrictEqual([1, 2])
 
     // Fetch Page 3
     const fetchPage3Promise = observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     const page3Data = await fetchPage3Promise
-    expect(page3Data.data?.pageParams).toEqual([1, 2, 3])
+    expect(page3Data.data?.pageParams).toStrictEqual([1, 2, 3])
 
     // Now the real deal; re-fetching this query **should not** stamp into an
     // infinite loop where the retryer every time restarts from page 1
@@ -479,11 +487,11 @@ describe('InfiniteQueryBehavior', () => {
     const reFetchPromise = observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     const reFetchedData = await reFetchPromise
-    expect(reFetchedData.data?.pageParams).toEqual([1, 2, 3])
+    expect(reFetchedData.data?.pageParams).toStrictEqual([1, 2, 3])
   })
 
   it('should fetch even if initialPageParam is null', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
@@ -499,7 +507,6 @@ describe('InfiniteQueryBehavior', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-
     await vi.advanceTimersByTimeAsync(0)
     expect(observerResult).toMatchObject({
       isFetching: false,
@@ -509,8 +516,32 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
+  it('should preserve a null first page parameter when refetching', async () => {
+    const key = createKey()
+    const pageParams: Array<unknown> = []
+    const queryFn = ({ pageParam }: { pageParam: unknown }) => {
+      pageParams.push(pageParam)
+      return String(pageParam)
+    }
+
+    await queryClient.infiniteQuery({
+      queryKey: key,
+      queryFn,
+      initialPageParam: null,
+      getNextPageParam: () => undefined,
+    })
+    await queryClient.infiniteQuery({
+      queryKey: key,
+      queryFn,
+      initialPageParam: 'replacement',
+      getNextPageParam: () => undefined,
+    })
+
+    expect(pageParams).toStrictEqual([null, null])
+  })
+
   it('should not fetch next page when getNextPageParam returns null', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
@@ -526,7 +557,6 @@ describe('InfiniteQueryBehavior', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-
     await vi.advanceTimersByTimeAsync(0)
     expect(observerResult).toMatchObject({
       isFetching: false,
@@ -534,7 +564,6 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     await observer.fetchNextPage()
-
     expect(observerResult).toMatchObject({
       isFetching: false,
       data: { pages: [1], pageParams: [1] },
@@ -544,8 +573,9 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   it('should use persister when provided', async () => {
-    const key = queryKey()
+    const key = createKey()
 
+    // oxlint-disable-next-line vitest/require-mock-type-parameters -- the persister receives an argument-less fetch function at runtime, which 'QueryPersister' cannot express
     const persisterSpy = vi.fn().mockImplementation(async (fn) => {
       return await fn()
     })
@@ -559,7 +589,6 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     const unsubscribe = observer.subscribe(() => {})
-
     await vi.advanceTimersByTimeAsync(0)
     expect(persisterSpy).toHaveBeenCalledTimes(1)
 

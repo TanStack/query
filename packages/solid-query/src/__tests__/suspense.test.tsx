@@ -8,7 +8,7 @@ import {
   createSignal,
   on,
 } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useInfiniteQuery, useQuery } from '..'
 import { renderWithClient } from './utils'
 import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'
@@ -29,7 +29,7 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should render the correct amount of times in Suspense mode', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseQueryResult<number>> = []
 
     let count = 0
@@ -55,7 +55,10 @@ describe("useQuery's in Suspense mode", () => {
 
       return (
         <div>
-          <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+          <button
+            aria-label="toggle"
+            onClick={() => setStateKey(createKey())}
+          />
           data: {String(state.data)}
         </div>
       )
@@ -77,13 +80,13 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
     expect(renders).toBe(4)
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     expect(states[1]).toMatchObject({ data: 1, status: 'success' })
     expect(states[3]).toMatchObject({ data: 2, status: 'success' })
   })
 
   it('should return the correct states for a successful infinite query', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
@@ -118,10 +121,8 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
-    // eslint-disable-next-line cspell/spellchecker
-    // TODO(lukemurray): in react this is 1 in solid this is 2 because suspense
-    // occurs on read.
-    expect(states.length).toBe(2)
+    // In react this is 1, but in solid it is 2 because suspense occurs on read.
+    expect(states).toHaveLength(2)
     expect(states[1]).toMatchObject({
       data: { pages: [1], pageParams: [1] },
       status: 'success',
@@ -131,9 +132,8 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
-    // eslint-disable-next-line cspell/spellchecker
-    // TODO(lukemurray): in react this is 2 and in solid it is 4
-    expect(states.length).toBe(4)
+    // In react this is 2, but in solid it is 4 because suspense occurs on read.
+    expect(states).toHaveLength(4)
     expect(states[3]).toMatchObject({
       data: { pages: [2], pageParams: [1] },
       status: 'success',
@@ -141,9 +141,11 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should not call the queryFn twice when used in Suspense mode', async () => {
-    const key = queryKey()
+    const key = createKey()
 
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       useQuery(() => ({
@@ -163,12 +165,11 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(rendered.getByText('rendered')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(20)
-
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should remove query instance when component unmounted', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useQuery(() => ({
@@ -212,7 +213,7 @@ describe("useQuery's in Suspense mode", () => {
 
   // https://github.com/tannerlinsley/react-query/issues/468
   it('should reset error state if new component instances are mounted', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     let succeed = false
 
@@ -270,7 +271,7 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     let succeed = false
 
@@ -335,7 +336,7 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should refetch when re-mounting', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     function Component() {
@@ -393,8 +394,8 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should suspend when switching to a new query', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     function Component(props: { queryKey: Array<string> }) {
       const result = useQuery(() => ({
@@ -438,11 +439,9 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should throw errors to the error boundary by default', async () => {
-    const key = queryKey()
+    const key = createKey()
 
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -482,12 +481,10 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when throwOnError: false', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const state = useQuery(() => ({
@@ -530,11 +527,9 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should throw errors to the error boundary when a throwOnError function returns true', async () => {
-    const key = queryKey()
+    const key = createKey()
 
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -574,12 +569,10 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when a throwOnError function returns false', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const state = useQuery(() => ({
@@ -623,9 +616,11 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should not call the queryFn when not enabled', async () => {
-    const key = queryKey()
+    const key = createKey()
 
-    const queryFn = vi.fn(() => sleep(10).then(() => '23'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => '23'),
+    )
 
     function Page() {
       const [enabled, setEnabled] = createSignal(false)
@@ -653,7 +648,6 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     expect(queryFn).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
     fireEvent.click(rendered.getByRole('button', { name: /fire/i }))
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -663,11 +657,9 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should error caught in error boundary without infinite loop', async () => {
-    const key = queryKey()
+    const key = createKey()
 
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     let succeed = true
 
@@ -722,16 +714,12 @@ describe("useQuery's in Suspense mode", () => {
     // render error boundary fallback (error boundary)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleMock.mockRestore()
   })
 
   it('should error caught in error boundary without infinite loop when query keys changed', async () => {
     let succeed = true
 
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const [key, setKey] = createSignal(0)
@@ -784,14 +772,10 @@ describe("useQuery's in Suspense mode", () => {
     // render error boundary fallback (error boundary)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleMock.mockRestore()
   })
 
   it('should error caught in error boundary without infinite loop when enabled changed', async () => {
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const queryKeys = '1'
@@ -847,12 +831,10 @@ describe("useQuery's in Suspense mode", () => {
     // render error boundary fallback (error boundary)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleMock.mockRestore()
   })
 
   it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
-    const key = queryKey()
+    const key = createKey()
     let state: UseQueryResult<number> | null = null
 
     let count = 0
@@ -885,14 +867,12 @@ describe("useQuery's in Suspense mode", () => {
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(state).toMatchObject({
       data: 1,
       status: 'success',
     })
     expect(renders).toBe(2)
-    expect(rendered.queryByText('rendered')).toBeInTheDocument()
+    expect(rendered.getByText('rendered')).toBeInTheDocument()
   })
 })

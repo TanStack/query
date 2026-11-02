@@ -1,5 +1,116 @@
 # @tanstack/svelte-query-devtools
 
+## 6.3.8
+
+### Patch Changes
+
+- Updated dependencies [[`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1)]:
+  - @tanstack/svelte-query@6.3.8
+  - @tanstack/query-devtools@5.105.2
+
+## 6.3.7
+
+### Patch Changes
+
+- Updated dependencies [[`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/svelte-query@6.3.7
+  - @tanstack/query-devtools@5.105.1
+
+## 6.3.6
+
+### Patch Changes
+
+- [#12313](https://github.com/TanStack/query/pull/12313) [`aff30e3`](https://github.com/TanStack/query/commit/aff30e36bd392acead10883f15172fff61c65063) - fix(svelte-query-devtools): stop defaulting the 'theme' prop to 'system' so the theme chosen in the devtools settings applies when the prop is omitted
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.105.0
+  - @tanstack/svelte-query@6.3.6
+
+## 6.3.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.104.5
+  - @tanstack/svelte-query@6.3.5
+
+## 6.3.4
+
+### Patch Changes
+
+- Updated dependencies [[`c8f5eac`](https://github.com/TanStack/query/commit/c8f5eac9df24c3cf987dc23865493ebd0d346caa), [`fc3a384`](https://github.com/TanStack/query/commit/fc3a3848f25adec750e6ee6d3abf9280c7e3a990), [`b61abc2`](https://github.com/TanStack/query/commit/b61abc2033f9e2fbf24d6753baedeaa74b2f1c17), [`2bb82df`](https://github.com/TanStack/query/commit/2bb82dfd23dc570b06e452c30b12ec0fd1ea7daf)]:
+  - @tanstack/query-devtools@5.104.4
+  - @tanstack/svelte-query@6.3.4
+
+## 6.3.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.104.3
+  - @tanstack/svelte-query@6.3.3
+
+## 6.3.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.104.2
+  - @tanstack/svelte-query@6.3.2
+
+## 6.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`ec060b6`](https://github.com/TanStack/query/commit/ec060b6f74b2e51f4b0c78932beec656ef6f6878)]:
+  - @tanstack/query-devtools@5.104.1
+  - @tanstack/svelte-query@6.3.1
+
+## 6.3.0
+
+### Minor Changes
+
+- [#11650](https://github.com/TanStack/query/pull/11650) [`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e) - Build projects with Vite 8
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/query-devtools@5.104.0
+  - @tanstack/svelte-query@6.3.0
+
+## 6.2.5
+
+### Patch Changes
+
+- Updated dependencies [[`d038065`](https://github.com/TanStack/query/commit/d03806572aea427e34acc4cf53779942962874cb), [`d86ac36`](https://github.com/TanStack/query/commit/d86ac36663e3757a0ad35b5ead5f1d25dfb1b15d)]:
+  - @tanstack/svelte-query@6.2.5
+  - @tanstack/query-devtools@5.103.3
+
+## 6.2.4
+
+### Patch Changes
+
+- [#11009](https://github.com/TanStack/query/pull/11009) [`535cd61`](https://github.com/TanStack/query/commit/535cd61221bbe9f663a3f9789d175d8c82c7ff68) - fix(svelte-query-devtools): update the devtools instance when options change after mount
+
+- Updated dependencies []:
+  - @tanstack/svelte-query@6.2.4
+
+## 6.2.3
+
+### Patch Changes
+
+- [#10636](https://github.com/TanStack/query/pull/10636) [`847f471`](https://github.com/TanStack/query/commit/847f471e37c865a488ba891d9bac7a17af73e918) - Add theme option support to the floating devtools.
+
+- Updated dependencies [[`1490a4b`](https://github.com/TanStack/query/commit/1490a4b2aef372bff00af88c31ab896646ce1e99)]:
+  - @tanstack/svelte-query@6.2.3
+
+## 6.2.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.103.2
+  - @tanstack/svelte-query@6.2.2
+
 ## 6.2.1
 
 ### Patch Changes

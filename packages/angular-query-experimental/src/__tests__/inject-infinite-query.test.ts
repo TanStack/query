@@ -7,7 +7,7 @@ import {
   signal,
 } from '@angular/core'
 import { render } from '@testing-library/angular'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectInfiniteQuery,
@@ -34,7 +34,7 @@ describe('injectInfiniteQuery', () => {
   })
 
   it('should properly execute infinite query', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     @Component({
       template: `
@@ -56,14 +56,12 @@ describe('injectInfiniteQuery', () => {
 
     expect(rendered.getByText('status: pending')).toBeInTheDocument()
     expect(rendered.getByText('pages: none')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('status: success')).toBeInTheDocument()
     expect(rendered.getByText('pages: data on page 0')).toBeInTheDocument()
 
     rendered.fixture.componentInstance.query.fetchNextPage()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('status: success')).toBeInTheDocument()
@@ -73,7 +71,7 @@ describe('injectInfiniteQuery', () => {
   })
 
   it('should reject and update signal', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     @Component({
       template: `
@@ -99,10 +97,8 @@ describe('injectInfiniteQuery', () => {
 
     expect(rendered.getByText('status: pending')).toBeInTheDocument()
     expect(rendered.getByText('pages: none')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('status: error')).toBeInTheDocument()
     expect(rendered.getByText('pages: none')).toBeInTheDocument()
     expect(rendered.getByText('error: Some error')).toBeInTheDocument()
@@ -111,7 +107,7 @@ describe('injectInfiniteQuery', () => {
   })
 
   it('should keep initialData visible alongside the error when a refetch fails', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     @Component({
       template: `
@@ -135,7 +131,6 @@ describe('injectInfiniteQuery', () => {
 
     expect(rendered.getByText('pages: 1')).toBeInTheDocument()
     expect(rendered.getByText('isError: false')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('pages: 1')).toBeInTheDocument()
@@ -144,8 +139,10 @@ describe('injectInfiniteQuery', () => {
 
   describe('skipToken', () => {
     it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
-      const key = queryKey()
-      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+      const key = createKey()
+      const queryFn = vi.fn<
+        (context: { pageParam: number }) => Promise<string>
+      >(({ pageParam }: { pageParam: number }) =>
         sleep(10).then(() => `comments for 1 page ${pageParam}`),
       )
 
@@ -171,7 +168,6 @@ describe('injectInfiniteQuery', () => {
 
       expect(rendered.getByText('status: pending')).toBeInTheDocument()
       expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
-
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
       expect(queryFn).not.toHaveBeenCalled()
@@ -181,7 +177,6 @@ describe('injectInfiniteQuery', () => {
       rendered.fixture.componentInstance.postId.set('1')
       rendered.fixture.detectChanges()
       expect(rendered.getByText('isFetching: true')).toBeInTheDocument()
-
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
       expect(queryFn).toHaveBeenCalledTimes(1)
@@ -194,7 +189,7 @@ describe('injectInfiniteQuery', () => {
 
   describe('injection context', () => {
     it('should throw NG0203 with descriptive error outside injection context', () => {
-      const key = queryKey()
+      const key = createKey()
       expect(() => {
         injectInfiniteQuery(() => ({
           queryKey: key,
@@ -207,7 +202,7 @@ describe('injectInfiniteQuery', () => {
     })
 
     it('should be usable outside injection context when passing an injector', () => {
-      const key = queryKey()
+      const key = createKey()
       const query = injectInfiniteQuery(
         () => ({
           queryKey: key,

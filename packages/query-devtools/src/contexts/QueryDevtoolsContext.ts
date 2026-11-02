@@ -18,6 +18,10 @@ export const QueryDevtoolsContext = createContext<QueryDevtoolsProps>({
   shadowDOMTarget: undefined,
 })
 
+/**
+ * Returns the devtools configuration from context, such as the `client` and the `onlineManager`.
+ * @returns The devtools configuration.
+ */
 export function useQueryDevtoolsContext() {
   return useContext(QueryDevtoolsContext)
 }

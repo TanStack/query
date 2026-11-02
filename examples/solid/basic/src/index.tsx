@@ -7,34 +7,19 @@ import {
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { For, Match, Switch, createSignal } from 'solid-js'
 import { render } from 'solid-js/web'
+import { postsQueries } from './services/posts/queries'
 import type { Component, Setter } from 'solid-js'
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 })
 
-type Post = {
-  id: number
-  title: string
-  body: string
-}
-
-function createPosts() {
-  return useQuery(() => ({
-    queryKey: ['posts'],
-    queryFn: async (): Promise<Array<Post>> => {
-      const response = await fetch('https://jsonplaceholder.typicode.com/posts')
-      return await response.json()
-    },
-  }))
-}
-
 function Posts(props: { setPostId: Setter<number> }) {
-  const state = createPosts()
+  const state = useQuery(() => postsQueries.list())
 
   return (
     <div>
@@ -57,7 +42,9 @@ function Posts(props: { setPostId: Setter<number> }) {
                         style={
                           // We can access the query data here to show bold links for
                           // ones that are cached
-                          queryClient.getQueryData(['post', post.id])
+                          queryClient.getQueryData(
+                            postsQueries.detail(post.id).queryKey,
+                          )
                             ? {
                                 'font-weight': 'bold',
                                 color: 'green',
@@ -80,23 +67,8 @@ function Posts(props: { setPostId: Setter<number> }) {
   )
 }
 
-const getPostById = async (id: number): Promise<Post> => {
-  const response = await fetch(
-    `https://jsonplaceholder.typicode.com/posts/${id}`,
-  )
-  return await response.json()
-}
-
-function createPost(postId: number) {
-  return useQuery(() => ({
-    queryKey: ['post', postId],
-    queryFn: () => getPostById(postId),
-    enabled: !!postId,
-  }))
-}
-
 function Post(props: { postId: number; setPostId: Setter<number> }) {
-  const state = createPost(props.postId)
+  const state = useQuery(() => postsQueries.detail(props.postId))
 
   return (
     <div>
@@ -106,9 +78,7 @@ function Post(props: { postId: number; setPostId: Setter<number> }) {
         </a>
       </div>
       <Switch>
-        <Match when={!props.postId || state.status === 'pending'}>
-          Loading...
-        </Match>
+        <Match when={state.status === 'pending'}>Loading...</Match>
         <Match when={state.status === 'error'}>
           <span>Error: {(state.error as Error).message}</span>
         </Match>

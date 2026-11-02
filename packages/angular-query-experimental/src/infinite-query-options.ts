@@ -11,9 +11,9 @@ import type {
 import type { CreateInfiniteQueryOptions } from './types'
 
 /**
- * The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
- * may be `undefined` while the query is `pending`.
- *
+ * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted, may be
+ * `undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is
+ * `pending`.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
@@ -50,10 +50,9 @@ export type UndefinedInitialDataInfiniteOptions<
 }
 
 /**
- * The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set and
- * `queryFn` is not `skipToken` — same as {@link UndefinedInitialDataInfiniteOptions}, but `queryFn` may not be
- * `skipToken`.
- *
+ * The options accepted by the `infiniteQueryOptions` overload selected when `queryFn` is not `skipToken` and
+ * `initialData` is omitted, may be `undefined`, or is a function that may return `undefined` — same as
+ * {@link UndefinedInitialDataInfiniteOptions}, but `queryFn` may not be `skipToken`.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
@@ -78,10 +77,11 @@ export type UnusedSkipTokenInfiniteOptions<
   'queryFn'
 > & {
   /**
-   * `skipToken` is not allowed as a value here — this overload is selected when no `initialData` is set. If
-   * you don't intend to run the query yet, set `enabled: false` — omitting `queryFn` alone still triggers a
-   * fetch that fails with "Missing queryFn" unless `enabled` is `false` or a default query function has been
-   * defined. A default query function only supplies `queryFn`; it doesn't defer the fetch on its own.
+   * `skipToken` is not allowed as a value here — this overload is selected when `initialData` is omitted, may
+   * be `undefined`, or is a function that may return `undefined`. If you don't intend to run the query yet,
+   * set `enabled: false` — omitting `queryFn` alone still triggers a fetch that fails with "Missing queryFn"
+   * unless `enabled` is `false` or a default query function has been defined. A default query function only
+   * supplies `queryFn`; it doesn't defer the fetch on its own.
    */
   queryFn?: Exclude<
     CreateInfiniteQueryOptions<
@@ -96,9 +96,8 @@ export type UnusedSkipTokenInfiniteOptions<
 }
 
 /**
- * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
- * never `undefined` (unless a `select` changes `TData` to include `undefined`).
- *
+ * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is known to be
+ * defined — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
@@ -129,7 +128,6 @@ export type DefinedInitialDataInfiniteOptions<
   initialData:
     | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
-    | undefined
 }
 
 /**
@@ -138,15 +136,13 @@ export type DefinedInitialDataInfiniteOptions<
  * `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options
  * for.
  *
- * This overload is selected when `initialData` is set.
- *
- * @see {@link injectInfiniteQuery} to run an infinite query with these options.
+ * This overload is selected when `initialData` is known to be defined.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to
- * `injectInfiniteQuery`, with `initialData` set.
+ * `injectInfiniteQuery`, with `initialData` known to be defined.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  * @remarks See {@link injectInfiniteQuery} for examples that fetch further pages, from a button click or
  * automatically as the user scrolls.
- *
+ * @see {@link injectInfiniteQuery} to run an infinite query with these options.
  * @example
  * ```angular-ts
  * import { infiniteQueryOptions, injectInfiniteQuery } from '@tanstack/angular-query-experimental'
@@ -206,11 +202,12 @@ export function infiniteQueryOptions<
  * `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as
  * `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options
  * for.
- *
+ * @param options - The {@link UnusedSkipTokenInfiniteOptions} to use — everything you can pass to
+ * `injectInfiniteQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  * @remarks See {@link injectInfiniteQuery} for examples that fetch further pages, from a button click or
  * automatically as the user scrolls.
- *
+ * @see {@link injectInfiniteQuery} to run an infinite query with these options.
  * @example
  * A parameterized factory, so the same options object can be reused per `postId`:
  * ```angular-ts
@@ -247,10 +244,6 @@ export function infiniteQueryOptions<
  *   readonly commentsQuery = injectInfiniteQuery(() => commentsOptions(this.postId()))
  * }
  * ```
- *
- * @see {@link injectInfiniteQuery} to run an infinite query with these options.
- * @param options - The {@link UnusedSkipTokenInfiniteOptions} to use — everything you can pass to
- * `injectInfiniteQuery`.
  */
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -280,11 +273,12 @@ export function infiniteQueryOptions<
  * `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as
  * `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options
  * for.
- *
+ * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to
+ * `injectInfiniteQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  * @remarks See {@link injectInfiniteQuery} for examples that fetch further pages (from a button click or
  * automatically as the user scrolls) and that use `skipToken` to disable the query until `postId` is set.
- *
+ * @see {@link injectInfiniteQuery} to run an infinite query with these options.
  * @example
  * A parameterized factory, so the same options object can be reused per `postId`:
  * ```angular-ts
@@ -321,10 +315,6 @@ export function infiniteQueryOptions<
  *   readonly commentsQuery = injectInfiniteQuery(() => commentsOptions(this.postId()))
  * }
  * ```
- *
- * @see {@link injectInfiniteQuery} to run an infinite query with these options.
- * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to
- * `injectInfiniteQuery`.
  */
 export function infiniteQueryOptions<
   TQueryFnData,

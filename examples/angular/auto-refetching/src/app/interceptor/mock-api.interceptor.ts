@@ -19,8 +19,8 @@ import type { Observable } from 'rxjs'
 export const mockInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
-): Observable<HttpEvent<any>> => {
-  const respondWith = (status: number, body: any) =>
+): Observable<HttpEvent<unknown>> => {
+  const respondWith = (status: number, body: unknown) =>
     of(new HttpResponse({ status, body })).pipe(delay(100))
   if (req.url === '/api/tasks') {
     switch (req.method) {
@@ -29,7 +29,7 @@ export const mockInterceptor: HttpInterceptorFn = (
           200,
           JSON.parse(localStorage.getItem('tasks') || '[]'),
         )
-      case 'POST':
+      case 'POST': {
         const tasks = JSON.parse(localStorage.getItem('tasks') || '[]')
         tasks.push(req.body)
         localStorage.setItem('tasks', JSON.stringify(tasks))
@@ -37,6 +37,7 @@ export const mockInterceptor: HttpInterceptorFn = (
           status: 'success',
           task: req.body,
         })
+      }
       case 'DELETE':
         localStorage.removeItem('tasks')
         return respondWith(200, { status: 'success' })

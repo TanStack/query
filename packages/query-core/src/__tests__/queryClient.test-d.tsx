@@ -1,5 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { skipToken } from '../utils'
 import type { MutationFilters, QueryFilters, Updater } from '../utils'
@@ -74,11 +74,11 @@ const typedFilterKey = typedQueryFilters.queryKey!
 const typedMutationKey = typedMutationOptions.mutationKey!
 
 const untypedQueryOptions: EnsureQueryDataOptions = {
-  queryKey: ['key'] as any,
+  queryKey: ['key'],
 }
 
 const untypedFetchInfiniteQueryOptions: FetchInfiniteQueryOptions = {
-  queryKey: ['key'] as any,
+  queryKey: ['key'],
   pages: 5,
   getNextPageParam: (lastPage) => {
     expectTypeOf(lastPage).toEqualTypeOf<unknown>()
@@ -384,7 +384,7 @@ describe('queryClient', () => {
 
     it('should resolve with the data type', async () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       const data = await queryClient.fetchQuery(typedQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<TypedData>()
@@ -392,7 +392,7 @@ describe('queryClient', () => {
 
     it('should resolve with unknown when untyped', async () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       const data = await queryClient.fetchQuery(untypedQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<unknown>()
@@ -417,9 +417,9 @@ describe('queryClient', () => {
     })
 
     it('should allow passing pages', async () => {
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       const data = await new QueryClient().fetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve('string'),
         getNextPageParam: () => 1,
         initialPageParam: 1,
@@ -454,7 +454,7 @@ describe('queryClient', () => {
 
     it('should resolve with InfiniteData of the data type', async () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       const data = await queryClient.fetchInfiniteQuery(
         typedFetchInfiniteQueryOptions,
       )
@@ -464,7 +464,7 @@ describe('queryClient', () => {
 
     it('should resolve with InfiniteData of unknown when untyped', async () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       const data = await queryClient.fetchInfiniteQuery(
         untypedFetchInfiniteQueryOptions,
       )
@@ -523,7 +523,7 @@ describe('queryClient', () => {
   describe('ensureQueryData', () => {
     it('should resolve with the data type', async () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       const data = await queryClient.ensureQueryData(typedQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<TypedData>()
@@ -531,7 +531,7 @@ describe('queryClient', () => {
 
     it('should resolve with unknown when untyped', async () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       const data = await queryClient.ensureQueryData(untypedQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<unknown>()
@@ -546,9 +546,7 @@ describe('queryClient', () => {
         initialPageParam: 1,
         getNextPageParam: () => 2,
         select: (data) => ({
-          pages: data.pages.map(
-            (x) => `count: ${(x as { count: number }).count}`,
-          ),
+          pages: data.pages.map((x) => `count: ${x.count}`),
         }),
       })
 
@@ -646,7 +644,7 @@ describe('queryClient', () => {
   describe('ensureInfiniteQueryData', () => {
     it('should resolve with InfiniteData of the data type', async () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       const data = await queryClient.ensureInfiniteQueryData(
         typedFetchInfiniteQueryOptions,
       )
@@ -656,7 +654,7 @@ describe('queryClient', () => {
 
     it('should resolve with InfiniteData of unknown when untyped', async () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       const data = await queryClient.ensureInfiniteQueryData(
         untypedFetchInfiniteQueryOptions,
       )
@@ -667,7 +665,7 @@ describe('queryClient', () => {
     it('should accept a revalidateIfStale that FetchInfiniteQueryOptions does not have', () => {
       const queryClient = new QueryClient()
 
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.ensureInfiniteQueryData({
         ...typedFetchInfiniteQueryOptions,
         revalidateIfStale: true,
@@ -691,12 +689,14 @@ describe('queryClient', () => {
         { queryKey: '1' },
       ])
     })
+
     it('should reject an object queryKey (#8684)', () => {
       assertType<Parameters<QueryClient['invalidateQueries']>>([
         // @ts-expect-error key is not an array
         { queryKey: { foo: true } },
       ])
     })
+
     it('should type the predicate if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
@@ -847,6 +847,45 @@ describe('queryClient', () => {
   })
 
   describe('isFetching', () => {
+    it('should reject a fetchStatus filter', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
+        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'fetching' }),
+      ).toEqualTypeOf<number>()
+      expectTypeOf(
+        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
+        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'paused' }),
+      ).toEqualTypeOf<number>()
+      expectTypeOf(
+        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
+        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'idle' }),
+      ).toEqualTypeOf<number>()
+    })
+
+    it('should accept the other query filters', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        queryClient.isFetching({
+          queryKey: ['key'],
+          exact: true,
+          type: 'active',
+          stale: true,
+          predicate: (query) => query.state.data !== undefined,
+        }),
+      ).toEqualTypeOf<number>()
+    })
+
+    it('should allow fetchStatus in query cache filters', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        queryClient.getQueryCache().findAll({ fetchStatus: 'paused' }),
+      ).toBeArray()
+    })
+
     it('should return a number', () => {
       const queryClient = new QueryClient()
 
@@ -888,6 +927,7 @@ describe('queryClient', () => {
         { notAFilter: true },
       ])
     })
+
     it('should accept typed and untyped mutation filters alike', () => {
       const queryClient = new QueryClient()
 
@@ -896,6 +936,36 @@ describe('queryClient', () => {
       ).toEqualTypeOf<number>()
       expectTypeOf(
         queryClient.isMutating(untypedMutationFilters),
+      ).toEqualTypeOf<number>()
+    })
+
+    it('should accept an explicit mutation filter type', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        queryClient.isMutating<MutationFilters<TypedData, TypedError>>({
+          predicate(mutation) {
+            expectTypeOf(mutation).toEqualTypeOf<
+              Mutation<TypedData, TypedError>
+            >()
+            expectTypeOf(mutation.state.data).toEqualTypeOf<
+              TypedData | undefined
+            >()
+            expectTypeOf(
+              mutation.state.error,
+            ).toEqualTypeOf<TypedError | null>()
+            return true
+          },
+        }),
+      ).toEqualTypeOf<number>()
+    })
+
+    it('should reject a status filter', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        // @ts-expect-error isMutating always filters by status: 'pending'
+        queryClient.isMutating({ mutationKey: ['key'], status: 'pending' }),
       ).toEqualTypeOf<number>()
     })
   })
@@ -939,7 +1009,7 @@ describe('queryClient', () => {
   describe('prefetchQuery', () => {
     it('should return a promise of void rather than the data', () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       const result = queryClient.prefetchQuery({
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
@@ -952,7 +1022,7 @@ describe('queryClient', () => {
   describe('prefetchInfiniteQuery', () => {
     it('should return a promise of void rather than the pages', () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       const result = queryClient.prefetchInfiniteQuery({
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
@@ -1160,6 +1230,7 @@ describe('queryClient', () => {
       ).toEqualTypeOf<void>()
     })
 
+    // oxlint-disable-next-line vitest/expect-expect -- Oxlint does not find assertions inside object methods
     it('should type the onSettled callback arguments', () => {
       const queryClient = new QueryClient()
 

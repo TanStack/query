@@ -9,7 +9,7 @@
     onSettledMock: (data: number | undefined) => void
   }
 
-  const { queryClient, onSettledMock, onSuccessMock }: Props = $props()
+  let { queryClient, onSettledMock, onSuccessMock }: Props = $props()
 
   let count = $state(0)
 
