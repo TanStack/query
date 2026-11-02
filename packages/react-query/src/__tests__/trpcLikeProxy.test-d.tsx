@@ -1,7 +1,7 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import {
   QueryClient,
-  experimental_useWaterfall,
+  experimental_waterfallHandle,
   useQuery,
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
@@ -114,10 +114,10 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
     assertType(trpc.$fromHandle(wrongInput))
   })
 
-  it('should switch a handle with useWaterfall', () => {
+  it('should switch a handle with waterfallHandle', () => {
     const comments = trpc['post.comments'].$prefetch({ postId: '1', page: 1 })
 
-    const next = experimental_useWaterfall(
+    const next = experimental_waterfallHandle(
       trpc['post.comments'].queryOptions,
       comments,
       (input) => {

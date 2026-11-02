@@ -12,7 +12,7 @@ import {
   experimental_fetchHandle,
   experimental_fromHandle,
   experimental_prefetchHandle,
-  experimental_useWaterfall,
+  experimental_waterfallHandle,
   queryOptions,
   useQuery,
   useSuspenseQuery,
@@ -20,7 +20,7 @@ import {
 import { renderWithClient } from './utils'
 import type { experimental_QueryHandle } from '..'
 
-describe('experimental_useWaterfall', () => {
+describe('experimental_waterfallHandle', () => {
   const createPostsQuery = () => {
     const key = createKey()
     const queryFn = vi.fn<(page: number) => Promise<string>>((page) =>
@@ -34,17 +34,15 @@ describe('experimental_useWaterfall', () => {
     return { postsQuery, queryFn }
   }
 
-  it('should start the query for an input during render, once', async () => {
+  it('should let the reader fetch the query for an input, once', async () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
     const { postsQuery, queryFn } = createPostsQuery()
-    const handles: Array<experimental_QueryHandle<typeof postsQuery>> = []
 
     function Posts() {
-      const handle = experimental_useWaterfall(postsQuery, { page: 1 })
-      handles.push(handle)
+      const posts = experimental_waterfallHandle(postsQuery, { page: 1 })
       const { data } = useSuspenseQuery(
-        experimental_fromHandle(postsQuery, handle),
+        experimental_fromHandle(postsQuery, posts),
       )
       return <div>data: {data}</div>
     }
@@ -60,31 +58,6 @@ describe('experimental_useWaterfall', () => {
     await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('data: page 1')).toBeInTheDocument()
     expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(handles.at(-1)).toStrictEqual({
-      queryKey: postsQuery({ page: 1 }).queryKey,
-      input: { page: 1 },
-    })
-  })
-
-  it('should keep its handle while the input maps to the same query', () => {
-    using _timers = fakeTimers()
-    using queryClient = clearOnDispose(new QueryClient())
-    const { postsQuery, queryFn } = createPostsQuery()
-    const handles: Array<experimental_QueryHandle<typeof postsQuery>> = []
-
-    function Posts(props: { page: number }) {
-      handles.push(experimental_useWaterfall(postsQuery, { page: props.page }))
-      return null
-    }
-
-    const rendered = renderWithClient(queryClient, <Posts page={1} />)
-    rendered.rerender(<Posts page={1} />)
-    rendered.rerender(<Posts page={2} />)
-
-    expect(handles[0]).toBe(handles[1])
-    expect(handles[2]).not.toBe(handles[1])
-    expect(handles[2]?.input).toStrictEqual({ page: 2 })
-    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
   it('should keep the handle a loader passed down until the switched input maps to another query', async () => {
@@ -101,7 +74,7 @@ describe('experimental_useWaterfall', () => {
     }) {
       const [page, setPage] = React.useState(1)
       const [filter, setFilter] = React.useState('')
-      const posts = experimental_useWaterfall(
+      const posts = experimental_waterfallHandle(
         postsQuery,
         props.posts,
         (input) => ({ ...input, page, filter }),
@@ -127,6 +100,7 @@ describe('experimental_useWaterfall', () => {
 
     fireEvent.click(rendered.getByText('filter'))
     expect(handles.at(-1)).toBe(loaderHandle)
+    expect(queryFn).toHaveBeenCalledTimes(1)
 
     fireEvent.click(rendered.getByText('next'))
     expect(handles.at(-1)).toStrictEqual({

@@ -103,9 +103,9 @@ function Post(props: { post: experimental_QueryHandle<typeof postQuery> }) {
 
 Handles from `experimental_ensureHandle` and `experimental_fetchHandle` carry the data they waited for, and `experimental_fromHandle` passes it on as `initialData` with its `initialDataUpdatedAt`. `useQuery` then always has data, even in a client that never saw the loader's cache, and its `data` is typed as defined. Data already in the cache wins over the handle's data. For a handle from `experimental_prefetchHandle`, `useQuery` data stays possibly `undefined`.
 
-## Waterfalls: `experimental_useWaterfall`
+## Waterfalls: `experimental_waterfallHandle`
 
-Sometimes the input is only known during render, like a search term or a page a user clicks to. `experimental_useWaterfall` starts the query from a component. The request can't start until the component renders, which makes it a [request waterfall](./request-waterfalls.md), and the name keeps that visible.
+Sometimes the input is only known during render, like a search term or a page a user clicks to. `experimental_waterfallHandle` builds the handle for such an input. It doesn't start the query: the component that reads the handle does, when it renders. That makes it a [request waterfall](./request-waterfalls.md), and the name keeps that visible. It is a plain function, not a hook, so it can be called anywhere.
 
 Pass it an input:
 
@@ -113,7 +113,9 @@ Pass it an input:
 
 ```tsx
 function Search(props: { term: string }) {
-  const results = experimental_useWaterfall(searchQuery, { term: props.term })
+  const results = experimental_waterfallHandle(searchQuery, {
+    term: props.term,
+  })
   const { data } = useQuery(experimental_fromHandle(searchQuery, results))
 }
 ```
@@ -127,10 +129,14 @@ Or switch a handle a loader passed down to a new input:
 ```tsx
 function Posts(props: { posts: experimental_QueryHandle<typeof postsQuery> }) {
   const [page, setPage] = React.useState(1)
-  const posts = experimental_useWaterfall(postsQuery, props.posts, (input) => ({
-    ...input,
-    page,
-  }))
+  const posts = experimental_waterfallHandle(
+    postsQuery,
+    props.posts,
+    (input) => ({
+      ...input,
+      page,
+    }),
+  )
   const { data } = useQuery({
     ...experimental_fromHandle(postsQuery, posts),
     placeholderData: keepPreviousData,
@@ -140,9 +146,9 @@ function Posts(props: { posts: experimental_QueryHandle<typeof postsQuery> }) {
 
 [//]: # 'WaterfallSwitch'
 
-While the switched input maps to the handle's own query, the hook returns that handle and starts nothing, so the first page reads what the loader started. Prefer putting such inputs in the URL so the loader can start them, and use `experimental_useWaterfall` when that isn't practical.
+While the switched input maps to the handle's own query, it returns that handle as is, so the first page reads what the loader started. Prefer putting such inputs in the URL so the loader can start them, and use `experimental_waterfallHandle` when that isn't practical.
 
-Like `usePrefetchQuery`, the hook only starts a query the cache has never fetched, so it is safe on every render, and it runs during server renders too. Stale data and errors are left to the component that reads the handle.
+The query starts when its reader renders, like any other `useQuery` or `useSuspenseQuery`. `useQuery` doesn't fetch during a server render, while `useSuspenseQuery` does.
 
 ## Server rendering
 

@@ -5,7 +5,7 @@ import { clearOnDispose, fakeTimers, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   dehydrate,
-  experimental_useWaterfall,
+  experimental_waterfallHandle,
   hydrate,
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
@@ -93,7 +93,7 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
       comments: experimental_QueryHandle<TRPC['post.comments']['queryOptions']>
     }) {
       const [page, setPage] = React.useState(1)
-      const handle = experimental_useWaterfall(
+      const handle = experimental_waterfallHandle(
         trpc['post.comments'].queryOptions,
         props.comments,
         (input) => ({ ...input, page }),

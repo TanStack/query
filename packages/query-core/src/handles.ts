@@ -1,4 +1,4 @@
-import { noop } from './utils'
+import { hashQueryKeyByOptions, noop } from './utils'
 import type { QueryClient } from './queryClient'
 import type { Query } from './query'
 import type {
@@ -7,6 +7,7 @@ import type {
   InferErrorFromTag,
   InfiniteData,
   QueryKey,
+  QueryKeyHashFunction,
 } from './types'
 
 // TYPES
@@ -16,6 +17,7 @@ import type {
  */
 interface QueryFactoryOptions {
   queryKey: QueryKey
+  queryKeyHashFn?: QueryKeyHashFunction<any>
 }
 
 /**
@@ -69,8 +71,8 @@ export type QueryHandleKey<TFactory extends QueryHandleFactory> = PlainQueryKey<
 >
 
 /**
- * A small serializable reference to a query started by `experimental_prefetchHandle` or
- * `experimental_useWaterfall`. Pass it to the component that reads the query, and rebuild the
+ * A small serializable reference to a query, from `experimental_prefetchHandle` or
+ * `experimental_waterfallHandle`. Pass it to the component that reads the query, and rebuild the
  * query's options there with `experimental_fromHandle(factory, handle)`.
  *
  * Handles of two factories only mix when their keys have the same type. Declare keys with
@@ -291,49 +293,79 @@ export async function experimental_fetchHandle<
 }
 
 /**
- * Starts a query from an input that is only known during render, and returns its handle. This is a
- * request waterfall: the request can't start until a component renders. Framework adapters build
- * `experimental_useWaterfall` on it.
- *
- * It starts the query only if the cache has never fetched it (no entry, or a pending entry that
- * isn't fetching), so it is safe to call on every render. Stale data is left to the reader, which
- * refetches it on mount like any observer, and an errored entry is left to the reader's error
- * handling.
- *
- * With `previous`, `input` is the switched input for the query `previous` refers to. While it maps
- * to the same query, `previous` is returned as is and nothing starts.
- * @param queryClient - The client to start the query on.
+ * Builds the handle of a query whose input is only known during render, like a search term or a
+ * page a user clicks to. It doesn't start the query: the component that reads the handle does,
+ * when it renders, which makes it a request waterfall. The name keeps that visible. Prefer
+ * starting queries in a route loader or server component with `experimental_prefetchHandle`.
  * @param factory - The query factory, a function of the query's input that returns its options.
- * @param input - The input to pass to the factory.
- * @param previous - The handle the input was switched from, if any.
- * @returns `previous` while the input maps to its query, otherwise a handle for the new input.
+ * @param input - The input to pass to the factory, if it takes one.
+ * @returns A handle with the query's key and input.
+ * @example
+ * ```tsx
+ * function Search(props: { term: string }) {
+ *   const results = experimental_waterfallHandle(searchQuery, { term: props.term })
+ *   const { data } = useQuery(experimental_fromHandle(searchQuery, results))
+ * }
+ * ```
+ */
+export function experimental_waterfallHandle<
+  TFactory extends QueryHandleFactory,
+>(factory: TFactory, ...input: Parameters<TFactory>): QueryHandle<TFactory>
+/**
+ * Switches a handle, like one a loader passed down, to a new input, like the next page, and
+ * returns the handle for that input. It doesn't start the query: the component that reads the
+ * handle does, when it renders, which makes it a request waterfall. Prefer passing the new input
+ * to the loader through the URL.
+ *
+ * While the switched input maps to the handle's own query, the handle is returned as is, so the
+ * first page reads what the loader started.
+ * @param factory - The factory that started the handle's query.
+ * @param handle - The handle to switch from.
+ * @param switchInput - Returns the new input, given the handle's input.
+ * @returns `handle` while the switched input maps to its query, otherwise a handle for the new
+ * input.
+ * @example
+ * ```tsx
+ * function Posts(props: { posts: experimental_QueryHandle<typeof postsQuery> }) {
+ *   const [page, setPage] = React.useState(1)
+ *   const posts = experimental_waterfallHandle(postsQuery, props.posts, (input) => ({
+ *     ...input,
+ *     page,
+ *   }))
+ *   const { data } = useQuery(experimental_fromHandle(postsQuery, posts))
+ * }
+ * ```
  */
 export function experimental_waterfallHandle<
   TFactory extends QueryHandleFactory,
 >(
-  queryClient: QueryClient,
   factory: TFactory,
-  input: QueryHandleInput<TFactory>,
-  previous?: QueryHandle<TFactory>,
-): QueryHandle<TFactory> {
-  const options = factory(input)
-  if (previous) {
-    const { queryHash } = queryClient.defaultQueryOptions(options)
-    const previousHash = queryClient.defaultQueryOptions({
-      ...options,
-      queryKey: previous.queryKey,
-      queryHash: undefined,
-    }).queryHash
-    if (queryHash === previousHash) {
-      return previous
-    }
+  handle: QueryHandle<TFactory>,
+  switchInput: (
+    input: QueryHandleInput<TFactory>,
+  ) => QueryHandleInput<TFactory>,
+): QueryHandle<TFactory>
+export function experimental_waterfallHandle<
+  TFactory extends QueryHandleFactory,
+>(factory: TFactory, ...args: Array<any>): QueryHandle<TFactory> {
+  const [inputOrHandle, switchInput] = args as [
+    unknown,
+    ((input: QueryHandleInput<TFactory>) => QueryHandleInput<TFactory>)?,
+  ]
+  if (typeof switchInput !== 'function') {
+    return toHandle(
+      factory(inputOrHandle),
+      inputOrHandle,
+    ) as QueryHandle<TFactory>
   }
-  const query = getQuery(queryClient, options)
+  const previous = inputOrHandle as QueryHandle<TFactory>
+  const input = switchInput(previous.input)
+  const options = factory(input)
   if (
-    !query ||
-    (query.state.status === 'pending' && query.state.fetchStatus === 'idle')
+    hashQueryKeyByOptions(options.queryKey, options) ===
+    hashQueryKeyByOptions(previous.queryKey as QueryKey, options)
   ) {
-    void startQueryFromFactory(queryClient, options).catch(noop)
+    return previous
   }
   return toHandle(options, input) as QueryHandle<TFactory>
 }

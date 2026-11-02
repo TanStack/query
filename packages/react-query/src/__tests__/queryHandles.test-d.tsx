@@ -5,7 +5,7 @@ import {
   experimental_fetchHandle,
   experimental_fromHandle,
   experimental_prefetchHandle,
-  experimental_useWaterfall,
+  experimental_waterfallHandle,
   infiniteQueryOptions,
   keepPreviousData,
   queryOptions,
@@ -259,23 +259,23 @@ describe('query handles', () => {
     })
   })
 
-  describe('experimental_useWaterfall', () => {
+  describe('experimental_waterfallHandle', () => {
     it("should take the factory's input", () => {
-      const handle = experimental_useWaterfall(postQuery, { id: '1' })
-      const viewer = experimental_useWaterfall(viewerQuery)
+      const handle = experimental_waterfallHandle(postQuery, { id: '1' })
+      const viewer = experimental_waterfallHandle(viewerQuery)
 
       expectTypeOf(handle).toEqualTypeOf<
         experimental_QueryHandle<typeof postQuery>
       >()
       expectTypeOf(viewer.input).toEqualTypeOf<undefined>()
       // @ts-expect-error the input has the wrong shape
-      experimental_useWaterfall(postQuery, { id: 1 })
+      experimental_waterfallHandle(postQuery, { id: 1 })
     })
 
     it('should switch a handle to a new input', () => {
       const handle = {} as experimental_QueryHandle<typeof postQuery>
 
-      const next = experimental_useWaterfall(postQuery, handle, (input) => {
+      const next = experimental_waterfallHandle(postQuery, handle, (input) => {
         expectTypeOf(input).toEqualTypeOf<{ id: string }>()
         return { ...input, id: '2' }
       })
@@ -283,7 +283,7 @@ describe('query handles', () => {
       expectTypeOf(next).toEqualTypeOf<
         experimental_QueryHandle<typeof postQuery>
       >()
-      experimental_useWaterfall(
+      experimental_waterfallHandle(
         postQuery,
         handle,
         // @ts-expect-error the new input has the wrong shape
