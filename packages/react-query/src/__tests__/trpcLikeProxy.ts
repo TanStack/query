@@ -14,7 +14,7 @@ import type {
   experimental_QueryHandleWithData,
 } from '..'
 
-// A minimal tRPC-like options proxy, built only on the public handle APIs
+// A small tRPC-like options proxy that uses only the public handle APIs
 
 type AnyProcedure = (input: any) => Promise<unknown>
 

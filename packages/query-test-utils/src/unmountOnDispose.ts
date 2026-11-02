@@ -1,8 +1,8 @@
 /**
- * Makes a rendered tree, like the result of Testing Library's `render`, unmount when it is
- * disposed, for a test to hold with `using`. Declared after the client it renders with, it
- * unmounts before that client is cleared.
- * @param rendered - The render result to unmount on dispose.
+ * Unmounts a render result, like one from Testing Library's `render`, when a test's `using`
+ * declaration disposes it. Declare it after the client it renders with, so it unmounts before the
+ * client clears.
+ * @param rendered - The render result to unmount.
  * @returns The same render result, disposable.
  * @example
  * ```tsx

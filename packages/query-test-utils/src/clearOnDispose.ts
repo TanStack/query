@@ -1,7 +1,6 @@
 /**
- * Makes a client, like a `QueryClient`, clear its caches when it is disposed, for a test to hold
- * with `using`.
- * @param client - The client to clear on dispose.
+ * Clears a client, like a `QueryClient`, when a test's `using` declaration disposes it.
+ * @param client - The client to clear.
  * @returns The same client, disposable.
  * @example
  * ```ts

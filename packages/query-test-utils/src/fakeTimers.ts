@@ -1,7 +1,7 @@
 import { vi } from 'vitest'
 
 /**
- * Switches to fake timers until the returned object is disposed, for a test to hold with `using`.
+ * Switches to fake timers until a test's `using` declaration disposes the result.
  * @returns A disposable that switches back to real timers.
  * @example
  * ```ts

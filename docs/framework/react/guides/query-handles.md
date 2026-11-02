@@ -7,11 +7,11 @@ title: Query Handles (experimental)
 
 A route loader or Server Component knows which data a page needs before the page renders. Query handles let it start those queries early and pass small references to the components that read them, so the components don't repeat the query's options and don't start requests of their own.
 
-A handle is a plain object with the query's key and the input it was started with. It is serializable, so it can cross a loader or Server Component boundary.
+A handle is a plain object with the query's key and its input. It is serializable, so a loader or Server Component can return it.
 
 ## Query factories
 
-Handles are built from query factories: functions of one input (or none) that return query options.
+Handles come from query factories: functions of one input (or none) that return query options.
 
 [//]: # 'Factories'
 
@@ -48,7 +48,7 @@ Three functions start a query and return its handle. They take the `QueryClient`
 
 All three use the query's `staleTime` like `queryClient.query`: they start a fetch only when the cache has no fresh data, and `experimental_ensureHandle` refetches stale data in the background.
 
-`experimental_prefetchHandle` never throws: errors surface where the handle is read. The other two reject when the query fails without data, so a loader can redirect or show an error page.
+`experimental_prefetchHandle` never throws: errors show up where a component reads the handle. The other two reject when the query fails without data, so a loader can redirect or show an error page.
 
 [//]: # 'Loader'
 
@@ -99,13 +99,13 @@ function Post(props: { post: experimental_QueryHandle<typeof postQuery> }) {
 
 [//]: # 'Reading'
 
-`select`'s argument is typed from the factory, as with any `queryOptions` result. Keep options that decide how the query fetches or how long its data stays fresh, like `queryFn` or `staleTime`, on the factory, so the loader and the component agree on them.
+The factory types `select`'s argument, as with any `queryOptions` result. Keep options that decide how the query fetches or how long its data stays fresh, like `queryFn` or `staleTime`, on the factory, so the loader and the component agree on them.
 
-Handles from `experimental_ensureHandle` and `experimental_fetchHandle` carry the data they waited for, and `experimental_fromHandle` passes it on as `initialData` with its `initialDataUpdatedAt`. `useQuery` then always has data, even in a client that never saw the loader's cache, and its `data` is typed as defined. Data already in the cache wins over the handle's data. For a handle from `experimental_prefetchHandle`, `useQuery` data stays possibly `undefined`.
+Handles from `experimental_ensureHandle` and `experimental_fetchHandle` carry the data they waited for, and `experimental_fromHandle` passes it on as `initialData` with its `initialDataUpdatedAt`. `useQuery` then always has data, even in a client that never saw the loader's cache, and types its `data` as defined. Data already in the cache wins over the handle's data. For a handle from `experimental_prefetchHandle`, `useQuery` data stays possibly `undefined`.
 
 ## Waterfalls: `experimental_waterfallHandle`
 
-Sometimes the input is only known during render, like a search term or a page a user clicks to. `experimental_waterfallHandle` builds the handle for such an input. It doesn't start the query: the component that reads the handle does, when it renders. That makes it a [request waterfall](./request-waterfalls.md), and the name keeps that visible. It is a plain function, not a hook, so it can be called anywhere.
+Sometimes you only know the input during render, like a search term or a page a user clicks to. `experimental_waterfallHandle` builds the handle for such an input. It doesn't start the query: the component that reads the handle does, when it renders. That makes it a [request waterfall](./request-waterfalls.md), and the name keeps that visible. It is a plain function, not a hook, so you can call it anywhere.
 
 Pass it an input:
 
@@ -282,6 +282,6 @@ export function dehydrateUnsent(queryClient: QueryClient) {
 
 [//]: # 'NestedDehydrateDont'
 
-A module is shared by every request the server handles. Once one request has sent a query, every later request for any user skips it, so their pages arrive without its data and fetch it again in the browser. The set also grows for as long as the server runs.
+Every request the server handles shares the module. Once one request has sent a query, every later request for any user skips it, so their pages arrive without its data and fetch it again in the browser. The set also grows for as long as the server runs.
 
-A query is sent once, with the state it has when it is first dehydrated. If it changes later in the same request, the change doesn't reach the browser.
+Each query goes out once, with the state it has when `dehydrate` first includes it. If it changes later in the same request, the change doesn't reach the browser.

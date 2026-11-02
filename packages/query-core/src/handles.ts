@@ -13,7 +13,7 @@ import type {
 // TYPES
 
 /**
- * The options a query factory returns, as built by `queryOptions` or `infiniteQueryOptions`.
+ * The options a query factory returns, usually from `queryOptions` or `infiniteQueryOptions`.
  */
 interface QueryFactoryOptions {
   queryKey: QueryKey
@@ -21,8 +21,8 @@ interface QueryFactoryOptions {
 }
 
 /**
- * A function of zero or one argument that returns the options of a query, usually built with
- * `queryOptions` or `infiniteQueryOptions`. Its argument is the query's input, which handles carry.
+ * A function of zero or one argument that returns a query's options, usually with `queryOptions`
+ * or `infiniteQueryOptions`. Its argument is the query's input, which handles carry.
  */
 export type QueryHandleFactory = (input?: any) => QueryFactoryOptions
 
@@ -33,8 +33,8 @@ export type QueryHandleInput<TFactory extends QueryHandleFactory> =
   Parameters<TFactory> extends [] ? undefined : Parameters<TFactory>[0]
 
 /**
- * The data of a query built by a factory, as tagged on its `queryKey`. For an infinite query
- * factory this is the `InfiniteData` of its pages, with the type of its `initialPageParam`.
+ * The data type of a factory's query, from the tag on its `queryKey`. For an infinite query
+ * factory, this is the `InfiniteData` of its pages, with the type of its `initialPageParam`.
  */
 export type QueryHandleData<TFactory extends QueryHandleFactory> =
   ReturnType<TFactory> extends { initialPageParam: infer TPageParam }
@@ -47,7 +47,7 @@ export type QueryHandleData<TFactory extends QueryHandleFactory> =
     : InferDataFromTag<unknown, ReturnType<TFactory>['queryKey']>
 
 /**
- * The error type of a query built by a factory, as tagged on its `queryKey`.
+ * The error type of a factory's query, from the tag on its `queryKey`.
  */
 export type QueryHandleError<TFactory extends QueryHandleFactory> =
   InferErrorFromTag<DefaultError, ReturnType<TFactory>['queryKey']>
@@ -86,7 +86,7 @@ export interface QueryHandle<
    */
   readonly queryKey: QueryHandleKey<TFactory>
   /**
-   * The input the query was started with: the argument passed to its factory.
+   * The query's input: the argument its factory takes.
    */
   readonly input: QueryHandleInput<TFactory>
 }
@@ -104,7 +104,7 @@ export interface QueryHandleWithData<
    */
   readonly data: QueryHandleData<TFactory>
   /**
-   * When `data` was last updated, passed on as `initialDataUpdatedAt`.
+   * When `data` last changed. `experimental_fromHandle` passes it on as `initialDataUpdatedAt`.
    */
   readonly dataUpdatedAt: number
 }
@@ -127,7 +127,7 @@ export type FromHandleOptions<
 // FUNCTIONS
 
 /**
- * Tells options built by `infiniteQueryOptions` from options built by `queryOptions`.
+ * Tells `infiniteQueryOptions` results apart from `queryOptions` results.
  * @param options - Options a query factory returned.
  * @returns Whether they describe an infinite query.
  */
@@ -136,7 +136,7 @@ function isInfiniteOptions(options: QueryFactoryOptions): boolean {
 }
 
 /**
- * Starts a query built by a factory, without waiting.
+ * Starts a factory's query without waiting.
  * @param client - The client to start the query on.
  * @param options - Options a query factory returned.
  * @returns The promise of the query's data.
@@ -168,7 +168,7 @@ function getQuery(
 /**
  * Builds a handle.
  * @param options - Options a query factory returned.
- * @param input - The input they were built from.
+ * @param input - The factory's input.
  * @returns A handle with their key and the input.
  */
 function toHandle(options: QueryFactoryOptions, input: unknown) {
@@ -177,9 +177,9 @@ function toHandle(options: QueryFactoryOptions, input: unknown) {
 
 /**
  * Builds a handle that carries the query's current data.
- * @param client - The client the query is cached on.
+ * @param client - The client whose cache holds the query.
  * @param options - Options a query factory returned.
- * @param input - The input they were built from.
+ * @param input - The factory's input.
  * @returns A handle with their key, the input and the data.
  */
 function withData(
@@ -196,10 +196,10 @@ function withData(
 }
 
 /**
- * Starts a query without waiting and returns a serializable handle for it, for a route loader, a
- * server component or a server render to pass to the component that reads the query. Like
- * `queryClient.query`, it fetches only if the cache has no fresh data, and it never throws: errors
- * surface where the handle is read.
+ * Starts a query without waiting and returns a serializable handle for it. A route loader, server
+ * component or server render passes the handle to the component that reads the query. Like
+ * `queryClient.query`, it fetches only if the cache has no fresh data. It never throws: errors
+ * show up where a component reads the handle.
  * @param queryClient - The client to start the query on.
  * @param factory - The query factory, a function of the query's input that returns its options.
  * @param input - The input to pass to the factory, if it takes one.
@@ -230,7 +230,7 @@ export function experimental_prefetchHandle<
 
 /**
  * Starts a query and waits until the cache has data for it, then returns a handle that carries the
- * data. Cached data resolves at once, even if it is stale, and stale data is refetched in the
+ * data. It resolves at once with cached data, even stale data, and refetches stale data in the
  * background. Rejects if the query has no data and its fetch fails.
  * @param queryClient - The client to start the query on.
  * @param factory - The query factory, a function of the query's input that returns its options.
@@ -265,7 +265,7 @@ export async function experimental_ensureHandle<
 
 /**
  * Starts a query and waits for fresh data, then returns a handle that carries the data. Like
- * `queryClient.query`, cached data is used only if it isn't stale. Rejects if the fetch fails.
+ * `queryClient.query`, it uses cached data only if it isn't stale. Rejects if the fetch fails.
  * @param queryClient - The client to start the query on.
  * @param factory - The query factory, a function of the query's input that returns its options.
  * @param input - The input to pass to the factory, if it takes one.
@@ -293,7 +293,7 @@ export async function experimental_fetchHandle<
 }
 
 /**
- * Builds the handle of a query whose input is only known during render, like a search term or a
+ * Builds the handle of a query whose input you only know during render, like a search term or a
  * page a user clicks to. It doesn't start the query: the component that reads the handle does,
  * when it renders, which makes it a request waterfall. The name keeps that visible. Prefer
  * starting queries in a route loader or server component with `experimental_prefetchHandle`.
@@ -317,8 +317,8 @@ export function experimental_waterfallHandle<
  * handle does, when it renders, which makes it a request waterfall. Prefer passing the new input
  * to the loader through the URL.
  *
- * While the switched input maps to the handle's own query, the handle is returned as is, so the
- * first page reads what the loader started.
+ * While the new input maps to the handle's own query, it returns the handle as is, so the first
+ * page reads what the loader started.
  * @param factory - The factory that started the handle's query.
  * @param handle - The handle to switch from.
  * @param switchInput - Returns the new input, given the handle's input.
@@ -376,8 +376,8 @@ export function experimental_waterfallHandle<
  * that takes query options, and spread them to add read-site options like `select`. They share the
  * cache entry the handle's verb started.
  *
- * For a handle from `experimental_ensureHandle` or `experimental_fetchHandle`, the handle's data
- * is passed on as `initialData` and `initialDataUpdatedAt`, so readers always have data. Data
+ * For a handle from `experimental_ensureHandle` or `experimental_fetchHandle`, it passes the
+ * handle's data on as `initialData` and `initialDataUpdatedAt`, so readers always have data. Data
  * already in the cache wins over it.
  * @param factory - The factory that started the query.
  * @param handle - The handle the factory's verb returned.

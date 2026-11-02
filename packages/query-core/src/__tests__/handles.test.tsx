@@ -319,7 +319,7 @@ describe('query handles', () => {
       })
     })
 
-    it('should let data already in the cache win over the handle data', () => {
+    it("should prefer cached data over the handle's data", () => {
       using _timers = fakeTimers()
       using queryClient = clearOnDispose(new QueryClient())
       const postQuery = createPostQuery()
@@ -369,7 +369,7 @@ describe('query handles', () => {
       })
     })
 
-    it('should return the handle it switches from while the switched input maps to its query', () => {
+    it('should return the same handle while the new input maps to its query', () => {
       using _timers = fakeTimers()
       using queryClient = clearOnDispose(new QueryClient())
       const key = createKey()

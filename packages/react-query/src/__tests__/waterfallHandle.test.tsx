@@ -35,7 +35,7 @@ describe('experimental_waterfallHandle', () => {
     return { postsQuery, queryFn }
   }
 
-  it('should let the reader fetch the query for an input, once', async () => {
+  it('should let the reader fetch the query once', async () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
     const { postsQuery, queryFn } = createPostsQuery()
@@ -63,7 +63,7 @@ describe('experimental_waterfallHandle', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
-  it('should keep the handle a loader passed down until the switched input maps to another query', async () => {
+  it("should keep the loader's handle until the new input maps to another query", async () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
     const { postsQuery, queryFn } = createPostsQuery()
