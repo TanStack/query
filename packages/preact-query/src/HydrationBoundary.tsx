@@ -150,13 +150,31 @@ export const HydrationBoundary = ({
         }
       }
 
+      // Filter out existing queries that were created by useQuery on the server
+      // (status === 'pending' && fetchStatus === 'idle' && data === undefined)
+      // These don't have real data yet, so we should hydrate them
+      const filteredExistingQueries = existingQueries.filter((dehydratedQuery) => {
+        const existingQuery = queryCache.get(dehydratedQuery.queryHash)
+        if (!existingQuery) return true
+        
+        // If existing query is pending with no data and idle fetchStatus,
+        // it was created by useQuery on server (which doesn't fetch)
+        // We SHOULD hydrate it
+        const isServerUseQuery = 
+          existingQuery.state.status === 'pending' &&
+          existingQuery.state.fetchStatus === 'idle' &&
+          existingQuery.state.data === undefined
+        
+        return !isServerUseQuery
+      })
+
       if (newQueries.length > 0) {
         // It's actually fine to call this with queries/state that already exists
         // in the cache, or is older. hydrate() is idempotent for queries.
         hydrate(client, { queries: newQueries }, optionsRef.current)
       }
-      if (existingQueries.length > 0) {
-        return { existingQueries, parentSnapshot }
+      if (filteredExistingQueries.length > 0) {
+        return { existingQueries: filteredExistingQueries, parentSnapshot }
       }
     }
     return undefined
