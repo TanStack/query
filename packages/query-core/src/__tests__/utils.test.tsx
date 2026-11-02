@@ -728,6 +728,20 @@ describe('core/utils', () => {
   })
 
   describe('addConsumeAwareSignal', () => {
+    it('should allow page parameters to be passed to URLSearchParams', () => {
+      const controller = new AbortController()
+      const context = addConsumeAwareSignal(
+        { pageParam: 'cursor' },
+        () => controller.signal,
+        vi.fn(),
+        controller.signal,
+      )
+      const { signal, ...params } = context
+
+      expect(signal).toBe(controller.signal)
+      expect(new URLSearchParams(params).toString()).toBe('pageParam=cursor')
+    })
+
     it('should expose the signal on the query context while preserving its properties', () => {
       const controller = new AbortController()
       const key = createKey()

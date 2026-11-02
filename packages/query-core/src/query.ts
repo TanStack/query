@@ -1,5 +1,6 @@
 import {
   ensureQueryFn,
+  fetchSignal,
   noop,
   replaceData,
   resolveQueryValue,
@@ -749,12 +750,15 @@ export class Query<
     // Adds an enumerable signal property to the object that
     // which sets abortSignalConsumed to true when the signal
     // is read.
-    const addSignalProperty = (object: unknown) => {
-      Object.defineProperty(object, 'signal', {
-        enumerable: true,
-        get: () => {
-          this.#abortSignalConsumed = true
-          return abortController.signal
+    const addSignalProperty = (object: object) => {
+      Object.defineProperties(object, {
+        [fetchSignal]: { value: abortController.signal, enumerable: true },
+        signal: {
+          enumerable: true,
+          get: () => {
+            this.#abortSignalConsumed = true
+            return abortController.signal
+          },
         },
       })
     }

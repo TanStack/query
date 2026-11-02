@@ -700,6 +700,16 @@ export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
   return !!throwOnError
 }
 
+export const fetchSignal = Symbol()
+
+/** Internal view of a context that can expose its signal without consuming it. */
+export type FetchSignalContext = {
+  /** The public signal, whose getter can mark it consumed. */
+  readonly signal: AbortSignal
+  /** The original fetch signal, absent on application-created contexts. */
+  readonly [fetchSignal]?: AbortSignal
+}
+
 /**
  * Adds a lazy `signal` getter to an object, such as a query function context. The first time
  * `signal` is read, `onCancelled` is registered for the signal's `abort` event (or called right
@@ -707,32 +717,37 @@ export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
  * @param object - The object to add the `signal` property to.
  * @param getSignal - Returns the `AbortSignal`. Called once, when `signal` is first read.
  * @param onCancelled - Called when the signal is aborted, if `signal` was read.
+ * @param internalSignal - The fetch signal to forward without consuming the getter.
  * @returns The same object, with the `signal` property added.
  */
-export function addConsumeAwareSignal<T>(
+export function addConsumeAwareSignal<T extends object>(
   object: T,
   getSignal: () => AbortSignal,
   onCancelled: () => void,
+  internalSignal?: AbortSignal,
 ): T & { signal: AbortSignal } {
   let consumed = false
   let signal: AbortSignal | undefined
 
-  Object.defineProperty(object, 'signal', {
-    enumerable: true,
-    get: () => {
-      signal ??= getSignal()
-      if (consumed) {
+  Object.defineProperties(object, {
+    [fetchSignal]: { value: internalSignal },
+    signal: {
+      enumerable: true,
+      get: () => {
+        signal ??= getSignal()
+        if (consumed) {
+          return signal
+        }
+
+        consumed = true
+        if (signal.aborted) {
+          onCancelled()
+        } else {
+          signal.addEventListener('abort', onCancelled, { once: true })
+        }
+
         return signal
-      }
-
-      consumed = true
-      if (signal.aborted) {
-        onCancelled()
-      } else {
-        signal.addEventListener('abort', onCancelled, { once: true })
-      }
-
-      return signal
+      },
     },
   })
 
