@@ -2820,6 +2820,8 @@ const stylesFactory = (
       z-index: 9999;
       display: flex;
       height: 100%;
+      flex: 1 1 500px;
+      min-height: 0;
       gap: ${tokens.size[0.5]};
       & * {
         box-sizing: border-box;
