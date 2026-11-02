@@ -14,7 +14,6 @@
     "@tanstack/vue-query": "^5.105.1",
     "@tanstack/vue-query-devtools": "^6.3.7",
     "@tanstack/vue-router": "^1.170.42",
-    "localforage": "^1.10.0",
     "match-sorter": "^8.3.0",
     "vue": "^3.5.43"
   },

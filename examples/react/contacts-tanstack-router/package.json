@@ -14,7 +14,6 @@
     "@tanstack/react-query": "^5.105.1",
     "@tanstack/react-query-devtools": "^5.105.1",
     "@tanstack/react-router": "^1.170.46",
-    "localforage": "^1.10.0",
     "match-sorter": "^8.3.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"

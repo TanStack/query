@@ -2390,9 +2390,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.105.1
         version: link:../../../packages/react-query-devtools
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
       match-sorter:
         specifier: ^8.3.0
         version: 8.3.0
@@ -2442,9 +2439,6 @@ importers:
       '@tanstack/react-router':
         specifier: ^1.170.46
         version: 1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
       match-sorter:
         specifier: ^8.3.0
         version: 8.3.0
@@ -3593,9 +3587,6 @@ importers:
       '@tanstack/solid-query-devtools':
         specifier: ^5.105.1
         version: link:../../../packages/solid-query-devtools
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
       match-sorter:
         specifier: ^8.3.0
         version: 8.3.0
@@ -3633,9 +3624,6 @@ importers:
       '@tanstack/solid-router':
         specifier: ^1.170.43
         version: 1.170.43(solid-js@1.9.15)
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
       match-sorter:
         specifier: ^8.3.0
         version: 8.3.0
@@ -5192,9 +5180,6 @@ importers:
       '@tanstack/vue-router':
         specifier: ^1.170.42
         version: 1.170.42(@vue/composition-api@1.7.2(vue@3.5.44(typescript@6.0.3)))(vue@3.5.44(typescript@6.0.3))
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
       match-sorter:
         specifier: ^8.3.0
         version: 8.3.0
@@ -5238,9 +5223,6 @@ importers:
       '@tanstack/vue-query-devtools':
         specifier: ^6.3.7
         version: link:../../../packages/vue-query-devtools
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
       match-sorter:
         specifier: ^8.3.0
         version: 8.3.0
@@ -18076,9 +18058,6 @@ packages:
   image-meta@0.3.0:
     resolution: {integrity: sha512-IDxPcgtP9oUwUhcUMBfAQo27JTx9j96jFV9kpfavkANF6LvcTWEm1IouSbgMDV3G5Y5jx2SEdnHtecxV2OjGBA==}
 
-  immediate@3.0.6:
-    resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
-
   immutable@5.1.5:
     resolution: {integrity: sha512-t7xcm2siw+hlUM68I+UEOK+z84RzmN59as9DZ7P1l0994DKUWV7UXBMQZVxaoMSRQ+PBZbHCOoBt7a2wxOMt+A==}
 
@@ -18768,9 +18747,6 @@ packages:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
 
-  lie@3.1.1:
-    resolution: {integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==}
-
   lightningcss-android-arm64@1.32.0:
     resolution: {integrity: sha512-YK7/ClTt4kAK0vo6w3X+Pnm0D2cf2vPHbhOXdoNti1Ga0al1P4TBZhwjATvjNwLEBCnKvjJc2jQgHXH0NEwlAg==}
     engines: {node: '>= 12.0.0'}
@@ -18986,9 +18962,6 @@ packages:
   local-pkg@1.2.1:
     resolution: {integrity: sha512-++gUqRDEvcnN6Zhqrr+y/CkVEHhlrR96vZn3nZZPYzMcBUyBtTKzB9NadClFIsIVSsu+3i9tfk/erqy9kAmt7Q==}
     engines: {node: '>=14'}
-
-  localforage@1.10.0:
-    resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
 
   locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
@@ -37934,8 +37907,6 @@ snapshots:
 
   image-meta@0.3.0: {}
 
-  immediate@3.0.6: {}
-
   immutable@5.1.5: {}
 
   import-fresh@3.3.1:
@@ -38761,10 +38732,6 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
-  lie@3.1.1:
-    dependencies:
-      immediate: 3.0.6
-
   lightningcss-android-arm64@1.32.0:
     optional: true
 
@@ -38986,10 +38953,6 @@ snapshots:
       mlly: 1.8.2
       pkg-types: 2.4.0
       quansync: 0.2.11
-
-  localforage@1.10.0:
-    dependencies:
-      lie: 3.1.1
 
   locate-character@3.0.0: {}
 
