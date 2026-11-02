@@ -877,7 +877,9 @@ export interface ResultOptions {
  */
 export interface RefetchOptions extends ResultOptions {
   /**
-   * If set to `true`, a currently running request will be cancelled before a new request is made
+   * If set to `true`, a currently running request with cached data is cancelled before a new
+   * request starts. Without cached data, an invalidated request finishes first, then one shared
+   * full refresh runs. A request that has not been invalidated is reused.
    *
    * If set to `false`, no refetch will be made if there is already a request running.
    * @defaultValue true

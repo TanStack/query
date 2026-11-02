@@ -94,7 +94,7 @@ export interface QueryState<TData = unknown, TError = DefaultError> {
   fetchMeta: FetchMeta | null
   /**
    * Whether the query has been marked as invalidated via `invalidate()`.
-   * - Reset to `false` whenever the query resolves successfully.
+   * - Reset to `false` on success, unless an invalidated fetch still has a queued refresh.
    */
   isInvalidated: boolean
   /**
@@ -193,7 +193,9 @@ export interface FetchMeta {
 export interface FetchOptions<TData = unknown> {
   /**
    * If `true`, an in-flight fetch is cancelled before starting a new one, when the query already
-   * has data. Otherwise, the in-flight fetch is reused.
+   * has data. Without data, an invalidated fetch finishes first, then one full refresh runs.
+   * Without data, page fetches and supplied initial promises reuse the in-flight fetch instead.
+   * If `false`, the in-flight fetch is reused without queuing a refresh.
    */
   cancelRefetch?: boolean
   /**
@@ -205,6 +207,21 @@ export interface FetchOptions<TData = unknown> {
    * restored by `hydrate`.
    */
   initialPromise?: Promise<TData>
+}
+
+type Refresh<TData> =
+  | { kind: 'clean' }
+  | { kind: 'invalidated' }
+  | {
+      kind: 'queued'
+      promise: Promise<TData>
+      resolve: (promise: Promise<TData>) => void
+    }
+
+interface FetchRun<TData> {
+  retryer: Retryer<TData>
+  processed: Promise<TData>
+  refresh: Refresh<TData>
 }
 
 interface FailedAction<TError> {
@@ -297,8 +314,7 @@ export class Query<
   #revertState?: QueryState<TData, TError>
   #cache: QueryCache
   #client: QueryClient
-  #retryer?: Retryer<TData>
-  #fetchPromise?: Promise<TData>
+  #run?: FetchRun<TData>
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
@@ -341,7 +357,7 @@ export class Query<
    * @returns The promise of the in-flight fetch, or `undefined`.
    */
   get promise(): Promise<TData> | undefined {
-    return this.#retryer?.promise
+    return this.#run?.retryer.promise
   }
 
   /**
@@ -427,8 +443,9 @@ export class Query<
    * ```
    */
   cancel(options?: CancelOptions): Promise<void> {
-    const promise = this.#retryer?.promise
-    this.#retryer?.cancel(options)
+    const promise = this.#run?.retryer.promise
+    this.#withdrawRefresh()
+    this.#run?.retryer.cancel(options)
     return promise ? promise.then(noop).catch(noop) : Promise.resolve()
   }
 
@@ -588,7 +605,7 @@ export class Query<
     observer?.refetch({ cancelRefetch: false })
 
     // Continue fetch if currently paused
-    this.#retryer?.continue()
+    this.#run?.retryer.continue()
   }
 
   /**
@@ -602,7 +619,7 @@ export class Query<
     observer?.refetch({ cancelRefetch: false })
 
     // Continue fetch if currently paused
-    this.#retryer?.continue()
+    this.#run?.retryer.continue()
   }
 
   /**
@@ -637,15 +654,16 @@ export class Query<
       if (!this.observers.length) {
         // If the transport layer does not support cancellation
         // we'll let the query continue so the result can be cached
-        if (this.#retryer) {
+        this.#withdrawRefresh()
+        if (this.#run) {
           if (
             this.#abortSignalConsumed ||
             (this.state.fetchStatus === 'paused' &&
               this.state.status === 'pending')
           ) {
-            this.#retryer.cancel({ revert: true })
+            this.#run.retryer.cancel({ revert: true })
           } else {
-            this.#retryer.cancelRetry()
+            this.#run.retryer.cancelRetry()
           }
         }
 
@@ -680,6 +698,9 @@ export class Query<
    * ```
    */
   invalidate(): void {
+    if (this.#run?.refresh.kind === 'clean') {
+      this.#run.refresh = { kind: 'invalidated' }
+    }
     if (!this.state.isInvalidated) {
       this.#dispatch({ type: 'invalidate' })
     }
@@ -692,12 +713,15 @@ export class Query<
    *   starting a new one, unless `fetchOptions.cancelRefetch` is set and the
    *   query already has data, in which case the current fetch is silently
    *   cancelled first.
+   * - Without data, a full fetch with `cancelRefetch: true` after invalidation
+   *   waits for one shared refresh after the current fetch finishes. The current
+   *   fetch still publishes its result and resolves its own callers first.
    * - If `options` is passed, it replaces the query's current options
    *   before fetching.
    * @param options - Query options that replace the query's current options before fetching. They
    * are not applied when an in-flight fetch is reused.
-   * @param fetchOptions - Set `cancelRefetch` to cancel an in-flight fetch first (only if the query
-   * already has data), and `meta` to pass extra information to the query's behavior.
+   * @param fetchOptions - Set `cancelRefetch` to replace an in-flight fetch with data, or queue a
+   * full refresh of an invalidated fetch without data. Set `meta` to pass behavior metadata.
    * @returns A promise that resolves with the fetched data, or rejects with the fetch error. If the
    * fetch is cancelled with `revert` while the query has data, it resolves with the restored data
    * instead.
@@ -706,21 +730,29 @@ export class Query<
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     fetchOptions?: FetchOptions<TQueryFnData>,
   ): Promise<TData> {
+    const current = this.#run
     if (
       this.state.fetchStatus !== 'idle' &&
       // If the promise in the retryer is already rejected, we have to definitely
       // re-start the fetch; there is a chance that the query is still in a
       // pending state when that happens
-      this.#retryer?.status() !== 'rejected'
+      current?.retryer.status() !== 'rejected'
     ) {
       if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
         // Silently cancel current fetch if the user wants to cancel refetch
-        this.cancel({ silent: true })
-      } else if (this.#retryer && this.#fetchPromise) {
+        current?.retryer.cancel({ silent: true })
+      } else if (current) {
         // make sure that retries that were potentially cancelled due to unmounts can continue
-        this.#retryer.continueRetry()
-        // Return current promise if we are already fetching
-        return this.#fetchPromise
+        current.retryer.continueRetry()
+        if (
+          fetchOptions?.cancelRefetch &&
+          current.refresh.kind !== 'clean' &&
+          !fetchOptions.meta?.fetchMore?.direction &&
+          !fetchOptions.initialPromise
+        ) {
+          return this.#queueRefresh(current)
+        }
+        return current.processed
       }
     }
 
@@ -827,21 +859,22 @@ export class Query<
             (this.options as { pages?: number }).pages,
           ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>)
         : this.options.behavior
+    const preparing = this.#run
+    const refresh = preparing?.refresh
     behavior?.onFetch(context, this as unknown as Query)
+    if (
+      preparing &&
+      refresh?.kind === 'queued' &&
+      (this.#run !== preparing || preparing.refresh !== refresh)
+    ) {
+      return this.#run?.processed ?? preparing.processed
+    }
 
     // Store state in case the current fetch needs to be reverted
     this.#revertState = this.state
 
-    // Set to fetching state if not already in it
-    if (
-      this.state.fetchStatus === 'idle' ||
-      this.state.fetchMeta !== context.fetchOptions?.meta
-    ) {
-      this.#dispatch({ type: 'fetch', meta: context.fetchOptions?.meta })
-    }
-
     // Try to fetch the data
-    const retryer = (this.#retryer = createRetryer({
+    const retryer = createRetryer<TData, TError>({
       initialPromise: fetchOptions?.initialPromise as
         | Promise<TData>
         | undefined,
@@ -868,9 +901,9 @@ export class Query<
       retryDelay: context.options.retryDelay,
       networkMode: context.options.networkMode,
       canRun: () => true,
-    }))
+    })
 
-    const fetchPromise = (async () => {
+    const processFetch = async () => {
       try {
         const data = await retryer.promise
         // this is more of a runtime guard
@@ -896,10 +929,10 @@ export class Query<
       } catch (error) {
         if (error instanceof CancelledError) {
           if (error.silent) {
-            if (this.#retryer !== retryer && this.#fetchPromise) {
+            if (this.#run && this.#run !== run) {
               // A new fetch replaced the silently cancelled one,
               // so we piggyback onto that promise.
-              return this.#fetchPromise
+              return this.#run.processed
             }
             throw error
           } else if (error.revert) {
@@ -930,19 +963,85 @@ export class Query<
 
         throw error // rethrow the error for further handling
       } finally {
-        // The settled retryer's promise would otherwise pin this fetch's raw
-        // result (a second copy after structural sharing) for the query's lifetime
-        if (this.#retryer === retryer) {
-          this.#retryer = undefined
-          this.#fetchPromise = undefined
+        if (this.#run === run) {
+          if (
+            run.refresh.kind === 'queued' &&
+            this.#cache.get<TQueryFnData, TError, TData, TQueryKey>(
+              this.queryHash,
+            ) === this
+          ) {
+            const refresh = run.refresh
+            const next = this.fetch(undefined, { cancelRefetch: false })
+            if (this.#run === run && run.refresh === refresh) {
+              run.refresh = { kind: 'clean' }
+              refresh.resolve(next)
+            }
+            next.catch(noop)
+          }
+          if (this.#run === run) {
+            this.#run = undefined
+          }
         }
         // Schedule query gc after fetching
         this.scheduleGc()
       }
-    })()
-    this.#fetchPromise = fetchPromise
-    retryer.start()
+    }
+    const run: FetchRun<TData> = {
+      retryer,
+      processed: processFetch(),
+      refresh: { kind: 'clean' },
+    }
+    const fetchPromise = run.processed
+    const previous = this.#run
+    this.#run = run
+    if (previous?.refresh.kind === 'queued') {
+      const refresh = previous.refresh
+      previous.refresh = { kind: 'clean' }
+      if (
+        fetchOptions?.meta?.fetchMore?.direction ||
+        fetchOptions?.initialPromise
+      ) {
+        run.refresh = refresh
+      } else {
+        refresh.resolve(fetchPromise)
+      }
+    }
+
+    if (
+      this.state.fetchStatus === 'idle' ||
+      this.state.fetchMeta !== context.fetchOptions?.meta
+    ) {
+      this.#dispatch({ type: 'fetch', meta: context.fetchOptions?.meta })
+    }
+    if (this.#run === run && retryer.status() === 'pending') {
+      retryer.start()
+    }
     return fetchPromise
+  }
+
+  #queueRefresh(run: FetchRun<TData>): Promise<TData> {
+    if (run.refresh.kind !== 'queued') {
+      let resolve: (promise: Promise<TData>) => void
+      const promise = new Promise<TData>((resolvePromise) => {
+        resolve = resolvePromise
+      })
+      promise.catch(noop)
+      run.refresh = {
+        kind: 'queued',
+        promise,
+        resolve: (value) => resolve(value),
+      }
+    }
+    return run.refresh.promise
+  }
+
+  #withdrawRefresh(): void {
+    const run = this.#run
+    if (run?.refresh.kind === 'queued') {
+      const refresh = run.refresh
+      run.refresh = { kind: 'invalidated' }
+      refresh.resolve(run.processed)
+    }
   }
 
   #dispatch(action: Action<TData, TError>): void {
@@ -976,6 +1075,8 @@ export class Query<
           const newState = {
             ...state,
             ...successState(action.data, action.dataUpdatedAt),
+            isInvalidated:
+              !action.manual && this.#run?.refresh.kind === 'queued',
             dataUpdateCount: state.dataUpdateCount + 1,
             ...(!action.manual && {
               fetchStatus: 'idle' as const,

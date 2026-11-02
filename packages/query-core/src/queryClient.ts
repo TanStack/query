@@ -485,8 +485,9 @@ export class QueryClient {
    * control which of them to refetch afterwards. Without filters, every query is invalidated.
    * @param options - Passed to {@link QueryClient#refetchQueries}, e.g. `cancelRefetch` and
    * `throwOnError`.
-   * @returns A promise that resolves once the refetch settles, or immediately if `refetchType` is
-   * `'none'`.
+   * @returns A promise that resolves once the refetch settles, including a queued refresh after
+   * an invalidated initial fetch, or immediately if `refetchType` is `'none'`. Queries that are
+   * initially paused do not delay the returned promise.
    * @example
    * ```ts
    * await queryClient.invalidateQueries({ queryKey: ['posts'], refetchType: 'active' })
@@ -519,9 +520,10 @@ export class QueryClient {
    * filters, every query in the cache is refetched. Queries that are disabled, or static (only
    * have observers with a static `staleTime`), are never refetched.
    *
-   * By default (`cancelRefetch: true`), a currently running fetch is cancelled before the new
-   * one starts. The returned promise does not reject on individual query failures unless
-   * `throwOnError` is `true`.
+   * By default (`cancelRefetch: true`), a currently running fetch with cached data is cancelled
+   * before the new one starts. Without data, an invalidated fetch finishes first, then one shared
+   * refresh runs. Other initial fetches are reused. The returned promise does not reject on
+   * individual query failures unless `throwOnError` is `true`.
    *
    * Initially paused fetches do not delay the returned promise. Their later errors are handled
    * even when `throwOnError` is `true`.

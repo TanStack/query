@@ -304,6 +304,43 @@ describe('useQuery', () => {
     expect(status.value).toBe('pending')
   })
 
+  it('should refresh an invalidated initial fetch with the options updated in the same tick', async () => {
+    const key = createKey()
+    const input = ref('before')
+    const queryClient = useQueryClient()
+    const request = vi.fn<(value: string) => Promise<string>>(async (value) => {
+      await sleep(10)
+      return value
+    })
+    const query = useQuery({
+      queryKey: key,
+      queryFn: computed(() => {
+        const value = input.value
+        return () => request(value)
+      }),
+      staleTime: Infinity,
+    })
+    const completed = vi.fn<() => void>()
+
+    input.value = 'after'
+    const invalidation = queryClient
+      .invalidateQueries({ queryKey: key })
+      .then(() => completed())
+    await vi.advanceTimersByTimeAsync(10)
+    expect(query.data.value).toBe('before')
+    expect(query.isStale.value).toBe(true)
+    expect(completed).not.toHaveBeenCalled()
+    expect(request).toHaveBeenNthCalledWith(1, 'before')
+    expect(request).toHaveBeenNthCalledWith(2, 'after')
+
+    await vi.advanceTimersByTimeAsync(10)
+    await invalidation
+    expect(query.data.value).toBe('after')
+    expect(query.isStale.value).toBe(false)
+    expect(completed).toHaveBeenCalledTimes(1)
+    queryClient.removeQueries({ queryKey: key })
+  })
+
   it('should use the current value for the queryKey when refetch is called', async () => {
     const key = createKey()
     const queryFn = vi.fn<() => string>(() => 'foo')

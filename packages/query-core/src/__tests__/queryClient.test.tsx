@@ -2633,7 +2633,7 @@ describe('queryClient', () => {
       serverData = 'after'
       const invalidated = queryClient
         .invalidateQueries({ queryKey: key })
-        .then(onInvalidated)
+        .then(() => onInvalidated())
 
       await vi.advanceTimersByTimeAsync(10)
       await expect(initial).resolves.toBe('before')
