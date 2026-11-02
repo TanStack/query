@@ -61,6 +61,8 @@ export const injectDevtoolsPanel: InjectDevtoolsPanel = (
         errorTypes = [],
         styleNonce,
         shadowDOMTarget,
+        hideDisabledQueries,
+        theme,
         onClose,
         hostElement,
       } = queryOptions()
@@ -80,6 +82,8 @@ export const injectDevtoolsPanel: InjectDevtoolsPanel = (
                 errorTypes,
                 styleNonce,
                 shadowDOMTarget,
+                hideDisabledQueries,
+                theme,
                 onClose,
                 onlineManager,
               })
@@ -94,6 +98,7 @@ export const injectDevtoolsPanel: InjectDevtoolsPanel = (
         } else if (devtools && hostElement) {
           devtools.setClient(client)
           devtools.setErrorTypes(errorTypes)
+          devtools.setTheme(theme)
           onClose && devtools.setOnClose(onClose)
         } else if (devtools && !hostElement) {
           destroy()

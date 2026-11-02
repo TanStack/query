@@ -14,14 +14,15 @@ import {
   noop,
   skipToken,
 } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { keepPreviousData } from '..'
 import { useQuery } from '../useQuery'
 import { useBaseQuery } from '../useBaseQuery'
 import { useQueryClient } from '../useQueryClient'
+import type { Query, QueryObserverResult } from '@tanstack/query-core'
 
-vi.mock('../useQueryClient')
-vi.mock('../useBaseQuery')
+vi.mock(import('../useQueryClient'))
+vi.mock(import('../useBaseQuery'))
 
 describe('useQuery', () => {
   beforeEach(() => {
@@ -33,7 +34,7 @@ describe('useQuery', () => {
   })
 
   it('should properly execute query', () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = () => sleep(0).then(() => 'Some data')
 
     useQuery({
@@ -54,7 +55,7 @@ describe('useQuery', () => {
   })
 
   it('should work with options getter', async () => {
-    const key = queryKey()
+    const key = createKey()
     const query = useQuery(() => ({
       queryKey: key,
       queryFn: () => sleep(0).then(() => 'result01'),
@@ -72,7 +73,7 @@ describe('useQuery', () => {
   })
 
   it('should work with options getter and be reactive', async () => {
-    const key = queryKey()
+    const key = createKey()
     const keyRef = ref('key011')
     const resultRef = ref('result02')
     const query = useQuery(() => ({
@@ -104,7 +105,7 @@ describe('useQuery', () => {
   })
 
   it('should return pending status initially', () => {
-    const key = queryKey()
+    const key = createKey()
     const query = useQuery({
       queryKey: key,
       queryFn: () => sleep(0).then(() => 'Some data'),
@@ -119,7 +120,7 @@ describe('useQuery', () => {
   })
 
   it('should resolve to success and update reactive state: useQuery(key, dataFn)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const query = useQuery({
       queryKey: key,
       queryFn: () => sleep(0).then(() => 'result2'),
@@ -137,7 +138,7 @@ describe('useQuery', () => {
   })
 
   it('should resolve to success and update reactive state: useQuery(optionsObj)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const query = useQuery({
       queryKey: key,
       queryFn: () => sleep(0).then(() => 'result31'),
@@ -156,7 +157,7 @@ describe('useQuery', () => {
   })
 
   it('should resolve to success and update reactive state: useQuery(key, optionsObj)', async () => {
-    const key = queryKey()
+    const key = createKey()
     const query = useQuery({
       queryKey: key,
       queryFn: () => sleep(0).then(() => 'result32'),
@@ -175,7 +176,7 @@ describe('useQuery', () => {
   })
 
   it('should reject and update reactive state', async () => {
-    const key = queryKey()
+    const key = createKey()
     const query = useQuery({
       queryKey: key,
       queryFn: () =>
@@ -197,7 +198,7 @@ describe('useQuery', () => {
   })
 
   it('should update query on reactive (Ref) key change', async () => {
-    const key = queryKey()
+    const key = createKey()
     const secondKeyRef = ref('key7')
     const query = useQuery({
       queryKey: [...key, secondKeyRef],
@@ -222,7 +223,7 @@ describe('useQuery', () => {
   })
 
   it("should update query when an option is passed as Ref and it's changed", async () => {
-    const key = queryKey()
+    const key = createKey()
     const enabled = ref(false)
     const query = useQuery({
       queryKey: key,
@@ -249,8 +250,8 @@ describe('useQuery', () => {
   })
 
   it('should properly execute dependent queries', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const { data } = useQuery({
       queryKey: key1,
       queryFn: () => sleep(0).then(() => 'Some data'),
@@ -258,9 +259,9 @@ describe('useQuery', () => {
 
     const enabled = computed(() => !!data.value)
 
-    const dependentQueryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'Some data'))
+    const dependentQueryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'Some data'),
+    )
     const { fetchStatus, status } = useQuery(
       reactive({
         queryKey: key2,
@@ -269,15 +270,15 @@ describe('useQuery', () => {
       }),
     )
 
-    expect(data.value).toStrictEqual(undefined)
-    expect(fetchStatus.value).toStrictEqual('idle')
+    expect(data.value).toBeUndefined()
+    expect(fetchStatus.value).toBe('idle')
     expect(dependentQueryFn).not.toHaveBeenCalled()
     await vi.advanceTimersByTimeAsync(0)
-    expect(data.value).toStrictEqual('Some data')
-    expect(fetchStatus.value).toStrictEqual('fetching')
+    expect(data.value).toBe('Some data')
+    expect(fetchStatus.value).toBe('fetching')
     await vi.advanceTimersByTimeAsync(10)
-    expect(fetchStatus.value).toStrictEqual('idle')
-    expect(status.value).toStrictEqual('success')
+    expect(fetchStatus.value).toBe('idle')
+    expect(status.value).toBe('success')
     expect(dependentQueryFn).toHaveBeenCalledTimes(1)
     expect(dependentQueryFn).toHaveBeenCalledWith(
       expect.objectContaining({ queryKey: key2 }),
@@ -285,7 +286,7 @@ describe('useQuery', () => {
   })
 
   it('should stop listening to changes on onScopeDispose', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryClient = useQueryClient()
     const onScopeDisposeMock = vi.mocked(onScopeDispose)
     onScopeDisposeMock.mockImplementationOnce((fn) => fn())
@@ -295,17 +296,17 @@ describe('useQuery', () => {
       queryFn: () => sleep(0).then(() => 'Some data'),
     })
 
-    expect(status.value).toStrictEqual('pending')
+    expect(status.value).toBe('pending')
     await vi.advanceTimersByTimeAsync(0)
     expect(queryClient.getQueryData(key)).toBe('Some data')
-    expect(status.value).toStrictEqual('pending')
+    expect(status.value).toBe('pending')
     await vi.advanceTimersByTimeAsync(0)
-    expect(status.value).toStrictEqual('pending')
+    expect(status.value).toBe('pending')
   })
 
   it('should use the current value for the queryKey when refetch is called', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const key = createKey()
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const keyRef = ref('key11')
     const query = useQuery({
       queryKey: [...key, keyRef],
@@ -338,21 +339,21 @@ describe('useQuery', () => {
   it.runIf(isVue3)(
     'should return deeply reactive and readonly data by default',
     async () => {
-      const key = queryKey()
+      const key = createKey()
       const { data } = useQuery({
         queryKey: key,
         queryFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
       })
 
       await vi.advanceTimersByTimeAsync(10)
-      expect(data.value).toEqual({ nested: { count: 0 } })
+      expect(data.value).toStrictEqual({ nested: { count: 0 } })
       expect(isReactive(data.value?.nested)).toBe(true)
       expect(isReadonly(data.value?.nested)).toBe(true)
     },
   )
 
   it('should return data in a shallow ref when shallow is true', async () => {
-    const key = queryKey()
+    const key = createKey()
     const { data } = useQuery({
       queryKey: key,
       queryFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
@@ -360,14 +361,14 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(data.value).toEqual({ nested: { count: 0 } })
+    expect(data.value).toStrictEqual({ nested: { count: 0 } })
     expect(isReactive(data.value?.nested)).toBe(false)
     expect(isReadonly(data.value?.nested)).toBe(false)
   })
 
   it('should be `enabled` to accept getter function', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const key = createKey()
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const checked = ref(false)
 
     useQuery({
@@ -380,12 +381,14 @@ describe('useQuery', () => {
 
     checked.value = true
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryFn).toHaveBeenCalled()
+    expect(queryFn).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: key }),
+    )
   })
 
   it('should allow getters for query keys', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const key = createKey()
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
 
@@ -406,8 +409,8 @@ describe('useQuery', () => {
   })
 
   it('should allow arbitrarily nested getters for query keys', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => 'foo')
+    const key = createKey()
+    const queryFn = vi.fn<() => string>(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
     const key3 = ref('key3')
@@ -456,8 +459,10 @@ describe('useQuery', () => {
   })
 
   it('should allow a getter for the whole query key', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'foo'))
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'foo'),
+    )
     const key1 = ref('key1')
 
     useQuery({
@@ -473,7 +478,7 @@ describe('useQuery', () => {
   })
 
   it('should derive data via select without changing what is cached', async () => {
-    const key = queryKey()
+    const key = createKey()
     const query = useQuery({
       queryKey: key,
       queryFn: () => sleep(10).then(() => ['a', 'b', 'c']),
@@ -488,13 +493,15 @@ describe('useQuery', () => {
 
     const queryClient = useQueryClient()
 
-    expect(queryClient.getQueryData(key)).toEqual(['a', 'b', 'c'])
+    expect(queryClient.getQueryData(key)).toStrictEqual(['a', 'b', 'c'])
   })
 
   it('should stay disabled until the dependent value is set', async () => {
-    const key = queryKey()
+    const key = createKey()
     const postId = ref<number>()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'Some data'),
+    )
 
     const query = useQuery({
       queryKey: [...key, postId],
@@ -516,9 +523,11 @@ describe('useQuery', () => {
   })
 
   it('should skip the query while a computed queryFn resolves to skipToken, and run it once defined', async () => {
-    const key = queryKey()
+    const key = createKey()
     const postId = ref<number>()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'Some data'),
+    )
 
     const query = useQuery({
       queryKey: [...key, postId],
@@ -539,7 +548,7 @@ describe('useQuery', () => {
   })
 
   it('should seed from initialData and skip the loading state', () => {
-    const key = queryKey()
+    const key = createKey()
     const query = useQuery({
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
@@ -553,8 +562,10 @@ describe('useQuery', () => {
   })
 
   it('should still fetch in the background and replace initialData with the fetched value', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     const query = useQuery({
       queryKey: key,
@@ -571,7 +582,7 @@ describe('useQuery', () => {
   })
 
   it('should keep initialData visible alongside the error when a refetch fails', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const query = useQuery({
       queryKey: key,
@@ -595,10 +606,10 @@ describe('useQuery', () => {
   })
 
   it('should keep the previous page visible while the next page loads with keepPreviousData', async () => {
-    const key = queryKey()
+    const key = createKey()
     const page = ref(0)
-    const queryFn = vi.fn((pageParam: number) =>
-      sleep(10).then(() => `page-${pageParam}`),
+    const queryFn = vi.fn<(pageParam: number) => Promise<string>>(
+      (pageParam: number) => sleep(10).then(() => `page-${pageParam}`),
     )
 
     const query = useQuery({
@@ -628,8 +639,14 @@ describe('useQuery', () => {
 
   describe('throwOnError', () => {
     it('should evaluate throwOnError when query is expected to throw', async () => {
-      const key = queryKey()
-      const throwOnError = vi.fn()
+      const key = createKey()
+      const throwOnError =
+        vi.fn<
+          (
+            error: Error,
+            query: Query<unknown, Error, unknown, Array<string>>,
+          ) => boolean
+        >()
       useQuery({
         queryKey: key,
         queryFn: () =>
@@ -656,25 +673,20 @@ describe('useQuery', () => {
         .spyOn(console, 'warn')
         .mockImplementation(() => {})
 
-      try {
-        useQuery({
-          queryKey: queryKey(),
-          queryFn: () => sleep(0).then(() => 'data'),
-        })
+      useQuery({
+        queryKey: createKey(),
+        queryFn: () => sleep(0).then(() => 'data'),
+      })
 
-        expect(consoleWarnMock).toHaveBeenCalledWith(
-          'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
-        )
-      } finally {
-        consoleWarnMock.mockRestore()
-        vi.unstubAllEnvs()
-      }
+      expect(consoleWarnMock).toHaveBeenCalledWith(
+        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+      )
     })
   })
 
   describe('suspense', () => {
     it('should return a Promise', () => {
-      const key = queryKey()
+      const key = createKey()
       const query = useQuery({
         queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
@@ -685,9 +697,12 @@ describe('useQuery', () => {
     })
 
     it('should resolve after being enabled', async () => {
-      const key = queryKey()
-      const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
-      const onResolve = vi.fn()
+      const key = createKey()
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'Some data'),
+      )
+      const onResolve =
+        vi.fn<(result: QueryObserverResult<string, Error>) => void>()
       const isEnabled = ref(false)
       const query = useQuery({
         queryKey: key,
@@ -710,8 +725,10 @@ describe('useQuery', () => {
     })
 
     it('should resolve immediately without refetching when the data is fresh', () => {
-      const key = queryKey()
-      const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+      const key = createKey()
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'Some data'),
+      )
 
       const query = useQuery({
         queryKey: key,
@@ -726,7 +743,7 @@ describe('useQuery', () => {
     })
 
     it('should not throw from suspense by default', async () => {
-      const key = queryKey()
+      const key = createKey()
       const query = useQuery({
         queryKey: key,
         queryFn: () =>
@@ -745,8 +762,8 @@ describe('useQuery', () => {
     it('should throw from suspense when throwOnError is true', async ({
       onTestFinished,
     }) => {
-      const key = queryKey()
-      const throwOnError = vi.fn().mockReturnValue(true)
+      const key = createKey()
+      const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
       const query = useQuery({
         queryKey: key,
         queryFn: () =>
@@ -783,7 +800,7 @@ describe('useQuery', () => {
     })
 
     it('should release suspense when setQueryData is called while fetch is in-flight', async () => {
-      const key = queryKey()
+      const key = createKey()
 
       const query = useQuery({
         queryKey: key,
@@ -801,7 +818,7 @@ describe('useQuery', () => {
     })
 
     it('should release suspense when streamedQuery receives first chunk', async () => {
-      const key = queryKey()
+      const key = createKey()
 
       async function* numberGenerator() {
         await sleep(10)

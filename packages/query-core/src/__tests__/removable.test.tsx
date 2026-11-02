@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Removable } from '../removable'
 import { defaultTimeoutProvider, timeoutManager } from '../timeoutManager'
 import { setIsServer } from './utils'
-import type { TimeoutCallback } from '../timeoutManager'
+import type { TimeoutCallback, TimeoutProvider } from '../timeoutManager'
 
 class RemovableTest extends Removable {
-  optionalRemoveSpy = vi.fn()
+  optionalRemoveSpy = vi.fn<() => void>()
 
   // Expose the protected members so they can be exercised directly.
   callScheduleGc(): void {
@@ -28,10 +28,14 @@ class RemovableTest extends Removable {
 describe('Removable', () => {
   function createMockProvider() {
     return {
-      setTimeout: vi.fn((_callback: TimeoutCallback, _delay: number) => 123),
-      clearTimeout: vi.fn(),
-      setInterval: vi.fn((_callback: TimeoutCallback, _delay: number) => 456),
-      clearInterval: vi.fn(),
+      setTimeout: vi.fn<TimeoutProvider<number>['setTimeout']>(
+        (_callback: TimeoutCallback, _delay: number) => 123,
+      ),
+      clearTimeout: vi.fn<TimeoutProvider<number>['clearTimeout']>(),
+      setInterval: vi.fn<TimeoutProvider<number>['setInterval']>(
+        (_callback: TimeoutCallback, _delay: number) => 456,
+      ),
+      clearInterval: vi.fn<TimeoutProvider<number>['clearInterval']>(),
     }
   }
 

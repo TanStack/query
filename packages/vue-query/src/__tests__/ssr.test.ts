@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createSSRApp, defineComponent, h, onServerPrefetch } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { computed, isVue3 } from 'vue-demi'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 
-vi.mock('../useQueryClient')
+vi.mock(import('../useQueryClient'))
 
 describe('Server Side Rendering', () => {
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('Server Side Rendering', () => {
   it.runIf(isVue3)(
     'should resolve a dependent query whose queryKey changed before suspense in onServerPrefetch',
     async () => {
-      const key = queryKey()
+      const key = createKey()
 
       const App = defineComponent({
         setup() {

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { MutationObserver, QueryClient } from '..'
+import type { MutationFunctionContext, MutationObserverResult } from '..'
 
 describe('mutationObserver', () => {
   let queryClient: QueryClient
@@ -75,8 +76,14 @@ describe('mutationObserver', () => {
       mutationFn: (text: string) => sleep(20).then(() => text),
     })
 
-    const subscription1Handler = vi.fn()
-    const subscription2Handler = vi.fn()
+    const subscription1Handler =
+      vi.fn<
+        (result: MutationObserverResult<string, Error, string, unknown>) => void
+      >()
+    const subscription2Handler =
+      vi.fn<
+        (result: MutationObserverResult<string, Error, string, unknown>) => void
+      >()
 
     const unsubscribe1 = mutation.subscribe(subscription1Handler)
     const unsubscribe2 = mutation.subscribe(subscription2Handler)
@@ -99,7 +106,10 @@ describe('mutationObserver', () => {
       gcTime: 10,
     })
 
-    const subscriptionHandler = vi.fn()
+    const subscriptionHandler =
+      vi.fn<
+        (result: MutationObserverResult<string, Error, string, unknown>) => void
+      >()
 
     const unsubscribe = mutation.subscribe(subscriptionHandler)
 
@@ -123,7 +133,10 @@ describe('mutationObserver', () => {
 
     unsubscribe()
 
-    const subscriptionHandler = vi.fn()
+    const subscriptionHandler =
+      vi.fn<
+        (result: MutationObserverResult<string, Error, string, unknown>) => void
+      >()
     mutation.subscribe(subscriptionHandler)
     await vi.advanceTimersByTimeAsync(20)
     expect(mutation.getCurrentResult()).toMatchObject({
@@ -157,7 +170,10 @@ describe('mutationObserver', () => {
       gcTime: 10,
     })
 
-    const subscriptionHandler = vi.fn()
+    const subscriptionHandler =
+      vi.fn<
+        (result: MutationObserverResult<string, Error, string, unknown>) => void
+      >()
 
     const unsubscribe = mutation.subscribe(subscriptionHandler)
 
@@ -173,13 +189,16 @@ describe('mutationObserver', () => {
   })
 
   it('should reset the observer when changing mutation keys', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutation = new MutationObserver(queryClient, {
       mutationKey: [...key, '1'],
       mutationFn: (text: string) => sleep(5).then(() => text),
     })
 
-    const subscriptionHandler = vi.fn()
+    const subscriptionHandler =
+      vi.fn<
+        (result: MutationObserverResult<string, Error, string, unknown>) => void
+      >()
 
     const unsubscribe = mutation.subscribe(subscriptionHandler)
 
@@ -201,13 +220,16 @@ describe('mutationObserver', () => {
   })
 
   it('should not affect already existing mutations when changing mutation keys', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mutationObserver = new MutationObserver(queryClient, {
       mutationKey: [...key, '1'],
       mutationFn: (text: string) => sleep(5).then(() => text),
     })
 
-    const subscriptionHandler = vi.fn()
+    const subscriptionHandler =
+      vi.fn<
+        (result: MutationObserverResult<string, Error, string, unknown>) => void
+      >()
 
     const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
 
@@ -245,7 +267,10 @@ describe('mutationObserver', () => {
       mutationFn: (text: string) => sleep(5).then(() => text),
     })
 
-    const subscriptionHandler = vi.fn()
+    const subscriptionHandler =
+      vi.fn<
+        (result: MutationObserverResult<string, Error, string, unknown>) => void
+      >()
 
     const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
 
@@ -280,7 +305,10 @@ describe('mutationObserver', () => {
       mutationFn,
     })
 
-    const subscriptionHandler = vi.fn()
+    const subscriptionHandler =
+      vi.fn<
+        (result: MutationObserverResult<string, Error, string, unknown>) => void
+      >()
 
     const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
 
@@ -321,7 +349,10 @@ describe('mutationObserver', () => {
         sleep(5).then(() => Promise.reject(new Error('err'))),
     })
 
-    const subscriptionHandler = vi.fn()
+    const subscriptionHandler =
+      vi.fn<
+        (result: MutationObserverResult<never, Error, string, unknown>) => void
+      >()
 
     const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
 
@@ -353,7 +384,10 @@ describe('mutationObserver', () => {
       mutationFn: (text: string) => sleep(20).then(() => text),
     })
 
-    const subscriptionHandler = vi.fn()
+    const subscriptionHandler =
+      vi.fn<
+        (result: MutationObserverResult<string, Error, string, unknown>) => void
+      >()
 
     const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
 
@@ -380,14 +414,34 @@ describe('mutationObserver', () => {
   })
 
   it('should call mutation callbacks in correct order with correct arguments for success case', async () => {
-    const onSuccess = vi.fn()
-    const onSettled = vi.fn()
+    const onSuccess =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettled =
+      vi.fn<
+        (
+          data: string | undefined,
+          error: Error | null,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const mutationObserver = new MutationObserver(queryClient, {
       mutationFn: (text: string) => Promise.resolve(text.toUpperCase()),
     })
 
-    const subscriptionHandler = vi.fn()
+    const subscriptionHandler =
+      vi.fn<
+        (result: MutationObserverResult<string, Error, string, unknown>) => void
+      >()
     const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
 
     mutationObserver.mutate('success', {
@@ -418,15 +472,35 @@ describe('mutationObserver', () => {
   })
 
   it('should call mutation callbacks in correct order with correct arguments for error case', async () => {
-    const onError = vi.fn()
-    const onSettled = vi.fn()
+    const onError =
+      vi.fn<
+        (
+          error: Error,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettled =
+      vi.fn<
+        (
+          data: undefined,
+          error: Error | null,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const error = new Error('error')
     const mutationObserver = new MutationObserver(queryClient, {
       mutationFn: (_: string) => Promise.reject(error),
     })
 
-    const subscriptionHandler = vi.fn()
+    const subscriptionHandler =
+      vi.fn<
+        (result: MutationObserverResult<never, Error, string, unknown>) => void
+      >()
     const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
 
     mutationObserver
@@ -462,18 +536,18 @@ describe('mutationObserver', () => {
     it('should transfer onSuccess and onSettled to different execution context where they are reported', async ({
       onTestFinished,
     }) => {
-      const unhandledRejectionFn = vi.fn()
+      const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
       process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         process.off('unhandledRejection', unhandledRejectionFn)
       })
 
       const onSuccessError = new Error('onSuccess-error')
-      const onSuccess = vi.fn(() => {
+      const onSuccess = vi.fn<() => never>(() => {
         throw onSuccessError
       })
       const onSettledError = new Error('onSettled-error')
-      const onSettled = vi.fn(() => {
+      const onSettled = vi.fn<() => never>(() => {
         throw onSettledError
       })
 
@@ -481,7 +555,12 @@ describe('mutationObserver', () => {
         mutationFn: (text: string) => Promise.resolve(text.toUpperCase()),
       })
 
-      const subscriptionHandler = vi.fn()
+      const subscriptionHandler =
+        vi.fn<
+          (
+            result: MutationObserverResult<string, Error, string, unknown>,
+          ) => void
+        >()
       const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
 
       mutationObserver.mutate('success', {
@@ -512,18 +591,18 @@ describe('mutationObserver', () => {
     it('should transfer onError and onSettled to different execution context where they are reported', async ({
       onTestFinished,
     }) => {
-      const unhandledRejectionFn = vi.fn()
+      const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
       process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         process.off('unhandledRejection', unhandledRejectionFn)
       })
 
       const onErrorError = new Error('onError-error')
-      const onError = vi.fn(() => {
+      const onError = vi.fn<() => never>(() => {
         throw onErrorError
       })
       const onSettledError = new Error('onSettled-error')
-      const onSettled = vi.fn(() => {
+      const onSettled = vi.fn<() => never>(() => {
         throw onSettledError
       })
 
@@ -532,7 +611,12 @@ describe('mutationObserver', () => {
         mutationFn: (_: string) => Promise.reject(error),
       })
 
-      const subscriptionHandler = vi.fn()
+      const subscriptionHandler =
+        vi.fn<
+          (
+            result: MutationObserverResult<never, Error, string, unknown>,
+          ) => void
+        >()
       const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
 
       mutationObserver
@@ -580,6 +664,135 @@ describe('mutationObserver', () => {
     })
     expect(notifySpy).not.toHaveBeenCalledWith(
       expect.objectContaining({ type: 'observerOptionsUpdated' }),
+    )
+
+    unsubscribe()
+  })
+
+  it('should not invoke onSettled with the next mutation options when mutate is called inside onSuccess', async () => {
+    // Regression test for https://github.com/TanStack/query/issues/11451
+    // If mutate() is called inside onSuccess, this.#mutateOptions is overwritten
+    // before onSettled fires. Without snapshotting mutateOptions at the start of
+    // #notify(), onSettled would receive the next mutation's callback but the
+    // current mutation's data/variables.
+    const onSettledFirst =
+      vi.fn<
+        (
+          data: number | undefined,
+          error: Error | null,
+          variables: number,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettledSecond =
+      vi.fn<
+        (
+          data: number | undefined,
+          error: Error | null,
+          variables: number,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: (value: number) => Promise.resolve(value),
+    })
+
+    const unsubscribe = mutation.subscribe(() => {})
+
+    mutation.mutate(1, {
+      onSuccess: () => {
+        // Trigger a second mutation from inside onSuccess of the first
+        mutation.mutate(2, { onSettled: onSettledSecond })
+      },
+      onSettled: onSettledFirst,
+    })
+
+    // Let both mutations settle
+    await vi.runAllTimersAsync()
+
+    // onSettled for the first mutation must have been called with data=1
+    expect(onSettledFirst).toHaveBeenCalledTimes(1)
+    expect(onSettledFirst).toHaveBeenCalledWith(
+      1,
+      null,
+      1,
+      undefined,
+      expect.any(Object),
+    )
+
+    // onSettled for the second mutation must have been called with data=2
+    expect(onSettledSecond).toHaveBeenCalledTimes(1)
+    expect(onSettledSecond).toHaveBeenCalledWith(
+      2,
+      null,
+      2,
+      undefined,
+      expect.any(Object),
+    )
+
+    unsubscribe()
+  })
+
+  it('should not invoke onSettled with the next mutation options when mutate is called inside onError', async () => {
+    const onSettledFirst =
+      vi.fn<
+        (
+          data: number | undefined,
+          error: Error | null,
+          variables: number,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+    const onSettledSecond =
+      vi.fn<
+        (
+          data: number | undefined,
+          error: Error | null,
+          variables: number,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
+
+    const error = new Error('error')
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: (value: number) =>
+        value === 1 ? Promise.reject(error) : Promise.resolve(value),
+    })
+
+    const unsubscribe = mutation.subscribe(() => {})
+
+    mutation
+      .mutate(1, {
+        onError: () => {
+          void mutation.mutate(2, { onSettled: onSettledSecond })
+        },
+        onSettled: onSettledFirst,
+      })
+      .catch(() => {})
+
+    await vi.runAllTimersAsync()
+
+    expect(onSettledFirst).toHaveBeenCalledTimes(1)
+    expect(onSettledFirst).toHaveBeenCalledWith(
+      undefined,
+      error,
+      1,
+      undefined,
+      expect.any(Object),
+    )
+
+    expect(onSettledSecond).toHaveBeenCalledTimes(1)
+    expect(onSettledSecond).toHaveBeenCalledWith(
+      2,
+      null,
+      2,
+      undefined,
+      expect.any(Object),
     )
 
     unsubscribe()

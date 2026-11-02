@@ -14,16 +14,9 @@ import { StatelessRef } from './utils.svelte.js'
 import type {
   PersistedClient,
   Persister,
+  Promisable,
 } from '@tanstack/query-persist-client-core'
 import type { StatusResult } from './utils.svelte.js'
-
-beforeEach(() => {
-  vi.useFakeTimers()
-})
-
-afterEach(() => {
-  vi.useRealTimers()
-})
 
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
@@ -60,6 +53,14 @@ const createMockErrorPersister = (
 }
 
 describe('PersistQueryClientProvider', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should restore cache from persister', async () => {
     const states = new StatelessRef<Array<StatusResult<string>>>([])
 
@@ -294,7 +295,7 @@ describe('PersistQueryClientProvider', () => {
 
     queryClient.clear()
 
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<() => void>()
 
     const rendered = render(OnSuccess, {
       props: {
@@ -349,7 +350,7 @@ describe('PersistQueryClientProvider', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('fetched')).toBeInTheDocument()
 
-    expect(states.current).toEqual([
+    expect(states.current).toStrictEqual([
       'onSuccess',
       'onSuccess done',
       'fetching',
@@ -360,15 +361,13 @@ describe('PersistQueryClientProvider', () => {
   it('should remove cache after non-successful restoring', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-    const consoleWarnMock = vi
-      .spyOn(console, 'warn')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
+    vi.spyOn(console, 'warn').mockReturnValue(undefined)
 
     const queryClient = new QueryClient()
-    const removeClient = vi.fn()
-    const onSuccess = vi.fn()
-    const onError = vi.fn()
+    const removeClient = vi.fn<() => Promisable<void>>()
+    const onSuccess = vi.fn<() => void>()
+    const onError = vi.fn<() => void>()
 
     const [error, persister] = createMockErrorPersister(removeClient)
 
@@ -384,7 +383,5 @@ describe('PersistQueryClientProvider', () => {
     expect(onError).toHaveBeenCalledTimes(1)
     expect(consoleErrorMock).toHaveBeenCalledTimes(1)
     expect(consoleErrorMock).toHaveBeenNthCalledWith(1, error)
-    consoleErrorMock.mockRestore()
-    consoleWarnMock.mockRestore()
   })
 })

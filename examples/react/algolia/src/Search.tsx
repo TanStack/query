@@ -1,13 +1,14 @@
 import * as React from 'react'
+import { useDebouncedValue } from '@tanstack/react-pacer/debouncer'
 
 import SearchResults from './SearchResults'
 
 export default function Search() {
   const [query, setQuery] = React.useState('')
+  const [debouncedQuery] = useDebouncedValue(query, { wait: 300 })
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault()
-    // It is recommended to debounce this event in prod
     setQuery(event.target.value)
   }
 
@@ -18,7 +19,7 @@ export default function Search() {
         value={query}
         placeholder="Search products"
       />
-      <SearchResults query={query} />
+      <SearchResults query={debouncedQuery} />
     </div>
   )
 }

@@ -7,30 +7,30 @@ describe('createRawRef', () => {
   it('should create a reactive reference', () => {
     const [ref, update] = createRawRef({ a: 1, b: 2 })
 
-    expect(ref).toEqual({ a: 1, b: 2 })
+    expect(ref).toStrictEqual({ a: 1, b: 2 })
 
     update({ a: 3, b: 4 })
-    expect(ref).toEqual({ a: 3, b: 4 })
+    expect(ref).toStrictEqual({ a: 3, b: 4 })
 
     ref.a = 5
-    expect(ref).toEqual({ a: 5, b: 4 })
+    expect(ref).toStrictEqual({ a: 5, b: 4 })
   })
 
   it('should handle nested objects', () => {
     const [ref, update] = createRawRef<{ a: any }>({ a: { b: { c: 1 } } })
 
-    expect(ref).toEqual({ a: { b: { c: 1 } } })
+    expect(ref).toStrictEqual({ a: { b: { c: 1 } } })
 
     // update with same structure
     update({ a: { b: { c: 2 } } })
-    expect(ref).toEqual({ a: { b: { c: 2 } } })
+    expect(ref).toStrictEqual({ a: { b: { c: 2 } } })
 
     ref.a.b.c = 3
-    expect(ref).toEqual({ a: { b: { c: 3 } } })
+    expect(ref).toStrictEqual({ a: { b: { c: 3 } } })
 
     // update with different structure should wipe out everything below the first level
     update({ a: { b: 3 } })
-    expect(ref).toEqual({ a: { b: 3 } })
+    expect(ref).toStrictEqual({ a: { b: 3 } })
   })
 
   it('should remove properties when a new object is assigned', () => {
@@ -39,10 +39,10 @@ describe('createRawRef', () => {
       b: 2,
     })
 
-    expect(ref).toEqual({ a: 1, b: 2 })
+    expect(ref).toStrictEqual({ a: 1, b: 2 })
 
     update({ a: 3 })
-    expect(ref).toEqual({ a: 3 })
+    expect(ref).toStrictEqual({ a: 3 })
   })
 
   it(
@@ -63,7 +63,7 @@ describe('createRawRef', () => {
       delete ref.b // should remove b, and should rerun the effect
       flushSync()
       delete ref.a // should remove a, and should _not_ rerun the effect
-      expect(states).toEqual([2, undefined, 4, undefined])
+      expect(states).toStrictEqual([2, undefined, 4, undefined])
     }),
   )
 
@@ -95,16 +95,16 @@ describe('createRawRef', () => {
       b: 2,
     })
 
-    expect(Object.keys(ref)).toEqual(['a', 'b'])
+    expect(Object.keys(ref)).toStrictEqual(['a', 'b'])
 
     delete ref.b
-    expect(Reflect.ownKeys(ref)).toEqual(['a'])
+    expect(Reflect.ownKeys(ref)).toStrictEqual(['a'])
 
     update({})
-    expect(Object.keys(ref)).toEqual([])
+    expect(Object.keys(ref)).toStrictEqual([])
 
     update({ a: 1, b: 2 })
-    expect(Object.keys(ref)).toEqual(['a', 'b'])
+    expect(Object.keys(ref)).toStrictEqual(['a', 'b'])
   })
 
   it('should correctly trap calls to `getOwnPropertyDescriptor`', () => {
@@ -113,7 +113,7 @@ describe('createRawRef', () => {
       b: 2,
     })
 
-    expect(Reflect.getOwnPropertyDescriptor(ref, 'b')).toEqual({
+    expect(Reflect.getOwnPropertyDescriptor(ref, 'b')).toStrictEqual({
       configurable: true,
       enumerable: true,
       get: expect.any(Function),
@@ -121,19 +121,19 @@ describe('createRawRef', () => {
     })
 
     delete ref.b
-    expect(Reflect.getOwnPropertyDescriptor(ref, 'b')).toEqual(undefined)
+    expect(Reflect.getOwnPropertyDescriptor(ref, 'b')).toBeUndefined()
 
     update({})
-    expect(Reflect.getOwnPropertyDescriptor(ref, 'a')).toEqual(undefined)
+    expect(Reflect.getOwnPropertyDescriptor(ref, 'a')).toBeUndefined()
 
     update({ a: 1, b: 2 })
-    expect(Reflect.getOwnPropertyDescriptor(ref, 'a')).toEqual({
+    expect(Reflect.getOwnPropertyDescriptor(ref, 'a')).toStrictEqual({
       configurable: true,
       enumerable: true,
       get: expect.any(Function),
       set: expect.any(Function),
     })
-    expect(Reflect.getOwnPropertyDescriptor(ref, 'b')).toEqual({
+    expect(Reflect.getOwnPropertyDescriptor(ref, 'b')).toStrictEqual({
       configurable: true,
       enumerable: true,
       get: expect.any(Function),
@@ -188,23 +188,23 @@ describe('createRawRef', () => {
   it('should handle arrays', () => {
     const [ref, update] = createRawRef([1, 2, 3])
 
-    expect(ref).toEqual([1, 2, 3])
+    expect(ref).toStrictEqual([1, 2, 3])
 
     ref[0] = 4
-    expect(ref).toEqual([4, 2, 3])
+    expect(ref).toStrictEqual([4, 2, 3])
 
     update([5, 6])
-    expect(ref).toEqual([5, 6])
+    expect(ref).toStrictEqual([5, 6])
 
     update([7, 8, 9])
-    expect(ref).toEqual([7, 8, 9])
+    expect(ref).toStrictEqual([7, 8, 9])
   })
 
   it('should return `false` when deleting a property that does not exist', () => {
     const [ref] = createRawRef<Record<string, number>>({ a: 1, b: 2 })
 
     expect(Reflect.deleteProperty(ref, 'c')).toBe(false)
-    expect(ref).toEqual({ a: 1, b: 2 })
+    expect(ref).toStrictEqual({ a: 1, b: 2 })
   })
 
   it('should handle shrinking an array by more than one entry at once', () => {
@@ -213,34 +213,34 @@ describe('createRawRef', () => {
     // when two or more items were removed from the reactive array in a single update.
     const [ref, update] = createRawRef([1, 2, 3, 4, 5])
 
-    expect(ref).toEqual([1, 2, 3, 4, 5])
+    expect(ref).toStrictEqual([1, 2, 3, 4, 5])
 
     update([1, 2])
-    expect(ref).toEqual([1, 2])
+    expect(ref).toStrictEqual([1, 2])
 
     update([1, 2, 3, 4])
-    expect(ref).toEqual([1, 2, 3, 4])
+    expect(ref).toStrictEqual([1, 2, 3, 4])
 
     update([])
-    expect(ref).toEqual([])
+    expect(ref).toStrictEqual([])
   })
 
   it('should behave like a regular object when not using `update`', () => {
     const [ref] = createRawRef<Record<string, unknown>>({ a: 1, b: 2 })
 
-    expect(ref).toEqual({ a: 1, b: 2 })
+    expect(ref).toStrictEqual({ a: 1, b: 2 })
 
     ref.a = 3
-    expect(ref).toEqual({ a: 3, b: 2 })
+    expect(ref).toStrictEqual({ a: 3, b: 2 })
 
     ref.b = 4
-    expect(ref).toEqual({ a: 3, b: 4 })
+    expect(ref).toStrictEqual({ a: 3, b: 4 })
 
     ref.c = 5
-    expect(ref).toEqual({ a: 3, b: 4, c: 5 })
+    expect(ref).toStrictEqual({ a: 3, b: 4, c: 5 })
 
     ref.fn = () => 6
-    expect(ref).toEqual({ a: 3, b: 4, c: 5, fn: expect.any(Function) })
+    expect(ref).toStrictEqual({ a: 3, b: 4, c: 5, fn: expect.any(Function) })
     expect((ref.fn as () => number)()).toBe(6)
   })
 })

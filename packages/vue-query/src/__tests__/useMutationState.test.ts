@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue-demi'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useMutationState } from '../useMutationState'
 import { useQueryClient } from '../useQueryClient'
 
-vi.mock('../useQueryClient')
+vi.mock(import('../useQueryClient'))
 
 describe('useMutationState', () => {
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe('useMutationState', () => {
   })
 
   it('should return variables after calling mutate 1', () => {
-    const key = queryKey()
+    const key = createKey()
     const variables = 'foo123'
 
     const { mutate } = useMutation({
@@ -32,13 +32,13 @@ describe('useMutationState', () => {
       select: (mutation) => mutation.state.variables,
     })
 
-    expect(mutationState.value).toEqual([variables])
+    expect(mutationState.value).toStrictEqual([variables])
   })
 
   it('should return variables after calling mutate 2', () => {
     const queryClient = useQueryClient()
     queryClient.clear()
-    const key = queryKey()
+    const key = createKey()
     const variables = 'bar234'
 
     const { mutate } = useMutation({
@@ -50,11 +50,11 @@ describe('useMutationState', () => {
 
     const mutationState = useMutationState()
 
-    expect(mutationState.value[0]?.variables).toEqual(variables)
+    expect(mutationState.value[0]?.variables).toStrictEqual(variables)
   })
 
   it('should work with options getter and be reactive', async () => {
-    const key = queryKey()
+    const key = createKey()
     const keyRef = ref('useMutationStateGetter2')
     const variables = 'foo123'
 
@@ -70,10 +70,10 @@ describe('useMutationState', () => {
       select: (mutation) => mutation.state.variables,
     }))
 
-    expect(mutationState.value).toEqual([])
+    expect(mutationState.value).toStrictEqual([])
 
     keyRef.value = key[0]!
     await vi.advanceTimersByTimeAsync(0)
-    expect(mutationState.value).toEqual([variables])
+    expect(mutationState.value).toStrictEqual([variables])
   })
 })
