@@ -122,7 +122,9 @@ describe('SolidQueryDevtoolsPanel', () => {
     ))
 
     expect(container.querySelector('.tsqd-parent-container')).toHaveStyle({
-      height: '500px',
+      height: '100%',
+      display: 'flex',
+      'flex-direction': 'column',
       width: '300px',
     })
   })
