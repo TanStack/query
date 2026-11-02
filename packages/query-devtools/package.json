@@ -75,6 +75,7 @@
   },
   "devDependencies": {
     "@solidjs/testing-library": "catalog:",
+    "@tanstack/query-test-utils": "workspace:*",
     "typescript": "catalog:",
     "unplugin-solid": "catalog:",
     "vite-plugin-solid": "catalog:"

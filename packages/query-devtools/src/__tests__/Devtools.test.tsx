@@ -15,6 +15,11 @@ import {
 } from '@tanstack/query-core'
 import { fireEvent, render, within } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
+import {
+  clearOnDispose,
+  subscribe,
+  unmountOnDispose,
+} from '@tanstack/query-test-utils'
 import { DevtoolsOfflineProvider } from '../providers/DevtoolsOfflineProvider'
 import { DevtoolsSubscriptionsProvider } from '../providers/DevtoolsSubscriptionsProvider'
 import DevtoolsComponent from '../DevtoolsComponent'
@@ -54,13 +59,6 @@ const serverEnvironment = (): Disposable => {
     },
   }
 }
-
-const clearOnDispose = (client: QueryClient): QueryClient & Disposable =>
-  Object.assign(client, {
-    [Symbol.dispose]: () => {
-      client.clear()
-    },
-  })
 
 describe('Devtools', () => {
   const storage: { [key: string]: string } = {}
@@ -751,15 +749,17 @@ describe('Devtools', () => {
         queryFn: () => 'x',
       })
       const handle = experimental_waterfallHandle(waterfallQuery, { id: 1 })
-      const unsubscribe = new QueryObserver(
-        queryClient,
-        experimental_fromHandle(waterfallQuery, handle),
-      ).subscribe(noop)
-      const rendered = renderDevtools({ initialIsOpen: true })
+      using _subscription = subscribe(
+        new QueryObserver(
+          queryClient,
+          experimental_fromHandle(waterfallQuery, handle),
+        ),
+        noop,
+      )
+      using rendered = unmountOnDispose(renderDevtools({ initialIsOpen: true }))
 
       expect(rendered.getByText('waterfall')).toBeInTheDocument()
       expect(rendered.getByLabelText(/, waterfall/)).toBeInTheDocument()
-      unsubscribe()
     })
 
     it('should show how a query was started and that it was never read', async () => {
@@ -772,7 +772,7 @@ describe('Devtools', () => {
         { id: 1 },
       )
       await vi.advanceTimersByTimeAsync(0)
-      const rendered = renderDevtools({ initialIsOpen: true })
+      using rendered = unmountOnDispose(renderDevtools({ initialIsOpen: true }))
 
       fireEvent.click(rendered.getByLabelText('Query key ["prefetched-q",1]'))
 
@@ -781,14 +781,16 @@ describe('Devtools', () => {
         'Prefetched, never read',
       )
 
-      const unsubscribe = new QueryObserver(queryClient, {
-        queryKey: handle.queryKey,
-        queryFn: () => 'x',
-      }).subscribe(noop)
+      using _subscription = subscribe(
+        new QueryObserver(queryClient, {
+          queryKey: handle.queryKey,
+          queryFn: () => 'x',
+        }),
+        noop,
+      )
       await vi.advanceTimersByTimeAsync(0)
 
       expect(rendered.queryByRole('note')).not.toBeInTheDocument()
-      unsubscribe()
     })
 
     it('should show where a hydrated query was started', async () => {
@@ -804,7 +806,7 @@ describe('Devtools', () => {
         dehydrated = dehydrate(serverClient)
       }
       hydrate(queryClient, dehydrated)
-      const rendered = renderDevtools({ initialIsOpen: true })
+      using rendered = unmountOnDispose(renderDevtools({ initialIsOpen: true }))
 
       fireEvent.click(rendered.getByLabelText('Query key ["server-q"]'))
 
@@ -813,7 +815,7 @@ describe('Devtools', () => {
 
     it('should not show start info for queries started by other APIs', () => {
       queryClient.setQueryData(['plain-q'], 'x')
-      const rendered = renderDevtools({ initialIsOpen: true })
+      using rendered = unmountOnDispose(renderDevtools({ initialIsOpen: true }))
 
       fireEvent.click(rendered.getByLabelText('Query key ["plain-q"]'))
 

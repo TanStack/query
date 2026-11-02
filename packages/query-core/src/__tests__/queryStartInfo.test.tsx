@@ -4,6 +4,7 @@ import {
   createKey,
   fakeTimers,
   sleep,
+  subscribe,
 } from '@tanstack/query-test-utils'
 import {
   QueryClient,
@@ -65,13 +66,15 @@ describe('query start info', () => {
       observed: false,
     })
 
-    const unsubscribe = new QueryObserver(
-      queryClient,
-      experimental_fromHandle(postQuery, handle),
-    ).subscribe(noop)
+    using _subscription = subscribe(
+      new QueryObserver(
+        queryClient,
+        experimental_fromHandle(postQuery, handle),
+      ),
+      noop,
+    )
 
     expect(experimental_getQueryStartInfo(query)?.observed).toBe(true)
-    unsubscribe()
   })
 
   it('should record the first fetch of a reader of an experimental_waterfallHandle handle', async () => {
@@ -91,7 +94,7 @@ describe('query start info', () => {
       queryClient,
       experimental_fromHandle(postQuery, handle),
     )
-    const unsubscribe = observer.subscribe(noop)
+    using _subscription = subscribe(observer, noop)
     const query = getQuery(queryClient, handle.queryKey)
 
     expect(experimental_getQueryStartInfo(query)).toStrictEqual({
@@ -105,7 +108,6 @@ describe('query start info', () => {
     void observer.refetch()
 
     expect(experimental_getQueryStartInfo(query)?.startedAt).toBe(startedAt)
-    unsubscribe()
   })
 
   it('should keep the record of a loader handle that experimental_waterfallHandle switches back to', () => {
@@ -119,16 +121,18 @@ describe('query start info', () => {
       id: '1',
     }))
 
-    const unsubscribe = new QueryObserver(
-      queryClient,
-      experimental_fromHandle(postQuery, switched),
-    ).subscribe(noop)
+    using _subscription = subscribe(
+      new QueryObserver(
+        queryClient,
+        experimental_fromHandle(postQuery, switched),
+      ),
+      noop,
+    )
 
     expect(
       experimental_getQueryStartInfo(getQuery(queryClient, handle.queryKey))
         ?.verb,
     ).toBe('prefetchHandle')
-    unsubscribe()
   })
 
   it('should not record queries started by other APIs', async () => {
@@ -181,7 +185,7 @@ describe('query start info', () => {
     using _timers = fakeTimers()
     using _server = serverEnvironment()
     using serverClient = clearOnDispose(new QueryClient())
-    const warn = vi.spyOn(console, 'warn').mockReturnValue(undefined)
+    using warn = vi.spyOn(console, 'warn').mockReturnValue(undefined)
     experimental_prefetchHandle(serverClient, createPostQuery(), { id: '1' })
 
     dehydrate(serverClient)
@@ -193,7 +197,7 @@ describe('query start info', () => {
   it('should not warn about pending queries started by other APIs or in the browser', () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
-    const warn = vi.spyOn(console, 'warn').mockReturnValue(undefined)
+    using warn = vi.spyOn(console, 'warn').mockReturnValue(undefined)
     const postQuery = createPostQuery()
     experimental_prefetchHandle(queryClient, postQuery, { id: '1' })
     using _server = serverEnvironment()
