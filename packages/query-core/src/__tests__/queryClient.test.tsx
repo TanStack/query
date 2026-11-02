@@ -2613,6 +2613,44 @@ describe('queryClient', () => {
       expect(fetchCount).toBe(1)
     })
 
+    it('should refresh an invalidated initial fetch after showing its first result', async () => {
+      const key = createKey()
+      let serverData = 'before'
+      const queryFn = vi.fn<() => Promise<string>>(async () => {
+        const response = serverData
+        await sleep(10)
+        return response
+      })
+      const initial = queryClient.query({ queryKey: key, queryFn })
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        staleTime: Infinity,
+      })
+      const unsubscribe = observer.subscribe(noop)
+      const onInvalidated = vi.fn<() => void>()
+
+      serverData = 'after'
+      const invalidated = queryClient
+        .invalidateQueries({ queryKey: key })
+        .then(onInvalidated)
+
+      await vi.advanceTimersByTimeAsync(10)
+      await expect(initial).resolves.toBe('before')
+      expect(queryClient.getQueryData(key)).toBe('before')
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(onInvalidated).not.toHaveBeenCalled()
+      expect(observer.getCurrentResult().isStale).toBe(true)
+
+      await vi.advanceTimersByTimeAsync(10)
+      await invalidated
+      expect(queryClient.getQueryData(key)).toBe('after')
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(onInvalidated).toHaveBeenCalledExactlyOnceWith()
+      expect(observer.getCurrentResult().isStale).toBe(false)
+      unsubscribe()
+    })
+
     it('should not refetch static queries after invalidation', async () => {
       const key = createKey()
       const queryFn = vi.fn<() => string>(() => 'data1')
