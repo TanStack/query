@@ -15,13 +15,11 @@
     "@tanstack/vue-query-devtools": "^6.3.7",
     "localforage": "^1.10.0",
     "match-sorter": "^8.3.0",
-    "sort-by": "^1.2.0",
     "vue": "^3.5.43",
     "vue-router": "^5.4.0"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.105.1",
-    "@types/sort-by": "^1.2.3",
     "@vitejs/plugin-vue": "^6.0.9",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.12.0",

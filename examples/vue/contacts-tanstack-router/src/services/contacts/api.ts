@@ -1,6 +1,5 @@
 import localforage from 'localforage'
 import { matchSorter } from 'match-sorter'
-import sortBy from 'sort-by'
 import type { Contact } from './types'
 
 const initialData: Array<Contact> = [
@@ -42,7 +41,9 @@ export const contactsAPI = {
     if (query) {
       contacts = matchSorter(contacts, query, { keys: ['first', 'last'] })
     }
-    return contacts.sort(sortBy('last', 'createdAt'))
+    return contacts.sort((a, b) =>
+      a.last < b.last ? -1 : a.last > b.last ? 1 : a.createdAt - b.createdAt,
+    )
   },
   createContact: async (
     data: Pick<Contact, 'first' | 'last' | 'twitter' | 'avatar' | 'notes'>,

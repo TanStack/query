@@ -16,13 +16,11 @@
     "@tanstack/solid-router": "^1.170.43",
     "localforage": "^1.10.0",
     "match-sorter": "^8.3.0",
-    "solid-js": "^1.9.15",
-    "sort-by": "^1.2.0"
+    "solid-js": "^1.9.15"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.105.1",
     "@tanstack/router-plugin": "^1.168.48",
-    "@types/sort-by": "^1.2.3",
     "eslint-plugin-solid": "^0.18.1",
     "typescript": "^6.0.3",
     "vite": "^8.3.5",
