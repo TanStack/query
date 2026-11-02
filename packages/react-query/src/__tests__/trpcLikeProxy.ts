@@ -51,7 +51,7 @@ const procedureInfiniteQueryOptions = <
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   })
 
-export type ProcedureQueryOptions<
+type ProcedureQueryOptions<
   TPath extends string,
   TProcedure extends AnyProcedure,
 > = (
@@ -60,7 +60,7 @@ export type ProcedureQueryOptions<
   typeof procedureQueryOptions<TPath, InputOf<TProcedure>, OutputOf<TProcedure>>
 >
 
-export type ProcedureInfiniteQueryOptions<
+type ProcedureInfiniteQueryOptions<
   TPath extends string,
   TInput extends { cursor?: Cursor },
   TOutput extends { nextCursor: Cursor },
@@ -128,7 +128,7 @@ type HandleOf<TFactory> = TFactory extends experimental_QueryHandleFactory
 /**
  * Any handle a procedure of the router started.
  */
-export type AnyRouterHandle<TRouter extends AnyRouter> = HandleOf<
+type AnyRouterHandle<TRouter extends AnyRouter> = HandleOf<
   ProcedureFactory<TRouter>
 >
 
