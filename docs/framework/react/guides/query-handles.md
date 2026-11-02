@@ -98,7 +98,7 @@ function Post(props: { post: experimental_QueryHandle<typeof postQuery> }) {
 
 [//]: # 'Reading'
 
-The factory types `select`'s argument, as with any `queryOptions` result. Keep options that decide how the query fetches or how long its data stays fresh, like `queryFn` or `staleTime`, on the factory, so the loader and the component agree on them.
+The factory types `select`'s argument, as with any `queryOptions` result. A `select` in the factory works too: readers get the selected type, and a read-site `select` replaces it. Keep options that decide how the query fetches or how long its data stays fresh, like `queryFn` or `staleTime`, on the factory, so the loader and the component agree on them.
 
 Readers get the query's data from the cache. To get defined `data`, read the handle with `useSuspenseQuery`, which waits for the data. `useQuery` types `data` as possibly `undefined`, as usual, even for a handle a loader waited for: the cache may have lost the data since, for example after `queryClient.clear()`.
 
