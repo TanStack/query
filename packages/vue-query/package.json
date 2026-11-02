@@ -33,6 +33,16 @@
     "test:build": "publint --strict && attw --pack",
     "build": "tsdown --tsconfig tsconfig.prod.json"
   },
+  "nx": {
+    "targets": {
+      "test:lib": {
+        "parallelism": false
+      },
+      "test:types": {
+        "parallelism": false
+      }
+    }
+  },
   "type": "module",
   "types": "build/legacy/index.d.ts",
   "main": "build/legacy/index.cjs",
