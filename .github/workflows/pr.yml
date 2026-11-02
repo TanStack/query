@@ -64,9 +64,8 @@ jobs:
         uses: andresz1/size-limit-action@94bc357df29c36c8f8d50ea497c3e225c3c95d1d
         with:
           github_token: ${{ github.token }}
-          skip_step: install
-          build_script: build:all
-          script: vpx size-limit --json
+          skip_step: build
+          script: npx size-limit --json
   version-preview:
     name: Version Preview
     runs-on: ubuntu-latest
