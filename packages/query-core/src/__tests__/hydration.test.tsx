@@ -1,5 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { clearOnDispose, createKey, sleep } from '@tanstack/query-test-utils'
+import {
+  clearOnDispose,
+  createKey,
+  sleep,
+  subscribe,
+} from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
@@ -1128,13 +1133,15 @@ describe('dehydration and rehydration', () => {
       const queryFn = vi.fn<() => Promise<string>>(() =>
         sleep(10).then(() => 'client data'),
       )
-      const observer = new QueryObserver(queryClient, {
-        queryKey: key,
-        queryFn,
-        retry: 1,
-        retryDelay: 5,
-      })
-      const unsubscribe = observer.subscribe(noop)
+      using _subscription = subscribe(
+        new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn,
+          retry: 1,
+          retryDelay: 5,
+        }),
+        noop,
+      )
 
       await vi.advanceTimersByTimeAsync(10)
       expect(queryFn).not.toHaveBeenCalled()
@@ -1152,7 +1159,6 @@ describe('dehydration and rehydration', () => {
         data: 'client data',
         fetchStatus: 'idle',
       })
-      unsubscribe()
     })
 
     it('should not retry when an observer that mounted before it rejected sets retry to false', async () => {
@@ -1165,12 +1171,14 @@ describe('dehydration and rehydration', () => {
       const queryFn = vi.fn<() => Promise<string>>(() =>
         sleep(10).then(() => 'client data'),
       )
-      const observer = new QueryObserver(queryClient, {
-        queryKey: key,
-        queryFn,
-        retry: false,
-      })
-      const unsubscribe = observer.subscribe(noop)
+      using _subscription = subscribe(
+        new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn,
+          retry: false,
+        }),
+        noop,
+      )
 
       await vi.advanceTimersByTimeAsync(10)
       expect(queryClient.getQueryState(key)).toMatchObject({
@@ -1179,7 +1187,6 @@ describe('dehydration and rehydration', () => {
         fetchStatus: 'idle',
       })
       expect(queryFn).not.toHaveBeenCalled()
-      unsubscribe()
     })
 
     it('should keep the retry options it was hydrated with that an observer does not set', async () => {
@@ -1198,10 +1205,10 @@ describe('dehydration and rehydration', () => {
       const queryFn = vi.fn<() => Promise<string>>(() =>
         sleep(10).then(() => 'client data'),
       )
-      const unsubscribe = new QueryObserver(queryClient, {
-        queryKey: key,
-        queryFn,
-      }).subscribe(noop)
+      using _subscription = subscribe(
+        new QueryObserver(queryClient, { queryKey: key, queryFn }),
+        noop,
+      )
 
       await vi.advanceTimersByTimeAsync(15)
       expect(queryFn).toHaveBeenCalledTimes(1)
@@ -1211,7 +1218,6 @@ describe('dehydration and rehydration', () => {
         status: 'success',
         data: 'client data',
       })
-      unsubscribe()
     })
 
     it('should retry with the options it was hydrated with when no observer has mounted', async () => {
