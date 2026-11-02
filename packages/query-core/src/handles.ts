@@ -1,7 +1,7 @@
 import { hashQueryKeyByOptions, noop } from './utils'
 import type { QueryClient } from './queryClient'
 import type { Query } from './query'
-import type { QueryKey, QueryKeyHashFunction } from './types'
+import type { InferDataFromTag, QueryKey, QueryKeyHashFunction } from './types'
 
 // TYPES
 
@@ -93,6 +93,33 @@ export interface QueryHandle<
  */
 export type FromHandleOptions<TFactory extends QueryHandleFactory> =
   ReturnType<TFactory>
+
+type FactoryData<TOptions> = 'select' extends keyof TOptions
+  ? TOptions extends { select?: (data: any) => infer TData }
+    ? TData
+    : never
+  : TOptions extends { queryKey: QueryKey }
+    ? InferDataFromTag<unknown, TOptions['queryKey']>
+    : unknown
+
+/**
+ * The data a reader of a factory's query gets, the same as `useSuspenseQuery`'s `data`: what the
+ * factory's `select` returns, or else the `queryFn`'s data, which is `InfiniteData` for an infinite
+ * factory. Use it to type a prop that takes the data. Pass a factory type or a handle type.
+ * @example
+ * ```ts
+ * function PostTitle(props: { post: experimental_InferQueryHandleData<typeof postQuery> }) {
+ *   return <h1>{props.post.title}</h1>
+ * }
+ * ```
+ */
+export type InferQueryHandleData<
+  T extends QueryHandleFactory | QueryHandle<any>,
+> = T extends QueryHandleFactory
+  ? FactoryData<ReturnType<T>>
+  : T extends QueryHandle<infer TFactory>
+    ? FactoryData<ReturnType<TFactory>>
+    : never
 
 // FUNCTIONS
 

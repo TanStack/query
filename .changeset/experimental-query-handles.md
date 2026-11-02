@@ -3,4 +3,4 @@
 '@tanstack/react-query': minor
 ---
 
-Add experimental query handles. `experimental_prefetchHandle`, `experimental_ensureHandle` and `experimental_fetchHandle` start a query from a query factory and return a small serializable handle. `experimental_fromHandle` rebuilds the query's options from a handle. `experimental_waterfallHandle` builds a handle for an input known only during render, and the component that reads it starts the query.
+Add experimental query handles. `experimental_prefetchHandle`, `experimental_ensureHandle` and `experimental_fetchHandle` start a query from a query factory and return a small serializable handle. `experimental_fromHandle` rebuilds the query's options from a handle. `experimental_waterfallHandle` builds a handle for an input known only during render, and the component that reads it starts the query. `experimental_InferQueryHandleData` gives the type of the data a reader gets from a factory or handle.

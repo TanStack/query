@@ -14,7 +14,11 @@ import {
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '..'
-import type { InfiniteData, experimental_QueryHandle } from '..'
+import type {
+  InfiniteData,
+  experimental_InferQueryHandleData,
+  experimental_QueryHandle,
+} from '..'
 
 type Post = { id: string; title: string }
 
@@ -538,6 +542,115 @@ describe('query handles', () => {
       })
 
       expectTypeOf(data).toEqualTypeOf<number>()
+    })
+  })
+
+  describe('experimental_InferQueryHandleData', () => {
+    const postTitleQuery = (input: { id: string }) =>
+      queryOptions({
+        queryKey: ['post-title', input.id] as const,
+        queryFn: (): Promise<Post> =>
+          Promise.resolve({ id: input.id, title: '' }),
+        select: (post) => post.title,
+      })
+
+    const feedItemsQuery = (input: { size: number }) =>
+      infiniteQueryOptions({
+        queryKey: ['feed-items', input.size] as const,
+        queryFn: ({ pageParam }) => Promise.resolve([pageParam]),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage) => lastPage[0],
+        select: (data) => data.pages.flat(),
+      })
+
+    const handle = {} as experimental_QueryHandle<typeof postQuery>
+
+    it("should give a factory's data, the same as useSuspenseQuery", () => {
+      expectTypeOf<
+        experimental_InferQueryHandleData<typeof postQuery>
+      >().toEqualTypeOf<Post>()
+      expectTypeOf<
+        experimental_InferQueryHandleData<typeof viewerQuery>
+      >().toEqualTypeOf<{ name: string }>()
+      expectTypeOf<
+        experimental_InferQueryHandleData<typeof postQuery>
+      >().toEqualTypeOf(
+        useSuspenseQuery(experimental_fromHandle(postQuery, handle)).data,
+      )
+    })
+
+    it("should give what a factory's select returns, the same as useSuspenseQuery", () => {
+      const titleHandle = {} as experimental_QueryHandle<typeof postTitleQuery>
+
+      expectTypeOf<
+        experimental_InferQueryHandleData<typeof postTitleQuery>
+      >().toEqualTypeOf<string>()
+      expectTypeOf<
+        experimental_InferQueryHandleData<typeof postTitleQuery>
+      >().toEqualTypeOf(
+        useSuspenseQuery(experimental_fromHandle(postTitleQuery, titleHandle))
+          .data,
+      )
+    })
+
+    it("should give an infinite factory's data, the same as useSuspenseInfiniteQuery", () => {
+      const feedHandle = {} as experimental_QueryHandle<typeof feedQuery>
+
+      expectTypeOf<
+        experimental_InferQueryHandleData<typeof feedQuery>
+      >().toEqualTypeOf<InfiniteData<Array<number>, unknown>>()
+      expectTypeOf<
+        experimental_InferQueryHandleData<typeof feedQuery>
+      >().toEqualTypeOf(
+        useSuspenseInfiniteQuery(experimental_fromHandle(feedQuery, feedHandle))
+          .data,
+      )
+    })
+
+    it("should give what an infinite factory's select returns, the same as useSuspenseInfiniteQuery", () => {
+      const itemsHandle = {} as experimental_QueryHandle<typeof feedItemsQuery>
+
+      expectTypeOf<
+        experimental_InferQueryHandleData<typeof feedItemsQuery>
+      >().toEqualTypeOf<Array<number>>()
+      expectTypeOf<
+        experimental_InferQueryHandleData<typeof feedItemsQuery>
+      >().toEqualTypeOf(
+        useSuspenseInfiniteQuery(
+          experimental_fromHandle(feedItemsQuery, itemsHandle),
+        ).data,
+      )
+    })
+
+    it('should take a handle type', async () => {
+      const ensured = await experimental_ensureHandle(
+        queryClient,
+        postTitleQuery,
+        { id: '1' },
+      )
+
+      expectTypeOf<
+        experimental_InferQueryHandleData<typeof handle>
+      >().toEqualTypeOf<Post>()
+      expectTypeOf<
+        experimental_InferQueryHandleData<typeof ensured>
+      >().toEqualTypeOf<string>()
+    })
+
+    it('should type a prop that takes the data', () => {
+      function PostTitle(props: {
+        post: experimental_InferQueryHandleData<typeof postQuery>
+      }) {
+        return props.post.title
+      }
+      const { data } = useSuspenseQuery(
+        experimental_fromHandle(postQuery, handle),
+      )
+      const maybe = useQuery(experimental_fromHandle(postQuery, handle)).data
+
+      assertType(PostTitle({ post: data }))
+      // @ts-expect-error useQuery data may be undefined
+      assertType(PostTitle({ post: maybe }))
     })
   })
 })

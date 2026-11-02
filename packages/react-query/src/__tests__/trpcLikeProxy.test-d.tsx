@@ -7,7 +7,11 @@ import {
   useSuspenseQuery,
 } from '..'
 import { createOptionsProxy } from './trpcLikeProxy'
-import type { InfiniteData, experimental_QueryHandle } from '..'
+import type {
+  InfiniteData,
+  experimental_InferQueryHandleData,
+  experimental_QueryHandle,
+} from '..'
 import type { OptionsProxy } from './trpcLikeProxy'
 
 type Post = { id: string; title: string }
@@ -133,5 +137,26 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
     expectTypeOf(useSuspenseQuery(trpc.$fromHandle(next)).data).toEqualTypeOf<
       Array<Comment>
     >()
+  })
+
+  it("should infer a procedure's data from its factory, the same as useSuspenseQuery", async () => {
+    const post = trpc['post.byId'].$prefetch({ id: '1' })
+    const feed = await trpc.feed.$ensureInfinite({ limit: 2 })
+
+    expectTypeOf<
+      experimental_InferQueryHandleData<TRPC['post.byId']['queryOptions']>
+    >().toEqualTypeOf<Post>()
+    expectTypeOf<
+      experimental_InferQueryHandleData<TRPC['post.byId']['queryOptions']>
+    >().toEqualTypeOf(useSuspenseQuery(trpc.$fromHandle(post)).data)
+    expectTypeOf<
+      experimental_InferQueryHandleData<typeof post>
+    >().toEqualTypeOf<Post>()
+    expectTypeOf<
+      experimental_InferQueryHandleData<TRPC['feed']['infiniteQueryOptions']>
+    >().toEqualTypeOf(useSuspenseInfiniteQuery(trpc.$fromHandle(feed)).data)
+    expectTypeOf<
+      experimental_InferQueryHandleData<typeof feed>
+    >().toEqualTypeOf<InfiniteData<FeedPage, unknown>>()
   })
 })
