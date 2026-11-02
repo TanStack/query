@@ -1247,6 +1247,107 @@ describe('dehydration and rehydration', () => {
       })
     })
 
+    it("should keep the hydration retry options over the client's query defaults", async () => {
+      using _timers = fakeTimers()
+      const key = createKey()
+      using serverClient = startRejectingQuery(key)
+      const dehydrated = dehydrate(serverClient)
+
+      using queryClient = clearOnDispose(
+        new QueryClient({
+          defaultOptions: {
+            queries: { retry: 2, retryDelay: 5 },
+            hydrate: { queries: { retry: 0 } },
+          },
+        }),
+      )
+      hydrate(queryClient, dehydrated)
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'client data'),
+      )
+      using _subscription = subscribe(
+        new QueryObserver(queryClient, { queryKey: key, queryFn }),
+        noop,
+      )
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        status: 'error',
+        fetchFailureCount: 1,
+      })
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    it('should keep the hydration retry options over setQueryDefaults', async () => {
+      using _timers = fakeTimers()
+      const key = createKey()
+      using serverClient = startRejectingQuery(key)
+      const dehydrated = dehydrate(serverClient)
+
+      using queryClient = clearOnDispose(
+        new QueryClient({
+          defaultOptions: { hydrate: { queries: { retry: 0 } } },
+        }),
+      )
+      queryClient.setQueryDefaults(key, { retry: 2, retryDelay: 5 })
+      hydrate(queryClient, dehydrated)
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'client data'),
+      )
+      using _subscription = subscribe(
+        new QueryObserver(queryClient, { queryKey: key, queryFn }),
+        noop,
+      )
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        status: 'error',
+        fetchFailureCount: 1,
+      })
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    it("should retry with the retry options an observer sets itself over the client's query defaults", async () => {
+      using _timers = fakeTimers()
+      const key = createKey()
+      using serverClient = startRejectingQuery(key)
+      const dehydrated = dehydrate(serverClient)
+
+      using queryClient = clearOnDispose(
+        new QueryClient({
+          defaultOptions: {
+            queries: { retry: 0 },
+            hydrate: { queries: { retry: 0 } },
+          },
+        }),
+      )
+      hydrate(queryClient, dehydrated)
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'client data'),
+      )
+      using _subscription = subscribe(
+        new QueryObserver(
+          queryClient,
+          queryClient.defaultQueryOptions({
+            queryKey: key,
+            queryFn,
+            retry: 1,
+            retryDelay: 5,
+          }),
+        ),
+        noop,
+      )
+
+      await vi.advanceTimersByTimeAsync(15)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        status: 'success',
+        data: 'client data',
+      })
+    })
+
     it('should retry with the hydration options when no observer has mounted', async () => {
       using _timers = fakeTimers()
       const key = createKey()
