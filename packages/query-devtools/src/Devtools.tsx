@@ -1512,7 +1512,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
           <div
             class="tsqd-query-waterfall-indicator"
             aria-hidden="true"
-            title="Fetched by the reader of a waterfallHandle"
+            title="A waterfallHandle reader fetched this query"
           >
             waterfall
           </div>

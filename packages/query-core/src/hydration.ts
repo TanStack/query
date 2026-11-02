@@ -95,7 +95,7 @@ interface DehydratedQuery {
   meta?: QueryMeta
   queryType?: 'infinite'
   /**
-   * In development, how the query was started through the handle APIs, for the devtools.
+   * In development, how a handle API started the query, for the devtools.
    */
   experimental_start?: QueryStartInfo
 }
@@ -208,7 +208,7 @@ export function dehydrateQuery(
 }
 
 /**
- * Reads how a query was started through the handle APIs, for `dehydrateQuery`.
+ * Reads how a handle API started a query, for `dehydrateQuery`.
  * @param query - The query to dehydrate.
  * @returns The `experimental_start` field, if the query has start info.
  */
@@ -317,7 +317,7 @@ function warnIfPendingHandleQueryIsLeftOut(query: Query): void {
     query.state.status === 'pending'
   ) {
     console.warn(
-      `The query ${query.queryHash} was started with experimental_${start.verb} and is still pending, but shouldDehydrateQuery left it out, so its data won't reach the client. Include pending queries in shouldDehydrateQuery, or await the query with experimental_ensureHandle or experimental_fetchHandle before dehydrating.`,
+      `experimental_${start.verb} started the query ${query.queryHash} and it is still pending, but shouldDehydrateQuery left it out, so its data won't reach the client. Include pending queries in shouldDehydrateQuery, or await the query with experimental_ensureHandle or experimental_fetchHandle before you dehydrate.`,
     )
   }
 }

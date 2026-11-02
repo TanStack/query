@@ -26,11 +26,11 @@ export function getQueryStatusLabel(query: Query) {
 }
 
 /**
- * Returns how a query was started through the experimental handle APIs, if it was. Reads the
+ * Returns how an experimental handle API started a query, if one did. Reads the
  * registered symbol that `@tanstack/query-core` stores it under, since the devtools bundle their
  * own copy of that package.
  * @param query - The query to look up.
- * @returns The start info, or `undefined` for queries started by other APIs or older versions.
+ * @returns The start info, or `undefined` for queries that other APIs or older versions started.
  */
 export function getQueryStartInfo(query: Query): QueryStartInfo | undefined {
   return (query as unknown as Record<symbol, QueryStartInfo | undefined>)[
@@ -39,8 +39,8 @@ export function getQueryStartInfo(query: Query): QueryStartInfo | undefined {
 }
 
 /**
- * Whether a query was prefetched through a handle but no component has read it since, which
- * usually means a loader prefetches data that the page no longer uses.
+ * Whether a handle prefetched a query that no component has read since. That usually means a
+ * loader prefetches data the page no longer uses.
  * @param query - The query to check.
  * @returns `true` for a prefetched query that has never had an observer.
  */

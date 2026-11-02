@@ -50,7 +50,7 @@ const createPostQuery = () => {
 }
 
 describe('query start info', () => {
-  it('should record how a query was started and when an observer reads it', () => {
+  it('should record how a query started and when an observer reads it', () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
     const postQuery = createPostQuery()
@@ -135,7 +135,7 @@ describe('query start info', () => {
     ).toBe('prefetchHandle')
   })
 
-  it('should not record queries started by other APIs', async () => {
+  it('should not record queries that other APIs start', async () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
     const postQuery = createPostQuery()
@@ -194,7 +194,7 @@ describe('query start info', () => {
     expect(warn.mock.calls[0]?.[0]).toContain('experimental_prefetchHandle')
   })
 
-  it('should not warn about pending queries started by other APIs or in the browser', () => {
+  it('should not warn about pending queries that other APIs or the browser started', () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
     using warn = vi.spyOn(console, 'warn').mockReturnValue(undefined)

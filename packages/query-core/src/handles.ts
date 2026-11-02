@@ -129,7 +129,7 @@ export type InferQueryHandleData<
     : never
 
 /**
- * How a query was last started through the handle APIs, as shown by the devtools.
+ * How a handle API last started a query, for the devtools to show.
  */
 export interface QueryStartInfo {
   /**
@@ -161,7 +161,7 @@ type QueryWithStartInfo = Query<any, any, any, any> & {
 }
 
 /**
- * Stores how a query was started on the query, hidden from enumeration.
+ * Stores how a query started on the query itself, hidden from enumeration.
  * @param query - The query that started.
  * @param info - How it started.
  */
@@ -197,7 +197,7 @@ function watchObservers(queryCache: QueryCache): void {
 }
 
 /**
- * Records how a query was started, for the devtools. A query that an observer has read stays read.
+ * Records how a query started, for the devtools. A query that an observer has read stays read.
  * @internal
  * @param queryCache - The cache the query belongs to.
  * @param query - The query that started.
@@ -217,12 +217,12 @@ export function recordQueryStart(
 }
 
 /**
- * Returns how a query was last started through `experimental_prefetchHandle`,
- * `experimental_ensureHandle` or `experimental_fetchHandle`, or first fetched by a reader of an
- * `experimental_waterfallHandle` handle, if it was. A query hydrated from a server render in
- * development keeps the server's record.
+ * Returns how `experimental_prefetchHandle`, `experimental_ensureHandle` or
+ * `experimental_fetchHandle` last started a query, or whether a reader of an
+ * `experimental_waterfallHandle` handle first fetched it. In development, a query that `hydrate`
+ * restores from a server render keeps the server's record.
  * @param query - The query to look up.
- * @returns The start info, or `undefined` if the query wasn't started through those APIs.
+ * @returns The start info, or `undefined` if none of those APIs started the query.
  */
 export function experimental_getQueryStartInfo(
   query: Query<any, any, any, any>,
@@ -244,7 +244,7 @@ function markWaterfall<THandle extends object>(handle: THandle): THandle {
 }
 
 /**
- * Wraps the `queryFn` of a waterfall handle's options so the query's first fetch is recorded with
+ * Wraps the `queryFn` of a waterfall handle's options so it records the query's first fetch with
  * the verb `waterfallHandle`, since that fetch is the waterfall.
  * @param options - Options a query factory returned for the handle's input.
  * @returns The options, with the wrapped `queryFn`.

@@ -743,7 +743,7 @@ describe('Devtools', () => {
       expect(rendered.getByLabelText(/, static/)).toBeInTheDocument()
     })
 
-    it('should render a "waterfall" indicator for a query fetched by the reader of a waterfallHandle', () => {
+    it('should render a "waterfall" indicator for a query that a waterfallHandle reader fetched', () => {
       const waterfallQuery = (input: { id: number }) => ({
         queryKey: ['waterfall-q', input.id],
         queryFn: () => 'x',
@@ -762,7 +762,7 @@ describe('Devtools', () => {
       expect(rendered.getByLabelText(/, waterfall/)).toBeInTheDocument()
     })
 
-    it('should show how a query was started and that it was never read', async () => {
+    it('should show how a query started and that nothing read it', async () => {
       const handle = experimental_prefetchHandle(
         queryClient,
         (input: { id: number }) => ({
@@ -793,7 +793,7 @@ describe('Devtools', () => {
       expect(rendered.queryByRole('note')).not.toBeInTheDocument()
     })
 
-    it('should show where a hydrated query was started', async () => {
+    it('should show where a hydrated query started', async () => {
       let dehydrated: DehydratedState
       {
         using _server = serverEnvironment()
@@ -813,7 +813,7 @@ describe('Devtools', () => {
       expect(rendered.getByText('prefetchHandle (server)')).toBeInTheDocument()
     })
 
-    it('should not show start info for queries started by other APIs', () => {
+    it('should not show start info for queries that other APIs start', () => {
       queryClient.setQueryData(['plain-q'], 'x')
       using rendered = unmountOnDispose(renderDevtools({ initialIsOpen: true }))
 
