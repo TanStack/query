@@ -6,6 +6,7 @@ import {
   createKey,
   fakeTimers,
   sleep,
+  unmountOnDispose,
 } from '@tanstack/query-test-utils'
 import {
   QueryClient,
@@ -47,11 +48,13 @@ describe('experimental_waterfallHandle', () => {
       return <div>data: {data}</div>
     }
 
-    const rendered = renderWithClient(
-      queryClient,
-      <React.Suspense fallback="Loading...">
-        <Posts />
-      </React.Suspense>,
+    using rendered = unmountOnDispose(
+      renderWithClient(
+        queryClient,
+        <React.Suspense fallback="Loading...">
+          <Posts />
+        </React.Suspense>,
+      ),
     )
 
     expect(rendered.getByText('Loading...')).toBeInTheDocument()
@@ -90,9 +93,8 @@ describe('experimental_waterfallHandle', () => {
       )
     }
 
-    const rendered = renderWithClient(
-      queryClient,
-      <Posts posts={loaderHandle} />,
+    using rendered = unmountOnDispose(
+      renderWithClient(queryClient, <Posts posts={loaderHandle} />),
     )
     await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('data: page 1')).toBeInTheDocument()
@@ -132,7 +134,7 @@ describe('experimental_waterfallHandle', () => {
       return <div>data: {data}</div>
     }
 
-    const rendered = renderWithClient(freshClient, <Posts />)
+    using rendered = unmountOnDispose(renderWithClient(freshClient, <Posts />))
 
     expect(rendered.getByText('data: page 1')).toBeInTheDocument()
     expect(statuses[0]).toBe('success')

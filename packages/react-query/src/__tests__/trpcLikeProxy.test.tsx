@@ -1,7 +1,12 @@
 import { describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 import { act, fireEvent } from '@testing-library/react'
-import { clearOnDispose, fakeTimers, sleep } from '@tanstack/query-test-utils'
+import {
+  clearOnDispose,
+  fakeTimers,
+  sleep,
+  unmountOnDispose,
+} from '@tanstack/query-test-utils'
 import {
   QueryClient,
   dehydrate,
@@ -114,13 +119,15 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
       )
     }
 
-    const rendered = renderWithClient(
-      queryClient,
-      <React.Suspense fallback="Loading...">
-        <Post post={payload.post} />
-        <Comments comments={payload.comments} />
-        <Feed feed={payload.feed} />
-      </React.Suspense>,
+    using rendered = unmountOnDispose(
+      renderWithClient(
+        queryClient,
+        <React.Suspense fallback="Loading...">
+          <Post post={payload.post} />
+          <Comments comments={payload.comments} />
+          <Feed feed={payload.feed} />
+        </React.Suspense>,
+      ),
     )
 
     expect(rendered.getByText('title: post 1')).toBeInTheDocument()
