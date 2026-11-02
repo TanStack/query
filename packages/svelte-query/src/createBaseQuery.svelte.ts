@@ -84,6 +84,24 @@ export function createBaseQuery<
     isRestoring.current && typeof window !== 'undefined'
       ? () => undefined
       : observer.subscribe(() => update(createResult()))
+
+  // Register cleanup for the initial subscription
+  // This works in both component context (onDestroy) and $effect.root (via returned cleanup)
+  const cleanupSubscription = () => {
+    unsubscribe()
+  }
+
+  // Register cleanup via onDestroy for component context
+  try {
+    onDestroy(cleanupSubscription)
+  } catch (e) {}
+
+  // Also register cleanup via $effect cleanup for $effect.root context
+  // This $effect runs once and returns the cleanup function
+  $effect(() => {
+    return cleanupSubscription
+  })
+
   // ...but also watch for state changes to resubscribe, and because Svelte right now doesn't
   // run onDestroy on components with pending work that are destroyed again before they are resolved...
   watchChanges(
