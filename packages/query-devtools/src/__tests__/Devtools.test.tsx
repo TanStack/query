@@ -5,6 +5,7 @@ import {
   QueryObserver,
   dehydrate,
   environmentManager,
+  experimental_ensureHandle,
   experimental_fromHandle,
   experimental_prefetchHandle,
   experimental_waterfallHandle,
@@ -791,6 +792,25 @@ describe('Devtools', () => {
       await vi.advanceTimersByTimeAsync(0)
 
       expect(rendered.queryByRole('note')).not.toBeInTheDocument()
+    })
+
+    it('should show a new start on fresh data, which fetches nothing', async () => {
+      const factory = () => ({
+        queryKey: ['restarted-q'],
+        queryFn: () => 'x',
+        staleTime: Infinity,
+      })
+      experimental_prefetchHandle(queryClient, factory)
+      await vi.advanceTimersByTimeAsync(0)
+      using rendered = unmountOnDispose(renderDevtools({ initialIsOpen: true }))
+
+      fireEvent.click(rendered.getByLabelText('Query key ["restarted-q"]'))
+      expect(rendered.getByText('prefetchHandle (client)')).toBeInTheDocument()
+
+      await experimental_ensureHandle(queryClient, factory)
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(rendered.getByText('ensureHandle (client)')).toBeInTheDocument()
     })
 
     it('should show where a hydrated query started', async () => {

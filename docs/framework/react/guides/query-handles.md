@@ -174,7 +174,7 @@ const queryClient = new QueryClient({
 
 [//]: # 'DehydratePending'
 
-In development, `dehydrate` warns when a server render leaves out a pending query that a handle function started, because the browser would fetch it again.
+In development, `dehydrate` warns once when a server render leaves out a pending query that a handle function started and no earlier `dehydrate` call sent, because the browser would fetch it again.
 
 ### Server `staleTime`
 
@@ -291,8 +291,10 @@ Each query goes out once, with the state it has when `dehydrate` first includes 
 
 ## Devtools
 
-In development, the query devtools show how each handle's query started:
+The query devtools show how each handle's query started:
 
 - **Started by** shows the function that started the query and whether it ran on the server or in the browser. Queries that `hydrate` restores from a server render keep the server's record.
 - A **waterfall** badge marks queries that a component first fetched by reading a handle from `experimental_waterfallHandle`.
 - **Prefetched, never read** marks queries that a handle function started and no component has read since. That usually means a loader prefetches data the page no longer uses.
+
+Records from a server render only reach the browser in development.

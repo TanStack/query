@@ -214,15 +214,17 @@ export function recordQueryStart(
     experimental_getQueryStartInfo(query)?.observed ||
     query.getObserversCount() > 0
   setStartInfo(query, { ...info, observed })
+  // A start on fresh data doesn't fetch, so nothing else tells the devtools to read the record
+  queryCache.notify({ type: 'observerResultsUpdated', query })
 }
 
 /**
- * Returns how `experimental_prefetchHandle`, `experimental_ensureHandle` or
- * `experimental_fetchHandle` last started a query, or whether a reader of an
- * `experimental_waterfallHandle` handle first fetched it. In development, a query that `hydrate`
- * restores from a server render keeps the server's record.
+ * Returns how a handle API started a query: the last `experimental_prefetchHandle`,
+ * `experimental_ensureHandle` or `experimental_fetchHandle` call, or the first fetch by a reader of
+ * an `experimental_waterfallHandle` handle. In development, a query that `hydrate` restores from a
+ * server render keeps the server's record.
  * @param query - The query to look up.
- * @returns The start info, or `undefined` if none of those APIs started the query.
+ * @returns The start info, or `undefined` for queries that other APIs started.
  */
 export function experimental_getQueryStartInfo(
   query: Query<any, any, any, any>,
@@ -230,16 +232,17 @@ export function experimental_getQueryStartInfo(
   return (query as QueryWithStartInfo)[startInfoKey]
 }
 
-const waterfallKey = Symbol.for('@tanstack/query-core/experimental_waterfall')
+// Kept off the handles, which must stay plain objects that a Server Component can pass on
+const waterfallHandles = new WeakSet<object>()
 
 /**
- * Marks a handle from `experimental_waterfallHandle`, hidden from enumeration so the handle still
- * equals and serializes as `{ queryKey, input }`.
- * @param handle - The handle to mark.
+ * Remembers a handle from `experimental_waterfallHandle`, so `experimental_fromHandle` can record
+ * its reader's first fetch.
+ * @param handle - The handle to remember.
  * @returns The handle.
  */
 function markWaterfall<THandle extends object>(handle: THandle): THandle {
-  Object.defineProperty(handle, waterfallKey, { value: true })
+  waterfallHandles.add(handle)
   return handle
 }
 
@@ -528,9 +531,8 @@ export function experimental_fromHandle<TFactory extends QueryHandleFactory>(
   factory: TFactory,
   handle: QueryHandle<NoInfer<TFactory>>,
 ): FromHandleOptions<TFactory> {
-  const options =
-    waterfallKey in handle
-      ? recordWaterfallStart(factory(handle.input))
-      : factory(handle.input)
+  const options = waterfallHandles.has(handle)
+    ? recordWaterfallStart(factory(handle.input))
+    : factory(handle.input)
   return options as FromHandleOptions<TFactory>
 }

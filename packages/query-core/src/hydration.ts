@@ -1,3 +1,4 @@
+import { environmentManager } from './environmentManager'
 import { experimental_getQueryStartInfo, recordQueryStart } from './handles'
 import { noop } from './utils'
 import type { QueryStartInfo } from './handles'
@@ -292,6 +293,9 @@ export function dehydrate(
     .getAll()
     .flatMap((query) => {
       if (filterQuery(query)) {
+        if (process.env.NODE_ENV !== 'production') {
+          dehydratedQueries.add(query)
+        }
         return [dehydrateQuery(query, serializeData, shouldRedactErrors)]
       }
       if (process.env.NODE_ENV !== 'production') {
@@ -303,9 +307,14 @@ export function dehydrate(
   return { mutations, queries }
 }
 
+// In development, the queries some `dehydrate` call has sent, and those it has warned about
+const dehydratedQueries = new WeakSet<Query>()
+const warnedQueries = new WeakSet<Query>()
+
 /**
- * Warns when a server render leaves out a pending query that a handle verb started, because a
- * component that reads the handle in the browser would fetch it again.
+ * Warns once when a server render leaves out a pending query that a handle verb started, because
+ * a component that reads the handle in the browser would fetch it again. Queries an earlier
+ * `dehydrate` call sent don't count, since the browser already gets them.
  * @param query - A query that `shouldDehydrateQuery` left out.
  */
 function warnIfPendingHandleQueryIsLeftOut(query: Query): void {
@@ -314,8 +323,12 @@ function warnIfPendingHandleQueryIsLeftOut(query: Query): void {
     start &&
     start.verb !== 'waterfallHandle' &&
     start.environment === 'server' &&
-    query.state.status === 'pending'
+    environmentManager.isServer() &&
+    query.state.status === 'pending' &&
+    !dehydratedQueries.has(query) &&
+    !warnedQueries.has(query)
   ) {
+    warnedQueries.add(query)
     console.warn(
       `experimental_${start.verb} started the query ${query.queryHash} and it is still pending, but shouldDehydrateQuery left it out, so its data won't reach the client. Include pending queries in shouldDehydrateQuery, or await the query with experimental_ensureHandle or experimental_fetchHandle before you dehydrate.`,
     )
@@ -451,7 +464,11 @@ export function hydrate(
         )
       }
 
-      if (experimental_start && !experimental_getQueryStartInfo(query)) {
+      if (
+        process.env.NODE_ENV !== 'production' &&
+        experimental_start &&
+        !experimental_getQueryStartInfo(query)
+      ) {
         recordQueryStart(queryCache, query, {
           ...experimental_start,
           observed: false,

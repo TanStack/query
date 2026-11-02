@@ -1,5 +1,6 @@
 import { serialize } from 'superjson'
 import { createSignal, onCleanup, onMount } from 'solid-js'
+import { experimental_getQueryStartInfo } from '@tanstack/query-core'
 import type {
   Mutation,
   Query,
@@ -26,16 +27,13 @@ export function getQueryStatusLabel(query: Query) {
 }
 
 /**
- * Returns how an experimental handle API started a query, if one did. Reads the
- * registered symbol that `@tanstack/query-core` stores it under, since the devtools bundle their
- * own copy of that package.
+ * Returns how an experimental handle API started a query, if one did. query-core stores it under a
+ * registered symbol, so this copy of query-core reads it even when the app uses another copy.
  * @param query - The query to look up.
  * @returns The start info, or `undefined` for queries that other APIs or older versions started.
  */
 export function getQueryStartInfo(query: Query): QueryStartInfo | undefined {
-  return (query as unknown as Record<symbol, QueryStartInfo | undefined>)[
-    Symbol.for('@tanstack/query-core/experimental_start')
-  ]
+  return experimental_getQueryStartInfo(query)
 }
 
 /**

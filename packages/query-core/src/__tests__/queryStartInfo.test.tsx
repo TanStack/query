@@ -9,8 +9,10 @@ import {
 import {
   QueryClient,
   QueryObserver,
+  defaultShouldDehydrateQuery,
   dehydrate,
   environmentManager,
+  experimental_ensureHandle,
   experimental_fromHandle,
   experimental_getQueryStartInfo,
   experimental_prefetchHandle,
@@ -19,7 +21,7 @@ import {
   isServer,
   noop,
 } from '..'
-import type { DehydratedState } from '..'
+import type { DehydratedState, QueryCacheNotifyEvent } from '..'
 
 const serverEnvironment = (): Disposable => {
   environmentManager.setIsServer(() => true)
@@ -88,6 +90,8 @@ describe('query start info', () => {
       input: { id: '1' },
     })
     expect(JSON.parse(JSON.stringify(handle))).toStrictEqual(handle)
+    // React Server Components reject props with symbol properties
+    expect(Object.getOwnPropertySymbols(handle)).toHaveLength(0)
 
     const startedAt = Date.now()
     const observer = new QueryObserver(
@@ -133,6 +137,49 @@ describe('query start info', () => {
       experimental_getQueryStartInfo(getQuery(queryClient, handle.queryKey))
         ?.verb,
     ).toBe('prefetchHandle')
+  })
+
+  it('should notify the cache when a handle restarts a query on fresh data', async () => {
+    using _timers = fakeTimers()
+    using queryClient = clearOnDispose(
+      new QueryClient({ defaultOptions: { queries: { staleTime: Infinity } } }),
+    )
+    const postQuery = createPostQuery()
+    experimental_prefetchHandle(queryClient, postQuery, { id: '1' })
+    await vi.advanceTimersByTimeAsync(10)
+    const query = getQuery(queryClient, postQuery({ id: '1' }).queryKey)
+    const listener = vi.fn<(event: QueryCacheNotifyEvent) => void>()
+    using _subscription = subscribe(queryClient.getQueryCache(), listener)
+
+    await vi.advanceTimersByTimeAsync(5)
+    const handle = await experimental_ensureHandle(queryClient, postQuery, {
+      id: '1',
+    })
+
+    expect(queryClient.getQueryData(handle.queryKey)).toBe('1')
+    expect(experimental_getQueryStartInfo(query)).toMatchObject({
+      verb: 'ensureHandle',
+      startedAt: Date.now(),
+    })
+    expect(listener).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'observerResultsUpdated', query }),
+    )
+  })
+
+  it('should keep the start info when resetQueries resets the query', async () => {
+    using _timers = fakeTimers()
+    using queryClient = clearOnDispose(new QueryClient())
+    const postQuery = createPostQuery()
+    const handle = experimental_prefetchHandle(queryClient, postQuery, {
+      id: '1',
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    await queryClient.resetQueries({ queryKey: handle.queryKey })
+
+    expect(
+      experimental_getQueryStartInfo(getQuery(queryClient, handle.queryKey)),
+    ).toMatchObject({ verb: 'prefetchHandle' })
   })
 
   it('should not record queries that other APIs start', async () => {
@@ -192,6 +239,64 @@ describe('query start info', () => {
 
     expect(warn).toHaveBeenCalledTimes(1)
     expect(warn.mock.calls[0]?.[0]).toContain('experimental_prefetchHandle')
+  })
+
+  it('should warn once per query', () => {
+    using _timers = fakeTimers()
+    using _server = serverEnvironment()
+    using serverClient = clearOnDispose(new QueryClient())
+    using warn = vi.spyOn(console, 'warn').mockReturnValue(undefined)
+    experimental_prefetchHandle(serverClient, createPostQuery(), { id: '1' })
+
+    dehydrate(serverClient)
+    dehydrate(serverClient)
+
+    expect(warn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should not warn about a pending query that an earlier dehydrate sent', () => {
+    using _timers = fakeTimers()
+    using _server = serverEnvironment()
+    using serverClient = clearOnDispose(new QueryClient())
+    using warn = vi.spyOn(console, 'warn').mockReturnValue(undefined)
+    experimental_prefetchHandle(serverClient, createPostQuery(), { id: '1' })
+    const sent = new Set<string>()
+    const dehydrateUnsent = () =>
+      dehydrate(serverClient, {
+        shouldDehydrateQuery: (query) => {
+          if (sent.has(query.queryHash)) return false
+          const include =
+            defaultShouldDehydrateQuery(query) ||
+            query.state.status === 'pending'
+          if (include) sent.add(query.queryHash)
+          return include
+        },
+      })
+
+    expect(dehydrateUnsent().queries).toHaveLength(1)
+    expect(dehydrateUnsent().queries).toHaveLength(0)
+    expect(warn).not.toHaveBeenCalled()
+  })
+
+  it('should not warn when the browser dehydrates a hydrated pending query', () => {
+    using _timers = fakeTimers()
+    using queryClient = clearOnDispose(new QueryClient())
+    using warn = vi.spyOn(console, 'warn').mockReturnValue(undefined)
+    let dehydrated: DehydratedState
+    {
+      using _server = serverEnvironment()
+      using serverClient = clearOnDispose(new QueryClient())
+      experimental_prefetchHandle(serverClient, createPostQuery(), { id: '1' })
+      dehydrated = dehydrate(serverClient, {
+        shouldDehydrateQuery: () => true,
+      })
+    }
+
+    hydrate(queryClient, dehydrated)
+    // Like persistQueryClient saving the cache
+    dehydrate(queryClient)
+
+    expect(warn).not.toHaveBeenCalled()
   })
 
   it('should not warn about pending queries that other APIs or the browser started', () => {
