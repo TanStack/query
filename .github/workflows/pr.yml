@@ -60,12 +60,16 @@ jobs:
         run: echo "COMMIT_SHA=${COMMIT_SHA}" >> "$GITHUB_ENV"
         env:
           COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: TEST LS
+        run: ls /home/runner/.local/share/vite-plus/bin
       - name: Size Limit
         uses: andresz1/size-limit-action@94bc357df29c36c8f8d50ea497c3e225c3c95d1d
         with:
           github_token: ${{ github.token }}
+          package_manager: vp
           skip_step: build
-          script: npx size-limit --json
+          build_script: vp run build:all
+          script: vpx size-limit --json
   version-preview:
     name: Version Preview
     runs-on: ubuntu-latest
