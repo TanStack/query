@@ -1,8 +1,7 @@
 // @ts-nocheck
-import fs from 'fs'
+import fs, { globSync } from 'node:fs'
 import path from 'node:path'
-import { globSync } from 'node:fs'
-import { execSync, execFileSync } from 'node:child_process'
+import { execFileSync, execSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 
 const rootDir = path.join(import.meta.dirname, '..')
@@ -245,7 +244,7 @@ try {
 
 if (!tagExists) {
   execSync(`git tag -a -m "${tagName}" ${tagName}`)
-  execSync('git push --tags')
+  execSync(`git push origin ${tagName}`)
 }
 
 const prereleaseFlag = isPrerelease ? '--prerelease' : ''

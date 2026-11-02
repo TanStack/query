@@ -5,35 +5,43 @@ title: Installation
 
 > IMPORTANT: The Lit adapter is currently experimental and v0.1. Pin exact versions if you need extra release stability while the API is early.
 
-Install Lit Query with Lit and TanStack Query Core:
+Install Lit Query:
 
-```bash
-npm i @tanstack/lit-query @tanstack/query-core lit
+```sh
+npm i @tanstack/lit-query
 ```
 
 or
 
-```bash
-pnpm add @tanstack/lit-query @tanstack/query-core lit
+```sh
+pnpm add @tanstack/lit-query
 ```
 
 or
 
-```bash
-yarn add @tanstack/lit-query @tanstack/query-core lit
+```sh
+yarn add @tanstack/lit-query
 ```
 
 or
 
-```bash
-bun add @tanstack/lit-query @tanstack/query-core lit
+```sh
+bun add @tanstack/lit-query
 ```
-
-`@tanstack/query-core` is a peer dependency of `@tanstack/lit-query`. Even though the Lit docs import user-facing APIs from `@tanstack/lit-query`, your app should install `@tanstack/query-core` explicitly.
 
 ## Requirements
 
 Lit Query is intended for Lit 2.8 and newer, including Lit 3. It uses Lit reactive controllers and Lit context, so query consumers should be `ReactiveControllerHost` instances such as `LitElement`.
+
+The snippets in these docs declare reactive properties with `static properties` and initialize them as class fields. Class fields that use the native `[[Define]]` semantics shadow the accessors Lit uses to detect changes, so with TypeScript set `useDefineForClassFields` to `false`, as the runnable examples do. See [Avoiding issues with class fields](https://lit.dev/docs/components/properties/#avoiding-issues-with-class-fields) in the Lit docs for more details.
+
+```json
+{
+  "compilerOptions": {
+    "useDefineForClassFields": false
+  }
+}
+```
 
 TanStack Query is optimized for modern browsers:
 

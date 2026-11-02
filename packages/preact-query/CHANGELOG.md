@@ -1,5 +1,96 @@
 # @tanstack/preact-query
 
+## 5.105.2
+
+### Patch Changes
+
+- [#12230](https://github.com/TanStack/query/pull/12230) [`1e1caa5`](https://github.com/TanStack/query/commit/1e1caa5a32847969f7157627cd805bd8103cd873) - Update the observer options before subscribing so revealing an `<Activity>` tree whose query key changed while hidden no longer fetches the previous key.
+
+- [#12480](https://github.com/TanStack/query/pull/12480) [`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1) - Exclude `status` from the filters accepted by `QueryClient.isMutating`, `useIsMutating`, and `injectIsMutating`. These APIs always count mutations with `status: 'pending'`.
+- Updated dependencies [[`2ee2fd9`](https://github.com/TanStack/query/commit/2ee2fd935acd88532255947c4b5e29baffd21ce8), [`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1), [`e69cac6`](https://github.com/TanStack/query/commit/e69cac69d99cc3c4f6f32b2ad8aad53da83b4a72), [`f2215d2`](https://github.com/TanStack/query/commit/f2215d25945e6461252b7c32bf822f31239e507e), [`86e7957`](https://github.com/TanStack/query/commit/86e79571fd45f29ab7d172102fdd718d3b8bde69), [`b6576b3`](https://github.com/TanStack/query/commit/b6576b388f2784839081358fa82744b0aacdeecd), [`af0e0ef`](https://github.com/TanStack/query/commit/af0e0ef5fc04e9d232fdc3aebd24ffe528b256d7), [`05d9b6a`](https://github.com/TanStack/query/commit/05d9b6a40b9d4ac49943e9d881789e098db5bdfa)]:
+  - @tanstack/query-core@5.105.2
+
+## 5.105.1
+
+### Patch Changes
+
+- [#11373](https://github.com/TanStack/query/pull/11373) [`7ccba6e`](https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6) - fix({react,preact,angular,solid,vue}-query/infiniteQueryOptions): correct the overload selected for a possibly-undefined 'initialData'
+
+- [#12390](https://github.com/TanStack/query/pull/12390) [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf) - Exclude `fetchStatus` from the filters accepted by `QueryClient.isFetching`, `useIsFetching`, and `injectIsFetching`. These APIs always count queries with `fetchStatus: 'fetching'`.
+- Updated dependencies [[`6f8a48d`](https://github.com/TanStack/query/commit/6f8a48d543b499b6d9b0e95050c28183c8c18ae0), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/query-core@5.105.1
+
+## 5.105.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.105.0
+
+## 5.104.5
+
+### Patch Changes
+
+- [#12117](https://github.com/TanStack/query/pull/12117) [`1f8d134`](https://github.com/TanStack/query/commit/1f8d134ea3fa356072b40c69d5cd0227886b89bd) - Recompute `useMutationState` and `useIsMutating` results when their filters, selector, or query client change, without waiting for a mutation cache update.
+- Updated dependencies [[`f608f93`](https://github.com/TanStack/query/commit/f608f933a36da30670082e90d0a56b2569290563)]:
+  - @tanstack/query-core@5.104.5
+
+## 5.104.4
+
+### Patch Changes
+
+- [#11251](https://github.com/TanStack/query/pull/11251) [`fc3a384`](https://github.com/TanStack/query/commit/fc3a3848f25adec750e6ee6d3abf9280c7e3a990) - fix({preact,solid,svelte,angular-query-experimental}): switch to 'export type *' for type-only re-exports
+
+- [#11375](https://github.com/TanStack/query/pull/11375) [`0addcd2`](https://github.com/TanStack/query/commit/0addcd2a9ae7371dbb7a860277b08ad4c2444975) - Allow queries with falsy errors to retry on mount when `throwOnError` returns false.
+
+- [#11259](https://github.com/TanStack/query/pull/11259) [`2ce5190`](https://github.com/TanStack/query/commit/2ce51902de300c9639b0594a2e64b53c7bf1fce9) - fix(preact-query): do not go into optimistic fetching state when not subscribed
+- Updated dependencies [[`1fee044`](https://github.com/TanStack/query/commit/1fee0443dbeb346b8401557ca286a66cdec7ad71), [`fce89dd`](https://github.com/TanStack/query/commit/fce89ddf7a35b14252096ff64a1217efd81b415c)]:
+  - @tanstack/query-core@5.104.4
+
+## 5.104.3
+
+### Patch Changes
+
+- Updated dependencies [[`0f15bc9`](https://github.com/TanStack/query/commit/0f15bc925db5813be6a17527988ec7d7b3c8cfc0)]:
+  - @tanstack/query-core@5.104.3
+
+## 5.104.2
+
+### Patch Changes
+
+- [#11711](https://github.com/TanStack/query/pull/11711) [`a94c7ca`](https://github.com/TanStack/query/commit/a94c7caeec624d0714ee00be3a703943ec2ddbeb) - Add Preact v11 to peerDependencies
+- Updated dependencies [[`03e8c39`](https://github.com/TanStack/query/commit/03e8c3955ddbf20f0a07b79982b52dfad8df5323)]:
+  - @tanstack/query-core@5.104.2
+
+## 5.104.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.104.1
+
+## 5.104.0
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/query-core@5.104.0
+
+## 5.103.3
+
+### Patch Changes
+
+- [#11647](https://github.com/TanStack/query/pull/11647) [`1c9693e`](https://github.com/TanStack/query/commit/1c9693eac75495a04ae4328a35818b1fdf264978) - fix(codemods): avoid copying unnecessary files from codemods project
+- Updated dependencies []:
+  - @tanstack/query-core@5.103.3
+
+## 5.103.2
+
+### Patch Changes
+
+- Updated dependencies [[`8a28904`](https://github.com/TanStack/query/commit/8a28904aaccb6bc26398b751400a181c0f6d7f0e)]:
+  - @tanstack/query-core@5.103.2
+
 ## 5.103.1
 
 ### Patch Changes

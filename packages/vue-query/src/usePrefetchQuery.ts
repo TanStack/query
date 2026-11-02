@@ -12,6 +12,10 @@ import type {
 import type { QueryClient } from './queryClient'
 import type { MaybeRefDeep, MaybeRefOrGetter } from './types'
 
+/**
+ * The options accepted by `usePrefetchQuery` — everything you can pass to `queryClient.query`, except that
+ * `queryFn` can't be `skipToken`.
+ */
 export type UsePrefetchQueryOptions<
   TQueryFnData,
   TError,
@@ -42,6 +46,11 @@ export type UsePrefetchQueryOptions<
   >
 }
 
+/**
+ * Checks whether an option was passed as a getter function.
+ * @param value - The option value.
+ * @returns `true` if `value` is a function.
+ */
 function isGetter<T>(value: MaybeRefOrGetter<T>): value is () => T {
   return typeof value === 'function'
 }
@@ -58,13 +67,10 @@ function isGetter<T>(value: MaybeRefOrGetter<T>): value is () => T {
  *
  * Fire this during render, before a suspense boundary that wraps a component using `useQuery`'s `suspense()`
  * — see the {@link https://tanstack.com/query/latest/docs/framework/vue/guides/suspense | Suspense guide}.
- *
  * @param options - A `ref`, plain value, or reactive getter resolving to the {@link UsePrefetchQueryOptions} to
  * use — everything you can pass to `queryClient.query`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
- * @returns `void` — nothing is returned.
- *
  * @example
  * ```vue
  * <script setup lang="ts">

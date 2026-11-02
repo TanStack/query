@@ -1,14 +1,22 @@
 <script lang="ts">
-  import type { QueryClient } from '@tanstack/query-core'
+  import type {
+    MutationFunctionContext,
+    QueryClient,
+  } from '@tanstack/query-core'
   import { createMutation, setQueryClientContext } from '../../src/index.js'
   import { sleep } from '@tanstack/query-test-utils'
 
   type Props = {
     queryClient: QueryClient
-    perCallOnSuccess: (...args: Array<unknown>) => void
+    onSuccessMutate: (
+      data: string,
+      variables: string,
+      onMutateResult: unknown,
+      context: MutationFunctionContext,
+    ) => void
   }
 
-  const { queryClient, perCallOnSuccess }: Props = $props()
+  let { queryClient, onSuccessMutate }: Props = $props()
 
   setQueryClientContext(queryClient)
 
@@ -17,8 +25,6 @@
   }))
 </script>
 
-<button
-  onclick={() => mutation.mutate('todo', { onSuccess: perCallOnSuccess })}
->
+<button onclick={() => mutation.mutate('todo', { onSuccess: onSuccessMutate })}>
   Mutate
 </button>

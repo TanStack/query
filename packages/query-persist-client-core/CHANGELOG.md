@@ -1,5 +1,86 @@
 # @tanstack/query-persist-client-core
 
+## 5.105.2
+
+### Patch Changes
+
+- Updated dependencies [[`2ee2fd9`](https://github.com/TanStack/query/commit/2ee2fd935acd88532255947c4b5e29baffd21ce8), [`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1), [`e69cac6`](https://github.com/TanStack/query/commit/e69cac69d99cc3c4f6f32b2ad8aad53da83b4a72), [`f2215d2`](https://github.com/TanStack/query/commit/f2215d25945e6461252b7c32bf822f31239e507e), [`86e7957`](https://github.com/TanStack/query/commit/86e79571fd45f29ab7d172102fdd718d3b8bde69), [`b6576b3`](https://github.com/TanStack/query/commit/b6576b388f2784839081358fa82744b0aacdeecd), [`af0e0ef`](https://github.com/TanStack/query/commit/af0e0ef5fc04e9d232fdc3aebd24ffe528b256d7), [`05d9b6a`](https://github.com/TanStack/query/commit/05d9b6a40b9d4ac49943e9d881789e098db5bdfa)]:
+  - @tanstack/query-core@5.105.2
+
+## 5.105.1
+
+### Patch Changes
+
+- [#11678](https://github.com/TanStack/query/pull/11678) [`db79da7`](https://github.com/TanStack/query/commit/db79da70ede675b8f41c7b2227d0123cfdd14839) - fix(query-persist-client-core): catch errors when persisting in 'persistQueryClientSubscribe' to prevent unhandled promise rejections, and log them in development
+
+- [#11919](https://github.com/TanStack/query/pull/11919) [`8be136b`](https://github.com/TanStack/query/commit/8be136b02214fe7b073673fa1cb30110a8de8482) - Validate persisted query keys, hashes, state objects, and data update timestamps before retrieval, restoration, garbage collection, or filtered removal. Remove malformed entries without interrupting subsequent queries, while preserving valid `null` data.
+- Updated dependencies [[`6f8a48d`](https://github.com/TanStack/query/commit/6f8a48d543b499b6d9b0e95050c28183c8c18ae0), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/query-core@5.105.1
+
+## 5.105.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.105.0
+
+## 5.104.5
+
+### Patch Changes
+
+- Updated dependencies [[`f608f93`](https://github.com/TanStack/query/commit/f608f933a36da30670082e90d0a56b2569290563)]:
+  - @tanstack/query-core@5.104.5
+
+## 5.104.4
+
+### Patch Changes
+
+- Updated dependencies [[`1fee044`](https://github.com/TanStack/query/commit/1fee0443dbeb346b8401557ca286a66cdec7ad71), [`fce89dd`](https://github.com/TanStack/query/commit/fce89ddf7a35b14252096ff64a1217efd81b415c)]:
+  - @tanstack/query-core@5.104.4
+
+## 5.104.3
+
+### Patch Changes
+
+- [#11410](https://github.com/TanStack/query/pull/11410) [`ed4d849`](https://github.com/TanStack/query/commit/ed4d849731bfe6404be9d40aec84eda54f958d7f) - fix(query-persist-client-core/createPersister): await the storage write in `persistQuery`, so `persistQueryByKey` resolves only once the entry has actually been written and rejects when the write fails instead of leaving an unhandled rejection
+- Updated dependencies [[`0f15bc9`](https://github.com/TanStack/query/commit/0f15bc925db5813be6a17527988ec7d7b3c8cfc0)]:
+  - @tanstack/query-core@5.104.3
+
+## 5.104.2
+
+### Patch Changes
+
+- Updated dependencies [[`03e8c39`](https://github.com/TanStack/query/commit/03e8c3955ddbf20f0a07b79982b52dfad8df5323)]:
+  - @tanstack/query-core@5.104.2
+
+## 5.104.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.104.1
+
+## 5.104.0
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/query-core@5.104.0
+
+## 5.103.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.103.3
+
+## 5.103.2
+
+### Patch Changes
+
+- Updated dependencies [[`8a28904`](https://github.com/TanStack/query/commit/8a28904aaccb6bc26398b751400a181c0f6d7f0e)]:
+  - @tanstack/query-core@5.103.2
+
 ## 5.103.1
 
 ### Patch Changes

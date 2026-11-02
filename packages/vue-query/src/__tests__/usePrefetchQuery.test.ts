@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick, ref } from 'vue-demi'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { usePrefetchQuery } from '../usePrefetchQuery'
 
@@ -17,7 +17,7 @@ describe('usePrefetchQuery', () => {
     const queryClient = new QueryClient()
     const querySpy = vi.spyOn(queryClient, 'query')
     const queryFn = () => Promise.resolve('prefetched')
-    const key = queryKey()
+    const key = createKey()
 
     usePrefetchQuery(
       {
@@ -38,7 +38,7 @@ describe('usePrefetchQuery', () => {
     const queryClient = new QueryClient()
     const querySpy = vi.spyOn(queryClient, 'query')
     const queryFn = () => Promise.resolve('prefetched')
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'existing')
 
     usePrefetchQuery(
@@ -56,7 +56,7 @@ describe('usePrefetchQuery', () => {
     const queryClient = new QueryClient()
     const querySpy = vi.spyOn(queryClient, 'query')
     const nestedRef = ref('value')
-    const key = queryKey()
+    const key = createKey()
     const queryFn = () => Promise.resolve('prefetched')
 
     usePrefetchQuery(
@@ -77,7 +77,7 @@ describe('usePrefetchQuery', () => {
     const queryClient = new QueryClient()
     const querySpy = vi.spyOn(queryClient, 'query')
     const keyRef = ref('first')
-    const key = queryKey()
+    const key = createKey()
     const queryFn = () => Promise.resolve(keyRef.value)
 
     usePrefetchQuery(
@@ -96,7 +96,6 @@ describe('usePrefetchQuery', () => {
 
     keyRef.value = 'second'
     await nextTick()
-
     expect(querySpy).toHaveBeenCalledTimes(2)
     expect(querySpy).toHaveBeenNthCalledWith(2, {
       queryKey: [...key, 'second'],
@@ -106,23 +105,20 @@ describe('usePrefetchQuery', () => {
 
   it('should warn when used outside of setup function in development mode', () => {
     vi.stubEnv('NODE_ENV', 'development')
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnMock = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
-    try {
-      usePrefetchQuery(
-        {
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve('prefetched'),
-        },
-        new QueryClient(),
-      )
+    usePrefetchQuery(
+      {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve('prefetched'),
+      },
+      new QueryClient(),
+    )
 
-      expect(warnSpy).toHaveBeenCalledWith(
-        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
-      )
-    } finally {
-      warnSpy.mockRestore()
-      vi.unstubAllEnvs()
-    }
+    expect(consoleWarnMock).toHaveBeenCalledWith(
+      'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+    )
   })
 })

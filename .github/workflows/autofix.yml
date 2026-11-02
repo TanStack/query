@@ -45,3 +45,4 @@ jobs:
         uses: autofix-ci/action@635ffb0c9798bd160680f18fd73371e355b85f27
         with:
           commit-message: 'ci: apply automated fixes'
+          fail-fast: ${{ github.event_name == 'pull_request' }}

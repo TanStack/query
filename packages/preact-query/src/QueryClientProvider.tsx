@@ -1,7 +1,7 @@
-import type { QueryClient } from '@tanstack/query-core'
 import { createContext } from 'preact'
-import type { ComponentChildren, VNode } from 'preact'
 import { useContext, useEffect } from 'preact/hooks'
+import type { QueryClient } from '@tanstack/query-core'
+import type { ComponentChildren, VNode } from 'preact'
 
 /**
  * The context that `useQueryClient` reads from. `QueryClientProvider` is the normal way to set it.
@@ -12,11 +12,11 @@ export const QueryClientContext = createContext<QueryClient | undefined>(
 
 /**
  * The `useQueryClient` hook returns the current `QueryClient` instance.
- *
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current `QueryClient` instance.
- * @throws If no `queryClient` argument is passed and no `QueryClientProvider` is found in the component tree.
+ * @throws {Error} If no `queryClient` argument is passed and no `QueryClientProvider` is found in the
+ * component tree.
  */
 export const useQueryClient = (queryClient?: QueryClient) => {
   const client = useContext(QueryClientContext)
@@ -53,9 +53,8 @@ export type QueryClientProviderProps = {
  * calls `client.mount()`/`client.unmount()` as this component mounts/unmounts, which subscribes the client to
  * focus/online events (resuming any paused mutations and refetching as needed when the app regains focus or
  * comes back online).
- *
+ * @param props - The `client` to provide, and the `children` that get access to it.
  * @returns The provided `children`, wrapped so they can read the `QueryClient` via `useQueryClient`.
- *
  * @example
  * ```tsx
  * import { QueryClient, QueryClientProvider } from '@tanstack/preact-query'

@@ -192,9 +192,11 @@ describe('hydration', () => {
       // neither key may be optional
       expectTypeOf<
         keyof {
-          [K in keyof DehydratedState as {} extends Pick<DehydratedState, K>
-            ? K
-            : never]: true
+          [
+            K in keyof DehydratedState as {} extends Pick<DehydratedState, K>
+              ? K
+              : never
+          ]: true
         }
       >().toEqualTypeOf<never>()
     })

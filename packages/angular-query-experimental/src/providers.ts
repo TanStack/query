@@ -9,7 +9,6 @@ import type { Provider } from '@angular/core'
  * `QueryClient` instance for part of the application, or for unit testing.
  * @param queryClient - A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
  * @returns A provider object that can be used to provide the `QueryClient` instance.
- *
  * @example
  * Providing a test-only `QueryClient` in a component test, without wiring up `provideTanStackQuery`'s other
  * defaults:
@@ -40,13 +39,11 @@ export function provideQueryClient(
 /**
  * Sets up providers necessary to enable TanStack Query functionality for Angular applications. Allows
  * configuring a `QueryClient` and optional features such as developer tools.
- *
- * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
- * @see {@link withDevtools}
  * @param queryClient - A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
  * @param features - Optional features to configure additional Query functionality.
  * @returns A set of providers to set up TanStack Query.
- *
+ * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
+ * @see {@link withDevtools}
  * @example
  * ```ts
  * import { provideTanStackQuery, QueryClient } from '@tanstack/angular-query-experimental'
@@ -55,7 +52,6 @@ export function provideQueryClient(
  *   providers: [provideTanStackQuery(new QueryClient())],
  * })
  * ```
- *
  * @example
  * The same, in an `NgModule`-based application:
  * ```ts
@@ -69,7 +65,6 @@ export function provideQueryClient(
  * })
  * export class AppModule {}
  * ```
- *
  * @example
  * Enabling optional developer tools by adding `withDevtools` — by default, the tools are then loaded when
  * your app is in development mode:
@@ -84,7 +79,6 @@ export function provideQueryClient(
  *   providers: [provideTanStackQuery(new QueryClient(), withDevtools())],
  * })
  * ```
- *
  * @example
  * Using an `InjectionToken` for the `QueryClient` — an advanced optimization that lets TanStack Query be
  * absent from the main application bundle, useful for including it on lazy-loaded routes only while still
@@ -113,9 +107,9 @@ export function provideTanStackQuery(
  * Sets up providers necessary to enable TanStack Query functionality for Angular applications.
  *
  * Allows configuring a `QueryClient`.
- * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
  * @param queryClient - A `QueryClient` instance.
  * @returns A set of providers to set up TanStack Query.
+ * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
  * @deprecated Use `provideTanStackQuery` instead.
  */
 export function provideAngularQuery(queryClient: QueryClient): Array<Provider> {
@@ -130,7 +124,13 @@ type QueryFeatureKind = (typeof queryFeatures)[number]
  * Helper type to represent a Query feature.
  */
 export interface QueryFeature<TFeatureKind extends QueryFeatureKind> {
+  /**
+   * The kind of the feature, e.g. `'Devtools'` or `'PersistQueryClient'`.
+   */
   ɵkind: TFeatureKind
+  /**
+   * The providers that `provideTanStackQuery` registers for the feature.
+   */
   ɵproviders: Array<Provider>
 }
 
