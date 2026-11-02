@@ -1,5 +1,25 @@
 # @tanstack/query-core
 
+## 5.105.2
+
+### Patch Changes
+
+- [#10969](https://github.com/TanStack/query/pull/10969) [`2ee2fd9`](https://github.com/TanStack/query/commit/2ee2fd935acd88532255947c4b5e29baffd21ce8) - Fix infinite queries to respect a reduced `maxPages` limit when fetching in either direction.
+
+- [#12480](https://github.com/TanStack/query/pull/12480) [`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1) - Exclude `status` from the filters accepted by `QueryClient.isMutating`, `useIsMutating`, and `injectIsMutating`. These APIs always count mutations with `status: 'pending'`.
+
+- [#12442](https://github.com/TanStack/query/pull/12442) [`e69cac6`](https://github.com/TanStack/query/commit/e69cac69d99cc3c4f6f32b2ad8aad53da83b4a72) - Handle the rejection of a paused refetch started by `refetchQueries` with `throwOnError`, so cancelling it later no longer causes an unhandled `CancelledError`.
+
+- [#12447](https://github.com/TanStack/query/pull/12447) [`f2215d2`](https://github.com/TanStack/query/commit/f2215d25945e6461252b7c32bf822f31239e507e) - Use `() => void` instead of the DOM-only `VoidFunction` type in `addConsumeAwareSignal`, so the published declarations type-check without the DOM lib.
+
+- [#10777](https://github.com/TanStack/query/pull/10777) [`86e7957`](https://github.com/TanStack/query/commit/86e79571fd45f29ab7d172102fdd718d3b8bde69) - Fix `shallowEqualObjects` to compare own property keys and values and ignore inherited properties. Objects with different own keys now compare as unequal, including when the differing values are `undefined`.
+
+- [#12489](https://github.com/TanStack/query/pull/12489) [`b6576b3`](https://github.com/TanStack/query/commit/b6576b388f2784839081358fa82744b0aacdeecd) - Keep all callers of an in-flight query waiting for the replacement fetch when invalidation cancels it, including after repeated invalidations.
+
+- [#12481](https://github.com/TanStack/query/pull/12481) [`af0e0ef`](https://github.com/TanStack/query/commit/af0e0ef5fc04e9d232fdc3aebd24ffe528b256d7) - Prevent cancelled streamed queries from writing to the cache or starting a delayed stream, even when the stream does not consume the abort signal.
+
+- [#11788](https://github.com/TanStack/query/pull/11788) [`05d9b6a`](https://github.com/TanStack/query/commit/05d9b6a40b9d4ac49943e9d881789e098db5bdfa) - Clear `isPaused` on a mutation that can start once its `onMutate` resolves, so it is no longer dehydrated and resumed a second time while its request is in flight.
+
 ## 5.105.1
 
 ### Patch Changes
