@@ -103,6 +103,8 @@ The factory types `select`'s argument, as with any `queryOptions` result. Keep o
 
 Handles from `experimental_ensureHandle` and `experimental_fetchHandle` carry the data they waited for, and `experimental_fromHandle` passes it on as `initialData` with its `initialDataUpdatedAt`. `useQuery` then always has data, even in a client that never saw the loader's cache, and types its `data` as defined. Data already in the cache wins over the handle's data. For a handle from `experimental_prefetchHandle`, `useQuery` data stays possibly `undefined`.
 
+As with any `initialData`, a mounted reader puts the handle's data back in the cache after `queryClient.clear()` or `removeQueries`, and `resetQueries` resets the query to it. The handle lives as long as the router keeps the loader data, so a logout that clears the cache should also drop the loader data, for example by invalidating the route.
+
 If the page sends its loader data and dehydrated state as plain JSON, or `serializeData` copies the data, an awaited handle's data goes out twice: once in the handle and once in the dehydrated state.
 
 ## Waterfalls: `experimental_waterfallHandle`

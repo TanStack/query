@@ -55,11 +55,7 @@ export {
 export type {
   FromHandleOptions as experimental_FromHandleOptions,
   QueryHandle as experimental_QueryHandle,
-  QueryHandleData as experimental_QueryHandleData,
-  QueryHandleError as experimental_QueryHandleError,
   QueryHandleFactory as experimental_QueryHandleFactory,
-  QueryHandleInput as experimental_QueryHandleInput,
-  QueryHandleKey as experimental_QueryHandleKey,
   QueryHandleWithData as experimental_QueryHandleWithData,
 } from './handles'
 

@@ -4,6 +4,7 @@ import {
   createKey,
   fakeTimers,
   sleep,
+  subscribe,
 } from '@tanstack/query-test-utils'
 import {
   QueryClient,
@@ -14,6 +15,7 @@ import {
   experimental_fromHandle,
   experimental_prefetchHandle,
   experimental_waterfallHandle,
+  noop,
 } from '..'
 
 const isServer = environmentManager.isServer()
@@ -428,6 +430,55 @@ describe('query handles', () => {
       )
 
       expect(observer.getCurrentResult().data).toBe('newer')
+    })
+
+    it("should seed the cache from a handle's data again after clear(), like any initialData", () => {
+      using _timers = fakeTimers()
+      using queryClient = clearOnDispose(new QueryClient())
+      const postQuery = createPostQuery()
+      const handle = {
+        queryKey: postQuery({ id: '1' }).queryKey,
+        input: { id: '1' },
+        data: 'from the loader',
+        dataUpdatedAt: Date.now(),
+      }
+      const options = {
+        ...experimental_fromHandle(postQuery, handle),
+        enabled: false,
+      }
+      const observer = new QueryObserver(queryClient, options)
+      using _subscription = subscribe(observer, noop)
+
+      queryClient.clear()
+      expect(queryClient.getQueryData(handle.queryKey)).toBeUndefined()
+      // The reader renders again
+      observer.setOptions(options)
+
+      expect(queryClient.getQueryData(handle.queryKey)).toBe('from the loader')
+    })
+
+    it("should reset the query to a handle's data, like any initialData", async () => {
+      using _timers = fakeTimers()
+      using queryClient = clearOnDispose(new QueryClient())
+      const postQuery = createPostQuery()
+      const handle = {
+        queryKey: postQuery({ id: '1' }).queryKey,
+        input: { id: '1' },
+        data: 'from the loader',
+        dataUpdatedAt: Date.now(),
+      }
+      using _subscription = subscribe(
+        new QueryObserver(queryClient, {
+          ...experimental_fromHandle(postQuery, handle),
+          enabled: false,
+        }),
+        noop,
+      )
+      queryClient.setQueryData(handle.queryKey, 'newer')
+
+      await queryClient.resetQueries({ queryKey: handle.queryKey })
+
+      expect(queryClient.getQueryData(handle.queryKey)).toBe('from the loader')
     })
   })
 

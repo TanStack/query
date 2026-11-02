@@ -2,9 +2,7 @@ import { hashQueryKeyByOptions, noop } from './utils'
 import type { QueryClient } from './queryClient'
 import type { Query } from './query'
 import type {
-  DefaultError,
   InferDataFromTag,
-  InferErrorFromTag,
   InfiniteData,
   QueryKey,
   QueryKeyHashFunction,
@@ -29,7 +27,7 @@ export type QueryHandleFactory = (input?: any) => QueryFactoryOptions
 /**
  * The input of a query factory: its first parameter, or `undefined` if it takes none.
  */
-export type QueryHandleInput<TFactory extends QueryHandleFactory> =
+type QueryHandleInput<TFactory extends QueryHandleFactory> =
   Parameters<TFactory> extends [] ? undefined : Parameters<TFactory>[0]
 
 /**
@@ -48,7 +46,7 @@ type QueryHandleArgs<TFactory extends QueryHandleFactory> =
  * The data type of a factory's query, from the tag on its `queryKey`. For an infinite query
  * factory, this is the `InfiniteData` of its pages, with the type of its `initialPageParam`.
  */
-export type QueryHandleData<TFactory extends QueryHandleFactory> =
+type QueryHandleData<TFactory extends QueryHandleFactory> =
   ReturnType<TFactory> extends { initialPageParam: infer TPageParam }
     ? InferDataFromTag<
         unknown,
@@ -57,12 +55,6 @@ export type QueryHandleData<TFactory extends QueryHandleFactory> =
       ? InfiniteData<TPage, TPageParam>
       : InferDataFromTag<unknown, ReturnType<TFactory>['queryKey']>
     : InferDataFromTag<unknown, ReturnType<TFactory>['queryKey']>
-
-/**
- * The error type of a factory's query, from the tag on its `queryKey`.
- */
-export type QueryHandleError<TFactory extends QueryHandleFactory> =
-  InferErrorFromTag<DefaultError, ReturnType<TFactory>['queryKey']>
 
 type PlainTuple<
   TQueryKey extends ReadonlyArray<unknown>,
@@ -88,7 +80,7 @@ type PlainQueryKey<TQueryKey extends ReadonlyArray<unknown>> =
  * `queryOptions` adds, so a handle stays a plain serializable object for routers that check
  * loader data.
  */
-export type QueryHandleKey<TFactory extends QueryHandleFactory> = PlainQueryKey<
+type QueryHandleKey<TFactory extends QueryHandleFactory> = PlainQueryKey<
   ReturnType<TFactory>['queryKey']
 >
 
