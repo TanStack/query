@@ -1,6 +1,23 @@
 <template>
-  <span
-    class="fa fa-circle-o-notch fa-spin"
-    style="margin-left: 4px; font-size: small"
-  />
+  <span :class="$style.spinner" />
 </template>
+
+<style module>
+.spinner {
+  display: inline-block;
+  width: 0.75em;
+  height: 0.75em;
+  margin-left: 4px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  font-size: small;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>

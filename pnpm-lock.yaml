@@ -2104,9 +2104,6 @@ importers:
       '@tanstack/preact-query-devtools':
         specifier: ^5.105.1
         version: link:../../../packages/preact-query-devtools
-      font-awesome:
-        specifier: ^4.7.0
-        version: 4.7.0
       preact:
         specifier: ^11.0.1
         version: 11.0.1(preact-render-to-string@6.8.0)
@@ -3306,9 +3303,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.105.1
         version: link:../../../packages/react-query-devtools
-      font-awesome:
-        specifier: ^4.7.0
-        version: 4.7.0
       react:
         specifier: ^19.3.1
         version: 19.3.1
@@ -4079,9 +4073,6 @@ importers:
       '@tanstack/solid-query-devtools':
         specifier: ^5.105.1
         version: link:../../../packages/solid-query-devtools
-      font-awesome:
-        specifier: ^4.7.0
-        version: 4.7.0
       solid-js:
         specifier: ^1.9.15
         version: 1.9.15
@@ -5947,9 +5938,6 @@ importers:
       '@tanstack/vue-query-devtools':
         specifier: ^6.3.7
         version: link:../../../packages/vue-query-devtools
-      font-awesome:
-        specifier: ^4.7.0
-        version: 4.7.0
       vue:
         specifier: ^3.5.43
         version: 3.5.44(typescript@6.0.3)
@@ -17514,10 +17502,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-
-  font-awesome@4.7.0:
-    resolution: {integrity: sha512-U6kGnykA/6bFmg1M/oT9EkFeIYv7JlX3bozwQJWiiLz6L0w3F5vBVPxHlwyX/vtNq1ckcpRKOB9f2Qal/VtFpg==}
-    engines: {node: '>=0.10.3'}
 
   fontace@0.4.1:
     resolution: {integrity: sha512-lDMvbAzSnHmbYMTEld5qdtvNH2/pWpICOqpean9IgC7vUbUJc3k+k5Dokp85CegamqQpFbXf0rAVkbzpyTA8aw==}
@@ -37313,8 +37297,6 @@ snapshots:
   follow-redirects@1.16.0(debug@4.4.3(supports-color@7.2.0)):
     optionalDependencies:
       debug: 4.4.3(supports-color@7.2.0)
-
-  font-awesome@4.7.0: {}
 
   fontace@0.4.1:
     dependencies:
