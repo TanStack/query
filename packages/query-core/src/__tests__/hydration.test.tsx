@@ -1186,6 +1186,34 @@ describe('dehydration and rehydration', () => {
       })
     })
 
+    it("should resolve a fetch that joins the hydrated promise with the data of the observer's retry", async () => {
+      using _timers = fakeTimers()
+      const key = createKey()
+      using serverClient = startRejectingQuery(key)
+      const dehydrated = dehydrate(serverClient)
+
+      using queryClient = clearOnDispose(new QueryClient())
+      hydrate(queryClient, dehydrated)
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'client data'),
+      )
+      using _subscription = subscribe(
+        new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn,
+          retry: 1,
+          retryDelay: 5,
+        }),
+        noop,
+      )
+      const joined = queryClient.query({ queryKey: key, queryFn })
+
+      await vi.advanceTimersByTimeAsync(25)
+
+      await expect(joined).resolves.toBe('client data')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
     it('should not retry when an observer that mounted before it rejected sets retry to false', async () => {
       using _timers = fakeTimers()
       const key = createKey()
