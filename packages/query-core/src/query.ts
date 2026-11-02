@@ -893,6 +893,8 @@ export class Query<
         if (error instanceof CancelledError) {
           if (error.silent) {
             if (this.#retryer !== retryer && this.#fetchPromise) {
+              // A new fetch replaced the silently cancelled one,
+              // so we piggyback onto that promise.
               return this.#fetchPromise
             }
             throw error
