@@ -3,7 +3,7 @@ import { injectQuery } from '@tanstack/angular-query-experimental'
 import { HttpClient } from '@angular/common/http'
 import { lastValueFrom } from 'rxjs'
 
-interface Response {
+interface Repo {
   name: string
   description: string
   subscribers_count: number
@@ -23,7 +23,7 @@ export class SimpleExampleComponent {
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(
-        this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+        this.#http.get<Repo>('https://api.github.com/repos/TanStack/query'),
       ),
   }))
 }

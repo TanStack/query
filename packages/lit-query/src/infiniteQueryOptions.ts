@@ -9,10 +9,8 @@ import type {
 /**
  * Brands infinite query options so the `queryKey` carries the infinite query
  * data and error types across TanStack Query APIs.
- *
  * @param options - Infinite query options to preserve and brand.
  * @returns The same options object with a typed `queryKey`.
- *
  * @example
  * ```ts
  * import { infiniteQueryOptions } from '@tanstack/lit-query'

@@ -18,6 +18,21 @@ import type {
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions.js'
 
+/**
+ * The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
+ * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
+ *
+ * This overload is selected when `initialData` is known to be defined.
+ * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to
+ * `createInfiniteQuery`, with `initialData` known to be defined, wrapped in an {@link Accessor} so options
+ * can be reactive.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+ * be used.
+ * @returns The current query result, plus `fetchNextPage`/`fetchPreviousPage`/`hasNextPage`/`hasPreviousPage`
+ * to page through the query.
+ * @see {@link infiniteQueryOptions} to share these options between `createInfiniteQuery` and imperative APIs
+ * like `queryClient.infiniteQuery`.
+ */
 export function createInfiniteQuery<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -37,6 +52,21 @@ export function createInfiniteQuery<
   queryClient?: Accessor<QueryClient>,
 ): DefinedCreateInfiniteQueryResult<TData, TError>
 
+/**
+ * The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
+ * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
+ *
+ * This overload is selected when `initialData` is omitted, may be `undefined`, or is a function that may
+ * return `undefined`.
+ * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to
+ * `createInfiniteQuery`, wrapped in an {@link Accessor} so options can be reactive.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+ * be used.
+ * @returns The current query result, plus `fetchNextPage`/`fetchPreviousPage`/`hasNextPage`/`hasPreviousPage`
+ * to page through the query.
+ * @see {@link infiniteQueryOptions} to share these options between `createInfiniteQuery` and imperative APIs
+ * like `queryClient.infiniteQuery`.
+ */
 export function createInfiniteQuery<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -57,15 +87,16 @@ export function createInfiniteQuery<
 ): CreateInfiniteQueryResult<TData, TError>
 
 /**
- * @see {@link infiniteQueryOptions} to share these options between `createInfiniteQuery` and imperative APIs
- * like `queryClient.infiniteQuery`.
+ * The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
+ * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  * @param options - The {@link CreateInfiniteQueryOptions} to use — everything you can pass to
  * `createInfiniteQuery`, wrapped in an {@link Accessor} so options can be reactive.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current query result, plus `fetchNextPage`/`fetchPreviousPage`/`hasNextPage`/`hasPreviousPage`
  * to page through the query.
- *
+ * @see {@link infiniteQueryOptions} to share these options between `createInfiniteQuery` and imperative APIs
+ * like `queryClient.infiniteQuery`.
  * @example
  * Fetching the next page from a "Load More" button click:
  * ```svelte
@@ -104,7 +135,6 @@ export function createInfiniteQuery<
  *   </button>
  * {/if}
  * ```
- *
  * @example
  * Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a
  * sentinel element after the list:

@@ -1,5 +1,5 @@
 ---
-id: query-options
+id: mutation-options
 title: Mutation Options
 ---
 
@@ -11,7 +11,7 @@ and you'll also get type inference and type safety for all of them.
 
 ```ts
 export class QueriesService {
-  private readonly http = inject(HttpClient)
+  private readonly queryClient = inject(QueryClient)
 
   updatePost(id: number) {
     return mutationOptions({

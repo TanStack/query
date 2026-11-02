@@ -5,7 +5,7 @@
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
   import { StatelessRef } from '../utils.svelte'
 
-  interface Props {
+  type Props = {
     queryClient: QueryClient
     persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
     onSuccess: () => Promise<void>

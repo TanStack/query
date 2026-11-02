@@ -4,6 +4,9 @@ export const infiniteQueryFunctions = [
   'useSuspenseInfiniteQuery',
 ] as const
 
+/**
+ * The names of the functions whose options the `infinite-query-property-order` rule checks.
+ */
 export type InfiniteQueryFunctions = (typeof infiniteQueryFunctions)[number]
 
 export const checkedProperties = [
@@ -12,6 +15,9 @@ export const checkedProperties = [
   'getNextPageParam',
 ] as const
 
+/**
+ * The option properties whose order the `infinite-query-property-order` rule checks.
+ */
 export type InfiniteQueryProperties = (typeof checkedProperties)[number]
 
 export const sortRules = [

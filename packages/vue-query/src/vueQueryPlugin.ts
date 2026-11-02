@@ -35,13 +35,16 @@ interface ClientOptions extends CommonOptions {
   queryClient?: QueryClient
 }
 
+/**
+ * The options accepted by `VueQueryPlugin`: either a `queryClient` to install, or a `queryClientConfig` for the
+ * client the plugin creates, plus the shared options.
+ */
 export type VueQueryPluginOptions = ConfigOptions | ClientOptions
 
 /**
  * Installs a `QueryClient` on the Vue app, making it available to every descendant component through
  * `useQueryClient` — the Vue equivalent of React's `QueryClientProvider`, but wired up as an app-level plugin
  * instead of a wrapping component.
- *
  * @example
  * ```ts
  * import { createApp } from 'vue'
@@ -50,7 +53,6 @@ export type VueQueryPluginOptions = ConfigOptions | ClientOptions
  * const app = createApp(App)
  * app.use(VueQueryPlugin)
  * ```
- *
  * @example
  * Pass a `queryClient` you constructed yourself — useful for SSR, where you need a fresh `QueryClient` per
  * request, or when the same instance also needs to be used outside of Vue components:
@@ -60,7 +62,6 @@ export type VueQueryPluginOptions = ConfigOptions | ClientOptions
  * const queryClient = new QueryClient()
  * app.use(VueQueryPlugin, { queryClient })
  * ```
- *
  * @example
  * Or pass `queryClientConfig` to let the plugin construct the `QueryClient` for you, with your own defaults:
  * ```ts

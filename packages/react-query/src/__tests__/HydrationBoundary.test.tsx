@@ -30,6 +30,7 @@ describe('React hydration', () => {
     stringifiedState = JSON.stringify(dehydrated)
     queryClient.clear()
   })
+
   afterEach(() => {
     vi.useRealTimers()
   })
@@ -161,7 +162,6 @@ describe('React hydration', () => {
       expect(rendered.getByText('string')).toBeInTheDocument()
       // New query data should be available immediately
       expect(rendered.getByText('added')).toBeInTheDocument()
-
       await vi.advanceTimersByTimeAsync(0)
       // After effects phase has had time to run, the observer should have updated
       expect(rendered.queryByText('string')).not.toBeInTheDocument()
@@ -342,7 +342,6 @@ describe('React hydration', () => {
       }),
     )
 
-    hydrateSpy.mockRestore()
     queryClient.clear()
   })
 
@@ -366,7 +365,6 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(hydrateSpy).toHaveBeenCalledTimes(0)
 
-    hydrateSpy.mockRestore()
     queryClient.clear()
   })
 
@@ -390,7 +388,6 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(hydrateSpy).toHaveBeenCalledTimes(0)
 
-    hydrateSpy.mockRestore()
     queryClient.clear()
   })
 
@@ -414,7 +411,6 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(hydrateSpy).toHaveBeenCalledTimes(0)
 
-    hydrateSpy.mockRestore()
     queryClient.clear()
   })
 
@@ -491,13 +487,12 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('new')).toBeInTheDocument()
 
-    hydrateSpy.mockRestore()
     prefetchQueryClient.clear()
     clientQueryClient.clear()
   })
 
   it('should not refetch when query has enabled set to false', async () => {
-    const queryFn = vi.fn()
+    const queryFn = vi.fn<() => Promise<Array<string>>>()
     const queryClient = new QueryClient()
 
     function Page() {
@@ -518,7 +513,6 @@ describe('React hydration', () => {
     )
 
     expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
@@ -527,7 +521,7 @@ describe('React hydration', () => {
   })
 
   it('should not refetch when query has staleTime set to Infinity', async () => {
-    const queryFn = vi.fn()
+    const queryFn = vi.fn<() => Promise<Array<string>>>()
     const queryClient = new QueryClient()
 
     function Page() {
@@ -548,7 +542,6 @@ describe('React hydration', () => {
     )
 
     expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()

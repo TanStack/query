@@ -1,10 +1,10 @@
-import { beforeAll, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue-demi'
 import { MutationCache as MutationCacheOrigin } from '@tanstack/query-core'
 import { MutationCache } from '../mutationCache'
 
 describe('MutationCache', () => {
-  beforeAll(() => {
+  beforeEach(() => {
     vi.spyOn(MutationCacheOrigin.prototype, 'find')
     vi.spyOn(MutationCacheOrigin.prototype, 'findAll')
   })

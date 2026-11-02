@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 import { act, fireEvent } from '@testing-library/react'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { Suspense, startTransition, useDeferredValue } from 'react'
 import { QueryClient, useSuspenseQuery } from '..'
 import { renderWithClient } from './utils'
@@ -20,7 +20,7 @@ describe('react transitions', () => {
   })
 
   it('should keep values of old key around with useDeferredValue', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -46,25 +46,18 @@ describe('react transitions', () => {
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
-
     expect(rendered.getByText('data: test0')).toBeInTheDocument()
 
-    await act(() =>
-      fireEvent.click(rendered.getByRole('button', { name: 'increment' })),
-    )
-
+    fireEvent.click(rendered.getByRole('button', { name: 'increment' }))
     expect(rendered.getByText('data: test0')).toBeVisible()
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
-
     expect(rendered.getByText('data: test1')).toBeInTheDocument()
   })
 
   it('should keep values of old key around with startTransition', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -91,20 +84,13 @@ describe('react transitions', () => {
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
-
     expect(rendered.getByText('data: test0')).toBeInTheDocument()
 
-    await act(() =>
-      fireEvent.click(rendered.getByRole('button', { name: 'increment' })),
-    )
-
+    fireEvent.click(rendered.getByRole('button', { name: 'increment' }))
     expect(rendered.getByText('data: test0')).toBeVisible()
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
-
     expect(rendered.getByText('data: test1')).toBeInTheDocument()
   })
 })

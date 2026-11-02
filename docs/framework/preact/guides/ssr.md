@@ -28,7 +28,7 @@ With a client rendered application, these are the minimum 3 server roundtrips yo
 
 As soon as **1.** is complete, the user can see the content and when **2.** finishes, the page is interactive and clickable. Because the markup also contains the initial data we need, step **3.** does not need to run on the client at all, at least until you want to revalidate the data for some reason.
 
-This is all from the clients perspective. On the server, we need to **prefetch** that data before we generate/render the markup, we need to **dehydrate** that data into a serializable format we can embed in the markup, and on the client we need to **hydrate** that data into a Preact Query cache so we can avoid doing a new fetch on the client.
+This is all from the client's perspective. On the server, we need to **prefetch** that data before we generate/render the markup, we need to **dehydrate** that data into a serializable format we can embed in the markup, and on the client we need to **hydrate** that data into a Preact Query cache so we can avoid doing a new fetch on the client.
 
 Read on to learn how to implement these three steps with Preact Query.
 
@@ -107,7 +107,7 @@ With just a little more setup, you can use a `queryClient` to prefetch queries d
 - On the server, create a `const queryClient = new QueryClient(options)`
 - Do `await queryClient.query(...)` for each query you want to prefetch
   - You want to use `await Promise.all(...)` to fetch the queries in parallel when possible
-  - It's fine to have queries that aren't prefetched. These wont be server rendered, instead they will be fetched on the client after the application is interactive. This can be great for content that are shown only after user interaction, or is far down on the page to avoid blocking more critical content.
+  - It's fine to have queries that aren't prefetched. These won't be server rendered, instead they will be fetched on the client after the application is interactive. This can be great for content that is shown only after user interaction, or is far down on the page to avoid blocking more critical content.
 - Call `dehydrate(queryClient)` and embed the result in the markup you send to the client, alongside the html produced by `renderToString`
 - On the client, wrap your tree with `<HydrationBoundary state={dehydratedState}>`, where `dehydratedState` is parsed back out of the embedded markup
 
@@ -341,6 +341,141 @@ const queryClient = new QueryClient({
 ```
 
 This transforms each query's `data` on the way out of `dehydrate` and on the way into `hydrate`, so `serialize`/`deserialize` only ever need to handle the shape of your query data, not the full dehydrated state. As with any custom serializer, make sure it's safe against XSS if you end up embedding its output directly into markup.
+
+## Streaming
+
+`preact-render-to-string` can also [stream](https://preactjs.com/guide/v11/server-side-rendering#streaming) the html with `renderToPipeableStream`. It sends `<Suspense>` fallbacks right away and replaces them with the finished content as it resolves, so the parts of the page that are ready can be shown before the slow ones.
+
+To combine this with `useSuspenseQuery`, the rule from [the note on Suspense](#a-quick-note-on-suspense) still applies: prefetch every query you render. Start all of them before rendering, without awaiting them, so each `<Suspense>` boundary only waits for its own query instead of starting it after the previous boundary resolved:
+
+```tsx
+void queryClient.query(postsQueries.list()).catch(noop)
+void queryClient.query(commentsQueries.list()).catch(noop)
+```
+
+Since the html is sent in chunks, there is no single point where you could `dehydrate` the whole cache and embed it. Instead, `dehydrate` each query as soon as it succeeds and send its state along with the next chunk, so that by the time the client hydrates, it has the data of every boundary:
+
+```tsx
+import { Transform } from 'node:stream'
+import { renderToPipeableStream } from 'preact-render-to-string/stream-node'
+import { uneval } from 'devalue'
+import { QueryClientProvider, dehydrate, noop } from '@tanstack/preact-query'
+
+export function render({ onShellReady, onError }) {
+  const queryClient = makeQueryClient()
+
+  void queryClient.query(postsQueries.list()).catch(noop)
+  void queryClient.query(commentsQueries.list()).catch(noop)
+
+  // Collect each query's state as soon as it succeeds
+  const states = []
+  const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+    if (event.type === 'updated' && event.action.type === 'success') {
+      states.push(
+        dehydrate(queryClient, {
+          shouldDehydrateQuery: (query) => query === event.query,
+        }),
+      )
+    }
+  })
+
+  // Send the collected states right before the next chunk
+  const flushStates = () =>
+    states
+      .splice(0)
+      .map(
+        (state) =>
+          `<script>window.__QUERY_STATES__.push(${uneval(state)});document.currentScript.remove()</script>`,
+      )
+      .join('')
+
+  const injectStates = new Transform({
+    transform(chunk, _encoding, callback) {
+      callback(null, flushStates() + chunk)
+    },
+    flush(callback) {
+      callback(null, flushStates())
+    },
+  })
+
+  const stream = renderToPipeableStream(
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>,
+    {
+      onShellReady,
+      onAllReady: unsubscribe,
+      onError: (error) => {
+        // The renderer destroys its own stream on errors and aborts,
+        // so end this one as well to let the response finish
+        unsubscribe()
+        injectStates.end()
+        onError(error)
+      },
+    },
+  )
+
+  return {
+    pipe: (writable) => {
+      injectStates.pipe(writable, { end: false })
+      stream.pipe(injectStates)
+      return injectStates
+    },
+    abort: stream.abort,
+  }
+}
+```
+
+Define `window.__QUERY_STATES__ = []` in an inline `<script>` in the `<head>` of your html, write the html before the app in `onShellReady`, pipe the app into the response and write the rest of the html once the stream ends:
+
+```tsx
+const { pipe, abort } = render({
+  onShellReady() {
+    res.statusCode = 200
+    res.setHeader('Content-Type', 'text/html')
+    res.write(htmlStart)
+
+    const stream = pipe(res)
+    stream.on('end', () => {
+      clearTimeout(abortTimeout)
+      res.end(htmlEnd)
+    })
+  },
+  onError(error) {
+    console.error(error)
+  },
+})
+
+// Stop streaming and let the client render the rest if it takes too long
+const abortTimeout = setTimeout(abort, 10000)
+```
+
+On the client, `hydrate` all streamed states into the `queryClient` before hydrating the app. The client entry is a module script, so it only runs once the whole stream has been received:
+
+```tsx
+import { hydrate as preactHydrate } from 'preact'
+import { QueryClientProvider, hydrate } from '@tanstack/preact-query'
+
+const queryClient = makeQueryClient()
+
+for (const state of window.__QUERY_STATES__) {
+  hydrate(queryClient, state)
+}
+
+preactHydrate(
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>,
+  document.getElementById('root'),
+)
+```
+
+A few things to keep in mind:
+
+- The states are embedded directly into the markup, so serialize them with an XSS-safe serializer like `uneval` from [devalue](https://github.com/Rich-Harris/devalue). See [Serialization](#serialization).
+- Middleware that buffers the response, like `compression`, holds back the chunks until the end. Flush it after every chunk, for example with `res.flush()`, to keep the response streaming.
+- Failed queries are not dehydrated, so the client fetches them again. Wrap the boundaries in an error boundary built with [`useErrorBoundary`](https://preactjs.com/guide/v10/hooks/#useerrorboundary) to show an error when that fetch fails as well. Don't use a class component with `getDerivedStateFromError` or `componentDidCatch` together with `options.errorBoundaries` for this: `preact-render-to-string` then also catches the promises of suspending components on the server, which breaks streaming.
+- If a query fails on the server, the streamed content of its boundary ends up as the text `undefined` until the client hydrates and replaces it.
 
 ## Tips, Tricks and Caveats
 

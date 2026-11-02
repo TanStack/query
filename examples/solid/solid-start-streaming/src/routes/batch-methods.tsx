@@ -32,7 +32,8 @@ export default function BatchMethods() {
 
   const hello = useQuery(() => ({
     queryKey: ['hello', count()] as const,
-    queryFn: ({ queryKey: [_, count] }) => sayHello(`solid ${count}`),
+    queryFn: ({ queryKey: [, currentCount] }) =>
+      sayHello(`solid ${currentCount}`),
   }))
 
   return (
@@ -50,7 +51,7 @@ export default function BatchMethods() {
       >
         <option value="raf">requestAnimationFrame</option>
         <option value="timer">setTimeout</option>
-        <option value="tick">queueMicrotick</option>
+        <option value="tick">queueMicrotask</option>
       </select>
       <button class="increment" onClick={() => setCount((x) => x + 1)}>
         Clicks: {count()}
@@ -69,7 +70,7 @@ export default function BatchMethods() {
         perceived as a glitch in the layout of the webpage that usually lasts
         for one frame. By using another batching strategy in the browser,
         instead of the default setTimeout one, we can mitigate this issue. Try
-        out requestAnimationFrame or queueMicrotick.
+        out requestAnimationFrame or queueMicrotask.
       </p>
     </div>
   )

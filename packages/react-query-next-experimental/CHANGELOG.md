@@ -1,5 +1,80 @@
 # @tanstack/react-query-next-experimental
 
+## 5.105.1
+
+### Patch Changes
+
+- Updated dependencies [[`7ccba6e`](https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/react-query@5.105.1
+
+## 5.105.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/react-query@5.105.0
+
+## 5.104.5
+
+### Patch Changes
+
+- Updated dependencies [[`1f8d134`](https://github.com/TanStack/query/commit/1f8d134ea3fa356072b40c69d5cd0227886b89bd)]:
+  - @tanstack/react-query@5.104.5
+
+## 5.104.4
+
+### Patch Changes
+
+- [#11728](https://github.com/TanStack/query/pull/11728) [`a108398`](https://github.com/TanStack/query/commit/a10839824cecec8ea141330191c2e0ad0ae2b53f) - fix(react-query*): declare '@types/react' as an optional peer dependency
+- Updated dependencies [[`c208861`](https://github.com/TanStack/query/commit/c20886163a3759725cceafb421e864e7d213ec26), [`a108398`](https://github.com/TanStack/query/commit/a10839824cecec8ea141330191c2e0ad0ae2b53f)]:
+  - @tanstack/react-query@5.104.4
+
+## 5.104.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/react-query@5.104.3
+
+## 5.104.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/react-query@5.104.2
+
+## 5.104.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/react-query@5.104.1
+
+## 5.104.0
+
+### Minor Changes
+
+- [#11650](https://github.com/TanStack/query/pull/11650) [`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e) - Build projects with Vite 8
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/react-query@5.104.0
+
+## 5.103.3
+
+### Patch Changes
+
+- Updated dependencies [[`1c9693e`](https://github.com/TanStack/query/commit/1c9693eac75495a04ae4328a35818b1fdf264978)]:
+  - @tanstack/react-query@5.103.3
+
+## 5.103.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/react-query@5.103.2
+
 ## 5.103.1
 
 ### Patch Changes
