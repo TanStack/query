@@ -56,7 +56,7 @@ replace: { 'useQuery': 'createQuery' }
 </script>
 
 <div>
-  {/* 🚀 applying the filter will enable and execute the query */}
+  <!-- 🚀 applying the filter will enable and execute the query -->
   <FiltersForm onApply={(value)=>{
     filter = value;
   }} />
