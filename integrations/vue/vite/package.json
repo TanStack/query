@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@tanstack/vue-query": "workspace:*",
+    "@tanstack/vue-query-devtools": "workspace:*",
     "vue": "^3.5.43"
   },
   "devDependencies": {
