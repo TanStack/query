@@ -1,0 +1,15 @@
+{
+  "name": "@tanstack/query-integration-solid-astro-7",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "astro build"
+  },
+  "dependencies": {
+    "@astrojs/solid-js": "^7.0.2",
+    "@tanstack/solid-query": "workspace:*",
+    "@tanstack/solid-query-devtools": "workspace:*",
+    "astro": "^7.3.5",
+    "solid-js": "^1.9.15"
+  }
+}
