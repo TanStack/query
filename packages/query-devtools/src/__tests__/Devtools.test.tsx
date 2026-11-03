@@ -8,7 +8,7 @@ import {
   noop,
   onlineManager,
 } from '@tanstack/query-core'
-import { fireEvent, render, within } from '@solidjs/testing-library'
+import { cleanup, fireEvent, render, within } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { DevtoolsOfflineProvider } from '../providers/DevtoolsOfflineProvider'
 import { DevtoolsSubscriptionsProvider } from '../providers/DevtoolsSubscriptionsProvider'
@@ -106,6 +106,7 @@ describe('Devtools', () => {
   })
 
   afterEach(() => {
+    cleanup()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
     onlineManager.setOnline(true)
