@@ -76,7 +76,6 @@ overrides:
   '@types/react': 'catalog:'
   '@types/react-dom': 'catalog:'
   '@types/node': '^24.19.2'
-  esbuild: '^0.28.2'
 
 allowBuilds:
   # root dependency
