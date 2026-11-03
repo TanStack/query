@@ -6559,6 +6559,9 @@ importers:
       '@solidjs/testing-library':
         specifier: 'catalog:'
         version: 0.8.10(@solidjs/router@0.15.4(solid-js@1.9.15))(solid-js@1.9.15)
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       typescript:
         specifier: 'catalog:'
         version: 6.0.3

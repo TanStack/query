@@ -1,4 +1,7 @@
+import { environmentManager } from './environmentManager'
+import { experimental_getQueryStartInfo, recordQueryStart } from './handles'
 import { noop } from './utils'
+import type { QueryStartInfo } from './handles'
 import type {
   DefaultError,
   MutationKey,
@@ -92,6 +95,10 @@ interface DehydratedQuery {
   promise?: Promise<unknown>
   meta?: QueryMeta
   queryType?: 'infinite'
+  /**
+   * In development, how a handle API started the query, for the devtools.
+   */
+  experimental_start?: QueryStartInfo
 }
 
 /**
@@ -197,7 +204,18 @@ export function dehydrateQuery(
     }),
     ...(query.meta && { meta: query.meta }),
     ...(query.queryType && { queryType: query.queryType }),
+    ...(process.env.NODE_ENV !== 'production' && startInfoOf(query)),
   }
+}
+
+/**
+ * Reads how a handle API started a query, for `dehydrateQuery`.
+ * @param query - The query to dehydrate.
+ * @returns The `experimental_start` field, if the query has start info.
+ */
+function startInfoOf(query: Query) {
+  const start = experimental_getQueryStartInfo(query)
+  return start && { experimental_start: start }
 }
 
 /**
@@ -273,13 +291,48 @@ export function dehydrate(
   const queries = client
     .getQueryCache()
     .getAll()
-    .flatMap((query) =>
-      filterQuery(query)
-        ? [dehydrateQuery(query, serializeData, shouldRedactErrors)]
-        : [],
-    )
+    .flatMap((query) => {
+      if (filterQuery(query)) {
+        if (process.env.NODE_ENV !== 'production') {
+          dehydratedQueries.add(query)
+        }
+        return [dehydrateQuery(query, serializeData, shouldRedactErrors)]
+      }
+      if (process.env.NODE_ENV !== 'production') {
+        warnIfPendingHandleQueryIsLeftOut(query)
+      }
+      return []
+    })
 
   return { mutations, queries }
+}
+
+// In development, the queries some `dehydrate` call has sent, and those it has warned about
+const dehydratedQueries = new WeakSet<Query>()
+const warnedQueries = new WeakSet<Query>()
+
+/**
+ * Warns once when a server render leaves out a pending query that a handle verb started, because
+ * a component that reads the handle in the browser would fetch it again. Queries an earlier
+ * `dehydrate` call sent don't count, since the browser already gets them.
+ * @param query - A query that `shouldDehydrateQuery` left out.
+ */
+function warnIfPendingHandleQueryIsLeftOut(query: Query): void {
+  const start = experimental_getQueryStartInfo(query)
+  if (
+    start &&
+    start.verb !== 'waterfallHandle' &&
+    start.environment === 'server' &&
+    environmentManager.isServer() &&
+    query.state.status === 'pending' &&
+    !dehydratedQueries.has(query) &&
+    !warnedQueries.has(query)
+  ) {
+    warnedQueries.add(query)
+    console.warn(
+      `experimental_${start.verb} started the query ${query.queryHash} and it is still pending, but shouldDehydrateQuery left it out, so its data won't reach the client. Include pending queries in shouldDehydrateQuery, or await the query with experimental_ensureHandle or experimental_fetchHandle before you dehydrate.`,
+    )
+  }
 }
 
 /**
@@ -335,6 +388,7 @@ export function hydrate(
       promise,
       dehydratedAt,
       queryType,
+      experimental_start,
     }) => {
       const syncData = promise ? tryResolveSync(promise) : undefined
       const rawData = state.data === undefined ? syncData?.data : state.data
@@ -408,6 +462,17 @@ export function hydrate(
               }),
           },
         )
+      }
+
+      if (
+        process.env.NODE_ENV !== 'production' &&
+        experimental_start &&
+        !experimental_getQueryStartInfo(query)
+      ) {
+        recordQueryStart(queryCache, query, {
+          ...experimental_start,
+          observed: false,
+        })
       }
 
       if (
