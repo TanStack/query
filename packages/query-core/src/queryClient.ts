@@ -3,6 +3,7 @@ import {
   hashKey,
   hashQueryKeyByOptions,
   noop,
+  ownQueryOptions,
   partialMatchKey,
   resolveQueryValue,
   skipToken,
@@ -1102,6 +1103,7 @@ export class QueryClient {
       ...options,
       _defaulted: true,
     }
+    ownQueryOptions.set(defaultedOptions, options)
 
     if (!defaultedOptions.queryHash) {
       defaultedOptions.queryHash = hashQueryKeyByOptions(

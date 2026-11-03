@@ -1158,6 +1158,39 @@ describe('dehydration and rehydration', () => {
     serverClient.clear()
   })
 
+  it("should use the hydrate retry over the client's default retry when a hydrated query rejects", async () => {
+    const key = createKey()
+    const serverClient = new QueryClient({
+      defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
+    })
+    void serverClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
+        retry: false,
+      })
+      .catch(noop)
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: 1, retryDelay: 10 } },
+    })
+    hydrate(queryClient, dehydrate(serverClient), {
+      defaultOptions: { queries: { retry: false } },
+    })
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+    })
+    const unsubscribe = observer.subscribe(noop)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryClient.getQueryState(key)?.status).toBe('error')
+
+    unsubscribe()
+    queryClient.clear()
+    serverClient.clear()
+  })
+
   it('should transform promise result', async () => {
     const key = createKey()
     const queryClient = new QueryClient({
