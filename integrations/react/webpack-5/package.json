@@ -12,11 +12,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-env": "^7.29.7",
     "@babel/preset-react": "^7.25.9",
     "babel-loader": "^9.2.1",
     "html-webpack-plugin": "^5.6.8",
-    "webpack": "^5.96.1",
+    "webpack": "^5.112.2",
     "webpack-cli": "^5.1.4"
   }
 }
