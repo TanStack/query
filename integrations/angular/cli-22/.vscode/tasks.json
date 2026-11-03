@@ -12,10 +12,10 @@
         "background": {
           "activeOnStart": true,
           "beginsPattern": {
-            "regexp": "(.*?)"
+            "regexp": "Changes detected"
           },
           "endsPattern": {
-            "regexp": "bundle generation complete"
+            "regexp": "bundle generation (complete|failed)"
           }
         }
       }
