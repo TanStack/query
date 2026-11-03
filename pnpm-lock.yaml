@@ -415,9 +415,6 @@ importers:
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
-      zone.js:
-        specifier: 0.15.0
-        version: 0.15.0
     devDependencies:
       '@angular/build':
         specifier: ^22.2.5
@@ -458,9 +455,6 @@ importers:
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
-      zone.js:
-        specifier: 0.15.0
-        version: 0.15.0
     devDependencies:
       '@angular/build':
         specifier: ^22.2.5
@@ -507,9 +501,6 @@ importers:
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
-      zone.js:
-        specifier: 0.15.0
-        version: 0.15.0
     devDependencies:
       '@angular/build':
         specifier: ^22.2.5
@@ -553,9 +544,6 @@ importers:
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
-      zone.js:
-        specifier: 0.15.0
-        version: 0.15.0
     devDependencies:
       '@angular/build':
         specifier: ^22.2.5
@@ -596,9 +584,6 @@ importers:
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
-      zone.js:
-        specifier: 0.15.0
-        version: 0.15.0
     devDependencies:
       '@angular/build':
         specifier: ^22.2.5
@@ -642,9 +627,6 @@ importers:
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
-      zone.js:
-        specifier: 0.15.0
-        version: 0.15.0
     devDependencies:
       '@angular/build':
         specifier: ^22.2.5
@@ -685,9 +667,6 @@ importers:
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
-      zone.js:
-        specifier: 0.15.0
-        version: 0.15.0
     devDependencies:
       '@angular/build':
         specifier: ^22.2.5
@@ -731,9 +710,6 @@ importers:
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
-      zone.js:
-        specifier: 0.15.0
-        version: 0.15.0
     devDependencies:
       '@angular/build':
         specifier: ^22.2.5
@@ -777,9 +753,6 @@ importers:
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
-      zone.js:
-        specifier: 0.15.0
-        version: 0.15.0
     devDependencies:
       '@angular/build':
         specifier: ^22.2.5
@@ -823,9 +796,6 @@ importers:
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
-      zone.js:
-        specifier: 0.15.0
-        version: 0.15.0
     devDependencies:
       '@angular/build':
         specifier: ^22.2.5
@@ -866,9 +836,6 @@ importers:
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
-      zone.js:
-        specifier: 0.15.0
-        version: 0.15.0
     devDependencies:
       '@angular/build':
         specifier: ^22.2.5
