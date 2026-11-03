@@ -629,43 +629,6 @@ export const skipToken = Symbol()
  */
 export type SkipToken = typeof skipToken
 
-type RetryOptions = Pick<
-  QueryOptions<any, any, any, any>,
-  'retry' | 'retryDelay'
->
-
-const explicitRetryOptions = new WeakMap<object, RetryOptions>()
-
-/**
- * Remembers the `retry` and `retryDelay` a caller set itself, before client defaults filled them in.
- * @internal
- * @param defaultedOptions - The options `defaultQueryOptions` returns.
- * @param options - The options the caller passed in.
- */
-export function setExplicitRetryOptions(
-  defaultedOptions: object,
-  options: RetryOptions,
-): void {
-  if (options.retry !== undefined || options.retryDelay !== undefined) {
-    explicitRetryOptions.set(defaultedOptions, {
-      retry: options.retry,
-      retryDelay: options.retryDelay,
-    })
-  }
-}
-
-/**
- * Returns the `retry` and `retryDelay` a caller set itself on options from `defaultQueryOptions`.
- * @internal
- * @param defaultedOptions - The options `defaultQueryOptions` returned.
- * @returns The options the caller set, or `undefined` if it set neither.
- */
-export function getExplicitRetryOptions(
-  defaultedOptions: object,
-): RetryOptions | undefined {
-  return explicitRetryOptions.get(defaultedOptions)
-}
-
 /**
  * Returns the function to call for a fetch. If there is no `queryFn` but the fetch was started from
  * an `initialPromise`, that promise is returned instead. If there is no usable `queryFn` (missing or

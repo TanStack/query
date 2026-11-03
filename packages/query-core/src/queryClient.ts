@@ -5,7 +5,6 @@ import {
   noop,
   partialMatchKey,
   resolveQueryValue,
-  setExplicitRetryOptions,
   skipToken,
 } from './utils'
 import { QueryCache } from './queryCache'
@@ -1103,7 +1102,6 @@ export class QueryClient {
       ...options,
       _defaulted: true,
     }
-    setExplicitRetryOptions(defaultedOptions, options)
 
     if (!defaultedOptions.queryHash) {
       defaultedOptions.queryHash = hashQueryKeyByOptions(

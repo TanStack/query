@@ -1,7 +1,6 @@
 import {
   ensureQueryFn,
   fetchSignal,
-  getExplicitRetryOptions,
   noop,
   replaceData,
   resolveQueryValue,
@@ -830,22 +829,11 @@ export class Query<
         : this.options.behavior
     behavior?.onFetch(context, this as unknown as Query)
 
-    // A hydrated promise starts fetching before any observer mounts. At each
-    // failure, retry options an observer set itself win over those from
-    // hydration, and client defaults don't count as set
-    const getRetryOption = <TKey extends 'retry' | 'retryDelay'>(
-      key: TKey,
-    ): QueryOptions<TQueryFnData, TError, TData, TQueryKey>[TKey] => {
-      if (fetchOptions?.initialPromise) {
-        for (const observer of this.observers) {
-          const value = getExplicitRetryOptions(observer.options)?.[key]
-          if (value !== undefined) {
-            return value
-          }
-        }
-      }
-      return context.options[key]
-    }
+    // A hydrated promise starts fetching before any observer mounts, so its
+    // retries use the options observers have set since, if any
+    const getRetryOption = <TKey extends 'retry' | 'retryDelay'>(key: TKey) =>
+      (fetchOptions?.initialPromise ? this.options[key] : undefined) ??
+      context.options[key]
 
     // Store state in case the current fetch needs to be reverted
     this.#revertState = this.state

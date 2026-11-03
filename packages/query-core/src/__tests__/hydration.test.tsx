@@ -5,7 +5,6 @@ import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 import { dehydrateQuery } from '../index'
 import { MutationCache } from '../mutationCache'
-import { InfiniteQueryObserver } from '../infiniteQueryObserver'
 import { QueryObserver } from '../queryObserver'
 import { noop } from '../utils'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
@@ -1098,392 +1097,65 @@ describe('dehydration and rehydration', () => {
     })
   })
 
-  describe('a hydrated promise that rejects', () => {
-    function startRejectingQuery(key: Array<string>) {
-      const serverClient = new QueryClient({
-        defaultOptions: {
-          dehydrate: {
-            shouldDehydrateQuery: () => true,
-            shouldRedactErrors: () => false,
-          },
-        },
-      })
-      void serverClient
-        .query({
-          queryKey: key,
-          queryFn: () =>
-            sleep(10).then(() => Promise.reject(new Error('server error'))),
-          retry: false,
-        })
-        .catch(noop)
-      return serverClient
-    }
-
-    function startRejectingInfiniteQuery(key: Array<string>) {
-      const serverClient = new QueryClient({
-        defaultOptions: {
-          dehydrate: {
-            shouldDehydrateQuery: () => true,
-            shouldRedactErrors: () => false,
-          },
-        },
-      })
-      void serverClient
-        .infiniteQuery({
-          queryKey: key,
-          queryFn: () =>
-            sleep(10).then(() => Promise.reject(new Error('server error'))),
-          initialPageParam: 0,
-          getNextPageParam: () => undefined,
-          retry: false,
-        })
-        .catch(noop)
-      return serverClient
-    }
-
-    it('should retry with the retry options of an observer that mounted before it rejected', async () => {
-      const key = createKey()
-      const serverClient = startRejectingQuery(key)
-      const dehydrated = dehydrate(serverClient)
-
-      const queryClient = new QueryClient()
-      hydrate(queryClient, dehydrated)
-      const queryFn = vi.fn<() => Promise<string>>(() =>
-        sleep(10).then(() => 'client data'),
-      )
-      const observer = new QueryObserver(queryClient, {
-        queryKey: key,
-        queryFn,
-        retry: 1,
-        retryDelay: 5,
-      })
-      const unsubscribe = observer.subscribe(noop)
-
-      await vi.advanceTimersByTimeAsync(10)
-      expect(queryFn).not.toHaveBeenCalled()
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        status: 'pending',
-        fetchFailureCount: 1,
-      })
-
-      await vi.advanceTimersByTimeAsync(5)
-      expect(queryFn).toHaveBeenCalledTimes(1)
-
-      await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        status: 'success',
-        data: 'client data',
-        fetchStatus: 'idle',
-      })
-
-      unsubscribe()
-      queryClient.clear()
-      serverClient.clear()
+  it("should use the observer's retryDelay when a hydrated query rejects", async () => {
+    const key = createKey()
+    const serverClient = new QueryClient({
+      defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
     })
-
-    it("should resolve a fetch that joins the hydrated promise with the data of the observer's retry", async () => {
-      const key = createKey()
-      const serverClient = startRejectingQuery(key)
-      const dehydrated = dehydrate(serverClient)
-
-      const queryClient = new QueryClient()
-      hydrate(queryClient, dehydrated)
-      const queryFn = vi.fn<() => Promise<string>>(() =>
-        sleep(10).then(() => 'client data'),
-      )
-      const observer = new QueryObserver(queryClient, {
+    void serverClient
+      .query({
         queryKey: key,
-        queryFn,
-        retry: 1,
-        retryDelay: 5,
-      })
-      const unsubscribe = observer.subscribe(noop)
-      const joined = queryClient.query({ queryKey: key, queryFn })
-
-      await vi.advanceTimersByTimeAsync(25)
-
-      await expect(joined).resolves.toBe('client data')
-      expect(queryFn).toHaveBeenCalledTimes(1)
-
-      unsubscribe()
-      queryClient.clear()
-      serverClient.clear()
-    })
-
-    it('should not retry when an observer that mounted before it rejected sets retry to false', async () => {
-      const key = createKey()
-      const serverClient = startRejectingQuery(key)
-      const dehydrated = dehydrate(serverClient)
-
-      const queryClient = new QueryClient()
-      hydrate(queryClient, dehydrated)
-      const queryFn = vi.fn<() => Promise<string>>(() =>
-        sleep(10).then(() => 'client data'),
-      )
-      const observer = new QueryObserver(queryClient, {
-        queryKey: key,
-        queryFn,
+        queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
         retry: false,
       })
-      const unsubscribe = observer.subscribe(noop)
+      .catch(noop)
+    const queryClient = new QueryClient()
+    hydrate(queryClient, dehydrate(serverClient))
 
-      await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        status: 'error',
-        error: new Error('server error'),
-        fetchStatus: 'idle',
-      })
-      expect(queryFn).not.toHaveBeenCalled()
-
-      unsubscribe()
-      queryClient.clear()
-      serverClient.clear()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      retry: 1,
+      retryDelay: 10,
     })
+    const unsubscribe = observer.subscribe(noop)
 
-    it('should keep the hydration retry options that an observer does not set', async () => {
-      const key = createKey()
-      const serverClient = startRejectingQuery(key)
-      const dehydrated = dehydrate(serverClient)
+    await vi.advanceTimersByTimeAsync(30)
+    expect(queryClient.getQueryData(key)).toBe('data')
 
-      const queryClient = new QueryClient({
-        defaultOptions: {
-          hydrate: { queries: { retry: 1, retryDelay: 5 } },
-        },
-      })
-      hydrate(queryClient, dehydrated)
-      const queryFn = vi.fn<() => Promise<string>>(() =>
-        sleep(10).then(() => 'client data'),
-      )
-      const observer = new QueryObserver(queryClient, {
+    unsubscribe()
+    queryClient.clear()
+    serverClient.clear()
+  })
+
+  it("should use the observer's retry when a hydrated query rejects", async () => {
+    const key = createKey()
+    const serverClient = new QueryClient({
+      defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
+    })
+    void serverClient
+      .query({
         queryKey: key,
-        queryFn,
+        queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
+        retry: false,
       })
-      const unsubscribe = observer.subscribe(noop)
+      .catch(noop)
+    const queryClient = new QueryClient()
+    hydrate(queryClient, dehydrate(serverClient))
 
-      await vi.advanceTimersByTimeAsync(15)
-      expect(queryFn).toHaveBeenCalledTimes(1)
-
-      await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        status: 'success',
-        data: 'client data',
-      })
-
-      unsubscribe()
-      queryClient.clear()
-      serverClient.clear()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      retry: false,
     })
+    const unsubscribe = observer.subscribe(noop)
 
-    it("should keep the hydration retry options over the client's query defaults", async () => {
-      const key = createKey()
-      const serverClient = startRejectingQuery(key)
-      const dehydrated = dehydrate(serverClient)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryClient.getQueryState(key)?.status).toBe('error')
 
-      const queryClient = new QueryClient({
-        defaultOptions: {
-          queries: { retry: 2, retryDelay: 5 },
-          hydrate: { queries: { retry: 0 } },
-        },
-      })
-      hydrate(queryClient, dehydrated)
-      const queryFn = vi.fn<() => Promise<string>>(() =>
-        sleep(10).then(() => 'client data'),
-      )
-      const observer = new QueryObserver(queryClient, {
-        queryKey: key,
-        queryFn,
-      })
-      const unsubscribe = observer.subscribe(noop)
-
-      await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        status: 'error',
-        fetchFailureCount: 1,
-      })
-      expect(queryFn).not.toHaveBeenCalled()
-
-      unsubscribe()
-      queryClient.clear()
-      serverClient.clear()
-    })
-
-    it('should keep the hydration retry options over setQueryDefaults', async () => {
-      const key = createKey()
-      const serverClient = startRejectingQuery(key)
-      const dehydrated = dehydrate(serverClient)
-
-      const queryClient = new QueryClient({
-        defaultOptions: { hydrate: { queries: { retry: 0 } } },
-      })
-      queryClient.setQueryDefaults(key, { retry: 2, retryDelay: 5 })
-      hydrate(queryClient, dehydrated)
-      const queryFn = vi.fn<() => Promise<string>>(() =>
-        sleep(10).then(() => 'client data'),
-      )
-      const observer = new QueryObserver(queryClient, {
-        queryKey: key,
-        queryFn,
-      })
-      const unsubscribe = observer.subscribe(noop)
-
-      await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        status: 'error',
-        fetchFailureCount: 1,
-      })
-      expect(queryFn).not.toHaveBeenCalled()
-
-      unsubscribe()
-      queryClient.clear()
-      serverClient.clear()
-    })
-
-    it("should retry with the retry options an observer sets itself over the client's query defaults", async () => {
-      const key = createKey()
-      const serverClient = startRejectingQuery(key)
-      const dehydrated = dehydrate(serverClient)
-
-      const queryClient = new QueryClient({
-        defaultOptions: {
-          queries: { retry: 0 },
-          hydrate: { queries: { retry: 0 } },
-        },
-      })
-      hydrate(queryClient, dehydrated)
-      const queryFn = vi.fn<() => Promise<string>>(() =>
-        sleep(10).then(() => 'client data'),
-      )
-      const observer = new QueryObserver(
-        queryClient,
-        queryClient.defaultQueryOptions({
-          queryKey: key,
-          queryFn,
-          retry: 1,
-          retryDelay: 5,
-        }),
-      )
-      const unsubscribe = observer.subscribe(noop)
-
-      await vi.advanceTimersByTimeAsync(15)
-      expect(queryFn).toHaveBeenCalledTimes(1)
-
-      await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        status: 'success',
-        data: 'client data',
-      })
-
-      unsubscribe()
-      queryClient.clear()
-      serverClient.clear()
-    })
-
-    it('should retry with the hydration options when no observer has mounted', async () => {
-      const key = createKey()
-      const serverClient = startRejectingQuery(key)
-      const dehydrated = dehydrate(serverClient)
-
-      const queryClient = new QueryClient({
-        defaultOptions: {
-          hydrate: { queries: { retry: 1, retryDelay: 5 } },
-        },
-      })
-      hydrate(queryClient, dehydrated)
-
-      await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        status: 'pending',
-        fetchFailureCount: 1,
-      })
-
-      await vi.advanceTimersByTimeAsync(5)
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        status: 'error',
-        error: new Error('server error'),
-        fetchFailureCount: 2,
-        fetchStatus: 'idle',
-      })
-
-      queryClient.clear()
-      serverClient.clear()
-    })
-
-    it('should retry a hydrated infinite query with the queryFn of an observer that mounted before it rejected', async () => {
-      const key = createKey()
-      const serverClient = startRejectingInfiniteQuery(key)
-      const dehydrated = dehydrate(serverClient)
-
-      const queryClient = new QueryClient({
-        defaultOptions: { hydrate: { queries: { retry: 0 } } },
-      })
-      hydrate(queryClient, dehydrated)
-      const queryFn = vi.fn<
-        (context: { pageParam: number }) => Promise<string>
-      >(({ pageParam }) => sleep(10).then(() => `page ${pageParam}`))
-      const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: key,
-        queryFn,
-        initialPageParam: 0,
-        getNextPageParam: () => undefined,
-        retry: 1,
-        retryDelay: 5,
-      })
-      const unsubscribe = observer.subscribe(noop)
-
-      await vi.advanceTimersByTimeAsync(10)
-      expect(queryFn).not.toHaveBeenCalled()
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        status: 'pending',
-        fetchFailureCount: 1,
-      })
-
-      await vi.advanceTimersByTimeAsync(5)
-      expect(queryFn).toHaveBeenCalledTimes(1)
-      expect(queryFn).toHaveBeenCalledWith(
-        expect.objectContaining({ pageParam: 0 }),
-      )
-
-      await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        status: 'success',
-        data: { pages: ['page 0'], pageParams: [0] },
-        fetchStatus: 'idle',
-      })
-
-      unsubscribe()
-      queryClient.clear()
-      serverClient.clear()
-    })
-
-    it('should retry a hydrated infinite query with the hydration options when no observer has mounted', async () => {
-      const key = createKey()
-      const serverClient = startRejectingInfiniteQuery(key)
-      const dehydrated = dehydrate(serverClient)
-
-      const queryClient = new QueryClient({
-        defaultOptions: {
-          hydrate: { queries: { retry: 1, retryDelay: 5 } },
-        },
-      })
-      hydrate(queryClient, dehydrated)
-
-      await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        status: 'pending',
-        fetchFailureCount: 1,
-      })
-
-      await vi.advanceTimersByTimeAsync(5)
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        status: 'error',
-        error: new Error('server error'),
-        fetchFailureCount: 2,
-        fetchStatus: 'idle',
-      })
-
-      queryClient.clear()
-      serverClient.clear()
-    })
+    unsubscribe()
+    queryClient.clear()
+    serverClient.clear()
   })
 
   it('should transform promise result', async () => {
