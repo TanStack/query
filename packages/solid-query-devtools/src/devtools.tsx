@@ -8,6 +8,7 @@ import type {
   Theme,
 } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/solid-query'
+import type { JSX } from '@solidjs/web'
 
 interface DevtoolsOptions {
   /**
@@ -53,7 +54,9 @@ interface DevtoolsOptions {
   theme?: Theme
 }
 
-export default function SolidQueryDevtools(props: DevtoolsOptions) {
+export default function SolidQueryDevtools(
+  props: DevtoolsOptions,
+): JSX.Element {
   const queryClient = useQueryClient(props.client)
   const client = createMemo(() => queryClient)
   let ref!: HTMLDivElement

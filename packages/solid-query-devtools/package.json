@@ -81,6 +81,7 @@
     "vitest": "^4.0.18"
   },
   "peerDependencies": {
+    "@solidjs/web": ">=2.0.0-rc.13 <3.0.0",
     "@tanstack/solid-query": "workspace:^",
     "solid-js": ">=2.0.0-rc.13 <3.0.0"
   }
