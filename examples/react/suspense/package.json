@@ -10,15 +10,15 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.105.3",
-    "@tanstack/react-query-devtools": "^5.105.3",
+    "@tanstack/react-query": "^5.106.0",
+    "@tanstack/react-query-devtools": "^5.106.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-error-boundary": "^4.1.2"
   },
   "devDependencies": {
     "@eslint-react/eslint-plugin": "^5.28.8",
-    "@tanstack/eslint-plugin-query": "^5.105.3",
+    "@tanstack/eslint-plugin-query": "^5.106.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.2.1",
