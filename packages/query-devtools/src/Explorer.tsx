@@ -5,9 +5,15 @@ import {
   Match,
   Show,
   Switch,
+  createContext,
+  createEffect,
   createMemo,
   createSignal,
   createUniqueId,
+  on,
+  onCleanup,
+  onMount,
+  useContext,
 } from 'solid-js'
 import { Key } from '@solid-primitives/keyed'
 import * as goober from 'goober'
@@ -27,6 +33,9 @@ import {
   Trash,
 } from './icons'
 import { useQueryDevtoolsContext, useTheme } from './contexts'
+import { primitiveText, searchEntries, searchExplorer } from './explorerSearch'
+import type { ExplorerSearch } from './explorerSearch'
+import type { Accessor } from 'solid-js'
 import type { Query } from '@tanstack/query-core'
 
 /**
@@ -263,6 +272,192 @@ type ExplorerProps = {
   activeQuery?: Query
   itemsDeletable?: boolean
   onEdit?: () => void
+  search?: ExplorerSearch
+}
+
+/**
+ * Adds nested data search without changing the explorer's manual expansion.
+ * @param props - Data explorer options and the selected query or mutation identity.
+ * @returns The search controls and the original data tree.
+ */
+export function SearchableExplorer(
+  props: ExplorerProps & { searchKey?: unknown },
+) {
+  const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
+  const styles = createMemo(() =>
+    theme() === 'dark' ? darkStyles(css) : lightStyles(css),
+  )
+  const [term, setTerm] = createSignal('')
+  const [debouncedTerm, setDebouncedTerm] = createSignal('')
+  const clear = () => {
+    setTerm('')
+    setDebouncedTerm('')
+  }
+  const searchKey = createMemo(() => props.searchKey)
+  createEffect(on(searchKey, clear))
+  createEffect(() => {
+    const next = term().toLowerCase()
+    if (!next) {
+      setDebouncedTerm('')
+      return
+    }
+    const timeout = setTimeout(() => setDebouncedTerm(next), 150)
+    onCleanup(() => clearTimeout(timeout))
+  })
+  const search = createMemo<ExplorerSearch | undefined>(() => {
+    const activeTerm = debouncedTerm()
+    return activeTerm
+      ? { term: activeTerm, match: searchExplorer(props.value, activeTerm) }
+      : undefined
+  })
+  const highlightName = `tsqd-data-search-${createUniqueId()}`
+  const [nativeHighlight, setNativeHighlight] = createSignal<Highlight>()
+  let root!: HTMLDivElement
+  onMount(() => {
+    const view = root.ownerDocument.defaultView
+    if (!view || !('highlights' in view.CSS) || !('Highlight' in view)) return
+    const registry = view.CSS.highlights
+    const highlight = new view.Highlight()
+    registry.set(highlightName, highlight)
+    setNativeHighlight(highlight)
+    onCleanup(() => {
+      registry.delete(highlightName)
+      highlight.clear()
+    })
+  })
+  const nativeHighlightStyle = createMemo(
+    () => css`
+      & ::highlight(${highlightName}) {
+        color: ${
+          theme() === 'dark' ? tokens.colors.gray[100] : tokens.colors.gray[900]
+        };
+        background-color: ${
+          theme() === 'dark'
+            ? tokens.colors.yellow[900]
+            : tokens.colors.yellow[200]
+        };
+      }
+    `,
+  )
+  return (
+    <div ref={root} class={nativeHighlightStyle()}>
+      <div class={styles().search}>
+        <input
+          type="search"
+          aria-label="Search data"
+          placeholder="Search data"
+          class={styles().searchInput}
+          value={term()}
+          onInput={(event) => setTerm(event.currentTarget.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              event.stopPropagation()
+              clear()
+            }
+          }}
+        />
+        <Show when={term()}>
+          <button
+            type="button"
+            class={styles().clearSearch}
+            onClick={clear}
+            aria-label="Clear search"
+          >
+            Clear
+          </button>
+        </Show>
+      </div>
+      <div role="status" aria-live="polite">
+        {search() && !search()!.match.hasMatch ? 'No matches' : ''}
+      </div>
+      <SearchHighlightContext.Provider value={nativeHighlight}>
+        <Explorer {...props} search={search()} />
+      </SearchHighlightContext.Provider>
+    </div>
+  )
+}
+
+const SearchHighlightContext = createContext<Accessor<Highlight | undefined>>(
+  () => undefined,
+)
+
+/**
+ * Marks literal, case-insensitive matches in a label or primitive value.
+ * @param props - The text, normalized search term, and highlight style.
+ * @returns Text with matching substrings marked.
+ */
+function HighlightedText(props: {
+  text: string
+  term?: string
+  class: string
+}) {
+  const nativeHighlight = useContext(SearchHighlightContext)
+  const matches = createMemo(() => {
+    const term = props.term
+    if (!term) return []
+    const lower = props.text.toLowerCase()
+    const offsets: Array<{ start: number; end: number }> = []
+    let offset = 0
+    for (const character of props.text) {
+      const end = offset + character.length
+      for (let i = 0; i < character.toLowerCase().length; i++) {
+        offsets.push({ start: offset, end })
+      }
+      offset = end
+    }
+    const ranges: Array<{ start: number; end: number }> = []
+    let index = lower.indexOf(term)
+    while (index !== -1) {
+      const from = offsets[index]!.start
+      const to = offsets[index + term.length - 1]!.end
+      ranges.push({ start: from, end: to })
+      index = lower.indexOf(term, index + term.length)
+    }
+    return ranges
+  })
+  const fallback = () => {
+    const parts = []
+    let start = 0
+    for (const match of matches()) {
+      parts.push(props.text.slice(start, match.start))
+      parts.push(
+        <mark class={props.class}>
+          {props.text.slice(match.start, match.end)}
+        </mark>,
+      )
+      start = match.end
+    }
+    parts.push(props.text.slice(start))
+    return parts
+  }
+  return (
+    <Show when={nativeHighlight()} fallback={fallback()}>
+      {(highlight) => (
+        <span
+          ref={(element) => {
+            const text = element.ownerDocument.createTextNode('')
+            element.append(text)
+            createEffect(() => {
+              text.data = props.text
+              const ranges = matches().map((match) => {
+                const range = element.ownerDocument.createRange()
+                range.setStart(text, match.start)
+                range.setEnd(text, match.end)
+                highlight().add(range)
+                return range
+              })
+              onCleanup(() => {
+                for (const range of ranges) highlight().delete(range)
+              })
+            })
+          }}
+        />
+      )}
+    </Show>
+  )
 }
 
 /**
@@ -294,13 +489,23 @@ export default function Explorer(props: ExplorerProps) {
   const [expanded, setExpanded] = createSignal(
     (props.defaultExpanded || []).includes(props.label),
   )
+  const isExpanded = () =>
+    expanded() ||
+    (!!props.search &&
+      [...props.search.match.children.values()].some((child) => child.hasMatch))
   const toggleExpanded = () => setExpanded((old) => !old)
   const [expandedPages, setExpandedPages] = createSignal<Array<number>>([])
 
   const subEntries = createMemo(() => {
+    if (props.search) {
+      return props.search.match.kind === 'branch'
+        ? (searchEntries(props.value) ?? [])
+        : []
+    }
     if (Array.isArray(props.value)) {
       return props.value.map((d, i) => ({
         label: i.toString(),
+        key: i.toString(),
         value: d,
       }))
     } else if (
@@ -312,16 +517,19 @@ export default function Explorer(props: ExplorerProps) {
       if (props.value instanceof Map) {
         return Array.from(props.value, ([key, val]) => ({
           label: key,
+          key,
           value: val,
         }))
       }
       return Array.from(props.value, (val, i) => ({
         label: i.toString(),
+        key: i.toString(),
         value: val,
       }))
     } else if (typeof props.value === 'object' && props.value !== null) {
       return Object.entries(props.value).map(([key, val]) => ({
         label: key,
+        key,
         value: val,
       }))
     }
@@ -329,6 +537,12 @@ export default function Explorer(props: ExplorerProps) {
   })
 
   const type = createMemo<string>(() => {
+    if (props.search) {
+      if (Array.isArray(props.value)) return 'array'
+      if (props.value instanceof Map || props.value instanceof Set)
+        return 'Iterable'
+      return props.value === null ? 'object' : typeof props.value
+    }
     if (Array.isArray(props.value)) {
       return 'array'
     } else if (
@@ -346,6 +560,63 @@ export default function Explorer(props: ExplorerProps) {
 
   const subEntryPages = createMemo(() => chunkArray(subEntries(), 100))
 
+  const pageHasMatch = (index: number) =>
+    !!(
+      props.search &&
+      subEntryPages()[index]?.some(
+        (entry) => props.search?.match.children.get(entry.key)?.hasMatch,
+      )
+    )
+  const matchingPage = createMemo(() =>
+    subEntryPages().findIndex((_, index) => pageHasMatch(index)),
+  )
+  const isPageExpanded = (index: number) =>
+    expandedPages().includes(index) || matchingPage() === index
+  const childSearch = (key: unknown): ExplorerSearch | undefined => {
+    const search = props.search
+    const match = search?.match.children.get(key)
+    return search && match ? { term: search.term, match } : undefined
+  }
+  const label = () => (
+    <HighlightedText
+      text={props.label}
+      term={props.search?.match.label ? props.search.term : undefined}
+      class={styles().highlight}
+    />
+  )
+  const valueText = () => {
+    if (!props.search) return displayValue(props.value)
+    switch (props.search.match.kind) {
+      case 'circular':
+        return '[Circular]'
+      case 'accessor':
+        return '[Getter]'
+      case 'opaque':
+        return '[Object]'
+      case 'branch':
+        return Array.isArray(props.value)
+          ? '[]'
+          : props.value instanceof Map
+            ? 'Map(0)'
+            : props.value instanceof Set
+              ? 'Set(0)'
+              : '{}'
+      case 'value':
+        return primitiveText(props.value)
+    }
+  }
+  const renderedValue = () => (
+    <>
+      {props.search && typeof props.value === 'string' ? '"' : ''}
+      <HighlightedText
+        text={valueText() ?? ''}
+        term={props.search?.match.value ? props.search.term : undefined}
+        class={styles().highlight}
+      />
+      {props.search && typeof props.value === 'string' ? '"' : ''}
+    </>
+  )
+
   const currentDataPath = props.dataPath ?? []
 
   const inputId = createUniqueId()
@@ -357,9 +628,9 @@ export default function Explorer(props: ExplorerProps) {
           <button
             class={styles().expanderButton}
             onClick={() => toggleExpanded()}
-            aria-expanded={expanded() ? 'true' : 'false'}
+            aria-expanded={isExpanded() ? 'true' : 'false'}
           >
-            <Expander expanded={expanded()} /> <span>{props.label}</span>{' '}
+            <Expander expanded={isExpanded()} /> <span>{label()}</span>{' '}
             <span class={styles().info}>
               {String(type()).toLowerCase() === 'iterable' ? '(Iterable) ' : ''}
               {subEntries().length} {subEntries().length > 1 ? `items` : `item`}
@@ -387,7 +658,13 @@ export default function Explorer(props: ExplorerProps) {
                 />
               </Show>
 
-              <Show when={!!props.onEdit && !serialize(props.value).meta}>
+              <Show
+                when={
+                  !!props.onEdit &&
+                  !props.search &&
+                  !serialize(props.value).meta
+                }
+              >
                 <button
                   class={styles().actionButton}
                   title={'Bulk Edit Data'}
@@ -402,18 +679,19 @@ export default function Explorer(props: ExplorerProps) {
             </div>
           </Show>
         </div>
-        <Show when={expanded()}>
+        <Show when={isExpanded()}>
           <Show when={subEntryPages().length === 1}>
             <div class={styles().subEntry}>
-              <Key each={subEntries()} by={(item) => item.label}>
+              <Key each={subEntries()} by={(item) => item.key}>
                 {(entry) => {
                   return (
                     <Explorer
                       defaultExpanded={props.defaultExpanded}
                       label={entry().label}
+                      search={childSearch(entry().key)}
                       value={entry().value}
                       editable={props.editable}
-                      dataPath={[...currentDataPath, entry().label]}
+                      dataPath={[...currentDataPath, entry().key]}
                       activeQuery={props.activeQuery}
                       itemsDeletable={
                         type() === 'array' ||
@@ -440,22 +718,32 @@ export default function Explorer(props: ExplorerProps) {
                               : [...old, index],
                           )
                         }
-                        class={styles().expanderButton}
+                        class={cx(
+                          styles().expanderButton,
+                          pageHasMatch(index) && styles().highlight,
+                        )}
+                        aria-expanded={isPageExpanded(index)}
+                        aria-description={
+                          pageHasMatch(index)
+                            ? 'Contains search matches'
+                            : undefined
+                        }
                       >
-                        <Expander expanded={expandedPages().includes(index)} />{' '}
-                        [{index * 100}...
+                        <Expander expanded={isPageExpanded(index)} /> [
+                        {index * 100}...
                         {index * 100 + 100 - 1}]
                       </button>
-                      <Show when={expandedPages().includes(index)}>
+                      <Show when={isPageExpanded(index)}>
                         <div class={styles().subEntry}>
-                          <Key each={entries()} by={(entry) => entry.label}>
+                          <Key each={entries()} by={(entry) => entry.key}>
                             {(entry) => (
                               <Explorer
                                 defaultExpanded={props.defaultExpanded}
                                 label={entry().label}
+                                search={childSearch(entry().key)}
                                 value={entry().value}
                                 editable={props.editable}
-                                dataPath={[...currentDataPath, entry().label]}
+                                dataPath={[...currentDataPath, entry().key]}
                                 activeQuery={props.activeQuery}
                               />
                             )}
@@ -473,7 +761,7 @@ export default function Explorer(props: ExplorerProps) {
       <Show when={subEntryPages().length === 0}>
         <div class={styles().row}>
           <label for={inputId} class={styles().label}>
-            {props.label}:
+            {label()}:
           </label>
           <Show
             when={
@@ -483,9 +771,7 @@ export default function Explorer(props: ExplorerProps) {
                 type() === 'number' ||
                 type() === 'boolean')
             }
-            fallback={
-              <span class={styles().value}>{displayValue(props.value)}</span>
-            }
+            fallback={<span class={styles().value}>{renderedValue()}</span>}
           >
             <Show
               when={
@@ -497,7 +783,12 @@ export default function Explorer(props: ExplorerProps) {
               <input
                 id={inputId}
                 type={type() === 'number' ? 'number' : 'text'}
-                class={cx(styles().value, styles().editableInput)}
+                class={cx(
+                  styles().value,
+                  styles().editableInput,
+                  props.search?.match.value && styles().highlight,
+                )}
+                data-search-match={props.search?.match.value || undefined}
                 value={props.value as string | number}
                 onChange={(changeEvent) => {
                   const oldData = props.activeQuery!.state.data
@@ -528,7 +819,7 @@ export default function Explorer(props: ExplorerProps) {
                   dataPath={currentDataPath}
                   value={props.value as boolean}
                 />
-                {displayValue(props.value)}
+                {renderedValue()}
               </span>
             </Show>
           </Show>
@@ -558,6 +849,32 @@ const stylesFactory = (
   const { colors, font, size, border } = tokens
   const t = (light: string, dark: string) => (theme === 'light' ? light : dark)
   return {
+    search: css`
+      display: flex;
+      gap: ${size[2]};
+      margin-bottom: ${size[2]};
+    `,
+    searchInput: css`
+      min-width: 0;
+      flex: 1;
+      padding: ${size[1]} ${size[2]};
+      color: inherit;
+      background: ${t(colors.gray[100], colors.darkGray[600])};
+      border: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
+      border-radius: ${border.radius.xs};
+    `,
+    clearSearch: css`
+      color: inherit;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    `,
+    highlight: css`
+      && {
+        color: ${t(colors.gray[900], colors.gray[100])};
+        background-color: ${t(colors.yellow[200], colors.yellow[900])};
+      }
+    `,
     entry: css`
       & * {
         font-size: ${font.size.xs};

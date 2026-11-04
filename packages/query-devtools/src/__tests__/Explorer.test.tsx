@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, within } from '@solidjs/testing-library'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
-import Explorer from '../Explorer'
+import { createSignal } from 'solid-js'
+import Explorer, { SearchableExplorer } from '../Explorer'
 import { QueryDevtoolsContext, ThemeContext } from '../contexts'
 
 // `goober` compiles every `css\`...\`` template literal at mount time;
@@ -25,28 +26,495 @@ describe('Explorer', () => {
   afterEach(() => {
     queryClient.clear()
     vi.useRealTimers()
+    vi.unstubAllGlobals()
   })
 
   function renderExplorer(
-    props: Parameters<typeof Explorer>[0],
-    options: { theme?: 'dark' | 'light' } = {},
+    props: Parameters<typeof SearchableExplorer>[0],
+    options: {
+      theme?: 'dark' | 'light'
+      searchable?: boolean
+      container?: HTMLElement
+    } = {},
   ) {
     const theme = options.theme ?? 'dark'
-    return render(() => (
-      <QueryDevtoolsContext.Provider
-        value={{
-          client: queryClient,
-          queryFlavor: 'TanStack Query',
-          version: '5',
-          onlineManager,
-        }}
-      >
-        <ThemeContext.Provider value={() => theme}>
-          <Explorer {...props} />
-        </ThemeContext.Provider>
-      </QueryDevtoolsContext.Provider>
-    ))
+    return render(
+      () => (
+        <QueryDevtoolsContext.Provider
+          value={{
+            client: queryClient,
+            queryFlavor: 'TanStack Query',
+            version: '5',
+            onlineManager,
+          }}
+        >
+          <ThemeContext.Provider value={() => theme}>
+            {options.searchable ? (
+              <SearchableExplorer {...props} />
+            ) : (
+              <Explorer {...props} />
+            )}
+          </ThemeContext.Provider>
+        </QueryDevtoolsContext.Provider>
+      ),
+      { container: options.container },
+    )
   }
+
+  function renderSearchable(props: Parameters<typeof SearchableExplorer>[0]) {
+    return renderExplorer(props, { searchable: true })
+  }
+
+  function searchData(
+    rendered: ReturnType<typeof renderExplorer>,
+    term: string,
+  ) {
+    fireEvent.input(rendered.getByRole('searchbox', { name: 'Search data' }), {
+      target: { value: term },
+    })
+    vi.advanceTimersByTime(150)
+  }
+
+  describe('nested search', () => {
+    it('uses native ranges and replaces them when the search or data changes', () => {
+      const highlights = new Map<string, Set<Range>>()
+      vi.stubGlobal('CSS', { highlights })
+      vi.stubGlobal('Highlight', Set)
+      const [value, setValue] = createSignal({
+        city: '\ud83d\udccd \u0130stanbul \u0130stanbul',
+      })
+      const rendered = renderSearchable({
+        label: 'Data',
+        get value() {
+          return value()
+        },
+      })
+      const highlightedText = () =>
+        [...highlights.values()].flatMap((ranges) =>
+          [...ranges].map((range) => range.toString()),
+        )
+
+      searchData(rendered, 'BUL')
+      expect(highlights.size).toBe(1)
+      expect(highlightedText()).toStrictEqual(['bul', 'bul'])
+      expect(rendered.container.querySelector('mark')).toBeNull()
+
+      searchData(rendered, 'i')
+      expect(highlightedText()).toStrictEqual(['i', 'İ', 'İ'])
+      setValue({ city: 'Izmir' })
+      expect(highlightedText().sort()).toStrictEqual(['I', 'i', 'i'])
+
+      fireEvent.click(rendered.getByText('Clear'))
+      expect(highlightedText()).toStrictEqual([])
+      rendered.unmount()
+      expect(highlights.size).toBe(0)
+    })
+
+    it('keeps native highlights separate for each explorer and cleans up on unmount', () => {
+      const foreign = new Set<Range>()
+      const highlights = new Map([['other-feature', foreign]])
+      vi.stubGlobal('CSS', { highlights })
+      vi.stubGlobal('Highlight', Set)
+      const first = renderSearchable({
+        label: 'Data',
+        value: { text: 'first' },
+      })
+      const second = renderSearchable({
+        label: 'Data',
+        value: { text: 'second' },
+      })
+      for (const [rendered, term] of [
+        [first, 'first'],
+        [second, 'second'],
+      ] as const) {
+        fireEvent.input(within(rendered.container).getByRole('searchbox'), {
+          target: { value: term },
+        })
+        vi.advanceTimersByTime(150)
+      }
+      expect(highlights.size).toBe(3)
+      first.unmount()
+      expect(highlights.size).toBe(2)
+      expect(
+        [...highlights.values()].flatMap((ranges) =>
+          [...ranges].map((range) => range.toString()),
+        ),
+      ).toStrictEqual(['second'])
+      second.unmount()
+      expect([...highlights]).toStrictEqual([['other-feature', foreign]])
+    })
+
+    it('uses markup when the native highlight constructor is unavailable', () => {
+      vi.stubGlobal('CSS', { highlights: new Map() })
+      const rendered = renderSearchable({
+        label: 'Data',
+        value: { text: 'needle' },
+      })
+      searchData(rendered, 'needle')
+      expect(rendered.getByText('needle').tagName).toBe('MARK')
+    })
+
+    it('registers highlights in the document that contains the explorer', () => {
+      const highlights = new Map<string, Set<Range>>()
+      vi.stubGlobal('CSS', { highlights: new Map() })
+      vi.stubGlobal('Highlight', Set)
+      const frame = document.createElement('iframe')
+      document.body.append(frame)
+      const frameDocument = frame.contentDocument!
+      Object.defineProperty(frame.contentWindow, 'CSS', {
+        value: { highlights },
+      })
+      Object.defineProperty(frame.contentWindow, 'Highlight', { value: Set })
+      const rendered = renderExplorer(
+        { label: 'Data', value: { text: 'needle' } },
+        { searchable: true, container: frameDocument.body },
+      )
+      expect(highlights.size).toBe(1)
+      expect(rendered.container.firstElementChild!.ownerDocument).toBe(
+        frameDocument,
+      )
+      expect(CSS.highlights.size).toBe(0)
+      rendered.unmount()
+      expect(highlights.size).toBe(0)
+      frame.remove()
+    })
+
+    it('debounces nested label matches and leaves ordinary siblings visible', () => {
+      const rendered = renderSearchable({
+        label: 'Data',
+        value: { users: { profile: { firstName: 'Anna' } }, unrelated: 42 },
+      })
+      fireEvent.input(rendered.getByLabelText('Search data'), {
+        target: { value: 'FIRSTname' },
+      })
+      vi.advanceTimersByTime(149)
+      expect(rendered.queryByText('"Anna"')).not.toBeInTheDocument()
+      vi.advanceTimersByTime(1)
+      expect(rendered.getByText('firstName').tagName).toBe('MARK')
+      expect(rendered.getByText('"Anna"')).toBeVisible()
+      expect(rendered.getByText('unrelated:')).toBeVisible()
+      expect(rendered.getByText('42')).toBeVisible()
+    })
+
+    it('matches nested primitive values with case-insensitive literal substrings', () => {
+      const rendered = renderSearchable({
+        label: 'Data',
+        value: {
+          nested: {
+            text: 'Before A.*[B] after',
+            count: 12345,
+            flag: false,
+            empty: null,
+          },
+        },
+      })
+      searchData(rendered, 'a.*[b]')
+      expect(rendered.getByText('A.*[B]').tagName).toBe('MARK')
+      expect(rendered.getByText('text:')).toBeVisible()
+      searchData(rendered, '234')
+      expect(rendered.getByText('234').tagName).toBe('MARK')
+      searchData(rendered, 'FALSE')
+      expect(rendered.getByText('false').tagName).toBe('MARK')
+      searchData(rendered, 'null')
+      expect(rendered.getByText('null').tagName).toBe('MARK')
+    })
+
+    it('highlights literal backslashes and quotes in string values', () => {
+      const rendered = renderSearchable({
+        label: 'Data',
+        value: { text: 'a\\b"c' },
+      })
+      searchData(rendered, 'a\\b"c')
+      expect(rendered.getByText('a\\b"c').tagName).toBe('MARK')
+    })
+
+    it('highlights original text when Unicode lowercasing changes its length', () => {
+      const rendered = renderSearchable({
+        label: 'Data',
+        value: { city: '\ud83d\udccd \u0130stanbul' },
+      })
+      searchData(rendered, 'BUL')
+      expect(rendered.getByText('bul').tagName).toBe('MARK')
+      expect(rendered.getByText('city:').nextElementSibling).toHaveTextContent(
+        '"\ud83d\udccd \u0130stanbul"',
+      )
+      searchData(rendered, 'i')
+      expect(rendered.getByText('\u0130').tagName).toBe('MARK')
+    })
+
+    it('reports no matches without matching the synthetic Data label', () => {
+      const rendered = renderSearchable({ label: 'Data', value: { count: 1 } })
+      searchData(rendered, 'Data')
+      expect(rendered.getByRole('status')).toHaveTextContent('No matches')
+      expect(rendered.getByRole('button', { expanded: false })).toBeVisible()
+      fireEvent.click(rendered.getByLabelText('Clear search'))
+      expect(rendered.getByRole('status')).toHaveTextContent(/^$/)
+    })
+
+    it('reveals a matching container label without opening unrelated descendants', () => {
+      const rendered = renderSearchable({
+        label: 'Data',
+        value: { profile: { secret: 'hidden' } },
+      })
+      searchData(rendered, 'profile')
+      expect(
+        rendered.getByRole('button', {
+          name: 'profile 1 item',
+          expanded: false,
+        }),
+      ).toBeVisible()
+      expect(rendered.queryByText('secret:')).not.toBeInTheDocument()
+    })
+
+    it('restores manual expansion immediately on clear and Escape', () => {
+      const rendered = renderSearchable({
+        label: 'Data',
+        defaultExpanded: ['Data'],
+        value: { manual: { keep: 'open' }, automatic: { target: 'found' } },
+      })
+      fireEvent.click(rendered.getByRole('button', { name: 'manual 1 item' }))
+      searchData(rendered, 'found')
+      expect(rendered.getByText('found')).toBeVisible()
+      expect(rendered.getByText('"open"')).toBeVisible()
+      fireEvent.click(rendered.getByLabelText('Clear search'))
+      expect(rendered.getByLabelText('Search data')).toHaveValue('')
+      expect(rendered.queryByText('target:')).not.toBeInTheDocument()
+      expect(rendered.getByText('"open"')).toBeVisible()
+      searchData(rendered, 'found')
+      fireEvent.keyDown(rendered.getByLabelText('Search data'), {
+        key: 'Escape',
+      })
+      expect(rendered.queryByText('target:')).not.toBeInTheDocument()
+      expect(rendered.getByText('"open"')).toBeVisible()
+      expect(rendered.container.querySelector('mark')).toBeNull()
+    })
+
+    it('cancels a pending search on Escape', () => {
+      const rendered = renderSearchable({
+        label: 'Data',
+        value: { nested: { target: 1 } },
+      })
+      fireEvent.input(rendered.getByLabelText('Search data'), {
+        target: { value: 'target' },
+      })
+      fireEvent.keyDown(rendered.getByLabelText('Search data'), {
+        key: 'Escape',
+      })
+      vi.advanceTimersByTime(150)
+      expect(rendered.queryByText('target:')).not.toBeInTheDocument()
+      expect(rendered.getByLabelText('Search data')).toHaveValue('')
+    })
+
+    it('highlights the full editable input and edits original index 150 without changing manual pages', () => {
+      const value = Array.from({ length: 200 }, (_, index) => `value-${index}`)
+      queryClient.setQueryData(['data'], value)
+      const rendered = renderSearchable({
+        label: 'Data',
+        value,
+        defaultExpanded: ['Data'],
+        editable: true,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+      })
+      fireEvent.click(rendered.getByText('[0...99]'))
+      searchData(rendered, 'VALUE-150')
+      const input = rendered.getByDisplayValue('value-150')
+      expect(input).toHaveValue('value-150')
+      expect(input).toHaveAttribute('data-search-match', 'true')
+      expect(rendered.getByDisplayValue('value-0')).toHaveValue('value-0')
+      fireEvent.change(input, { target: { value: 'edited' } })
+      const expected = [...value]
+      expected[150] = 'edited'
+      expect(queryClient.getQueryData(['data'])).toStrictEqual(expected)
+      fireEvent.click(rendered.getByText('Clear'))
+      expect(rendered.getByDisplayValue('value-0')).toBeVisible()
+      expect(rendered.queryByText('150:')).not.toBeInTheDocument()
+      fireEvent.click(rendered.getByText('[100...199]'))
+      expect(rendered.getByText('150:')).toBeVisible()
+    })
+
+    it('keeps property paths distinct when labels contain separators', () => {
+      const value = { 'a.b': { name: 'needle' }, a: { b: { name: 'needle' } } }
+      queryClient.setQueryData(['data'], value)
+      const rendered = renderSearchable({
+        label: 'Data',
+        value,
+        editable: true,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+      })
+      searchData(rendered, 'needle')
+      const fields = rendered.getAllByLabelText('name:')
+      expect(fields).toHaveLength(2)
+      fireEvent.change(fields[0]!, { target: { value: 'edited' } })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual({
+        'a.b': { name: 'edited' },
+        a: { b: { name: 'needle' } },
+      })
+    })
+
+    it('opens only the first matching page and marks other pages with matches', () => {
+      const rendered = renderSearchable({
+        label: 'Data',
+        defaultExpanded: ['Data'],
+        value: Array.from({ length: 201 }, (_, index) => ({
+          name: `Person ${index}`,
+        })),
+      })
+      searchData(rendered, 'name')
+      expect(rendered.getAllByText('name')).toHaveLength(100)
+      const first = rendered.getByText('[0...99]').closest('button')!
+      const next = rendered.getByText('[100...199]').closest('button')!
+      expect(first).toHaveAttribute('aria-expanded', 'true')
+      expect(next).toHaveAttribute('aria-expanded', 'false')
+      expect(next).toHaveAccessibleDescription('Contains search matches')
+      fireEvent.click(next)
+      expect(rendered.getAllByText('name')).toHaveLength(200)
+      fireEvent.click(rendered.getByText('Clear'))
+      expect(next).toHaveAttribute('aria-expanded', 'true')
+      expect(first).toHaveAttribute('aria-expanded', 'false')
+    })
+
+    it('updates search results when root data changes', () => {
+      const [value, setValue] = createSignal({ nested: { text: 'old' } })
+      const rendered = renderSearchable({
+        label: 'Data',
+        get value() {
+          return value()
+        },
+      })
+      searchData(rendered, 'needle')
+      expect(rendered.getByRole('status')).toHaveTextContent('No matches')
+      setValue({ nested: { text: 'new needle' } })
+      expect(rendered.getByText('needle').tagName).toBe('MARK')
+      expect(rendered.getByRole('status')).toHaveTextContent(/^$/)
+      setValue({ nested: { text: 'gone' } })
+      expect(rendered.getByRole('status')).toHaveTextContent('No matches')
+      expect(rendered.container.querySelector('mark')).toBeNull()
+    })
+
+    it('clears the term when the selected root changes', () => {
+      const [key, setKey] = createSignal('first')
+      const rendered = renderSearchable({
+        label: 'Data',
+        value: { text: 'needle' },
+        get searchKey() {
+          return key()
+        },
+      })
+      searchData(rendered, 'needle')
+      setKey('second')
+      expect(rendered.getByLabelText('Search data')).toHaveValue('')
+      expect(rendered.container.querySelector('mark')).toBeNull()
+    })
+
+    it('searches Map and Set entries and keeps distinct object keys', () => {
+      const first = {
+        toString() {
+          throw new Error('Do not convert keys')
+        },
+      }
+      const second = {}
+      const rendered = renderSearchable({
+        label: 'Data',
+        value: {
+          map: new Map<unknown, unknown>([
+            [first, { text: 'first needle' }],
+            [second, { text: 'second needle' }],
+            ['named', new Set(['set needle'])],
+          ]),
+        },
+      })
+      searchData(rendered, 'needle')
+      expect(rendered.getAllByText('needle')).toHaveLength(3)
+      expect(
+        rendered.getAllByRole('button', {
+          name: '[Object key] 1 item',
+          expanded: true,
+        }),
+      ).toHaveLength(2)
+      searchData(rendered, 'NAMED')
+      expect(rendered.getByText('named').tagName).toBe('MARK')
+    })
+
+    it('edits Map values through original non-string keys during search', () => {
+      const key = {}
+      const value = new Map<unknown, unknown>([
+        [key, { name: 'needle' }],
+        [1, 'number needle'],
+        ['1', 'string needle'],
+      ])
+      queryClient.setQueryData(['data'], value)
+      const rendered = renderSearchable({
+        label: 'Data',
+        value,
+        editable: true,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+      })
+      searchData(rendered, 'needle')
+      fireEvent.change(rendered.getByLabelText('name:'), {
+        target: { value: 'edited' },
+      })
+      fireEvent.change(rendered.getByDisplayValue('number needle'), {
+        target: { value: 'updated number' },
+      })
+      expect(queryClient.getQueryData(['data'])).toStrictEqual(
+        new Map<unknown, unknown>([
+          [key, { name: 'edited' }],
+          [1, 'updated number'],
+          ['1', 'string needle'],
+        ]),
+      )
+    })
+
+    it('stops cycles and searches shared values under each original path', () => {
+      const shared = { text: 'needle' }
+      const value: {
+        left: typeof shared
+        right: typeof shared
+        self?: unknown
+      } = { left: shared, right: shared }
+      value.self = value
+      const rendered = renderSearchable({ label: 'Data', value })
+      searchData(rendered, 'needle')
+      expect(rendered.getAllByText('needle')).toHaveLength(2)
+      expect(rendered.getByText('[Circular]')).toBeVisible()
+    })
+
+    it('does not read accessors, consume generators, or serialize opaque objects during search', () => {
+      const getter = vi.fn<() => never>(() => {
+        throw new Error('Do not read')
+      })
+      const iterate = vi.fn<() => void>()
+      function* generator() {
+        iterate()
+        yield 'never'
+      }
+      const opaque = {
+        toJSON: vi.fn<() => never>(() => {
+          throw new Error('Do not serialize')
+        }),
+      }
+      Object.setPrototypeOf(opaque, { custom: true })
+      const [editable, setEditable] = createSignal(false)
+      const nested = { text: 'needle', generator: generator(), opaque }
+      Object.defineProperty(nested, 'getter', { enumerable: true, get: getter })
+      const rendered = renderSearchable({
+        label: 'Data',
+        value: { nested },
+        onEdit: vi.fn<() => void>(),
+        get editable() {
+          return editable()
+        },
+      })
+      searchData(rendered, 'needle')
+      expect(rendered.getByText('needle').tagName).toBe('MARK')
+      setEditable(true)
+      expect(rendered.getByText('[Getter]')).toBeVisible()
+      expect(rendered.getAllByText('[Object]')).toHaveLength(2)
+      expect(getter).not.toHaveBeenCalled()
+      expect(iterate).not.toHaveBeenCalled()
+      expect(opaque.toJSON).not.toHaveBeenCalled()
+    })
+  })
 
   describe('primitive values', () => {
     it('should render a "label: value" row for a string value', () => {

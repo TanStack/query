@@ -1,0 +1,139 @@
+/** Match metadata at one original data path. */
+export type SearchMatch = {
+  /** Whether the original entry label matches. */
+  label: boolean
+  /** Whether a primitive value matches. */
+  value: boolean
+  /** Includes descendants, so rendering never needs to search a subtree again. */
+  hasMatch: boolean
+  /** Controls safe expansion and terminal display during search. */
+  kind: 'branch' | 'value' | 'opaque' | 'circular' | 'accessor'
+  /** Entries keyed by their original label, including Map key identity. */
+  children: ReadonlyMap<unknown, SearchMatch>
+}
+
+/** Search information passed to an individual explorer row. */
+export type ExplorerSearch = {
+  /** The case-normalized literal search term. */
+  term: string
+  /** Match metadata for this row's original data path. */
+  match: SearchMatch
+}
+
+type SearchEntry = {
+  key: unknown
+  label: string
+  value: unknown
+  accessor?: boolean
+}
+
+/**
+ * Converts only primitive values to searchable text.
+ * @param value - The inspected value.
+ * @returns Primitive text, or undefined for objects and functions.
+ */
+export function primitiveText(value: unknown): string | undefined {
+  if (value === null) return 'null'
+  switch (typeof value) {
+    case 'string':
+    case 'number':
+    case 'boolean':
+    case 'bigint':
+    case 'symbol':
+    case 'undefined':
+      return String(value)
+    default:
+      return undefined
+  }
+}
+
+/**
+ * Reads finite entries through native collection methods and own descriptors.
+ * Accessors and user-defined iterators or key conversions are not evaluated.
+ * @param value - The inspected value.
+ * @returns Original entries, or undefined for opaque values.
+ */
+export function searchEntries(value: unknown): Array<SearchEntry> | undefined {
+  if (value instanceof Map) {
+    return Array.from(Map.prototype.entries.call(value), ([key, entry]) => ({
+      key,
+      label: primitiveText(key) ?? '[Object key]',
+      value: entry,
+    }))
+  }
+  if (value instanceof Set) {
+    return Array.from(Set.prototype.values.call(value), (entry, index) => ({
+      key: String(index),
+      label: String(index),
+      value: entry,
+    }))
+  }
+  if (
+    value === null ||
+    typeof value !== 'object' ||
+    (!Array.isArray(value) &&
+      Object.getPrototypeOf(value) !== Object.prototype &&
+      Object.getPrototypeOf(value) !== null)
+  ) {
+    return undefined
+  }
+  return Object.entries(Object.getOwnPropertyDescriptors(value))
+    .filter(([, descriptor]) => descriptor.enumerable)
+    .map(([key, descriptor]) => ({
+      key,
+      label: key,
+      value: descriptor.value,
+      accessor: !('value' in descriptor),
+    }))
+}
+
+/**
+ * Builds one search tree, stopping ancestor cycles while visiting shared siblings.
+ * @param rootValue - The current root data.
+ * @param term - The case-normalized literal search term.
+ * @returns Match and safe rendering metadata for every original entry.
+ */
+export function searchExplorer(rootValue: unknown, term: string): SearchMatch {
+  const ancestors = new Set<unknown>()
+  /**
+   * Visits one original path with its current ancestors.
+   * @param value - The entry value.
+   * @param label - The entry label; absent for the synthetic root.
+   * @param accessor - Whether reading the entry would invoke a getter.
+   * @returns The entry's match metadata.
+   */
+  function visit(
+    value: unknown,
+    label?: string,
+    accessor = false,
+  ): SearchMatch {
+    const labelMatch = label?.toLowerCase().includes(term) ?? false
+    const text = accessor ? undefined : primitiveText(value)
+    const valueMatch = text?.toLowerCase().includes(term) ?? false
+    const children = new Map<unknown, SearchMatch>()
+    const match: SearchMatch = {
+      label: labelMatch,
+      value: valueMatch,
+      hasMatch: labelMatch || valueMatch,
+      kind: accessor ? 'accessor' : text !== undefined ? 'value' : 'opaque',
+      children,
+    }
+    if (accessor || text !== undefined) return match
+    if (ancestors.has(value)) {
+      match.kind = 'circular'
+      return match
+    }
+    const entries = searchEntries(value)
+    if (!entries) return match
+    match.kind = 'branch'
+    ancestors.add(value)
+    for (const entry of entries) {
+      const child = visit(entry.value, entry.label, entry.accessor)
+      children.set(entry.key, child)
+      match.hasMatch ||= child.hasMatch
+    }
+    ancestors.delete(value)
+    return match
+  }
+  return visit(rootValue)
+}
