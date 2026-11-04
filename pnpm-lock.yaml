@@ -3386,6 +3386,9 @@ importers:
       '@tanstack/solid-query':
         specifier: ^5.105.3
         version: link:../../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: ^5.105.3
+        version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.9.18
         version: 1.9.18
@@ -3760,6 +3763,9 @@ importers:
       '@tanstack/solid-query':
         specifier: ^5.105.3
         version: link:../../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: ^5.105.3
+        version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.9.18
         version: 1.9.18
@@ -3850,6 +3856,9 @@ importers:
       '@tanstack/solid-query':
         specifier: ^5.105.3
         version: link:../../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: ^5.105.3
+        version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.9.18
         version: 1.9.18
