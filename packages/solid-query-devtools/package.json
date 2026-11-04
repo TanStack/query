@@ -55,6 +55,7 @@
     },
     "require": "./build/index.cjs"
   },
+  "sideEffects": false,
   "files": [
     "build",
     "src",
