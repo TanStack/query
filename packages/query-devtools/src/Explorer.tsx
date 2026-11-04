@@ -5,7 +5,6 @@ import {
   Match,
   Show,
   Switch,
-  createContext,
   createEffect,
   createMemo,
   createSignal,
@@ -13,7 +12,6 @@ import {
   on,
   onCleanup,
   onMount,
-  useContext,
 } from 'solid-js'
 import { Key } from '@solid-primitives/keyed'
 import * as goober from 'goober'
@@ -35,7 +33,6 @@ import {
 import { useQueryDevtoolsContext, useTheme } from './contexts'
 import { primitiveText, searchEntries, searchExplorer } from './explorerSearch'
 import type { ExplorerSearch } from './explorerSearch'
-import type { Accessor } from 'solid-js'
 import type { Query } from '@tanstack/query-core'
 
 /**
@@ -273,6 +270,7 @@ type ExplorerProps = {
   itemsDeletable?: boolean
   onEdit?: () => void
   search?: ExplorerSearch
+  highlight?: Highlight
 }
 
 /**
@@ -372,24 +370,21 @@ export function SearchableExplorer(
       <div role="status" aria-live="polite">
         {search() && !search()!.match.hasMatch ? 'No matches' : ''}
       </div>
-      <SearchHighlightContext.Provider value={nativeHighlight}>
-        <Explorer {...props} search={search()} />
-      </SearchHighlightContext.Provider>
+      <Explorer {...props} search={search()} highlight={nativeHighlight()} />
     </div>
   )
 }
 
-const SearchHighlightContext = createContext<Accessor<Highlight | undefined>>(
-  () => undefined,
-)
-
 /**
  * Marks literal, case-insensitive matches in a label or primitive value.
- * @param props - The text and normalized search term.
+ * @param props - The text, normalized search term, and shared highlight instance.
  * @returns Text with matching substrings marked.
  */
-function HighlightedText(props: { text: string; term?: string }) {
-  const nativeHighlight = useContext(SearchHighlightContext)
+function HighlightedText(props: {
+  text: string
+  term?: string
+  highlight?: Highlight
+}) {
   const matches = createMemo(() => {
     const term = props.term
     if (!term) return []
@@ -416,7 +411,7 @@ function HighlightedText(props: { text: string; term?: string }) {
   const text = document.createTextNode('')
   createEffect(() => {
     text.data = props.text
-    const highlight = nativeHighlight()
+    const highlight = props.highlight
     if (!highlight) return
     const ranges = matches().map((match) => {
       const range = text.ownerDocument.createRange()
@@ -553,6 +548,7 @@ export default function Explorer(props: ExplorerProps) {
     <HighlightedText
       text={props.label}
       term={props.search?.match.label ? props.search.term : undefined}
+      highlight={props.highlight}
     />
   )
   const valueText = () => {
@@ -582,6 +578,7 @@ export default function Explorer(props: ExplorerProps) {
       <HighlightedText
         text={valueText() ?? ''}
         term={props.search?.match.value ? props.search.term : undefined}
+        highlight={props.highlight}
       />
       {props.search && typeof props.value === 'string' ? '"' : ''}
     </>
@@ -659,6 +656,7 @@ export default function Explorer(props: ExplorerProps) {
                       defaultExpanded={props.defaultExpanded}
                       label={entry().label}
                       search={childSearch(entry().key)}
+                      highlight={props.highlight}
                       value={entry().value}
                       editable={props.editable}
                       dataPath={[...currentDataPath, entry().key]}
@@ -711,6 +709,7 @@ export default function Explorer(props: ExplorerProps) {
                                 defaultExpanded={props.defaultExpanded}
                                 label={entry().label}
                                 search={childSearch(entry().key)}
+                                highlight={props.highlight}
                                 value={entry().value}
                                 editable={props.editable}
                                 dataPath={[...currentDataPath, entry().key]}

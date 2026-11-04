@@ -350,6 +350,7 @@ describe('Explorer', () => {
       })
       searchData(rendered, 'name')
       expect(rendered.getAllByText('name:')).toHaveLength(100)
+      expect(highlightedText()).toStrictEqual(Array(100).fill('name'))
       const first = rendered.getByText('[0...99]').closest('button')!
       const next = rendered.getByText('[100...199]').closest('button')!
       expect(first).toHaveAttribute('aria-expanded', 'true')
@@ -357,6 +358,7 @@ describe('Explorer', () => {
       expect(next).toHaveAccessibleDescription('Contains search matches')
       fireEvent.click(next)
       expect(rendered.getAllByText('name:')).toHaveLength(200)
+      expect(highlightedText()).toStrictEqual(Array(200).fill('name'))
       fireEvent.click(rendered.getByText('Clear'))
       expect(next).toHaveAttribute('aria-expanded', 'true')
       expect(first).toHaveAttribute('aria-expanded', 'false')
