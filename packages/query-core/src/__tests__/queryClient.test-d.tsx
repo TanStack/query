@@ -323,6 +323,54 @@ describe('queryClient', () => {
     })
   })
 
+  describe('optimisticUpdate', () => {
+    it('should resolve to a rollback function', () => {
+      const queryClient = new QueryClient()
+      const rollback = queryClient.optimisticUpdate(
+        { queryKey: ['key'] },
+        'data',
+      )
+
+      expectTypeOf(rollback).toEqualTypeOf<Promise<() => void>>()
+    })
+
+    it('should default the updater data to unknown', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf<
+        Parameters<
+          typeof queryClient.optimisticUpdate<unknown, typeof typedQueryFilters>
+        >[1]
+      >().toEqualTypeOf<Updater<unknown, unknown>>()
+    })
+
+    it('should type the updater with the given data type', () => {
+      const queryClient = new QueryClient()
+
+      void queryClient.optimisticUpdate<Array<string>>(
+        { queryKey: ['key'] },
+        (old) => {
+          expectTypeOf(old).toEqualTypeOf<Array<string> | undefined>()
+          return old ? [...old, 'new'] : old
+        },
+      )
+
+      void queryClient.optimisticUpdate<Array<string>>(
+        { queryKey: ['key'] },
+        // @ts-expect-error the updater must return the given data type
+        () => 5,
+      )
+    })
+
+    it('should accept SetDataOptions', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf<
+        Parameters<typeof queryClient.optimisticUpdate>[2]
+      >().toEqualTypeOf<SetDataOptions | undefined>()
+    })
+  })
+
   describe('getQueryState', () => {
     it('should be loose typed without tag', () => {
       const key = ['key'] as const

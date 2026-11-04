@@ -186,6 +186,18 @@ export class QueryClient extends QC {
     )
   }
 
+  override optimisticUpdate<TData = unknown>(
+    filters: MaybeRefDeep<QueryFilters>,
+    updater: Updater<TData | undefined, TData | undefined>,
+    options: MaybeRefDeep<SetDataOptions> = {},
+  ): Promise<() => void> {
+    return super.optimisticUpdate(
+      cloneDeepUnref(filters),
+      updater,
+      cloneDeepUnref(options),
+    )
+  }
+
   override getQueryState<
     TQueryFnData = unknown,
     TError = DefaultError,
