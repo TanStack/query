@@ -1,3 +1,4 @@
+import { runInNewContext } from 'node:vm'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, within } from '@solidjs/testing-library'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
@@ -105,6 +106,8 @@ describe('Explorer', () => {
       })
       searchData(rendered, 'a')
       expect(highlightedText()).toHaveLength(1000)
+      setValue({ first: 'b'.repeat(600), second: 'a'.repeat(600) })
+      expect(highlightedText()).toStrictEqual(Array(600).fill('a'))
       setValue({ first: 'b'.repeat(600), second: 'a'.repeat(1000) })
       expect(highlightedText()).toHaveLength(1000)
       searchData(rendered, 'b')
@@ -504,6 +507,113 @@ describe('Explorer', () => {
       ).toHaveLength(2)
       searchData(rendered, 'NAMED')
       expect(highlightedText()).toContain('named')
+    })
+
+    it.each([
+      {
+        kind: 'Map',
+        populated: "new Map([['entry', 'needle']])",
+        empty: 'new Map()',
+      },
+      { kind: 'Set', populated: "new Set(['needle'])", empty: 'new Set()' },
+    ])(
+      'renders cross-realm $kind labels and empty values',
+      ({ kind, populated, empty }) => {
+        const collection: unknown = runInNewContext(populated)
+        const [value, setValue] = createSignal({ collection })
+        const rendered = renderSearchable({
+          label: 'Data',
+          get value() {
+            return value()
+          },
+        })
+        searchData(rendered, 'needle')
+        expect(
+          rendered.getByRole('button', {
+            name: /collection \(iterable\) 1 item/i,
+          }),
+        ).toBeVisible()
+        const emptyCollection: unknown = runInNewContext(empty)
+        setValue({ collection: emptyCollection })
+        searchData(rendered, 'collection')
+        expect(rendered.getByText(`${kind}(0)`)).toBeVisible()
+      },
+    )
+
+    it.each([
+      {
+        kind: 'Map',
+        expression: "new Map([['entry', 'needle'], ['other', 'kept']])",
+        label: 'entry:',
+        values: (value: unknown) =>
+          Array.from(Map.prototype.values.call(value)),
+      },
+      {
+        kind: 'Set',
+        expression: "new Set(['needle', 'kept'])",
+        label: '0:',
+        values: (value: unknown) =>
+          Array.from(Set.prototype.values.call(value)),
+      },
+    ])(
+      'edits and deletes cross-realm $kind entries',
+      ({ expression, label, values }) => {
+        const value: unknown = runInNewContext(expression)
+        queryClient.setQueryData(['data'], value)
+        const rendered = renderSearchable({
+          label: 'Data',
+          value,
+          editable: true,
+          activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        })
+        searchData(rendered, 'needle')
+        fireEvent.change(rendered.getByLabelText(label), {
+          target: { value: 'edited' },
+        })
+        expect(values(queryClient.getQueryData(['data']))).toStrictEqual([
+          'edited',
+          'kept',
+        ])
+        queryClient.setQueryData(['data'], value)
+        const row = rendered.getByLabelText(label).closest('div')!
+        fireEvent.click(within(row).getByLabelText('Delete item'))
+        expect(values(queryClient.getQueryData(['data']))).toStrictEqual([
+          'kept',
+        ])
+      },
+    )
+
+    it('edits and deletes entries through a foreign object ancestor', () => {
+      const value: unknown = runInNewContext(
+        "({ nested: new Map([['entry', 'needle'], ['other', 'kept']]), sibling: 'kept' })",
+      )
+      queryClient.setQueryData(['data'], value)
+      const rendered = renderSearchable({
+        label: 'Data',
+        value,
+        editable: true,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+      })
+      searchData(rendered, 'needle')
+      fireEvent.change(rendered.getByLabelText('entry:'), {
+        target: { value: 'edited' },
+      })
+      const edited = queryClient.getQueryData<{
+        nested: unknown
+        sibling: string
+      }>(['data'])
+      expect(Map.prototype.get.call(edited?.nested, 'entry')).toBe('edited')
+      expect(edited?.sibling).toBe('kept')
+      queryClient.setQueryData(['data'], value)
+      const row = rendered.getByLabelText('entry:').closest('div')!
+      fireEvent.click(within(row).getByLabelText('Delete item'))
+      const deleted = queryClient.getQueryData<{
+        nested: unknown
+        sibling: string
+      }>(['data'])
+      expect(Map.prototype.has.call(deleted?.nested, 'entry')).toBe(false)
+      expect(Map.prototype.get.call(deleted?.nested, 'other')).toBe('kept')
+      expect(deleted?.sibling).toBe('kept')
     })
 
     it('edits Map values through original non-string keys during search', () => {

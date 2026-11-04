@@ -83,6 +83,17 @@ describe('explorer search', () => {
   it('keeps typed arrays and boxed strings opaque', () => {
     expect(searchEntries(new Uint8Array(100_000))).toBeUndefined()
     expect(searchEntries(Object('needle'))).toBeUndefined()
+    const value: unknown = runInNewContext("new String('needle')")
+    const read = vi.fn<() => never>(() => {
+      throw new Error('Do not read')
+    })
+    Object.defineProperty(Object.getPrototypeOf(value), 'constructor', {
+      get: read,
+    })
+    expect(searchEntries(value)).toBeUndefined()
+    expect(read).not.toHaveBeenCalled()
+    Object.setPrototypeOf(value, null)
+    expect(searchEntries(value)).toBeUndefined()
   })
 
   it('bounds deeply nested searches and keeps nearby matches', () => {

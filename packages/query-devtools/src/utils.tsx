@@ -1,5 +1,6 @@
 import { serialize } from 'superjson'
 import { createSignal, onCleanup, onMount } from 'solid-js'
+import { getNativeObjectType } from './nativeObjectType'
 import type { Mutation, Query } from '@tanstack/query-core'
 import type { DevtoolsPosition } from './contexts'
 
@@ -223,8 +224,11 @@ export const updateNestedDataByPath = (
     return value
   }
 
-  if (oldData instanceof Map) {
-    const newData = new Map(oldData)
+  const type = getNativeObjectType(oldData)
+  if (type === 'Map') {
+    const newData = new Map<unknown, unknown>(
+      Map.prototype.entries.call(oldData),
+    )
 
     if (updatePath.length === 1) {
       newData.set(updatePath[0], value)
@@ -236,9 +240,9 @@ export const updateNestedDataByPath = (
     return newData
   }
 
-  if (oldData instanceof Set) {
+  if (type === 'Set') {
     const setAsArray = updateNestedDataByPath(
-      Array.from(oldData),
+      Array.from(Set.prototype.values.call(oldData)),
       updatePath,
       value,
     )
@@ -262,7 +266,7 @@ export const updateNestedDataByPath = (
     return newData
   }
 
-  if (oldData instanceof Object) {
+  if (oldData !== null && typeof oldData === 'object') {
     const newData = { ...oldData }
 
     if (updatePath.length === 1) {
@@ -291,8 +295,11 @@ export const deleteNestedDataByPath = (
   oldData: unknown,
   deletePath: Array<string>,
 ): any => {
-  if (oldData instanceof Map) {
-    const newData = new Map(oldData)
+  const type = getNativeObjectType(oldData)
+  if (type === 'Map') {
+    const newData = new Map<unknown, unknown>(
+      Map.prototype.entries.call(oldData),
+    )
 
     if (deletePath.length === 1) {
       newData.delete(deletePath[0])
@@ -304,8 +311,11 @@ export const deleteNestedDataByPath = (
     return newData
   }
 
-  if (oldData instanceof Set) {
-    const setAsArray = deleteNestedDataByPath(Array.from(oldData), deletePath)
+  if (type === 'Set') {
+    const setAsArray = deleteNestedDataByPath(
+      Array.from(Set.prototype.values.call(oldData)),
+      deletePath,
+    )
     return new Set(setAsArray)
   }
 
@@ -324,7 +334,7 @@ export const deleteNestedDataByPath = (
     return newData
   }
 
-  if (oldData instanceof Object) {
+  if (oldData !== null && typeof oldData === 'object') {
     const newData = { ...oldData }
 
     if (deletePath.length === 1) {

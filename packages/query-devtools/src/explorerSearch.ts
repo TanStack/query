@@ -1,3 +1,5 @@
+import { getNativeObjectType } from './nativeObjectType'
+
 /** Match metadata at one original data path. */
 export type SearchMatch = {
   /** Whether the original entry label matches. */
@@ -48,34 +50,6 @@ export function primitiveText(value: unknown): string | undefined {
 }
 
 /**
- * Reads native collection entries across realms without invoking tag accessors.
- * @param value - The inspected object.
- * @param tag - The collection tag to check.
- * @returns Native entries, or undefined when the object has no collection brand.
- */
-function collectionEntries(
-  value: object,
-  tag: 'Map' | 'Set',
-): Array<SearchEntry> | undefined {
-  try {
-    if (tag === 'Map') {
-      return Array.from(Map.prototype.entries.call(value), ([key, entry]) => ({
-        key,
-        label: primitiveText(key) ?? '[Object key]',
-        value: entry,
-      }))
-    }
-    return Array.from(Set.prototype.values.call(value), (entry, index) => ({
-      key: String(index),
-      label: String(index),
-      value: entry,
-    }))
-  } catch {
-    return undefined
-  }
-}
-
-/**
  * Reads finite entries through native collection methods and own descriptors.
  * Accessors and user-defined iterators or key conversions are not evaluated.
  * @param value - The inspected value.
@@ -86,22 +60,25 @@ export function searchEntries(value: unknown): Array<SearchEntry> | undefined {
     if (
       value === null ||
       typeof value !== 'object' ||
-      ArrayBuffer.isView(value) ||
-      value instanceof String
+      ArrayBuffer.isView(value)
     ) {
       return undefined
     }
-    let prototype: object | null = value
-    while (prototype) {
-      const tag = Object.getOwnPropertyDescriptor(
-        prototype,
-        Symbol.toStringTag,
-      )?.value
-      if (tag === 'Map' || tag === 'Set') {
-        const collection = collectionEntries(value, tag)
-        if (collection) return collection
-      }
-      prototype = Object.getPrototypeOf(prototype)
+    const type = getNativeObjectType(value)
+    if (type === 'String') return undefined
+    if (type === 'Map') {
+      return Array.from(Map.prototype.entries.call(value), ([key, entry]) => ({
+        key,
+        label: primitiveText(key) ?? '[Object key]',
+        value: entry,
+      }))
+    }
+    if (type === 'Set') {
+      return Array.from(Set.prototype.values.call(value), (entry, index) => ({
+        key: String(index),
+        label: String(index),
+        value: entry,
+      }))
     }
     const entries = Object.entries(Object.getOwnPropertyDescriptors(value))
       .filter(([, descriptor]) => descriptor.enumerable)

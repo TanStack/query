@@ -32,6 +32,7 @@ import {
 } from './icons'
 import { useQueryDevtoolsContext, useTheme } from './contexts'
 import { primitiveText, searchEntries, searchExplorer } from './explorerSearch'
+import { getNativeObjectType } from './nativeObjectType'
 import type { ExplorerSearch } from './explorerSearch'
 import type { Query } from '@tanstack/query-core'
 
@@ -477,6 +478,7 @@ export default function Explorer(props: ExplorerProps) {
     if (!hasSearchMatchingChild()) setExpanded((old) => !old)
   }
   const [expandedPages, setExpandedPages] = createSignal<Array<number>>([])
+  const nativeObjectType = createMemo(() => getNativeObjectType(props.value))
 
   const subEntries = createMemo(() => {
     if (props.search) {
@@ -490,19 +492,27 @@ export default function Explorer(props: ExplorerProps) {
         key: i.toString(),
         value: d,
       }))
+    } else if (nativeObjectType() === 'Map') {
+      return Array.from(
+        Map.prototype.entries.call(props.value),
+        ([key, val]) => ({
+          label: primitiveText(key) ?? '[Object key]',
+          key,
+          value: val,
+        }),
+      )
+    } else if (nativeObjectType() === 'Set') {
+      return Array.from(Set.prototype.values.call(props.value), (val, i) => ({
+        label: i.toString(),
+        key: i.toString(),
+        value: val,
+      }))
     } else if (
       props.value !== null &&
       typeof props.value === 'object' &&
       isIterable(props.value) &&
       typeof props.value[Symbol.iterator] === 'function'
     ) {
-      if (props.value instanceof Map) {
-        return Array.from(props.value, ([key, val]) => ({
-          label: key,
-          key,
-          value: val,
-        }))
-      }
       return Array.from(props.value, (val, i) => ({
         label: i.toString(),
         key: i.toString(),
@@ -521,7 +531,7 @@ export default function Explorer(props: ExplorerProps) {
   const type = createMemo<string>(() => {
     if (props.search) {
       if (Array.isArray(props.value)) return 'array'
-      if (props.value instanceof Map || props.value instanceof Set)
+      if (nativeObjectType() === 'Map' || nativeObjectType() === 'Set')
         return 'Iterable'
       return props.value === null ? 'object' : typeof props.value
     }
@@ -578,9 +588,9 @@ export default function Explorer(props: ExplorerProps) {
       case 'branch':
         return Array.isArray(props.value)
           ? '[]'
-          : props.value instanceof Map
+          : nativeObjectType() === 'Map'
             ? 'Map(0)'
-            : props.value instanceof Set
+            : nativeObjectType() === 'Set'
               ? 'Set(0)'
               : '{}'
       case 'value':
