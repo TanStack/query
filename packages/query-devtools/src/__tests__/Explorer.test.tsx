@@ -92,6 +92,29 @@ describe('Explorer', () => {
       expect(rendered.container).toHaveTextContent('a'.repeat(2000))
     })
 
+    it('shares the range limit across rows and resets it for each search', () => {
+      const [value, setValue] = createSignal({
+        first: 'a'.repeat(600),
+        second: 'a'.repeat(600),
+      })
+      const rendered = renderSearchable({
+        label: 'Data',
+        get value() {
+          return value()
+        },
+      })
+      searchData(rendered, 'a')
+      expect(highlightedText()).toHaveLength(1000)
+      setValue({ first: 'b'.repeat(600), second: 'a'.repeat(1000) })
+      expect(highlightedText()).toHaveLength(1000)
+      searchData(rendered, 'b')
+      expect(highlightedText()).toStrictEqual(Array(600).fill('b'))
+      setValue({ first: 'b'.repeat(800), second: '' })
+      expect(highlightedText()).toHaveLength(800)
+      fireEvent.click(rendered.getByText('Clear'))
+      expect(highlightedText()).toHaveLength(0)
+    })
+
     it('uses native ranges and replaces them when the search or data changes', () => {
       const highlights = new Map<string, Set<Range>>()
       vi.stubGlobal('CSS', { highlights })

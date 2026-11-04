@@ -317,13 +317,17 @@ export function SearchableExplorer(
   onMount(() => {
     const view = root.ownerDocument.defaultView!
     const registry = view.CSS.highlights
-    const highlight = new view.Highlight()
-    registry.set(highlightName, highlight)
-    setNativeHighlight(highlight)
-    onCleanup(() => {
-      registry.delete(highlightName)
-      highlight.clear()
-    })
+    createEffect(
+      on(search, () => {
+        const highlight = new view.Highlight()
+        registry.set(highlightName, highlight)
+        setNativeHighlight(highlight)
+        onCleanup(() => {
+          registry.delete(highlightName)
+          highlight.clear()
+        })
+      }),
+    )
   })
   const nativeHighlightStyle = createMemo(
     () => css`
@@ -375,6 +379,8 @@ export function SearchableExplorer(
   )
 }
 
+const MAX_HIGHLIGHT_RANGES = 1000
+
 /**
  * Marks literal, case-insensitive matches in a label or primitive value.
  * @param props - The text, normalized search term, and shared highlight instance.
@@ -405,7 +411,7 @@ function HighlightedText(props: {
     }
     const ranges: Array<{ start: number; end: number }> = []
     let index = lower.indexOf(term)
-    while (index !== -1 && ranges.length < 1000) {
+    while (index !== -1 && ranges.length < MAX_HIGHLIGHT_RANGES) {
       const from = originalPosition(index).start
       const to = originalPosition(index + term.length - 1).end
       ranges.push({ start: from, end: to })
@@ -418,13 +424,15 @@ function HighlightedText(props: {
     text.data = props.text
     const highlight = props.highlight
     if (!highlight) return
-    const ranges = matches().map((match) => {
+    const ranges: Array<Range> = []
+    for (const match of matches()) {
+      if (highlight.size >= MAX_HIGHLIGHT_RANGES) break
       const range = text.ownerDocument.createRange()
       range.setStart(text, match.start)
       range.setEnd(text, match.end)
       highlight.add(range)
-      return range
-    })
+      ranges.push(range)
+    }
     onCleanup(() => {
       for (const range of ranges) highlight.delete(range)
     })

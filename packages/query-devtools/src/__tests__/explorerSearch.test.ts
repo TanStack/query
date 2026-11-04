@@ -1,7 +1,47 @@
+import { runInNewContext } from 'node:vm'
 import { describe, expect, it, vi } from 'vitest'
 import { searchEntries, searchExplorer } from '../explorerSearch'
 
 describe('explorer search', () => {
+  it.each([
+    { expression: "new Map([['name', 'needle']])", label: 'name' },
+    { expression: "new Set(['needle'])", label: '0' },
+    {
+      expression: "new (class extends Map {})([['name', 'needle']])",
+      label: 'name',
+    },
+  ])(
+    'searches cross-realm collections: $expression',
+    ({ expression, label }) => {
+      const value: unknown = runInNewContext(expression)
+      expect(searchExplorer(value, 'needle').hasMatch).toBe(true)
+      expect(searchEntries(value)?.[0]?.label).toBe(label)
+    },
+  )
+
+  it('does not read collection tag accessors', () => {
+    const read = vi.fn<() => never>(() => {
+      throw new Error('Do not read')
+    })
+    const value = { name: 'needle' }
+    Object.defineProperty(value, Symbol.toStringTag, { get: read })
+    expect(searchExplorer(value, 'needle').hasMatch).toBe(true)
+    expect(read).not.toHaveBeenCalled()
+  })
+
+  it('searches ordinary data when a collection tag has no native brand', () => {
+    const value = { name: 'needle', [Symbol.toStringTag]: 'Map' }
+    expect(searchExplorer(value, 'needle').hasMatch).toBe(true)
+  })
+
+  it('finds the native brand behind an overridden collection tag', () => {
+    const value: unknown = runInNewContext(
+      "Object.defineProperty(new Map([['name', 'needle']]), Symbol.toStringTag, {value: 'Set'})",
+    )
+    expect(searchExplorer(value, 'needle').hasMatch).toBe(true)
+    expect(searchEntries(value)?.[0]?.label).toBe('name')
+  })
+
   it('treats proxy collections and throwing introspection as opaque', () => {
     for (const collection of [
       new Map([['name', 'needle']]),
