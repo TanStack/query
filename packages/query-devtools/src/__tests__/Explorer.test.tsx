@@ -558,15 +558,23 @@ describe('Explorer', () => {
     ])(
       'edits and deletes cross-realm $kind entries',
       ({ expression, label, values }) => {
-        const value: unknown = runInNewContext(expression)
-        queryClient.setQueryData(['data'], value)
+        const initial: unknown = runInNewContext(expression)
+        const [value, setValue] = createSignal<unknown>(initial)
+        queryClient.setQueryData(['data'], initial)
         const rendered = renderSearchable({
           label: 'Data',
-          value,
+          get value() {
+            return value()
+          },
+          defaultExpanded: ['Data'],
           editable: true,
           activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
         })
         searchData(rendered, 'needle')
+        expect(rendered.getByLabelText(label)).toHaveAttribute(
+          'data-search-match',
+          'true',
+        )
         fireEvent.change(rendered.getByLabelText(label), {
           target: { value: 'edited' },
         })
@@ -574,7 +582,12 @@ describe('Explorer', () => {
           'edited',
           'kept',
         ])
-        queryClient.setQueryData(['data'], value)
+        setValue(queryClient.getQueryData(['data']))
+        expect(rendered.getByLabelText(label)).not.toHaveAttribute(
+          'data-search-match',
+        )
+        queryClient.setQueryData(['data'], initial)
+        setValue(initial)
         const row = rendered.getByLabelText(label).closest('div')!
         fireEvent.click(within(row).getByLabelText('Delete item'))
         expect(values(queryClient.getQueryData(['data']))).toStrictEqual([
@@ -583,18 +596,22 @@ describe('Explorer', () => {
       },
     )
 
-    it('edits and deletes entries through a foreign object ancestor', () => {
-      const value: unknown = runInNewContext(
-        "({ nested: new Map([['entry', 'needle'], ['other', 'kept']]), sibling: 'kept' })",
+    it('edits and deletes entries through a foreign object ancestor with a getter', () => {
+      const initial: unknown = runInNewContext(
+        "({ nested: new Map([['entry', 'needle'], ['other', 'kept']]), sibling: 'kept', get unread() { throw new Error('Do not read') } })",
       )
-      queryClient.setQueryData(['data'], value)
+      queryClient.setQueryData(['data'], initial)
+      const [value, setValue] = createSignal<unknown>({})
       const rendered = renderSearchable({
         label: 'Data',
-        value,
+        get value() {
+          return value()
+        },
         editable: true,
         activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
       })
       searchData(rendered, 'needle')
+      setValue(initial)
       fireEvent.change(rendered.getByLabelText('entry:'), {
         target: { value: 'edited' },
       })
@@ -604,7 +621,7 @@ describe('Explorer', () => {
       }>(['data'])
       expect(Map.prototype.get.call(edited?.nested, 'entry')).toBe('edited')
       expect(edited?.sibling).toBe('kept')
-      queryClient.setQueryData(['data'], value)
+      queryClient.setQueryData(['data'], initial)
       const row = rendered.getByLabelText('entry:').closest('div')!
       fireEvent.click(within(row).getByLabelText('Delete item'))
       const deleted = queryClient.getQueryData<{

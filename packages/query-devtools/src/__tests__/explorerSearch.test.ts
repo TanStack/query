@@ -80,6 +80,17 @@ describe('explorer search', () => {
     expect(read).not.toHaveBeenCalled()
   })
 
+  it.each([
+    { kind: 'Map', value: new Map([['entry', 'needle']]), key: 'entry' },
+    { kind: 'Set', value: new Set(['needle']), key: '0' },
+  ])('searches a $kind with a null prototype', ({ value, key }) => {
+    Object.setPrototypeOf(value, null)
+    expect(searchEntries(value)).toStrictEqual([
+      { key, label: key, value: 'needle' },
+    ])
+    expect(searchExplorer(value, 'needle').children.get(key)?.value).toBe(true)
+  })
+
   it('keeps typed arrays and boxed strings opaque', () => {
     expect(searchEntries(new Uint8Array(100_000))).toBeUndefined()
     expect(searchEntries(Object('needle'))).toBeUndefined()

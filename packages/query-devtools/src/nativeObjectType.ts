@@ -46,7 +46,12 @@ export function getNativeObjectType(
       return 'String'
     }
     const parent = Object.getPrototypeOf(value)
-    if (parent === Object.prototype || parent === null) return undefined
+    if (parent === null) {
+      if (hasNativeBrand(value, 'Map')) return 'Map'
+      if (hasNativeBrand(value, 'Set')) return 'Set'
+      return undefined
+    }
+    if (parent === Object.prototype) return undefined
     let prototype: object | null = value
     for (let depth = 0; prototype && depth <= 500; depth++) {
       const tag = Object.getOwnPropertyDescriptor(

@@ -209,6 +209,34 @@ export const getPreferredColorScheme = () => {
 }
 
 /**
+ * Reads plain-object properties without invoking accessors, including across realms.
+ * @param value - The data to inspect.
+ * @returns Own descriptors, or undefined for values that cannot be copied as records.
+ */
+function getPlainObjectDescriptors(
+  value: unknown,
+): PropertyDescriptorMap | undefined {
+  if (value === null || typeof value !== 'object') return undefined
+  const prototype = Object.getPrototypeOf(value)
+  if (prototype !== null) {
+    const constructor = Object.getOwnPropertyDescriptor(
+      prototype,
+      'constructor',
+    )?.value
+    if (
+      typeof constructor !== 'function' ||
+      Object.getOwnPropertyDescriptor(constructor, 'prototype')?.value !==
+        prototype ||
+      Function.prototype.toString.call(constructor) !==
+        Function.prototype.toString.call(Object)
+    ) {
+      return undefined
+    }
+  }
+  return Object.getOwnPropertyDescriptors(value)
+}
+
+/**
  * Updates nested data by path.
  * @param oldData - Data to be updated
  * @param updatePath - Path to the data to be updated
@@ -266,20 +294,23 @@ export const updateNestedDataByPath = (
     return newData
   }
 
-  if (oldData !== null && typeof oldData === 'object') {
-    const newData = { ...oldData }
-
-    if (updatePath.length === 1) {
-      // @ts-expect-error
-      newData[updatePath[0]] = value
-      return newData
-    }
-
+  const descriptors = getPlainObjectDescriptors(oldData)
+  if (descriptors) {
     const [head, ...tail] = updatePath
-    // @ts-expect-error
-    newData[head] = updateNestedDataByPath(newData[head], tail, value)
-
-    return newData
+    if (head === undefined) return oldData
+    const previous = Object.getOwnPropertyDescriptor(oldData, head)
+    if (tail.length && (!previous || !('value' in previous))) return oldData
+    return Object.create(Object.getPrototypeOf(oldData), {
+      ...descriptors,
+      [head]: {
+        value: tail.length
+          ? updateNestedDataByPath(previous?.value, tail, value)
+          : value,
+        enumerable: previous?.enumerable ?? true,
+        configurable: true,
+        writable: true,
+      },
+    })
   }
 
   return oldData
@@ -334,20 +365,21 @@ export const deleteNestedDataByPath = (
     return newData
   }
 
-  if (oldData !== null && typeof oldData === 'object') {
-    const newData = { ...oldData }
-
-    if (deletePath.length === 1) {
-      // @ts-expect-error
-      delete newData[deletePath[0]]
-      return newData
-    }
-
+  const descriptors = getPlainObjectDescriptors(oldData)
+  if (descriptors) {
     const [head, ...tail] = deletePath
-    // @ts-expect-error
-    newData[head] = deleteNestedDataByPath(newData[head], tail)
-
-    return newData
+    if (head === undefined) return oldData
+    if (tail.length === 0) {
+      delete descriptors[head]
+    } else {
+      const previous = Object.getOwnPropertyDescriptor(oldData, head)
+      if (!previous || !('value' in previous)) return oldData
+      descriptors[head] = {
+        ...previous,
+        value: deleteNestedDataByPath(previous.value, tail),
+      }
+    }
+    return Object.create(Object.getPrototypeOf(oldData), descriptors)
   }
 
   return oldData
