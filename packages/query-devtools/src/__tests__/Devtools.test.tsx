@@ -1126,6 +1126,86 @@ describe('Devtools', () => {
     })
   })
 
+  describe('Data Explorer search', () => {
+    it('searches only query Data and resets search when the selection changes', () => {
+      queryClient.setQueryData(['search-first'], {
+        nested: { name: 'first needle' },
+      })
+      queryClient.setQueryData(['search-second'], {
+        nested: { name: 'second' },
+      })
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByLabelText('Query key ["search-first"]'))
+      expect(rendered.getAllByLabelText('Search data')).toHaveLength(1)
+      const search = rendered.getByRole('searchbox', { name: 'Search data' })
+      fireEvent.input(search, { target: { value: 'NEEDLE' } })
+      vi.advanceTimersByTime(150)
+      const dataContainer = rendered.container.querySelector(
+        '.tsqd-query-details-data-explorer',
+      )
+      assert(dataContainer instanceof HTMLElement)
+      const data = within(dataContainer)
+      expect(data.getByLabelText('name:')).toHaveValue('first needle')
+      expect(data.getByLabelText('name:')).toHaveAttribute(
+        'data-search-match',
+        'true',
+      )
+      queryClient.setQueryData(['search-first'], {
+        nested: { name: 'updated needle' },
+      })
+      expect(data.getByLabelText('name:')).toHaveValue('updated needle')
+      fireEvent.click(rendered.getByLabelText('Query key ["search-second"]'))
+      expect(rendered.getByLabelText('Search data')).toHaveValue('')
+      expect(dataContainer.querySelector('[data-search-match]')).toBeNull()
+    })
+
+    it('searches read-only mutation Data and resets search when the selection changes', async () => {
+      const first = queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['search-first'],
+        mutationFn: () =>
+          Promise.resolve({ nested: { name: 'mutation needle' } }),
+      })
+      const second = queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['search-second'],
+        mutationFn: () => Promise.resolve({ nested: { name: 'other' } }),
+      })
+      await first.execute(undefined)
+      await second.execute(undefined)
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Mutations'))
+      const rows = rendered.getAllByLabelText(/^Mutation submitted at /)
+      const firstRow = rows.find((row) =>
+        row.textContent.includes('search-first'),
+      )
+      const secondRow = rows.find((row) =>
+        row.textContent.includes('search-second'),
+      )
+      assert(firstRow && secondRow)
+      fireEvent.click(firstRow)
+      expect(rendered.getAllByLabelText('Search data')).toHaveLength(1)
+      fireEvent.input(rendered.getByLabelText('Search data'), {
+        target: { value: 'needle' },
+      })
+      vi.advanceTimersByTime(150)
+      const dataContainer = rendered.getByRole('heading', {
+        name: 'Data Explorer',
+      }).nextElementSibling
+      assert(dataContainer instanceof HTMLElement)
+      const data = within(dataContainer)
+      expect(
+        [...CSS.highlights.values()].flatMap((highlight) =>
+          [...highlight].map((range) => range.toString()),
+        ),
+      ).toContain('needle')
+      expect(data.queryByRole('textbox')).not.toBeInTheDocument()
+      fireEvent.click(secondRow)
+      expect(rendered.getByLabelText('Search data')).toHaveValue('')
+      expect(
+        [...CSS.highlights.values()].every((highlight) => highlight.size === 0),
+      ).toBe(true)
+    })
+  })
+
   describe('query details', () => {
     it('should open the query details panel when a query row is clicked', () => {
       queryClient.setQueryData(['posts'], [{ id: 1 }])
