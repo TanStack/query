@@ -317,8 +317,7 @@ export function SearchableExplorer(
   const [nativeHighlight, setNativeHighlight] = createSignal<Highlight>()
   let root!: HTMLDivElement
   onMount(() => {
-    const view = root.ownerDocument.defaultView
-    if (!view || !('highlights' in view.CSS) || !('Highlight' in view)) return
+    const view = root.ownerDocument.defaultView!
     const registry = view.CSS.highlights
     const highlight = new view.Highlight()
     registry.set(highlightName, highlight)
@@ -386,14 +385,10 @@ const SearchHighlightContext = createContext<Accessor<Highlight | undefined>>(
 
 /**
  * Marks literal, case-insensitive matches in a label or primitive value.
- * @param props - The text, normalized search term, and highlight style.
+ * @param props - The text and normalized search term.
  * @returns Text with matching substrings marked.
  */
-function HighlightedText(props: {
-  text: string
-  term?: string
-  class: string
-}) {
+function HighlightedText(props: { text: string; term?: string }) {
   const nativeHighlight = useContext(SearchHighlightContext)
   const matches = createMemo(() => {
     const term = props.term
@@ -418,46 +413,23 @@ function HighlightedText(props: {
     }
     return ranges
   })
-  const fallback = () => {
-    const parts = []
-    let start = 0
-    for (const match of matches()) {
-      parts.push(props.text.slice(start, match.start))
-      parts.push(
-        <mark class={props.class}>
-          {props.text.slice(match.start, match.end)}
-        </mark>,
-      )
-      start = match.end
-    }
-    parts.push(props.text.slice(start))
-    return parts
-  }
-  return (
-    <Show when={nativeHighlight()} fallback={fallback()}>
-      {(highlight) => (
-        <span
-          ref={(element) => {
-            const text = element.ownerDocument.createTextNode('')
-            element.append(text)
-            createEffect(() => {
-              text.data = props.text
-              const ranges = matches().map((match) => {
-                const range = element.ownerDocument.createRange()
-                range.setStart(text, match.start)
-                range.setEnd(text, match.end)
-                highlight().add(range)
-                return range
-              })
-              onCleanup(() => {
-                for (const range of ranges) highlight().delete(range)
-              })
-            })
-          }}
-        />
-      )}
-    </Show>
-  )
+  const text = document.createTextNode('')
+  createEffect(() => {
+    text.data = props.text
+    const highlight = nativeHighlight()
+    if (!highlight) return
+    const ranges = matches().map((match) => {
+      const range = text.ownerDocument.createRange()
+      range.setStart(text, match.start)
+      range.setEnd(text, match.end)
+      highlight.add(range)
+      return range
+    })
+    onCleanup(() => {
+      for (const range of ranges) highlight.delete(range)
+    })
+  })
+  return text
 }
 
 /**
@@ -581,7 +553,6 @@ export default function Explorer(props: ExplorerProps) {
     <HighlightedText
       text={props.label}
       term={props.search?.match.label ? props.search.term : undefined}
-      class={styles().highlight}
     />
   )
   const valueText = () => {
@@ -611,7 +582,6 @@ export default function Explorer(props: ExplorerProps) {
       <HighlightedText
         text={valueText() ?? ''}
         term={props.search?.match.value ? props.search.term : undefined}
-        class={styles().highlight}
       />
       {props.search && typeof props.value === 'string' ? '"' : ''}
     </>

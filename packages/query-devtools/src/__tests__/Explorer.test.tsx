@@ -26,7 +26,6 @@ describe('Explorer', () => {
   afterEach(() => {
     queryClient.clear()
     vi.useRealTimers()
-    vi.unstubAllGlobals()
   })
 
   function renderExplorer(
@@ -75,6 +74,12 @@ describe('Explorer', () => {
     vi.advanceTimersByTime(150)
   }
 
+  function highlightedText() {
+    return [...CSS.highlights.values()].flatMap((highlight) =>
+      [...highlight].map((range) => range.toString()),
+    )
+  }
+
   describe('nested search', () => {
     it('uses native ranges and replaces them when the search or data changes', () => {
       const highlights = new Map<string, Set<Range>>()
@@ -89,15 +94,9 @@ describe('Explorer', () => {
           return value()
         },
       })
-      const highlightedText = () =>
-        [...highlights.values()].flatMap((ranges) =>
-          [...ranges].map((range) => range.toString()),
-        )
-
       searchData(rendered, 'BUL')
       expect(highlights.size).toBe(1)
       expect(highlightedText()).toStrictEqual(['bul', 'bul'])
-      expect(rendered.container.querySelector('mark')).toBeNull()
 
       searchData(rendered, 'i')
       expect(highlightedText()).toStrictEqual(['i', 'İ', 'İ'])
@@ -144,16 +143,6 @@ describe('Explorer', () => {
       expect([...highlights]).toStrictEqual([['other-feature', foreign]])
     })
 
-    it('uses markup when the native highlight constructor is unavailable', () => {
-      vi.stubGlobal('CSS', { highlights: new Map() })
-      const rendered = renderSearchable({
-        label: 'Data',
-        value: { text: 'needle' },
-      })
-      searchData(rendered, 'needle')
-      expect(rendered.getByText('needle').tagName).toBe('MARK')
-    })
-
     it('registers highlights in the document that contains the explorer', () => {
       const highlights = new Map<string, Set<Range>>()
       vi.stubGlobal('CSS', { highlights: new Map() })
@@ -190,7 +179,7 @@ describe('Explorer', () => {
       vi.advanceTimersByTime(149)
       expect(rendered.queryByText('"Anna"')).not.toBeInTheDocument()
       vi.advanceTimersByTime(1)
-      expect(rendered.getByText('firstName').tagName).toBe('MARK')
+      expect(highlightedText()).toContain('firstName')
       expect(rendered.getByText('"Anna"')).toBeVisible()
       expect(rendered.getByText('unrelated:')).toBeVisible()
       expect(rendered.getByText('42')).toBeVisible()
@@ -209,14 +198,14 @@ describe('Explorer', () => {
         },
       })
       searchData(rendered, 'a.*[b]')
-      expect(rendered.getByText('A.*[B]').tagName).toBe('MARK')
+      expect(highlightedText()).toContain('A.*[B]')
       expect(rendered.getByText('text:')).toBeVisible()
       searchData(rendered, '234')
-      expect(rendered.getByText('234').tagName).toBe('MARK')
+      expect(highlightedText()).toContain('234')
       searchData(rendered, 'FALSE')
-      expect(rendered.getByText('false').tagName).toBe('MARK')
+      expect(highlightedText()).toContain('false')
       searchData(rendered, 'null')
-      expect(rendered.getByText('null').tagName).toBe('MARK')
+      expect(highlightedText()).toContain('null')
     })
 
     it('highlights literal backslashes and quotes in string values', () => {
@@ -225,7 +214,7 @@ describe('Explorer', () => {
         value: { text: 'a\\b"c' },
       })
       searchData(rendered, 'a\\b"c')
-      expect(rendered.getByText('a\\b"c').tagName).toBe('MARK')
+      expect(highlightedText()).toContain('a\\b"c')
     })
 
     it('highlights original text when Unicode lowercasing changes its length', () => {
@@ -234,12 +223,12 @@ describe('Explorer', () => {
         value: { city: '\ud83d\udccd \u0130stanbul' },
       })
       searchData(rendered, 'BUL')
-      expect(rendered.getByText('bul').tagName).toBe('MARK')
+      expect(highlightedText()).toContain('bul')
       expect(rendered.getByText('city:').nextElementSibling).toHaveTextContent(
         '"\ud83d\udccd \u0130stanbul"',
       )
       searchData(rendered, 'i')
-      expect(rendered.getByText('\u0130').tagName).toBe('MARK')
+      expect(highlightedText()).toContain('\u0130')
     })
 
     it('reports no matches without matching the synthetic Data label', () => {
@@ -274,7 +263,7 @@ describe('Explorer', () => {
       })
       fireEvent.click(rendered.getByRole('button', { name: 'manual 1 item' }))
       searchData(rendered, 'found')
-      expect(rendered.getByText('found')).toBeVisible()
+      expect(rendered.getByText('"found"')).toBeVisible()
       expect(rendered.getByText('"open"')).toBeVisible()
       fireEvent.click(rendered.getByLabelText('Clear search'))
       expect(rendered.getByLabelText('Search data')).toHaveValue('')
@@ -286,7 +275,7 @@ describe('Explorer', () => {
       })
       expect(rendered.queryByText('target:')).not.toBeInTheDocument()
       expect(rendered.getByText('"open"')).toBeVisible()
-      expect(rendered.container.querySelector('mark')).toBeNull()
+      expect(highlightedText()).toHaveLength(0)
     })
 
     it('cancels a pending search on Escape', () => {
@@ -360,14 +349,14 @@ describe('Explorer', () => {
         })),
       })
       searchData(rendered, 'name')
-      expect(rendered.getAllByText('name')).toHaveLength(100)
+      expect(rendered.getAllByText('name:')).toHaveLength(100)
       const first = rendered.getByText('[0...99]').closest('button')!
       const next = rendered.getByText('[100...199]').closest('button')!
       expect(first).toHaveAttribute('aria-expanded', 'true')
       expect(next).toHaveAttribute('aria-expanded', 'false')
       expect(next).toHaveAccessibleDescription('Contains search matches')
       fireEvent.click(next)
-      expect(rendered.getAllByText('name')).toHaveLength(200)
+      expect(rendered.getAllByText('name:')).toHaveLength(200)
       fireEvent.click(rendered.getByText('Clear'))
       expect(next).toHaveAttribute('aria-expanded', 'true')
       expect(first).toHaveAttribute('aria-expanded', 'false')
@@ -384,11 +373,11 @@ describe('Explorer', () => {
       searchData(rendered, 'needle')
       expect(rendered.getByRole('status')).toHaveTextContent('No matches')
       setValue({ nested: { text: 'new needle' } })
-      expect(rendered.getByText('needle').tagName).toBe('MARK')
+      expect(highlightedText()).toContain('needle')
       expect(rendered.getByRole('status')).toHaveTextContent(/^$/)
       setValue({ nested: { text: 'gone' } })
       expect(rendered.getByRole('status')).toHaveTextContent('No matches')
-      expect(rendered.container.querySelector('mark')).toBeNull()
+      expect(highlightedText()).toHaveLength(0)
     })
 
     it('clears the term when the selected root changes', () => {
@@ -403,7 +392,7 @@ describe('Explorer', () => {
       searchData(rendered, 'needle')
       setKey('second')
       expect(rendered.getByLabelText('Search data')).toHaveValue('')
-      expect(rendered.container.querySelector('mark')).toBeNull()
+      expect(highlightedText()).toHaveLength(0)
     })
 
     it('searches Map and Set entries and keeps distinct object keys', () => {
@@ -424,7 +413,9 @@ describe('Explorer', () => {
         },
       })
       searchData(rendered, 'needle')
-      expect(rendered.getAllByText('needle')).toHaveLength(3)
+      expect(
+        highlightedText().filter((text) => text === 'needle'),
+      ).toHaveLength(3)
       expect(
         rendered.getAllByRole('button', {
           name: '[Object key] 1 item',
@@ -432,7 +423,7 @@ describe('Explorer', () => {
         }),
       ).toHaveLength(2)
       searchData(rendered, 'NAMED')
-      expect(rendered.getByText('named').tagName).toBe('MARK')
+      expect(highlightedText()).toContain('named')
     })
 
     it('edits Map values through original non-string keys during search', () => {
@@ -475,7 +466,9 @@ describe('Explorer', () => {
       value.self = value
       const rendered = renderSearchable({ label: 'Data', value })
       searchData(rendered, 'needle')
-      expect(rendered.getAllByText('needle')).toHaveLength(2)
+      expect(
+        highlightedText().filter((text) => text === 'needle'),
+      ).toHaveLength(2)
       expect(rendered.getByText('[Circular]')).toBeVisible()
     })
 
@@ -506,7 +499,7 @@ describe('Explorer', () => {
         },
       })
       searchData(rendered, 'needle')
-      expect(rendered.getByText('needle').tagName).toBe('MARK')
+      expect(highlightedText()).toContain('needle')
       setEditable(true)
       expect(rendered.getByText('[Getter]')).toBeVisible()
       expect(rendered.getAllByText('[Object]')).toHaveLength(2)

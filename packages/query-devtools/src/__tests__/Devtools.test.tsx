@@ -1192,11 +1192,17 @@ describe('Devtools', () => {
       }).nextElementSibling
       assert(dataContainer instanceof HTMLElement)
       const data = within(dataContainer)
-      expect(data.getByText('needle').tagName).toBe('MARK')
+      expect(
+        [...CSS.highlights.values()].flatMap((highlight) =>
+          [...highlight].map((range) => range.toString()),
+        ),
+      ).toContain('needle')
       expect(data.queryByRole('textbox')).not.toBeInTheDocument()
       fireEvent.click(secondRow)
       expect(rendered.getByLabelText('Search data')).toHaveValue('')
-      expect(dataContainer.querySelector('mark')).toBeNull()
+      expect(
+        [...CSS.highlights.values()].every((highlight) => highlight.size === 0),
+      ).toBe(true)
     })
   })
 
