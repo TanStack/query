@@ -15,7 +15,7 @@
     "@tanstack/vue-query": "^5.105.3",
     "@tanstack/vue-query-devtools": "^6.3.9",
     "msw": "^2.15.0",
-    "vue": "^3.5.43",
+    "vue": "^3.5.44",
     "vue-router": "^5.4.0",
     "vue-sonner": "^2.0.9"
   },

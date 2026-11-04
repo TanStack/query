@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@tanstack/vue-query": "^5.105.3",
-    "vue": "^3.5.43"
+    "vue": "^3.5.44"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.105.3",
