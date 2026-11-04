@@ -10,10 +10,10 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@solidjs/router": "^1.0.0",
+    "@solidjs/router": "^1.0.1",
     "@tanstack/solid-query": "^5.105.3",
     "@tanstack/solid-query-devtools": "^5.105.3",
-    "solid-js": "^1.9.15"
+    "solid-js": "^1.9.18"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -22,6 +22,6 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "vite": "^8.3.5",
-    "vite-plugin-solid": "^2.11.14"
+    "vite-plugin-solid": "^2.11.15"
   }
 }

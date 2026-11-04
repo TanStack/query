@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.4",
-    "@solidjs/router": "^1.0.0",
-    "@solidjs/start": "^2.1.0",
+    "@solidjs/router": "^1.0.1",
+    "@solidjs/start": "^2.2.0",
     "@tanstack/solid-query": "^5.105.3",
     "@tanstack/solid-query-devtools": "^5.105.3",
-    "solid-js": "^1.9.15"
+    "solid-js": "^1.9.18"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.105.3",
