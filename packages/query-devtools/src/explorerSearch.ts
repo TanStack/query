@@ -54,37 +54,51 @@ export function primitiveText(value: unknown): string | undefined {
  * @returns Original entries, or undefined for opaque values.
  */
 export function searchEntries(value: unknown): Array<SearchEntry> | undefined {
-  if (value instanceof Map) {
-    return Array.from(Map.prototype.entries.call(value), ([key, entry]) => ({
-      key,
-      label: primitiveText(key) ?? '[Object key]',
-      value: entry,
-    }))
-  }
-  if (value instanceof Set) {
-    return Array.from(Set.prototype.values.call(value), (entry, index) => ({
-      key: String(index),
-      label: String(index),
-      value: entry,
-    }))
-  }
-  if (
-    value === null ||
-    typeof value !== 'object' ||
-    (!Array.isArray(value) &&
+  try {
+    if (value instanceof Map) {
+      return Array.from(Map.prototype.entries.call(value), ([key, entry]) => ({
+        key,
+        label: primitiveText(key) ?? '[Object key]',
+        value: entry,
+      }))
+    }
+    if (value instanceof Set) {
+      return Array.from(Set.prototype.values.call(value), (entry, index) => ({
+        key: String(index),
+        label: String(index),
+        value: entry,
+      }))
+    }
+    if (
+      value === null ||
+      typeof value !== 'object' ||
+      ArrayBuffer.isView(value) ||
+      value instanceof String
+    ) {
+      return undefined
+    }
+    const entries = Object.entries(Object.getOwnPropertyDescriptors(value))
+      .filter(([, descriptor]) => descriptor.enumerable)
+      .map(([key, descriptor]) => ({
+        key,
+        label: key,
+        value: descriptor.value,
+        accessor: !('value' in descriptor),
+      }))
+    if (
+      !Array.isArray(value) &&
       Object.getPrototypeOf(value) !== Object.prototype &&
-      Object.getPrototypeOf(value) !== null)
-  ) {
+      Object.getPrototypeOf(value) !== null &&
+      !entries.some(
+        (entry) => !entry.accessor && typeof entry.value !== 'function',
+      )
+    ) {
+      return undefined
+    }
+    return entries
+  } catch {
     return undefined
   }
-  return Object.entries(Object.getOwnPropertyDescriptors(value))
-    .filter(([, descriptor]) => descriptor.enumerable)
-    .map(([key, descriptor]) => ({
-      key,
-      label: key,
-      value: descriptor.value,
-      accessor: !('value' in descriptor),
-    }))
 }
 
 /**
@@ -100,12 +114,14 @@ export function searchExplorer(rootValue: unknown, term: string): SearchMatch {
    * @param value - The entry value.
    * @param label - The entry label; absent for the synthetic root.
    * @param accessor - Whether reading the entry would invoke a getter.
+   * @param depth - The current nesting depth.
    * @returns The entry's match metadata.
    */
   function visit(
     value: unknown,
     label?: string,
     accessor = false,
+    depth = 0,
   ): SearchMatch {
     const labelMatch = label?.toLowerCase().includes(term) ?? false
     const text = accessor ? undefined : primitiveText(value)
@@ -119,6 +135,7 @@ export function searchExplorer(rootValue: unknown, term: string): SearchMatch {
       children,
     }
     if (accessor || text !== undefined) return match
+    if (depth > 500) return match
     if (ancestors.has(value)) {
       match.kind = 'circular'
       return match
@@ -128,7 +145,7 @@ export function searchExplorer(rootValue: unknown, term: string): SearchMatch {
     match.kind = 'branch'
     ancestors.add(value)
     for (const entry of entries) {
-      const child = visit(entry.value, entry.label, entry.accessor)
+      const child = visit(entry.value, entry.label, entry.accessor, depth + 1)
       children.set(entry.key, child)
       match.hasMatch ||= child.hasMatch
     }

@@ -389,20 +389,25 @@ function HighlightedText(props: {
     const term = props.term
     if (!term) return []
     const lower = props.text.toLowerCase()
-    const offsets: Array<{ start: number; end: number }> = []
-    let offset = 0
-    for (const character of props.text) {
-      const end = offset + character.length
-      for (let i = 0; i < character.toLowerCase().length; i++) {
-        offsets.push({ start: offset, end })
+    let originalStart = 0
+    let originalEnd = 0
+    let lowercaseEnd = 0
+    const originalPosition = (index: number) => {
+      while (lowercaseEnd <= index) {
+        const character = String.fromCodePoint(
+          props.text.codePointAt(originalEnd)!,
+        )
+        originalStart = originalEnd
+        originalEnd += character.length
+        lowercaseEnd += character.toLowerCase().length
       }
-      offset = end
+      return { start: originalStart, end: originalEnd }
     }
     const ranges: Array<{ start: number; end: number }> = []
     let index = lower.indexOf(term)
-    while (index !== -1) {
-      const from = offsets[index]!.start
-      const to = offsets[index + term.length - 1]!.end
+    while (index !== -1 && ranges.length < 1000) {
+      const from = originalPosition(index).start
+      const to = originalPosition(index + term.length - 1).end
       ranges.push({ start: from, end: to })
       index = lower.indexOf(term, index + term.length)
     }
@@ -456,11 +461,13 @@ export default function Explorer(props: ExplorerProps) {
   const [expanded, setExpanded] = createSignal(
     (props.defaultExpanded || []).includes(props.label),
   )
-  const isExpanded = () =>
-    expanded() ||
-    (!!props.search &&
-      [...props.search.match.children.values()].some((child) => child.hasMatch))
-  const toggleExpanded = () => setExpanded((old) => !old)
+  const hasSearchMatchingChild = () =>
+    !!props.search &&
+    [...props.search.match.children.values()].some((child) => child.hasMatch)
+  const isExpanded = () => expanded() || hasSearchMatchingChild()
+  const toggleExpanded = () => {
+    if (!hasSearchMatchingChild()) setExpanded((old) => !old)
+  }
   const [expandedPages, setExpandedPages] = createSignal<Array<number>>([])
 
   const subEntries = createMemo(() => {
@@ -679,13 +686,14 @@ export default function Explorer(props: ExplorerProps) {
                   <div>
                     <div class={styles().entry}>
                       <button
-                        onClick={() =>
+                        onClick={() => {
+                          if (matchingPage() === index) return
                           setExpandedPages((old) =>
                             old.includes(index)
                               ? old.filter((d) => d !== index)
                               : [...old, index],
                           )
-                        }
+                        }}
                         class={cx(
                           styles().expanderButton,
                           pageHasMatch(index) && styles().highlight,

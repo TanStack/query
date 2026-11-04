@@ -154,6 +154,8 @@ Select a query or mutation and use **Search data** in its Data Explorer to searc
 
 Matching text is highlighted. Matching editable values have a highlighted input. The explorer opens matching branches and the first matching page in each paginated collection. Other pages with matches are highlighted so you can open them. You can still inspect other rows and edit query data.
 
+Text highlighting is limited to the first 1,000 matches in each label or value.
+
 Select **Clear** or press **Escape** in the search field to restore your manual expansion. Selecting another query or mutation clears the search.
 
 ## Devtools in production

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, within } from '@solidjs/testing-library'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
 import { createSignal } from 'solid-js'
+import { clearDelegatedEvents, delegateEvents } from 'solid-js/web'
 import Explorer, { SearchableExplorer } from '../Explorer'
 import { QueryDevtoolsContext, ThemeContext } from '../contexts'
 
@@ -81,6 +82,16 @@ describe('Explorer', () => {
   }
 
   describe('nested search', () => {
+    it('bounds the number of native ranges for a repeated match', () => {
+      const rendered = renderSearchable({
+        label: 'Data',
+        value: 'a'.repeat(2000),
+      })
+      searchData(rendered, 'a')
+      expect(highlightedText()).toHaveLength(1000)
+      expect(rendered.container).toHaveTextContent('a'.repeat(2000))
+    })
+
     it('uses native ranges and replaces them when the search or data changes', () => {
       const highlights = new Map<string, Set<Range>>()
       vi.stubGlobal('CSS', { highlights })
@@ -159,12 +170,27 @@ describe('Explorer', () => {
         { searchable: true, container: frameDocument.body },
       )
       expect(highlights.size).toBe(1)
+      delegateEvents(['input'], frameDocument)
+      fireEvent.input(within(rendered.container).getByRole('searchbox'), {
+        target: { value: 'needle' },
+      })
+      vi.advanceTimersByTime(150)
+      expect(
+        [...highlights.values()].flatMap((ranges) =>
+          [...ranges].map((range) => range.toString()),
+        ),
+      ).toStrictEqual(['needle'])
+      expect(
+        [...highlights.values()].flatMap((ranges) => [...ranges])[0]!
+          .startContainer.ownerDocument,
+      ).toBe(frameDocument)
       expect(rendered.container.firstElementChild!.ownerDocument).toBe(
         frameDocument,
       )
       expect(CSS.highlights.size).toBe(0)
       rendered.unmount()
       expect(highlights.size).toBe(0)
+      clearDelegatedEvents(frameDocument)
       frame.remove()
     })
 
@@ -278,6 +304,34 @@ describe('Explorer', () => {
       expect(highlightedText()).toHaveLength(0)
     })
 
+    it('keeps manual expansion when clicking search-open branches', () => {
+      const rendered = renderSearchable({
+        label: 'Data',
+        defaultExpanded: ['Data', 'opened'],
+        value: {
+          opened: { text: 'needle' },
+          automatic: { text: 'needle' },
+          other: { text: 'unrelated' },
+        },
+      })
+      searchData(rendered, 'needle')
+      fireEvent.click(rendered.getByRole('button', { name: 'opened 1 item' }))
+      fireEvent.click(
+        rendered.getByRole('button', { name: 'automatic 1 item' }),
+      )
+      fireEvent.click(rendered.getByRole('button', { name: 'other 1 item' }))
+      fireEvent.click(rendered.getByText('Clear'))
+      expect(
+        rendered.getByRole('button', { name: 'opened 1 item' }),
+      ).toHaveAttribute('aria-expanded', 'true')
+      expect(
+        rendered.getByRole('button', { name: 'automatic 1 item' }),
+      ).toHaveAttribute('aria-expanded', 'false')
+      expect(
+        rendered.getByRole('button', { name: 'other 1 item' }),
+      ).toHaveAttribute('aria-expanded', 'true')
+    })
+
     it('cancels a pending search on Escape', () => {
       const rendered = renderSearchable({
         label: 'Data',
@@ -356,6 +410,7 @@ describe('Explorer', () => {
       expect(first).toHaveAttribute('aria-expanded', 'true')
       expect(next).toHaveAttribute('aria-expanded', 'false')
       expect(next).toHaveAccessibleDescription('Contains search matches')
+      fireEvent.click(first)
       fireEvent.click(next)
       expect(rendered.getAllByText('name:')).toHaveLength(200)
       expect(highlightedText()).toStrictEqual(Array(200).fill('name'))
