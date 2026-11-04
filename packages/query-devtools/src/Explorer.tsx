@@ -19,6 +19,7 @@ import { tokens } from './theme'
 import {
   deleteNestedDataByPath,
   displayValue,
+  isPlainObject,
   updateNestedDataByPath,
 } from './utils'
 import {
@@ -479,6 +480,14 @@ export default function Explorer(props: ExplorerProps) {
   }
   const [expandedPages, setExpandedPages] = createSignal<Array<number>>([])
   const nativeObjectType = createMemo(() => getNativeObjectType(props.value))
+  const childrenEditable = createMemo(
+    () =>
+      props.editable &&
+      (Array.isArray(props.value) ||
+        nativeObjectType() === 'Map' ||
+        nativeObjectType() === 'Set' ||
+        isPlainObject(props.value)),
+  )
 
   const subEntries = createMemo(() => {
     if (props.search) {
@@ -683,7 +692,7 @@ export default function Explorer(props: ExplorerProps) {
                       search={childSearch(entry().key)}
                       highlight={props.highlight}
                       value={entry().value}
-                      editable={props.editable}
+                      editable={childrenEditable()}
                       dataPath={[...currentDataPath, entry().key]}
                       activeQuery={props.activeQuery}
                       itemsDeletable={
@@ -737,7 +746,7 @@ export default function Explorer(props: ExplorerProps) {
                                 search={childSearch(entry().key)}
                                 highlight={props.highlight}
                                 value={entry().value}
-                                editable={props.editable}
+                                editable={childrenEditable()}
                                 dataPath={[...currentDataPath, entry().key]}
                                 activeQuery={props.activeQuery}
                               />

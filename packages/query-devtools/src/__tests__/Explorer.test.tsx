@@ -633,6 +633,62 @@ describe('Explorer', () => {
       expect(deleted?.sibling).toBe('kept')
     })
 
+    it.each([
+      {
+        kind: 'class',
+        create: () =>
+          Object.assign(new (class Data {})(), {
+            text: 'needle',
+            nested: { text: 'needle nested' },
+            enabled: true,
+            count: 1,
+          }),
+      },
+      {
+        kind: 'Date',
+        create: () =>
+          Object.assign(new Date('2026-01-01'), {
+            text: 'needle',
+            nested: { text: 'needle nested' },
+            enabled: true,
+            count: 1,
+          }),
+      },
+      {
+        kind: 'paginated class',
+        create: () =>
+          Object.assign(
+            new (class Data {})(),
+            Object.fromEntries(
+              Array.from({ length: 101 }, (_, index) => [
+                `item${index}`,
+                'needle',
+              ]),
+            ),
+          ),
+      },
+    ])('shows $kind fields as read-only', ({ create }) => {
+      const value = create()
+      queryClient.setQueryData(['data'], value)
+      const rendered = renderSearchable({
+        label: 'Data',
+        value,
+        editable: true,
+        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+      })
+      searchData(rendered, 'needle')
+      expect(rendered.queryAllByRole('textbox')).toHaveLength(0)
+      expect(rendered.queryAllByRole('spinbutton')).toHaveLength(0)
+      expect(
+        rendered.queryAllByRole('button', { name: 'Delete item' }),
+      ).toHaveLength(0)
+      expect(
+        rendered.queryByRole('button', { name: 'Toggle value' }),
+      ).not.toBeInTheDocument()
+      expect(highlightedText()).toContain('needle')
+      expect(queryClient.getQueryData(['data'])).toBe(value)
+    })
+
     it('edits Map values through original non-string keys during search', () => {
       const key = {}
       const value = new Map<unknown, unknown>([

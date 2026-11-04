@@ -209,31 +209,29 @@ export const getPreferredColorScheme = () => {
 }
 
 /**
- * Reads plain-object properties without invoking accessors, including across realms.
+ * Checks whether a value is a plain object without invoking accessors, including across realms.
  * @param value - The data to inspect.
- * @returns Own descriptors, or undefined for values that cannot be copied as records.
+ * @returns Whether the value can be copied as a record.
  */
-function getPlainObjectDescriptors(
-  value: unknown,
-): PropertyDescriptorMap | undefined {
-  if (value === null || typeof value !== 'object') return undefined
-  const prototype = Object.getPrototypeOf(value)
-  if (prototype !== null) {
+export function isPlainObject(value: unknown): boolean {
+  if (value === null || typeof value !== 'object') return false
+  try {
+    const prototype = Object.getPrototypeOf(value)
+    if (prototype === null) return true
     const constructor = Object.getOwnPropertyDescriptor(
       prototype,
       'constructor',
     )?.value
-    if (
-      typeof constructor !== 'function' ||
-      Object.getOwnPropertyDescriptor(constructor, 'prototype')?.value !==
-        prototype ||
-      Function.prototype.toString.call(constructor) !==
+    return (
+      typeof constructor === 'function' &&
+      Object.getOwnPropertyDescriptor(constructor, 'prototype')?.value ===
+        prototype &&
+      Function.prototype.toString.call(constructor) ===
         Function.prototype.toString.call(Object)
-    ) {
-      return undefined
-    }
+    )
+  } catch {
+    return false
   }
-  return Object.getOwnPropertyDescriptors(value)
 }
 
 /**
@@ -294,8 +292,8 @@ export const updateNestedDataByPath = (
     return newData
   }
 
-  const descriptors = getPlainObjectDescriptors(oldData)
-  if (descriptors) {
+  if (isPlainObject(oldData)) {
+    const descriptors = Object.getOwnPropertyDescriptors(oldData)
     const [head, ...tail] = updatePath
     if (head === undefined) return oldData
     const previous = Object.getOwnPropertyDescriptor(oldData, head)
@@ -365,8 +363,8 @@ export const deleteNestedDataByPath = (
     return newData
   }
 
-  const descriptors = getPlainObjectDescriptors(oldData)
-  if (descriptors) {
+  if (isPlainObject(oldData)) {
+    const descriptors = Object.getOwnPropertyDescriptors(oldData)
     const [head, ...tail] = deletePath
     if (head === undefined) return oldData
     if (tail.length === 0) {
