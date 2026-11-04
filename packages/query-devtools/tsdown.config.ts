@@ -42,6 +42,9 @@ const baseConfig = {
     alwaysBundle: [/./],
     dts: { alwaysBundle: [] },
   },
+  outputOptions: {
+    postBanner: '/* @refresh skip */',
+  },
   inputOptions: {
     // Keep package imports in declaration output. Runtime Solid imports are
     // bundled from the browser files by solidBrowserImports above.
