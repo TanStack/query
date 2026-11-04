@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
 
   const query = createQuery(() => ({

@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "test:types": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/vue-query": "workspace:*",

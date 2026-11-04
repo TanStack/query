@@ -6,7 +6,7 @@ import App from './App'
 
 const queryClient = new QueryClient()
 
-const root = document.getElementById('root')
+const root = document.getElementById('root')!
 
 render(
   () => (
