@@ -181,6 +181,34 @@ useMutation({
 
 [//]: # 'Example3'
 
+### Using `queryClient.optimisticUpdate`
+
+`queryClient.optimisticUpdate` does the cancel, snapshot and update steps from the examples above in one call, and resolves to a `rollback` function that you can return from `onMutate`:
+
+[//]: # 'ExampleOptimisticUpdate'
+
+```tsx
+useMutation({
+  mutationFn: addTodo,
+  onMutate: async (newTodo, context) => {
+    const rollback = await context.client.optimisticUpdate<Array<Todo>>(
+      { queryKey: ['todos'] },
+      (old) => (old ? [...old, newTodo] : old),
+    )
+    return { rollback }
+  },
+  onError: (err, newTodo, onMutateResult) => onMutateResult?.rollback(),
+  onSettled: (data, error, variables, onMutateResult, context) =>
+    context.client.invalidateQueries({ queryKey: ['todos'] }),
+})
+```
+
+[//]: # 'ExampleOptimisticUpdate'
+
+It takes the same filters as `setQueriesData`, so the example above updates every cached todo list whose key starts with `['todos']`, e.g. `['todos', { status: 'done' }]`. Only queries that already exist are updated.
+
+`rollback` restores each updated query to its state from before the update, including queries that had no data yet. It leaves alone any query whose data has changed since the update, e.g. because a refetch finished in the meantime, and any query that was removed from the cache.
+
 ## When to use what
 
 If you only have one place where the optimistic result should be shown, using `variables` and updating the UI directly is the approach that requires less code and is generally easier to reason about. For example, you don't need to handle rollbacks at all.

@@ -408,6 +408,311 @@ describe('queryClient', () => {
     })
   })
 
+  describe('optimisticUpdate', () => {
+    it('should update all existing, matching queries and roll them back', async () => {
+      const key = createKey()
+      queryClient.setQueryData([...key, 1], 1, { updatedAt: 100 })
+      queryClient.setQueryData([...key, 2], 2, { updatedAt: 200 })
+      queryClient.setQueryData(['other'], 3)
+
+      const rollback = await queryClient.optimisticUpdate<number>(
+        { queryKey: key },
+        (old) => (old === undefined ? undefined : old + 5),
+      )
+
+      expect(queryClient.getQueryData([...key, 1])).toBe(6)
+      expect(queryClient.getQueryData([...key, 2])).toBe(7)
+      expect(queryClient.getQueryData(['other'])).toBe(3)
+
+      rollback()
+
+      expect(queryClient.getQueryState([...key, 1])).toMatchObject({
+        data: 1,
+        dataUpdatedAt: 100,
+        status: 'success',
+      })
+      expect(queryClient.getQueryState([...key, 2])).toMatchObject({
+        data: 2,
+        dataUpdatedAt: 200,
+        status: 'success',
+      })
+      expect(queryClient.getQueryData(['other'])).toBe(3)
+    })
+
+    it('should accept a value instead of an updater function', async () => {
+      const key = createKey()
+      queryClient.setQueryData(key, 'data')
+
+      const rollback = await queryClient.optimisticUpdate(
+        { queryKey: key },
+        'optimistic',
+      )
+
+      expect(queryClient.getQueryData(key)).toBe('optimistic')
+
+      rollback()
+
+      expect(queryClient.getQueryData(key)).toBe('data')
+    })
+
+    it('should accept queryFilters', async () => {
+      const key = createKey()
+      queryClient.setQueryData([...key, 1], 1)
+      queryClient.setQueryData([...key, 2], 2)
+      const query1 = queryCache.find({ queryKey: [...key, 1] })!
+
+      await queryClient.optimisticUpdate<number>(
+        { predicate: (query) => query === query1 },
+        (old) => old! + 5,
+      )
+
+      expect(queryClient.getQueryData([...key, 1])).toBe(6)
+      expect(queryClient.getQueryData([...key, 2])).toBe(2)
+    })
+
+    it('should cancel outgoing fetches so they do not overwrite the optimistic data', async () => {
+      const key = createKey()
+      queryClient.setQueryData(key, 'data')
+
+      const pending = queryClient.query({
+        queryKey: key,
+        queryFn: () => sleep(50).then(() => 'server'),
+        staleTime: 0,
+      })
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.getQueryState(key)?.fetchStatus).toBe('fetching')
+
+      const rollback = await queryClient.optimisticUpdate(
+        { queryKey: key },
+        'optimistic',
+      )
+
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        data: 'optimistic',
+        fetchStatus: 'idle',
+      })
+      // the cancelled fetch was reverted to the data from before it started
+      await expect(pending).resolves.toBe('data')
+
+      await vi.advanceTimersByTimeAsync(50)
+      expect(queryClient.getQueryData(key)).toBe('optimistic')
+
+      rollback()
+
+      expect(queryClient.getQueryData(key)).toBe('data')
+    })
+
+    it('should not create queries that do not exist', async () => {
+      const key = createKey()
+
+      const rollback = await queryClient.optimisticUpdate(
+        { queryKey: key },
+        'optimistic',
+      )
+
+      expect(queryCache.find({ queryKey: key })).toBeUndefined()
+
+      rollback()
+
+      expect(queryCache.find({ queryKey: key })).toBeUndefined()
+    })
+
+    it('should skip queries for which the updater returns undefined', async () => {
+      const key = createKey()
+      queryClient.setQueryData([...key, 1], 1, { updatedAt: 100 })
+      queryClient.setQueryData([...key, 2], 2, { updatedAt: 200 })
+
+      const rollback = await queryClient.optimisticUpdate<number>(
+        { queryKey: key },
+        (old) => (old === 1 ? 10 : undefined),
+      )
+
+      expect(queryClient.getQueryData([...key, 1])).toBe(10)
+      expect(queryClient.getQueryState([...key, 2])).toMatchObject({
+        data: 2,
+        dataUpdatedAt: 200,
+      })
+
+      rollback()
+
+      expect(queryClient.getQueryData([...key, 1])).toBe(1)
+      expect(queryClient.getQueryState([...key, 2])).toMatchObject({
+        data: 2,
+        dataUpdatedAt: 200,
+      })
+    })
+
+    it('should restore a query without data back to pending on rollback', async () => {
+      const key = createKey()
+      queryCache.build(queryClient, { queryKey: key })
+      expect(queryClient.getQueryState(key)?.status).toBe('pending')
+
+      const rollback = await queryClient.optimisticUpdate<Array<string>>(
+        { queryKey: key },
+        (old) => [...(old ?? []), 'new'],
+      )
+
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        data: ['new'],
+        status: 'success',
+      })
+
+      rollback()
+
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        data: undefined,
+        dataUpdatedAt: 0,
+        status: 'pending',
+      })
+    })
+
+    it('should restore the error and invalidation state on rollback', async () => {
+      const key = createKey()
+      const error = new Error('error')
+      queryClient.setQueryData(key, 'data')
+      queryCache.find({ queryKey: key })!.setState({ error, status: 'error' })
+      await queryClient.invalidateQueries({ queryKey: key })
+
+      const rollback = await queryClient.optimisticUpdate(
+        { queryKey: key },
+        'optimistic',
+      )
+
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        data: 'optimistic',
+        error: null,
+        isInvalidated: false,
+        status: 'success',
+      })
+
+      rollback()
+
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        data: 'data',
+        error,
+        isInvalidated: true,
+        status: 'error',
+      })
+    })
+
+    it('should record the optimistic data with the given updatedAt', async () => {
+      const key = createKey()
+      queryClient.setQueryData(key, 'data', { updatedAt: 100 })
+
+      const rollback = await queryClient.optimisticUpdate(
+        { queryKey: key },
+        'optimistic',
+        { updatedAt: 500 },
+      )
+
+      expect(queryClient.getQueryState(key)?.dataUpdatedAt).toBe(500)
+
+      rollback()
+
+      expect(queryClient.getQueryState(key)?.dataUpdatedAt).toBe(100)
+    })
+
+    it('should not roll back queries whose data changed after the optimistic update', async () => {
+      const key = createKey()
+      queryClient.setQueryData([...key, 1], 'data1')
+      queryClient.setQueryData([...key, 2], 'data2')
+
+      const rollback = await queryClient.optimisticUpdate(
+        { queryKey: key },
+        'optimistic',
+      )
+      queryClient.setQueryData([...key, 1], 'server')
+
+      rollback()
+
+      expect(queryClient.getQueryData([...key, 1])).toBe('server')
+      expect(queryClient.getQueryData([...key, 2])).toBe('data2')
+    })
+
+    it('should not roll back queries that were removed from the cache', async () => {
+      const key = createKey()
+      queryClient.setQueryData(key, 'data')
+
+      const rollback = await queryClient.optimisticUpdate(
+        { queryKey: key },
+        'optimistic',
+      )
+      queryClient.removeQueries({ queryKey: key })
+      queryClient.setQueryData(key, 'new')
+
+      const listener = vi.fn<(event: QueryCacheNotifyEvent) => void>()
+      const unsubscribe = queryCache.subscribe(listener)
+      rollback()
+      unsubscribe()
+
+      expect(listener).not.toHaveBeenCalled()
+      expect(queryClient.getQueryData(key)).toBe('new')
+    })
+
+    it('should only roll back once', async () => {
+      const key = createKey()
+      queryClient.setQueryData(key, 'data')
+
+      const rollback = await queryClient.optimisticUpdate(
+        { queryKey: key },
+        'optimistic',
+      )
+
+      const listener = vi.fn<(event: QueryCacheNotifyEvent) => void>()
+      const unsubscribe = queryCache.subscribe(listener)
+      rollback()
+      expect(listener).toHaveBeenCalledTimes(1)
+      rollback()
+      unsubscribe()
+
+      expect(listener).toHaveBeenCalledTimes(1)
+      expect(queryClient.getQueryData(key)).toBe('data')
+    })
+
+    it('should roll back the queries already updated and reject if the updater throws', async () => {
+      const key = createKey()
+      queryClient.setQueryData([...key, 1], 1)
+      queryClient.setQueryData([...key, 2], 2)
+      const error = new Error('updater failed')
+
+      await expect(
+        queryClient.optimisticUpdate<number>({ queryKey: key }, (old) => {
+          if (old === 2) {
+            throw error
+          }
+          return old! + 5
+        }),
+      ).rejects.toBe(error)
+
+      expect(queryClient.getQueryData([...key, 1])).toBe(1)
+      expect(queryClient.getQueryData([...key, 2])).toBe(2)
+    })
+
+    it('should notify observers of the optimistic data and of the rollback', async () => {
+      const key = createKey()
+      queryClient.setQueryData(key, 'data')
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        enabled: false,
+      })
+      const results: Array<unknown> = []
+      const unsubscribe = observer.subscribe((result) => {
+        results.push(result.data)
+      })
+
+      const rollback = await queryClient.optimisticUpdate(
+        { queryKey: key },
+        'optimistic',
+      )
+      await vi.advanceTimersByTimeAsync(0)
+      rollback()
+      await vi.advanceTimersByTimeAsync(0)
+      unsubscribe()
+
+      expect(results).toStrictEqual(['optimistic', 'data'])
+    })
+  })
+
   describe('isFetching', () => {
     it('should return length of fetching queries', async () => {
       expect(queryClient.isFetching()).toBe(0)

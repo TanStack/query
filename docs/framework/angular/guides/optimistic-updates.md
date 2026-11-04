@@ -166,3 +166,23 @@ injectMutation({
 ```
 
 [//]: # 'Example3'
+[//]: # 'ExampleOptimisticUpdate'
+
+```ts
+injectMutation(() => ({
+  mutationFn: addTodo,
+  onMutate: async (newTodo, context) => {
+    const rollback = await context.client.optimisticUpdate<Array<Todo>>(
+      { queryKey: ['todos'] },
+      (old) => (old ? [...old, newTodo] : old),
+    )
+    return { rollback }
+  },
+  onError: (err, newTodo, onMutateResult) => onMutateResult?.rollback(),
+  onSettled: (data, error, variables, onMutateResult, context) => {
+    context.client.invalidateQueries({ queryKey: ['todos'] })
+  },
+}))
+```
+
+[//]: # 'ExampleOptimisticUpdate'

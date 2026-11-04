@@ -172,6 +172,41 @@ describe('QueryCache', () => {
     })
   })
 
+  describe('optimisticUpdate', () => {
+    it('should properly unwrap params with queryKey', async () => {
+      const queryClient = new QueryClient()
+
+      const rollback = await queryClient.optimisticUpdate(
+        { queryKey: queryKeyRef },
+        fn,
+        { updatedAt: ref(3) },
+      )
+
+      expect(QueryClientOrigin.prototype.optimisticUpdate).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref },
+        fn,
+        { updatedAt: 3 },
+      )
+      expect(rollback).toBeTypeOf('function')
+    })
+
+    it('should update and roll back queries matched by a filter with refs', async () => {
+      const queryClient = new QueryClient()
+      queryClient.setQueryData(queryKeyUnref, 'data')
+
+      const rollback = await queryClient.optimisticUpdate(
+        { queryKey: queryKeyRef },
+        'optimistic',
+      )
+
+      expect(queryClient.getQueryData(queryKeyUnref)).toBe('optimistic')
+
+      rollback()
+
+      expect(queryClient.getQueryData(queryKeyUnref)).toBe('data')
+    })
+  })
+
   describe('getQueryState', () => {
     it('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()

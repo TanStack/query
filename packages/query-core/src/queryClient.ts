@@ -41,7 +41,7 @@ import type {
   ResetOptions,
   SetDataOptions,
 } from './types'
-import type { QueryState } from './query'
+import type { Query, QueryState } from './query'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
 
 // TYPES
@@ -355,6 +355,130 @@ export class QueryClient {
           this.setQueryData<TQueryFnData>(queryKey, updater, options),
         ]),
     )
+  }
+
+  /**
+   * Optimistically updates the cached data of every existing query matching the given filters,
+   * and returns a function that rolls the update back. It combines the usual optimistic update
+   * steps into one call:
+   *
+   * 1. Cancels outgoing fetches for the matching queries via {@link QueryClient#cancelQueries},
+   *    so a fetch that resolves later can't overwrite the optimistic data.
+   * 2. Takes a snapshot of each matching query's state.
+   * 3. Applies the `updater` to each matching query, like {@link QueryClient#setQueriesData}.
+   *    Queries for which the updater returns `undefined` are left untouched.
+   *
+   * Steps 2 and 3 run synchronously once the cancellation has settled, so nothing can change the
+   * cache in between. Only queries that already exist are updated; no new cache entries are
+   * created. If the `updater` throws, the queries updated so far are rolled back and the returned
+   * promise rejects with that error.
+   *
+   * Calling the returned `rollback` function restores the snapshotted state (`data`,
+   * `dataUpdatedAt`, `status`, `error` and `isInvalidated`) of each updated query. A query that
+   * had no data before the update goes back to having none. Queries whose data has changed since
+   * the optimistic update (e.g. because a refetch finished in the meantime), or that were removed
+   * from the cache, are not touched. Calling `rollback` more than once has no further effect.
+   *
+   * Updates must be performed immutably: do not mutate the data passed to the `updater` in place,
+   * otherwise the snapshot is mutated as well and can't be restored.
+   * @param filters - The filters that select which existing queries to cancel, snapshot and update.
+   * @param updater - Either the new data, or a function that receives each matched query's current
+   * data (which may be `undefined`) and returns the new data.
+   * @param options - Set `updatedAt` to override the timestamp the optimistic data is recorded with.
+   * @returns A promise that resolves to a `rollback` function once the optimistic update has been
+   * applied.
+   * @see {@link QueryClient#setQueriesData}
+   * @example
+   * ```ts
+   * useMutation({
+   *   mutationFn: addTodo,
+   *   onMutate: async (newTodo, context) => {
+   *     const rollback = await context.client.optimisticUpdate<Array<Todo>>(
+   *       { queryKey: ['todos'] },
+   *       (old) => (old ? [...old, newTodo] : old),
+   *     )
+   *     return { rollback }
+   *   },
+   *   onError: (error, newTodo, onMutateResult) => onMutateResult?.rollback(),
+   *   onSettled: (data, error, newTodo, onMutateResult, context) =>
+   *     context.client.invalidateQueries({ queryKey: ['todos'] }),
+   * })
+   * ```
+   */
+  async optimisticUpdate<
+    TQueryFnData = unknown,
+    TQueryFilters extends QueryFilters<any> = QueryFilters,
+  >(
+    filters: TQueryFilters,
+    updater: Updater<
+      NoInfer<TQueryFnData> | undefined,
+      NoInfer<TQueryFnData> | undefined
+    >,
+    options?: SetDataOptions,
+  ): Promise<() => void> {
+    await this.cancelQueries(filters)
+
+    const queryCache = this.#queryCache
+    const snapshots: Array<{
+      query: Query
+      previousState: Pick<
+        QueryState,
+        'data' | 'dataUpdatedAt' | 'error' | 'isInvalidated' | 'status'
+      >
+      optimisticData: unknown
+    }> = []
+
+    const rollback = (): void => {
+      // `splice` empties the list, so calling `rollback` again is a no-op
+      const toRestore = snapshots.splice(0)
+      notifyManager.batch(() => {
+        toRestore.forEach(({ query, previousState, optimisticData }) => {
+          if (
+            queryCache.get(query.queryHash) === query &&
+            query.state.data === optimisticData
+          ) {
+            query.setState(previousState)
+          }
+        })
+      })
+    }
+
+    notifyManager.batch(() => {
+      try {
+        queryCache.findAll(filters).forEach((query) => {
+          const { data, dataUpdatedAt, error, isInvalidated, status } =
+            query.state
+          const newData = functionalUpdate(
+            updater,
+            data as TQueryFnData | undefined,
+          )
+
+          if (newData === undefined) {
+            return
+          }
+
+          snapshots.push({
+            query,
+            previousState: {
+              data,
+              dataUpdatedAt,
+              error,
+              isInvalidated,
+              status,
+            },
+            optimisticData: query.setData(newData, {
+              ...options,
+              manual: true,
+            }),
+          })
+        })
+      } catch (error) {
+        rollback()
+        throw error
+      }
+    })
+
+    return rollback
   }
 
   /**
