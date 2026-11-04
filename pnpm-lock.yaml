@@ -6220,16 +6220,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/solid-query-devtools
       astro:
-        specifier: ^7.3.5
+        specifier: ^7.4.4
         version: 7.4.4(@types/node@24.19.2)(@vercel/functions@2.2.13)(db0@0.4.1)(esbuild@0.28.2)(idb-keyval@6.3.0)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.46.1)(tsx@4.23.15)(yaml@2.9.1)
       solid-js:
-        specifier: ^1.9.15
+        specifier: ^1.9.18
         version: 1.9.18
 
   integrations/solid/solid-start-2:
     dependencies:
       '@solidjs/start':
-        specifier: ^2.1.0
+        specifier: ^2.2.0
         version: 2.2.0(@solidjs/router@1.0.1(solid-js@1.9.18))(@testing-library/jest-dom@6.9.1)(crossws@0.4.16(srvx@1.0.8))(ocache@0.3.1)(solid-js@1.9.18)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.46.1)(tsx@4.23.15)(yaml@2.9.1))
       '@tanstack/solid-query':
         specifier: workspace:*
@@ -6238,7 +6238,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/solid-query-devtools
       solid-js:
-        specifier: ^1.9.15
+        specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
       nitro:
