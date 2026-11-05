@@ -1786,6 +1786,65 @@ describe('Devtools', () => {
     })
   })
 
+  describe('text direction', () => {
+    it('should render the floating devtools with "dir" set to "ltr"', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.container.querySelector('.tsqd-transitions-container'),
+      ).toHaveAttribute('dir', 'ltr')
+    })
+
+    it('should render the embedded panel with "dir" set to "ltr"', () => {
+      const rendered = render(() => (
+        <DevtoolsPanelComponent
+          client={queryClient}
+          onlineManager={onlineManager}
+          queryFlavor="TanStack Query"
+          version="5"
+        />
+      ))
+
+      expect(
+        rendered.container.querySelector('.tsqd-main-panel'),
+      ).toHaveAttribute('dir', 'ltr')
+    })
+
+    it('should render the settings menu with "dir" set to "ltr"', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+        key: 'Enter',
+      })
+
+      expect(document.querySelector('.tsqd-settings-menu')).toHaveAttribute(
+        'dir',
+        'ltr',
+      )
+    })
+
+    it.each(['position', 'theme', 'disabled-queries'])(
+      'should render the "%s" sub-menu with "dir" set to "ltr"',
+      (name) => {
+        const rendered = renderDevtools({ initialIsOpen: true })
+
+        fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+          key: 'Enter',
+        })
+
+        const subTrigger = document.querySelector<HTMLElement>(
+          `.tsqd-settings-menu-sub-trigger-${name}`,
+        )
+        expect(subTrigger).not.toBeNull()
+        fireEvent.keyDown(subTrigger!, { key: 'ArrowRight' })
+
+        expect(
+          document.querySelector('.tsqd-settings-submenu'),
+        ).toHaveAttribute('dir', 'ltr')
+      },
+    )
+  })
+
   describe('resize handle', () => {
     it('should increase height when "ArrowUp" is pressed on the resize handle in "bottom" position', () => {
       const rendered = renderDevtools(
