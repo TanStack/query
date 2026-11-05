@@ -325,6 +325,7 @@ const PiPPanel: Component<{
 
   return (
     <div
+      dir="ltr"
       style={{
         '--tsqd-font-size': '16px',
         'max-height': '100vh',
