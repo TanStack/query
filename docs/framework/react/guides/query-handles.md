@@ -38,34 +38,33 @@ A handle's type comes from its factory's key. Declare keys with `as const`: two 
 
 ## Starting queries
 
-Three functions start a query and return its handle. They take the `QueryClient` first, then the factory, then the factory's input:
+Two functions start a query and return its handle. They take the `QueryClient` first, then the factory, then the factory's input:
 
-| Function                      | Waits for                           |
-| ----------------------------- | ----------------------------------- |
-| `experimental_prefetchHandle` | nothing                             |
-| `experimental_ensureHandle`   | any data, cached data even if stale |
-| `experimental_fetchHandle`    | fresh data                          |
+| Function                        | Waits for  |
+| ------------------------------- | ---------- |
+| `experimental_queryHandle`      | nothing    |
+| `experimental_queryHandleAsync` | fresh data |
 
-All three return the same plain handle, without the query's data. When an awaited handle resolves, the cache has the query's data.
+Both return the same plain handle, without the query's data. When `experimental_queryHandleAsync` resolves, the cache has the query's data.
 
-All three use the query's `staleTime` like `queryClient.query`: they start a fetch only when the cache has no fresh data, and `experimental_ensureHandle` refetches stale data in the background.
+Both use the query's `staleTime` like `queryClient.query`: they start a fetch only when the cache has no fresh data.
 
-`experimental_prefetchHandle` doesn't wait and doesn't reject: fetch errors show up where a component reads the handle. The other two reject when the query fails without data, so a loader can redirect or show an error page.
+`experimental_queryHandle` doesn't wait and doesn't reject: fetch errors show up where a component reads the handle. `experimental_queryHandleAsync` rejects when the query fails, so a loader can redirect or show an error page.
 
 [//]: # 'Loader'
 
 ```tsx
 import {
-  experimental_ensureHandle,
-  experimental_prefetchHandle,
+  experimental_queryHandle,
+  experimental_queryHandleAsync,
 } from '@tanstack/react-query'
 
 export async function loader({ params }) {
   return {
     // The page can't render without the viewer, so wait for it
-    viewer: await experimental_ensureHandle(queryClient, viewerQuery),
+    viewer: await experimental_queryHandleAsync(queryClient, viewerQuery),
     // Start the post without waiting, and stream it in
-    post: experimental_prefetchHandle(queryClient, postQuery, {
+    post: experimental_queryHandle(queryClient, postQuery, {
       id: params.id,
     }),
   }
@@ -73,6 +72,32 @@ export async function loader({ params }) {
 ```
 
 [//]: # 'Loader'
+
+### Using cached data, even if stale
+
+`queryClient.query` with `staleTime: 'static'` [replaces the deprecated `ensureQueryData`](./prefetching.md#using-query-to-prefetch): it returns cached data even if it is stale, and fetches only when the cache has none. To do the same with a handle, start the query with `experimental_queryHandle`, then wait for it with `queryClient.query` and `staleTime: 'static'`:
+
+[//]: # 'EnsureData'
+
+```tsx
+export async function loader({ params }) {
+  // Start the post, and refetch it in the background if it is stale
+  const post = experimental_queryHandle(queryClient, postQuery, {
+    id: params.id,
+  })
+  // If we have the post loaded already, we don't want to block on a refetch.
+  // Otherwise wait for it, and throw if it fails
+  await queryClient.query({
+    ...postQuery({ id: params.id }),
+    staleTime: 'static',
+  })
+  return { post }
+}
+```
+
+[//]: # 'EnsureData'
+
+Start the handle first. When the cache has no post, `queryClient.query` then waits for the fetch that `experimental_queryHandle` started, so the post is fetched once.
 
 ## Reading handles
 
@@ -155,7 +180,7 @@ Queries you start with handles work with the [hydration APIs](./advanced-ssr.md)
 
 ### Streaming pending queries
 
-`dehydrate` only includes successful queries by default. To stream a query that `experimental_prefetchHandle` started and that is still pending, opt in through `shouldDehydrateQuery`. A pending query dehydrates to a promise, so the page needs a transport that can send promises, like React Server Components, TanStack Start or React Router:
+`dehydrate` only includes successful queries by default. To stream a query that `experimental_queryHandle` started and that is still pending, opt in through `shouldDehydrateQuery`. A pending query dehydrates to a promise, so the page needs a transport that can send promises, like React Server Components, TanStack Start or React Router:
 
 [//]: # 'DehydratePending'
 
@@ -189,7 +214,7 @@ const postQuery = (input: { id: string }) =>
   })
 
 // On the server: fetches the post, and sends it along with the page
-const post = await experimental_fetchHandle(queryClient, postQuery, { id })
+const post = await experimental_queryHandleAsync(queryClient, postQuery, { id })
 
 // In the browser: the post is already stale, so this fetches it again on mount
 const { data } = useQuery(experimental_fromHandle(postQuery, post))
