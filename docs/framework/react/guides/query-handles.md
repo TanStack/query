@@ -75,29 +75,30 @@ export async function loader({ params }) {
 
 ### Using cached data, even if stale
 
-`queryClient.query` with `staleTime: 'static'` [replaces the deprecated `ensureQueryData`](./prefetching.md#using-query-to-prefetch): it returns cached data even if it is stale, and fetches only when the cache has none. To do the same with a handle, start the query with `experimental_queryHandle`, then wait for it with `queryClient.query` and `staleTime: 'static'`:
+Both functions take options for one call as their last argument. Only `staleTime` is allowed, and it applies to that call only: the handle doesn't carry it, so readers use the factory's `staleTime`. A factory without input takes `undefined` in the input's place.
+
+`queryClient.query` with `staleTime: 'static'` [replaces the deprecated `ensureQueryData`](./prefetching.md#using-query-to-prefetch): it returns cached data even if it is stale, and fetches only when the cache has none. Pass the same `staleTime` to `experimental_queryHandleAsync`:
 
 [//]: # 'EnsureData'
 
 ```tsx
 export async function loader({ params }) {
-  // Start the post, and refetch it in the background if it is stale
-  const post = experimental_queryHandle(queryClient, postQuery, {
-    id: params.id,
-  })
-  // If we have the post loaded already, we don't want to block on a refetch.
-  // Otherwise wait for it, and throw if it fails
-  await queryClient.query({
-    ...postQuery({ id: params.id }),
-    staleTime: 'static',
-  })
-  return { post }
+  return {
+    // If we have the post loaded already, we don't want to block on a refetch.
+    // Otherwise wait for it, and throw if it fails
+    post: await experimental_queryHandleAsync(
+      queryClient,
+      postQuery,
+      { id: params.id },
+      { staleTime: 'static' },
+    ),
+  }
 }
 ```
 
 [//]: # 'EnsureData'
 
-Start the handle first. When the cache has no post, `queryClient.query` then waits for the fetch that `experimental_queryHandle` started, so the post is fetched once.
+The loader doesn't refetch stale data. The component that reads the handle does: it uses the factory's `staleTime`, so it refetches stale data in the background when it mounts.
 
 ## Reading handles
 
