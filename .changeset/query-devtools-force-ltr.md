@@ -4,4 +4,4 @@
 '@tanstack/preact-query-devtools': patch
 ---
 
-fix({query,react-query,preact-query}-devtools): move 'dir="ltr"' into 'query-devtools' so the panel and settings menus render left-to-right on RTL pages in every adapter
+fix({query,react-query,preact-query}-devtools): always render the devtools left-to-right regardless of the page direction or browser language
