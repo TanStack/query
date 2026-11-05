@@ -2378,8 +2378,8 @@
               "to": "framework/vue/reference/type-aliases/MutationCacheNotifyEvent"
             },
             {
-              "label": "Types / MutationFilters",
-              "to": "framework/vue/reference/type-aliases/MutationFilters"
+              "label": "Interfaces / MutationFilters",
+              "to": "framework/vue/reference/interfaces/MutationFilters"
             },
             {
               "label": "Types / MutationFunction",
@@ -2458,8 +2458,8 @@
               "to": "framework/vue/reference/type-aliases/QueryCacheNotifyEvent"
             },
             {
-              "label": "Types / QueryFilters",
-              "to": "framework/vue/reference/type-aliases/QueryFilters"
+              "label": "Interfaces / QueryFilters",
+              "to": "framework/vue/reference/interfaces/QueryFilters"
             },
             {
               "label": "Types / QueryFunction",
@@ -3952,10 +3952,6 @@
               "to": "framework/svelte/reference/type-aliases/GetPreviousPageParamFunction"
             },
             {
-              "label": "Types / HydrationBoundary",
-              "to": "framework/svelte/reference/type-aliases/HydrationBoundary"
-            },
-            {
               "label": "Types / InferDataFromTag",
               "to": "framework/svelte/reference/type-aliases/InferDataFromTag"
             },
@@ -4162,10 +4158,6 @@
             {
               "label": "Types / dataTagSymbol",
               "to": "framework/svelte/reference/type-aliases/dataTagSymbol"
-            },
-            {
-              "label": "Variables / HydrationBoundary",
-              "to": "framework/svelte/reference/variables/HydrationBoundary"
             },
             {
               "label": "Variables / dataTagErrorSymbol",

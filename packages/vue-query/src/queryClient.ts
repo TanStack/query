@@ -5,7 +5,13 @@ import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
 import type { UseQueryOptions } from './queryOptions'
 import type { Ref } from 'vue-demi'
-import type { MaybeRefDeep, NoUnknown, QueryClientConfig } from './types'
+import type {
+  MaybeRef,
+  MaybeRefDeep,
+  MaybeRefOrGetter,
+  NoUnknown,
+  QueryClientConfig,
+} from './types'
 import type {
   CancelOptions,
   DefaultError,
@@ -34,6 +40,15 @@ import type {
   SetDataOptions,
   Updater,
 } from '@tanstack/query-core'
+
+type VueQueryExecutionOptions<TOptions extends { queryKey: unknown }> =
+  MaybeRef<{
+    [Property in keyof TOptions]: Property extends 'queryFn'
+      ? MaybeRefDeep<TOptions[Property] | symbol>
+      : Property extends 'queryKey'
+        ? MaybeRefOrGetter<MaybeRefDeep<TOptions[Property]>>
+        : MaybeRefDeep<TOptions[Property]>
+  }>
 
 /**
  * Vue-aware subclass of `@tanstack/query-core`'s `QueryClient`. Methods that accept `options` (such as
@@ -120,7 +135,7 @@ export class QueryClient extends QC {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: MaybeRefDeep<
+    options: VueQueryExecutionOptions<
       EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<TData>
@@ -130,12 +145,18 @@ export class QueryClient extends QC {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: MaybeRefDeep<
+    options: VueQueryExecutionOptions<
       EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<TData> {
     // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.ensureQueryData(cloneDeepUnref(options))
+    return super.ensureQueryData(
+      cloneDeepUnref(
+        options as MaybeRefDeep<
+          EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
+        >,
+      ),
+    )
   }
 
   override getQueriesData<TData = unknown>(
@@ -151,7 +172,7 @@ export class QueryClient extends QC {
   >(
     queryKey: TTaggedQueryKey,
     updater: Updater<
-      NoInfer<TInferredQueryFnData> | undefined,
+      InferDataFromTag<NoInfer<TQueryFnData>, TTaggedQueryKey> | undefined,
       NoInfer<TInferredQueryFnData> | undefined
     >,
     options?: MaybeRefDeep<SetDataOptions>,
@@ -315,7 +336,7 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: MaybeRefDeep<
+    options: VueQueryExecutionOptions<
       QueryExecuteOptions<
         TQueryFnData,
         TError,
@@ -334,7 +355,7 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: MaybeRefDeep<
+    options: VueQueryExecutionOptions<
       QueryExecuteOptions<
         TQueryFnData,
         TError,
@@ -345,7 +366,20 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<TData> {
-    return super.query(cloneDeepUnref(options))
+    return super.query(
+      cloneDeepUnref(
+        options as MaybeRefDeep<
+          QueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey,
+            TPageParam
+          >
+        >,
+      ),
+    )
   }
 
   /**
@@ -384,7 +418,7 @@ export class QueryClient extends QC {
     TPageParam = never,
   >(
     options:
-      | MaybeRefDeep<
+      | VueQueryExecutionOptions<
           FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
         >
       | (() => FetchQueryOptions<
@@ -402,12 +436,18 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: MaybeRefDeep<
+    options: VueQueryExecutionOptions<
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
     >,
   ): Promise<TData> {
     // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.fetchQuery(cloneDeepUnref(options))
+    return super.fetchQuery(
+      cloneDeepUnref(
+        options as MaybeRefDeep<
+          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+        >,
+      ),
+    )
   }
 
   /**
@@ -436,7 +476,7 @@ export class QueryClient extends QC {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: MaybeRefDeep<
+    options: VueQueryExecutionOptions<
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<void>
@@ -446,12 +486,18 @@ export class QueryClient extends QC {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: MaybeRefDeep<
+    options: VueQueryExecutionOptions<
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<void> {
     // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.prefetchQuery(cloneDeepUnref(options))
+    return super.prefetchQuery(
+      cloneDeepUnref(
+        options as MaybeRefDeep<
+          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+        >,
+      ),
+    )
   }
 
   // These one-shot imperative methods do not resolve top-level option getters.

@@ -1,5 +1,31 @@
 # @tanstack/solid-query-devtools
 
+## 5.106.1
+
+### Patch Changes
+
+- [#12524](https://github.com/TanStack/query/pull/12524) [`f078a2b`](https://github.com/TanStack/query/commit/f078a2b2c81a3a278448e3c64de2dc773cab0ffa) - fix(solid-query-devtools): replace 'clientOnly' with a 'process.env.NODE_ENV' gate to fix hydration mismatch
+- Updated dependencies [[`c4ed956`](https://github.com/TanStack/query/commit/c4ed956bb97e381a2875e59f134bb99eecb92a02)]:
+  - @tanstack/query-devtools@5.106.1
+  - @tanstack/solid-query@5.106.1
+
+## 5.106.0
+
+### Patch Changes
+
+- [#12499](https://github.com/TanStack/query/pull/12499) [`46d0477`](https://github.com/TanStack/query/commit/46d0477df2311d496cca006eb5ec885c024875a1) - Let inline devtools panels fill their container height while keeping a 500px default height when the container has no set height.
+- Updated dependencies [[`46d0477`](https://github.com/TanStack/query/commit/46d0477df2311d496cca006eb5ec885c024875a1), [`f69b28a`](https://github.com/TanStack/query/commit/f69b28a1dd2a2b4ca9b8f9117e0f60cc70443775), [`1176d37`](https://github.com/TanStack/query/commit/1176d373d161e0acca98d00244203778ff99c4fb), [`254350f`](https://github.com/TanStack/query/commit/254350f9cba47fd87304e057fac1a314093423f0)]:
+  - @tanstack/query-devtools@5.106.0
+  - @tanstack/solid-query@5.106.0
+
+## 5.105.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.105.3
+  - @tanstack/solid-query@5.105.3
+
 ## 5.105.2
 
 ### Patch Changes

@@ -1,10 +1,11 @@
 import { defineConfig } from 'tsdown'
 import solid from 'unplugin-solid/rolldown'
+import type { UserConfig } from 'tsdown'
 
-const baseConfig = {
+const baseConfig: UserConfig = {
   target: 'esnext',
-  platform: 'browser' as const,
-  format: ['esm', 'cjs'] as ['esm', 'cjs'],
+  platform: 'browser',
+  format: ['esm', 'cjs'],
   outDir: 'build',
   fixedExtension: false,
 }
