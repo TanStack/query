@@ -1,8 +1,7 @@
 import {
-  experimental_ensureHandle,
-  experimental_fetchHandle,
   experimental_fromHandle,
-  experimental_prefetchHandle,
+  experimental_queryHandle,
+  experimental_queryHandleAsync,
   infiniteQueryOptions,
   queryOptions,
 } from '..'
@@ -79,7 +78,7 @@ type DecorateInfiniteProcedure<
         TInput,
         TOutput
       >
-      $ensureInfinite: (
+      $infiniteQueryHandleAsync: (
         input: Omit<TInput, 'cursor'>,
         opts?: { pages?: number },
       ) => Promise<
@@ -95,15 +94,10 @@ type DecorateProcedure<
   TProcedure extends AnyProcedure,
 > = {
   queryOptions: ProcedureQueryOptions<TPath, TProcedure>
-  $prefetch: (
+  $queryHandle: (
     input: InputOf<TProcedure>,
   ) => experimental_QueryHandle<ProcedureQueryOptions<TPath, TProcedure>>
-  $ensure: (
-    input: InputOf<TProcedure>,
-  ) => Promise<
-    experimental_QueryHandle<ProcedureQueryOptions<TPath, TProcedure>>
-  >
-  $fetch: (
+  $queryHandleAsync: (
     input: InputOf<TProcedure>,
   ) => Promise<
     experimental_QueryHandle<ProcedureQueryOptions<TPath, TProcedure>>
@@ -186,14 +180,12 @@ export function createOptionsProxy<TRouter extends AnyRouter>(
     return {
       queryOptions: factory,
       infiniteQueryOptions: infiniteFactory,
-      $prefetch: (input: unknown) =>
-        experimental_prefetchHandle(queryClient, factory, input),
-      $ensure: (input: unknown) =>
-        experimental_ensureHandle(queryClient, factory, input),
-      $fetch: (input: unknown) =>
-        experimental_fetchHandle(queryClient, factory, input),
-      $ensureInfinite: (input: object, opts?: { pages?: number }) =>
-        experimental_ensureHandle(
+      $queryHandle: (input: unknown) =>
+        experimental_queryHandle(queryClient, factory, input),
+      $queryHandleAsync: (input: unknown) =>
+        experimental_queryHandleAsync(queryClient, factory, input),
+      $infiniteQueryHandleAsync: (input: object, opts?: { pages?: number }) =>
+        experimental_queryHandleAsync(
           queryClient,
           (pageInput: object) => ({
             ...infiniteFactory(pageInput),

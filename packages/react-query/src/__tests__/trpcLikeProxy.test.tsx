@@ -53,14 +53,14 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
 
     using serverClient = clearOnDispose(new QueryClient())
     const serverTrpc = createOptionsProxy(router, serverClient)
-    const postPromise = serverTrpc['post.byId'].$ensure({ id: '1' })
-    const feedPromise = serverTrpc.feed.$ensureInfinite(
+    const postPromise = serverTrpc['post.byId'].$queryHandleAsync({ id: '1' })
+    const feedPromise = serverTrpc.feed.$infiniteQueryHandleAsync(
       { limit: 10 },
       { pages: 2 },
     )
     await vi.advanceTimersByTimeAsync(10)
     const post = await postPromise
-    const comments = serverTrpc['post.comments'].$prefetch({
+    const comments = serverTrpc['post.comments'].$queryHandle({
       postId: post.input.id,
       page: 1,
     })

@@ -14,7 +14,7 @@ import {
   defaultShouldDehydrateQuery,
   dehydrate,
   experimental_fromHandle,
-  experimental_prefetchHandle,
+  experimental_queryHandle,
   queryOptions,
   useSuspenseQuery,
 } from '..'
@@ -22,7 +22,7 @@ import { renderWithClient } from './utils'
 import type { experimental_QueryHandle } from '..'
 
 describe('query handles', () => {
-  it('should stream a pending prefetched query to a reader without fetching it again', async () => {
+  it('should stream a pending query from experimental_queryHandle to a reader without fetching it again', async () => {
     using _timers = fakeTimers()
     const key = createKey()
     const queryFn = vi.fn<(id: string) => Promise<string>>((id) =>
@@ -36,7 +36,7 @@ describe('query handles', () => {
       })
 
     using serverClient = clearOnDispose(new QueryClient())
-    const handle = experimental_prefetchHandle(serverClient, postQuery, {
+    const handle = experimental_queryHandle(serverClient, postQuery, {
       id: '1',
     })
     const dehydrated = dehydrate(serverClient, {

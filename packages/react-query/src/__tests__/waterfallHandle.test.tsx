@@ -10,9 +10,9 @@ import {
 } from '@tanstack/query-test-utils'
 import {
   QueryClient,
-  experimental_fetchHandle,
   experimental_fromHandle,
-  experimental_prefetchHandle,
+  experimental_queryHandle,
+  experimental_queryHandleAsync,
   experimental_waterfallHandle,
   queryOptions,
   useQuery,
@@ -67,7 +67,7 @@ describe('experimental_waterfallHandle', () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
     const { postsQuery, queryFn } = createPostsQuery()
-    const loaderHandle = experimental_prefetchHandle(queryClient, postsQuery, {
+    const loaderHandle = experimental_queryHandle(queryClient, postsQuery, {
       page: 1,
     })
     const handles: Array<experimental_QueryHandle<typeof postsQuery>> = []
@@ -118,7 +118,7 @@ describe('experimental_waterfallHandle', () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
     const { postsQuery } = createPostsQuery()
-    const promise = experimental_fetchHandle(queryClient, postsQuery, {
+    const promise = experimental_queryHandleAsync(queryClient, postsQuery, {
       page: 1,
     })
     await vi.advanceTimersByTimeAsync(10)

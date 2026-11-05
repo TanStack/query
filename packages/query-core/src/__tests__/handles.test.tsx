@@ -10,10 +10,9 @@ import {
   QueryClient,
   QueryObserver,
   environmentManager,
-  experimental_ensureHandle,
-  experimental_fetchHandle,
   experimental_fromHandle,
-  experimental_prefetchHandle,
+  experimental_queryHandle,
+  experimental_queryHandleAsync,
   experimental_waterfallHandle,
   noop,
 } from '..'
@@ -29,6 +28,16 @@ const serverEnvironment = (): Disposable => {
   }
 }
 
+const unhandledRejections = () => {
+  const listener = vi.fn<NodeJS.UnhandledRejectionListener>()
+  process.on('unhandledRejection', listener)
+  return Object.assign(listener, {
+    [Symbol.dispose]: () => {
+      process.off('unhandledRejection', listener)
+    },
+  })
+}
+
 describe('query handles', () => {
   const createPostQuery = (
     queryFn = (id: string) => sleep(10).then(() => id),
@@ -40,13 +49,13 @@ describe('query handles', () => {
     })
   }
 
-  describe('experimental_prefetchHandle', () => {
+  describe('experimental_queryHandle', () => {
     it('should start the query and return a serializable handle', () => {
       using _timers = fakeTimers()
       using queryClient = clearOnDispose(new QueryClient())
       const postQuery = createPostQuery()
 
-      const handle = experimental_prefetchHandle(queryClient, postQuery, {
+      const handle = experimental_queryHandle(queryClient, postQuery, {
         id: '1',
       })
 
@@ -69,7 +78,7 @@ describe('query handles', () => {
         queryFn: () => 'viewer',
       })
 
-      const handle = experimental_prefetchHandle(queryClient, viewerQuery)
+      const handle = experimental_queryHandle(queryClient, viewerQuery)
 
       expect(handle).toStrictEqual({ queryKey: key, input: undefined })
     })
@@ -79,9 +88,39 @@ describe('query handles', () => {
       using queryClient = clearOnDispose(new QueryClient())
       const postQuery = createPostQuery(() => Promise.reject(new Error('no')))
 
-      experimental_prefetchHandle(queryClient, postQuery, { id: '1' })
+      experimental_queryHandle(queryClient, postQuery, { id: '1' })
       await vi.advanceTimersByTimeAsync(0)
 
+      expect(
+        queryClient.getQueryState(postQuery({ id: '1' }).queryKey)?.status,
+      ).toBe('error')
+    })
+
+    it('should not cause an unhandled rejection when the queryFn rejects at once', async () => {
+      using onUnhandledRejection = unhandledRejections()
+      using queryClient = clearOnDispose(new QueryClient())
+      const postQuery = createPostQuery(() => Promise.reject(new Error('no')))
+
+      experimental_queryHandle(queryClient, postQuery, { id: '1' })
+      await sleep(0)
+
+      expect(onUnhandledRejection).not.toHaveBeenCalled()
+      expect(
+        queryClient.getQueryState(postQuery({ id: '1' }).queryKey)?.status,
+      ).toBe('error')
+    })
+
+    it('should not cause an unhandled rejection when the queryFn throws synchronously', async () => {
+      using onUnhandledRejection = unhandledRejections()
+      using queryClient = clearOnDispose(new QueryClient())
+      const postQuery = createPostQuery(() => {
+        throw new Error('no')
+      })
+
+      experimental_queryHandle(queryClient, postQuery, { id: '1' })
+      await sleep(0)
+
+      expect(onUnhandledRejection).not.toHaveBeenCalled()
       expect(
         queryClient.getQueryState(postQuery({ id: '1' }).queryKey)?.status,
       ).toBe('error')
@@ -99,7 +138,7 @@ describe('query handles', () => {
       })
       queryClient.setQueryData(postQuery({ id: '1' }).queryKey, 'cached')
 
-      experimental_prefetchHandle(queryClient, postQuery, { id: '1' })
+      experimental_queryHandle(queryClient, postQuery, { id: '1' })
 
       expect(queryFn).not.toHaveBeenCalled()
     })
@@ -115,7 +154,7 @@ describe('query handles', () => {
         getNextPageParam: (lastPage: number) => lastPage + 1,
       })
 
-      experimental_prefetchHandle(queryClient, feedQuery, { size: 1 })
+      experimental_queryHandle(queryClient, feedQuery, { size: 1 })
       await vi.advanceTimersByTimeAsync(0)
 
       expect(queryClient.getQueryData([...key, 1])).toStrictEqual({
@@ -134,7 +173,7 @@ describe('query handles', () => {
         initialPageParam: 1,
       })
 
-      experimental_prefetchHandle(queryClient, feedQuery, { size: 1 })
+      experimental_queryHandle(queryClient, feedQuery, { size: 1 })
       await vi.advanceTimersByTimeAsync(0)
 
       expect(queryClient.getQueryData([...key, 1])).toStrictEqual({
@@ -144,13 +183,13 @@ describe('query handles', () => {
     })
   })
 
-  describe('experimental_ensureHandle', () => {
+  describe('experimental_queryHandleAsync', () => {
     it('should wait for the data and return a plain handle', async () => {
       using _timers = fakeTimers()
       using queryClient = clearOnDispose(new QueryClient())
       const postQuery = createPostQuery()
 
-      const promise = experimental_ensureHandle(queryClient, postQuery, {
+      const promise = experimental_queryHandleAsync(queryClient, postQuery, {
         id: '1',
       })
       await vi.advanceTimersByTimeAsync(10)
@@ -163,73 +202,6 @@ describe('query handles', () => {
       expect(queryClient.getQueryData(handle.queryKey)).toBe('1')
     })
 
-    it('should load the pages an infinite factory asks for', async () => {
-      using _timers = fakeTimers()
-      using queryClient = clearOnDispose(new QueryClient())
-      const key = createKey()
-      const feedQuery = (input: { pages: number }) => ({
-        queryKey: key,
-        queryFn: ({ pageParam }: { pageParam: number }) => pageParam * 10,
-        initialPageParam: 1,
-        getNextPageParam: (lastPage: number) => lastPage / 10 + 1,
-        pages: input.pages,
-      })
-
-      await experimental_ensureHandle(queryClient, feedQuery, { pages: 3 })
-
-      expect(queryClient.getQueryData(key)).toStrictEqual({
-        pages: [10, 20, 30],
-        pageParams: [1, 2, 3],
-      })
-    })
-
-    it('should resolve with stale cached data at once and refetch it in the background', async () => {
-      using _timers = fakeTimers()
-      using queryClient = clearOnDispose(new QueryClient())
-      const queryFn = vi.fn<(id: string) => Promise<string>>((id) =>
-        sleep(10).then(() => `${id}-new`),
-      )
-      const postQuery = createPostQuery(queryFn)
-      queryClient.setQueryData(postQuery({ id: '1' }).queryKey, 'cached')
-
-      await experimental_ensureHandle(queryClient, postQuery, { id: '1' })
-
-      expect(queryClient.getQueryData(postQuery({ id: '1' }).queryKey)).toBe(
-        'cached',
-      )
-      expect(queryFn).toHaveBeenCalledTimes(1)
-      await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryData(postQuery({ id: '1' }).queryKey)).toBe(
-        '1-new',
-      )
-    })
-
-    it('should not reject when a background refetch of cached data fails', async () => {
-      using _timers = fakeTimers()
-      using queryClient = clearOnDispose(new QueryClient())
-      const postQuery = createPostQuery(() => Promise.reject(new Error('no')))
-      queryClient.setQueryData(postQuery({ id: '1' }).queryKey, 'cached')
-
-      const handle = await experimental_ensureHandle(queryClient, postQuery, {
-        id: '1',
-      })
-      await vi.advanceTimersByTimeAsync(0)
-
-      expect(queryClient.getQueryData(handle.queryKey)).toBe('cached')
-    })
-
-    it('should reject when the query has no data and fails', async () => {
-      using _timers = fakeTimers()
-      using queryClient = clearOnDispose(new QueryClient())
-      const postQuery = createPostQuery(() => Promise.reject(new Error('no')))
-
-      await expect(
-        experimental_ensureHandle(queryClient, postQuery, { id: '1' }),
-      ).rejects.toThrow('no')
-    })
-  })
-
-  describe('experimental_fetchHandle', () => {
     it('should wait for fresh data when the cached data is stale', async () => {
       using _timers = fakeTimers()
       using queryClient = clearOnDispose(new QueryClient())
@@ -238,7 +210,7 @@ describe('query handles', () => {
       )
       queryClient.setQueryData(postQuery({ id: '1' }).queryKey, 'cached')
 
-      const promise = experimental_fetchHandle(queryClient, postQuery, {
+      const promise = experimental_queryHandleAsync(queryClient, postQuery, {
         id: '1',
       })
       await vi.advanceTimersByTimeAsync(10)
@@ -253,7 +225,7 @@ describe('query handles', () => {
       const postQuery = createPostQuery(() => Promise.reject(new Error('no')))
 
       await expect(
-        experimental_fetchHandle(queryClient, postQuery, { id: '1' }),
+        experimental_queryHandleAsync(queryClient, postQuery, { id: '1' }),
       ).rejects.toThrow('no')
     })
 
@@ -270,12 +242,58 @@ describe('query handles', () => {
       })
       queryClient.setQueryData(key, { pages: [10], pageParams: [1] })
 
-      await experimental_fetchHandle(queryClient, feedQuery, { pages: 2 })
+      await experimental_queryHandleAsync(queryClient, feedQuery, { pages: 2 })
 
       expect(queryClient.getQueryData(key)).toStrictEqual({
         pages: [10, 20],
         pageParams: [1, 2],
       })
+    })
+  })
+
+  describe("with queryClient.query and staleTime: 'static'", () => {
+    it('should use stale cached data at once and refetch it in the background', async () => {
+      using _timers = fakeTimers()
+      using queryClient = clearOnDispose(new QueryClient())
+      const queryFn = vi.fn<(id: string) => Promise<string>>((id) =>
+        sleep(10).then(() => `${id}-new`),
+      )
+      const postQuery = createPostQuery(queryFn)
+      queryClient.setQueryData(postQuery({ id: '1' }).queryKey, 'cached')
+
+      const handle = experimental_queryHandle(queryClient, postQuery, {
+        id: '1',
+      })
+      const data = await queryClient.query({
+        ...experimental_fromHandle(postQuery, handle),
+        staleTime: 'static',
+      })
+
+      expect(data).toBe('cached')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.getQueryData(handle.queryKey)).toBe('1-new')
+    })
+
+    it('should wait for the fetch the handle started when the cache has no data', async () => {
+      using _timers = fakeTimers()
+      using queryClient = clearOnDispose(new QueryClient())
+      const queryFn = vi.fn<(id: string) => Promise<string>>((id) =>
+        sleep(10).then(() => id),
+      )
+      const postQuery = createPostQuery(queryFn)
+
+      const handle = experimental_queryHandle(queryClient, postQuery, {
+        id: '1',
+      })
+      const promise = queryClient.query({
+        ...experimental_fromHandle(postQuery, handle),
+        staleTime: 'static',
+      })
+      await vi.advanceTimersByTimeAsync(10)
+
+      await expect(promise).resolves.toBe('1')
+      expect(queryFn).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -289,16 +307,16 @@ describe('query handles', () => {
       )
       const postQuery = createPostQuery(queryFn)
 
-      experimental_prefetchHandle(queryClient, postQuery, { id: '1' })
+      experimental_queryHandle(queryClient, postQuery, { id: '1' })
       await vi.advanceTimersByTimeAsync(10)
       expect(queryFn).toHaveBeenCalledTimes(1)
 
       // staleTime defaults to 0, so the data is already stale
-      await experimental_ensureHandle(queryClient, postQuery, { id: '1' })
+      experimental_queryHandle(queryClient, postQuery, { id: '1' })
       expect(queryFn).toHaveBeenCalledTimes(2)
       await vi.advanceTimersByTimeAsync(10)
 
-      const fetched = experimental_fetchHandle(queryClient, postQuery, {
+      const fetched = experimental_queryHandleAsync(queryClient, postQuery, {
         id: '1',
       })
       expect(queryFn).toHaveBeenCalledTimes(3)
@@ -322,14 +340,13 @@ describe('query handles', () => {
       )
       const postQuery = createPostQuery(queryFn)
 
-      const first = experimental_fetchHandle(queryClient, postQuery, {
+      const first = experimental_queryHandleAsync(queryClient, postQuery, {
         id: '1',
       })
       await vi.advanceTimersByTimeAsync(10)
       await first
-      experimental_prefetchHandle(queryClient, postQuery, { id: '1' })
-      await experimental_ensureHandle(queryClient, postQuery, { id: '1' })
-      await experimental_fetchHandle(queryClient, postQuery, { id: '1' })
+      experimental_queryHandle(queryClient, postQuery, { id: '1' })
+      await experimental_queryHandleAsync(queryClient, postQuery, { id: '1' })
 
       expect(queryFn).toHaveBeenCalledTimes(1)
     })
@@ -340,7 +357,7 @@ describe('query handles', () => {
       using _timers = fakeTimers()
       using queryClient = clearOnDispose(new QueryClient())
       const postQuery = createPostQuery()
-      const handle = experimental_prefetchHandle(queryClient, postQuery, {
+      const handle = experimental_queryHandle(queryClient, postQuery, {
         id: '1',
       })
 
@@ -357,7 +374,7 @@ describe('query handles', () => {
       using _timers = fakeTimers()
       using queryClient = clearOnDispose(new QueryClient())
       const postQuery = createPostQuery()
-      const handle = experimental_prefetchHandle(queryClient, postQuery, {
+      const handle = experimental_queryHandle(queryClient, postQuery, {
         id: '1',
       })
       await vi.advanceTimersByTimeAsync(10)
@@ -374,7 +391,7 @@ describe('query handles', () => {
       using _timers = fakeTimers()
       using queryClient = clearOnDispose(new QueryClient())
       const postQuery = createPostQuery()
-      const promise = experimental_fetchHandle(queryClient, postQuery, {
+      const promise = experimental_queryHandleAsync(queryClient, postQuery, {
         id: '1',
       })
       await vi.advanceTimersByTimeAsync(10)
@@ -390,7 +407,7 @@ describe('query handles', () => {
       using _timers = fakeTimers()
       using queryClient = clearOnDispose(new QueryClient())
       const postQuery = createPostQuery()
-      const promise = experimental_fetchHandle(queryClient, postQuery, {
+      const promise = experimental_queryHandleAsync(queryClient, postQuery, {
         id: '1',
       })
       await vi.advanceTimersByTimeAsync(10)
@@ -451,7 +468,7 @@ describe('query handles', () => {
         queryKey: [...key, input.id],
         queryFn: () => input.id,
       })
-      const previous = experimental_prefetchHandle(queryClient, postQuery, {
+      const previous = experimental_queryHandle(queryClient, postQuery, {
         id: '1',
       })
 

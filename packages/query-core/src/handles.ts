@@ -1,6 +1,5 @@
 import { hashQueryKeyByOptions, noop } from './utils'
 import type { QueryClient } from './queryClient'
-import type { Query } from './query'
 import type { InferDataFromTag, QueryKey, QueryKeyHashFunction } from './types'
 
 // TYPES
@@ -66,8 +65,8 @@ type QueryHandleKey<TFactory extends QueryHandleFactory> = PlainQueryKey<
 >
 
 /**
- * A small serializable reference to a query, from `experimental_prefetchHandle`,
- * `experimental_ensureHandle`, `experimental_fetchHandle` or `experimental_waterfallHandle`. Pass
+ * A small serializable reference to a query, from `experimental_queryHandle`,
+ * `experimental_queryHandleAsync` or `experimental_waterfallHandle`. Pass
  * it to the component that reads the query, and rebuild the query's options there with
  * `experimental_fromHandle(factory, handle)`. It carries no data: readers get the query's data
  * from the cache.
@@ -148,21 +147,6 @@ function startQueryFromFactory(
 }
 
 /**
- * Looks up the cache entry of a factory's options.
- * @param client - The client whose cache to look in.
- * @param options - Options a query factory returned.
- * @returns The query, if the cache has it.
- */
-function getQuery(
-  client: QueryClient,
-  options: QueryFactoryOptions,
-): Query<any, any, any, any> | undefined {
-  return client
-    .getQueryCache()
-    .get(client.defaultQueryOptions(options).queryHash)
-}
-
-/**
  * Builds a handle.
  * @param options - Options a query factory returned.
  * @param input - The factory's input.
@@ -175,8 +159,8 @@ function toHandle(options: QueryFactoryOptions, input: unknown) {
 /**
  * Starts a query without waiting and returns a serializable handle for it. A route loader, server
  * component or server render passes the handle to the component that reads the query. Like
- * `queryClient.query`, it fetches only if the cache has no fresh data. It doesn't reject: fetch
- * errors show up where a component reads the handle.
+ * `queryClient.query`, it fetches only if the cache has no fresh data. It never rejects, even when
+ * the `queryFn` fails at once: fetch errors show up where a component reads the handle.
  * @param queryClient - The client to start the query on.
  * @param factory - The query factory, a function of the query's input that returns its options.
  * @param input - The input to pass to the factory, if it takes one.
@@ -190,12 +174,10 @@ function toHandle(options: QueryFactoryOptions, input: unknown) {
  *   })
  *
  * // in a route loader
- * const post = experimental_prefetchHandle(queryClient, postQuery, { id })
+ * const post = experimental_queryHandle(queryClient, postQuery, { id })
  * ```
  */
-export function experimental_prefetchHandle<
-  TFactory extends QueryHandleFactory,
->(
+export function experimental_queryHandle<TFactory extends QueryHandleFactory>(
   queryClient: QueryClient,
   factory: TFactory,
   ...input: QueryHandleArgs<TFactory>
@@ -206,10 +188,10 @@ export function experimental_prefetchHandle<
 }
 
 /**
- * Starts a query and waits until the cache has data for it, then returns a serializable handle for
- * it. It resolves at once with cached data, even stale data, and refetches stale data in the
- * background. Rejects if the query has no data and its fetch fails. The handle carries no data;
- * read it with `useSuspenseQuery` to get defined data.
+ * Starts a query and waits for it like `queryClient.query`, then returns a serializable handle for
+ * it. It uses cached data only if it isn't stale. Rejects if the fetch fails, so a loader can
+ * redirect or show an error page. The handle carries no data; read it with `useSuspenseQuery` to
+ * get defined data.
  * @param queryClient - The client to start the query on.
  * @param factory - The query factory, a function of the query's input that returns its options.
  * @param input - The input to pass to the factory, if it takes one.
@@ -217,41 +199,10 @@ export function experimental_prefetchHandle<
  * @example
  * ```ts
  * // in a route loader
- * const viewer = await experimental_ensureHandle(queryClient, viewerQuery)
+ * const post = await experimental_queryHandleAsync(queryClient, postQuery, { id })
  * ```
  */
-export async function experimental_ensureHandle<
-  TFactory extends QueryHandleFactory,
->(
-  queryClient: QueryClient,
-  factory: TFactory,
-  ...input: QueryHandleArgs<TFactory>
-): Promise<QueryHandle<TFactory>> {
-  const options = factory(...input)
-  const promise = startQueryFromFactory(queryClient, options)
-  if (getQuery(queryClient, options)?.state.data === undefined) {
-    await promise
-  } else {
-    promise.catch(noop)
-  }
-  return toHandle(options, input[0]) as QueryHandle<TFactory>
-}
-
-/**
- * Starts a query and waits for fresh data, then returns a serializable handle for it. Like
- * `queryClient.query`, it uses cached data only if it isn't stale. Rejects if the fetch fails. The
- * handle carries no data; read it with `useSuspenseQuery` to get defined data.
- * @param queryClient - The client to start the query on.
- * @param factory - The query factory, a function of the query's input that returns its options.
- * @param input - The input to pass to the factory, if it takes one.
- * @returns A promise of a handle with the query's key and input.
- * @example
- * ```ts
- * // in a route loader
- * const post = await experimental_fetchHandle(queryClient, postQuery, { id })
- * ```
- */
-export async function experimental_fetchHandle<
+export async function experimental_queryHandleAsync<
   TFactory extends QueryHandleFactory,
 >(
   queryClient: QueryClient,
@@ -267,7 +218,7 @@ export async function experimental_fetchHandle<
  * Builds the handle of a query whose input you only know during render, like a search term or a
  * page a user clicks to. It doesn't start the query: the component that reads the handle does,
  * when it renders, which makes it a request waterfall. The name keeps that visible. Prefer
- * starting queries in a route loader or server component with `experimental_prefetchHandle`.
+ * starting queries in a route loader or server component with `experimental_queryHandle`.
  * @param factory - The query factory, a function of the query's input that returns its options.
  * @param input - The input to pass to the factory, if it takes one.
  * @returns A handle with the query's key and input.

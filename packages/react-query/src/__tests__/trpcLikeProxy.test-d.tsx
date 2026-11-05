@@ -37,18 +37,23 @@ const trpc = createOptionsProxy(router, new QueryClient())
 
 describe('a tRPC-like proxy on the public handle APIs', () => {
   it("should type the verbs' input from the procedure", () => {
-    assertType(trpc['post.byId'].$prefetch({ id: '1' }))
+    assertType(trpc['post.byId'].$queryHandle({ id: '1' }))
     // @ts-expect-error the input has the wrong shape
-    assertType(trpc['post.byId'].$prefetch({ id: 1 }))
+    assertType(trpc['post.byId'].$queryHandle({ id: 1 }))
     // @ts-expect-error a procedure whose output has no cursor has no infinite verbs
-    assertType(trpc['post.byId'].$ensureInfinite)
+    assertType(trpc['post.byId'].$infiniteQueryHandleAsync)
   })
 
-  it('should give awaited handles the same plain type as prefetched ones', async () => {
-    const post = await trpc['post.byId'].$ensure({ id: '1' })
-    const feed = await trpc.feed.$ensureInfinite({ limit: 2 }, { pages: 2 })
+  it('should give awaited handles the same plain type as handles that are not awaited', async () => {
+    const post = await trpc['post.byId'].$queryHandleAsync({ id: '1' })
+    const feed = await trpc.feed.$infiniteQueryHandleAsync(
+      { limit: 2 },
+      { pages: 2 },
+    )
 
-    expectTypeOf(post).toEqualTypeOf(trpc['post.byId'].$prefetch({ id: '1' }))
+    expectTypeOf(post).toEqualTypeOf(
+      trpc['post.byId'].$queryHandle({ id: '1' }),
+    )
     expectTypeOf(post).not.toHaveProperty('data')
     expectTypeOf(post.input).toEqualTypeOf<{ id: string }>()
     expectTypeOf(feed.input).toEqualTypeOf<
@@ -57,9 +62,9 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
   })
 
   it('should read any handle without naming its procedure', async () => {
-    const post = trpc['post.byId'].$prefetch({ id: '1' })
-    const ensured = await trpc['post.byId'].$ensure({ id: '1' })
-    const feed = await trpc.feed.$ensureInfinite({ limit: 2 })
+    const post = trpc['post.byId'].$queryHandle({ id: '1' })
+    const awaited = await trpc['post.byId'].$queryHandleAsync({ id: '1' })
+    const feed = await trpc.feed.$infiniteQueryHandleAsync({ limit: 2 })
 
     expectTypeOf(
       useSuspenseQuery(trpc.$fromHandle(post)).data,
@@ -67,11 +72,11 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
     expectTypeOf(useQuery(trpc.$fromHandle(post)).data).toEqualTypeOf<
       Post | undefined
     >()
-    expectTypeOf(useQuery(trpc.$fromHandle(ensured)).data).toEqualTypeOf<
+    expectTypeOf(useQuery(trpc.$fromHandle(awaited)).data).toEqualTypeOf<
       Post | undefined
     >()
     expectTypeOf(
-      useSuspenseQuery(trpc.$fromHandle(ensured)).data,
+      useSuspenseQuery(trpc.$fromHandle(awaited)).data,
     ).toEqualTypeOf<Post>()
     expectTypeOf(
       useSuspenseInfiniteQuery(trpc.$fromHandle(feed)).data,
@@ -79,7 +84,7 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
   })
 
   it('should type select from the procedure when read-site options are spread', () => {
-    const post = trpc['post.byId'].$prefetch({ id: '1' })
+    const post = trpc['post.byId'].$queryHandle({ id: '1' })
 
     const { data } = useSuspenseQuery({
       ...trpc.$fromHandle(post),
@@ -97,7 +102,7 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
       post: experimental_QueryHandle<TRPC['post.byId']['queryOptions']>
     }
 
-    expectTypeOf(trpc['post.byId'].$prefetch({ id: '1' })).toEqualTypeOf(
+    expectTypeOf(trpc['post.byId'].$queryHandle({ id: '1' })).toEqualTypeOf(
       props.post,
     )
     expectTypeOf(
@@ -122,7 +127,10 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
   })
 
   it('should switch a handle with waterfallHandle', () => {
-    const comments = trpc['post.comments'].$prefetch({ postId: '1', page: 1 })
+    const comments = trpc['post.comments'].$queryHandle({
+      postId: '1',
+      page: 1,
+    })
 
     const next = experimental_waterfallHandle(
       trpc['post.comments'].queryOptions,
@@ -140,8 +148,8 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
   })
 
   it("should infer a procedure's data from its factory, the same as useSuspenseQuery", async () => {
-    const post = trpc['post.byId'].$prefetch({ id: '1' })
-    const feed = await trpc.feed.$ensureInfinite({ limit: 2 })
+    const post = trpc['post.byId'].$queryHandle({ id: '1' })
+    const feed = await trpc.feed.$infiniteQueryHandleAsync({ limit: 2 })
 
     expectTypeOf<
       experimental_InferQueryHandleData<TRPC['post.byId']['queryOptions']>

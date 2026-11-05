@@ -1,10 +1,9 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import {
   QueryClient,
-  experimental_ensureHandle,
-  experimental_fetchHandle,
   experimental_fromHandle,
-  experimental_prefetchHandle,
+  experimental_queryHandle,
+  experimental_queryHandleAsync,
   experimental_waterfallHandle,
   infiniteQueryOptions,
   keepPreviousData,
@@ -47,20 +46,18 @@ const queryClient = new QueryClient()
 describe('query handles', () => {
   describe('verbs', () => {
     it("should take the factory's input", () => {
-      assertType(
-        experimental_prefetchHandle(queryClient, postQuery, { id: '1' }),
-      )
-      assertType(experimental_prefetchHandle(queryClient, viewerQuery))
+      assertType(experimental_queryHandle(queryClient, postQuery, { id: '1' }))
+      assertType(experimental_queryHandle(queryClient, viewerQuery))
 
       // @ts-expect-error the input is required
-      assertType(experimental_prefetchHandle(queryClient, postQuery))
+      assertType(experimental_queryHandle(queryClient, postQuery))
       assertType(
         // @ts-expect-error the input has the wrong shape
-        experimental_prefetchHandle(queryClient, postQuery, { id: 1 }),
+        experimental_queryHandle(queryClient, postQuery, { id: 1 }),
       )
       assertType(
         // @ts-expect-error the factory takes no input
-        experimental_prefetchHandle(queryClient, viewerQuery, { id: '1' }),
+        experimental_queryHandle(queryClient, viewerQuery, { id: '1' }),
       )
     })
 
@@ -76,10 +73,10 @@ describe('query handles', () => {
         })
 
       assertType(
-        experimental_prefetchHandle(queryClient, optionsQuery, { id: '1' }),
+        experimental_queryHandle(queryClient, optionsQuery, { id: '1' }),
       )
       assertType(
-        experimental_prefetchHandle(
+        experimental_queryHandle(
           queryClient,
           optionsQuery,
           { id: '1' },
@@ -88,16 +85,7 @@ describe('query handles', () => {
         ),
       )
       assertType(
-        await experimental_ensureHandle(
-          queryClient,
-          optionsQuery,
-          { id: '1' },
-          // @ts-expect-error the handle only carries the input
-          { staleTime: 60_000 },
-        ),
-      )
-      assertType(
-        await experimental_fetchHandle(
+        await experimental_queryHandleAsync(
           queryClient,
           optionsQuery,
           { id: '1' },
@@ -117,8 +105,8 @@ describe('query handles', () => {
           queryFn: () => Promise.resolve([input?.page ?? 1]),
         })
 
-      assertType(experimental_prefetchHandle(queryClient, listQuery))
-      const handle = experimental_prefetchHandle(queryClient, listQuery, {
+      assertType(experimental_queryHandle(queryClient, listQuery))
+      const handle = experimental_queryHandle(queryClient, listQuery, {
         page: 2,
       })
 
@@ -137,7 +125,7 @@ describe('query handles', () => {
           ],
           queryFn: () => Promise.resolve(input.id),
         })
-      const handle = experimental_prefetchHandle(queryClient, pageQuery, {
+      const handle = experimental_queryHandle(queryClient, pageQuery, {
         id: '1',
       })
 
@@ -147,7 +135,7 @@ describe('query handles', () => {
     })
 
     it('should return a plain handle with the key and input', () => {
-      const handle = experimental_prefetchHandle(queryClient, postQuery, {
+      const handle = experimental_queryHandle(queryClient, postQuery, {
         id: '1',
       })
 
@@ -157,48 +145,49 @@ describe('query handles', () => {
     })
 
     it('should give a factory without input an undefined input', () => {
-      const handle = experimental_prefetchHandle(queryClient, viewerQuery)
+      const handle = experimental_queryHandle(queryClient, viewerQuery)
 
       expectTypeOf(handle.input).toEqualTypeOf<undefined>()
     })
 
     it('should resolve awaited handles with the same plain handle', async () => {
-      const ensured = await experimental_ensureHandle(queryClient, postQuery, {
+      const post = await experimental_queryHandleAsync(queryClient, postQuery, {
         id: '1',
       })
-      const fetched = await experimental_fetchHandle(queryClient, viewerQuery)
+      const viewer = await experimental_queryHandleAsync(
+        queryClient,
+        viewerQuery,
+      )
 
-      expectTypeOf(ensured).toEqualTypeOf<
+      expectTypeOf(post).toEqualTypeOf<
         experimental_QueryHandle<typeof postQuery>
       >()
-      expectTypeOf(fetched).toEqualTypeOf<
+      expectTypeOf(viewer).toEqualTypeOf<
         experimental_QueryHandle<typeof viewerQuery>
       >()
-      expectTypeOf(ensured).not.toHaveProperty('data')
+      expectTypeOf(post).not.toHaveProperty('data')
     })
   })
 
   describe('experimental_fromHandle', () => {
     it('should type useQuery data as possibly undefined for handles from every verb', async () => {
-      const prefetched = experimental_prefetchHandle(queryClient, postQuery, {
+      const started = experimental_queryHandle(queryClient, postQuery, {
         id: '1',
       })
-      const ensured = await experimental_ensureHandle(queryClient, postQuery, {
-        id: '1',
-      })
-      const fetched = await experimental_fetchHandle(queryClient, postQuery, {
-        id: '1',
-      })
+      const awaited = await experimental_queryHandleAsync(
+        queryClient,
+        postQuery,
+        {
+          id: '1',
+        },
+      )
       const waterfall = experimental_waterfallHandle(postQuery, { id: '1' })
 
       expectTypeOf(
-        useQuery(experimental_fromHandle(postQuery, prefetched)).data,
+        useQuery(experimental_fromHandle(postQuery, started)).data,
       ).toEqualTypeOf<Post | undefined>()
       expectTypeOf(
-        useQuery(experimental_fromHandle(postQuery, ensured)).data,
-      ).toEqualTypeOf<Post | undefined>()
-      expectTypeOf(
-        useQuery(experimental_fromHandle(postQuery, fetched)).data,
+        useQuery(experimental_fromHandle(postQuery, awaited)).data,
       ).toEqualTypeOf<Post | undefined>()
       expectTypeOf(
         useQuery(experimental_fromHandle(postQuery, waterfall)).data,
@@ -206,25 +195,23 @@ describe('query handles', () => {
     })
 
     it('should type useSuspenseQuery data as defined for handles from every verb', async () => {
-      const prefetched = experimental_prefetchHandle(queryClient, postQuery, {
+      const started = experimental_queryHandle(queryClient, postQuery, {
         id: '1',
       })
-      const ensured = await experimental_ensureHandle(queryClient, postQuery, {
-        id: '1',
-      })
-      const fetched = await experimental_fetchHandle(queryClient, postQuery, {
-        id: '1',
-      })
+      const awaited = await experimental_queryHandleAsync(
+        queryClient,
+        postQuery,
+        {
+          id: '1',
+        },
+      )
       const waterfall = experimental_waterfallHandle(postQuery, { id: '1' })
 
       expectTypeOf(
-        useSuspenseQuery(experimental_fromHandle(postQuery, prefetched)).data,
+        useSuspenseQuery(experimental_fromHandle(postQuery, started)).data,
       ).toEqualTypeOf<Post>()
       expectTypeOf(
-        useSuspenseQuery(experimental_fromHandle(postQuery, ensured)).data,
-      ).toEqualTypeOf<Post>()
-      expectTypeOf(
-        useSuspenseQuery(experimental_fromHandle(postQuery, fetched)).data,
+        useSuspenseQuery(experimental_fromHandle(postQuery, awaited)).data,
       ).toEqualTypeOf<Post>()
       expectTypeOf(
         useSuspenseQuery(experimental_fromHandle(postQuery, waterfall)).data,
@@ -232,9 +219,13 @@ describe('query handles', () => {
     })
 
     it('should keep useQuery data possibly undefined when read-site options are spread', async () => {
-      const handle = await experimental_fetchHandle(queryClient, postQuery, {
-        id: '1',
-      })
+      const handle = await experimental_queryHandleAsync(
+        queryClient,
+        postQuery,
+        {
+          id: '1',
+        },
+      )
 
       const { data } = useQuery({
         ...experimental_fromHandle(postQuery, handle),
@@ -245,7 +236,7 @@ describe('query handles', () => {
     })
 
     it('should accept keepPreviousData as placeholderData', () => {
-      const handle = experimental_prefetchHandle(queryClient, postQuery, {
+      const handle = experimental_queryHandle(queryClient, postQuery, {
         id: '1',
       })
 
@@ -258,7 +249,7 @@ describe('query handles', () => {
     })
 
     it('should work with infinite queries', () => {
-      const handle = experimental_prefetchHandle(queryClient, feedQuery, {
+      const handle = experimental_queryHandle(queryClient, feedQuery, {
         size: 1,
       })
 
@@ -270,9 +261,11 @@ describe('query handles', () => {
     })
 
     it('should type infinite data as possibly undefined for useInfiniteQuery and defined for useSuspenseInfiniteQuery', async () => {
-      const handle = await experimental_ensureHandle(queryClient, feedQuery, {
-        size: 1,
-      })
+      const handle = await experimental_queryHandleAsync(
+        queryClient,
+        feedQuery,
+        { size: 1 },
+      )
 
       expectTypeOf(
         useInfiniteQuery(experimental_fromHandle(feedQuery, handle)).data,
@@ -284,7 +277,7 @@ describe('query handles', () => {
     })
 
     it('should take no third argument', () => {
-      const handle = experimental_prefetchHandle(queryClient, postQuery, {
+      const handle = experimental_queryHandle(queryClient, postQuery, {
         id: '1',
       })
 
@@ -301,7 +294,7 @@ describe('query handles', () => {
           queryFn: (): Promise<Post> =>
             Promise.resolve({ id: input.id, title: '' }),
         })
-      const handle = experimental_prefetchHandle(queryClient, otherQuery, {
+      const handle = experimental_queryHandle(queryClient, otherQuery, {
         id: '1',
       })
 
@@ -370,7 +363,7 @@ describe('query handles', () => {
       })
 
     it('should infer a read-site select from the factory with useQuery', () => {
-      const handle = experimental_prefetchHandle(queryClient, postQuery, {
+      const handle = experimental_queryHandle(queryClient, postQuery, {
         id: '1',
       })
 
@@ -394,7 +387,7 @@ describe('query handles', () => {
     })
 
     it('should infer a read-site select from the factory with useSuspenseQuery', () => {
-      const handle = experimental_prefetchHandle(queryClient, postQuery, {
+      const handle = experimental_queryHandle(queryClient, postQuery, {
         id: '1',
       })
 
@@ -410,7 +403,7 @@ describe('query handles', () => {
     })
 
     it('should type read-site placeholderData and enabled from the factory', () => {
-      const handle = experimental_prefetchHandle(queryClient, postQuery, {
+      const handle = experimental_queryHandle(queryClient, postQuery, {
         id: '1',
       })
 
@@ -438,7 +431,7 @@ describe('query handles', () => {
     })
 
     it('should infer a read-site select from an infinite factory', () => {
-      const handle = experimental_prefetchHandle(queryClient, feedQuery, {
+      const handle = experimental_queryHandle(queryClient, feedQuery, {
         size: 1,
       })
 
@@ -461,17 +454,10 @@ describe('query handles', () => {
     })
 
     it("should type data from a factory's select", async () => {
-      const prefetched = experimental_prefetchHandle(
-        queryClient,
-        postTitleQuery,
-        { id: '1' },
-      )
-      const ensured = await experimental_ensureHandle(
-        queryClient,
-        postTitleQuery,
-        { id: '1' },
-      )
-      const fetched = await experimental_fetchHandle(
+      const started = experimental_queryHandle(queryClient, postTitleQuery, {
+        id: '1',
+      })
+      const awaited = await experimental_queryHandleAsync(
         queryClient,
         postTitleQuery,
         { id: '1' },
@@ -481,13 +467,10 @@ describe('query handles', () => {
       })
 
       expectTypeOf(
-        useQuery(experimental_fromHandle(postTitleQuery, prefetched)).data,
+        useQuery(experimental_fromHandle(postTitleQuery, started)).data,
       ).toEqualTypeOf<string | undefined>()
       expectTypeOf(
-        useSuspenseQuery(experimental_fromHandle(postTitleQuery, ensured)).data,
-      ).toEqualTypeOf<string>()
-      expectTypeOf(
-        useSuspenseQuery(experimental_fromHandle(postTitleQuery, fetched)).data,
+        useSuspenseQuery(experimental_fromHandle(postTitleQuery, awaited)).data,
       ).toEqualTypeOf<string>()
       expectTypeOf(
         useSuspenseQuery(experimental_fromHandle(postTitleQuery, waterfall))
@@ -496,7 +479,7 @@ describe('query handles', () => {
     })
 
     it("should keep a selecting factory's cache data as the queryFn's data", async () => {
-      const handle = await experimental_ensureHandle(
+      const handle = await experimental_queryHandleAsync(
         queryClient,
         postTitleQuery,
         { id: '1' },
@@ -514,7 +497,7 @@ describe('query handles', () => {
     })
 
     it("should type data from an infinite factory's select", () => {
-      const handle = experimental_prefetchHandle(queryClient, feedItemsQuery, {
+      const handle = experimental_queryHandle(queryClient, feedItemsQuery, {
         size: 1,
       })
 
@@ -529,7 +512,7 @@ describe('query handles', () => {
     })
 
     it("should replace a factory's select with a read-site select over the queryFn's data", () => {
-      const handle = experimental_prefetchHandle(queryClient, postTitleQuery, {
+      const handle = experimental_queryHandle(queryClient, postTitleQuery, {
         id: '1',
       })
 
@@ -623,7 +606,7 @@ describe('query handles', () => {
     })
 
     it('should take a handle type', async () => {
-      const ensured = await experimental_ensureHandle(
+      const awaited = await experimental_queryHandleAsync(
         queryClient,
         postTitleQuery,
         { id: '1' },
@@ -633,7 +616,7 @@ describe('query handles', () => {
         experimental_InferQueryHandleData<typeof handle>
       >().toEqualTypeOf<Post>()
       expectTypeOf<
-        experimental_InferQueryHandleData<typeof ensured>
+        experimental_InferQueryHandleData<typeof awaited>
       >().toEqualTypeOf<string>()
     })
 
