@@ -1126,10 +1126,30 @@ describe('dehydration and rehydration', () => {
     })
     const unsubscribe = observer.subscribe(noop)
 
-    // rejects at 10ms, retries after 10ms and resolves at 20ms
-    await vi.advanceTimersByTimeAsync(20)
-    // ✅ The reader's retry ran
-    expect(browserClient.getQueryData(key)).toBe('browser data')
+    // ✅ 0ms: pending while the server's promise is in flight
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      failureCount: 0,
+    })
+
+    // ✅ 10ms: the promise rejected, and the query stays pending for the retry
+    await vi.advanceTimersByTimeAsync(10)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      failureCount: 1,
+      failureReason: new Error('redacted'),
+    })
+
+    // ✅ 20ms: the retry succeeded
+    await vi.advanceTimersByTimeAsync(10)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      failureCount: 0,
+      data: 'browser data',
+    })
 
     unsubscribe()
     browserClient.clear()
