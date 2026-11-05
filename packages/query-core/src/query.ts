@@ -502,11 +502,15 @@ export class Query<
   }
 
   /**
-   * Returns `true` if the query has at least one observer configured with
+   * Returns `true` if the query has data and at least one observer configured with
    * `staleTime: 'static'`, meaning it is treated as never stale.
    * @returns `true` if the query is static.
    */
   isStatic(): boolean {
+    if (this.state.data === undefined) {
+      return false
+    }
+
     if (this.getObserversCount() > 0) {
       return this.observers.some(
         (observer) =>

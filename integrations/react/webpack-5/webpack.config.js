@@ -6,15 +6,23 @@ const htmlPlugin = new HtmlWebPackPlugin({
 })
 
 module.exports = {
+  entry: './src/index.tsx',
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
   module: {
     rules: [
       {
-        test: /\.(?:js|mjs|cjs|jsx)$/,
+        test: /\.(?:js|mjs|cjs|jsx|ts|tsx)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
+            presets: [
+              '@babel/preset-env',
+              '@babel/preset-react',
+              '@babel/preset-typescript',
+            ],
           },
         },
       },
