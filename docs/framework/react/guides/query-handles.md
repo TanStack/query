@@ -38,18 +38,19 @@ A handle's type comes from its factory's key. Declare keys with `as const`: two 
 
 ## Starting queries
 
-Two functions start a query and return its handle. They take the `QueryClient` first, then the factory, then the factory's input:
+Three functions start a query and return its handle. They take the `QueryClient` first, then the factory, then the factory's input:
 
-| Function                        | Waits for  |
-| ------------------------------- | ---------- |
-| `experimental_queryHandle`      | nothing    |
-| `experimental_queryHandleAsync` | fresh data |
+| Function                         | Waits for                     |
+| -------------------------------- | ----------------------------- |
+| `experimental_queryHandle`       | nothing                       |
+| `experimental_queryHandleAsync`  | fresh data                    |
+| `experimental_ensureQueryHandle` | any data, even if it is stale |
 
-Both return the same plain handle, without the query's data. When `experimental_queryHandleAsync` resolves, the cache has the query's data.
+All three return the same plain handle, without the query's data. When an awaited handle resolves, the cache has the query's data.
 
-Both use the query's `staleTime` like `queryClient.query`: they start a fetch only when the cache has no fresh data.
+`experimental_queryHandle` and `experimental_queryHandleAsync` use the query's `staleTime` like `queryClient.query`: they start a fetch only when the cache has no fresh data.
 
-`experimental_queryHandle` doesn't wait and doesn't reject: fetch errors show up where a component reads the handle. `experimental_queryHandleAsync` rejects when the query fails, so a loader can redirect or show an error page.
+`experimental_queryHandle` doesn't wait and doesn't reject: fetch errors show up where a component reads the handle. The other two reject when the fetch they wait for fails, so a loader can redirect or show an error page.
 
 [//]: # 'Loader'
 
@@ -75,23 +76,20 @@ export async function loader({ params }) {
 
 ### Using cached data, even if stale
 
-Both functions take options for one call as their last argument. Only `staleTime` is allowed, and it applies to that call only: the handle doesn't carry it, so readers use the factory's `staleTime`. A factory without input takes `undefined` in the input's place.
-
-`queryClient.query` with `staleTime: 'static'` [replaces the deprecated `ensureQueryData`](./prefetching.md#using-query-to-prefetch): it returns cached data even if it is stale, and fetches only when the cache has none. Pass the same `staleTime` to `experimental_queryHandleAsync`:
+`experimental_ensureQueryHandle` is the handle version of `queryClient.query` with `staleTime: 'static'`, which [replaces the deprecated `ensureQueryData`](./prefetching.md#using-query-to-prefetch). If the cache has data, even stale data, it resolves at once without fetching. If not, it fetches once and waits:
 
 [//]: # 'EnsureData'
 
 ```tsx
+import { experimental_ensureQueryHandle } from '@tanstack/react-query'
+
 export async function loader({ params }) {
   return {
     // If we have the post loaded already, we don't want to block on a refetch.
     // Otherwise wait for it, and throw if it fails
-    post: await experimental_queryHandleAsync(
-      queryClient,
-      postQuery,
-      { id: params.id },
-      { staleTime: 'static' },
-    ),
+    post: await experimental_ensureQueryHandle(queryClient, postQuery, {
+      id: params.id,
+    }),
   }
 }
 ```

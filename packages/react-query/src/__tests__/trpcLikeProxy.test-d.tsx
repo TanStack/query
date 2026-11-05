@@ -40,31 +40,10 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
     assertType(trpc['post.byId'].$queryHandle({ id: '1' }))
     // @ts-expect-error the input has the wrong shape
     assertType(trpc['post.byId'].$queryHandle({ id: 1 }))
+    // @ts-expect-error the input has the wrong shape
+    assertType(trpc['post.byId'].$ensureQueryHandle({ id: 1 }))
     // @ts-expect-error a procedure whose output has no cursor has no infinite verbs
     assertType(trpc['post.byId'].$infiniteQueryHandleAsync)
-  })
-
-  it("should pass a call's staleTime through, and nothing else", async () => {
-    assertType(trpc['post.byId'].$queryHandle({ id: '1' }, { staleTime: 0 }))
-    assertType(
-      await trpc['post.byId'].$queryHandleAsync(
-        { id: '1' },
-        { staleTime: 'static' },
-      ),
-    )
-    assertType(
-      await trpc.feed.$infiniteQueryHandleAsync(
-        { limit: 2 },
-        { pages: 2, staleTime: 'static' },
-      ),
-    )
-    assertType(
-      trpc['post.byId'].$queryHandle(
-        { id: '1' },
-        // @ts-expect-error only staleTime applies to one call
-        { enabled: false },
-      ),
-    )
   })
 
   it('should give awaited handles the same plain type as handles that are not awaited', async () => {
@@ -76,6 +55,9 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
 
     expectTypeOf(post).toEqualTypeOf(
       trpc['post.byId'].$queryHandle({ id: '1' }),
+    )
+    expectTypeOf(post).toEqualTypeOf(
+      await trpc['post.byId'].$ensureQueryHandle({ id: '1' }),
     )
     expectTypeOf(post).not.toHaveProperty('data')
     expectTypeOf(post.input).toEqualTypeOf<{ id: string }>()

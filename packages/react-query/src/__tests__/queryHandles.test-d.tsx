@@ -1,6 +1,7 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import {
   QueryClient,
+  experimental_ensureQueryHandle,
   experimental_fromHandle,
   experimental_queryHandle,
   experimental_queryHandleAsync,
@@ -59,17 +60,21 @@ describe('query handles', () => {
         // @ts-expect-error the factory takes no input
         experimental_queryHandle(queryClient, viewerQuery, { id: '1' }),
       )
+      assertType(
+        // @ts-expect-error the input has the wrong shape
+        experimental_ensureQueryHandle(queryClient, postQuery, { id: 1 }),
+      )
     })
 
     it("should not take a factory's other parameters, which the handle can't carry", async () => {
       const optionsQuery = (
         input: { id: string },
-        opts?: { enabled?: boolean },
+        opts?: { staleTime?: number },
       ) =>
         queryOptions({
           queryKey: ['post', input.id] as const,
           queryFn: () => Promise.resolve(input.id),
-          enabled: opts?.enabled,
+          staleTime: opts?.staleTime,
         })
 
       assertType(
@@ -81,7 +86,7 @@ describe('query handles', () => {
           optionsQuery,
           { id: '1' },
           // @ts-expect-error the handle only carries the input
-          { enabled: false },
+          { staleTime: 60_000 },
         ),
       )
       assertType(
@@ -90,97 +95,21 @@ describe('query handles', () => {
           optionsQuery,
           { id: '1' },
           // @ts-expect-error the handle only carries the input
-          { enabled: false },
-        ),
-      )
-      const opts = { enabled: false }
-      // @ts-expect-error the handle only carries the input
-      assertType(experimental_waterfallHandle(optionsQuery, { id: '1' }, opts))
-    })
-
-    it('should take a staleTime for the call, and nothing else', async () => {
-      assertType(
-        experimental_queryHandle(
-          queryClient,
-          postQuery,
-          { id: '1' },
-          { staleTime: 'static' },
-        ),
-      )
-      assertType(
-        await experimental_queryHandleAsync(
-          queryClient,
-          postQuery,
-          { id: '1' },
           { staleTime: 60_000 },
         ),
       )
       assertType(
-        experimental_queryHandle(
+        await experimental_ensureQueryHandle(
           queryClient,
-          postQuery,
+          optionsQuery,
           { id: '1' },
-          {
-            staleTime: (query) => {
-              expectTypeOf(query.state.data).toEqualTypeOf<Post | undefined>()
-              return 0
-            },
-          },
+          // @ts-expect-error the handle only carries the input
+          { staleTime: 60_000 },
         ),
       )
-      assertType(
-        experimental_queryHandle(queryClient, viewerQuery, undefined, {
-          staleTime: 'static',
-        }),
-      )
-
-      assertType(
-        experimental_queryHandle(
-          queryClient,
-          postQuery,
-          { id: '1' },
-          // @ts-expect-error only staleTime applies to one call
-          { enabled: false },
-        ),
-      )
-      assertType(
-        await experimental_queryHandleAsync(
-          queryClient,
-          postQuery,
-          { id: '1' },
-          // @ts-expect-error only staleTime applies to one call
-          { staleTime: 'static', gcTime: 0 },
-        ),
-      )
-      assertType(
-        experimental_queryHandle(
-          queryClient,
-          postQuery,
-          { id: '1' },
-          // @ts-expect-error not a staleTime
-          { staleTime: 'forever' },
-        ),
-      )
-      assertType(
-        // @ts-expect-error a factory without input takes undefined before the options
-        experimental_queryHandle(queryClient, viewerQuery, {
-          staleTime: 'static',
-        }),
-      )
-    })
-
-    it("should keep the call's staleTime out of the handle's type", async () => {
-      const handle = await experimental_queryHandleAsync(
-        queryClient,
-        postQuery,
-        { id: '1' },
-        { staleTime: 'static' },
-      )
-
-      expectTypeOf(handle).toEqualTypeOf<
-        experimental_QueryHandle<typeof postQuery>
-      >()
-      expectTypeOf(handle).not.toHaveProperty('staleTime')
+      const opts = { staleTime: 60_000 }
+      // @ts-expect-error the handle only carries the input
+      assertType(experimental_waterfallHandle(optionsQuery, { id: '1' }, opts))
     })
 
     it('should take an optional input', () => {
@@ -243,9 +172,16 @@ describe('query handles', () => {
         queryClient,
         viewerQuery,
       )
+      const ensured = await experimental_ensureQueryHandle(
+        queryClient,
+        viewerQuery,
+      )
 
       expectTypeOf(post).toEqualTypeOf<
         experimental_QueryHandle<typeof postQuery>
+      >()
+      expectTypeOf(ensured).toEqualTypeOf<
+        experimental_QueryHandle<typeof viewerQuery>
       >()
       expectTypeOf(viewer).toEqualTypeOf<
         experimental_QueryHandle<typeof viewerQuery>
@@ -266,8 +202,16 @@ describe('query handles', () => {
           id: '1',
         },
       )
+      const ensured = await experimental_ensureQueryHandle(
+        queryClient,
+        postQuery,
+        { id: '1' },
+      )
       const waterfall = experimental_waterfallHandle(postQuery, { id: '1' })
 
+      expectTypeOf(
+        useQuery(experimental_fromHandle(postQuery, ensured)).data,
+      ).toEqualTypeOf<Post | undefined>()
       expectTypeOf(
         useQuery(experimental_fromHandle(postQuery, started)).data,
       ).toEqualTypeOf<Post | undefined>()
@@ -290,8 +234,16 @@ describe('query handles', () => {
           id: '1',
         },
       )
+      const ensured = await experimental_ensureQueryHandle(
+        queryClient,
+        postQuery,
+        { id: '1' },
+      )
       const waterfall = experimental_waterfallHandle(postQuery, { id: '1' })
 
+      expectTypeOf(
+        useSuspenseQuery(experimental_fromHandle(postQuery, ensured)).data,
+      ).toEqualTypeOf<Post>()
       expectTypeOf(
         useSuspenseQuery(experimental_fromHandle(postQuery, started)).data,
       ).toEqualTypeOf<Post>()
