@@ -1097,7 +1097,7 @@ describe('dehydration and rehydration', () => {
     })
   })
 
-  it("should use the observer's retryDelay when a hydrated query rejects", async () => {
+  it("should retry a hydrated query that rejects with the observer's retry and retryDelay", async () => {
     const key = createKey()
     const serverClient = new QueryClient({
       defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
@@ -1109,26 +1109,29 @@ describe('dehydration and rehydration', () => {
         retry: false,
       })
       .catch(noop)
-    const queryClient = new QueryClient()
-    hydrate(queryClient, dehydrate(serverClient))
+    const browserClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    })
+    hydrate(browserClient, dehydrate(serverClient))
 
-    const observer = new QueryObserver(queryClient, {
+    const observer = new QueryObserver(browserClient, {
       queryKey: key,
-      queryFn: () => sleep(10).then(() => 'data'),
+      queryFn: () => sleep(10).then(() => 'browser data'),
       retry: 1,
       retryDelay: 10,
     })
     const unsubscribe = observer.subscribe(noop)
 
+    // rejects at 10ms, retries at 20ms, resolves at 30ms
     await vi.advanceTimersByTimeAsync(30)
-    expect(queryClient.getQueryData(key)).toBe('data')
+    expect(browserClient.getQueryData(key)).toBe('browser data')
 
     unsubscribe()
-    queryClient.clear()
+    browserClient.clear()
     serverClient.clear()
   })
 
-  it("should use the observer's retry when a hydrated query rejects", async () => {
+  it('should not retry a hydrated query that rejects when the observer sets retry: false', async () => {
     const key = createKey()
     const serverClient = new QueryClient({
       defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
@@ -1140,21 +1143,23 @@ describe('dehydration and rehydration', () => {
         retry: false,
       })
       .catch(noop)
-    const queryClient = new QueryClient()
-    hydrate(queryClient, dehydrate(serverClient))
+    const browserClient = new QueryClient({
+      defaultOptions: { queries: { retry: 1 } },
+    })
+    hydrate(browserClient, dehydrate(serverClient))
 
-    const observer = new QueryObserver(queryClient, {
+    const observer = new QueryObserver(browserClient, {
       queryKey: key,
-      queryFn: () => sleep(10).then(() => 'data'),
+      queryFn: () => sleep(10).then(() => 'browser data'),
       retry: false,
     })
     const unsubscribe = observer.subscribe(noop)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getQueryState(key)?.status).toBe('error')
+    expect(browserClient.getQueryState(key)?.status).toBe('error')
 
     unsubscribe()
-    queryClient.clear()
+    browserClient.clear()
     serverClient.clear()
   })
 
@@ -1170,24 +1175,24 @@ describe('dehydration and rehydration', () => {
         retry: false,
       })
       .catch(noop)
-    const queryClient = new QueryClient({
+    const browserClient = new QueryClient({
       defaultOptions: { queries: { retry: 1, retryDelay: 10 } },
     })
-    hydrate(queryClient, dehydrate(serverClient), {
+    hydrate(browserClient, dehydrate(serverClient), {
       defaultOptions: { queries: { retry: false } },
     })
 
-    const observer = new QueryObserver(queryClient, {
+    const observer = new QueryObserver(browserClient, {
       queryKey: key,
-      queryFn: () => sleep(10).then(() => 'data'),
+      queryFn: () => sleep(10).then(() => 'browser data'),
     })
     const unsubscribe = observer.subscribe(noop)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getQueryState(key)?.status).toBe('error')
+    expect(browserClient.getQueryState(key)?.status).toBe('error')
 
     unsubscribe()
-    queryClient.clear()
+    browserClient.clear()
     serverClient.clear()
   })
 
