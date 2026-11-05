@@ -1,5 +1,14 @@
 # @tanstack/solid-query-devtools
 
+## 5.106.1
+
+### Patch Changes
+
+- [#12524](https://github.com/TanStack/query/pull/12524) [`f078a2b`](https://github.com/TanStack/query/commit/f078a2b2c81a3a278448e3c64de2dc773cab0ffa) - fix(solid-query-devtools): replace 'clientOnly' with a 'process.env.NODE_ENV' gate to fix hydration mismatch
+- Updated dependencies [[`c4ed956`](https://github.com/TanStack/query/commit/c4ed956bb97e381a2875e59f134bb99eecb92a02)]:
+  - @tanstack/query-devtools@5.106.1
+  - @tanstack/solid-query@5.106.1
+
 ## 5.106.0
 
 ### Patch Changes
