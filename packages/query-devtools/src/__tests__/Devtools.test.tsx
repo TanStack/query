@@ -1025,6 +1025,19 @@ describe('Devtools', () => {
         pipDocument.querySelector('[aria-label*="narrow-pip-query"]'),
       ).not.toBeNull()
     })
+
+    it('should render the PiP panel with "dir" set to "ltr"', () => {
+      const { pipDocument } = stubPipWindow()
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+      expect(pipDocument.querySelector('.tsqd-main-panel')).toHaveAttribute(
+        'dir',
+        'ltr',
+      )
+    })
   })
 
   describe('status counts', () => {
@@ -1784,6 +1797,118 @@ describe('Devtools', () => {
         localStorage.getItem('TanstackQueryDevtools.hideDisabledQueries'),
       ).toBe('true')
     })
+  })
+
+  describe('text direction', () => {
+    it('should render the floating devtools with "dir" set to "ltr"', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.container.querySelector('.tsqd-transitions-container'),
+      ).toHaveAttribute('dir', 'ltr')
+    })
+
+    it('should render the embedded panel with "dir" set to "ltr"', () => {
+      const rendered = render(() => (
+        <DevtoolsPanelComponent
+          client={queryClient}
+          onlineManager={onlineManager}
+          queryFlavor="TanStack Query"
+          version="5"
+        />
+      ))
+
+      expect(
+        rendered.container.querySelector('.tsqd-main-panel'),
+      ).toHaveAttribute('dir', 'ltr')
+    })
+
+    it('should render the settings menu with "dir" set to "ltr"', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+        key: 'Enter',
+      })
+
+      expect(document.querySelector('.tsqd-settings-menu')).toHaveAttribute(
+        'dir',
+        'ltr',
+      )
+    })
+
+    it.each(['position', 'theme', 'disabled-queries'])(
+      'should render the "%s" sub-menu with "dir" set to "ltr"',
+      (name) => {
+        const rendered = renderDevtools({ initialIsOpen: true })
+
+        fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+          key: 'Enter',
+        })
+
+        const subTrigger = document.querySelector<HTMLElement>(
+          `.tsqd-settings-menu-sub-trigger-${name}`,
+        )
+        expect(subTrigger).not.toBeNull()
+        fireEvent.keyDown(subTrigger!, { key: 'ArrowRight' })
+
+        expect(
+          document.querySelector('.tsqd-settings-submenu'),
+        ).toHaveAttribute('dir', 'ltr')
+      },
+    )
+
+    it.each([
+      ['position', 'full'],
+      ['theme', 'full'],
+      ['disabled-queries', 'full'],
+      ['theme', 'embedded'],
+      ['disabled-queries', 'embedded'],
+    ] as const)(
+      'should open the "%s" sub-menu with "ArrowRight" in the %s devtools when the browser language is RTL',
+      (name, mode) => {
+        const rendered = render(() =>
+          mode === 'full' ? (
+            <DevtoolsComponent
+              client={queryClient}
+              onlineManager={onlineManager}
+              queryFlavor="TanStack Query"
+              version="5"
+              initialIsOpen
+            />
+          ) : (
+            <DevtoolsPanelComponent
+              client={queryClient}
+              onlineManager={onlineManager}
+              queryFlavor="TanStack Query"
+              version="5"
+            />
+          ),
+        )
+        const language = vi
+          .spyOn(navigator, 'language', 'get')
+          .mockReturnValue('ar')
+        window.dispatchEvent(new Event('languagechange'))
+
+        try {
+          fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+            key: 'Enter',
+          })
+
+          const subTrigger = document.querySelector<HTMLElement>(
+            `.tsqd-settings-menu-sub-trigger-${name}`,
+          )
+          expect(subTrigger).not.toBeNull()
+          fireEvent.keyDown(subTrigger!, { key: 'ArrowRight' })
+
+          expect(
+            document.querySelector('.tsqd-settings-submenu'),
+          ).toHaveAttribute('dir', 'ltr')
+        } finally {
+          language.mockRestore()
+          window.dispatchEvent(new Event('languagechange'))
+        }
+      },
+    )
   })
 
   describe('resize handle', () => {

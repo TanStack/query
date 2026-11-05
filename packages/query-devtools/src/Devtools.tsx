@@ -236,6 +236,7 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
           `,
           'tsqd-transitions-container',
         )}
+        dir="ltr"
         ref={transitionsContainerRef}
       >
         <TransitionGroup name="tsqd-panel-transition">
@@ -324,6 +325,7 @@ const PiPPanel: Component<{
 
   return (
     <div
+      dir="ltr"
       style={{
         '--tsqd-font-size': '16px',
         'max-height': '100vh',
@@ -393,6 +395,7 @@ export const ParentPanel: Component<{
 
   return (
     <div
+      dir="ltr"
       style={{
         '--tsqd-font-size': '16px',
       }}
@@ -1123,6 +1126,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                 }
               >
                 <DropdownMenu.Content
+                  dir="ltr"
                   class={cx(styles().settingsMenu, 'tsqd-settings-menu')}
                 >
                   <div
@@ -1154,6 +1158,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                         }
                       >
                         <DropdownMenu.SubContent
+                          dir="ltr"
                           class={cx(
                             styles().settingsMenu,
                             'tsqd-settings-submenu',
@@ -1235,6 +1240,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                       }
                     >
                       <DropdownMenu.SubContent
+                        dir="ltr"
                         class={cx(
                           styles().settingsMenu,
                           'tsqd-settings-submenu',
@@ -1304,6 +1310,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                       }
                     >
                       <DropdownMenu.SubContent
+                        dir="ltr"
                         class={cx(
                           styles().settingsMenu,
                           'tsqd-settings-submenu',

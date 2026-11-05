@@ -1,4 +1,5 @@
 import { createLocalStorage } from '@solid-primitives/storage'
+import { I18nProvider } from '@kobalte/core'
 import { createMemo } from 'solid-js'
 import { DevtoolsOfflineProvider } from './providers/DevtoolsOfflineProvider'
 import { DevtoolsSubscriptionsProvider } from './providers/DevtoolsSubscriptionsProvider'
@@ -32,10 +33,12 @@ const DevtoolsComponent: DevtoolsComponentType = (props) => {
           <DevtoolsSubscriptionsProvider>
             <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
               <ThemeContext.Provider value={theme}>
-                <Devtools
-                  localStore={localStore}
-                  setLocalStore={setLocalStore}
-                />
+                <I18nProvider locale="en-US">
+                  <Devtools
+                    localStore={localStore}
+                    setLocalStore={setLocalStore}
+                  />
+                </I18nProvider>
               </ThemeContext.Provider>
             </PiPProvider>
           </DevtoolsSubscriptionsProvider>
