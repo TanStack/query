@@ -7,8 +7,10 @@ import {
 } from '..'
 import type {
   QueryClient,
+  StaleTime,
   experimental_FromHandleOptions,
   experimental_QueryHandle,
+  experimental_QueryHandleCallOptions,
   experimental_QueryHandleFactory,
 } from '..'
 
@@ -80,7 +82,9 @@ type DecorateInfiniteProcedure<
       >
       $infiniteQueryHandleAsync: (
         input: Omit<TInput, 'cursor'>,
-        opts?: { pages?: number },
+        opts?: { pages?: number } & experimental_QueryHandleCallOptions<
+          ProcedureInfiniteQueryOptions<TPath, TInput, TOutput>
+        >,
       ) => Promise<
         experimental_QueryHandle<
           ProcedureInfiniteQueryOptions<TPath, TInput, TOutput>
@@ -96,9 +100,15 @@ type DecorateProcedure<
   queryOptions: ProcedureQueryOptions<TPath, TProcedure>
   $queryHandle: (
     input: InputOf<TProcedure>,
+    callOptions?: experimental_QueryHandleCallOptions<
+      ProcedureQueryOptions<TPath, TProcedure>
+    >,
   ) => experimental_QueryHandle<ProcedureQueryOptions<TPath, TProcedure>>
   $queryHandleAsync: (
     input: InputOf<TProcedure>,
+    callOptions?: experimental_QueryHandleCallOptions<
+      ProcedureQueryOptions<TPath, TProcedure>
+    >,
   ) => Promise<
     experimental_QueryHandle<ProcedureQueryOptions<TPath, TProcedure>>
   >
@@ -180,11 +190,19 @@ export function createOptionsProxy<TRouter extends AnyRouter>(
     return {
       queryOptions: factory,
       infiniteQueryOptions: infiniteFactory,
-      $queryHandle: (input: unknown) =>
-        experimental_queryHandle(queryClient, factory, input),
-      $queryHandleAsync: (input: unknown) =>
-        experimental_queryHandleAsync(queryClient, factory, input),
-      $infiniteQueryHandleAsync: (input: object, opts?: { pages?: number }) =>
+      $queryHandle: (
+        input: unknown,
+        callOptions?: experimental_QueryHandleCallOptions<typeof factory>,
+      ) => experimental_queryHandle(queryClient, factory, input, callOptions),
+      $queryHandleAsync: (
+        input: unknown,
+        callOptions?: experimental_QueryHandleCallOptions<typeof factory>,
+      ) =>
+        experimental_queryHandleAsync(queryClient, factory, input, callOptions),
+      $infiniteQueryHandleAsync: (
+        input: object,
+        opts?: { pages?: number; staleTime?: StaleTime },
+      ) =>
         experimental_queryHandleAsync(
           queryClient,
           (pageInput: object) => ({
@@ -192,6 +210,7 @@ export function createOptionsProxy<TRouter extends AnyRouter>(
             pages: opts?.pages,
           }),
           input,
+          { staleTime: opts?.staleTime },
         ),
     }
   }

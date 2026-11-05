@@ -64,12 +64,12 @@ describe('query handles', () => {
     it("should not take a factory's other parameters, which the handle can't carry", async () => {
       const optionsQuery = (
         input: { id: string },
-        opts?: { staleTime?: number },
+        opts?: { enabled?: boolean },
       ) =>
         queryOptions({
           queryKey: ['post', input.id] as const,
           queryFn: () => Promise.resolve(input.id),
-          staleTime: opts?.staleTime,
+          enabled: opts?.enabled,
         })
 
       assertType(
@@ -81,7 +81,7 @@ describe('query handles', () => {
           optionsQuery,
           { id: '1' },
           // @ts-expect-error the handle only carries the input
-          { staleTime: 60_000 },
+          { enabled: false },
         ),
       )
       assertType(
@@ -90,12 +90,97 @@ describe('query handles', () => {
           optionsQuery,
           { id: '1' },
           // @ts-expect-error the handle only carries the input
+          { enabled: false },
+        ),
+      )
+      const opts = { enabled: false }
+      // @ts-expect-error the handle only carries the input
+      assertType(experimental_waterfallHandle(optionsQuery, { id: '1' }, opts))
+    })
+
+    it('should take a staleTime for the call, and nothing else', async () => {
+      assertType(
+        experimental_queryHandle(
+          queryClient,
+          postQuery,
+          { id: '1' },
+          { staleTime: 'static' },
+        ),
+      )
+      assertType(
+        await experimental_queryHandleAsync(
+          queryClient,
+          postQuery,
+          { id: '1' },
           { staleTime: 60_000 },
         ),
       )
-      const opts = { staleTime: 60_000 }
-      // @ts-expect-error the handle only carries the input
-      assertType(experimental_waterfallHandle(optionsQuery, { id: '1' }, opts))
+      assertType(
+        experimental_queryHandle(
+          queryClient,
+          postQuery,
+          { id: '1' },
+          {
+            staleTime: (query) => {
+              expectTypeOf(query.state.data).toEqualTypeOf<Post | undefined>()
+              return 0
+            },
+          },
+        ),
+      )
+      assertType(
+        experimental_queryHandle(queryClient, viewerQuery, undefined, {
+          staleTime: 'static',
+        }),
+      )
+
+      assertType(
+        experimental_queryHandle(
+          queryClient,
+          postQuery,
+          { id: '1' },
+          // @ts-expect-error only staleTime applies to one call
+          { enabled: false },
+        ),
+      )
+      assertType(
+        await experimental_queryHandleAsync(
+          queryClient,
+          postQuery,
+          { id: '1' },
+          // @ts-expect-error only staleTime applies to one call
+          { staleTime: 'static', gcTime: 0 },
+        ),
+      )
+      assertType(
+        experimental_queryHandle(
+          queryClient,
+          postQuery,
+          { id: '1' },
+          // @ts-expect-error not a staleTime
+          { staleTime: 'forever' },
+        ),
+      )
+      assertType(
+        // @ts-expect-error a factory without input takes undefined before the options
+        experimental_queryHandle(queryClient, viewerQuery, {
+          staleTime: 'static',
+        }),
+      )
+    })
+
+    it("should keep the call's staleTime out of the handle's type", async () => {
+      const handle = await experimental_queryHandleAsync(
+        queryClient,
+        postQuery,
+        { id: '1' },
+        { staleTime: 'static' },
+      )
+
+      expectTypeOf(handle).toEqualTypeOf<
+        experimental_QueryHandle<typeof postQuery>
+      >()
+      expectTypeOf(handle).not.toHaveProperty('staleTime')
     })
 
     it('should take an optional input', () => {

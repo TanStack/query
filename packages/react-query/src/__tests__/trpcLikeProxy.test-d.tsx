@@ -44,6 +44,29 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
     assertType(trpc['post.byId'].$infiniteQueryHandleAsync)
   })
 
+  it("should pass a call's staleTime through, and nothing else", async () => {
+    assertType(trpc['post.byId'].$queryHandle({ id: '1' }, { staleTime: 0 }))
+    assertType(
+      await trpc['post.byId'].$queryHandleAsync(
+        { id: '1' },
+        { staleTime: 'static' },
+      ),
+    )
+    assertType(
+      await trpc.feed.$infiniteQueryHandleAsync(
+        { limit: 2 },
+        { pages: 2, staleTime: 'static' },
+      ),
+    )
+    assertType(
+      trpc['post.byId'].$queryHandle(
+        { id: '1' },
+        // @ts-expect-error only staleTime applies to one call
+        { enabled: false },
+      ),
+    )
+  })
+
   it('should give awaited handles the same plain type as handles that are not awaited', async () => {
     const post = await trpc['post.byId'].$queryHandleAsync({ id: '1' })
     const feed = await trpc.feed.$infiniteQueryHandleAsync(

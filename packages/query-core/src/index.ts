@@ -55,6 +55,7 @@ export type {
   FromHandleOptions as experimental_FromHandleOptions,
   InferQueryHandleData as experimental_InferQueryHandleData,
   QueryHandle as experimental_QueryHandle,
+  QueryHandleCallOptions as experimental_QueryHandleCallOptions,
   QueryHandleFactory as experimental_QueryHandleFactory,
 } from './handles'
 
