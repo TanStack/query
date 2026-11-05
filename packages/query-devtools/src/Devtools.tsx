@@ -52,7 +52,7 @@ import {
   Wifi,
   XCircle,
 } from './icons'
-import Explorer from './Explorer'
+import Explorer, { SearchableExplorer } from './Explorer'
 import { VirtualList } from './VirtualList'
 import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
 import {
@@ -2218,7 +2218,8 @@ const QueryDetails = () => {
             }}
             class="tsqd-query-details-explorer-container tsqd-query-details-data-explorer"
           >
-            <Explorer
+            <SearchableExplorer
+              searchKey={activeQuery()}
               label="Data"
               defaultExpanded={['Data']}
               value={activeQueryStateData()}
@@ -2473,7 +2474,8 @@ const MutationDetails = () => {
           }}
           class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
         >
-          <Explorer
+          <SearchableExplorer
+            searchKey={activeMutation()}
             label="Data"
             defaultExpanded={['Data']}
             value={activeMutation()!.state.data}

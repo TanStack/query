@@ -10,14 +10,14 @@
     "test:types": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^5.105.3",
-    "@tanstack/vue-query-devtools": "^6.3.9",
+    "@tanstack/vue-query": "^5.106.0",
+    "@tanstack/vue-query-devtools": "^6.3.10",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.2",
     "vue": "^3.5.44"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.105.3",
+    "@tanstack/eslint-plugin-query": "^5.106.0",
     "@vitejs/plugin-vue": "^6.0.9",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.12.0",

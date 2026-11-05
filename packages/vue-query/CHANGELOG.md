@@ -1,5 +1,15 @@
 # @tanstack/vue-query
 
+## 5.106.0
+
+### Patch Changes
+
+- [#12525](https://github.com/TanStack/query/pull/12525) [`e712412`](https://github.com/TanStack/query/commit/e7124128ccab29f8dbbbdf1297df05aa13171b6d) - Accept reactive query options in Vue QueryClient execution methods.
+
+- [#12226](https://github.com/TanStack/query/pull/12226) [`3ccb007`](https://github.com/TanStack/query/commit/3ccb007cbda7bc44b0c449ff20e5533422ef5c85) - fix(vue-query/queryClient): preserve union narrowing in 'setQueryData' updaters for tagged query keys
+- Updated dependencies []:
+  - @tanstack/query-core@5.106.0
+
 ## 5.105.3
 
 ### Patch Changes

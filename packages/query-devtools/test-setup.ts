@@ -12,6 +12,8 @@ const isList = (element: HTMLElement) =>
   )
 
 beforeEach(() => {
+  vi.stubGlobal('CSS', { ...globalThis.CSS, highlights: new Map() })
+  vi.stubGlobal('Highlight', Set)
   vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(
     function (this: HTMLElement) {
       return isList(this) ? 410 : 0
@@ -55,6 +57,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup()
+  vi.unstubAllGlobals()
   if (scrollToDescriptor) {
     Object.defineProperty(HTMLElement.prototype, 'scrollTo', scrollToDescriptor)
   } else {
