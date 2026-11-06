@@ -62,12 +62,12 @@ import {
 
 export async function loader({ params }) {
   return {
-    // The page can't render without the viewer, so wait for it
-    viewer: await experimental_queryHandleAsync(queryClient, viewerQuery),
     // Start the post without waiting, and stream it in
     post: experimental_queryHandle(queryClient, postQuery, {
       id: params.id,
     }),
+    // The page can't render without the viewer, so wait for it
+    viewer: await experimental_queryHandleAsync(queryClient, viewerQuery),
   }
 }
 ```
@@ -130,6 +130,52 @@ export async function loader({ params }) {
 > Use the data for decisions in the loader, like throwing `notFound()` or redirecting. Don't build other queries' inputs from it: those queries would wait for this one, which is a waterfall. Start independent handles before you await.
 
 `experimental_getQueryHandleData` never fetches, waits or creates a query. It returns what the factory's `select` returns, or else the `queryFn`'s data.
+
+### Pitfalls
+
+**Awaiting one handle after another.** Each `await` waits for its query before the next one starts:
+
+[//]: # 'SequentialAwaits'
+
+```tsx
+// The viewer starts only after the post has loaded
+const post = await experimental_ensureQueryHandle(queryClient, postQuery, {
+  id,
+})
+const viewer = await experimental_queryHandleAsync(queryClient, viewerQuery)
+```
+
+[//]: # 'SequentialAwaits'
+
+Await them together instead:
+
+[//]: # 'PromiseAll'
+
+```tsx
+const [post, viewer] = await Promise.all([
+  experimental_ensureQueryHandle(queryClient, postQuery, { id }),
+  experimental_queryHandleAsync(queryClient, viewerQuery),
+])
+```
+
+[//]: # 'PromiseAll'
+
+[`Promise.allKeyed`](https://github.com/tc39/proposal-await-dictionary), a Stage 3 TC39 proposal, does the same with named results. Only Firefox ships it so far, so elsewhere you need a polyfill such as core-js:
+
+[//]: # 'PromiseAllKeyed'
+
+```tsx
+const { post, viewer } = await Promise.allKeyed({
+  post: experimental_ensureQueryHandle(queryClient, postQuery, { id }),
+  viewer: experimental_queryHandleAsync(queryClient, viewerQuery),
+})
+```
+
+[//]: # 'PromiseAllKeyed'
+
+**Starting a handle after an await.** `experimental_queryHandle` doesn't wait, but it only starts when the loader reaches it, and after an `await` that is late. Start every handle before the first `await`.
+
+**Building another query's input from awaited data.** See the warning in [Reading awaited data in a loader](#reading-awaited-data-in-a-loader).
 
 ## Reading handles
 
