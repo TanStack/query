@@ -4,7 +4,7 @@ import {
   inject,
   output,
 } from '@angular/core'
-import { QueryClient, injectQuery } from '@tanstack/angular-query-experimental'
+import { QueryClient, injectQuery } from '@tanstack/angular-query'
 import { PostsQueries } from '../services/posts/queries'
 
 @Component({

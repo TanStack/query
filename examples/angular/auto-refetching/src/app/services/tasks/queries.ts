@@ -1,8 +1,5 @@
 import { Injectable, inject } from '@angular/core'
-import {
-  mutationOptions,
-  queryOptions,
-} from '@tanstack/angular-query-experimental'
+import { mutationOptions, queryOptions } from '@tanstack/angular-query'
 import { lastValueFrom } from 'rxjs'
 import { TasksAPI } from './api'
 

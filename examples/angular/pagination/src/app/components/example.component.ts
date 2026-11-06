@@ -11,7 +11,7 @@ import {
   injectQuery,
   keepPreviousData,
   noop,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 import { ProjectsQueries } from '../services/projects/queries'
 
 @Component({

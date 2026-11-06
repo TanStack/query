@@ -4,7 +4,7 @@ import {
   computed,
   inject,
 } from '@angular/core'
-import { injectInfiniteQuery } from '@tanstack/angular-query-experimental'
+import { injectInfiniteQuery } from '@tanstack/angular-query'
 import { ProjectStyleDirective } from '../directives/project-style.directive'
 import { ProjectsQueries } from '../services/projects/queries'
 

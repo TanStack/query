@@ -11,79 +11,129 @@ title: Devtools
 
 ## Enable devtools
 
+Add the devtools package (in addition to `@tanstack/angular-query`):
+
+```bash
+npm install @tanstack/angular-query-devtools
+```
+
 The devtools help you debug and inspect your queries and mutations. You can enable the devtools by adding `withDevtools` to `provideTanStackQuery`.
 
-By default, Angular Query Devtools are only included in development mode bundles, so you don't need to worry about excluding them during a production build.
+By default, Angular Query Devtools only load in development.
 
 ```ts
-import {
-  QueryClient,
-  provideTanStackQuery,
-} from '@tanstack/angular-query-experimental'
+import { QueryClient, provideTanStackQuery } from '@tanstack/angular-query'
 
-import { withDevtools } from '@tanstack/angular-query-experimental/devtools'
+import { withDevtools } from '@tanstack/angular-query-devtools'
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideTanStackQuery(new QueryClient(), withDevtools())],
+  providers: [provideTanStackQuery(() => new QueryClient(), withDevtools())],
 }
 ```
 
 ## Devtools in production
 
-Devtools are automatically excluded from production builds. However, it might be desirable to lazy load the devtools in production.
-
-To use `withDevtools` in production builds, import using the `production` sub-path. The function exported from the production subpath is identical to the main one, but won't be excluded from production builds.
+If you need the real implementation in production, import from the `production` entrypoint.
 
 ```ts
-import { withDevtools } from '@tanstack/angular-query-experimental/devtools/production'
+import { withDevtools } from '@tanstack/angular-query-devtools/production'
 ```
 
-To control when devtools are loaded, you can use the `loadDevtools` option.
+To control when devtools are rendered, use the `loadDevtools` option.
 
-When not setting the option or setting it to 'auto', the devtools will be loaded automatically only when Angular runs in development mode.
+When omitted or set to `'auto'`, devtools are only rendered in development mode.
 
 ```ts
-import { withDevtools } from '@tanstack/angular-query-experimental/devtools'
+import { withDevtools } from '@tanstack/angular-query-devtools'
 
-provideTanStackQuery(new QueryClient(), withDevtools())
+providers: [provideTanStackQuery(() => new QueryClient(), withDevtools())]
 
 // which is equivalent to
-provideTanStackQuery(
-  new QueryClient(),
-  withDevtools(() => ({ loadDevtools: 'auto' })),
-)
+providers: [
+  provideTanStackQuery(
+    () => new QueryClient(),
+    withDevtools(() => ({ loadDevtools: 'auto' })),
+  ),
+]
 ```
 
-When setting the option to true, the devtools will be loaded in both development and production mode.
+When setting the option to true, the devtools will be rendered in both development and production mode.
 
 This is useful if you want to load devtools based on [Angular environment configurations](https://angular.dev/tools/cli/environments). E.g. you could set this to true when the application is running on your production build staging environment.
 
 ```ts
 import { environment } from './environments/environment'
 // Make sure to use the production sub-path to load devtools in production builds
-import { withDevtools } from '@tanstack/angular-query-experimental/devtools/production'
+import { withDevtools } from '@tanstack/angular-query-devtools/production'
 
-provideTanStackQuery(
-  new QueryClient(),
-  withDevtools(() => ({ loadDevtools: environment.loadDevtools })),
-)
+providers: [
+  provideTanStackQuery(
+    () => new QueryClient(),
+    withDevtools(() => ({ loadDevtools: environment.loadDevtools })),
+  ),
+]
 ```
 
-When setting the option to false, the devtools will not be loaded.
+When setting the option to false, the devtools will not be rendered.
 
 ```ts
-provideTanStackQuery(
-  new QueryClient(),
-  withDevtools(() => ({ loadDevtools: false })),
-)
+providers: [
+  provideTanStackQuery(
+    () => new QueryClient(),
+    withDevtools(() => ({ loadDevtools: false })),
+  ),
+]
 ```
 
-## Derive options through reactivity
+### Webpack file replacements
 
-Options are passed to `withDevtools` from a callback function to support reactivity through signals. In the following example
-a signal is created from a RxJS observable that emits on a keyboard shortcut. When the derived signal is set to true, the devtools are lazily loaded.
+Some webpack-based Angular builders do not apply package export conditions when
+they bundle application code. Use the explicit `production` and `stub`
+entrypoints with Angular CLI file replacements to keep the devtools dependency
+out of production bundles.
 
-The example below always loads devtools in development mode and loads on-demand in production mode when a keyboard shortcut is pressed.
+Create an application-level import that can be replaced:
+
+```ts
+// src/app/query-devtools.ts
+export { withDevtools } from '@tanstack/angular-query-devtools/production'
+```
+
+```ts
+// src/app/query-devtools.stub.ts
+export { withDevtools } from '@tanstack/angular-query-devtools/stub'
+```
+
+Import the application-level module from your config:
+
+```ts
+import { withDevtools } from './query-devtools'
+```
+
+Then configure the production build:
+
+```json
+{
+  "configurations": {
+    "production": {
+      "fileReplacements": [
+        {
+          "replace": "src/app/query-devtools.ts",
+          "with": "src/app/query-devtools.stub.ts"
+        }
+      ]
+    }
+  }
+}
+```
+
+The same pattern is available for the programmatic panel:
+`@tanstack/angular-query-devtools/devtools-panel/production` and
+`@tanstack/angular-query-devtools/devtools-panel/stub`.
+
+## Reactive options
+
+Mutable options can be Angular signals. For example, a signal derived from a keyboard shortcut can show devtools on demand:
 
 ```ts
 import { Injectable, isDevMode } from '@angular/core'
@@ -107,29 +157,23 @@ export class DevtoolsOptionsManager {
 }
 ```
 
-If you want to use an injectable such as a service in the callback you can use `deps`. The injected value will be passed as parameter to the callback function.
-
-This is similar to `deps` in Angular's [`useFactory`](https://angular.dev/guide/di/dependency-injection-providers#factory-providers-usefactory) provider.
+The callback runs once in an Angular injection context, so it can call
+`inject()`. Return signals as option values to update them reactively:
 
 ```ts
 // ...
-// 👇 Note we import from the production sub-path to enable devtools lazy loading in production builds
-import { withDevtools } from '@tanstack/angular-query-experimental/devtools/production'
+// 👇 Import from the production sub-path to make devtools available in production builds
+import { inject } from '@angular/core'
+import { withDevtools } from '@tanstack/angular-query-devtools/production'
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(),
     provideTanStackQuery(
-      new QueryClient(),
-      withDevtools(
-        (devToolsOptionsManager: DevtoolsOptionsManager) => ({
-          loadDevtools: devToolsOptionsManager.loadDevtools(),
-        }),
-        {
-          // `deps` is used to inject and pass `DevtoolsOptionsManager` to the `withDevtools` callback.
-          deps: [DevtoolsOptionsManager],
-        },
-      ),
+      () => new QueryClient(),
+      withDevtools(() => ({
+        loadDevtools: inject(DevtoolsOptionsManager).loadDevtools,
+      })),
     ),
   ],
 }
@@ -137,11 +181,16 @@ export const appConfig: ApplicationConfig = {
 
 ### Options returned from the callback
 
-Of these options `loadDevtools`, `client`, `position`, `errorTypes`, `buttonPosition`, `initialIsOpen`, and `theme` support reactivity through signals.
+`loadDevtools`, `client`, `position`, `errorTypes`, `buttonPosition`,
+`initialIsOpen`, and `theme` accept either their documented static value or a
+signal containing that value.
+
+`styleNonce`, `shadowDOMTarget`, and `hideDisabledQueries` are construction-time
+options and do not accept signals.
 
 - `loadDevtools?: 'auto' | boolean`
-  - Defaults to `auto`: lazily loads devtools when in development mode. Skips loading in production mode.
-  - Use this to control if the devtools are loaded.
+  - Omit or `'auto'`: load devtools only in development mode.
+  - Use this to control whether devtools load when using the `/production` import.
 - `initialIsOpen?: Boolean`
   - Set this to `true` if you want the tools to default to being open
 - `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "relative"`
@@ -161,67 +210,7 @@ Of these options `loadDevtools`, `client`, `position`, `errorTypes`, `buttonPosi
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
 - `hideDisabledQueries?: boolean`
-  - Defaults to `false`.
   - Set this to true to hide disabled queries from the devtools panel.
 - `theme?: "light" | "dark" | "system"`
   - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
-  - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
-
-## Embedded Mode
-
-Embedded mode will show the development tools as a fixed element in your application, so you can use our panel in your own development tools.
-
-Use `injectDevtoolsPanel` to render the devtools panel inside an element of your component. Like `withDevtools`, it is only included in development mode bundles. To use it in production builds, import it from `@tanstack/angular-query-experimental/devtools-panel/production`.
-
-```angular-ts
-import { Component, signal, viewChild } from '@angular/core'
-import { injectDevtoolsPanel } from '@tanstack/angular-query-experimental/devtools-panel'
-import type { ElementRef } from '@angular/core'
-
-@Component({
-  selector: 'app-root',
-  template: `
-    <button type="button" (click)="isOpen.set(!isOpen())">
-      {{ isOpen() ? 'Close' : 'Open' }} the devtools panel
-    </button>
-    @if (isOpen()) {
-      <div #div style="height: 500px"></div>
-    }
-  `,
-})
-export class AppComponent {
-  readonly isOpen = signal(false)
-  readonly divEl = viewChild<ElementRef>('div')
-
-  readonly devtools = injectDevtoolsPanel(() => ({
-    hostElement: this.divEl(),
-    onClose: () => this.isOpen.set(false),
-  }))
-}
-```
-
-`injectDevtoolsPanel` must be called in an injection context, or be given an `Injector` through the `injector` option in its second argument: `injectDevtoolsPanel(() => ({ ... }), { injector })`.
-
-### Options
-
-Of these options `hostElement`, `client`, `errorTypes`, `onClose`, and `theme` support reactivity through signals.
-
-- `hostElement?: ElementRef`
-  - The element to render the devtools panel in. When it is `undefined` or `null`, the devtools panel is not created, or is destroyed if it exists.
-- `onClose?: () => void`
-  - Callback function that is called when the devtools panel is closed
-- `client?: QueryClient`,
-  - Use this to use a custom QueryClient. Otherwise, the QueryClient provided through `provideTanStackQuery` will be injected.
-- `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
-  - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
-- `styleNonce?: string`
-  - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
-- `shadowDOMTarget?: ShadowRoot`
-  - Default behavior will apply the devtool's styles to the head tag within the DOM.
-  - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
-- `hideDisabledQueries?: boolean`
-  - Defaults to `false`.
-  - Set this to true to hide disabled queries from the devtools panel.
-- `theme?: "light" | "dark" | "system"`
-  - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
-  - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
+  - Sets the theme of the devtools panel, overriding the Settings menu selection.

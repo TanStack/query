@@ -1,6 +1,6 @@
-# AngularCli22
+# Angular CLI
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.5.
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.
 
 ## Development server
 
@@ -38,7 +38,7 @@ This will compile your project and store the build artifacts in the `dist/` dire
 
 ## Running unit tests
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
 
 ```bash
 ng test

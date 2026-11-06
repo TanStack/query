@@ -1,5 +1,52 @@
 # @tanstack/angular-query-persist-client
 
+## 5.0.0-rc.5
+
+### Patch Changes
+
+- [#12054](https://github.com/TanStack/query/pull/12054) [`9464a5e`](https://github.com/TanStack/query/commit/9464a5e71f68c95cc12a07068ae30a2f1b13b0ea) - Update the Angular packages to the latest Query core and incorporate upstream adapter fixes, type coverage, and tooling updates.
+- Updated dependencies [[`9464a5e`](https://github.com/TanStack/query/commit/9464a5e71f68c95cc12a07068ae30a2f1b13b0ea)]:
+  - @tanstack/angular-query@5.0.0-rc.5
+
+## 5.0.0-rc.4
+
+### Patch Changes
+
+- Updated dependencies [[`46da583`](https://github.com/TanStack/query/commit/46da583fa3760715d9fb13677bbe022f901e0730), [`1a2f6b3`](https://github.com/TanStack/query/commit/1a2f6b38d534245b957c7ea87ac830cc1e06d7f1)]:
+  - @tanstack/angular-query@5.0.0-rc.4
+
+## 5.0.0-rc.3
+
+### Patch Changes
+
+- Updated dependencies [[`d83eef6`](https://github.com/TanStack/query/commit/d83eef68ae3484ec8254a9c28582ed41af30035b)]:
+  - @tanstack/angular-query@5.0.0-rc.3
+
+## 5.0.0-rc.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query@5.0.0-rc.2
+
+## 5.0.0-rc.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query@5.0.0-rc.1
+
+## 5.0.0-rc.0
+
+### Major Changes
+
+- [#11516](https://github.com/TanStack/query/pull/11516) [`7da5a24`](https://github.com/TanStack/query/commit/7da5a24becd506c0d121c4c1d264251e62e53d96) - Add the stable Angular Query adapter for Angular 20.1+. It includes SSR support, Resource API interoperability, persistence integration, improved internal subscription and pending tasks management, stable `injectQueries` and consistency improvements in the API.
+
+### Patch Changes
+
+- Updated dependencies [[`7da5a24`](https://github.com/TanStack/query/commit/7da5a24becd506c0d121c4c1d264251e62e53d96)]:
+  - @tanstack/angular-query@5.0.0-rc.0
+
 ## 5.103.2
 
 ### Patch Changes
