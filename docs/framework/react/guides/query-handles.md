@@ -160,12 +160,20 @@ const [post, viewer] = await Promise.all([
 
 [//]: # 'PromiseAll'
 
-[`Promise.allKeyed`](https://github.com/tc39/proposal-await-dictionary), a Stage 3 TC39 proposal, does the same with named results. Only Firefox ships it so far, so elsewhere you need a polyfill such as core-js:
+For named results, define a small `allKeyed`, adapted from the one in [raf-query](https://github.com/KATT/raf-query/blob/main/packages/core/src/all-keyed.ts). It mirrors [`Promise.allKeyed`](https://github.com/tc39/proposal-await-dictionary), a Stage 3 TC39 proposal, without patching `Promise`:
 
 [//]: # 'PromiseAllKeyed'
 
 ```tsx
-const { post, viewer } = await Promise.allKeyed({
+async function allKeyed<T extends Record<string, unknown>>(
+  record: T,
+): Promise<{ [K in keyof T]: Awaited<T[K]> }> {
+  const keys = Object.keys(record)
+  const values = await Promise.all(keys.map((key) => record[key]))
+  return Object.fromEntries(keys.map((key, i) => [key, values[i]])) as any
+}
+
+const { post, viewer } = await allKeyed({
   post: experimental_ensureQueryHandle(queryClient, postQuery, { id }),
   viewer: experimental_queryHandleAsync(queryClient, viewerQuery),
 })
