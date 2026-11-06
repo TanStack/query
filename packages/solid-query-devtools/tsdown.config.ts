@@ -55,8 +55,15 @@ const jsxConfig = (
 })
 
 export default defineConfig([
-  compiledConfig({ index: 'src/index.tsx' }, false, true),
-  jsxConfig({ index: 'src/index.tsx' }, false),
+  compiledConfig(
+    { index: 'src/index.tsx', production: 'src/production.tsx' },
+    false,
+    true,
+  ),
+  jsxConfig(
+    { index: 'src/index.tsx', production: 'src/production.tsx' },
+    false,
+  ),
   compiledConfig({ dev: 'src/index.tsx' }, true, false),
   jsxConfig({ dev: 'src/index.tsx' }, true),
 ])

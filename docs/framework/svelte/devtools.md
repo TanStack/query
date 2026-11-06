@@ -41,6 +41,8 @@ You can import the devtools like this:
 import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
 ```
 
+By default, Svelte Query Devtools are only rendered in development, using `DEV` from `esm-env`. In production, the devtools component renders nothing.
+
 ## Floating Mode
 
 Floating Mode will mount the devtools as a fixed, floating element in your app and provide a toggle in the corner of the screen to show and hide the devtools. This toggle state will be stored and remembered in localStorage across reloads.
@@ -85,3 +87,39 @@ Place the following code as high in your Svelte app as you can. The closer it is
 - `theme?: Theme`
   - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
   - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
+
+## Devtools in production
+
+Devtools are excluded in production builds. However, it might be desirable to lazy load the devtools in production:
+
+```svelte
+<script lang="ts">
+  import { onMount } from 'svelte'
+  import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
+  import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
+  import Example from './Example.svelte'
+
+  const queryClient = new QueryClient()
+
+  let showDevtools = $state(false)
+
+  onMount(() => {
+    // @ts-expect-error
+    window.toggleDevtools = () => (showDevtools = !showDevtools)
+  })
+</script>
+
+<QueryClientProvider client={queryClient}>
+  <Example />
+  <SvelteQueryDevtools initialIsOpen />
+  {#if showDevtools}
+    {#await import('@tanstack/svelte-query-devtools/production') then { SvelteQueryDevtools: SvelteQueryDevtoolsProduction }}
+      <SvelteQueryDevtoolsProduction />
+    {/await}
+  {/if}
+</QueryClientProvider>
+```
+
+With this, calling `window.toggleDevtools()` will download the devtools bundle and show them.
+
+For TypeScript, you would need to set `moduleResolution` to `'bundler'`, `'node16'`, or `'nodenext'` in your tsconfig.
