@@ -390,6 +390,16 @@ describe('useQuery', () => {
         queryKey: [...key, 'key12'],
       }),
     )
+
+    keyRef.value = 'key13'
+    await query.state.refetch()
+    expect(queryFn).toHaveBeenCalledTimes(3)
+    expect(queryFn).toHaveBeenNthCalledWith(
+      3,
+      expect.objectContaining({
+        queryKey: [...key, 'key13'],
+      }),
+    )
   })
 
   it.runIf(isVue3)(

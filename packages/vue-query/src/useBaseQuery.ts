@@ -176,6 +176,10 @@ export function useBaseQuery<
     // noop
   }
 
+  // Replaced below with the wrapper. Declared here so the subscriber can put it
+  // back after `updateState` copies the observer's own `refetch` onto `state`.
+  let refetch: (typeof state)['refetch'] = (...args) => observer.refetch(...args)
+
   if (client.isRestoring) {
     watch(
       client.isRestoring,
@@ -184,6 +188,7 @@ export function useBaseQuery<
           unsubscribe()
           unsubscribe = observer.subscribe((result) => {
             updateState(state, result)
+            state.refetch = refetch
           })
         }
       },
@@ -194,6 +199,7 @@ export function useBaseQuery<
   const updater = () => {
     observer.setOptions(defaultedOptions.value)
     updateState(state, observer.getCurrentResult())
+    state.refetch = refetch
   }
 
   watch(defaultedOptions, updater)
@@ -202,11 +208,13 @@ export function useBaseQuery<
     unsubscribe()
   })
 
-  // fix #5910
-  const refetch = (...args: Parameters<(typeof state)['refetch']>) => {
+  // fix #5910. Call `observer.refetch`: `state.refetch` is this wrapper, so
+  // calling it would recurse.
+  refetch = (...args) => {
     updater()
-    return state.refetch(...args)
+    return observer.refetch(...args)
   }
+  state.refetch = refetch
 
   const suspense = () => {
     return new Promise<QueryObserverResult<TData, TError>>(
