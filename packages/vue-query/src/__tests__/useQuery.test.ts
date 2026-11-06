@@ -3,6 +3,7 @@ import {
   computed,
   isReactive,
   isReadonly,
+  isRef,
   isVue3,
   onScopeDispose,
   reactive,
@@ -102,6 +103,43 @@ describe('useQuery', () => {
       isFetched: { value: true },
       isSuccess: { value: true },
     })
+  })
+
+  it('should expose data, status, and isPending on state without ref unwrapping', async () => {
+    const key = createKey()
+    const query = useQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'Some data'),
+    })
+
+    expect(isRef(query.state)).toBe(false)
+    expect(isReadonly(query.state)).toBe(true)
+    expect(query.state.status).toBe('pending')
+    expect(query.state.isPending).toBe(true)
+    expect(query.state.data).toBeUndefined()
+    expect(query.state.error).toBeNull()
+
+    const status = computed(() => query.state.status)
+    const data = computed(() => query.state.data)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(query.state.status).toBe('success')
+    expect(query.state.isPending).toBe(false)
+    expect(query.state.isSuccess).toBe(true)
+    expect(query.state.data).toBe('Some data')
+    expect(query.state.error).toBeNull()
+    expect(query.data.value).toBe(query.state.data)
+    expect(query.status.value).toBe(query.state.status)
+    expect(status.value).toBe('success')
+    expect(data.value).toBe('Some data')
+    expect(query.state).not.toHaveProperty('refetch')
+
+    const refetchResult = query.refetch()
+    await vi.advanceTimersByTimeAsync(10)
+    await refetchResult
+    expect(query.state.data).toBe('Some data')
+    expect(query.state.status).toBe('success')
   })
 
   it('should return pending status initially', () => {

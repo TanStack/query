@@ -237,6 +237,104 @@ describe('useQuery', () => {
     })
   })
 
+  describe('state', () => {
+    it('should read data and isPending without unwrapping refs', () => {
+      const key = createKey()
+
+      const { state } = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      expectTypeOf(state.status).toEqualTypeOf<
+        'pending' | 'error' | 'success'
+      >()
+      expectTypeOf(state.isPending).toEqualTypeOf<boolean>()
+      expectTypeOf(state.data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(state).not.toHaveProperty('refetch')
+    })
+
+    it('should narrow data to TData when status is success', () => {
+      const key = createKey()
+
+      const { state } = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      if (state.status === 'success') {
+        expectTypeOf(state.data).toEqualTypeOf<string>()
+        expectTypeOf(state.error).toEqualTypeOf<null>()
+        expectTypeOf(state.isPending).toEqualTypeOf<false>()
+        expectTypeOf(state.isSuccess).toEqualTypeOf<true>()
+      }
+    })
+
+    it('should narrow data to TData when isSuccess is true', () => {
+      const key = createKey()
+
+      const { state } = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      if (state.isSuccess) {
+        expectTypeOf(state.data).toEqualTypeOf<string>()
+        expectTypeOf(state.error).toEqualTypeOf<null>()
+      }
+    })
+
+    it('should narrow data to undefined when status is pending', () => {
+      const key = createKey()
+
+      const { state } = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      if (state.status === 'pending') {
+        expectTypeOf(state.data).toEqualTypeOf<undefined>()
+        expectTypeOf(state.error).toEqualTypeOf<null>()
+        expectTypeOf(state.isPending).toEqualTypeOf<true>()
+      }
+
+      if (state.isPending) {
+        expectTypeOf(state.data).toEqualTypeOf<undefined>()
+      }
+    })
+
+    it('should narrow error when status is error and keep data possibly undefined', () => {
+      const key = createKey()
+
+      const { state } = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      if (state.status === 'error') {
+        expectTypeOf(state.error).toEqualTypeOf<Error>()
+        expectTypeOf(state.data).toEqualTypeOf<string | undefined>()
+        expectTypeOf(state.isPending).toEqualTypeOf<false>()
+      }
+    })
+
+    it('should keep data defined on state when initialData is provided', () => {
+      const key = createKey()
+
+      const { state } = useQuery({
+        queryKey: key,
+        queryFn: () => ({ wow: true }),
+        initialData: { wow: true },
+      })
+
+      expectTypeOf(state.data).toEqualTypeOf<{ wow: boolean }>()
+
+      if (state.status === 'success') {
+        expectTypeOf(state.data).toEqualTypeOf<{ wow: boolean }>()
+      }
+    })
+  })
+
   describe('Discriminated union return type', () => {
     it('should have possibly undefined data by default', () => {
       const key = createKey()
