@@ -25,21 +25,11 @@ import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 import type { MaybeRefOrGetter } from './types'
 
 /**
- * Action methods stay on the composable return (`refetch`, `fetchNextPage`, `fetchPreviousPage`).
- * They are not part of the `status` discriminant, so `state` omits them.
- */
-type QueryStateFunctionKey = 'refetch' | 'fetchNextPage' | 'fetchPreviousPage'
-
-/**
  * Readonly view of a union that stays a union. A single `Readonly<Union>` collapses the members, which
  * drops the `status` / `isSuccess` / `isPending` discriminants.
  */
 type ReadonlyQueryState<T> = T extends any
-  ? {
-      readonly [
-        K in keyof T as K extends QueryStateFunctionKey ? never : K
-      ]: T[K]
-    }
+  ? { readonly [K in keyof T]: T[K] }
   : never
 
 /**
@@ -69,8 +59,7 @@ export type UseBaseQueryReturnType<
   suspense: () => Promise<TResult>
   /**
    * The query result as one readonly reactive object. `data`, `error`, `status`, `isPending`, and the other
-   * status fields are plain values — read `state.data`, not `state.data.value`. `refetch`, `fetchNextPage`,
-   * and `fetchPreviousPage` stay on the composable return, next to `state`.
+   * fields are plain values — read `state.data`, not `state.data.value`.
    *
    * The object is a discriminated union, so a check on `status`, `isSuccess`, `isPending`, or `isError`
    * narrows the other fields. When `status` is `'success'` (or `isSuccess` is `true`), `data` is `TData`.
@@ -183,16 +172,6 @@ export function useBaseQuery<
     ? shallowReactive(observer.getCurrentResult())
     : reactive(observer.getCurrentResult())
 
-  // `updateState` only writes keys already present on `state`. Drop the action
-  // methods before the first update so `state` keeps the status fields only.
-  const exposedFns: Record<string, unknown> = {}
-  for (const key of Object.keys(state)) {
-    if (typeof state[key as keyof typeof state] === 'function') {
-      exposedFns[key] = state[key as keyof typeof state]
-      delete state[key as keyof typeof state]
-    }
-  }
-
   let unsubscribe = () => {
     // noop
   }
@@ -217,19 +196,17 @@ export function useBaseQuery<
     updateState(state, observer.getCurrentResult())
   }
 
-  // fix #5910
-  const refetch = (
-    ...args: Parameters<QueryObserverResult<TData, TError>['refetch']>
-  ) => {
-    updater()
-    return observer.refetch(...args)
-  }
-
   watch(defaultedOptions, updater)
 
   onScopeDispose(() => {
     unsubscribe()
   })
+
+  // fix #5910
+  const refetch = (...args: Parameters<(typeof state)['refetch']>) => {
+    updater()
+    return state.refetch(...args)
+  }
 
   const suspense = () => {
     return new Promise<QueryObserverResult<TData, TError>>(
@@ -297,7 +274,11 @@ export function useBaseQuery<
     : readonly(state)
 
   const object: any = toRefs(readonlyState)
-  Object.assign(object, exposedFns)
+  for (const key in state) {
+    if (typeof state[key as keyof typeof state] === 'function') {
+      object[key] = state[key as keyof typeof state]
+    }
+  }
 
   object.suspense = suspense
   object.refetch = refetch

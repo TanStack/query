@@ -133,13 +133,31 @@ describe('useQuery', () => {
     expect(query.status.value).toBe(query.state.status)
     expect(status.value).toBe('success')
     expect(data.value).toBe('Some data')
-    expect(query.state).not.toHaveProperty('refetch')
+    expect(query.state.refetch).toBeTypeOf('function')
 
     const refetchResult = query.refetch()
     await vi.advanceTimersByTimeAsync(10)
     await refetchResult
     expect(query.state.data).toBe('Some data')
     expect(query.state.status).toBe('success')
+  })
+
+  it('should keep function-valued data on state when select returns a function', async () => {
+    const key = createKey()
+    const { state } = useQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'fetched'),
+      initialData: 'initial',
+      select: (value: string) => () => value,
+    })
+
+    expect(state.status).toBe('success')
+    expect(state.data()).toBe('initial')
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(state.status).toBe('success')
+    expect(state.data()).toBe('fetched')
   })
 
   it('should return pending status initially', () => {

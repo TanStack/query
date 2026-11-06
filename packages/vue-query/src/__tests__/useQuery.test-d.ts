@@ -251,7 +251,7 @@ describe('useQuery', () => {
       >()
       expectTypeOf(state.isPending).toEqualTypeOf<boolean>()
       expectTypeOf(state.data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(state).not.toHaveProperty('refetch')
+      expectTypeOf(state.refetch).toBeFunction()
     })
 
     it('should narrow data to TData when status is success', () => {
@@ -331,6 +331,21 @@ describe('useQuery', () => {
 
       if (state.status === 'success') {
         expectTypeOf(state.data).toEqualTypeOf<{ wow: boolean }>()
+      }
+    })
+
+    it('should keep a function returned by select as data', () => {
+      const key = createKey()
+
+      const { state } = useQuery({
+        queryKey: key,
+        queryFn: () => 'fetched',
+        initialData: 'initial',
+        select: (value: string) => () => value,
+      })
+
+      if (state.status === 'success') {
+        expectTypeOf(state.data).toEqualTypeOf<() => string>()
       }
     })
   })
