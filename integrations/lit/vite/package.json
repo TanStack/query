@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc --noEmit && vite build"
+    "build": "vite build",
+    "test:types": "tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/lit-query": "workspace:*",

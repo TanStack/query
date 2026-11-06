@@ -1,6 +1,6 @@
 <script lang="ts">
   import { QueryClientProvider } from '@tanstack/svelte-query'
-  import SvelteQueryDevtools from '../src/Devtools.svelte'
+  import SvelteQueryDevtools from '../src/SvelteQueryDevtools.svelte'
   import type { QueryClient } from '@tanstack/svelte-query'
 
   type Props = {
