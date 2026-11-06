@@ -1,0 +1,19 @@
+{
+  "name": "@tanstack/query-integration-preact-vite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@preact/preset-vite": "^2.10.6",
+    "@tanstack/preact-query": "workspace:*",
+    "@tanstack/preact-query-devtools": "workspace:*",
+    "preact": "^11.0.1",
+    "vite": "^8.3.5"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}

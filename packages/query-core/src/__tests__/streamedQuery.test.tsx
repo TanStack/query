@@ -396,6 +396,170 @@ describe('streamedQuery', () => {
     })
   })
 
+  it.each(['append', 'replace'] as const)(
+    'should stop %s writes after explicit cancellation when the stream ignores the signal',
+    async (refetchMode) => {
+      const key = createKey()
+      queryClient.setQueryData(key, [99])
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: streamedQuery({
+          streamFn: () => createAsyncNumberGenerator(3),
+          refetchMode,
+        }),
+        persister: (queryFn, context) => queryFn({ ...context }),
+      })
+
+      const unsubscribe = observer.subscribe(vi.fn())
+      await vi.advanceTimersByTimeAsync(50)
+      await queryClient.cancelQueries({ queryKey: key })
+      const cancelledData = queryClient.getQueryData(key)
+      expect(cancelledData).toStrictEqual(
+        refetchMode === 'append' ? [99, 0] : [99],
+      )
+
+      await vi.advanceTimersByTimeAsync(150)
+      expect(queryClient.getQueryData(key)).toStrictEqual(cancelledData)
+      unsubscribe()
+    },
+  )
+
+  it('should preserve a non-streamed replacement when the old stream ignores the signal', async () => {
+    const key = createKey()
+    const queryFn = streamedQuery({
+      streamFn: () => createAsyncNumberGenerator(3),
+    })
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: (context) => queryFn(context),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+    await vi.advanceTimersByTimeAsync(50)
+    observer.setOptions({ queryKey: key, queryFn: () => [100] })
+    await observer.refetch()
+    await vi.advanceTimersByTimeAsync(150)
+
+    expect(queryClient.getQueryData(key)).toStrictEqual([100])
+    unsubscribe()
+  })
+
+  it('should preserve the new stream when the old stream ignores the signal', async () => {
+    const key = createKey()
+    let offset = 0
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        streamFn: () => {
+          const stream = createAsyncNumberGenerator(3, offset)
+          offset += 100
+          return stream
+        },
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+    await vi.advanceTimersByTimeAsync(50)
+    void observer.refetch()
+    await vi.advanceTimersByTimeAsync(150)
+
+    expect(queryClient.getQueryData(key)).toStrictEqual([100, 101, 102])
+    unsubscribe()
+  })
+
+  it('should ignore a chunk queued just before cancellation', async () => {
+    const key = createKey()
+    queryClient.setQueryData(key, [99])
+    let resolveChunk: (chunk: IteratorResult<number>) => void = () => {
+      throw new Error('The iterator has not started')
+    }
+    const next = vi.fn<() => Promise<IteratorResult<number>>>(
+      () =>
+        new Promise<IteratorResult<number>>((resolve) => {
+          resolveChunk = resolve
+        }),
+    )
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        refetchMode: 'append',
+        streamFn: () => ({
+          [Symbol.asyncIterator]: () => ({ next }),
+        }),
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+    await vi.advanceTimersByTimeAsync(0)
+    resolveChunk({ done: false, value: 1 })
+    void queryClient.cancelQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(queryClient.getQueryData(key)).toStrictEqual([99])
+    expect(next).toHaveBeenCalledTimes(1)
+    unsubscribe()
+  })
+
+  it.each(['queryFn', 'persister'] as const)(
+    'should not start a stream after cancellation during a delayed %s',
+    async (delayIn) => {
+      const key = createKey()
+      queryClient.setQueryData(key, [99])
+      const streamFn = vi.fn<() => AsyncIterable<number>>(() =>
+        createAsyncNumberGenerator(1),
+      )
+      const queryFn = streamedQuery({ streamFn })
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn:
+          delayIn === 'queryFn'
+            ? async (context) => {
+                await sleep(50)
+                return queryFn(context)
+              }
+            : queryFn,
+        persister:
+          delayIn === 'persister'
+            ? async (fn, context) => {
+                await sleep(50)
+                return fn({ ...context })
+              }
+            : undefined,
+      })
+
+      const unsubscribe = observer.subscribe(vi.fn())
+      await queryClient.cancelQueries({ queryKey: key })
+      queryClient.setQueryData(key, [100])
+      await vi.advanceTimersByTimeAsync(100)
+
+      expect(streamFn).not.toHaveBeenCalled()
+      expect(queryClient.getQueryData(key)).toStrictEqual([100])
+      unsubscribe()
+    },
+  )
+
+  it('should keep a custom signal getter lazy', async () => {
+    const key = createKey()
+    const controller = new AbortController()
+    const getSignal = vi.fn<() => AbortSignal>(() => controller.signal)
+    const queryFn = streamedQuery({
+      streamFn: () => createAsyncNumberGenerator(1),
+    })
+
+    const result = queryFn({
+      client: queryClient,
+      queryKey: key,
+      meta: undefined,
+      get signal() {
+        return getSignal()
+      },
+    })
+    await vi.advanceTimersByTimeAsync(50)
+
+    await expect(result).resolves.toStrictEqual([0])
+    expect(getSignal).not.toHaveBeenCalled()
+  })
+
   it('should support custom reducer', async () => {
     const key = createKey()
 

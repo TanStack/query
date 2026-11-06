@@ -24,7 +24,7 @@ import type { MutationFilters, QueryClient } from '@tanstack/query-core'
  * ```
  */
 export function useIsMutating(
-  filters?: MutationFilters,
+  filters?: Omit<MutationFilters, 'status'>,
   queryClient?: QueryClient,
 ): ReactiveValue<number> {
   const client = useQueryClient(queryClient)

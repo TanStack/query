@@ -1,5 +1,38 @@
 # @tanstack/vue-query-devtools
 
+## 6.3.11
+
+### Patch Changes
+
+- Updated dependencies [[`c4ed956`](https://github.com/TanStack/query/commit/c4ed956bb97e381a2875e59f134bb99eecb92a02)]:
+  - @tanstack/query-devtools@5.106.1
+  - @tanstack/vue-query@5.106.1
+
+## 6.3.10
+
+### Patch Changes
+
+- [#12499](https://github.com/TanStack/query/pull/12499) [`46d0477`](https://github.com/TanStack/query/commit/46d0477df2311d496cca006eb5ec885c024875a1) - Let inline devtools panels fill their container height while keeping a 500px default height when the container has no set height.
+- Updated dependencies [[`46d0477`](https://github.com/TanStack/query/commit/46d0477df2311d496cca006eb5ec885c024875a1), [`f69b28a`](https://github.com/TanStack/query/commit/f69b28a1dd2a2b4ca9b8f9117e0f60cc70443775), [`1176d37`](https://github.com/TanStack/query/commit/1176d373d161e0acca98d00244203778ff99c4fb), [`254350f`](https://github.com/TanStack/query/commit/254350f9cba47fd87304e057fac1a314093423f0), [`e712412`](https://github.com/TanStack/query/commit/e7124128ccab29f8dbbbdf1297df05aa13171b6d), [`3ccb007`](https://github.com/TanStack/query/commit/3ccb007cbda7bc44b0c449ff20e5533422ef5c85)]:
+  - @tanstack/query-devtools@5.106.0
+  - @tanstack/vue-query@5.106.0
+
+## 6.3.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.105.3
+  - @tanstack/vue-query@5.105.3
+
+## 6.3.8
+
+### Patch Changes
+
+- Updated dependencies [[`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1)]:
+  - @tanstack/vue-query@5.105.2
+  - @tanstack/query-devtools@5.105.2
+
 ## 6.3.7
 
 ### Patch Changes
