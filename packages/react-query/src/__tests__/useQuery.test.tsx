@@ -771,6 +771,41 @@ describe('useQuery', () => {
     expect(runs).toBe(2)
   })
 
+  it('should not trigger redundant updates when an unstable selector throws an error and the component re-renders', async () => {
+    const key = createKey()
+    const error = new Error('Select Error')
+    const states: Array<UseQueryResult<string>> = []
+
+    function Page() {
+      const [, rerender] = React.useReducer(() => ({}), {})
+      const state = useQuery<string, Error>({
+        queryKey: key,
+        queryFn: () => 'test',
+        select: () => {
+          throw error
+        },
+      })
+      states.push(state)
+      return (
+        <div>
+          <div>error: {state.error?.message}</div>
+          <button onClick={rerender}>rerender</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('error: Select Error')
+    const countAfterError = states.length
+
+    fireEvent.click(rendered.getByRole('button', { name: 'rerender' }))
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(states.length).toBe(countAfterError + 1)
+  })
+
   it('should track properties and only re-render when a tracked property changes', async () => {
     const key = createKey()
     const states: Array<UseQueryResult<string>> = []

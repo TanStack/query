@@ -534,6 +534,65 @@ describe('queryObserver', () => {
     })
   })
 
+  it('should not notify listeners when setOptions is called with an unstable selector throwing the same error', async () => {
+    const key = createKey()
+    const queryFn = () => Promise.resolve({ count: 1 })
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      select: () => {
+        throw new Error('selector error')
+      },
+    })
+    const results: Array<QueryObserverResult> = []
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    const initialNotificationCount = results.length
+
+    // Update with a new selector function reference throwing the same error
+    observer.setOptions({
+      queryKey: key,
+      queryFn,
+      select: () => {
+        throw new Error('selector error')
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    // It should not notify listeners again because the result has not changed
+    expect(results.length).toBe(initialNotificationCount)
+
+    // When the error changes, it should update and notify listeners
+    observer.setOptions({
+      queryKey: key,
+      queryFn,
+      select: () => {
+        throw new Error('different error')
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(results.length).toBe(initialNotificationCount + 1)
+    expect(results[results.length - 1]?.error).toEqual(new Error('different error'))
+
+    // When the error message is same but details or cause change, it should update and notify listeners
+    observer.setOptions({
+      queryKey: key,
+      queryFn,
+      select: () => {
+        throw new Error('different error', { cause: 'cause-detail' })
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(results.length).toBe(initialNotificationCount + 2)
+    expect((results[results.length - 1]?.error as Error).cause).toBe(
+      'cause-detail',
+    )
+
+    unsubscribe()
+  })
+
   it('should not have isPlaceholderData true when selector throws on placeholder data', () => {
     const key = createKey()
     const queryFn = () => sleep(10).then(() => ({ count: 1 }))

@@ -73,6 +73,7 @@ export class QueryObserver<
     TQueryKey
   >
   #selectError: TError | null
+  #selectErrorUpdatedAt?: number
   #selectFn?: (data: TQueryData) => TData
   #selectResult?: TData
   // This property keeps track of the last query with defined data.
@@ -97,6 +98,7 @@ export class QueryObserver<
 
     this.#client = client
     this.#selectError = null
+    this.#selectErrorUpdatedAt = 0
 
     this.bindMethods()
     this.setOptions(options)
@@ -697,20 +699,27 @@ export class QueryObserver<
           data = replaceData(prevResult?.data, data, options)
           this.#selectResult = data
           this.#selectError = null
+          this.#selectErrorUpdatedAt = 0
         } catch (selectError) {
-          this.#selectError = selectError as TError
+          if (hasErrorChanged(this.#selectError, selectError)) {
+            this.#selectError = selectError as TError
+            this.#selectErrorUpdatedAt = Date.now()
+          }
         }
       }
     } else if (data === undefined) {
       // a stored select error belongs to previously selected data; once that
       // data is gone (query switch or reset), it must not leak into this result
       this.#selectError = null
+      this.#selectErrorUpdatedAt = 0
     }
 
     if (this.#selectError) {
       error = this.#selectError
       data = this.#selectResult
-      errorUpdatedAt = Date.now()
+      errorUpdatedAt =
+        this.#selectErrorUpdatedAt ||
+        (this.#selectErrorUpdatedAt = Date.now())
       status = 'error'
       isPlaceholderData = false
     }
@@ -973,4 +982,27 @@ function isStale(
     resolveQueryValue(options.enabled, query) !== false &&
     query.isStaleByTime(resolveQueryValue(options.staleTime, query))
   )
+}
+
+function hasErrorChanged(prevError: unknown, nextError: unknown): boolean {
+  if (!prevError) {
+    return true
+  }
+  if (prevError === nextError) {
+    return false
+  }
+  if (prevError instanceof Error && nextError instanceof Error) {
+    if (
+      prevError.name !== nextError.name ||
+      prevError.message !== nextError.message ||
+      (prevError as Error).cause !== (nextError as Error).cause
+    ) {
+      return true
+    }
+    return !shallowEqualObjects(prevError as any, nextError as any)
+  }
+  if (prevError instanceof Error || nextError instanceof Error) {
+    return true
+  }
+  return !shallowEqualObjects(prevError as any, nextError as any)
 }
