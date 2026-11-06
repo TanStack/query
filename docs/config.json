@@ -531,6 +531,43 @@
           ]
         },
         {
+          "label": "svelte",
+          "children": [
+            {
+              "label": "Queries",
+              "to": "framework/svelte/guides/queries"
+            },
+            {
+              "label": "Network Mode",
+              "to": "framework/svelte/guides/network-mode"
+            },
+            {
+              "label": "Parallel Queries",
+              "to": "framework/svelte/guides/parallel-queries"
+            },
+            {
+              "label": "Query Retries",
+              "to": "framework/svelte/guides/query-retries"
+            },
+            {
+              "label": "Mutations",
+              "to": "framework/svelte/guides/mutations"
+            },
+            {
+              "label": "Invalidations from Mutations",
+              "to": "framework/svelte/guides/invalidations-from-mutations"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/svelte/guides/optimistic-updates"
+            },
+            {
+              "label": "Query Cancellation",
+              "to": "framework/svelte/guides/query-cancellation"
+            }
+          ]
+        },
+        {
           "label": "vue",
           "children": [
             {
@@ -2337,8 +2374,8 @@
               "to": "framework/vue/reference/type-aliases/MutationCacheNotifyEvent"
             },
             {
-              "label": "Types / MutationFilters",
-              "to": "framework/vue/reference/type-aliases/MutationFilters"
+              "label": "Interfaces / MutationFilters",
+              "to": "framework/vue/reference/interfaces/MutationFilters"
             },
             {
               "label": "Types / MutationFunction",
@@ -2417,8 +2454,8 @@
               "to": "framework/vue/reference/type-aliases/QueryCacheNotifyEvent"
             },
             {
-              "label": "Types / QueryFilters",
-              "to": "framework/vue/reference/type-aliases/QueryFilters"
+              "label": "Interfaces / QueryFilters",
+              "to": "framework/vue/reference/interfaces/QueryFilters"
             },
             {
               "label": "Types / QueryFunction",
@@ -3911,10 +3948,6 @@
               "to": "framework/svelte/reference/type-aliases/GetPreviousPageParamFunction"
             },
             {
-              "label": "Types / HydrationBoundary",
-              "to": "framework/svelte/reference/type-aliases/HydrationBoundary"
-            },
-            {
               "label": "Types / InferDataFromTag",
               "to": "framework/svelte/reference/type-aliases/InferDataFromTag"
             },
@@ -4121,10 +4154,6 @@
             {
               "label": "Types / dataTagSymbol",
               "to": "framework/svelte/reference/type-aliases/dataTagSymbol"
-            },
-            {
-              "label": "Variables / HydrationBoundary",
-              "to": "framework/svelte/reference/variables/HydrationBoundary"
             },
             {
               "label": "Variables / dataTagErrorSymbol",
@@ -6778,12 +6807,20 @@
               "to": "framework/react/examples/react-native"
             },
             {
-              "label": "React Router",
-              "to": "framework/react/examples/react-router"
+              "label": "Contacts (TanStack Router)",
+              "to": "framework/react/examples/contacts-tanstack-router"
             },
             {
-              "label": "Offline Queries and Mutations",
-              "to": "framework/react/examples/offline"
+              "label": "Contacts (React Router)",
+              "to": "framework/react/examples/contacts-react-router"
+            },
+            {
+              "label": "Offline Queries and Mutations (TanStack Router)",
+              "to": "framework/react/examples/offline-tanstack-router"
+            },
+            {
+              "label": "Offline Queries and Mutations (React Router)",
+              "to": "framework/react/examples/offline-react-router"
             },
             {
               "label": "Algolia",
@@ -6835,8 +6872,12 @@
               "to": "framework/solid/examples/astro"
             },
             {
-              "label": "Offline Queries and Mutations",
-              "to": "framework/solid/examples/offline"
+              "label": "Offline Queries and Mutations (TanStack Router)",
+              "to": "framework/solid/examples/offline-tanstack-router"
+            },
+            {
+              "label": "Offline Queries and Mutations (Solid Router)",
+              "to": "framework/solid/examples/offline-solid-router"
             },
             {
               "label": "Playground",
@@ -6867,8 +6908,12 @@
               "to": "framework/solid/examples/rick-morty-solid-router"
             },
             {
-              "label": "Solid Router",
-              "to": "framework/solid/examples/solid-router"
+              "label": "Contacts (TanStack Router)",
+              "to": "framework/solid/examples/contacts-tanstack-router"
+            },
+            {
+              "label": "Contacts (Solid Router)",
+              "to": "framework/solid/examples/contacts-solid-router"
             },
             {
               "label": "Suspense",
@@ -6960,8 +7005,16 @@
               "to": "framework/vue/examples/rick-morty-vue-router"
             },
             {
-              "label": "Vue Router",
-              "to": "framework/vue/examples/vue-router"
+              "label": "Contacts (TanStack Router)",
+              "to": "framework/vue/examples/contacts-tanstack-router"
+            },
+            {
+              "label": "Contacts (Vue Router)",
+              "to": "framework/vue/examples/contacts-vue-router"
+            },
+            {
+              "label": "Offline Queries and Mutations (TanStack Router)",
+              "to": "framework/vue/examples/offline-tanstack-router"
             },
             {
               "label": "Offline Queries and Mutations (Vue Router)",

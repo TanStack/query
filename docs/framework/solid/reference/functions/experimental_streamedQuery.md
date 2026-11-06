@@ -9,12 +9,14 @@ title: experimental_streamedQuery
 function experimental_streamedQuery<TQueryFnData = unknown, TData = TQueryFnData[], TQueryKey extends readonly unknown[] = readonly unknown[]>(options: StreamedQueryParams<TQueryFnData, TData, TQueryKey>): (context: object) => TData | Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/streamedQuery.ts:70](https://github.com/TanStack/query/blob/main/packages/query-core/src/streamedQuery.ts#L70)
+Defined in: [packages/query-core/src/streamedQuery.ts:73](https://github.com/TanStack/query/blob/main/packages/query-core/src/streamedQuery.ts#L73)
 
 This is a helper function to create a query function that streams data from an AsyncIterable.
 Data will be an Array of all the chunks received.
 The query will be in a 'pending' state until the first chunk of data is received, but will go to 'success' after that.
 The query will stay in fetchStatus 'fetching' until the stream ends.
+Explicit cancellation stops further cache updates, even if `streamFn` does not read `signal`.
+If `streamFn` does not read `signal`, the stream continues after the last observer unsubscribes.
 
 ## Type Parameters
 
