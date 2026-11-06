@@ -3,6 +3,7 @@
   import { navigating, page } from '$app/state'
   import { contactsQueries } from '$lib/services/contacts/queries'
   import { createQuery, useIsFetching } from '@tanstack/svelte-query'
+  import { createDebouncer } from '@tanstack/svelte-pacer/debouncer'
   import type { LayoutProps } from './$types'
 
   let { data, children }: LayoutProps = $props()
@@ -10,12 +11,10 @@
   const contactsQuery = createQuery(() => contactsQueries.list(data.q))
   const fetchingContacts = useIsFetching({ queryKey: contactsQueries.lists() })
 
-  let searchTimeout: ReturnType<typeof setTimeout> | undefined
-
-  const submitSearch = (form: HTMLFormElement | null) => {
-    clearTimeout(searchTimeout)
-    searchTimeout = setTimeout(() => form?.requestSubmit(), 500)
-  }
+  const searchDebouncer = createDebouncer(
+    (form: HTMLFormElement | null) => form?.requestSubmit(),
+    { wait: 500 },
+  )
 </script>
 
 <div id="root">
@@ -31,7 +30,8 @@
           name="q"
           value={data.q}
           class={fetchingContacts.current > 0 ? 'loading' : ''}
-          oninput={(event) => submitSearch(event.currentTarget.form)}
+          oninput={(event) =>
+            searchDebouncer.maybeExecute(event.currentTarget.form)}
         />
         <div
           id="search-spinner"

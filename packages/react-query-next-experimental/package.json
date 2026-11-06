@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-next-experimental",
-  "version": "5.105.1",
+  "version": "5.106.1",
   "description": "Hydration utils for React Query in the NextJs app directory",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -58,7 +58,7 @@
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
-    "next": "^16.0.1",
+    "next": "^16.4.4",
     "react": "catalog:",
     "typescript": "catalog:"
   },

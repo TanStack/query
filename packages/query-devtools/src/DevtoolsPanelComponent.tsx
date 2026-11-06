@@ -1,4 +1,5 @@
 import { createLocalStorage } from '@solid-primitives/storage'
+import { I18nProvider } from '@kobalte/core'
 import { createMemo } from 'solid-js'
 import { DevtoolsOfflineProvider } from './providers/DevtoolsOfflineProvider'
 import { DevtoolsSubscriptionsProvider } from './providers/DevtoolsSubscriptionsProvider'
@@ -36,14 +37,16 @@ const DevtoolsPanelComponent: DevtoolsComponentType = (props) => {
               setLocalStore={setLocalStore}
             >
               <ThemeContext.Provider value={theme}>
-                <ParentPanel>
-                  <ContentView
-                    localStore={localStore}
-                    setLocalStore={setLocalStore}
-                    onClose={props.onClose}
-                    showPanelViewOnly
-                  />
-                </ParentPanel>
+                <I18nProvider locale="en-US">
+                  <ParentPanel>
+                    <ContentView
+                      localStore={localStore}
+                      setLocalStore={setLocalStore}
+                      onClose={props.onClose}
+                      showPanelViewOnly
+                    />
+                  </ParentPanel>
+                </I18nProvider>
               </ThemeContext.Provider>
             </PiPProvider>
           </DevtoolsSubscriptionsProvider>

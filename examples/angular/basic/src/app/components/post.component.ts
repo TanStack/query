@@ -17,10 +17,9 @@ export class PostComponent {
   readonly #postsQueries = inject(PostsQueries)
 
   readonly setPostId = output<number>()
-  readonly postId = input(0)
+  readonly postId = input.required<number>()
 
-  readonly postQuery = injectQuery(() => ({
-    ...this.#postsQueries.detail(this.postId()),
-    enabled: this.postId() > 0,
-  }))
+  readonly postQuery = injectQuery(() =>
+    this.#postsQueries.detail(this.postId()),
+  )
 }
