@@ -2613,6 +2613,30 @@ describe('queryClient', () => {
       expect(fetchCount).toBe(1)
     })
 
+    it('should refetch static queries without data after invalidation', async () => {
+      const key = createKey()
+      const queryFn = vi
+        .fn<() => Promise<string>>()
+        .mockRejectedValueOnce(new Error('error'))
+        .mockResolvedValue('data')
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        staleTime: 'static',
+        retry: false,
+      })
+      const unsubscribe = observer.subscribe(noop)
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(queryClient.getQueryState(key)?.status).toBe('error')
+
+      await queryClient.invalidateQueries({ queryKey: key })
+
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(queryClient.getQueryData(key)).toBe('data')
+      unsubscribe()
+    })
+
     it('should not refetch static queries after invalidation', async () => {
       const key = createKey()
       const queryFn = vi.fn<() => string>(() => 'data1')
@@ -2633,6 +2657,45 @@ describe('queryClient', () => {
   })
 
   describe('resetQueries', () => {
+    it('should refetch active static queries after reset', async () => {
+      const key = createKey()
+      const queryFn = vi.fn<() => string>(() => 'data')
+      await queryClient.query({ queryKey: key, queryFn })
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        staleTime: 'static',
+      })
+      const unsubscribe = observer.subscribe(noop)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      await queryClient.resetQueries({ queryKey: key })
+
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(queryClient.getQueryData(key)).toBe('data')
+      unsubscribe()
+    })
+
+    it('should not refetch static queries when reset restores initial data', async () => {
+      const key = createKey()
+      const queryFn = vi.fn<() => number>(() => 1)
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        staleTime: 'static',
+        initialData: 0,
+      })
+      const unsubscribe = observer.subscribe(noop)
+      queryClient.setQueryData(key, 2)
+
+      await queryClient.resetQueries({ queryKey: key })
+
+      expect(queryFn).not.toHaveBeenCalled()
+      expect(queryClient.getQueryData(key)).toBe(0)
+      unsubscribe()
+    })
+
     it('should notify listeners when a query is reset', async () => {
       const key = createKey()
 

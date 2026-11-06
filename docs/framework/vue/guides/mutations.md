@@ -92,5 +92,10 @@ createApp(App).use(VueQueryPlugin, vueQueryOptions).mount('#app')
 ```
 
 [//]: # 'Example11'
+[//]: # 'OfflineExampleLink'
+
+We also have an extensive [offline example](../examples/offline-vue-router) that covers both queries and mutations.
+
+[//]: # 'OfflineExampleLink'
 [//]: # 'Materials'
 [//]: # 'Materials'

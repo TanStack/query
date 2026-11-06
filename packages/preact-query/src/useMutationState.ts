@@ -31,7 +31,7 @@ import type {
  * ```
  */
 export function useIsMutating(
-  filters?: MutationFilters,
+  filters?: Omit<MutationFilters, 'status'>,
   queryClient?: QueryClient,
 ): number {
   const client = useQueryClient(queryClient)
