@@ -15,6 +15,7 @@ import type {
 interface QueryFactoryOptions {
   queryKey: QueryKey
   queryKeyHashFn?: QueryKeyHashFunction<any>
+  select?: (data: any) => unknown
 }
 
 /**
@@ -380,7 +381,6 @@ export function experimental_fromHandle<TFactory extends QueryHandleFactory>(
  * @param factory - The function of the query's input that the handle came from.
  * @param handle - A handle from `experimental_queryHandleAsync` or `experimental_ensureQueryHandle`.
  * @returns The data a reader of the handle gets from the cache.
- * @throws {Error} If the cache has no data for the handle's query, for example after `queryClient.clear()`.
  * @example
  * ```ts
  * // in a route loader
@@ -396,16 +396,9 @@ export function experimental_getQueryHandleData<
   factory: TFactory,
   handle: DefinedQueryHandle<NoInfer<TFactory>>,
 ): InferQueryHandleData<TFactory> {
-  const options = factory(handle.input) as QueryFactoryOptions & {
-    select?: (data: unknown) => unknown
-  }
+  const options = factory(handle.input)
   const { queryHash } = queryClient.defaultQueryOptions(options)
   const data = queryClient.getQueryCache().get(queryHash)?.state.data
-  if (data === undefined) {
-    throw new Error(
-      `experimental_getQueryHandleData: the cache has no data for the query ${queryHash}. Read the handle right after awaiting it, before anything clears or removes the query.`,
-    )
-  }
   return (
     options.select ? options.select(data) : data
   ) as InferQueryHandleData<TFactory>

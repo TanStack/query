@@ -450,39 +450,6 @@ describe('query handles', () => {
       ).toBe('1')
     })
 
-    it('should throw without creating a query when the cache has no data', async () => {
-      using _timers = fakeTimers()
-      using queryClient = clearOnDispose(new QueryClient())
-      const queryFn = vi.fn<(id: string) => Promise<string>>((id) =>
-        Promise.resolve(id),
-      )
-      const postQuery = createPostQuery(queryFn)
-      const first = await experimental_queryHandleAsync(
-        queryClient,
-        postQuery,
-        { id: '1' },
-      )
-      const second = await experimental_queryHandleAsync(
-        queryClient,
-        postQuery,
-        { id: '2' },
-      )
-
-      queryClient.clear()
-      expect(() =>
-        experimental_getQueryHandleData(queryClient, postQuery, first),
-      ).toThrow('experimental_getQueryHandleData: the cache has no data')
-
-      await experimental_queryHandleAsync(queryClient, postQuery, { id: '2' })
-      queryClient.removeQueries({ queryKey: second.queryKey })
-      expect(() =>
-        experimental_getQueryHandleData(queryClient, postQuery, second),
-      ).toThrow('experimental_getQueryHandleData: the cache has no data')
-
-      expect(queryClient.getQueryCache().getAll()).toHaveLength(0)
-      expect(queryFn).toHaveBeenCalledTimes(3)
-    })
-
     it('should let a loader throw a 404 for a post that does not exist', async () => {
       using _timers = fakeTimers()
       using queryClient = clearOnDispose(new QueryClient())

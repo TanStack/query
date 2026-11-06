@@ -126,7 +126,7 @@ export async function loader({ params }) {
 
 [//]: # 'LoaderData'
 
-Start the other handles before you await, so reading the data doesn't create a waterfall. `experimental_getQueryHandleData` never fetches, waits or creates a query. It returns what the factory's `select` returns, or else the `queryFn`'s data, and throws if the cache has no data for the handle, for example after `queryClient.clear()`.
+Start the other handles before you await, so reading the data doesn't create a waterfall. `experimental_getQueryHandleData` never fetches, waits or creates a query. It returns what the factory's `select` returns, or else the `queryFn`'s data.
 
 ## Reading handles
 
