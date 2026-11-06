@@ -73,6 +73,7 @@ export class QueryObserver<
     TQueryKey
   >
   #selectError: TError | null
+  #selectErrorUpdatedAt = 0
   #selectFn?: (data: TQueryData) => TData
   #selectResult?: TData
   // This property keeps track of the last query with defined data.
@@ -697,20 +698,27 @@ export class QueryObserver<
           data = replaceData(prevResult?.data, data, options)
           this.#selectResult = data
           this.#selectError = null
+          this.#selectErrorUpdatedAt = 0
         } catch (selectError) {
-          this.#selectError = selectError as TError
+          // A new inline select throws a new object on every render. Replacing
+          // the stored error refreshes errorUpdatedAt and notifies subscribers.
+          if (selectErrorChanged(this.#selectError, selectError)) {
+            this.#selectError = selectError as TError
+            this.#selectErrorUpdatedAt = Date.now()
+          }
         }
       }
     } else if (data === undefined) {
       // a stored select error belongs to previously selected data; once that
       // data is gone (query switch or reset), it must not leak into this result
       this.#selectError = null
+      this.#selectErrorUpdatedAt = 0
     }
 
     if (this.#selectError) {
       error = this.#selectError
       data = this.#selectResult
-      errorUpdatedAt = Date.now()
+      errorUpdatedAt = this.#selectErrorUpdatedAt
       status = 'error'
       isPlaceholderData = false
     }
@@ -972,5 +980,36 @@ function isStale(
   return (
     resolveQueryValue(options.enabled, query) !== false &&
     query.isStaleByTime(resolveQueryValue(options.staleTime, query))
+  )
+}
+
+/**
+ * Reports whether a value just thrown by `select` should replace the stored select error.
+ * A new `Error` with the same name, message, cause, and own fields is the same failure.
+ * That keeps `errorUpdatedAt` stable when an inline selector throws again on the next render.
+ * @param previous - The select error already stored, if there is one.
+ * @param next - The value just thrown by `select`.
+ * @returns `true` if `next` should replace `previous`.
+ */
+function selectErrorChanged(previous: unknown, next: unknown): boolean {
+  if (Object.is(previous, next)) {
+    return false
+  }
+
+  if (!(previous instanceof Error) || !(next instanceof Error)) {
+    return true
+  }
+
+  if (
+    previous.name !== next.name ||
+    previous.message !== next.message ||
+    !Object.is(previous.cause, next.cause)
+  ) {
+    return true
+  }
+
+  return !shallowEqualObjects(
+    previous as unknown as Record<string, any>,
+    next as unknown as Record<string, any>,
   )
 }

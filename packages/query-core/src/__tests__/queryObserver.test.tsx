@@ -534,6 +534,107 @@ describe('queryObserver', () => {
     })
   })
 
+  it('should not notify listeners when an unstable selector throws the same error', async () => {
+    const key = createKey()
+    const queryFn = () => Promise.resolve({ count: 1 })
+    const observer = new QueryObserver<{ count: number }, Error, number>(
+      queryClient,
+      {
+        queryKey: key,
+        queryFn,
+        select: () => {
+          throw new Error('selector error')
+        },
+      },
+    )
+    const results: Array<QueryObserverResult> = []
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    const settled = results[results.length - 1]
+    const selectError = settled?.error
+    let notifications = results.length
+    expect(settled).toMatchObject({ status: 'error' })
+    expect(selectError).toBeInstanceOf(Error)
+
+    const expectSameError = async (
+      select: (data: { count: number }) => number,
+    ) => {
+      observer.setOptions({ queryKey: key, queryFn, select })
+      await vi.advanceTimersByTimeAsync(10)
+      expect(results).toHaveLength(notifications)
+      expect(observer.getCurrentResult().error).toBe(selectError)
+      expect(observer.getCurrentResult().errorUpdatedAt).toBe(
+        settled?.errorUpdatedAt,
+      )
+    }
+
+    await expectSameError(() => {
+      throw new Error('selector error')
+    })
+    await expectSameError(() => {
+      throw selectError
+    })
+
+    const changed = new Error('different error')
+    observer.setOptions({
+      queryKey: key,
+      queryFn,
+      select: () => {
+        throw changed
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    notifications++
+
+    expect(results).toHaveLength(notifications)
+    expect(results[results.length - 1]?.error).toBe(changed)
+    expect(results[results.length - 1]?.errorUpdatedAt).toBeGreaterThan(
+      settled?.errorUpdatedAt ?? 0,
+    )
+
+    const withCause = new Error('different error', { cause: 'missing' })
+    observer.setOptions({
+      queryKey: key,
+      queryFn,
+      select: () => {
+        throw withCause
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    notifications++
+    expect(results).toHaveLength(notifications)
+    expect(results[results.length - 1]?.error).toBe(withCause)
+
+    observer.setOptions({
+      queryKey: key,
+      queryFn,
+      select: () => {
+        throw new Error('different error', { cause: 'missing' })
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(results).toHaveLength(notifications)
+
+    observer.setOptions({
+      queryKey: key,
+      queryFn,
+      select: (data) => data.count,
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(results).toHaveLength(notifications + 1)
+    expect(results[results.length - 1]).toMatchObject({
+      status: 'success',
+      data: 1,
+      error: null,
+    })
+
+    unsubscribe()
+  })
+
   it('should not have isPlaceholderData true when selector throws on placeholder data', () => {
     const key = createKey()
     const queryFn = () => sleep(10).then(() => ({ count: 1 }))

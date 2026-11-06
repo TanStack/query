@@ -771,6 +771,63 @@ describe('useQuery', () => {
     expect(runs).toBe(2)
   })
 
+  it('should not loop when an inline selector throws and the query renders a stateful child', async () => {
+    const key = createKey()
+    let renders = 0
+
+    function Child() {
+      const [ready, setReady] = React.useState(false)
+
+      React.useEffect(() => {
+        setReady(true)
+      }, [])
+
+      return <span>{ready ? 'ready' : 'waiting'}</span>
+    }
+
+    function Page() {
+      renders++
+      if (renders > 20) {
+        throw new Error('render loop')
+      }
+
+      const [, rerender] = React.useReducer(() => ({}), {})
+      const state = useQuery({
+        queryKey: key,
+        queryFn: (): { result?: Array<string> } => ({}),
+        select: (data) => {
+          if (data.result === undefined) {
+            throw new TypeError(
+              "Cannot read properties of undefined (reading 'map')",
+            )
+          }
+          return data.result
+        },
+      })
+
+      return (
+        <div>
+          <div>{state.status}</div>
+          <Child />
+          <button onClick={rerender}>rerender</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('error')
+    rendered.getByText('ready')
+    const settled = renders
+
+    fireEvent.click(rendered.getByRole('button', { name: 'rerender' }))
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(renders).toBe(settled + 1)
+    rendered.getByText('error')
+  })
+
   it('should track properties and only re-render when a tracked property changes', async () => {
     const key = createKey()
     const states: Array<UseQueryResult<string>> = []
