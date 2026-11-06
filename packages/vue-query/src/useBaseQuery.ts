@@ -108,7 +108,12 @@ export function useBaseQuery<
     }
     const clonedOptions = cloneDeepUnref(resolvedOptions as any)
 
-    if (typeof clonedOptions.enabled === 'function') {
+    // A zero-arg function is a Vue getter and must run here so its refs are tracked.
+    // `(query) => boolean` is query-core's callback and is left for core to call.
+    if (
+      typeof clonedOptions.enabled === 'function' &&
+      clonedOptions.enabled.length === 0
+    ) {
       clonedOptions.enabled = clonedOptions.enabled()
     }
 
@@ -176,9 +181,15 @@ export function useBaseQuery<
           // noop
         }
         const run = () => {
-          if (defaultedOptions.value.enabled !== false) {
-            // fix #6133
-            observer.setOptions(defaultedOptions.value)
+          // Apply the latest options before resolving `enabled`, so a query callback sees the current query.
+          // fix #6133
+          observer.setOptions(defaultedOptions.value)
+          const { enabled } = defaultedOptions.value
+          if (
+            (typeof enabled === 'function'
+              ? enabled(observer.getCurrentQuery())
+              : enabled) !== false
+          ) {
             const optimisticResult = observer.getOptimisticResult(
               defaultedOptions.value,
             )

@@ -16,6 +16,21 @@ import type {
 } from '@tanstack/query-core'
 
 /**
+ * `enabled` for Vue Query. A `ref`, `computed`, or plain boolean is reactive. A zero-argument getter
+ * (`() => ...`) is too: it is called while tracking dependencies. query-core's `(query) => boolean` is
+ * kept as that callback and is not tracked by Vue — a `ref` read inside it is current when core calls it,
+ * and a `ref` change does not by itself call it again.
+ */
+export type VueQueryEnabledOption<
+  TQueryFnData,
+  TError,
+  TQueryData,
+  TQueryKey extends QueryKey,
+> =
+  | MaybeRefOrGetter<boolean | undefined>
+  | QueryBooleanOption<TQueryFnData, TError, TQueryData, TQueryKey>
+
+/**
  * The plain, unwrapped options that `queryOptions` hands back, and what `useQuery`, `useQueries`, and the
  * `queryClient` methods see once `ref`s have been resolved. To pass options in, use
  * {@link UseQueryOptions}, which accepts the same options as `ref`s and `computed`s too.
@@ -42,14 +57,12 @@ export type QueryOptions<
       TQueryKey
     >
   ]: Property extends 'enabled'
-    ?
-        | MaybeRefOrGetter<boolean | undefined>
-        | (() => QueryBooleanOption<
-            TQueryFnData,
-            TError,
-            TQueryData,
-            DeepUnwrapRef<TQueryKey>
-          >)
+    ? VueQueryEnabledOption<
+        TQueryFnData,
+        TError,
+        TQueryData,
+        DeepUnwrapRef<TQueryKey>
+      >
     : Property extends 'queryKey'
       ? MaybeRefOrGetter<TQueryKey>
       : QueryObserverOptions<
@@ -66,7 +79,8 @@ type SkipTokenForUseQuery = symbol
 
 /**
  * The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `enabled` tracks reactive
- * dependencies automatically as a `ref`, a plain value, or a reactive getter (`() => ...`). `queryKey` reacts
+ * dependencies as a `ref`, a plain boolean, or a zero-argument getter (`() => ...`). query-core's
+ * `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts
  * through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual
  * entries. Other options are read once when passed as a plain value, and stay reactive when passed as a `ref`
  * or a `computed`. Only `enabled` and `queryKey` read a function as a getter, so `queryFn` reacts through a

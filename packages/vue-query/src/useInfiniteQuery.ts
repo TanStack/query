@@ -4,6 +4,7 @@ import type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
+import type { VueQueryEnabledOption } from './queryOptions'
 import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
@@ -47,14 +48,11 @@ export type UseInfiniteQueryOptions<
         TPageParam
       >
     ]: Property extends 'enabled'
-      ? MaybeRefOrGetter<
-          InfiniteQueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            DeepUnwrapRef<TQueryKey>,
-            TPageParam
-          >[Property]
+      ? VueQueryEnabledOption<
+          TQueryFnData,
+          TError,
+          InfiniteData<TQueryFnData, TPageParam>,
+          DeepUnwrapRef<TQueryKey>
         >
       : MaybeRefDeep<
           InfiniteQueryObserverOptions<

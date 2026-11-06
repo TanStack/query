@@ -386,6 +386,27 @@ describe('useQuery', () => {
     )
   })
 
+  it('should pass the query to an enabled callback instead of calling it as a getter', () => {
+    const key = createKey()
+    const queryFn = vi.fn<() => string>(() => 'foo')
+    const enabled = vi.fn<
+      (query: { queryKey: ReadonlyArray<unknown> }) => boolean
+    >((query) => Array.isArray(query.queryKey))
+
+    useQuery({
+      queryKey: key,
+      queryFn,
+      enabled,
+    })
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(enabled.mock.calls.length).toBeGreaterThan(0)
+    for (const call of enabled.mock.calls) {
+      expect(call).toHaveLength(1)
+      expect(call[0]).toStrictEqual(expect.objectContaining({ queryKey: key }))
+    }
+  })
+
   it('should allow getters for query keys', async () => {
     const key = createKey()
     const queryFn = vi.fn<() => string>(() => 'foo')
@@ -716,6 +737,34 @@ describe('useQuery', () => {
       expect(onResolve).not.toHaveBeenCalled()
 
       isEnabled.value = true
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(onResolve).toHaveBeenCalledTimes(1)
+      expect(onResolve).toHaveBeenCalledWith(
+        expect.objectContaining({ data: 'Some data' }),
+      )
+    })
+
+    it('should keep suspense pending while an enabled callback returns false', async () => {
+      const key = createKey()
+      const phase = ref('off')
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'Some data'),
+      )
+      const onResolve =
+        vi.fn<(result: QueryObserverResult<string, Error>) => void>()
+      const query = useQuery({
+        queryKey: [...key, phase],
+        queryFn,
+        enabled: (currentQuery) => currentQuery.queryKey.at(-1) === 'on',
+      })
+
+      query.suspense().then(onResolve)
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryFn).not.toHaveBeenCalled()
+      expect(onResolve).not.toHaveBeenCalled()
+
+      phase.value = 'on'
       await vi.advanceTimersByTimeAsync(10)
       expect(queryFn).toHaveBeenCalledTimes(1)
       expect(onResolve).toHaveBeenCalledTimes(1)
