@@ -3,11 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "test:types": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/vue-query": "workspace:*",
-    "vue": "^3.5.43"
+    "@tanstack/vue-query-devtools": "workspace:*",
+    "vue": "^3.5.44"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.9",
