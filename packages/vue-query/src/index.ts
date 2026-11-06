@@ -37,6 +37,7 @@ export type { UseQueryReturnType, UseQueryDefinedReturnType } from './useQuery'
 export type {
   UseInfiniteQueryOptions,
   UseInfiniteQueryReturnType,
+  UseInfiniteQueryDefinedReturnType,
 } from './useInfiniteQuery'
 export type {
   MutationResult,
