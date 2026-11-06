@@ -6,7 +6,7 @@
   ],
   "commit": false,
   "access": "public",
-  "baseBranch": "angular-adapter-pre",
+  "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "fixed": [
     [
