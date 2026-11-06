@@ -766,6 +766,122 @@ describe('Devtools', () => {
       ).not.toBeInTheDocument()
     })
 
+    it('should cycle and persist the filter scope', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const scope = rendered.getByRole('button', { name: /^Filter scope: / })
+      expect(scope).toHaveAccessibleName('Filter scope: Key')
+      fireEvent.click(scope)
+      expect(scope).toHaveAccessibleName('Filter scope: Data')
+      expect(localStorage.getItem('TanstackQueryDevtools.filterScope')).toBe(
+        'data',
+      )
+      expect(
+        rendered.getByLabelText('Filter queries by query data'),
+      ).toBeInTheDocument()
+      fireEvent.click(scope)
+      expect(scope).toHaveAccessibleName('Filter scope: All')
+      expect(
+        rendered.getByLabelText('Filter queries by query key or data'),
+      ).toBeInTheDocument()
+      fireEvent.click(scope)
+      expect(scope).toHaveAccessibleName('Filter scope: Key')
+    })
+
+    it('should restore a persisted filter scope and ignore unknown values', () => {
+      const restored = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'all' },
+      )
+      expect(
+        restored.getByRole('button', { name: 'Filter scope: All' }),
+      ).toBeInTheDocument()
+      cleanup()
+
+      const fallback = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'bogus' },
+      )
+      expect(
+        fallback.getByRole('button', { name: 'Filter scope: Key' }),
+      ).toBeInTheDocument()
+    })
+
+    it('should filter queries by data keys and values in the "data" scope', () => {
+      queryClient.setQueryData(['posts'], [{ id: 1, author: 'Alice' }])
+      queryClient.setQueryData(['users'], { alice: { role: 'admin' } })
+      queryClient.setQueryData(['alice-settings'], { theme: 'dark' })
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'data' },
+      )
+      const filter = rendered.getByLabelText('Filter queries by query data')
+
+      fireEvent.input(filter, { target: { value: 'ALICE' } })
+      expect(rendered.getByLabelText('Query key ["posts"]')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Query key ["users"]')).toBeInTheDocument()
+      expect(
+        rendered.queryByLabelText('Query key ["alice-settings"]'),
+      ).not.toBeInTheDocument()
+
+      fireEvent.input(filter, { target: { value: 'admin' } })
+      expect(rendered.getAllByLabelText(/^Query key /)).toHaveLength(1)
+      expect(rendered.getByLabelText('Query key ["users"]')).toBeInTheDocument()
+    })
+
+    it('should match either the key or the data in the "all" scope', () => {
+      queryClient.setQueryData(['posts'], { author: 'alice' })
+      queryClient.setQueryData(['alice-settings'], { theme: 'dark' })
+      queryClient.setQueryData(['users'], { name: 'bob' })
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'all' },
+      )
+
+      fireEvent.input(
+        rendered.getByLabelText('Filter queries by query key or data'),
+        { target: { value: 'alice' } },
+      )
+      expect(rendered.getByLabelText('Query key ["posts"]')).toBeInTheDocument()
+      expect(
+        rendered.getByLabelText('Query key ["alice-settings"]'),
+      ).toBeInTheDocument()
+      expect(
+        rendered.queryByLabelText('Query key ["users"]'),
+      ).not.toBeInTheDocument()
+    })
+
+    it('should update data filter results when query data changes', async () => {
+      queryClient.setQueryData(['posts'], { status: 'draft' })
+      queryClient.setQueryData(['users'], { status: 'active' })
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'data' },
+      )
+
+      fireEvent.input(rendered.getByLabelText('Filter queries by query data'), {
+        target: { value: 'published' },
+      })
+      expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
+
+      queryClient.setQueryData(['posts'], { status: 'published' })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(rendered.getByLabelText('Query key ["posts"]')).toBeInTheDocument()
+
+      queryClient.setQueryData(['posts'], { status: 'archived' })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
+    })
+
+    it('should not show the filter scope toggle in the mutations view', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByText('Mutations'))
+      expect(
+        rendered.queryByRole('button', { name: /^Filter scope: / }),
+      ).not.toBeInTheDocument()
+    })
+
     it('should clear all queries when the clear cache button is clicked', () => {
       queryClient.setQueryData(['posts'], [])
       queryClient.setQueryData(['users'], [])

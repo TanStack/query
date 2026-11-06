@@ -53,21 +53,25 @@ import {
   XCircle,
 } from './icons'
 import Explorer, { SearchableExplorer } from './Explorer'
+import { hasExplorerMatch } from './explorerSearch'
 import { VirtualList } from './VirtualList'
 import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
 import {
   BUTTON_POSITION,
   DEFAULT_HEIGHT,
   DEFAULT_MUTATION_SORT_FN_NAME,
+  DEFAULT_QUERY_FILTER_SCOPE,
   DEFAULT_SORT_FN_NAME,
   DEFAULT_SORT_ORDER,
   DEFAULT_WIDTH,
   INITIAL_IS_OPEN,
   POSITION,
+  QUERY_FILTER_SCOPES,
   firstBreakpoint,
   secondBreakpoint,
   thirdBreakpoint,
 } from './constants'
+import type { QueryFilterScope } from './constants'
 import type {
   DevtoolsErrorType,
   DevtoolsPosition,
@@ -82,6 +86,18 @@ import type {
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
 import type { Accessor, Component, JSX } from 'solid-js'
+
+const queryFilterScopeLabels: Record<QueryFilterScope, string> = {
+  key: 'Key',
+  data: 'Data',
+  all: 'All',
+}
+
+const queryFilterScopeAriaLabels: Record<QueryFilterScope, string> = {
+  key: 'Filter queries by query key',
+  data: 'Filter queries by query data',
+  all: 'Filter queries by query key or data',
+}
 
 interface DevtoolsPanelProps {
   localStore: StorageObject<string>
@@ -755,22 +771,71 @@ export const ContentView: Component<ContentViewProps> = (props) => {
         : useQueryDevtoolsContext().hideDisabledQueries || false
   })
 
+  const filterScope = createMemo<QueryFilterScope>(() => {
+    const scope = props.localStore.filterScope as QueryFilterScope
+    return QUERY_FILTER_SCOPES.includes(scope)
+      ? scope
+      : DEFAULT_QUERY_FILTER_SCOPE
+  })
+
+  const cycleFilterScope = () => {
+    const index = QUERY_FILTER_SCOPES.indexOf(filterScope())
+    props.setLocalStore(
+      'filterScope',
+      QUERY_FILTER_SCOPES[(index + 1) % QUERY_FILTER_SCOPES.length]!,
+    )
+  }
+
+  // Data changes don't change the query count, so data searches need their own trigger
+  const queryDataVersion = createSubscribeToQueryCacheBatcher(
+    () => ({}),
+    false,
+    (event) =>
+      filterScope() !== 'key' &&
+      !!props.localStore.filter &&
+      event.type === 'updated' &&
+      (event.action.type === 'success' || event.action.type === 'setState'),
+  )
+
+  // Data is replaced rather than mutated, so a result stays valid while the data reference does
+  const dataMatchCache = new WeakMap<
+    Query,
+    { data: unknown; term: string; matched: boolean }
+  >()
+
+  const matchesQueryData = (query: Query, term: string) => {
+    const data = query.state.data
+    const cached = dataMatchCache.get(query)
+    if (cached && cached.data === data && cached.term === term) {
+      return cached.matched
+    }
+    const matched = data !== undefined && hasExplorerMatch(data, term)
+    dataMatchCache.set(query, { data, term, matched })
+    return matched
+  }
+
   const queries = createMemo(
     on(
       () => [
         queryCount(),
         props.localStore.filter,
+        filterScope(),
+        queryDataVersion(),
         sort(),
         sortOrder(),
         hideDisabledQueries(),
       ],
       () => {
         const curr = query_cache().getAll()
+        const filter = props.localStore.filter || ''
+        const scope = filterScope()
+        const dataTerm = filter.toLowerCase()
 
-        let filtered = props.localStore.filter
+        let filtered = filter
           ? curr.filter(
               (item) =>
-                rankItem(item.queryHash, props.localStore.filter || '').passed,
+                (scope !== 'data' && rankItem(item.queryHash, filter).passed) ||
+                (scope !== 'key' && matchesQueryData(item, dataTerm)),
             )
           : [...curr]
 
@@ -939,7 +1004,11 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             >
               <Search />
               <input
-                aria-label="Filter queries by query key"
+                aria-label={
+                  selectedView() === 'queries'
+                    ? queryFilterScopeAriaLabels[filterScope()]
+                    : 'Filter queries by query key'
+                }
                 type="text"
                 placeholder="Filter"
                 onInput={(e) => {
@@ -957,6 +1026,21 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                     : props.localStore.mutationFilter || ''
                 }
               />
+              <Show when={selectedView() === 'queries'}>
+                <button
+                  type="button"
+                  onClick={cycleFilterScope}
+                  class={cx(
+                    styles().filterScopeBtn,
+                    'tsqd-query-filter-scope-btn',
+                  )}
+                  aria-label={`Filter scope: ${queryFilterScopeLabels[filterScope()]}`}
+                  title={`${queryFilterScopeAriaLabels[filterScope()]}. Click to switch between key, data, and both.`}
+                  data-scope={filterScope()}
+                >
+                  {queryFilterScopeLabels[filterScope()]}
+                </button>
+              </Show>
             </div>
             <div
               class={cx(
@@ -3156,6 +3240,8 @@ const stylesFactory = (
       & input {
         font-size: ${font.size.xs};
         width: 100%;
+        min-width: 0;
+        flex: 1;
         background-color: ${t(colors.gray[100], colors.darkGray[400])};
         border: none;
         padding: 0;
@@ -3172,6 +3258,27 @@ const stylesFactory = (
       &:focus-within {
         outline-offset: 2px;
         border-radius: ${border.radius.xs};
+        outline: 2px solid ${colors.blue[800]};
+      }
+    `,
+    filterScopeBtn: css`
+      flex-shrink: 0;
+      cursor: pointer;
+      padding: 0 ${size[1]};
+      border-radius: ${border.radius.xs};
+      border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
+      background-color: ${t(colors.gray[200], colors.darkGray[500])};
+      color: ${t(colors.gray[700], colors.gray[300])};
+      font-size: ${font.size.xs};
+      line-height: ${font.lineHeight.xs};
+      &[data-scope='data'],
+      &[data-scope='all'] {
+        border-color: ${t(colors.blue[300], colors.blue[700])};
+        background-color: ${t(colors.blue[100], colors.blue[900])};
+        color: ${t(colors.blue[700], colors.blue[300])};
+      }
+      &:focus-visible {
+        outline-offset: 2px;
         outline: 2px solid ${colors.blue[800]};
       }
     `,

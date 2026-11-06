@@ -105,6 +105,41 @@ export function searchEntries(value: unknown): Array<SearchEntry> | undefined {
 }
 
 /**
+ * Checks whether any entry label or primitive value contains the term, using
+ * the same rules as `searchExplorer` but stopping at the first match.
+ * @param rootValue - The data to search.
+ * @param term - The case-normalized literal search term.
+ * @returns Whether the data contains a match.
+ */
+export function hasExplorerMatch(rootValue: unknown, term: string): boolean {
+  const ancestors = new Set<unknown>()
+  /**
+   * Visits one value with its current ancestors.
+   * @param value - The entry value.
+   * @param depth - The current nesting depth.
+   * @returns Whether the value or any descendant matches.
+   */
+  function visit(value: unknown, depth: number): boolean {
+    const text = primitiveText(value)
+    if (text !== undefined) return text.toLowerCase().includes(term)
+    if (depth > 500 || ancestors.has(value)) return false
+    const entries = searchEntries(value)
+    if (!entries) return false
+    ancestors.add(value)
+    try {
+      return entries.some(
+        (entry) =>
+          entry.label.toLowerCase().includes(term) ||
+          (!entry.accessor && visit(entry.value, depth + 1)),
+      )
+    } finally {
+      ancestors.delete(value)
+    }
+  }
+  return visit(rootValue, 0)
+}
+
+/**
  * Builds one search tree, stopping ancestor cycles while visiting shared siblings.
  * @param rootValue - The current root data.
  * @param term - The case-normalized literal search term.

@@ -15,3 +15,7 @@ export const DEFAULT_WIDTH = 500
 export const DEFAULT_SORT_FN_NAME = Object.keys(sortFns)[0]
 export const DEFAULT_SORT_ORDER = 1
 export const DEFAULT_MUTATION_SORT_FN_NAME = Object.keys(mutationSortFns)[0]
+export const QUERY_FILTER_SCOPES = ['key', 'data', 'all'] as const
+/** What the query list filter matches: the query key, the query data, or either. */
+export type QueryFilterScope = (typeof QUERY_FILTER_SCOPES)[number]
+export const DEFAULT_QUERY_FILTER_SCOPE: QueryFilterScope = 'key'

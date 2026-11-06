@@ -1,6 +1,10 @@
 import { runInNewContext } from 'node:vm'
 import { describe, expect, it, vi } from 'vitest'
-import { searchEntries, searchExplorer } from '../explorerSearch'
+import {
+  hasExplorerMatch,
+  searchEntries,
+  searchExplorer,
+} from '../explorerSearch'
 
 describe('explorer search', () => {
   it.each([
@@ -114,5 +118,50 @@ describe('explorer search', () => {
       searchExplorer({ nearby: 'needle', deep: value }, 'needle').hasMatch,
     ).toBe(true)
     expect(searchExplorer(value, 'needle').hasMatch).toBe(false)
+  })
+
+  describe('hasExplorerMatch', () => {
+    it.each([
+      { value: { name: 'needle' }, term: 'needle' },
+      { value: { needle: 1 }, term: 'needle' },
+      { value: [1, 2, { deep: [42] }], term: '42' },
+      { value: new Map([['a', 'needle']]), term: 'needle' },
+      { value: new Set(['needle']), term: 'needle' },
+      { value: { flag: true }, term: 'true' },
+      { value: { empty: null }, term: 'null' },
+      { value: { name: 'other' }, term: 'needle' },
+      { value: 'needle', term: 'eed' },
+      { value: new Uint8Array([1]), term: '1' },
+    ])('agrees with searchExplorer for $term', ({ value, term }) => {
+      expect(hasExplorerMatch(value, term)).toBe(
+        searchExplorer(value, term).hasMatch,
+      )
+    })
+
+    it('handles circular data', () => {
+      const value: Record<string, unknown> = { name: 'other' }
+      value.self = value
+      expect(hasExplorerMatch(value, 'needle')).toBe(false)
+      value.found = 'needle'
+      expect(hasExplorerMatch(value, 'needle')).toBe(true)
+    })
+
+    it('matches accessor labels without evaluating getters', () => {
+      const read = vi.fn<() => string>(() => 'needle')
+      const value = {}
+      Object.defineProperty(value, 'getter', { get: read, enumerable: true })
+      expect(hasExplorerMatch(value, 'needle')).toBe(false)
+      expect(hasExplorerMatch(value, 'getter')).toBe(true)
+      expect(read).not.toHaveBeenCalled()
+    })
+
+    it('bounds deeply nested searches', () => {
+      let value: unknown = 'needle'
+      for (let depth = 0; depth < 10_000; depth++) value = { next: value }
+      expect(hasExplorerMatch(value, 'needle')).toBe(false)
+      expect(
+        hasExplorerMatch({ nearby: 'needle', deep: value }, 'needle'),
+      ).toBe(true)
+    })
   })
 })
