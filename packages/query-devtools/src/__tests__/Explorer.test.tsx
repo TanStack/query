@@ -478,6 +478,30 @@ describe('Explorer', () => {
       expect(highlightedText()).toHaveLength(0)
     })
 
+    it('starts with the initial search and restores it when the selected root changes', () => {
+      const [key, setKey] = createSignal('first')
+      const [initialSearch, setInitialSearch] = createSignal('Needle')
+      const rendered = renderSearchable({
+        label: 'Data',
+        value: { text: 'a needle' },
+        get searchKey() {
+          return key()
+        },
+        get initialSearch() {
+          return initialSearch()
+        },
+      })
+      const input = rendered.getByLabelText('Search data')
+      expect(input).toHaveValue('Needle')
+      expect(highlightedText()).toStrictEqual(['needle'])
+      searchData(rendered, 'other')
+      setInitialSearch('a')
+      expect(input).toHaveValue('other')
+      setKey('second')
+      expect(input).toHaveValue('a')
+      expect(highlightedText()).toStrictEqual(['a'])
+    })
+
     it('searches Map and Set entries and keeps distinct object keys', () => {
       const first = {
         toString() {
