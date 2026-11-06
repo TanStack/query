@@ -2,14 +2,14 @@
   "name": "@tanstack/query-integration-react-next-15",
   "private": true,
   "scripts": {
-    "dev": "next dev --webpack",
+    "dev": "next dev",
     "build": "next build"
   },
   "dependencies": {
     "@js-temporal/polyfill": "^0.5.1",
     "@tanstack/react-query": "workspace:*",
     "@tanstack/react-query-devtools": "workspace:*",
-    "next": "^15.4.8",
+    "next": "^15.5.28",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tupleson": "0.23.1"

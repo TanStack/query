@@ -148,6 +148,16 @@ function App() {
   - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
   - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
 
+## Search query and mutation data
+
+Select a query or mutation and use **Search data** in its Data Explorer to search nested property names and primitive values. Search uses case-insensitive text matching and treats special characters as plain text.
+
+Matching text is highlighted. Matching editable values have a highlighted input. The explorer opens matching branches and the first matching page in each paginated collection. Other pages with matches are highlighted so you can open them. You can still inspect other rows and edit query data.
+
+The Data Explorer highlights up to 1,000 matches at a time.
+
+Select **Clear** or press **Escape** in the search field to restore your manual expansion. Selecting another query or mutation clears the search.
+
 ## Devtools in production
 
 Devtools are excluded in production builds. However, it might be desirable to lazy load the devtools in production:
@@ -172,8 +182,9 @@ function App() {
   const [showDevtools, setShowDevtools] = React.useState(false)
 
   React.useEffect(() => {
-    // @ts-expect-error
-    window.toggleDevtools = () => setShowDevtools((old) => !old)
+    Object.assign(window, {
+      toggleDevtools: () => setShowDevtools((old) => !old),
+    })
   }, [])
 
   return (

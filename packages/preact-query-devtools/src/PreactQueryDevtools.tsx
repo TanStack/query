@@ -137,5 +137,5 @@ export function PreactQueryDevtools(props: DevtoolsOptions): VNode | null {
     }
   }, [devtools])
 
-  return <div dir="ltr" className="tsqd-parent-container" ref={ref} />
+  return <div className="tsqd-parent-container" ref={ref} />
 }
