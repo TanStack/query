@@ -1,5 +1,12 @@
 # @tanstack/lit-query
 
+## 0.2.36
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.106.1
+
 ## 0.2.35
 
 ### Patch Changes
