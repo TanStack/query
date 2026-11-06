@@ -3,7 +3,7 @@ import type { QueryClient } from './queryClient'
 import type {
   InferDataFromTag,
   QueryKey,
-  QueryKeyHashFunction,
+  QueryObserverOptions,
   StaleTime,
 } from './types'
 
@@ -12,11 +12,10 @@ import type {
 /**
  * The options a query factory returns, usually from `queryOptions` or `infiniteQueryOptions`.
  */
-interface QueryFactoryOptions {
-  queryKey: QueryKey
-  queryKeyHashFn?: QueryKeyHashFunction<any>
-  select?: (data: any) => unknown
-}
+type QueryFactoryOptions = Pick<
+  QueryObserverOptions<any, any, any, any, any>,
+  'queryKey' | 'queryKeyHashFn' | 'select'
+>
 
 /**
  * A function of zero or one argument that returns a query's options, usually with `queryOptions`
