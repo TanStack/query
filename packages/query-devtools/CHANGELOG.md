@@ -1,5 +1,16 @@
 # @tanstack/query-devtools
 
+## 5.107.0
+
+### Minor Changes
+
+- [#12538](https://github.com/TanStack/query/pull/12538) [`a4d72f7`](https://github.com/TanStack/query/commit/a4d72f75c1c7a59e39aaf4f776f540c3814e46f7) - feat(query-devtools): add a filter scope toggle to filter queries and mutations by key, data (mutation variables or data), or both. Data and All scopes initialize explorer searches with the filter. Mutation explorers initialize searches only for matching variables or data, and filtering refreshes when mutation variables change in place.
+
+### Patch Changes
+
+- Updated dependencies [[`b6add89`](https://github.com/TanStack/query/commit/b6add891c1b846c1f276a4c0110edb58b62defaa)]:
+  - @tanstack/query-core@5.107.0
+
 ## 5.106.1
 
 ### Patch Changes

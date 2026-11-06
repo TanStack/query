@@ -1,5 +1,17 @@
 # @tanstack/solid-query-devtools
 
+## 5.107.0
+
+### Minor Changes
+
+- [#12530](https://github.com/TanStack/query/pull/12530) [`a8c2a17`](https://github.com/TanStack/query/commit/a8c2a17846ffcf873a041e4aa90ba341f89dd916) - feat({solid,svelte}-query-devtools): add './production' entry to lazy load the devtools in production builds
+
+### Patch Changes
+
+- Updated dependencies [[`a4d72f7`](https://github.com/TanStack/query/commit/a4d72f75c1c7a59e39aaf4f776f540c3814e46f7)]:
+  - @tanstack/query-devtools@5.107.0
+  - @tanstack/solid-query@5.107.0
+
 ## 5.106.1
 
 ### Patch Changes
