@@ -110,7 +110,7 @@ const filterScopeAriaLabels: Record<
   },
 }
 
-// Data is replaced rather than mutated, so a search text stays valid while the data reference does
+// Query data is immutable. Cached mutation text is invalidated when mutation state changes.
 const dataSearchTexts = new WeakMap<object, string>()
 
 /**
@@ -919,11 +919,19 @@ export const ContentView: Component<ContentViewProps> = (props) => {
   const mutationDataVersion = createSubscribeToMutationCacheBatcher(
     () => ({}),
     false,
-    (event) =>
-      filterScope() !== 'key' &&
-      !!props.localStore.mutationFilter &&
-      event.type === 'updated' &&
-      (event.action.type === 'pending' || event.action.type === 'success'),
+    (event) => {
+      if (event.type !== 'updated') return false
+      // Mutation functions can change variables in place, including when no data filter is active.
+      for (const value of [
+        event.mutation.state.variables,
+        event.mutation.state.data,
+      ]) {
+        if (typeof value === 'object' && value !== null) {
+          dataSearchTexts.delete(value)
+        }
+      }
+      return filterScope() !== 'key' && !!props.localStore.mutationFilter
+    },
   )
 
   const mutationDataSearchTexts = createDataSearchTexts()
@@ -1566,7 +1574,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
       <Show when={selectedView() === 'queries' && selectedQueryHash()}>
         <QueryDetails
           initialSearch={
-            filterScope() === 'data' ? props.localStore.filter : undefined
+            filterScope() !== 'key' ? props.localStore.filter : undefined
           }
         />
       </Show>
@@ -1574,7 +1582,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
       <Show when={selectedView() === 'mutations' && selectedMutationId()}>
         <MutationDetails
           initialSearch={
-            filterScope() === 'data'
+            filterScope() !== 'key'
               ? props.localStore.mutationFilter
               : undefined
           }
@@ -2549,6 +2557,11 @@ const MutationDetails = (props: { initialSearch?: string }) => {
     false,
   )
 
+  const matchingSearch = (value: unknown) =>
+    props.initialSearch && matchesData(value, props.initialSearch.toLowerCase())
+      ? props.initialSearch
+      : undefined
+
   const getQueryStatusColors = () => {
     if (color() === 'gray') {
       return css`
@@ -2624,7 +2637,9 @@ const MutationDetails = (props: { initialSearch?: string }) => {
           }}
           class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
         >
-          <Explorer
+          <SearchableExplorer
+            searchKey={activeMutation()}
+            initialSearch={matchingSearch(activeMutation()!.state.variables)}
             label="Variables"
             defaultExpanded={['Variables']}
             value={activeMutation()!.state.variables}
@@ -2664,7 +2679,7 @@ const MutationDetails = (props: { initialSearch?: string }) => {
         >
           <SearchableExplorer
             searchKey={activeMutation()}
-            initialSearch={props.initialSearch}
+            initialSearch={matchingSearch(activeMutation()!.state.data)}
             label="Data"
             defaultExpanded={['Data']}
             value={activeMutation()!.state.data}

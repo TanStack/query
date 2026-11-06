@@ -2503,13 +2503,13 @@ importers:
         version: 19.3.0(@types/react@19.3.0)
       '@vitejs/plugin-react':
         specifier: ^6.2.1
-        version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.46.1)(tsx@4.23.15)(yaml@2.9.1))
+        version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.90.0)(terser@5.46.1)(tsx@4.23.15)(yaml@2.9.0))
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
         specifier: ^8.3.5
-        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.46.1)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.90.0)(terser@5.46.1)(tsx@4.23.15)(yaml@2.9.0)
 
   examples/react/devtools-panel:
     dependencies:

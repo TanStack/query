@@ -120,6 +120,16 @@ describe('explorer search', () => {
     expect(searchExplorer(value, 'needle').hasMatch).toBe(false)
   })
 
+  it.each([
+    { depth: 500, matches: true },
+    { depth: 501, matches: false },
+  ])('bounds matching entries at object depth $depth', ({ depth, matches }) => {
+    let value: unknown = { name: 'needle' }
+    for (let index = 0; index < depth; index++) value = { next: value }
+    expect(searchExplorer(value, 'needle').hasMatch).toBe(matches)
+    expect(createSearchText(value).includes('needle')).toBe(matches)
+  })
+
   describe('createSearchText', () => {
     const matches = (value: unknown, term: string) =>
       createSearchText(value).includes(term)

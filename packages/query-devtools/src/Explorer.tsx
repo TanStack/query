@@ -357,8 +357,8 @@ export function SearchableExplorer(
       <div class={styles().search}>
         <input
           type="search"
-          aria-label="Search data"
-          placeholder="Search data"
+          aria-label={`Search ${props.label.toLowerCase()}`}
+          placeholder={`Search ${props.label.toLowerCase()}`}
           class={styles().searchInput}
           value={term()}
           onInput={(event) => setTerm(event.currentTarget.value)}
