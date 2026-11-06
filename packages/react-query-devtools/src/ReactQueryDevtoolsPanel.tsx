@@ -29,7 +29,7 @@ export interface DevtoolsPanelOptions {
 
   /**
    * Custom styles for the devtools panel
-   * @default { height: '500px' }
+   * @default { height: '100%', display: 'flex', flexDirection: 'column' }
    * @example { height: '100%' }
    * @example { height: '100%', width: '100%' }
    */
@@ -115,7 +115,12 @@ export function ReactQueryDevtoolsPanel(
 
   return (
     <div
-      style={{ height: '500px', ...props.style }}
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        ...props.style,
+      }}
       className="tsqd-parent-container"
       ref={ref}
     ></div>

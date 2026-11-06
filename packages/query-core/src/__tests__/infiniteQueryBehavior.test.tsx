@@ -88,7 +88,7 @@ describe('InfiniteQueryBehavior', () => {
       data: { pages: [1], pageParams: [1] },
     })
 
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 1,
@@ -101,7 +101,7 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the second page
     await observer.fetchNextPage()
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 2,
@@ -119,7 +119,7 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the page before the first page
     await observer.fetchPreviousPage()
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 0,
@@ -138,7 +138,7 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the page before
     await observer.fetchPreviousPage()
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: -1,
@@ -156,7 +156,7 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the page after
     await observer.fetchNextPage()
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 1,
@@ -178,7 +178,7 @@ describe('InfiniteQueryBehavior', () => {
     // Only 2 pages should refetch
     expect(queryFnSpy).toHaveBeenCalledTimes(2)
 
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 0,
@@ -187,7 +187,7 @@ describe('InfiniteQueryBehavior', () => {
       signal: abortSignal,
     })
 
-    expect(queryFnSpy).toHaveBeenNthCalledWith(2, {
+    expect(queryFnSpy.mock.calls[1]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 1,
@@ -241,7 +241,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenCalledTimes(1)
 
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 1,
@@ -298,7 +298,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenCalledTimes(1)
 
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+    expect(queryFnSpy.mock.calls[0]?.[0]).toMatchObject({
       queryKey: key,
       client: queryClient,
       pageParam: 2,

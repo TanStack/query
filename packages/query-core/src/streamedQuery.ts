@@ -1,4 +1,5 @@
-import { addConsumeAwareSignal, addToEnd } from './utils'
+import { addConsumeAwareSignal, addToEnd, fetchSignal } from './utils'
+import type { FetchSignalContext } from './utils'
 import type {
   OmitKeyof,
   QueryFunction,
@@ -54,6 +55,8 @@ type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
  * Data will be an Array of all the chunks received.
  * The query will be in a 'pending' state until the first chunk of data is received, but will go to 'success' after that.
  * The query will stay in fetchStatus 'fetching' until the stream ends.
+ * Explicit cancellation stops further cache updates, even if `streamFn` does not read `signal`.
+ * If `streamFn` does not read `signal`, the stream continues after the last observer unsubscribes.
  * @param options - The `streamFn` that returns an AsyncIterable to stream data from, and the optional
  * `refetchMode`, `reducer`, and `initialValue` options.
  * @returns A query function to pass as `queryFn`.
@@ -82,6 +85,12 @@ export function streamedQuery<
   TQueryKey
 > {
   return async (context) => {
+    const signalContext: FetchSignalContext = context
+    const signal = signalContext[fetchSignal]
+    if (signal?.aborted) {
+      return initialValue
+    }
+
     const query = context.client
       .getQueryCache()
       .find({ queryKey: context.queryKey, exact: true })
@@ -108,14 +117,16 @@ export function streamedQuery<
       },
       () => context.signal,
       () => (cancelled = true),
+      signal,
     )
 
+    const isStreamInactive = () => cancelled || signal?.aborted === true
     const stream = await streamFn(streamFnContext)
 
     const isReplaceRefetch = isRefetch && refetchMode === 'replace'
 
     for await (const chunk of stream) {
-      if (cancelled) {
+      if (isStreamInactive()) {
         break
       }
 
@@ -130,7 +141,7 @@ export function streamedQuery<
     }
 
     // finalize result: replace-refetching needs to write to the cache
-    if (isReplaceRefetch && !cancelled) {
+    if (isReplaceRefetch && !isStreamInactive()) {
       context.client.setQueryData<TData>(context.queryKey, result)
     }
 

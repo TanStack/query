@@ -135,6 +135,41 @@ const isOpen = ref(false)
   - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
   - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
 
+## Devtools in production
+
+Devtools are excluded in production builds. However, it might be desirable to lazy load the devtools in production:
+
+```vue
+<script setup>
+import { defineAsyncComponent, onMounted, ref } from 'vue'
+import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+
+const VueQueryDevtoolsProduction = defineAsyncComponent(() =>
+  import('@tanstack/vue-query-devtools/production').then(
+    (d) => d.VueQueryDevtools,
+  ),
+)
+
+const showDevtools = ref(false)
+
+onMounted(() => {
+  Object.assign(window, {
+    toggleDevtools: () => (showDevtools.value = !showDevtools.value),
+  })
+})
+</script>
+
+<template>
+  <h1>The app!</h1>
+  <VueQueryDevtools initialIsOpen />
+  <VueQueryDevtoolsProduction v-if="showDevtools" />
+</template>
+```
+
+With this, calling `window.toggleDevtools()` will download the devtools bundle and show them.
+
+For TypeScript, you would need to set `moduleResolution` to `'bundler'`, `'node16'`, or `'nodenext'` in your tsconfig.
+
 ## Traditional Devtools
 
 Vue Query will seamlessly integrate with the [Official Vue devtools](https://github.com/vuejs/devtools-next), adding custom inspector and timeline events.

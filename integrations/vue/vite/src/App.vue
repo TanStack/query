@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
+import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 const { isPending, isError, data } = useQuery({
   queryKey: ['test'],
@@ -14,4 +15,5 @@ const { isPending, isError, data } = useQuery({
   <div v-if="isPending">Loading...</div>
   <div v-else-if="isError">An error has occurred!</div>
   <div v-else-if="data">{{ data }}</div>
+  <VueQueryDevtools />
 </template>

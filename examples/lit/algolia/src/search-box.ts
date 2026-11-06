@@ -1,4 +1,5 @@
 import { LitElement, html } from 'lit'
+import { createDebouncedValue } from '@tanstack/lit-pacer/debouncer'
 import './search-results'
 
 class SearchBox extends LitElement {
@@ -7,6 +8,9 @@ class SearchBox extends LitElement {
   }
 
   private query = ''
+  private debouncedQuery = createDebouncedValue(this, () => this.query, {
+    wait: 300,
+  })[0]
 
   protected override createRenderRoot(): HTMLElement | DocumentFragment {
     return this
@@ -15,14 +19,13 @@ class SearchBox extends LitElement {
   render() {
     return html`
       <div>
-        <!-- It is recommended to debounce this event in prod -->
         <input
           .value=${this.query}
           placeholder="Search products"
           @input=${(event: Event) =>
             (this.query = (event.currentTarget as HTMLInputElement).value)}
         />
-        <search-results .query=${this.query}></search-results>
+        <search-results .query=${this.debouncedQuery()}></search-results>
       </div>
     `
   }

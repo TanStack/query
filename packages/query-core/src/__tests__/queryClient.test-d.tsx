@@ -938,6 +938,36 @@ describe('queryClient', () => {
         queryClient.isMutating(untypedMutationFilters),
       ).toEqualTypeOf<number>()
     })
+
+    it('should accept an explicit mutation filter type', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        queryClient.isMutating<MutationFilters<TypedData, TypedError>>({
+          predicate(mutation) {
+            expectTypeOf(mutation).toEqualTypeOf<
+              Mutation<TypedData, TypedError>
+            >()
+            expectTypeOf(mutation.state.data).toEqualTypeOf<
+              TypedData | undefined
+            >()
+            expectTypeOf(
+              mutation.state.error,
+            ).toEqualTypeOf<TypedError | null>()
+            return true
+          },
+        }),
+      ).toEqualTypeOf<number>()
+    })
+
+    it('should reject a status filter', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        // @ts-expect-error isMutating always filters by status: 'pending'
+        queryClient.isMutating({ mutationKey: ['key'], status: 'pending' }),
+      ).toEqualTypeOf<number>()
+    })
   })
 
   describe('getQueriesData', () => {

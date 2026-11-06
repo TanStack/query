@@ -11,6 +11,7 @@ import {
   QueryClient,
   QueryObserver,
   dehydrate,
+  focusManager,
   hydrate,
   noop,
 } from '..'
@@ -38,6 +39,54 @@ describe('query', () => {
   afterEach(() => {
     queryClient.clear()
     vi.useRealTimers()
+  })
+
+  it('should not let a cancelled retry pause its replacement fetch', async () => {
+    const key = createKey()
+    const initial = queryClient.query({
+      queryKey: key,
+      queryFn: () => Promise.reject(new Error('synthetic failure')),
+      retry: 1,
+      retryDelay: 100,
+    })
+    initial.catch(noop)
+    await vi.advanceTimersByTimeAsync(0)
+    await queryClient.cancelQueries({ queryKey: key })
+    focusManager.setFocused(false)
+    try {
+      const replacement = queryClient.query({
+        queryKey: key,
+        queryFn: () => sleep(200).then(() => 'fresh'),
+      })
+      await vi.advanceTimersByTimeAsync(100)
+      const fetchStatus = queryClient.getQueryState(key)?.fetchStatus
+      await vi.advanceTimersByTimeAsync(100)
+      await expect(replacement).resolves.toBe('fresh')
+      expect(fetchStatus).toBe('fetching')
+    } finally {
+      focusManager.setFocused(undefined)
+    }
+  })
+
+  it('should collect a cancelled query after its retry delay expires', async () => {
+    const key = createKey()
+    const initial = queryClient.query({
+      queryKey: key,
+      queryFn: () => Promise.reject(new Error('synthetic failure')),
+      retry: 1,
+      retryDelay: 100,
+      gcTime: 200,
+    })
+    initial.catch(noop)
+    await vi.advanceTimersByTimeAsync(0)
+    await queryClient.cancelQueries({ queryKey: key })
+    focusManager.setFocused(false)
+    try {
+      await vi.advanceTimersByTimeAsync(250)
+      expect(queryClient.getQueryState(key)).toBeUndefined()
+    } finally {
+      focusManager.setFocused(undefined)
+    }
   })
 
   it('should use the longest garbage collection time it has seen', async () => {
@@ -1145,6 +1194,73 @@ describe('query', () => {
     await expect(promise).resolves.toBe('data1')
 
     expect(queryFn).toHaveBeenCalledTimes(2)
+  })
+
+  it('should resolve all imperative callers after an invalidation replaces their fetch', async () => {
+    const key = createKey()
+    let fetchCount = 0
+    const queryFn = vi.fn<() => Promise<string>>(async () => {
+      const data = 'data' + ++fetchCount
+      await sleep(100)
+      return data
+    })
+    queryClient.setQueryData(key, 'initial')
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      staleTime: Infinity,
+    })
+    const unsubscribe = observer.subscribe(noop)
+    const options = { queryKey: key, queryFn }
+    const results = Promise.allSettled([
+      queryClient.query(options),
+      queryClient.query(options),
+    ])
+
+    await vi.advanceTimersByTimeAsync(10)
+    void queryClient.invalidateQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(100)
+
+    await expect(results).resolves.toStrictEqual([
+      { status: 'fulfilled', value: 'data2' },
+      { status: 'fulfilled', value: 'data2' },
+    ])
+    expect(queryClient.getQueryData(key)).toBe('data2')
+    expect(queryFn).toHaveBeenCalledTimes(2)
+    unsubscribe()
+  })
+
+  it('should resolve an imperative caller after repeated invalidations replace its fetch', async () => {
+    const key = createKey()
+    let fetchCount = 0
+    const queryFn = vi.fn<() => Promise<string>>(async () => {
+      const data = 'data' + ++fetchCount
+      await sleep(100)
+      return data
+    })
+    queryClient.setQueryData(key, 'initial')
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      staleTime: Infinity,
+    })
+    const unsubscribe = observer.subscribe(noop)
+    const results = Promise.allSettled([
+      queryClient.query({ queryKey: key, queryFn }),
+    ])
+
+    await vi.advanceTimersByTimeAsync(10)
+    void queryClient.invalidateQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(10)
+    void queryClient.invalidateQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(100)
+
+    await expect(results).resolves.toStrictEqual([
+      { status: 'fulfilled', value: 'data3' },
+    ])
+    expect(queryClient.getQueryData(key)).toBe('data3')
+    expect(queryFn).toHaveBeenCalledTimes(3)
+    unsubscribe()
   })
 
   it('should have an error log when queryFn data is not serializable', async () => {

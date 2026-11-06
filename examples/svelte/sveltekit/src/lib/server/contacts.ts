@@ -1,5 +1,4 @@
 import { matchSorter } from 'match-sorter'
-import sortBy from 'sort-by'
 import type { Contact } from '$lib/services/contacts/types'
 
 let contacts: Array<Contact> = [
@@ -31,7 +30,9 @@ export async function getContacts(query?: string) {
   if (query) {
     result = matchSorter(result, query, { keys: ['first', 'last'] })
   }
-  return result.sort(sortBy('last', 'createdAt'))
+  return result.sort((a, b) =>
+    a.last < b.last ? -1 : a.last > b.last ? 1 : a.createdAt - b.createdAt,
+  )
 }
 
 export async function createContact(

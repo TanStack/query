@@ -209,12 +209,15 @@ describe('injectQuery', () => {
     TestBed.tick()
     expect(queryFn).toHaveBeenCalledTimes(2)
     // should call queryFn with context containing the new queryKey
-    expect(queryFn).toHaveBeenNthCalledWith(2, {
-      client: queryClient,
-      meta: undefined,
-      queryKey: key2,
-      signal: expect.anything(),
-    })
+    expect(queryFn).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        client: queryClient,
+        meta: undefined,
+        queryKey: key2,
+        signal: expect.anything(),
+      }),
+    )
   })
 
   it('should only run query once enabled signal is set to true', async () => {
