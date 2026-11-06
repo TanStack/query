@@ -166,8 +166,9 @@ function App() {
   const [showDevtools, setShowDevtools] = createSignal(false)
 
   onMount(() => {
-    // @ts-expect-error
-    window.toggleDevtools = () => setShowDevtools((old) => !old)
+    Object.assign(window, {
+      toggleDevtools: () => setShowDevtools((old) => !old),
+    })
   })
 
   return (

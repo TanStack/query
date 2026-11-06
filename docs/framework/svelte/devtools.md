@@ -104,8 +104,9 @@ Devtools are excluded in production builds. However, it might be desirable to la
   let showDevtools = $state(false)
 
   onMount(() => {
-    // @ts-expect-error
-    window.toggleDevtools = () => (showDevtools = !showDevtools)
+    Object.assign(window, {
+      toggleDevtools: () => (showDevtools = !showDevtools),
+    })
   })
 </script>
 
