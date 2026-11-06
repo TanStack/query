@@ -108,7 +108,12 @@ export function useBaseQuery<
     }
     const clonedOptions = cloneDeepUnref(resolvedOptions as any)
 
-    if (typeof clonedOptions.enabled === 'function') {
+    // A zero-arg function is a Vue getter and must run here so its refs are tracked.
+    // `(query) => boolean` is query-core's callback and is left for core to call.
+    if (
+      typeof clonedOptions.enabled === 'function' &&
+      clonedOptions.enabled.length === 0
+    ) {
       clonedOptions.enabled = clonedOptions.enabled()
     }
 

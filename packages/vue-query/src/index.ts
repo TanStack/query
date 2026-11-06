@@ -8,6 +8,7 @@ export { QueryCache } from './queryCache'
 export { queryOptions } from './queryOptions'
 export type {
   QueryOptions,
+  VueQueryEnabledOption,
   UseQueryOptions,
   UndefinedInitialQueryOptions,
   DefinedInitialQueryOptions,

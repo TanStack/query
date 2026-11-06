@@ -386,6 +386,27 @@ describe('useQuery', () => {
     )
   })
 
+  it('should pass the query to an enabled callback instead of calling it as a getter', () => {
+    const key = createKey()
+    const queryFn = vi.fn<() => string>(() => 'foo')
+    const enabled = vi.fn<
+      (query: { queryKey: ReadonlyArray<unknown> }) => boolean
+    >((query) => Array.isArray(query.queryKey))
+
+    useQuery({
+      queryKey: key,
+      queryFn,
+      enabled,
+    })
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(enabled.mock.calls.length).toBeGreaterThan(0)
+    for (const call of enabled.mock.calls) {
+      expect(call).toHaveLength(1)
+      expect(call[0]).toStrictEqual(expect.objectContaining({ queryKey: key }))
+    }
+  })
+
   it('should allow getters for query keys', async () => {
     const key = createKey()
     const queryFn = vi.fn<() => string>(() => 'foo')
