@@ -4,6 +4,7 @@ import {
   QueryClient,
   QueryClientProvider,
   queryOptions,
+  useMutation,
   useQueries,
   useQuery,
 } from '@tanstack/react-query'
@@ -16,12 +17,17 @@ import {
   orderTrackingNumber,
   productCodename,
   productSku,
+  refundConfirmation,
+  returnReference,
+  returnRequest,
+  submitReturn,
   userEmail,
 } from './data'
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { staleTime: Infinity, gcTime: Infinity },
+    mutations: { gcTime: Infinity },
   },
 })
 
@@ -33,6 +39,7 @@ const readCount = (name: string, fallback: number) => {
 const PRODUCT_COUNT = readCount('products', 300)
 const USER_COUNT = readCount('users', 150)
 const ORDER_COUNT = readCount('orders', 150)
+const RETURN_COUNT = readCount('returns', 150)
 
 const productListQuery = queryOptions({
   queryKey: ['products', 'list', PRODUCT_COUNT],
@@ -181,18 +188,31 @@ function UsersAndOrders() {
   return null
 }
 
+function Returns() {
+  const { mutate } = useMutation({
+    mutationKey: ['returns', 'submit'],
+    mutationFn: submitReturn,
+  })
+  // Each call adds a mutation to the cache; their variables and data are only visible in the devtools
+  React.useEffect(() => {
+    range(RETURN_COUNT).forEach((id) => mutate(returnRequest(id)))
+  }, [mutate])
+  return null
+}
+
 function App() {
   const [selected, setSelected] = React.useState(1)
   const { data: products } = useQuery(productListQuery)
 
   return (
     <div style={{ fontFamily: 'sans-serif', padding: 16 }}>
-      <h1>Devtools: filter queries by data</h1>
+      <h1>Devtools: filter queries and mutations by data</h1>
       <JankMeter />
       <p>
         {PRODUCT_COUNT} product detail queries, {USER_COUNT} user queries and{' '}
-        {ORDER_COUNT} order queries with large payloads. Change the size with{' '}
-        <code>?products=600&amp;users=300&amp;orders=300</code>.
+        {ORDER_COUNT} order queries with large payloads, and {RETURN_COUNT}{' '}
+        return mutations with large variables and data. Change the size with{' '}
+        <code>?products=600&amp;users=300&amp;orders=300&amp;returns=300</code>.
       </p>
       <p>
         Open the devtools, click the filter scope button next to the filter
@@ -218,6 +238,20 @@ function App() {
           <code>qqqzzz</code>
         </li>
       </ul>
+      <p>
+        In the <b>Mutations</b> view, the same filter scope searches the
+        variables and data of each mutation:
+      </p>
+      <ul>
+        <li>
+          return reference (variables of return 23):{' '}
+          <code>{returnReference(23)}</code>
+        </li>
+        <li>
+          refund confirmation (data of return 88):{' '}
+          <code>{refundConfirmation(88)}</code>
+        </li>
+      </ul>
       <ProductDetails id={selected} />
       <h2>Products ({products?.length ?? '...'})</h2>
       <div
@@ -236,6 +270,7 @@ function App() {
         ))}
       </div>
       <UsersAndOrders />
+      <Returns />
     </div>
   )
 }

@@ -58,20 +58,20 @@ import { VirtualList } from './VirtualList'
 import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
 import {
   BUTTON_POSITION,
+  DEFAULT_FILTER_SCOPE,
   DEFAULT_HEIGHT,
   DEFAULT_MUTATION_SORT_FN_NAME,
-  DEFAULT_QUERY_FILTER_SCOPE,
   DEFAULT_SORT_FN_NAME,
   DEFAULT_SORT_ORDER,
   DEFAULT_WIDTH,
+  FILTER_SCOPES,
   INITIAL_IS_OPEN,
   POSITION,
-  QUERY_FILTER_SCOPES,
   firstBreakpoint,
   secondBreakpoint,
   thirdBreakpoint,
 } from './constants'
-import type { QueryFilterScope } from './constants'
+import type { FilterScope } from './constants'
 import type {
   DevtoolsErrorType,
   DevtoolsPosition,
@@ -80,6 +80,7 @@ import type {
 import type {
   Mutation,
   MutationCache,
+  MutationCacheNotifyEvent,
   Query,
   QueryCache,
   QueryCacheNotifyEvent,
@@ -87,16 +88,78 @@ import type {
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
 import type { Accessor, Component, JSX } from 'solid-js'
 
-const queryFilterScopeLabels: Record<QueryFilterScope, string> = {
+const filterScopeLabels: Record<FilterScope, string> = {
   key: 'Key',
   data: 'Data',
   all: 'All',
 }
 
-const queryFilterScopeAriaLabels: Record<QueryFilterScope, string> = {
-  key: 'Filter queries by query key',
-  data: 'Filter queries by query data',
-  all: 'Filter queries by query key or data',
+const filterScopeAriaLabels: Record<
+  'queries' | 'mutations',
+  Record<FilterScope, string>
+> = {
+  queries: {
+    key: 'Filter queries by query key',
+    data: 'Filter queries by query data',
+    all: 'Filter queries by query key or data',
+  },
+  mutations: {
+    key: 'Filter mutations by mutation key',
+    data: 'Filter mutations by variables or data',
+    all: 'Filter mutations by mutation key, variables or data',
+  },
+}
+
+// Data is replaced rather than mutated, so a search text stays valid while the data reference does
+const dataSearchTexts = new WeakMap<object, string>()
+
+/**
+ * Gets the cached search text of query or mutation data, building it if there is time left.
+ * @param data - The query data, or mutation variables or data.
+ * @param deadline - When to stop building search texts, compared to `performance.now()`.
+ * @returns The search text, or undefined if it isn't built and the deadline has passed.
+ */
+const getDataSearchText = (data: unknown, deadline = Infinity) => {
+  if (typeof data !== 'object' || data === null) return createSearchText(data)
+  let text = dataSearchTexts.get(data)
+  if (text === undefined && performance.now() < deadline) {
+    text = createSearchText(data)
+    dataSearchTexts.set(data, text)
+  }
+  return text
+}
+
+/**
+ * Checks whether data contains the term. Missing data never matches.
+ * @param data - The query data, or mutation variables or data.
+ * @param term - The lowercased search term.
+ * @returns Whether the data matches.
+ */
+const matchesData = (data: unknown, term: string) =>
+  data !== undefined && getDataSearchText(data)!.includes(term)
+
+/**
+ * Builds data search texts for a few milliseconds per task, so filtering by data doesn't block
+ * the page.
+ * @returns `version`, which changes when building continued in a later task, and `prepare`,
+ * which returns whether the search texts of all the data are built.
+ */
+const createDataSearchTexts = () => {
+  const [version, setVersion] = createSignal(0)
+  let timeout: ReturnType<typeof setTimeout> | undefined
+  onCleanup(() => clearTimeout(timeout))
+
+  const prepare = (data: Array<unknown>) => {
+    clearTimeout(timeout)
+    const deadline = performance.now() + 8
+    if (data.every((item) => getDataSearchText(item, deadline) !== undefined)) {
+      return true
+    }
+    timeout = setTimeout(() => setVersion((current) => current + 1))
+    return false
+  }
+
+  return { version, prepare }
 }
 
 interface DevtoolsPanelProps {
@@ -771,18 +834,16 @@ export const ContentView: Component<ContentViewProps> = (props) => {
         : useQueryDevtoolsContext().hideDisabledQueries || false
   })
 
-  const filterScope = createMemo<QueryFilterScope>(() => {
-    const scope = props.localStore.filterScope as QueryFilterScope
-    return QUERY_FILTER_SCOPES.includes(scope)
-      ? scope
-      : DEFAULT_QUERY_FILTER_SCOPE
+  const filterScope = createMemo<FilterScope>(() => {
+    const scope = props.localStore.filterScope as FilterScope
+    return FILTER_SCOPES.includes(scope) ? scope : DEFAULT_FILTER_SCOPE
   })
 
   const cycleFilterScope = () => {
-    const index = QUERY_FILTER_SCOPES.indexOf(filterScope())
+    const index = FILTER_SCOPES.indexOf(filterScope())
     props.setLocalStore(
       'filterScope',
-      QUERY_FILTER_SCOPES[(index + 1) % QUERY_FILTER_SCOPES.length]!,
+      FILTER_SCOPES[(index + 1) % FILTER_SCOPES.length]!,
     )
   }
 
@@ -797,23 +858,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
       (event.action.type === 'success' || event.action.type === 'setState'),
   )
 
-  // Data is replaced rather than mutated, so a search text stays valid while the data reference does
-  const dataTexts = new WeakMap<object, string>()
-
-  const getDataText = (data: unknown, deadline = Infinity) => {
-    if (typeof data !== 'object' || data === null) return createSearchText(data)
-    let text = dataTexts.get(data)
-    if (text === undefined && performance.now() < deadline) {
-      text = createSearchText(data)
-      dataTexts.set(data, text)
-    }
-    return text
-  }
-
-  // Bumped to filter again once the next search texts are built in a later task
-  const [dataTextsVersion, setDataTextsVersion] = createSignal(0)
-  let dataTextsTimeout: ReturnType<typeof setTimeout> | undefined
-  onCleanup(() => clearTimeout(dataTextsTimeout))
+  const queryDataSearchTexts = createDataSearchTexts()
 
   const queries = createMemo(
     on(
@@ -822,7 +867,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
         props.localStore.filter,
         filterScope(),
         queryDataVersion(),
-        dataTextsVersion(),
+        queryDataSearchTexts.version(),
         sort(),
         sortOrder(),
         hideDisabledQueries(),
@@ -833,28 +878,20 @@ export const ContentView: Component<ContentViewProps> = (props) => {
         const scope = filterScope()
         const dataTerm = filter.toLowerCase()
 
-        clearTimeout(dataTextsTimeout)
-        if (filter && scope !== 'key') {
-          // Builds search texts for a few milliseconds per task so filtering doesn't block the page
-          const deadline = performance.now() + 8
-          for (const item of curr) {
-            if (getDataText(item.state.data, deadline) === undefined) {
-              dataTextsTimeout = setTimeout(() =>
-                setDataTextsVersion((version) => version + 1),
-              )
-              // Keeps the previous results until all search texts are built
-              return prev ?? []
-            }
-          }
+        if (
+          filter &&
+          scope !== 'key' &&
+          !queryDataSearchTexts.prepare(curr.map((item) => item.state.data))
+        ) {
+          // Keeps the previous results until all search texts are built
+          return prev ?? []
         }
 
         let filtered = filter
           ? curr.filter(
               (item) =>
                 (scope !== 'data' && rankItem(item.queryHash, filter).passed) ||
-                (scope !== 'key' &&
-                  item.state.data !== undefined &&
-                  getDataText(item.state.data)!.includes(dataTerm)),
+                (scope !== 'key' && matchesData(item.state.data, dataTerm)),
             )
           : [...curr]
 
@@ -878,26 +915,60 @@ export const ContentView: Component<ContentViewProps> = (props) => {
     false,
   )
 
+  // Variables and data changes don't change the mutation count, so data searches need their own trigger
+  const mutationDataVersion = createSubscribeToMutationCacheBatcher(
+    () => ({}),
+    false,
+    (event) =>
+      filterScope() !== 'key' &&
+      !!props.localStore.mutationFilter &&
+      event.type === 'updated' &&
+      (event.action.type === 'pending' || event.action.type === 'success'),
+  )
+
+  const mutationDataSearchTexts = createDataSearchTexts()
+
   const mutations = createMemo(
     on(
       () => [
         mutationCount(),
         props.localStore.mutationFilter,
+        filterScope(),
+        mutationDataVersion(),
+        mutationDataSearchTexts.version(),
         mutationSort(),
         mutationSortOrder(),
       ],
-      () => {
+      (_input, _prevInput, prev: Array<Mutation> | undefined) => {
         const curr = mutation_cache().getAll()
+        const filter = props.localStore.mutationFilter || ''
+        const scope = filterScope()
+        const dataTerm = filter.toLowerCase()
 
-        const filtered = props.localStore.mutationFilter
+        if (
+          filter &&
+          scope !== 'key' &&
+          !mutationDataSearchTexts.prepare(
+            curr.flatMap((item) => [item.state.variables, item.state.data]),
+          )
+        ) {
+          // Keeps the previous results until all search texts are built
+          return prev ?? []
+        }
+
+        const filtered = filter
           ? curr.filter((item) => {
               const value = `${
                 item.options.mutationKey
                   ? JSON.stringify(item.options.mutationKey) + ' - '
                   : ''
               }${new Date(item.state.submittedAt).toLocaleString()}`
-              return rankItem(value, props.localStore.mutationFilter || '')
-                .passed
+              return (
+                (scope !== 'data' && rankItem(value, filter).passed) ||
+                (scope !== 'key' &&
+                  (matchesData(item.state.variables, dataTerm) ||
+                    matchesData(item.state.data, dataTerm)))
+              )
             })
           : [...curr]
 
@@ -1024,9 +1095,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
               <Search />
               <input
                 aria-label={
-                  selectedView() === 'queries'
-                    ? queryFilterScopeAriaLabels[filterScope()]
-                    : 'Filter queries by query key'
+                  filterScopeAriaLabels[selectedView()][filterScope()]
                 }
                 type="text"
                 placeholder="Filter"
@@ -1045,21 +1114,19 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                     : props.localStore.mutationFilter || ''
                 }
               />
-              <Show when={selectedView() === 'queries'}>
-                <button
-                  type="button"
-                  onClick={cycleFilterScope}
-                  class={cx(
-                    styles().filterScopeBtn,
-                    'tsqd-query-filter-scope-btn',
-                  )}
-                  aria-label={`Filter scope: ${queryFilterScopeLabels[filterScope()]}`}
-                  title={`${queryFilterScopeAriaLabels[filterScope()]}. Click to switch between key, data, and both.`}
-                  data-scope={filterScope()}
-                >
-                  {queryFilterScopeLabels[filterScope()]}
-                </button>
-              </Show>
+              <button
+                type="button"
+                onClick={cycleFilterScope}
+                class={cx(
+                  styles().filterScopeBtn,
+                  'tsqd-query-filter-scope-btn',
+                )}
+                aria-label={`Filter scope: ${filterScopeLabels[filterScope()]}`}
+                title={`${filterScopeAriaLabels[selectedView()][filterScope()]}. Click to switch between key, data, and both.`}
+                data-scope={filterScope()}
+              >
+                {filterScopeLabels[filterScope()]}
+              </button>
             </div>
             <div
               class={cx(
@@ -2689,6 +2756,7 @@ const setupMutationCacheSubscription = () => {
 const createSubscribeToMutationCacheBatcher = <T,>(
   callback: (queryCache: Accessor<MutationCache>) => Exclude<T, Function>,
   equalityCheck: boolean = true,
+  shouldUpdate: (event: MutationCacheNotifyEvent) => boolean = () => true,
 ) => {
   const { mutationCacheSubscriptions } = useDevtoolsSubscriptions()
   const mutationCache = createMemo(() => {
@@ -2705,7 +2773,7 @@ const createSubscribeToMutationCacheBatcher = <T,>(
     setValue(callback(mutationCache))
   })
 
-  mutationCacheSubscriptions.register(callback, setValue)
+  mutationCacheSubscriptions.register(callback, setValue, shouldUpdate)
 
   return value
 }

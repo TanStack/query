@@ -162,6 +162,9 @@ export function productCodename(id: number) {
 export const productSku = (id: number) => `SKU-${pad(id, 5)}-X`
 export const userEmail = (id: number) => `customer.${pad(id)}@example.test`
 export const orderTrackingNumber = (id: number) => `TRK-${pad(id * 7919, 8)}-EU`
+export const returnReference = (id: number) => `RMA-${pad(id * 104729, 9)}`
+export const refundConfirmation = (id: number) =>
+  `REFUND-${pad(id * 1299709, 10)}-OK`
 
 export type ProductSummary = { id: number; name: string }
 
@@ -313,6 +316,45 @@ export function orderDetail(id: number) {
   }
 }
 
+export function returnRequest(id: number) {
+  const random = createRandom(id * 5381)
+  return {
+    id,
+    reference: returnReference(id),
+    orderId: int(random, 1, 1000),
+    reason: paragraph(random, 8),
+    items: Array.from({ length: 20 }, (_, index) => ({
+      line: index + 1,
+      productId: int(random, 1, 1000),
+      condition: pick(random, ['unopened', 'damaged', 'used', 'defective']),
+      inspection: {
+        photos: Array.from({ length: 4 }, (__, photo) => ({
+          url: `https://example.test/returns/${id}/${index}/${photo}.jpg`,
+          caption: sentence(random, int(random, 6, 12)),
+        })),
+      },
+    })),
+  }
+}
+
+export type ReturnRequest = ReturnType<typeof returnRequest>
+
+function refundResponse(request: ReturnRequest) {
+  const random = createRandom(request.id * 3571)
+  return {
+    confirmation: refundConfirmation(request.id),
+    status: 'approved',
+    ledger: request.items.map((item) => ({
+      line: item.line,
+      amount: int(random, 500, 99999) / 100,
+      audit: Array.from({ length: 4 }, (_, step) => ({
+        at: new Date(Date.UTC(2025, 8, 1 + step)).toISOString(),
+        note: sentence(random, int(random, 6, 12)),
+      })),
+    })),
+  }
+}
+
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export async function fetchProducts(count: number) {
@@ -333,4 +375,9 @@ export async function fetchUser(id: number) {
 export async function fetchOrder(id: number) {
   await wait(50)
   return orderDetail(id)
+}
+
+export async function submitReturn(request: ReturnRequest) {
+  await wait(50)
+  return refundResponse(request)
 }
