@@ -178,7 +178,8 @@ export function useBaseQuery<
 
   // Replaced below with the wrapper. Declared here so the subscriber can put it
   // back after `updateState` copies the observer's own `refetch` onto `state`.
-  let refetch: (typeof state)['refetch'] = (...args) => observer.refetch(...args)
+  let refetch: (typeof state)['refetch'] = (...args) =>
+    observer.refetch(...args)
 
   if (client.isRestoring) {
     watch(
