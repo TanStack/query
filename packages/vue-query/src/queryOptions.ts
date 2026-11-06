@@ -27,7 +27,7 @@ export type VueQueryEnabledOption<
   TQueryData,
   TQueryKey extends QueryKey,
 > =
-  | MaybeRef<boolean | undefined>
+  | MaybeRefOrGetter<boolean | undefined>
   | QueryBooleanOption<TQueryFnData, TError, TQueryData, TQueryKey>
 
 /**

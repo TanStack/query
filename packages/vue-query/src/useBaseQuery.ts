@@ -181,9 +181,15 @@ export function useBaseQuery<
           // noop
         }
         const run = () => {
-          if (defaultedOptions.value.enabled !== false) {
-            // fix #6133
-            observer.setOptions(defaultedOptions.value)
+          // Apply the latest options before resolving `enabled`, so a query callback sees the current query.
+          // fix #6133
+          observer.setOptions(defaultedOptions.value)
+          const { enabled } = defaultedOptions.value
+          if (
+            (typeof enabled === 'function'
+              ? enabled(observer.getCurrentQuery())
+              : enabled) !== false
+          ) {
             const optimisticResult = observer.getOptimisticResult(
               defaultedOptions.value,
             )

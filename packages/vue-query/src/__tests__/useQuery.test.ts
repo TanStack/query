@@ -745,6 +745,34 @@ describe('useQuery', () => {
       )
     })
 
+    it('should keep suspense pending while an enabled callback returns false', async () => {
+      const key = createKey()
+      const phase = ref('off')
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'Some data'),
+      )
+      const onResolve =
+        vi.fn<(result: QueryObserverResult<string, Error>) => void>()
+      const query = useQuery({
+        queryKey: [...key, phase],
+        queryFn,
+        enabled: (currentQuery) => currentQuery.queryKey.at(-1) === 'on',
+      })
+
+      query.suspense().then(onResolve)
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryFn).not.toHaveBeenCalled()
+      expect(onResolve).not.toHaveBeenCalled()
+
+      phase.value = 'on'
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(onResolve).toHaveBeenCalledTimes(1)
+      expect(onResolve).toHaveBeenCalledWith(
+        expect.objectContaining({ data: 'Some data' }),
+      )
+    })
+
     it('should resolve immediately without refetching when the data is fresh', () => {
       const key = createKey()
       const queryFn = vi.fn<() => Promise<string>>(() =>
