@@ -45,7 +45,7 @@ You can import the devtools like this:
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 ```
 
-By default, Solid Query Devtools are only enabled in development mode (`isDev` from `solid-js/web`). In production, the devtools components render nothing. During development, the devtools are loaded only on the client and are not rendered on the server.
+By default, Solid Query Devtools are only enabled when `process.env.NODE_ENV === 'development'`. In production, the devtools components render nothing. During development, the server renders an empty container element and the devtools mount into it on the client.
 
 ## Floating Mode
 
@@ -143,3 +143,52 @@ function App() {
 - `theme?: "light" | "dark" | "system"`
   - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
   - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
+
+## Devtools in production
+
+Devtools are excluded in production builds. However, it might be desirable to lazy load the devtools in production:
+
+```tsx
+import { createSignal, lazy, onMount, Show, Suspense } from 'solid-js'
+import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
+import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
+import { Example } from './Example'
+
+const queryClient = new QueryClient()
+
+const SolidQueryDevtoolsProduction = lazy(() =>
+  import('@tanstack/solid-query-devtools/production').then((d) => ({
+    default: d.SolidQueryDevtools,
+  })),
+)
+
+function App() {
+  const [showDevtools, setShowDevtools] = createSignal(false)
+
+  onMount(() => {
+    Object.assign(window, {
+      toggleDevtools: () => setShowDevtools((old) => !old),
+    })
+  })
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Example />
+      <SolidQueryDevtools initialIsOpen />
+      <Show when={showDevtools()}>
+        <Suspense fallback={null}>
+          <SolidQueryDevtoolsProduction />
+        </Suspense>
+      </Show>
+    </QueryClientProvider>
+  )
+}
+
+export default App
+```
+
+With this, calling `window.toggleDevtools()` will download the devtools bundle and show them.
+
+`@tanstack/solid-query-devtools/production` also exports `SolidQueryDevtoolsPanel` for Embedded Mode.
+
+For TypeScript, you would need to set `moduleResolution` to `'bundler'`, `'node16'`, or `'nodenext'` in your tsconfig.

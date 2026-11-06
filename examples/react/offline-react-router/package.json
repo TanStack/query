@@ -1,0 +1,37 @@
+{
+  "name": "@tanstack/query-example-react-offline-react-router",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/query-async-storage-persister": "^5.106.1",
+    "@tanstack/react-query": "^5.106.1",
+    "@tanstack/react-query-devtools": "^5.106.1",
+    "@tanstack/react-query-persist-client": "^5.106.1",
+    "msw": "^2.15.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-hot-toast": "^2.6.1",
+    "react-router": "^8.5.0"
+  },
+  "devDependencies": {
+    "@eslint-react/eslint-plugin": "^5.28.8",
+    "@tanstack/eslint-plugin-query": "^5.106.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.2.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
+}

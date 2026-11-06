@@ -1,4 +1,3 @@
-import 'font-awesome/css/font-awesome.min.css'
 import React, { lazy } from 'react'
 import ReactDOM from 'react-dom/client'
 import {

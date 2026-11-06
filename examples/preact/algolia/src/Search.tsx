@@ -1,14 +1,15 @@
 import { useState } from 'preact/hooks'
+import { useDebouncedValue } from '@tanstack/preact-pacer/debouncer'
 
 import SearchResults from './SearchResults'
 import type { TargetedEvent } from 'preact'
 
 export default function Search() {
   const [query, setQuery] = useState('')
+  const [debouncedQuery] = useDebouncedValue(query, { wait: 300 })
 
   const handleOnInput = (event: TargetedEvent<HTMLInputElement>) => {
     event.preventDefault()
-    // It is recommended to debounce this event in prod
     setQuery(event.currentTarget.value)
   }
 
@@ -19,7 +20,7 @@ export default function Search() {
         value={query}
         placeholder="Search products"
       />
-      <SearchResults query={query} />
+      <SearchResults query={debouncedQuery} />
     </div>
   )
 }

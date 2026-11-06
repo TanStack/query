@@ -1,5 +1,4 @@
 /* @refresh reload */
-import 'font-awesome/css/font-awesome.min.css'
 import { ErrorBoundary, Show, Suspense, createSignal, lazy } from 'solid-js'
 import { render } from 'solid-js/web'
 import {
