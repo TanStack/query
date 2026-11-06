@@ -46,7 +46,7 @@ Three functions start a query and return its handle. They take the `QueryClient`
 | `experimental_queryHandleAsync`  | fresh data                    |
 | `experimental_ensureQueryHandle` | any data, even if it is stale |
 
-All three return the same plain handle, without the query's data. When an awaited handle resolves, the cache has the query's data.
+At runtime, all three return the same plain `{ queryKey, input }` handle, without the query's data. In types, the two awaited functions return an `experimental_DefinedQueryHandle`: when it resolves, the cache has the query's data, so `experimental_getQueryHandleData` can read it.
 
 `experimental_queryHandle` and `experimental_queryHandleAsync` use the query's `staleTime` like `queryClient.query`: they start a fetch only when the cache has no fresh data.
 
