@@ -23,6 +23,36 @@ describe('Discriminated union return type', () => {
     >()
   })
 
+  it('should have defined data when initialData is provided as an object', () => {
+    const key = createKey()
+    const query = reactive(
+      useInfiniteQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+        getNextPageParam: () => undefined,
+        initialPageParam: 0,
+        initialData: { pages: ['Some data'], pageParams: [0] },
+      }),
+    )
+
+    expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
+  })
+
+  it('should have defined data when initialData is provided as a function which always returns the data', () => {
+    const key = createKey()
+    const query = reactive(
+      useInfiniteQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+        getNextPageParam: () => undefined,
+        initialPageParam: 0,
+        initialData: () => ({ pages: ['Some data'], pageParams: [0] }),
+      }),
+    )
+
+    expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
+  })
+
   it('should have defined data when query is success', () => {
     const key = createKey()
     const query = reactive(
