@@ -12,6 +12,7 @@ import {
   environmentManager,
   experimental_ensureQueryHandle,
   experimental_fromHandle,
+  experimental_getQueryHandleData,
   experimental_queryHandle,
   experimental_queryHandleAsync,
   experimental_waterfallHandle,
@@ -361,6 +362,155 @@ describe('query handles', () => {
       expect(queryFn).not.toHaveBeenCalled()
       experimental_queryHandle(queryClient, postQuery, { id: '1' })
       expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('experimental_getQueryHandleData', () => {
+    it('should read the data of an awaited handle without fetching', async () => {
+      using _timers = fakeTimers()
+      using queryClient = clearOnDispose(new QueryClient())
+      const queryFn = vi.fn<(id: string) => Promise<string>>((id) =>
+        sleep(10).then(() => id),
+      )
+      const postQuery = createPostQuery(queryFn)
+
+      const promise = experimental_queryHandleAsync(queryClient, postQuery, {
+        id: '1',
+      })
+      await vi.advanceTimersByTimeAsync(10)
+      const handle = await promise
+
+      expect(
+        experimental_getQueryHandleData(queryClient, postQuery, handle),
+      ).toBe('1')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    it('should read stale cached data of an ensured handle without fetching', async () => {
+      using _timers = fakeTimers()
+      using queryClient = clearOnDispose(new QueryClient())
+      const queryFn = vi.fn<(id: string) => Promise<string>>((id) =>
+        sleep(10).then(() => id),
+      )
+      const postQuery = createPostQuery(queryFn)
+      queryClient.setQueryData(postQuery({ id: '1' }).queryKey, 'cached')
+
+      const handle = await experimental_ensureQueryHandle(
+        queryClient,
+        postQuery,
+        { id: '1' },
+      )
+
+      expect(
+        experimental_getQueryHandleData(queryClient, postQuery, handle),
+      ).toBe('cached')
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    it("should return what the factory's select returns", async () => {
+      using _timers = fakeTimers()
+      using queryClient = clearOnDispose(new QueryClient())
+      const key = createKey()
+      const postQuery = (input: { id: string }) => ({
+        queryKey: [...key, input.id],
+        queryFn: () => ({ id: input.id, title: `post ${input.id}` }),
+        select: (post: { id: string; title: string }) => post.title,
+      })
+
+      const handle = await experimental_queryHandleAsync(
+        queryClient,
+        postQuery,
+        { id: '1' },
+      )
+
+      expect(
+        experimental_getQueryHandleData(queryClient, postQuery, handle),
+      ).toBe('post 1')
+    })
+
+    it("should find the query with the factory's queryKeyHashFn", async () => {
+      using _timers = fakeTimers()
+      using queryClient = clearOnDispose(new QueryClient())
+      const key = createKey()
+      const postQuery = (input: { id: string }) => ({
+        queryKey: [...key, input.id],
+        queryFn: () => input.id,
+        queryKeyHashFn: (queryKey: ReadonlyArray<unknown>) =>
+          `custom:${queryKey.join('/')}`,
+      })
+
+      const handle = await experimental_queryHandleAsync(
+        queryClient,
+        postQuery,
+        { id: '1' },
+      )
+
+      expect(
+        experimental_getQueryHandleData(queryClient, postQuery, handle),
+      ).toBe('1')
+    })
+
+    it('should throw without creating a query when the cache has no data', async () => {
+      using _timers = fakeTimers()
+      using queryClient = clearOnDispose(new QueryClient())
+      const queryFn = vi.fn<(id: string) => Promise<string>>((id) =>
+        Promise.resolve(id),
+      )
+      const postQuery = createPostQuery(queryFn)
+      const first = await experimental_queryHandleAsync(
+        queryClient,
+        postQuery,
+        { id: '1' },
+      )
+      const second = await experimental_queryHandleAsync(
+        queryClient,
+        postQuery,
+        { id: '2' },
+      )
+
+      queryClient.clear()
+      expect(() =>
+        experimental_getQueryHandleData(queryClient, postQuery, first),
+      ).toThrow('experimental_getQueryHandleData: the cache has no data')
+
+      await experimental_queryHandleAsync(queryClient, postQuery, { id: '2' })
+      queryClient.removeQueries({ queryKey: second.queryKey })
+      expect(() =>
+        experimental_getQueryHandleData(queryClient, postQuery, second),
+      ).toThrow('experimental_getQueryHandleData: the cache has no data')
+
+      expect(queryClient.getQueryCache().getAll()).toHaveLength(0)
+      expect(queryFn).toHaveBeenCalledTimes(3)
+    })
+
+    it('should let a loader throw a 404 for a post that does not exist', async () => {
+      using _timers = fakeTimers()
+      using queryClient = clearOnDispose(new QueryClient())
+      class NotFoundError extends Error {}
+      const key = createKey()
+      const posts: Record<string, { title: string } | undefined> = {
+        '1': { title: 'Hello' },
+      }
+      const postQuery = (input: { id: string }) => ({
+        queryKey: [...key, input.id],
+        queryFn: () => posts[input.id] ?? null,
+      })
+      const loader = async (params: { id: string }) => {
+        const post = await experimental_queryHandleAsync(
+          queryClient,
+          postQuery,
+          params,
+        )
+        if (!experimental_getQueryHandleData(queryClient, postQuery, post)) {
+          throw new NotFoundError()
+        }
+        return { post }
+      }
+
+      await expect(loader({ id: '1' })).resolves.toStrictEqual({
+        post: { queryKey: postQuery({ id: '1' }).queryKey, input: { id: '1' } },
+      })
+      await expect(loader({ id: '2' })).rejects.toBeInstanceOf(NotFoundError)
     })
   })
 

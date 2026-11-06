@@ -93,6 +93,22 @@ export interface QueryHandle<
   readonly input: QueryHandleInput<TFactory>
 }
 
+declare const definedQueryHandle: unique symbol
+
+/**
+ * A handle from `experimental_queryHandleAsync` or `experimental_ensureQueryHandle`: when it
+ * resolved, the cache had the query's data. `experimental_getQueryHandleData` only takes these.
+ * The brand exists only in types, so the handle is still a plain `{ queryKey, input }`.
+ */
+export interface DefinedQueryHandle<
+  TFactory extends QueryHandleFactory = QueryHandleFactory,
+> extends QueryHandle<TFactory> {
+  /**
+   * Marks a handle whose data was in the cache when it resolved. It exists only in types.
+   */
+  readonly [definedQueryHandle]: true
+}
+
 /**
  * The options `experimental_fromHandle` returns: the factory's options for the handle's input.
  */
@@ -122,9 +138,11 @@ export type InferQueryHandleData<
   T extends QueryHandleFactory | QueryHandle<any>,
 > = T extends QueryHandleFactory
   ? FactoryData<ReturnType<T>>
-  : T extends QueryHandle<infer TFactory>
+  : T extends DefinedQueryHandle<infer TFactory>
     ? FactoryData<ReturnType<TFactory>>
-    : never
+    : T extends QueryHandle<infer TFactory>
+      ? FactoryData<ReturnType<TFactory>>
+      : never
 
 // FUNCTIONS
 
@@ -214,10 +232,10 @@ export async function experimental_queryHandleAsync<
   queryClient: QueryClient,
   factory: TFactory,
   ...input: QueryHandleArgs<TFactory>
-): Promise<QueryHandle<TFactory>> {
+): Promise<DefinedQueryHandle<TFactory>> {
   const options = factory(...input)
   await startQueryFromFactory(queryClient, options)
-  return toHandle(options, input[0]) as QueryHandle<TFactory>
+  return toHandle(options, input[0]) as DefinedQueryHandle<TFactory>
 }
 
 /**
@@ -241,10 +259,10 @@ export async function experimental_ensureQueryHandle<
   queryClient: QueryClient,
   factory: TFactory,
   ...input: QueryHandleArgs<TFactory>
-): Promise<QueryHandle<TFactory>> {
+): Promise<DefinedQueryHandle<TFactory>> {
   const options = factory(...input)
   await startQueryFromFactory(queryClient, { ...options, staleTime: 'static' })
-  return toHandle(options, input[0]) as QueryHandle<TFactory>
+  return toHandle(options, input[0]) as DefinedQueryHandle<TFactory>
 }
 
 /**
@@ -350,4 +368,45 @@ export function experimental_fromHandle<TFactory extends QueryHandleFactory>(
   handle: QueryHandle<NoInfer<TFactory>>,
 ): FromHandleOptions<TFactory> {
   return factory(handle.input) as FromHandleOptions<TFactory>
+}
+
+/**
+ * Reads the data of an awaited handle from the cache, for a loader that decides what to do with
+ * it, like throwing `notFound()`. It takes only handles from `experimental_queryHandleAsync` and
+ * `experimental_ensureQueryHandle`, so it can't read a query that was only started. It never
+ * fetches, waits or creates a query. It returns what the factory's `select` returns, or else the
+ * `queryFn`'s data, like `useSuspenseQuery`'s `data`.
+ * @param queryClient - The client that has the query's data.
+ * @param factory - The function of the query's input that the handle came from.
+ * @param handle - A handle from `experimental_queryHandleAsync` or `experimental_ensureQueryHandle`.
+ * @returns The data a reader of the handle gets from the cache.
+ * @throws {Error} If the cache has no data for the handle's query, for example after `queryClient.clear()`.
+ * @example
+ * ```ts
+ * // in a route loader
+ * const post = await experimental_queryHandleAsync(queryClient, postQuery, { id })
+ * if (!experimental_getQueryHandleData(queryClient, postQuery, post)) throw notFound()
+ * return { post }
+ * ```
+ */
+export function experimental_getQueryHandleData<
+  TFactory extends QueryHandleFactory,
+>(
+  queryClient: QueryClient,
+  factory: TFactory,
+  handle: DefinedQueryHandle<NoInfer<TFactory>>,
+): InferQueryHandleData<TFactory> {
+  const options = factory(handle.input) as QueryFactoryOptions & {
+    select?: (data: unknown) => unknown
+  }
+  const { queryHash } = queryClient.defaultQueryOptions(options)
+  const data = queryClient.getQueryCache().get(queryHash)?.state.data
+  if (data === undefined) {
+    throw new Error(
+      `experimental_getQueryHandleData: the cache has no data for the query ${queryHash}. Read the handle right after awaiting it, before anything clears or removes the query.`,
+    )
+  }
+  return (
+    options.select ? options.select(data) : data
+  ) as InferQueryHandleData<TFactory>
 }

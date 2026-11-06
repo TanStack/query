@@ -60,6 +60,10 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
     )
     await vi.advanceTimersByTimeAsync(10)
     const post = await postPromise
+    expect(serverTrpc.$getQueryHandleData(post)).toStrictEqual({
+      id: '1',
+      title: 'post 1',
+    })
     const comments = serverTrpc['post.comments'].$queryHandle({
       postId: post.input.id,
       page: 1,

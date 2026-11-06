@@ -9,6 +9,7 @@ import {
 import { createOptionsProxy } from './trpcLikeProxy'
 import type {
   InfiniteData,
+  experimental_DefinedQueryHandle,
   experimental_InferQueryHandleData,
   experimental_QueryHandle,
 } from '..'
@@ -46,24 +47,39 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
     assertType(trpc['post.byId'].$infiniteQueryHandleAsync)
   })
 
-  it('should give awaited handles the same plain type as handles that are not awaited', async () => {
+  it('should give awaited handles a defined handle type, and keep the others plain', async () => {
     const post = await trpc['post.byId'].$queryHandleAsync({ id: '1' })
     const feed = await trpc.feed.$infiniteQueryHandleAsync(
       { limit: 2 },
       { pages: 2 },
     )
 
-    expectTypeOf(post).toEqualTypeOf(
-      trpc['post.byId'].$queryHandle({ id: '1' }),
-    )
+    expectTypeOf(post).toEqualTypeOf<
+      experimental_DefinedQueryHandle<TRPC['post.byId']['queryOptions']>
+    >()
     expectTypeOf(post).toEqualTypeOf(
       await trpc['post.byId'].$ensureQueryHandle({ id: '1' }),
     )
+    expectTypeOf(trpc['post.byId'].$queryHandle({ id: '1' })).toEqualTypeOf<
+      experimental_QueryHandle<TRPC['post.byId']['queryOptions']>
+    >()
     expectTypeOf(post).not.toHaveProperty('data')
     expectTypeOf(post.input).toEqualTypeOf<{ id: string }>()
     expectTypeOf(feed.input).toEqualTypeOf<
       Omit<{ limit: number; cursor?: number | null }, 'cursor'>
     >()
+  })
+
+  it('should read the data of any awaited handle without naming its procedure', async () => {
+    const post = await trpc['post.byId'].$queryHandleAsync({ id: '1' })
+    const feed = await trpc.feed.$infiniteQueryHandleAsync({ limit: 2 })
+
+    expectTypeOf(trpc.$getQueryHandleData(post)).toEqualTypeOf<Post>()
+    expectTypeOf(trpc.$getQueryHandleData(feed)).toEqualTypeOf<
+      InfiniteData<FeedPage, unknown>
+    >()
+    // @ts-expect-error the query may not have data yet
+    trpc.$getQueryHandleData(trpc['post.byId'].$queryHandle({ id: '1' }))
   })
 
   it('should read any handle without naming its procedure', async () => {

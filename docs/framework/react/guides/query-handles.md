@@ -98,6 +98,36 @@ export async function loader({ params }) {
 
 The loader doesn't refetch stale data. The component that reads the handle does: it uses the factory's `staleTime`, so it refetches stale data in the background when it mounts.
 
+### Reading awaited data in a loader
+
+Sometimes the loader needs the data itself, for example to throw `notFound()` when a post doesn't exist. `experimental_getQueryHandleData(queryClient, factory, handle)` reads it from the cache. It takes only handles from `experimental_queryHandleAsync` and `experimental_ensureQueryHandle`, which wait for data. Passing a handle from `experimental_queryHandle` is a type error, because its query may not have data yet.
+
+[//]: # 'LoaderData'
+
+```tsx
+import {
+  experimental_getQueryHandleData,
+  experimental_queryHandle,
+  experimental_queryHandleAsync,
+} from '@tanstack/react-query'
+
+export async function loader({ params }) {
+  // Start the viewer first, so it loads while the loader waits for the post
+  const viewer = experimental_queryHandle(queryClient, viewerQuery)
+  const post = await experimental_queryHandleAsync(queryClient, postQuery, {
+    id: params.id,
+  })
+  if (!experimental_getQueryHandleData(queryClient, postQuery, post)) {
+    throw notFound()
+  }
+  return { viewer, post }
+}
+```
+
+[//]: # 'LoaderData'
+
+Start the other handles before you await, so reading the data doesn't create a waterfall. `experimental_getQueryHandleData` never fetches, waits or creates a query. It returns what the factory's `select` returns, or else the `queryFn`'s data, and throws if the cache has no data for the handle, for example after `queryClient.clear()`.
+
 ## Reading handles
 
 `experimental_fromHandle(factory, handle)` rebuilds the query's options from its handle. Pass them to `useQuery`, `useSuspenseQuery`, `useSuspenseInfiniteQuery` or any other API that takes query options, and spread them to add read-site options like `select`:
