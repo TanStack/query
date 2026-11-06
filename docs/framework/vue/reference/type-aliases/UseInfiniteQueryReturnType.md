@@ -9,7 +9,7 @@ title: UseInfiniteQueryReturnType
 type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<TData, TError, InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:74](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L74)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:75](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L75)
 
 The result of `useInfiniteQuery`: [InfiniteQueryObserverResult](InfiniteQueryObserverResult.md) from `@tanstack/query-core`, with
 its properties wrapped in `Ref`s as in UseBaseQueryReturnType.
