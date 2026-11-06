@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, assert, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   QueryObserver,
@@ -8,7 +8,7 @@ import {
   noop,
   onlineManager,
 } from '@tanstack/query-core'
-import { fireEvent, render, within } from '@solidjs/testing-library'
+import { cleanup, fireEvent, render, within } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { DevtoolsOfflineProvider } from '../providers/DevtoolsOfflineProvider'
 import { DevtoolsSubscriptionsProvider } from '../providers/DevtoolsSubscriptionsProvider'
@@ -24,15 +24,15 @@ import type { QueryDevtoolsProps } from '../contexts'
 // `@solid-primitives/transition-group`, whose `exports` field points at
 // `src/index.ts` (not published) under a `@solid-primitives/source` condition
 // that Vite can't fall through, so we stub it with a transparent pass-through.
-vi.mock('solid-transition-group', () => ({
-  TransitionGroup: (props: { children: unknown }) => props.children,
+vi.mock(import('solid-transition-group'), () => ({
+  TransitionGroup: (props) => props.children,
 }))
 
 // `goober` compiles every `css\`...\`` template literal at mount time
 // (template parsing + class hashing + style serialization), which
 // dominates mount cost and produces no value for label/role-based
 // assertions, so we replace it with a no-op factory.
-vi.mock('goober', () => {
+vi.mock(import('goober'), () => {
   let counter = 0
   const css = Object.assign(() => `tsqd-${++counter}`, {
     bind: () => css,
@@ -43,8 +43,8 @@ vi.mock('goober', () => {
 describe('Devtools', () => {
   const storage: { [key: string]: string } = {}
   let queryClient: QueryClient
-  let previousRootFontSize = ''
-  let resizeObservers: Array<ResizeObserver> = []
+  let previousRootFontSize: string
+  let resizeObservers: Array<ResizeObserver>
 
   beforeEach(() => {
     resizeObservers = []
@@ -71,11 +71,11 @@ describe('Devtools', () => {
         matches: false,
         media: query,
         onchange: null,
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        dispatchEvent: vi.fn(),
+        addEventListener: vi.fn<MediaQueryList['addEventListener']>(),
+        removeEventListener: vi.fn<MediaQueryList['removeEventListener']>(),
+        addListener: vi.fn<MediaQueryList['addListener']>(),
+        removeListener: vi.fn<MediaQueryList['removeListener']>(),
+        dispatchEvent: vi.fn<MediaQueryList['dispatchEvent']>(),
       })),
     )
     vi.stubGlobal(
@@ -86,7 +86,7 @@ describe('Devtools', () => {
           this.callback = callback
           resizeObservers.push(this)
         }
-        observe = vi.fn((target: Element) => {
+        observe = vi.fn<(target: Element) => void>((target: Element) => {
           this.callback(
             [
               {
@@ -94,12 +94,11 @@ describe('Devtools', () => {
                 contentRect: { width: 1000, height: 500 } as DOMRectReadOnly,
               } as ResizeObserverEntry,
             ],
-            // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-            this as unknown as ResizeObserver,
+            this,
           )
         })
-        unobserve = vi.fn()
-        disconnect = vi.fn()
+        unobserve = vi.fn<ResizeObserver['unobserve']>()
+        disconnect = vi.fn<ResizeObserver['disconnect']>()
       },
     )
     queryClient = new QueryClient()
@@ -107,7 +106,7 @@ describe('Devtools', () => {
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
+    cleanup()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
     onlineManager.setOnline(true)
@@ -164,6 +163,177 @@ describe('Devtools', () => {
     })
   }
 
+  it('should render only visible queries from a large cache', () => {
+    for (let index = 0; index < 2000; index++) {
+      queryClient.setQueryData(['large-cache', index], index)
+    }
+
+    const rendered = renderDevtools({ initialIsOpen: true })
+    const rows = rendered.getAllByRole('button', { name: /^Query key / })
+
+    expect(rows.length).toBeGreaterThan(0)
+    expect(rows.length).toBeLessThan(100)
+  })
+
+  describe('virtualized cache lists', () => {
+    function getViewport(
+      container: HTMLElement,
+      view: 'queries' | 'mutations',
+    ) {
+      const viewport = container.querySelector<HTMLDivElement>(
+        `.tsqd-${view}-overflow-container`,
+      )
+      if (!viewport) throw new Error('Missing cache list viewport')
+      return viewport
+    }
+
+    function seedQueries() {
+      for (let index = 0; index < 1000; index++) {
+        queryClient.setQueryData(
+          [`query-${String(index).padStart(4, '0')}`],
+          `data-${index}`,
+        )
+      }
+    }
+
+    it('keeps selected query details updating when its row is offscreen', () => {
+      seedQueries()
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.sort': 'query hash' },
+      )
+      fireEvent.click(rendered.getByLabelText('Query key ["query-0000"]'))
+      const viewport = getViewport(rendered.container, 'queries')
+      viewport.scrollTo({ top: viewport.scrollHeight })
+      expect(
+        rendered.queryByLabelText('Query key ["query-0000"]'),
+      ).not.toBeInTheDocument()
+      expect(rendered.getByLabelText('Query key ["query-0999"]')).toBeVisible()
+
+      queryClient.setQueryData(['query-0000'], 'updated-selected-data')
+      expect(rendered.getByDisplayValue('updated-selected-data')).toBeVisible()
+      viewport.scrollTo({ top: 0 })
+      expect(rendered.getByLabelText('Query key ["query-0000"]')).toBeVisible()
+      expect(rendered.getByText('Query Details')).toBeVisible()
+    })
+
+    it('filters, clears, and restores queries after distant scrolling', () => {
+      seedQueries()
+      const rendered = renderDevtools({ initialIsOpen: true })
+      const viewport = getViewport(rendered.container, 'queries')
+      viewport.scrollTo({ top: viewport.scrollHeight })
+      const filter = rendered.getByLabelText('Filter queries by query key')
+      fireEvent.input(filter, { target: { value: 'query-0000' } })
+      viewport.scrollTo({ top: viewport.scrollTop })
+      expect(rendered.getAllByLabelText(/^Query key /)).toHaveLength(1)
+      expect(rendered.getByLabelText('Query key ["query-0000"]')).toBeVisible()
+
+      fireEvent.input(filter, { target: { value: 'no-query-matches' } })
+      expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
+      fireEvent.input(filter, { target: { value: '' } })
+      expect(rendered.getAllByLabelText(/^Query key /).length).toBeLessThan(100)
+      viewport.scrollTo({ top: viewport.scrollHeight })
+      fireEvent.click(rendered.getByLabelText('Clear query cache'))
+      expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
+      queryClient.setQueryData(['after-clear'], 'restored')
+      viewport.scrollTo({ top: viewport.scrollTop })
+      expect(rendered.getByLabelText('Query key ["after-clear"]')).toBeVisible()
+    })
+
+    it('keeps query clicks aligned after a same-count sort change', () => {
+      seedQueries()
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.sort': 'query hash' },
+      )
+      const viewport = getViewport(rendered.container, 'queries')
+      viewport.scrollTo({ top: 14000 })
+      fireEvent.click(rendered.getByLabelText('Sort order ascending'))
+      const row = rendered.getAllByLabelText(/^Query key /)[5]
+      assert(row)
+      const match = row.getAttribute('aria-label')?.match(/query-(\d+)/)
+      assert(match?.[1])
+      fireEvent.click(row)
+      expect(
+        rendered.getByDisplayValue(`data-${Number(match[1])}`),
+      ).toBeVisible()
+    })
+
+    it('keeps mutation clicks aligned after a same-count sort change', () => {
+      for (let index = 0; index < 100; index++) {
+        queryClient.getMutationCache().build(queryClient, {
+          mutationKey: [`reorder-${index}`],
+        })
+      }
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Mutations'))
+      const viewport = getViewport(rendered.container, 'mutations')
+      viewport.scrollTo({ top: 1400 })
+      fireEvent.click(rendered.getByLabelText('Sort order ascending'))
+      const row = rendered.getAllByLabelText(/^Mutation submitted at /)[5]
+      assert(row)
+      const key = row.textContent.match(/reorder-\d+/)?.[0]
+      assert(key)
+      fireEvent.click(row)
+      expect(
+        rendered.container.querySelector('.tsqd-query-details-summary'),
+      ).toHaveTextContent(key)
+    })
+
+    it('bounds mutation rows, preserves offscreen details, and filters from a distant offset', async () => {
+      const mutations = Array.from({ length: 2000 }, (_, index) =>
+        queryClient.getMutationCache().build(queryClient, {
+          mutationKey: [
+            index === 1999 ? 'mutation-target' : `mutation-${index}`,
+          ],
+          mutationFn: () => Promise.resolve(`result-${index}`),
+        }),
+      )
+      const selected = mutations[0]
+      assert(selected)
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Mutations'))
+      expect(
+        rendered.getAllByLabelText(/^Mutation submitted at /).length,
+      ).toBeLessThan(100)
+      const viewport = getViewport(rendered.container, 'mutations')
+      viewport.scrollTo({ top: viewport.scrollHeight })
+      const selectedRow = rendered
+        .getByText(/\["mutation-0"\]/)
+        .closest('button')
+      assert(selectedRow)
+      fireEvent.click(selectedRow)
+      viewport.scrollTo({ top: 14000 })
+      expect(
+        rendered.queryByText(/\["mutation-0"\]/, { selector: 'code' }),
+      ).not.toBeInTheDocument()
+      await selected.execute({})
+      await vi.advanceTimersByTimeAsync(0)
+      expect(rendered.getByText('Mutation Details')).toBeVisible()
+      expect(rendered.container).toHaveTextContent('result-0')
+      expect(
+        rendered.queryByText(/\["mutation-0"\]/, { selector: 'code' }),
+      ).not.toBeInTheDocument()
+
+      viewport.scrollTo({ top: viewport.scrollHeight })
+      fireEvent.input(rendered.getByLabelText('Filter queries by query key'), {
+        target: { value: 'mutation-target' },
+      })
+      viewport.scrollTo({ top: viewport.scrollTop })
+      expect(
+        rendered.getAllByLabelText(/^Mutation submitted at /),
+      ).toHaveLength(1)
+      expect(
+        rendered.getByText(/\["mutation-target"\]/, { selector: 'code' }),
+      ).toBeVisible()
+      fireEvent.click(rendered.getByLabelText('Clear query cache'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(
+        rendered.queryAllByLabelText(/^Mutation submitted at /),
+      ).toHaveLength(0)
+    })
+  })
+
   it('should keep measured panel widths independent', () => {
     let firstState!: ReturnType<typeof useDevtoolsState>
     let secondState!: ReturnType<typeof useDevtoolsState>
@@ -218,6 +388,7 @@ describe('Devtools', () => {
               />
             ))
       }
+
       it('should keep cache notifications and cleanup independent for the same query key', () => {
         const secondClient = new QueryClient()
         queryClient.setQueryData(['shared-key'], 'first-data')
@@ -353,6 +524,83 @@ describe('Devtools', () => {
         expect(panel.getByDisplayValue('new-update')).toBeInTheDocument()
         rendered.unmount()
         secondClient.clear()
+      })
+
+      it('should switch mutation cache subscriptions when the client changes', async () => {
+        const secondClient = new QueryClient()
+        const [client, setClient] = createSignal(queryClient)
+        const Component =
+          mode === 'full' ? DevtoolsComponent : DevtoolsPanelComponent
+        const rendered = render(() => (
+          <Component
+            client={client()}
+            onlineManager={onlineManager}
+            queryFlavor="TanStack Query"
+            version="5"
+            initialIsOpen
+          />
+        ))
+        const panel = within(rendered.container)
+        fireEvent.click(panel.getByText('Mutations'))
+        setClient(secondClient)
+
+        await secondClient
+          .getMutationCache()
+          .build(secondClient, {
+            mutationKey: ['switch-mutation'],
+            mutationFn: () => Promise.resolve('new-result'),
+          })
+          .execute({})
+        await vi.advanceTimersByTimeAsync(0)
+        expect(panel.getAllByLabelText(/Mutation submitted at/)).toHaveLength(1)
+        rendered.unmount()
+        secondClient.clear()
+      })
+
+      it('should drop queued mutation cache updates from the previous client', async () => {
+        const secondClient = new QueryClient()
+        const [client, setClient] = createSignal(queryClient)
+        const Component =
+          mode === 'full' ? DevtoolsComponent : DevtoolsPanelComponent
+        const rendered = render(() => (
+          <Component
+            client={client()}
+            onlineManager={onlineManager}
+            queryFlavor="TanStack Query"
+            version="5"
+            initialIsOpen
+          />
+        ))
+        const panel = within(rendered.container)
+        fireEvent.click(panel.getByText('Mutations'))
+
+        void queryClient
+          .getMutationCache()
+          .build(queryClient, {
+            mutationKey: ['previous-mutation'],
+            mutationFn: () => new Promise(noop),
+          })
+          .execute({})
+        setClient(secondClient)
+
+        await vi.advanceTimersByTimeAsync(0)
+        expect(panel.getByLabelText('Pending: 0')).toBeInTheDocument()
+        rendered.unmount()
+        secondClient.clear()
+      })
+
+      it('should toggle the supplied online manager when the offline button is clicked', () => {
+        const Manager =
+          onlineManager.constructor as new () => typeof onlineManager
+        const manager = new Manager()
+        const panel = within(mount(queryClient, manager).container)
+
+        fireEvent.click(panel.getByLabelText('Mock offline behavior'))
+        expect(manager.isOnline()).toBe(false)
+        expect(onlineManager.isOnline()).toBe(true)
+        expect(
+          panel.getByLabelText('Unset offline mocking behavior'),
+        ).toHaveAttribute('aria-pressed', 'true')
       })
 
       it('should keep query selection independent between clients', () => {
@@ -536,7 +784,7 @@ describe('Devtools', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
       fireEvent.click(rendered.getByText('Mutations'))
 
-      const listener = vi.fn()
+      const listener = vi.fn<EventListener>()
       window.addEventListener('@tanstack/query-devtools-event', listener)
 
       try {
@@ -677,21 +925,34 @@ describe('Devtools', () => {
       > = {},
     ) {
       const pipDocument = document.implementation.createHTMLDocument('PiP')
+      Object.defineProperty(pipDocument, 'defaultView', { value: window })
       const listeners = new Map<string, EventListener>()
       const fakeWindow: FakePipWindow = {
         document: pipDocument,
         innerWidth: 800,
         innerHeight: 600,
-        addEventListener: vi.fn((event: string, handler: EventListener) => {
+        addEventListener: vi.fn<
+          (event: string, handler: EventListener) => void
+        >((event: string, handler: EventListener) => {
           listeners.set(event, handler)
         }),
-        removeEventListener: vi.fn((event: string) => {
+        removeEventListener: vi.fn<(event: string) => void>((event: string) => {
           listeners.delete(event)
         }),
-        close: vi.fn(),
+        close: vi.fn<() => void>(),
         ...overrides,
       }
-      const open = vi.fn(() => fakeWindow)
+      const open = vi.fn<
+        () => Pick<
+          Window,
+          | 'close'
+          | 'addEventListener'
+          | 'removeEventListener'
+          | 'document'
+          | 'innerWidth'
+          | 'innerHeight'
+        >
+      >(() => fakeWindow)
       vi.stubGlobal('open', open)
       return {
         pipDocument,
@@ -764,6 +1025,19 @@ describe('Devtools', () => {
         pipDocument.querySelector('[aria-label*="narrow-pip-query"]'),
       ).not.toBeNull()
     })
+
+    it('should render the PiP panel with "dir" set to "ltr"', () => {
+      const { pipDocument } = stubPipWindow()
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+      expect(pipDocument.querySelector('.tsqd-main-panel')).toHaveAttribute(
+        'dir',
+        'ltr',
+      )
+    })
   })
 
   describe('status counts', () => {
@@ -800,7 +1074,7 @@ describe('Devtools', () => {
           constructor(callback: ResizeObserverCallback) {
             this.callback = callback
           }
-          observe = vi.fn((target: Element) => {
+          observe = vi.fn<(target: Element) => void>((target: Element) => {
             this.callback(
               [
                 {
@@ -808,12 +1082,11 @@ describe('Devtools', () => {
                   contentRect: { width: 500, height: 500 } as DOMRectReadOnly,
                 } as ResizeObserverEntry,
               ],
-              // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-              this as unknown as ResizeObserver,
+              this,
             )
           })
-          unobserve = vi.fn()
-          disconnect = vi.fn()
+          unobserve = vi.fn<ResizeObserver['unobserve']>()
+          disconnect = vi.fn<ResizeObserver['disconnect']>()
         },
       )
 
@@ -837,7 +1110,7 @@ describe('Devtools', () => {
           constructor(callback: ResizeObserverCallback) {
             this.callback = callback
           }
-          observe = vi.fn((target: Element) => {
+          observe = vi.fn<(target: Element) => void>((target: Element) => {
             this.callback(
               [
                 {
@@ -845,12 +1118,11 @@ describe('Devtools', () => {
                   contentRect: { width: 500, height: 500 } as DOMRectReadOnly,
                 } as ResizeObserverEntry,
               ],
-              // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-              this as unknown as ResizeObserver,
+              this,
             )
           })
-          unobserve = vi.fn()
-          disconnect = vi.fn()
+          unobserve = vi.fn<ResizeObserver['unobserve']>()
+          disconnect = vi.fn<ResizeObserver['disconnect']>()
         },
       )
 
@@ -864,6 +1136,86 @@ describe('Devtools', () => {
 
       fireEvent.blur(fresh)
       expect(rendered.queryByRole('tooltip')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('Data Explorer search', () => {
+    it('searches only query Data and resets search when the selection changes', () => {
+      queryClient.setQueryData(['search-first'], {
+        nested: { name: 'first needle' },
+      })
+      queryClient.setQueryData(['search-second'], {
+        nested: { name: 'second' },
+      })
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByLabelText('Query key ["search-first"]'))
+      expect(rendered.getAllByLabelText('Search data')).toHaveLength(1)
+      const search = rendered.getByRole('searchbox', { name: 'Search data' })
+      fireEvent.input(search, { target: { value: 'NEEDLE' } })
+      vi.advanceTimersByTime(150)
+      const dataContainer = rendered.container.querySelector(
+        '.tsqd-query-details-data-explorer',
+      )
+      assert(dataContainer instanceof HTMLElement)
+      const data = within(dataContainer)
+      expect(data.getByLabelText('name:')).toHaveValue('first needle')
+      expect(data.getByLabelText('name:')).toHaveAttribute(
+        'data-search-match',
+        'true',
+      )
+      queryClient.setQueryData(['search-first'], {
+        nested: { name: 'updated needle' },
+      })
+      expect(data.getByLabelText('name:')).toHaveValue('updated needle')
+      fireEvent.click(rendered.getByLabelText('Query key ["search-second"]'))
+      expect(rendered.getByLabelText('Search data')).toHaveValue('')
+      expect(dataContainer.querySelector('[data-search-match]')).toBeNull()
+    })
+
+    it('searches read-only mutation Data and resets search when the selection changes', async () => {
+      const first = queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['search-first'],
+        mutationFn: () =>
+          Promise.resolve({ nested: { name: 'mutation needle' } }),
+      })
+      const second = queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['search-second'],
+        mutationFn: () => Promise.resolve({ nested: { name: 'other' } }),
+      })
+      await first.execute(undefined)
+      await second.execute(undefined)
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Mutations'))
+      const rows = rendered.getAllByLabelText(/^Mutation submitted at /)
+      const firstRow = rows.find((row) =>
+        row.textContent.includes('search-first'),
+      )
+      const secondRow = rows.find((row) =>
+        row.textContent.includes('search-second'),
+      )
+      assert(firstRow && secondRow)
+      fireEvent.click(firstRow)
+      expect(rendered.getAllByLabelText('Search data')).toHaveLength(1)
+      fireEvent.input(rendered.getByLabelText('Search data'), {
+        target: { value: 'needle' },
+      })
+      vi.advanceTimersByTime(150)
+      const dataContainer = rendered.getByRole('heading', {
+        name: 'Data Explorer',
+      }).nextElementSibling
+      assert(dataContainer instanceof HTMLElement)
+      const data = within(dataContainer)
+      expect(
+        [...CSS.highlights.values()].flatMap((highlight) =>
+          [...highlight].map((range) => range.toString()),
+        ),
+      ).toContain('needle')
+      expect(data.queryByRole('textbox')).not.toBeInTheDocument()
+      fireEvent.click(secondRow)
+      expect(rendered.getByLabelText('Search data')).toHaveValue('')
+      expect(
+        [...CSS.highlights.values()].every((highlight) => highlight.size === 0),
+      ).toBe(true)
     })
   })
 
@@ -924,7 +1276,7 @@ describe('Devtools', () => {
       queryClient.setQueryData(['action-refetch'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
-      const listener = vi.fn()
+      const listener = vi.fn<EventListener>()
       window.addEventListener('@tanstack/query-devtools-event', listener)
 
       try {
@@ -966,7 +1318,9 @@ describe('Devtools', () => {
     })
 
     it('should restore the previous query options when "Restore Loading" is clicked after "Trigger Loading"', async () => {
-      const queryFn = vi.fn(() => Promise.resolve('original'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('original'),
+      )
       void queryClient
         .query({
           queryKey: ['action-restore-loading'],
@@ -1090,7 +1444,9 @@ describe('Devtools', () => {
         target: { value: JSON.stringify({ name: 'b' }) },
       })
       fireEvent.submit(textarea.closest('form')!)
-      expect(queryClient.getQueryData(['edit-save'])).toEqual({ name: 'b' })
+      expect(queryClient.getQueryData(['edit-save'])).toStrictEqual({
+        name: 'b',
+      })
     })
 
     it('should set an error state when the edited data is invalid JSON', () => {
@@ -1119,7 +1475,7 @@ describe('Devtools', () => {
       expect(rendered.getByText('Invalid Value')).toBeInTheDocument()
 
       fireEvent.focus(textarea)
-      expect(rendered.queryByText('Invalid Value')).toBeNull()
+      expect(rendered.queryByText('Invalid Value')).not.toBeInTheDocument()
     })
 
     it('should return to the data view when the editor "Cancel" button is clicked', () => {
@@ -1133,7 +1489,9 @@ describe('Devtools', () => {
       ).toBeInTheDocument()
 
       fireEvent.click(rendered.getByText('Cancel'))
-      expect(rendered.queryByLabelText('Edit query data as JSON')).toBeNull()
+      expect(
+        rendered.queryByLabelText('Edit query data as JSON'),
+      ).not.toBeInTheDocument()
       expect(rendered.getByLabelText('Bulk Edit Data')).toBeInTheDocument()
     })
   })
@@ -1230,6 +1588,7 @@ describe('Devtools', () => {
         unsubscribe()
       }
     })
+
     it('should hide disabled queries when the "hideDisabledQueries" prop is true', () => {
       const disabled = new QueryObserver(queryClient, {
         queryKey: ['hide-prop-disabled'],
@@ -1392,7 +1751,7 @@ describe('Devtools', () => {
         themeMenu?.querySelectorAll<HTMLElement>('[role="menuitemradio"]') ??
           [],
       ).find((el) => String(el.textContent).includes('Light'))
-      expect(lightItem).not.toBeUndefined()
+      expect(lightItem).toBeDefined()
       fireEvent.keyDown(lightItem!, { key: 'Enter' })
       expect(
         localStorage.getItem('TanstackQueryDevtools.theme_preference'),
@@ -1438,6 +1797,118 @@ describe('Devtools', () => {
         localStorage.getItem('TanstackQueryDevtools.hideDisabledQueries'),
       ).toBe('true')
     })
+  })
+
+  describe('text direction', () => {
+    it('should render the floating devtools with "dir" set to "ltr"', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.container.querySelector('.tsqd-transitions-container'),
+      ).toHaveAttribute('dir', 'ltr')
+    })
+
+    it('should render the embedded panel with "dir" set to "ltr"', () => {
+      const rendered = render(() => (
+        <DevtoolsPanelComponent
+          client={queryClient}
+          onlineManager={onlineManager}
+          queryFlavor="TanStack Query"
+          version="5"
+        />
+      ))
+
+      expect(
+        rendered.container.querySelector('.tsqd-main-panel'),
+      ).toHaveAttribute('dir', 'ltr')
+    })
+
+    it('should render the settings menu with "dir" set to "ltr"', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+        key: 'Enter',
+      })
+
+      expect(document.querySelector('.tsqd-settings-menu')).toHaveAttribute(
+        'dir',
+        'ltr',
+      )
+    })
+
+    it.each(['position', 'theme', 'disabled-queries'])(
+      'should render the "%s" sub-menu with "dir" set to "ltr"',
+      (name) => {
+        const rendered = renderDevtools({ initialIsOpen: true })
+
+        fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+          key: 'Enter',
+        })
+
+        const subTrigger = document.querySelector<HTMLElement>(
+          `.tsqd-settings-menu-sub-trigger-${name}`,
+        )
+        expect(subTrigger).not.toBeNull()
+        fireEvent.keyDown(subTrigger!, { key: 'ArrowRight' })
+
+        expect(
+          document.querySelector('.tsqd-settings-submenu'),
+        ).toHaveAttribute('dir', 'ltr')
+      },
+    )
+
+    it.each([
+      ['position', 'full'],
+      ['theme', 'full'],
+      ['disabled-queries', 'full'],
+      ['theme', 'embedded'],
+      ['disabled-queries', 'embedded'],
+    ] as const)(
+      'should open the "%s" sub-menu with "ArrowRight" in the %s devtools when the browser language is RTL',
+      (name, mode) => {
+        const rendered = render(() =>
+          mode === 'full' ? (
+            <DevtoolsComponent
+              client={queryClient}
+              onlineManager={onlineManager}
+              queryFlavor="TanStack Query"
+              version="5"
+              initialIsOpen
+            />
+          ) : (
+            <DevtoolsPanelComponent
+              client={queryClient}
+              onlineManager={onlineManager}
+              queryFlavor="TanStack Query"
+              version="5"
+            />
+          ),
+        )
+        const language = vi
+          .spyOn(navigator, 'language', 'get')
+          .mockReturnValue('ar')
+        window.dispatchEvent(new Event('languagechange'))
+
+        try {
+          fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+            key: 'Enter',
+          })
+
+          const subTrigger = document.querySelector<HTMLElement>(
+            `.tsqd-settings-menu-sub-trigger-${name}`,
+          )
+          expect(subTrigger).not.toBeNull()
+          fireEvent.keyDown(subTrigger!, { key: 'ArrowRight' })
+
+          expect(
+            document.querySelector('.tsqd-settings-submenu'),
+          ).toHaveAttribute('dir', 'ltr')
+        } finally {
+          language.mockRestore()
+          window.dispatchEvent(new Event('languagechange'))
+        }
+      },
+    )
   })
 
   describe('resize handle', () => {

@@ -21,25 +21,25 @@ When you begin your React Query journey, you'll want these devtools by your side
 
 The devtools are a separate package that you need to install:
 
-```bash
+```sh
 npm i @tanstack/react-query-devtools
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/react-query-devtools
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/react-query-devtools
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/react-query-devtools
 ```
 
@@ -92,9 +92,12 @@ function App() {
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `hideDisabledQueries?: boolean`
+  - Defaults to `false`.
+  - Set this to true to hide disabled queries from the devtools panel.
 - `theme?: "light" | "dark" | "system"`
-  - Defaults to `system`.
-  - Set this to change the theme of the devtools panel.
+  - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
+  - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
 
 ## Embedded Mode
 
@@ -138,9 +141,22 @@ function App() {
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `hideDisabledQueries?: boolean`
+  - Defaults to `false`.
+  - Set this to true to hide disabled queries from the devtools panel.
 - `theme?: "light" | "dark" | "system"`
-  - Defaults to `system`.
-  - Set this to change the theme of the devtools panel.
+  - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
+  - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
+
+## Search query and mutation data
+
+Select a query or mutation and use **Search data** in its Data Explorer to search nested property names and primitive values. Search uses case-insensitive text matching and treats special characters as plain text.
+
+Matching text is highlighted. Matching editable values have a highlighted input. The explorer opens matching branches and the first matching page in each paginated collection. Other pages with matches are highlighted so you can open them. You can still inspect other rows and edit query data.
+
+The Data Explorer highlights up to 1,000 matches at a time.
+
+Select **Clear** or press **Escape** in the search field to restore your manual expansion. Selecting another query or mutation clears the search.
 
 ## Devtools in production
 
@@ -166,8 +182,9 @@ function App() {
   const [showDevtools, setShowDevtools] = React.useState(false)
 
   React.useEffect(() => {
-    // @ts-expect-error
-    window.toggleDevtools = () => setShowDevtools((old) => !old)
+    Object.assign(window, {
+      toggleDevtools: () => setShowDevtools((old) => !old),
+    })
   }, [])
 
   return (

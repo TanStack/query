@@ -12,7 +12,7 @@ import {
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { render } from '@testing-library/angular'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   dehydrate,
@@ -26,306 +26,310 @@ import { INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY } from '../hydration-state-
 import { provideAngularQueryChangeDetection } from './test-utils'
 import type { DehydratedState } from '@tanstack/query-core'
 
-beforeEach(() => {
-  vi.useFakeTimers()
-})
+describe('TransferState', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
 
-afterEach(() => {
-  vi.restoreAllMocks()
-  vi.useRealTimers()
-})
+  afterEach(() => {
+    vi.restoreAllMocks()
+    vi.useRealTimers()
+  })
 
-describe('TransferState hydration (client)', () => {
-  it('browser hydrates from default key', async () => {
-    const key = queryKey()
-    const sourceClient = new QueryClient()
-    sourceClient.setQueryData(key, 'from-server')
-    const dehydrated = dehydrate(sourceClient)
-    const appClient = new QueryClient()
+  describe('TransferState hydration (client)', () => {
+    it('browser hydrates from default key', async () => {
+      const key = createKey()
+      const sourceClient = new QueryClient()
+      sourceClient.setQueryData(key, 'from-server')
+      const dehydrated = dehydrate(sourceClient)
+      const appClient = new QueryClient()
 
-    @Component({
-      template: `<div>{{ state.data() ?? '' }}</div>`,
+      @Component({
+        template: `<div>{{ state.data() ?? '' }}</div>`,
+      })
+      class Page {
+        state = injectQuery(() => ({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'from-client'),
+        }))
+      }
+
+      const rendered = await render(Page, {
+        providers: [
+          provideAngularQueryChangeDetection(),
+          provideEnvironmentInitializer(() => {
+            inject(TransferState).set(
+              INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY,
+              dehydrated,
+            )
+          }),
+          provideTanStackQuery(() => appClient),
+        ],
+      })
+
+      rendered.fixture.detectChanges()
+      expect(rendered.getByText('from-server')).toBeInTheDocument()
+      expect(
+        rendered.fixture.debugElement.injector
+          .get(TransferState)
+          .get(INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY, null),
+      ).toBeNull()
     })
-    class Page {
-      state = injectQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'from-client'),
-      }))
+
+    it('browser hydrates from custom key', async () => {
+      const customKeyName = 'tanstack-test-custom-hydration'
+      const customKey = makeStateKey<DehydratedState>(customKeyName)
+      const key = createKey()
+      const sourceClient = new QueryClient()
+      sourceClient.setQueryData(key, 'from-custom-key')
+      const dehydrated = dehydrate(sourceClient)
+      const appClient = new QueryClient()
+
+      @Component({
+        template: `<div>{{ state.data() ?? '' }}</div>`,
+      })
+      class Page {
+        state = injectQuery(() => ({
+          queryKey: key,
+          staleTime: Infinity,
+          queryFn: () => Promise.resolve('from-client'),
+        }))
+      }
+
+      const rendered = await render(Page, {
+        providers: [
+          provideAngularQueryChangeDetection(),
+          provideEnvironmentInitializer(() => {
+            inject(TransferState).set(customKey, dehydrated)
+          }),
+          provideTanStackQuery(
+            () => appClient,
+            withHydrationKey(customKeyName),
+          ),
+        ],
+      })
+
+      rendered.fixture.detectChanges()
+      expect(rendered.getByText('from-custom-key')).toBeInTheDocument()
+      expect(
+        rendered.fixture.debugElement.injector
+          .get(TransferState)
+          .get(customKey, null),
+      ).toBeNull()
+    })
+
+    it('browser does not re-fetch when hydrated state is fresh', async () => {
+      const key = createKey()
+      const sourceClient = new QueryClient()
+      sourceClient.setQueryData(key, 'cached')
+      const dehydrated = dehydrate(sourceClient)
+      const appClient = new QueryClient()
+      let queryFnCalls = 0
+
+      @Component({
+        template: `<div>{{ state.data() ?? '' }}</div>`,
+      })
+      class Page {
+        state = injectQuery(() => ({
+          queryKey: key,
+          staleTime: Infinity,
+          queryFn: () => {
+            queryFnCalls++
+            return sleep(10).then(() => 'should-not-run')
+          },
+        }))
+
+        _ = effect(() => {
+          void this.state.data()
+        })
+      }
+
+      await render(Page, {
+        providers: [
+          provideAngularQueryChangeDetection(),
+          provideEnvironmentInitializer(() => {
+            inject(TransferState).set(
+              INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY,
+              dehydrated,
+            )
+          }),
+          provideTanStackQuery(() => appClient),
+        ],
+      })
+
+      await vi.advanceTimersByTimeAsync(100)
+      expect(queryFnCalls).toBe(0)
+    })
+
+    it('withNoQueryHydration disables browser hydration', async () => {
+      const key = createKey()
+      const sourceClient = new QueryClient()
+      sourceClient.setQueryData(key, 'from-server')
+      const dehydrated = dehydrate(sourceClient)
+      const appClient = new QueryClient()
+
+      @Component({
+        template: `<div>{{ state.data() ?? '' }}</div>`,
+      })
+      class Page {
+        state = injectQuery(() => ({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'from-client'),
+        }))
+      }
+
+      const rendered = await render(Page, {
+        providers: [
+          provideAngularQueryChangeDetection(),
+          provideEnvironmentInitializer(() => {
+            inject(TransferState).set(
+              INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY,
+              dehydrated,
+            )
+          }),
+          provideTanStackQuery(() => appClient, withNoQueryHydration()),
+        ],
+      })
+
+      rendered.fixture.detectChanges()
+      await vi.advanceTimersByTimeAsync(10)
+      rendered.fixture.detectChanges()
+
+      expect(rendered.getByText('from-client')).toBeInTheDocument()
+      expect(
+        rendered.fixture.debugElement.injector
+          .get(TransferState)
+          .get(INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY, null),
+      ).toStrictEqual(dehydrated)
+    })
+  })
+
+  describe('TransferState dehydration (server)', () => {
+    function createQueryInjector(
+      queryClient: QueryClient,
+      platformId: 'server' | 'browser',
+      ...features: Array<Parameters<typeof provideTanStackQuery>[1]>
+    ) {
+      TestBed.configureTestingModule({
+        providers: [
+          provideAngularQueryChangeDetection(),
+          { provide: PLATFORM_ID, useValue: platformId },
+        ],
+      })
+
+      return createEnvironmentInjector(
+        [provideTanStackQuery(() => queryClient, ...features)],
+        TestBed.inject(EnvironmentInjector),
+      )
     }
 
-    const rendered = await render(Page, {
-      providers: [
-        provideAngularQueryChangeDetection(),
-        provideEnvironmentInitializer(() => {
-          inject(TransferState).set(
-            INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY,
-            dehydrated,
-          )
-        }),
-        provideTanStackQuery(() => appClient),
-      ],
-    })
+    it('server serializes dehydrated queries on TransferState.toJson', async () => {
+      const key = createKey()
+      const queryClient = new QueryClient()
+      const injector = createQueryInjector(queryClient, 'server')
 
-    rendered.fixture.detectChanges()
-    expect(rendered.getByText('from-server')).toBeInTheDocument()
-    expect(
-      rendered.fixture.debugElement.injector
+      void queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => Promise.resolve('ssr-data'),
+        })
+        .catch(noop)
+      await vi.advanceTimersByTimeAsync(0)
+
+      injector.get(TransferState).toJson()
+
+      const stored = injector
         .get(TransferState)
-        .get(INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY, null),
-    ).toBeNull()
-  })
-
-  it('browser hydrates from custom key', async () => {
-    const customKeyName = 'tanstack-test-custom-hydration'
-    const customKey = makeStateKey<DehydratedState>(customKeyName)
-    const key = queryKey()
-    const sourceClient = new QueryClient()
-    sourceClient.setQueryData(key, 'from-custom-key')
-    const dehydrated = dehydrate(sourceClient)
-    const appClient = new QueryClient()
-
-    @Component({
-      template: `<div>{{ state.data() ?? '' }}</div>`,
-    })
-    class Page {
-      state = injectQuery(() => ({
-        queryKey: key,
-        staleTime: Infinity,
-        queryFn: () => Promise.resolve('from-client'),
-      }))
-    }
-
-    const rendered = await render(Page, {
-      providers: [
-        provideAngularQueryChangeDetection(),
-        provideEnvironmentInitializer(() => {
-          inject(TransferState).set(customKey, dehydrated)
-        }),
-        provideTanStackQuery(() => appClient, withHydrationKey(customKeyName)),
-      ],
+        .get(INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY, null)
+      expect(stored).not.toBeNull()
+      expect(stored!.queries).toHaveLength(1)
+      expect(stored!.queries[0]?.queryKey).toStrictEqual(key)
     })
 
-    rendered.fixture.detectChanges()
-    expect(rendered.getByText('from-custom-key')).toBeTruthy()
-    expect(
-      rendered.fixture.debugElement.injector
-        .get(TransferState)
-        .get(customKey, null),
-    ).toBeNull()
-  })
+    it('browser platform does not write server dehydration state', async () => {
+      const key = createKey()
+      const queryClient = new QueryClient()
+      const injector = createQueryInjector(queryClient, 'browser')
 
-  it('browser does not re-fetch when hydrated state is fresh', async () => {
-    const key = queryKey()
-    const sourceClient = new QueryClient()
-    sourceClient.setQueryData(key, 'cached')
-    const dehydrated = dehydrate(sourceClient)
-    const appClient = new QueryClient()
-    let queryFnCalls = 0
+      void queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => Promise.resolve('data'),
+        })
+        .catch(noop)
+      await vi.advanceTimersByTimeAsync(0)
 
-    @Component({
-      template: `<div>{{ state.data() ?? '' }}</div>`,
+      injector.get(TransferState).toJson()
+
+      expect(
+        injector
+          .get(TransferState)
+          .get(INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY, null),
+      ).toBeNull()
     })
-    class Page {
-      state = injectQuery(() => ({
-        queryKey: key,
-        staleTime: Infinity,
-        queryFn: () => {
-          queryFnCalls++
-          return sleep(10).then(() => 'should-not-run')
-        },
-      }))
 
-      _ = effect(() => {
-        void this.state.data()
+    it('withNoQueryHydration disables server dehydration', async () => {
+      const key = createKey()
+      const queryClient = new QueryClient()
+      const injector = createQueryInjector(
+        queryClient,
+        'server',
+        withNoQueryHydration(),
+      )
+
+      void queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => Promise.resolve('data'),
+        })
+        .catch(noop)
+      await vi.advanceTimersByTimeAsync(0)
+
+      injector.get(TransferState).toJson()
+
+      expect(
+        injector
+          .get(TransferState)
+          .get(INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY, null),
+      ).toBeNull()
+    })
+
+    it('multiple query clients can use distinct hydration keys', async () => {
+      const keyA = createKey()
+      const keyB = createKey()
+      const clientA = new QueryClient()
+      const clientB = new QueryClient()
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideAngularQueryChangeDetection(),
+          { provide: PLATFORM_ID, useValue: 'server' },
+        ],
       })
-    }
 
-    await render(Page, {
-      providers: [
-        provideAngularQueryChangeDetection(),
-        provideEnvironmentInitializer(() => {
-          inject(TransferState).set(
-            INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY,
-            dehydrated,
-          )
-        }),
-        provideTanStackQuery(() => appClient),
-      ],
+      createEnvironmentInjector(
+        [provideTanStackQuery(() => clientA, withHydrationKey('client-a'))],
+        TestBed.inject(EnvironmentInjector),
+      )
+      createEnvironmentInjector(
+        [provideTanStackQuery(() => clientB, withHydrationKey('client-b'))],
+        TestBed.inject(EnvironmentInjector),
+      )
+
+      clientA.setQueryData(keyA, 'a')
+      clientB.setQueryData(keyB, 'b')
+
+      const transferState = TestBed.inject(TransferState)
+      transferState.toJson()
+
+      expect(
+        transferState.get(makeStateKey<DehydratedState>('client-a'), null)
+          ?.queries[0]?.queryKey,
+      ).toStrictEqual(keyA)
+      expect(
+        transferState.get(makeStateKey<DehydratedState>('client-b'), null)
+          ?.queries[0]?.queryKey,
+      ).toStrictEqual(keyB)
     })
-
-    await vi.advanceTimersByTimeAsync(100)
-    expect(queryFnCalls).toBe(0)
-  })
-
-  it('withNoQueryHydration disables browser hydration', async () => {
-    const key = queryKey()
-    const sourceClient = new QueryClient()
-    sourceClient.setQueryData(key, 'from-server')
-    const dehydrated = dehydrate(sourceClient)
-    const appClient = new QueryClient()
-
-    @Component({
-      template: `<div>{{ state.data() ?? '' }}</div>`,
-    })
-    class Page {
-      state = injectQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'from-client'),
-      }))
-    }
-
-    const rendered = await render(Page, {
-      providers: [
-        provideAngularQueryChangeDetection(),
-        provideEnvironmentInitializer(() => {
-          inject(TransferState).set(
-            INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY,
-            dehydrated,
-          )
-        }),
-        provideTanStackQuery(() => appClient, withNoQueryHydration()),
-      ],
-    })
-
-    rendered.fixture.detectChanges()
-    await vi.advanceTimersByTimeAsync(10)
-    rendered.fixture.detectChanges()
-
-    expect(rendered.getByText('from-client')).toBeInTheDocument()
-    expect(
-      rendered.fixture.debugElement.injector
-        .get(TransferState)
-        .get(INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY, null),
-    ).toEqual(dehydrated)
-  })
-})
-
-describe('TransferState dehydration (server)', () => {
-  function createQueryInjector(
-    queryClient: QueryClient,
-    platformId: 'server' | 'browser',
-    ...features: Array<Parameters<typeof provideTanStackQuery>[1]>
-  ) {
-    TestBed.configureTestingModule({
-      providers: [
-        provideAngularQueryChangeDetection(),
-        { provide: PLATFORM_ID, useValue: platformId },
-      ],
-    })
-
-    return createEnvironmentInjector(
-      [provideTanStackQuery(() => queryClient, ...features)],
-      TestBed.inject(EnvironmentInjector),
-    )
-  }
-
-  it('server serializes dehydrated queries on TransferState.toJson', async () => {
-    const key = queryKey()
-    const queryClient = new QueryClient()
-    const injector = createQueryInjector(queryClient, 'server')
-
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => Promise.resolve('ssr-data'),
-      })
-      .catch(noop)
-    await vi.advanceTimersByTimeAsync(0)
-
-    injector.get(TransferState).toJson()
-
-    const stored = injector
-      .get(TransferState)
-      .get(INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY, null)
-    expect(stored).not.toBeNull()
-    if (!stored) throw new Error('expected dehydrated state')
-    expect(stored.queries.length).toBe(1)
-    expect(stored.queries[0]?.queryKey).toEqual(key)
-  })
-
-  it('browser platform does not write server dehydration state', async () => {
-    const key = queryKey()
-    const queryClient = new QueryClient()
-    const injector = createQueryInjector(queryClient, 'browser')
-
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => Promise.resolve('data'),
-      })
-      .catch(noop)
-    await vi.advanceTimersByTimeAsync(0)
-
-    injector.get(TransferState).toJson()
-
-    expect(
-      injector
-        .get(TransferState)
-        .get(INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY, null),
-    ).toBeNull()
-  })
-
-  it('withNoQueryHydration disables server dehydration', async () => {
-    const key = queryKey()
-    const queryClient = new QueryClient()
-    const injector = createQueryInjector(
-      queryClient,
-      'server',
-      withNoQueryHydration(),
-    )
-
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => Promise.resolve('data'),
-      })
-      .catch(noop)
-    await vi.advanceTimersByTimeAsync(0)
-
-    injector.get(TransferState).toJson()
-
-    expect(
-      injector
-        .get(TransferState)
-        .get(INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY, null),
-    ).toBeNull()
-  })
-
-  it('multiple query clients can use distinct hydration keys', async () => {
-    const keyA = queryKey()
-    const keyB = queryKey()
-    const clientA = new QueryClient()
-    const clientB = new QueryClient()
-
-    TestBed.configureTestingModule({
-      providers: [
-        provideAngularQueryChangeDetection(),
-        { provide: PLATFORM_ID, useValue: 'server' },
-      ],
-    })
-
-    createEnvironmentInjector(
-      [provideTanStackQuery(() => clientA, withHydrationKey('client-a'))],
-      TestBed.inject(EnvironmentInjector),
-    )
-    createEnvironmentInjector(
-      [provideTanStackQuery(() => clientB, withHydrationKey('client-b'))],
-      TestBed.inject(EnvironmentInjector),
-    )
-
-    clientA.setQueryData(keyA, 'a')
-    clientB.setQueryData(keyB, 'b')
-
-    const transferState = TestBed.inject(TransferState)
-    transferState.toJson()
-
-    expect(
-      transferState.get(makeStateKey<DehydratedState>('client-a'), null)
-        ?.queries[0]?.queryKey,
-    ).toEqual(keyA)
-    expect(
-      transferState.get(makeStateKey<DehydratedState>('client-b'), null)
-        ?.queries[0]?.queryKey,
-    ).toEqual(keyB)
   })
 })

@@ -11,11 +11,11 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "^22.0.0",
-    "@angular/compiler": "^22.0.0",
-    "@angular/core": "^22.0.0",
-    "@angular/forms": "^22.0.0",
-    "@angular/platform-browser": "^22.0.0",
+    "@angular/common": "^22.2.4",
+    "@angular/compiler": "^22.2.4",
+    "@angular/core": "^22.2.4",
+    "@angular/forms": "^22.2.4",
+    "@angular/platform-browser": "^22.2.4",
     "@tanstack/angular-query-devtools": "workspace:*",
     "@tanstack/angular-query": "workspace:*",
     "rxjs": "^7.8.2",
@@ -23,10 +23,10 @@
     "zone.js": "0.16.1"
   },
   "devDependencies": {
-    "@angular/build": "^22.0.0",
-    "@angular/cli": "^22.0.0",
-    "@angular/compiler-cli": "^22.0.0",
-    "@tanstack/eslint-plugin-query": "^5.104.4",
-    "typescript": "6.0.3"
+    "@angular/build": "^22.2.5",
+    "@angular/cli": "^22.2.5",
+    "@angular/compiler-cli": "^22.2.4",
+    "@tanstack/eslint-plugin-query": "^5.106.1",
+    "typescript": "^6.0.3"
   }
 }

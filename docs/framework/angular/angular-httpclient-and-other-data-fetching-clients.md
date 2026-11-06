@@ -23,7 +23,7 @@ class ExampleComponent {
     queryKey: ['repoData'],
     queryFn: () =>
       firstValueFrom(
-        this.http.get('https://api.github.com/repos/tanstack/query'),
+        this.http.get('https://api.github.com/repos/TanStack/query'),
       ),
   }))
 }

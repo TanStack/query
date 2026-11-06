@@ -10,9 +10,9 @@ import {
   QueryClient,
   injectQuery,
   keepPreviousData,
+  noop,
 } from '@tanstack/angular-query'
-import { lastValueFrom, noop } from 'rxjs'
-import { ProjectsService } from '../services/projects.service'
+import { ProjectsQueries } from '../services/projects/queries'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,14 +21,11 @@ import { ProjectsService } from '../services/projects.service'
 })
 export class ExampleComponent {
   readonly queryClient = inject(QueryClient)
-  readonly projectsService = inject(ProjectsService)
+  readonly #projectsQueries = inject(ProjectsQueries)
   readonly page = signal(0)
 
   readonly query = injectQuery(() => ({
-    queryKey: ['projects', this.page()],
-    queryFn: () => {
-      return lastValueFrom(this.projectsService.getProjects(this.page()))
-    },
+    ...this.#projectsQueries.list(this.page()),
     placeholderData: keepPreviousData,
     staleTime: 5000,
   }))
@@ -41,11 +38,7 @@ export class ExampleComponent {
     untracked(() => {
       if (!isPlaceholderData && data?.hasMore) {
         void this.queryClient
-          .query({
-            queryKey: ['projects', newPage],
-            queryFn: () =>
-              lastValueFrom(this.projectsService.getProjects(newPage)),
-          })
+          .query(this.#projectsQueries.list(newPage))
           .catch(noop)
       }
     })

@@ -97,7 +97,7 @@ describe('injectMutationState', () => {
         }))
       })
 
-      expect(mutationState()).toEqual([variables])
+      expect(mutationState()).toStrictEqual([variables])
     })
 
     it('reactive options should update injectMutationState', () => {
@@ -131,10 +131,10 @@ describe('injectMutationState', () => {
         }))
       })
 
-      expect(mutationState()).toEqual([variables1])
+      expect(mutationState()).toStrictEqual([variables1])
 
       filterKey.set(mutationKey2)
-      expect(mutationState()).toEqual([variables2])
+      expect(mutationState()).toStrictEqual([variables2])
     })
 
     it('preserves result identity when an unrelated mutation changes', () => {
@@ -174,7 +174,7 @@ describe('injectMutationState', () => {
         return injectMutationState()
       })
 
-      expect(mutationState()[0]?.variables).toEqual(variables)
+      expect(mutationState()[0]?.variables).toStrictEqual(variables)
     })
 
     it('should support required signal inputs', async () => {
@@ -245,7 +245,7 @@ describe('injectMutationState', () => {
       it('throws NG0203 with descriptive error outside injection context', () => {
         expect(() => {
           injectMutationState()
-        }).toThrowError(/NG0203(.*?)injectMutationState/)
+        }).toThrow(/NG0203(.*?)injectMutationState/)
       })
     })
   })

@@ -13,7 +13,7 @@ function injectQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnDat
 function injectQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(optionsFn: () => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryResult<TData, TError>;
 ```
 
-- [`() => DefinedInitialDataOptions` → `DefinedCreateQueryResult`](#call-signature-1): This overload is selected when `initialData` is set on the options returned by `optionsFn`, so the resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+- [`() => DefinedInitialDataOptions` → `DefinedCreateQueryResult`](#call-signature-1): This overload is selected when `initialData` is known to be defined on the options returned by `optionsFn`, so the resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
 - [`() => UndefinedInitialDataOptions` → `CreateQueryResult`](#call-signature-2): Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 - [`() => CreateQueryOptions` → `CreateQueryResult`](#call-signature-3): This overload accepts the general [CreateQueryOptions](../type-aliases/CreateQueryOptions.md) shape rather than the `initialData`-aware overloads above, so whether `data` is defined can't be inferred from the call site — useful when wrapping `injectQuery` in your own helper function that forwards caller-provided options.
 
@@ -29,7 +29,7 @@ function injectQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnDat
 
 Defined in: [packages/angular-query/src/inject-query.ts:59](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-query.ts#L59)
 
-This overload is selected when `initialData` is set on the options returned by `optionsFn`, so the
+This overload is selected when `initialData` is known to be defined on the options returned by `optionsFn`, so the
 resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
@@ -57,7 +57,7 @@ resulting `data` signal is never `undefined` (unless a `select` changes `TData` 
 () => [`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 A function returning the [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you
-can pass to `injectQuery`, with `initialData` set. Similar to `computed` from Angular, this function runs
+can pass to `injectQuery`, with `initialData` known to be defined. Similar to `computed` from Angular, this function runs
 in the reactive context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive the query.
 
 ### Returns

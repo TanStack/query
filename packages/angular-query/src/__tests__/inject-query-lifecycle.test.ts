@@ -11,8 +11,8 @@ function setupLifecycle() {
   const destroyCallbacks: Array<() => void> = []
   const taskCleanups: Array<ReturnType<typeof vi.fn>> = []
   const pendingTasks = {
-    add: vi.fn(() => {
-      const cleanup = vi.fn()
+    add: vi.fn<() => () => void>(() => {
+      const cleanup = vi.fn<() => void>()
       taskCleanups.push(cleanup)
       return cleanup
     }),
@@ -22,13 +22,15 @@ function setupLifecycle() {
     onDestroy: ReturnType<typeof vi.fn>
   } = {
     destroyed: false,
-    onDestroy: vi.fn((callback: () => void) => {
-      destroyCallbacks.push(callback)
-      return () => {
-        const index = destroyCallbacks.indexOf(callback)
-        if (index !== -1) destroyCallbacks.splice(index, 1)
-      }
-    }),
+    onDestroy: vi.fn<(callback: () => void) => () => void>(
+      (callback: () => void) => {
+        destroyCallbacks.push(callback)
+        return () => {
+          const index = destroyCallbacks.indexOf(callback)
+          if (index !== -1) destroyCallbacks.splice(index, 1)
+        }
+      },
+    ),
   }
   const injector = {
     get(token: unknown) {
@@ -59,10 +61,10 @@ describe('QueryLifecycle', () => {
     lifecycle.setPending(true)
     lifecycle.setPending(true)
 
-    expect(pendingTasks.add).toHaveBeenCalledOnce()
+    expect(pendingTasks.add).toHaveBeenCalledTimes(1)
 
     lifecycle.setPending(false)
-    expect(taskCleanups[0]).toHaveBeenCalledOnce()
+    expect(taskCleanups[0]).toHaveBeenCalledTimes(1)
 
     lifecycle.setPending(true)
     expect(pendingTasks.add).toHaveBeenCalledTimes(2)
@@ -75,9 +77,9 @@ describe('QueryLifecycle', () => {
     destroy()
 
     expect(lifecycle.destroyed).toBe(true)
-    expect(taskCleanups[0]).toHaveBeenCalledOnce()
+    expect(taskCleanups[0]).toHaveBeenCalledTimes(1)
 
     lifecycle.setPending(true)
-    expect(pendingTasks.add).toHaveBeenCalledOnce()
+    expect(pendingTasks.add).toHaveBeenCalledTimes(1)
   })
 })

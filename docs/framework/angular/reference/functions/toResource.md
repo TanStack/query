@@ -9,9 +9,12 @@ title: toResource
 function toResource<TValue>(query: QueryResourceSource<TValue>): QueryResource<TValue>;
 ```
 
-Defined in: [packages/angular-query/src/query-resource.ts:41](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-resource.ts#L41)
+Defined in: [packages/angular-query/src/query-resource.ts:44](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-resource.ts#L44)
 
 Converts an Angular Query result into Angular's Resource interface.
+
+Warning: experimental feature. The API may change in minor and patch releases.
+Pin your package version to an exact version when using this feature.
 
 Call this function once and reuse the returned resource.
 

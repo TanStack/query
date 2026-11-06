@@ -42,7 +42,7 @@ describe('SolidQueryDevtoolsPanel', () => {
       TanstackQueryDevtoolsPanel.prototype,
       'setOnClose',
     )
-    const onClose = vi.fn()
+    const onClose = vi.fn<() => void>()
 
     render(() => (
       <SolidQueryDevtoolsPanel client={queryClient} onClose={onClose} />
@@ -96,11 +96,11 @@ describe('SolidQueryDevtoolsPanel', () => {
     expect(setTheme).toHaveBeenCalledWith('dark')
   })
 
-  it('should default "theme" to "system" when the prop is omitted', () => {
+  it('should forward an undefined "theme" to the devtools instance when the prop is omitted', () => {
     const setTheme = vi.spyOn(TanstackQueryDevtoolsPanel.prototype, 'setTheme')
     render(() => <SolidQueryDevtoolsPanel client={queryClient} />)
 
-    expect(setTheme).toHaveBeenCalledWith('system')
+    expect(setTheme).toHaveBeenCalledWith(undefined)
   })
 
   it('should forward the resolved "QueryClient" via "setClient"', () => {
@@ -122,7 +122,9 @@ describe('SolidQueryDevtoolsPanel', () => {
     ))
 
     expect(container.querySelector('.tsqd-parent-container')).toHaveStyle({
-      height: '500px',
+      height: '100%',
+      display: 'flex',
+      'flex-direction': 'column',
       width: '300px',
     })
   })
@@ -148,14 +150,11 @@ describe('SolidQueryDevtoolsPanel', () => {
     ))
     unmountComponent()
 
-    expect(unmount).toHaveBeenCalled()
+    expect(unmount).toHaveBeenCalledWith()
   })
 
   it('should return null in non-development environments', async () => {
-    vi.doMock('solid-js/web', async (importOriginal) => {
-      const actual = await importOriginal()
-      return Object.assign({}, actual, { isDev: false })
-    })
+    vi.stubEnv('NODE_ENV', 'production')
     vi.resetModules()
 
     try {
@@ -163,7 +162,6 @@ describe('SolidQueryDevtoolsPanel', () => {
         await import('..')
       expect(ProductionDevtoolsPanel({})).toBeNull()
     } finally {
-      vi.doUnmock('solid-js/web')
       vi.resetModules()
     }
   })

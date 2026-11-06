@@ -7,7 +7,7 @@ import type { Resource, Signal } from '@angular/core'
 
 describe('initialData', () => {
   describe('Config object overload', () => {
-    it('TData should always be defined when initialData is provided as an object', () => {
+    it('tData should always be defined when initialData is provided as an object', () => {
       const query = injectQuery(() => ({
         queryKey: ['key'],
         queryFn: () => ({ wow: true }),
@@ -19,7 +19,7 @@ describe('initialData', () => {
       expectTypeOf(resource.value).toEqualTypeOf<Signal<{ wow: boolean }>>()
     })
 
-    it('TData should be defined when passed through queryOptions', () => {
+    it('tData should be defined when passed through queryOptions', () => {
       const options = () =>
         queryOptions({
           queryKey: ['key'],
@@ -63,7 +63,7 @@ describe('initialData', () => {
       expectTypeOf(query.data).toEqualTypeOf<Signal<boolean | undefined>>()
     })
 
-    it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
+    it('tData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
       const { data } = injectQuery(() => ({
         queryKey: ['key'],
         queryFn: () => {
@@ -79,7 +79,7 @@ describe('initialData', () => {
       expectTypeOf(data).toEqualTypeOf<Signal<{ wow: boolean }>>()
     })
 
-    it('TData should have undefined in the union when initialData is NOT provided', () => {
+    it('tData should have undefined in the union when initialData is NOT provided', () => {
       const { data } = injectQuery(() => ({
         queryKey: ['key'],
         queryFn: () => {
@@ -92,7 +92,7 @@ describe('initialData', () => {
       expectTypeOf(data).toEqualTypeOf<Signal<{ wow: boolean } | undefined>>()
     })
 
-    it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+    it('tData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
       const { data } = injectQuery(() => ({
         queryKey: ['key'],
         queryFn: () => {
@@ -106,7 +106,7 @@ describe('initialData', () => {
       expectTypeOf(data).toEqualTypeOf<Signal<{ wow: boolean } | undefined>>()
     })
 
-    it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
+    it('tData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
       const query = injectQuery(() => ({
         queryKey: ['key'],
         queryFn: () => {
@@ -161,13 +161,15 @@ describe('initialData', () => {
       }))
     })
   })
-})
 
-it('supports reading data from a generic result type', () => {
-  const readId = <T extends { id: number }>(query: CreateQueryResult<T>) =>
-    query.data()?.id
+  it('supports reading data from a generic result type', () => {
+    const readId = <T extends { id: number }>(query: CreateQueryResult<T>) =>
+      query.data()?.id
 
-  expectTypeOf(readId).toBeCallableWith({} as CreateQueryResult<{ id: number }>)
+    expectTypeOf(readId).toBeCallableWith(
+      {} as CreateQueryResult<{ id: number }>,
+    )
+  })
 })
 
 describe('Discriminated union return type', () => {

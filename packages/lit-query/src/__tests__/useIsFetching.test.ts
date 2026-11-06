@@ -1,6 +1,14 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createQueryController } from '../createQueryController.js'
@@ -9,11 +17,14 @@ import { generateElementName } from './utils.js'
 import type { IsFetchingAccessor } from '../useIsFetching.js'
 
 const providerTagName = generateElementName()
-customElements.define(providerTagName, QueryClientProvider)
 
 describe('useIsFetching', () => {
   let queryClient: QueryClient
   let container: HTMLElement
+
+  beforeAll(() => {
+    customElements.define(providerTagName, QueryClientProvider)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -29,7 +40,7 @@ describe('useIsFetching', () => {
   })
 
   it('should keep the pre-connect placeholder zero until a provider binds', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Consumer extends LitElement {
       readonly queryKey = key
@@ -76,7 +87,7 @@ describe('useIsFetching', () => {
   })
 
   it('should prefer an explicit client over the provider context', async () => {
-    const key = queryKey()
+    const key = createKey()
     const providerClient = new QueryClient()
 
     const provider = document.createElement(
@@ -135,7 +146,7 @@ describe('useIsFetching', () => {
   })
 
   it('should track the fetching count', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Producer extends LitElement {
       readonly query = createQueryController(
@@ -175,7 +186,7 @@ describe('useIsFetching', () => {
   })
 
   it('should not process query cache updates while disconnected', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Producer extends LitElement {
       readonly query = createQueryController(
@@ -217,8 +228,8 @@ describe('useIsFetching', () => {
   })
 
   it('should count all fetching queries when filters are omitted', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     class Producer extends LitElement {
       readonly query1 = createQueryController(this, {
@@ -260,8 +271,8 @@ describe('useIsFetching', () => {
   })
 
   it('should be able to filter', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     class Host extends LitElement {
       readonly query1 = createQueryController(
@@ -316,9 +327,9 @@ describe('useIsFetching', () => {
   })
 
   it('should apply updated filters on host updates', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const unmatchedKey = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
+    const unmatchedKey = createKey()
     let activeFilter: { queryKey?: ReadonlyArray<string> } = {
       queryKey: key1,
     }
@@ -382,7 +393,7 @@ describe('useIsFetching', () => {
   })
 
   it('should fail after the handshake and recover under a provider', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Consumer extends LitElement {
       readonly queryKey = key
@@ -427,7 +438,7 @@ describe('useIsFetching', () => {
   })
 
   it('should not throw on an already-connected host with an explicit client', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     class Producer extends LitElement {
       readonly query = createQueryController(

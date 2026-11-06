@@ -106,9 +106,9 @@
     "typescript": "catalog:",
     "vite-plugin-dts": "4.2.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^4.1.11",
+    "vitest": "^5.0.5",
     "zone.js": "^0.16.0",
-    "vite": "^8.3.1"
+    "vite": "^8.3.5"
   },
   "peerDependencies": {
     "@angular/common": ">=20.1.0",

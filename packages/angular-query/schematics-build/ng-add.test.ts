@@ -61,7 +61,7 @@ describe('ng-add schematic', () => {
     expect(appConfig).toContain(
       'provideTanStackQuery(() => new QueryClient(), withDevtools())',
     )
-    expect(queryRunner.tasks).toEqual([
+    expect(queryRunner.tasks).toStrictEqual([
       expect.objectContaining({ name: 'node-package' }),
     ])
   })

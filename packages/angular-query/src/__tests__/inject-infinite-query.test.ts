@@ -116,20 +116,22 @@ describe('injectInfiniteQuery', () => {
     fixture.detectChanges()
     const query = fixture.componentInstance.query
 
-    expect(query.data()?.pages).toEqual([1])
+    expect(query.data()?.pages).toStrictEqual([1])
     expect(query.isError()).toBe(false)
     expect(query.status()).toBe('success')
 
     await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
 
-    expect(query.data()?.pages).toEqual([1])
+    expect(query.data()?.pages).toStrictEqual([1])
     expect(query.isError()).toBe(true)
     expect(query.status()).toBe('error')
   })
 
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
-    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+    const queryFn = vi.fn<
+      ({ pageParam }: { pageParam: number }) => Promise<string>
+    >(({ pageParam }: { pageParam: number }) =>
       sleep(10).then(() => `comments for 1 page ${pageParam}`),
     )
     const postId = signal<string | undefined>(undefined)
@@ -169,7 +171,7 @@ describe('injectInfiniteQuery', () => {
     fixture.detectChanges()
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query.status()).toBe('success')
-    expect(query.data()?.pages).toEqual(['comments for 1 page 0'])
+    expect(query.data()?.pages).toStrictEqual(['comments for 1 page 0'])
   })
 
   describe('injection context', () => {
@@ -182,7 +184,7 @@ describe('injectInfiniteQuery', () => {
           initialPageParam: 0,
           getNextPageParam: () => 12,
         }))
-      }).toThrowError(/NG0203(.*?)injectInfiniteQuery/)
+      }).toThrow(/NG0203(.*?)injectInfiniteQuery/)
     })
   })
 })

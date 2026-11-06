@@ -8,11 +8,15 @@ import type { Signal } from '@angular/core'
 function store(initial: number) {
   let current = initial
   const listeners = new Set<() => void>()
-  const cleanup = vi.fn((notify: () => void) => listeners.delete(notify))
-  const subscribe = vi.fn((notify: () => void) => {
-    listeners.add(notify)
-    return () => cleanup(notify)
-  })
+  const cleanup = vi.fn<(notify: () => void) => boolean>((notify: () => void) =>
+    listeners.delete(notify),
+  )
+  const subscribe = vi.fn<(notify: () => void) => () => boolean>(
+    (notify: () => void) => {
+      listeners.add(notify)
+      return () => cleanup(notify)
+    },
+  )
   return {
     subscribe,
     cleanup,
@@ -93,12 +97,14 @@ describe('injectExternalStore', () => {
       ),
     )
     fixture.detectChanges()
-    const derive = vi.fn(() => fixture.componentInstance.value().count)
+    const derive = vi.fn<() => number>(
+      () => fixture.componentInstance.value().count,
+    )
     const derived = computed(derive)
     expect(derived()).toBe(1)
     source.set(1)
     expect(derived()).toBe(1)
-    expect(derive).toHaveBeenCalledOnce()
+    expect(derive).toHaveBeenCalledTimes(1)
     source.set(2)
     expect(derived()).toBe(2)
   })
@@ -125,7 +131,7 @@ describe('injectExternalStore', () => {
     incidental.set(1)
     fixture.detectChanges()
     expect(value()).toBe(20)
-    expect(source.subscribe).toHaveBeenCalledOnce()
+    expect(source.subscribe).toHaveBeenCalledTimes(1)
   })
 
   it('follows the current source and releases the previous source', () => {
@@ -141,7 +147,7 @@ describe('injectExternalStore', () => {
     second.set(11)
     fixture.detectChanges()
     expect(value()).toBe(11)
-    expect(first.cleanup).toHaveBeenCalledOnce()
+    expect(first.cleanup).toHaveBeenCalledTimes(1)
     first.set(2)
     expect(value()).toBe(11)
     second.set(12)
@@ -160,7 +166,7 @@ describe('injectExternalStore', () => {
     fixture.detectChanges()
     paused.set(true)
     fixture.detectChanges()
-    expect(source.cleanup).toHaveBeenCalledOnce()
+    expect(source.cleanup).toHaveBeenCalledTimes(1)
     source.set(2)
     paused.set(false)
     fixture.detectChanges()
@@ -192,7 +198,7 @@ describe('injectExternalStore', () => {
     fixture.detectChanges()
     enabled.set(false)
     fixture.detectChanges()
-    expect(seen).toEqual([1, 1])
+    expect(seen).toStrictEqual([1, 1])
   })
 
   it('keeps snapshot errors separate from subscription errors', () => {
@@ -226,7 +232,7 @@ describe('injectExternalStore', () => {
     expect(() => fixture.componentInstance.value()).toThrow('snapshot failed')
     source.set(3)
     expect(fixture.componentInstance.value()).toBe(3)
-    expect(source.subscribe).toHaveBeenCalledOnce()
+    expect(source.subscribe).toHaveBeenCalledTimes(1)
   })
 
   it.each([false, true])(
@@ -238,14 +244,16 @@ describe('injectExternalStore', () => {
           getSnapshot: source.getSnapshot,
           subscribe: (notify) => {
             const cleanup = source.subscribe(notify)
+            // oxlint-disable-next-line vitest-js/no-conditional-in-test -- The parameter selects setup/actions; every case runs the assertions.
             if (duringSetup) fixture.destroy()
             return cleanup
           },
         })),
       )
       fixture.detectChanges()
+      // oxlint-disable-next-line vitest-js/no-conditional-in-test -- The parameter selects setup/actions; every case runs the assertions.
       if (!duringSetup) fixture.destroy()
-      expect(source.cleanup).toHaveBeenCalledOnce()
+      expect(source.cleanup).toHaveBeenCalledTimes(1)
     },
   )
 

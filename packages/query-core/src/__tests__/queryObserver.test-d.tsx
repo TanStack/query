@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { QueryClient, QueryObserver } from '..'
 import type {
   DefaultError,
@@ -82,7 +82,7 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf(
-          new QueryObserver(queryClient, { queryKey: queryKey() }),
+          new QueryObserver(queryClient, { queryKey: createKey() }),
         ).toBeObject()
       })
     })
@@ -107,7 +107,7 @@ describe('queryObserver', () => {
     describe('enabled', () => {
       it('should type the query given to an enabled callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           enabled: (query) => {
             expectTypeOf(query.state.data).toEqualTypeOf<
@@ -120,7 +120,7 @@ describe('queryObserver', () => {
 
       it('should only accept a boolean from an enabled callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           // @ts-expect-error an enabled callback must return a boolean
           enabled: () => 'yes',
@@ -138,7 +138,7 @@ describe('queryObserver', () => {
     describe('staleTime', () => {
       it('should type the query given to a staleTime callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           staleTime: (query) => {
             expectTypeOf(query.state.data).toEqualTypeOf<
@@ -151,7 +151,7 @@ describe('queryObserver', () => {
 
       it('should only accept a StaleTime from a staleTime callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           // @ts-expect-error a staleTime callback must return a StaleTime
           staleTime: () => 'soon',
@@ -166,7 +166,7 @@ describe('queryObserver', () => {
     describe('refetchInterval', () => {
       it('should type the query given to a refetchInterval callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           refetchInterval: (query) => {
             expectTypeOf(query.state.data).toEqualTypeOf<
@@ -179,7 +179,7 @@ describe('queryObserver', () => {
 
       it('should only accept a number, false or undefined from a refetchInterval callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           // @ts-expect-error a refetchInterval callback must return a number, false or undefined
           refetchInterval: () => 'often',
@@ -197,7 +197,7 @@ describe('queryObserver', () => {
     describe('refetchOnWindowFocus', () => {
       it('should type the query given to a refetchOnWindowFocus callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           refetchOnWindowFocus: (query) => {
             expectTypeOf(query.state.data).toEqualTypeOf<
@@ -210,7 +210,7 @@ describe('queryObserver', () => {
 
       it('should only accept a boolean or the always literal from a refetchOnWindowFocus callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           // @ts-expect-error the callback must return a boolean or the always literal
           refetchOnWindowFocus: () => 'sometimes',
@@ -228,7 +228,7 @@ describe('queryObserver', () => {
     describe('refetchOnReconnect', () => {
       it('should type the query given to a refetchOnReconnect callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           refetchOnReconnect: (query) => {
             expectTypeOf(query.state.data).toEqualTypeOf<
@@ -241,7 +241,7 @@ describe('queryObserver', () => {
 
       it('should only accept a boolean or the always literal from a refetchOnReconnect callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           // @ts-expect-error the callback must return a boolean or the always literal
           refetchOnReconnect: () => 'sometimes',
@@ -259,7 +259,7 @@ describe('queryObserver', () => {
     describe('refetchOnMount', () => {
       it('should type the query given to a refetchOnMount callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           refetchOnMount: (query) => {
             expectTypeOf(query.state.data).toEqualTypeOf<
@@ -272,7 +272,7 @@ describe('queryObserver', () => {
 
       it('should only accept a boolean or the always literal from a refetchOnMount callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           // @ts-expect-error the callback must return a boolean or the always literal
           refetchOnMount: () => 'sometimes',
@@ -290,7 +290,7 @@ describe('queryObserver', () => {
     describe('retryOnMount', () => {
       it('should type the query given to a retryOnMount callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           retryOnMount: (query) => {
             expectTypeOf(query.state.data).toEqualTypeOf<
@@ -305,7 +305,7 @@ describe('queryObserver', () => {
     describe('throwOnError', () => {
       it('should type the error given to a throwOnError callback', () => {
         new QueryObserver<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           throwOnError: (error, query) => {
             expectTypeOf(error).toEqualTypeOf<CustomError>()
@@ -319,7 +319,7 @@ describe('queryObserver', () => {
 
       it('should only accept a boolean from a throwOnError callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           // @ts-expect-error the callback must return a boolean
           throwOnError: () => 'yes',
@@ -337,7 +337,7 @@ describe('queryObserver', () => {
     describe('retry', () => {
       it('should type the error given to a retry callback', () => {
         new QueryObserver<boolean, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           retry: (failureCount, error) => {
             expectTypeOf(failureCount).toEqualTypeOf<number>()
             expectTypeOf(error).toEqualTypeOf<CustomError>()
@@ -348,7 +348,7 @@ describe('queryObserver', () => {
 
       it('should only accept a boolean from a retry callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           // @ts-expect-error the callback must return a boolean
           retry: () => 'maybe',
@@ -363,7 +363,7 @@ describe('queryObserver', () => {
     describe('retryDelay', () => {
       it('should type the error given to a retryDelay callback', () => {
         new QueryObserver<boolean, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           retryDelay: (failureCount, error) => {
             expectTypeOf(failureCount).toEqualTypeOf<number>()
             expectTypeOf(error).toEqualTypeOf<CustomError>()
@@ -374,7 +374,7 @@ describe('queryObserver', () => {
 
       it('should only accept a number from a retryDelay callback', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           // @ts-expect-error the callback must return a number
           retryDelay: () => 'soon',
@@ -402,7 +402,7 @@ describe('queryObserver', () => {
 
       it('should only accept a string from a queryKeyHashFn', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           // @ts-expect-error the callback must return a string
           queryKeyHashFn: () => 42,
@@ -417,7 +417,7 @@ describe('queryObserver', () => {
     describe('structuralSharing', () => {
       it('should type a structuralSharing callback as unknown', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           structuralSharing: (oldData, newData) => {
             expectTypeOf(oldData).toEqualTypeOf<unknown>()
@@ -440,7 +440,7 @@ describe('queryObserver', () => {
     describe('select', () => {
       it('should type the result data as what select returns', () => {
         const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ count: 1 }),
           select: (data) => data.count,
         })
@@ -452,7 +452,7 @@ describe('queryObserver', () => {
 
       it('should infer the selected type in the subscribe callback', () => {
         const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => ({ count: 1 }),
           select: (data) => ({ myCount: data.count }),
         })
@@ -466,7 +466,7 @@ describe('queryObserver', () => {
 
       it('should infer the selected type from the refetch result', async () => {
         const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => ({ count: 1 }),
           select: (data) => ({ myCount: data.count }),
         })
@@ -480,7 +480,7 @@ describe('queryObserver', () => {
 
       it('should keep the query data type on the options that precede it', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ count: 1 }),
           select: (data) => data.count,
           placeholderData: (previousData) => {
@@ -514,7 +514,7 @@ describe('queryObserver', () => {
     describe('initialData', () => {
       it('should type an initialData function from the data type', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           initialData: () => {
             expectTypeOf<
@@ -546,7 +546,7 @@ describe('queryObserver', () => {
 
       it('should accept the query data directly, not only a function', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           placeholderData: { value: 'placeholder' },
         })
@@ -576,7 +576,7 @@ describe('queryObserver', () => {
 
       it('should type the error of the previousQuery it is given', () => {
         new QueryObserver<boolean, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           placeholderData: (_, previousQuery) => {
             if (previousQuery) {
               expectTypeOf(
@@ -592,7 +592,7 @@ describe('queryObserver', () => {
         const queryData = { foo: 'bar' } as const
 
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => queryData,
           select: (data) => data.foo,
           placeholderData: (previousData) => {
@@ -608,7 +608,7 @@ describe('queryObserver', () => {
     describe('gcTime', () => {
       it('should reject a non-number gcTime', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           // @ts-expect-error gcTime must be a number
           gcTime: 'nope',
@@ -623,7 +623,7 @@ describe('queryObserver', () => {
     describe('queryHash', () => {
       it('should reject a non-string queryHash', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           // @ts-expect-error queryHash must be a string
           queryHash: 42,
@@ -638,7 +638,7 @@ describe('queryObserver', () => {
     describe('networkMode', () => {
       it('should type networkMode as the network mode union', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           // @ts-expect-error networkMode must be one of the NetworkMode values
           networkMode: 'nope',
@@ -690,7 +690,7 @@ describe('queryObserver', () => {
     describe('persister', () => {
       it('should type persister from the queryFn data', () => {
         new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           persister: (persistedQueryFn, _context, query) => {
             expectTypeOf(persistedQueryFn).returns.toEqualTypeOf<
@@ -775,7 +775,7 @@ describe('queryObserver', () => {
       describe('dataUpdatedAt', () => {
         it('should be typed as a number', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -788,7 +788,7 @@ describe('queryObserver', () => {
       describe('errorUpdatedAt', () => {
         it('should be typed as a number', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -801,7 +801,7 @@ describe('queryObserver', () => {
       describe('failureCount', () => {
         it('should be typed as a number', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -814,7 +814,7 @@ describe('queryObserver', () => {
       describe('errorUpdateCount', () => {
         it('should be typed as a number', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -827,7 +827,7 @@ describe('queryObserver', () => {
       describe('isFetching', () => {
         it('should be typed as a boolean', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -840,7 +840,7 @@ describe('queryObserver', () => {
       describe('isRefetching', () => {
         it('should be typed as a boolean', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -853,7 +853,7 @@ describe('queryObserver', () => {
       describe('isPaused', () => {
         it('should be typed as a boolean', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -866,7 +866,7 @@ describe('queryObserver', () => {
       describe('isStale', () => {
         it('should be typed as a boolean', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -879,7 +879,7 @@ describe('queryObserver', () => {
       describe('isEnabled', () => {
         it('should be typed as a boolean', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -892,7 +892,7 @@ describe('queryObserver', () => {
       describe('isFetched', () => {
         it('should be typed as a boolean', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -905,7 +905,7 @@ describe('queryObserver', () => {
       describe('isFetchedAfterMount', () => {
         it('should be typed as a boolean', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -918,7 +918,7 @@ describe('queryObserver', () => {
       describe('isInitialLoading', () => {
         it('should be typed as a boolean', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -937,7 +937,7 @@ describe('queryObserver', () => {
 
         it('should stay possibly undefined on an isError check', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -952,7 +952,7 @@ describe('queryObserver', () => {
 
         it('should be defined on a success status check', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -965,7 +965,7 @@ describe('queryObserver', () => {
 
         it('should be undefined on a pending status check', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -992,7 +992,7 @@ describe('queryObserver', () => {
 
         it('should be the observed error type on an isError check', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -1005,7 +1005,7 @@ describe('queryObserver', () => {
 
         it('should be the observed error type on an error status check', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -1079,7 +1079,7 @@ describe('queryObserver', () => {
           const observer = new QueryObserver<boolean, CustomError>(
             queryClient,
             {
-              queryKey: queryKey(),
+              queryKey: createKey(),
             },
           )
 
@@ -1092,7 +1092,7 @@ describe('queryObserver', () => {
       describe('refetch', () => {
         it('should be typed from the observed types', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -1105,7 +1105,7 @@ describe('queryObserver', () => {
 
         it('should only accept RefetchOptions', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -1118,7 +1118,7 @@ describe('queryObserver', () => {
       describe('status', () => {
         it('should be typed as the query status union', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -1140,7 +1140,7 @@ describe('queryObserver', () => {
       describe('fetchStatus', () => {
         it('should be typed as the fetch status union', () => {
           const observer = new QueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve({ value: 'data' }),
           })
 
@@ -1163,7 +1163,7 @@ describe('queryObserver', () => {
 
       it('should pin every flag along with its data and error types', () => {
         const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -1201,7 +1201,7 @@ describe('queryObserver', () => {
 
       it('should pin every flag along with its data and error types', () => {
         const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -1240,7 +1240,7 @@ describe('queryObserver', () => {
 
       it('should pin every flag along with its data and error types', () => {
         const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -1279,7 +1279,7 @@ describe('queryObserver', () => {
 
       it('should pin every flag along with its data and error types', () => {
         const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -1318,7 +1318,7 @@ describe('queryObserver', () => {
 
       it('should pin every flag along with its data and error types', () => {
         const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -1357,7 +1357,7 @@ describe('queryObserver', () => {
 
       it('should pin every flag along with its data and error types', () => {
         const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -1420,12 +1420,12 @@ describe('queryObserver', () => {
   describe('setOptions', () => {
     it('should keep the observed data type in the options it is given', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
       observer.setOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         select: (data) => {
           expectTypeOf(data).toEqualTypeOf<{ value: string }>()
@@ -1434,7 +1434,7 @@ describe('queryObserver', () => {
       })
 
       observer.setOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         // @ts-expect-error the queryFn must return the observed data type
         queryFn: () => 42,
       })
@@ -1446,7 +1446,7 @@ describe('queryObserver', () => {
       const observer = new QueryObserver<{ value: string }, CustomError>(
         queryClient,
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         },
       )
@@ -1463,12 +1463,12 @@ describe('queryObserver', () => {
   describe('getOptimisticResult', () => {
     it('should be typed from the options it is given', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
       const options = queryClient.defaultQueryOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1479,7 +1479,7 @@ describe('queryObserver', () => {
       const withCustomError = new QueryObserver<{ value: string }, CustomError>(
         queryClient,
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         },
       )
@@ -1488,7 +1488,7 @@ describe('queryObserver', () => {
         { value: string },
         CustomError
       >({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1503,7 +1503,7 @@ describe('queryObserver', () => {
 
     it('should require the options that are always defaulted', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1534,7 +1534,7 @@ describe('queryObserver', () => {
   describe('getCurrentResult', () => {
     it('should be typed from the observed types', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1545,7 +1545,7 @@ describe('queryObserver', () => {
       const withCustomError = new QueryObserver<{ value: string }, CustomError>(
         queryClient,
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         },
       )
@@ -1559,7 +1559,7 @@ describe('queryObserver', () => {
   describe('trackResult', () => {
     it('should return the same result type it is given', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1570,7 +1570,7 @@ describe('queryObserver', () => {
       const withCustomError = new QueryObserver<{ value: string }, CustomError>(
         queryClient,
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         },
       )
@@ -1590,7 +1590,7 @@ describe('queryObserver', () => {
 
     it('should type the tracked property in the onPropTracked callback', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1603,7 +1603,7 @@ describe('queryObserver', () => {
   describe('trackProp', () => {
     it('should only accept a key of the result', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1616,7 +1616,7 @@ describe('queryObserver', () => {
   describe('getCurrentQuery', () => {
     it('should carry the observed types into the query state', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1630,7 +1630,7 @@ describe('queryObserver', () => {
       const withCustomError = new QueryObserver<{ value: string }, CustomError>(
         queryClient,
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         },
       )
@@ -1645,7 +1645,7 @@ describe('queryObserver', () => {
 
     it('should keep the data type from before select', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ count: 1 }),
         select: (data) => data.count,
       })
@@ -1670,7 +1670,7 @@ describe('queryObserver', () => {
 
     it('should type the counters and timestamps of the query state as numbers', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1685,7 +1685,7 @@ describe('queryObserver', () => {
 
     it('should always declare data on the query state', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1705,7 +1705,7 @@ describe('queryObserver', () => {
 
     it('should type the remaining fields of the query state', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1726,7 +1726,7 @@ describe('queryObserver', () => {
 
     it('should keep the query state and its own fields writable', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1752,7 +1752,7 @@ describe('queryObserver', () => {
 
     it('should resolve with the observed result type', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1763,7 +1763,7 @@ describe('queryObserver', () => {
       const withCustomError = new QueryObserver<{ value: string }, CustomError>(
         queryClient,
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         },
       )
@@ -1775,7 +1775,7 @@ describe('queryObserver', () => {
 
     it('should only accept RefetchOptions', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1792,7 +1792,7 @@ describe('queryObserver', () => {
   describe('fetchOptimistic', () => {
     it('should keep the observed types in its options and result', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1801,7 +1801,7 @@ describe('queryObserver', () => {
       >()
 
       observer.fetchOptimistic({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         // @ts-expect-error the queryFn must return the observed data type
         queryFn: () => 42,
       })
@@ -1809,7 +1809,7 @@ describe('queryObserver', () => {
       const withCustomError = new QueryObserver<{ value: string }, CustomError>(
         queryClient,
         {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         },
       )
@@ -1830,7 +1830,7 @@ describe('queryObserver', () => {
   describe('subscribe', () => {
     it('should return an unsubscribe function', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve('data'),
       })
 
@@ -1841,7 +1841,7 @@ describe('queryObserver', () => {
   describe('destroy', () => {
     it('should return void', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1852,7 +1852,7 @@ describe('queryObserver', () => {
   describe('updateResult', () => {
     it('should return void', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1863,7 +1863,7 @@ describe('queryObserver', () => {
   describe('onQueryUpdate', () => {
     it('should return void', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1874,7 +1874,7 @@ describe('queryObserver', () => {
   describe('shouldFetchOnReconnect', () => {
     it('should return a boolean', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
@@ -1887,7 +1887,7 @@ describe('queryObserver', () => {
   describe('shouldFetchOnWindowFocus', () => {
     it('should return a boolean', () => {
       const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 

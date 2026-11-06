@@ -1,29 +1,13 @@
-<script lang="ts">
-import { defineComponent, ref } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 
-import Posts from './Posts.vue'
-import Post from './Post.vue'
+import PostList from './PostList.vue'
+import PostDetail from './PostDetail.vue'
 
-export default defineComponent({
-  name: 'App',
-  components: { Posts, Post },
-  setup() {
-    const visitedPosts = ref(new Set())
-    const isVisited = (id: number) => visitedPosts.value.has(id)
-
-    const postId = ref(-1)
-    const setPostId = (id: number) => {
-      visitedPosts.value.add(id)
-      postId.value = id
-    }
-
-    return {
-      isVisited,
-      postId,
-      setPostId,
-    }
-  },
-})
+const postId = ref(-1)
+const setPostId = (id: number) => {
+  postId.value = id
+}
 </script>
 
 <template>
@@ -35,14 +19,14 @@ export default defineComponent({
     instantly and background refresh right before your eyes!
     <br />
     You will also notice, that after some time the name of the author gets
-    loaded. This Data is not directly included in the
-    <code>/post/id</code> response but gets fetched when the post gets loaded
+    loaded. This data is not directly included in the
+    <code>/posts/id</code> response but gets fetched when the post gets loaded
     from its <code>userId</code>.
     <strong>
       (You may need to throttle your network speed to simulate longer loading
       sequences)
     </strong>
   </p>
-  <Post v-if="postId > -1" :postId="postId" @setPostId="setPostId" />
-  <Posts v-else :isVisited="isVisited" @setPostId="setPostId" />
+  <PostDetail v-if="postId > -1" :post-id="postId" @set-post-id="setPostId" />
+  <PostList v-else @set-post-id="setPostId" />
 </template>

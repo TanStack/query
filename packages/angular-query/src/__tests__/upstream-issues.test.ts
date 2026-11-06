@@ -59,7 +59,9 @@ describe('upstream Angular issue reproductions', () => {
     await fixture.whenStable()
     fixture.detectChanges()
     expect(fixture.componentInstance.query.isSuccess()).toBe(true)
-    expect(fixture.componentInstance.query.data()).toEqual([1, 2, 3, 4, 5])
+    expect(fixture.componentInstance.query.data()).toStrictEqual([
+      1, 2, 3, 4, 5,
+    ])
     expect(fixture.nativeElement.textContent).toBe('true')
   })
 
@@ -112,7 +114,7 @@ describe('upstream Angular issue reproductions', () => {
   )
 
   it('#7488: taking a data alias does not read an unset required input', async () => {
-    const optionsRead = vi.fn()
+    const optionsRead = vi.fn<() => void>()
     @Component({ template: '{{ data() }}' })
     class App {
       name = input.required<string>()
@@ -199,6 +201,7 @@ describe('upstream Angular issue reproductions', () => {
       )
       TestBed.tick()
       mutation.mutate(first)
+      // oxlint-disable-next-line vitest-js/no-conditional-in-test -- The parameter selects setup/actions; every case runs the assertions.
       if (reset) mutation.reset()
       const second = mutation.mutateAsync(Promise.resolve())
       let stable = false
@@ -245,7 +248,7 @@ describe('upstream Angular issue reproductions', () => {
     const fixture = TestBed.createComponent(App)
     fixture.detectChanges()
     fixture.componentInstance.save()
-    expect(snapshots).toEqual(['new title', 'new title'])
+    expect(snapshots).toStrictEqual(['new title', 'new title'])
     expect(client.getQueryData(['9735'])).toBe('new title')
     fixture.detectChanges()
     expect(fixture.nativeElement.textContent).toBe('new title')

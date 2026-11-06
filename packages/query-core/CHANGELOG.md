@@ -1,5 +1,59 @@
 # @tanstack/query-core
 
+## 5.106.1
+
+No changes in this release.
+
+## 5.106.0
+
+No changes in this release.
+
+## 5.105.3
+
+### Patch Changes
+
+- [#11537](https://github.com/TanStack/query/pull/11537) [`3f4de1b`](https://github.com/TanStack/query/commit/3f4de1b40cce4314f7572b515ad8fd26dd85fe04) - Prevent a cancelled retry from pausing the query when its retry delay expires.
+
+- [#12497](https://github.com/TanStack/query/pull/12497) [`969e580`](https://github.com/TanStack/query/commit/969e58019bf650fb17c273fddd0e8d2adf56d4d9) - Allow static queries without data to refetch after reset, invalidation, or an explicit refetch. A query is static only when it has data.
+
+## 5.105.2
+
+### Patch Changes
+
+- [#10969](https://github.com/TanStack/query/pull/10969) [`2ee2fd9`](https://github.com/TanStack/query/commit/2ee2fd935acd88532255947c4b5e29baffd21ce8) - Fix infinite queries to respect a reduced `maxPages` limit when fetching in either direction.
+
+- [#12480](https://github.com/TanStack/query/pull/12480) [`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1) - Exclude `status` from the filters accepted by `QueryClient.isMutating`, `useIsMutating`, and `injectIsMutating`. These APIs always count mutations with `status: 'pending'`.
+
+- [#12442](https://github.com/TanStack/query/pull/12442) [`e69cac6`](https://github.com/TanStack/query/commit/e69cac69d99cc3c4f6f32b2ad8aad53da83b4a72) - Handle the rejection of a paused refetch started by `refetchQueries` with `throwOnError`, so cancelling it later no longer causes an unhandled `CancelledError`.
+
+- [#12447](https://github.com/TanStack/query/pull/12447) [`f2215d2`](https://github.com/TanStack/query/commit/f2215d25945e6461252b7c32bf822f31239e507e) - Use `() => void` instead of the DOM-only `VoidFunction` type in `addConsumeAwareSignal`, so the published declarations type-check without the DOM lib.
+
+- [#10777](https://github.com/TanStack/query/pull/10777) [`86e7957`](https://github.com/TanStack/query/commit/86e79571fd45f29ab7d172102fdd718d3b8bde69) - Fix `shallowEqualObjects` to compare own property keys and values and ignore inherited properties. Objects with different own keys now compare as unequal, including when the differing values are `undefined`.
+
+- [#12489](https://github.com/TanStack/query/pull/12489) [`b6576b3`](https://github.com/TanStack/query/commit/b6576b388f2784839081358fa82744b0aacdeecd) - Keep all callers of an in-flight query waiting for the replacement fetch when invalidation cancels it, including after repeated invalidations.
+
+- [#12481](https://github.com/TanStack/query/pull/12481) [`af0e0ef`](https://github.com/TanStack/query/commit/af0e0ef5fc04e9d232fdc3aebd24ffe528b256d7) - Prevent cancelled streamed queries from writing to the cache or starting a delayed stream, even when the stream does not consume the abort signal.
+
+- [#11788](https://github.com/TanStack/query/pull/11788) [`05d9b6a`](https://github.com/TanStack/query/commit/05d9b6a40b9d4ac49943e9d881789e098db5bdfa) - Clear `isPaused` on a mutation that can start once its `onMutate` resolves, so it is no longer dehydrated and resumed a second time while its request is in flight.
+
+## 5.105.1
+
+### Patch Changes
+
+- [#12406](https://github.com/TanStack/query/pull/12406) [`6f8a48d`](https://github.com/TanStack/query/commit/6f8a48d543b499b6d9b0e95050c28183c8c18ae0) - Reduce temporary allocations when checking tracked result properties for observer notifications.
+
+- [#12390](https://github.com/TanStack/query/pull/12390) [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf) - Exclude `fetchStatus` from the filters accepted by `QueryClient.isFetching`, `useIsFetching`, and `injectIsFetching`. These APIs always count queries with `fetchStatus: 'fetching'`.
+
+## 5.105.0
+
+No changes in this release.
+
+## 5.104.5
+
+### Patch Changes
+
+- [#12131](https://github.com/TanStack/query/pull/12131) [`f608f93`](https://github.com/TanStack/query/commit/f608f933a36da30670082e90d0a56b2569290563) - Use the supplied query options when fetching optimistically so Suspense queries can fetch after their cache entry is recreated without a query function.
+
 ## 5.104.4
 
 ### Patch Changes

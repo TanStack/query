@@ -13,7 +13,7 @@ import type { Signal } from '@angular/core'
  * @returns A read-only signal with the number of fetching mutations.
  */
 export function injectIsMutating(
-  filters: () => MutationFilters = () => ({}),
+  filters: () => Omit<MutationFilters, 'status'> = () => ({}),
 ): Signal<number> {
   if (typeof ngDevMode === 'undefined' || ngDevMode) {
     assertInInjectionContext(injectIsMutating)

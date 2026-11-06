@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/svelte'
 import { flushSync } from 'svelte'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   createQuery,
@@ -34,7 +34,7 @@ describe('createQuery', () => {
   it(
     'should return the correct states for a successful query',
     withEffectRoot(async () => {
-      const key = queryKey()
+      const key = createKey()
       const { promise, resolve } = promiseWithResolvers<string>()
 
       const query = createQuery<string, Error>(
@@ -45,7 +45,7 @@ describe('createQuery', () => {
         () => queryClient,
       )
 
-      expect(query).toEqual({
+      expect(query).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: null,
@@ -75,7 +75,7 @@ describe('createQuery', () => {
 
       resolve('resolved')
       await vi.advanceTimersByTimeAsync(0)
-      expect(query).toEqual({
+      expect(query).toStrictEqual({
         data: 'resolved',
         dataUpdatedAt: expect.any(Number),
         error: null,
@@ -108,7 +108,7 @@ describe('createQuery', () => {
   it(
     'should return the correct states for an unsuccessful query',
     withEffectRoot(async () => {
-      const key = queryKey()
+      const key = createKey()
       let count = 0
       const states: Array<CreateQueryResult> = []
       const query = createQuery<string, Error>(
@@ -130,7 +130,7 @@ describe('createQuery', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(query.isError).toBe(true)
 
-      expect(states[0]).toEqual({
+      expect(states[0]).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: null,
@@ -158,7 +158,7 @@ describe('createQuery', () => {
         fetchStatus: 'fetching',
       })
 
-      expect(states[1]).toEqual({
+      expect(states[1]).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: null,
@@ -186,7 +186,7 @@ describe('createQuery', () => {
         fetchStatus: 'fetching',
       })
 
-      expect(states[2]).toEqual({
+      expect(states[2]).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: new Error('rejected #2'),
@@ -217,7 +217,7 @@ describe('createQuery', () => {
   )
 
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     await queryClient
       .query({
@@ -254,7 +254,7 @@ describe('createQuery', () => {
   })
 
   it('should keep initialData visible alongside the error when a refetch fails', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const rendered = render(Base, {
       props: {
@@ -277,7 +277,7 @@ describe('createQuery', () => {
   })
 
   it('should not cancel an ongoing fetch when refetch is called with cancelRefetch=false if we have data already', async () => {
-    const key = queryKey()
+    const key = createKey()
     let fetchCount = 0
 
     const { promise, resolve } = promiseWithResolvers<string>()
@@ -308,7 +308,7 @@ describe('createQuery', () => {
   })
 
   it('should cancel an ongoing fetch when refetch is called (cancelRefetch=true) if we have data already', async () => {
-    const key = queryKey()
+    const key = createKey()
     let fetchCount = 0
 
     const { promise, resolve } = promiseWithResolvers<string>()
@@ -338,7 +338,7 @@ describe('createQuery', () => {
   })
 
   it('should not cancel an ongoing fetch when refetch is called (cancelRefetch=true) if we do not have data yet', async () => {
-    const key = queryKey()
+    const key = createKey()
     let fetchCount = 0
 
     const { promise, resolve } = promiseWithResolvers<string>()
@@ -367,7 +367,7 @@ describe('createQuery', () => {
   })
 
   it('should be able to watch a query without providing a query function', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     queryClient.setQueryDefaults(key, {
       queryFn: () => 'data',
@@ -386,7 +386,7 @@ describe('createQuery', () => {
   })
 
   it('should pick up a query when re-mounting with gcTime 0', async () => {
-    const key = queryKey()
+    const key = createKey()
     // this needs to be split into two different effect roots because
     // effects won't pick up dependencies created after the first `await`
     // -- the two roots effectively emulate two consecutive components being rendered
@@ -454,7 +454,7 @@ describe('createQuery', () => {
   })
 
   it('should not get into an infinite loop when removing a query with gcTime 0 and rerendering', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<CreateQueryResult<string>> = []
 
     // First mount: render the query and let it fetch
@@ -502,7 +502,7 @@ describe('createQuery', () => {
       await vi.advanceTimersByTimeAsync(100)
     })()
 
-    expect(states.length).toBe(4)
+    expect(states).toHaveLength(4)
     expect(states[0]).toMatchObject({
       isPending: true,
       isSuccess: false,
@@ -526,8 +526,8 @@ describe('createQuery', () => {
   })
 
   it('should fetch when refetchOnMount is false and nothing has been fetched yet', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => 'test')
+    const key = createKey()
+    const queryFn = vi.fn<() => string>(() => 'test')
 
     const rendered = render(Base, {
       props: {
@@ -548,8 +548,8 @@ describe('createQuery', () => {
   })
 
   it('should not fetch when refetchOnMount is false and data has been fetched already', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => 'test')
+    const key = createKey()
+    const queryFn = vi.fn<() => string>(() => 'test')
 
     queryClient.setQueryData(key, 'prefetched')
 
@@ -571,7 +571,7 @@ describe('createQuery', () => {
   })
 
   it('should be able to select a part of the data with select', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const rendered = render(Select, {
       props: {
@@ -590,7 +590,7 @@ describe('createQuery', () => {
   })
 
   it('should throw an error when a selector throws', async () => {
-    const key = queryKey()
+    const key = createKey()
     const error = new Error('Select Error')
 
     const rendered = render(Select, {
@@ -613,7 +613,7 @@ describe('createQuery', () => {
   })
 
   it('should be able to remove a query', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     const rendered = render(Base, {
@@ -646,7 +646,7 @@ describe('createQuery', () => {
   })
 
   it('should keep up-to-date with query key changes', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const rendered = render(Counter, {
       props: {
@@ -680,7 +680,7 @@ describe('createQuery', () => {
   })
 
   it('should create a new query when refetching a removed query', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     const rendered = render(Base, {
@@ -710,7 +710,7 @@ describe('createQuery', () => {
   it(
     'should share equal data structures between query results',
     withEffectRoot(async () => {
-      const key = queryKey()
+      const key = createKey()
 
       const result1 = [
         { id: '1', done: false },
@@ -748,7 +748,7 @@ describe('createQuery', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(query.data?.[1]?.done).toBe(true)
 
-      expect(states.length).toBe(4)
+      expect(states).toHaveLength(4)
 
       const todos = states[1]?.data
       const todo1 = todos?.[0]
@@ -758,8 +758,8 @@ describe('createQuery', () => {
       const newTodo1 = newTodos?.[0]
       const newTodo2 = newTodos?.[1]
 
-      expect(todos).toEqual(result1)
-      expect(newTodos).toEqual(result2)
+      expect(todos).toStrictEqual(result1)
+      expect(newTodos).toStrictEqual(result2)
       expect(newTodos).not.toBe(todos)
       expect(newTodo1).toBe(todo1)
       expect(newTodo2).not.toBe(todo2)
@@ -767,7 +767,7 @@ describe('createQuery', () => {
   )
 
   it('should use query function from hook when the existing query does not have a query function', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     queryClient.setQueryData(key, 'set')
 
@@ -793,7 +793,7 @@ describe('createQuery', () => {
   })
 
   it('should update query stale state and refetch when invalidated with invalidateQueries', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     const rendered = render(Base, {
@@ -821,8 +821,8 @@ describe('createQuery', () => {
   })
 
   it('should not update disabled query when refetching with refetchQueries', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 1))
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 1))
 
     const rendered = render(Base, {
       props: {
@@ -846,8 +846,8 @@ describe('createQuery', () => {
   })
 
   it('should not refetch disabled query when invalidated with invalidateQueries', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 1))
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 1))
 
     const rendered = render(Base, {
       props: {
@@ -874,7 +874,7 @@ describe('createQuery', () => {
   })
 
   it('should not fetch when switching to a disabled query', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const rendered = render(Counter, {
       props: {
@@ -903,7 +903,7 @@ describe('createQuery', () => {
   })
 
   it('should keep the previous data when placeholderData is set', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const rendered = render(Counter, {
       props: {
@@ -943,7 +943,7 @@ describe('createQuery', () => {
   })
 
   it('should not show initial data from next query if placeholderData is set', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const rendered = render(Counter, {
       props: {
@@ -984,7 +984,7 @@ describe('createQuery', () => {
   })
 
   it('should keep the previous data on disabled query when placeholderData is set and switching query key multiple times', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     // Set initial query data
     queryClient.setQueryData([...key, 10], 10)
@@ -1036,7 +1036,7 @@ describe('createQuery', () => {
   })
 
   it('should use the correct query function when components use different configurations', async () => {
-    const key = queryKey()
+    const key = createKey()
     const { promise, resolve } = promiseWithResolvers<number>()
 
     const rendered = render(TwoQueries, {
@@ -1069,7 +1069,7 @@ describe('createQuery', () => {
   })
 
   it('should be able to set different stale times for a query', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     // Prefetch the query
     const prefetchPromise = queryClient
@@ -1123,7 +1123,7 @@ describe('createQuery', () => {
   })
 
   it('should re-render when a query becomes stale', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const rendered = render(Base, {
       props: {
@@ -1152,7 +1152,7 @@ describe('createQuery', () => {
   it(
     'should not re-render when it should only re-render on data changes and the data did not change',
     withEffectRoot(async () => {
-      const key = queryKey()
+      const key = createKey()
       const states: Array<CreateQueryResult<string>> = []
       const { promise, resolve } = promiseWithResolvers<string>()
 
@@ -1177,7 +1177,7 @@ describe('createQuery', () => {
       }, 10)
 
       await vi.advanceTimersByTimeAsync(10)
-      expect(states.length).toBe(2)
+      expect(states).toHaveLength(2)
 
       expect(states[0]).toMatchObject({
         data: undefined,
@@ -1195,7 +1195,7 @@ describe('createQuery', () => {
   it(
     'should track properties and only re-render when a tracked property changes',
     withEffectRoot(async () => {
-      const key = queryKey()
+      const key = createKey()
       const states: Array<string | undefined> = []
       const { promise, resolve } = promiseWithResolvers<string>()
 
@@ -1228,8 +1228,8 @@ describe('createQuery', () => {
 
       // Wait for refetch to complete
       await vi.advanceTimersByTimeAsync(20)
-      expect(states.length).toBe(2)
-      expect(states[0]).toBe(undefined)
+      expect(states).toHaveLength(2)
+      expect(states[0]).toBeUndefined()
       expect(states[1]).toBe('test')
     }),
   )
@@ -1237,7 +1237,7 @@ describe('createQuery', () => {
   it(
     'should always re-render if we are tracking props but not using any',
     withEffectRoot(async () => {
-      const key = queryKey()
+      const key = createKey()
       let renderCount = 0
       const states: Array<CreateQueryResult<string>> = []
 
@@ -1264,7 +1264,7 @@ describe('createQuery', () => {
       expect(query.data).toBe('test')
 
       expect(renderCount).toBe(2)
-      expect(states.length).toBe(2)
+      expect(states).toHaveLength(2)
       expect(states[0]).toMatchObject({ data: undefined })
       expect(states[1]).toMatchObject({ data: 'test' })
     }),
@@ -1273,7 +1273,7 @@ describe('createQuery', () => {
   it(
     'should update query options',
     withEffectRoot(() => {
-      const key = queryKey()
+      const key = createKey()
 
       const queryFn = () => sleep(10).then(() => 'data1')
 
@@ -1294,8 +1294,8 @@ describe('createQuery', () => {
   )
 
   it('should start with status pending, fetchStatus idle if enabled is false', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const rendered = render(TwoQueries, {
       props: {
@@ -1331,7 +1331,7 @@ describe('createQuery', () => {
   })
 
   it('should be in "pending" state by default', () => {
-    const key = queryKey()
+    const key = createKey()
 
     const rendered = render(Base, {
       props: {
@@ -1347,8 +1347,8 @@ describe('createQuery', () => {
   })
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue('data')
+    const key = createKey()
+    const queryFn = vi.fn<() => string>().mockReturnValue('data')
 
     const rendered = render(Base, {
       props: {
@@ -1378,7 +1378,7 @@ describe('createQuery', () => {
   })
 
   it('should not refetch stale query on focus when `refetchOnWindowFocus` is set to `false`', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     const rendered = render(Base, {
@@ -1409,7 +1409,7 @@ describe('createQuery', () => {
   })
 
   it('should not refetch stale query on focus when `refetchOnWindowFocus` is set to a function that returns `false`', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     const rendered = render(Base, {
@@ -1440,7 +1440,7 @@ describe('createQuery', () => {
   })
 
   it('should not refetch fresh query on focus when `refetchOnWindowFocus` is set to `true`', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     const rendered = render(Base, {
@@ -1471,7 +1471,7 @@ describe('createQuery', () => {
   })
 
   it('should refetch fresh query when refetchOnMount is set to always', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     // Prefetch the query
     await queryClient
@@ -1506,7 +1506,7 @@ describe('createQuery', () => {
   })
 
   it('should refetch stale query when refetchOnMount is set to true', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     // Prefetch the query
     await queryClient
@@ -1541,10 +1541,8 @@ describe('createQuery', () => {
   })
 
   it('should set status to error if queryFn throws', async () => {
-    const key = queryKey()
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    const key = createKey()
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const rendered = render(Base, {
       props: {
@@ -1560,12 +1558,10 @@ describe('createQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('status')).toHaveTextContent('error')
     expect(rendered.getByTestId('error')).toHaveTextContent('Error test')
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should set status to error instead of throwing when error should not be thrown', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const rendered = render(Base, {
       props: {
@@ -1592,7 +1588,7 @@ describe('createQuery', () => {
 
       let currentClient = $state(queryClient1)
 
-      const key = queryKey()
+      const key = createKey()
 
       createQuery(
         () => ({
@@ -1604,18 +1600,20 @@ describe('createQuery', () => {
 
       expect(
         queryClient1.getQueryCache().find({ queryKey: key })?.queryKey,
-      ).toEqual(key)
+      ).toStrictEqual(key)
 
       currentClient = queryClient2
       flushSync()
       expect(
         queryClient2.getQueryCache().find({ queryKey: key })?.queryKey,
-      ).toEqual(key)
+      ).toStrictEqual(key)
     }),
   )
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     const rendered = render(IsRestoring, {
       props: { queryClient, queryFn },

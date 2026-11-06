@@ -61,6 +61,7 @@ describe('PendingTasks Integration', () => {
       const first = mutation.mutateAsync('first')
       const second = mutation.mutateAsync('second')
       await Promise.resolve()
+      // oxlint-disable-next-line vitest-js/no-conditional-in-test -- The parameter selects setup/actions; every case runs the assertions.
       if (reset) mutation.reset()
       let stable = false
       const stability = TestBed.inject(ApplicationRef)
@@ -132,7 +133,7 @@ describe('PendingTasks Integration', () => {
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
       expect(query.status()).toBe('error')
-      expect(query.error()).toEqual(new Error('instant-error'))
+      expect(query.error()).toStrictEqual(new Error('instant-error'))
     })
 
     it('should handle synchronous mutationFn with whenStable()', async () => {
@@ -181,7 +182,7 @@ describe('PendingTasks Integration', () => {
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
       expect(mutation.isError()).toBe(true)
-      expect(mutation.error()).toEqual(new Error('sync-mutation-error'))
+      expect(mutation.error()).toStrictEqual(new Error('sync-mutation-error'))
     })
 
     it('should keep whenStable pending after mutate starts', async () => {
@@ -216,7 +217,7 @@ describe('PendingTasks Integration', () => {
 
   describe('Race Conditions', () => {
     it('should not register a pending task while query is disabled by enabled', async () => {
-      const queryFn = vi.fn(async () => {
+      const queryFn = vi.fn<() => Promise<string>>(async () => {
         await sleep(10)
         return 'disabled-data'
       })
@@ -674,9 +675,9 @@ describe('PendingTasks Integration', () => {
       await vi.advanceTimersByTimeAsync(20)
       await stablePromise
       expect(query1.status()).toBe('success')
-      expect(query1.data()).toEqual({ id: 1 })
+      expect(query1.data()).toStrictEqual({ id: 1 })
       expect(query2.status()).toBe('success')
-      expect(query2.data()).toEqual({ id: 2 })
+      expect(query2.data()).toStrictEqual({ id: 2 })
 
       httpTestingController.verify()
     })

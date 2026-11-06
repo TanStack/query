@@ -136,19 +136,23 @@ describe('SSR with real Zone.js timers', () => {
   afterEach(() => destroyPlatform())
 
   it('serializes cached data without waiting for stale or GC timers', async () => {
-    expect(await render(CachedQueryComponent)).toContain('cached-on-server')
+    await expect(render(CachedQueryComponent)).resolves.toContain(
+      'cached-on-server',
+    )
   })
 
   it('serializes reactive query changes without waiting for background timers', async () => {
-    expect(await render(ReactiveQueryComponent)).toContain('second')
+    await expect(render(ReactiveQueryComponent)).resolves.toContain('second')
   })
 
   it('waits for a query fetch, but not its background timers', async () => {
-    expect(await render(FetchingQueryComponent)).toContain('fetched-on-server')
+    await expect(render(FetchingQueryComponent)).resolves.toContain(
+      'fetched-on-server',
+    )
   })
 
   it('waits for parallel query fetches, but not their background timers', async () => {
-    expect(await render(FetchingQueriesComponent)).toContain(
+    await expect(render(FetchingQueriesComponent)).resolves.toContain(
       'fetched-on-server',
     )
   })

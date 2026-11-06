@@ -54,7 +54,8 @@ export interface DevtoolsOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * @defaultValue system
+   * This overrides the theme selected in the devtools Settings menu. When omitted, the
+   * selected theme is used, or `'system'` if none is selected.
    */
   theme?: Theme
 }
@@ -136,5 +137,5 @@ export function ReactQueryDevtools(
     }
   }, [devtools])
 
-  return <div dir="ltr" className="tsqd-parent-container" ref={ref}></div>
+  return <div className="tsqd-parent-container" ref={ref}></div>
 }

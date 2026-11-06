@@ -20,21 +20,13 @@ import {
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { render } from '@testing-library/angular'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import * as persistClientCore from '@tanstack/query-persist-client-core'
 import { withPersistQueryClient } from '../with-persist-query-client'
 import type {
   PersistedClient,
   Persister,
 } from '@tanstack/query-persist-client-core'
-
-beforeEach(() => {
-  vi.useFakeTimers()
-})
-
-afterEach(() => {
-  vi.useRealTimers()
-})
 
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
@@ -72,8 +64,16 @@ const createMockErrorPersister = (
 }
 
 describe('withPersistQueryClient', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('restores cache from persister', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -158,8 +158,8 @@ describe('withPersistQueryClient', () => {
   })
 
   it('restores cache for injectQueries and keeps it idle while restoring', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const states: Array<
       Array<{
         status: string
@@ -272,7 +272,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should show initialData while restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -361,7 +361,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should not refetch after restoring when data is fresh', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<{
       status: string
       fetchStatus: string
@@ -446,7 +446,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should call onSuccess after successful restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryClient = new QueryClient()
     void queryClient
       .query({
@@ -477,7 +477,7 @@ describe('withPersistQueryClient', () => {
       }))
     }
 
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<() => void>()
 
     const rendered = await render(Page, {
       providers: [
@@ -503,7 +503,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should await onSuccess before refetching or subscribing', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryClient = new QueryClient()
     void queryClient
       .query({
@@ -519,8 +519,10 @@ describe('withPersistQueryClient', () => {
 
     queryClient.clear()
 
-    const fetchSpy = vi.fn(() => sleep(10).then(() => 'fetched'))
-    const onSuccess = vi.fn(async () => {
+    const fetchSpy = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'fetched'),
+    )
+    const onSuccess = vi.fn<() => Promise<void>>(async () => {
       await sleep(20)
     })
 
@@ -574,15 +576,15 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should remove cache after non-successful restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const queryClient = new QueryClient()
-    const removeClient = vi.fn()
+    const removeClient = vi.fn<Persister['removeClient']>()
     const [error, persister] = createMockErrorPersister(removeClient)
-    const onSuccess = vi.fn()
-    const onError = vi.fn()
+    const onSuccess = vi.fn<() => void>()
+    const onError = vi.fn<() => void>()
 
     @Component({
       template: `
@@ -628,15 +630,15 @@ describe('withPersistQueryClient', () => {
   })
 
   it('should await onError before starting queries after restore failure', async () => {
-    const key = queryKey()
-    const onErrorMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    const key = createKey()
+    const onErrorMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
     const queryClient = new QueryClient()
-    const removeClient = vi.fn()
+    const removeClient = vi.fn<() => void>()
     const [, persister] = createMockErrorPersister(removeClient)
-    const fetchSpy = vi.fn(() => sleep(10).then(() => 'fetched'))
-    const onError = vi.fn(async () => {
+    const fetchSpy = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'fetched'),
+    )
+    const onError = vi.fn<() => Promise<void>>(async () => {
       await sleep(20)
     })
 
@@ -691,7 +693,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it('factory form can inject a token and restores cache', async () => {
-    const key = queryKey()
+    const key = createKey()
     const holder = { persister: createMockPersister() }
     const HOLDER = new InjectionToken<{ persister: Persister }>(
       'persist-test-holder',
@@ -744,7 +746,9 @@ describe('withPersistQueryClient', () => {
   })
 
   it('factory callback runs only in browser mode', async () => {
-    const factory = vi.fn(() => ({
+    const factory = vi.fn<
+      () => { persistOptions: { persister: persistClientCore.Persister } }
+    >(() => ({
       persistOptions: {
         persister: createMockPersister(),
       },
@@ -775,10 +779,10 @@ describe('withPersistQueryClient', () => {
   })
 
   it('cleanup subscription runs on injector destroy', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryClient = new QueryClient()
     const persister = createMockPersister()
-    const cleanup = vi.fn()
+    const cleanup = vi.fn<() => void>()
     const subscribeSpy = vi
       .spyOn(persistClientCore, 'persistQueryClientSubscribe')
       .mockReturnValue(cleanup)
@@ -841,6 +845,7 @@ describe('withPersistQueryClient', () => {
 
     expect(subscribeSpy).not.toHaveBeenCalled()
   })
+
   it('keeps restoration state independent when a provider configuration is reused', async () => {
     TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],

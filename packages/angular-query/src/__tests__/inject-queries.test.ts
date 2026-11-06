@@ -12,7 +12,7 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { provideIsRestoring } from '../internal'
 import { QueryClient, onlineManager, provideTanStackQuery, skipToken } from '..'
 import { injectQueries } from '../inject-queries'
@@ -25,19 +25,19 @@ import {
 
 let queryClient: QueryClient
 
-beforeEach(() => {
-  vi.useFakeTimers()
-  queryClient = new QueryClient()
-  vi.useFakeTimers({ shouldAdvanceTime: true })
-  setupTanStackQueryTestBed(queryClient)
-})
-
-afterEach(() => {
-  onlineManager.setOnline(true)
-  vi.useRealTimers()
-})
-
 describe('injectQueries', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+    queryClient = new QueryClient()
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    setupTanStackQueryTestBed(queryClient)
+  })
+
+  afterEach(() => {
+    onlineManager.setOnline(true)
+    vi.useRealTimers()
+  })
+
   it.each([false, true])(
     'uses current options and slot identity for multi-query refetch (combine=%s)',
     async (combine) => {
@@ -112,7 +112,7 @@ describe('injectQueries', () => {
           },
         ],
       }))
-    }).toThrowError(/NG0203(.*?)injectQueries/)
+    }).toThrow(/NG0203(.*?)injectQueries/)
   })
 
   it('allows cache listeners to read a result while options update', () => {
@@ -132,7 +132,9 @@ describe('injectQueries', () => {
 
     TestBed.tick()
     const query = queries()[0]
-    const readResult = vi.fn(() => query.status())
+    const readResult = vi.fn<() => 'error' | 'pending' | 'success'>(() =>
+      query.status(),
+    )
     const subscriptionEvents: Array<string> = []
     const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
       // setQueries emits synchronously; this read must not re-enter the signal
@@ -146,8 +148,8 @@ describe('injectQueries', () => {
     staleTime.set(1)
 
     expect(() => TestBed.tick()).not.toThrow()
-    expect(readResult).toHaveBeenCalled()
-    expect(subscriptionEvents).toEqual([])
+    expect(readResult).toHaveBeenCalledWith()
+    expect(subscriptionEvents).toStrictEqual([])
 
     unsubscribe()
   })
@@ -186,7 +188,7 @@ describe('injectQueries', () => {
     expect(() => TestBed.tick()).not.toThrow()
 
     await Promise.resolve()
-    expect(nestedStatuses).toEqual(['pending', 'pending'])
+    expect(nestedStatuses).toStrictEqual(['pending', 'pending'])
     unsubscribe()
   })
 
@@ -217,16 +219,16 @@ describe('injectQueries', () => {
     key.set('new')
 
     expect(() => queries()[0].status()).not.toThrow()
-    expect(nestedStatuses).toEqual([])
+    expect(nestedStatuses).toStrictEqual([])
     expect(() => TestBed.tick()).not.toThrow()
     await Promise.resolve()
-    expect(nestedStatuses).toEqual(['pending'])
+    expect(nestedStatuses).toStrictEqual(['pending'])
     unsubscribe()
   })
 
   it('should return the correct states', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const results: Array<Array<Record<string, any>>> = []
 
     @Component({
@@ -349,8 +351,8 @@ describe('injectQueries', () => {
   })
 
   it('should support combining results', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     let count = 0
 
     const results: Array<{ data: string; refetch: () => void }> = []
@@ -405,7 +407,7 @@ describe('injectQueries', () => {
     const dataChanges = results.filter(
       (result, index) => result.data !== results[index - 1]?.data,
     )
-    expect(dataChanges.map((result) => result.data)).toEqual([
+    expect(dataChanges.map((result) => result.data)).toStrictEqual([
       ',',
       '1,',
       '1,2',
@@ -437,7 +439,7 @@ describe('injectQueries', () => {
     TestBed.tick()
 
     shouldCombine.set(true)
-    expect(queries()).toEqual({ count: 1 })
+    expect(queries()).toStrictEqual({ count: 1 })
   })
 
   it('removes a combined result when combine configuration changes', () => {
@@ -456,7 +458,7 @@ describe('injectQueries', () => {
       })),
     )
 
-    expect(queries()).toEqual({ count: 1 })
+    expect(queries()).toStrictEqual({ count: 1 })
     TestBed.tick()
 
     shouldCombine.set(false)
@@ -475,15 +477,15 @@ describe('injectQueries', () => {
       })),
     )
 
-    expect(queries()).toEqual({ value: 0 })
+    expect(queries()).toStrictEqual({ value: 0 })
     TestBed.tick()
     queryClient.setQueryData(key, 2)
     const previous = queries()
     queryClient.setQueryData(key, 3)
-    expect(queries()).toEqual(previous)
+    expect(queries()).toStrictEqual(previous)
     expect(queries()).not.toBe(previous)
     showData.set(true)
-    expect(queries()).toEqual({ value: 3 })
+    expect(queries()).toStrictEqual({ value: 3 })
   })
 
   it('should handle mixed success and error query states', async () => {
@@ -567,7 +569,9 @@ describe('injectQueries', () => {
 
   it('should react to enabled signal changes', async () => {
     const enabled = signal(false)
-    const fetchSpy = vi.fn(() => sleep(10).then(() => 'enabled-data'))
+    const fetchSpy = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'enabled-data'),
+    )
 
     @Component({
       template: '',
@@ -606,7 +610,7 @@ describe('injectQueries', () => {
 
   it('should not resubscribe or refetch unchanged stale queries when options change', async () => {
     const multiplier = signal(1)
-    const fetchSpy = vi.fn(() => sleep(10).then(() => 2))
+    const fetchSpy = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 2))
 
     @Component({
       template: '',
@@ -655,10 +659,10 @@ describe('injectQueries', () => {
 
   it('should refetch only changed keys when queries length stays the same', async () => {
     const ids = signal<[string, string]>(['a', 'b'])
-    const firstSpy = vi.fn((context: any) =>
+    const firstSpy = vi.fn<(context: any) => Promise<string>>((context: any) =>
       sleep(10).then(() => `first-${context.queryKey[1]}`),
     )
-    const secondSpy = vi.fn((context: any) =>
+    const secondSpy = vi.fn<(context: any) => Promise<string>>((context: any) =>
       sleep(10).then(() => `second-${context.queryKey[1]}`),
     )
 
@@ -917,8 +921,8 @@ describe('injectQueries', () => {
     rendered.fixture.detectChanges()
 
     await rendered.findByText('3')
-    expect(rendered.queryByText('1')).toBeNull()
-    expect(rendered.queryByText('2')).toBeNull()
+    expect(rendered.queryByText('1')).not.toBeInTheDocument()
+    expect(rendered.queryByText('2')).not.toBeInTheDocument()
   })
 
   it('should support required signal inputs', async () => {
@@ -950,7 +954,7 @@ describe('injectQueries', () => {
     await vi.advanceTimersByTimeAsync(0)
 
     const result = rendered.fixture.nativeElement.textContent
-    expect(result).toEqual('signal-input-required-test')
+    expect(result).toBe('signal-input-required-test')
   })
 
   it('should allow reading query state in ngOnInit with required signal inputs', async () => {
@@ -1033,7 +1037,7 @@ describe('injectQueries', () => {
       expect(successQuery.status()).toBe('success')
       expect(successQuery.data()).toBe('instant-data')
       expect(errorQuery.status()).toBe('error')
-      expect(errorQuery.error()).toEqual(new Error('instant-error'))
+      expect(errorQuery.error()).toStrictEqual(new Error('instant-error'))
     })
 
     it('tracks invalidation even when combine returns an unchanged value', async () => {
@@ -1077,7 +1081,9 @@ describe('injectQueries', () => {
     })
 
     it('should not register pending tasks for disabled queries', async () => {
-      const queryFn = vi.fn(() => Promise.resolve('disabled-data'))
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        Promise.resolve('disabled-data'),
+      )
 
       @Component({
         template: '',
@@ -1264,7 +1270,9 @@ describe('injectQueries', () => {
 
   it('should pause fetching while restoring and fetch once restoring is disabled', async () => {
     const isRestoring = signal(true)
-    const fetchSpy = vi.fn(() => sleep(10).then(() => 'restored-data'))
+    const fetchSpy = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'restored-data'),
+    )
     setupTanStackQueryTestBed(queryClient, {
       providers: [provideIsRestoring(() => isRestoring.asReadonly())],
     })
@@ -1348,8 +1356,9 @@ describe('injectQueries', () => {
       )
 
       expect(queries()[0].status()).toBe('pending')
-      expect(queriedKeys).toEqual([])
+      expect(queriedKeys).toStrictEqual([])
 
+      // oxlint-disable-next-line vitest-js/no-conditional-in-test -- The parameter selects setup/actions; every case runs the assertions.
       if (writeOrder === 'options-first') {
         key.set('new')
         isRestoring.set(false)
@@ -1360,7 +1369,7 @@ describe('injectQueries', () => {
       TestBed.tick()
       await TestBed.inject(ApplicationRef).whenStable()
 
-      expect(queriedKeys).toEqual(['new'])
+      expect(queriedKeys).toStrictEqual(['new'])
       expect(queries()[0].data()).toBe('new')
       expect(
         queryClient
@@ -1400,7 +1409,9 @@ describe('injectQueries', () => {
     expect(queries()[0].status()).toBe('pending')
     TestBed.tick()
 
-    const boundaryRead = vi.fn(() => queries()[0].status())
+    const boundaryRead = vi.fn<() => 'error' | 'pending' | 'success'>(() =>
+      queries()[0].status(),
+    )
     let appliedStaleTime: number | undefined
     const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
       if (event.type === 'observerOptionsUpdated') {
@@ -1413,7 +1424,7 @@ describe('injectQueries', () => {
     isRestoring.set(false)
 
     expect(() => TestBed.tick()).not.toThrow()
-    expect(boundaryRead).toHaveBeenCalled()
+    expect(boundaryRead).toHaveBeenCalledWith()
     expect(appliedStaleTime).toBe(1)
     expect(
       queryClient
@@ -1570,10 +1581,12 @@ describe('injectQueries', () => {
 
   it('should use latest query key for aliased refetch function', async () => {
     const key = signal('one')
-    const fetchSpy = vi.fn(async (context: any) => {
-      await new Promise((resolve) => setTimeout(resolve, 10))
-      return context.queryKey[1]
-    })
+    const fetchSpy = vi.fn<(context: any) => Promise<any>>(
+      async (context: any) => {
+        await new Promise((resolve) => setTimeout(resolve, 10))
+        return context.queryKey[1]
+      },
+    )
 
     @Component({
       template: '',

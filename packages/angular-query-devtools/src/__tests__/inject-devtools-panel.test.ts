@@ -4,15 +4,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { injectDevtoolsPanel } from '../devtools-panel'
 import { setupTanStackQueryTestBed } from './test-utils'
-import type { Theme } from '@tanstack/query-devtools'
+import type {
+  TanstackQueryDevtoolsPanel,
+  Theme,
+} from '@tanstack/query-devtools'
 
 const mockDevtoolsPanelInstance = {
-  mount: vi.fn(),
-  unmount: vi.fn(),
-  setClient: vi.fn(),
-  setErrorTypes: vi.fn(),
-  setOnClose: vi.fn(),
-  setTheme: vi.fn(),
+  mount: vi.fn<TanstackQueryDevtoolsPanel['mount']>(),
+  unmount: vi.fn<TanstackQueryDevtoolsPanel['unmount']>(),
+  setClient: vi.fn<TanstackQueryDevtoolsPanel['setClient']>(),
+  setErrorTypes: vi.fn<TanstackQueryDevtoolsPanel['setErrorTypes']>(),
+  setOnClose: vi.fn<TanstackQueryDevtoolsPanel['setOnClose']>(),
+  setTheme: vi.fn<TanstackQueryDevtoolsPanel['setTheme']>(),
 }
 
 const mocks = vi.hoisted(() => {
@@ -21,10 +24,13 @@ const mocks = vi.hoisted(() => {
   }
 
   return {
-    mockTanstackQueryDevtoolsPanel: vi.fn(MockTanstackQueryDevtoolsPanel),
+    mockTanstackQueryDevtoolsPanel: vi.fn<
+      typeof MockTanstackQueryDevtoolsPanel
+    >(MockTanstackQueryDevtoolsPanel),
   }
 })
 
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- The mock cannot implement the devtools class's private fields.
 vi.mock('@tanstack/query-devtools', () => ({
   TanstackQueryDevtoolsPanel: mocks.mockTanstackQueryDevtoolsPanel,
 }))
@@ -59,7 +65,7 @@ describe('injectDevtoolsPanel', () => {
       }))
     })
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       destroy: expect.any(Function),
     })
   })
@@ -68,6 +74,7 @@ describe('injectDevtoolsPanel', () => {
     TestBed.runInInjectionContext(() => {
       injectDevtoolsPanel(() => ({
         hostElement: TestBed.inject(ElementRef),
+        hideDisabledQueries: true,
       }))
     })
 
@@ -77,11 +84,11 @@ describe('injectDevtoolsPanel', () => {
 
     expect(mockDevtoolsPanelInstance.mount).toHaveBeenCalledTimes(1)
     expect(mocks.mockTanstackQueryDevtoolsPanel).toHaveBeenCalledWith(
-      expect.objectContaining({ theme: 'system' }),
+      expect.objectContaining({ theme: undefined, hideDisabledQueries: true }),
     )
   })
 
-  it('should update the theme and reset to system when it is removed', async () => {
+  it('should update the theme and restore the saved preference when it is removed', async () => {
     const theme = signal<Theme | undefined>('dark')
 
     TestBed.runInInjectionContext(() => {
@@ -106,7 +113,7 @@ describe('injectDevtoolsPanel', () => {
     theme.set(undefined)
     await TestBed.inject(ApplicationRef).whenStable()
     expect(mockDevtoolsPanelInstance.setTheme).toHaveBeenLastCalledWith(
-      'system',
+      undefined,
     )
     expect(mockDevtoolsPanelInstance.setTheme).toHaveBeenCalledTimes(2)
     expect(mocks.mockTanstackQueryDevtoolsPanel).toHaveBeenCalledTimes(1)
@@ -233,8 +240,8 @@ describe('injectDevtoolsPanel', () => {
   })
 
   it('should update onClose and clear it when removed', async () => {
-    const functionA = vi.fn()
-    const functionB = vi.fn()
+    const functionA = vi.fn<() => void>()
+    const functionB = vi.fn<() => void>()
 
     const onClose = signal<typeof functionA | undefined>(functionA)
 

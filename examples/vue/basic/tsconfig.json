@@ -25,6 +25,7 @@
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.vue",
-    "eslint.config.js"
+    "*.config.ts",
+    "*.config.js"
   ]
 }

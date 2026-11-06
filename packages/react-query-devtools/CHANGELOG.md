@@ -1,5 +1,63 @@
 # @tanstack/react-query-devtools
 
+## 5.106.1
+
+### Patch Changes
+
+- [#12528](https://github.com/TanStack/query/pull/12528) [`c4ed956`](https://github.com/TanStack/query/commit/c4ed956bb97e381a2875e59f134bb99eecb92a02) - fix({query,react-query,preact-query}-devtools): always render the devtools left-to-right regardless of the page direction or browser language
+- Updated dependencies [[`c4ed956`](https://github.com/TanStack/query/commit/c4ed956bb97e381a2875e59f134bb99eecb92a02)]:
+  - @tanstack/query-devtools@5.106.1
+  - @tanstack/react-query@5.106.1
+
+## 5.106.0
+
+### Patch Changes
+
+- [#12499](https://github.com/TanStack/query/pull/12499) [`46d0477`](https://github.com/TanStack/query/commit/46d0477df2311d496cca006eb5ec885c024875a1) - Let inline devtools panels fill their container height while keeping a 500px default height when the container has no set height.
+- Updated dependencies [[`46d0477`](https://github.com/TanStack/query/commit/46d0477df2311d496cca006eb5ec885c024875a1), [`f69b28a`](https://github.com/TanStack/query/commit/f69b28a1dd2a2b4ca9b8f9117e0f60cc70443775), [`1176d37`](https://github.com/TanStack/query/commit/1176d373d161e0acca98d00244203778ff99c4fb), [`254350f`](https://github.com/TanStack/query/commit/254350f9cba47fd87304e057fac1a314093423f0)]:
+  - @tanstack/query-devtools@5.106.0
+  - @tanstack/react-query@5.106.0
+
+## 5.105.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.105.3
+  - @tanstack/react-query@5.105.3
+
+## 5.105.2
+
+### Patch Changes
+
+- Updated dependencies [[`1e1caa5`](https://github.com/TanStack/query/commit/1e1caa5a32847969f7157627cd805bd8103cd873), [`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1)]:
+  - @tanstack/react-query@5.105.2
+  - @tanstack/query-devtools@5.105.2
+
+## 5.105.1
+
+### Patch Changes
+
+- Updated dependencies [[`7ccba6e`](https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/react-query@5.105.1
+  - @tanstack/query-devtools@5.105.1
+
+## 5.105.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.105.0
+  - @tanstack/react-query@5.105.0
+
+## 5.104.5
+
+### Patch Changes
+
+- Updated dependencies [[`1f8d134`](https://github.com/TanStack/query/commit/1f8d134ea3fa356072b40c69d5cd0227886b89bd)]:
+  - @tanstack/react-query@5.104.5
+  - @tanstack/query-devtools@5.104.5
+
 ## 5.104.4
 
 ### Patch Changes

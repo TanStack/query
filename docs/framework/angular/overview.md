@@ -87,12 +87,12 @@ export class SimpleExampleComponent {
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(
-        this.http.get<Response>('https://api.github.com/repos/tanstack/query'),
+        this.http.get<Repo>('https://api.github.com/repos/TanStack/query'),
       ),
   }))
 }
 
-interface Response {
+interface Repo {
   name: string
   description: string
   subscribers_count: number

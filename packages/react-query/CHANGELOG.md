@@ -1,5 +1,61 @@
 # @tanstack/react-query
 
+## 5.106.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.106.1
+
+## 5.106.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.106.0
+
+## 5.105.3
+
+### Patch Changes
+
+- Updated dependencies [[`3f4de1b`](https://github.com/TanStack/query/commit/3f4de1b40cce4314f7572b515ad8fd26dd85fe04), [`969e580`](https://github.com/TanStack/query/commit/969e58019bf650fb17c273fddd0e8d2adf56d4d9)]:
+  - @tanstack/query-core@5.105.3
+
+## 5.105.2
+
+### Patch Changes
+
+- [#12230](https://github.com/TanStack/query/pull/12230) [`1e1caa5`](https://github.com/TanStack/query/commit/1e1caa5a32847969f7157627cd805bd8103cd873) - Update the observer options before subscribing so revealing an `<Activity>` tree whose query key changed while hidden no longer fetches the previous key.
+
+- [#12480](https://github.com/TanStack/query/pull/12480) [`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1) - Exclude `status` from the filters accepted by `QueryClient.isMutating`, `useIsMutating`, and `injectIsMutating`. These APIs always count mutations with `status: 'pending'`.
+- Updated dependencies [[`2ee2fd9`](https://github.com/TanStack/query/commit/2ee2fd935acd88532255947c4b5e29baffd21ce8), [`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1), [`e69cac6`](https://github.com/TanStack/query/commit/e69cac69d99cc3c4f6f32b2ad8aad53da83b4a72), [`f2215d2`](https://github.com/TanStack/query/commit/f2215d25945e6461252b7c32bf822f31239e507e), [`86e7957`](https://github.com/TanStack/query/commit/86e79571fd45f29ab7d172102fdd718d3b8bde69), [`b6576b3`](https://github.com/TanStack/query/commit/b6576b388f2784839081358fa82744b0aacdeecd), [`af0e0ef`](https://github.com/TanStack/query/commit/af0e0ef5fc04e9d232fdc3aebd24ffe528b256d7), [`05d9b6a`](https://github.com/TanStack/query/commit/05d9b6a40b9d4ac49943e9d881789e098db5bdfa)]:
+  - @tanstack/query-core@5.105.2
+
+## 5.105.1
+
+### Patch Changes
+
+- [#11373](https://github.com/TanStack/query/pull/11373) [`7ccba6e`](https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6) - fix({react,preact,angular,solid,vue}-query/infiniteQueryOptions): correct the overload selected for a possibly-undefined 'initialData'
+
+- [#12390](https://github.com/TanStack/query/pull/12390) [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf) - Exclude `fetchStatus` from the filters accepted by `QueryClient.isFetching`, `useIsFetching`, and `injectIsFetching`. These APIs always count queries with `fetchStatus: 'fetching'`.
+- Updated dependencies [[`6f8a48d`](https://github.com/TanStack/query/commit/6f8a48d543b499b6d9b0e95050c28183c8c18ae0), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/query-core@5.105.1
+
+## 5.105.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.105.0
+
+## 5.104.5
+
+### Patch Changes
+
+- [#12117](https://github.com/TanStack/query/pull/12117) [`1f8d134`](https://github.com/TanStack/query/commit/1f8d134ea3fa356072b40c69d5cd0227886b89bd) - Recompute `useMutationState` and `useIsMutating` results when their filters, selector, or query client change, without waiting for a mutation cache update.
+- Updated dependencies [[`f608f93`](https://github.com/TanStack/query/commit/f608f933a36da30670082e90d0a56b2569290563)]:
+  - @tanstack/query-core@5.104.5
+
 ## 5.104.4
 
 ### Patch Changes

@@ -134,6 +134,10 @@
               "to": "framework/svelte/ssr"
             },
             {
+              "label": "Testing",
+              "to": "framework/svelte/testing"
+            },
+            {
               "label": "Migrate from v5 to v6",
               "to": "framework/svelte/migrate-from-v5-to-v6"
             }
@@ -527,6 +531,43 @@
           ]
         },
         {
+          "label": "svelte",
+          "children": [
+            {
+              "label": "Queries",
+              "to": "framework/svelte/guides/queries"
+            },
+            {
+              "label": "Network Mode",
+              "to": "framework/svelte/guides/network-mode"
+            },
+            {
+              "label": "Parallel Queries",
+              "to": "framework/svelte/guides/parallel-queries"
+            },
+            {
+              "label": "Query Retries",
+              "to": "framework/svelte/guides/query-retries"
+            },
+            {
+              "label": "Mutations",
+              "to": "framework/svelte/guides/mutations"
+            },
+            {
+              "label": "Invalidations from Mutations",
+              "to": "framework/svelte/guides/invalidations-from-mutations"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/svelte/guides/optimistic-updates"
+            },
+            {
+              "label": "Query Cancellation",
+              "to": "framework/svelte/guides/query-cancellation"
+            }
+          ]
+        },
+        {
           "label": "vue",
           "children": [
             {
@@ -838,6 +879,10 @@
             {
               "label": "SSR",
               "to": "framework/lit/guides/ssr"
+            },
+            {
+              "label": "Testing",
+              "to": "framework/lit/guides/testing"
             }
           ]
         },
@@ -2345,8 +2390,8 @@
               "to": "framework/vue/reference/type-aliases/MutationCacheNotifyEvent"
             },
             {
-              "label": "Types / MutationFilters",
-              "to": "framework/vue/reference/type-aliases/MutationFilters"
+              "label": "Interfaces / MutationFilters",
+              "to": "framework/vue/reference/interfaces/MutationFilters"
             },
             {
               "label": "Types / MutationFunction",
@@ -2425,8 +2470,8 @@
               "to": "framework/vue/reference/type-aliases/QueryCacheNotifyEvent"
             },
             {
-              "label": "Types / QueryFilters",
-              "to": "framework/vue/reference/type-aliases/QueryFilters"
+              "label": "Interfaces / QueryFilters",
+              "to": "framework/vue/reference/interfaces/QueryFilters"
             },
             {
               "label": "Types / QueryFunction",
@@ -3919,10 +3964,6 @@
               "to": "framework/svelte/reference/type-aliases/GetPreviousPageParamFunction"
             },
             {
-              "label": "Types / HydrationBoundary",
-              "to": "framework/svelte/reference/type-aliases/HydrationBoundary"
-            },
-            {
               "label": "Types / InferDataFromTag",
               "to": "framework/svelte/reference/type-aliases/InferDataFromTag"
             },
@@ -4129,10 +4170,6 @@
             {
               "label": "Types / dataTagSymbol",
               "to": "framework/svelte/reference/type-aliases/dataTagSymbol"
-            },
-            {
-              "label": "Variables / HydrationBoundary",
-              "to": "framework/svelte/reference/variables/HydrationBoundary"
             },
             {
               "label": "Variables / dataTagErrorSymbol",
@@ -6706,24 +6743,24 @@
               "to": "framework/react/examples/basic-graphql-request"
             },
             {
-              "label": "Auto Refetching / Polling / Realtime",
-              "to": "framework/react/examples/auto-refetching"
+              "label": "Auto Refetching / Polling / Realtime (Next.js Pages Router)",
+              "to": "framework/react/examples/auto-refetching-nextjs-pages-router"
             },
             {
-              "label": "Optimistic Updates",
+              "label": "Optimistic Updates (Next.js App Router)",
               "to": "framework/react/examples/nextjs-app-optimistic-updates"
             },
             {
-              "label": "Pagination",
-              "to": "framework/react/examples/pagination"
+              "label": "Pagination (Next.js Pages Router)",
+              "to": "framework/react/examples/pagination-nextjs-pages-router"
             },
             {
-              "label": "Load-More & Infinite Scroll",
-              "to": "framework/react/examples/load-more-infinite-scroll"
+              "label": "Load-More & Infinite Scroll (Next.js Pages Router)",
+              "to": "framework/react/examples/load-more-infinite-scroll-nextjs-pages-router"
             },
             {
-              "label": "Infinite query with Max pages",
-              "to": "framework/react/examples/infinite-query-with-max-pages"
+              "label": "Infinite query with Max pages (Next.js Pages Router)",
+              "to": "framework/react/examples/infinite-query-with-max-pages-nextjs-pages-router"
             },
             {
               "label": "Suspense",
@@ -6738,16 +6775,16 @@
               "to": "framework/react/examples/playground"
             },
             {
-              "label": "Prefetching",
-              "to": "framework/react/examples/prefetching"
+              "label": "Prefetching (Next.js Pages Router)",
+              "to": "framework/react/examples/prefetching-nextjs-pages-router"
             },
             {
-              "label": "Star Wars",
-              "to": "framework/react/examples/star-wars"
+              "label": "Star Wars (React Router)",
+              "to": "framework/react/examples/star-wars-react-router"
             },
             {
-              "label": "Rick And Morty",
-              "to": "framework/react/examples/rick-morty"
+              "label": "Rick And Morty (React Router)",
+              "to": "framework/react/examples/rick-morty-react-router"
             },
             {
               "label": "Next.js Pages",
@@ -6766,12 +6803,20 @@
               "to": "framework/react/examples/react-native"
             },
             {
-              "label": "React Router",
-              "to": "framework/react/examples/react-router"
+              "label": "Contacts (TanStack Router)",
+              "to": "framework/react/examples/contacts-tanstack-router"
             },
             {
-              "label": "Offline Queries and Mutations",
-              "to": "framework/react/examples/offline"
+              "label": "Contacts (React Router)",
+              "to": "framework/react/examples/contacts-react-router"
+            },
+            {
+              "label": "Offline Queries and Mutations (TanStack Router)",
+              "to": "framework/react/examples/offline-tanstack-router"
+            },
+            {
+              "label": "Offline Queries and Mutations (React Router)",
+              "to": "framework/react/examples/offline-react-router"
             },
             {
               "label": "Algolia",
@@ -6815,7 +6860,7 @@
               "to": "framework/solid/examples/default-query-function"
             },
             {
-              "label": "Solid Start",
+              "label": "SolidStart 1",
               "to": "framework/solid/examples/solid-start-streaming"
             },
             {
@@ -6823,8 +6868,72 @@
               "to": "framework/solid/examples/astro"
             },
             {
-              "label": "Offline Queries and Mutations",
-              "to": "framework/solid/examples/offline"
+              "label": "Offline Queries and Mutations (TanStack Router)",
+              "to": "framework/solid/examples/offline-tanstack-router"
+            },
+            {
+              "label": "Offline Queries and Mutations (Solid Router)",
+              "to": "framework/solid/examples/offline-solid-router"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/solid/examples/playground"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/solid/examples/algolia"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/solid/examples/chat"
+            },
+            {
+              "label": "Shadow DOM",
+              "to": "framework/solid/examples/shadow-dom"
+            },
+            {
+              "label": "Devtools Embedded Panel",
+              "to": "framework/solid/examples/devtools-panel"
+            },
+            {
+              "label": "Star Wars (Solid Router)",
+              "to": "framework/solid/examples/star-wars-solid-router"
+            },
+            {
+              "label": "Rick And Morty (Solid Router)",
+              "to": "framework/solid/examples/rick-morty-solid-router"
+            },
+            {
+              "label": "Contacts (TanStack Router)",
+              "to": "framework/solid/examples/contacts-tanstack-router"
+            },
+            {
+              "label": "Contacts (Solid Router)",
+              "to": "framework/solid/examples/contacts-solid-router"
+            },
+            {
+              "label": "Suspense",
+              "to": "framework/solid/examples/suspense"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/solid/examples/batching"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime (SolidStart 2)",
+              "to": "framework/solid/examples/auto-refetching-solid-start2"
+            },
+            {
+              "label": "Optimistic Updates (SolidStart 2)",
+              "to": "framework/solid/examples/optimistic-updates-solid-start2"
+            },
+            {
+              "label": "Pagination (SolidStart 2)",
+              "to": "framework/solid/examples/pagination-solid-start2"
+            },
+            {
+              "label": "Prefetching (SolidStart 2)",
+              "to": "framework/solid/examples/prefetching-solid-start2"
             }
           ]
         },
@@ -6844,12 +6953,100 @@
               "to": "framework/vue/examples/2.7-basic"
             },
             {
-              "label": "Nuxt 3",
-              "to": "framework/vue/examples/nuxt3"
+              "label": "Simple (Nuxt 3)",
+              "to": "framework/vue/examples/simple-nuxt3"
+            },
+            {
+              "label": "Simple (Nuxt 4)",
+              "to": "framework/vue/examples/simple-nuxt4"
             },
             {
               "label": "Persister",
               "to": "framework/vue/examples/persister"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/vue/examples/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/vue/examples/default-query-function"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/vue/examples/playground"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/vue/examples/algolia"
+            },
+            {
+              "label": "Shadow DOM",
+              "to": "framework/vue/examples/shadow-dom"
+            },
+            {
+              "label": "Devtools Embedded Panel",
+              "to": "framework/vue/examples/devtools-panel"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/vue/examples/chat"
+            },
+            {
+              "label": "Star Wars (Vue Router)",
+              "to": "framework/vue/examples/star-wars-vue-router"
+            },
+            {
+              "label": "Rick And Morty (Vue Router)",
+              "to": "framework/vue/examples/rick-morty-vue-router"
+            },
+            {
+              "label": "Contacts (TanStack Router)",
+              "to": "framework/vue/examples/contacts-tanstack-router"
+            },
+            {
+              "label": "Contacts (Vue Router)",
+              "to": "framework/vue/examples/contacts-vue-router"
+            },
+            {
+              "label": "Offline Queries and Mutations (TanStack Router)",
+              "to": "framework/vue/examples/offline-tanstack-router"
+            },
+            {
+              "label": "Offline Queries and Mutations (Vue Router)",
+              "to": "framework/vue/examples/offline-vue-router"
+            },
+            {
+              "label": "Suspense",
+              "to": "framework/vue/examples/suspense"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/vue/examples/batching"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime (Nuxt 4)",
+              "to": "framework/vue/examples/auto-refetching-nuxt4"
+            },
+            {
+              "label": "Optimistic Updates (Nuxt 4)",
+              "to": "framework/vue/examples/optimistic-updates-nuxt4"
+            },
+            {
+              "label": "Pagination (Nuxt 4)",
+              "to": "framework/vue/examples/pagination-nuxt4"
+            },
+            {
+              "label": "Load-More & Infinite Scroll (Nuxt 4)",
+              "to": "framework/vue/examples/load-more-infinite-scroll-nuxt4"
+            },
+            {
+              "label": "Infinite query with Max pages (Nuxt 4)",
+              "to": "framework/vue/examples/infinite-query-with-max-pages-nuxt4"
+            },
+            {
+              "label": "Prefetching (Nuxt 4)",
+              "to": "framework/vue/examples/prefetching-nuxt4"
             }
           ]
         },
@@ -6861,32 +7058,80 @@
               "to": "framework/svelte/examples/simple"
             },
             {
-              "label": "Basic",
-              "to": "framework/svelte/examples/basic"
+              "label": "Basic (SvelteKit)",
+              "to": "framework/svelte/examples/basic-sveltekit"
             },
             {
-              "label": "Auto Refetching / Polling / Realtime",
-              "to": "framework/svelte/examples/auto-refetching"
+              "label": "Auto Refetching / Polling / Realtime (SvelteKit)",
+              "to": "framework/svelte/examples/auto-refetching-sveltekit"
             },
             {
-              "label": "SSR",
-              "to": "framework/svelte/examples/ssr"
+              "label": "SSR (SvelteKit)",
+              "to": "framework/svelte/examples/ssr-sveltekit"
             },
             {
-              "label": "Optimistic Updates",
-              "to": "framework/svelte/examples/optimistic-updates"
+              "label": "Optimistic Updates (SvelteKit)",
+              "to": "framework/svelte/examples/optimistic-updates-sveltekit"
             },
             {
-              "label": "Playground",
-              "to": "framework/svelte/examples/playground"
+              "label": "Playground (SvelteKit)",
+              "to": "framework/svelte/examples/playground-sveltekit"
             },
             {
-              "label": "Star Wars",
-              "to": "framework/svelte/examples/star-wars"
+              "label": "Star Wars (SvelteKit)",
+              "to": "framework/svelte/examples/star-wars-sveltekit"
             },
             {
-              "label": "Infinite Queries",
-              "to": "framework/svelte/examples/load-more-infinite-scroll"
+              "label": "Infinite Queries (SvelteKit)",
+              "to": "framework/svelte/examples/load-more-infinite-scroll-sveltekit"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/svelte/examples/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/svelte/examples/default-query-function"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/svelte/examples/algolia"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/svelte/examples/chat"
+            },
+            {
+              "label": "Shadow DOM",
+              "to": "framework/svelte/examples/shadow-dom"
+            },
+            {
+              "label": "Rick And Morty (SvelteKit)",
+              "to": "framework/svelte/examples/rick-morty-sveltekit"
+            },
+            {
+              "label": "SvelteKit",
+              "to": "framework/svelte/examples/sveltekit"
+            },
+            {
+              "label": "Offline Queries and Mutations (SvelteKit)",
+              "to": "framework/svelte/examples/offline-sveltekit"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/svelte/examples/batching"
+            },
+            {
+              "label": "Pagination (SvelteKit)",
+              "to": "framework/svelte/examples/pagination-sveltekit"
+            },
+            {
+              "label": "Infinite query with Max pages (SvelteKit)",
+              "to": "framework/svelte/examples/infinite-query-with-max-pages-sveltekit"
+            },
+            {
+              "label": "Prefetching (SvelteKit)",
+              "to": "framework/svelte/examples/prefetching-sveltekit"
             }
           ]
         },
@@ -6904,6 +7149,66 @@
             {
               "label": "SSR",
               "to": "framework/lit/examples/ssr"
+            },
+            {
+              "label": "Simple",
+              "to": "framework/lit/examples/simple"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/lit/examples/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/lit/examples/default-query-function"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/lit/examples/playground"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/lit/examples/algolia"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/lit/examples/chat"
+            },
+            {
+              "label": "Star Wars (@lit-labs/router)",
+              "to": "framework/lit/examples/star-wars-lit-labs-router"
+            },
+            {
+              "label": "Rick And Morty (@lit-labs/router)",
+              "to": "framework/lit/examples/rick-morty-lit-labs-router"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/lit/examples/batching"
+            },
+            {
+              "label": "Offline Queries and Mutations (@lit-labs/router)",
+              "to": "framework/lit/examples/offline-lit-labs-router"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "framework/lit/examples/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/lit/examples/optimistic-updates"
+            },
+            {
+              "label": "Load-More & Infinite Scroll (@lit-labs/router)",
+              "to": "framework/lit/examples/load-more-infinite-scroll-lit-labs-router"
+            },
+            {
+              "label": "Infinite query with Max pages",
+              "to": "framework/lit/examples/infinite-query-with-max-pages"
+            },
+            {
+              "label": "Prefetching (@lit-labs/router)",
+              "to": "framework/lit/examples/prefetching-lit-labs-router"
             }
           ]
         },
@@ -6943,12 +7248,105 @@
               "to": "framework/angular/examples/rxjs"
             },
             {
-              "label": "Query options from a service",
-              "to": "framework/angular/examples/query-options-from-a-service"
+              "label": "Query options from a service (Angular Router)",
+              "to": "framework/angular/examples/query-options-from-a-service-angular-router"
             },
             {
-              "label": "Devtools embedded panel",
-              "to": "framework/angular/examples/devtools-panel"
+              "label": "Devtools embedded panel (Angular Router)",
+              "to": "framework/angular/examples/devtools-panel-angular-router"
+            }
+          ]
+        },
+        {
+          "label": "preact",
+          "children": [
+            {
+              "label": "Simple",
+              "to": "framework/preact/examples/simple"
+            },
+            {
+              "label": "Basic",
+              "to": "framework/preact/examples/basic"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/preact/examples/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/preact/examples/default-query-function"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/preact/examples/playground"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/preact/examples/algolia"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/preact/examples/chat"
+            },
+            {
+              "label": "Shadow DOM",
+              "to": "framework/preact/examples/shadow-dom"
+            },
+            {
+              "label": "Devtools Embedded Panel",
+              "to": "framework/preact/examples/devtools-panel"
+            },
+            {
+              "label": "Star Wars (preact-iso)",
+              "to": "framework/preact/examples/star-wars-preact-iso"
+            },
+            {
+              "label": "Rick And Morty (preact-iso)",
+              "to": "framework/preact/examples/rick-morty-preact-iso"
+            },
+            {
+              "label": "Offline Queries and Mutations (preact-iso)",
+              "to": "framework/preact/examples/offline-preact-iso"
+            },
+            {
+              "label": "Suspense",
+              "to": "framework/preact/examples/suspense"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/preact/examples/batching"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "framework/preact/examples/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/preact/examples/optimistic-updates"
+            },
+            {
+              "label": "Pagination",
+              "to": "framework/preact/examples/pagination"
+            },
+            {
+              "label": "Load-More & Infinite Scroll (preact-iso)",
+              "to": "framework/preact/examples/load-more-infinite-scroll-preact-iso"
+            },
+            {
+              "label": "Infinite query with Max pages",
+              "to": "framework/preact/examples/infinite-query-with-max-pages"
+            },
+            {
+              "label": "Prefetching (preact-iso)",
+              "to": "framework/preact/examples/prefetching-preact-iso"
+            },
+            {
+              "label": "SSR",
+              "to": "framework/preact/examples/ssr"
+            },
+            {
+              "label": "SSR with streaming",
+              "to": "framework/preact/examples/ssr-streaming"
             }
           ]
         }

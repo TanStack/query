@@ -95,7 +95,7 @@ describe('Zone.js notification integration', () => {
     TestBed.tick()
     await mutation.mutateAsync()
 
-    expect(seenInOnMutate).toEqual(['optimistic'])
+    expect(seenInOnMutate).toStrictEqual(['optimistic'])
   })
 
   it('uses the latest options when restoration ends in the same Zone.js turn', async () => {
@@ -129,7 +129,7 @@ describe('Zone.js notification integration', () => {
     TestBed.tick()
     await TestBed.inject(ApplicationRef).whenStable()
 
-    expect(queriedKeys).toEqual(['new'])
+    expect(queriedKeys).toStrictEqual(['new'])
     expect(query.data()).toBe('new')
     expect(
       queryClient
@@ -158,6 +158,7 @@ describe('Zone.js notification integration', () => {
     await TestBed.inject(ApplicationRef).whenStable()
     expect(fixture.componentInstance.second.data()).toBe('dependent data')
   })
+
   it('renders outside-zone query, multi-query and mutation notifications automatically', async () => {
     @Component({
       template:

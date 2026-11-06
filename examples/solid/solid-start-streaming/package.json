@@ -1,28 +1,27 @@
 {
-  "name": "@tanstack/query-example-solid-start-streaming",
+  "name": "@tanstack/query-example-solid-solid-start-streaming",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vinxi dev",
-    "build": "vinxi build",
-    "start": "vinxi start",
-    "version": "vinxi version",
-    "test:eslint": "eslint ./src"
+    "dev": "vite dev",
+    "build": "vite build",
+    "start": "node .output/server/index.mjs",
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.4",
-    "@solidjs/router": "^0.15.3",
-    "@solidjs/start": "^1.1.3",
-    "@tanstack/solid-query": "^5.104.4",
-    "@tanstack/solid-query-devtools": "^5.104.4",
-    "solid-js": "^1.9.15",
-    "vinxi": "^0.5.3"
-  },
-  "engines": {
-    "node": ">=18"
+    "@solidjs/router": "^1.0.1",
+    "@solidjs/start": "^2.2.0",
+    "@tanstack/solid-query": "^5.106.1",
+    "@tanstack/solid-query-devtools": "^5.106.1",
+    "solid-js": "^1.9.18"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.104.4",
-    "eslint-plugin-solid": "^0.18.1"
+    "@tanstack/eslint-plugin-query": "^5.106.1",
+    "eslint-plugin-solid": "^0.18.1",
+    "nitro": "^3.0.260903-beta",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5"
   }
 }

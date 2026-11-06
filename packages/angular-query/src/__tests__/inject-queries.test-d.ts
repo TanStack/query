@@ -73,6 +73,7 @@ describe('InjectQueries config object overload', () => {
     }))
     expectTypeOf(combined()).toEqualTypeOf<CustomError | null>()
   })
+
   it('preserves custom errors from annotated options without a query-key tag', () => {
     class CustomError extends Error {
       detail = 'detail'
@@ -109,7 +110,7 @@ describe('InjectQueries config object overload', () => {
     queryResults()[0].resource
   })
 
-  it('TData should always be defined when initialData is provided as an object', () => {
+  it('tData should always be defined when initialData is provided as an object', () => {
     const query1 = {
       queryKey: ['key1'],
       queryFn: () => {
@@ -146,7 +147,7 @@ describe('InjectQueries config object overload', () => {
     expectTypeOf(query3Data).toEqualTypeOf<string | undefined>()
   })
 
-  it('TData should be defined when passed through queryOptions', () => {
+  it('tData should be defined when passed through queryOptions', () => {
     const options = queryOptions({
       queryKey: ['key'],
       queryFn: () => {
@@ -186,7 +187,7 @@ describe('InjectQueries config object overload', () => {
     expectTypeOf(query2Data).toEqualTypeOf<boolean | undefined>()
   })
 
-  it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+  it('tData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
     const queryResults = injectQueries(() => ({
       queries: [
         {
@@ -231,7 +232,7 @@ describe('InjectQueries config object overload', () => {
     })
   })
 
-  it('TData should have correct type when conditional skipToken is passed', () => {
+  it('tData should have correct type when conditional skipToken is passed', () => {
     const queryResults = injectQueries(() => ({
       queries: [
         {

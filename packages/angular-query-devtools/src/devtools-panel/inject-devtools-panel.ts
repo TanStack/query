@@ -61,9 +61,10 @@ export const injectDevtoolsPanel: InjectDevtoolsPanel = (
     const {
       client = injectedClient,
       errorTypes = [],
-      theme = 'system',
+      theme,
       styleNonce,
       shadowDOMTarget,
+      hideDisabledQueries,
       onClose,
       hostElement,
     } = queryOptions()
@@ -92,6 +93,7 @@ export const injectDevtoolsPanel: InjectDevtoolsPanel = (
               theme,
               styleNonce,
               shadowDOMTarget,
+              hideDisabledQueries,
               onClose,
               onlineManager,
             })

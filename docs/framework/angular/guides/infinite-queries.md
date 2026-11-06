@@ -102,6 +102,7 @@ export class Example {
 projectsQuery = injectInfiniteQuery(() => ({
   queryKey: ['projects'],
   queryFn: fetchProjects,
+  initialPageParam: 0,
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
 }))

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { InfiniteQueryObserver, QueryClient } from '..'
 import type {
   DefaultError,
@@ -67,14 +67,14 @@ describe('infiniteQueryObserver', () => {
       it('should be required', () => {
         // @ts-expect-error initialPageParam is required
         new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           getNextPageParam: () => 1,
         })
 
         expectTypeOf(
           new InfiniteQueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve('data'),
             initialPageParam: 1,
             getNextPageParam: () => 1,
@@ -84,7 +84,7 @@ describe('infiniteQueryObserver', () => {
 
       it('should widen a literal to its base type', () => {
         const observer = new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           initialPageParam: 1,
           getNextPageParam: () => 1,
@@ -101,14 +101,14 @@ describe('infiniteQueryObserver', () => {
       it('should be required', () => {
         // @ts-expect-error getNextPageParam is required
         new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           initialPageParam: 1,
         })
 
         expectTypeOf(
           new InfiniteQueryObserver(queryClient, {
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve('data'),
             initialPageParam: 1,
             getNextPageParam: () => 1,
@@ -118,7 +118,7 @@ describe('infiniteQueryObserver', () => {
 
       it('should type the pages and page params it is given', () => {
         new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           initialPageParam: 1,
           getNextPageParam: (
@@ -160,7 +160,7 @@ describe('infiniteQueryObserver', () => {
 
       it('should type the pages and page params it is given', () => {
         new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
@@ -236,7 +236,7 @@ describe('infiniteQueryObserver', () => {
     describe('queryFn', () => {
       it('should type the page param of the context it is given', () => {
         new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           initialPageParam: 1,
           getNextPageParam: () => 1,
           queryFn: (context) => {
@@ -248,7 +248,7 @@ describe('infiniteQueryObserver', () => {
 
       it('should type the direction of the context it is given', () => {
         new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           initialPageParam: 1,
           getNextPageParam: () => 1,
           queryFn: (context) => {
@@ -306,7 +306,7 @@ describe('infiniteQueryObserver', () => {
     describe('persister', () => {
       it('should type the page param of the queryFn it is given', () => {
         new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           initialPageParam: 1,
           getNextPageParam: () => 1,
@@ -347,7 +347,7 @@ describe('infiniteQueryObserver', () => {
     describe('select', () => {
       it('should be given the paged data', () => {
         new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
@@ -362,7 +362,7 @@ describe('infiniteQueryObserver', () => {
 
       it('should type the result data as what select returns', () => {
         const observer = new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ count: 1 }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
@@ -663,7 +663,7 @@ describe('infiniteQueryObserver', () => {
 
       it('should pin every flag along with its data and error types', () => {
         const observer = new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
@@ -705,7 +705,7 @@ describe('infiniteQueryObserver', () => {
 
       it('should pin every flag along with its data and error types', () => {
         const observer = new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
@@ -748,7 +748,7 @@ describe('infiniteQueryObserver', () => {
 
       it('should pin every flag along with its data and error types', () => {
         const observer = new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
@@ -805,7 +805,7 @@ describe('infiniteQueryObserver', () => {
 
       it('should pin every flag along with its data and error types', () => {
         const observer = new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
@@ -848,7 +848,7 @@ describe('infiniteQueryObserver', () => {
 
       it('should pin every flag along with its data and error types', () => {
         const observer = new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
@@ -893,7 +893,7 @@ describe('infiniteQueryObserver', () => {
 
       it('should pin every flag along with its data and error types', () => {
         const observer = new InfiniteQueryObserver(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
@@ -993,14 +993,14 @@ describe('infiniteQueryObserver', () => {
   describe('setOptions', () => {
     it('should keep the paged data type in the options it is given', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
       })
 
       observer.setOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1013,7 +1013,7 @@ describe('infiniteQueryObserver', () => {
       })
 
       observer.setOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         initialPageParam: 1,
         getNextPageParam: () => 1,
         // @ts-expect-error the queryFn must return the observed page data type
@@ -1023,7 +1023,7 @@ describe('infiniteQueryObserver', () => {
 
     it('should return void', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1036,7 +1036,7 @@ describe('infiniteQueryObserver', () => {
   describe('options', () => {
     it('should leave the page param of the queryFn context unknown', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1052,7 +1052,7 @@ describe('infiniteQueryObserver', () => {
 
     it('should expose the paged data type through the options it holds', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1070,7 +1070,7 @@ describe('infiniteQueryObserver', () => {
   describe('getOptimisticResult', () => {
     it('should be typed from the options it is given', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1083,7 +1083,7 @@ describe('infiniteQueryObserver', () => {
         Array<string>,
         number
       > = {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1102,7 +1102,7 @@ describe('infiniteQueryObserver', () => {
 
     it('should require the options that are always defaulted', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1134,7 +1134,7 @@ describe('infiniteQueryObserver', () => {
   describe('getCurrentResult', () => {
     it('should be typed from the observed types', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1153,7 +1153,7 @@ describe('infiniteQueryObserver', () => {
         { value: string },
         CustomError
       >(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1171,7 +1171,7 @@ describe('infiniteQueryObserver', () => {
   describe('getCurrentQuery', () => {
     it('should carry the paged data into the query state', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1184,7 +1184,7 @@ describe('infiniteQueryObserver', () => {
 
     it('should type the fetchMeta of the query state as the fetch direction', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1199,7 +1199,7 @@ describe('infiniteQueryObserver', () => {
   describe('fetchNextPage', () => {
     it('should resolve with the infinite result type', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1215,7 +1215,7 @@ describe('infiniteQueryObserver', () => {
 
     it('should only accept FetchNextPageOptions', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1233,7 +1233,7 @@ describe('infiniteQueryObserver', () => {
   describe('fetchPreviousPage', () => {
     it('should resolve with the infinite result type', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1249,7 +1249,7 @@ describe('infiniteQueryObserver', () => {
 
     it('should only accept FetchPreviousPageOptions', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1267,7 +1267,7 @@ describe('infiniteQueryObserver', () => {
   describe('refetch', () => {
     it('should resolve with the base result rather than the infinite one', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1285,7 +1285,7 @@ describe('infiniteQueryObserver', () => {
   describe('subscribe', () => {
     it('should infer the infinite result type in the listener', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1303,7 +1303,7 @@ describe('infiniteQueryObserver', () => {
 
     it('should return an unsubscribe function', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -1316,7 +1316,7 @@ describe('infiniteQueryObserver', () => {
   describe('trackResult', () => {
     it('should widen the infinite result it is given to the base result', () => {
       const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,

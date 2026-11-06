@@ -7,8 +7,7 @@ const vueQueryOptions: VueQueryPluginOptions = {
   queryClientConfig: {
     defaultOptions: {
       queries: {
-        gcTime: 1000 * 60 * 60 * 24,
-        // staleTime: 1000 * 10,
+        gcTime: 24 * 60 * 60 * 1000,
       },
     },
   },

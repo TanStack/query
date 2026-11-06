@@ -48,11 +48,11 @@ describe('server client defaults', () => {
         provideTanStackQuery(() => new QueryClient()),
       ],
     })
-    expect(TestBed.inject(QueryClient).getDefaultOptions()).toEqual({
+    expect(TestBed.inject(QueryClient).getDefaultOptions()).toStrictEqual({
       queries: { gcTime: Infinity, retry: false },
       mutations: { gcTime: Infinity },
     })
-    expect(unrelated.getDefaultOptions()).toEqual({})
+    expect(unrelated.getDefaultOptions()).toStrictEqual({})
   })
 
   it('preserves explicit server client defaults', () => {
@@ -71,7 +71,7 @@ describe('server client defaults', () => {
         ),
       ],
     })
-    expect(TestBed.inject(QueryClient).getDefaultOptions()).toEqual({
+    expect(TestBed.inject(QueryClient).getDefaultOptions()).toStrictEqual({
       queries: { gcTime: 1000, retry: 1, staleTime: 30000 },
       mutations: { gcTime: 2000 },
     })

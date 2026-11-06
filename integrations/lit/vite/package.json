@@ -1,0 +1,18 @@
+{
+  "name": "@tanstack/query-integration-lit-vite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/lit-query": "workspace:*",
+    "@tanstack/query-core": "workspace:*",
+    "lit": "^3.3.3",
+    "vite": "^8.3.5"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}

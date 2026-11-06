@@ -136,7 +136,8 @@ The pages under `docs/framework/*/reference` are generated from the JSDoc in eac
 pnpm run generate-docs
 ```
 
-Note that the generated pages link to source with line numbers, so they can fall out of date even when a change leaves the JSDoc alone — adding a line near the top of a file shifts every symbol below it. Re-run the script if you are unsure.
+> [!WARNING]
+> Do NOT run this script as part of your Pull Request. Documentation changes will automatically re-sync once your PR has been merged.
 
 ### Running examples
 

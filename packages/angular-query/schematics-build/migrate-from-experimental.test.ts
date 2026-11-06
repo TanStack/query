@@ -59,7 +59,7 @@ function unrelated(provide: any, client: any) { provide(new Client()); client();
     expect(output).toContain(`${devtoolsPackage.name}/production`)
     expect(
       JSON.parse(result.readContent('/package.json')).dependencies,
-    ).toEqual({
+    ).toStrictEqual({
       [packageJson.name]: `^${packageJson.version}`,
       [devtoolsPackage.name]: `^${devtoolsPackage.version}`,
     })
@@ -328,7 +328,7 @@ provideTanStackQuery(new core.QueryClient());
     )
     expect(
       JSON.parse(result.readContent('/package.json')).dependencies,
-    ).toEqual({ [packageJson.name]: `^${packageJson.version}` })
+    ).toStrictEqual({ [packageJson.name]: `^${packageJson.version}` })
   })
 
   it.each([
@@ -360,7 +360,7 @@ provideTanStackQuery(new core.QueryClient());
       expect(result.readContent(`/${path}`)).toBe(source)
       expect(
         JSON.parse(result.readContent('/package.json')).dependencies,
-      ).toEqual({
+      ).toStrictEqual({
         '@tanstack/query-core': '^5',
         [packageJson.name]: `^${packageJson.version}`,
       })
@@ -431,7 +431,7 @@ query.${helper}(${args});`)
 ${helper}(${args});
 function unrelated(${helper}: any) { ${helper}(options, { injector }); }`)
         await runner.runSchematic('migrate-from-experimental', {}, tree)
-        expect(warnings).toEqual([])
+        expect(warnings).toStrictEqual([])
       },
     )
 
@@ -729,8 +729,10 @@ injectMutation(() => condition ? { throwOnError: true } : ({ throwOnError: true 
     const text = result.readContent('/package.json')
     const pkg = JSON.parse(text)
     expect(text).toContain('    "name": "library",\r\n')
-    expect(pkg.peerDependencies).toEqual({ [packageJson.name]: '~99.0.0' })
-    expect(pkg.optionalDependencies).toEqual({
+    expect(pkg.peerDependencies).toStrictEqual({
+      [packageJson.name]: '~99.0.0',
+    })
+    expect(pkg.optionalDependencies).toStrictEqual({
       [packageJson.name]: `^${packageJson.version}`,
     })
     expect(warnings.join('\n')).toContain('Rename peerDependenciesMeta')
@@ -844,7 +846,7 @@ injectMutation(() => condition ? { throwOnError: true } : ({ throwOnError: true 
     expect(
       JSON.parse(result.readContent('/projects/lib/package.json'))
         .peerDependencies,
-    ).toEqual({
+    ).toStrictEqual({
       [packageJson.name]: `^${packageJson.version}`,
       [devtoolsPackage.name]: `^${devtoolsPackage.version}`,
     })
@@ -871,6 +873,7 @@ injectMutation(() => condition ? { throwOnError: true } : ({ throwOnError: true 
       const legacy = `import { QueryClient } from '@tanstack/angular-query-experimental';`
       const { runner, tree, warnings } = setup(legacy)
       tree.create('/nx.json', '{}')
+      // oxlint-disable-next-line vitest-js/no-conditional-in-test -- The parameter selects setup/actions; every case runs the assertions.
       if (angularWorkspace)
         tree.create(
           '/angular.json',
@@ -937,7 +940,7 @@ export type { QueryKey } from '@tanstack/query-core';`,
       expect(
         JSON.parse(result.readContent('/libs/data/package.json'))
           .peerDependencies,
-      ).toEqual({
+      ).toStrictEqual({
         [packageJson.name]: '^5.1.0',
         [devtoolsPackage.name]: `^${devtoolsPackage.version}`,
       })
@@ -1044,7 +1047,7 @@ import { sha3_256 } from '@noble/hashes/sha3.js';`,
     expect(
       JSON.parse(result.readContent('/packages/shared/package.json'))
         .peerDependencies,
-    ).toEqual({ [packageJson.name]: `^${packageJson.version}` })
+    ).toStrictEqual({ [packageJson.name]: `^${packageJson.version}` })
   })
 
   it('keeps a root core dependency used by an excluded nested library source', async () => {
@@ -1075,7 +1078,7 @@ import { sha3_256 } from '@noble/hashes/sha3.js';`,
     )
     expect(
       JSON.parse(result.readContent('/package.json')).dependencies,
-    ).toEqual({
+    ).toStrictEqual({
       '@tanstack/query-core': '^5',
       [packageJson.name]: `^${packageJson.version}`,
     })
@@ -1107,6 +1110,7 @@ import { sha3_256 } from '@noble/hashes/sha3.js';`,
     )
     expect(runner.tasks).toHaveLength(0)
   })
+
   it('reports panel injector arguments and the removed panel options type', async () => {
     const { runner, tree, warnings } =
       setup(`import { injectDevtoolsPanel as panel, type InjectDevtoolsPanelOptions } from '@tanstack/angular-query-experimental/devtools-panel';
@@ -1151,7 +1155,9 @@ provideAngularQuery(new QueryClient());`,
         {},
         tree,
       )
-      expect(JSON.parse(result.readContent('/package.json'))[type]).toEqual({
+      expect(
+        JSON.parse(result.readContent('/package.json'))[type],
+      ).toStrictEqual({
         [packageJson.name]: `^${packageJson.version}`,
         [devtoolsPackage.name]: `${versioned ? '' : '^'}${devtoolsPackage.version}`,
       })
@@ -1195,7 +1201,7 @@ provideAngularQuery(new QueryClient());`,
     )
     expect(
       JSON.parse(result.readContent('/package.json')).dependencies,
-    ).toEqual({ [packageJson.name]: packageJson.version })
+    ).toStrictEqual({ [packageJson.name]: packageJson.version })
     expect(runner.tasks).toHaveLength(0)
   })
 
@@ -1253,7 +1259,7 @@ provideAngularQuery(new QueryClient());`,
     )
     expect(
       JSON.parse(result.readContent('/package.json')).dependencies,
-    ).toEqual({
+    ).toStrictEqual({
       [packageJson.name]: `${exact ? '' : '^'}${packageJson.version}`,
       [devtoolsPackage.name]: `${exact ? '' : '^'}${devtoolsPackage.version}`,
     })
@@ -1281,7 +1287,7 @@ provideAngularQuery(new QueryClient());`,
       )
       expect(
         JSON.parse(result.readContent('/package.json')).dependencies,
-      ).toEqual({
+      ).toStrictEqual({
         [packageJson.name]: packageJson.version,
         [devtoolsPackage.name]: devtoolsPackage.version,
       })
@@ -1327,7 +1333,7 @@ provideAngularQuery(new QueryClient());`,
     )
     expect(
       JSON.parse(result.readContent('/package.json')).devDependencies,
-    ).toEqual({ [packageJson.name]: packageJson.version })
+    ).toStrictEqual({ [packageJson.name]: packageJson.version })
   })
 
   it('keeps existing stable and devtools version specifiers', async () => {
@@ -1351,7 +1357,7 @@ provideAngularQuery(new QueryClient());`,
     )
     expect(
       JSON.parse(result.readContent('/package.json')).dependencies,
-    ).toEqual({
+    ).toStrictEqual({
       [packageJson.name]: '~99.0.0',
       [devtoolsPackage.name]: '99.0.0',
     })
@@ -1513,6 +1519,7 @@ describe('project-local test configurations', () => {
           exclude: ['src/excluded.spec.ts'],
         }),
       )
+      // oxlint-disable-next-line vitest-js/no-conditional-in-test -- The parameter selects setup/actions; every case runs the assertions.
       if (solution) {
         tree.create(
           '/tsconfig.json',
@@ -1558,6 +1565,7 @@ describe('project-local test configurations', () => {
       const root = metadataFirst ? '' : 'projects/lib'
       const prefix = root ? `/${root}` : ''
       const manifest = JSON.stringify({ nx: { tags: ['scope:lib'] } })
+      // oxlint-disable-next-line vitest-js/no-conditional-in-test -- The parameter selects setup/actions; every case runs the assertions.
       if (metadataFirst) tree.overwrite('/package.json', manifest)
       tree.create(
         `${prefix}/project.json`,
@@ -1577,6 +1585,7 @@ describe('project-local test configurations', () => {
           },
         }),
       )
+      // oxlint-disable-next-line vitest-js/no-conditional-in-test -- The parameter selects setup/actions; every case runs the assertions.
       if (!metadataFirst) tree.create(`${prefix}/package.json`, manifest)
       tree.create(
         `${prefix}/tsconfig.lib.json`,

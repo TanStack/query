@@ -13,7 +13,7 @@ import type { Signal } from '@angular/core'
  * @returns signal with number of loading or fetching queries.
  */
 export function injectIsFetching(
-  filters: () => QueryFilters = () => ({}),
+  filters: () => Omit<QueryFilters, 'fetchStatus'> = () => ({}),
 ): Signal<number> {
   if (typeof ngDevMode === 'undefined' || ngDevMode) {
     assertInInjectionContext(injectIsFetching)

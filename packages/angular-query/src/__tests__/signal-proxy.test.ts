@@ -17,14 +17,14 @@ describe('signalProxy', () => {
     const source = signal({ value: 'data', falsy: false, zero: 0 })
     const proxy = signalProxy(source, ['value', 'falsy', 'zero'])
 
-    expect(Object.keys(proxy)).toEqual(['value', 'falsy', 'zero'])
+    expect(Object.keys(proxy)).toStrictEqual(['value', 'falsy', 'zero'])
     expect('value' in proxy).toBe(true)
     expect('falsy' in proxy).toBe(true)
     expect('zero' in proxy).toBe(true)
     expect('missing' in proxy).toBe(false)
     expect(Object.hasOwn(proxy, 'missing')).toBe(false)
     expect(Reflect.get(proxy, 'then')).toBeUndefined()
-    expect(await Promise.resolve(proxy)).toBe(proxy)
+    await expect(Promise.resolve(proxy)).resolves.toBe(proxy)
   })
 
   it('should have computed fields', () => {

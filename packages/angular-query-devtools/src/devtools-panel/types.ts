@@ -25,8 +25,9 @@ export interface DevtoolsPanelOptions {
    */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * The theme of the devtools panel.
-   * @default 'system'
+   * The theme of the devtools panel. Overrides the theme selected in the devtools
+   * Settings menu. When omitted, the selected theme is used, or `'system'` if none
+   * is selected.
    */
   theme?: Theme
   /**
@@ -38,6 +39,10 @@ export interface DevtoolsPanelOptions {
    * within the shadow DOM instead of within the head tag in the light DOM.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * Set this to true to hide disabled queries from the devtools panel.
+   */
+  hideDisabledQueries?: boolean
 
   /**
    * Callback function that is called when the devtools panel is closed

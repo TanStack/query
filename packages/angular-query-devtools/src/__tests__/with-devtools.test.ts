@@ -20,39 +20,44 @@ import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
+  TanstackQueryDevtools,
   Theme,
 } from '@tanstack/query-devtools'
+import type { WritableSignal } from '@angular/core'
 import type { DevtoolsOptions } from '../types'
 
 const { mockDevtoolsInstance, mockTanstackQueryDevtools } = vi.hoisted(() => {
   const instance = {
-    mount: vi.fn(),
-    unmount: vi.fn(),
-    setClient: vi.fn(),
-    setPosition: vi.fn(),
-    setErrorTypes: vi.fn(),
-    setButtonPosition: vi.fn(),
-    setInitialIsOpen: vi.fn(),
-    setTheme: vi.fn(),
+    mount: vi.fn<TanstackQueryDevtools['mount']>(),
+    unmount: vi.fn<TanstackQueryDevtools['unmount']>(),
+    setClient: vi.fn<TanstackQueryDevtools['setClient']>(),
+    setPosition: vi.fn<TanstackQueryDevtools['setPosition']>(),
+    setErrorTypes: vi.fn<TanstackQueryDevtools['setErrorTypes']>(),
+    setButtonPosition: vi.fn<TanstackQueryDevtools['setButtonPosition']>(),
+    setInitialIsOpen: vi.fn<TanstackQueryDevtools['setInitialIsOpen']>(),
+    setTheme: vi.fn<TanstackQueryDevtools['setTheme']>(),
   }
 
   return {
     mockDevtoolsInstance: instance,
-    mockTanstackQueryDevtools: vi.fn(function MockTanstackQueryDevtools() {
-      return instance
-    }),
+    mockTanstackQueryDevtools: vi.fn<() => typeof instance>(
+      function MockTanstackQueryDevtools() {
+        return instance
+      },
+    ),
   }
 })
 
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- The mock cannot implement the devtools class's private fields.
 vi.mock('@tanstack/query-devtools', () => ({
   TanstackQueryDevtools: mockTanstackQueryDevtools,
 }))
 
-vi.mock('@angular/core', async () => {
+vi.mock(import('@angular/core'), async () => {
   const actual = await vi.importActual('@angular/core')
   return {
     ...actual,
-    isDevMode: vi.fn(),
+    isDevMode: vi.fn<() => boolean>(),
   }
 })
 
@@ -505,7 +510,7 @@ describe('withDevtools feature', () => {
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await TestBed.inject(ApplicationRef).whenStable()
 
-    expect(mockTanstackQueryDevtools).toHaveBeenCalled()
+    expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(1)
     expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
     expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(0)
 
@@ -589,7 +594,9 @@ describe('withDevtools feature', () => {
       const secondService = { value: 'second' }
       const firstServiceToken = new InjectionToken('FirstService')
       const secondServiceToken = new InjectionToken('SecondService')
-      const withDevtoolsFn = vi.fn(() => {
+      const withDevtoolsFn = vi.fn<
+        () => { loadDevtools: boolean; initialIsOpen: boolean }
+      >(() => {
         const first = inject(firstServiceToken)
         const second = inject(secondServiceToken)
 
@@ -614,7 +621,7 @@ describe('withDevtools feature', () => {
       TestBed.inject(ENVIRONMENT_INITIALIZER)
       await TestBed.inject(ApplicationRef).whenStable()
 
-      expect(withDevtoolsFn).toHaveBeenCalled()
+      expect(withDevtoolsFn).toHaveBeenCalledWith()
       expect(mockTanstackQueryDevtools).toHaveBeenCalledWith(
         expect.objectContaining({ initialIsOpen: true }),
       )
@@ -626,7 +633,12 @@ describe('withDevtools feature', () => {
         position = signal<DevtoolsPosition>('bottom')
       }
 
-      const withDevtoolsFn = vi.fn(() => {
+      const withDevtoolsFn = vi.fn<
+        () => {
+          loadDevtools: WritableSignal<boolean>
+          position: WritableSignal<DevtoolsPosition>
+        }
+      >(() => {
         const service = inject(ReactiveService)
         return {
           loadDevtools: service.enabled,

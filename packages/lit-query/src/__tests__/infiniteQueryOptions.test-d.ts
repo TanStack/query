@@ -4,7 +4,7 @@ import {
   dataTagSymbol,
   skipToken,
 } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
@@ -21,7 +21,7 @@ describe('infiniteQueryOptions', () => {
   it('should not allow excess properties', () => {
     assertType(
       infiniteQueryOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve('data'),
         getNextPageParam: () => 1,
         initialPageParam: 1,
@@ -33,7 +33,7 @@ describe('infiniteQueryOptions', () => {
 
   it('should infer types for callbacks', () => {
     infiniteQueryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve('data'),
       staleTime: 1000,
       getNextPageParam: () => 1,
@@ -48,7 +48,7 @@ describe('infiniteQueryOptions', () => {
     const infinite = createInfiniteQueryController(
       new Host(),
       infiniteQueryOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         initialPageParam: 0,
         queryFn: () => Promise.resolve({ page: 1 }),
         getNextPageParam: (lastPage) => lastPage.page + 1,
@@ -65,7 +65,7 @@ describe('infiniteQueryOptions', () => {
     const infinite = createInfiniteQueryController(
       new Host(),
       infiniteQueryOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve('string'),
         getNextPageParam: () => 1,
         initialPageParam: 1,
@@ -79,7 +79,7 @@ describe('infiniteQueryOptions', () => {
 
   it('should work when passed to infiniteQuery', async () => {
     const options = infiniteQueryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve('data'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -91,7 +91,7 @@ describe('infiniteQueryOptions', () => {
 
   it('should work when passed to infiniteQuery with select', async () => {
     const options = infiniteQueryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve('data'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -104,7 +104,7 @@ describe('infiniteQueryOptions', () => {
 
   it('should work when passed to infiniteQuery with enabled: false', async () => {
     const options = infiniteQueryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve('data'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -117,7 +117,7 @@ describe('infiniteQueryOptions', () => {
 
   it('should work when passed to infiniteQuery with skipToken', async () => {
     const options = infiniteQueryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: skipToken,
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -129,7 +129,7 @@ describe('infiniteQueryOptions', () => {
 
   it('should tag the queryKey with the result type of the QueryFn', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       initialPageParam: 0,
       queryFn: () => Promise.resolve({ page: 3 }),
       getNextPageParam: (lastPage) => lastPage.page + 1,
@@ -143,7 +143,7 @@ describe('infiniteQueryOptions', () => {
 
   it('should tag the queryKey even if no promise is returned', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => 'string',
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -154,7 +154,7 @@ describe('infiniteQueryOptions', () => {
 
   it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve('string'),
       select: (data) => data.pages,
       getNextPageParam: () => 1,
@@ -166,7 +166,7 @@ describe('infiniteQueryOptions', () => {
 
   it('should return the proper type when passed to getQueryData', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       initialPageParam: 0,
       queryFn: () => Promise.resolve({ page: 3 }),
       getNextPageParam: (lastPage) => lastPage.page + 1,
@@ -180,7 +180,7 @@ describe('infiniteQueryOptions', () => {
 
   it('should properly type when passed to setQueryData', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       initialPageParam: 0,
       queryFn: () => Promise.resolve({ page: 3 }),
       getNextPageParam: (lastPage) => lastPage.page + 1,
@@ -212,7 +212,7 @@ describe('infiniteQueryOptions', () => {
   it('should not be allowed to be passed to non-infinite query functions', () => {
     const queryClient = new QueryClient()
     const options = infiniteQueryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -226,7 +226,7 @@ describe('infiniteQueryOptions', () => {
   it('should allow optional initialData function', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => initialData,
       initialData: initialData
         ? () => ({ pages: [initialData], pageParams: [] })
@@ -244,7 +244,7 @@ describe('infiniteQueryOptions', () => {
   it('should allow optional initialData object', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => initialData,
       initialData: initialData
         ? { pages: [initialData], pageParams: [] }

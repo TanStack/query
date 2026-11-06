@@ -212,5 +212,5 @@ options and do not accept signals.
 - `hideDisabledQueries?: boolean`
   - Set this to true to hide disabled queries from the devtools panel.
 - `theme?: "light" | "dark" | "system"`
-  - Defaults to `system`.
-  - Sets the theme of the devtools panel.
+  - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
+  - Sets the theme of the devtools panel, overriding the Settings menu selection.

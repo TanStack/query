@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-query'
 
 import { useAppState } from './src/hooks/useAppState'
+import { Devtools } from './src/components/Devtools'
 import { MoviesStack } from './src/navigation/MoviesStack'
 import { useOnlineManager } from './src/hooks/useOnlineManager'
 import type { AppStateStatus } from 'react-native'
@@ -33,6 +34,7 @@ export default function App() {
       <NavigationContainer>
         <MoviesStack />
       </NavigationContainer>
+      <Devtools />
     </QueryClientProvider>
   )
 }
