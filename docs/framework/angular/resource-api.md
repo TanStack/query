@@ -3,6 +3,9 @@ id: resource-api
 title: Resource API
 ---
 
+> IMPORTANT: `toResource` is experimental. Its API may change in minor and patch releases.
+> Pin `@tanstack/angular-query` to an exact version when using this feature.
+
 Angular Query can convert any query result into an Angular
 [`Resource`](https://angular.dev/api/core/Resource)-compatible view with `toResource`. The query
 remains responsible for fetching and caching the server state while Angular APIs can consume the

@@ -34,6 +34,9 @@ type QueryResourceSource<TValue> = {
 /**
  * Converts an Angular Query result into Angular's Resource interface.
  *
+ * Warning: experimental feature. The API may change in minor and patch releases.
+ * Pin your package version to an exact version when using this feature.
+ *
  * Call this function once and reuse the returned resource.
  * @param query - An Angular Query or infinite-query result.
  * @returns A Resource-compatible view of the query result.
