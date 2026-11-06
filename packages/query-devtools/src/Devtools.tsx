@@ -1564,11 +1564,21 @@ export const ContentView: Component<ContentViewProps> = (props) => {
         </Show>
       </div>
       <Show when={selectedView() === 'queries' && selectedQueryHash()}>
-        <QueryDetails />
+        <QueryDetails
+          initialSearch={
+            filterScope() === 'data' ? props.localStore.filter : undefined
+          }
+        />
       </Show>
 
       <Show when={selectedView() === 'mutations' && selectedMutationId()}>
-        <MutationDetails />
+        <MutationDetails
+          initialSearch={
+            filterScope() === 'data'
+              ? props.localStore.mutationFilter
+              : undefined
+          }
+        />
       </Show>
     </>
   )
@@ -1958,7 +1968,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
   )
 }
 
-const QueryDetails = () => {
+const QueryDetails = (props: { initialSearch?: string }) => {
   const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsState()
 
   const theme = useTheme()
@@ -2397,6 +2407,7 @@ const QueryDetails = () => {
           >
             <SearchableExplorer
               searchKey={activeQuery()}
+              initialSearch={props.initialSearch}
               label="Data"
               defaultExpanded={['Data']}
               value={activeQueryStateData()}
@@ -2491,7 +2502,7 @@ const QueryDetails = () => {
   )
 }
 
-const MutationDetails = () => {
+const MutationDetails = (props: { initialSearch?: string }) => {
   const { selectedMutationId } = useDevtoolsState()
 
   const theme = useTheme()
@@ -2653,6 +2664,7 @@ const MutationDetails = () => {
         >
           <SearchableExplorer
             searchKey={activeMutation()}
+            initialSearch={props.initialSearch}
             label="Data"
             defaultExpanded={['Data']}
             value={activeMutation()!.state.data}

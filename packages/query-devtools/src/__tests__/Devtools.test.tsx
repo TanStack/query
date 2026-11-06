@@ -1359,6 +1359,55 @@ describe('Devtools', () => {
         [...CSS.highlights.values()].every((highlight) => highlight.size === 0),
       ).toBe(true)
     })
+
+    it('should start the query Data search with the filter only when the filter scope is data', () => {
+      queryClient.setQueryData(['seed-first'], { name: 'first needle' })
+      queryClient.setQueryData(['seed-second'], { name: 'second needle' })
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'data' },
+      )
+      fireEvent.input(rendered.getByLabelText('Filter queries by query data'), {
+        target: { value: 'Needle' },
+      })
+      fireEvent.click(rendered.getByLabelText('Query key ["seed-first"]'))
+      const search = rendered.getByLabelText('Search data')
+      expect(search).toHaveValue('Needle')
+      expect(rendered.getByLabelText('name:')).toHaveAttribute(
+        'data-search-match',
+        'true',
+      )
+      fireEvent.input(search, { target: { value: 'first' } })
+      fireEvent.click(rendered.getByLabelText('Query key ["seed-second"]'))
+      expect(search).toHaveValue('Needle')
+
+      fireEvent.click(
+        rendered.getByRole('button', { name: 'Filter scope: Data' }),
+      )
+      fireEvent.click(rendered.getByLabelText('Query key ["seed-first"]'))
+      expect(rendered.getByLabelText('Search data')).toHaveValue('')
+    })
+
+    it('should start the mutation Data search with the filter when the filter scope is data', async () => {
+      await queryClient
+        .getMutationCache()
+        .build(queryClient, {
+          mutationKey: ['seed'],
+          mutationFn: () => Promise.resolve({ name: 'mutation needle' }),
+        })
+        .execute(undefined)
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'data' },
+      )
+      fireEvent.click(rendered.getByText('Mutations'))
+      fireEvent.input(
+        rendered.getByLabelText('Filter mutations by variables or data'),
+        { target: { value: 'needle' } },
+      )
+      fireEvent.click(rendered.getByLabelText(/^Mutation submitted at /))
+      expect(rendered.getByLabelText('Search data')).toHaveValue('needle')
+    })
   })
 
   describe('query details', () => {
