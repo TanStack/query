@@ -6,6 +6,7 @@ import type {
 } from './infiniteQueryOptions'
 import type {
   DefaultError,
+  DefinedInfiniteQueryObserverResult,
   InfiniteData,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
@@ -78,6 +79,17 @@ export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
 >
 
 /**
+ * The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined` (unless a `select`
+ * changes `TData` to include `undefined`).
+ */
+export type UseInfiniteQueryDefinedReturnType<TData, TError> =
+  UseBaseQueryReturnType<
+    TData,
+    TError,
+    DefinedInfiniteQueryObserverResult<TData, TError>
+  >
+
+/**
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
@@ -141,7 +153,7 @@ export function useInfiniteQuery<
     >
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryReturnType<TData, TError>
+): UseInfiniteQueryDefinedReturnType<TData, TError>
 
 /**
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
