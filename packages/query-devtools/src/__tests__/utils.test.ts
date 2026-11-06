@@ -1,3 +1,4 @@
+import { runInNewContext } from 'node:vm'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, QueryObserver } from '@tanstack/query-core'
 import { createRoot } from 'solid-js'
@@ -25,6 +26,77 @@ import type {
 } from '@tanstack/query-core'
 
 describe('Utils tests', () => {
+  describe.each([
+    {
+      realm: 'local',
+      createDate: (): unknown =>
+        Object.assign(new Date('2026-01-01'), { text: 'needle' }),
+      createData: (): unknown => ({
+        nested: { text: 'needle', kept: true },
+        get unread() {
+          throw new Error('Do not read')
+        },
+      }),
+      createAccessor: (): unknown => ({
+        get unread() {
+          throw new Error('Do not read')
+        },
+      }),
+    },
+    {
+      realm: 'foreign',
+      createDate: (): unknown =>
+        runInNewContext(
+          "Object.assign(new Date('2026-01-01'), { text: 'needle' })",
+        ),
+      createData: (): unknown =>
+        runInNewContext(
+          "({ nested: { text: 'needle', kept: true }, get unread() { throw new Error('Do not read') } })",
+        ),
+      createAccessor: (): unknown =>
+        runInNewContext(
+          "({ get unread() { throw new Error('Do not read') } })",
+        ),
+    },
+  ])('$realm object edits', ({ createDate, createData, createAccessor }) => {
+    it('preserves Date values when editing or deleting an own field', () => {
+      const value = createDate()
+      expect(updateNestedDataByPath(value, ['text'], 'edited')).toBe(value)
+      expect(deleteNestedDataByPath(value, ['text'])).toBe(value)
+      expect(Date.prototype.getTime.call(value)).toBe(1767225600000)
+      expect(Object.getOwnPropertyDescriptor(value, 'text')?.value).toBe(
+        'needle',
+      )
+    })
+
+    it('edits and deletes data fields without reading sibling getters', () => {
+      const value = createData()
+      const edited = updateNestedDataByPath(value, ['nested', 'text'], 'edited')
+      expect(edited.nested.text).toBe('edited')
+      expect(edited.nested.kept).toBe(true)
+      expect(Object.getOwnPropertyDescriptor(edited, 'unread')?.get).toBe(
+        Object.getOwnPropertyDescriptor(value, 'unread')?.get,
+      )
+      const deleted = deleteNestedDataByPath(value, ['nested', 'text'])
+      expect(Object.hasOwn(deleted.nested, 'text')).toBe(false)
+      expect(deleted.nested.kept).toBe(true)
+      expect(Object.getOwnPropertyDescriptor(deleted, 'unread')?.get).toBe(
+        Object.getOwnPropertyDescriptor(value, 'unread')?.get,
+      )
+      expect(Object.getOwnPropertyDescriptor(value, 'nested')?.value.text).toBe(
+        'needle',
+      )
+    })
+
+    it('does not evaluate accessors on the edited path', () => {
+      const value = createAccessor()
+      expect(updateNestedDataByPath(value, ['unread', 'text'], 'edited')).toBe(
+        value,
+      )
+      expect(deleteNestedDataByPath(value, ['unread', 'text'])).toBe(value)
+    })
+  })
+
   describe('updatedNestedDataByPath', () => {
     describe('array', () => {
       it('should update data correctly', () => {

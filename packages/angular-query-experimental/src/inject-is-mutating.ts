@@ -45,7 +45,7 @@ export interface InjectIsMutatingOptions {
  * ```
  */
 export function injectIsMutating(
-  filters?: MutationFilters,
+  filters?: Omit<MutationFilters, 'status'>,
   options?: InjectIsMutatingOptions,
 ): Signal<number> {
   !options?.injector && assertInInjectionContext(injectIsMutating)

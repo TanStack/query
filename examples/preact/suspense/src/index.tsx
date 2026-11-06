@@ -1,4 +1,3 @@
-import 'font-awesome/css/font-awesome.min.css'
 import { render } from 'preact'
 import { Suspense, lazy } from 'preact/compat'
 import { useState } from 'preact/hooks'

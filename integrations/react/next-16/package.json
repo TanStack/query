@@ -9,7 +9,7 @@
     "@js-temporal/polyfill": "^0.5.1",
     "@tanstack/react-query": "workspace:*",
     "@tanstack/react-query-devtools": "workspace:*",
-    "next": "^16.0.7",
+    "next": "^16.4.4",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tupleson": "0.23.1"
