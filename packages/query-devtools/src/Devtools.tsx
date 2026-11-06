@@ -53,7 +53,7 @@ import {
   XCircle,
 } from './icons'
 import Explorer, { SearchableExplorer } from './Explorer'
-import { hasExplorerMatch } from './explorerSearch'
+import { createSearchText } from './explorerSearch'
 import { VirtualList } from './VirtualList'
 import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
 import {
@@ -797,22 +797,23 @@ export const ContentView: Component<ContentViewProps> = (props) => {
       (event.action.type === 'success' || event.action.type === 'setState'),
   )
 
-  // Data is replaced rather than mutated, so a result stays valid while the data reference does
-  const dataMatchCache = new WeakMap<
-    Query,
-    { data: unknown; term: string; matched: boolean }
-  >()
+  // Data is replaced rather than mutated, so a search text stays valid while the data reference does
+  const dataTexts = new WeakMap<object, string>()
 
-  const matchesQueryData = (query: Query, term: string) => {
-    const data = query.state.data
-    const cached = dataMatchCache.get(query)
-    if (cached && cached.data === data && cached.term === term) {
-      return cached.matched
+  const getDataText = (data: unknown, deadline = Infinity) => {
+    if (typeof data !== 'object' || data === null) return createSearchText(data)
+    let text = dataTexts.get(data)
+    if (text === undefined && performance.now() < deadline) {
+      text = createSearchText(data)
+      dataTexts.set(data, text)
     }
-    const matched = data !== undefined && hasExplorerMatch(data, term)
-    dataMatchCache.set(query, { data, term, matched })
-    return matched
+    return text
   }
+
+  // Bumped to filter again once the next search texts are built in a later task
+  const [dataTextsVersion, setDataTextsVersion] = createSignal(0)
+  let dataTextsTimeout: ReturnType<typeof setTimeout> | undefined
+  onCleanup(() => clearTimeout(dataTextsTimeout))
 
   const queries = createMemo(
     on(
@@ -821,21 +822,39 @@ export const ContentView: Component<ContentViewProps> = (props) => {
         props.localStore.filter,
         filterScope(),
         queryDataVersion(),
+        dataTextsVersion(),
         sort(),
         sortOrder(),
         hideDisabledQueries(),
       ],
-      () => {
+      (_input, _prevInput, prev: Array<Query> | undefined) => {
         const curr = query_cache().getAll()
         const filter = props.localStore.filter || ''
         const scope = filterScope()
         const dataTerm = filter.toLowerCase()
 
+        clearTimeout(dataTextsTimeout)
+        if (filter && scope !== 'key') {
+          // Builds search texts for a few milliseconds per task so filtering doesn't block the page
+          const deadline = performance.now() + 8
+          for (const item of curr) {
+            if (getDataText(item.state.data, deadline) === undefined) {
+              dataTextsTimeout = setTimeout(() =>
+                setDataTextsVersion((version) => version + 1),
+              )
+              // Keeps the previous results until all search texts are built
+              return prev ?? []
+            }
+          }
+        }
+
         let filtered = filter
           ? curr.filter(
               (item) =>
                 (scope !== 'data' && rankItem(item.queryHash, filter).passed) ||
-                (scope !== 'key' && matchesQueryData(item, dataTerm)),
+                (scope !== 'key' &&
+                  item.state.data !== undefined &&
+                  getDataText(item.state.data)!.includes(dataTerm)),
             )
           : [...curr]
 

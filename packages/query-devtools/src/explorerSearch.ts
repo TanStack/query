@@ -104,39 +104,44 @@ export function searchEntries(value: unknown): Array<SearchEntry> | undefined {
   }
 }
 
+// `toLowerCase` never outputs it, so a lowercased term can't match across two joined parts
+const SEARCH_TEXT_SEPARATOR = 'A'
+
 /**
- * Checks whether any entry label or primitive value contains the term, using
- * the same rules as `searchExplorer` but stopping at the first match.
- * @param rootValue - The data to search.
- * @param term - The case-normalized literal search term.
- * @returns Whether the data contains a match.
+ * Builds the text that `searchExplorer` matches: every entry label and
+ * primitive value, lowercased. Visiting breadth-first reaches each object once
+ * at its shallowest depth, so shared data is searched once with the same depth
+ * bound.
+ * @param rootValue - The data to build the search text of.
+ * @returns Text that contains a lowercased term exactly when `searchExplorer` matches it.
  */
-export function hasExplorerMatch(rootValue: unknown, term: string): boolean {
-  const ancestors = new Set<unknown>()
-  /**
-   * Visits one value with its current ancestors.
-   * @param value - The entry value.
-   * @param depth - The current nesting depth.
-   * @returns Whether the value or any descendant matches.
-   */
-  function visit(value: unknown, depth: number): boolean {
-    const text = primitiveText(value)
-    if (text !== undefined) return text.toLowerCase().includes(term)
-    if (depth > 500 || ancestors.has(value)) return false
-    const entries = searchEntries(value)
-    if (!entries) return false
-    ancestors.add(value)
-    try {
-      return entries.some(
-        (entry) =>
-          entry.label.toLowerCase().includes(term) ||
-          (!entry.accessor && visit(entry.value, depth + 1)),
-      )
-    } finally {
-      ancestors.delete(value)
+export function createSearchText(rootValue: unknown): string {
+  const rootText = primitiveText(rootValue)
+  if (rootText !== undefined) return rootText.toLowerCase()
+  const parts: Array<string> = []
+  const seen = new Set<unknown>([rootValue])
+  const queue: Array<{ value: unknown; depth: number }> = [
+    { value: rootValue, depth: 0 },
+  ]
+  // Also visits the entries pushed while iterating
+  for (const { value, depth } of queue) {
+    for (const entry of searchEntries(value) ?? []) {
+      parts.push(entry.label.toLowerCase())
+      if (entry.accessor) continue
+      const text = primitiveText(entry.value)
+      if (text !== undefined) {
+        parts.push(text.toLowerCase())
+      } else if (
+        depth < 500 &&
+        typeof entry.value === 'object' &&
+        !seen.has(entry.value)
+      ) {
+        seen.add(entry.value)
+        queue.push({ value: entry.value, depth: depth + 1 })
+      }
     }
   }
-  return visit(rootValue, 0)
+  return parts.join(SEARCH_TEXT_SEPARATOR)
 }
 
 /**

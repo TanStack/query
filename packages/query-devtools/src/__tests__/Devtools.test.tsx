@@ -873,6 +873,38 @@ describe('Devtools', () => {
       expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
     })
 
+    it('should keep the previous results until a slow data search for the latest filter is ready', async () => {
+      for (let index = 0; index < 6; index++) {
+        queryClient.setQueryData(['item', index], {
+          name: index % 2 ? 'needle' : 'hay',
+        })
+      }
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'data' },
+      )
+      const filter = rendered.getByLabelText('Filter queries by query data')
+      // Every call takes 5ms, so each task only builds one search text
+      let now = 0
+      vi.spyOn(performance, 'now').mockImplementation(() => (now += 5))
+
+      fireEvent.input(filter, { target: { value: 'needle' } })
+      expect(rendered.getAllByLabelText(/^Query key /)).toHaveLength(6)
+      fireEvent.input(filter, { target: { value: 'hay' } })
+      expect(rendered.getAllByLabelText(/^Query key /)).toHaveLength(6)
+
+      await vi.advanceTimersByTimeAsync(50)
+      expect(
+        rendered
+          .getAllByLabelText(/^Query key /)
+          .map((row) => row.getAttribute('aria-label')),
+      ).toStrictEqual([
+        'Query key ["item",0]',
+        'Query key ["item",2]',
+        'Query key ["item",4]',
+      ])
+    })
+
     it('should not show the filter scope toggle in the mutations view', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
