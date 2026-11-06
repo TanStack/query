@@ -3,13 +3,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "test:types": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tanstack/svelte-query": "workspace:*",
     "@tanstack/svelte-query-devtools": "workspace:*",
+    "@tsconfig/svelte": "^5.0.4",
     "svelte": "^5.57.1",
+    "svelte-check": "^4.7.7",
+    "typescript": "^6.0.3",
     "vite": "^8.3.5"
   }
 }

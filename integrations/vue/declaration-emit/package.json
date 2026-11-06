@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@tanstack/vue-query": "workspace:*",
-    "vue": "^3.5.43"
+    "vue": "^3.5.44"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

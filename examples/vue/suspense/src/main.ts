@@ -1,4 +1,3 @@
-import 'font-awesome/css/font-awesome.min.css'
 import { createApp } from 'vue'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 
