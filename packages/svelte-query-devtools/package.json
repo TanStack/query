@@ -45,6 +45,12 @@
       "svelte": "./dist/index.js",
       "import": "./dist/index.js"
     },
+    "./production": {
+      "@tanstack/custom-condition": "./src/production.ts",
+      "types": "./dist/production.d.ts",
+      "svelte": "./dist/production.js",
+      "import": "./dist/production.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
