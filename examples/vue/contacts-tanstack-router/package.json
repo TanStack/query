@@ -11,14 +11,14 @@
   },
   "dependencies": {
     "@tanstack/vue-pacer": "^0.2.0",
-    "@tanstack/vue-query": "^5.105.2",
-    "@tanstack/vue-query-devtools": "^6.3.8",
+    "@tanstack/vue-query": "^5.106.1",
+    "@tanstack/vue-query-devtools": "^6.3.11",
     "@tanstack/vue-router": "^1.170.42",
     "match-sorter": "^8.3.0",
-    "vue": "^3.5.43"
+    "vue": "^3.5.44"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.105.2",
+    "@tanstack/eslint-plugin-query": "^5.106.1",
     "@tanstack/router-plugin": "^1.168.48",
     "@vitejs/plugin-vue": "^6.0.9",
     "eslint-config-prettier": "^10.1.8",

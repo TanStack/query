@@ -1,5 +1,21 @@
 # @tanstack/query-core
 
+## 5.106.1
+
+No changes in this release.
+
+## 5.106.0
+
+No changes in this release.
+
+## 5.105.3
+
+### Patch Changes
+
+- [#11537](https://github.com/TanStack/query/pull/11537) [`3f4de1b`](https://github.com/TanStack/query/commit/3f4de1b40cce4314f7572b515ad8fd26dd85fe04) - Prevent a cancelled retry from pausing the query when its retry delay expires.
+
+- [#12497](https://github.com/TanStack/query/pull/12497) [`969e580`](https://github.com/TanStack/query/commit/969e58019bf650fb17c273fddd0e8d2adf56d4d9) - Allow static queries without data to refetch after reset, invalidation, or an explicit refetch. A query is static only when it has data.
+
 ## 5.105.2
 
 ### Patch Changes

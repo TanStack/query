@@ -252,7 +252,7 @@ Removable.destroy
 fetch(options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey, never>, fetchOptions?: FetchOptions<TQueryFnData>): Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/query.ts:705](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L705)
+Defined in: [packages/query-core/src/query.ts:709](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L709)
 
 Fetches the query, i.e. runs its `queryFn` (through any configured
 retryer/behavior) and updates the query's state with the result.
@@ -295,7 +295,7 @@ instead.
 getObserversCount(): number;
 ```
 
-Defined in: [packages/query-core/src/query.ts:669](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L669)
+Defined in: [packages/query-core/src/query.ts:673](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L673)
 
 Returns the number of observers currently subscribed to this query.
 
@@ -321,7 +321,7 @@ if (query.getObserversCount() === 0) {
 invalidate(): void;
 ```
 
-Defined in: [packages/query-core/src/query.ts:682](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L682)
+Defined in: [packages/query-core/src/query.ts:686](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L686)
 
 Marks the query as invalidated, unless it is already invalidated. This
 updates `state.isInvalidated` and notifies observers, but does not by
@@ -406,7 +406,7 @@ either data or an error at least once.
 isStale(): boolean;
 ```
 
-Defined in: [packages/query-core/src/query.ts:535](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L535)
+Defined in: [packages/query-core/src/query.ts:539](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L539)
 
 Returns `true` if the query is stale.
 - If the query has observers, defers to whether any observer's current
@@ -441,7 +441,7 @@ if (query.isStale()) {
 isStaleByTime(staleTime?: number | "static"): boolean;
 ```
 
-Defined in: [packages/query-core/src/query.ts:563](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L563)
+Defined in: [packages/query-core/src/query.ts:567](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L567)
 
 Returns `true` if the query's data is stale relative to the given
 `staleTime` (defaults to `0`).
@@ -485,7 +485,7 @@ isStatic(): boolean;
 
 Defined in: [packages/query-core/src/query.ts:508](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L508)
 
-Returns `true` if the query has at least one observer configured with
+Returns `true` if the query has data and at least one observer configured with
 `staleTime: 'static'`, meaning it is treated as never stale.
 
 #### Returns

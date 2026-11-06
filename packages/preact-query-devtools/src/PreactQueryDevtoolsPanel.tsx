@@ -112,7 +112,12 @@ export function PreactQueryDevtoolsPanel(
 
   return (
     <div
-      style={{ height: '500px', ...props.style }}
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        ...props.style,
+      }}
       className="tsqd-parent-container"
       ref={ref}
     />
