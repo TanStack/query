@@ -1,10 +1,11 @@
 import { defineConfig } from 'tsdown'
 import solid from 'unplugin-solid/rolldown'
+import type { UserConfig } from 'tsdown'
 
-const baseConfig = {
+const baseConfig: UserConfig = {
   target: 'esnext',
-  platform: 'browser' as const,
-  format: ['esm', 'cjs'] as ['esm', 'cjs'],
+  platform: 'browser',
+  format: ['esm', 'cjs'],
   outDir: 'build',
   fixedExtension: false,
 }
@@ -20,7 +21,7 @@ const compiledConfig = (
   entry: Record<string, string>,
   development: boolean,
   clean: boolean,
-) => ({
+): UserConfig => ({
   ...baseConfig,
   entry,
   clean,
@@ -39,10 +40,13 @@ const compiledConfig = (
   plugins: [solid()],
 })
 
-const jsxConfig = (entry: Record<string, string>, development: boolean) => ({
+const jsxConfig = (
+  entry: Record<string, string>,
+  development: boolean,
+): UserConfig => ({
   ...baseConfig,
   entry,
-  format: 'esm' as const,
+  format: 'esm',
   clean: false,
   dts: false,
   env: environment(development),
@@ -51,8 +55,15 @@ const jsxConfig = (entry: Record<string, string>, development: boolean) => ({
 })
 
 export default defineConfig([
-  compiledConfig({ index: 'src/index.tsx' }, false, true),
-  jsxConfig({ index: 'src/index.tsx' }, false),
+  compiledConfig(
+    { index: 'src/index.tsx', production: 'src/production.tsx' },
+    false,
+    true,
+  ),
+  jsxConfig(
+    { index: 'src/index.tsx', production: 'src/production.tsx' },
+    false,
+  ),
   compiledConfig({ dev: 'src/index.tsx' }, true, false),
   jsxConfig({ dev: 'src/index.tsx' }, true),
 ])

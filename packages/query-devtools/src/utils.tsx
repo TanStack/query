@@ -1,5 +1,6 @@
 import { serialize } from 'superjson'
 import { createSignal, onCleanup, onMount } from 'solid-js'
+import { getNativeObjectType } from './nativeObjectType'
 import type { Mutation, Query } from '@tanstack/query-core'
 import type { DevtoolsPosition } from './contexts'
 
@@ -208,6 +209,32 @@ export const getPreferredColorScheme = () => {
 }
 
 /**
+ * Checks whether a value is a plain object without invoking accessors, including across realms.
+ * @param value - The data to inspect.
+ * @returns Whether the value can be copied as a record.
+ */
+export function isPlainObject(value: unknown): boolean {
+  if (value === null || typeof value !== 'object') return false
+  try {
+    const prototype = Object.getPrototypeOf(value)
+    if (prototype === null) return true
+    const constructor = Object.getOwnPropertyDescriptor(
+      prototype,
+      'constructor',
+    )?.value
+    return (
+      typeof constructor === 'function' &&
+      Object.getOwnPropertyDescriptor(constructor, 'prototype')?.value ===
+        prototype &&
+      Function.prototype.toString.call(constructor) ===
+        Function.prototype.toString.call(Object)
+    )
+  } catch {
+    return false
+  }
+}
+
+/**
  * Updates nested data by path.
  * @param oldData - Data to be updated
  * @param updatePath - Path to the data to be updated
@@ -223,8 +250,11 @@ export const updateNestedDataByPath = (
     return value
   }
 
-  if (oldData instanceof Map) {
-    const newData = new Map(oldData)
+  const type = getNativeObjectType(oldData)
+  if (type === 'Map') {
+    const newData = new Map<unknown, unknown>(
+      Map.prototype.entries.call(oldData),
+    )
 
     if (updatePath.length === 1) {
       newData.set(updatePath[0], value)
@@ -236,9 +266,9 @@ export const updateNestedDataByPath = (
     return newData
   }
 
-  if (oldData instanceof Set) {
+  if (type === 'Set') {
     const setAsArray = updateNestedDataByPath(
-      Array.from(oldData),
+      Array.from(Set.prototype.values.call(oldData)),
       updatePath,
       value,
     )
@@ -262,20 +292,23 @@ export const updateNestedDataByPath = (
     return newData
   }
 
-  if (oldData instanceof Object) {
-    const newData = { ...oldData }
-
-    if (updatePath.length === 1) {
-      // @ts-expect-error
-      newData[updatePath[0]] = value
-      return newData
-    }
-
+  if (isPlainObject(oldData)) {
+    const descriptors = Object.getOwnPropertyDescriptors(oldData)
     const [head, ...tail] = updatePath
-    // @ts-expect-error
-    newData[head] = updateNestedDataByPath(newData[head], tail, value)
-
-    return newData
+    if (head === undefined) return oldData
+    const previous = Object.getOwnPropertyDescriptor(oldData, head)
+    if (tail.length && (!previous || !('value' in previous))) return oldData
+    return Object.create(Object.getPrototypeOf(oldData), {
+      ...descriptors,
+      [head]: {
+        value: tail.length
+          ? updateNestedDataByPath(previous?.value, tail, value)
+          : value,
+        enumerable: previous?.enumerable ?? true,
+        configurable: true,
+        writable: true,
+      },
+    })
   }
 
   return oldData
@@ -291,8 +324,11 @@ export const deleteNestedDataByPath = (
   oldData: unknown,
   deletePath: Array<string>,
 ): any => {
-  if (oldData instanceof Map) {
-    const newData = new Map(oldData)
+  const type = getNativeObjectType(oldData)
+  if (type === 'Map') {
+    const newData = new Map<unknown, unknown>(
+      Map.prototype.entries.call(oldData),
+    )
 
     if (deletePath.length === 1) {
       newData.delete(deletePath[0])
@@ -304,8 +340,11 @@ export const deleteNestedDataByPath = (
     return newData
   }
 
-  if (oldData instanceof Set) {
-    const setAsArray = deleteNestedDataByPath(Array.from(oldData), deletePath)
+  if (type === 'Set') {
+    const setAsArray = deleteNestedDataByPath(
+      Array.from(Set.prototype.values.call(oldData)),
+      deletePath,
+    )
     return new Set(setAsArray)
   }
 
@@ -324,20 +363,21 @@ export const deleteNestedDataByPath = (
     return newData
   }
 
-  if (oldData instanceof Object) {
-    const newData = { ...oldData }
-
-    if (deletePath.length === 1) {
-      // @ts-expect-error
-      delete newData[deletePath[0]]
-      return newData
-    }
-
+  if (isPlainObject(oldData)) {
+    const descriptors = Object.getOwnPropertyDescriptors(oldData)
     const [head, ...tail] = deletePath
-    // @ts-expect-error
-    newData[head] = deleteNestedDataByPath(newData[head], tail)
-
-    return newData
+    if (head === undefined) return oldData
+    if (tail.length === 0) {
+      delete descriptors[head]
+    } else {
+      const previous = Object.getOwnPropertyDescriptor(oldData, head)
+      if (!previous || !('value' in previous)) return oldData
+      descriptors[head] = {
+        ...previous,
+        value: deleteNestedDataByPath(previous.value, tail),
+      }
+    }
+    return Object.create(Object.getPrototypeOf(oldData), descriptors)
   }
 
   return oldData

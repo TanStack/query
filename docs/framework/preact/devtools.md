@@ -141,3 +141,65 @@ function App() {
 - `theme?: "light" | "dark" | "system"`
   - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
   - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
+
+## Devtools in production
+
+Devtools are excluded in production builds. However, it might be desirable to lazy load the devtools in production:
+
+```tsx
+import { lazy, Suspense } from 'preact/compat'
+import { useEffect, useState } from 'preact/hooks'
+import { QueryClient, QueryClientProvider } from '@tanstack/preact-query'
+import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
+import { Example } from './Example'
+
+const queryClient = new QueryClient()
+
+const PreactQueryDevtoolsProduction = lazy(() =>
+  import('@tanstack/preact-query-devtools/build/modern/production.js').then(
+    (d) => ({
+      default: d.PreactQueryDevtools,
+    }),
+  ),
+)
+
+function App() {
+  const [showDevtools, setShowDevtools] = useState(false)
+
+  useEffect(() => {
+    Object.assign(window, {
+      toggleDevtools: () => setShowDevtools((old) => !old),
+    })
+  }, [])
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Example />
+      <PreactQueryDevtools initialIsOpen />
+      {showDevtools && (
+        <Suspense fallback={null}>
+          <PreactQueryDevtoolsProduction />
+        </Suspense>
+      )}
+    </QueryClientProvider>
+  )
+}
+
+export default App
+```
+
+With this, calling `window.toggleDevtools()` will download the devtools bundle and show them.
+
+### Modern bundlers
+
+If your bundler supports package exports, you can use the following import path:
+
+```tsx
+const PreactQueryDevtoolsProduction = lazy(() =>
+  import('@tanstack/preact-query-devtools/production').then((d) => ({
+    default: d.PreactQueryDevtools,
+  })),
+)
+```
+
+For TypeScript, you would need to set `moduleResolution` to `'bundler'`, `'node16'`, or `'nodenext'` in your tsconfig.
