@@ -29,7 +29,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function useInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: MaybeRefOrGetter<DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryDefinedReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:139](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L139)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:137](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L137)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -129,7 +129,7 @@ const { data, isError, error } = useInfiniteQuery({
 function useInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: MaybeRefOrGetter<UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:270](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L270)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:268](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L268)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -294,7 +294,7 @@ onUnmounted(() => observer?.disconnect())
 function useInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: MaybeRefOrGetter<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:363](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L363)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:361](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L361)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other

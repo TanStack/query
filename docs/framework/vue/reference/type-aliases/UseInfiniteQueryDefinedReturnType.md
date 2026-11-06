@@ -9,7 +9,7 @@ title: UseInfiniteQueryDefinedReturnType
 type UseInfiniteQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<TData, TError, DefinedInfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:85](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L85)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:83](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L83)
 
 The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined` (unless a `select`
 changes `TData` to include `undefined`).

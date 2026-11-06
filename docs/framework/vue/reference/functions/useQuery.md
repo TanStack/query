@@ -112,7 +112,7 @@ const { data, isError, error } = useQuery({
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:213](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L213)
+Defined in: [packages/vue-query/src/useQuery.ts:234](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L234)
 
 `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
 (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
@@ -157,7 +157,9 @@ will be used.
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
 The current query result. `status` is `pending` if there is no cached data to display, `error` if
-the last fetch attempt failed, or `success` if the query has data to display.
+the last fetch attempt failed, or `success` if the query has data to display. `state` is that result as one
+reactive object — `state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'`
+narrows `state.data` to `TData`.
 
 ### Examples
 
@@ -279,6 +281,25 @@ const { data, isPlaceholderData, isError, error } = useQuery({
 </template>
 ```
 
+`state` keeps `data`, `error`, `status`, and `isPending` on one reactive object, so a `status` check
+narrows `data` and you never read `.value`:
+```vue
+<script setup lang="ts">
+import { useQuery } from '@tanstack/vue-query'
+
+const { state } = useQuery({
+  queryKey: ['post'],
+  queryFn: fetchPost,
+})
+</script>
+
+<template>
+  <span v-if="state.status === 'pending'">Loading...</span>
+  <span v-else-if="state.status === 'error'">Error: {{ state.error.message }}</span>
+  <h1 v-else>{{ state.data.title }}</h1>
+</template>
+```
+
 <a id="call-signature-3"></a>
 
 ## Call Signature
@@ -287,7 +308,7 @@ const { data, isPlaceholderData, isError, error } = useQuery({
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: MaybeRefOrGetter<UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:286](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L286)
+Defined in: [packages/vue-query/src/useQuery.ts:307](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L307)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other

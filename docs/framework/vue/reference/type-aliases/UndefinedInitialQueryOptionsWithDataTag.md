@@ -9,7 +9,7 @@ title: UndefinedInitialQueryOptionsWithDataTag
 type UndefinedInitialQueryOptionsWithDataTag<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & WithUndefinedInitialData<TQueryFnData> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/queryOptions.ts:203](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L203)
+Defined in: [packages/vue-query/src/queryOptions.ts:217](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L217)
 
 The options returned by the `queryOptions` overload selected when `initialData` is omitted, may be
 `undefined`, or is a function that may return `undefined`, with the `queryKey` tagged with the query's data

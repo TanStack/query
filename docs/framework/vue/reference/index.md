@@ -161,6 +161,7 @@ title: "@tanstack/vue-query"
 - [UseQueryDefinedReturnType](type-aliases/UseQueryDefinedReturnType.md)
 - [UseQueryOptions](type-aliases/UseQueryOptions.md)
 - [UseQueryReturnType](type-aliases/UseQueryReturnType.md)
+- [VueQueryEnabledOption](type-aliases/VueQueryEnabledOption.md)
 - [VueQueryPluginOptions](type-aliases/VueQueryPluginOptions.md)
 - [WithRequired](type-aliases/WithRequired.md)
 
