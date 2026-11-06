@@ -215,7 +215,7 @@ Readers get the query's data from the cache. To get defined `data`, read the han
 
 ## Waterfalls: `experimental_waterfallHandle`
 
-Sometimes you only know the input during render, like a search term or a page a user clicks to. `experimental_waterfallHandle` builds the handle for such an input. It doesn't start the query: the component that reads the handle does, when it renders. That makes it a [request waterfall](./request-waterfalls.md), and the name keeps that visible. It is a plain function, not a hook, so you can call it anywhere.
+Sometimes you only know the input during render, like a search term, a page a user clicks to, or an id in another query's data. `experimental_waterfallHandle` builds the handle for such an input. It doesn't start the query: the component that reads the handle does, when it renders. That makes it a [request waterfall](./request-waterfalls.md), and the name keeps that visible. It is a plain function, not a hook, so you can call it anywhere.
 
 Pass it an input:
 
@@ -232,13 +232,37 @@ function Search(props: { term: string }) {
 
 [//]: # 'WaterfallInput'
 
+When the input comes from another query's data, the dependency is real: the author's other posts can't start until the post's data arrives. Start the dependent query in the component that has that data:
+
+[//]: # 'WaterfallDependent'
+
+```tsx
+function MorePosts(props: {
+  post: experimental_QueryHandle<typeof postQuery>
+}) {
+  const { data: post } = useSuspenseQuery(
+    experimental_fromHandle(postQuery, props.post),
+  )
+  const authorPosts = experimental_waterfallHandle(authorPostsQuery, {
+    authorId: post.authorId,
+  })
+  const { data } = useQuery(
+    experimental_fromHandle(authorPostsQuery, authorPosts),
+  )
+}
+```
+
+[//]: # 'WaterfallDependent'
+
+Most pages don't need this. Put the input in the URL, or have the post's query return what the page needs, so the loader can start everything at once.
+
 Or switch a handle a loader passed down to a new input:
 
 [//]: # 'WaterfallSwitch'
 
 ```tsx
 function Posts(props: { posts: experimental_QueryHandle<typeof postsQuery> }) {
-  const [page, setPage] = React.useState(1)
+  const [page, setPage] = React.useState(props.posts.input.page)
   const posts = experimental_waterfallHandle(
     postsQuery,
     props.posts,
@@ -256,7 +280,7 @@ function Posts(props: { posts: experimental_QueryHandle<typeof postsQuery> }) {
 
 [//]: # 'WaterfallSwitch'
 
-While the switched input maps to the handle's own query, it returns that handle as is, so the first page reads what the loader started. That also keeps the old input when only fields outside the key change, so put everything the `queryFn` reads in the key. Prefer putting such inputs in the URL so the loader can start them, and use `experimental_waterfallHandle` when that isn't practical.
+`page` starts from the handle's input, so the first render reads the query the loader started instead of fetching another page. While the switched input maps to the handle's own query, it returns that handle as is, so the first page reads what the loader started. That also keeps the old input when only fields outside the key change, so put everything the `queryFn` reads in the key. Prefer putting such inputs in the URL so the loader can start them, and use `experimental_waterfallHandle` when that isn't practical.
 
 The query starts when its reader renders, like any other `useQuery` or `useSuspenseQuery`. `useQuery` doesn't fetch during a server render, while `useSuspenseQuery` does.
 

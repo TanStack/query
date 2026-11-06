@@ -301,7 +301,8 @@ export function experimental_waterfallHandle<
  * @example
  * ```tsx
  * function Posts(props: { posts: experimental_QueryHandle<typeof postsQuery> }) {
- *   const [page, setPage] = React.useState(1)
+ *   // Start from the loader's page, so the first render reads the query it started
+ *   const [page, setPage] = React.useState(props.posts.input.page)
  *   const posts = experimental_waterfallHandle(postsQuery, props.posts, (input) => ({
  *     ...input,
  *     page,
