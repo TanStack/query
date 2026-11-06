@@ -1,5 +1,15 @@
 # @tanstack/vue-query
 
+## 5.107.1
+
+### Patch Changes
+
+- [#12542](https://github.com/TanStack/query/pull/12542) [`025773a`](https://github.com/TanStack/query/commit/025773a83a7375078fb5ac46280222fe52c9b212) - fix(vue-query): keep query-core's `enabled(query)` callback. Zero-argument getters and refs stay reactive; the query callback is passed through to query-core.
+
+- [#12541](https://github.com/TanStack/query/pull/12541) [`f4199ab`](https://github.com/TanStack/query/commit/f4199ab51f4e54044e97bcbd520977728538a649) - feat(vue-query): return a reactive `state` from `useQuery` so `status === 'success'` narrows `data` without unwrapping refs
+- Updated dependencies []:
+  - @tanstack/query-core@5.107.1
+
 ## 5.107.0
 
 ### Patch Changes
