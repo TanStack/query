@@ -90,7 +90,9 @@ export function useQuery<
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
- * the last fetch attempt failed, or `success` if the query has data to display.
+ * the last fetch attempt failed, or `success` if the query has data to display. `state` is that result as one
+ * reactive object — `state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'`
+ * narrows `state.data` to `TData`.
  * @example
  * A query key built from a reactive `ref` — the query refetches whenever `postId` changes:
  * ```vue
@@ -207,6 +209,25 @@ export function useQuery<
  *     </ul>
  *     <button :disabled="isPlaceholderData" @click="page++">Next Page</button>
  *   </template>
+ * </template>
+ * ```
+ * @example
+ * `state` keeps `data`, `error`, `status`, and `isPending` on one reactive object, so a `status` check
+ * narrows `data` and you never read `.value`:
+ * ```vue
+ * <script setup lang="ts">
+ * import { useQuery } from '@tanstack/vue-query'
+ *
+ * const { state } = useQuery({
+ *   queryKey: ['post'],
+ *   queryFn: fetchPost,
+ * })
+ * </script>
+ *
+ * <template>
+ *   <span v-if="state.status === 'pending'">Loading...</span>
+ *   <span v-else-if="state.status === 'error'">Error: {{ state.error.message }}</span>
+ *   <h1 v-else>{{ state.data.title }}</h1>
  * </template>
  * ```
  */

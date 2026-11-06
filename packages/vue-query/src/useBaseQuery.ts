@@ -25,8 +25,16 @@ import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 import type { MaybeRefOrGetter } from './types'
 
 /**
+ * Readonly view of a union that stays a union. A single `Readonly<Union>` collapses the members, which
+ * drops the `status` / `isSuccess` / `isPending` discriminants.
+ */
+type ReadonlyQueryState<T> = T extends any
+  ? { readonly [K in keyof T]: T[K] }
+  : never
+
+/**
  * The result of the query composables: every property of the observer result wrapped in a `Ref`, except
- * the `refetch`, `fetchNextPage`, and `fetchPreviousPage` functions, plus `suspense`.
+ * the `refetch`, `fetchNextPage`, and `fetchPreviousPage` functions, plus `suspense` and `state`.
  */
 export type UseBaseQueryReturnType<
   TData,
@@ -49,6 +57,37 @@ export type UseBaseQueryReturnType<
    * `true`, in which case it rejects.
    */
   suspense: () => Promise<TResult>
+  /**
+   * The query result as one readonly reactive object. `data`, `error`, `status`, `isPending`, and the other
+   * fields are plain values — read `state.data`, not `state.data.value`.
+   *
+   * The object is a discriminated union, so a check on `status`, `isSuccess`, `isPending`, or `isError`
+   * narrows the other fields. When `status` is `'success'` (or `isSuccess` is `true`), `data` is `TData`.
+   * When `status` is `'pending'` (or `isPending` is `true`), `data` is `undefined` and `error` is `null`.
+   * @example
+   * ```vue
+   * <script setup lang="ts">
+   * import { useQuery } from '@tanstack/vue-query'
+   *
+   * const { state } = useQuery({
+   *   queryKey: ['post'],
+   *   queryFn: fetchPost,
+   * })
+   *
+   * if (state.status === 'success') {
+   *   // `state.data` is `Post`, not `Post | undefined`
+   *   console.log(state.data.title)
+   * }
+   * </script>
+   *
+   * <template>
+   *   <span v-if="state.status === 'pending'">Loading...</span>
+   *   <span v-else-if="state.status === 'error'">Error: {{ state.error.message }}</span>
+   *   <h1 v-else>{{ state.data.title }}</h1>
+   * </template>
+   * ```
+   */
+  state: ReadonlyQueryState<TResult>
 }
 
 type UseQueryOptionsGeneric<
@@ -142,6 +181,11 @@ export function useBaseQuery<
     // noop
   }
 
+  // Replaced below with the wrapper. Declared here so the subscriber can put it
+  // back after `updateState` copies the observer's own `refetch` onto `state`.
+  let refetch: (typeof state)['refetch'] = (...args) =>
+    observer.refetch(...args)
+
   if (client.isRestoring) {
     watch(
       client.isRestoring,
@@ -150,6 +194,7 @@ export function useBaseQuery<
           unsubscribe()
           unsubscribe = observer.subscribe((result) => {
             updateState(state, result)
+            state.refetch = refetch
           })
         }
       },
@@ -160,6 +205,7 @@ export function useBaseQuery<
   const updater = () => {
     observer.setOptions(defaultedOptions.value)
     updateState(state, observer.getCurrentResult())
+    state.refetch = refetch
   }
 
   watch(defaultedOptions, updater)
@@ -168,11 +214,13 @@ export function useBaseQuery<
     unsubscribe()
   })
 
-  // fix #5910
-  const refetch = (...args: Parameters<(typeof state)['refetch']>) => {
+  // fix #5910. Call `observer.refetch`: `state.refetch` is this wrapper, so
+  // calling it would recurse.
+  refetch = (...args) => {
     updater()
-    return state.refetch(...args)
+    return observer.refetch(...args)
   }
+  state.refetch = refetch
 
   const suspense = () => {
     return new Promise<QueryObserverResult<TData, TError>>(
@@ -254,6 +302,7 @@ export function useBaseQuery<
 
   object.suspense = suspense
   object.refetch = refetch
+  object.state = readonlyState
 
   return object as UseBaseQueryReturnType<TData, TError>
 }
