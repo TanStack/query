@@ -160,7 +160,7 @@ const [post, viewer] = await Promise.all([
 
 [//]: # 'PromiseAll'
 
-For named results, define a small `allKeyed`, adapted from the one in [raf-query](https://github.com/KATT/raf-query/blob/main/packages/core/src/all-keyed.ts). It mirrors [`Promise.allKeyed`](https://github.com/tc39/proposal-await-dictionary), a Stage 3 TC39 proposal, without patching `Promise`:
+For named results, define a small `allKeyed`. It mirrors [`Promise.allKeyed`](https://github.com/tc39/proposal-await-dictionary), a Stage 3 TC39 proposal, without patching `Promise`:
 
 [//]: # 'PromiseAllKeyed'
 
