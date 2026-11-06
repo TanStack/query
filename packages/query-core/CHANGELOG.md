@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.107.0
+
+### Patch Changes
+
+- [#12540](https://github.com/TanStack/query/pull/12540) [`b6add89`](https://github.com/TanStack/query/commit/b6add891c1b846c1f276a4c0110edb58b62defaa) - Keep the timestamp stable for the same selector error to prevent infinite render loops.
+
 ## 5.106.1
 
 No changes in this release.
