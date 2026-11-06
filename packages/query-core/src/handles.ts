@@ -283,7 +283,7 @@ export async function experimental_ensureQueryHandle<
  *   const authorPosts = experimental_waterfallHandle(authorPostsQuery, {
  *     authorId: post.authorId,
  *   })
- *   const { data } = useQuery(experimental_fromHandle(authorPostsQuery, authorPosts))
+ *   const { data } = useInfiniteQuery(experimental_fromHandle(authorPostsQuery, authorPosts))
  * }
  * ```
  */
@@ -292,9 +292,9 @@ export function experimental_waterfallHandle<
 >(factory: TFactory, ...input: QueryHandleArgs<TFactory>): QueryHandle<TFactory>
 /**
  * Switches a handle, like one a loader passed down, to a new input, like a search term the user
- * types, and returns the handle for that input. It doesn't start the query: the component that reads the
- * handle does, when it renders, which makes it a request waterfall. Prefer passing the new input
- * to the loader through the URL.
+ * types, and returns the handle for that input. It doesn't start the query: the component that
+ * reads the handle does, when it renders, which makes it a request waterfall. Prefer passing the
+ * new input to the loader through the URL.
  *
  * While the new input maps to the handle's own query, it returns the handle as is, so the first
  * render reads what the loader started. That also keeps the old input when only fields outside the
@@ -313,7 +313,7 @@ export function experimental_waterfallHandle<
  *     ...input,
  *     term,
  *   }))
- *   const { data } = useQuery(experimental_fromHandle(searchQuery, results))
+ *   const { data } = useInfiniteQuery(experimental_fromHandle(searchQuery, results))
  * }
  * ```
  */
