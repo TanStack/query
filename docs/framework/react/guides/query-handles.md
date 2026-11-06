@@ -126,7 +126,10 @@ export async function loader({ params }) {
 
 [//]: # 'LoaderData'
 
-Start the other handles before you await, so reading the data doesn't create a waterfall. `experimental_getQueryHandleData` never fetches, waits or creates a query. It returns what the factory's `select` returns, or else the `queryFn`'s data.
+> [!WARNING]
+> Use the data for decisions in the loader, like throwing `notFound()` or redirecting. Don't build other queries' inputs from it: those queries would wait for this one, which is a waterfall. Start independent handles before you await.
+
+`experimental_getQueryHandleData` never fetches, waits or creates a query. It returns what the factory's `select` returns, or else the `queryFn`'s data.
 
 ## Reading handles
 
