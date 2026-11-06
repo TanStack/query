@@ -435,6 +435,36 @@ describe('withDevtools feature', () => {
     expect(mockDevtoolsInstance.setTheme).toHaveBeenLastCalledWith('dark')
   })
 
+  it('should update theme to undefined when it is removed', async () => {
+    const theme = signal<Theme | undefined>('dark')
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          () => new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+            theme,
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await TestBed.inject(ApplicationRef).whenStable()
+
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenLastCalledWith('dark')
+
+    theme.set(undefined)
+    await TestBed.inject(ApplicationRef).whenStable()
+
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(2)
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenLastCalledWith(undefined)
+    expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(1)
+  })
+
   it('should pass construction-only options to the devtools', async () => {
     const shadowDOMTarget = document
       .createElement('div')

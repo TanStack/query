@@ -68,10 +68,10 @@ import { lastValueFrom } from 'rxjs'
   template: `
     @if (repoDataQuery.isPending()) {
       Loading...
-    } @else if (query.isError()) {
-      An error has occurred: {{ query.error().message }}
-    } @else if (query.isSuccess()) {
-      @let data = query.data();
+    } @else if (repoDataQuery.isError()) {
+      An error has occurred: {{ repoDataQuery.error().message }}
+    } @else if (repoDataQuery.isSuccess()) {
+      @let data = repoDataQuery.data();
       <h1>{{ data.name }}</h1>
       <p>{{ data.description }}</p>
       <strong>👀 {{ data.subscribers_count }}</strong>
