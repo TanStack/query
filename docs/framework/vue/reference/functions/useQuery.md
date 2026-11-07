@@ -79,8 +79,8 @@ will be used.
 
 The current query result, typed so that `data` is never `undefined` (unless a `select` changes
 `TData` to include `undefined`). `status` never resolves to `pending` in this overload's type, since
-`initialData` guarantees data upfront. `state` is that result as one reactive object — `state.data`,
-`state.isPending`, and the rest are plain values.
+`initialData` guarantees data upfront. `state` is that result as one readonly reactive object —
+`state.data`, `state.isPending`, and the rest are plain values.
 
 ### Example
 
@@ -159,8 +159,8 @@ will be used.
 
 The current query result. `status` is `pending` if there is no cached data to display, `error` if
 the last fetch attempt failed, or `success` if the query has data to display. `state` is that result as one
-reactive object — `state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'`
-narrows `state.data` to `TData`.
+readonly reactive object — `state.data`, `state.isPending`, and the rest are plain values, and
+`state.status === 'success'` narrows `state.data` to `TData`.
 
 ### Examples
 
@@ -360,7 +360,7 @@ will be used.
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
 The current query result, with `data` typed as possibly `undefined`. `state` is that result as one
-reactive object — `state.data`, `state.isPending`, and the rest are plain values, and
+readonly reactive object — `state.data`, `state.isPending`, and the rest are plain values, and
 `state.status === 'success'` narrows `state.data` to `TData`.
 
 ### Examples
@@ -436,5 +436,5 @@ will be used.
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
 The current query result, with `data` typed as possibly `undefined`. `state` is that result as one
-reactive object — `state.data`, `state.isPending`, and the rest are plain values, and
+readonly reactive object — `state.data`, `state.isPending`, and the rest are plain values, and
 `state.status === 'success'` narrows `state.data` to `TData`.
