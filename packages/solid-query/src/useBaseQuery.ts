@@ -414,7 +414,9 @@ export function useBaseQuery<
       const value = Reflect.get(target, prop)
       if (
         isServer &&
-        queryResource.state === 'ready' &&
+        queryResource.state !== 'unresolved' &&
+        queryResource.state !== 'pending' &&
+        queryResource.state !== 'errored' &&
         typeof value !== 'function'
       ) {
         return queryResource()?.[prop]
