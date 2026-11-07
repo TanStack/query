@@ -138,9 +138,9 @@ const isOpen = ref(false)
 
 ## Filter queries and mutations
 
-The **Filter** input above the query and mutation lists matches the text shown in each row by default. Select the scope button inside the input to switch between **Key**, **Data**, and **All**:
+The **Filter** input above the query and mutation lists uses the **Key** scope by default. Select the scope button inside the input to switch between **Key**, **Data**, and **All**:
 
-- **Key** matches what the list shows for each row: the query hash, or the mutation key and submission time.
+- **Key** matches the query hash, or the mutation key and submission time.
 - **Data** matches the query data, or the mutation variables or data, the same way **Search data** does below.
 - **All** matches either.
 
