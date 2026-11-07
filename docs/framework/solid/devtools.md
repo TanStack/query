@@ -123,7 +123,8 @@ function App() {
 
 - `style?: JSX.CSSProperties`
   - Custom styles for the devtools panel
-  - Default: `{ height: '500px' }`
+  - Default: `{ height: '100%', display: 'flex', 'flex-direction': 'column' }`
+  - The panel fills the height of its container, or is `500px` tall when the container has no set height.
   - Example: `{ height: '100%' }`
   - Example: `{ height: '100%', width: '100%' }`
 - `onClose?: () => void`
