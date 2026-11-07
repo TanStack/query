@@ -1,14 +1,17 @@
 import {
-  experimental_ensureHandle,
-  experimental_fetchHandle,
+  experimental_ensureQueryHandle,
   experimental_fromHandle,
-  experimental_prefetchHandle,
+  experimental_getQueryHandleData,
+  experimental_queryHandle,
+  experimental_queryHandleAsync,
   infiniteQueryOptions,
   queryOptions,
 } from '..'
 import type {
   QueryClient,
+  experimental_DefinedQueryHandle,
   experimental_FromHandleOptions,
+  experimental_InferQueryHandleData,
   experimental_QueryHandle,
   experimental_QueryHandleFactory,
 } from '..'
@@ -79,11 +82,11 @@ type DecorateInfiniteProcedure<
         TInput,
         TOutput
       >
-      $ensureInfinite: (
+      $infiniteQueryHandleAsync: (
         input: Omit<TInput, 'cursor'>,
         opts?: { pages?: number },
       ) => Promise<
-        experimental_QueryHandle<
+        experimental_DefinedQueryHandle<
           ProcedureInfiniteQueryOptions<TPath, TInput, TOutput>
         >
       >
@@ -95,18 +98,18 @@ type DecorateProcedure<
   TProcedure extends AnyProcedure,
 > = {
   queryOptions: ProcedureQueryOptions<TPath, TProcedure>
-  $prefetch: (
+  $queryHandle: (
     input: InputOf<TProcedure>,
   ) => experimental_QueryHandle<ProcedureQueryOptions<TPath, TProcedure>>
-  $ensure: (
+  $queryHandleAsync: (
     input: InputOf<TProcedure>,
   ) => Promise<
-    experimental_QueryHandle<ProcedureQueryOptions<TPath, TProcedure>>
+    experimental_DefinedQueryHandle<ProcedureQueryOptions<TPath, TProcedure>>
   >
-  $fetch: (
+  $ensureQueryHandle: (
     input: InputOf<TProcedure>,
   ) => Promise<
-    experimental_QueryHandle<ProcedureQueryOptions<TPath, TProcedure>>
+    experimental_DefinedQueryHandle<ProcedureQueryOptions<TPath, TProcedure>>
   >
 } & DecorateInfiniteProcedure<TPath, TProcedure>
 
@@ -128,6 +131,18 @@ type HandleOf<TFactory> = TFactory extends experimental_QueryHandleFactory
  * Any handle a procedure of the router started.
  */
 type AnyRouterHandle<TRouter extends AnyRouter> = HandleOf<
+  ProcedureFactory<TRouter>
+>
+
+type DefinedHandleOf<TFactory> =
+  TFactory extends experimental_QueryHandleFactory
+    ? experimental_DefinedQueryHandle<TFactory>
+    : never
+
+/**
+ * Any handle the router's awaited verbs returned.
+ */
+type AnyRouterDefinedHandle<TRouter extends AnyRouter> = DefinedHandleOf<
   ProcedureFactory<TRouter>
 >
 
@@ -162,6 +177,16 @@ export type OptionsProxy<TRouter extends AnyRouter> = {
       ? experimental_FromHandleOptions<TFactory>
       : never
     : never
+  /**
+   * Reads the data of any handle the router's awaited verbs returned, from the procedure path in
+   * its key.
+   */
+  $getQueryHandleData: <THandle extends AnyRouterDefinedHandle<TRouter>>(
+    handle: THandle,
+  ) => FactoryOfHandle<TRouter, THandle> extends infer TFactory extends
+    experimental_QueryHandleFactory
+    ? experimental_InferQueryHandleData<TFactory>
+    : never
 }
 
 /**
@@ -186,14 +211,14 @@ export function createOptionsProxy<TRouter extends AnyRouter>(
     return {
       queryOptions: factory,
       infiniteQueryOptions: infiniteFactory,
-      $prefetch: (input: unknown) =>
-        experimental_prefetchHandle(queryClient, factory, input),
-      $ensure: (input: unknown) =>
-        experimental_ensureHandle(queryClient, factory, input),
-      $fetch: (input: unknown) =>
-        experimental_fetchHandle(queryClient, factory, input),
-      $ensureInfinite: (input: object, opts?: { pages?: number }) =>
-        experimental_ensureHandle(
+      $queryHandle: (input: unknown) =>
+        experimental_queryHandle(queryClient, factory, input),
+      $queryHandleAsync: (input: unknown) =>
+        experimental_queryHandleAsync(queryClient, factory, input),
+      $ensureQueryHandle: (input: unknown) =>
+        experimental_ensureQueryHandle(queryClient, factory, input),
+      $infiniteQueryHandleAsync: (input: object, opts?: { pages?: number }) =>
+        experimental_queryHandleAsync(
           queryClient,
           (pageInput: object) => ({
             ...infiniteFactory(pageInput),
@@ -215,8 +240,31 @@ export function createOptionsProxy<TRouter extends AnyRouter>(
       : experimental_fromHandle(procedure.queryOptions, handle as never)
   }
 
+  const $getQueryHandleData = (handle: {
+    queryKey: readonly [string, { type: 'query' | 'infinite' }]
+    input: any
+  }) => {
+    const [path, { type }] = handle.queryKey
+    const procedure = decorate(path)
+    return type === 'infinite'
+      ? experimental_getQueryHandleData(
+          queryClient,
+          procedure.infiniteQueryOptions,
+          handle as never,
+        )
+      : experimental_getQueryHandleData(
+          queryClient,
+          procedure.queryOptions,
+          handle as never,
+        )
+  }
+
   return new Proxy({} as OptionsProxy<TRouter>, {
     get: (_target, path) =>
-      path === '$fromHandle' ? $fromHandle : decorate(path as string),
+      path === '$fromHandle'
+        ? $fromHandle
+        : path === '$getQueryHandleData'
+          ? $getQueryHandleData
+          : decorate(path as string),
   })
 }

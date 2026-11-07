@@ -12,11 +12,10 @@ import {
   defaultShouldDehydrateQuery,
   dehydrate,
   environmentManager,
-  experimental_ensureHandle,
+  experimental_ensureQueryHandle,
   experimental_fromHandle,
   experimental_getQueryStartInfo,
-  experimental_prefetchHandle,
-  experimental_waterfallHandle,
+  experimental_queryHandle,
   hydrate,
   isServer,
   noop,
@@ -65,13 +64,16 @@ describe('query start info', () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
     const postQuery = createPostQuery()
-    const handle = experimental_prefetchHandle(queryClient, postQuery, {
+    const handle = experimental_queryHandle(queryClient, postQuery, {
       id: '1',
     })
     const query = getQuery(queryClient, handle.queryKey)
 
+    expect(JSON.parse(JSON.stringify(handle))).toStrictEqual(handle)
+    // React Server Components reject props with symbol properties
+    expect(Object.getOwnPropertySymbols(handle)).toHaveLength(0)
     expect(experimental_getQueryStartInfo(query)).toStrictEqual({
-      verb: 'prefetchHandle',
+      verb: 'queryHandle',
       environment: 'client',
       startedAt: Date.now(),
       observed: false,
@@ -88,30 +90,19 @@ describe('query start info', () => {
     expect(experimental_getQueryStartInfo(query)?.observed).toBe(true)
   })
 
-  it('should record the first fetch of a reader of an experimental_waterfallHandle handle', async () => {
+  it("should record an observer's first fetch on a client that uses handles", async () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
     const postQuery = createPostQuery()
-    const handle = experimental_waterfallHandle(postQuery, { id: '1' })
-
-    expect(handle).toStrictEqual({
-      queryKey: postQuery({ id: '1' }).queryKey,
-      input: { id: '1' },
-    })
-    expect(JSON.parse(JSON.stringify(handle))).toStrictEqual(handle)
-    // React Server Components reject props with symbol properties
-    expect(Object.getOwnPropertySymbols(handle)).toHaveLength(0)
+    experimental_queryHandle(queryClient, postQuery, { id: '1' })
 
     const startedAt = Date.now()
-    const observer = new QueryObserver(
-      queryClient,
-      experimental_fromHandle(postQuery, handle),
-    )
+    const observer = new QueryObserver(queryClient, postQuery({ id: '2' }))
     using _subscription = subscribe(observer, noop)
-    const query = getQuery(queryClient, handle.queryKey)
+    const query = getQuery(queryClient, postQuery({ id: '2' }).queryKey)
 
     expect(experimental_getQueryStartInfo(query)).toStrictEqual({
-      verb: 'waterfallHandle',
+      verb: 'observer',
       environment: 'client',
       startedAt,
       observed: true,
@@ -123,29 +114,55 @@ describe('query start info', () => {
     expect(experimental_getQueryStartInfo(query)?.startedAt).toBe(startedAt)
   })
 
-  it('should keep the record of a loader handle that experimental_waterfallHandle switches back to', () => {
+  it('should record a first fetch that a suspense read starts', () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
     const postQuery = createPostQuery()
-    const handle = experimental_prefetchHandle(queryClient, postQuery, {
+    experimental_queryHandle(queryClient, postQuery, { id: '1' })
+
+    const options = postQuery({ id: '2' })
+    void new QueryObserver(queryClient, options)
+      .fetchOptimistic(options)
+      .catch(noop)
+
+    expect(
+      experimental_getQueryStartInfo(getQuery(queryClient, options.queryKey)),
+    ).toMatchObject({ verb: 'observer', observed: true })
+  })
+
+  it('should keep the record of a handle whose query an observer reads with plain options', () => {
+    using _timers = fakeTimers()
+    using queryClient = clearOnDispose(new QueryClient())
+    const postQuery = createPostQuery()
+    const handle = experimental_queryHandle(queryClient, postQuery, {
       id: '1',
     })
-    const switched = experimental_waterfallHandle(postQuery, handle, () => ({
-      id: '1',
-    }))
 
     using _subscription = subscribe(
-      new QueryObserver(
-        queryClient,
-        experimental_fromHandle(postQuery, switched),
-      ),
+      new QueryObserver(queryClient, postQuery(handle.input)),
       noop,
     )
 
     expect(
-      experimental_getQueryStartInfo(getQuery(queryClient, handle.queryKey))
-        ?.verb,
-    ).toBe('prefetchHandle')
+      experimental_getQueryStartInfo(getQuery(queryClient, handle.queryKey)),
+    ).toMatchObject({ verb: 'queryHandle', observed: true })
+  })
+
+  it("should not record an observer's fetch on a client where no handle function ran", () => {
+    using _timers = fakeTimers()
+    using queryClient = clearOnDispose(new QueryClient())
+    const postQuery = createPostQuery()
+
+    using _subscription = subscribe(
+      new QueryObserver(queryClient, postQuery({ id: '1' })),
+      noop,
+    )
+
+    expect(
+      experimental_getQueryStartInfo(
+        getQuery(queryClient, postQuery({ id: '1' }).queryKey),
+      ),
+    ).toBeUndefined()
   })
 
   it('should notify the cache when a handle restarts a query on fresh data', async () => {
@@ -154,20 +171,22 @@ describe('query start info', () => {
       new QueryClient({ defaultOptions: { queries: { staleTime: Infinity } } }),
     )
     const postQuery = createPostQuery()
-    experimental_prefetchHandle(queryClient, postQuery, { id: '1' })
+    experimental_queryHandle(queryClient, postQuery, { id: '1' })
     await vi.advanceTimersByTimeAsync(10)
     const query = getQuery(queryClient, postQuery({ id: '1' }).queryKey)
     const listener = vi.fn<(event: QueryCacheNotifyEvent) => void>()
     using _subscription = subscribe(queryClient.getQueryCache(), listener)
 
     await vi.advanceTimersByTimeAsync(5)
-    const handle = await experimental_ensureHandle(queryClient, postQuery, {
-      id: '1',
-    })
+    const handle = await experimental_ensureQueryHandle(
+      queryClient,
+      postQuery,
+      { id: '1' },
+    )
 
     expect(queryClient.getQueryData(handle.queryKey)).toBe('1')
     expect(experimental_getQueryStartInfo(query)).toMatchObject({
-      verb: 'ensureHandle',
+      verb: 'ensureQueryHandle',
       startedAt: Date.now(),
     })
     expect(listener).toHaveBeenCalledWith(
@@ -179,7 +198,7 @@ describe('query start info', () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
     const postQuery = createPostQuery()
-    const handle = experimental_prefetchHandle(queryClient, postQuery, {
+    const handle = experimental_queryHandle(queryClient, postQuery, {
       id: '1',
     })
     await vi.advanceTimersByTimeAsync(10)
@@ -188,39 +207,32 @@ describe('query start info', () => {
 
     expect(
       experimental_getQueryStartInfo(getQuery(queryClient, handle.queryKey)),
-    ).toMatchObject({ verb: 'prefetchHandle' })
+    ).toMatchObject({ verb: 'queryHandle' })
   })
 
   it('should not record anything in production', async () => {
     using _timers = fakeTimers()
     using _production = productionEnvironment()
     using queryClient = clearOnDispose(new QueryClient())
-    const key = createKey()
-    const queryFn = () => sleep(10).then(() => 'data')
-    const postQuery = (input: { id: string }) => ({
-      queryKey: [...key, input.id],
-      queryFn,
-    })
+    const postQuery = createPostQuery()
 
-    const prefetched = experimental_prefetchHandle(queryClient, postQuery, {
+    const prefetched = experimental_queryHandle(queryClient, postQuery, {
       id: '1',
     })
-    const waterfall = experimental_waterfallHandle(postQuery, { id: '2' })
-    const options = experimental_fromHandle(postQuery, waterfall)
+    const options = postQuery({ id: '2' })
     using _subscription = subscribe(
       new QueryObserver(queryClient, options),
       noop,
     )
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(options.queryFn).toBe(queryFn)
     expect(
       experimental_getQueryStartInfo(
         getQuery(queryClient, prefetched.queryKey),
       ),
     ).toBeUndefined()
     expect(
-      experimental_getQueryStartInfo(getQuery(queryClient, waterfall.queryKey)),
+      experimental_getQueryStartInfo(getQuery(queryClient, options.queryKey)),
     ).toBeUndefined()
   })
 
@@ -229,27 +241,35 @@ describe('query start info', () => {
     using _production = productionEnvironment()
     using queryClient = clearOnDispose(new QueryClient())
 
-    experimental_prefetchHandle(queryClient, createPostQuery(), { id: '1' })
+    experimental_queryHandle(queryClient, createPostQuery(), { id: '1' })
 
     expect(queryClient.getQueryCache().hasListeners()).toBe(false)
   })
 
-  it('should not record queries that other APIs start', async () => {
+  it('should not record queries that other APIs start, even when an observer reads them', async () => {
     using _timers = fakeTimers()
     using queryClient = clearOnDispose(new QueryClient())
     const postQuery = createPostQuery()
+    experimental_queryHandle(queryClient, postQuery, { id: '1' })
 
-    void queryClient.query(postQuery({ id: '1' })).catch(noop)
+    void queryClient.query(postQuery({ id: '2' })).catch(noop)
+    using _subscription = subscribe(
+      new QueryObserver(queryClient, postQuery({ id: '2' })),
+      noop,
+    )
     await vi.advanceTimersByTimeAsync(10)
 
     expect(
       experimental_getQueryStartInfo(
-        getQuery(queryClient, postQuery({ id: '1' }).queryKey),
+        getQuery(queryClient, postQuery({ id: '2' }).queryKey),
       ),
     ).toBeUndefined()
-    expect(dehydrate(queryClient).queries[0]).not.toHaveProperty(
-      'experimental_start',
-    )
+    expect(
+      dehydrate(queryClient).queries.find(
+        (query) =>
+          query.queryHash === JSON.stringify(postQuery({ id: '2' }).queryKey),
+      ),
+    ).not.toHaveProperty('experimental_start')
   })
 
   it('should carry the start info from the server to the client in development', () => {
@@ -260,7 +280,7 @@ describe('query start info', () => {
     {
       using _server = serverEnvironment()
       using serverClient = clearOnDispose(new QueryClient())
-      experimental_prefetchHandle(serverClient, postQuery, { id: '1' })
+      experimental_queryHandle(serverClient, postQuery, { id: '1' })
       dehydrated = dehydrate(serverClient, {
         shouldDehydrateQuery: () => true,
       })
@@ -273,7 +293,7 @@ describe('query start info', () => {
         getQuery(queryClient, postQuery({ id: '1' }).queryKey),
       ),
     ).toStrictEqual({
-      verb: 'prefetchHandle',
+      verb: 'queryHandle',
       environment: 'server',
       startedAt: Date.now(),
       observed: false,
@@ -285,12 +305,12 @@ describe('query start info', () => {
     using _server = serverEnvironment()
     using serverClient = clearOnDispose(new QueryClient())
     using warn = vi.spyOn(console, 'warn').mockReturnValue(undefined)
-    experimental_prefetchHandle(serverClient, createPostQuery(), { id: '1' })
+    experimental_queryHandle(serverClient, createPostQuery(), { id: '1' })
 
     dehydrate(serverClient)
 
     expect(warn).toHaveBeenCalledTimes(1)
-    expect(warn.mock.calls[0]?.[0]).toContain('experimental_prefetchHandle')
+    expect(warn.mock.calls[0]?.[0]).toContain('experimental_queryHandle')
   })
 
   it('should warn once per query', () => {
@@ -298,7 +318,7 @@ describe('query start info', () => {
     using _server = serverEnvironment()
     using serverClient = clearOnDispose(new QueryClient())
     using warn = vi.spyOn(console, 'warn').mockReturnValue(undefined)
-    experimental_prefetchHandle(serverClient, createPostQuery(), { id: '1' })
+    experimental_queryHandle(serverClient, createPostQuery(), { id: '1' })
 
     dehydrate(serverClient)
     dehydrate(serverClient)
@@ -311,7 +331,7 @@ describe('query start info', () => {
     using _server = serverEnvironment()
     using serverClient = clearOnDispose(new QueryClient())
     using warn = vi.spyOn(console, 'warn').mockReturnValue(undefined)
-    experimental_prefetchHandle(serverClient, createPostQuery(), { id: '1' })
+    experimental_queryHandle(serverClient, createPostQuery(), { id: '1' })
     const sent = new Set<string>()
     const dehydrateUnsent = () =>
       dehydrate(serverClient, {
@@ -338,7 +358,7 @@ describe('query start info', () => {
     {
       using _server = serverEnvironment()
       using serverClient = clearOnDispose(new QueryClient())
-      experimental_prefetchHandle(serverClient, createPostQuery(), { id: '1' })
+      experimental_queryHandle(serverClient, createPostQuery(), { id: '1' })
       dehydrated = dehydrate(serverClient, {
         shouldDehydrateQuery: () => true,
       })
@@ -356,7 +376,7 @@ describe('query start info', () => {
     using queryClient = clearOnDispose(new QueryClient())
     using warn = vi.spyOn(console, 'warn').mockReturnValue(undefined)
     const postQuery = createPostQuery()
-    experimental_prefetchHandle(queryClient, postQuery, { id: '1' })
+    experimental_queryHandle(queryClient, postQuery, { id: '1' })
     using _server = serverEnvironment()
     using serverClient = clearOnDispose(new QueryClient())
     void serverClient.query(postQuery({ id: '2' })).catch(noop)

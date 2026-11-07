@@ -10,7 +10,6 @@ import {
 import {
   QueryClient,
   dehydrate,
-  experimental_waterfallHandle,
   hydrate,
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
@@ -53,14 +52,18 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
 
     using serverClient = clearOnDispose(new QueryClient())
     const serverTrpc = createOptionsProxy(router, serverClient)
-    const postPromise = serverTrpc['post.byId'].$ensure({ id: '1' })
-    const feedPromise = serverTrpc.feed.$ensureInfinite(
+    const postPromise = serverTrpc['post.byId'].$queryHandleAsync({ id: '1' })
+    const feedPromise = serverTrpc.feed.$infiniteQueryHandleAsync(
       { limit: 10 },
       { pages: 2 },
     )
     await vi.advanceTimersByTimeAsync(10)
     const post = await postPromise
-    const comments = serverTrpc['post.comments'].$prefetch({
+    expect(serverTrpc.$getQueryHandleData(post)).toStrictEqual({
+      id: '1',
+      title: 'post 1',
+    })
+    const comments = serverTrpc['post.comments'].$queryHandle({
       postId: post.input.id,
       page: 1,
     })
@@ -97,13 +100,10 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
     function Comments(props: {
       comments: experimental_QueryHandle<TRPC['post.comments']['queryOptions']>
     }) {
-      const [page, setPage] = React.useState(1)
-      const handle = experimental_waterfallHandle(
-        trpc['post.comments'].queryOptions,
-        props.comments,
-        (input) => ({ ...input, page }),
+      const [page, setPage] = React.useState(props.comments.input.page)
+      const { data } = useSuspenseQuery(
+        trpc['post.comments'].queryOptions({ ...props.comments.input, page }),
       )
-      const { data } = useSuspenseQuery(trpc.$fromHandle(handle))
       return (
         <div>
           <div>comments: {data.join(', ')}</div>

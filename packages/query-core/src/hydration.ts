@@ -312,7 +312,7 @@ const dehydratedQueries = new WeakSet<Query>()
 const warnedQueries = new WeakSet<Query>()
 
 /**
- * Warns once when a server render leaves out a pending query that a handle verb started, because
+ * Warns once when a server render leaves out a pending query that a handle function started, because
  * a component that reads the handle in the browser would fetch it again. Queries an earlier
  * `dehydrate` call sent don't count, since the browser already gets them.
  * @param query - A query that `shouldDehydrateQuery` left out.
@@ -321,7 +321,7 @@ function warnIfPendingHandleQueryIsLeftOut(query: Query): void {
   const start = experimental_getQueryStartInfo(query)
   if (
     start &&
-    start.verb !== 'waterfallHandle' &&
+    start.verb !== 'observer' &&
     start.environment === 'server' &&
     environmentManager.isServer() &&
     query.state.status === 'pending' &&
@@ -330,7 +330,7 @@ function warnIfPendingHandleQueryIsLeftOut(query: Query): void {
   ) {
     warnedQueries.add(query)
     console.warn(
-      `experimental_${start.verb} started the query ${query.queryHash} and it is still pending, but shouldDehydrateQuery left it out, so its data won't reach the client. Include pending queries in shouldDehydrateQuery, or await the query with experimental_ensureHandle or experimental_fetchHandle before you dehydrate.`,
+      `experimental_${start.verb} started the query ${query.queryHash} and it is still pending, but shouldDehydrateQuery left it out, so its data won't reach the client. Include pending queries in shouldDehydrateQuery, or await the query with experimental_queryHandleAsync or experimental_ensureQueryHandle before you dehydrate.`,
     )
   }
 }

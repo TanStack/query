@@ -13,7 +13,6 @@ import { rankItem } from '@tanstack/match-sorter-utils'
 import * as goober from 'goober'
 import { clsx as cx } from 'clsx'
 import { TransitionGroup } from 'solid-transition-group'
-import { Key } from '@solid-primitives/keyed'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { DropdownMenu, RadioGroup } from '@kobalte/core'
 import { Portal } from 'solid-js/web'
@@ -55,7 +54,8 @@ import {
   Wifi,
   XCircle,
 } from './icons'
-import Explorer from './Explorer'
+import Explorer, { SearchableExplorer } from './Explorer'
+import { VirtualList } from './VirtualList'
 import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
 import {
   BUTTON_POSITION,
@@ -238,6 +238,7 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
           `,
           'tsqd-transitions-container',
         )}
+        dir="ltr"
         ref={transitionsContainerRef}
       >
         <TransitionGroup name="tsqd-panel-transition">
@@ -326,6 +327,7 @@ const PiPPanel: Component<{
 
   return (
     <div
+      dir="ltr"
       style={{
         '--tsqd-font-size': '16px',
         'max-height': '100vh',
@@ -395,6 +397,7 @@ export const ParentPanel: Component<{
 
   return (
     <div
+      dir="ltr"
       style={{
         '--tsqd-font-size': '16px',
       }}
@@ -1125,6 +1128,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                 }
               >
                 <DropdownMenu.Content
+                  dir="ltr"
                   class={cx(styles().settingsMenu, 'tsqd-settings-menu')}
                 >
                   <div
@@ -1156,6 +1160,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                         }
                       >
                         <DropdownMenu.SubContent
+                          dir="ltr"
                           class={cx(
                             styles().settingsMenu,
                             'tsqd-settings-submenu',
@@ -1237,6 +1242,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                       }
                     >
                       <DropdownMenu.SubContent
+                        dir="ltr"
                         class={cx(
                           styles().settingsMenu,
                           'tsqd-settings-submenu',
@@ -1306,6 +1312,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                       }
                     >
                       <DropdownMenu.SubContent
+                        dir="ltr"
                         class={cx(
                           styles().settingsMenu,
                           'tsqd-settings-submenu',
@@ -1354,32 +1361,38 @@ export const ContentView: Component<ContentViewProps> = (props) => {
           </div>
         </div>
         <Show when={selectedView() === 'queries'}>
-          <div
-            class={cx(
-              styles().overflowQueryContainer,
-              'tsqd-queries-overflow-container',
-            )}
-          >
-            <div class="tsqd-queries-container">
-              <Key by={(q) => q.queryHash} each={queries()}>
+          <Show when={query_cache()} keyed>
+            {(_cache) => (
+              <VirtualList
+                each={queries()}
+                getKey={(query) => query.queryHash}
+                class={cx(
+                  styles().overflowQueryContainer,
+                  'tsqd-queries-overflow-container',
+                )}
+                contentClass="tsqd-queries-container"
+              >
                 {(query) => <QueryRow query={query()} />}
-              </Key>
-            </div>
-          </div>
+              </VirtualList>
+            )}
+          </Show>
         </Show>
         <Show when={selectedView() === 'mutations'}>
-          <div
-            class={cx(
-              styles().overflowQueryContainer,
-              'tsqd-mutations-overflow-container',
-            )}
-          >
-            <div class="tsqd-mutations-container">
-              <Key by={(m) => m.mutationId} each={mutations()}>
+          <Show when={mutation_cache()} keyed>
+            {(_cache) => (
+              <VirtualList
+                each={mutations()}
+                getKey={(mutation) => mutation.mutationId}
+                class={cx(
+                  styles().overflowQueryContainer,
+                  'tsqd-mutations-overflow-container',
+                )}
+                contentClass="tsqd-mutations-container"
+              >
                 {(mutation) => <MutationRow mutation={mutation()} />}
-              </Key>
-            </div>
-          </div>
+              </VirtualList>
+            )}
+          </Show>
         </Show>
       </div>
       <Show when={selectedView() === 'queries' && selectedQueryHash()}>
@@ -1436,7 +1449,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
   const isWaterfall = createSubscribeToQueryCacheBatcher(
     (queryCache) => {
       const query = queryCache().get(props.query.queryHash)
-      return !!query && getQueryStartInfo(query)?.verb === 'waterfallHandle'
+      return !!query && getQueryStartInfo(query)?.verb === 'observer'
     },
     true,
     (e) => e.query.queryHash === props.query.queryHash,
@@ -1512,7 +1525,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
           <div
             class="tsqd-query-waterfall-indicator"
             aria-hidden="true"
-            title="A waterfallHandle reader fetched this query"
+            title="A component started this query's first fetch, not a handle function"
           >
             waterfall
           </div>
@@ -1537,32 +1550,16 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
 
   const mutationState = createSubscribeToMutationCacheBatcher(
-    (mutationCache) => {
-      const mutations = mutationCache().getAll()
-      const mutation = mutations.find(
-        (m) => m.mutationId === props.mutation.mutationId,
-      )
-      return mutation?.state
-    },
+    () => props.mutation.state,
   )
 
-  const isPaused = createSubscribeToMutationCacheBatcher((mutationCache) => {
-    const mutations = mutationCache().getAll()
-    const mutation = mutations.find(
-      (m) => m.mutationId === props.mutation.mutationId,
-    )
-    if (!mutation) return false
-    return mutation.state.isPaused
-  })
+  const isPaused = createSubscribeToMutationCacheBatcher(
+    () => props.mutation.state.isPaused,
+  )
 
-  const status = createSubscribeToMutationCacheBatcher((mutationCache) => {
-    const mutations = mutationCache().getAll()
-    const mutation = mutations.find(
-      (m) => m.mutationId === props.mutation.mutationId,
-    )
-    if (!mutation) return 'idle'
-    return mutation.state.status
-  })
+  const status = createSubscribeToMutationCacheBatcher(
+    () => props.mutation.state.status,
+  )
 
   const color = createMemo(() =>
     getMutationStatusColor({
@@ -1636,40 +1633,13 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
 }
 
 const QueryStatusCount: Component = () => {
-  const stale = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'stale').length,
-  )
-
-  const fresh = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'fresh').length,
-  )
-
-  const fetching = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'fetching').length,
-  )
-
-  const paused = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'paused').length,
-  )
-
-  const inactive = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'inactive').length,
-  )
+  const counts = createSubscribeToQueryCacheBatcher((queryCache) => {
+    const tally = { fresh: 0, fetching: 0, paused: 0, stale: 0, inactive: 0 }
+    for (const query of queryCache().getAll()) {
+      tally[getQueryStatusLabel(query)]++
+    }
+    return tally
+  })
 
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
@@ -1683,67 +1653,23 @@ const QueryStatusCount: Component = () => {
     <div
       class={cx(styles().queryStatusContainer, 'tsqd-query-status-container')}
     >
-      <QueryStatus label="Fresh" color="green" count={fresh()} />
-      <QueryStatus label="Fetching" color="blue" count={fetching()} />
-      <QueryStatus label="Paused" color="purple" count={paused()} />
-      <QueryStatus label="Stale" color="yellow" count={stale()} />
-      <QueryStatus label="Inactive" color="gray" count={inactive()} />
+      <QueryStatus label="Fresh" color="green" count={counts().fresh} />
+      <QueryStatus label="Fetching" color="blue" count={counts().fetching} />
+      <QueryStatus label="Paused" color="purple" count={counts().paused} />
+      <QueryStatus label="Stale" color="yellow" count={counts().stale} />
+      <QueryStatus label="Inactive" color="gray" count={counts().inactive} />
     </div>
   )
 }
 
 const MutationStatusCount: Component = () => {
-  const success = createSubscribeToMutationCacheBatcher(
-    (mutationCache) =>
-      mutationCache()
-        .getAll()
-        .filter(
-          (m) =>
-            getMutationStatusColor({
-              isPaused: m.state.isPaused,
-              status: m.state.status,
-            }) === 'green',
-        ).length,
-  )
-
-  const pending = createSubscribeToMutationCacheBatcher(
-    (mutationCache) =>
-      mutationCache()
-        .getAll()
-        .filter(
-          (m) =>
-            getMutationStatusColor({
-              isPaused: m.state.isPaused,
-              status: m.state.status,
-            }) === 'yellow',
-        ).length,
-  )
-
-  const paused = createSubscribeToMutationCacheBatcher(
-    (mutationCache) =>
-      mutationCache()
-        .getAll()
-        .filter(
-          (m) =>
-            getMutationStatusColor({
-              isPaused: m.state.isPaused,
-              status: m.state.status,
-            }) === 'purple',
-        ).length,
-  )
-
-  const error = createSubscribeToMutationCacheBatcher(
-    (mutationCache) =>
-      mutationCache()
-        .getAll()
-        .filter(
-          (m) =>
-            getMutationStatusColor({
-              isPaused: m.state.isPaused,
-              status: m.state.status,
-            }) === 'red',
-        ).length,
-  )
+  const counts = createSubscribeToMutationCacheBatcher((mutationCache) => {
+    const tally = { green: 0, yellow: 0, purple: 0, red: 0, gray: 0 }
+    for (const mutation of mutationCache().getAll()) {
+      tally[getMutationStatusColor(mutation.state)]++
+    }
+    return tally
+  })
 
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
@@ -1757,10 +1683,10 @@ const MutationStatusCount: Component = () => {
     <div
       class={cx(styles().queryStatusContainer, 'tsqd-query-status-container')}
     >
-      <QueryStatus label="Paused" color="purple" count={paused()} />
-      <QueryStatus label="Pending" color="yellow" count={pending()} />
-      <QueryStatus label="Success" color="green" count={success()} />
-      <QueryStatus label="Error" color="red" count={error()} />
+      <QueryStatus label="Paused" color="purple" count={counts().purple} />
+      <QueryStatus label="Pending" color="yellow" count={counts().yellow} />
+      <QueryStatus label="Success" color="green" count={counts().green} />
+      <QueryStatus label="Error" color="red" count={counts().red} />
     </div>
   )
 }
@@ -1907,48 +1833,34 @@ const QueryDetails = () => {
   })
 
   const activeQuery = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash()),
+    (queryCache) => queryCache().get(selectedQueryHash() ?? ''),
     false,
   )
 
   const activeQueryFresh = createSubscribeToQueryCacheBatcher((queryCache) => {
-    return queryCache()
-      .getAll()
-      .find((query) => query.queryHash === selectedQueryHash())
+    return queryCache().get(selectedQueryHash() ?? '')
   }, false)
 
   const activeQueryState = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash())?.state,
+    (queryCache) => queryCache().get(selectedQueryHash() ?? '')?.state,
     false,
   )
 
   const activeQueryStateData = createSubscribeToQueryCacheBatcher(
     (queryCache) => {
-      return queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash())?.state.data
+      return queryCache().get(selectedQueryHash() ?? '')?.state.data
     },
     false,
   )
 
   const statusLabel = createSubscribeToQueryCacheBatcher((queryCache) => {
-    const query = queryCache()
-      .getAll()
-      .find((q) => q.queryHash === selectedQueryHash())
+    const query = queryCache().get(selectedQueryHash() ?? '')
     if (!query) return 'inactive'
     return getQueryStatusLabel(query)
   })
 
   const queryStatus = createSubscribeToQueryCacheBatcher((queryCache) => {
-    const query = queryCache()
-      .getAll()
-      .find((q) => q.queryHash === selectedQueryHash())
+    const query = queryCache().get(selectedQueryHash() ?? '')
     if (!query) return 'pending'
     return query.state.status
   })
@@ -1956,8 +1868,7 @@ const QueryDetails = () => {
   const observerCount = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
       queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash())
+        .get(selectedQueryHash() ?? '')
         ?.getObserversCount() ?? 0,
   )
 
@@ -2373,7 +2284,8 @@ const QueryDetails = () => {
             }}
             class="tsqd-query-details-explorer-container tsqd-query-details-data-explorer"
           >
-            <Explorer
+            <SearchableExplorer
+              searchKey={activeQuery()}
               label="Data"
               defaultExpanded={['Data']}
               value={activeQueryStateData()}
@@ -2628,7 +2540,8 @@ const MutationDetails = () => {
           }}
           class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
         >
-          <Explorer
+          <SearchableExplorer
+            searchKey={activeMutation()}
             label="Data"
             defaultExpanded={['Data']}
             value={activeMutation()!.state.data}
@@ -2879,6 +2792,8 @@ const stylesFactory = (
       z-index: 9999;
       display: flex;
       height: 100%;
+      flex: 1 1 500px;
+      min-height: 0;
       gap: ${tokens.size[0.5]};
       & * {
         box-sizing: border-box;
@@ -3392,6 +3307,7 @@ const stylesFactory = (
     `,
     overflowQueryContainer: css`
       flex: 1;
+      min-height: 0;
       overflow-y: auto;
       & > div {
         display: flex;
@@ -3400,6 +3316,7 @@ const stylesFactory = (
     `,
     queryRow: css`
       display: flex;
+      width: 100%;
       align-items: center;
       padding: 0;
       border: none;

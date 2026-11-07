@@ -1,20 +1,18 @@
 import { createSignal } from 'solid-js'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, assert, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   QueryObserver,
   dehydrate,
   environmentManager,
-  experimental_ensureHandle,
-  experimental_fromHandle,
-  experimental_prefetchHandle,
-  experimental_waterfallHandle,
+  experimental_ensureQueryHandle,
+  experimental_queryHandle,
   hydrate,
   isServer,
   noop,
   onlineManager,
 } from '@tanstack/query-core'
-import { fireEvent, render, within } from '@solidjs/testing-library'
+import { cleanup, fireEvent, render, within } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
 import {
   clearOnDispose,
@@ -127,6 +125,7 @@ describe('Devtools', () => {
   })
 
   afterEach(() => {
+    cleanup()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
     onlineManager.setOnline(true)
@@ -182,6 +181,177 @@ describe('Devtools', () => {
       )
     })
   }
+
+  it('should render only visible queries from a large cache', () => {
+    for (let index = 0; index < 2000; index++) {
+      queryClient.setQueryData(['large-cache', index], index)
+    }
+
+    const rendered = renderDevtools({ initialIsOpen: true })
+    const rows = rendered.getAllByRole('button', { name: /^Query key / })
+
+    expect(rows.length).toBeGreaterThan(0)
+    expect(rows.length).toBeLessThan(100)
+  })
+
+  describe('virtualized cache lists', () => {
+    function getViewport(
+      container: HTMLElement,
+      view: 'queries' | 'mutations',
+    ) {
+      const viewport = container.querySelector<HTMLDivElement>(
+        `.tsqd-${view}-overflow-container`,
+      )
+      if (!viewport) throw new Error('Missing cache list viewport')
+      return viewport
+    }
+
+    function seedQueries() {
+      for (let index = 0; index < 1000; index++) {
+        queryClient.setQueryData(
+          [`query-${String(index).padStart(4, '0')}`],
+          `data-${index}`,
+        )
+      }
+    }
+
+    it('keeps selected query details updating when its row is offscreen', () => {
+      seedQueries()
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.sort': 'query hash' },
+      )
+      fireEvent.click(rendered.getByLabelText('Query key ["query-0000"]'))
+      const viewport = getViewport(rendered.container, 'queries')
+      viewport.scrollTo({ top: viewport.scrollHeight })
+      expect(
+        rendered.queryByLabelText('Query key ["query-0000"]'),
+      ).not.toBeInTheDocument()
+      expect(rendered.getByLabelText('Query key ["query-0999"]')).toBeVisible()
+
+      queryClient.setQueryData(['query-0000'], 'updated-selected-data')
+      expect(rendered.getByDisplayValue('updated-selected-data')).toBeVisible()
+      viewport.scrollTo({ top: 0 })
+      expect(rendered.getByLabelText('Query key ["query-0000"]')).toBeVisible()
+      expect(rendered.getByText('Query Details')).toBeVisible()
+    })
+
+    it('filters, clears, and restores queries after distant scrolling', () => {
+      seedQueries()
+      const rendered = renderDevtools({ initialIsOpen: true })
+      const viewport = getViewport(rendered.container, 'queries')
+      viewport.scrollTo({ top: viewport.scrollHeight })
+      const filter = rendered.getByLabelText('Filter queries by query key')
+      fireEvent.input(filter, { target: { value: 'query-0000' } })
+      viewport.scrollTo({ top: viewport.scrollTop })
+      expect(rendered.getAllByLabelText(/^Query key /)).toHaveLength(1)
+      expect(rendered.getByLabelText('Query key ["query-0000"]')).toBeVisible()
+
+      fireEvent.input(filter, { target: { value: 'no-query-matches' } })
+      expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
+      fireEvent.input(filter, { target: { value: '' } })
+      expect(rendered.getAllByLabelText(/^Query key /).length).toBeLessThan(100)
+      viewport.scrollTo({ top: viewport.scrollHeight })
+      fireEvent.click(rendered.getByLabelText('Clear query cache'))
+      expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
+      queryClient.setQueryData(['after-clear'], 'restored')
+      viewport.scrollTo({ top: viewport.scrollTop })
+      expect(rendered.getByLabelText('Query key ["after-clear"]')).toBeVisible()
+    })
+
+    it('keeps query clicks aligned after a same-count sort change', () => {
+      seedQueries()
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.sort': 'query hash' },
+      )
+      const viewport = getViewport(rendered.container, 'queries')
+      viewport.scrollTo({ top: 14000 })
+      fireEvent.click(rendered.getByLabelText('Sort order ascending'))
+      const row = rendered.getAllByLabelText(/^Query key /)[5]
+      assert(row)
+      const match = row.getAttribute('aria-label')?.match(/query-(\d+)/)
+      assert(match?.[1])
+      fireEvent.click(row)
+      expect(
+        rendered.getByDisplayValue(`data-${Number(match[1])}`),
+      ).toBeVisible()
+    })
+
+    it('keeps mutation clicks aligned after a same-count sort change', () => {
+      for (let index = 0; index < 100; index++) {
+        queryClient.getMutationCache().build(queryClient, {
+          mutationKey: [`reorder-${index}`],
+        })
+      }
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Mutations'))
+      const viewport = getViewport(rendered.container, 'mutations')
+      viewport.scrollTo({ top: 1400 })
+      fireEvent.click(rendered.getByLabelText('Sort order ascending'))
+      const row = rendered.getAllByLabelText(/^Mutation submitted at /)[5]
+      assert(row)
+      const key = row.textContent.match(/reorder-\d+/)?.[0]
+      assert(key)
+      fireEvent.click(row)
+      expect(
+        rendered.container.querySelector('.tsqd-query-details-summary'),
+      ).toHaveTextContent(key)
+    })
+
+    it('bounds mutation rows, preserves offscreen details, and filters from a distant offset', async () => {
+      const mutations = Array.from({ length: 2000 }, (_, index) =>
+        queryClient.getMutationCache().build(queryClient, {
+          mutationKey: [
+            index === 1999 ? 'mutation-target' : `mutation-${index}`,
+          ],
+          mutationFn: () => Promise.resolve(`result-${index}`),
+        }),
+      )
+      const selected = mutations[0]
+      assert(selected)
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Mutations'))
+      expect(
+        rendered.getAllByLabelText(/^Mutation submitted at /).length,
+      ).toBeLessThan(100)
+      const viewport = getViewport(rendered.container, 'mutations')
+      viewport.scrollTo({ top: viewport.scrollHeight })
+      const selectedRow = rendered
+        .getByText(/\["mutation-0"\]/)
+        .closest('button')
+      assert(selectedRow)
+      fireEvent.click(selectedRow)
+      viewport.scrollTo({ top: 14000 })
+      expect(
+        rendered.queryByText(/\["mutation-0"\]/, { selector: 'code' }),
+      ).not.toBeInTheDocument()
+      await selected.execute({})
+      await vi.advanceTimersByTimeAsync(0)
+      expect(rendered.getByText('Mutation Details')).toBeVisible()
+      expect(rendered.container).toHaveTextContent('result-0')
+      expect(
+        rendered.queryByText(/\["mutation-0"\]/, { selector: 'code' }),
+      ).not.toBeInTheDocument()
+
+      viewport.scrollTo({ top: viewport.scrollHeight })
+      fireEvent.input(rendered.getByLabelText('Filter queries by query key'), {
+        target: { value: 'mutation-target' },
+      })
+      viewport.scrollTo({ top: viewport.scrollTop })
+      expect(
+        rendered.getAllByLabelText(/^Mutation submitted at /),
+      ).toHaveLength(1)
+      expect(
+        rendered.getByText(/\["mutation-target"\]/, { selector: 'code' }),
+      ).toBeVisible()
+      fireEvent.click(rendered.getByLabelText('Clear query cache'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(
+        rendered.queryAllByLabelText(/^Mutation submitted at /),
+      ).toHaveLength(0)
+    })
+  })
 
   it('should keep measured panel widths independent', () => {
     let firstState!: ReturnType<typeof useDevtoolsState>
@@ -744,27 +914,30 @@ describe('Devtools', () => {
       expect(rendered.getByLabelText(/, static/)).toBeInTheDocument()
     })
 
-    it('should render a "waterfall" indicator for a query that a waterfallHandle reader fetched', () => {
-      const waterfallQuery = (input: { id: number }) => ({
+    it('should render a "waterfall" indicator for a query whose first fetch an observer started', () => {
+      const postQuery = (input: { id: number }) => ({
         queryKey: ['waterfall-q', input.id],
         queryFn: () => 'x',
       })
-      const handle = experimental_waterfallHandle(waterfallQuery, { id: 1 })
+      experimental_queryHandle(queryClient, postQuery, { id: 1 })
       using _subscription = subscribe(
-        new QueryObserver(
-          queryClient,
-          experimental_fromHandle(waterfallQuery, handle),
-        ),
+        new QueryObserver(queryClient, postQuery({ id: 2 })),
         noop,
       )
       using rendered = unmountOnDispose(renderDevtools({ initialIsOpen: true }))
 
-      expect(rendered.getByText('waterfall')).toBeInTheDocument()
-      expect(rendered.getByLabelText(/, waterfall/)).toBeInTheDocument()
+      expect(rendered.getAllByText('waterfall')).toHaveLength(1)
+      expect(
+        rendered.getByLabelText('Query key ["waterfall-q",2], waterfall'),
+      ).toBeInTheDocument()
+
+      fireEvent.click(rendered.getByLabelText(/\["waterfall-q",2\]/))
+
+      expect(rendered.getByText('observer (client)')).toBeInTheDocument()
     })
 
     it('should show how a query started and that nothing read it', async () => {
-      const handle = experimental_prefetchHandle(
+      const handle = experimental_queryHandle(
         queryClient,
         (input: { id: number }) => ({
           queryKey: ['prefetched-q', input.id],
@@ -777,7 +950,7 @@ describe('Devtools', () => {
 
       fireEvent.click(rendered.getByLabelText('Query key ["prefetched-q",1]'))
 
-      expect(rendered.getByText('prefetchHandle (client)')).toBeInTheDocument()
+      expect(rendered.getByText('queryHandle (client)')).toBeInTheDocument()
       expect(rendered.getByRole('note')).toHaveTextContent(
         'Prefetched, never read',
       )
@@ -800,17 +973,19 @@ describe('Devtools', () => {
         queryFn: () => 'x',
         staleTime: Infinity,
       })
-      experimental_prefetchHandle(queryClient, factory)
+      experimental_queryHandle(queryClient, factory)
       await vi.advanceTimersByTimeAsync(0)
       using rendered = unmountOnDispose(renderDevtools({ initialIsOpen: true }))
 
       fireEvent.click(rendered.getByLabelText('Query key ["restarted-q"]'))
-      expect(rendered.getByText('prefetchHandle (client)')).toBeInTheDocument()
+      expect(rendered.getByText('queryHandle (client)')).toBeInTheDocument()
 
-      await experimental_ensureHandle(queryClient, factory)
+      await experimental_ensureQueryHandle(queryClient, factory)
       await vi.advanceTimersByTimeAsync(0)
 
-      expect(rendered.getByText('ensureHandle (client)')).toBeInTheDocument()
+      expect(
+        rendered.getByText('ensureQueryHandle (client)'),
+      ).toBeInTheDocument()
     })
 
     it('should show where a hydrated query started', async () => {
@@ -818,7 +993,7 @@ describe('Devtools', () => {
       {
         using _server = serverEnvironment()
         using serverClient = clearOnDispose(new QueryClient())
-        experimental_prefetchHandle(serverClient, () => ({
+        experimental_queryHandle(serverClient, () => ({
           queryKey: ['server-q'],
           queryFn: () => 'x',
         }))
@@ -830,11 +1005,18 @@ describe('Devtools', () => {
 
       fireEvent.click(rendered.getByLabelText('Query key ["server-q"]'))
 
-      expect(rendered.getByText('prefetchHandle (server)')).toBeInTheDocument()
+      expect(rendered.getByText('queryHandle (server)')).toBeInTheDocument()
     })
 
     it('should not show start info for queries that other APIs start', () => {
       queryClient.setQueryData(['plain-q'], 'x')
+      using _subscription = subscribe(
+        new QueryObserver(queryClient, {
+          queryKey: ['observed-q'],
+          queryFn: () => 'x',
+        }),
+        noop,
+      )
       using rendered = unmountOnDispose(renderDevtools({ initialIsOpen: true }))
 
       fireEvent.click(rendered.getByLabelText('Query key ["plain-q"]'))
@@ -873,6 +1055,7 @@ describe('Devtools', () => {
       > = {},
     ) {
       const pipDocument = document.implementation.createHTMLDocument('PiP')
+      Object.defineProperty(pipDocument, 'defaultView', { value: window })
       const listeners = new Map<string, EventListener>()
       const fakeWindow: FakePipWindow = {
         document: pipDocument,
@@ -972,6 +1155,19 @@ describe('Devtools', () => {
         pipDocument.querySelector('[aria-label*="narrow-pip-query"]'),
       ).not.toBeNull()
     })
+
+    it('should render the PiP panel with "dir" set to "ltr"', () => {
+      const { pipDocument } = stubPipWindow()
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+      expect(pipDocument.querySelector('.tsqd-main-panel')).toHaveAttribute(
+        'dir',
+        'ltr',
+      )
+    })
   })
 
   describe('status counts', () => {
@@ -1070,6 +1266,86 @@ describe('Devtools', () => {
 
       fireEvent.blur(fresh)
       expect(rendered.queryByRole('tooltip')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('Data Explorer search', () => {
+    it('searches only query Data and resets search when the selection changes', () => {
+      queryClient.setQueryData(['search-first'], {
+        nested: { name: 'first needle' },
+      })
+      queryClient.setQueryData(['search-second'], {
+        nested: { name: 'second' },
+      })
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByLabelText('Query key ["search-first"]'))
+      expect(rendered.getAllByLabelText('Search data')).toHaveLength(1)
+      const search = rendered.getByRole('searchbox', { name: 'Search data' })
+      fireEvent.input(search, { target: { value: 'NEEDLE' } })
+      vi.advanceTimersByTime(150)
+      const dataContainer = rendered.container.querySelector(
+        '.tsqd-query-details-data-explorer',
+      )
+      assert(dataContainer instanceof HTMLElement)
+      const data = within(dataContainer)
+      expect(data.getByLabelText('name:')).toHaveValue('first needle')
+      expect(data.getByLabelText('name:')).toHaveAttribute(
+        'data-search-match',
+        'true',
+      )
+      queryClient.setQueryData(['search-first'], {
+        nested: { name: 'updated needle' },
+      })
+      expect(data.getByLabelText('name:')).toHaveValue('updated needle')
+      fireEvent.click(rendered.getByLabelText('Query key ["search-second"]'))
+      expect(rendered.getByLabelText('Search data')).toHaveValue('')
+      expect(dataContainer.querySelector('[data-search-match]')).toBeNull()
+    })
+
+    it('searches read-only mutation Data and resets search when the selection changes', async () => {
+      const first = queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['search-first'],
+        mutationFn: () =>
+          Promise.resolve({ nested: { name: 'mutation needle' } }),
+      })
+      const second = queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['search-second'],
+        mutationFn: () => Promise.resolve({ nested: { name: 'other' } }),
+      })
+      await first.execute(undefined)
+      await second.execute(undefined)
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Mutations'))
+      const rows = rendered.getAllByLabelText(/^Mutation submitted at /)
+      const firstRow = rows.find((row) =>
+        row.textContent.includes('search-first'),
+      )
+      const secondRow = rows.find((row) =>
+        row.textContent.includes('search-second'),
+      )
+      assert(firstRow && secondRow)
+      fireEvent.click(firstRow)
+      expect(rendered.getAllByLabelText('Search data')).toHaveLength(1)
+      fireEvent.input(rendered.getByLabelText('Search data'), {
+        target: { value: 'needle' },
+      })
+      vi.advanceTimersByTime(150)
+      const dataContainer = rendered.getByRole('heading', {
+        name: 'Data Explorer',
+      }).nextElementSibling
+      assert(dataContainer instanceof HTMLElement)
+      const data = within(dataContainer)
+      expect(
+        [...CSS.highlights.values()].flatMap((highlight) =>
+          [...highlight].map((range) => range.toString()),
+        ),
+      ).toContain('needle')
+      expect(data.queryByRole('textbox')).not.toBeInTheDocument()
+      fireEvent.click(secondRow)
+      expect(rendered.getByLabelText('Search data')).toHaveValue('')
+      expect(
+        [...CSS.highlights.values()].every((highlight) => highlight.size === 0),
+      ).toBe(true)
     })
   })
 
@@ -1651,6 +1927,118 @@ describe('Devtools', () => {
         localStorage.getItem('TanstackQueryDevtools.hideDisabledQueries'),
       ).toBe('true')
     })
+  })
+
+  describe('text direction', () => {
+    it('should render the floating devtools with "dir" set to "ltr"', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.container.querySelector('.tsqd-transitions-container'),
+      ).toHaveAttribute('dir', 'ltr')
+    })
+
+    it('should render the embedded panel with "dir" set to "ltr"', () => {
+      const rendered = render(() => (
+        <DevtoolsPanelComponent
+          client={queryClient}
+          onlineManager={onlineManager}
+          queryFlavor="TanStack Query"
+          version="5"
+        />
+      ))
+
+      expect(
+        rendered.container.querySelector('.tsqd-main-panel'),
+      ).toHaveAttribute('dir', 'ltr')
+    })
+
+    it('should render the settings menu with "dir" set to "ltr"', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+        key: 'Enter',
+      })
+
+      expect(document.querySelector('.tsqd-settings-menu')).toHaveAttribute(
+        'dir',
+        'ltr',
+      )
+    })
+
+    it.each(['position', 'theme', 'disabled-queries'])(
+      'should render the "%s" sub-menu with "dir" set to "ltr"',
+      (name) => {
+        const rendered = renderDevtools({ initialIsOpen: true })
+
+        fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+          key: 'Enter',
+        })
+
+        const subTrigger = document.querySelector<HTMLElement>(
+          `.tsqd-settings-menu-sub-trigger-${name}`,
+        )
+        expect(subTrigger).not.toBeNull()
+        fireEvent.keyDown(subTrigger!, { key: 'ArrowRight' })
+
+        expect(
+          document.querySelector('.tsqd-settings-submenu'),
+        ).toHaveAttribute('dir', 'ltr')
+      },
+    )
+
+    it.each([
+      ['position', 'full'],
+      ['theme', 'full'],
+      ['disabled-queries', 'full'],
+      ['theme', 'embedded'],
+      ['disabled-queries', 'embedded'],
+    ] as const)(
+      'should open the "%s" sub-menu with "ArrowRight" in the %s devtools when the browser language is RTL',
+      (name, mode) => {
+        const rendered = render(() =>
+          mode === 'full' ? (
+            <DevtoolsComponent
+              client={queryClient}
+              onlineManager={onlineManager}
+              queryFlavor="TanStack Query"
+              version="5"
+              initialIsOpen
+            />
+          ) : (
+            <DevtoolsPanelComponent
+              client={queryClient}
+              onlineManager={onlineManager}
+              queryFlavor="TanStack Query"
+              version="5"
+            />
+          ),
+        )
+        const language = vi
+          .spyOn(navigator, 'language', 'get')
+          .mockReturnValue('ar')
+        window.dispatchEvent(new Event('languagechange'))
+
+        try {
+          fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+            key: 'Enter',
+          })
+
+          const subTrigger = document.querySelector<HTMLElement>(
+            `.tsqd-settings-menu-sub-trigger-${name}`,
+          )
+          expect(subTrigger).not.toBeNull()
+          fireEvent.keyDown(subTrigger!, { key: 'ArrowRight' })
+
+          expect(
+            document.querySelector('.tsqd-settings-submenu'),
+          ).toHaveAttribute('dir', 'ltr')
+        } finally {
+          language.mockRestore()
+          window.dispatchEvent(new Event('languagechange'))
+        }
+      },
+    )
   })
 
   describe('resize handle', () => {
