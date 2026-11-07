@@ -193,13 +193,7 @@ export const ASTUtils = {
   }) {
     const { node, context } = params
 
-    // we need the fallbacks for backwards compat with eslint < 8.37.0
-    // oxlint-disable-next-line typescript/no-unnecessary-condition
-    const sourceCode = context.sourceCode ?? context.getSourceCode()
-    // oxlint-disable-next-line typescript/no-unnecessary-condition
     const scope = context.sourceCode.getScope(node)
-      ? sourceCode.getScope(node)
-      : context.getScope()
 
     const resolvedNode = scope.references.find((ref) => ref.identifier === node)
       ?.resolved?.defs[0]?.node
