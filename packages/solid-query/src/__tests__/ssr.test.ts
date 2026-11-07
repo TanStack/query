@@ -7,6 +7,7 @@ import {
   QueryCache,
   QueryClient,
   QueryClientProvider,
+  notifyManager,
   useInfiniteQuery,
   useQuery,
 } from '..'
@@ -92,6 +93,34 @@ describe('Server Side Rendering', () => {
     await expect(markup).resolves.toContain(
       'data: initial, isFetching: true, other: other',
     )
+  })
+
+  it('should render the query state the resource resolved with when updates are batched', async () => {
+    const key = createKey()
+
+    function Page() {
+      const query = useQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'data'),
+      }))
+
+      return createComponent(Suspense, {
+        fallback: 'loading',
+        get children() {
+          return `data: ${query.data}, dataUpdatedAt: ${query.dataUpdatedAt}`
+        },
+      })
+    }
+
+    const markup = renderToString(Page)
+    await vi.advanceTimersByTimeAsync(5)
+    notifyManager.batch(() => {
+      queryClient.setQueryData(key, 'first', { updatedAt: 1 })
+      queryClient.setQueryData(key, 'second', { updatedAt: 2 })
+    })
+    await vi.advanceTimersByTimeAsync(6)
+
+    await expect(markup).resolves.toContain('data: first, dataUpdatedAt: 1')
   })
 
   it('should render the resolved infinite query state', async () => {

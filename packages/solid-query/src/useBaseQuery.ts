@@ -182,7 +182,8 @@ export function useBaseQuery<
           reject(unwrappedResult.error)
           unsubscribeIfQueued()
         } else {
-          if (queryResource.state === 'pending') {
+          if (resolver === resolve) {
+            resolver = null
             const { data, ...rest } = result
             setState(rest)
           }
