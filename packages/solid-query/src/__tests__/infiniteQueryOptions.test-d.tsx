@@ -1,5 +1,10 @@
+import {
+  QueryClient,
+  infiniteQueryOptions as coreInfiniteQueryOptions,
+  dataTagSymbol,
+  skipToken,
+} from '@tanstack/query-core'
 import { describe, expectTypeOf, it } from 'vitest'
-import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
@@ -19,6 +24,30 @@ export const exportedInfiniteQueryOptions = infiniteQueryOptions({
 })
 
 describe('infiniteQueryOptions', () => {
+  it('should infer data from core infiniteQueryOptions', () => {
+    const options = coreInfiniteQueryOptions({
+      queryKey: createKey(),
+      initialPageParam: 0,
+      queryFn: ({ pageParam }) => Promise.resolve(pageParam),
+      getNextPageParam: () => undefined,
+    })
+    const query = useInfiniteQuery(() => options)
+    expectTypeOf(query.data).toEqualTypeOf<InfiniteData<number> | undefined>()
+  })
+
+  it('should preserve selected data and initialData from core infiniteQueryOptions', () => {
+    const options = coreInfiniteQueryOptions({
+      queryKey: createKey(),
+      initialPageParam: 0,
+      queryFn: ({ pageParam }) => Promise.resolve(pageParam),
+      getNextPageParam: () => undefined,
+      initialData: { pages: [1], pageParams: [0] },
+      select: (data) => data.pages.length,
+    })
+    const query = useInfiniteQuery(() => options)
+    expectTypeOf(query.data).toEqualTypeOf<number>()
+  })
+
   it('should work when passed to infiniteQuery', async () => {
     const options = infiniteQueryOptions({
       getNextPageParam: () => 10,

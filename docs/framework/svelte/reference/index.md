@@ -83,6 +83,9 @@ title: "@tanstack/svelte-query"
 
 - [Accessor](type-aliases/Accessor.md)
 - [AnyDataTag](type-aliases/AnyDataTag.md)
+- [CoreInfiniteQueryOptions](type-aliases/CoreInfiniteQueryOptions.md)
+- [CoreMutationOptions](type-aliases/CoreMutationOptions.md)
+- [CoreQueryOptions](type-aliases/CoreQueryOptions.md)
 - [CreateBaseMutationResult](type-aliases/CreateBaseMutationResult.md)
 - [CreateBaseQueryOptions](type-aliases/CreateBaseQueryOptions.md)
 - [CreateBaseQueryResult](type-aliases/CreateBaseQueryResult.md)

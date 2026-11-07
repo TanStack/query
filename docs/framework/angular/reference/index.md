@@ -95,6 +95,9 @@ title: "@tanstack/angular-query-experimental"
 ## Type Aliases
 
 - [AnyDataTag](type-aliases/AnyDataTag.md)
+- [CoreInfiniteQueryOptions](type-aliases/CoreInfiniteQueryOptions.md)
+- [CoreMutationOptions](type-aliases/CoreMutationOptions.md)
+- [CoreQueryOptions](type-aliases/CoreQueryOptions.md)
 - [CreateBaseMutationResult](type-aliases/CreateBaseMutationResult.md)
 - [CreateBaseQueryResult](type-aliases/CreateBaseQueryResult.md)
 - [CreateInfiniteQueryResult](type-aliases/CreateInfiniteQueryResult.md)
