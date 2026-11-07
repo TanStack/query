@@ -142,6 +142,26 @@ function App() {
   - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
   - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
 
+## Filter queries and mutations
+
+The **Filter** input above the query and mutation lists matches the query or mutation key by default. Select the scope button inside the input to switch between **Key**, **Data**, and **All**:
+
+- **Key** matches the query key or the mutation key.
+- **Data** matches the query data, or the mutation variables or data, the same way **Search data** does below.
+- **All** matches either.
+
+The selected scope is remembered across reloads, like the other filter settings.
+
+## Search query and mutation data
+
+Select a query or mutation and use **Search data** in its Data Explorer to search nested property names and primitive values. Search uses case-insensitive text matching and treats special characters as plain text.
+
+Matching text is highlighted. Matching editable values have a highlighted input. The explorer opens matching branches and the first matching page in each paginated collection. Other pages with matches are highlighted so you can open them. You can still inspect other rows and edit query data.
+
+The Data Explorer highlights up to 1,000 matches at a time.
+
+Select **Clear** or press **Escape** in the search field to restore your manual expansion. Selecting another query or mutation clears the search, unless the filter scope is **Data** or **All**: then the search starts with the filter text. For a mutation, it starts only in the variables or data that match the filter.
+
 ## Devtools in production
 
 Devtools are excluded in production builds. However, it might be desirable to lazy load the devtools in production:
