@@ -8,7 +8,9 @@ title: UseBaseMutationResult
 ```ts
 type UseBaseMutationResult<TData = unknown, TError = DefaultError, TVariables = unknown, TOnMutateResult = unknown> = Override<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>, {
   mutate: UseMutateFunction<TData, TError, TVariables, TOnMutateResult>;
-}> & object;
+}> & {
+  mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult>;
+};
 ```
 
 Defined in: [packages/preact-query/src/types.ts:452](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L452)
