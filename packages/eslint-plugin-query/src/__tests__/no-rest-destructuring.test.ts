@@ -12,6 +12,17 @@ const ruleTester = new RuleTester()
 
 ruleTester.run('no-rest-destructuring', rule, {
   valid: [
+    ...['useQueries', 'useSuspenseQueries'].map((hook) => ({
+      name: `${hook} result array can be copied`,
+      code: `
+        import { ${hook} } from '@tanstack/react-query'
+
+        function Component() {
+          const queries = ${hook}({ queries: [] })
+          return [...queries]
+        }
+      `,
+    })),
     {
       name: 'useQuery is not captured',
       code: normalizeIndent`
