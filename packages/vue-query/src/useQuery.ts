@@ -39,11 +39,10 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
  * `undefined` (unless a `select` changes `TData` to include `undefined`).
  *
  * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
- * tracked, while a plain boolean isn't tracked on its own.
- * query-core's `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts
- * through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual
- * entries. Other options are read once when passed as a plain value, and stay reactive when passed as a `ref`
- * or a `computed`.
+ * tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+ * accepted too and is passed through untracked. `queryKey` reacts through a `ref` or a reactive getter for the
+ * array itself, or `ref`s and reactive getters as individual entries. Other options are read once when passed as
+ * a plain value, and stay reactive when passed as a `ref` or a `computed`.
  * @param options - The {@link DefinedInitialQueryOptions} to use — everything you can pass to `useQuery`,
  * with `initialData` known to be defined.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
@@ -85,11 +84,10 @@ export function useQuery<
 
 /**
  * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
- * tracked, while a plain boolean isn't tracked on its own.
- * query-core's `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts
- * through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual
- * entries. Other options are read once when passed as a plain value, and stay reactive when passed as a `ref`
- * or a `computed`.
+ * tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+ * accepted too and is passed through untracked. `queryKey` reacts through a `ref` or a reactive getter for the
+ * array itself, or `ref`s and reactive getters as individual entries. Other options are read once when passed as
+ * a plain value, and stay reactive when passed as a `ref` or a `computed`.
  * @param options - The {@link UndefinedInitialQueryOptions} to use — everything you can pass to `useQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
@@ -251,10 +249,9 @@ export function useQuery<
  * overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
  *
  * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
- * tracked, while a plain boolean isn't tracked on its own.
- * query-core's `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts
- * through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual
- * entries.
+ * tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+ * accepted too and is passed through untracked. `queryKey` reacts through a `ref` or a reactive getter for the
+ * array itself, or `ref`s and reactive getters as individual entries.
  *
  * When `options` itself is a reactive getter, the whole object is re-evaluated on every change to its
  * dependencies, so any option inside it — not just `queryKey` and `enabled` — can change over time.

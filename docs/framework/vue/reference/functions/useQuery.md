@@ -29,17 +29,16 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryDefinedReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:76](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L76)
+Defined in: [packages/vue-query/src/useQuery.ts:75](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L75)
 
 This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
 `undefined` (unless a `select` changes `TData` to include `undefined`).
 
 `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
-tracked, while a plain boolean isn't tracked on its own.
-query-core's `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts
-through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual
-entries. Other options are read once when passed as a plain value, and stay reactive when passed as a `ref`
-or a `computed`.
+tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+accepted too and is passed through untracked. `queryKey` reacts through a `ref` or a reactive getter for the
+array itself, or `ref`s and reactive getters as individual entries. Other options are read once when passed as
+a plain value, and stay reactive when passed as a `ref` or a `computed`.
 
 ### Type Parameters
 
@@ -114,14 +113,13 @@ const { data, isError, error } = useQuery({
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:238](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L238)
+Defined in: [packages/vue-query/src/useQuery.ts:236](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L236)
 
 `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
-tracked, while a plain boolean isn't tracked on its own.
-query-core's `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts
-through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual
-entries. Other options are read once when passed as a plain value, and stay reactive when passed as a `ref`
-or a `computed`.
+tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+accepted too and is passed through untracked. `queryKey` reacts through a `ref` or a reactive getter for the
+array itself, or `ref`s and reactive getters as individual entries. Other options are read once when passed as
+a plain value, and stay reactive when passed as a `ref` or a `computed`.
 
 ### Type Parameters
 
@@ -312,17 +310,16 @@ const { state } = useQuery({
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: MaybeRefOrGetter<UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:313](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L313)
+Defined in: [packages/vue-query/src/useQuery.ts:310](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L310)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
 overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
 `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
-tracked, while a plain boolean isn't tracked on its own.
-query-core's `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts
-through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual
-entries.
+tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+accepted too and is passed through untracked. `queryKey` reacts through a `ref` or a reactive getter for the
+array itself, or `ref`s and reactive getters as individual entries.
 
 When `options` itself is a reactive getter, the whole object is re-evaluated on every change to its
 dependencies, so any option inside it — not just `queryKey` and `enabled` — can change over time.
