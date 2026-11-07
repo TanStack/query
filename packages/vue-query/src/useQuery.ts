@@ -38,7 +38,8 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
  * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
  * `undefined` (unless a `select` changes `TData` to include `undefined`).
  *
- * `enabled` tracks reactive dependencies as a `ref`, a plain boolean, or a zero-argument getter (`() => ...`).
+ * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+ * tracked, while a plain boolean isn't tracked on its own.
  * query-core's `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts
  * through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual
  * entries. Other options are read once when passed as a plain value, and stay reactive when passed as a `ref`
@@ -83,7 +84,8 @@ export function useQuery<
 ): UseQueryDefinedReturnType<TData, TError>
 
 /**
- * `enabled` tracks reactive dependencies as a `ref`, a plain boolean, or a zero-argument getter (`() => ...`).
+ * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+ * tracked, while a plain boolean isn't tracked on its own.
  * query-core's `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts
  * through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual
  * entries. Other options are read once when passed as a plain value, and stay reactive when passed as a `ref`
@@ -248,7 +250,8 @@ export function useQuery<
  * `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
  * overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
  *
- * `enabled` tracks reactive dependencies as a `ref`, a plain boolean, or a zero-argument getter (`() => ...`).
+ * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+ * tracked, while a plain boolean isn't tracked on its own.
  * query-core's `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts
  * through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual
  * entries.
