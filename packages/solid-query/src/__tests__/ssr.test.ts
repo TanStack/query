@@ -123,6 +123,38 @@ describe('Server Side Rendering', () => {
     await expect(markup).resolves.toContain('data: first, dataUpdatedAt: 1')
   })
 
+  it('should render the resolved query state when the query is created inside Suspense', async () => {
+    const key = createKey()
+
+    function Page() {
+      const query = useQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'data'),
+      }))
+
+      return `data: ${query.data}, status: ${query.status}, isFetching: ${query.isFetching}`
+    }
+
+    const markup = renderToStringAsync(() =>
+      createComponent(QueryClientProvider, {
+        client: queryClient,
+        get children() {
+          return createComponent(Suspense, {
+            fallback: 'loading',
+            get children() {
+              return createComponent(Page, {})
+            },
+          })
+        },
+      }),
+    )
+    await vi.advanceTimersByTimeAsync(11)
+
+    await expect(markup).resolves.toContain(
+      'data: data, status: success, isFetching: false',
+    )
+  })
+
   it('should render the resolved infinite query state', async () => {
     const key = createKey()
 

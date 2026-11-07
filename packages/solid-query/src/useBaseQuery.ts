@@ -182,11 +182,6 @@ export function useBaseQuery<
           reject(unwrappedResult.error)
           unsubscribeIfQueued()
         } else {
-          if (resolver === resolve) {
-            resolver = null
-            const { data, ...rest } = result
-            setState(rest)
-          }
           resolve(unwrappedResult)
           unsubscribeIfQueued()
         }
@@ -416,7 +411,15 @@ export function useBaseQuery<
         }
         return queryResource()?.data
       }
-      return Reflect.get(target, prop)
+      const value = Reflect.get(target, prop)
+      if (
+        isServer &&
+        queryResource.state === 'ready' &&
+        typeof value !== 'function'
+      ) {
+        return queryResource()?.[prop]
+      }
+      return value
     },
   }
 

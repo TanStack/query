@@ -2,4 +2,4 @@
 '@tanstack/solid-query': patch
 ---
 
-fix(solid-query/useBaseQuery): update the store on the server so result fields other than 'data' are not stuck in 'pending'
+fix(solid-query/useBaseQuery): read result fields from the resolved resource on the server so fields other than 'data' are not stuck in 'pending'
