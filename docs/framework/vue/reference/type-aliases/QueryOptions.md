@@ -9,7 +9,7 @@ title: QueryOptions
 type QueryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = { [Property in keyof QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>]: Property extends "enabled" ? VueQueryEnabledOption<TQueryFnData, TError, TQueryData, DeepUnwrapRef<TQueryKey>> : Property extends "queryKey" ? MaybeRefOrGetter<TQueryKey> : QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, DeepUnwrapRef<TQueryKey>>[Property] } & ShallowOption;
 ```
 
-Defined in: [packages/vue-query/src/queryOptions.ts:44](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L44)
+Defined in: [packages/vue-query/src/queryOptions.ts:46](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L46)
 
 The plain, unwrapped options that `queryOptions` hands back, and what `useQuery`, `useQueries`, and the
 `queryClient` methods see once `ref`s have been resolved. To pass options in, use
@@ -33,7 +33,8 @@ The type of errors your `queryFn` may throw.
 
 `TData` = `TQueryFnData`
 
-The type `data` ends up as after `select` runs.
+The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
+`select` is used.
 
 ### TQueryData
 

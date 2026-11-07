@@ -9,11 +9,11 @@ title: UseInfiniteQueryOptions
 type UseInfiniteQueryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown> = MaybeRef<{ [Property in keyof InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>]: Property extends "enabled" ? VueQueryEnabledOption<TQueryFnData, TError, InfiniteData<TQueryFnData, TPageParam>, DeepUnwrapRef<TQueryKey>> : MaybeRefDeep<InfiniteQueryObserverOptions<TQueryFnData, TError, TData, DeepUnwrapRef<TQueryKey>, TPageParam>[Property]> } & ShallowOption>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:34](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L34)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:39](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L39)
 
-The options accepted by `useInfiniteQuery`. Same as [InfiniteQueryObserverOptions](../interfaces/InfiniteQueryObserverOptions.md) from
-`@tanstack/query-core`, plus the `shallow` option. Each option except `shallow` can also be a `ref` (and
-`enabled` a reactive getter).
+The options accepted by `useInfiniteQuery`. Extends [InfiniteQueryObserverOptions](../interfaces/InfiniteQueryObserverOptions.md) from
+`@tanstack/query-core` with the `vue-query`-specific `shallow` option. Each option except `shallow` can also
+be a `ref` (and `enabled` a zero-argument getter or query-core's `(query) => boolean` callback).
 
 ## Type Parameters
 
@@ -21,18 +21,28 @@ The options accepted by `useInfiniteQuery`. Same as [InfiniteQueryObserverOption
 
 `TQueryFnData` = `unknown`
 
+The type of a single page, as your `queryFn` resolves it.
+
 ### TError
 
 `TError` = [`DefaultError`](DefaultError.md)
+
+The type of errors your `queryFn` may throw.
 
 ### TData
 
 `TData` = `TQueryFnData`
 
+The type `data` ends up as after `select` runs — defaults to `TQueryFnData`.
+
 ### TQueryKey
 
 `TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
 
+The type of your `queryKey`.
+
 ### TPageParam
 
 `TPageParam` = `unknown`
+
+The type of the parameter passed to `queryFn` to fetch a given page.
