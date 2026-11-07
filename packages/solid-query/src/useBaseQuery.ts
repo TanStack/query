@@ -411,7 +411,17 @@ export function useBaseQuery<
         }
         return queryResource()?.data
       }
-      return Reflect.get(target, prop)
+      const value = Reflect.get(target, prop)
+      if (
+        isServer &&
+        queryResource.state !== 'unresolved' &&
+        queryResource.state !== 'pending' &&
+        queryResource.state !== 'errored' &&
+        typeof value !== 'function'
+      ) {
+        return queryResource()?.[prop]
+      }
+      return value
     },
   }
 
