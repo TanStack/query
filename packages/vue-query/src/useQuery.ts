@@ -47,9 +47,11 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
  * with `initialData` known to be defined.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
- * @returns The current query result, typed so that `data` is never `undefined` (unless a `select` changes
- * `TData` to include `undefined`). `status` never resolves to `pending` in this overload's type, since
- * `initialData` guarantees data upfront.
+ * @returns The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
+ * fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
+ * since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived boolean `ref`s for
+ * convenience. `state` is that result as one readonly reactive object — `state.data`, `state.isPending`, and
+ * the rest are plain values.
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -92,9 +94,10 @@ export function useQuery<
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
- * the last fetch attempt failed, or `success` if the query has data to display. `state` is that result as one
- * reactive object — `state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'`
- * narrows `state.data` to `TData`.
+ * the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+ * are derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
+ * `state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows
+ * `state.data` to `TData`.
  * @example
  * A query key built from a reactive `ref` — the query refetches whenever `postId` changes:
  * ```vue
@@ -258,7 +261,11 @@ export function useQuery<
  * @param options - A `ref`, plain value, or reactive getter resolving to the {@link UseQueryOptions} to use.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
- * @returns The current query result, with `data` typed as possibly `undefined`.
+ * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
+ * the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+ * are derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
+ * `state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows
+ * `state.data` to `TData`.
  * @example
  * Passing a whole-options getter so `staleTime` reacts to a setting stored elsewhere, not just `queryKey`:
  * ```vue

@@ -29,7 +29,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryDefinedReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:75](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L75)
+Defined in: [packages/vue-query/src/useQuery.ts:77](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L77)
 
 This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
 `undefined` (unless a `select` changes `TData` to include `undefined`).
@@ -78,9 +78,11 @@ will be used.
 
 [`UseQueryDefinedReturnType`](../type-aliases/UseQueryDefinedReturnType.md)\<`TData`, `TError`\>
 
-The current query result, typed so that `data` is never `undefined` (unless a `select` changes
-`TData` to include `undefined`). `status` never resolves to `pending` in this overload's type, since
-`initialData` guarantees data upfront.
+The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
+fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
+since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived boolean `ref`s for
+convenience. `state` is that result as one readonly reactive object — `state.data`, `state.isPending`, and
+the rest are plain values.
 
 ### Example
 
@@ -113,7 +115,7 @@ const { data, isError, error } = useQuery({
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:236](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L236)
+Defined in: [packages/vue-query/src/useQuery.ts:239](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L239)
 
 `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
 tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
@@ -159,9 +161,10 @@ will be used.
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
 The current query result. `status` is `pending` if there is no cached data to display, `error` if
-the last fetch attempt failed, or `success` if the query has data to display. `state` is that result as one
-reactive object — `state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'`
-narrows `state.data` to `TData`.
+the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+are derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
+`state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows
+`state.data` to `TData`.
 
 ### Examples
 
@@ -310,7 +313,7 @@ const { state } = useQuery({
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: MaybeRefOrGetter<UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:310](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L310)
+Defined in: [packages/vue-query/src/useQuery.ts:317](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L317)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
@@ -361,7 +364,11 @@ will be used.
 
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
-The current query result, with `data` typed as possibly `undefined`.
+The current query result. `status` is `pending` if there is no cached data to display, `error` if
+the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+are derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
+`state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows
+`state.data` to `TData`.
 
 ### Examples
 
@@ -435,4 +442,8 @@ will be used.
 
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
-The current query result, with `data` typed as possibly `undefined`.
+The current query result. `status` is `pending` if there is no cached data to display, `error` if
+the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+are derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
+`state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows
+`state.data` to `TData`.
