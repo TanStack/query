@@ -160,6 +160,62 @@ describe('useQueries', () => {
     expect(rendered.getByText('data: custom client')).toBeInTheDocument()
   })
 
+  it('should refetch queries when queryClient changes', async () => {
+    const key = createKey()
+
+    const queryClient1 = new QueryClient()
+    const queryClient2 = new QueryClient()
+
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
+
+    function Page(props: { client: () => QueryClient }) {
+      const queries = useQueries(
+        () => ({
+          queries: [
+            {
+              queryKey: key,
+              queryFn,
+            },
+          ],
+        }),
+        props.client,
+      )
+
+      return <div>status: {queries[0].status}</div>
+    }
+
+    const [client, setClient] = createSignal(queryClient1)
+
+    const rendered = render(() => <Page client={client} />)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('status: success')).toBeInTheDocument()
+    expect(
+      queryClient1.getQueryCache().find({ queryKey: key })?.state.data,
+    ).toBe('data')
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    setClient(queryClient2)
+    expect(rendered.getByText('status: pending')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('status: success')).toBeInTheDocument()
+    expect(
+      queryClient2.getQueryCache().find({ queryKey: key })?.state.data,
+    ).toBe('data')
+    expect(queryFn).toHaveBeenCalledTimes(2)
+
+    rendered.unmount()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(
+      queryClient2.getQueryCache().find({ queryKey: key })?.getObserversCount(),
+    ).toBe(0)
+
+    queryClient1.clear()
+    queryClient2.clear()
+  })
+
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
     const key1 = createKey()
     const key2 = createKey()
