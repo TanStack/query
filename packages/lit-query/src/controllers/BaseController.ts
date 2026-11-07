@@ -266,7 +266,7 @@ export abstract class BaseController<TResult> implements ReactiveController {
       new ContextEvent(
         queryClientContext,
         contextTarget as unknown as Element,
-        (value, unsubscribe) => {
+        (value: QueryClient | undefined, unsubscribe) => {
           if (
             this.destroyed ||
             !this.connected ||
@@ -284,7 +284,6 @@ export abstract class BaseController<TResult> implements ReactiveController {
           }
 
           const resolutionChanged = this.updateQueryClientResolutionState(
-            // oxlint-disable-next-line typescript/no-unnecessary-condition -- the provider sends 'undefined' when its 'client' is removed
             value === undefined ? 'missing' : 'bound',
           )
           const clientChanged = this.contextClient !== value
