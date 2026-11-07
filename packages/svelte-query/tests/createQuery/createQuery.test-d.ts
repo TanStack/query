@@ -1,6 +1,6 @@
-import { describe, expectTypeOf, it } from 'vitest'
 import { queryOptions as coreQueryOptions } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
+import { describe, expectTypeOf, it } from 'vitest'
 import { createQuery, queryOptions } from '../../src/index.js'
 
 describe('createQuery', () => {
@@ -59,7 +59,7 @@ describe('createQuery', () => {
         expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
       })
 
-      it('TData should be inferred when passed through core queryOptions', () => {
+      it('should infer TData when passed through core queryOptions', () => {
         const key = createKey()
         const options = coreQueryOptions({
           queryKey: key,
