@@ -69,9 +69,17 @@ export function createBaseQuery<
    */
   function createResult() {
     const result = observer.getOptimisticResult(resolvedOptions)
-    return !resolvedOptions.notifyOnChangeProps
-      ? observer.trackResult(result)
-      : result
+    if (resolvedOptions.notifyOnChangeProps) {
+      return result
+    }
+    // Changes to properties that weren't tracked yet don't notify, so read them from the
+    // observer's current result instead of the one captured here.
+    const currentObserver = observer
+    return observer.trackResult(
+      new Proxy(result, {
+        get: (_, key) => Reflect.get(currentObserver.getCurrentResult(), key),
+      }),
+    )
   }
   const [query, update] = createRawRef(
     // svelte-ignore state_referenced_locally - intentional, initial value
