@@ -45,6 +45,21 @@ export {
 export type { MutationFilters, QueryFilters, SkipToken, Updater } from './utils'
 
 export { streamedQuery as experimental_streamedQuery } from './streamedQuery'
+export {
+  experimental_ensureQueryHandle,
+  experimental_fromHandle,
+  experimental_getQueryHandleData,
+  experimental_queryHandle,
+  experimental_queryHandleAsync,
+  experimental_waterfallHandle,
+} from './handles'
+export type {
+  DefinedQueryHandle as experimental_DefinedQueryHandle,
+  FromHandleOptions as experimental_FromHandleOptions,
+  InferQueryHandleData as experimental_InferQueryHandleData,
+  QueryHandle as experimental_QueryHandle,
+  QueryHandleFactory as experimental_QueryHandleFactory,
+} from './handles'
 
 // Types
 export type {
