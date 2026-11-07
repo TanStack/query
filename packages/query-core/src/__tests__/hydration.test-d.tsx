@@ -275,6 +275,7 @@ describe('hydration', () => {
         | 'promise'
         | 'meta'
         | 'queryType'
+        | 'experimental_start'
       >()
     })
   })

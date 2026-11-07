@@ -1,6 +1,7 @@
 import { focusManager } from './focusManager'
 import { isServer as isServerEnvironment } from './environmentManager'
 import { notifyManager } from './notifyManager'
+import { recordObserverFetch } from './handles'
 import { fetchState } from './query'
 import { Subscribable } from './subscribable'
 import {
@@ -424,6 +425,10 @@ export class QueryObserver<
       .getQueryCache()
       .build(this.#client, defaultedOptions)
 
+    if (process.env.NODE_ENV !== 'production') {
+      recordObserverFetch(this.#client.getQueryCache(), query)
+    }
+
     let unsubscribe = () => {}
     let resolveEarly:
       | ((result: QueryObserverResult<TData, TError>) => void)
@@ -485,6 +490,10 @@ export class QueryObserver<
   ): Promise<TQueryData | undefined> {
     // Make sure we reference the latest query as the current one might have been removed
     this.#updateQuery()
+
+    if (process.env.NODE_ENV !== 'production') {
+      recordObserverFetch(this.#client.getQueryCache(), this.#currentQuery)
+    }
 
     // Fetch
     let promise: Promise<TQueryData | undefined> = this.#currentQuery.fetch(

@@ -4,12 +4,21 @@ import {
   QueryClient,
   QueryObserver,
   dehydrate,
+  environmentManager,
+  experimental_ensureQueryHandle,
+  experimental_queryHandle,
   hydrate,
+  isServer,
   noop,
   onlineManager,
 } from '@tanstack/query-core'
 import { cleanup, fireEvent, render, within } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
+import {
+  clearOnDispose,
+  subscribe,
+  unmountOnDispose,
+} from '@tanstack/query-test-utils'
 import { DevtoolsOfflineProvider } from '../providers/DevtoolsOfflineProvider'
 import { DevtoolsSubscriptionsProvider } from '../providers/DevtoolsSubscriptionsProvider'
 import DevtoolsComponent from '../DevtoolsComponent'
@@ -19,6 +28,7 @@ import DevtoolsPanelComponent from '../DevtoolsPanelComponent'
 import { Devtools } from '../Devtools'
 import { PiPProvider, QueryDevtoolsContext, ThemeContext } from '../contexts'
 import type { QueryDevtoolsProps } from '../contexts'
+import type { DehydratedState } from '@tanstack/query-core'
 
 // `solid-transition-group` internally imports from
 // `@solid-primitives/transition-group`, whose `exports` field points at
@@ -39,6 +49,15 @@ vi.mock(import('goober'), () => {
   })
   return { css, glob: () => {}, setup: () => {} }
 })
+
+const serverEnvironment = (): Disposable => {
+  environmentManager.setIsServer(() => true)
+  return {
+    [Symbol.dispose]: () => {
+      environmentManager.setIsServer(() => isServer)
+    },
+  }
+}
 
 describe('Devtools', () => {
   const storage: { [key: string]: string } = {}
@@ -1035,6 +1054,117 @@ describe('Devtools', () => {
 
       expect(rendered.getByText('static')).toBeInTheDocument()
       expect(rendered.getByLabelText(/, static/)).toBeInTheDocument()
+    })
+
+    it('should render a "waterfall" indicator for a query whose first fetch an observer started', () => {
+      const postQuery = (input: { id: number }) => ({
+        queryKey: ['waterfall-q', input.id],
+        queryFn: () => 'x',
+      })
+      experimental_queryHandle(queryClient, postQuery, { id: 1 })
+      using _subscription = subscribe(
+        new QueryObserver(queryClient, postQuery({ id: 2 })),
+        noop,
+      )
+      using rendered = unmountOnDispose(renderDevtools({ initialIsOpen: true }))
+
+      expect(rendered.getAllByText('waterfall')).toHaveLength(1)
+      expect(
+        rendered.getByLabelText('Query key ["waterfall-q",2], waterfall'),
+      ).toBeInTheDocument()
+
+      fireEvent.click(rendered.getByLabelText(/\["waterfall-q",2\]/))
+
+      expect(rendered.getByText('observer (client)')).toBeInTheDocument()
+    })
+
+    it('should show how a query started and that nothing read it', async () => {
+      const handle = experimental_queryHandle(
+        queryClient,
+        (input: { id: number }) => ({
+          queryKey: ['prefetched-q', input.id],
+          queryFn: () => 'x',
+        }),
+        { id: 1 },
+      )
+      await vi.advanceTimersByTimeAsync(0)
+      using rendered = unmountOnDispose(renderDevtools({ initialIsOpen: true }))
+
+      fireEvent.click(rendered.getByLabelText('Query key ["prefetched-q",1]'))
+
+      expect(rendered.getByText('queryHandle (client)')).toBeInTheDocument()
+      expect(rendered.getByRole('note')).toHaveTextContent(
+        'Prefetched, never read',
+      )
+
+      using _subscription = subscribe(
+        new QueryObserver(queryClient, {
+          queryKey: handle.queryKey,
+          queryFn: () => 'x',
+        }),
+        noop,
+      )
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(rendered.queryByRole('note')).not.toBeInTheDocument()
+    })
+
+    it('should show a new start on fresh data, which fetches nothing', async () => {
+      const factory = () => ({
+        queryKey: ['restarted-q'],
+        queryFn: () => 'x',
+        staleTime: Infinity,
+      })
+      experimental_queryHandle(queryClient, factory)
+      await vi.advanceTimersByTimeAsync(0)
+      using rendered = unmountOnDispose(renderDevtools({ initialIsOpen: true }))
+
+      fireEvent.click(rendered.getByLabelText('Query key ["restarted-q"]'))
+      expect(rendered.getByText('queryHandle (client)')).toBeInTheDocument()
+
+      await experimental_ensureQueryHandle(queryClient, factory)
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(
+        rendered.getByText('ensureQueryHandle (client)'),
+      ).toBeInTheDocument()
+    })
+
+    it('should show where a hydrated query started', async () => {
+      let dehydrated: DehydratedState
+      {
+        using _server = serverEnvironment()
+        using serverClient = clearOnDispose(new QueryClient())
+        experimental_queryHandle(serverClient, () => ({
+          queryKey: ['server-q'],
+          queryFn: () => 'x',
+        }))
+        await vi.advanceTimersByTimeAsync(0)
+        dehydrated = dehydrate(serverClient)
+      }
+      hydrate(queryClient, dehydrated)
+      using rendered = unmountOnDispose(renderDevtools({ initialIsOpen: true }))
+
+      fireEvent.click(rendered.getByLabelText('Query key ["server-q"]'))
+
+      expect(rendered.getByText('queryHandle (server)')).toBeInTheDocument()
+    })
+
+    it('should not show start info for queries that other APIs start', () => {
+      queryClient.setQueryData(['plain-q'], 'x')
+      using _subscription = subscribe(
+        new QueryObserver(queryClient, {
+          queryKey: ['observed-q'],
+          queryFn: () => 'x',
+        }),
+        noop,
+      )
+      using rendered = unmountOnDispose(renderDevtools({ initialIsOpen: true }))
+
+      fireEvent.click(rendered.getByLabelText('Query key ["plain-q"]'))
+
+      expect(rendered.queryByText('Started by:')).not.toBeInTheDocument()
+      expect(rendered.queryByText('waterfall')).not.toBeInTheDocument()
     })
 
     it('should render a query row when an object query key is mutated in place', () => {
