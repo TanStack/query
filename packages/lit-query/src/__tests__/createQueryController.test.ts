@@ -1870,4 +1870,115 @@ describe('createQueryController', () => {
 
     host.query.destroy()
   })
+
+  it('should render query results based on the current status', async () => {
+    const key = createKey()
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'ok'),
+          retry: false,
+        },
+        queryClient,
+      )
+
+      override render() {
+        return html`${this.query.render({
+          pending: () => 'pending-ui',
+          success: (result) => `success-${result.data}`,
+          error: () => 'error-ui',
+        })}`
+      }
+    }
+
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    expect(
+      host.query.render({
+        pending: () => 'pending-ui',
+        success: () => 'success-ui',
+        error: () => 'error-ui',
+      }),
+    ).toBe('pending-ui')
+
+    container.append(host)
+    await host.updateComplete
+    expect(host.shadowRoot).toHaveTextContent('pending-ui')
+
+    await vi.advanceTimersByTimeAsync(10)
+    await host.updateComplete
+    expect(host.shadowRoot).toHaveTextContent('success-ok')
+
+    host.query.destroy()
+  })
+
+  it('should render the error branch when a query fails', async () => {
+    const key = createKey()
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: async () => {
+            throw new Error('render-failed')
+          },
+          retry: false,
+        },
+        queryClient,
+      )
+
+      override render() {
+        return html`${this.query.render({
+          pending: () => 'pending-ui',
+          success: () => 'success-ui',
+          error: (result) => result.error.message,
+        })}`
+      }
+    }
+
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await vi.advanceTimersByTimeAsync(0)
+    await host.updateComplete
+
+    expect(host.shadowRoot).toHaveTextContent('render-failed')
+    host.query.destroy()
+  })
+
+  it('should return undefined when no renderer matches the query status', async () => {
+    const key = createKey()
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'ok'),
+          retry: false,
+        },
+        queryClient,
+      )
+    }
+
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    expect(host.query.render({ error: () => 'error-ui' })).toBeUndefined()
+
+    container.append(host)
+    await vi.advanceTimersByTimeAsync(10)
+    await host.updateComplete
+    expect(
+      host.query.render({
+        pending: () => 'pending-ui',
+        error: () => 'error-ui',
+      }),
+    ).toBeUndefined()
+
+    host.query.destroy()
+  })
 })

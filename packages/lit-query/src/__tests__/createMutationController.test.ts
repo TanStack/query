@@ -1127,4 +1127,110 @@ describe('createMutationController', () => {
     consumer.mutation.destroy()
     providerB.remove()
   })
+
+  it('should render mutation results based on the current status', async () => {
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        { mutationFn: (value: number) => sleep(10).then(() => value + 1) },
+        queryClient,
+      )
+
+      override render() {
+        return html`${this.mutation.render({
+          idle: () => 'idle-ui',
+          pending: () => 'pending-ui',
+          success: (result) => `success-${result.data}`,
+          error: () => 'error-ui',
+        })}`
+      }
+    }
+
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    expect(
+      host.mutation.render({
+        idle: () => 'idle-ui',
+        pending: () => 'pending-ui',
+        success: () => 'success-ui',
+        error: () => 'error-ui',
+      }),
+    ).toBe('idle-ui')
+
+    container.append(host)
+    await host.updateComplete
+    const mutationPromise = host.mutation.mutateAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
+    await host.updateComplete
+    expect(host.shadowRoot).toHaveTextContent('pending-ui')
+    expect(
+      host.mutation.render({
+        idle: () => 'idle-ui',
+        pending: () => 'pending-ui',
+        success: () => 'success-ui',
+        error: () => 'error-ui',
+      }),
+    ).toBe('pending-ui')
+
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(mutationPromise).resolves.toBe(2)
+    await host.updateComplete
+    expect(host.shadowRoot).toHaveTextContent('success-2')
+
+    host.mutation.destroy()
+  })
+
+  it('should render the error branch when a mutation fails', async () => {
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: async () => {
+            throw new Error('render-mutation-failed')
+          },
+        },
+        queryClient,
+      )
+
+      override render() {
+        return html`${this.mutation.render({
+          idle: () => 'idle-ui',
+          pending: () => 'pending-ui',
+          success: () => 'success-ui',
+          error: (result) => result.error.message,
+        })}`
+      }
+    }
+
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
+
+    await expect(host.mutation.mutateAsync(undefined)).rejects.toThrow(
+      'render-mutation-failed',
+    )
+    await host.updateComplete
+    expect(host.shadowRoot).toHaveTextContent('render-mutation-failed')
+
+    host.mutation.destroy()
+  })
+
+  it('should return undefined when no renderer matches the mutation status', () => {
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        { mutationFn: async (value: number) => value + 1 },
+        queryClient,
+      )
+    }
+
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    expect(
+      host.mutation.render({ success: () => 'success-ui' }),
+    ).toBeUndefined()
+
+    host.mutation.destroy()
+  })
 })

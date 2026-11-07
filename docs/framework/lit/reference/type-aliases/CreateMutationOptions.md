@@ -9,7 +9,7 @@ title: CreateMutationOptions
 type CreateMutationOptions<TData = unknown, TError = DefaultError, TVariables = void, TOnMutateResult = unknown> = MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/lit-query/src/createMutationController.ts:21](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L21)
+Defined in: [packages/lit-query/src/createMutationController.ts:23](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L23)
 
 Options accepted by `createMutationController`.
 

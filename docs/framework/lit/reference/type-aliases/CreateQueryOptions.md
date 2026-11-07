@@ -9,7 +9,7 @@ title: CreateQueryOptions
 type CreateQueryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>;
 ```
 
-Defined in: [packages/lit-query/src/createQueryController.ts:24](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L24)
+Defined in: [packages/lit-query/src/createQueryController.ts:26](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L26)
 
 Options accepted by `createQueryController`.
 
