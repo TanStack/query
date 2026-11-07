@@ -29,7 +29,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function useInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: MaybeRefOrGetter<DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryDefinedReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:137](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L137)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:138](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L138)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -37,9 +37,10 @@ The options for `useInfiniteQuery` are identical to `useQuery`, with the additio
 This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
 `undefined` (unless a `select` changes `TData` to include `undefined`).
 
-`enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
-(`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
-individual entries — the array itself can't be a bare getter.
+`enabled` tracks reactive dependencies as a `ref`, a plain boolean, or a zero-argument getter (`() => ...`).
+query-core's `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts
+through a `ref` for the array itself, or `ref`s and reactive getters as individual entries — the array
+itself can't be a bare getter.
 
 ### Type Parameters
 
@@ -129,14 +130,15 @@ const { data, isError, error } = useInfiniteQuery({
 function useInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: MaybeRefOrGetter<UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:268](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L268)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:270](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L270)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
 
-`enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
-(`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
-individual entries — the array itself can't be a bare getter.
+`enabled` tracks reactive dependencies as a `ref`, a plain boolean, or a zero-argument getter (`() => ...`).
+query-core's `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts
+through a `ref` for the array itself, or `ref`s and reactive getters as individual entries — the array
+itself can't be a bare getter.
 
 ### Type Parameters
 
@@ -294,15 +296,16 @@ onUnmounted(() => observer?.disconnect())
 function useInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: MaybeRefOrGetter<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:361](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L361)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:364](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L364)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
 overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
-`enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
-(`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
-individual entries — the array itself can't be a bare getter.
+`enabled` tracks reactive dependencies as a `ref`, a plain boolean, or a zero-argument getter (`() => ...`).
+query-core's `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts
+through a `ref` for the array itself, or `ref`s and reactive getters as individual entries — the array
+itself can't be a bare getter.
 
 ### Type Parameters
 

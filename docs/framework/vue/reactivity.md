@@ -159,6 +159,8 @@ More details on this option can be found on the [useQuery reference](./reference
 
 The other query options accept refs as well, and pick up changes to them. Reactive getters, however, are only resolved in `queryKey` and `enabled`, since a function is already a valid value for options such as `select` or `staleTime`.
 
+In `enabled`, only a zero-argument getter is resolved this way. Query Core's `(query) => boolean` callback is accepted too, and is passed through untracked: a ref read inside it is current when Query Core calls it, but a change to that ref doesn't call it again by itself.
+
 ### Immutability
 
 Results from `useQuery` are always immutable. This is necessary for performance and caching purposes. If you need to mutate a value returned from `useQuery`, you must create a copy of the data.
