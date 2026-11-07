@@ -9,7 +9,7 @@ title: DefinedInitialQueryOptionsWithDataTag
 type DefinedInitialQueryOptionsWithDataTag<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & WithDefinedInitialData<TQueryFnData> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/queryOptions.ts:230](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L230)
+Defined in: [packages/vue-query/src/queryOptions.ts:233](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L233)
 
 The options returned by the `queryOptions` overload selected when `initialData` is known to be defined,
 with the `queryKey` tagged with the query's data and error types.
