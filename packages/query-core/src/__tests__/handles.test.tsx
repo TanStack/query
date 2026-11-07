@@ -15,7 +15,6 @@ import {
   experimental_getQueryHandleData,
   experimental_queryHandle,
   experimental_queryHandleAsync,
-  experimental_waterfallHandle,
   noop,
 } from '..'
 
@@ -612,76 +611,6 @@ describe('query handles', () => {
         status: 'pending',
         data: undefined,
       })
-    })
-  })
-
-  describe('experimental_waterfallHandle', () => {
-    it('should build a handle for the input without starting the query', () => {
-      using _timers = fakeTimers()
-      using queryClient = clearOnDispose(new QueryClient())
-      const queryFn = vi.fn<(id: string) => Promise<string>>((id) =>
-        sleep(10).then(() => id),
-      )
-      const postQuery = createPostQuery(queryFn)
-
-      const handle = experimental_waterfallHandle(postQuery, { id: '1' })
-
-      expect(handle).toStrictEqual({
-        queryKey: postQuery({ id: '1' }).queryKey,
-        input: { id: '1' },
-      })
-      expect(queryFn).not.toHaveBeenCalled()
-      expect(queryClient.getQueryCache().getAll()).toHaveLength(0)
-    })
-
-    it('should give a factory without input an undefined input', () => {
-      const key = createKey()
-      const viewerQuery = () => ({ queryKey: key, queryFn: () => 'viewer' })
-
-      expect(experimental_waterfallHandle(viewerQuery)).toStrictEqual({
-        queryKey: key,
-        input: undefined,
-      })
-    })
-
-    it('should return the same handle while the new input maps to its query', () => {
-      using _timers = fakeTimers()
-      using queryClient = clearOnDispose(new QueryClient())
-      const key = createKey()
-      const postQuery = (input: { id: string; locale?: string }) => ({
-        queryKey: [...key, input.id],
-        queryFn: () => input.id,
-      })
-      const previous = experimental_queryHandle(queryClient, postQuery, {
-        id: '1',
-      })
-
-      expect(
-        experimental_waterfallHandle(postQuery, previous, (input) => ({
-          ...input,
-          locale: 'en',
-        })),
-      ).toBe(previous)
-      expect(
-        experimental_waterfallHandle(postQuery, previous, () => ({ id: '2' })),
-      ).toStrictEqual({
-        queryKey: [...key, '2'],
-        input: { id: '2' },
-      })
-    })
-
-    it("should compare keys with the factory's queryKeyHashFn", () => {
-      const key = createKey()
-      const postQuery = (input: { id: string }) => ({
-        queryKey: [...key, input.id],
-        queryFn: () => input.id,
-        queryKeyHashFn: () => 'same',
-      })
-      const previous = experimental_waterfallHandle(postQuery, { id: '1' })
-
-      expect(
-        experimental_waterfallHandle(postQuery, previous, () => ({ id: '2' })),
-      ).toBe(previous)
     })
   })
 })

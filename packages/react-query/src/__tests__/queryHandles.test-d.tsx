@@ -6,7 +6,6 @@ import {
   experimental_getQueryHandleData,
   experimental_queryHandle,
   experimental_queryHandleAsync,
-  experimental_waterfallHandle,
   infiniteQueryOptions,
   keepPreviousData,
   queryOptions,
@@ -109,9 +108,6 @@ describe('query handles', () => {
           { staleTime: 60_000 },
         ),
       )
-      const opts = { staleTime: 60_000 }
-      // @ts-expect-error the handle only carries the input
-      assertType(experimental_waterfallHandle(optionsQuery, { id: '1' }, opts))
     })
 
     it('should take an optional input', () => {
@@ -255,15 +251,10 @@ describe('query handles', () => {
       const started = experimental_queryHandle(queryClient, postQuery, {
         id: '1',
       })
-      const waterfall = experimental_waterfallHandle(postQuery, { id: '1' })
 
       assertType(
         // @ts-expect-error the query may not have data yet
         experimental_getQueryHandleData(queryClient, postQuery, started),
-      )
-      assertType(
-        // @ts-expect-error the query may not have data yet
-        experimental_getQueryHandleData(queryClient, postQuery, waterfall),
       )
     })
 
@@ -297,7 +288,6 @@ describe('query handles', () => {
         postQuery,
         { id: '1' },
       )
-      const waterfall = experimental_waterfallHandle(postQuery, { id: '1' })
 
       expectTypeOf(
         useQuery(experimental_fromHandle(postQuery, ensured)).data,
@@ -307,9 +297,6 @@ describe('query handles', () => {
       ).toEqualTypeOf<Post | undefined>()
       expectTypeOf(
         useQuery(experimental_fromHandle(postQuery, awaited)).data,
-      ).toEqualTypeOf<Post | undefined>()
-      expectTypeOf(
-        useQuery(experimental_fromHandle(postQuery, waterfall)).data,
       ).toEqualTypeOf<Post | undefined>()
     })
 
@@ -329,7 +316,6 @@ describe('query handles', () => {
         postQuery,
         { id: '1' },
       )
-      const waterfall = experimental_waterfallHandle(postQuery, { id: '1' })
 
       expectTypeOf(
         useSuspenseQuery(experimental_fromHandle(postQuery, ensured)).data,
@@ -339,9 +325,6 @@ describe('query handles', () => {
       ).toEqualTypeOf<Post>()
       expectTypeOf(
         useSuspenseQuery(experimental_fromHandle(postQuery, awaited)).data,
-      ).toEqualTypeOf<Post>()
-      expectTypeOf(
-        useSuspenseQuery(experimental_fromHandle(postQuery, waterfall)).data,
       ).toEqualTypeOf<Post>()
     })
 
@@ -435,39 +418,6 @@ describe('query handles', () => {
       expectTypeOf(
         useQuery(experimental_fromHandle(postQuery, handle)).data,
       ).toEqualTypeOf<Post | undefined>()
-    })
-  })
-
-  describe('experimental_waterfallHandle', () => {
-    it("should take the factory's input", () => {
-      const handle = experimental_waterfallHandle(postQuery, { id: '1' })
-      const viewer = experimental_waterfallHandle(viewerQuery)
-
-      expectTypeOf(handle).toEqualTypeOf<
-        experimental_QueryHandle<typeof postQuery>
-      >()
-      expectTypeOf(viewer.input).toEqualTypeOf<undefined>()
-      // @ts-expect-error the input has the wrong shape
-      experimental_waterfallHandle(postQuery, { id: 1 })
-    })
-
-    it('should switch a handle to a new input', () => {
-      const handle = {} as experimental_QueryHandle<typeof postQuery>
-
-      const next = experimental_waterfallHandle(postQuery, handle, (input) => {
-        expectTypeOf(input).toEqualTypeOf<{ id: string }>()
-        return { ...input, id: '2' }
-      })
-
-      expectTypeOf(next).toEqualTypeOf<
-        experimental_QueryHandle<typeof postQuery>
-      >()
-      experimental_waterfallHandle(
-        postQuery,
-        handle,
-        // @ts-expect-error the new input has the wrong shape
-        () => ({ id: 2 }),
-      )
     })
   })
 
@@ -589,19 +539,12 @@ describe('query handles', () => {
         postTitleQuery,
         { id: '1' },
       )
-      const waterfall = experimental_waterfallHandle(postTitleQuery, {
-        id: '1',
-      })
 
       expectTypeOf(
         useQuery(experimental_fromHandle(postTitleQuery, started)).data,
       ).toEqualTypeOf<string | undefined>()
       expectTypeOf(
         useSuspenseQuery(experimental_fromHandle(postTitleQuery, awaited)).data,
-      ).toEqualTypeOf<string>()
-      expectTypeOf(
-        useSuspenseQuery(experimental_fromHandle(postTitleQuery, waterfall))
-          .data,
       ).toEqualTypeOf<string>()
     })
 

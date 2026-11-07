@@ -51,7 +51,6 @@ export {
   experimental_getQueryHandleData,
   experimental_queryHandle,
   experimental_queryHandleAsync,
-  experimental_waterfallHandle,
 } from './handles'
 export type {
   DefinedQueryHandle as experimental_DefinedQueryHandle,

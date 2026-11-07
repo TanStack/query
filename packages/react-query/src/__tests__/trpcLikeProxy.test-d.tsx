@@ -1,7 +1,6 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import {
   QueryClient,
-  experimental_waterfallHandle,
   useQuery,
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
@@ -147,25 +146,21 @@ describe('a tRPC-like proxy on the public handle APIs', () => {
     assertType(trpc.$fromHandle(wrongInput))
   })
 
-  it('should switch a handle with waterfallHandle', () => {
+  it("should build a procedure's options from a handle's input", () => {
     const comments = trpc['post.comments'].$queryHandle({
       postId: '1',
       page: 1,
     })
 
-    const next = experimental_waterfallHandle(
-      trpc['post.comments'].queryOptions,
-      comments,
-      (input) => {
-        expectTypeOf(input).toEqualTypeOf<{ postId: string; page: number }>()
-        return { ...input, page: 2 }
-      },
-    )
-
-    expectTypeOf(next).toEqualTypeOf(comments)
-    expectTypeOf(useSuspenseQuery(trpc.$fromHandle(next)).data).toEqualTypeOf<
-      Array<Comment>
-    >()
+    expectTypeOf(comments.input).toEqualTypeOf<{
+      postId: string
+      page: number
+    }>()
+    expectTypeOf(
+      useSuspenseQuery(
+        trpc['post.comments'].queryOptions({ ...comments.input, page: 2 }),
+      ).data,
+    ).toEqualTypeOf<Array<Comment>>()
   })
 
   it("should infer a procedure's data from its factory, the same as useSuspenseQuery", async () => {
