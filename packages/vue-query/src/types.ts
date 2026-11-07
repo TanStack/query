@@ -81,6 +81,18 @@ export type DeepUnwrapRef<T> = T extends UnwrapLeaf
         }
       : UnwrapRef<T>
 
+// Options typed for `@tanstack/query-core` keep the key as written, so their callbacks would be typed with the `ref`,
+// but at runtime they receive the unwrapped key.
+/**
+ * Rejects a `queryKey` that contains a `ref`.
+ * @internal
+ */
+export type RefFreeQueryKey<TQueryKey> = [DeepUnwrapRef<TQueryKey>] extends [
+  TQueryKey,
+]
+  ? unknown
+  : { queryKey?: never }
+
 /**
  * The `vue-query`-specific `shallow` option, accepted by query and mutation options.
  */
