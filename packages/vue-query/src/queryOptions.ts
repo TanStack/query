@@ -16,10 +16,11 @@ import type {
 } from '@tanstack/query-core'
 
 /**
- * `enabled` for Vue Query. A `ref`, `computed`, or plain boolean is reactive. A zero-argument getter
- * (`() => ...`) is too: it is called while tracking dependencies. query-core's `(query) => boolean` is
- * kept as that callback and is not tracked by Vue — a `ref` read inside it is current when core calls it,
- * and a `ref` change does not by itself call it again.
+ * `enabled` for Vue Query. A `ref` or `computed` is reactive, while a plain boolean isn't tracked on its own. A
+ * zero-argument getter (`() => ...`) is reactive too: it is called while tracking dependencies. query-core's
+ * `(query) => boolean` is kept as that callback and is not tracked by Vue — a `ref` read inside it is current
+ * when core calls it, and a `ref` change does not by itself call it again. The two are told apart by the number
+ * of declared parameters, so declare `query` as a required parameter.
  */
 export type VueQueryEnabledOption<
   TQueryFnData,

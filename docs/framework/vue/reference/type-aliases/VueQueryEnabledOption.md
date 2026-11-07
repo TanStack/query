@@ -11,12 +11,13 @@ type VueQueryEnabledOption<TQueryFnData, TError, TQueryData, TQueryKey extends Q
 | QueryBooleanOption<TQueryFnData, TError, TQueryData, TQueryKey>;
 ```
 
-Defined in: [packages/vue-query/src/queryOptions.ts:24](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L24)
+Defined in: [packages/vue-query/src/queryOptions.ts:25](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L25)
 
-`enabled` for Vue Query. A `ref`, `computed`, or plain boolean is reactive. A zero-argument getter
-(`() => ...`) is too: it is called while tracking dependencies. query-core's `(query) => boolean` is
-kept as that callback and is not tracked by Vue — a `ref` read inside it is current when core calls it,
-and a `ref` change does not by itself call it again.
+`enabled` for Vue Query. A `ref` or `computed` is reactive, while a plain boolean isn't tracked on its own. A
+zero-argument getter (`() => ...`) is reactive too: it is called while tracking dependencies. query-core's
+`(query) => boolean` is kept as that callback and is not tracked by Vue — a `ref` read inside it is current
+when core calls it, and a `ref` change does not by itself call it again. The two are told apart by the number
+of declared parameters, so declare `query` as a required parameter.
 
 ## Type Parameters
 

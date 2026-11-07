@@ -13,7 +13,7 @@ Defined in: [packages/vue-query/src/useInfiniteQuery.ts:34](https://github.com/T
 
 The options accepted by `useInfiniteQuery`. Same as [InfiniteQueryObserverOptions](../interfaces/InfiniteQueryObserverOptions.md) from
 `@tanstack/query-core`, plus the `shallow` option. Each option except `shallow` can also be a `ref` (and
-`enabled` a reactive getter).
+`enabled` a zero-argument getter or query-core's `(query) => boolean` callback).
 
 ## Type Parameters
 
