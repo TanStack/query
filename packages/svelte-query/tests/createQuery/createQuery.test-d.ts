@@ -59,7 +59,7 @@ describe('createQuery', () => {
         expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
       })
 
-      it('TData should be inferred when passed through core queryOptions', () => {
+      it('should infer TData when passed through core queryOptions', () => {
         const key = createKey()
         const options = coreQueryOptions({
           queryKey: key,
