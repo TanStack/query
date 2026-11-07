@@ -137,7 +137,7 @@ describe('Explorer', () => {
 
       searchData(rendered, 'i')
       expect(highlightedText()).toStrictEqual(['i', 'İ', 'İ'])
-      setValue({ city: 'Izmir' })
+      setValue({ material: 'Izmir' })
       expect(highlightedText().sort()).toStrictEqual(['I', 'i', 'i'])
 
       fireEvent.click(rendered.getByText('Clear'))
