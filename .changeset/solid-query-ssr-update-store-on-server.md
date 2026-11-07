@@ -2,4 +2,4 @@
 '@tanstack/solid-query': patch
 ---
 
-fix(solid-query): update the query result on the server so fields other than `data` (e.g. `status`, `isFetching`, `hasNextPage`) are not stuck in the pending state during SSR
+fix(solid-query/useBaseQuery): update the store on the server so result fields other than 'data' are not stuck in 'pending'
