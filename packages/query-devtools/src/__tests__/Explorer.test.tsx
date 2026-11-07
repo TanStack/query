@@ -123,7 +123,7 @@ describe('Explorer', () => {
       vi.stubGlobal('CSS', { highlights })
       vi.stubGlobal('Highlight', Set)
       const [value, setValue] = createSignal({
-        city: '\ud83d\udccd \u0130stanbul \u0130stanbul',
+        material: '\ud83d\udccd \u0130pek \u0130pek',
       })
       const rendered = renderSearchable({
         label: 'Data',
@@ -131,9 +131,9 @@ describe('Explorer', () => {
           return value()
         },
       })
-      searchData(rendered, 'BUL')
+      searchData(rendered, 'PEK')
       expect(highlights.size).toBe(1)
-      expect(highlightedText()).toStrictEqual(['bul', 'bul'])
+      expect(highlightedText()).toStrictEqual(['pek', 'pek'])
 
       searchData(rendered, 'i')
       expect(highlightedText()).toStrictEqual(['i', 'İ', 'İ'])
@@ -272,13 +272,13 @@ describe('Explorer', () => {
     it('highlights original text when Unicode lowercasing changes its length', () => {
       const rendered = renderSearchable({
         label: 'Data',
-        value: { city: '\ud83d\udccd \u0130stanbul' },
+        value: { material: '\ud83d\udccd \u0130pek' },
       })
-      searchData(rendered, 'BUL')
-      expect(highlightedText()).toContain('bul')
-      expect(rendered.getByText('city:').nextElementSibling).toHaveTextContent(
-        '"\ud83d\udccd \u0130stanbul"',
-      )
+      searchData(rendered, 'PEK')
+      expect(highlightedText()).toContain('pek')
+      expect(
+        rendered.getByText('material:').nextElementSibling,
+      ).toHaveTextContent('"\ud83d\udccd \u0130pek"')
       searchData(rendered, 'i')
       expect(highlightedText()).toContain('\u0130')
     })
