@@ -37,7 +37,8 @@ export type VueQueryEnabledOption<
  * {@link UseQueryOptions}, which accepts the same options as `ref`s and `computed`s too.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
- * @template TData - The type `data` ends up as after `select` runs.
+ * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
+ * `select` is used.
  * @template TQueryData - The type of data stored in the cache, before `select` runs. Defaults to
  * `TQueryFnData` and can be configured independently of it.
  * @template TQueryKey - The type of your `queryKey`.
@@ -98,7 +99,8 @@ type SkipTokenForUseQuery = symbol
  * re-evaluates.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
- * @template TData - The type `data` ends up as after `select` runs.
+ * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
+ * `select` is used.
  * @template TQueryData - The type of data stored in the cache, before `select` runs. Defaults to
  * `TQueryFnData` and can be configured independently of it.
  * @template TQueryKey - The type of your `queryKey`.

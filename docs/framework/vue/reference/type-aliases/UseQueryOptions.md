@@ -9,7 +9,7 @@ title: UseQueryOptions
 type UseQueryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = MaybeRef<{ [Property in keyof QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>]: Property extends "enabled" | "queryKey" ? QueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>[Property] : Property extends "queryFn" ? MaybeRefDeep<QueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>[Property] | SkipTokenForUseQuery> : MaybeRefDeep<QueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>[Property]> } & ShallowOption>;
 ```
 
-Defined in: [packages/vue-query/src/queryOptions.ts:105](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L105)
+Defined in: [packages/vue-query/src/queryOptions.ts:108](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L108)
 
 The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `enabled` accepts a `ref`, a
 plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is tracked, while a plain boolean
@@ -47,7 +47,8 @@ The type of errors your `queryFn` may throw.
 
 `TData` = `TQueryFnData`
 
-The type `data` ends up as after `select` runs.
+The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
+`select` is used.
 
 ### TQueryData
 
