@@ -29,7 +29,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryDefinedReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:74](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L74)
+Defined in: [packages/vue-query/src/useQuery.ts:75](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L75)
 
 This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
 `undefined` (unless a `select` changes `TData` to include `undefined`).
@@ -79,7 +79,8 @@ will be used.
 
 The current query result, typed so that `data` is never `undefined` (unless a `select` changes
 `TData` to include `undefined`). `status` never resolves to `pending` in this overload's type, since
-`initialData` guarantees data upfront.
+`initialData` guarantees data upfront. `state` is that result as one reactive object — `state.data`,
+`state.isPending`, and the rest are plain values.
 
 ### Example
 
@@ -112,7 +113,7 @@ const { data, isError, error } = useQuery({
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:234](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L234)
+Defined in: [packages/vue-query/src/useQuery.ts:235](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L235)
 
 `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
 (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
@@ -308,7 +309,7 @@ const { state } = useQuery({
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: MaybeRefOrGetter<UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:307](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L307)
+Defined in: [packages/vue-query/src/useQuery.ts:310](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L310)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
@@ -358,7 +359,9 @@ will be used.
 
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
-The current query result, with `data` typed as possibly `undefined`.
+The current query result, with `data` typed as possibly `undefined`. `state` is that result as one
+reactive object — `state.data`, `state.isPending`, and the rest are plain values, and
+`state.status === 'success'` narrows `state.data` to `TData`.
 
 ### Examples
 
@@ -432,4 +435,6 @@ will be used.
 
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
-The current query result, with `data` typed as possibly `undefined`.
+The current query result, with `data` typed as possibly `undefined`. `state` is that result as one
+reactive object — `state.data`, `state.isPending`, and the rest are plain values, and
+`state.status === 'success'` narrows `state.data` to `TData`.
