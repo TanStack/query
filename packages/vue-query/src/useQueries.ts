@@ -395,6 +395,9 @@ export function useQueries<
 
       // A zero-arg function is a Vue getter and must run here so its refs are tracked.
       // `(query) => boolean` is query-core's callback and is left for core to call.
+      // The getter's result is cached, so one reading non-reactive state, such as a store from framework-agnostic
+      // options, is not read again. `(...args)` and `(query = fallback)` have length 0 too, so they don't receive
+      // the query. Declaring a parameter avoids both.
       if (
         typeof clonedOptions.enabled === 'function' &&
         clonedOptions.enabled.length === 0
