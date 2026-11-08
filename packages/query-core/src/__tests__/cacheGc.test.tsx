@@ -144,6 +144,45 @@ describe('garbage collection after cache removal', () => {
     },
   )
 
+  it.each(['clear', 'remove'] as const)(
+    'clears a GC timer when the abort listener synchronously removes the last observer during %s',
+    async (operation) => {
+      const cache = client.getQueryCache()
+      const key = createKey()
+      let unsubscribe: () => void = noop
+      let queryDuringAbort: unknown
+      const onAbort = vi.fn<() => void>(() => {
+        queryDuringAbort = cache.find({ queryKey: key })
+        unsubscribe()
+      })
+      const observer = new QueryObserver(client, {
+        queryKey: key,
+        gcTime: 1000,
+        queryFn: ({ signal }) => {
+          signal.addEventListener('abort', onAbort)
+          return new Promise<string>(noop)
+        },
+      })
+      unsubscribe = observer.subscribe(noop)
+      const query = observer.getCurrentQuery()
+
+      removalOperations[operation](
+        () => client.clear(),
+        () => cache.remove(query),
+      )
+
+      expect(onAbort).toHaveBeenCalledTimes(1)
+      expect(queryDuringAbort).toBe(query)
+      expect(query.getObserversCount()).toBe(0)
+      expect(cache.getAll()).toStrictEqual([])
+      expect(vi.getTimerCount()).toBe(0)
+
+      await vi.advanceTimersByTimeAsync(0)
+      expect(cache.getAll()).toStrictEqual([])
+      expect(vi.getTimerCount()).toBe(0)
+    },
+  )
+
   it('does not schedule an old query on unsubscribe when a replacement has the same hash', async () => {
     const key = createKey()
     const cache = client.getQueryCache()
