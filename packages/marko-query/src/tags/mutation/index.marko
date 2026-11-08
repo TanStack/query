@@ -1,0 +1,77 @@
+import type {
+  Accessor,
+  CreateMutationOptions,
+  CreateMutationResult,
+  DefaultError,
+  MutateOptions,
+  MutationObserverResult,
+  QueryClient,
+} from "@tanstack/marko-query";
+import {
+  MutationBinding,
+  idleMutationResult,
+  resolveClient,
+  toPlainResult,
+} from "@tanstack/marko-query/internal";
+
+export interface Input<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TOnMutateResult = unknown,
+> {
+  /** The mutation's options. A function, so the tag follows the values it reads. */
+  options: Accessor<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>>;
+  /** The client to use instead of the one for this `$global`. */
+  client?: Accessor<QueryClient>;
+}
+
+static function raise(error: unknown): never {
+  throw error;
+}
+
+<let/result=(idleMutationResult() as MutationObserverResult<TData, TError, TVariables, TOnMutateResult>)>
+<const/holder={} as { binding?: MutationBinding }>
+<const/connect=(() => {
+  if (!holder.binding) {
+    holder.binding = new MutationBinding(
+      resolveClient($global, input.client),
+      input.options(),
+    );
+    holder.binding.subscribe((next) => {
+      result = toPlainResult(next);
+    });
+  }
+  return holder.binding;
+})>
+
+<lifecycle
+  onMount() {
+    connect();
+  }
+  onUpdate() {
+    const client = resolveClient($global, input.client);
+    if (holder.binding && holder.binding.client !== client) {
+      holder.binding.destroy();
+      holder.binding = undefined;
+    }
+    connect().setOptions(input.options());
+  }
+  onDestroy() {
+    holder.binding?.destroy();
+  }
+/>
+
+<if=(
+  result.isError &&
+  holder.binding?.shouldThrow(result.error)
+)>${raise(result.error)}</if>
+
+<return=({
+  ...result,
+  mutate: (variables: TVariables, options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>) =>
+    connect().mutate(variables, options),
+  mutateAsync: (variables: TVariables, options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>) =>
+    connect().mutateAsync(variables, options) as Promise<TData>,
+  reset: () => connect().reset(),
+} as CreateMutationResult<TData, TError, TVariables, TOnMutateResult>)>

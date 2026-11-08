@@ -1,0 +1,87 @@
+import { InfiniteQueryObserver } from "@tanstack/marko-query";
+import type {
+  Accessor,
+  CreateInfiniteQueryOptions,
+  CreateInfiniteQueryResult,
+  DefaultError,
+  FetchNextPageOptions,
+  FetchPreviousPageOptions,
+  InfiniteData,
+  QueryClient,
+  QueryKey,
+  RefetchOptions,
+} from "@tanstack/marko-query";
+import {
+  QueryBinding,
+  readQuery,
+  resolveClient,
+  toPlainResult,
+} from "@tanstack/marko-query/internal";
+import type { Snapshot } from "@tanstack/marko-query/internal";
+
+export interface Input<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> {
+  /** The query's options. A function, so the tag follows the values it reads. */
+  options: Accessor<
+    CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+  >;
+  /** The client to use instead of the one for this `$global`. */
+  client?: Accessor<QueryClient>;
+}
+
+static function raise(error: unknown): never {
+  throw error;
+}
+
+<const/snapshot=(readQuery(
+  resolveClient($global, input.client),
+  input.options(),
+  InfiniteQueryObserver,
+) as Snapshot<CreateInfiniteQueryResult<TData, TError>>)>
+<let/result=snapshot.result>
+<let/thrown=snapshot.error>
+<const/holder={} as { binding?: QueryBinding<InfiniteQueryObserver> }>
+<const/connect=(() =>
+  (holder.binding ??= new QueryBinding<InfiniteQueryObserver>(
+    resolveClient($global, input.client),
+    input.options(),
+    (next, error) => {
+      result = toPlainResult(next) as CreateInfiniteQueryResult<TData, TError>;
+      thrown = error;
+    },
+    InfiniteQueryObserver,
+    snapshot.hydration,
+  )))>
+
+<lifecycle
+  onMount() {
+    connect();
+  }
+  onUpdate() {
+    const client = resolveClient($global, input.client);
+    if (holder.binding && holder.binding.client !== client) {
+      holder.binding.destroy();
+      holder.binding = undefined;
+    }
+    connect().setOptions(input.options());
+  }
+  onDestroy() {
+    holder.binding?.destroy();
+  }
+/>
+
+<if=thrown !== undefined>${raise(thrown)}</if>
+
+<return=({
+  ...result,
+  refetch: (options?: RefetchOptions) => connect().observer.refetch(options),
+  fetchNextPage: (options?: FetchNextPageOptions) =>
+    connect().observer.fetchNextPage(options),
+  fetchPreviousPage: (options?: FetchPreviousPageOptions) =>
+    connect().observer.fetchPreviousPage(options),
+} as CreateInfiniteQueryResult<TData, TError>)>

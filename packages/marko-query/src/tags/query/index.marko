@@ -1,0 +1,76 @@
+import { QueryObserver } from "@tanstack/marko-query";
+import type {
+  Accessor,
+  CreateQueryOptions,
+  CreateQueryResult,
+  DefaultError,
+  QueryClient,
+  QueryKey,
+  RefetchOptions,
+} from "@tanstack/marko-query";
+import {
+  QueryBinding,
+  readQuery,
+  resolveClient,
+  toPlainResult,
+} from "@tanstack/marko-query/internal";
+import type { Snapshot } from "@tanstack/marko-query/internal";
+
+export interface Input<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> {
+  /** The query's options. A function, so the tag follows the values it reads. */
+  options: Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>;
+  /** The client to use instead of the one for this `$global`. */
+  client?: Accessor<QueryClient>;
+}
+
+static function raise(error: unknown): never {
+  throw error;
+}
+
+<const/snapshot=(readQuery(
+  resolveClient($global, input.client),
+  input.options(),
+) as Snapshot<CreateQueryResult<TData, TError>>)>
+<let/result=snapshot.result>
+<let/thrown=snapshot.error>
+<const/holder={} as { binding?: QueryBinding }>
+<const/connect=(() =>
+  (holder.binding ??= new QueryBinding(
+    resolveClient($global, input.client),
+    input.options(),
+    (next, error) => {
+      result = toPlainResult(next) as CreateQueryResult<TData, TError>;
+      thrown = error;
+    },
+    QueryObserver,
+    snapshot.hydration,
+  )))>
+
+<lifecycle
+  onMount() {
+    connect();
+  }
+  onUpdate() {
+    const client = resolveClient($global, input.client);
+    if (holder.binding && holder.binding.client !== client) {
+      holder.binding.destroy();
+      holder.binding = undefined;
+    }
+    connect().setOptions(input.options());
+  }
+  onDestroy() {
+    holder.binding?.destroy();
+  }
+/>
+
+<if=thrown !== undefined>${raise(thrown)}</if>
+
+<return=({
+  ...result,
+  refetch: (options?: RefetchOptions) => connect().observer.refetch(options),
+} as CreateQueryResult<TData, TError>)>

@@ -1,0 +1,43 @@
+import type { Accessor, QueryClient, MutationFilters } from "@tanstack/marko-query";
+import {
+  readIsMutating,
+  resolveClient,
+  watchIsMutating,
+} from "@tanstack/marko-query/internal";
+
+export interface Input {
+  /** Which mutations to count. A function, so the tag follows the values it reads. */
+  filters?: Accessor<MutationFilters>;
+  /** The client to use instead of the one for this `$global`. */
+  client?: Accessor<QueryClient>;
+}
+
+<let/count=readIsMutating(resolveClient($global, input.client), input.filters?.())>
+<const/holder={} as { watcher?: ReturnType<typeof watchIsMutating>; client?: QueryClient }>
+
+<lifecycle
+  onMount() {
+    const client = resolveClient($global, input.client);
+    holder.client = client;
+    holder.watcher = watchIsMutating(client, input.filters?.(), (value) => {
+      count = value;
+    });
+  }
+  onUpdate() {
+    const client = resolveClient($global, input.client);
+    if (holder.client !== client) {
+      holder.watcher?.destroy();
+      holder.client = client;
+      holder.watcher = watchIsMutating(client, input.filters?.(), (value) => {
+        count = value;
+      });
+    } else {
+      holder.watcher?.setInput(input.filters?.());
+    }
+  }
+  onDestroy() {
+    holder.watcher?.destroy();
+  }
+/>
+
+<return=count>

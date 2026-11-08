@@ -1,0 +1,21 @@
+import type { Accessor, QueryClient } from "@tanstack/marko-query";
+import { registerQueryClientFactory } from "@tanstack/marko-query/internal";
+
+export interface Input {
+  /**
+   * Creates every `QueryClient` of the app: one per request on the server and
+   * one per page in the browser. Must be a function you `import`.
+   */
+  factory: Accessor<QueryClient>;
+}
+
+// Server: nothing to do here. `transform/query-client-factory.cjs` registers
+// the factory when the layout's module is evaluated, before route handlers
+// run (loading a route loads the layout with it).
+// Browser: the factory is part of this tag's input, so it travels with the
+// page and no other module has to be imported for it.
+<lifecycle
+  onMount() {
+    registerQueryClientFactory(input.factory);
+  }
+/>

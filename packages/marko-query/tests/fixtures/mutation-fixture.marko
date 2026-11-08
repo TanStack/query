@@ -1,0 +1,41 @@
+import type { QueryClient } from "@tanstack/marko-query";
+
+export interface Input {
+  client: QueryClient;
+  mutationFn: (value: number) => Promise<number>;
+  throwOnError?: boolean;
+  log: string[];
+}
+
+<try>
+  <mutation/save
+    client=() => input.client
+    options=() => ({
+      mutationKey: ["save"],
+      mutationFn: input.mutationFn,
+      throwOnError: input.throwOnError,
+      onSuccess: (data: number) => input.log.push(`success ${data}`),
+    })
+  />
+  <is-mutating/count client=() => input.client/>
+  <mutation-state/states
+    client=() => input.client
+    options=() => ({
+      filters: { mutationKey: ["save"] },
+      select: (mutation) => mutation.state.status,
+    })
+  />
+  <p id="status">${save.status}</p>
+  <p id="data">${String(save.data)}</p>
+  <p id="error">${save.error ? (save.error as Error).message : ""}</p>
+  <p id="count">${count}</p>
+  <p id="states">${states.join(",")}</p>
+  <button id="save" onClick() { save.mutate(2, { onSettled: () => input.log.push("settled") }) }>save</button>
+  <button id="save-async" onClick() {
+    save.mutateAsync(-1).catch((error: Error) => input.log.push(`rejected ${error.message}`));
+  }>save</button>
+  <button id="reset" onClick() { save.reset() }>reset</button>
+  <@catch|error|>
+    <p id="caught">${(error as Error).message}</p>
+  </@catch>
+</try>

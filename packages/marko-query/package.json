@@ -1,0 +1,95 @@
+{
+  "name": "@tanstack/marko-query",
+  "version": "0.0.0",
+  "description": "Tags for managing, caching and syncing asynchronous and remote data in Marko 6",
+  "author": "Behzad Barzin",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TanStack/query.git",
+    "directory": "packages/marko-query"
+  },
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "keywords": [
+    "tanstack",
+    "query",
+    "marko",
+    "data-fetching"
+  ],
+  "scripts": {
+    "clean": "premove ./dist ./coverage ./dist-ts ./.cache/test-types",
+    "compile": "tsc --project tsconfig.json",
+    "test:oxlint": "oxlint ./src ./tests",
+    "test:types": "npm-run-all --serial test:types:*",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts57 --tsBuildInfoFile .cache/test-types/ts57.tsbuildinfo",
+    "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts58 --tsBuildInfoFile .cache/test-types/ts58.tsbuildinfo",
+    "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts59 --tsBuildInfoFile .cache/test-types/ts59.tsbuildinfo",
+    "test:types:tscurrent": "marko-type-check --project tsconfig.typecheck.json",
+    "test:types:ts70": "node ../../node_modules/typescript70/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts70 --tsBuildInfoFile .cache/test-types/ts70.tsbuildinfo",
+    "test:types:ts71": "node ../../node_modules/typescript71/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts71 --tsBuildInfoFile .cache/test-types/ts71.tsbuildinfo",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:build": "publint --strict && attw --pack",
+    "build": "premove ./dist && tsc --project tsconfig.prod.json && marko-type-check --project tsconfig.tags.json && premove ./dist/.tsbuildinfo"
+  },
+  "nx": {
+    "targets": {
+      "test:lib": {
+        "dependsOn": [
+          "^compile",
+          "build"
+        ]
+      },
+      "test:types": {
+        "dependsOn": [
+          "^compile",
+          "^build",
+          "build"
+        ]
+      }
+    }
+  },
+  "type": "module",
+  "types": "dist/lib/index.d.ts",
+  "module": "dist/lib/index.js",
+  "exports": {
+    ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
+      "types": "./dist/lib/index.d.ts",
+      "import": "./dist/lib/index.js"
+    },
+    "./internal": {
+      "@tanstack/custom-condition": "./src/internal.ts",
+      "types": "./dist/lib/internal.d.ts",
+      "import": "./dist/lib/internal.js"
+    },
+    "./marko.json": "./marko.json",
+    "./dist/tags/*": "./dist/tags/*",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": [
+    "**/*.marko"
+  ],
+  "files": [
+    "dist",
+    "src",
+    "transform",
+    "marko.json"
+  ],
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@marko/type-check": "catalog:",
+    "@marko/vite": "catalog:",
+    "marko": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "marko": "^6.0.0"
+  }
+}

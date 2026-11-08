@@ -1,0 +1,26 @@
+import type {
+  Accessor,
+  DehydratedState,
+  HydrateOptions,
+  QueryClient,
+} from "@tanstack/marko-query";
+import { hydrateBoundary, resolveClient } from "@tanstack/marko-query/internal";
+
+export interface Input {
+  /** What `dehydrate` returned, e.g. on the server or from a loader. */
+  state: DehydratedState | null | undefined;
+  /** Passed to core `hydrate`. A function, as it can hold functions. */
+  options?: Accessor<HydrateOptions>;
+  /** The client to use instead of the one for this `$global`. */
+  client?: Accessor<QueryClient>;
+  content?: Marko.Body;
+}
+
+<const/client=resolveClient($global, input.client)>
+<const/hydrated=hydrateBoundary(client, input.state, input.options?.())>
+<lifecycle
+  onMount() {
+    hydrateBoundary(resolveClient($global, input.client), input.state, input.options?.());
+  }
+/>
+<${input.content}/>

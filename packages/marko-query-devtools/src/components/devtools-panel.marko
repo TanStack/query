@@ -1,0 +1,50 @@
+import { getQueryClient, onlineManager } from "@tanstack/marko-query";
+import type { TanstackQueryDevtoolsPanel } from "@tanstack/query-devtools";
+import type { DevtoolsPanelOptions } from "../types.js";
+
+export interface Input extends DevtoolsPanelOptions {
+  /** Mount outside development too (the `/production` tags). */
+  production: boolean;
+}
+
+static function noop() {}
+
+<const/holder={} as { devtools?: TanstackQueryDevtoolsPanel; destroyed?: boolean }>
+<div/host class="tsqd-parent-container" style=(input.style ?? { height: "500px" })/>
+
+<lifecycle
+  onMount() {
+    if (!input.production && process.env.NODE_ENV !== "development") return;
+    void import("@tanstack/query-devtools").then(({ TanstackQueryDevtoolsPanel }) => {
+      if (holder.destroyed) return;
+      holder.devtools = new TanstackQueryDevtoolsPanel({
+        client: input.client ? input.client() : getQueryClient($global),
+        queryFlavor: "Marko Query",
+        version: "5",
+        onlineManager,
+        buttonPosition: "bottom-left",
+        position: "bottom",
+        initialIsOpen: true,
+        errorTypes: input.errorTypes?.() ?? [],
+        styleNonce: input.styleNonce,
+        shadowDOMTarget: input.shadowDOMTarget?.(),
+        onClose: input.onClose ?? noop,
+        hideDisabledQueries: input.hideDisabledQueries ?? false,
+        theme: input.theme ?? "system",
+      });
+      holder.devtools.mount(host());
+    });
+  }
+  onUpdate() {
+    const devtools = holder.devtools;
+    if (!devtools) return;
+    devtools.setClient(input.client ? input.client() : getQueryClient($global));
+    devtools.setErrorTypes(input.errorTypes?.() ?? []);
+    devtools.setOnClose(input.onClose ?? noop);
+    devtools.setTheme(input.theme ?? "system");
+  }
+  onDestroy() {
+    holder.destroyed = true;
+    holder.devtools?.unmount();
+  }
+/>

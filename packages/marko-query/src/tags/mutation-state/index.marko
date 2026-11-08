@@ -1,0 +1,57 @@
+import type {
+  Accessor,
+  Mutation,
+  MutationState,
+  MutationStateOptions,
+  QueryClient,
+} from "@tanstack/marko-query";
+import {
+  readMutationState,
+  resolveClient,
+  watchMutationState,
+} from "@tanstack/marko-query/internal";
+
+export interface Input<TResult = MutationState> {
+  /**
+   * `{ filters?, select? }`. A function, so the tag follows the values it
+   * reads.
+   */
+  options?: Accessor<MutationStateOptions<TResult, Mutation>>;
+  /** The client to use instead of the one for this `$global`. */
+  client?: Accessor<QueryClient>;
+}
+
+<let/states=(readMutationState(
+  resolveClient($global, input.client),
+  input.options?.(),
+) as TResult[])>
+<const/holder={} as {
+  watcher?: { setInput(options: unknown): void; destroy(): void };
+  client?: QueryClient;
+}>
+<const/watch=((client: QueryClient) =>
+  watchMutationState(client, input.options?.(), (value) => {
+    states = value as TResult[];
+  }))>
+
+<lifecycle
+  onMount() {
+    holder.client = resolveClient($global, input.client);
+    holder.watcher = watch(holder.client);
+  }
+  onUpdate() {
+    const client = resolveClient($global, input.client);
+    if (holder.client !== client) {
+      holder.watcher?.destroy();
+      holder.client = client;
+      holder.watcher = watch(client);
+    } else {
+      holder.watcher?.setInput(input.options?.());
+    }
+  }
+  onDestroy() {
+    holder.watcher?.destroy();
+  }
+/>
+
+<return=states>

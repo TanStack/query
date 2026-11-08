@@ -1,0 +1,83 @@
+import type {
+  Accessor,
+  CreateQueriesOptions,
+  CreateQueriesResult,
+  QueryClient,
+  QueryObserverResult,
+  RefetchOptions,
+} from "@tanstack/marko-query";
+import {
+  QueriesBinding,
+  readQueries,
+  resolveClient,
+  toPlainResult,
+} from "@tanstack/marko-query/internal";
+
+export interface Input<T extends Array<any>, TCombined = unknown> {
+  /**
+   * `{ queries, combine? }`. A function, so the tag follows the values it
+   * reads.
+   */
+  options: Accessor<CreateQueriesOptions<T, TCombined>>;
+  /** The client to use instead of the one for this `$global`. */
+  client?: Accessor<QueryClient>;
+}
+
+static function raise(error: unknown): never {
+  throw error;
+}
+
+// `combine` is called here rather than kept in a tag variable: it is created
+// by the `options` accessor, so Marko could not serialize it.
+static function combineResults(
+  combine: ((results: never) => unknown) | undefined,
+  results: unknown,
+): unknown {
+  return combine ? combine(results as never) : results;
+}
+
+<const/snapshot=readQueries(resolveClient($global, input.client), {
+  queries: input.options().queries as never,
+})>
+<let/results=(snapshot.result as QueryObserverResult[])>
+<let/thrown=snapshot.error>
+<const/holder={} as { binding?: QueriesBinding }>
+<const/connect=(() =>
+  (holder.binding ??= new QueriesBinding(
+    resolveClient($global, input.client),
+    { queries: input.options().queries as never },
+    (next, error) => {
+      results = next.results.map(toPlainResult);
+      thrown = error;
+    },
+    snapshot.hydration,
+  )))>
+
+<lifecycle
+  onMount() {
+    connect();
+  }
+  onUpdate() {
+    const client = resolveClient($global, input.client);
+    if (holder.binding && holder.binding.client !== client) {
+      holder.binding.destroy();
+      holder.binding = undefined;
+    }
+    connect().setOptions({ queries: input.options().queries as never });
+  }
+  onDestroy() {
+    holder.binding?.destroy();
+  }
+/>
+
+<if=thrown !== undefined>${raise(thrown)}</if>
+
+<const/withMethods=(results.map((result, index) => ({
+  ...result,
+  refetch: (options?: RefetchOptions) =>
+    connect().observer.getObservers()[index]!.refetch(options),
+})) as QueryObserverResult[])>
+<return=(combineResults(
+  input.options().combine as ((results: never) => unknown) | undefined,
+  withMethods,
+) as CreateQueriesResult<T, TCombined>)>
