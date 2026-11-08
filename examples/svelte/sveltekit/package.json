@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^7.0.1",
-    "@sveltejs/kit": "^2.70.3",
+    "@sveltejs/kit": "^3.0.0",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tanstack/eslint-plugin-query": "^5.107.1",
     "@typescript-eslint/parser": "^8.72.0",

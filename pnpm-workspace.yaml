@@ -102,3 +102,6 @@ allowBuilds:
 
   # nextJs
   sharp: false # not directly required for build
+minimumReleaseAgeExclude:
+  # Renovate security update: @sveltejs/kit@3.0.0
+  - '@sveltejs/kit@3.0.0'
