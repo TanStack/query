@@ -1,5 +1,5 @@
-import { LitElement, html } from 'lit'
 import { createMutationController } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import { todosMutations, todosQueries } from './services/todos/queries'
 
 class AddTodo extends LitElement {

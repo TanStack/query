@@ -6,8 +6,8 @@ import type {
   QueryKey,
   QueryKeyWithDataTag,
 } from '@tanstack/query-core'
-import type { InfiniteQueryOptions } from './types'
 import type { Accessor } from 'solid-js'
+import type { InfiniteQueryOptions } from './types'
 
 /**
  * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted, may be

@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { InfiniteQueryObserver, QueryClient } from '..'
 import type {
   DefaultError,
@@ -1043,7 +1043,7 @@ describe('infiniteQueryObserver', () => {
       })
 
       type Context = Parameters<
-        Extract<typeof observer.options.queryFn, Function>
+        Extract<typeof observer.options.queryFn, (...args: Array<any>) => any>
       >[0]
 
       expectTypeOf<Context['pageParam']>().toEqualTypeOf<unknown>()

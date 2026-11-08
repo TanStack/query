@@ -1,5 +1,5 @@
-import { useRoute } from 'preact-iso'
 import { useQuery } from '@tanstack/preact-query'
+import { useRoute } from 'preact-iso'
 import { charactersQueries } from './services/characters/queries'
 
 export default function CharacterPage() {

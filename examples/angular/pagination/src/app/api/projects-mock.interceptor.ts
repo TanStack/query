@@ -1,7 +1,7 @@
 import { HttpResponse } from '@angular/common/http'
 import { delay, of } from 'rxjs'
-import type { Observable } from 'rxjs'
 import type { HttpEvent, HttpInterceptorFn } from '@angular/common/http'
+import type { Observable } from 'rxjs'
 
 export const projectsMockInterceptor: HttpInterceptorFn = (
   req,

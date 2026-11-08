@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit'
-import type { Actions } from './$types'
 import { deleteContact, updateContact } from '$lib/server/contacts'
+import type { Actions } from './$types'
 
 export const actions = {
   favorite: async ({ request, params }) => {

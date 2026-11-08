@@ -7,8 +7,8 @@ import {
   signal,
 } from '@angular/core'
 import { QueryClient, notifyManager } from '@tanstack/query-core'
-import type { MutationFilters } from '@tanstack/query-core'
 import type { Signal } from '@angular/core'
+import type { MutationFilters } from '@tanstack/query-core'
 
 /**
  * Options for `injectIsMutating`, passed after the mutation filters.

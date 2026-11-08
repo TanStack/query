@@ -1,9 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@solidjs/testing-library'
-import { QueryClient, noop, useQueries, useQuery } from '@tanstack/solid-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
-import { createEffect, createSignal, onMount } from 'solid-js'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { QueryClient, noop, useQueries, useQuery } from '@tanstack/solid-query'
+import { createEffect, createSignal, onMount } from 'solid-js'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 import type {
   PersistedClient,

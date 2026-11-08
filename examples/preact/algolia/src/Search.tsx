@@ -1,6 +1,5 @@
-import { useState } from 'preact/hooks'
 import { useDebouncedValue } from '@tanstack/preact-pacer/debouncer'
-
+import { useState } from 'preact/hooks'
 import SearchResults from './SearchResults'
 import type { TargetedEvent } from 'preact'
 

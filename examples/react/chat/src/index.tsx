@@ -1,15 +1,14 @@
-import ReactDOM from 'react-dom/client'
 import {
   QueryClient,
   QueryClientProvider,
   useQuery,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-
-import './style.css'
 import { useState } from 'react'
-import { messagesQueries } from './services/messages/queries'
+import './style.css'
+import ReactDOM from 'react-dom/client'
 import { Message } from './message'
+import { messagesQueries } from './services/messages/queries'
 
 const queryClient = new QueryClient()
 

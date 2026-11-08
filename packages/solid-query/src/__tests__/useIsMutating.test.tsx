@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
-import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, useIsMutating, useMutation } from '..'
 import { renderWithClient, setActTimeout } from './utils'
 

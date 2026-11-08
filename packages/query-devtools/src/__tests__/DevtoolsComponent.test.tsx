@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, onlineManager } from '@tanstack/query-core'
 import { render } from '@solidjs/testing-library'
+import { QueryClient, onlineManager } from '@tanstack/query-core'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import DevtoolsComponent from '../DevtoolsComponent'
 
 // `solid-transition-group` internally imports from

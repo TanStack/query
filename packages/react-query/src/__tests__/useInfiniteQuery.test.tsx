@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@testing-library/react'
-import * as React from 'react'
-import { createRenderStream } from '@testing-library/react-render-stream'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { fireEvent, render } from '@testing-library/react'
+import { createRenderStream } from '@testing-library/react-render-stream'
+import * as React from 'react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryCache,
   QueryClient,
@@ -12,12 +12,12 @@ import {
   useInfiniteQuery,
 } from '..'
 import { renderWithClient, setActTimeout } from './utils'
+import type { Mock } from 'vitest'
 import type {
   InfiniteData,
   QueryFunctionContext,
   UseInfiniteQueryResult,
 } from '..'
-import type { Mock } from 'vitest'
 
 interface Result {
   items: Array<number>

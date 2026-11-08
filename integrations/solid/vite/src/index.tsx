@@ -1,7 +1,8 @@
 /* @refresh reload */
-import { render } from 'solid-js/web'
+
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
+import { render } from 'solid-js/web'
 import App from './App'
 
 const queryClient = new QueryClient()

@@ -9,8 +9,8 @@ import {
 import { clearDelegatedEvents, delegateEvents } from 'solid-js/web'
 import { PIP_DEFAULT_HEIGHT } from '../constants'
 import { useQueryDevtoolsContext } from './QueryDevtoolsContext'
-import type { Accessor, JSX } from 'solid-js'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
+import type { Accessor, JSX } from 'solid-js'
 
 interface PiPProviderProps {
   children: JSX.Element

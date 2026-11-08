@@ -1,8 +1,8 @@
-import { For, Show, createSignal } from 'solid-js'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/solid-query'
-import type { Todo } from '~/services/todos/types'
-import type { JSX } from 'solid-js'
+import { For, Show, createSignal } from 'solid-js'
 import { todosMutations, todosQueries } from '~/services/todos/queries'
+import type { JSX } from 'solid-js'
+import type { Todo } from '~/services/todos/types'
 
 interface MutationContext {
   previousTodos: Array<Todo> | undefined

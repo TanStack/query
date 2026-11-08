@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
-
+import { ref } from 'vue'
 import ChatMessage from './ChatMessage.vue'
 
 const questions = ref<Array<{ id: string; question: string }>>([])

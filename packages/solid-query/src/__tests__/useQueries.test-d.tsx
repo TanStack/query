@@ -1,6 +1,6 @@
-import { describe, expectTypeOf, it } from 'vitest'
 import { skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
+import { describe, expectTypeOf, it } from 'vitest'
 import { queryOptions, useQueries } from '..'
 import { QueryClient } from '../QueryClient'
 import type * as QueryCore from '@tanstack/query-core'

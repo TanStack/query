@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { untrack } from 'svelte'
   import { createKey, sleep } from '@tanstack/query-test-utils'
-  import { createInfiniteQuery } from '../../src/index.js'
+  import { untrack } from 'svelte'
   import { setQueryClientContext } from '../../src/context.js'
+  import { createInfiniteQuery } from '../../src/index.js'
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
 
   type Props = {

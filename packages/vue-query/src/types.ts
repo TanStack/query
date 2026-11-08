@@ -13,6 +13,7 @@ import type { ComputedRef, Ref, UnwrapRef } from 'vue-demi'
 type Primitive = string | number | boolean | bigint | symbol | undefined | null
 type UnwrapLeaf =
   | Primitive
+  // oxlint-disable-next-line typescript/no-unsafe-function-type -- leaves every function-like value, including constructors, unwrapped
   | Function
   | Date
   | Error
@@ -44,6 +45,7 @@ export type MaybeRefOrGetter<T> = MaybeRef<T> | (() => T)
  * object as a whole.
  */
 export type MaybeRefDeep<T> = MaybeRef<
+  // oxlint-disable-next-line typescript/no-unsafe-function-type -- keeps every function-like value, including constructors, as it is
   T extends Function
     ? T
     : T extends object

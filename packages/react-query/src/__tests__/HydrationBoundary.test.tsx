@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import * as React from 'react'
-import { render } from '@testing-library/react'
 import * as coreModule from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
+import { render } from '@testing-library/react'
+import * as React from 'react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   HydrationBoundary,
   QueryClient,

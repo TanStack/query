@@ -1,4 +1,3 @@
-import { LitElement, html } from 'lit'
 import {
   QueryClient,
   QueryClientProvider,
@@ -7,6 +6,7 @@ import {
   keepPreviousData,
   noop,
 } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import {
   armNextProjectMutationFailureOnServer,
   resetProjectsApiState,

@@ -2,7 +2,6 @@
 // in solid-js/web package. I'll create a GitHub issue with them to see
 // why that happens.
 import { hydrate, notifyManager, shouldThrowError } from '@tanstack/query-core'
-import { isServer } from 'solid-js/web'
 import {
   createComputed,
   createMemo,
@@ -12,17 +11,18 @@ import {
   onCleanup,
 } from 'solid-js'
 import { createStore, reconcile, unwrap } from 'solid-js/store'
+import { isServer } from 'solid-js/web'
 import { useQueryClientResolver } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
-import type { UseBaseQueryOptions } from './types'
-import type { Accessor, Signal } from 'solid-js'
-import type { QueryClient } from './QueryClient'
 import type {
   Query,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import type { Accessor, Signal } from 'solid-js'
+import type { QueryClient } from './QueryClient'
+import type { UseBaseQueryOptions } from './types'
 
 /**
  * Applies the `reconcile` option when writing a new observer result into the store.

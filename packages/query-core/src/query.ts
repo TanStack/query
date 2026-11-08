@@ -1,3 +1,7 @@
+import { infiniteQueryBehavior } from './infiniteQueryBehavior'
+import { notifyManager } from './notifyManager'
+import { Removable } from './removable'
+import { CancelledError, canFetch, createRetryer } from './retryer'
 import {
   ensureQueryFn,
   fetchSignal,
@@ -7,12 +11,10 @@ import {
   skipToken,
   timeUntilStale,
 } from './utils'
-import { notifyManager } from './notifyManager'
-import { CancelledError, canFetch, createRetryer } from './retryer'
-import { Removable } from './removable'
-import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
+import type { QueryObserver } from './queryObserver'
+import type { Retryer } from './retryer'
 import type {
   CancelOptions,
   DefaultError,
@@ -27,8 +29,6 @@ import type {
   SetDataOptions,
   StaleTime,
 } from './types'
-import type { QueryObserver } from './queryObserver'
-import type { Retryer } from './retryer'
 
 // TYPES
 
@@ -976,7 +976,7 @@ export class Query<
             ...fetchState(state.data, this.options),
             fetchMeta: action.meta ?? null,
           }
-        case 'success':
+        case 'success': {
           const newState = {
             ...state,
             ...successState(action.data, action.dataUpdatedAt),
@@ -992,7 +992,8 @@ export class Query<
           this.#revertState = action.manual ? newState : undefined
 
           return newState
-        case 'error':
+        }
+        case 'error': {
           const error = action.error
           return {
             ...state,
@@ -1007,6 +1008,7 @@ export class Query<
             // note that "no data" always means stale so we can set unconditionally here
             isInvalidated: true,
           }
+        }
         case 'invalidate':
           return {
             ...state,

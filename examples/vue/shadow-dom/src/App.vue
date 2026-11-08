@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
-
 import DogList from './DogList.vue'
 
 defineProps<{ shadowRoot: ShadowRoot }>()

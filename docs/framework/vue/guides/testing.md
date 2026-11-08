@@ -20,9 +20,9 @@ npm install @vue/test-utils --save-dev
 ```
 
 ```ts
-import { defineComponent } from 'vue'
-import { flushPromises, mount } from '@vue/test-utils'
 import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
+import { flushPromises, mount } from '@vue/test-utils'
+import { defineComponent } from 'vue'
 
 function withSetup<T>(composable: () => T, queryClient = new QueryClient()) {
   let result!: T
@@ -48,10 +48,10 @@ npm install @vue/test-utils@1 flush-promises --save-dev
 ```
 
 ```ts
-import { defineComponent } from 'vue'
+import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
 import { createLocalVue, mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
-import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
+import { defineComponent } from 'vue'
 
 function withSetup<T>(composable: () => T, queryClient = new QueryClient()) {
   let result!: T

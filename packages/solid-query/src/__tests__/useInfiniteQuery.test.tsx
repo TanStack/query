@@ -1,6 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
-
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   For,
   Index,
@@ -11,7 +10,7 @@ import {
   createSignal,
   on,
 } from 'solid-js'
-import { createKey, sleep } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryCache,
   QueryClient,
@@ -21,12 +20,12 @@ import {
   useInfiniteQuery,
 } from '..'
 import { Blink, renderWithClient, setActTimeout } from './utils'
+import type { Mock } from 'vitest'
 import type {
   InfiniteData,
   QueryFunctionContext,
   UseInfiniteQueryResult,
 } from '..'
-import type { Mock } from 'vitest'
 
 interface Result {
   items: Array<number>

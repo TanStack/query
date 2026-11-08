@@ -1,5 +1,4 @@
 import { describe, expectTypeOf, it } from 'vitest'
-
 import { useMutationState } from '../useMutationState'
 import type {
   Mutation,

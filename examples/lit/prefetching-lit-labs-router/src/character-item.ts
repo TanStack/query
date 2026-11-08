@@ -1,9 +1,9 @@
-import { LitElement, html } from 'lit'
 import {
   createQueryController,
   noop,
   useQueryClient,
 } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import { charactersQueries } from './services/characters/queries'
 
 class CharacterItem extends LitElement {

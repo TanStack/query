@@ -1,10 +1,10 @@
+import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref, unref } from 'vue-demi'
-import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
-import { QueryClient } from '../queryClient'
-import { QueryCache } from '../queryCache'
-import { MutationCache } from '../mutationCache'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
+import { MutationCache } from '../mutationCache'
+import { QueryCache } from '../queryCache'
+import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 
 // Get the prototype methods dynamically

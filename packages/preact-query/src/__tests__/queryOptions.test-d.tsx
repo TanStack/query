@@ -1,13 +1,12 @@
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-
 import { queryOptions } from '../queryOptions'
 import { useQueries } from '../useQueries'
 import { useQuery } from '../useQuery'
 import { useSuspenseQuery } from '../useSuspenseQuery'
-import type { AnyUseQueryOptions } from '../types'
 import type { DataTag, InitialDataFunction } from '@tanstack/query-core'
+import type { AnyUseQueryOptions } from '../types'
 
 // Regression test for exported queryOptions inference under declaration emit.
 // TypeScript should be able to name the return type without expanding the

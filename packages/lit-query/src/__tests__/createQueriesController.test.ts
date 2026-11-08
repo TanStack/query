@@ -1,3 +1,6 @@
+import { QueryClient } from '@tanstack/query-core'
+import { createKey, sleep } from '@tanstack/query-test-utils'
+import { LitElement, html } from 'lit'
 import {
   afterEach,
   beforeAll,
@@ -7,15 +10,12 @@ import {
   it,
   vi,
 } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
-import { createKey, sleep } from '@tanstack/query-test-utils'
-import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createQueriesController } from '../createQueriesController.js'
 import { queryOptions } from '../queryOptions.js'
 import { generateElementName } from './utils.js'
-import type { QueriesResultAccessor } from '../createQueriesController.js'
 import type { QueryObserverResult, QueryStatus } from '@tanstack/query-core'
+import type { QueriesResultAccessor } from '../createQueriesController.js'
 
 const providerTagName = generateElementName()
 

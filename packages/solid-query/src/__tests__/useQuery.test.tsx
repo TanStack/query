@@ -1,4 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render } from '@solidjs/testing-library'
+import {
+  createKey,
+  mockVisibilityState,
+  sleep,
+} from '@tanstack/query-test-utils'
 import {
   ErrorBoundary,
   Match,
@@ -9,13 +14,8 @@ import {
   createSignal,
   on,
 } from 'solid-js'
-import { fireEvent, render } from '@solidjs/testing-library'
 import { reconcile } from 'solid-js/store'
-import {
-  createKey,
-  mockVisibilityState,
-  sleep,
-} from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   IsRestoringProvider,
   QueryCache,
@@ -31,9 +31,9 @@ import {
   renderWithClient,
   setActTimeout,
 } from './utils'
-import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
-import type { Mock } from 'vitest'
 import type { JSX } from 'solid-js'
+import type { Mock } from 'vitest'
+import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
 
 describe('useQuery', () => {
   let queryCache: QueryCache

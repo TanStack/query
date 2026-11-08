@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 import { useDebouncer } from '@tanstack/vue-pacer/debouncer'
 import { useIsFetching, useQuery } from '@tanstack/vue-query'
+import { computed, onUnmounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import ErrorPage from '../ErrorPage.vue'
 import { contactsQueries } from '../services/contacts/queries'
 

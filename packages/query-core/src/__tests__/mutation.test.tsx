@@ -3,8 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MutationCache, QueryClient, focusManager, onlineManager } from '..'
 import { MutationObserver } from '../mutationObserver'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
-import type { MutationState } from '../mutation'
 import type { MutationCacheNotifyEvent, MutationFunctionContext } from '..'
+import type { MutationState } from '../mutation'
 
 describe('mutation', () => {
   let queryClient: QueryClient

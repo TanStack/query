@@ -1,15 +1,15 @@
-import { createLocalStorage } from '@solid-primitives/storage'
 import { I18nProvider } from '@kobalte/core'
+import { createLocalStorage } from '@solid-primitives/storage'
 import { createMemo } from 'solid-js'
-import { DevtoolsOfflineProvider } from './providers/DevtoolsOfflineProvider'
-import { DevtoolsSubscriptionsProvider } from './providers/DevtoolsSubscriptionsProvider'
-import { DevtoolsStateProvider } from './providers/DevtoolsStateProvider'
 import { Devtools } from './Devtools'
-import { getPreferredColorScheme } from './utils'
 import { THEME_PREFERENCE } from './constants'
 import { PiPProvider, QueryDevtoolsContext, ThemeContext } from './contexts'
-import type { Theme } from './contexts'
+import { DevtoolsOfflineProvider } from './providers/DevtoolsOfflineProvider'
+import { DevtoolsStateProvider } from './providers/DevtoolsStateProvider'
+import { DevtoolsSubscriptionsProvider } from './providers/DevtoolsSubscriptionsProvider'
+import { getPreferredColorScheme } from './utils'
 import type { DevtoolsComponentType } from './Devtools'
+import type { Theme } from './contexts'
 
 const DevtoolsComponent: DevtoolsComponentType = (props) => {
   const [localStore, setLocalStore] = createLocalStorage({

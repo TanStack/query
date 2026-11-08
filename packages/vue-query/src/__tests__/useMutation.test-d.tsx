@@ -1,13 +1,13 @@
+import { sleep } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 import { reactive } from 'vue-demi'
-import { sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
-import type { MutationResult, UseMutationReturnType } from '..'
 import type {
   MutationFunctionContext,
   MutationKey,
   QueryClient,
 } from '@tanstack/query-core'
+import type { MutationResult, UseMutationReturnType } from '..'
 
 describe('Discriminated union return type', () => {
   it('should have possibly undefined data by default', () => {

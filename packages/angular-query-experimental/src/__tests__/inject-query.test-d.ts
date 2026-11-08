@@ -1,5 +1,5 @@
-import { describe, expectTypeOf, it } from 'vitest'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { describe, expectTypeOf, it } from 'vitest'
 import { injectQuery, queryOptions } from '..'
 import type { Signal } from '@angular/core'
 import type { CreateQueryOptions, OmitKeyof, QueryFunction } from '..'

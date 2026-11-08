@@ -1,5 +1,4 @@
 import { QueriesObserver, noop } from '@tanstack/query-core'
-import { createStore, unwrap } from 'solid-js/store'
 import {
   batch,
   createComputed,
@@ -11,11 +10,9 @@ import {
   onCleanup,
   onMount,
 } from 'solid-js'
+import { createStore, unwrap } from 'solid-js/store'
 import { useQueryClientResolver } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
-import type { QueryOptions, UseQueryResult } from './types'
-import type { Accessor } from 'solid-js'
-import type { QueryClient } from './QueryClient'
 import type {
   DefaultError,
   OmitKeyof,
@@ -27,6 +24,9 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
+import type { Accessor } from 'solid-js'
+import type { QueryClient } from './QueryClient'
+import type { QueryOptions, UseQueryResult } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter

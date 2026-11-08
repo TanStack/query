@@ -47,8 +47,8 @@ Garbage collecting a Query from memory **does not** affect the persisted data. T
 
 ```tsx
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { QueryClient } from '@tanstack/react-query'
 import { experimental_createQueryPersister } from '@tanstack/query-persist-client-core'
+import { QueryClient } from '@tanstack/react-query'
 
 const persister = experimental_createQueryPersister({
   storage: AsyncStorage,

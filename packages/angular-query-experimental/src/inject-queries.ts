@@ -1,9 +1,4 @@
 import {
-  QueriesObserver,
-  QueryClient,
-  notifyManager,
-} from '@tanstack/query-core'
-import {
   DestroyRef,
   Injector,
   NgZone,
@@ -15,8 +10,14 @@ import {
   signal,
   untracked,
 } from '@angular/core'
-import { signalProxy } from './signal-proxy'
+import {
+  QueriesObserver,
+  QueryClient,
+  notifyManager,
+} from '@tanstack/query-core'
 import { injectIsRestoring } from './inject-is-restoring'
+import { signalProxy } from './signal-proxy'
+import type { Signal } from '@angular/core'
 import type {
   DefaultError,
   OmitKeyof,
@@ -32,7 +33,6 @@ import type {
   CreateQueryResult,
   DefinedCreateQueryResult,
 } from './types'
-import type { Signal } from '@angular/core'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function always gets undefined passed

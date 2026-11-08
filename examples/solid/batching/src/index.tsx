@@ -1,12 +1,13 @@
 /* @refresh reload */
-import { Index, Match, Show, Switch, createSignal } from 'solid-js'
-import { render } from 'solid-js/web'
+
 import {
   QueryClient,
   QueryClientProvider,
   useQueries,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
+import { Index, Match, Show, Switch, createSignal } from 'solid-js'
+import { render } from 'solid-js/web'
 import { charactersQueries } from './services/characters/queries'
 
 const queryClient = new QueryClient({

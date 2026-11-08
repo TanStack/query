@@ -1,10 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import * as React from 'react'
 import {
   PERSISTER_KEY_PREFIX,
   experimental_createQueryPersister,
 } from '@tanstack/query-persist-client-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import * as React from 'react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryCache, QueryClient, hashKey, useQuery } from '..'
 import { renderWithClient } from './utils'
 

@@ -1,9 +1,9 @@
-import { useState } from 'preact/hooks'
 import {
   useMutation,
   useQueryClient,
   useSuspenseQuery,
 } from '@tanstack/preact-query'
+import { useState } from 'preact/hooks'
 import { todosMutations, todosQueries } from '../services/todos/queries'
 import type { Todo } from '../services/todos/types'
 

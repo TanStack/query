@@ -2,7 +2,6 @@ import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/preact'
 import { useEffect, useState } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-
 import { MutationCache, QueryCache, QueryClient, useMutation } from '..'
 import { ErrorBoundary } from './ErrorBoundary'
 import {
@@ -10,8 +9,8 @@ import {
   renderWithClient,
   setActTimeout,
 } from './utils'
-import type { UseMutationResult } from '../types'
 import type { MutationFunctionContext } from '..'
+import type { UseMutationResult } from '../types'
 
 describe('useMutation', () => {
   let queryCache: QueryCache

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { useRouter } from 'vue-router'
 import ErrorPage from '../ErrorPage.vue'
 import FavoriteButton from '../FavoriteButton.vue'
 import { contactsAPI } from '../services/contacts/api'

@@ -78,9 +78,8 @@ Visit https://tanstack.com/query/latest/docs/vue/overview
 2. Initialize **Vue Query** via **VueQueryPlugin**
 
    ```tsx
-   import { createApp } from 'vue'
    import { VueQueryPlugin } from '@tanstack/vue-query'
-
+   import { createApp } from 'vue'
    import App from './App.vue'
 
    createApp(App).use(VueQueryPlugin).mount('#app')
@@ -89,8 +88,8 @@ Visit https://tanstack.com/query/latest/docs/vue/overview
 3. Use query
 
    ```tsx
-   import { defineComponent } from 'vue'
    import { useQuery } from '@tanstack/vue-query'
+   import { defineComponent } from 'vue'
 
    export default defineComponent({
      name: 'MyComponent',

@@ -1,9 +1,9 @@
-import React from 'react'
 import { HydrationBoundary, dehydrate, noop } from '@tanstack/react-query'
-import { todosQueries } from '../services/todos/queries'
-import { getQueryClient } from '@/app/get-query-client'
+import React from 'react'
 import { getTodos } from '@/app/api/todos/data'
+import { getQueryClient } from '@/app/get-query-client'
 import ApproachTabs from '@/components/ApproachTabs'
+import { todosQueries } from '../services/todos/queries'
 
 export default function Home() {
   const queryClient = getQueryClient()

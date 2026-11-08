@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useTemplateRef, watchEffect } from 'vue'
-import { useElementVisibility } from '@vueuse/core'
 import { useInfiniteQuery } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+import { useElementVisibility } from '@vueuse/core'
+import { useTemplateRef, watchEffect } from 'vue'
 import { projectsQueries } from '../services/projects/queries'
 
 const loadMoreButton = useTemplateRef('loadMoreButton')

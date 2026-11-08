@@ -1,9 +1,9 @@
 import { runInNewContext } from 'node:vm'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, within } from '@solidjs/testing-library'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
 import { createSignal } from 'solid-js'
 import { clearDelegatedEvents, delegateEvents } from 'solid-js/web'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Explorer, { SearchableExplorer } from '../Explorer'
 import { QueryDevtoolsContext, ThemeContext } from '../contexts'
 

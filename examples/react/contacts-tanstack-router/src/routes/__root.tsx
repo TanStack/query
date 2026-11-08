@@ -1,3 +1,5 @@
+import { useDebouncedCallback } from '@tanstack/react-pacer/debouncer'
+import { useIsFetching, useSuspenseQuery } from '@tanstack/react-query'
 import {
   Link,
   Outlet,
@@ -6,8 +8,6 @@ import {
   useNavigate,
   useRouterState,
 } from '@tanstack/react-router'
-import { useDebouncedCallback } from '@tanstack/react-pacer/debouncer'
-import { useIsFetching, useSuspenseQuery } from '@tanstack/react-query'
 import { contactsQueries } from '../services/contacts/queries'
 import type { QueryClient } from '@tanstack/react-query'
 

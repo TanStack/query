@@ -1,8 +1,8 @@
-import { ErrorBoundary, For, Suspense, createSignal } from 'solid-js'
 import { A } from '@solidjs/router'
 import { noop, useQuery, useQueryClient } from '@tanstack/solid-query'
-import type { Character } from '~/services/characters/types'
+import { ErrorBoundary, For, Suspense, createSignal } from 'solid-js'
 import { charactersQueries } from '~/services/characters/queries'
+import type { Character } from '~/services/characters/types'
 
 function CharacterItem(props: {
   char: Character

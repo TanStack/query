@@ -2,12 +2,12 @@ import { notifyManager } from './notifyManager'
 import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
 import { replaceEqualDeep, shallowEqualObjects } from './utils'
+import type { QueryClient } from './queryClient'
 import type {
   DefaultedQueryObserverOptions,
   QueryObserverOptions,
   QueryObserverResult,
 } from './types'
-import type { QueryClient } from './queryClient'
 
 /**
  * Returns the items of `array1` that are not in `array2`.

@@ -1,6 +1,6 @@
 import { BroadcastChannel } from 'broadcast-channel'
-import type { BroadcastChannelOptions } from 'broadcast-channel'
 import type { QueryClient, QueryKey } from '@tanstack/query-core'
+import type { BroadcastChannelOptions } from 'broadcast-channel'
 
 /**
  * Metadata describing a broadcast that failed to be delivered to other tabs.

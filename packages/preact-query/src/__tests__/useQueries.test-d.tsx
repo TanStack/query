@@ -1,12 +1,11 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
-
 import { skipToken } from '..'
 import { queryOptions } from '../queryOptions'
 import { useQueries } from '../useQueries'
+import type { QueryFunctionContext } from '@tanstack/query-core'
 import type { OmitKeyof, QueryFunction, QueryKey } from '..'
 import type { UseQueryOptions, UseQueryResult } from '../types'
-import type { QueryFunctionContext } from '@tanstack/query-core'
 
 describe('useQueries', () => {
   describe('config object overload', () => {

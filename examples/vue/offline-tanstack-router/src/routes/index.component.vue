@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Link } from '@tanstack/vue-router'
 import { useQuery } from '@tanstack/vue-query'
+import { Link } from '@tanstack/vue-router'
 import { moviesQueries } from '../services/movies/queries'
 
 const { data, error, isError, isFetching, isLoading } = useQuery(

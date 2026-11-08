@@ -5,14 +5,14 @@ import type {
   DefinedQueryObserverResult,
   QueryKey,
 } from '@tanstack/query-core'
-import type { UseBaseQueryReturnType } from './useBaseQuery'
-import type { MaybeRefOrGetter } from './types'
 import type { QueryClient } from './queryClient'
 import type {
   DefinedInitialQueryOptions,
   UndefinedInitialQueryOptions,
   UseQueryOptions,
 } from './queryOptions'
+import type { MaybeRefOrGetter } from './types'
+import type { UseBaseQueryReturnType } from './useBaseQuery'
 
 /**
  * The result of `useQuery` when `initialData` is omitted, may be `undefined`, or is a function that may

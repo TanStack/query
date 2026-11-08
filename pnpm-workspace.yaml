@@ -1,5 +1,9 @@
 cleanupUnusedCatalogs: true
 minimumReleaseAge: 1440
+minimumReleaseAgeExclude:
+  - '@tanstack/eslint-config@0.5.0' # Published by TanStack from TanStack/config.
+  - '@tanstack/oxfmt-config@0.1.0' # Published by TanStack from TanStack/config.
+  - '@tanstack/oxlint-config@0.2.0' # Published by TanStack from TanStack/config.
 linkWorkspacePackages: true
 preferWorkspacePackages: true
 blockExoticSubdeps: true

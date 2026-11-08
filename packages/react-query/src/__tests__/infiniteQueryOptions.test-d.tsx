@@ -1,10 +1,10 @@
-import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
-import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import { useQuery } from '../useQuery'
+import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import type {
   DataTag,
   InfiniteData,

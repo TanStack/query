@@ -1,7 +1,7 @@
-import { describe, expectTypeOf, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
-import { useInfiniteQuery } from '../useInfiniteQuery'
+import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../QueryClient'
+import { useInfiniteQuery } from '../useInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('useInfiniteQuery', () => {

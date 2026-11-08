@@ -235,8 +235,8 @@ import {
   HydrationBoundary,
   QueryClient,
 } from '@tanstack/react-query'
-import Posts from './posts'
 import CommentsServerComponent from './comments-server'
+import Posts from './posts'
 
 export default async function PostsPage() {
   const queryClient = new QueryClient()
@@ -507,8 +507,8 @@ import {
   QueryClient,
 } from '@tanstack/react-query'
 import { getQueryClient } from './get-query-client'
-import { serialize } from './transformer'
 import Posts from './posts'
+import { serialize } from './transformer'
 
 export default function PostsPage() {
   const queryClient = getQueryClient()
@@ -580,8 +580,8 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import * as React from 'react'
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
+import * as React from 'react'
 
 function makeQueryClient() {
   return new QueryClient({

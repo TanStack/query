@@ -174,9 +174,9 @@ Select **Clear** or press **Escape** in the search field to restore your manual 
 Devtools are excluded in production builds. However, it might be desirable to lazy load the devtools in production:
 
 ```tsx
-import * as React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import * as React from 'react'
 import { Example } from './Example'
 
 const queryClient = new QueryClient()

@@ -1,7 +1,6 @@
 import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte'
-import { defineConfig } from 'vitest/config'
 import { svelteTesting } from '@testing-library/svelte/vite'
-
+import { defineConfig } from 'vitest/config'
 import packageJson from './package.json'
 
 export default defineConfig({

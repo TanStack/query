@@ -1,9 +1,9 @@
 /* istanbul ignore file */
 
-import { useQuery } from './useQuery'
 import { useInfiniteQuery } from './useInfiniteQuery'
 import { useMutation } from './useMutation'
 import { useQueries } from './useQueries'
+import { useQuery } from './useQuery'
 
 // Re-export core
 export * from '@tanstack/query-core'

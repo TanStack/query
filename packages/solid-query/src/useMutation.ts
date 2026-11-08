@@ -3,13 +3,13 @@ import { createComputed, createMemo, on, onCleanup } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { useQueryClientResolver } from './QueryClientProvider'
 import type { DefaultError } from '@tanstack/query-core'
+import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
   UseMutateFunction,
   UseMutationOptions,
   UseMutationResult,
 } from './types'
-import type { Accessor } from 'solid-js'
 
 /**
  * Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.

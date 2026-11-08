@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { CancelledError, canFetch, createRetryer } from '../retryer'
 import { focusManager } from '../focusManager'
 import { onlineManager } from '../onlineManager'
+import { CancelledError, canFetch, createRetryer } from '../retryer'
 
 describe('createRetryer', () => {
   beforeEach(() => {

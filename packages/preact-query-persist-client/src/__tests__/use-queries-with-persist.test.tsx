@@ -1,14 +1,14 @@
+import { QueryClient, useQueries } from '@tanstack/preact-query'
+import { PersistQueryClientProvider } from '@tanstack/preact-query-persist-client'
+import { sleep } from '@tanstack/query-test-utils'
 import { act, render } from '@testing-library/preact'
 import { useCallback } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { sleep } from '@tanstack/query-test-utils'
-import { QueryClient, useQueries } from '@tanstack/preact-query'
-import { PersistQueryClientProvider } from '@tanstack/preact-query-persist-client'
+import type { QueryObserverResult } from '@tanstack/preact-query'
 import type {
   PersistedClient,
   Persister,
 } from '@tanstack/query-persist-client-core'
-import type { QueryObserverResult } from '@tanstack/preact-query'
 
 describe('useQueries with persist and memoized combine (preact)', () => {
   const storage: Record<string, string> = {}

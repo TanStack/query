@@ -1,5 +1,5 @@
-import { LitElement, css, html } from 'lit'
 import { createQueryController } from '@tanstack/lit-query'
+import { LitElement, css, html } from 'lit'
 import { dataQueries } from './services/data/queries.js'
 import type { QueryClient, QueryResultAccessor } from '@tanstack/lit-query'
 import type { DataResponse } from './services/data/types.js'

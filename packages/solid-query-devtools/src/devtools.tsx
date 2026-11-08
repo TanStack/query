@@ -1,6 +1,6 @@
-import { createEffect, createMemo, onCleanup, onMount } from 'solid-js'
-import { onlineManager, useQueryClient } from '@tanstack/solid-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
+import { onlineManager, useQueryClient } from '@tanstack/solid-query'
+import { createEffect, createMemo, onCleanup, onMount } from 'solid-js'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,

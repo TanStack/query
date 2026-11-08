@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@solidjs/testing-library'
-import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
+import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import SolidQueryDevtoolsPanel from '../devtoolsPanel'
 
 describe('SolidQueryDevtoolsPanel', () => {

@@ -1,5 +1,5 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { Query, QueryClient, hashKey } from '@tanstack/query-core'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import {
   PERSISTER_KEY_PREFIX,
   experimental_createQueryPersister,

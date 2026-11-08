@@ -1,7 +1,6 @@
-import { useId } from 'preact/hooks'
 import { normalizeProps, useMachine } from '@zag-js/preact'
 import * as toast from '@zag-js/toast'
-
+import { useId } from 'preact/hooks'
 import './toaster.css'
 
 export const toaster = toast.createStore({

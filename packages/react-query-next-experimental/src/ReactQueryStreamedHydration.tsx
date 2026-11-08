@@ -9,13 +9,13 @@ import {
 } from '@tanstack/react-query'
 import * as React from 'react'
 import { createHydrationStreamProvider } from './HydrationStreamProvider'
-import type { HydrationStreamProviderProps } from './HydrationStreamProvider'
 import type {
   DehydrateOptions,
   DehydratedState,
   HydrateOptions,
   QueryClient,
 } from '@tanstack/react-query'
+import type { HydrationStreamProviderProps } from './HydrationStreamProvider'
 
 const stream = createHydrationStreamProvider<DehydratedState>()
 

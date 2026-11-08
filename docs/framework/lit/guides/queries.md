@@ -12,8 +12,8 @@ A query is a declarative dependency on an asynchronous source of data tied to a 
 In Lit, subscribe to a query with [`createQueryController`](../reference/functions/createQueryController.md):
 
 ```ts
-import { LitElement, html } from 'lit'
 import { createQueryController } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 
 class TodosView extends LitElement {
   private readonly todos = createQueryController(this, {

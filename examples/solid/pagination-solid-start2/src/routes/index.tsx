@@ -1,4 +1,10 @@
 import {
+  keepPreviousData,
+  noop,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/solid-query'
+import {
   ErrorBoundary,
   For,
   Show,
@@ -6,12 +12,6 @@ import {
   createEffect,
   createSignal,
 } from 'solid-js'
-import {
-  keepPreviousData,
-  noop,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/solid-query'
 import { projectsQueries } from '~/services/projects/queries'
 
 export default function Example() {

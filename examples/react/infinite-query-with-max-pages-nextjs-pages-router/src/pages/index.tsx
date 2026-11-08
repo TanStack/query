@@ -1,6 +1,6 @@
-import React from 'react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import React from 'react'
 import { projectsQueries } from '../services/projects/queries'
 
 export default function Example() {

@@ -1,6 +1,5 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { describe, expect, it } from 'vitest'
-
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import type { UseInfiniteQueryOptions } from '../types'
 

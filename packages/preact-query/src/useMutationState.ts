@@ -1,6 +1,5 @@
-import { useCallback, useState } from 'preact/hooks'
-
 import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
+import { useCallback, useState } from 'preact/hooks'
 import { useQueryClient } from './QueryClientProvider'
 import { useSyncExternalStore } from './utils'
 import type {

@@ -1,6 +1,10 @@
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
 import { createRetryer } from './retryer'
+import type { MutationCache } from './mutationCache'
+import type { MutationObserver } from './mutationObserver'
+import type { QueryClient } from './queryClient'
+import type { Retryer } from './retryer'
 import type {
   DefaultError,
   MutationFunctionContext,
@@ -8,10 +12,6 @@ import type {
   MutationOptions,
   MutationStatus,
 } from './types'
-import type { MutationCache } from './mutationCache'
-import type { MutationObserver } from './mutationObserver'
-import type { Retryer } from './retryer'
-import type { QueryClient } from './queryClient'
 
 // TYPES
 

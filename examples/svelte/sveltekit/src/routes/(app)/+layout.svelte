@@ -1,9 +1,9 @@
 <script lang="ts">
+  import { createDebouncer } from '@tanstack/svelte-pacer/debouncer'
+  import { createQuery, useIsFetching } from '@tanstack/svelte-query'
   import { resolve } from '$app/paths'
   import { navigating, page } from '$app/state'
   import { contactsQueries } from '$lib/services/contacts/queries'
-  import { createQuery, useIsFetching } from '@tanstack/svelte-query'
-  import { createDebouncer } from '@tanstack/svelte-pacer/debouncer'
   import type { LayoutProps } from './$types'
 
   let { data, children }: LayoutProps = $props()

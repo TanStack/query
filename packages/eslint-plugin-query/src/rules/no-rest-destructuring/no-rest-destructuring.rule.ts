@@ -1,7 +1,7 @@
 import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
-import { getDocsUrl } from '../../utils/get-docs-url'
 import { ASTUtils } from '../../utils/ast-utils'
 import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
+import { getDocsUrl } from '../../utils/get-docs-url'
 import { NoRestDestructuringUtils } from './no-rest-destructuring.utils'
 import type { ExtraRuleDocs } from '../../types'
 

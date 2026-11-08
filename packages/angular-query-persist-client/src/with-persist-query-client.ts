@@ -1,8 +1,4 @@
-import {
-  QueryClient,
-  provideIsRestoring,
-  queryFeature,
-} from '@tanstack/angular-query-experimental'
+import { isPlatformBrowser } from '@angular/common'
 import {
   DestroyRef,
   ENVIRONMENT_INITIALIZER,
@@ -10,13 +6,17 @@ import {
   inject,
   signal,
 } from '@angular/core'
-import { isPlatformBrowser } from '@angular/common'
+import {
+  QueryClient,
+  provideIsRestoring,
+  queryFeature,
+} from '@tanstack/angular-query-experimental'
 import {
   persistQueryClientRestore,
   persistQueryClientSubscribe,
 } from '@tanstack/query-persist-client-core'
-import type { PersistQueryClientOptions as PersistQueryClientOptionsCore } from '@tanstack/query-persist-client-core'
 import type { PersistQueryClientFeature } from '@tanstack/angular-query-experimental'
+import type { PersistQueryClientOptions as PersistQueryClientOptionsCore } from '@tanstack/query-persist-client-core'
 
 type PersistQueryClientOptions = {
   persistOptions: Omit<PersistQueryClientOptionsCore, 'queryClient'>

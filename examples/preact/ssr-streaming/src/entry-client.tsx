@@ -1,6 +1,6 @@
-import { hydrate as preactHydrate } from 'preact'
 import { QueryClientProvider, hydrate } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
+import { hydrate as preactHydrate } from 'preact'
 import App from './App'
 import { makeQueryClient } from './makeQueryClient'
 import type { DehydratedState } from '@tanstack/preact-query'

@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { QueriesObserver, QueryClient } from '..'
 import type {
   Query,

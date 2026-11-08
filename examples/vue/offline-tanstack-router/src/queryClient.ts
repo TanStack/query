@@ -1,5 +1,5 @@
-import { MutationCache, QueryClient } from '@tanstack/vue-query'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
+import { MutationCache, QueryClient } from '@tanstack/vue-query'
 import { toast } from 'vue-sonner'
 import { moviesMutations, moviesQueries } from './services/movies/queries'
 

@@ -1,7 +1,6 @@
-import { createApp } from 'vue'
 import { VueQueryPlugin } from '@tanstack/vue-query'
+import { createApp } from 'vue'
 import './index.css'
-
 import App from './App.vue'
 
 const appRoot = document.getElementById('app')

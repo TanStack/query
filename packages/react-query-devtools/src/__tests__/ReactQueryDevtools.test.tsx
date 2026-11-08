@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { render } from '@testing-library/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { render } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ReactQueryDevtools as ReactQueryDevtoolsComponent } from '../ReactQueryDevtools'
 
 const mountMock = vi.fn<TanstackQueryDevtools['mount']>()

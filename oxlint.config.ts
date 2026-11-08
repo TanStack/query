@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url'
+import { tanstackConfig } from '@tanstack/oxlint-config'
 import pluginVitest from '@vitest/eslint-plugin'
 import pluginJestDom from 'eslint-plugin-jest-dom'
 import pluginJsdoc from 'eslint-plugin-jsdoc'
@@ -17,138 +18,23 @@ const jsdocRecommendedRules = Object.fromEntries(
 )
 
 export default defineConfig({
+  extends: [tanstackConfig],
   plugins: ['import', 'typescript', 'unicorn', 'vitest'],
   jsPlugins: [
-    { name: 'import-js', specifier: 'eslint-plugin-import-x' },
     { name: 'cspell', specifier: '@cspell/eslint-plugin' },
-    '@stylistic/eslint-plugin',
     // Absolute path so that package configs can extend this config
     fileURLToPath(new URL('./scripts/oxlint/plugin.ts', import.meta.url)),
   ],
-  categories: {
-    correctness: 'off',
-  },
-  options: {
-    typeAware: true,
-  },
-  env: {
-    browser: true,
-    es2020: true,
-  },
+  env: tanstackConfig.env,
   settings: {
     vitest: { typecheck: true },
   },
   ignorePatterns: [
     'examples/**',
     'integrations/**',
-    '**/.nx/**',
-    '**/.svelte-kit/**',
-    '**/build/**',
-    '**/coverage/**',
-    '**/dist/**',
-    '**/snap/**',
-    '**/vite.config.*.timestamp-*.*',
+    ...tanstackConfig.ignorePatterns,
   ],
   rules: {
-    // JavaScript
-    'for-direction': 'error',
-    'no-async-promise-executor': 'error',
-    'no-class-assign': 'error',
-    'no-compare-neg-zero': 'error',
-    'no-cond-assign': 'error',
-    'no-constant-binary-expression': 'error',
-    'no-constant-condition': 'error',
-    'no-control-regex': 'error',
-    'no-debugger': 'error',
-    'no-delete-var': 'error',
-    'no-dupe-else-if': 'error',
-    'no-duplicate-case': 'error',
-    'no-empty-character-class': 'error',
-    'no-empty-pattern': 'error',
-    'no-empty-static-block': 'error',
-    'no-ex-assign': 'error',
-    'no-extra-boolean-cast': 'error',
-    'no-fallthrough': 'error',
-    'no-global-assign': 'error',
-    'no-invalid-regexp': 'error',
-    'no-irregular-whitespace': 'error',
-    'no-loss-of-precision': 'error',
-    'no-misleading-character-class': 'error',
-    'no-nonoctal-decimal-escape': 'error',
-    'no-regex-spaces': 'error',
-    'no-self-assign': 'error',
-    'no-shadow': 'warn',
-    'no-shadow-restricted-names': 'error',
-    'no-sparse-arrays': 'error',
-    'no-unsafe-finally': 'error',
-    'no-unsafe-optional-chaining': 'error',
-    'no-unused-labels': 'error',
-    'no-unused-private-class-members': 'error',
-    'no-useless-backreference': 'error',
-    'no-useless-catch': 'error',
-    'no-useless-escape': 'error',
-    'no-var': 'error',
-    'no-with': 'error',
-    'require-yield': 'error',
-    'sort-imports': ['error', { ignoreDeclarationSort: true }],
-    'use-isnan': 'error',
-    'valid-typeof': 'error',
-
-    // Imports
-    'import/consistent-type-specifier-style': ['error', 'prefer-top-level'],
-    'import/first': 'error',
-    'import/newline-after-import': 'error',
-    'import/no-commonjs': 'error',
-    'import/no-duplicates': 'error',
-    'import-js/order': [
-      'error',
-      {
-        groups: [
-          'builtin',
-          'external',
-          'internal',
-          'parent',
-          'sibling',
-          'index',
-          'object',
-          'type',
-        ],
-      },
-    ],
-
-    // TypeScript
-    'typescript/array-type': [
-      'error',
-      { default: 'generic', readonly: 'generic' },
-    ],
-    'typescript/ban-ts-comment': [
-      'error',
-      { 'ts-expect-error': false, 'ts-ignore': 'allow-with-description' },
-    ],
-    'typescript/consistent-type-imports': ['error', { prefer: 'type-imports' }],
-    'typescript/method-signature-style': ['error', 'property'],
-    'typescript/no-duplicate-enum-values': 'error',
-    'typescript/no-extra-non-null-assertion': 'error',
-    'typescript/no-for-in-array': 'error',
-    'typescript/no-inferrable-types': ['error', { ignoreParameters: true }],
-    'typescript/no-misused-new': 'error',
-    'typescript/no-namespace': 'error',
-    'typescript/no-non-null-asserted-optional-chain': 'error',
-    'typescript/no-unnecessary-condition': 'error',
-    'typescript/no-unnecessary-type-assertion': 'error',
-    'typescript/no-wrapper-object-types': 'error',
-    'typescript/prefer-as-const': 'error',
-    'typescript/prefer-for-of': 'warn',
-    'typescript/require-await': 'warn',
-    'typescript/triple-slash-reference': 'error',
-    'tanstack-query/type-parameter-naming': 'error',
-
-    // Node
-    'unicorn/prefer-node-protocol': 'error',
-
-    // Stylistic
-    '@stylistic/spaced-comment': 'error',
-
     // Spelling
     'cspell/spellchecker': [
       'warn',

@@ -11,7 +11,6 @@ import {
   it,
   vi,
 } from 'vitest'
-
 import {
   QueryCache,
   QueryClient,

@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { act, render } from '@testing-library/preact'
 import { QueryClient, QueryClientProvider } from '@tanstack/preact-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
+import { act, render } from '@testing-library/preact'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { PreactQueryDevtools as PreactQueryDevtoolsComponent } from '../PreactQueryDevtools'
 
 const mountMock = vi.fn<TanstackQueryDevtools['mount']>()

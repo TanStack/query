@@ -1,6 +1,6 @@
 import Providers from './providers'
-import type React from 'react'
 import type { Metadata } from 'next'
+import type React from 'react'
 
 export const metadata: Metadata = {
   title: 'Create Next App',

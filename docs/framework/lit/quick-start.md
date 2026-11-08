@@ -12,13 +12,13 @@ This snippet shows the three core Lit Query concepts:
 For complete runnable examples, see [Basic](./examples/basic), [Pagination](./examples/pagination), and [SSR](./examples/ssr).
 
 ```ts
-import { LitElement, html } from 'lit'
 import {
   QueryClient,
   QueryClientProvider,
   createMutationController,
   createQueryController,
 } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import { addTodo, getTodos } from './api'
 
 const queryClient = new QueryClient()

@@ -1,6 +1,3 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
-import { TestBed } from '@angular/core/testing'
 import {
   ENVIRONMENT_INITIALIZER,
   EnvironmentInjector,
@@ -11,8 +8,11 @@ import {
   provideZonelessChangeDetection,
   signal,
 } from '@angular/core'
-import { provideTanStackQuery } from '../providers'
+import { TestBed } from '@angular/core/testing'
+import { QueryClient } from '@tanstack/query-core'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { withDevtools } from '../devtools'
+import { provideTanStackQuery } from '../providers'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,

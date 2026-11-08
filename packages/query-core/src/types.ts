@@ -1,13 +1,13 @@
 /* istanbul ignore file */
 
-import type { QueryClient } from './queryClient'
 import type { DehydrateOptions, HydrateOptions } from './hydration'
 import type { MutationState } from './mutation'
+import type { MutationCache } from './mutationCache'
 import type { FetchDirection, Query, QueryBehavior } from './query'
+import type { QueryCache } from './queryCache'
+import type { QueryClient } from './queryClient'
 import type { RetryDelayValue, RetryValue } from './retryer'
 import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
-import type { QueryCache } from './queryCache'
-import type { MutationCache } from './mutationCache'
 
 /**
  * Excludes `undefined` from `T`. Used where a value must be defined, such as the data type that a
@@ -264,6 +264,7 @@ export type QueryFunctionContext<
 /** @inline */
 export type InitialDataFunction<T> = () => T | undefined
 
+// oxlint-disable-next-line typescript/no-unsafe-function-type -- excludes every function-like value, including constructors, from the value branch
 type NonFunctionGuard<T> = T extends Function ? never : T
 
 /** @inline */

@@ -1,5 +1,5 @@
-import { Link } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
+import { Link } from 'react-router'
 import { moviesQueries } from '../services/movies/queries'
 
 export default function List() {

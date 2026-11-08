@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-
 import { queryOptions } from '../queryOptions'
 import type { UseQueryOptions } from '../types'
 

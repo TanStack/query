@@ -4,8 +4,8 @@ import {
   onCleanup,
   useContext,
 } from 'solid-js'
-import type { QueryClient } from './QueryClient'
 import type { Accessor, JSX } from 'solid-js'
+import type { QueryClient } from './QueryClient'
 
 /**
  * The context that `useQueryClient` reads from. `QueryClientProvider` is the normal way to set it.

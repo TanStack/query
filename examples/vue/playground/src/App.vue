@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
 import { useQueryClient } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
-import { serverConfig } from './services/todos/api'
-
-import TodoList from './TodoList.vue'
-import EditTodo from './EditTodo.vue'
+import { ref, watchEffect } from 'vue'
 import AddTodo from './AddTodo.vue'
+import EditTodo from './EditTodo.vue'
+import TodoList from './TodoList.vue'
+import { serverConfig } from './services/todos/api'
 
 const queryClient = useQueryClient()
 

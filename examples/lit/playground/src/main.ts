@@ -1,7 +1,7 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { keyed } from 'lit/directives/keyed.js'
 import { styleMap } from 'lit/directives/style-map.js'
-import { QueryClient, QueryClientProvider } from '@tanstack/lit-query'
 import './styles.css'
 import { serverConfig } from './services/todos/api'
 import './todo-list'

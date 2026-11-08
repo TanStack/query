@@ -1,5 +1,5 @@
-import { render } from 'preact'
 import { QueryClient, QueryClientProvider } from '@tanstack/preact-query'
+import { render } from 'preact'
 import App from './App'
 
 const queryClient = new QueryClient()

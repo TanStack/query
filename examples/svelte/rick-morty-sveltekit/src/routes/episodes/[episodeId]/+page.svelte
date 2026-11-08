@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import Character from './Character.svelte'
   import { episodesQueries } from '$lib/services/episodes/queries'
+  import Character from './Character.svelte'
   import type { PageProps } from './$types'
 
   let { params }: PageProps = $props()

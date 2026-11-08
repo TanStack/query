@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it } from 'vitest'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { TanstackQueryDevtools } from '..'
 
 describe('TanstackQueryDevtools', () => {

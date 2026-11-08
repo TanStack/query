@@ -1,7 +1,7 @@
-import { render } from 'preact'
-import './index.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/preact-query'
+import './index.css'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
+import { render } from 'preact'
 import { DogList } from './DogList'
 
 const appRoot = document.getElementById('root')

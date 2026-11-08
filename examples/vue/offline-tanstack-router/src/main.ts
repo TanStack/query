@@ -1,8 +1,7 @@
 import 'vue-sonner/style.css'
-import { createApp } from 'vue'
-import { VueQueryPlugin } from '@tanstack/vue-query'
 import { persistQueryClient } from '@tanstack/query-persist-client-core'
-
+import { VueQueryPlugin } from '@tanstack/vue-query'
+import { createApp } from 'vue'
 import App from './App.vue'
 import { worker } from './mocks'
 import { persister, queryClient } from './queryClient'

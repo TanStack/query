@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { render } from '@testing-library/svelte'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { render } from '@testing-library/svelte'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, createQueries } from '../../src/index.js'
 import { promiseWithResolvers, ref, withEffectRoot } from '../utils.svelte.js'
 import IsRestoring from './IsRestoring.svelte'

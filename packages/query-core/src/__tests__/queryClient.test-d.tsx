@@ -1,12 +1,11 @@
-import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import { skipToken } from '../utils'
-import type { MutationFilters, QueryFilters, Updater } from '../utils'
 import type { Mutation } from '../mutation'
+import type { MutationCache } from '../mutationCache'
 import type { Query, QueryState } from '../query'
 import type { QueryCache } from '../queryCache'
-import type { MutationCache } from '../mutationCache'
 import type {
   DataTag,
   DefaultError,
@@ -27,6 +26,7 @@ import type {
   SetDataOptions,
   UnsetMarker,
 } from '../types'
+import type { MutationFilters, QueryFilters, Updater } from '../utils'
 
 type TypedData = { foo: string }
 type TypedError = DefaultError & { bar: string }

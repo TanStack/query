@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/svelte-query'
+import { render } from '@testing-library/svelte'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import SvelteQueryDevtools from '../src/SvelteQueryDevtools.svelte'
 import Wrapper from './Wrapper.svelte'
 import type { TanstackQueryDevtools } from '@tanstack/query-devtools'

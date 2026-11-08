@@ -1,12 +1,13 @@
 /* @refresh reload */
-import { Match, Show, Switch, createSignal } from 'solid-js'
-import { render } from 'solid-js/web'
+
 import {
   QueryClient,
   QueryClientProvider,
   useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtoolsPanel } from '@tanstack/solid-query-devtools'
+import { Match, Show, Switch, createSignal } from 'solid-js'
+import { render } from 'solid-js/web'
 import { reposQueries } from './services/repos/queries'
 
 const queryClient = new QueryClient()

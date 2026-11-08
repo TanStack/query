@@ -16,8 +16,8 @@ An infinite query result contains:
 ## Load More Example
 
 ```ts
-import { LitElement, html } from 'lit'
 import { createInfiniteQueryController } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 
 class ProjectsList extends LitElement {
   private readonly projects = createInfiniteQueryController(this, {

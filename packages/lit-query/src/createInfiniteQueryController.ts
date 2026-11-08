@@ -3,7 +3,6 @@ import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
 import { QueryObserverResultTracker } from './queryObserverResultTracker.js'
-import type { Accessor, ValueAccessor } from './accessor.js'
 import type {
   DefaultError,
   DefaultedInfiniteQueryObserverOptions,
@@ -14,6 +13,7 @@ import type {
   QueryKey,
 } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
+import type { Accessor, ValueAccessor } from './accessor.js'
 
 /**
  * Options accepted by `createInfiniteQueryController`.

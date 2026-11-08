@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { render } from '@testing-library/svelte'
 import { QueryClient, dehydrate, noop } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
+import { render } from '@testing-library/svelte'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Base from './Base.svelte'
 
 describe('HydrationBoundary', () => {

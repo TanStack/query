@@ -1,5 +1,5 @@
-import { notFound } from '@tanstack/react-router'
 import { mutationOptions, queryOptions } from '@tanstack/react-query'
+import { notFound } from '@tanstack/react-router'
 import { contactsAPI } from './api'
 import type { Contact } from './types'
 

@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
+import { describe, expect, it } from 'vitest'
 import { queryOptions } from '../queryOptions'
 import type { QueryOptions } from '../queryOptions'
 

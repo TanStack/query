@@ -1,12 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { act, fireEvent, render, renderHook } from '@testing-library/react'
-import * as React from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
 import {
   createKey,
   mockVisibilityState,
   sleep,
 } from '@tanstack/query-test-utils'
+import { act, fireEvent, render, renderHook } from '@testing-library/react'
+import * as React from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   IsRestoringProvider,
   QueryCache,
@@ -25,13 +25,13 @@ import {
   renderWithClient,
   setActTimeout,
 } from './utils'
+import type { Mock } from 'vitest'
 import type {
   DefinedUseQueryResult,
   Query,
   QueryFunction,
   UseQueryResult,
 } from '..'
-import type { Mock } from 'vitest'
 
 describe('useQuery', () => {
   let queryCache: QueryCache

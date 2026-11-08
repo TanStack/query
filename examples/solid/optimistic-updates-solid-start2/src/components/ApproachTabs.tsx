@@ -1,6 +1,6 @@
 import { Show, createSignal } from 'solid-js'
-import TodoListUI from './TodoListUI'
 import TodoListCache from './TodoListCache'
+import TodoListUI from './TodoListUI'
 import type { JSX } from 'solid-js'
 
 type Tab = 'ui-variables' | 'cache'

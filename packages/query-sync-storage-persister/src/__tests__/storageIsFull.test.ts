@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest'
 import {
   MutationCache,
   QueryCache,
@@ -8,6 +7,7 @@ import {
 } from '@tanstack/query-core'
 import { removeOldestQuery } from '@tanstack/query-persist-client-core'
 import { sleep } from '@tanstack/query-test-utils'
+import { describe, expect, it } from 'vitest'
 import { createSyncStoragePersister } from '../index'
 
 function getMockStorage(limitSize?: number) {

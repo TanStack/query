@@ -1,5 +1,3 @@
-import React, { lazy } from 'react'
-import ReactDOM from 'react-dom/client'
 import {
   QueryClient,
   QueryClientProvider,
@@ -8,11 +6,11 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import React, { lazy } from 'react'
+import ReactDOM from 'react-dom/client'
 import { ErrorBoundary } from 'react-error-boundary'
-
-import { projectsQueries } from './services/projects/queries'
-
 import Button from './components/Button'
+import { projectsQueries } from './services/projects/queries'
 
 const Projects = lazy(() => import('./components/Projects'))
 const Project = lazy(() => import('./components/Project'))

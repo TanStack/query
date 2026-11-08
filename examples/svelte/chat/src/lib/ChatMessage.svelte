@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import { messagesQueries } from './services/messages/queries'
   import Message from './Message.svelte'
+  import { messagesQueries } from './services/messages/queries'
 
   type Props = {
     id: string

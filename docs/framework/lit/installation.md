@@ -86,8 +86,8 @@ customElements.define('app-query-provider', AppQueryProvider)
 You can register the provider class directly and bind its `client` property from a Lit template. The dot is important: `.client=${queryClient}` is a property binding, not an HTML attribute.
 
 ```ts
-import { LitElement, html } from 'lit'
 import { QueryClient, QueryClientProvider } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 
 const queryClient = new QueryClient()
 

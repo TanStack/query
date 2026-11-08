@@ -1,6 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-
 import './styles.css'
 import Search from './Search'
 

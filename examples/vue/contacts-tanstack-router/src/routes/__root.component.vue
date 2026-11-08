@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { useDebouncer } from '@tanstack/vue-pacer/debouncer'
+import { useIsFetching, useQuery } from '@tanstack/vue-query'
 import {
   Link,
   Outlet,
@@ -8,8 +9,7 @@ import {
   useRouterState,
   useSearch,
 } from '@tanstack/vue-router'
-import { useDebouncer } from '@tanstack/vue-pacer/debouncer'
-import { useIsFetching, useQuery } from '@tanstack/vue-query'
+import { computed, ref, watch } from 'vue'
 import { contactsQueries } from '../services/contacts/queries'
 import type { Ref } from 'vue'
 

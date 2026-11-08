@@ -1,11 +1,11 @@
-import { Match, Show, Switch, createSignal } from 'solid-js'
-import { Link, createFileRoute } from '@tanstack/solid-router'
 import {
   onlineManager,
   useMutation,
   useQuery,
   useQueryClient,
 } from '@tanstack/solid-query'
+import { Link, createFileRoute } from '@tanstack/solid-router'
+import { Match, Show, Switch, createSignal } from 'solid-js'
 import { moviesMutations, moviesQueries } from '../services/movies/queries'
 
 export const Route = createFileRoute('/$movieId')({

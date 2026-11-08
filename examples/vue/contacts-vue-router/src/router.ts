@@ -1,12 +1,12 @@
-import { createRouter, createWebHistory } from 'vue-router'
 import { noop } from '@tanstack/vue-query'
+import { createRouter, createWebHistory } from 'vue-router'
 import { queryClient } from './queryClient'
-import { contactsQueries } from './services/contacts/queries'
-import RootView from './routes/RootView.vue'
-import IndexView from './routes/IndexView.vue'
 import ContactView from './routes/ContactView.vue'
 import EditView from './routes/EditView.vue'
+import IndexView from './routes/IndexView.vue'
 import NewView from './routes/NewView.vue'
+import RootView from './routes/RootView.vue'
+import { contactsQueries } from './services/contacts/queries'
 
 export const router = createRouter({
   history: createWebHistory(),

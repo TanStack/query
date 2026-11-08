@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
+import { ref } from 'vue'
 import { todosQueries } from './services/todos/queries'
 
 const props = withDefaults(defineProps<{ initialFilter?: string }>(), {

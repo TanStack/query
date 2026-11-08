@@ -1,8 +1,8 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import './index.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import './index.css'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import { DogList } from './DogList'
 
 const appRoot = document.getElementById('root')

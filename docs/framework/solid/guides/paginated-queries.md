@@ -18,8 +18,8 @@ const projectsQuery = useQuery(() => ({
 [//]: # 'Example2'
 
 ```tsx
-import { createSignal, Switch, Match, Show, For } from 'solid-js'
 import { keepPreviousData, useQuery } from '@tanstack/solid-query'
+import { createSignal, Switch, Match, Show, For } from 'solid-js'
 
 function Todos() {
   const [page, setPage] = createSignal(0)

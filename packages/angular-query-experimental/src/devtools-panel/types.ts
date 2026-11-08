@@ -1,6 +1,6 @@
-import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { ElementRef, Injector } from '@angular/core'
 import type { QueryClient } from '@tanstack/query-core'
+import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 
 /**
  * Options for `injectDevtoolsPanel`.

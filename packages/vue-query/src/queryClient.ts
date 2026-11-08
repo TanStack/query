@@ -1,17 +1,8 @@
-import { nextTick, ref } from 'vue-demi'
 import { QueryClient as QC } from '@tanstack/query-core'
-import { cloneDeepUnref } from './utils'
-import { QueryCache } from './queryCache'
+import { nextTick, ref } from 'vue-demi'
 import { MutationCache } from './mutationCache'
-import type { UseQueryOptions } from './queryOptions'
-import type { Ref } from 'vue-demi'
-import type {
-  MaybeRef,
-  MaybeRefDeep,
-  MaybeRefOrGetter,
-  NoUnknown,
-  QueryClientConfig,
-} from './types'
+import { QueryCache } from './queryCache'
+import { cloneDeepUnref } from './utils'
 import type {
   CancelOptions,
   DefaultError,
@@ -40,6 +31,15 @@ import type {
   SetDataOptions,
   Updater,
 } from '@tanstack/query-core'
+import type { Ref } from 'vue-demi'
+import type { UseQueryOptions } from './queryOptions'
+import type {
+  MaybeRef,
+  MaybeRefDeep,
+  MaybeRefOrGetter,
+  NoUnknown,
+  QueryClientConfig,
+} from './types'
 
 type VueQueryExecutionOptions<TOptions extends { queryKey: unknown }> =
   MaybeRef<{

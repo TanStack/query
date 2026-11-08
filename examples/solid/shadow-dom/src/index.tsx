@@ -1,8 +1,9 @@
 /* @refresh reload */
-import { render } from 'solid-js/web'
-import './index.css'
+
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
+import './index.css'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
+import { render } from 'solid-js/web'
 import { DogList } from './DogList'
 
 const appRoot = document.getElementById('root')

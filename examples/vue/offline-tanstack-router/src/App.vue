@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RouterProvider } from '@tanstack/vue-router'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+import { RouterProvider } from '@tanstack/vue-router'
 import { Toaster } from 'vue-sonner'
 import { router } from './router'
 </script>
