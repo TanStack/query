@@ -179,12 +179,13 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   /**
-   * Removes a mutation from the cache.
+   * Removes a mutation from the cache and clears its garbage collection timer.
    * @internal
    * @param mutation - The mutation to remove, also from its scope's queue.
    */
   remove(mutation: Mutation<any, any, any, any>): void {
     if (this.#mutations.delete(mutation)) {
+      mutation.destroy()
       const scope = scopeFor(mutation)
       if (typeof scope === 'string') {
         const scopedMutations = this.#scopes.get(scope)
@@ -204,6 +205,16 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     // Currently we notify the removal even if the mutation was already removed.
     // Consider making this an error or not notifying of the removal depending on the desired semantics.
     this.notify({ type: 'removed', mutation })
+  }
+
+  /**
+   * Checks whether a mutation is still stored in this cache.
+   * @internal
+   * @param mutation - The mutation to check.
+   * @returns Whether the mutation belongs to this cache.
+   */
+  has(mutation: Mutation<any, any, any, any>): boolean {
+    return this.#mutations.has(mutation)
   }
 
   /**
@@ -251,7 +262,8 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   /**
-   * Removes all mutations from the cache.
+   * Removes all mutations from the cache and clears their garbage collection timers.
+   * Mutations already executing continue to run.
    * @example
    * ```ts
    * const mutationCache = queryClient.getMutationCache()
@@ -264,6 +276,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       const mutations = this.getAll()
       this.#mutations.clear()
       this.#scopes.clear()
+      mutations.forEach((mutation) => mutation.destroy())
       mutations.forEach((mutation) => {
         this.notify({ type: 'removed', mutation })
       })

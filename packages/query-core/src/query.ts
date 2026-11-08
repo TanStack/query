@@ -631,7 +631,7 @@ export class Query<
    * @internal
    * @param observer - The observer to remove. When the last observer is removed, the in-flight
    * fetch is cancelled if its abort signal was consumed (otherwise only its retries are stopped),
-   * and garbage collection is scheduled.
+   * and garbage collection is scheduled if the query is still cached.
    */
   removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
     const index = this.observers.indexOf(observer)
@@ -653,7 +653,13 @@ export class Query<
           }
         }
 
-        this.scheduleGc()
+        if (
+          this.#cache.get<TQueryFnData, TError, TData, TQueryKey>(
+            this.queryHash,
+          ) === this
+        ) {
+          this.scheduleGc()
+        }
       }
 
       this.#cache.notify({ type: 'observerRemoved', query: this, observer })
@@ -940,8 +946,14 @@ export class Query<
           this.#retryer = undefined
           this.#fetchPromise = undefined
         }
-        // Schedule query gc after fetching
-        this.scheduleGc()
+        // A removed query can finish cancellation after its timer was cleared.
+        if (
+          this.#cache.get<TQueryFnData, TError, TData, TQueryKey>(
+            this.queryHash,
+          ) === this
+        ) {
+          this.scheduleGc()
+        }
       }
     })()
     this.#fetchPromise = fetchPromise

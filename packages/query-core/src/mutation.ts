@@ -212,12 +212,15 @@ export class Mutation<
   /**
    * Unsubscribes an observer from the mutation.
    * @internal
-   * @param observer - The observer to remove. Garbage collection is scheduled afterwards.
+   * @param observer - The observer to remove. Garbage collection is scheduled afterwards if
+   * the mutation is still cached.
    */
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
     this.#observers = this.#observers.filter((x) => x !== observer)
 
-    this.scheduleGc()
+    if (this.#mutationCache.has(this)) {
+      this.scheduleGc()
+    }
 
     this.#mutationCache.notify({
       type: 'observerRemoved',

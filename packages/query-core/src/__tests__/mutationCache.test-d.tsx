@@ -38,6 +38,7 @@ describe('mutationCache', () => {
         | 'build'
         | 'add'
         | 'remove'
+        | 'has'
         | 'canRun'
         | 'runNext'
         | 'clear'
