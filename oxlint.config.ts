@@ -23,7 +23,7 @@ export default defineConfig({
   jsPlugins: [
     { name: 'cspell', specifier: '@cspell/eslint-plugin' },
     // Absolute path so that package configs can extend this config
-    fileURLToPath(new URL('./scripts/oxlint/plugin.ts', import.meta.url)),
+    fileURLToPath(new URL('./scripts/oxlint-plugin.ts', import.meta.url)),
   ],
   env: tanstackConfig.env,
   settings: {
