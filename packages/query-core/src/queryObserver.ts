@@ -309,7 +309,11 @@ export class QueryObserver<
       // When keeping the previous data, the result doesn't change until new
       // data arrives.
       this.#currentResult = result
-      this.#currentResultOptions = this.options
+      // record the options the result was actually created from, not
+      // observer options: `setOptions` runs in an effect and may not have
+      // applied the render's options yet (e.g. an interrupted background
+      // render with a changed `select`).
+      this.#currentResultOptions = options
       this.#currentResultState = this.#currentQuery.state
     }
     return result

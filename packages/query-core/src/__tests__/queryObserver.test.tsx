@@ -31,7 +31,7 @@ describe('queryObserver', () => {
   it.each([false, true])(
     'should update selected placeholder data when select changes (function: %s)',
     (functional) => {
-      const key = queryKey()
+      const key = createKey()
       const placeholderData = functional ? () => 2 : 2
       const options = {
         queryKey: key,
@@ -1975,6 +1975,41 @@ describe('queryObserver', () => {
     const updatedResult = observer.getOptimisticResult(defaultedOptions)
     expect(updatedResult.data).toBe('updated')
     expect(observer.getCurrentResult().data).toBe('updated')
+  })
+
+  it('should not reuse placeholder data selected by an interrupted render with a different select', () => {
+    const key = createKey()
+
+    const optionsA = queryClient.defaultQueryOptions({
+      queryKey: key,
+      queryFn: () => 'data',
+      placeholderData: 'placeholder',
+      select: (value: string) => `A:${value}`,
+    })
+
+    const observer = new QueryObserver(queryClient, optionsA)
+
+    // First render with the current (A) options
+    const initialResult = observer.getOptimisticResult(optionsA)
+    expect(initialResult.data).toBe('A:placeholder')
+    expect(initialResult.isPlaceholderData).toBe(true)
+
+    // A background render with a changed selector (options B) moves the
+    // optimistic cursor, then gets interrupted before setOptions runs
+    const optionsB = queryClient.defaultQueryOptions({
+      queryKey: key,
+      queryFn: () => 'data',
+      placeholderData: 'placeholder',
+      select: (value: string) => `B:${value}`,
+    })
+    const interruptedResult = observer.getOptimisticResult(optionsB)
+    expect(interruptedResult.data).toBe('B:placeholder')
+
+    // The next render still uses the old (A) options and must recompute from
+    // the placeholder instead of reusing the value selected by the discarded
+    // render.
+    const nextResult = observer.getOptimisticResult(optionsA)
+    expect(nextResult.data).toBe('A:placeholder')
   })
 
   describe('StrictMode behavior', () => {

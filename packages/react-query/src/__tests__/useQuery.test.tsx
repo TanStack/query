@@ -85,7 +85,7 @@ describe('useQuery', () => {
   it.each([false, true])(
     'should update placeholder selection on rerender (StrictMode: %s)',
     (strict) => {
-      const key = queryKey()
+      const key = createKey()
       const initialProps: { factor: number | undefined } = { factor: 2 }
       const view = renderHook(
         ({ factor }: { factor: number | undefined }) =>
