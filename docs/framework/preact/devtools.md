@@ -121,7 +121,8 @@ function App() {
 
 - `style?: CSSProperties`
   - Custom styles for the devtools panel
-  - Default: `{ height: '500px' }`
+  - Default: `{ height: '100%', display: 'flex', flexDirection: 'column' }`
+  - The panel fills the height of its container, or is `500px` tall when the container has no set height.
   - Example: `{ height: '100%' }`
   - Example: `{ height: '100%', width: '100%' }`
 - `onClose?: () => void`
@@ -141,3 +142,85 @@ function App() {
 - `theme?: "light" | "dark" | "system"`
   - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
   - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
+
+## Filter queries and mutations
+
+The **Filter** input above the query and mutation lists uses the **Key** scope by default. Select the scope button inside the input to switch between **Key**, **Data**, and **All**:
+
+- **Key** matches the query hash, or the mutation key and submission time.
+- **Data** matches the query data, or the mutation variables or data, the same way **Search data** does below.
+- **All** matches either.
+
+The selected scope is remembered across reloads, like the other filter settings.
+
+## Search query and mutation data
+
+Select a query or mutation and use **Search data** in its Data Explorer to search nested property names and primitive values. Search uses case-insensitive text matching and treats special characters as plain text.
+
+Matching text is highlighted. Matching editable values have a highlighted input. The explorer opens matching branches and the first matching page in each paginated collection. Other pages with matches are highlighted so you can open them. You can still inspect other rows and edit query data.
+
+The Data Explorer highlights up to 1,000 matches at a time.
+
+Select **Clear** or press **Escape** in the search field to restore your manual expansion. Selecting another query or mutation clears the search, unless the filter scope is **Data** or **All**: then the search starts with the filter text. For a mutation, it starts only in the variables or data that match the filter.
+
+## Devtools in production
+
+Devtools are excluded in production builds. However, it might be desirable to lazy load the devtools in production:
+
+```tsx
+import { lazy, Suspense } from 'preact/compat'
+import { useEffect, useState } from 'preact/hooks'
+import { QueryClient, QueryClientProvider } from '@tanstack/preact-query'
+import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
+import { Example } from './Example'
+
+const queryClient = new QueryClient()
+
+const PreactQueryDevtoolsProduction = lazy(() =>
+  import('@tanstack/preact-query-devtools/build/modern/production.js').then(
+    (d) => ({
+      default: d.PreactQueryDevtools,
+    }),
+  ),
+)
+
+function App() {
+  const [showDevtools, setShowDevtools] = useState(false)
+
+  useEffect(() => {
+    Object.assign(window, {
+      toggleDevtools: () => setShowDevtools((old) => !old),
+    })
+  }, [])
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Example />
+      <PreactQueryDevtools initialIsOpen />
+      {showDevtools && (
+        <Suspense fallback={null}>
+          <PreactQueryDevtoolsProduction />
+        </Suspense>
+      )}
+    </QueryClientProvider>
+  )
+}
+
+export default App
+```
+
+With this, calling `window.toggleDevtools()` will download the devtools bundle and show them.
+
+### Modern bundlers
+
+If your bundler supports package exports, you can use the following import path:
+
+```tsx
+const PreactQueryDevtoolsProduction = lazy(() =>
+  import('@tanstack/preact-query-devtools/production').then((d) => ({
+    default: d.PreactQueryDevtools,
+  })),
+)
+```
+
+For TypeScript, you would need to set `moduleResolution` to `'bundler'`, `'node16'`, or `'nodenext'` in your tsconfig.

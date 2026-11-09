@@ -9,14 +9,15 @@ title: UseQueryOptions
 type UseQueryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = MaybeRef<{ [Property in keyof QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>]: Property extends "enabled" | "queryKey" ? QueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>[Property] : Property extends "queryFn" ? MaybeRefDeep<QueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>[Property] | SkipTokenForUseQuery> : MaybeRefDeep<QueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>[Property]> } & ShallowOption>;
 ```
 
-Defined in: [packages/vue-query/src/queryOptions.ts:91](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L91)
+Defined in: [packages/vue-query/src/queryOptions.ts:108](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L108)
 
-The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `enabled` tracks reactive
-dependencies automatically as a `ref`, a plain value, or a reactive getter (`() => ...`). `queryKey` reacts
-through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual
-entries. Other options are read once when passed as a plain value, and stay reactive when passed as a `ref`
-or a `computed`. Only `enabled` and `queryKey` read a function as a getter, so `queryFn` reacts through a
-`computed`: a function there is the query function itself.
+The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `enabled` accepts a `ref`, a
+plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is tracked, while a plain boolean
+isn't tracked on its own. query-core's `(query) => boolean` callback is accepted too and is passed through
+untracked. `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and reactive
+getters as individual entries. Other options are read once when passed as a plain value, and stay reactive
+when passed as a `ref` or a `computed`. Only `enabled` and `queryKey` read a function as a getter, so
+`queryFn` reacts through a `computed`: a function there is the query function itself.
 
 If you instead pass a getter for the whole options object (`useQuery(() => ({ ... }))`), every option
 inside it — including `staleTime`, `retry`, and `select` — is re-evaluated whenever the getter's own
@@ -46,7 +47,8 @@ The type of errors your `queryFn` may throw.
 
 `TData` = `TQueryFnData`
 
-The type `data` ends up as after `select` runs.
+The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
+`select` is used.
 
 ### TQueryData
 

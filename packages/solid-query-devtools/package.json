@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query-devtools",
-  "version": "5.106.1",
+  "version": "5.107.1",
   "description": "Developer tools to interact with and visualize the TanStack/solid-query Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -37,23 +37,35 @@
   "types": "./build/index.d.ts",
   "browser": {},
   "exports": {
-    "@tanstack/custom-condition": "./src/index.tsx",
-    "solid": {
-      "development": "./build/dev.jsx",
-      "import": "./build/index.jsx"
-    },
-    "development": {
+    ".": {
+      "@tanstack/custom-condition": "./src/index.tsx",
+      "solid": {
+        "development": "./build/dev.jsx",
+        "import": "./build/index.jsx"
+      },
+      "development": {
+        "import": {
+          "types": "./build/index.d.ts",
+          "default": "./build/dev.js"
+        },
+        "require": "./build/dev.cjs"
+      },
       "import": {
         "types": "./build/index.d.ts",
-        "default": "./build/dev.js"
+        "default": "./build/index.js"
       },
-      "require": "./build/dev.cjs"
+      "require": "./build/index.cjs"
     },
-    "import": {
-      "types": "./build/index.d.ts",
-      "default": "./build/index.js"
+    "./production": {
+      "@tanstack/custom-condition": "./src/production.tsx",
+      "solid": "./build/production.jsx",
+      "import": {
+        "types": "./build/production.d.ts",
+        "default": "./build/production.js"
+      },
+      "require": "./build/production.cjs"
     },
-    "require": "./build/index.cjs"
+    "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [

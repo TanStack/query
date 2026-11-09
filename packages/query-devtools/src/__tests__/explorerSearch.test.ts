@@ -1,6 +1,10 @@
 import { runInNewContext } from 'node:vm'
 import { describe, expect, it, vi } from 'vitest'
-import { searchEntries, searchExplorer } from '../explorerSearch'
+import {
+  createSearchText,
+  searchEntries,
+  searchExplorer,
+} from '../explorerSearch'
 
 describe('explorer search', () => {
   it.each([
@@ -114,5 +118,81 @@ describe('explorer search', () => {
       searchExplorer({ nearby: 'needle', deep: value }, 'needle').hasMatch,
     ).toBe(true)
     expect(searchExplorer(value, 'needle').hasMatch).toBe(false)
+  })
+
+  it.each([
+    { depth: 500, matches: true },
+    { depth: 501, matches: false },
+  ])('bounds matching entries at object depth $depth', ({ depth, matches }) => {
+    let value: unknown = { name: 'needle' }
+    for (let index = 0; index < depth; index++) value = { next: value }
+    expect(searchExplorer(value, 'needle').hasMatch).toBe(matches)
+    expect(createSearchText(value).includes('needle')).toBe(matches)
+  })
+
+  describe('createSearchText', () => {
+    const matches = (value: unknown, term: string) =>
+      createSearchText(value).includes(term)
+
+    it.each([
+      { value: { name: 'needle' }, term: 'needle' },
+      { value: { needle: 1 }, term: 'needle' },
+      { value: [1, 2, { deep: [42] }], term: '42' },
+      { value: new Map([['a', 'needle']]), term: 'needle' },
+      { value: new Map([[{}, 'value']]), term: 'object key' },
+      { value: new Set(['needle']), term: 'needle' },
+      { value: { flag: true }, term: 'true' },
+      { value: { empty: null }, term: 'null' },
+      { value: { name: 'other' }, term: 'needle' },
+      { value: { Name: 'NEEDLE' }, term: 'needle' },
+      { value: 'needle', term: 'eed' },
+      { value: 42, term: '4' },
+      { value: new Uint8Array([1]), term: '1' },
+      { value: { ab: 'cd' }, term: 'bc' },
+      { value: ['ab', 'cd'], term: 'bc' },
+    ])('agrees with searchExplorer for $term', ({ value, term }) => {
+      expect(matches(value, term)).toBe(searchExplorer(value, term).hasMatch)
+    })
+
+    it('handles circular data', () => {
+      const value: Record<string, unknown> = { name: 'other' }
+      value.self = value
+      expect(matches(value, 'needle')).toBe(false)
+      value.found = 'needle'
+      expect(matches(value, 'needle')).toBe(true)
+    })
+
+    it('matches accessor labels without evaluating getters', () => {
+      const read = vi.fn<() => string>(() => 'needle')
+      const value = {}
+      Object.defineProperty(value, 'getter', { get: read, enumerable: true })
+      expect(matches(value, 'needle')).toBe(false)
+      expect(matches(value, 'getter')).toBe(true)
+      expect(read).not.toHaveBeenCalled()
+    })
+
+    it('bounds deeply nested searches', () => {
+      let value: unknown = 'needle'
+      for (let depth = 0; depth < 10_000; depth++) value = { next: value }
+      expect(matches(value, 'needle')).toBe(false)
+      expect(matches({ nearby: 'needle', deep: value }, 'needle')).toBe(true)
+    })
+
+    it('searches shared data once', () => {
+      let value: unknown = { name: 'needle' }
+      for (let depth = 0; depth < 40; depth++) {
+        value = { left: value, right: value }
+      }
+      expect(createSearchText(value).split('needle')).toHaveLength(2)
+    })
+
+    it('searches shared data at its shallowest depth', () => {
+      const shared = { name: 'needle' }
+      let deep: unknown = shared
+      for (let depth = 0; depth < 600; depth++) deep = { next: deep }
+      const value = { deep, near: shared }
+      expect(matches(value, 'needle')).toBe(true)
+      expect(searchExplorer(value, 'needle').hasMatch).toBe(true)
+    })
   })
 })
