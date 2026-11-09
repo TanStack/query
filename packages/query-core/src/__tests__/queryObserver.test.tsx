@@ -2048,6 +2048,32 @@ describe('queryObserver', () => {
     expect(observer.getOptimisticResult(optionsA).data).toBe('sel:A-data')
   })
 
+  it('should not reuse a placeholder selected by the previous selector when updates are shallow-equal', () => {
+    const key = createKey()
+    const base = {
+      queryKey: key,
+      queryFn: () => 1,
+      enabled: false,
+      placeholderData: 1,
+      structuralSharing: false,
+    }
+    const optionsA = queryClient.defaultQueryOptions({
+      ...base,
+      select: () => -0,
+    })
+    const optionsB = queryClient.defaultQueryOptions({
+      ...base,
+      select: () => 0,
+    })
+
+    const observer = new QueryObserver(queryClient, optionsA)
+    observer.setOptions(optionsB)
+
+    const result = observer.getOptimisticResult(optionsB)
+    expect(Object.is(result.data, -0)).toBe(false)
+    expect(result.data).toBe(0)
+  })
+
   describe('StrictMode behavior', () => {
     it('should deduplicate calls to queryFn', async () => {
       const key = createKey()

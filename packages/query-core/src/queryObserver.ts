@@ -704,6 +704,10 @@ export class QueryObserver<
           // associate the cached selection with the input it was computed
           // from: `prevResultState` can still describe the previous query
           // when a speculative render for another query overwrote the cache.
+          // Recorded before `select` runs on purpose: a throwing selector is
+          // cached as errored (see the "should not re-run a stable select
+          // when it re-renders if selector throws an error" test in
+          // react-query), so re-renders must not re-invoke it.
           this.#selectInput = data as TQueryData
           data = options.select(data as any)
           data = replaceData(prevResult?.data, data, options)
@@ -783,7 +787,6 @@ export class QueryObserver<
     const nextResult = this.createResult(this.#currentQuery, this.options)
 
     this.#currentResultState = this.#currentQuery.state
-    this.#currentResultOptions = this.options
 
     if (this.#currentResultState.data !== undefined) {
       this.#lastQueryWithDefinedData = this.#currentQuery
@@ -791,10 +794,15 @@ export class QueryObserver<
 
     // Only notify and update result if something has changed
     if (shallowEqualObjects(nextResult, prevResult)) {
+      // keep `#currentResult` and `#currentResultOptions` paired: recording
+      // the new options while keeping the previous result would let the
+      // placeholder memoization (which compares against these options)
+      // reuse a value the previous selector produced.
       return
     }
 
     this.#currentResult = nextResult
+    this.#currentResultOptions = this.options
 
     const shouldNotifyListeners = (): boolean => {
       if (!prevResult) {
