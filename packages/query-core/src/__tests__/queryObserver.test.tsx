@@ -2012,6 +2012,42 @@ describe('queryObserver', () => {
     expect(nextResult.data).toBe('A:placeholder')
   })
 
+  it('should not reuse a selection cached from a different query placeholder', () => {
+    const keyA = createKey()
+    const keyB = createKey()
+    queryClient.setQueryData(keyA, 'A-data')
+
+    // a stable selector shared by both queries
+    const select = (value: string) => `sel:${value}`
+
+    const optionsA = queryClient.defaultQueryOptions({
+      queryKey: keyA,
+      queryFn: () => 'A-data',
+      select,
+    })
+    const optionsB = queryClient.defaultQueryOptions({
+      queryKey: keyB,
+      queryFn: () => 'B-data',
+      placeholderData: 'B-placeholder',
+      select,
+    })
+
+    const observer = new QueryObserver(queryClient, optionsA)
+
+    // First render: query A with populated data
+    expect(observer.getOptimisticResult(optionsA).data).toBe('sel:A-data')
+
+    // An interrupted background render for query B (pending, placeholder)
+    // overwrites the selection cache
+    expect(observer.getOptimisticResult(optionsB).data).toBe(
+      'sel:B-placeholder',
+    )
+
+    // The next render is back on query A and must re-select A's data instead
+    // of reusing the selection cached from B's placeholder
+    expect(observer.getOptimisticResult(optionsA).data).toBe('sel:A-data')
+  })
+
   describe('StrictMode behavior', () => {
     it('should deduplicate calls to queryFn', async () => {
       const key = createKey()
