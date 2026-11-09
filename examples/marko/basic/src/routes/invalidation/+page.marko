@@ -1,0 +1,40 @@
+import { getQueryClient } from '@tanstack/marko-query'
+import { toggleTodo } from '../../lib/api.ts'
+import { todosQueryKey } from '../../lib/query-keys.ts'
+import { todosQueryOptions } from '../../lib/queries.ts'
+
+<page-header
+  title="Invalidation"
+  subtitle="The mutation does not touch the cache directly. On success it invalidates the todos key, and the query tag refetches."
+/>
+
+<query/todos options=() => todosQueryOptions/>
+
+<mutation/toggle options() {
+  return {
+    mutationFn: toggleTodo,
+    onSuccess: () =>
+      getQueryClient($global).invalidateQueries({ queryKey: todosQueryKey }),
+  }
+}/>
+
+<if=todos.data>
+  <ul>
+    <for|todo| of=todos.data by="id">
+      <li>
+        <button
+          type="button"
+          disabled=toggle.isPending
+          onClick() {
+            toggle.mutate(todo.id)
+          }
+        >${todo.completed ? '☑' : '☐'}</button>
+        ${todo.title}
+      </li>
+    </for>
+  </ul>
+</if>
+
+<p class="muted">
+  Toggling a todo invalidates <code>['todos']</code>, so the list refetches.
+</p>

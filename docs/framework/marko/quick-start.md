@@ -13,6 +13,8 @@ This snippet shows the three core Marko Query concepts:
 
 The snippet uses [Marko Run](https://github.com/marko-js/run). Without Marko Run, the tags work the same way. Only the place of the root layout and the server setup change. See [The Query Client](./guides/query-client.md).
 
+For complete runnable examples, see [Basic (all features)](./examples/basic) and [Custom Server without Marko Run](./examples/custom-server).
+
 First, write a function that creates a `QueryClient`. Marko Query calls it for every client it creates: one per request on the server and one per page in the browser.
 
 ```ts

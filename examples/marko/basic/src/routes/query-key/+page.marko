@@ -1,0 +1,37 @@
+import { todoPageQueryOptions } from '../../lib/queries.ts'
+
+<let/page=1>
+
+<page-header
+  title="Query key"
+  subtitle="One query tag whose key depends on page state. Changing the page switches the observer to a new key and keeps the old entry cached."
+/>
+
+<query/todos options() {
+  return todoPageQueryOptions(page)
+}/>
+
+<div class="row">
+  <button
+    type="button"
+    disabled=page === 1
+    onClick() {
+      page -= 1
+    }
+  >Previous</button>
+  <span class="muted">key: ['todos', 'page', ${page}]</span>
+  <button
+    type="button"
+    disabled=todos.data?.nextCursor === null
+    onClick() {
+      page += 1
+    }
+  >Next</button>
+</div>
+
+<if=todos.data>
+  <todo-list todos=todos.data.todos/>
+</if>
+<else-if=todos.error>
+  <p class="error">${todos.error.message}</p>
+</else-if>

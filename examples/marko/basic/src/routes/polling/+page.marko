@@ -1,0 +1,43 @@
+import { listTodos } from '../../lib/api.ts'
+
+<let/paused=false>
+
+<page-header
+  title="Polling"
+  subtitle="refetchInterval refetches on a timer. The timestamp below advances every second while polling is on."
+/>
+
+<query/todos options() {
+  return {
+    queryKey: ['todos', 'polling'],
+    queryFn: listTodos,
+    refetchInterval: paused ? false : 1000,
+  }
+}/>
+
+<div class="row">
+  <button
+    type="button"
+    class="primary"
+    onClick() {
+      paused = !paused
+    }
+  >${paused ? 'Resume polling' : 'Pause polling'}</button>
+  <span class="muted">
+    ${paused ? 'paused' : 'every 1s'} · updated at ${new Date(
+      todos.dataUpdatedAt,
+    ).toLocaleTimeString()}
+  </span>
+</div>
+
+<if=todos.data>
+  <todo-list todos=todos.data/>
+</if>
+<else-if=todos.error>
+  <p class="error">${todos.error.message}</p>
+</else-if>
+
+<p class="muted">
+  Set <code>refetchInterval</code> to <code>false</code> to stop the timer. The
+  tag keeps the last result while it is paused.
+</p>

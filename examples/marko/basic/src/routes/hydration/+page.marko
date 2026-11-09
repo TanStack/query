@@ -1,0 +1,28 @@
+import { dehydrate, getQueryClient } from '@tanstack/marko-query'
+import { todoPageQueryOptions } from '../../lib/queries.ts'
+
+<const/client=getQueryClient($global)>
+<const/ready=client.query(todoPageQueryOptions(1))>
+
+<page-header
+  title="Hydration"
+  subtitle="The page prefetches, dehydrates by hand, and hands the state to hydration-boundary. The boundary hydrates the client before the tag reads it."
+/>
+
+<await|_|=ready>
+  <const/state=dehydrate(client)>
+  <hydration-boundary state=state>
+    <query/todos options=() => todoPageQueryOptions(1)/>
+    <if=todos.data>
+      <todo-list todos=todos.data.todos/>
+    </if>
+    <else-if=todos.error>
+      <p class="error">${todos.error.message}</p>
+    </else-if>
+  </hydration-boundary>
+</await>
+
+<p class="muted">
+  Without the boundary the tag would render its pending state on the server,
+  because the cache is filled after the page starts rendering.
+</p>

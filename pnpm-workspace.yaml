@@ -71,6 +71,7 @@ packages:
   - 'examples/react/*'
   - 'examples/preact/*'
   - 'examples/lit/*'
+  - 'examples/marko/*'
   - 'examples/solid/*'
   - 'examples/svelte/*'
   - 'examples/vue/*'

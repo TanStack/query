@@ -7279,6 +7279,19 @@
           ]
         },
         {
+          "label": "marko",
+          "children": [
+            {
+              "label": "Basic (all features)",
+              "to": "framework/marko/examples/basic"
+            },
+            {
+              "label": "Custom Server (no Marko Run)",
+              "to": "framework/marko/examples/custom-server"
+            }
+          ]
+        },
+        {
           "label": "angular",
           "children": [
             {

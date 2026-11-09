@@ -1,0 +1,21 @@
+{
+  "name": "@tanstack/query-example-marko-custom-server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "test:eslint": "eslint ./src ./server.js",
+    "test:types": "mtc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@tanstack/marko-query": "workspace:^",
+    "marko": "catalog:"
+  },
+  "devDependencies": {
+    "@marko/type-check": "catalog:",
+    "@marko/vite": "catalog:",
+    "@tanstack/eslint-plugin-query": "workspace:^",
+    "typescript": "catalog:",
+    "vite": "^8.3.5"
+  }
+}

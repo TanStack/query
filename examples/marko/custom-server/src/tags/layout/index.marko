@@ -1,0 +1,104 @@
+import { createQueryClient } from '../../lib/query-client.ts'
+
+export interface Input {
+  content?: Marko.Body
+}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marko Query — custom server</title>
+  </head>
+  <body>
+    <query-client-factory factory=createQueryClient/>
+    <nav>
+      <a href="/">Todos</a>
+      <a href="/infinite">Infinite</a>
+    </nav>
+    <main>
+      <${input.content}/>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #15151e;
+    --surface: #1e1e2a;
+    --border: #2e2e3f;
+    --text: #e8e8f0;
+    --muted: #9a9ab0;
+    --accent: #ffcc00;
+    --link: #4db8ff;
+    --error: #ff6b6b;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  html,
+  body {
+    margin: 0;
+    min-height: 100%;
+    font-family: system-ui, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+  }
+  nav {
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  nav a {
+    color: var(--link);
+    text-decoration: none;
+  }
+  main {
+    width: min(52rem, 100% - 2rem);
+    margin: 0 auto;
+    padding: 2rem 0 3rem;
+  }
+  h1 {
+    margin: 0 0 0.25rem;
+    font-size: 1.5rem;
+  }
+  p {
+    margin: 0 0 1rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  ul {
+    margin: 0 0 1rem;
+    padding-left: 1.25rem;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem;
+  }
+  .muted {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .error {
+    color: var(--error);
+  }
+  button {
+    font: inherit;
+    padding: 0.45rem 0.8rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+</style>

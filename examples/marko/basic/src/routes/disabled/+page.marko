@@ -1,0 +1,32 @@
+import { listTodos } from '../../lib/api.ts'
+
+<let/on=false>
+
+<page-header
+  title="Disabled"
+  subtitle="A query with enabled: false. Nothing fetches until the button enables it, and then it fetches exactly once."
+/>
+
+<query/todos options() {
+  return {
+    queryKey: ['todos', 'disabled'],
+    queryFn: listTodos,
+    enabled: on,
+  }
+}/>
+
+<div class="row">
+  <button
+    type="button"
+    class="primary"
+    disabled=on
+    onClick() {
+      on = true
+    }
+  >${on ? 'Enabled' : 'Enable the query'}</button>
+  <span class="muted">status: ${todos.status} · fetchStatus: ${todos.fetchStatus}</span>
+</div>
+
+<if=todos.data>
+  <todo-list todos=todos.data/>
+</if>

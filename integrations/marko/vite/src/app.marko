@@ -1,0 +1,21 @@
+import { createQueryClient } from './lib/query-client.ts'
+
+<query-client-factory factory=createQueryClient/>
+
+<query/greeting options=() => ({
+  queryKey: ['greeting'],
+  queryFn: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    return 'Success'
+  },
+})/>
+
+<if=greeting.isPending>
+  <div>Loading...</div>
+</if>
+<else-if=greeting.isError>
+  <div>An error has occurred!</div>
+</else-if>
+<else>
+  <div>${greeting.data}</div>
+</else>

@@ -1,0 +1,24 @@
+import { todosQueryOptions } from '../../lib/queries.ts'
+
+<page-header
+  title="Form mutation"
+  subtitle="A plain form post. The handler creates the todo and redirects, so the page works without any client JavaScript."
+/>
+
+<form method="post" action="/form-mutation" class="row">
+  <input type="text" name="title" placeholder="What needs doing?" required/>
+  <button type="submit" class="primary">Add</button>
+</form>
+
+<if=$global.data.error>
+  <p class="error">${$global.data.error}</p>
+</if>
+
+<query/todos options=() => todosQueryOptions/>
+
+<if=todos.data>
+  <todo-list todos=todos.data/>
+</if>
+<else-if=todos.error>
+  <p class="error">${todos.error.message}</p>
+</else-if>

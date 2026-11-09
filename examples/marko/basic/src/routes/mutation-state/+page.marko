@@ -1,0 +1,32 @@
+import { createTodo } from '../../lib/api.ts'
+
+<page-header
+  title="Mutation state"
+  subtitle="is-mutating counts pending mutations and mutation-state returns their states. Both update while a mutation runs."
+/>
+
+<mutation/create options=() => ({ mutationFn: createTodo })/>
+
+<is-mutating/pending/>
+<mutation-state/states/>
+
+<div class="row">
+  <button
+    type="button"
+    class="primary"
+    disabled=create.isPending
+    onClick() {
+      create.mutate(`Todo ${Date.now()}`)
+    }
+  >${create.isPending ? 'Saving…' : 'Add a todo'}</button>
+</div>
+
+<div class="card">
+  <p>Pending mutations: <strong>${pending}</strong></p>
+  <p>Mutation states: <strong>${states.length}</strong></p>
+  <ul>
+    <for|state| of=states>
+      <li>${state.status}${state.isPaused ? ' (paused)' : ''}</li>
+    </for>
+  </ul>
+</div>

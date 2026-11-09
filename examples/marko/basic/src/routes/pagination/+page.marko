@@ -1,0 +1,42 @@
+import { todoPageQueryOptions } from '../../lib/queries.ts'
+
+<let/page=1>
+
+<page-header
+  title="Pagination"
+  subtitle="Numbered pages. keepPreviousData keeps the old page on screen while the next one loads, so there is no flash."
+/>
+
+<query/todos options() {
+  return todoPageQueryOptions(page)
+}/>
+
+<if=todos.isPending>
+  <p>Loading…</p>
+</if>
+<else-if=todos.isError>
+  <p class="error">${todos.error.message}</p>
+</else-if>
+<else>
+  <todo-list todos=todos.data.todos/>
+  <div class="row">
+    <button
+      type="button"
+      disabled=page === 1
+      onClick() {
+        page -= 1
+      }
+    >Previous</button>
+    <span class="muted">Page ${page} of ${Math.ceil(todos.data.count / 5)}</span>
+    <button
+      type="button"
+      disabled=todos.data.nextCursor === null
+      onClick() {
+        page += 1
+      }
+    >Next</button>
+    <if=todos.isFetching>
+      <span class="muted">Fetching…</span>
+    </if>
+  </div>
+</else>
