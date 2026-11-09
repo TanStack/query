@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { BROWSER, DEV } from 'esm-env'
+  import { BROWSER } from 'esm-env'
   import { onlineManager, useQueryClient } from '@tanstack/svelte-query'
   import type { QueryClient } from '@tanstack/svelte-query'
   import type {
@@ -74,7 +74,7 @@
   let ref: HTMLDivElement
   let devtools = $state<TanstackQueryDevtools | undefined>(undefined)
 
-  if (DEV && BROWSER) {
+  if (BROWSER) {
     onMount(() => {
       import('@tanstack/query-devtools').then((m) => {
         const QueryDevtools = m.TanstackQueryDevtools

@@ -31,6 +31,9 @@ export interface DevtoolsPanelOptions {
   shadowDOMTarget?: ShadowRoot
   /**
    * Custom styles for the devtools panel container.
+   * @default { height: '100%', display: 'flex', flexDirection: 'column' }
+   * @example { height: '100%' }
+   * @example { height: '100%', width: '100%' }
    */
   style?: CSSProperties
   /**

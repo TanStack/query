@@ -1,5 +1,39 @@
 # @tanstack/preact-query-devtools
 
+## 5.107.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.107.1
+  - @tanstack/query-devtools@5.107.1
+
+## 5.107.0
+
+### Patch Changes
+
+- Updated dependencies [[`a4d72f7`](https://github.com/TanStack/query/commit/a4d72f75c1c7a59e39aaf4f776f540c3814e46f7)]:
+  - @tanstack/query-devtools@5.107.0
+  - @tanstack/preact-query@5.107.0
+
+## 5.106.1
+
+### Patch Changes
+
+- [#12528](https://github.com/TanStack/query/pull/12528) [`c4ed956`](https://github.com/TanStack/query/commit/c4ed956bb97e381a2875e59f134bb99eecb92a02) - fix({query,react-query,preact-query}-devtools): always render the devtools left-to-right regardless of the page direction or browser language
+- Updated dependencies [[`c4ed956`](https://github.com/TanStack/query/commit/c4ed956bb97e381a2875e59f134bb99eecb92a02)]:
+  - @tanstack/query-devtools@5.106.1
+  - @tanstack/preact-query@5.106.1
+
+## 5.106.0
+
+### Patch Changes
+
+- [#12499](https://github.com/TanStack/query/pull/12499) [`46d0477`](https://github.com/TanStack/query/commit/46d0477df2311d496cca006eb5ec885c024875a1) - Let inline devtools panels fill their container height while keeping a 500px default height when the container has no set height.
+- Updated dependencies [[`46d0477`](https://github.com/TanStack/query/commit/46d0477df2311d496cca006eb5ec885c024875a1), [`f69b28a`](https://github.com/TanStack/query/commit/f69b28a1dd2a2b4ca9b8f9117e0f60cc70443775), [`1176d37`](https://github.com/TanStack/query/commit/1176d373d161e0acca98d00244203778ff99c4fb), [`254350f`](https://github.com/TanStack/query/commit/254350f9cba47fd87304e057fac1a314093423f0)]:
+  - @tanstack/query-devtools@5.106.0
+  - @tanstack/preact-query@5.106.0
+
 ## 5.105.3
 
 ### Patch Changes

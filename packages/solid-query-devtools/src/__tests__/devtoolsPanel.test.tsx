@@ -154,10 +154,7 @@ describe('SolidQueryDevtoolsPanel', () => {
   })
 
   it('should return null in non-development environments', async () => {
-    vi.doMock(import('solid-js/web'), async (importOriginal) => {
-      const actual = await importOriginal()
-      return Object.assign({}, actual, { isDev: false })
-    })
+    vi.stubEnv('NODE_ENV', 'production')
     vi.resetModules()
 
     try {
@@ -165,7 +162,6 @@ describe('SolidQueryDevtoolsPanel', () => {
         await import('..')
       expect(ProductionDevtoolsPanel({})).toBeNull()
     } finally {
-      vi.doUnmock('solid-js/web')
       vi.resetModules()
     }
   })

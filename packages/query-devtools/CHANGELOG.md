@@ -1,5 +1,47 @@
 # @tanstack/query-devtools
 
+## 5.107.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.107.1
+
+## 5.107.0
+
+### Minor Changes
+
+- [#12538](https://github.com/TanStack/query/pull/12538) [`a4d72f7`](https://github.com/TanStack/query/commit/a4d72f75c1c7a59e39aaf4f776f540c3814e46f7) - feat(query-devtools): add a filter scope toggle to filter queries and mutations by key, data (mutation variables or data), or both. Data and All scopes initialize explorer searches with the filter. Mutation explorers initialize searches only for matching variables or data, and filtering refreshes when mutation variables change in place.
+
+### Patch Changes
+
+- Updated dependencies [[`b6add89`](https://github.com/TanStack/query/commit/b6add891c1b846c1f276a4c0110edb58b62defaa)]:
+  - @tanstack/query-core@5.107.0
+
+## 5.106.1
+
+### Patch Changes
+
+- [#12528](https://github.com/TanStack/query/pull/12528) [`c4ed956`](https://github.com/TanStack/query/commit/c4ed956bb97e381a2875e59f134bb99eecb92a02) - fix({query,react-query,preact-query}-devtools): always render the devtools left-to-right regardless of the page direction or browser language
+- Updated dependencies []:
+  - @tanstack/query-core@5.106.1
+
+## 5.106.0
+
+### Minor Changes
+
+- [#12522](https://github.com/TanStack/query/pull/12522) [`f69b28a`](https://github.com/TanStack/query/commit/f69b28a1dd2a2b4ca9b8f9117e0f60cc70443775) - Add search for nested property names and values in the query and mutation Data Explorer, with highlighted matches and automatic expansion.
+
+### Patch Changes
+
+- [#12499](https://github.com/TanStack/query/pull/12499) [`46d0477`](https://github.com/TanStack/query/commit/46d0477df2311d496cca006eb5ec885c024875a1) - Let inline devtools panels fill their container height while keeping a 500px default height when the container has no set height.
+
+- [#12517](https://github.com/TanStack/query/pull/12517) [`1176d37`](https://github.com/TanStack/query/commit/1176d373d161e0acca98d00244203778ff99c4fb) - chore(query-devtools/tsdown.config): add '@refresh skip' banner so the app's 'solid-refresh' does not wrap the bundled Solid runtime
+
+- [#12502](https://github.com/TanStack/query/pull/12502) [`254350f`](https://github.com/TanStack/query/commit/254350f9cba47fd87304e057fac1a314093423f0) - Virtualize query and mutation lists to keep large caches responsive, and reduce repeated cache scans.
+- Updated dependencies []:
+  - @tanstack/query-core@5.106.0
+
 ## 5.105.3
 
 ### Patch Changes

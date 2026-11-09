@@ -1,5 +1,37 @@
 # @tanstack/preact-query-persist-client
 
+## 5.107.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.107.1
+  - @tanstack/query-persist-client-core@5.107.1
+
+## 5.107.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.107.0
+  - @tanstack/query-persist-client-core@5.107.0
+
+## 5.106.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.106.1
+  - @tanstack/query-persist-client-core@5.106.1
+
+## 5.106.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.106.0
+  - @tanstack/query-persist-client-core@5.106.0
+
 ## 5.105.3
 
 ### Patch Changes

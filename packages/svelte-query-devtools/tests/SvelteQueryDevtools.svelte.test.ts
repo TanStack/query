@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/svelte-query'
-import SvelteQueryDevtools from '../src/Devtools.svelte'
+import SvelteQueryDevtools from '../src/SvelteQueryDevtools.svelte'
 import Wrapper from './Wrapper.svelte'
 import type { TanstackQueryDevtools } from '@tanstack/query-devtools'
 
@@ -186,5 +186,25 @@ describe('SvelteQueryDevtools', () => {
     await rerender({ client: queryClient, theme: 'dark' })
 
     expect(setThemeMock).toHaveBeenCalledWith('dark')
+  })
+
+  it('should not export the devtools component in non-development environments', async () => {
+    vi.doMock(import('esm-env'), async (importOriginal) => ({
+      ...(await importOriginal()),
+      DEV: false,
+    }))
+    vi.resetModules()
+
+    try {
+      const { SvelteQueryDevtools: ProductionDevtools } =
+        await import('../src/index')
+      const { default: Devtools } =
+        await import('../src/SvelteQueryDevtools.svelte')
+
+      expect(ProductionDevtools).not.toBe(Devtools)
+    } finally {
+      vi.doUnmock('esm-env')
+      vi.resetModules()
+    }
   })
 })

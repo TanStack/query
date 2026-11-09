@@ -189,6 +189,36 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
+  it('should preserve discriminated union narrowing in setQueryData updaterFn', () => {
+    type Data =
+      | { kind: 'a'; value: number; requiredA: number }
+      | { kind: 'b'; value: number; requiredB: number }
+
+    const key = createKey()
+    const { queryKey: tagged } = queryOptions({
+      queryKey: key,
+      queryFn: (): Promise<Data> =>
+        Promise.resolve({
+          kind: 'a',
+          value: 1,
+          requiredA: 1,
+        }),
+    })
+
+    const queryClient = new QueryClient()
+    queryClient.setQueryData(tagged, (prev) => {
+      if (!prev || prev.kind !== 'a') {
+        return prev
+      }
+
+      expectTypeOf(prev).toEqualTypeOf<Extract<Data, { kind: 'a' }>>()
+      return { ...prev, value: prev.value + 1 }
+    })
+
+    // @ts-expect-error updater input should be inferred from the tagged query key
+    queryClient.setQueryData(tagged, (prev: string | undefined) => prev)
+  })
+
   it('should properly type value when passed to setQueryData', () => {
     const key = createKey()
     const { queryKey: tagged } = queryOptions({
@@ -446,6 +476,29 @@ describe('queryOptions', () => {
     })
 
     expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+
+  it('should allow a getter that returns boolean or undefined', () => {
+    const someRef = ref<boolean | undefined>(false)
+
+    const options = queryOptions({
+      queryKey: createKey(),
+      queryFn: () => Promise.resolve(1),
+      enabled: () => someRef.value,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+
+  it('should type enabled with the query argument from query-core', () => {
+    queryOptions({
+      queryKey: ['post'] as const,
+      queryFn: () => Promise.resolve(1),
+      enabled: (query) => {
+        expectTypeOf(query.queryKey).toEqualTypeOf<readonly ['post']>()
+        return query.state.status !== 'pending'
+      },
+    })
   })
 
   it('should allow computed ref as queryKey', () => {

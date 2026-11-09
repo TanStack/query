@@ -8,6 +8,7 @@ export { QueryCache } from './queryCache'
 export { queryOptions } from './queryOptions'
 export type {
   QueryOptions,
+  VueQueryEnabledOption,
   UseQueryOptions,
   UndefinedInitialQueryOptions,
   DefinedInitialQueryOptions,
@@ -37,6 +38,7 @@ export type { UseQueryReturnType, UseQueryDefinedReturnType } from './useQuery'
 export type {
   UseInfiniteQueryOptions,
   UseInfiniteQueryReturnType,
+  UseInfiniteQueryDefinedReturnType,
 } from './useInfiniteQuery'
 export type {
   MutationResult,
