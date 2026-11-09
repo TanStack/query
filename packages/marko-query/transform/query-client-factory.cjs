@@ -3,12 +3,13 @@
 // Compile-time half of `<query-client-factory factory=createClient/>`.
 //
 // A route handler or middleware that prefetches runs before the layout
-// renders, and the client it gets must already be made by the factory. So on
-// top of what the tag does while rendering, this transform registers the
-// factory when the template's module is evaluated on the server — before any
-// handler, middleware or render of the first request, because loading a route
-// loads the layout with it. The browser needs no such step: the tag registers
-// from its mount.
+// renders, and the client it gets must already be made by the factory. The
+// browser has the same requirement: the first `<query>` creates the page's
+// client from its mount hook, and Marko mounts children before parents, so a
+// hook in the layout runs too late. Both realms therefore register the factory
+// when the template's module is evaluated, which precedes any handler,
+// middleware, render or mount. Loading a route loads the layout with it, so
+// the server registration also precedes the first request's handler.
 
 const TAG = '<query-client-factory>'
 
@@ -63,12 +64,12 @@ module.exports = function transform(tag, t) {
         ),
       ],
       true,
-      'server',
+      null,
     ),
   )
 
-  // The browser gets the factory through the tag's input. Marko only sends a
-  // function that a template defines, not a bare import, so pass a wrapper.
+  // The tag's input carries the factory to the browser as well, so the tag
+  // keeps working when a host renders it without this transform.
   attr.node.value = t.arrowFunctionExpression(
     [],
     t.callExpression(t.identifier(value.name), []),

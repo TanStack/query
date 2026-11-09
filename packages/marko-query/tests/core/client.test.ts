@@ -180,12 +180,48 @@ describe('query client', () => {
       )
     })
 
-    it('browser: throws when the page client already exists', () => {
+    it('browser: warns but keeps the page client when one already exists', () => {
       setServer(false)
-      getQueryClient()
-      expect(() => registerQueryClientFactory(() => createClient())).toThrow(
-        /root layout/,
-      )
+      unregisterQueryClientFactory()
+      const page = getQueryClient()
+      expect(page.getDefaultOptions().queries?.staleTime).toBeUndefined()
+      const warnings: Array<string> = []
+      const warn = console.warn
+      console.warn = (message: string) => warnings.push(message)
+      try {
+        const made: Array<QueryClient> = []
+        const factory = () => {
+          const client = createClient()
+          made.push(client)
+          return client
+        }
+        expect(() => registerQueryClientFactory(factory)).not.toThrow()
+        expect(getQueryClient()).toBe(page)
+        expect(warnings.join('\n')).toContain('created later')
+        // The factory is adopted: the next client the page makes uses it.
+        resetShared()
+        expect(made).toStrictEqual([getQueryClient()])
+      } finally {
+        console.warn = warn
+      }
+    })
+
+    it('browser: stays silent when the page client came from a factory', () => {
+      setServer(false)
+      const first = () => createClient()
+      registerQueryClientFactory(first)
+      const page = getQueryClient()
+      const warnings: Array<string> = []
+      const warn = console.warn
+      console.warn = (message: string) => warnings.push(message)
+      try {
+        // Evaluating another template registers the same kind of factory again.
+        registerQueryClientFactory(() => createClient())
+        expect(warnings).toStrictEqual([])
+        expect(getQueryClient()).toBe(page)
+      } finally {
+        console.warn = warn
+      }
     })
 
     it('registering the same factory again is a no-op, even later', () => {

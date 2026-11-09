@@ -96,13 +96,16 @@ import { createQueryClient } from "../lib/query-client.ts";
 <query-client-factory factory=createQueryClient/>
 ```
 
-`factory` must be a function that you import. It is registered when the layout's
-module is evaluated on the server — before any handler, middleware, or render
-of the first request, because loading a route loads the layout with it — so
-route handlers that prefetch already use it. The tag
-registers it in the browser before any query tag runs. If the tag renders after
-a query tag, the browser throws an error. To use a client that you created
-yourself, call `setQueryClient(client, $global)`.
+`factory` must be a function that you import. The transform registers it in the
+layout's module in both environments, so it is in effect when the server
+evaluates that module — before any handler, middleware, or render of the first
+request, because loading a route loads the layout with it — and when the browser
+evaluates the page bundle, which is before Marko mounts anything. Route handlers
+that prefetch already use it, and so does the first query tag. In the browser, a
+factory that arrives after the page already has a client (the tag rendered below
+a query tag) logs a development warning and applies to the clients created
+after it. To use a client that you created yourself, call
+`setQueryClient(client, $global)`.
 
 ## Server rendering
 

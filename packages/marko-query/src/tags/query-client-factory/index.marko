@@ -9,11 +9,13 @@ export interface Input {
   factory: Accessor<QueryClient>;
 }
 
-// Server: nothing to do here. `transform/query-client-factory.cjs` registers
-// the factory when the layout's module is evaluated, before route handlers
-// run (loading a route loads the layout with it).
-// Browser: the factory is part of this tag's input, so it travels with the
-// page and no other module has to be imported for it.
+// `transform/query-client-factory.cjs` registers the factory at module scope,
+// in both realms, so it is in effect before any route handler, render or mount.
+// That registration is what makes the tag work, and it is why the tag reads
+// `input.factory`: Marko only sends a tag's input to the browser when the tag
+// uses it. This hook registers the same factory again, in the browser only, so
+// a host that renders the tag without the transform still gets it. Seeing the
+// factory twice is harmless.
 <lifecycle
   onMount() {
     registerQueryClientFactory(input.factory);

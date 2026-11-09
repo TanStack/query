@@ -29,9 +29,12 @@ const STATE_KEY = Symbol.for('@tanstack/marko-query/state')
 interface SharedState {
   factory: () => QueryClient
   browserClient: QueryClient | undefined
+  /** The factory that made {@link SharedState.browserClient}. */
+  browserClientFactory: (() => QueryClient) | undefined
   hydratedStates: WeakSet<object>
   restoring: WeakMap<QueryClient, RestoringState>
   defaultFactoryWarned: boolean
+  lateFactoryWarned: boolean
 }
 
 interface RestoringState {
@@ -57,9 +60,11 @@ const shared: SharedState =
   ((globalThis as Record<symbol, unknown>)[STATE_KEY] = {
     factory: DEFAULT_FACTORY,
     browserClient: undefined,
+    browserClientFactory: undefined,
     hydratedStates: new WeakSet(),
     restoring: new WeakMap(),
     defaultFactoryWarned: false,
+    lateFactoryWarned: false,
   } satisfies SharedState)
 
 type GlobalRecord = Record<PropertyKey, unknown>
@@ -85,6 +90,29 @@ function warnDefaultFactory(): void {
       'Put `<query-client-factory factory=...>` once in your root layout ' +
       'and import the factory there, or call `setQueryClientFactory` ' +
       'yourself in your server entry.',
+  )
+}
+
+/**
+ * Warns when the browser registers a factory after the page's client exists
+ * and that client came from the default factory. The page keeps that client,
+ * so the factory only applies to clients created later. It runs in
+ * development only and does not stop the page.
+ */
+function warnLateBrowserFactory(): void {
+  if (
+    typeof process === 'undefined' ||
+    process.env?.NODE_ENV === 'production'
+  ) {
+    return
+  }
+  if (shared.lateFactoryWarned) return
+  shared.lateFactoryWarned = true
+  console.warn(
+    '[marko-query] <query-client-factory> registered after the page client ' +
+      'was created with the default factory. The page keeps that client; the ' +
+      'factory applies to clients created later. Put the tag once, in your ' +
+      'root layout.',
   )
 }
 
@@ -144,6 +172,7 @@ function hydrateGlobal(client: QueryClient, global: GlobalRecord): void {
  * @returns The new client.
  */
 function createBrowserClient(): QueryClient {
+  shared.browserClientFactory = shared.factory
   const client = shared.factory()
   client.mount()
   return client
@@ -166,15 +195,25 @@ export function unregisterQueryClientFactory(): void {
 }
 
 /**
- * What `<query-client-factory>` calls, on the server while rendering and in
- * the browser while mounting. Unlike {@link setQueryClientFactory} it checks
- * the order: the factory must be registered before the first client exists,
- * or part of the page would use a client the factory did not create. That is
- * the case when the tag is not rendered first (put it in the root layout).
+ * Registers the factory that {@link getQueryClient} uses. The transform of
+ * `<query-client-factory>` calls it while the template's module is evaluated,
+ * which precedes any route handler, render or mount, in both realms. The tag
+ * also calls it from its mount hook, as a safety net for hosts that render the
+ * tag without the transform.
+ *
+ * On the server the factory must be registered before the request's client
+ * exists, or part of the page would use a client the factory did not create.
+ * That is the case when the tag is not rendered first (put it in the root
+ * layout), and it throws.
+ *
+ * In the browser a client that already exists is not an error: the page keeps
+ * it, the factory applies to clients created later, and development logs a
+ * warning.
  * @param factory - Makes a new `QueryClient`.
  * @param global - The render's `$global`. It is required on the server.
  * @throws {TypeError} When `factory` is not a function.
- * @throws {Error} When `global` is missing on the server, or a client exists.
+ * @throws {Error} When `global` is missing on the server, or when the server
+ * already created the request's client.
  */
 export function registerQueryClientFactory(
   factory: () => QueryClient,
@@ -192,13 +231,22 @@ export function registerQueryClientFactory(
       "[marko-query] registerQueryClientFactory(factory, $global): on the server pass the request's $global.",
     )
   }
-  const created = server
-    ? Boolean((global as GlobalRecord)[CLIENT_KEY])
-    : shared.browserClient !== undefined
-  if (created) {
-    throw new Error(
-      '[marko-query] <query-client-factory> must render before any query tag, so a client already exists. Put it once, in your root layout.',
-    )
+  if (server) {
+    if ((global as GlobalRecord)[CLIENT_KEY]) {
+      throw new Error(
+        '[marko-query] <query-client-factory> must render before any query tag, so a client already exists. Put it once, in your root layout.',
+      )
+    }
+  } else if (
+    shared.browserClient !== undefined &&
+    shared.browserClientFactory === DEFAULT_FACTORY
+  ) {
+    // A host rendered the tag without the transform, so a query tag already
+    // made the page's client with the default factory. Keep that client and
+    // adopt `factory` for the clients created after it. When the page's client
+    // came from an app factory there is nothing to report: the registration
+    // ran before the first query tag.
+    warnLateBrowserFactory()
   }
   shared.factory = factory
 }
@@ -224,6 +272,7 @@ export function setQueryClient(client: QueryClient, global?: object): void {
   if (shared.browserClient === client) return
   shared.browserClient?.unmount()
   shared.browserClient = client
+  shared.browserClientFactory = undefined
   client.mount()
   if (global) hydrateGlobal(client, global as GlobalRecord)
 }

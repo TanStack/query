@@ -43,16 +43,19 @@ import { createQueryClient } from "../lib/query-client";
 
 Marko Query calls the factory for every client that it creates. So the factory must return a new `QueryClient` on each call. If it returns a shared instance, all requests on the server share one cache.
 
-The tag registers the factory in both environments:
+The tag registers the factory in both environments, when the module of the layout is evaluated:
 
-- On the server, it registers the factory when the module of the layout is evaluated. Loading a route loads the layout with it, so the registration runs before any handler, middleware, or render of the first request. A route handler that prefetches already gets a client from the factory.
-- In the browser, it registers the factory when the tag mounts.
+- On the server, loading a route loads the layout with it, so the registration runs before any handler, middleware, or render of the first request. A route handler that prefetches already gets a client from the factory.
+- In the browser, the module of the layout is part of the page bundle, and the bundle is evaluated before Marko mounts anything. So the registration runs before the first query tag asks for the client of the page.
+
+The order does not depend on where the tag renders. It is fixed by module evaluation, so the tag works in the root layout even though Marko mounts child templates before their parents.
 
 The tag has these rules:
 
-- `factory` must be a function that the template imports, as in `factory=createQueryClient`. An inline function is a compile error, because the server registers the factory outside of any render.
+- `factory` must be a function that the template imports, as in `factory=createQueryClient`. An inline function is a compile error, because the registration runs outside of any render.
 - A template can contain the tag once. Put it once, in the root layout.
-- The tag must render before the content that uses the client. If a client already exists when the tag registers the factory, the tag throws an error.
+- On the server, the tag throws an error if a client already exists when it registers the factory. Two clients in one request would hold two different caches.
+- In the browser, the tag does not throw. If the page already has a client, the tag logs a warning in development and the factory applies to every client that Marko Query creates after it. The client of the page stays as it is, because a new client would lose the data that the page already has.
 
 If you do not register a factory, Marko Query uses `() => new QueryClient()`. In development, the server then logs a warning once, because a missing factory usually means that the registration did not run. To use the default options on purpose, register `() => new QueryClient()` yourself.
 
@@ -60,7 +63,7 @@ If you do not register a factory, Marko Query uses `() => new QueryClient()`. In
 
 The server registration runs when the module of the layout is evaluated. A custom server that loads the route or template modules before it fetches data needs nothing extra: loading a route loads the layout with it, so the factory is registered before the first prefetch.
 
-The escape hatch is for a server that fetches data without loading the templates first. Call `setQueryClientFactory` in a module that the server entry imports, and keep `<query-client-factory>` in the layout for the browser factory registration:
+The escape hatch is for a server that fetches data without loading the templates first. Call `setQueryClientFactory` in a module that the server entry imports, and keep `<query-client-factory>` in the layout, which registers the factory in the browser:
 
 ```ts
 // server entry
