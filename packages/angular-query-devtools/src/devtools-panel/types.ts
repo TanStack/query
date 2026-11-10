@@ -1,6 +1,6 @@
 import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { ElementRef } from '@angular/core'
-import type { QueryClient } from '@tanstack/query-core'
+import type { QueryClient } from '@tanstack/angular-query'
 
 /**
  * A devtools panel, which can be manually destroyed.

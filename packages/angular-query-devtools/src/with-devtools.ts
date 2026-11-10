@@ -12,8 +12,8 @@ import {
   provideEnvironmentInitializer,
   untracked,
 } from '@angular/core'
+import { QueryClient, onlineManager } from '@tanstack/angular-query'
 import { queryFeature } from '@tanstack/angular-query/internal'
-import { QueryClient, onlineManager } from '@tanstack/query-core'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import type { Signal } from '@angular/core'
 import type { DevtoolsOptions, WithDevtools } from './types'

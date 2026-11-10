@@ -1,4 +1,4 @@
-import { noop } from '@tanstack/query-core'
+import { noop } from '@tanstack/angular-query'
 import type {
   DevtoolsPanelOptions,
   DevtoolsPanelRef,

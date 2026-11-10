@@ -1,11 +1,10 @@
-import type { QueryClient } from '@tanstack/query-core'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
   Theme,
 } from '@tanstack/query-devtools'
-import type { QueryFeature } from '@tanstack/angular-query'
+import type { QueryClient, QueryFeature } from '@tanstack/angular-query'
 import type { Signal } from '@angular/core'
 
 /** A static devtools option or an Angular signal containing that option. */

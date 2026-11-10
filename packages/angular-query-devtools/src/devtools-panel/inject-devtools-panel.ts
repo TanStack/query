@@ -7,7 +7,7 @@ import {
   inject,
   untracked,
 } from '@angular/core'
-import { QueryClient, onlineManager } from '@tanstack/query-core'
+import { QueryClient, onlineManager } from '@tanstack/angular-query'
 import { isPlatformBrowser } from '@angular/common'
 import type { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { DevtoolsPanelOptions, InjectDevtoolsPanel } from './types'

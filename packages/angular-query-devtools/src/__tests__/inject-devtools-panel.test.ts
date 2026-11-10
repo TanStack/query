@@ -1,7 +1,7 @@
 import { ApplicationRef, ElementRef, signal } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient } from '@tanstack/angular-query'
 import { injectDevtoolsPanel } from '../devtools-panel'
 import { setupTanStackQueryTestBed } from './test-utils'
 import type {

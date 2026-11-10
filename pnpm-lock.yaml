@@ -6925,9 +6925,6 @@ importers:
 
   packages/angular-query-devtools:
     dependencies:
-      '@tanstack/query-core':
-        specifier: workspace:*
-        version: link:../query-core
       '@tanstack/query-devtools':
         specifier: workspace:*
         version: link:../query-devtools

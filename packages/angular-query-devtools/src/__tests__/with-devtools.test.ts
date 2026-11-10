@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
 import {
   ApplicationRef,
@@ -13,7 +12,7 @@ import {
   provideZonelessChangeDetection,
   signal,
 } from '@angular/core'
-import { provideTanStackQuery } from '@tanstack/angular-query'
+import { QueryClient, provideTanStackQuery } from '@tanstack/angular-query'
 import { getQueryFeatureProviders } from '@tanstack/angular-query/internal'
 import { withDevtools } from '../index'
 import type {
