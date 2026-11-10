@@ -217,9 +217,9 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
   // look like every page was intentionally deleted. Fail loudly instead — TypeDoc reports the
   // underlying diagnostics on stderr.
   //
-  // The most likely cause is TS6305: `angular-query-experimental` reaches `@tanstack/query-devtools`
-  // through a TypeScript project reference, so it consumes that package's emitted `.d.ts` rather than
-  // its source (which is solid-js JSX and cannot be compiled under Angular's tsconfig). The
+  // One known cause is TS6305: a package that reaches `@tanstack/query-devtools` through a
+  // TypeScript project reference consumes that package's emitted `.d.ts` rather than its source
+  // (which is solid-js JSX and cannot be compiled under another framework's tsconfig). The
   // `generate-docs` script builds it first, so this should only surface if that build was skipped.
   if (!project) {
     throw new Error(
