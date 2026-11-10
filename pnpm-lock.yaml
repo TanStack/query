@@ -391,10 +391,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -437,10 +437,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -483,16 +483,16 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       '@tanstack/angular-query-persist-client':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-persist-client
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.106.1
+        specifier: ^5.107.1
         version: link:../../../packages/query-async-storage-persister
       rxjs:
         specifier: ^7.8.2
@@ -538,10 +538,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -581,10 +581,10 @@ importers:
         specifier: ^22.0.0
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -624,10 +624,10 @@ importers:
         specifier: ^22.0.0
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -667,10 +667,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -716,10 +716,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -762,10 +762,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -811,10 +811,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -857,10 +857,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)))(rxjs@7.8.2)
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -906,10 +906,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -952,10 +952,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -1004,10 +1004,10 @@ importers:
         specifier: ^22.0.0
         version: 22.2.6(a1d20e1579b007a10175d052ea6e8746)
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       express:
         specifier: ^5.1.0
@@ -1059,16 +1059,16 @@ importers:
         specifier: ^22.0.0
         version: 22.2.6(a1d20e1579b007a10175d052ea6e8746)
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       '@tanstack/angular-query-persist-client':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-persist-client
       '@tanstack/query-async-storage-persister':
-        specifier: workspace:*
+        specifier: ^5.107.1
         version: link:../../../packages/query-async-storage-persister
       express:
         specifier: ^5.1.0
@@ -1117,10 +1117,10 @@ importers:
         specifier: ^22.0.0
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: workspace:*
+        specifier: ^5.0.0-rc.5
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
