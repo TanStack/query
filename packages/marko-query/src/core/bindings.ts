@@ -12,7 +12,7 @@ import {
   replaceEqualDeep,
   shouldThrowError,
 } from '@tanstack/query-core'
-import { isRestoring, onRestoringChange } from './client.js'
+import { hydrateOnce, isRestoring, onRestoringChange } from './client.js'
 import type {
   DefaultedQueryObserverOptions,
   DehydratedState,
@@ -662,7 +662,8 @@ export function watchMutationState<TResult = MutationState>(
 }
 
 /**
- * The browser side of `<hydration-boundary>`: core `hydrate`, nothing else.
+ * The browser side of `<hydration-boundary>`: core `hydrate`, with paused
+ * mutations hydrated once per client.
  * @param client - The client to hydrate.
  * @param state - The dehydrated state, if there is one.
  * @param options - Extra options for `hydrate`, such as `defaultOptions`.
@@ -672,5 +673,5 @@ export function hydrateBoundary(
   state: DehydratedState | null | undefined,
   options?: Parameters<typeof hydrate>[2],
 ): void {
-  if (state && typeof state === 'object') hydrate(client, state, options)
+  hydrateOnce(client, state, options)
 }

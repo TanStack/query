@@ -1,11 +1,34 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, dehydrate } from '@tanstack/marko-query'
+import { onlineManager } from '@tanstack/query-core'
+import { QueryClient, dehydrate, setQueryClient } from '@tanstack/marko-query'
 import Boundary from './fixtures/boundary-fixture.marko'
+import BoundaryMutations from './fixtures/boundary-mutation.marko'
 import Fetching from './fixtures/fetching-fixture.marko'
 import Infinite from './fixtures/infinite-fixture.marko'
 import Mutation from './fixtures/mutation-fixture.marko'
 import Queries from './fixtures/queries-fixture.marko'
 import { container, createClient, expectText, sleep, text } from './utils.js'
+import type { DehydratedState } from '@tanstack/marko-query'
+
+/**
+ * A dehydrated state holding one paused mutation, made the way the server
+ * makes one: the mutation is submitted while the client is offline, so core's
+ * default `shouldDehydrateMutation` keeps it.
+ */
+async function pausedState(): Promise<DehydratedState> {
+  onlineManager.setOnline(false)
+  const source = new QueryClient()
+  const mutation = source.getMutationCache().build(source, {
+    mutationKey: ['m'],
+    mutationFn: () => Promise.resolve('ok'),
+  })
+  void mutation.execute(1)
+  // `execute` is async, so wait for the pause instead of guessing a tick count.
+  await vi.waitFor(() => expect(mutation.state.isPaused).toBe(true))
+  const state = dehydrate(source)
+  onlineManager.setOnline(true)
+  return state
+}
 
 describe('marko-query tags', () => {
   let root: HTMLElement
@@ -154,6 +177,36 @@ describe('marko-query tags', () => {
       view.update({ client, state: dehydrate(source) })
       await expectText(root, 'data', 'second')
       expect(client.getQueryData(['boundary'])).toBe('second')
+    })
+
+    it('adds a paused mutation once, though it hydrates on render and on mount', async () => {
+      const state = await pausedState()
+      const client = createClient()
+      mount(BoundaryMutations, { client, state })
+      await expectText(root, 'count', '1')
+      expect(client.getMutationCache().getAll()).toHaveLength(1)
+    })
+
+    it('adds a paused mutation once when $global already hydrated it', async () => {
+      const state = await pausedState()
+      const client = createClient()
+      setQueryClient(client, { dehydratedQueryState: state })
+      expect(client.getMutationCache().getAll()).toHaveLength(1)
+      mount(BoundaryMutations, { client, state })
+      await expectText(root, 'count', '1')
+      expect(client.getMutationCache().getAll()).toHaveLength(1)
+    })
+
+    it('adds a paused mutation once when a fresh state is passed later', async () => {
+      const state = await pausedState()
+      const client = createClient()
+      root = container()
+      const view = BoundaryMutations.mount({ client, state }, root)
+      instance = view
+      await expectText(root, 'count', '1')
+      view.update({ client, state: structuredClone(state) })
+      await expectText(root, 'count', '1')
+      expect(client.getMutationCache().getAll()).toHaveLength(1)
     })
   })
 })

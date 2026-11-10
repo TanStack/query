@@ -33,7 +33,7 @@ The second way exists because Marko writes `$global` once, in the first part of 
 | The cache is filled before the page renders, for example by a handler   | `$global`, and the query tags that read it |
 | The data loads after `$global` is written, for example inside `<await>` | The query tag only                         |
 
-Hydration uses `hydrate` from TanStack Query Core, which updates a cache entry only when the incoming data is newer. So when an entry arrives in both ways, the second copy changes nothing.
+Hydration uses `hydrate` from TanStack Query Core, which updates a query entry only when the incoming data is newer. So when a query arrives in both ways, the second copy changes nothing. Mutations are different: core `hydrate` always adds a new `Mutation`, so Marko Query filters the paused mutations that the client already has before it calls `hydrate`. A paused mutation is therefore added once, and it runs once when the connection returns.
 
 ### What Is Sent
 
@@ -181,7 +181,7 @@ export interface Input {
 
 Use the boundary only for state that the request client does not already have. Data that you prefetch with `getQueryClient($global)`, or that a query tag loads inside `<await>`, reaches the browser without a boundary.
 
-The boundary hydrates during the server render, and again when it mounts in the browser. When a later render gives it a new state, it hydrates that state too. It takes these inputs:
+The boundary hydrates during the server render, and again when it mounts in the browser. When a later render gives it a new state, it hydrates that state too. A paused mutation is added to the cache only once, even when the same state also arrives through `$global` or is passed again on a later render. It takes these inputs:
 
 - `state`: what `dehydrate` returned. `null` and `undefined` are ignored.
 - `options`: a function that returns the `HydrateOptions` for core `hydrate`, for example `options=() => ({ defaultOptions: { queries: { staleTime: 60 * 1000 } } })`.

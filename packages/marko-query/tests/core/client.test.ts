@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { dehydrate, environmentManager } from '@tanstack/query-core'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { dehydrate, environmentManager, onlineManager } from '@tanstack/query-core'
 import {
   getQueryClient,
   isRestoring,
@@ -11,9 +11,37 @@ import {
   onRestoringChange,
   registerQueryClientFactory,
 } from '../../src/core/internal.js'
-import { unregisterQueryClientFactory } from '../../src/core/client.js'
+import { hydrateOnce, unregisterQueryClientFactory } from '../../src/core/client.js'
 import { createClient, resetShared, setServer } from './utils.js'
-import type { QueryClient } from '@tanstack/query-core'
+import type { DehydratedState, MutationKey, QueryClient } from '@tanstack/query-core'
+
+/**
+ * A dehydrated state holding paused mutations, made the way the server makes
+ * one: the mutations are submitted while the client is offline, so core's
+ * default `shouldDehydrateMutation` keeps them.
+ */
+async function pausedState(
+  variables: Array<number> = [1],
+  mutationKey: MutationKey | undefined = ['m'],
+): Promise<DehydratedState> {
+  onlineManager.setOnline(false)
+  const source = createClient()
+  const mutations = variables.map((value) => {
+    const mutation = source.getMutationCache().build(source, {
+      mutationKey,
+      mutationFn: () => Promise.resolve('ok'),
+    })
+    void mutation.execute(value)
+    return mutation
+  })
+  // `execute` is async, so wait for the pause instead of guessing a tick count.
+  await vi.waitFor(() => {
+    for (const mutation of mutations) expect(mutation.state.isPaused).toBe(true)
+  })
+  const state = dehydrate(source)
+  onlineManager.setOnline(true)
+  return state
+}
 
 describe('query client', () => {
   beforeEach(() => {
@@ -148,6 +176,61 @@ describe('query client', () => {
       expect(getQueryClient()).toBe(next)
       expect((previous as unknown as { mounts: number }).mounts).toBe(0)
       expect((next as unknown as { mounts: number }).mounts).toBe(1)
+    })
+  })
+
+  describe('hydrateOnce', () => {
+    afterEach(() => onlineManager.setOnline(true))
+
+    it('adds a paused mutation once, however often the state is hydrated', async () => {
+      const state = await pausedState()
+      const client = createClient()
+      hydrateOnce(client, state)
+      hydrateOnce(client, state)
+      hydrateOnce(client, state)
+      expect(client.getMutationCache().getAll()).toHaveLength(1)
+    })
+
+    it('recognizes the same mutation in a fresh dehydrate result', async () => {
+      const state = await pausedState()
+      const client = createClient()
+      hydrateOnce(client, state)
+      hydrateOnce(client, structuredClone(state))
+      expect(client.getMutationCache().getAll()).toHaveLength(1)
+    })
+
+    it('keeps distinct paused mutations', async () => {
+      const state = await pausedState([1, 2])
+      expect(state.mutations).toHaveLength(2)
+      const client = createClient()
+      hydrateOnce(client, state)
+      hydrateOnce(client, state)
+      expect(client.getMutationCache().getAll()).toHaveLength(2)
+    })
+
+    it('keeps paused mutations that have no mutationKey', async () => {
+      const state = await pausedState([1, 2], undefined)
+      expect(state.mutations).toHaveLength(2)
+      const client = createClient()
+      hydrateOnce(client, state)
+      expect(client.getMutationCache().getAll()).toHaveLength(2)
+    })
+
+    it('hydrates queries as core does', () => {
+      const source = createClient()
+      source.setQueryData(['q'], 'value')
+      const state = dehydrate(source)
+      const client = createClient()
+      hydrateOnce(client, state)
+      hydrateOnce(client, state)
+      expect(client.getQueryData(['q'])).toBe('value')
+    })
+
+    it('is a no-op for a nullish state', () => {
+      const client = createClient()
+      hydrateOnce(client, null)
+      hydrateOnce(client, undefined)
+      expect(client.getMutationCache().getAll()).toHaveLength(0)
     })
   })
 

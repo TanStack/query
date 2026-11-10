@@ -107,6 +107,16 @@ a query tag) logs a development warning and applies to the clients created
 after it. To use a client that you created yourself, call
 `setQueryClient(client, $global)`.
 
+The factory is stored once per process, so every root that one server process
+renders must use the same factory. Two layouts with different factories do not
+coexist: the layout module evaluated last wins, and every later request uses its
+factory, including requests for the other root. The browser is not affected,
+because each page bundle contains the layout of its own root. A server that must
+give one root different options pins a client for the request with
+`setQueryClient(client, $global)` in that root's middleware, before anything
+reads the client; the pin belongs to that request and is not affected by a
+factory that registers later.
+
 ## Server rendering
 
 The server sends the cache of the request client to the browser through
@@ -117,6 +127,12 @@ included.
 To hydrate state from another source, such as a loader, use
 `<hydration-boundary state=dehydratedState>`. Its content renders after the
 state is hydrated.
+
+A paused mutation is hydrated once per client, even when the same state also
+arrives through `$global` or is passed again on a later render. Core `hydrate`
+always adds a new `Mutation`, so the boundary filters the ones the client
+already has, by state object identity and by `mutationKey` plus `submittedAt`.
+Mutations without a `mutationKey` are matched by identity only.
 
 `throwOnError` throws during render, so the nearest `<try>` catches it.
 

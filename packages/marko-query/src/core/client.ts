@@ -2,9 +2,14 @@ import {
   QueryClient,
   dehydrate,
   environmentManager,
+  hashKey,
   hydrate,
 } from '@tanstack/query-core'
-import type { DehydratedState } from '@tanstack/query-core'
+import type {
+  DehydratedState,
+  HydrateOptions,
+  MutationKey,
+} from '@tanstack/query-core'
 
 /**
  * Marko's render-scoped `$global`. Only the keys Marko Query reads and writes
@@ -152,6 +157,85 @@ function attachServerClient(global: GlobalRecord, client: QueryClient): void {
   serializeGlobal(global, DEHYDRATED_STATE_KEY)
 }
 
+/** The dehydrated mutation state objects each client has already hydrated. */
+const hydratedMutations = new WeakMap<QueryClient, WeakSet<object>>()
+
+/**
+ * The set of mutation state objects that `client` has hydrated.
+ * @param client - The client to read.
+ * @returns The set, created on first use.
+ */
+function mutationRegistry(client: QueryClient): WeakSet<object> {
+  let seen = hydratedMutations.get(client)
+  if (!seen) hydratedMutations.set(client, (seen = new WeakSet()))
+  return seen
+}
+
+/**
+ * Identifies a dehydrated mutation by its key and submission time, so that a
+ * copy of the same mutation is recognized. Mutations without a `mutationKey`
+ * have no identity: two of them can be genuinely different.
+ * @param mutationKey - The mutation's key, if it has one.
+ * @param submittedAt - When the mutation was submitted.
+ * @returns The identity, or `undefined` when the mutation has no key.
+ */
+function mutationIdentity(
+  mutationKey: MutationKey | undefined,
+  submittedAt: number,
+): string | undefined {
+  return mutationKey ? `${hashKey(mutationKey)}|${submittedAt}` : undefined
+}
+
+/**
+ * Hydrates `state` into `client`, skipping paused mutations the client already
+ * has. Core `hydrate` dedupes queries by hash but always builds a new
+ * `Mutation`, so hydrating the same state twice would add the mutation twice
+ * and resume it twice.
+ *
+ * A mutation is skipped when its state object was hydrated before, which covers
+ * the same state reaching the client through `$global` and through
+ * `<hydration-boundary>`. A mutation with a `mutationKey` is also skipped when
+ * the cache already holds one with the same key and `submittedAt`, which covers
+ * a fresh `dehydrate` result of the same cache.
+ * @param client - The client to hydrate.
+ * @param state - The dehydrated state, if there is one.
+ * @param options - Extra options for `hydrate`.
+ */
+export function hydrateOnce(
+  client: QueryClient,
+  state: Partial<DehydratedState> | null | undefined,
+  options?: HydrateOptions,
+): void {
+  if (!state || typeof state !== 'object') return
+  const mutations = state.mutations
+  if (!mutations?.length) {
+    hydrate(client, state, options)
+    return
+  }
+  const seen = mutationRegistry(client)
+  const existing = new Set<string>()
+  for (const mutation of client.getMutationCache().getAll()) {
+    const identity = mutationIdentity(
+      mutation.options.mutationKey,
+      mutation.state.submittedAt,
+    )
+    if (identity) existing.add(identity)
+  }
+  const fresh = mutations.filter((mutation) => {
+    const stateObject = mutation.state as object | undefined
+    if (stateObject && typeof stateObject === 'object') {
+      if (seen.has(stateObject)) return false
+      seen.add(stateObject)
+    }
+    const identity = mutationIdentity(
+      mutation.mutationKey,
+      mutation.state.submittedAt,
+    )
+    return !identity || !existing.has(identity)
+  })
+  hydrate(client, { ...state, mutations: fresh }, options)
+}
+
 /**
  * Hydrates `client` with the state that the server put on `$global`. Each
  * state object is hydrated once.
@@ -164,7 +248,7 @@ function hydrateGlobal(client: QueryClient, global: GlobalRecord): void {
     return
   }
   shared.hydratedStates.add(state)
-  hydrate(client, state)
+  hydrateOnce(client, state)
 }
 
 /**

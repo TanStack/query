@@ -57,6 +57,22 @@ The tag has these rules:
 - On the server, the tag throws an error if a client already exists when it registers the factory. Two clients in one request would hold two different caches.
 - In the browser, the tag does not throw. If the page already has a client, the tag logs a warning in development and the factory applies to every client that Marko Query creates after it. The client of the page stays as it is, because a new client would lose the data that the page already has.
 
+The factory is stored once per process, so every root that one server process renders must use the same factory. Two layouts with different factories do not coexist: the layout module evaluated last wins, and every later request uses its factory, including requests for the other root. The browser is not affected, because each page bundle contains the layout of its own root.
+
+A server that must give one root different client options pins a client for the request instead of registering a second factory. Call `setQueryClient(client, $global)` in that root's middleware, before anything reads the client:
+
+```ts
+// src/routes/admin/+middleware.ts
+import { QueryClient, setQueryClient } from '@tanstack/marko-query'
+
+export default Run.ALL(async (ctx, next) => {
+  setQueryClient(new QueryClient({ defaultOptions: adminDefaults }), ctx)
+  return next()
+})
+```
+
+The pin belongs to that request only. Other requests keep the process factory, and a factory that registers later does not replace a client that already exists. The browser client of that root still comes from the factory in its layout, so keep the two in step: the pin covers the server, the layout covers the browser.
+
 If you do not register a factory, Marko Query uses `() => new QueryClient()`. In development, the server then logs a warning once, because a missing factory usually means that the registration did not run. To use the default options on purpose, register `() => new QueryClient()` yourself.
 
 ### Without Marko Run
@@ -108,7 +124,7 @@ The `$global` argument works differently in each environment:
 - In the browser, `$global` is optional. All calls return the same client, the client of the page. `$global` controls only hydration:
   - **With `$global`**, `getQueryClient($global)` reads the state that the server serialized into `$global.dehydratedQueryState` (the cache that the server prefetched) and hydrates the client with it.
   - **Without `$global`**, `getQueryClient()` does not read or hydrate anything. If no call with `$global` has run yet, the cache has no server data.
-  - **Hydration runs once for each state.** The first call with `$global` hydrates the client. Later calls with the same `$global` find that the state is already hydrated, so they change nothing in the cache.
+  - **Hydration runs once for each state.** The first call with `$global` hydrates the client. Later calls with the same `$global` find that the state is already hydrated, so they change nothing in the cache. A paused mutation is also added only once when the same mutation reaches the client through `<hydration-boundary>` as well.
   - **After the first call with `$global`**, you can call `getQueryClient()` without it. The client is already hydrated and is the same client.
 
 The query tags always pass `$global` to `getQueryClient`, so they hydrate the client for you. Pass `$global` yourself when your own code reads the client before any query tag has run:
