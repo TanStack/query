@@ -5066,12 +5066,12 @@
               "to": "framework/angular/reference/functions/injectMutationState"
             },
             {
-              "label": "Functions / injectQuery",
-              "to": "framework/angular/reference/functions/injectQuery"
+              "label": "Functions / injectQueries",
+              "to": "framework/angular/reference/functions/injectQueries"
             },
             {
-              "label": "Functions / injectQueryClient",
-              "to": "framework/angular/reference/functions/injectQueryClient"
+              "label": "Functions / injectQuery",
+              "to": "framework/angular/reference/functions/injectQuery"
             },
             {
               "label": "Functions / isCancelledError",
@@ -5106,7 +5106,7 @@
               "to": "framework/angular/reference/functions/provideTanStackQuery"
             },
             {
-              "label": "queryOptions",
+              "label": "Functions / queryOptions",
               "to": "framework/angular/reference/functions/queryOptions"
             },
             {
@@ -5116,6 +5116,18 @@
             {
               "label": "Functions / shouldThrowError",
               "to": "framework/angular/reference/functions/shouldThrowError"
+            },
+            {
+              "label": "Functions / toResource",
+              "to": "framework/angular/reference/functions/toResource"
+            },
+            {
+              "label": "Functions / withHydrationKey",
+              "to": "framework/angular/reference/functions/withHydrationKey"
+            },
+            {
+              "label": "Functions / withNoQueryHydration",
+              "to": "framework/angular/reference/functions/withNoQueryHydration"
             },
             {
               "label": "Classes / CancelledError",
@@ -5158,6 +5170,10 @@
               "to": "framework/angular/reference/classes/QueryObserver"
             },
             {
+              "label": "Interfaces / BaseInfiniteQueryNarrowing",
+              "to": "framework/angular/reference/interfaces/BaseInfiniteQueryNarrowing"
+            },
+            {
               "label": "Interfaces / BaseMutationNarrowing",
               "to": "framework/angular/reference/interfaces/BaseMutationNarrowing"
             },
@@ -5178,12 +5194,16 @@
               "to": "framework/angular/reference/interfaces/CreateMutationOptions"
             },
             {
-              "label": "Interfaces / CreateQueryOptions",
-              "to": "framework/angular/reference/interfaces/CreateQueryOptions"
-            },
-            {
               "label": "Interfaces / DefaultOptions",
               "to": "framework/angular/reference/interfaces/DefaultOptions"
+            },
+            {
+              "label": "Interfaces / DefinedInfiniteQueryNarrowing",
+              "to": "framework/angular/reference/interfaces/DefinedInfiniteQueryNarrowing"
+            },
+            {
+              "label": "Interfaces / DefinedQueryNarrowing",
+              "to": "framework/angular/reference/interfaces/DefinedQueryNarrowing"
             },
             {
               "label": "Interfaces / DehydrateOptions",
@@ -5262,28 +5282,8 @@
               "to": "framework/angular/reference/interfaces/InitialPageParam"
             },
             {
-              "label": "Interfaces / InjectInfiniteQueryOptions",
-              "to": "framework/angular/reference/interfaces/InjectInfiniteQueryOptions"
-            },
-            {
-              "label": "Interfaces / InjectIsFetchingOptions",
-              "to": "framework/angular/reference/interfaces/InjectIsFetchingOptions"
-            },
-            {
-              "label": "Interfaces / InjectIsMutatingOptions",
-              "to": "framework/angular/reference/interfaces/InjectIsMutatingOptions"
-            },
-            {
-              "label": "Interfaces / InjectMutationOptions",
-              "to": "framework/angular/reference/interfaces/InjectMutationOptions"
-            },
-            {
-              "label": "Interfaces / InjectMutationStateOptions",
-              "to": "framework/angular/reference/interfaces/InjectMutationStateOptions"
-            },
-            {
-              "label": "Interfaces / InjectQueryOptions",
-              "to": "framework/angular/reference/interfaces/InjectQueryOptions"
+              "label": "Interfaces / InjectQueriesOptions",
+              "to": "framework/angular/reference/interfaces/InjectQueriesOptions"
             },
             {
               "label": "Interfaces / InvalidateOptions",
@@ -5406,6 +5406,10 @@
               "to": "framework/angular/reference/interfaces/QueryOptions"
             },
             {
+              "label": "Interfaces / QueryResource",
+              "to": "framework/angular/reference/interfaces/QueryResource"
+            },
+            {
               "label": "Interfaces / QueryState",
               "to": "framework/angular/reference/interfaces/QueryState"
             },
@@ -5466,6 +5470,10 @@
               "to": "framework/angular/reference/type-aliases/CreateMutationResult"
             },
             {
+              "label": "Types / CreateQueryOptions",
+              "to": "framework/angular/reference/type-aliases/CreateQueryOptions"
+            },
+            {
               "label": "Types / CreateQueryResult",
               "to": "framework/angular/reference/type-aliases/CreateQueryResult"
             },
@@ -5508,10 +5516,6 @@
             {
               "label": "Types / DefinedQueryObserverResult",
               "to": "framework/angular/reference/type-aliases/DefinedQueryObserverResult"
-            },
-            {
-              "label": "Types / DevtoolsFeature",
-              "to": "framework/angular/reference/type-aliases/DevtoolsFeature"
             },
             {
               "label": "Types / DistributiveOmit",
@@ -5598,6 +5602,10 @@
               "to": "framework/angular/reference/type-aliases/MutationScope"
             },
             {
+              "label": "Types / MutationStateOptions",
+              "to": "framework/angular/reference/type-aliases/MutationStateOptions"
+            },
+            {
               "label": "Types / MutationStatus",
               "to": "framework/angular/reference/type-aliases/MutationStatus"
             },
@@ -5626,10 +5634,6 @@
               "to": "framework/angular/reference/type-aliases/Override"
             },
             {
-              "label": "Types / PersistQueryClientFeature",
-              "to": "framework/angular/reference/type-aliases/PersistQueryClientFeature"
-            },
-            {
               "label": "Types / PlaceholderDataFunction",
               "to": "framework/angular/reference/type-aliases/PlaceholderDataFunction"
             },
@@ -5652,10 +5656,6 @@
             {
               "label": "Types / QueryCacheNotifyEvent",
               "to": "framework/angular/reference/type-aliases/QueryCacheNotifyEvent"
-            },
-            {
-              "label": "Types / QueryFeatures",
-              "to": "framework/angular/reference/type-aliases/QueryFeatures"
             },
             {
               "label": "Types / QueryFunction",
@@ -7254,6 +7254,30 @@
             {
               "label": "Devtools embedded panel (Angular Router)",
               "to": "framework/angular/examples/devtools-panel-angular-router"
+            },
+            {
+              "label": "Dynamic devtools",
+              "to": "framework/angular/examples/dynamic-devtools"
+            },
+            {
+              "label": "Dynamic queries",
+              "to": "framework/angular/examples/dynamic-queries"
+            },
+            {
+              "label": "Persister",
+              "to": "framework/angular/examples/basic-persister"
+            },
+            {
+              "label": "SSR",
+              "to": "framework/angular/examples/ssr"
+            },
+            {
+              "label": "SSR with persistence",
+              "to": "framework/angular/examples/ssr-persist"
+            },
+            {
+              "label": "toResource with Signal Forms",
+              "to": "framework/angular/examples/to-resource-signal-forms"
             }
           ]
         },
