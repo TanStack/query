@@ -62,7 +62,7 @@ Remove whichever legacy package name your application uses, along with its devto
 stable adapter includes `@tanstack/query-core` as a dependency, so remove a direct installation
 unless your application imports it independently.
 
-```bash
+```sh
 npm uninstall @ngneat/query @ngneat/query-devtools @tanstack/query-core
 npm install @tanstack/angular-query @tanstack/angular-query-devtools
 ```

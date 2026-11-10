@@ -46,7 +46,7 @@ recognize them. Replace the alias with the real stable package before running th
 
 Install the stable package, then preview the bundled migration:
 
-```bash
+```sh
 npm install @tanstack/angular-query
 
 # With the Angular CLI
@@ -80,7 +80,7 @@ plugin settings may need manual review.
 
 ## Replace the experimental package
 
-```bash
+```sh
 npm uninstall @tanstack/angular-query-experimental
 npm install @tanstack/angular-query
 ```
@@ -142,7 +142,7 @@ const queryClient = inject(QueryClient) // [!code ++]
 
 Devtools no longer ship as entrypoints of the core Angular package.
 
-```bash
+```sh
 npm install @tanstack/angular-query-devtools
 ```
 

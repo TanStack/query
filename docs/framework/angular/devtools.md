@@ -13,7 +13,7 @@ title: Devtools
 
 Add the devtools package (in addition to `@tanstack/angular-query`):
 
-```bash
+```sh
 npm install @tanstack/angular-query-devtools
 ```
 

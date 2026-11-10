@@ -7,7 +7,7 @@ _Angular Query is compatible with Angular v20.1 and higher._
 
 ### Angular CLI
 
-```bash
+```sh
 ng add @tanstack/angular-query
 ```
 
@@ -16,31 +16,31 @@ This installs the package and devtools, then configures an SSR-safe `QueryClient
 
 ### Package managers
 
-```bash
+```sh
 npm i @tanstack/angular-query
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/angular-query
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/angular-query
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/angular-query
 ```
 
 If you want Angular Query devtools, install the standalone devtools package as well:
 
-```bash
+```sh
 npm i @tanstack/angular-query-devtools
 ```
 
