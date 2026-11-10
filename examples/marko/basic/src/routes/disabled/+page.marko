@@ -4,7 +4,7 @@ import { listTodos } from '../../lib/api.ts'
 
 <page-header
   title="Disabled"
-  subtitle="A query with enabled: false. Nothing fetches until the button enables it, and then it fetches exactly once."
+  subtitle="A query with enabled: false. Nothing fetches until the button enables it. After that first fetch the data stays fresh for the client's staleTime, and once it goes stale it can refetch on focus or reconnect."
 />
 
 <query/todos options() {

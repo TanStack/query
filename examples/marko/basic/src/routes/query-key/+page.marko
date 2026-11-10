@@ -22,7 +22,7 @@ import { todoPageQueryOptions } from '../../lib/queries.ts'
   <span class="muted">key: ['todos', 'page', ${page}]</span>
   <button
     type="button"
-    disabled=todos.data?.nextCursor === null
+    disabled=todos.isPlaceholderData || !todos.data?.nextCursor
     onClick() {
       page += 1
     }

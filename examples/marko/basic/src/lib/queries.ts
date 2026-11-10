@@ -55,11 +55,10 @@ export const todoCountQueryOptions = (filter: 'all' | 'completed' | 'active') =>
   queryOptions({
     queryKey: todoCountQueryKey(filter),
     queryFn: async () => {
-      const page = await fetchTodoPage({ limit: 100 })
-      if (filter === 'all') return page.count
-      return page.todos.filter(
-        (todo) => todo.completed === (filter === 'completed'),
-      ).length
+      const todos = await listTodos()
+      if (filter === 'all') return todos.length
+      return todos.filter((todo) => todo.completed === (filter === 'completed'))
+        .length
     },
   })
 

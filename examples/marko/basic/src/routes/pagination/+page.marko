@@ -1,4 +1,4 @@
-import { todoPageQueryOptions } from '../../lib/queries.ts'
+import { PAGE_SIZE, todoPageQueryOptions } from '../../lib/queries.ts'
 
 <let/page=1>
 
@@ -18,19 +18,20 @@ import { todoPageQueryOptions } from '../../lib/queries.ts'
   <p class="error">${todos.error.message}</p>
 </else-if>
 <else>
+  <const/totalPages=Math.ceil(todos.data.count / PAGE_SIZE)>
   <todo-list todos=todos.data.todos/>
   <div class="row">
     <button
       type="button"
-      disabled=page === 1
+      disabled=page <= 1
       onClick() {
         page -= 1
       }
     >Previous</button>
-    <span class="muted">Page ${page} of ${Math.ceil(todos.data.count / 5)}</span>
+    <span class="muted">Page ${page} of ${totalPages}</span>
     <button
       type="button"
-      disabled=todos.data.nextCursor === null
+      disabled=todos.isPlaceholderData || !todos.data.nextCursor
       onClick() {
         page += 1
       }

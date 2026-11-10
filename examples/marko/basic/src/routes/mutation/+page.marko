@@ -23,6 +23,7 @@ import { todosQueryOptions } from '../../lib/queries.ts'
 <div class="row">
   <input
     type="text"
+    aria-label="Todo title"
     value=title
     onInput(e) {
       title = (e.target as HTMLInputElement).value

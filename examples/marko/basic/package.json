@@ -7,7 +7,7 @@
     "build": "marko-run build",
     "preview": "marko-run preview",
     "test:eslint": "eslint ./src",
-    "test:types": "mtc -p tsconfig.json"
+    "test:types": "marko-run build --output .cache/types-build && mtc -p tsconfig.json"
   },
   "dependencies": {
     "@tanstack/marko-query": "workspace:^",

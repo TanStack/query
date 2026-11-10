@@ -23,6 +23,7 @@ import { todoPageQueryOptions } from '../../lib/queries.ts'
 </await>
 
 <p class="muted">
-  Without the boundary the tag would render its pending state on the server,
-  because the cache is filled after the page starts rendering.
+  The await above already filled the request client, so the tag would find the
+  data even without the boundary. The boundary is for state that arrives outside
+  the render: a loader, a second request, or a cache filled by hand.
 </p>

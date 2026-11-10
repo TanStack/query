@@ -6,9 +6,9 @@ function resolvePort() {
     return DEFAULT_DEMO_PORT
   }
 
-  const parsedPort = Number.parseInt(envPort, 10)
+  const parsedPort = Number(envPort)
   const isValidPort =
-    Number.isInteger(parsedPort) && parsedPort > 0 && parsedPort <= 65535
+    /^\d+$/.test(envPort) && parsedPort > 0 && parsedPort <= 65535
 
   if (!isValidPort) {
     throw new Error(
