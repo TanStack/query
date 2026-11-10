@@ -5,14 +5,19 @@ Persistence integration for `@tanstack/angular-query`.
 ## Installation
 
 ```sh
-pnpm add @tanstack/angular-query-persist-client @tanstack/query-persist-client-core
+pnpm add @tanstack/angular-query-persist-client @tanstack/query-async-storage-persister
 ```
+
+`@tanstack/query-async-storage-persister` provides the persister used below. Any
+other persister works as well.
 
 ## Usage
 
 ```ts
 import { QueryClient, provideTanStackQuery } from '@tanstack/angular-query'
 import { withPersistQueryClient } from '@tanstack/angular-query-persist-client'
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
+import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
