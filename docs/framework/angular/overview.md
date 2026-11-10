@@ -1,6 +1,8 @@
 ---
 id: overview
 title: Overview
+redirect_from:
+  - framework/angular/zoneless
 ---
 
 The `@tanstack/angular-query` package offers a 1st-class API for using TanStack Query via Angular.
@@ -9,7 +11,7 @@ If you have any feedback, please contact us at the [TanStack Discord](https://tl
 
 ## Supported Angular Versions
 
-TanStack Query is compatible with Angular v20.1 and higher.
+TanStack Query is compatible with Angular v20.1 and higher. Because the adapter is built on signals, it supports zoneless change detection as well as Zone.js.
 
 TanStack Query (FKA React Query) is often described as the missing data-fetching library for web applications, but in more technical terms, it makes **fetching, caching, synchronizing and updating server state** in your web applications a breeze.
 
