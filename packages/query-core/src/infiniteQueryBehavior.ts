@@ -193,7 +193,7 @@ export function hasNextPage(
   options: InfiniteQueryPageParamsOptions<any, any>,
   data?: InfiniteData<unknown>,
 ): boolean {
-  if (!data) return false
+  if (!data || !options.getNextPageParam) return false
   return getNextPageParam(options, data) != null
 }
 
