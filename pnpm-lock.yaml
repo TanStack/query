@@ -6352,22 +6352,22 @@ importers:
   integrations/angular/cli-22:
     dependencies:
       '@angular/common':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2)
       '@angular/compiler':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4
       '@angular/core':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)
       '@angular/forms':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)))(rxjs@7.8.2)
       '@angular/platform-browser':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@angular/router':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)))(rxjs@7.8.2)
       '@tanstack/angular-query':
         specifier: workspace:*
@@ -6376,26 +6376,23 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/angular-query-devtools
       rxjs:
-        specifier: ~7.8.0
+        specifier: ^7.8.2
         version: 7.8.2
       tslib:
-        specifier: ^2.3.0
+        specifier: ^2.8.1
         version: 2.8.1
-      zone.js:
-        specifier: ~0.16.0
-        version: 0.16.1
     devDependencies:
       '@angular/build':
-        specifier: ^22.0.0
+        specifier: ^22.2.5
         version: 22.2.5(46fc5ca31db6cb271ad7edc37360be27)
       '@angular/cli':
-        specifier: ^22.0.0
+        specifier: ^22.2.5
         version: 22.2.5(@types/node@24.19.2)(chokidar@5.0.0)
       '@angular/compiler-cli':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
       typescript:
-        specifier: 6.0.3
+        specifier: ^6.0.3
         version: 6.0.3
 
   integrations/lit/vite:
