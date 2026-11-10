@@ -42,10 +42,11 @@ function addDevtoolsDependency(): Rule {
   return (tree, context) => {
     if (hasPackageDependency(tree, DEVTOOLS_PACKAGE_NAME)) return tree
 
+    // A caret range lets the devtools update together with the query package.
     addPackageJsonDependency(tree, {
       type: NodeDependencyType.Default,
       name: DEVTOOLS_PACKAGE_NAME,
-      version: DEVTOOLS_PACKAGE_VERSION,
+      version: `^${DEVTOOLS_PACKAGE_VERSION}`,
       overwrite: false,
     })
     context.addTask(new NodePackageInstallTask())

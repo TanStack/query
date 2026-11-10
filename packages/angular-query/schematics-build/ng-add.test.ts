@@ -3,6 +3,7 @@ import angularQueryPackage from '../package.json' with { type: 'json' }
 import {
   SchematicTestRunner,
   angularCollection,
+  devtoolsPackage,
   queryCollection,
 } from './test-utils'
 
@@ -64,6 +65,22 @@ describe('ng-add schematic', () => {
     expect(queryRunner.tasks).toStrictEqual([
       expect.objectContaining({ name: 'node-package' }),
     ])
+  })
+
+  it('adds the devtools with a caret range so they update with Angular Query', async () => {
+    const tree = await createAngularApplication()
+    const result = await queryRunner.runSchematic(
+      'ng-add',
+      { project: 'test-app' },
+      tree,
+    )
+    const packageJson = JSON.parse(result.readContent('/package.json')) as {
+      dependencies: Record<string, string>
+    }
+
+    expect(packageJson.dependencies[devtoolsPackage.name]).toBe(
+      `^${devtoolsPackage.version}`,
+    )
   })
 
   it.each([
