@@ -648,10 +648,10 @@ export class QueryObserver<
       let placeholderData
 
       // Memoize placeholder data
-      if (
+      const isMemoizedPlaceholder =
         prevResult?.isPlaceholderData &&
         options.placeholderData === prevResultOptions?.placeholderData
-      ) {
+      if (isMemoizedPlaceholder) {
         placeholderData = prevResult.data
         // we have to skip select when reading this memoization
         // because prevResult.data is already "selected"
@@ -669,7 +669,8 @@ export class QueryObserver<
             : options.placeholderData
       }
 
-      if (placeholderData !== undefined) {
+      // A memoized placeholder stays one even when `select` turned it into undefined
+      if (isMemoizedPlaceholder || placeholderData !== undefined) {
         status = 'success'
         data = replaceData(
           prevResult?.data,

@@ -7130,4 +7130,64 @@ describe('useQuery', () => {
 
     expect(queryFn.mock.calls).toStrictEqual([['a'], ['b']])
   })
+
+  it('should not loop when a query with select and keepPreviousData is disabled', async () => {
+    const key = createKey()
+
+    function Page() {
+      const [id, setId] = React.useState('a')
+      const { data } = useQuery({
+        queryKey: [...key, id],
+        queryFn: () => [id],
+        enabled: id !== '',
+        placeholderData: keepPreviousData,
+        select: (items) => items.find((item) => item === id),
+      })
+
+      return (
+        <button onClick={() => setId('')}>{`picked: ${data ?? 'none'}`}</button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('picked: a')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('picked: none')).toBeInTheDocument()
+  })
+
+  it('should settle as placeholder data when select maps keepPreviousData to undefined', async () => {
+    const key = createKey()
+    const states: Array<UseQueryResult<string | undefined>> = []
+
+    function Page() {
+      const [id, setId] = React.useState('a')
+      const state = useQuery({
+        queryKey: [...key, id],
+        queryFn: () => [id],
+        enabled: id !== '',
+        placeholderData: keepPreviousData,
+        select: (items) => items.find((item) => item === id),
+      })
+      states.push(state)
+
+      return (
+        <button onClick={() => setId('')}>{`status: ${state.status}`}</button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('status: success')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(states.at(-1)).toMatchObject({
+      status: 'success',
+      isPlaceholderData: true,
+      data: undefined,
+    })
+  })
 })
