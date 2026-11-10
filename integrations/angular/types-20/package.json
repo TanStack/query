@@ -1,19 +1,19 @@
 {
-  "name": "angular-types-22",
+  "name": "@tanstack/query-integration-angular-types-20",
   "private": true,
   "type": "module",
   "scripts": {
     "test:types": "ngc --project tsconfig.json"
   },
   "devDependencies": {
-    "@angular/common": "^22.0.0",
-    "@angular/compiler": "^22.0.0",
-    "@angular/compiler-cli": "^22.0.0",
-    "@angular/core": "^22.0.0",
+    "@angular/common": "~20.1.0",
+    "@angular/compiler": "~20.1.0",
+    "@angular/compiler-cli": "~20.1.0",
+    "@angular/core": "~20.1.0",
     "@tanstack/angular-query": "workspace:*",
     "@tanstack/angular-query-devtools": "workspace:*",
     "@tanstack/angular-query-persist-client": "workspace:*",
-    "typescript": "catalog:"
+    "typescript": "5.8.3"
   },
   "nx": {
     "targets": {

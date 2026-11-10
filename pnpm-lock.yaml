@@ -6268,87 +6268,6 @@ importers:
         specifier: ^3.3.13
         version: 3.3.13(typescript@6.0.3)
 
-  integrations/angular-types-20:
-    devDependencies:
-      '@angular/common':
-        specifier: ~20.1.0
-        version: 20.1.8(@angular/core@20.1.8(@angular/compiler@20.1.8)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
-      '@angular/compiler':
-        specifier: ~20.1.0
-        version: 20.1.8
-      '@angular/compiler-cli':
-        specifier: ~20.1.0
-        version: 20.1.8(@angular/compiler@20.1.8)(supports-color@10.2.2)(typescript@5.8.3)
-      '@angular/core':
-        specifier: ~20.1.0
-        version: 20.1.8(@angular/compiler@20.1.8)(rxjs@7.8.2)(zone.js@0.15.0)
-      '@tanstack/angular-query':
-        specifier: workspace:*
-        version: link:../../packages/angular-query
-      '@tanstack/angular-query-devtools':
-        specifier: workspace:*
-        version: link:../../packages/angular-query-devtools
-      '@tanstack/angular-query-persist-client':
-        specifier: workspace:*
-        version: link:../../packages/angular-query-persist-client
-      typescript:
-        specifier: 5.8.3
-        version: 5.8.3
-
-  integrations/angular-types-21:
-    devDependencies:
-      '@angular/common':
-        specifier: ^21.0.0
-        version: 21.2.26(@angular/core@21.2.26(@angular/compiler@21.2.26)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
-      '@angular/compiler':
-        specifier: ^21.0.0
-        version: 21.2.26
-      '@angular/compiler-cli':
-        specifier: ^21.0.0
-        version: 21.2.26(@angular/compiler@21.2.26)(supports-color@10.2.2)(typescript@5.9.3)
-      '@angular/core':
-        specifier: ^21.0.0
-        version: 21.2.26(@angular/compiler@21.2.26)(rxjs@7.8.2)(zone.js@0.15.0)
-      '@tanstack/angular-query':
-        specifier: workspace:*
-        version: link:../../packages/angular-query
-      '@tanstack/angular-query-devtools':
-        specifier: workspace:*
-        version: link:../../packages/angular-query-devtools
-      '@tanstack/angular-query-persist-client':
-        specifier: workspace:*
-        version: link:../../packages/angular-query-persist-client
-      typescript:
-        specifier: 5.9.3
-        version: 5.9.3
-
-  integrations/angular-types-22:
-    devDependencies:
-      '@angular/common':
-        specifier: ^22.0.0
-        version: 22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
-      '@angular/compiler':
-        specifier: ^22.0.0
-        version: 22.2.4
-      '@angular/compiler-cli':
-        specifier: ^22.0.0
-        version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
-      '@angular/core':
-        specifier: ^22.0.0
-        version: 22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0)
-      '@tanstack/angular-query':
-        specifier: workspace:*
-        version: link:../../packages/angular-query
-      '@tanstack/angular-query-devtools':
-        specifier: workspace:*
-        version: link:../../packages/angular-query-devtools
-      '@tanstack/angular-query-persist-client':
-        specifier: workspace:*
-        version: link:../../packages/angular-query-persist-client
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.3
-
   integrations/angular/cli-22:
     dependencies:
       '@angular/common':
@@ -6393,6 +6312,87 @@ importers:
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
+        version: 6.0.3
+
+  integrations/angular/types-20:
+    devDependencies:
+      '@angular/common':
+        specifier: ~20.1.0
+        version: 20.1.8(@angular/core@20.1.8(@angular/compiler@20.1.8)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+      '@angular/compiler':
+        specifier: ~20.1.0
+        version: 20.1.8
+      '@angular/compiler-cli':
+        specifier: ~20.1.0
+        version: 20.1.8(@angular/compiler@20.1.8)(supports-color@10.2.2)(typescript@5.8.3)
+      '@angular/core':
+        specifier: ~20.1.0
+        version: 20.1.8(@angular/compiler@20.1.8)(rxjs@7.8.2)(zone.js@0.15.0)
+      '@tanstack/angular-query':
+        specifier: workspace:*
+        version: link:../../../packages/angular-query
+      '@tanstack/angular-query-devtools':
+        specifier: workspace:*
+        version: link:../../../packages/angular-query-devtools
+      '@tanstack/angular-query-persist-client':
+        specifier: workspace:*
+        version: link:../../../packages/angular-query-persist-client
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+
+  integrations/angular/types-21:
+    devDependencies:
+      '@angular/common':
+        specifier: ^21.0.0
+        version: 21.2.26(@angular/core@21.2.26(@angular/compiler@21.2.26)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2)
+      '@angular/compiler':
+        specifier: ^21.0.0
+        version: 21.2.26
+      '@angular/compiler-cli':
+        specifier: ^21.0.0
+        version: 21.2.26(@angular/compiler@21.2.26)(supports-color@10.2.2)(typescript@5.9.3)
+      '@angular/core':
+        specifier: ^21.0.0
+        version: 21.2.26(@angular/compiler@21.2.26)(rxjs@7.8.2)(zone.js@0.16.1)
+      '@tanstack/angular-query':
+        specifier: workspace:*
+        version: link:../../../packages/angular-query
+      '@tanstack/angular-query-devtools':
+        specifier: workspace:*
+        version: link:../../../packages/angular-query-devtools
+      '@tanstack/angular-query-persist-client':
+        specifier: workspace:*
+        version: link:../../../packages/angular-query-persist-client
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
+  integrations/angular/types-22:
+    devDependencies:
+      '@angular/common':
+        specifier: ^22.0.0
+        version: 22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2)
+      '@angular/compiler':
+        specifier: ^22.0.0
+        version: 22.2.4
+      '@angular/compiler-cli':
+        specifier: ^22.0.0
+        version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@angular/core':
+        specifier: ^22.0.0
+        version: 22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)
+      '@tanstack/angular-query':
+        specifier: workspace:*
+        version: link:../../../packages/angular-query
+      '@tanstack/angular-query-devtools':
+        specifier: workspace:*
+        version: link:../../../packages/angular-query-devtools
+      '@tanstack/angular-query-persist-client':
+        specifier: workspace:*
+        version: link:../../../packages/angular-query-persist-client
+      typescript:
+        specifier: 'catalog:'
         version: 6.0.3
 
   integrations/lit/vite:
@@ -25006,9 +25006,9 @@ snapshots:
       rxjs: 7.8.2
       tslib: 2.8.1
 
-  '@angular/common@21.2.26(@angular/core@21.2.26(@angular/compiler@21.2.26)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)':
+  '@angular/common@21.2.26(@angular/core@21.2.26(@angular/compiler@21.2.26)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2)':
     dependencies:
-      '@angular/core': 21.2.26(@angular/compiler@21.2.26)(rxjs@7.8.2)(zone.js@0.15.0)
+      '@angular/core': 21.2.26(@angular/compiler@21.2.26)(rxjs@7.8.2)(zone.js@0.16.1)
       rxjs: 7.8.2
       tslib: 2.8.1
 
@@ -25090,13 +25090,13 @@ snapshots:
       '@angular/compiler': 20.1.8
       zone.js: 0.15.0
 
-  '@angular/core@21.2.26(@angular/compiler@21.2.26)(rxjs@7.8.2)(zone.js@0.15.0)':
+  '@angular/core@21.2.26(@angular/compiler@21.2.26)(rxjs@7.8.2)(zone.js@0.16.1)':
     dependencies:
       rxjs: 7.8.2
       tslib: 2.8.1
     optionalDependencies:
       '@angular/compiler': 21.2.26
-      zone.js: 0.15.0
+      zone.js: 0.16.1
 
   '@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0)':
     dependencies:
