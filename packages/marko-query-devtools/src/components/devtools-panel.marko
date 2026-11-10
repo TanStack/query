@@ -15,25 +15,33 @@ static function noop() {}
 <lifecycle
   onMount() {
     if (!input.production && process.env.NODE_ENV !== "development") return;
-    void import("@tanstack/query-devtools").then(({ TanstackQueryDevtoolsPanel }) => {
-      if (holder.destroyed) return;
-      holder.devtools = new TanstackQueryDevtoolsPanel({
-        client: input.client ? input.client() : getQueryClient($global),
-        queryFlavor: "Marko Query",
-        version: "5",
-        onlineManager,
-        buttonPosition: "bottom-left",
-        position: "bottom",
-        initialIsOpen: true,
-        errorTypes: input.errorTypes?.() ?? [],
-        styleNonce: input.styleNonce,
-        shadowDOMTarget: input.shadowDOMTarget?.(),
-        onClose: input.onClose ?? noop,
-        hideDisabledQueries: input.hideDisabledQueries ?? false,
-        theme: input.theme ?? "system",
+    void import("@tanstack/query-devtools")
+      .then(({ TanstackQueryDevtoolsPanel }) => {
+        if (holder.destroyed) return;
+        const devtools = new TanstackQueryDevtoolsPanel({
+          client: input.client ? input.client() : getQueryClient($global),
+          queryFlavor: "Marko Query",
+          version: "5",
+          onlineManager,
+          buttonPosition: "bottom-left",
+          position: "bottom",
+          initialIsOpen: true,
+          errorTypes: input.errorTypes?.() ?? [],
+          styleNonce: input.styleNonce,
+          shadowDOMTarget: input.shadowDOMTarget?.(),
+          onClose: input.onClose ?? noop,
+          hideDisabledQueries: input.hideDisabledQueries ?? false,
+          theme: input.theme ?? "system",
+        });
+        devtools.mount(host());
+        holder.devtools = devtools;
+      })
+      .catch((error) => {
+        console.warn(
+          "[marko-query-devtools] The devtools panel failed to load. The page keeps running without it.",
+          error,
+        );
       });
-      holder.devtools.mount(host());
-    });
   }
   onUpdate() {
     const devtools = holder.devtools;

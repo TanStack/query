@@ -13,24 +13,32 @@ export interface Input extends DevtoolsOptions {
 <lifecycle
   onMount() {
     if (!input.production && process.env.NODE_ENV !== "development") return;
-    void import("@tanstack/query-devtools").then(({ TanstackQueryDevtools }) => {
-      if (holder.destroyed) return;
-      holder.devtools = new TanstackQueryDevtools({
-        client: input.client ? input.client() : getQueryClient($global),
-        queryFlavor: "Marko Query",
-        version: "5",
-        onlineManager,
-        initialIsOpen: input.initialIsOpen ?? false,
-        buttonPosition: input.buttonPosition ?? "bottom-right",
-        position: input.position ?? "bottom",
-        errorTypes: input.errorTypes?.() ?? [],
-        styleNonce: input.styleNonce,
-        shadowDOMTarget: input.shadowDOMTarget?.(),
-        hideDisabledQueries: input.hideDisabledQueries ?? false,
-        theme: input.theme ?? "system",
+    void import("@tanstack/query-devtools")
+      .then(({ TanstackQueryDevtools }) => {
+        if (holder.destroyed) return;
+        const devtools = new TanstackQueryDevtools({
+          client: input.client ? input.client() : getQueryClient($global),
+          queryFlavor: "Marko Query",
+          version: "5",
+          onlineManager,
+          initialIsOpen: input.initialIsOpen ?? false,
+          buttonPosition: input.buttonPosition ?? "bottom-right",
+          position: input.position ?? "bottom",
+          errorTypes: input.errorTypes?.() ?? [],
+          styleNonce: input.styleNonce,
+          shadowDOMTarget: input.shadowDOMTarget?.(),
+          hideDisabledQueries: input.hideDisabledQueries ?? false,
+          theme: input.theme ?? "system",
+        });
+        devtools.mount(host());
+        holder.devtools = devtools;
+      })
+      .catch((error) => {
+        console.warn(
+          "[marko-query-devtools] The devtools failed to load. The page keeps running without them.",
+          error,
+        );
       });
-      holder.devtools.mount(host());
-    });
   }
   onUpdate() {
     const devtools = holder.devtools;

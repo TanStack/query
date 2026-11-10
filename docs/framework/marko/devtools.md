@@ -43,6 +43,8 @@ You do not import the devtools tags. The Marko compiler finds `<query-devtools>`
 
 By default, Marko Query Devtools are only enabled when `process.env.NODE_ENV === 'development'`. In other builds, the tags load nothing. During development, the devtools load only in the browser, after the tag mounts. On the server, the tags render an empty container element.
 
+If the devtools chunk fails to load, for example when the browser is offline, a deploy is stale, or a Content Security Policy blocks it, the tag logs one warning and the page keeps running without the devtools. The failure does not become an unhandled rejection.
+
 ## Floating Mode
 
 Floating mode mounts the devtools as a fixed, floating element and adds a toggle in the corner of the screen to show and hide the panel. The toggle state is stored in localStorage and restored across reloads.
@@ -89,6 +91,7 @@ Marko serializes the input of the tags for the browser. So the inputs that hold 
 - `hideDisabledQueries?: boolean`
   - Defaults to `false`.
   - Set this to true to hide disabled queries from the devtools panel.
+  - Read once, when the devtools mount. The devtools package has no setter for it, so a change after mount does not reach the open panel. The devtools Settings menu has its own "Disabled Queries" choice, which it saves in `localStorage` and prefers over this input.
 - `theme?: "light" | "dark" | "system"`
   - Defaults to `system`.
   - Set this to change the theme of the devtools panel. The tags always pass a theme to the devtools, so the theme selected in the devtools Settings menu does not apply.
@@ -131,6 +134,7 @@ Render the tag as high in the app as possible. The closer it is to the root of t
 - `hideDisabledQueries?: boolean`
   - Defaults to `false`.
   - Set this to true to hide disabled queries from the devtools panel.
+  - Read once, when the devtools mount. The devtools package has no setter for it, so a change after mount does not reach the open panel. The devtools Settings menu has its own "Disabled Queries" choice, which it saves in `localStorage` and prefers over this input.
 - `theme?: "light" | "dark" | "system"`
   - Defaults to `system`.
   - Set this to change the theme of the devtools panel. The tags always pass a theme to the devtools, so the theme selected in the devtools Settings menu does not apply.
