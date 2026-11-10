@@ -11,6 +11,8 @@ To check the types of your templates, use [`@marko/type-check`](https://github.c
 
 ```ts
 // src/lib/api.ts
+const API_URL = 'http://localhost:3000' // the server has no page origin, so the URL must be absolute
+
 export type Todo = {
   id: number
   title: string
@@ -21,13 +23,13 @@ export type CreateTodoInput = {
 }
 
 export async function fetchTodos(): Promise<Todo[]> {
-  const response = await fetch('/api/todos')
+  const response = await fetch(`${API_URL}/api/todos`)
   if (!response.ok) throw new Error('Failed to fetch todos')
   return response.json() as Promise<Todo[]>
 }
 
 export async function addTodo(input: CreateTodoInput): Promise<Todo> {
-  const response = await fetch('/api/todos', {
+  const response = await fetch(`${API_URL}/api/todos`, {
     method: 'POST',
     body: JSON.stringify(input),
   })

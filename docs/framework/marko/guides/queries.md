@@ -100,6 +100,38 @@ export interface Input {
 
 The query key is used for caching, refetching, and sharing data between tags. When `input.userId` changes, the tag reads the query for the new key.
 
+## Stale Data and Refetching
+
+Cached data is **fresh** for `staleTime` milliseconds after the fetch that produced it, then **stale**. The default is `0`, so data is stale as soon as it arrives.
+
+Becoming stale does not start a fetch. `staleTime` is a comparison against the time of the last fetch, not a timer that fires a request. A stale query that nothing touches keeps its cached data and makes no request.
+
+Staleness decides whether a refetch happens, not when. These events ask for a refetch, and each one fetches only if the data is stale:
+
+| Event | Option | Default |
+| --- | --- | --- |
+| A tag mounts, or a second tag reads the same key | `refetchOnMount` | `true` |
+| The window regains focus | `refetchOnWindowFocus` | `true` |
+| The network reconnects | `refetchOnReconnect` | `true` |
+| `invalidateQueries` marks the query stale | — | — |
+
+Two cases ignore `staleTime`:
+
+- A query with no cached data always fetches when a tag mounts, whatever `staleTime` is set to.
+- `refetchInterval` fetches on its own timer, independent of `staleTime`. See [Polling](#polling).
+
+A disabled query (`enabled: false`) does not fetch on any of these events. `refetch()` still works on it.
+
+Set `staleTime` to `Infinity` to keep data fresh until `invalidateQueries` marks it stale. Set it to `'static'` to keep data fresh even then: `invalidateQueries` has no effect, and `refetchOnMount`, `refetchOnWindowFocus`, and `refetchOnReconnect` set to `'always'` are blocked too.
+
+```marko
+<query/todos options=() => ({
+  queryKey: ["todos"],
+  queryFn: fetchTodos,
+  staleTime: 60 * 1000,
+})/>
+```
+
 ## Refetching
 
 The result includes `refetch`:

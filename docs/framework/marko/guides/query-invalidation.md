@@ -20,7 +20,8 @@ client.invalidateQueries({
 When a query is invalidated:
 
 - It is marked stale, overriding any `staleTime`
-- If a tag is observing the query, the query refetches in the background
+- If a tag is observing the query and the query is enabled, the query refetches in the background
+- If every tag that observes the query is disabled (`enabled: false`), the query is marked stale but does not refetch. It refetches when a tag enables it again
 
 ## Invalidation from Mutations
 

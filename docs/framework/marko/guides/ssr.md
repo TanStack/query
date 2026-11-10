@@ -3,7 +3,7 @@ id: ssr
 title: Server Rendering & Hydration
 ---
 
-Marko 6 renders pages on the server and then resumes them in the browser. Marko Query is built for this model. Data that you fetch on the server is rendered into the HTML and sent with the page, so the browser starts with the same cache and does not fetch that data again.
+Marko 6 renders pages on the server and then resumes them in the browser. Marko Query is built for this model. Data that you fetch on the server is rendered into the HTML and sent with the page, so the browser starts with the same cache and does not fetch that data again while it is fresh.
 
 Read [The Query Client](./query-client.md) first. This guide depends on how Marko Query creates one client per request.
 
@@ -150,7 +150,7 @@ import { reportQuery } from "../../lib/queries";
 </try>
 ```
 
-The `<query>` tag inside `<await>` renders after the cache has the data, and Marko sends the cache entry of that tag with the streamed content. So the browser does not fetch it again. If `query` rejects, `<@catch>` renders the error.
+The `<query>` tag inside `<await>` renders after the cache has the data, and Marko sends the cache entry of that tag with the streamed content. So the browser does not fetch it again while it is fresh. If `query` rejects, `<@catch>` renders the error.
 
 Pros:
 
@@ -189,23 +189,42 @@ The boundary hydrates during the server render, and again when it mounts in the 
 
 On the server, the boundary hydrates the client of the request. So its state also reaches the browser in the two ways that are described above: in `$global`, and with the query tags that read it. In the browser, the boundary hydrates the client of the page, or the client that you pass in `client`.
 
-To hydrate a client other than the client of the page, pass it in `client`. The tags inside the boundary must use the same client, so pass the same `client` to them:
+To hydrate a client other than the client of the page, pass it in `client`. The tags inside the boundary must use the same client, so pass the same `client` to them.
+
+Resolve that client inside the template, from a module or from `$global`. Never pass a `QueryClient` as a tag input: when a tag resumes in the browser, Marko serializes its input, and a `QueryClient` is not serializable, so the render fails with `TypeError: Unable to serialize "input.client"`.
+
+```ts
+// src/lib/report-client.ts
+import { QueryClient } from '@tanstack/marko-query'
+
+const KEY = Symbol.for('report-client')
+
+/** One client per request on the server, one per page in the browser. */
+export function getReportClient($global: object): QueryClient {
+  const scope = $global as Record<symbol, QueryClient | undefined>
+  return (scope[KEY] ??= new QueryClient())
+}
+```
+
+The parameter is `object`, like `getQueryClient`, so a Marko Run handler context and a template's `$global` both fit.
 
 ```marko
 // src/tags/report-card/index.marko
-import type { DehydratedState, QueryClient } from "@tanstack/marko-query";
+import type { DehydratedState } from "@tanstack/marko-query";
 import { reportQuery } from "../../lib/queries";
+import { getReportClient } from "../../lib/report-client";
 
 export interface Input {
   state: DehydratedState;
-  client: QueryClient;
 }
 
-<hydration-boundary state=input.state client=() => input.client>
-  <query/report options=() => reportQuery client=() => input.client/>
+<hydration-boundary state=input.state client=() => getReportClient($global)>
+  <query/report options=() => reportQuery client=() => getReportClient($global)/>
   <p>${report.data?.summary}</p>
 </hydration-boundary>
 ```
+
+The handler that prefetches for this card calls `getReportClient(context)` too, so the render and the handler use the same client.
 
 ### Not Prefetching
 

@@ -92,4 +92,4 @@ Use `combine` when a template wants one derived value instead of an array of que
 </else>
 ```
 
-Having the same query key more than once in the `queries` array can cause those entries to share cached data. Deduplicate repeated keys first if each rendered row needs independent query state.
+Two entries with the same query key share one cache entry and one fetch. Give each row a distinct key when the rows need different data or independent query state, and deduplicate only when the rows can share data.
