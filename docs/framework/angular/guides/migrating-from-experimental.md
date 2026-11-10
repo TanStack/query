@@ -358,6 +358,7 @@ The factory runs once per injector, in an injection context, only in the browser
 Create persisters that access `localStorage` inside this factory.
 
 Persistence manages its restoration state automatically through `withPersistQueryClient`.
+See [persistQueryClient](../plugins/persistQueryClient.md) for the options and persisters.
 
 ## New behavior that needs no migration
 

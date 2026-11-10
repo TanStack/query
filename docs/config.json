@@ -7432,6 +7432,15 @@
           ]
         },
         {
+          "label": "angular",
+          "children": [
+            {
+              "label": "persistQueryClient",
+              "to": "framework/angular/plugins/persistQueryClient"
+            }
+          ]
+        },
+        {
           "label": "preact",
           "children": [
             {
