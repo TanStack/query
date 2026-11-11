@@ -44,7 +44,7 @@ static function raise(error: unknown): never {
   InfiniteQueryObserver,
 ) as Snapshot<CreateInfiniteQueryResult<TData, TError>>)>
 <let/result=snapshot.result>
-<let/thrown=snapshot.error>
+<let/thrown=snapshot.thrown>
 <const/holder={} as { binding?: QueryBinding<InfiniteQueryObserver> }>
 <const/connect=(() =>
   (holder.binding ??= new QueryBinding<InfiniteQueryObserver>(
@@ -75,7 +75,7 @@ static function raise(error: unknown): never {
   }
 />
 
-<if=thrown !== undefined>${raise(thrown)}</if>
+<if=thrown>${raise(thrown.error)}</if>
 
 <return=({
   ...result,

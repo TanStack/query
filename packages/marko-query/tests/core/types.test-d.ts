@@ -54,6 +54,17 @@ describe('type definitions', () => {
     >()
   })
 
+  it('infiniteQueryOptions accepts subscribed', () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['feed'],
+      queryFn: ({ pageParam }) => ({ items: [pageParam] }),
+      initialPageParam: 0,
+      getNextPageParam: () => 1,
+      subscribed: false,
+    })
+    expectTypeOf(options.subscribed).toEqualTypeOf<boolean | undefined>()
+  })
+
   it('mutationOptions keeps types and mutation results narrow', () => {
     const options = mutationOptions({
       mutationKey: ['add'],

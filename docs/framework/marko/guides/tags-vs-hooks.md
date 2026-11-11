@@ -109,7 +109,7 @@ By default, errors are in the result: check `isError` and read `error`. To handl
 </try>
 ```
 
-`<query>`, `<queries>`, `<infinite-query>`, and `<mutation>` support `throwOnError`.
+`<query>`, `<queries>`, `<infinite-query>`, and `<mutation>` support `throwOnError`. The throw also happens when the error itself is `undefined`, so a `queryFn` that calls `Promise.reject()` reaches `<@catch>`.
 
 ## No Provider
 

@@ -134,7 +134,30 @@ always adds a new `Mutation`, so the boundary filters the ones the client
 already has, by state object identity and by `mutationKey` plus `submittedAt`.
 Mutations without a `mutationKey` are matched by identity only.
 
-`throwOnError` throws during render, so the nearest `<try>` catches it.
+`throwOnError` throws during render, so the nearest `<try>` catches it. That
+includes an error that is `undefined`: the tag carries the throw request as a
+wrapper (`{ error }`), so a `queryFn` that calls `Promise.reject()` reaches
+`<@catch>` instead of being treated as success.
+
+## Subscribing
+
+`<query>`, `<infinite-query>` and `<queries>` take `subscribed`, `true` by
+default. With `subscribed: false` the tag reads the result once and then stops:
+no fetch starts, and no later cache update reaches the tag. The query stays
+enabled and other tags on the same key still fetch it, so this is a property of
+the tag, not of the query.
+
+```marko
+<query/todos options=() => ({ ...todosQuery, subscribed: false })/>
+```
+
+`<queries>` takes one flag for the whole tag, so it is not accepted inside an
+entry of `queries`. A tag that does not subscribe reports the cache's real
+`fetchStatus`: an uncached query shows `idle` rather than a fetch that never
+starts.
+
+`examples/marko/basic` renders two tags on one key at `/subscribed`, one of them
+frozen, so the difference is visible.
 
 ## Devtools
 

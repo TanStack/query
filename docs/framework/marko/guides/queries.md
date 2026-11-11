@@ -108,12 +108,12 @@ Becoming stale does not start a fetch. `staleTime` is a comparison against the t
 
 Staleness decides whether a refetch happens, not when. These events ask for a refetch, and each one fetches only if the data is stale:
 
-| Event | Option | Default |
-| --- | --- | --- |
-| A tag mounts, or a second tag reads the same key | `refetchOnMount` | `true` |
-| The window regains focus | `refetchOnWindowFocus` | `true` |
-| The network reconnects | `refetchOnReconnect` | `true` |
-| `invalidateQueries` marks the query stale | — | — |
+| Event                                            | Option                 | Default |
+| ------------------------------------------------ | ---------------------- | ------- |
+| A tag mounts, or a second tag reads the same key | `refetchOnMount`       | `true`  |
+| The window regains focus                         | `refetchOnWindowFocus` | `true`  |
+| The network reconnects                           | `refetchOnReconnect`   | `true`  |
+| `invalidateQueries` marks the query stale        | —                      | —       |
 
 Two cases ignore `staleTime`:
 
@@ -121,6 +121,8 @@ Two cases ignore `staleTime`:
 - `refetchInterval` fetches on its own timer, independent of `staleTime`. See [Polling](#polling).
 
 A disabled query (`enabled: false`) does not fetch on any of these events. `refetch()` still works on it.
+
+A query tag also stops fetching and stops receiving updates when it sets `subscribed: false`. The query itself stays enabled, so other tags on the same key keep fetching it. See [Rendering Without Subscribing](./parallel-queries.md#rendering-without-subscribing).
 
 Set `staleTime` to `Infinity` to keep data fresh until `invalidateQueries` marks it stale. Set it to `'static'` to keep data fresh even then: `invalidateQueries` has no effect, and `refetchOnMount`, `refetchOnWindowFocus`, and `refetchOnReconnect` set to `'always'` are blocked too.
 

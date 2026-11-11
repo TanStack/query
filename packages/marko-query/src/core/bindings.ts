@@ -33,6 +33,16 @@ type Defaulted = DefaultedQueryObserverOptions<any, any, any, any, any> & {
 }
 
 /**
+ * An error that `throwOnError` asks to throw. It is a wrapper, not the error
+ * itself, so that a query which rejects with `undefined` is still
+ * distinguishable from a query that did not fail.
+ */
+export interface Thrown {
+  /** The error to throw. It may be `undefined`. */
+  error: unknown
+}
+
+/**
  * What a tag renders on the server and resumes with in the browser: the
  * result without its functions, the dehydrated cache entries it observes
  * (server only), and the error to throw when `throwOnError` asks for it.
@@ -43,7 +53,7 @@ export interface Snapshot<TResult> {
   /** The dehydrated cache entries that the result observes. */
   hydration?: DehydratedState
   /** The error to throw when `throwOnError` asks for it. */
-  error?: unknown
+  thrown?: Thrown
 }
 
 /**
@@ -63,15 +73,24 @@ export function toPlainResult<T extends object>(result: T): T {
 /**
  * Applies the client's defaults to query options, and sets how the result is
  * computed while the cache is restoring.
+ *
+ * `_optimisticResults` is left unset when the tag will not subscribe: core
+ * would otherwise predict a fetch that never starts, and the result would
+ * report `isFetching: true` forever.
  * @param client - The client that holds the defaults.
  * @param options - The options of the query.
  * @returns The options with the defaults applied.
  */
-function defaultOptions(client: QueryClient, options: AnyOptions): Defaulted {
+function defaultOptions(
+  client: QueryClient,
+  options: AnyOptions & { subscribed?: boolean },
+): Defaulted {
   const defaulted = client.defaultQueryOptions(options)
   defaulted._optimisticResults = isRestoring(client)
     ? 'isRestoring'
-    : 'optimistic'
+    : options.subscribed === false
+      ? undefined
+      : 'optimistic'
   return defaulted
 }
 
@@ -79,19 +98,19 @@ function defaultOptions(client: QueryClient, options: AnyOptions): Defaulted {
  * Whether `throwOnError` asks to throw `error`.
  * @param result - The result to check.
  * @param observer - The observer that made the result.
- * @returns The error to throw, or `undefined`.
+ * @returns The error to throw, wrapped, or `undefined`.
  */
 function thrownError(
   result: QueryObserverResult<any, any>,
   observer: AnyQueryObserver,
-): unknown {
+): Thrown | undefined {
   const query = observer.getCurrentQuery()
   if (
     result.isError &&
     !result.isFetching &&
     shouldThrowError(observer.options.throwOnError, [result.error, query])
   ) {
-    return result.error
+    return { error: result.error }
   }
   return undefined
 }
@@ -137,14 +156,14 @@ export function readQuery<TResult>(
   return {
     result: toPlainResult(result) as TResult,
     hydration: dehydrateHashes(client, new Set([defaulted.queryHash])),
-    error: thrownError(result, observer),
+    thrown: thrownError(result, observer),
   }
 }
 
 /** Receives each result and the error `throwOnError` asks to throw, if any. */
 export type QueryListener = (
   result: QueryObserverResult<any, any>,
-  thrownError: unknown,
+  thrown: Thrown | undefined,
 ) => void
 
 /**
@@ -186,7 +205,10 @@ export class QueryBinding<TObserver extends AnyQueryObserver = QueryObserver> {
       !isRestoring(this.client) && this.#options.subscribed !== false
     this.#unsubscribe = subscribe
       ? this.observer.subscribe(
-          notifyManager.batchCalls((result) => this.#emit(result)),
+          notifyManager.batchCalls((result) => {
+            // A notification queued before `destroy` still runs after it.
+            if (!this.#destroyed) this.#emit(result)
+          }),
         )
       : noop
     // Pick up any update between creating the observer and subscribing to it.
@@ -214,8 +236,12 @@ export class QueryBinding<TObserver extends AnyQueryObserver = QueryObserver> {
     if (this.#destroyed) return
     const wasSubscribed = this.#options.subscribed !== false
     this.#options = defaultOptions(this.client, options)
+    const subscribed = this.#options.subscribed !== false
+    // Unsubscribe before applying the options: `setOptions` fetches when the
+    // observer has listeners, and the caller opted out of that fetch.
+    if (wasSubscribed && !subscribed) this.#unsubscribe()
     this.observer.setOptions(this.#options)
-    if (wasSubscribed !== (this.#options.subscribed !== false)) {
+    if (wasSubscribed !== subscribed) {
       this.#subscribe()
     } else {
       this.#emit(this.observer.getOptimisticResult(this.#options))
@@ -233,13 +259,20 @@ export class QueryBinding<TObserver extends AnyQueryObserver = QueryObserver> {
 }
 
 /**
- * The input of `<queries>`: the queries to run and an optional `combine`.
+ * The input of `<queries>`: the queries to run, an optional `combine`, and
+ * whether to subscribe to them.
  */
 export interface QueriesInput {
   /** The options of each query to run. */
   queries: ReadonlyArray<AnyOptions>
   /** Maps the results to one value. */
   combine?: (results: any) => unknown
+  /**
+   * Set to `false` to stop observing the queries: the tag keeps its last
+   * results and no fetch is triggered by it. One flag for the whole tag, not
+   * one per query.
+   */
+  subscribed?: boolean
 }
 
 /**
@@ -252,7 +285,12 @@ function defaultQueries(
   client: QueryClient,
   input: QueriesInput,
 ): Array<Defaulted> {
-  return input.queries.map((query) => defaultOptions(client, query))
+  return input.queries.map((query) =>
+    defaultOptions(client, {
+      ...query,
+      subscribed: input.subscribed,
+    } as AnyOptions),
+  )
 }
 
 /**
@@ -307,7 +345,7 @@ export function readQueries(
       client,
       new Set(queries.map((query) => query.queryHash)),
     ),
-    error: queriesError(value.results, observers),
+    thrown: queriesError(value.results, observers),
   }
 }
 
@@ -315,16 +353,16 @@ export function readQueries(
  * Finds the first error that `throwOnError` asks to throw.
  * @param results - The result of each query.
  * @param observers - The observer of each query, in the same order.
- * @returns The error to throw, or `undefined`.
+ * @returns The error to throw, wrapped, or `undefined`.
  */
 function queriesError(
   results: Array<QueryObserverResult<any, any>>,
   observers: Array<AnyQueryObserver>,
-): unknown {
+): Thrown | undefined {
   for (let index = 0; index < results.length; index++) {
     const observer = observers[index]
-    const error = observer && thrownError(results[index]!, observer)
-    if (error !== undefined) return error
+    const thrown = observer && thrownError(results[index]!, observer)
+    if (thrown) return thrown
   }
   return undefined
 }
@@ -332,7 +370,7 @@ function queriesError(
 /** Receives the value of `<queries>` and the error `throwOnError` asks to throw. */
 export type QueriesListener = (
   value: QueriesValue,
-  thrownError: unknown,
+  thrown: Thrown | undefined,
 ) => void
 
 /** What the observer of `<queries>` reports. */
@@ -390,9 +428,16 @@ export class QueriesBinding {
 
   #subscribe(): void {
     this.#unsubscribe()
-    this.#unsubscribe = isRestoring(this.client)
-      ? noop
-      : this.observer.subscribe(notifyManager.batchCalls(() => this.#report()))
+    const subscribe =
+      !isRestoring(this.client) && this.#input.subscribed !== false
+    this.#unsubscribe = subscribe
+      ? this.observer.subscribe(
+          notifyManager.batchCalls(() => {
+            // A notification queued before `destroy` still runs after it.
+            if (!this.#destroyed) this.#report()
+          }),
+        )
+      : noop
     this.#report()
   }
 
@@ -402,10 +447,16 @@ export class QueriesBinding {
    */
   setOptions(input: QueriesInput): void {
     if (this.#destroyed) return
+    const wasSubscribed = this.#input.subscribed !== false
     this.#input = input
     this.#queries = defaultQueries(this.client, input)
+    const subscribed = input.subscribed !== false
+    // Unsubscribe before applying the queries: `setQueries` subscribes new
+    // observers, and the caller opted out of that.
+    if (wasSubscribed && !subscribed) this.#unsubscribe()
     this.observer.setQueries(this.#queries, { combine: input.combine } as never)
-    this.#report()
+    if (wasSubscribed !== subscribed) this.#subscribe()
+    else this.#report()
   }
 
   /** Stops observing the queries. It cannot be used again. */
@@ -444,6 +495,7 @@ export class MutationBinding {
   readonly observer: MutationObserver<any, any, any, any>
   readonly client: QueryClient
   #unsubscribe: () => void = noop
+  #destroyed = false
 
   constructor(client: QueryClient, options: object) {
     this.client = client
@@ -460,7 +512,10 @@ export class MutationBinding {
     this.#unsubscribe()
     onResult(this.observer.getCurrentResult())
     this.#unsubscribe = this.observer.subscribe(
-      notifyManager.batchCalls(onResult),
+      notifyManager.batchCalls((result) => {
+        // A notification queued before `destroy` still runs after it.
+        if (!this.#destroyed) onResult(result)
+      }),
     )
   }
 
@@ -499,6 +554,7 @@ export class MutationBinding {
 
   /** Stops reporting results. */
   destroy(): void {
+    this.#destroyed = true
     this.#unsubscribe()
     this.#unsubscribe = noop
   }
@@ -511,6 +567,7 @@ export class CacheWatcher<TInput, TValue> {
   #read: (input: TInput) => TValue
   #onValue: (value: TValue) => void
   #unsubscribe: () => void
+  #destroyed = false
 
   constructor(
     subscribe: (listener: () => void) => () => void,
@@ -524,7 +581,10 @@ export class CacheWatcher<TInput, TValue> {
     this.#value = read(input)
     onValue(this.#value)
     this.#unsubscribe = subscribe(
-      notifyManager.batchCalls(() => this.#refresh()),
+      notifyManager.batchCalls(() => {
+        // A notification queued before `destroy` still runs after it.
+        if (!this.#destroyed) this.#refresh()
+      }),
     )
     this.#refresh()
   }
@@ -548,6 +608,7 @@ export class CacheWatcher<TInput, TValue> {
 
   /** Stops watching the cache. */
   destroy(): void {
+    this.#destroyed = true
     this.#unsubscribe()
     this.#unsubscribe = noop
   }

@@ -91,8 +91,8 @@ export type DefinedCreateQueryResult<
 > = DefinedCreateBaseQueryResult<TData, TError>
 
 /**
- * The observer options of an infinite query: `queryFn`, `initialPageParam`
- * and `getNextPageParam`.
+ * The options of `<infinite-query>`: the observer options of an infinite query
+ * (`queryFn`, `initialPageParam`, `getNextPageParam`) and `subscribed`.
  */
 export type CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -106,7 +106,13 @@ export type CreateInfiniteQueryOptions<
   TData,
   TQueryKey,
   TPageParam
->
+> & {
+  /**
+   * Set to `false` to stop observing the query: the tag keeps its last result
+   * and no fetch is triggered by it.
+   */
+  subscribed?: boolean
+}
 
 /**
  * What `<infinite-query>` returns: the pages in `data` and `fetchNextPage`

@@ -17,6 +17,8 @@ import {
   todoFeedQueryKey,
   todoPageQueryKey,
   todoSlowQueryKey,
+  todoSubscribedQueryKey,
+  todoUncachedQueryKey,
   todosQueryKey,
 } from './query-keys.ts'
 
@@ -97,3 +99,16 @@ export const createTodoMutationOptions = {
 export const toggleTodoMutationOptions = {
   mutationFn: toggleTodo,
 }
+
+// Two tags read this key. The prefetched copies are what the frozen tag shows.
+export const subscribedQueryOptions = queryOptions({
+  queryKey: todoSubscribedQueryKey,
+  queryFn: listTodos,
+})
+
+// Deliberately never prefetched, so the page can show that an opted-out tag
+// starts no fetch and reports `fetchStatus: 'idle'` instead of `fetching`.
+export const uncachedQueryOptions = queryOptions({
+  queryKey: todoUncachedQueryKey,
+  queryFn: listTodos,
+})

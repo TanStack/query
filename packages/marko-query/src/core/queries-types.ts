@@ -15,6 +15,7 @@ import type {
 // Ported from `svelte-query/src/createQueries.svelte.ts`, with Marko's result types.
 
 // `placeholderData` functions always receive `undefined` inside `<queries>`.
+// `subscribed` is an option of the tag, so it stays out of the per-query type.
 type CreateQueryOptionsForCreateQueries<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -22,7 +23,7 @@ type CreateQueryOptionsForCreateQueries<
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
   CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'placeholderData'
+  'placeholderData' | 'subscribed'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
 }
@@ -184,6 +185,12 @@ export interface CreateQueriesOptions<
    * server to the browser, so it must be serializable.
    */
   combine?: (result: QueriesResults<T>) => TCombinedResult
+  /**
+   * Set to `false` to stop observing the queries: the tag keeps its last
+   * results and no fetch is triggered by it. One flag for the whole tag; it is
+   * not accepted per query.
+   */
+  subscribed?: boolean
 }
 
 /**

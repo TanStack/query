@@ -17,6 +17,7 @@ import {
 } from '../../src/core/internal.js'
 import { createClient, setServer, sleep } from './utils.js'
 import type { QueryObserverResult } from '@tanstack/query-core'
+import type { QueriesListener } from '../../src/core/internal.js'
 
 describe('bindings', () => {
   afterEach(() => setServer(true))
@@ -42,7 +43,7 @@ describe('bindings', () => {
       expect(snapshot.hydration?.queries.map((q) => q.queryHash)).toStrictEqual(
         ['["a"]'],
       )
-      expect(snapshot.error).toBeUndefined()
+      expect(snapshot.thrown).toBeUndefined()
     })
 
     it('a query that was not fetched is pending and has nothing to hydrate', () => {
@@ -62,10 +63,25 @@ describe('bindings', () => {
         .query({ queryKey: ['e'], queryFn: () => Promise.reject(error) })
         .catch(() => {})
       const options = { queryKey: ['e'], queryFn: () => 1, retryOnMount: false }
-      expect(readQuery(client, options).error).toBeUndefined()
-      expect(readQuery(client, { ...options, throwOnError: true }).error).toBe(
-        error,
-      )
+      expect(readQuery(client, options).thrown).toBeUndefined()
+      expect(
+        readQuery(client, { ...options, throwOnError: true }).thrown,
+      ).toStrictEqual({ error })
+    })
+
+    it('throws an error that is undefined', async () => {
+      const client = createClient()
+      await client
+        .query({ queryKey: ['u'], queryFn: () => Promise.reject(undefined) })
+        .catch(() => {})
+      const snapshot = readQuery<QueryObserverResult>(client, {
+        queryKey: ['u'],
+        queryFn: () => 1,
+        retryOnMount: false,
+        throwOnError: true,
+      })
+      expect(snapshot.result.isError).toBe(true)
+      expect(snapshot.thrown).toStrictEqual({ error: undefined })
     })
 
     it("respects the client's dehydrate defaults", async () => {
@@ -220,6 +236,86 @@ describe('bindings', () => {
       await client.refetchQueries()
       expect(onResult).toHaveBeenCalledTimes(calls)
     })
+
+    it('ignores a notification that was queued before destroy', async () => {
+      const client = createClient()
+      const onResult = vi.fn<(result: QueryObserverResult) => void>()
+      const binding = new QueryBinding(
+        client,
+        { queryKey: ['queued'], queryFn: () => 1 },
+        onResult,
+      )
+      await sleep(5)
+      const calls = onResult.mock.calls.length
+      // `batchCalls` defers through `setTimeout`, so this notification is
+      // still queued when the binding is destroyed.
+      void client.refetchQueries({ queryKey: ['queued'] })
+      binding.destroy()
+      await sleep(20)
+      expect(onResult).toHaveBeenCalledTimes(calls)
+    })
+
+    it('does not fetch when it switches to subscribed: false', async () => {
+      const client = createClient()
+      const queryFn = vi.fn<() => number>(() => 1)
+      const binding = new QueryBinding(
+        client,
+        { queryKey: ['opt', 1], queryFn },
+        () => {},
+      )
+      await sleep(5)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      binding.setOptions({
+        queryKey: ['opt', 2],
+        queryFn,
+        subscribed: false,
+      } as never)
+      await sleep(10)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      binding.destroy()
+    })
+
+    it('does not report a fetch it will not start', async () => {
+      const client = createClient()
+      const results: Array<QueryObserverResult> = []
+      const binding = new QueryBinding(
+        client,
+        { queryKey: ['idle'], queryFn: () => 1, subscribed: false } as never,
+        (r) => results.push(r),
+      )
+      await sleep(10)
+      expect(results.at(-1)).toMatchObject({
+        status: 'pending',
+        fetchStatus: 'idle',
+        isFetching: false,
+      })
+      binding.destroy()
+    })
+
+    it('honours subscribed for an infinite query', async () => {
+      setServer(false)
+      const client = createClient()
+      const queryFn = vi.fn<() => Array<number>>(() => [1])
+      const binding = new QueryBinding(
+        client,
+        {
+          queryKey: ['inf'],
+          queryFn,
+          initialPageParam: 0,
+          getNextPageParam: () => undefined,
+          subscribed: false,
+        } as never,
+        () => {},
+        InfiniteQueryObserver,
+      )
+      await sleep(20)
+      expect(queryFn).not.toHaveBeenCalled()
+      expect(binding.getResult()).toMatchObject({
+        status: 'pending',
+        fetchStatus: 'idle',
+      })
+      binding.destroy()
+    })
   })
 
   describe('queries', () => {
@@ -254,6 +350,64 @@ describe('bindings', () => {
       expect(values.at(-1)).toStrictEqual([1, 2])
       binding.destroy()
     })
+
+    it('throws an error that is undefined', async () => {
+      setServer(true)
+      const client = createClient()
+      await client
+        .query({ queryKey: ['qu'], queryFn: () => Promise.reject(undefined) })
+        .catch(() => {})
+      const snapshot = readQueries(client, {
+        queries: [
+          {
+            queryKey: ['qu'],
+            queryFn: () => 1,
+            retryOnMount: false,
+            throwOnError: true,
+          } as never,
+        ],
+      })
+      expect(snapshot.thrown).toStrictEqual({ error: undefined })
+    })
+
+    it('subscribed: false stops the whole tag from fetching', async () => {
+      setServer(false)
+      const client = createClient()
+      const queryFn = vi.fn<() => number>(() => 1)
+      const binding = new QueriesBinding(
+        client,
+        {
+          queries: [{ queryKey: ['qs'], queryFn }] as never,
+          subscribed: false,
+        },
+        () => {},
+      )
+      await sleep(10)
+      expect(queryFn).not.toHaveBeenCalled()
+      binding.setOptions({
+        queries: [{ queryKey: ['qs'], queryFn }] as never,
+      })
+      await sleep(10)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      binding.destroy()
+    })
+
+    it('ignores a notification that was queued before destroy', async () => {
+      setServer(false)
+      const client = createClient()
+      const onResult = vi.fn<QueriesListener>()
+      const binding = new QueriesBinding(
+        client,
+        { queries: [{ queryKey: ['qq'], queryFn: () => 1 }] as never },
+        onResult,
+      )
+      await sleep(5)
+      const calls = onResult.mock.calls.length
+      void client.refetchQueries({ queryKey: ['qq'] })
+      binding.destroy()
+      await sleep(20)
+      expect(onResult).toHaveBeenCalledTimes(calls)
+    })
   })
 
   describe('mutations', () => {
@@ -283,6 +437,20 @@ describe('bindings', () => {
       expect(Object.values(result).some((v) => typeof v === 'function')).toBe(
         false,
       )
+    })
+
+    it('ignores a notification that was queued before destroy', async () => {
+      const client = createClient()
+      const statuses: Array<string> = []
+      const binding = new MutationBinding(client, {
+        mutationFn: (n: number) => sleep(5).then(() => n),
+      })
+      binding.subscribe((r) => statuses.push(r.status))
+      const pending = binding.mutateAsync(1)
+      binding.destroy()
+      await pending
+      await sleep(20)
+      expect(statuses).toStrictEqual(['idle'])
     })
   })
 
@@ -329,6 +497,19 @@ describe('bindings', () => {
       a.destroy()
       b.destroy()
       c.destroy()
+    })
+
+    it('ignores a notification that was queued before destroy', async () => {
+      const client = createClient()
+      const values: Array<number> = []
+      const watcher = watchIsFetching(client, undefined, (v) => values.push(v))
+      void client.query({
+        queryKey: ['wq'],
+        queryFn: () => sleep(5).then(() => 1),
+      })
+      watcher.destroy()
+      await sleep(30)
+      expect(values).toStrictEqual([0])
     })
   })
 

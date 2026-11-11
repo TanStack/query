@@ -1,0 +1,115 @@
+import { getQueryClient } from '@tanstack/marko-query'
+import { toggleTodo } from '../../lib/api.ts'
+import { todoSubscribedQueryKey } from '../../lib/query-keys.ts'
+import {
+  subscribedQueryOptions,
+  uncachedQueryOptions,
+} from '../../lib/queries.ts'
+
+<let/secondLive=true>
+
+<page-header
+  title="Subscribed"
+  subtitle="Two tags read the same key. The live one subscribes; the frozen one sets subscribed: false, so it keeps the data it rendered and ignores every later update. Toggle a todo to see them disagree."
+/>
+
+<query/live options=() => subscribedQueryOptions/>
+<query/frozen options=() => ({ ...subscribedQueryOptions, subscribed: secondLive })/>
+
+<mutation/toggle options() {
+  return {
+    mutationFn: toggleTodo,
+    onSuccess: () =>
+      getQueryClient($global).invalidateQueries({ queryKey: todoSubscribedQueryKey }),
+  }
+}/>
+
+<div class="row">
+  <button
+    type="button"
+    class="primary"
+    onClick() {
+      secondLive = !secondLive
+    }
+  >${secondLive ? 'Freeze the second tag' : 'Let the second tag subscribe again'}</button>
+  <span class="muted">second tag subscribed: ${String(secondLive)}</span>
+</div>
+
+<div class="panes">
+  <section>
+    <h2>Subscribed</h2>
+    <p class="muted">updates: always</p>
+    <if=live.data>
+      <ul>
+        <for|todo| of=live.data by="id">
+          <li>
+            <button
+              type="button"
+              disabled=toggle.isPending
+              onClick() {
+                toggle.mutate(todo.id)
+              }
+            >${todo.completed ? '☑' : '☐'}</button>
+            ${todo.title}
+          </li>
+        </for>
+      </ul>
+    </if>
+  </section>
+
+  <section>
+    <h2><code>subscribed: false</code></h2>
+    <p class="muted">
+      updates: ${secondLive ? 'the same as the left pane' : 'frozen at the moment it was frozen'}
+    </p>
+    <if=frozen.data>
+      <ul>
+        <for|todo| of=frozen.data by="id">
+          <li>${todo.completed ? '☑' : '☐'} ${todo.title}</li>
+        </for>
+      </ul>
+    </if>
+  </section>
+</div>
+
+<h2>No cached data, no fetch</h2>
+<p class="muted">
+  <code>${JSON.stringify(uncachedQueryOptions.queryKey)}</code> is never prefetched.
+  The tag below opts out, so it starts no request and reports the cache's real
+  <code>fetchStatus</code> instead of a fetch that never begins.
+</p>
+
+<query/idle options=() => ({ ...uncachedQueryOptions, subscribed: false })/>
+
+<p class="muted">
+  status: ${idle.status} · fetchStatus: ${idle.fetchStatus} · isFetching: ${String(idle.isFetching)}
+</p>
+
+<p class="muted">
+  The key stays uncached, so <code>fetchStatus</code> is <code>idle</code> and the
+  devtools show no entry for it. Remove <code>subscribed: false</code> and the same
+  tag fetches on mount.
+</p>
+
+<style>
+  .panes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  .panes section {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--surface);
+  }
+  .panes h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1rem;
+  }
+  .panes ul {
+    margin: 0.5rem 0 0;
+    padding-left: 1.25rem;
+  }
+</style>

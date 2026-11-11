@@ -23,6 +23,7 @@ export type {
   QueriesValue,
   QueryListener,
   Snapshot,
+  Thrown,
 } from './bindings.js'
 export {
   DEHYDRATED_STATE_KEY,

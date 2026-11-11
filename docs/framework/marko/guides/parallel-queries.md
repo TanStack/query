@@ -93,3 +93,41 @@ Use `combine` when a template wants one derived value instead of an array of que
 ```
 
 Two entries with the same query key share one cache entry and one fetch. Give each row a distinct key when the rows need different data or independent query state, and deduplicate only when the rows can share data.
+
+## Rendering Without Subscribing
+
+Each of the three reading tags takes `subscribed`: `<query>`, `<infinite-query>` and `<queries>`. It defaults to `true`. Setting it to `false` means the tag reads the result once and then stops: no fetch starts, and no later cache update reaches the tag.
+
+Use it when a template needs to show a query without driving it:
+
+- A tag that displays cached data but must not trigger a request, for example a summary panel on a page whose data another tag already loads.
+- A tag that is about to unmount, where starting a fetch would only be cancelled.
+- A `<queries>` list where the results feed a derivation and the page re-reads them elsewhere.
+
+The query itself is unaffected. `subscribed: false` is a property of the tag, not of the query: the query stays enabled, keeps its cache entry, and other tags on the same key still fetch and update it.
+
+```marko
+<queries/counts options=() => ({
+  queries: [allCountOptions, activeCountOptions],
+  subscribed: false,
+})/>
+```
+
+`<query>` and `<infinite-query>` take it in their options:
+
+```marko
+<infinite-query/feed options=() => ({ ...feedOptions, subscribed: false })/>
+```
+
+For `<queries>` it is one flag for the whole tag, so it is not accepted inside an entry of `queries`. A tag that does not subscribe also reports the cache's real `fetchStatus`: an uncached query shows `idle` rather than a fetch that never starts.
+
+A snapshot pane shows the difference. Both tags read one key; only the first one follows the cache:
+
+```marko
+<query/live options=() => todosQueryOptions/>
+<query/frozen options=() => ({ ...todosQueryOptions, subscribed: false })/>
+```
+
+Toggle a todo through `invalidateQueries` and the first list updates while the second keeps the data it rendered.
+
+The `/subscribed` page of `examples/marko/basic` runs this pair. It also renders a tag on a key that is never prefetched, which reports `fetchStatus: idle` and starts no request.

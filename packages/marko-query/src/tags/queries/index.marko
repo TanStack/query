@@ -36,16 +36,24 @@ static function combineResults(
   return combine ? combine(results as never) : results;
 }
 
-<const/snapshot=readQueries(resolveClient($global, input.client), {
-  queries: input.options().queries as never,
-})>
+static function queriesOf(options: CreateQueriesOptions<any, any>) {
+  return {
+    queries: options.queries as never,
+    subscribed: options.subscribed,
+  };
+}
+
+<const/snapshot=readQueries(
+  resolveClient($global, input.client),
+  queriesOf(input.options()),
+)>
 <let/results=(snapshot.result as QueryObserverResult[])>
-<let/thrown=snapshot.error>
+<let/thrown=snapshot.thrown>
 <const/holder={} as { binding?: QueriesBinding }>
 <const/connect=(() =>
   (holder.binding ??= new QueriesBinding(
     resolveClient($global, input.client),
-    { queries: input.options().queries as never },
+    queriesOf(input.options()),
     (next, error) => {
       results = next.results.map(toPlainResult);
       thrown = error;
@@ -63,14 +71,14 @@ static function combineResults(
       holder.binding.destroy();
       holder.binding = undefined;
     }
-    connect().setOptions({ queries: input.options().queries as never });
+    connect().setOptions(queriesOf(input.options()));
   }
   onDestroy() {
     holder.binding?.destroy();
   }
 />
 
-<if=thrown !== undefined>${raise(thrown)}</if>
+<if=thrown>${raise(thrown.error)}</if>
 
 <const/withMethods=(results.map((result, index) => ({
   ...result,
