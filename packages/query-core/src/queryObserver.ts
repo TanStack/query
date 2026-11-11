@@ -26,6 +26,24 @@ import type {
   RefetchOptions,
 } from './types'
 
+function areDataEqual(a: unknown, b: unknown): boolean {
+  return a === b && (a !== 0 || Object.is(a, b))
+}
+
+function shallowEqualQueryObserverResults<
+  TData,
+  TError,
+>(
+  a: QueryObserverResult<TData, TError>,
+  b: QueryObserverResult<TData, TError> | undefined,
+): boolean {
+  return (
+    !!b &&
+    shallowEqualObjects(a, b) &&
+    areDataEqual(a.data, b.data)
+  )
+}
+
 type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>,
 ) => void
@@ -291,7 +309,12 @@ export class QueryObserver<
 
     const result = this.createResult(query, options)
 
-    if (!shallowEqualObjects(this.getCurrentResult(), result)) {
+    if (
+      !shallowEqualQueryObserverResults(
+        this.getCurrentResult(),
+        result,
+      )
+    ) {
       // this assigns the optimistic result to the current Observer
       // because if the query function changes, useQuery will be performing
       // an effect where it would fetch again.
@@ -778,7 +801,9 @@ export class QueryObserver<
     }
 
     // Only notify and update result if something has changed
-    if (shallowEqualObjects(nextResult, prevResult)) {
+    if (
+      shallowEqualQueryObserverResults(nextResult, prevResult)
+    ) {
       return
     }
 
@@ -810,9 +835,15 @@ export class QueryObserver<
       }
 
       for (const key of notifyOnChangePropsValue ?? this.#trackedProps) {
-        if (
-          this.#currentResult[key as keyof QueryObserverResult] !==
+        const currentValue =
+          this.#currentResult[key as keyof QueryObserverResult]
+        const previousValue =
           prevResult[key as keyof QueryObserverResult]
+
+        if (
+          key === 'data'
+            ? !areDataEqual(currentValue, previousValue)
+            : currentValue !== previousValue
         ) {
           return true
         }
