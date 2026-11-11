@@ -8,6 +8,7 @@ import {
   setQueryClientFactory,
 } from '../../src/core/index.js'
 import {
+  onPageClientChange,
   onRestoringChange,
   registerQueryClientFactory,
 } from '../../src/core/internal.js'
@@ -176,6 +177,68 @@ describe('query client', () => {
       expect(getQueryClient()).toBe(next)
       expect((previous as unknown as { mounts: number }).mounts).toBe(0)
       expect((next as unknown as { mounts: number }).mounts).toBe(1)
+    })
+
+    it('setQueryClient hydrates $global into the client the page already uses', async () => {
+      setServer(true)
+      const server = createClient()
+      await server.query({ queryKey: ['x'], queryFn: () => 'server' })
+      const global = { dehydratedQueryState: dehydrate(server) }
+      setServer(false)
+
+      // The page client is created without `$global`, so nothing is hydrated.
+      const client = getQueryClient()
+      expect(client.getQueryData(['x'])).toBeUndefined()
+
+      setQueryClient(client, global)
+      expect(getQueryClient()).toBe(client)
+      expect(client.getQueryData(['x'])).toBe('server')
+      expect((client as unknown as { mounts: number }).mounts).toBe(1)
+    })
+  })
+
+  describe('onPageClientChange', () => {
+    beforeEach(() => setServer(false))
+
+    it('notifies when setQueryClient replaces the page client', () => {
+      const listener = vi.fn<() => void>()
+      const unwatch = onPageClientChange(listener, () => true)
+
+      setQueryClient(createClient())
+      expect(listener).toHaveBeenCalledTimes(1)
+
+      setQueryClient(createClient())
+      expect(listener).toHaveBeenCalledTimes(2)
+
+      unwatch()
+      setQueryClient(createClient())
+      expect(listener).toHaveBeenCalledTimes(2)
+    })
+
+    it('does not notify when the client is the one the page already uses', () => {
+      const client = getQueryClient()
+      const listener = vi.fn<() => void>()
+      onPageClientChange(listener, () => true)
+
+      setQueryClient(client)
+      expect(listener).not.toHaveBeenCalled()
+    })
+
+    it('does not notify a listener that does not follow the page client', () => {
+      const listener = vi.fn<() => void>()
+      onPageClientChange(listener, () => false)
+
+      setQueryClient(createClient())
+      expect(listener).not.toHaveBeenCalled()
+    })
+
+    it('does not notify on the server', () => {
+      setServer(true)
+      const listener = vi.fn<() => void>()
+      onPageClientChange(listener, () => true)
+
+      setQueryClient(createClient(), {})
+      expect(listener).not.toHaveBeenCalled()
     })
   })
 

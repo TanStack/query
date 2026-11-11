@@ -40,6 +40,8 @@ interface SharedState {
   restoring: WeakMap<QueryClient, RestoringState>
   defaultFactoryWarned: boolean
   lateFactoryWarned: boolean
+  /** Notified after {@link setQueryClient} replaces the page's client. */
+  clientListeners: Set<() => void>
 }
 
 interface RestoringState {
@@ -70,6 +72,7 @@ const shared: SharedState =
     restoring: new WeakMap(),
     defaultFactoryWarned: false,
     lateFactoryWarned: false,
+    clientListeners: new Set(),
   } satisfies SharedState)
 
 type GlobalRecord = Record<PropertyKey, unknown>
@@ -338,7 +341,8 @@ export function registerQueryClientFactory(
 /**
  * Uses a specific client. On the server, `global` is required and the client
  * becomes the request's client. In the browser it replaces the page's client
- * (which is mounted, and the previous one unmounted).
+ * (which is mounted, and the previous one unmounted). Passing the client the
+ * page already uses is not a no-op: `global` is still hydrated into it.
  * @param client - The client to use.
  * @param global - The render's `$global`. It is required on the server.
  * @throws {Error} When `global` is missing on the server.
@@ -353,12 +357,43 @@ export function setQueryClient(client: QueryClient, global?: object): void {
     attachServerClient(global as GlobalRecord, client)
     return
   }
-  if (shared.browserClient === client) return
+  if (shared.browserClient === client) {
+    // The page already uses this client, so there is nothing to mount or
+    // unmount, but `$global` may still carry state it has not hydrated.
+    if (global) hydrateGlobal(client, global as GlobalRecord)
+    return
+  }
   shared.browserClient?.unmount()
   shared.browserClient = client
   shared.browserClientFactory = undefined
   client.mount()
   if (global) hydrateGlobal(client, global as GlobalRecord)
+  for (const listener of [...shared.clientListeners]) listener()
+}
+
+/**
+ * Subscribes to replacements of the page's client. `setQueryClient` notifies
+ * the listeners after it swaps the client, so a mounted tag can reconnect to
+ * the new one. The server has no page client, so it never notifies.
+ *
+ * A tag that was given its own `client` input does not follow the page's
+ * client, so `followsPageClient` lets it opt out: replacing the page's client
+ * must not disturb a tag that observes a client of its own.
+ * @param reconnect - Called after the page's client is replaced.
+ * @param followsPageClient - Whether the tag follows the page's client.
+ * @returns A function that removes the listener.
+ */
+export function onPageClientChange(
+  reconnect: () => void,
+  followsPageClient: () => boolean,
+): () => void {
+  const listener = () => {
+    if (followsPageClient()) reconnect()
+  }
+  shared.clientListeners.add(listener)
+  return () => {
+    shared.clientListeners.delete(listener)
+  }
 }
 
 /**

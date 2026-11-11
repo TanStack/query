@@ -1,5 +1,6 @@
 import type { Accessor, QueryClient, MutationFilters } from "@tanstack/marko-query";
 import {
+  onPageClientChange,
   readIsMutating,
   resolveClient,
   watchIsMutating,
@@ -13,7 +14,11 @@ export interface Input {
 }
 
 <let/count=readIsMutating(resolveClient($global, input.client), input.filters?.())>
-<const/holder={} as { watcher?: ReturnType<typeof watchIsMutating>; client?: QueryClient }>
+<const/holder={} as {
+  watcher?: ReturnType<typeof watchIsMutating>;
+  client?: QueryClient;
+  unwatch?: () => void;
+}>
 
 <lifecycle
   onMount() {
@@ -22,6 +27,17 @@ export interface Input {
     holder.watcher = watchIsMutating(client, input.filters?.(), (value) => {
       count = value;
     });
+    holder.unwatch = onPageClientChange(
+      () => {
+        holder.watcher?.destroy();
+        const next = resolveClient($global, input.client);
+        holder.client = next;
+        holder.watcher = watchIsMutating(next, input.filters?.(), (value) => {
+          count = value;
+        });
+      },
+      () => !input.client,
+    );
   }
   onUpdate() {
     const client = resolveClient($global, input.client);
@@ -36,6 +52,7 @@ export interface Input {
     }
   }
   onDestroy() {
+    holder.unwatch?.();
     holder.watcher?.destroy();
   }
 />

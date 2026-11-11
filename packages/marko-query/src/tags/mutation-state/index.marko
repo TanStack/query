@@ -6,6 +6,7 @@ import type {
   QueryClient,
 } from "@tanstack/marko-query";
 import {
+  onPageClientChange,
   readMutationState,
   resolveClient,
   watchMutationState,
@@ -28,6 +29,7 @@ export interface Input<TResult = MutationState> {
 <const/holder={} as {
   watcher?: { setInput(options: unknown): void; destroy(): void };
   client?: QueryClient;
+  unwatch?: () => void;
 }>
 <const/watch=((client: QueryClient) =>
   watchMutationState(client, input.options?.(), (value) => {
@@ -38,6 +40,14 @@ export interface Input<TResult = MutationState> {
   onMount() {
     holder.client = resolveClient($global, input.client);
     holder.watcher = watch(holder.client);
+    holder.unwatch = onPageClientChange(
+      () => {
+        holder.watcher?.destroy();
+        holder.client = resolveClient($global, input.client);
+        holder.watcher = watch(holder.client);
+      },
+      () => !input.client,
+    );
   }
   onUpdate() {
     const client = resolveClient($global, input.client);
@@ -50,6 +60,7 @@ export interface Input<TResult = MutationState> {
     }
   }
   onDestroy() {
+    holder.unwatch?.();
     holder.watcher?.destroy();
   }
 />

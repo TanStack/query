@@ -107,6 +107,12 @@ a query tag) logs a development warning and applies to the clients created
 after it. To use a client that you created yourself, call
 `setQueryClient(client, $global)`.
 
+`setQueryClient(client)` replaces the client of the page. Every mounted tag that
+follows the client of the page reconnects to the new one, so its result and its
+subscription move with it. A tag that you gave its own `client` input keeps
+observing that client. The reconnect happens in the same tick as the call, so a
+tag never observes the old client after `setQueryClient` returns.
+
 The factory is stored once per process, so every root that one server process
 renders must use the same factory. Two layouts with different factories do not
 coexist: the layout module evaluated last wins, and every later request uses its

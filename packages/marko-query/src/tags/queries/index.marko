@@ -8,6 +8,7 @@ import type {
 } from "@tanstack/marko-query";
 import {
   QueriesBinding,
+  onPageClientChange,
   readQueries,
   resolveClient,
   toPlainResult,
@@ -49,7 +50,7 @@ static function queriesOf(options: CreateQueriesOptions<any, any>) {
 )>
 <let/results=(snapshot.result as QueryObserverResult[])>
 <let/thrown=snapshot.thrown>
-<const/holder={} as { binding?: QueriesBinding }>
+<const/holder={} as { binding?: QueriesBinding; unwatch?: () => void }>
 <const/connect=(() =>
   (holder.binding ??= new QueriesBinding(
     resolveClient($global, input.client),
@@ -64,6 +65,14 @@ static function queriesOf(options: CreateQueriesOptions<any, any>) {
 <lifecycle
   onMount() {
     connect();
+    holder.unwatch = onPageClientChange(
+      () => {
+        holder.binding?.destroy();
+        holder.binding = undefined;
+        connect();
+      },
+      () => !input.client,
+    );
   }
   onUpdate() {
     const client = resolveClient($global, input.client);
@@ -74,6 +83,7 @@ static function queriesOf(options: CreateQueriesOptions<any, any>) {
     connect().setOptions(queriesOf(input.options()));
   }
   onDestroy() {
+    holder.unwatch?.();
     holder.binding?.destroy();
   }
 />

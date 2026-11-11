@@ -148,6 +148,8 @@ The factory covers most needs. To use a client that you created yourself, call `
 - On the server, `setQueryClient(client, $global)` makes `client` the client of the request. `$global` is required. Call it before anything else gets the client of that request.
 - In the browser, `setQueryClient(client)` replaces the client of the page. Marko Query mounts the new client and unmounts the previous one. When you also pass `$global`, Marko Query hydrates the new client with the state that the server put on `$global`, unless it already hydrated that state into a client. Marko Query hydrates each state once, so it does not hydrate it again into the new client.
 
+Replacing the client of the page is not a one-way door. Every mounted tag that follows the client of the page reconnects to the new one, so its result and its subscription move with it. A tag that you gave its own `client` input keeps observing that client. The reconnect happens in the same tick as the call, so a tag never observes the old client after `setQueryClient` returns.
+
 ## A Different Client for One Tag
 
 Every tag except `<query-client-factory>` takes a `client` input. It is a function that returns the client to use instead of the client for this `$global`:

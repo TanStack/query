@@ -10,6 +10,7 @@ import type {
 } from "@tanstack/marko-query";
 import {
   QueryBinding,
+  onPageClientChange,
   readQuery,
   resolveClient,
   toPlainResult,
@@ -38,7 +39,7 @@ static function raise(error: unknown): never {
 ) as Snapshot<CreateQueryResult<TData, TError>>)>
 <let/result=snapshot.result>
 <let/thrown=snapshot.thrown>
-<const/holder={} as { binding?: QueryBinding }>
+<const/holder={} as { binding?: QueryBinding; unwatch?: () => void }>
 <const/connect=(() =>
   (holder.binding ??= new QueryBinding(
     resolveClient($global, input.client),
@@ -54,6 +55,14 @@ static function raise(error: unknown): never {
 <lifecycle
   onMount() {
     connect();
+    holder.unwatch = onPageClientChange(
+      () => {
+        holder.binding?.destroy();
+        holder.binding = undefined;
+        connect();
+      },
+      () => !input.client,
+    );
   }
   onUpdate() {
     const client = resolveClient($global, input.client);
@@ -64,6 +73,7 @@ static function raise(error: unknown): never {
     connect().setOptions(input.options());
   }
   onDestroy() {
+    holder.unwatch?.();
     holder.binding?.destroy();
   }
 />

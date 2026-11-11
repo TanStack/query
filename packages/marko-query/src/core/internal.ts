@@ -27,6 +27,7 @@ export type {
 } from './bindings.js'
 export {
   DEHYDRATED_STATE_KEY,
+  onPageClientChange,
   onRestoringChange,
   registerQueryClientFactory,
   resolveClient,

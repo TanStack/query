@@ -1,11 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { onlineManager } from '@tanstack/query-core'
-import { QueryClient, dehydrate, setQueryClient } from '@tanstack/marko-query'
+import { QueryClient, dehydrate, getQueryClient, setQueryClient } from '@tanstack/marko-query'
 import Boundary from './fixtures/boundary-fixture.marko'
 import BoundaryMutations from './fixtures/boundary-mutation.marko'
 import Fetching from './fixtures/fetching-fixture.marko'
 import Infinite from './fixtures/infinite-fixture.marko'
 import Mutation from './fixtures/mutation-fixture.marko'
+import PageClient from './fixtures/page-client-fixture.marko'
 import Queries from './fixtures/queries-fixture.marko'
 import { container, createClient, expectText, sleep, text } from './utils.js'
 import type { DehydratedState } from '@tanstack/marko-query'
@@ -172,6 +173,36 @@ describe('marko-query tags', () => {
       await expectText(root, 'slow', '1')
       await expectText(root, 'all', '0')
       await expectText(root, 'slow', '0')
+    })
+  })
+
+  describe('a replaced page client', () => {
+    it('reconnects the tags that follow it, and leaves the others alone', async () => {
+      const widgetClient = createClient()
+      widgetClient.setQueryData(['widget'], 'widget')
+      root = container()
+      instance = PageClient.mount(
+        { makeClient: createClient, widgetClient },
+        root,
+      )
+      await expectText(root, 'page', '"page"')
+      await expectText(root, 'widget', '"widget"')
+
+      const widgetQuery = widgetClient.getQueryCache().find({
+        queryKey: ['widget'],
+      })!
+      const widgetUpdates = widgetQuery.state.dataUpdateCount
+
+      root.querySelector<HTMLButtonElement>('#swap')!.click()
+
+      // The tag that follows the page's client reconnects to the new one.
+      await expectText(root, 'page', '"replaced"')
+      expect(getQueryClient().getQueryData(['page'])).toBe('replaced')
+
+      // The tag with its own `client` input keeps observing its own client.
+      await expectText(root, 'widget', '"widget"')
+      expect(widgetQuery.getObserversCount()).toBe(1)
+      expect(widgetQuery.state.dataUpdateCount).toBe(widgetUpdates)
     })
   })
 

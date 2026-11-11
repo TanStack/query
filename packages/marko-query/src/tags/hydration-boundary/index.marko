@@ -4,7 +4,7 @@ import type {
   HydrateOptions,
   QueryClient,
 } from "@tanstack/marko-query";
-import { hydrateBoundary, resolveClient } from "@tanstack/marko-query/internal";
+import { hydrateBoundary, onPageClientChange, resolveClient } from "@tanstack/marko-query/internal";
 
 export interface Input {
   /** What `dehydrate` returned, e.g. on the server or from a loader. */
@@ -21,6 +21,20 @@ export interface Input {
 <lifecycle
   onMount() {
     hydrateBoundary(resolveClient($global, input.client), input.state, input.options?.());
+    // `onMount`'s return value becomes `this` in `onDestroy`. A `<const>` would
+    // not do: this tag never reads one in its render, so Marko would not
+    // evaluate it in the browser.
+    return {
+      unwatch: onPageClientChange(
+        () => {
+          hydrateBoundary(resolveClient($global, input.client), input.state, input.options?.());
+        },
+        () => !input.client,
+      ),
+    };
+  }
+  onDestroy() {
+    this.unwatch?.();
   }
 />
 <${input.content}/>

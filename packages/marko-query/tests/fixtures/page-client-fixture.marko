@@ -1,0 +1,31 @@
+import { QueryClient, setQueryClient } from "@tanstack/marko-query";
+
+export interface Input {
+  /** Makes the client that replaces the page's client. */
+  makeClient: () => QueryClient;
+  /** The client of the widget tag, which must not follow the page's client. */
+  widgetClient: QueryClient;
+}
+
+<query/page
+  options=() => ({ queryKey: ["page"], queryFn: async () => "page", staleTime: Infinity })
+/>
+<query/widget
+  client=() => input.widgetClient
+  options=() => ({ queryKey: ["widget"], queryFn: async () => "widget", staleTime: Infinity })
+/>
+<is-fetching/all/>
+<p id="page">${JSON.stringify(page.data ?? null)}</p>
+<p id="widget">${JSON.stringify(widget.data ?? null)}</p>
+<p id="fetching">${all}</p>
+
+<button
+  id="swap"
+  onClick() {
+    const next = input.makeClient();
+    next.setQueryData(["page"], "replaced");
+    setQueryClient(next);
+  }
+>
+  swap
+</button>
