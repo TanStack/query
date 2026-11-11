@@ -196,8 +196,12 @@ export interface CreateQueriesOptions<
 /**
  * What `<queries>` returns: one result per query, or `combine`'s return value
  * when `combine` is given.
+ *
+ * `TCombined` defaults to `never`, which no `combine` can return, so "no
+ * `combine`" stays distinguishable from a `combine` that returns `unknown`.
+ * The tuple wrapper stops `never` from distributing over the conditional.
  */
 export type CreateQueriesResult<
   T extends Array<any>,
-  TCombined = unknown,
-> = unknown extends TCombined ? QueriesResults<T> : TCombined
+  TCombined = never,
+> = [TCombined] extends [never] ? QueriesResults<T> : TCombined

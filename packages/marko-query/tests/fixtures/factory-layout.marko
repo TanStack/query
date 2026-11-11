@@ -1,4 +1,8 @@
-import { createProbeClient } from "./probe-factory.ts";
+import { createProbeClient } from "./probe-factory";
+
+export interface Input {
+  content?: Marko.Body;
+}
 
 <query-client-factory factory=createProbeClient/>
 <main><${input.content}/></main>

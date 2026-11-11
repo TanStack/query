@@ -7,6 +7,7 @@ import {
 } from '../../src/core/index.js'
 import type {
   CreateMutationResult,
+  CreateQueriesResult,
   CreateQueryResult,
   DefinedCreateQueryResult,
   QueriesResults,
@@ -86,5 +87,19 @@ describe('type definitions', () => {
     >
     expectTypeOf<Results[0]['data']>().toEqualTypeOf<number | undefined>()
     expectTypeOf<Results[1]['data']>().toEqualTypeOf<string | undefined>()
+  })
+
+  it('createQueriesResult tells an absent combine from an unknown one', () => {
+    type T = [{ queryKey: ['a']; queryFn: () => number }]
+
+    // No `combine`: the tag returns one result per query.
+    expectTypeOf<CreateQueriesResult<T>>().toEqualTypeOf<QueriesResults<T>>()
+
+    // `combine` returns `unknown`: the tag returns whatever it produced, so
+    // array operations must not be accepted.
+    expectTypeOf<CreateQueriesResult<T, unknown>>().toEqualTypeOf<unknown>()
+
+    // `combine` returns a value: the tag returns that value.
+    expectTypeOf<CreateQueriesResult<T, number>>().toEqualTypeOf<number>()
   })
 })

@@ -52,6 +52,14 @@ export default defineConfig({
           environment: 'node',
         },
       },
+      {
+        extends: true,
+        test: {
+          name: 'transform',
+          include: ['tests/**/*.transform.test.ts'],
+          environment: 'node',
+        },
+      },
     ],
   },
 })

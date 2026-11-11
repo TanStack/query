@@ -13,7 +13,7 @@ import {
   toPlainResult,
 } from "@tanstack/marko-query/internal";
 
-export interface Input<T extends Array<any>, TCombined = unknown> {
+export interface Input<T extends Array<any>, TCombined = never> {
   /**
    * `{ queries, combine? }`. A function, so the tag follows the values it
    * reads.

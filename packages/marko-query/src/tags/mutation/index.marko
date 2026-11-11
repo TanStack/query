@@ -13,6 +13,7 @@ import {
   resolveClient,
   toPlainResult,
 } from "@tanstack/marko-query/internal";
+import type { Thrown } from "@tanstack/marko-query/internal";
 
 export interface Input<
   TData = unknown,
@@ -30,7 +31,22 @@ static function raise(error: unknown): never {
   throw error;
 }
 
+// `throwOnError` is read from the observer's current options, so the request
+// has to be recomputed whenever the options change, not only when the result
+// does: `MutationObserver.setOptions` reports no new result for a settled
+// mutation, so flipping `throwOnError` after a failure would otherwise never
+// reach the nearest `<try>`.
+static function thrownOf(
+  result: MutationObserverResult<any, any, any, any>,
+  binding: MutationBinding | undefined,
+): Thrown | undefined {
+  return result.isError && binding?.shouldThrow(result.error)
+    ? { error: result.error }
+    : undefined;
+}
+
 <let/result=(idleMutationResult() as MutationObserverResult<TData, TError, TVariables, TOnMutateResult>)>
+<let/thrown=undefined as Thrown | undefined>
 <const/holder={} as { binding?: MutationBinding }>
 <const/connect=(() => {
   if (!holder.binding) {
@@ -40,6 +56,7 @@ static function raise(error: unknown): never {
     );
     holder.binding.subscribe((next) => {
       result = toPlainResult(next);
+      thrown = thrownOf(result, holder.binding);
     });
   }
   return holder.binding;
@@ -56,16 +73,14 @@ static function raise(error: unknown): never {
       holder.binding = undefined;
     }
     connect().setOptions(input.options());
+    thrown = thrownOf(result, holder.binding);
   }
   onDestroy() {
     holder.binding?.destroy();
   }
 />
 
-<if=(
-  result.isError &&
-  holder.binding?.shouldThrow(result.error)
-)>${raise(result.error)}</if>
+<if=thrown>${raise(thrown.error)}</if>
 
 <return=({
   ...result,

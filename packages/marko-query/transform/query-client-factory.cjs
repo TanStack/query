@@ -12,6 +12,7 @@
 // the server registration also precedes the first request's handler.
 
 const TAG = '<query-client-factory>'
+const PACKAGE = '@tanstack/marko-query'
 
 module.exports = function transform(tag, t) {
   const file = tag.hub.file
@@ -44,23 +45,36 @@ module.exports = function transform(tag, t) {
   }
   file.metadata.queryClientFactoryTag = true
 
+  // A layout may already import `setQueryClientFactory` (the documented escape
+  // hatch for registering a factory by hand). Reuse that binding when it comes
+  // from this package, and otherwise take a name nothing else uses, so the
+  // injected import can never collide with one the template already has.
+  const existing = findImport(file.path.node.body, t, PACKAGE)
+  const local = existing
+    ? t.identifier(existing)
+    : file.path.scope.hasBinding('setQueryClientFactory')
+      ? file.path.scope.generateUidIdentifier('setQueryClientFactory')
+      : t.identifier('setQueryClientFactory')
+
   file.path.pushContainer(
     'body',
     t.markoScriptlet(
       [
-        t.importDeclaration(
-          [
-            t.importSpecifier(
-              t.identifier('setQueryClientFactory'),
-              t.identifier('setQueryClientFactory'),
-            ),
-          ],
-          t.stringLiteral('@tanstack/marko-query'),
-        ),
+        ...(existing
+          ? []
+          : [
+              t.importDeclaration(
+                [
+                  t.importSpecifier(
+                    t.identifier(local.name),
+                    t.identifier('setQueryClientFactory'),
+                  ),
+                ],
+                t.stringLiteral(PACKAGE),
+              ),
+            ]),
         t.expressionStatement(
-          t.callExpression(t.identifier('setQueryClientFactory'), [
-            t.identifier(value.name),
-          ]),
+          t.callExpression(t.identifier(local.name), [t.identifier(value.name)]),
         ),
       ],
       true,
@@ -82,4 +96,24 @@ function isImported(body, name, t) {
       t.isImportDeclaration(node) &&
       node.specifiers.some((s) => s.local.name === name),
   )
+}
+
+/**
+ * The local name that binds `setQueryClientFactory` from `source`, if the
+ * template has one. An aliased import counts: the binding is the same one.
+ * @param body - The template's top-level statements.
+ * @param t - The Babel types of the compiler.
+ * @param source - The module the binding must come from.
+ * @returns The local name, or `undefined`.
+ */
+function findImport(body, t, source) {
+  for (const node of body) {
+    if (!t.isImportDeclaration(node) || node.source.value !== source) continue
+    for (const s of node.specifiers) {
+      if (t.isImportSpecifier(s) && s.imported.name === 'setQueryClientFactory') {
+        return s.local.name
+      }
+    }
+  }
+  return undefined
 }

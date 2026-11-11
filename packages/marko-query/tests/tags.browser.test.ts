@@ -132,6 +132,27 @@ describe('marko-query tags', () => {
       root.querySelector<HTMLButtonElement>('#save')!.click()
       await expectText(root, 'caught', 'nope')
     })
+
+    it('throwOnError throws when it is turned on after the failure', async () => {
+      const client = createClient()
+      const input = {
+        client,
+        log: [],
+        throwOnError: false,
+        mutationFn: async () => Promise.reject(new Error('nope')),
+      }
+      root = container()
+      const view = Mutation.mount(input, root)
+      instance = view
+      root.querySelector<HTMLButtonElement>('#save')!.click()
+      await expectText(root, 'error', 'nope')
+      expect(text(root, 'caught')).toBeUndefined()
+
+      // The mutation is settled, so core reports no new result for the new
+      // options: the throw request has to be recomputed from the options.
+      view.update({ ...input, throwOnError: true })
+      await expectText(root, 'caught', 'nope')
+    })
   })
 
   describe('<is-fetching>', () => {
