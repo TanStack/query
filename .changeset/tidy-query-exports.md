@@ -2,7 +2,6 @@
 '@tanstack/query-core': patch
 '@tanstack/query-persist-client-core': patch
 '@tanstack/angular-query-experimental': patch
-'@tanstack/angular-query-persist-client': patch
 '@tanstack/preact-query': patch
 '@tanstack/preact-query-persist-client': patch
 '@tanstack/react-query': patch
