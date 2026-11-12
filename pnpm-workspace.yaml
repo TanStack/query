@@ -3,16 +3,17 @@ autoDedupe: true
 lockfile:
   includeResolutionSettings: true
 minimumReleaseAge: 1440
+minimumReleaseAgeExcludePrune: true
 linkWorkspacePackages: true
 preferWorkspacePackages: true
 blockExoticSubdeps: true
 shellEmulator: true
 trustPolicy: 'no-downgrade'
+trustPolicyExcludePrune: true
 trustPolicyExclude:
   - 'semver@5.7.2' # Socket score 100/100; popular and healthy.
   - 'semver@6.3.1' # Socket score 100/100; popular and healthy.
   - 'ua-parser-js@1.0.41' # Socket score 100/100; popular and healthy.
-  - 'undici-types@6.21.0' # Socket score 100/100; popular and healthy.
 
 catalog:
   typescript: 6.0.3
