@@ -1,5 +1,7 @@
 cleanupUnusedCatalogs: true
 autoDedupe: true
+lockfile:
+  includeResolutionSettings: true
 minimumReleaseAge: 1440
 linkWorkspacePackages: true
 preferWorkspacePackages: true
