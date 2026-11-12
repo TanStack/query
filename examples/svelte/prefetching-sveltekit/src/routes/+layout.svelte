@@ -16,7 +16,7 @@
 </script>
 
 <svelte:head>
-  <title>TanStack Svelte Query Prefetching Example</title>
+  <title>TanStack Svelte Query Prefetching Example (SvelteKit)</title>
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>

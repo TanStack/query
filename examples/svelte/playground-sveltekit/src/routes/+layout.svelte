@@ -17,7 +17,7 @@
 </script>
 
 <svelte:head>
-  <title>TanStack Svelte Query Playground Example</title>
+  <title>TanStack Svelte Query Playground Example (SvelteKit)</title>
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>

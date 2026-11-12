@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   app: {
     head: {
-      title: 'TanStack Vue Query Simple Example',
+      title: 'TanStack Vue Query Simple Example (Nuxt 4)',
       link: [
         {
           rel: 'shortcut icon',

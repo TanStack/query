@@ -9,7 +9,7 @@
 </script>
 
 <svelte:head>
-  <title>TanStack Svelte Query Offline Example</title>
+  <title>TanStack Svelte Query Offline Example (SvelteKit)</title>
 </svelte:head>
 
 <PersistQueryClientProvider

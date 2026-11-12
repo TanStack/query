@@ -17,7 +17,7 @@
 </script>
 
 <svelte:head>
-  <title>TanStack Svelte Query Optimistic Updates Example</title>
+  <title>TanStack Svelte Query Optimistic Updates Example (SvelteKit)</title>
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>

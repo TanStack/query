@@ -9,7 +9,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <Head>
-        <title>TanStack React Query Pagination Example</title>
+        <title>
+          TanStack React Query Pagination Example (Next.js Pages Router)
+        </title>
       </Head>
       <Component {...pageProps} />
     </QueryClientProvider>

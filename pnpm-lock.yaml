@@ -476,6 +476,49 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
 
+  examples/angular/basic-angular-router:
+    dependencies:
+      '@angular/common':
+        specifier: ^22.2.4
+        version: 22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+      '@angular/compiler':
+        specifier: ^22.2.4
+        version: 22.2.4
+      '@angular/core':
+        specifier: ^22.2.4
+        version: 22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0)
+      '@angular/platform-browser':
+        specifier: ^22.2.4
+        version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))
+      '@angular/router':
+        specifier: ^22.2.4
+        version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
+      '@tanstack/angular-query-experimental':
+        specifier: ^5.107.1
+        version: link:../../../packages/angular-query-experimental
+      rxjs:
+        specifier: ^7.8.2
+        version: 7.8.2
+      tslib:
+        specifier: ^2.8.1
+        version: 2.8.1
+    devDependencies:
+      '@angular/build':
+        specifier: ^22.2.5
+        version: 22.2.5(@angular/compiler-cli@22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3))(@angular/compiler@22.2.4)(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@24.19.2)(istanbul-lib-instrument@6.0.3(supports-color@10.2.2))(jiti@2.7.0)(postcss@8.5.32)(rollup@4.65.1)(supports-color@10.2.2)(tailwindcss@4.3.3)(terser@5.51.2)(tslib@2.8.1)(tsx@4.23.15)(typescript@6.0.3)(vitest@5.0.5)(yaml@2.9.1)
+      '@angular/cli':
+        specifier: ^22.2.5
+        version: 22.2.5(@types/node@24.19.2)(chokidar@5.0.0)
+      '@angular/compiler-cli':
+        specifier: ^22.2.4
+        version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/eslint-plugin-query
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
   examples/angular/basic-persister:
     dependencies:
       '@angular/common':
@@ -689,49 +732,6 @@ importers:
         version: 6.0.3
 
   examples/angular/query-options-from-a-service-angular-router:
-    dependencies:
-      '@angular/common':
-        specifier: ^22.2.4
-        version: 22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
-      '@angular/compiler':
-        specifier: ^22.2.4
-        version: 22.2.4
-      '@angular/core':
-        specifier: ^22.2.4
-        version: 22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0)
-      '@angular/platform-browser':
-        specifier: ^22.2.4
-        version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))
-      '@angular/router':
-        specifier: ^22.2.4
-        version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
-      '@tanstack/angular-query-experimental':
-        specifier: ^5.107.1
-        version: link:../../../packages/angular-query-experimental
-      rxjs:
-        specifier: ^7.8.2
-        version: 7.8.2
-      tslib:
-        specifier: ^2.8.1
-        version: 2.8.1
-    devDependencies:
-      '@angular/build':
-        specifier: ^22.2.5
-        version: 22.2.5(@angular/compiler-cli@22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3))(@angular/compiler@22.2.4)(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@24.19.2)(istanbul-lib-instrument@6.0.3(supports-color@10.2.2))(jiti@2.7.0)(postcss@8.5.32)(rollup@4.65.1)(supports-color@10.2.2)(tailwindcss@4.3.3)(terser@5.51.2)(tslib@2.8.1)(tsx@4.23.15)(typescript@6.0.3)(vitest@5.0.5)(yaml@2.9.0)
-      '@angular/cli':
-        specifier: ^22.2.5
-        version: 22.2.5(@types/node@24.19.2)(chokidar@5.0.0)
-      '@angular/compiler-cli':
-        specifier: ^22.2.4
-        version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
-      '@tanstack/eslint-plugin-query':
-        specifier: ^5.107.1
-        version: link:../../../packages/eslint-plugin-query
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-
-  examples/angular/router:
     dependencies:
       '@angular/common':
         specifier: ^22.2.4
@@ -2586,6 +2586,43 @@ importers:
         specifier: ^8.70.1
         version: 8.70.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
 
+  examples/react/hydration-nextjs-pages-router:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: ^5.107.1
+        version: link:../../../packages/react-query-devtools
+      next:
+        specifier: ^16.4.4
+        version: 16.4.4(@babel/core@7.29.7(supports-color@10.2.2))(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.104.1)
+      react:
+        specifier: ^19.3.1
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.3.1
+        version: 19.3.1(react@19.3.1)
+    devDependencies:
+      '@eslint-react/eslint-plugin':
+        specifier: ^5.28.8
+        version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/eslint-plugin-query
+      '@types/node':
+        specifier: ^24.19.2
+        version: 24.19.2
+      '@types/react':
+        specifier: ^19.3.0
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.3.0
+        version: 19.3.0(@types/react@19.3.0)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
   examples/react/infinite-query-with-max-pages-nextjs-pages-router:
     dependencies:
       '@tanstack/react-query':
@@ -2643,157 +2680,6 @@ importers:
       react-intersection-observer:
         specifier: ^11.0.1
         version: 11.0.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-    devDependencies:
-      '@eslint-react/eslint-plugin':
-        specifier: ^5.28.8
-        version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      '@tanstack/eslint-plugin-query':
-        specifier: ^5.107.1
-        version: link:../../../packages/eslint-plugin-query
-      '@types/node':
-        specifier: ^24.19.2
-        version: 24.19.2
-      '@types/react':
-        specifier: ^19.3.0
-        version: 19.3.0
-      '@types/react-dom':
-        specifier: ^19.3.0
-        version: 19.3.0(@types/react@19.3.0)
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-
-  examples/react/nextjs:
-    dependencies:
-      '@tanstack/react-query':
-        specifier: ^5.107.1
-        version: link:../../../packages/react-query
-      '@tanstack/react-query-devtools':
-        specifier: ^5.107.1
-        version: link:../../../packages/react-query-devtools
-      next:
-        specifier: ^16.4.4
-        version: 16.4.4(@babel/core@7.29.7(supports-color@10.2.2))(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.104.1)
-      react:
-        specifier: ^19.3.1
-        version: 19.3.1
-      react-dom:
-        specifier: ^19.3.1
-        version: 19.3.1(react@19.3.1)
-    devDependencies:
-      '@eslint-react/eslint-plugin':
-        specifier: ^5.28.8
-        version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      '@tanstack/eslint-plugin-query':
-        specifier: ^5.107.1
-        version: link:../../../packages/eslint-plugin-query
-      '@types/node':
-        specifier: ^24.19.2
-        version: 24.19.2
-      '@types/react':
-        specifier: ^19.3.0
-        version: 19.3.0
-      '@types/react-dom':
-        specifier: ^19.3.0
-        version: 19.3.0(@types/react@19.3.0)
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-
-  examples/react/nextjs-app-optimistic-updates:
-    dependencies:
-      '@tanstack/react-query':
-        specifier: ^5.107.1
-        version: link:../../../packages/react-query
-      '@tanstack/react-query-devtools':
-        specifier: ^5.107.1
-        version: link:../../../packages/react-query-devtools
-      next:
-        specifier: ^16.4.4
-        version: 16.4.4(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.104.1)
-      react:
-        specifier: ^19.3.1
-        version: 19.3.1
-      react-dom:
-        specifier: ^19.3.1
-        version: 19.3.1(react@19.3.1)
-    devDependencies:
-      '@eslint-react/eslint-plugin':
-        specifier: ^5.28.8
-        version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@tanstack/eslint-plugin-query':
-        specifier: ^5.107.1
-        version: link:../../../packages/eslint-plugin-query
-      '@types/node':
-        specifier: ^24.19.2
-        version: 24.19.2
-      '@types/react':
-        specifier: ^19.3.0
-        version: 19.3.0
-      '@types/react-dom':
-        specifier: ^19.3.0
-        version: 19.3.0(@types/react@19.3.0)
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-
-  examples/react/nextjs-app-prefetching:
-    dependencies:
-      '@tanstack/react-query':
-        specifier: ^5.107.1
-        version: link:../../../packages/react-query
-      '@tanstack/react-query-devtools':
-        specifier: ^5.107.1
-        version: link:../../../packages/react-query-devtools
-      next:
-        specifier: ^16.4.4
-        version: 16.4.4(@babel/core@7.29.7(supports-color@10.2.2))(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.104.1)
-      react:
-        specifier: ^19.3.1
-        version: 19.3.1
-      react-dom:
-        specifier: ^19.3.1
-        version: 19.3.1(react@19.3.1)
-    devDependencies:
-      '@eslint-react/eslint-plugin':
-        specifier: ^5.28.8
-        version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      '@tanstack/eslint-plugin-query':
-        specifier: ^5.107.1
-        version: link:../../../packages/eslint-plugin-query
-      '@types/node':
-        specifier: ^24.19.2
-        version: 24.19.2
-      '@types/react':
-        specifier: ^19.3.0
-        version: 19.3.0
-      '@types/react-dom':
-        specifier: ^19.3.0
-        version: 19.3.0(@types/react@19.3.0)
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-
-  examples/react/nextjs-suspense-streaming:
-    dependencies:
-      '@tanstack/react-query':
-        specifier: ^5.107.1
-        version: link:../../../packages/react-query
-      '@tanstack/react-query-devtools':
-        specifier: ^5.107.1
-        version: link:../../../packages/react-query-devtools
-      '@tanstack/react-query-next-experimental':
-        specifier: ^5.107.1
-        version: link:../../../packages/react-query-next-experimental
-      next:
-        specifier: ^16.4.4
-        version: 16.4.4(@babel/core@7.29.7(supports-color@10.2.2))(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.104.1)
-      react:
-        specifier: ^19.3.1
-        version: 19.3.1
-      react-dom:
-        specifier: ^19.3.1
-        version: 19.3.1(react@19.3.1)
     devDependencies:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
@@ -2921,6 +2807,43 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0)
 
+  examples/react/optimistic-updates-nextjs-app-router:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: ^5.107.1
+        version: link:../../../packages/react-query-devtools
+      next:
+        specifier: ^16.4.4
+        version: 16.4.4(@babel/core@7.29.7(supports-color@10.2.2))(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.104.1)
+      react:
+        specifier: ^19.3.1
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.3.1
+        version: 19.3.1(react@19.3.1)
+    devDependencies:
+      '@eslint-react/eslint-plugin':
+        specifier: ^5.28.8
+        version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/eslint-plugin-query
+      '@types/node':
+        specifier: ^24.19.2
+        version: 24.19.2
+      '@types/react':
+        specifier: ^19.3.0
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.3.0
+        version: 19.3.0(@types/react@19.3.0)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
   examples/react/pagination-nextjs-pages-router:
     dependencies:
       '@tanstack/react-query':
@@ -2994,6 +2917,43 @@ importers:
       vite:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0)
+
+  examples/react/prefetching-nextjs-app-router:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: ^5.107.1
+        version: link:../../../packages/react-query-devtools
+      next:
+        specifier: ^16.4.4
+        version: 16.4.4(@babel/core@7.29.7(supports-color@10.2.2))(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.104.1)
+      react:
+        specifier: ^19.3.1
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.3.1
+        version: 19.3.1(react@19.3.1)
+    devDependencies:
+      '@eslint-react/eslint-plugin':
+        specifier: ^5.28.8
+        version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/eslint-plugin-query
+      '@types/node':
+        specifier: ^24.19.2
+        version: 24.19.2
+      '@types/react':
+        specifier: ^19.3.0
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.3.0
+        version: 19.3.0(@types/react@19.3.0)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
 
   examples/react/prefetching-nextjs-pages-router:
     dependencies:
@@ -3304,6 +3264,46 @@ importers:
       vite:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0)
+
+  examples/react/suspense-streaming-nextjs-app-router:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: ^5.107.1
+        version: link:../../../packages/react-query-devtools
+      '@tanstack/react-query-next-experimental':
+        specifier: ^5.107.1
+        version: link:../../../packages/react-query-next-experimental
+      next:
+        specifier: ^16.4.4
+        version: 16.4.4(@babel/core@7.29.7(supports-color@10.2.2))(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.104.1)
+      react:
+        specifier: ^19.3.1
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.3.1
+        version: 19.3.1(react@19.3.1)
+    devDependencies:
+      '@eslint-react/eslint-plugin':
+        specifier: ^5.28.8
+        version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/eslint-plugin-query
+      '@types/node':
+        specifier: ^24.19.2
+        version: 24.19.2
+      '@types/react':
+        specifier: ^19.3.0
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.3.0
+        version: 19.3.0(@types/react@19.3.0)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
 
   examples/solid/algolia:
     dependencies:
@@ -3979,43 +3979,6 @@ importers:
         specifier: ^2.11.15
         version: 2.11.15(@testing-library/jest-dom@6.9.1)(solid-js@1.9.18)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
 
-  examples/solid/solid-start-streaming:
-    dependencies:
-      '@solidjs/meta':
-        specifier: ^0.29.4
-        version: 0.29.4(solid-js@1.9.18)
-      '@solidjs/router':
-        specifier: ^1.0.1
-        version: 1.0.1(solid-js@1.9.18)
-      '@solidjs/start':
-        specifier: ^2.2.0
-        version: 2.2.0(@solidjs/router@1.0.1(solid-js@1.9.18))(@testing-library/jest-dom@6.9.1)(crossws@0.4.16(srvx@1.0.8))(ocache@0.3.1)(solid-js@1.9.18)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
-      '@tanstack/solid-query':
-        specifier: ^5.107.1
-        version: link:../../../packages/solid-query
-      '@tanstack/solid-query-devtools':
-        specifier: ^5.107.1
-        version: link:../../../packages/solid-query-devtools
-      solid-js:
-        specifier: ^1.9.18
-        version: 1.9.18
-    devDependencies:
-      '@tanstack/eslint-plugin-query':
-        specifier: ^5.107.1
-        version: link:../../../packages/eslint-plugin-query
-      eslint-plugin-solid:
-        specifier: ^0.18.1
-        version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      nitro:
-        specifier: ^3.0.260903-beta
-        version: 3.0.260903-beta
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-      vite:
-        specifier: ^8.3.5
-        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0)
-
   examples/solid/star-wars-solid-router:
     dependencies:
       '@solidjs/router':
@@ -4052,6 +4015,43 @@ importers:
       vite-plugin-solid:
         specifier: ^2.11.15
         version: 2.11.15(@testing-library/jest-dom@6.9.1)(solid-js@1.9.18)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+
+  examples/solid/streaming-solid-start2:
+    dependencies:
+      '@solidjs/meta':
+        specifier: ^0.29.4
+        version: 0.29.4(solid-js@1.9.18)
+      '@solidjs/router':
+        specifier: ^1.0.1
+        version: 1.0.1(solid-js@1.9.18)
+      '@solidjs/start':
+        specifier: ^2.2.0
+        version: 2.2.0(@solidjs/router@1.0.1(solid-js@1.9.18))(@testing-library/jest-dom@6.9.1)(crossws@0.4.16(srvx@1.0.8))(ocache@0.3.1)(solid-js@1.9.18)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/solid-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: ^5.107.1
+        version: link:../../../packages/solid-query-devtools
+      solid-js:
+        specifier: ^1.9.18
+        version: 1.9.18
+    devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/eslint-plugin-query
+      eslint-plugin-solid:
+        specifier: ^0.18.1
+        version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      nitro:
+        specifier: ^3.0.260903-beta
+        version: 3.0.260903-beta
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
 
   examples/solid/suspense:
     dependencies:
@@ -4329,6 +4329,52 @@ importers:
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
+
+  examples/svelte/contacts-sveltekit:
+    dependencies:
+      '@tanstack/svelte-pacer':
+        specifier: ^0.2.0
+        version: 0.2.0(svelte@5.57.1(@typescript-eslint/types@8.72.0))
+      '@tanstack/svelte-query':
+        specifier: ^6.4.1
+        version: link:../../../packages/svelte-query
+      '@tanstack/svelte-query-devtools':
+        specifier: ^6.4.1
+        version: link:../../../packages/svelte-query-devtools
+      match-sorter:
+        specifier: ^8.3.0
+        version: 8.3.0
+    devDependencies:
+      '@sveltejs/adapter-auto':
+        specifier: ^7.0.1
+        version: 7.0.1(@sveltejs/kit@2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(svelte@5.57.1(@typescript-eslint/types@8.72.0))(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
+      '@sveltejs/kit':
+        specifier: ^2.70.3
+        version: 2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(svelte@5.57.1(@typescript-eslint/types@8.72.0))(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@sveltejs/vite-plugin-svelte':
+        specifier: ^7.3.1
+        version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/eslint-plugin-query
+      '@typescript-eslint/parser':
+        specifier: ^8.72.0
+        version: 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint-plugin-svelte:
+        specifier: ^3.23.0
+        version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.0))
+      svelte:
+        specifier: ^5.57.1
+        version: 5.57.1(@typescript-eslint/types@8.72.0)
+      svelte-check:
+        specifier: ^4.7.7
+        version: 4.7.7(picomatch@4.0.7)(svelte@5.57.1(@typescript-eslint/types@8.72.0))(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -4870,52 +4916,6 @@ importers:
       vite:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0)
-
-  examples/svelte/sveltekit:
-    dependencies:
-      '@tanstack/svelte-pacer':
-        specifier: ^0.2.0
-        version: 0.2.0(svelte@5.57.1(@typescript-eslint/types@8.72.0))
-      '@tanstack/svelte-query':
-        specifier: ^6.4.1
-        version: link:../../../packages/svelte-query
-      '@tanstack/svelte-query-devtools':
-        specifier: ^6.4.1
-        version: link:../../../packages/svelte-query-devtools
-      match-sorter:
-        specifier: ^8.3.0
-        version: 8.3.0
-    devDependencies:
-      '@sveltejs/adapter-auto':
-        specifier: ^7.0.1
-        version: 7.0.1(@sveltejs/kit@2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(svelte@5.57.1(@typescript-eslint/types@8.72.0))(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
-      '@sveltejs/kit':
-        specifier: ^2.70.3
-        version: 2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(svelte@5.57.1(@typescript-eslint/types@8.72.0))(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
-      '@sveltejs/vite-plugin-svelte':
-        specifier: ^7.3.1
-        version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
-      '@tanstack/eslint-plugin-query':
-        specifier: ^5.107.1
-        version: link:../../../packages/eslint-plugin-query
-      '@typescript-eslint/parser':
-        specifier: ^8.72.0
-        version: 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      eslint-plugin-svelte:
-        specifier: ^3.23.0
-        version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.0))
-      svelte:
-        specifier: ^5.57.1
-        version: 5.57.1(@typescript-eslint/types@8.72.0)
-      svelte-check:
-        specifier: ^4.7.7
-        version: 4.7.7(picomatch@4.0.7)(svelte@5.57.1(@typescript-eslint/types@8.72.0))(typescript@6.0.3)
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-      vite:
-        specifier: ^8.3.5
-        version: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
 
   examples/vue/algolia:
     dependencies:
@@ -25261,17 +25261,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint-react/ast@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
-    dependencies:
-      '@typescript-eslint/types': 8.72.0
-      '@typescript-eslint/typescript-estree': 8.72.0(supports-color@7.2.0)(typescript@6.0.3)
-      '@typescript-eslint/utils': 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      typescript: 6.0.3
-    optionalDependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
-    transitivePeerDependencies:
-      - supports-color
-
   '@eslint-react/core@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)':
     dependencies:
       '@eslint-react/ast': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -25284,21 +25273,6 @@ snapshots:
       typescript: 6.0.3
     optionalDependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
-    transitivePeerDependencies:
-      - supports-color
-
-  '@eslint-react/core@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
-    dependencies:
-      '@eslint-react/ast': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/eslint': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/shared': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/var': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@typescript-eslint/types': 8.72.0
-      '@typescript-eslint/utils': 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      ts-pattern: 5.9.2
-      typescript: 6.0.3
-    optionalDependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -25317,21 +25291,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint-react/eslint-plugin@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
-    dependencies:
-      '@eslint-react/shared': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      eslint-plugin-react-dom: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      eslint-plugin-react-jsx: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      eslint-plugin-react-naming-convention: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      eslint-plugin-react-rsc: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      eslint-plugin-react-web-api: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      eslint-plugin-react-x: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      typescript: 6.0.3
-    optionalDependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
-    transitivePeerDependencies:
-      - supports-color
-
   '@eslint-react/eslint@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)':
     dependencies:
       '@typescript-eslint/types': 8.72.0
@@ -25339,16 +25298,6 @@ snapshots:
       typescript: 6.0.3
     optionalDependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
-    transitivePeerDependencies:
-      - supports-color
-
-  '@eslint-react/eslint@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
-    dependencies:
-      '@typescript-eslint/types': 8.72.0
-      '@typescript-eslint/utils': 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      typescript: 6.0.3
-    optionalDependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -25366,20 +25315,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint-react/jsx@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
-    dependencies:
-      '@eslint-react/ast': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/eslint': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/var': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@typescript-eslint/types': 8.72.0
-      '@typescript-eslint/utils': 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      ts-pattern: 5.9.2
-      typescript: 6.0.3
-    optionalDependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
-    transitivePeerDependencies:
-      - supports-color
-
   '@eslint-react/shared@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)':
     dependencies:
       '@eslint-react/eslint': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -25389,18 +25324,6 @@ snapshots:
       zod: 4.6.7
     optionalDependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
-    transitivePeerDependencies:
-      - supports-color
-
-  '@eslint-react/shared@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
-    dependencies:
-      '@eslint-react/eslint': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@typescript-eslint/utils': 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      ts-pattern: 5.9.2
-      typescript: 6.0.3
-      zod: 4.6.7
-    optionalDependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -25415,20 +25338,6 @@ snapshots:
       typescript: 6.0.3
     optionalDependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
-    transitivePeerDependencies:
-      - supports-color
-
-  '@eslint-react/var@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
-    dependencies:
-      '@eslint-react/ast': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/eslint': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@typescript-eslint/scope-manager': 8.72.0
-      '@typescript-eslint/types': 8.72.0
-      '@typescript-eslint/utils': 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      ts-pattern: 5.9.2
-      typescript: 6.0.3
-    optionalDependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -29463,42 +29372,6 @@ snapshots:
   '@solidjs/router@1.0.1(solid-js@1.9.18)':
     dependencies:
       solid-js: 1.9.18
-
-  '@solidjs/start@2.2.0(@solidjs/router@1.0.1(solid-js@1.9.18))(@testing-library/jest-dom@6.9.1)(crossws@0.4.16(srvx@1.0.8))(ocache@0.3.1)(solid-js@1.9.18)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))':
-    dependencies:
-      '@babel/core': 7.29.7(supports-color@10.2.2)
-      '@babel/traverse': 7.29.12(supports-color@10.2.2)
-      '@babel/types': 7.29.11
-      '@jridgewell/trace-mapping': 0.3.31
-      '@solidjs/meta': 0.29.4(solid-js@1.9.18)
-      '@types/babel__traverse': 7.28.0
-      '@types/micromatch': 4.0.10
-      cookie-es: 3.1.1
-      defu: 6.1.7
-      error-stack-parser-es: 2.0.1
-      fast-glob: 3.3.3
-      h3: 2.0.8(crossws@0.4.16(srvx@1.0.8))(ocache@0.3.1)
-      html-to-image: 1.11.13
-      micromatch: 4.0.8
-      oxc-parser: 0.141.0
-      path-to-regexp: 8.4.2
-      pathe: 2.0.3
-      radix3: 1.1.2
-      seroval: 1.7.6
-      seroval-plugins: 1.7.1(seroval@1.7.6)
-      shiki: 4.6.0
-      solid-js: 1.9.18
-      srvx: 0.12.8
-      terracotta: 1.3.1(solid-js@1.9.18)
-      vite: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0)
-      vite-plugin-solid: 2.11.15(@testing-library/jest-dom@6.9.1)(solid-js@1.9.18)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
-    optionalDependencies:
-      '@solidjs/router': 1.0.1(solid-js@1.9.18)
-    transitivePeerDependencies:
-      - '@testing-library/jest-dom'
-      - crossws
-      - ocache
-      - supports-color
 
   '@solidjs/start@2.2.0(@solidjs/router@1.0.1(solid-js@1.9.18))(@testing-library/jest-dom@6.9.1)(crossws@0.4.16(srvx@1.0.8))(ocache@0.3.1)(solid-js@1.9.18)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))':
     dependencies:
@@ -33961,23 +33834,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-react-dom@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3):
-    dependencies:
-      '@eslint-react/ast': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/eslint': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/jsx': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/shared': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/var': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@typescript-eslint/types': 8.72.0
-      '@typescript-eslint/utils': 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      compare-versions: 6.1.1
-      ts-pattern: 5.9.2
-      typescript: 6.0.3
-    optionalDependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
-    transitivePeerDependencies:
-      - supports-color
-
   eslint-plugin-react-hooks@5.2.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2)):
     dependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
@@ -34008,21 +33864,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-react-jsx@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3):
-    dependencies:
-      '@eslint-react/ast': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/core': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/eslint': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/jsx': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/shared': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@typescript-eslint/types': 8.72.0
-      '@typescript-eslint/utils': 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      typescript: 6.0.3
-    optionalDependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
-    transitivePeerDependencies:
-      - supports-color
-
   eslint-plugin-react-naming-convention@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3):
     dependencies:
       '@eslint-react/ast': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -34036,22 +33877,6 @@ snapshots:
       typescript: 6.0.3
     optionalDependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
-    transitivePeerDependencies:
-      - supports-color
-
-  eslint-plugin-react-naming-convention@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3):
-    dependencies:
-      '@eslint-react/ast': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/core': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/eslint': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/shared': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/var': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@typescript-eslint/types': 8.72.0
-      '@typescript-eslint/utils': 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      ts-pattern: 5.9.2
-      typescript: 6.0.3
-    optionalDependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -34070,21 +33895,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-react-rsc@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3):
-    dependencies:
-      '@eslint-react/ast': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/core': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/eslint': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/shared': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/var': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@typescript-eslint/types': 8.72.0
-      '@typescript-eslint/utils': 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      typescript: 6.0.3
-    optionalDependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
-    transitivePeerDependencies:
-      - supports-color
-
   eslint-plugin-react-web-api@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3):
     dependencies:
       '@eslint-react/ast': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -34098,22 +33908,6 @@ snapshots:
       typescript: 6.0.3
     optionalDependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
-    transitivePeerDependencies:
-      - supports-color
-
-  eslint-plugin-react-web-api@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3):
-    dependencies:
-      '@eslint-react/ast': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/core': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/eslint': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/shared': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/var': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@typescript-eslint/types': 8.72.0
-      '@typescript-eslint/utils': 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      ts-pattern: 5.9.2
-      typescript: 6.0.3
-    optionalDependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -34136,28 +33930,6 @@ snapshots:
       typescript: 6.0.3
     optionalDependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
-    transitivePeerDependencies:
-      - supports-color
-
-  eslint-plugin-react-x@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3):
-    dependencies:
-      '@eslint-react/ast': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/core': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/eslint': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/jsx': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/shared': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@eslint-react/var': 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@typescript-eslint/scope-manager': 8.72.0
-      '@typescript-eslint/types': 8.72.0
-      '@typescript-eslint/typescript-estree': 8.72.0(supports-color@7.2.0)(typescript@6.0.3)
-      '@typescript-eslint/utils': 8.72.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      compare-versions: 6.1.1
-      string-ts: 2.3.1
-      ts-api-utils: 2.5.0(typescript@6.0.3)
-      ts-pattern: 5.9.2
-      typescript: 6.0.3
-    optionalDependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
