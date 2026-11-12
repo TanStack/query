@@ -1,4 +1,4 @@
-# TanStack Angular Query Router Example
+# TanStack Angular Query Basic Example (Angular Router)
 
 The basic posts example with Angular Router, one route per view.
 
