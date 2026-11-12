@@ -1,6 +1,16 @@
-# Simple (Nuxt 4) example
+# TanStack Vue Query Simple Example
+
+Fetches a single GitHub repository and shows its stats.
+
+Built with [Nuxt 4](https://nuxt.com).
+
+## How it works
+
+- `app/services/repos/queries.ts` defines `reposQueries.detail()`, a `queryOptions` factory keyed by `['repos', 'detail']` that fetches the `TanStack/query` repository from the GitHub API.
+- `app/app.vue` reads it with `useQuery(reposQueries.detail())` and calls `await suspense()` in `<script setup>`, so the repository is fetched during server rendering.
+- `app/plugins/vue-query.ts` is a Nuxt plugin that creates a `QueryClient` with a 5-second `staleTime` and installs `VueQueryPlugin`. On the server it stores `dehydrate(queryClient)` in `useState('vue-query')` on `app:rendered`, and on the client it calls `hydrate` with that state on `app:created`.
 
 To run this example:
 
-- `npm install` or `yarn` or `pnpm i` or `bun i`
-- `npm run dev` or `yarn dev` or `pnpm dev` or `bun dev`
+- `npm install`
+- `npm run dev`

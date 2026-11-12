@@ -1,8 +1,15 @@
-# Example
+# TanStack React Query Next.js Example
 
-In this simple example, we integrate React-Query seamlessly with Next.js data fetching methods to fetch queries in the server and hydrate them in the browser.
+Prefetches posts in `getStaticProps`, dehydrates the cache, and hydrates it in the browser with `HydrationBoundary`.
 
-In addition to fetching and mutating data, React-Query analyzes your queries and their results to construct a client-side cache of your data, which is kept up to date as further queries and mutations are run.
+Built with [Next.js (Pages Router)](https://nextjs.org/docs/pages).
+
+## How it works
+
+- `src/services/posts/queries.ts` defines `postsQueries.list(limit)` with `queryOptions`, keyed by `['posts', 'list', limit]`. `src/services/posts/api.ts` fetches the posts from JSONPlaceholder and keeps the first `limit` of them.
+- `src/pages/index.tsx` runs `queryClient.query(postsQueries.list(10))` on a fresh `QueryClient` in `getStaticProps` and returns `dehydrate(queryClient)` as `dehydratedState`.
+- `src/pages/_app.tsx` passes `pageProps.dehydratedState` to `HydrationBoundary`, and its `QueryClient` sets a `staleTime` of 1 minute so the prefetched list is not refetched right after hydration.
+- `src/components/PostList.tsx` reads `useQuery(postsQueries.list(postCount))`, and "Show More" raises `postCount` by 10, which fetches a new list. On `src/pages/client-only.tsx` the same component runs without prefetching, so the first list is fetched in the browser.
 
 To run this example:
 

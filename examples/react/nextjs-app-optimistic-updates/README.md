@@ -1,6 +1,8 @@
-# TanStack Query — Next.js App Router Optimistic Updates
+# TanStack React Query Optimistic Updates Example
 
 This example demonstrates **optimistic updates** with TanStack Query v5 in a Next.js App Router project.
+
+Built with [Next.js (App Router)](https://nextjs.org/docs/app).
 
 ## What it shows
 
