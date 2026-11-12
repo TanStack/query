@@ -493,7 +493,9 @@ export function acquireClient(client: QueryClient): () => void {
  * so it is not serialized and not shared with another tag.
  */
 export interface ClientHold {
+  /** The client the tag is using now, when the tag was given one. */
   client?: QueryClient
+  /** Releases the hold on {@link ClientHold.client}. Calling it twice is harmless. */
   release?: () => void
 }
 

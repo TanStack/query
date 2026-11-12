@@ -192,15 +192,15 @@ describe('marko-query tags', () => {
       const client = createClient()
       const mounts = vi.fn<() => void>()
       const unmounts = vi.fn<() => void>()
-      const mount = client.mount.bind(client)
-      const unmount = client.unmount.bind(client)
+      const originalMount = client.mount.bind(client)
+      const originalUnmount = client.unmount.bind(client)
       client.mount = () => {
         mounts()
-        mount()
+        originalMount()
       }
       client.unmount = () => {
         unmounts()
-        unmount()
+        originalUnmount()
       }
       const onFetch = vi.fn<() => void>()
       root = container()

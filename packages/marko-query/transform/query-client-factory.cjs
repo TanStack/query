@@ -74,7 +74,9 @@ module.exports = function transform(tag, t) {
               ),
             ]),
         t.expressionStatement(
-          t.callExpression(t.identifier(local.name), [t.identifier(value.name)]),
+          t.callExpression(t.identifier(local.name), [
+            t.identifier(value.name),
+          ]),
         ),
       ],
       true,
@@ -110,7 +112,10 @@ function findImport(body, t, source) {
   for (const node of body) {
     if (!t.isImportDeclaration(node) || node.source.value !== source) continue
     for (const s of node.specifiers) {
-      if (t.isImportSpecifier(s) && s.imported.name === 'setQueryClientFactory') {
+      if (
+        t.isImportSpecifier(s) &&
+        s.imported.name === 'setQueryClientFactory'
+      ) {
         return s.local.name
       }
     }

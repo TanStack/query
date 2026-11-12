@@ -140,8 +140,12 @@ describe('bindings', () => {
         status: 'pending',
         fetchStatus: 'fetching',
       })
-      await sleep(20)
-      expect(results.at(-1)).toMatchObject({ status: 'success', data: 'done' })
+      await vi.waitFor(() =>
+        expect(results.at(-1)).toMatchObject({
+          status: 'success',
+          data: 'done',
+        }),
+      )
       binding.destroy()
     })
 

@@ -201,7 +201,8 @@ export interface CreateQueriesOptions<
  * `combine`" stays distinguishable from a `combine` that returns `unknown`.
  * The tuple wrapper stops `never` from distributing over the conditional.
  */
-export type CreateQueriesResult<
-  T extends Array<any>,
-  TCombined = never,
-> = [TCombined] extends [never] ? QueriesResults<T> : TCombined
+export type CreateQueriesResult<T extends Array<any>, TCombined = never> = [
+  TCombined,
+] extends [never]
+  ? QueriesResults<T>
+  : TCombined

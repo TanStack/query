@@ -19,12 +19,12 @@ import {
   onRestoringChange,
   registerQueryClientFactory,
 } from '../../src/core/internal.js'
-import type { ClientHold } from '../../src/core/internal.js'
 import {
   hydrateOnce,
   unregisterQueryClientFactory,
 } from '../../src/core/client.js'
-import { createClient, resetShared, setServer } from './utils.js'
+import { createClient, mountsOf, resetShared, setServer } from './utils.js'
+import type { ClientHold } from '../../src/core/internal.js'
 import type {
   DehydratedState,
   MutationKey,
@@ -164,7 +164,7 @@ describe('query client', () => {
     it('one client per page, mounted once', () => {
       const client = getQueryClient()
       expect(getQueryClient({})).toBe(client)
-      expect((client as unknown as { mounts: number }).mounts).toBe(1)
+      expect(mountsOf(client)).toBe(1)
     })
 
     it('hydrates each distinct $global state once', async () => {
@@ -190,8 +190,8 @@ describe('query client', () => {
       const next = createClient()
       setQueryClient(next)
       expect(getQueryClient()).toBe(next)
-      expect((previous as unknown as { mounts: number }).mounts).toBe(0)
-      expect((next as unknown as { mounts: number }).mounts).toBe(1)
+      expect(mountsOf(previous)).toBe(0)
+      expect(mountsOf(next)).toBe(1)
     })
 
     it('setQueryClient hydrates $global into the client the page already uses', async () => {
@@ -208,7 +208,7 @@ describe('query client', () => {
       setQueryClient(client, global)
       expect(getQueryClient()).toBe(client)
       expect(client.getQueryData(['x'])).toBe('server')
-      expect((client as unknown as { mounts: number }).mounts).toBe(1)
+      expect(mountsOf(client)).toBe(1)
     })
   })
 
@@ -221,21 +221,21 @@ describe('query client', () => {
       const second: ClientHold = {}
       holdClient(first, client, true)
       holdClient(second, client, true)
-      expect(client.mounts).toBe(1)
+      expect(mountsOf(client)).toBe(1)
 
       holdClient(first, undefined, false)
-      expect(client.mounts).toBe(1)
+      expect(mountsOf(client)).toBe(1)
       holdClient(second, undefined, false)
-      expect(client.mounts).toBe(0)
+      expect(mountsOf(client)).toBe(0)
     })
 
     it('refetches on focus through a client a tag was given', async () => {
       const client = createClient()
-      const mounts = () => (client as unknown as { mounts: number }).mounts
       const hold: ClientHold = {}
       holdClient(hold, client, true)
-      const fetches = vi.fn<() => Promise<number>>(
-        async () => fetches.mock.calls.length,
+      let calls = 0
+      const fetches = vi.fn<() => Promise<number>>(() =>
+        Promise.resolve(++calls),
       )
       const observer = new QueryObserver(client, {
         queryKey: ['focus'],
@@ -252,7 +252,7 @@ describe('query client', () => {
       unsubscribe()
       observer.destroy()
       holdClient(hold, undefined, false)
-      expect(mounts()).toBe(0)
+      expect(mountsOf(client)).toBe(0)
       focusManager.setFocused(undefined)
     })
 
@@ -260,10 +260,10 @@ describe('query client', () => {
       const client = createClient()
       const hold: ClientHold = {}
       holdClient(hold, client, false)
-      expect(client.mounts).toBe(0)
+      expect(mountsOf(client)).toBe(0)
       expect(hold.client).toBeUndefined()
       holdClient(hold, undefined, false)
-      expect(client.mounts).toBe(0)
+      expect(mountsOf(client)).toBe(0)
     })
 
     it('swaps the hold when the tag switches to another client', () => {
@@ -272,10 +272,10 @@ describe('query client', () => {
       const hold: ClientHold = {}
       holdClient(hold, first, true)
       holdClient(hold, second, true)
-      expect(first.mounts).toBe(0)
-      expect(second.mounts).toBe(1)
+      expect(mountsOf(first)).toBe(0)
+      expect(mountsOf(second)).toBe(1)
       holdClient(hold, undefined, false)
-      expect(second.mounts).toBe(0)
+      expect(mountsOf(second)).toBe(0)
     })
 
     it('does nothing on the server', () => {
@@ -283,9 +283,9 @@ describe('query client', () => {
       const client = createClient()
       const hold: ClientHold = {}
       holdClient(hold, client, true)
-      expect(client.mounts).toBe(0)
+      expect(mountsOf(client)).toBe(0)
       holdClient(hold, undefined, false)
-      expect(client.mounts).toBe(0)
+      expect(mountsOf(client)).toBe(0)
     })
   })
 
