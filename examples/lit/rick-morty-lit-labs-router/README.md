@@ -1,4 +1,4 @@
-# TanStack Lit Query Rick And Morty Example
+# TanStack Lit Query Rick And Morty Example (@lit-labs/router)
 
 A multi-page Rick and Morty app with characters and episodes, where each page fetches its own data.
 

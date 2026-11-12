@@ -1,4 +1,4 @@
-# TanStack Angular Query Devtools Panel Example
+# TanStack Angular Query Devtools Panel Example (Angular Router)
 
 Embeds the devtools as a panel inside the page instead of the floating toggle.
 

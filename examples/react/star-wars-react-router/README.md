@@ -1,4 +1,4 @@
-# TanStack React Query Star Wars Example
+# TanStack React Query Star Wars Example (React Router)
 
 A multi-page Star Wars app with films and characters, where each page fetches its own data.
 

@@ -1,4 +1,4 @@
-# TanStack React Query Suspense Streaming Example
+# TanStack React Query Suspense Streaming Example (Next.js App Router)
 
 Streams suspense queries from the server with `ReactQueryStreamedHydration`, so each query's data reaches the client as it resolves.
 

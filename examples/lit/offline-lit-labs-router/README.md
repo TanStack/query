@@ -1,4 +1,4 @@
-# TanStack Lit Query Offline Example
+# TanStack Lit Query Offline Example (@lit-labs/router)
 
 A movie list that keeps working offline. Queries and mutations are persisted, mutations made offline are paused, and they resume when the connection returns or after a reload.
 

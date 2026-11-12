@@ -1,4 +1,4 @@
-# TanStack Solid Query Streaming Example
+# TanStack Solid Query Streaming Example (SolidStart)
 
 Streaming SSR, with one route per case: prefetching, deferred and streamed queries, hydration, mixed queries, batch methods and errors.
 

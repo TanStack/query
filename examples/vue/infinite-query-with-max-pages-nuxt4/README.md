@@ -1,4 +1,4 @@
-# TanStack Vue Query Infinite Query With Max Pages Example
+# TanStack Vue Query Infinite Query With Max Pages Example (Nuxt 4)
 
 An infinite list that loads pages in both directions and keeps at most 3 pages in the cache with `maxPages`.
 

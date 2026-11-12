@@ -1,4 +1,4 @@
-# TanStack Svelte Query Optimistic Updates Example
+# TanStack Svelte Query Optimistic Updates Example (SvelteKit)
 
 Adds todos optimistically by writing to the cache in `onMutate` and rolling back on error.
 

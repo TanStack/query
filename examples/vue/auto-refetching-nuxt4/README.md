@@ -1,4 +1,4 @@
-# TanStack Vue Query Auto Refetching Example
+# TanStack Vue Query Auto Refetching Example (Nuxt 4)
 
 A todo list that polls the server with `refetchInterval`. Adding a todo or clearing the list invalidates the query.
 

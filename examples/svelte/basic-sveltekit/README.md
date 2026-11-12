@@ -1,4 +1,4 @@
-# TanStack Svelte Query Basic Example
+# TanStack Svelte Query Basic Example (SvelteKit)
 
 A list of posts and a post detail view. Posts you have already opened are marked as visited from the query cache. The cache is persisted to `localStorage`.
 

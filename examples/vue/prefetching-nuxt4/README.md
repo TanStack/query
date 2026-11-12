@@ -1,4 +1,4 @@
-# TanStack Vue Query Prefetching Example
+# TanStack Vue Query Prefetching Example (Nuxt 4)
 
 Prefetches a character when you hover its link, so the detail view opens without a loading state.
 

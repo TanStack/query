@@ -1,4 +1,4 @@
-# TanStack Solid Query Prefetching Example
+# TanStack Solid Query Prefetching Example (SolidStart)
 
 Prefetches a character when you hover its link, so the detail view opens without a loading state.
 

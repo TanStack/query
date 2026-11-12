@@ -1,4 +1,4 @@
-# TanStack Solid Query Pagination Example
+# TanStack Solid Query Pagination Example (SolidStart)
 
 Paginated projects with `placeholderData: keepPreviousData`, so the current page stays visible while the next one loads. The next page is prefetched.
 

@@ -1,4 +1,4 @@
-# TanStack Vue Query Optimistic Updates Example
+# TanStack Vue Query Optimistic Updates Example (Nuxt 4)
 
 Adds todos optimistically in two ways: from the pending mutation's `variables`, or by writing to the cache in `onMutate` and rolling back on error.
 

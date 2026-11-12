@@ -1,4 +1,4 @@
-# TanStack React Query Prefetching Example
+# TanStack React Query Prefetching Example (Next.js Pages Router)
 
 Prefetches a character when you hover its link, so the detail view opens without a loading state.
 

@@ -1,4 +1,4 @@
-# TanStack Svelte Query Prefetching Example
+# TanStack Svelte Query Prefetching Example (SvelteKit)
 
 Prefetches a character when you hover its link, so the detail view opens without a loading state.
 

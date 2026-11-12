@@ -1,4 +1,4 @@
-# TanStack Vue Query Router Example
+# TanStack Vue Query Contacts Example (Vue Router)
 
 A contacts app whose router loaders read from the query cache and whose mutations invalidate it.
 

@@ -1,4 +1,4 @@
-# TanStack Svelte Query Offline Example
+# TanStack Svelte Query Offline Example (SvelteKit)
 
 A movie list that keeps working offline. Queries and mutations are persisted, mutations made offline are paused, and they resume when the connection returns or after a reload.
 

@@ -1,4 +1,4 @@
-# TanStack Solid Query Router Example
+# TanStack Solid Query Contacts Example (Solid Router)
 
 A contacts app whose router loaders read from the query cache and whose mutations invalidate it.
 

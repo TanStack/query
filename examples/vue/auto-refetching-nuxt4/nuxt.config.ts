@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   app: {
     head: {
-      title: 'TanStack Vue Query Auto Refetching Example',
+      title: 'TanStack Vue Query Auto Refetching Example (Nuxt 4)',
       link: [
         {
           rel: 'shortcut icon',

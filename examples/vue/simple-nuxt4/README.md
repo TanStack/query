@@ -1,4 +1,4 @@
-# TanStack Vue Query Simple Example
+# TanStack Vue Query Simple Example (Nuxt 4)
 
 Fetches a single GitHub repository and shows its stats.
 

@@ -1,4 +1,4 @@
-# TanStack Lit Query Load-More Infinite Scroll Example
+# TanStack Lit Query Load-More Infinite Scroll Example (@lit-labs/router)
 
 An infinite list that loads the next page when a "Load more" button is clicked or when the end of the list scrolls into view.
 

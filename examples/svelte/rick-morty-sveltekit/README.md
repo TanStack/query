@@ -1,4 +1,4 @@
-# TanStack Svelte Query Rick And Morty Example
+# TanStack Svelte Query Rick And Morty Example (SvelteKit)
 
 A multi-page Rick and Morty app with characters and episodes, where each page fetches its own data.
 

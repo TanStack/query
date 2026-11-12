@@ -1,7 +1,7 @@
 import { Providers } from './providers'
 
 export const metadata = {
-  title: 'TanStack React Query Suspense Streaming Example',
+  title: 'TanStack React Query Suspense Streaming Example (Next.js App Router)',
   description: 'Next.js App Router example with suspense streaming',
 }
 

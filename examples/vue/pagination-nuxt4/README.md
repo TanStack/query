@@ -1,4 +1,4 @@
-# TanStack Vue Query Pagination Example
+# TanStack Vue Query Pagination Example (Nuxt 4)
 
 Paginated projects with `placeholderData: keepPreviousData`, so the current page stays visible while the next one loads. The next page is prefetched.
 

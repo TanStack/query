@@ -1,4 +1,4 @@
-# TanStack Angular Query Query Options From A Service Example
+# TanStack Angular Query Query Options From A Service Example (Angular Router)
 
 Defines query options in an injectable service and uses them in routed components.
 

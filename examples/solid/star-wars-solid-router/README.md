@@ -1,4 +1,4 @@
-# TanStack Solid Query Star Wars Example
+# TanStack Solid Query Star Wars Example (Solid Router)
 
 A multi-page Star Wars app with films and characters, where each page fetches its own data.
 

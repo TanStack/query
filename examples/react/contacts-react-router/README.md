@@ -1,4 +1,4 @@
-# TanStack React Query Router Example
+# TanStack React Query Contacts Example (React Router)
 
 A contacts app whose router loaders read from the query cache and whose mutations invalidate it.
 

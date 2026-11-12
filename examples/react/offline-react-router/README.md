@@ -1,4 +1,4 @@
-# TanStack React Query Offline Example
+# TanStack React Query Offline Example (React Router)
 
 A movie list that keeps working offline. Queries and mutations are persisted, mutations made offline are paused, and they resume when the connection returns or after a reload.
 

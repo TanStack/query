@@ -1,4 +1,4 @@
-# TanStack Vue Query Load-More Infinite Scroll Example
+# TanStack Vue Query Load-More Infinite Scroll Example (Nuxt 4)
 
 An infinite list that loads the next page when a "Load more" button is clicked or when the end of the list scrolls into view.
 

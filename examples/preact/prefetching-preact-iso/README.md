@@ -1,4 +1,4 @@
-# TanStack Preact Query Prefetching Example
+# TanStack Preact Query Prefetching Example (preact-iso)
 
 Prefetches a character when you hover its link, so the detail view opens without a loading state.
 

@@ -1,4 +1,4 @@
-# TanStack Solid Query Optimistic Updates Example
+# TanStack Solid Query Optimistic Updates Example (SolidStart)
 
 Adds todos optimistically in two ways: from the pending mutation's `variables`, or by writing to the cache in `onMutate` and rolling back on error.
 

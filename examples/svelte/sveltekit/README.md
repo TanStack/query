@@ -1,4 +1,4 @@
-# TanStack Svelte Query SvelteKit Example
+# TanStack Svelte Query Contacts Example (SvelteKit)
 
 A contacts app whose SvelteKit `load` functions read from the query cache and whose mutations invalidate it.
 

@@ -1,4 +1,4 @@
-# TanStack Svelte Query Playground Example
+# TanStack Svelte Query Playground Example (SvelteKit)
 
 A todo list with adjustable `staleTime`, `gcTime` and error rate, to see how queries and mutations react to them.
 

@@ -1,4 +1,4 @@
-# TanStack Lit Query Star Wars Example
+# TanStack Lit Query Star Wars Example (@lit-labs/router)
 
 A multi-page Star Wars app with films and characters, where each page fetches its own data.
 

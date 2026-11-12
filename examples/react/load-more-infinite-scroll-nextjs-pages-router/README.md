@@ -1,4 +1,4 @@
-# TanStack React Query Load-More Infinite Scroll Example
+# TanStack React Query Load-More Infinite Scroll Example (Next.js Pages Router)
 
 An infinite list that loads the next page when a "Load more" button is clicked or when the end of the list scrolls into view.
 

@@ -1,4 +1,4 @@
-# TanStack React Query Next.js Example
+# TanStack React Query Next.js Example (Next.js Pages Router)
 
 Prefetches posts in `getStaticProps`, dehydrates the cache, and hydrates it in the browser with `HydrationBoundary`.
 

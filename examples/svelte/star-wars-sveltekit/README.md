@@ -1,4 +1,4 @@
-# TanStack Svelte Query Star Wars Example
+# TanStack Svelte Query Star Wars Example (SvelteKit)
 
 A multi-page Star Wars app with films and characters, where each page fetches its own data.
 

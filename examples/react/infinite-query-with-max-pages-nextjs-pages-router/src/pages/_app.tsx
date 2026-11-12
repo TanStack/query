@@ -10,7 +10,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <Head>
         <title>
-          TanStack React Query Infinite Query With Max Pages Example
+          TanStack React Query Infinite Query With Max Pages Example (Next.js
+          Pages Router)
         </title>
       </Head>
       <Component {...pageProps} />

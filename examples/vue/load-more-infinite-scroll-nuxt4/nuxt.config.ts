@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   app: {
     head: {
-      title: 'TanStack Vue Query Load-More Infinite Scroll Example',
+      title: 'TanStack Vue Query Load-More Infinite Scroll Example (Nuxt 4)',
       link: [
         {
           rel: 'shortcut icon',

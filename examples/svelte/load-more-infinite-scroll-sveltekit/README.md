@@ -1,4 +1,4 @@
-# TanStack Svelte Query Load-More Infinite Scroll Example
+# TanStack Svelte Query Load-More Infinite Scroll Example (SvelteKit)
 
 An infinite list that loads the next page when a "Load more" button is clicked.
 

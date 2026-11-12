@@ -1,4 +1,4 @@
-# TanStack Vue Query Star Wars Example
+# TanStack Vue Query Star Wars Example (Vue Router)
 
 A multi-page Star Wars app with films and characters, where each page fetches its own data.
 

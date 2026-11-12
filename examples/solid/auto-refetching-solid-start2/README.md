@@ -1,4 +1,4 @@
-# TanStack Solid Query Auto Refetching Example
+# TanStack Solid Query Auto Refetching Example (SolidStart)
 
 A todo list that polls the server with `refetchInterval`. Adding a todo or clearing the list invalidates the query.
 

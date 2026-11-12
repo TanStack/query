@@ -3,7 +3,7 @@ import type React from 'react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'TanStack React Query Prefetching Example',
+  title: 'TanStack React Query Prefetching Example (Next.js App Router)',
   description: 'Next.js App Router example with prefetching',
 }
 

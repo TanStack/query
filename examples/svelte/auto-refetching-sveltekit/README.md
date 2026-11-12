@@ -1,4 +1,4 @@
-# TanStack Svelte Query Auto Refetching Example
+# TanStack Svelte Query Auto Refetching Example (SvelteKit)
 
 A todo list that polls the server with `refetchInterval`. Adding a todo or clearing the list invalidates the query.
 

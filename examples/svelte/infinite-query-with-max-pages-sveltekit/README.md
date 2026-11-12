@@ -1,4 +1,4 @@
-# TanStack Svelte Query Infinite Query With Max Pages Example
+# TanStack Svelte Query Infinite Query With Max Pages Example (SvelteKit)
 
 An infinite list that loads pages in both directions and keeps at most 3 pages in the cache with `maxPages`.
 

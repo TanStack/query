@@ -16,7 +16,9 @@
 </script>
 
 <svelte:head>
-  <title>TanStack Svelte Query Infinite Query With Max Pages Example</title>
+  <title
+    >TanStack Svelte Query Infinite Query With Max Pages Example (SvelteKit)</title
+  >
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>

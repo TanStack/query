@@ -1,4 +1,4 @@
-# TanStack Svelte Query SSR Example
+# TanStack Svelte Query SSR Example (SvelteKit)
 
 Fills the cache in SvelteKit `load` functions with SvelteKit's `fetch`, so pages render on the server with data and the browser reuses the responses SvelteKit inlined instead of fetching again.
 

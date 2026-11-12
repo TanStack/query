@@ -1,4 +1,4 @@
-# TanStack Solid Query Rick And Morty Example
+# TanStack Solid Query Rick And Morty Example (Solid Router)
 
 A multi-page Rick and Morty app with characters and episodes, where each page fetches its own data.
 

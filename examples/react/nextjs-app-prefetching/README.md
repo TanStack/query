@@ -1,4 +1,4 @@
-# TanStack React Query Prefetching Example
+# TanStack React Query Prefetching Example (Next.js App Router)
 
 Prefetches a Pokémon in a Server Component and hydrates it in a Client Component with `HydrationBoundary`.
 

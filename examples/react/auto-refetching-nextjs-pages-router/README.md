@@ -1,4 +1,4 @@
-# TanStack React Query Auto Refetching Example
+# TanStack React Query Auto Refetching Example (Next.js Pages Router)
 
 A todo list that polls the server with `refetchInterval`. Adding a todo or clearing the list invalidates the query.
 

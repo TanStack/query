@@ -23,7 +23,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <Head>
-        <title>TanStack React Query Next.js Example</title>
+        <title>
+          TanStack React Query Next.js Example (Next.js Pages Router)
+        </title>
       </Head>
       <HydrationBoundary state={pageProps.dehydratedState}>
         <Component {...pageProps} />

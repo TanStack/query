@@ -1,4 +1,4 @@
-# TanStack Preact Query Rick And Morty Example
+# TanStack Preact Query Rick And Morty Example (preact-iso)
 
 A multi-page Rick and Morty app with characters and episodes, where each page fetches its own data.
 

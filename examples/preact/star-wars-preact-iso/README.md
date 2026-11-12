@@ -1,4 +1,4 @@
-# TanStack Preact Query Star Wars Example
+# TanStack Preact Query Star Wars Example (preact-iso)
 
 A multi-page Star Wars app with films and characters, where each page fetches its own data.
 

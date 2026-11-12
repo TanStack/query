@@ -1,4 +1,4 @@
-# TanStack React Query Basic Example
+# TanStack React Query Basic Example (ESLint Legacy Config)
 
 The basic posts example, linted with the legacy `.eslintrc` config of `@tanstack/eslint-plugin-query`.
 

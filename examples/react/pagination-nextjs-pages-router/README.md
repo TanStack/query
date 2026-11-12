@@ -1,4 +1,4 @@
-# TanStack React Query Pagination Example
+# TanStack React Query Pagination Example (Next.js Pages Router)
 
 Paginated projects with `placeholderData: keepPreviousData`, so the current page stays visible while the next one loads. The next page is prefetched.
 
