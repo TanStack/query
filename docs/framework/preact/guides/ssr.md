@@ -489,12 +489,37 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 ### High memory consumption on server
 
-In case you are creating the `QueryClient` for every request, Preact Query creates the isolated cache for this client, which is preserved in memory for the `gcTime` period. That may lead to high memory consumption on server in case of high number of requests during that period.
+On the server, `gcTime` defaults to `Infinity`. With `Infinity`, no garbage collection timer is scheduled, and the cache is freed from memory together with the `QueryClient` once the request finishes.
 
-On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
+Any finite `gcTime` schedules a timer for each query, and that timer keeps the query in memory until it fires. In Node.js, a timer also keeps alive the [`AsyncLocalStorage`](https://nodejs.org/api/async_context.html#class-asynclocalstorage) context it was created in. If your server framework stores the request in that context, the request stays in memory even after the response is sent, until the timer fires.
 
-Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you require a shorter `gcTime`, we recommend setting it to `2 * 1000` to allow sufficient time for the app to reference the data.
+This is easy to miss: a `gcTime` set in `defaultOptions` applies on the server too, so a value intended for the client also replaces `Infinity` on the server.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client.
+```tsx
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // This also applies on the server
+      gcTime: 1000 * 60,
+    },
+  },
+})
+```
 
-Alternatively, you can set a smaller `gcTime`.
+If you only want a custom `gcTime` in the browser, keep `Infinity` on the server:
+
+```tsx
+import { environmentManager, QueryClient } from '@tanstack/preact-query'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: environmentManager.isServer() ? Infinity : 1000 * 60,
+    },
+  },
+})
+```
+
+Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you do need a finite `gcTime` on the server, a short one such as `2 * 1000` gives the app enough time to reference the data, while limiting how long each request stays in memory.
+
+If you set a finite `gcTime` on the server, add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client. This removes every query from the cache and cancels its pending timer.

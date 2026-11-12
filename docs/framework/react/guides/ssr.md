@@ -565,13 +565,11 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 ### High memory consumption on server
 
-In case you are creating the `QueryClient` for every request, React Query creates the isolated cache for this client, which is preserved in memory for the `gcTime` period. That may lead to high memory consumption on server in case of high number of requests during that period.
+On the server, `gcTime` defaults to `Infinity`. With `Infinity`, no garbage collection timer is scheduled, and the cache is freed from memory together with the `QueryClient` once the request finishes.
 
-On the server, `gcTime` defaults to `Infinity`. With `Infinity`, no garbage collection timer is scheduled, and the cache is freed together with the `QueryClient` once nothing references it after the request has finished.
+Any finite `gcTime` schedules a timer for each query, and that timer keeps the query in memory until it fires. In Node.js, a timer also keeps alive the [`AsyncLocalStorage`](https://nodejs.org/api/async_context.html#class-asynclocalstorage) context it was created in, and frameworks like Next.js store the whole request in that context. So with a finite `gcTime`, the request stays in memory even after the response is sent, until the timer fires.
 
-Any finite `gcTime` schedules a timer for each query, and that timer keeps the query in memory until it fires. In Node.js, a timer also keeps alive the [`AsyncLocalStorage`](https://nodejs.org/api/async_context.html#class-asynclocalstorage) context it was created in, and frameworks such as Next.js store the whole request in that context. So with a finite `gcTime`, each request can stay in memory for the full `gcTime`, even after the response has been sent.
-
-This is easy to run into by accident: a `gcTime` set in `defaultOptions` applies on the server as well, so tuning it for the browser also replaces the `Infinity` default on the server:
+This is easy to miss: a `gcTime` set in `defaultOptions` applies on the server too, so a value intended for the client also replaces `Infinity` on the server.
 
 ```tsx
 const queryClient = new QueryClient({
@@ -598,7 +596,7 @@ const queryClient = new QueryClient({
 })
 ```
 
-Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you do need a finite `gcTime` on the server, a short one such as `2 * 1000` allows sufficient time for the app to reference the data, while limiting how long each request is kept in memory.
+Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you do need a finite `gcTime` on the server, a short one such as `2 * 1000` gives the app enough time to reference the data, while limiting how long each request stays in memory.
 
 If you set a finite `gcTime` on the server, add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client. This removes every query from the cache and cancels its pending timer.
 

@@ -194,4 +194,35 @@ A query's staleness is based on `dataUpdatedAt`, which is set to when it resolve
 
 ### High memory consumption on server
 
-Because the `QueryClient` is created fresh for every request, its cache is held in memory for the duration of that request. Under high request volume this can add up. `gcTime` defaults to `Infinity` on the server, so unless you configure it lower, memory for a request's cache isn't reclaimed automatically — in most cases this is fine, since the whole `QueryClient` instance becomes eligible for garbage collection once the request finishes and nothing references it anymore.
+On the server, `gcTime` defaults to `Infinity`. With `Infinity`, no garbage collection timer is scheduled, and the cache is freed from memory together with the `QueryClient` once the request finishes.
+
+Any finite `gcTime` schedules a timer for each query, and that timer keeps the query in memory until it fires. In Node.js, a timer also keeps alive the [`AsyncLocalStorage`](https://nodejs.org/api/async_context.html#class-asynclocalstorage) context it was created in. If your server framework stores the request in that context, the request stays in memory even after the response is sent, until the timer fires.
+
+This is easy to miss: a `gcTime` set in `defaultOptions` applies on the server too, so a value intended for the client also replaces `Infinity` on the server.
+
+```tsx
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // This also applies on the server
+      gcTime: 1000 * 60,
+    },
+  },
+})
+```
+
+If you only want a custom `gcTime` in the browser, keep `Infinity` on the server:
+
+```tsx
+import { environmentManager, QueryClient } from '@tanstack/solid-query'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: environmentManager.isServer() ? Infinity : 1000 * 60,
+    },
+  },
+})
+```
+
+If you set a finite `gcTime` on the server, add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client. This removes every query from the cache and cancels its pending timer.
