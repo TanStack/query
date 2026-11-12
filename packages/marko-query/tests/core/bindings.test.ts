@@ -435,6 +435,26 @@ describe('bindings', () => {
       binding.destroy()
     })
 
+    it('getResult reads the observer, so a reset is visible before its notification', async () => {
+      const client = createClient()
+      const binding = new MutationBinding(client, {
+        mutationKey: ['save'],
+        mutationFn: () => Promise.reject(new Error('nope')),
+      })
+      binding.mutate(1)
+      await sleep(5)
+      expect(binding.getResult().status).toBe('error')
+
+      // A changed `mutationKey` resets the observer, and the reset notification
+      // is batched. The observer already reports the reset result.
+      binding.setOptions({
+        mutationKey: ['other'],
+        mutationFn: () => Promise.reject(new Error('nope')),
+      })
+      expect(binding.getResult().status).toBe('idle')
+      binding.destroy()
+    })
+
     it('idleMutationResult is the plain idle result', () => {
       const result = idleMutationResult()
       expect(result.status).toBe('idle')

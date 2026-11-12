@@ -150,6 +150,8 @@ The factory covers most needs. To use a client that you created yourself, call `
 
 Replacing the client of the page is not a one-way door. Every mounted tag that follows the client of the page reconnects to the new one, so its result and its subscription move with it. A tag that you gave its own `client` input keeps observing that client. The reconnect happens in the same tick as the call, so a tag never observes the old client after `setQueryClient` returns.
 
+The new client is not seeded with the data of the old one. A `<query>` that resumed from the server keeps its server snapshot for the render that made it, and the binding that Marko Query rebuilds for the replacement client starts empty. The tag then shows what the new client fetches, not the entries of the previous cache. This matters when the replacement is a different scope, such as another account or another tenant, and the query has a long `staleTime`.
+
 ## A Different Client for One Tag
 
 Every tag except `<query-client-factory>` takes a `client` input. It is a function that returns the client to use instead of the client for this `$global`:

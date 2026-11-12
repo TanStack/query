@@ -87,8 +87,13 @@ static function thrownOf(
       holder.binding = undefined;
     }
     holdClient(holder.hold, connect().client, !!input.client);
-    connect().setOptions(input.options());
-    thrown = thrownOf(result, holder.binding);
+    const binding = connect();
+    binding.setOptions(input.options());
+    // `setOptions` resets the observer when the `mutationKey` changes, and the
+    // reset notification is batched. Reading `result` here would report the
+    // previous mutation's error with the new `throwOnError`, so read the
+    // observer instead.
+    thrown = thrownOf(binding.getResult(), binding);
   }
   onDestroy() {
     holder.unwatch?.();

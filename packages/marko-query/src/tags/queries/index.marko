@@ -52,21 +52,29 @@ static function queriesOf(options: CreateQueriesOptions<any, any>) {
 )>
 <let/results=(snapshot.result as QueryObserverResult[])>
 <let/thrown=snapshot.thrown>
-<const/holder={hold: {} as ClientHold} as {
+<const/holder={hold: {} as ClientHold, hydrated: false} as {
   binding?: QueriesBinding;
   unwatch?: () => void;
   hold: ClientHold;
+  hydrated: boolean;
 }>
-<const/connect=(() =>
-  (holder.binding ??= new QueriesBinding(
+<const/connect=(() => {
+  if (holder.binding) return holder.binding;
+  holder.binding = new QueriesBinding(
     resolveClient($global, input.client),
     queriesOf(input.options()),
     (next, error) => {
       results = next.results.map(toPlainResult);
       thrown = error;
     },
-    snapshot.hydration,
-  )))>
+    // The snapshot belongs to the render that made it. A binding built later,
+    // for a client that replaced the page's client, must not seed that client
+    // with the server's entries.
+    holder.hydrated ? undefined : snapshot.hydration,
+  );
+  holder.hydrated = true;
+  return holder.binding;
+})>
 
 <lifecycle
   onMount() {

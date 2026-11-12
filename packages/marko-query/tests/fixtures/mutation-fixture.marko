@@ -3,6 +3,7 @@ import type { QueryClient } from "@tanstack/marko-query";
 export interface Input {
   client: QueryClient;
   mutationFn: (value: number) => Promise<number>;
+  mutationKey?: string[];
   throwOnError?: boolean;
   log: string[];
 }
@@ -11,7 +12,7 @@ export interface Input {
   <mutation/save
     client=() => input.client
     options=() => ({
-      mutationKey: ["save"],
+      mutationKey: input.mutationKey ?? ["save"],
       mutationFn: input.mutationFn,
       throwOnError: input.throwOnError,
       onSuccess: (data: number) => input.log.push(`success ${data}`),

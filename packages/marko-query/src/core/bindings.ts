@@ -529,6 +529,14 @@ export class MutationBinding {
   }
 
   /**
+   * Reads the current result, with its functions.
+   * @returns The current observer result.
+   */
+  getResult(): MutationObserverResult<any, any, any, any> {
+    return this.observer.getCurrentResult()
+  }
+
+  /**
    * Whether `throwOnError` asks to throw `error`.
    * @param error - The error that the mutation failed with.
    * @returns `true` when the error must be thrown.

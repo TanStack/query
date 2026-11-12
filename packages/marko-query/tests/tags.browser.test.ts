@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { focusManager, onlineManager } from '@tanstack/query-core'
+import {
+  environmentManager,
+  focusManager,
+  onlineManager,
+} from '@tanstack/query-core'
 import {
   QueryClient,
   dehydrate,
@@ -160,6 +164,35 @@ describe('marko-query tags', () => {
       view.update({ ...input, throwOnError: true })
       await expectText(root, 'caught', 'nope')
     })
+
+    it('does not throw the previous error when the key and throwOnError change together', async () => {
+      const client = createClient()
+      const input = {
+        client,
+        log: [],
+        mutationKey: ['save'],
+        throwOnError: false,
+        mutationFn: async () => Promise.reject(new Error('nope')),
+      }
+      root = container()
+      const view = Mutation.mount(input, root)
+      instance = view
+      root.querySelector<HTMLButtonElement>('#save')!.click()
+      await expectText(root, 'error', 'nope')
+      expect(text(root, 'caught')).toBeUndefined()
+
+      // A changed `mutationKey` makes core reset the observer, and the reset
+      // notification is batched. The new options must not throw the previous
+      // mutation's error before that notification arrives.
+      view.update({
+        ...input,
+        mutationKey: ['other'],
+        throwOnError: true,
+      })
+      await sleep(20)
+      expect(text(root, 'caught')).toBeUndefined()
+      expect(text(root, 'status')).toBe('idle')
+    })
   })
 
   describe('<is-fetching>', () => {
@@ -229,7 +262,7 @@ describe('marko-query tags', () => {
       widgetClient.setQueryData(['widget'], 'widget')
       root = container()
       instance = PageClient.mount(
-        { makeClient: createClient, widgetClient },
+        { makeClient: createClient, widgetClient, seedOnSwap: true },
         root,
       )
       await expectText(root, 'page', '"page"')
@@ -250,6 +283,32 @@ describe('marko-query tags', () => {
       await expectText(root, 'widget', '"widget"')
       expect(widgetQuery.getObserversCount()).toBe(1)
       expect(widgetQuery.state.dataUpdateCount).toBe(widgetUpdates)
+    })
+
+    it('does not seed the replacement client with the server snapshot', async () => {
+      const widgetClient = createClient()
+      widgetClient.setQueryData(['widget'], 'widget')
+      const next = createClient()
+      root = container()
+      // The render has to look like the server's, or it makes no snapshot to
+      // replay. Marko's browser binding then resumes the rendered tree.
+      environmentManager.setIsServer(() => true)
+      try {
+        instance = PageClient.mount(
+          { makeClient: () => next, widgetClient, serverData: 'from server' },
+          root,
+        )
+      } finally {
+        environmentManager.setIsServer(() => false)
+      }
+      await expectText(root, 'page', '"from server"')
+
+      // The snapshot belongs to the render that made it. The binding built for
+      // the replacement client must not replay it, or the replacement client
+      // would show the old server data as its own.
+      root.querySelector<HTMLButtonElement>('#swap')!.click()
+      await expectText(root, 'page', '"page"')
+      expect(next.getQueryData(['page'])).toBe('page')
     })
   })
 

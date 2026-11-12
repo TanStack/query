@@ -1,31 +1,55 @@
-import { QueryClient, setQueryClient } from "@tanstack/marko-query";
+import { QueryClient, getQueryClient, setQueryClient } from "@tanstack/marko-query";
 
 export interface Input {
   /** Makes the client that replaces the page's client. */
   makeClient: () => QueryClient;
   /** The client of the widget tag, which must not follow the page's client. */
   widgetClient: QueryClient;
+  /** Whether the replacement client already holds the page's entry. */
+  seedOnSwap?: boolean;
+  /** Data the page's client holds before the render, as a resumed page's does. */
+  serverData?: string;
 }
 
-<query/page
-  options=() => ({ queryKey: ["page"], queryFn: async () => "page", staleTime: Infinity })
-/>
-<query/widget
-  client=() => input.widgetClient
-  options=() => ({ queryKey: ["widget"], queryFn: async () => "widget", staleTime: Infinity })
-/>
-<is-fetching/all/>
-<p id="page">${JSON.stringify(page.data ?? null)}</p>
-<p id="widget">${JSON.stringify(widget.data ?? null)}</p>
-<p id="fetching">${all}</p>
+<const/prepared=(
+  // A resumed page receives one plain serialized state, and the page's client
+  // hydrates it once. The test harness installs a getter that re-dehydrates on
+  // every read, so pin it to one object: otherwise the reconnect would hydrate
+  // the replacement client from `$global` and hide what this fixture tests.
+  getQueryClient($global),
+  Object.defineProperty($global, "dehydratedQueryState", {
+    configurable: true,
+    enumerable: true,
+    get: (() => {
+      const state = $global.dehydratedQueryState;
+      return () => state;
+    })(),
+  }),
+  input.serverData
+    ? (getQueryClient($global).setQueryData(["page"], input.serverData), true)
+    : true
+)>
+<if=prepared>
+  <query/page
+    options=() => ({ queryKey: ["page"], queryFn: async () => "page", staleTime: Infinity })
+  />
+  <query/widget
+    client=() => input.widgetClient
+    options=() => ({ queryKey: ["widget"], queryFn: async () => "widget", staleTime: Infinity })
+  />
+  <is-fetching/all/>
+  <p id="page">${JSON.stringify(page.data ?? null)}</p>
+  <p id="widget">${JSON.stringify(widget.data ?? null)}</p>
+  <p id="fetching">${all}</p>
 
-<button
-  id="swap"
-  onClick() {
-    const next = input.makeClient();
-    next.setQueryData(["page"], "replaced");
-    setQueryClient(next);
-  }
->
-  swap
-</button>
+  <button
+    id="swap"
+    onClick() {
+      const next = input.makeClient();
+      if (input.seedOnSwap) next.setQueryData(["page"], "replaced");
+      setQueryClient(next);
+    }
+  >
+    swap
+  </button>
+</if>

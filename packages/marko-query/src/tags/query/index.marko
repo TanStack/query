@@ -40,13 +40,15 @@ static function raise(error: unknown): never {
 ) as Snapshot<CreateQueryResult<TData, TError>>)>
 <let/result=snapshot.result>
 <let/thrown=snapshot.thrown>
-<const/holder={hold: {} as ClientHold} as {
+<const/holder={hold: {} as ClientHold, hydrated: false} as {
   binding?: QueryBinding;
   unwatch?: () => void;
   hold: ClientHold;
+  hydrated: boolean;
 }>
-<const/connect=(() =>
-  (holder.binding ??= new QueryBinding(
+<const/connect=(() => {
+  if (holder.binding) return holder.binding;
+  holder.binding = new QueryBinding(
     resolveClient($global, input.client),
     input.options(),
     (next, error) => {
@@ -54,8 +56,14 @@ static function raise(error: unknown): never {
       thrown = error;
     },
     QueryObserver,
-    snapshot.hydration,
-  )))>
+    // The snapshot belongs to the render that made it. A binding built later,
+    // for a client that replaced the page's client, must not seed that client
+    // with the server's entries.
+    holder.hydrated ? undefined : snapshot.hydration,
+  );
+  holder.hydrated = true;
+  return holder.binding;
+})>
 
 <lifecycle
   onMount() {
