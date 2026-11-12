@@ -12,8 +12,8 @@
   "dependencies": {
     "@tanstack/react-query": "^5.107.1",
     "@tanstack/react-query-devtools": "^5.107.1",
-    "graphql": "^16.9.0",
-    "graphql-request": "^7.1.2",
+    "graphql": "^16.15.0",
+    "graphql-request": "^7.4.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
@@ -24,6 +24,6 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.2.1",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5"
+    "vite": "^8.3.6"
   }
 }

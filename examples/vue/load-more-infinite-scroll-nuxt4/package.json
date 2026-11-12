@@ -14,7 +14,7 @@
     "@tanstack/vue-query": "^5.107.1",
     "@tanstack/vue-query-devtools": "^6.4.1",
     "@vueuse/core": "^15.0.0",
-    "nuxt": "^4.6.3",
+    "nuxt": "^4.6.4",
     "vue": "^3.5.44",
     "vue-router": "^5.4.0"
   },

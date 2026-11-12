@@ -11,13 +11,13 @@
   },
   "dependencies": {
     "@tanstack/lit-query": "^0.2.38",
-    "graphql": "^16.9.0",
-    "graphql-request": "^7.1.2",
+    "graphql": "^16.15.0",
+    "graphql-request": "^7.4.0",
     "lit": "^3.3.3"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.107.1",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5"
+    "vite": "^8.3.6"
   }
 }

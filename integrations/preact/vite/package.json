@@ -10,8 +10,8 @@
     "@preact/preset-vite": "^2.10.6",
     "@tanstack/preact-query": "workspace:*",
     "@tanstack/preact-query-devtools": "workspace:*",
-    "preact": "^11.0.1",
-    "vite": "^8.3.5"
+    "preact": "^11.2.0",
+    "vite": "^8.3.6"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

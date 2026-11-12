@@ -15,8 +15,8 @@
     "compression": "^1.8.2",
     "devalue": "^6.0.3",
     "express": "^5.3.0",
-    "preact": "^11.0.1",
-    "preact-render-to-string": "^6.8.0",
+    "preact": "^11.2.0",
+    "preact-render-to-string": "^6.8.2",
     "sirv": "^3.0.2"
   },
   "devDependencies": {
@@ -29,6 +29,6 @@
     "eslint": "^9.39.5",
     "eslint-config-preact": "^2.0.0",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5"
+    "vite": "^8.3.6"
   }
 }

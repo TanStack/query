@@ -58,9 +58,9 @@
     "!src/__tests__"
   ],
   "dependencies": {
-    "@tanstack/match-sorter-utils": "^9.1.2",
+    "@tanstack/match-sorter-utils": "^9.2.6",
     "@tanstack/query-core": "workspace:*",
-    "@vue/devtools-api": "^6.6.3",
+    "@vue/devtools-api": "^6.6.4",
     "vue-demi": "^0.14.10"
   },
   "devDependencies": {

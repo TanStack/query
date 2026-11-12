@@ -87,7 +87,7 @@
     "@angular/compiler": "catalog:",
     "@angular/core": "catalog:",
     "@angular/platform-browser": "catalog:",
-    "@oxc-project/runtime": "^0.151.0",
+    "@oxc-project/runtime": "^0.157.0",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/angular": "catalog:",
     "rxjs": "^7.8.2",

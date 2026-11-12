@@ -59,11 +59,11 @@
     "@angular/compiler": "catalog:",
     "@angular/core": "catalog:",
     "@angular/platform-browser": "catalog:",
-    "@oxc-project/runtime": "^0.151.0",
+    "@oxc-project/runtime": "^0.157.0",
     "@tanstack/angular-query-experimental": "workspace:*",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/angular": "catalog:",
-    "@testing-library/dom": "^10.4.0",
+    "@testing-library/dom": "^10.4.2",
     "typescript": "catalog:"
   },
   "peerDependencies": {
