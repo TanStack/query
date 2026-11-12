@@ -1,5 +1,6 @@
 ---
 '@tanstack/query-core': patch
+'@tanstack/query-devtools': patch
 '@tanstack/query-persist-client-core': patch
 '@tanstack/angular-query-experimental': patch
 '@tanstack/preact-query': patch

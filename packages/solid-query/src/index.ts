@@ -6,6 +6,7 @@ import { useMutation } from './useMutation'
 import { useQueries } from './useQueries'
 
 // Re-export core
+// oxlint-disable-next-line tanstack-query/no-restricted-syntax
 export * from '@tanstack/query-core'
 
 // Solid Query
