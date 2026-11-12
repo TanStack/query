@@ -15,19 +15,19 @@
     "@tanstack/svelte-query-devtools": "^6.4.1",
     "@tanstack/svelte-query-persist-client": "^6.4.1",
     "msw": "^2.15.0",
-    "svelte-sonner": "^1.2.2"
+    "svelte-sonner": "^1.2.3"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^7.0.1",
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tanstack/eslint-plugin-query": "^5.107.1",
-    "@typescript-eslint/parser": "^8.72.0",
-    "eslint-plugin-svelte": "^3.23.0",
-    "svelte": "^5.57.1",
-    "svelte-check": "^4.7.7",
+    "@typescript-eslint/parser": "^8.72.1",
+    "eslint-plugin-svelte": "^3.24.1",
+    "svelte": "^5.57.3",
+    "svelte-check": "^4.7.8",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5"
+    "vite": "^8.3.6"
   },
   "msw": {
     "workerDirectory": [

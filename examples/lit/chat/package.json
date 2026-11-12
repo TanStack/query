@@ -14,10 +14,10 @@
     "lit": "^3.3.3"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.3.3",
+    "@tailwindcss/vite": "^4.3.5",
     "@tanstack/eslint-plugin-query": "^5.107.1",
-    "tailwindcss": "^4.3.3",
+    "tailwindcss": "^4.3.5",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5"
+    "vite": "^8.3.6"
   }
 }

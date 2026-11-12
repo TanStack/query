@@ -56,7 +56,7 @@
     "!src/__tests__"
   ],
   "dependencies": {
-    "@typescript-eslint/utils": "^8.71.0"
+    "@typescript-eslint/utils": "^8.72.1"
   },
   "devDependencies": {
     "@typescript-eslint/parser": "catalog:",

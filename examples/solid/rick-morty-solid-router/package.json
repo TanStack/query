@@ -16,12 +16,12 @@
     "solid-js": "^1.9.18"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.3.3",
+    "@tailwindcss/vite": "^4.3.5",
     "@tanstack/eslint-plugin-query": "^5.107.1",
-    "eslint-plugin-solid": "^0.18.1",
-    "tailwindcss": "^4.3.3",
+    "eslint-plugin-solid": "^0.19.0",
+    "tailwindcss": "^4.3.5",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5",
+    "vite": "^8.3.6",
     "vite-plugin-solid": "^2.11.15"
   }
 }

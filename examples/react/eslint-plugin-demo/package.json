@@ -14,6 +14,6 @@
     "@tanstack/eslint-plugin-query": "^5.107.1",
     "eslint": "^9.39.5",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.70.1"
+    "typescript-eslint": "^8.72.1"
   }
 }

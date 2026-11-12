@@ -7,7 +7,7 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@solidjs/start": "^2.2.0",
+    "@solidjs/start": "^2.2.2",
     "@tanstack/solid-query": "workspace:*",
     "@tanstack/solid-query-devtools": "workspace:*",
     "solid-js": "^1.9.18"
@@ -15,6 +15,6 @@
   "devDependencies": {
     "nitro": "^3.0.260903-beta",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5"
+    "vite": "^8.3.6"
   }
 }

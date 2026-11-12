@@ -14,7 +14,7 @@
     "@tanstack/preact-query-devtools": "^5.107.1",
     "@tanstack/preact-query-persist-client": "^5.107.1",
     "@tanstack/query-async-storage-persister": "^5.107.1",
-    "preact": "^11.0.1"
+    "preact": "^11.2.0"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.6",
@@ -22,6 +22,6 @@
     "eslint": "^9.39.5",
     "eslint-config-preact": "^2.0.0",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5"
+    "vite": "^8.3.6"
   }
 }

@@ -17,14 +17,14 @@
     "@sveltejs/adapter-auto": "^7.0.1",
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
-    "@tailwindcss/vite": "^4.3.3",
+    "@tailwindcss/vite": "^4.3.5",
     "@tanstack/eslint-plugin-query": "^5.107.1",
-    "@typescript-eslint/parser": "^8.72.0",
-    "eslint-plugin-svelte": "^3.23.0",
-    "svelte": "^5.57.1",
-    "svelte-check": "^4.7.7",
-    "tailwindcss": "^4.3.3",
+    "@typescript-eslint/parser": "^8.72.1",
+    "eslint-plugin-svelte": "^3.24.1",
+    "svelte": "^5.57.3",
+    "svelte-check": "^4.7.8",
+    "tailwindcss": "^4.3.5",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5"
+    "vite": "^8.3.6"
   }
 }
