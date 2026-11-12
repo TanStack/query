@@ -4,8 +4,32 @@
 export * from '@tanstack/query-core'
 
 // Svelte Query
-export type * from './types.js'
-export * from './context.js'
+export type {
+  Accessor,
+  CreateBaseQueryOptions,
+  CreateBaseQueryResult,
+  CreateQueryOptions,
+  CreateQueryResult,
+  CreateInfiniteQueryOptions,
+  CreateInfiniteQueryResult,
+  DefinedCreateInfiniteQueryResult,
+  DefinedCreateBaseQueryResult,
+  DefinedCreateQueryResult,
+  CreateMutationOptions,
+  CreateMutateFunction,
+  CreateMutateAsyncFunction,
+  CreateBaseMutationResult,
+  CreateMutationResult,
+  MutationTypeFromResult,
+  MutationStateOptions,
+  QueryClientProviderProps,
+} from './types.js'
+export {
+  getQueryClientContext,
+  setQueryClientContext,
+  getIsRestoringContext,
+  setIsRestoringContext,
+} from './context.js'
 
 export { createQuery } from './createQuery.js'
 export type { QueriesResults, QueriesOptions } from './createQueries.svelte.js'

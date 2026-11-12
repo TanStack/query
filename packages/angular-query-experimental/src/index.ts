@@ -3,7 +3,22 @@
 // Re-export core
 export * from '@tanstack/query-core'
 
-export type * from './types'
+export type {
+  CreateBaseQueryOptions,
+  CreateQueryOptions,
+  BaseQueryNarrowing,
+  CreateInfiniteQueryOptions,
+  CreateBaseQueryResult,
+  CreateQueryResult,
+  DefinedCreateQueryResult,
+  CreateInfiniteQueryResult,
+  DefinedCreateInfiniteQueryResult,
+  CreateMutateFunction,
+  CreateMutateAsyncFunction,
+  CreateBaseMutationResult,
+  BaseMutationNarrowing,
+  CreateMutationResult,
+} from './types'
 
 export type {
   DefinedInitialDataOptions,
