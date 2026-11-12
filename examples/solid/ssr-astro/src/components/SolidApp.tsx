@@ -125,7 +125,7 @@ const PokemonDex = (props: { id: string }) => {
           {properCase(pokemon.data?.name || '')}
         </div>
         <div class="flex justify-center">
-          <div class="h-64 w-64 rounded-lg relative overflow-hidden border">
+          <div class="h-64 w-64 rounded-lg relative overflow-hidden border border-gray-200">
             <img
               class="h-[400%] w-[400%] max-w-[400%] object-contain blur-2xl brightness-125 contrast-150 absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
               src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${props.id}.png`}
@@ -165,7 +165,7 @@ const PokemonDex = (props: { id: string }) => {
             {(stat) => (
               <div class="flex gap-2 justify-center items-center">
                 <div class="w-36">{stat.name}</div>
-                <div class="w-80 h-8 relative bg-zinc-100 rounded overflow-hidden flex justify-center items-center">
+                <div class="w-80 h-8 relative bg-zinc-100 rounded-sm overflow-hidden flex justify-center items-center">
                   <div
                     class="absolute z-10 h-full top-0 left-0 bg-lime-300"
                     style={{
@@ -211,19 +211,19 @@ const SideNav = () => {
     id() === pokemonID ? 'bg-gray-50' : 'hover:bg-gray-50'
 
   return (
-    <div class="w-72 border-r flex flex-col px-2">
+    <div class="w-72 border-r border-gray-200 flex flex-col px-2">
       <div class="pt-3 pb-1 text-sm font-semibold">Pokemons</div>
 
       <div class="flex-1 overflow-auto flex flex-col gap-1">
         <For each={pokemonsList.data}>
           {(pokemon) => (
             <Link
-              class={`flex gap-2 items-center border rounded p-1 ${activeClass(
+              class={`flex gap-2 items-center border border-gray-200 rounded-sm p-1 ${activeClass(
                 pokemon.id,
               )}`}
               href={`./?id=${pokemon.id}`}
             >
-              <span class="flex bg-zinc-100 border relative justify-center items-center overflow-hidden rounded-sm w-9 h-9 flex-shrink-0">
+              <span class="flex bg-zinc-100 border border-gray-200 relative justify-center items-center overflow-hidden rounded-xs w-9 h-9 shrink-0">
                 <img
                   class="w-7 h-7 relative z-20"
                   src={pokemon.avatar}
