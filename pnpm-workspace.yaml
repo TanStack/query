@@ -106,6 +106,3 @@ allowBuilds:
 
   # nextJs
   sharp: false # not directly required for build
-minimumReleaseAgeExclude:
-  # Renovate security update: nuxt@4.6.2
-  - nuxt@4.6.2
