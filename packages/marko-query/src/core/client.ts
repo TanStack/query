@@ -60,8 +60,8 @@ declare const process: { env?: { NODE_ENV?: string } } | undefined
  */
 const DEFAULT_FACTORY = () => new QueryClient()
 
-// Kept on `globalThis` so that two copies of the adapter (the Marko 5 and
-// Marko 6 packages in one app, or a duplicated bundle) share one client.
+// Kept on `globalThis` so that two copies of the adapter (two versions of the
+// package in one app, or a duplicated bundle) share one client.
 const shared: SharedState =
   ((globalThis as Record<symbol, unknown>)[STATE_KEY] as
     | SharedState

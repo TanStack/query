@@ -5,7 +5,7 @@ title: Overview
 
 > IMPORTANT: The `@tanstack/marko-query` package is currently experimental. Expect the API and docs to keep evolving. If you use it in production while it is early, pin the package to an exact version and upgrade deliberately.
 
-The `@tanstack/marko-query` package is the Marko adapter for TanStack Query. It gives Marko 6 applications tags for fetching, caching, synchronizing, and updating server state, with server rendering and hydration built in.
+The `@tanstack/marko-query` package is the Marko adapter for TanStack Query. It gives Marko applications tags for fetching, caching, synchronizing, and updating server state, with server rendering and hydration built in.
 
 TanStack Query manages server state: data that is owned by a remote system, fetched asynchronously, shared across screens, and potentially changed by someone else at any time. It handles caching, request deduplication, stale data, background refetching, mutations, invalidation, pagination, and garbage collection.
 

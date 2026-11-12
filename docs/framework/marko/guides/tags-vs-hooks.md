@@ -3,7 +3,7 @@ id: tags-vs-hooks
 title: Tags vs Hooks
 ---
 
-Marko Query subscribes a template to a `QueryClient` with tags. A tag reads the latest result and updates the template when the cache changes. Tags are the integration point because Marko 6 renders on the server and then resumes in the browser. The browser does not run the template again from the start. It receives the values that the browser code needs, serialized by the server.
+Marko Query subscribes a template to a `QueryClient` with tags. A tag reads the latest result and updates the template when the cache changes. Tags are the integration point because Marko renders on the server and then resumes in the browser. The browser does not run the template again from the start. It receives the values that the browser code needs, serialized by the server.
 
 ## Mapping the Concepts
 
@@ -113,4 +113,4 @@ By default, errors are in the result: check `isError` and read `error`. To handl
 
 ## No Provider
 
-Marko 6 has no context API, so Marko Query does not use a provider component. It creates one client per request on the server and one client per page in the browser. See [The Query Client](./query-client.md).
+Marko has no context API, so Marko Query does not use a provider component. It creates one client per request on the server and one client per page in the browser. See [The Query Client](./query-client.md).

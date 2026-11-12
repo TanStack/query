@@ -31,7 +31,7 @@ or
 bun add @tanstack/marko-query
 ```
 
-Marko Query is compatible with Marko v6.
+Marko Query requires Marko 6 or higher.
 
 ### Requirements
 

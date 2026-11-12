@@ -3,7 +3,7 @@ id: query-client
 title: The Query Client
 ---
 
-Every tag reads and writes the cache of a `QueryClient`. Marko 6 has no context API, so Marko Query manages the clients for you:
+Every tag reads and writes the cache of a `QueryClient`. Marko has no context API, so Marko Query manages the clients for you:
 
 - **On the server**, there is one client per request. Marko Query stores it on the `$global` of the render and creates it the first time something asks for it: a route handler that prefetches, or the first tag that renders. Requests never share a client, so the data of one user never reaches another user.
 - **In the browser**, there is one client per page. Marko Query creates it the first time something asks for it and mounts it once, so it refetches on window focus and on reconnect.

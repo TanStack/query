@@ -3,7 +3,7 @@ id: ssr
 title: Server Rendering & Hydration
 ---
 
-Marko 6 renders pages on the server and then resumes them in the browser. Marko Query is built for this model. Data that you fetch on the server is rendered into the HTML and sent with the page, so the browser starts with the same cache and does not fetch that data again while it is fresh.
+Marko renders pages on the server and then resumes them in the browser. Marko Query is built for this model. Data that you fetch on the server is rendered into the HTML and sent with the page, so the browser starts with the same cache and does not fetch that data again while it is fresh.
 
 Read [The Query Client](./query-client.md) first. This guide depends on how Marko Query creates one client per request.
 

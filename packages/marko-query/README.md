@@ -1,6 +1,6 @@
 # @tanstack/marko-query
 
-Marko 6 adapter for `@tanstack/query-core`. It re-exports core and adds tags
+Marko adapter for `@tanstack/query-core`. It re-exports core and adds tags
 for queries, mutations and hydration. It creates a query client for each server
 request and for the page in the browser.
 

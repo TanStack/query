@@ -1,7 +1,7 @@
 {
   "name": "@tanstack/marko-query",
   "version": "0.0.0",
-  "description": "Tags for managing, caching and syncing asynchronous and remote data in Marko 6",
+  "description": "Tags for managing, caching and syncing asynchronous and remote data in Marko",
   "author": "Behzad Barzin",
   "license": "MIT",
   "repository": {
