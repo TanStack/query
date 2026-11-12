@@ -1,6 +1,6 @@
 # TanStack Vue Query Dependent Queries Example
 
-A query that waits for another query's result with `enabled`.
+A query that waits for another query's result, with `skipToken` as its `queryFn` until the author ID is known.
 
 ## How it works
 
