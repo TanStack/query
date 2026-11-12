@@ -23,7 +23,7 @@ export default function App() {
       <Router
         root={(props) => (
           <MetaProvider>
-            <Title>SolidStart - Basic</Title>
+            <Title>TanStack Solid Query Streaming Example</Title>
             <a href="/">Home</a>
             <a href="/streamed">Streamed</a>
             <a href="/deferred">Deferred</a>

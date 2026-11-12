@@ -5,6 +5,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import Head from 'next/head'
 import type { AppProps } from 'next/app'
 
 export default function MyApp({ Component, pageProps }: AppProps) {
@@ -21,6 +22,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <Head>
+        <title>TanStack React Query Next.js Example</title>
+      </Head>
       <HydrationBoundary state={pageProps.dehydratedState}>
         <Component {...pageProps} />
       </HydrationBoundary>

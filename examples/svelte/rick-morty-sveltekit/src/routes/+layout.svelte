@@ -18,7 +18,7 @@
 </script>
 
 <svelte:head>
-  <title>TanStack Query Svelte Rick And Morty Example</title>
+  <title>TanStack Svelte Query Rick And Morty Example</title>
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>

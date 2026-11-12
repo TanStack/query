@@ -1,6 +1,6 @@
 # TanStack Query — Next.js App Router Optimistic Updates
 
-This example demonstrates **optimistic updates** with TanStack Query v5 in a Next.js 14 App Router project.
+This example demonstrates **optimistic updates** with TanStack Query v5 in a Next.js App Router project.
 
 ## What it shows
 
@@ -48,7 +48,7 @@ const mutation = useMutation({
 
 ## Running the example
 
-```bash
+```sh
 npm install
 npm run dev
 ```

@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-  <title>TanStack Query SvelteKit Example</title>
+  <title>TanStack Svelte Query SvelteKit Example</title>
 </svelte:head>
 
 <QueryClientProvider client={data.queryClient}>
