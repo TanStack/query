@@ -10,12 +10,13 @@ import type {
 } from "@tanstack/marko-query";
 import {
   QueryBinding,
+  holdClient,
   onPageClientChange,
   readQuery,
   resolveClient,
   toPlainResult,
 } from "@tanstack/marko-query/internal";
-import type { Snapshot } from "@tanstack/marko-query/internal";
+import type { ClientHold, Snapshot } from "@tanstack/marko-query/internal";
 
 export interface Input<
   TQueryFnData = unknown,
@@ -39,7 +40,11 @@ static function raise(error: unknown): never {
 ) as Snapshot<CreateQueryResult<TData, TError>>)>
 <let/result=snapshot.result>
 <let/thrown=snapshot.thrown>
-<const/holder={} as { binding?: QueryBinding; unwatch?: () => void }>
+<const/holder={hold: {} as ClientHold} as {
+  binding?: QueryBinding;
+  unwatch?: () => void;
+  hold: ClientHold;
+}>
 <const/connect=(() =>
   (holder.binding ??= new QueryBinding(
     resolveClient($global, input.client),
@@ -54,12 +59,12 @@ static function raise(error: unknown): never {
 
 <lifecycle
   onMount() {
-    connect();
+    holdClient(holder.hold, connect().client, !!input.client);
     holder.unwatch = onPageClientChange(
       () => {
         holder.binding?.destroy();
         holder.binding = undefined;
-        connect();
+        holdClient(holder.hold, connect().client, !!input.client);
       },
       () => !input.client,
     );
@@ -70,11 +75,13 @@ static function raise(error: unknown): never {
       holder.binding.destroy();
       holder.binding = undefined;
     }
+    holdClient(holder.hold, connect().client, !!input.client);
     connect().setOptions(input.options());
   }
   onDestroy() {
     holder.unwatch?.();
     holder.binding?.destroy();
+    holdClient(holder.hold, undefined, false);
   }
 />
 

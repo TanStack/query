@@ -4,7 +4,13 @@ import type {
   HydrateOptions,
   QueryClient,
 } from "@tanstack/marko-query";
-import { hydrateBoundary, onPageClientChange, resolveClient } from "@tanstack/marko-query/internal";
+import {
+  holdClient,
+  hydrateBoundary,
+  onPageClientChange,
+  resolveClient,
+} from "@tanstack/marko-query/internal";
+import type { ClientHold } from "@tanstack/marko-query/internal";
 
 export interface Input {
   /** What `dehydrate` returned, e.g. on the server or from a loader. */
@@ -24,17 +30,25 @@ export interface Input {
     // `onMount`'s return value becomes `this` in `onDestroy`. A `<const>` would
     // not do: this tag never reads one in its render, so Marko would not
     // evaluate it in the browser.
+    const hold = { client: undefined, release: undefined } as ClientHold;
+    holdClient(hold, resolveClient($global, input.client), !!input.client);
     return {
+      hold,
       unwatch: onPageClientChange(
         () => {
+          holdClient(hold, resolveClient($global, input.client), !!input.client);
           hydrateBoundary(resolveClient($global, input.client), input.state, input.options?.());
         },
         () => !input.client,
       ),
     };
   }
+  onUpdate() {
+    holdClient(this.hold, resolveClient($global, input.client), !!input.client);
+  }
   onDestroy() {
     this.unwatch?.();
+    holdClient(this.hold, undefined, false);
   }
 />
 <${input.content}/>

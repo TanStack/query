@@ -27,8 +27,11 @@ export type {
 } from './bindings.js'
 export {
   DEHYDRATED_STATE_KEY,
+  acquireClient,
+  holdClient,
   onPageClientChange,
   onRestoringChange,
   registerQueryClientFactory,
   resolveClient,
 } from './client.js'
+export type { ClientHold } from './client.js'

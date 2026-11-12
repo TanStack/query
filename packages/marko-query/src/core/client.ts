@@ -42,6 +42,8 @@ interface SharedState {
   lateFactoryWarned: boolean
   /** Notified after {@link setQueryClient} replaces the page's client. */
   clientListeners: Set<() => void>
+  /** How many tags hold each client they were given, for {@link acquireClient}. */
+  explicitMounts: WeakMap<QueryClient, number>
 }
 
 interface RestoringState {
@@ -73,6 +75,7 @@ const shared: SharedState =
     defaultFactoryWarned: false,
     lateFactoryWarned: false,
     clientListeners: new Set(),
+    explicitMounts: new WeakMap(),
   } satisfies SharedState)
 
 type GlobalRecord = Record<PropertyKey, unknown>
@@ -448,6 +451,71 @@ export function resolveClient(
   client: (() => QueryClient) | undefined,
 ): QueryClient {
   return client ? client() : getQueryClient(global)
+}
+
+/**
+ * Mounts `client` while a tag uses it, and counts the hold. A client the tag
+ * was given through its `client` input is created by the app, so nothing else
+ * mounts it; without a mount it never listens for focus or reconnection, and
+ * its queries never refetch on either, while its paused mutations never resume.
+ *
+ * The page's client is already mounted by {@link getQueryClient} and
+ * {@link setQueryClient}, so tags do not acquire it. The count also keeps the
+ * mounts balanced when the same client is the page's client as well: core
+ * itself counts mounts, so the listeners go away only at zero.
+ *
+ * The server has no focus or online events to listen for, so it does nothing
+ * there.
+ * @param client - The client a tag is about to use.
+ * @returns A function that releases the hold. Calling it twice is harmless.
+ */
+export function acquireClient(client: QueryClient): () => void {
+  if (environmentManager.isServer()) return () => {}
+  const count = shared.explicitMounts.get(client) ?? 0
+  shared.explicitMounts.set(client, count + 1)
+  if (count === 0) client.mount()
+  let released = false
+  return () => {
+    if (released) return
+    released = true
+    const remaining = (shared.explicitMounts.get(client) ?? 1) - 1
+    if (remaining > 0) {
+      shared.explicitMounts.set(client, remaining)
+      return
+    }
+    shared.explicitMounts.delete(client)
+    client.unmount()
+  }
+}
+
+/**
+ * The client one tag holds mounted. It lives in the tag's browser-only state,
+ * so it is not serialized and not shared with another tag.
+ */
+export interface ClientHold {
+  client?: QueryClient
+  release?: () => void
+}
+
+/**
+ * Brings a tag's hold in line with the client it is using now: it mounts a
+ * client the tag was given, keeps it mounted while the tag keeps using it, and
+ * releases it as soon as the tag uses the page's client instead.
+ * @param hold - The tag's hold, created empty once.
+ * @param client - The client the tag uses now.
+ * @param owned - `true` when the tag was given this client through its `client`
+ * input, which is the only case that needs a mount.
+ */
+export function holdClient(
+  hold: ClientHold,
+  client: QueryClient | undefined,
+  owned: boolean,
+): void {
+  const want = owned ? client : undefined
+  if (hold.client === want) return
+  hold.release?.()
+  hold.client = want
+  hold.release = want ? acquireClient(want) : undefined
 }
 
 /**

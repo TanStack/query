@@ -6,11 +6,13 @@ import type {
   QueryClient,
 } from "@tanstack/marko-query";
 import {
+  holdClient,
   onPageClientChange,
   readMutationState,
   resolveClient,
   watchMutationState,
 } from "@tanstack/marko-query/internal";
+import type { ClientHold } from "@tanstack/marko-query/internal";
 
 export interface Input<TResult = MutationState> {
   /**
@@ -26,10 +28,11 @@ export interface Input<TResult = MutationState> {
   resolveClient($global, input.client),
   input.options?.(),
 ) as TResult[])>
-<const/holder={} as {
+<const/holder={hold: {} as ClientHold} as {
   watcher?: { setInput(options: unknown): void; destroy(): void };
   client?: QueryClient;
   unwatch?: () => void;
+  hold: ClientHold;
 }>
 <const/watch=((client: QueryClient) =>
   watchMutationState(client, input.options?.(), (value) => {
@@ -39,6 +42,7 @@ export interface Input<TResult = MutationState> {
 <lifecycle
   onMount() {
     holder.client = resolveClient($global, input.client);
+    holdClient(holder.hold, holder.client, !!input.client);
     holder.watcher = watch(holder.client);
     holder.unwatch = onPageClientChange(
       () => {
@@ -54,6 +58,7 @@ export interface Input<TResult = MutationState> {
     if (holder.client !== client) {
       holder.watcher?.destroy();
       holder.client = client;
+      holdClient(holder.hold, client, !!input.client);
       holder.watcher = watch(client);
     } else {
       holder.watcher?.setInput(input.options?.());
@@ -62,6 +67,7 @@ export interface Input<TResult = MutationState> {
   onDestroy() {
     holder.unwatch?.();
     holder.watcher?.destroy();
+    holdClient(holder.hold, undefined, false);
   }
 />
 

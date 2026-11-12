@@ -8,11 +8,13 @@ import type {
 } from "@tanstack/marko-query";
 import {
   QueriesBinding,
+  holdClient,
   onPageClientChange,
   readQueries,
   resolveClient,
   toPlainResult,
 } from "@tanstack/marko-query/internal";
+import type { ClientHold } from "@tanstack/marko-query/internal";
 
 export interface Input<T extends Array<any>, TCombined = never> {
   /**
@@ -50,7 +52,11 @@ static function queriesOf(options: CreateQueriesOptions<any, any>) {
 )>
 <let/results=(snapshot.result as QueryObserverResult[])>
 <let/thrown=snapshot.thrown>
-<const/holder={} as { binding?: QueriesBinding; unwatch?: () => void }>
+<const/holder={hold: {} as ClientHold} as {
+  binding?: QueriesBinding;
+  unwatch?: () => void;
+  hold: ClientHold;
+}>
 <const/connect=(() =>
   (holder.binding ??= new QueriesBinding(
     resolveClient($global, input.client),
@@ -64,12 +70,12 @@ static function queriesOf(options: CreateQueriesOptions<any, any>) {
 
 <lifecycle
   onMount() {
-    connect();
+    holdClient(holder.hold, connect().client, !!input.client);
     holder.unwatch = onPageClientChange(
       () => {
         holder.binding?.destroy();
         holder.binding = undefined;
-        connect();
+        holdClient(holder.hold, connect().client, !!input.client);
       },
       () => !input.client,
     );
@@ -80,11 +86,13 @@ static function queriesOf(options: CreateQueriesOptions<any, any>) {
       holder.binding.destroy();
       holder.binding = undefined;
     }
+    holdClient(holder.hold, connect().client, !!input.client);
     connect().setOptions(queriesOf(input.options()));
   }
   onDestroy() {
     holder.unwatch?.();
     holder.binding?.destroy();
+    holdClient(holder.hold, undefined, false);
   }
 />
 

@@ -8,7 +8,7 @@ Every tag reads and writes the cache of a `QueryClient`. Marko 6 has no context 
 - **On the server**, there is one client per request. Marko Query stores it on the `$global` of the render and creates it the first time something asks for it: a route handler that prefetches, or the first tag that renders. Requests never share a client, so the data of one user never reaches another user.
 - **In the browser**, there is one client per page. Marko Query creates it the first time something asks for it and mounts it once, so it refetches on window focus and on reconnect.
 
-You configure these clients with a factory, and you read them with `getQueryClient`.
+You configure these clients with a factory, and you read them with `getQueryClient`. [Summary: Factories, Clients, and Scope](#summary-factories-clients-and-scope) puts every call and its scope in one place.
 
 ## Configuring the Clients
 
@@ -164,6 +164,79 @@ import { widgetClient } from "../lib/widget-client";
 ```
 
 A client that you create at module scope is shared by all requests on the server. Do not put data that is specific to a user in it.
+
+Marko Query mounts this client while a tag uses it, and unmounts it when the last tag that used it is destroyed. `mount` is what makes the client listen for focus and reconnection, so without it the client's queries would never refetch on either, and a mutation that paused while offline would never resume. The client of the page is mounted already, so a tag leaves that one alone.
+
+## Summary: Factories, Clients, and Scope
+
+Two things are separate. A **factory** is a function that returns a new `QueryClient`. A **client** is one cache with its own listeners. You register one factory; Marko Query creates clients from it.
+
+### Server: one factory, one client per request
+
+| Call                                                | Effect                                                                                                            | Scope       |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------- |
+| `<query-client-factory factory=createQueryClient/>` | Registers the factory when the layout module is evaluated.                                                        | Process     |
+| `setQueryClientFactory(createQueryClient)`          | Registers the same factory from a server entry that does not load templates first.                                | Process     |
+| `getQueryClient($global)`                           | Creates the request's client from the factory on the first call, then returns that client.                        | One request |
+| `setQueryClient(client, $global)`                   | Makes `client` the request's client. It replaces a client that `getQueryClient` already created for that request. | One request |
+
+The factory runs once per request, not once per tag: every tag in a request reads the same client from `$global`.
+
+`setQueryClient` replaces the client for reads that happen after it. A tag that already rendered read the earlier client, so call it before the first tag renders.
+
+### Browser: one client per page
+
+| Call                                               | Effect                                                                                                                             | Scope       |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `<query-client-factory>` / `setQueryClientFactory` | Registers the factory. A factory that arrives after the page's client exists applies only to clients created later.                | Page bundle |
+| `getQueryClient($global)`                          | Creates the page's client on the first call, mounts it, and hydrates it from `$global` once.                                       | One page    |
+| `setQueryClient(client)`                           | Replaces the page's client, mounts it, unmounts the previous one, and reconnects every mounted tag that follows the page's client. | One page    |
+
+Every tag without a `client` input uses the page's client. A page has one client however many tags it renders.
+
+### Per tag: `client=() => myClient`
+
+`client` overrides the page's client for that tag only. The tag mounts the client while it uses it and unmounts it when the last tag using it is destroyed, so focus and reconnect refetches work on it.
+
+| Situation                         | Result                                                                                  |
+| --------------------------------- | --------------------------------------------------------------------------------------- |
+| Several tags name the same client | One cache, one mount. The client is unmounted when the last of those tags is destroyed. |
+| A tag names the page's client     | Safe. The page's client stays mounted while the page lives.                             |
+| A tag names a module-scope client | Every tag that names it shares that one cache. See below.                               |
+
+#### Never put per-request data in a module-scope client
+
+A module-scope client is one object for the whole server process. Every request that names it reads and writes the same cache, so data from one user is visible to the next.
+
+```ts
+// src/lib/widget-client.ts
+import { QueryClient } from '@tanstack/marko-query'
+
+// One object for the whole process. Do not cache user data in it.
+export const widgetClient = new QueryClient()
+```
+
+```marko
+// Any template that names it.
+<query/me client=() => widgetClient options=() => ({ queryKey: ["me"], queryFn: fetchMe })/>
+```
+
+Request A fills that cache with `"user-a"`, for example in a handler that calls `widgetClient.query(...)`. Request B renders the tag and finds `"user-a"` in the cache, so it renders request A's data.
+
+Request B's handler calling `widgetClient.query(...)` does not help. While A's entry is fresh, B's call makes no API request and returns A's data.
+
+The rule is absolute: a module-scope client may hold only data that every user may see, such as a public config or a shared lookup table. For anything that depends on the user, use the factory, which makes a new client for each request.
+
+The pattern is still useful for that shared data. The tag dehydrates the cache of the client it uses, so the server's copy of a module-scope client reaches the browser through the tag's own hydration, and the page does not refetch what the server already has.
+
+### Choosing
+
+| You want                                         | Use                                                    |
+| ------------------------------------------------ | ------------------------------------------------------ |
+| One cache per request, and per page              | The factory, and no `client` input.                    |
+| Different options for one route on the server    | `setQueryClient` in that route's middleware.           |
+| A separate cache for one widget                  | A module-scope client and `client=() => widgetClient`. |
+| A different client for the whole page at runtime | `setQueryClient(client)` in the browser.               |
 
 ## Restoring a Persisted Cache
 

@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { dehydrate, environmentManager, onlineManager } from '@tanstack/query-core'
+import {
+  QueryObserver,
+  dehydrate,
+  environmentManager,
+  focusManager,
+  onlineManager,
+} from '@tanstack/query-core'
 import {
   getQueryClient,
   isRestoring,
@@ -8,13 +14,22 @@ import {
   setQueryClientFactory,
 } from '../../src/core/index.js'
 import {
+  holdClient,
   onPageClientChange,
   onRestoringChange,
   registerQueryClientFactory,
 } from '../../src/core/internal.js'
-import { hydrateOnce, unregisterQueryClientFactory } from '../../src/core/client.js'
+import type { ClientHold } from '../../src/core/internal.js'
+import {
+  hydrateOnce,
+  unregisterQueryClientFactory,
+} from '../../src/core/client.js'
 import { createClient, resetShared, setServer } from './utils.js'
-import type { DehydratedState, MutationKey, QueryClient } from '@tanstack/query-core'
+import type {
+  DehydratedState,
+  MutationKey,
+  QueryClient,
+} from '@tanstack/query-core'
 
 /**
  * A dehydrated state holding paused mutations, made the way the server makes
@@ -194,6 +209,83 @@ describe('query client', () => {
       expect(getQueryClient()).toBe(client)
       expect(client.getQueryData(['x'])).toBe('server')
       expect((client as unknown as { mounts: number }).mounts).toBe(1)
+    })
+  })
+
+  describe('holdClient', () => {
+    beforeEach(() => setServer(false))
+
+    it('mounts a client the tag was given, once for all tags', () => {
+      const client = createClient()
+      const first: ClientHold = {}
+      const second: ClientHold = {}
+      holdClient(first, client, true)
+      holdClient(second, client, true)
+      expect(client.mounts).toBe(1)
+
+      holdClient(first, undefined, false)
+      expect(client.mounts).toBe(1)
+      holdClient(second, undefined, false)
+      expect(client.mounts).toBe(0)
+    })
+
+    it('refetches on focus through a client a tag was given', async () => {
+      const client = createClient()
+      const mounts = () => (client as unknown as { mounts: number }).mounts
+      const hold: ClientHold = {}
+      holdClient(hold, client, true)
+      const fetches = vi.fn<() => Promise<number>>(
+        async () => fetches.mock.calls.length,
+      )
+      const observer = new QueryObserver(client, {
+        queryKey: ['focus'],
+        queryFn: fetches,
+        staleTime: 0,
+      })
+      const unsubscribe = observer.subscribe(() => {})
+      await vi.waitFor(() => expect(fetches).toHaveBeenCalledTimes(1))
+
+      focusManager.setFocused(false)
+      focusManager.setFocused(true)
+      await vi.waitFor(() => expect(fetches).toHaveBeenCalledTimes(2))
+
+      unsubscribe()
+      observer.destroy()
+      holdClient(hold, undefined, false)
+      expect(mounts()).toBe(0)
+      focusManager.setFocused(undefined)
+    })
+
+    it('does not mount or unmount the client the tag was not given', () => {
+      const client = createClient()
+      const hold: ClientHold = {}
+      holdClient(hold, client, false)
+      expect(client.mounts).toBe(0)
+      expect(hold.client).toBeUndefined()
+      holdClient(hold, undefined, false)
+      expect(client.mounts).toBe(0)
+    })
+
+    it('swaps the hold when the tag switches to another client', () => {
+      const first = createClient()
+      const second = createClient()
+      const hold: ClientHold = {}
+      holdClient(hold, first, true)
+      holdClient(hold, second, true)
+      expect(first.mounts).toBe(0)
+      expect(second.mounts).toBe(1)
+      holdClient(hold, undefined, false)
+      expect(second.mounts).toBe(0)
+    })
+
+    it('does nothing on the server', () => {
+      setServer(true)
+      const client = createClient()
+      const hold: ClientHold = {}
+      holdClient(hold, client, true)
+      expect(client.mounts).toBe(0)
+      holdClient(hold, undefined, false)
+      expect(client.mounts).toBe(0)
     })
   })
 

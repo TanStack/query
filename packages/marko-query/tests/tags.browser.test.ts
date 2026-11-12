@@ -1,6 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { onlineManager } from '@tanstack/query-core'
-import { QueryClient, dehydrate, getQueryClient, setQueryClient } from '@tanstack/marko-query'
+import { focusManager, onlineManager } from '@tanstack/query-core'
+import {
+  QueryClient,
+  dehydrate,
+  getQueryClient,
+  setQueryClient,
+} from '@tanstack/marko-query'
 import Boundary from './fixtures/boundary-fixture.marko'
 import BoundaryMutations from './fixtures/boundary-mutation.marko'
 import Fetching from './fixtures/fetching-fixture.marko'
@@ -8,6 +13,7 @@ import Infinite from './fixtures/infinite-fixture.marko'
 import Mutation from './fixtures/mutation-fixture.marko'
 import PageClient from './fixtures/page-client-fixture.marko'
 import Queries from './fixtures/queries-fixture.marko'
+import WidgetFocus from './fixtures/widget-focus-fixture.marko'
 import { container, createClient, expectText, sleep, text } from './utils.js'
 import type { DehydratedState } from '@tanstack/marko-query'
 
@@ -173,6 +179,47 @@ describe('marko-query tags', () => {
       await expectText(root, 'slow', '1')
       await expectText(root, 'all', '0')
       await expectText(root, 'slow', '0')
+    })
+  })
+
+  describe('a client a tag was given', () => {
+    afterEach(() => {
+      focusManager.setFocused(undefined)
+      onlineManager.setOnline(true)
+    })
+
+    it('refetches on focus, and stops when the tag is destroyed', async () => {
+      const client = createClient()
+      const mounts = vi.fn<() => void>()
+      const unmounts = vi.fn<() => void>()
+      const mount = client.mount.bind(client)
+      const unmount = client.unmount.bind(client)
+      client.mount = () => {
+        mounts()
+        mount()
+      }
+      client.unmount = () => {
+        unmounts()
+        unmount()
+      }
+      const onFetch = vi.fn<() => void>()
+      root = container()
+      const view = WidgetFocus.mount({ client, onFetch }, root)
+      await expectText(root, 'stats', '"stats"')
+      expect(onFetch).toHaveBeenCalledTimes(1)
+      // Nothing else mounted the client, so the tag's mount is the only one.
+      expect(mounts).toHaveBeenCalledTimes(1)
+
+      focusManager.setFocused(false)
+      focusManager.setFocused(true)
+      await vi.waitFor(() => expect(onFetch).toHaveBeenCalledTimes(2))
+
+      view.destroy()
+      expect(unmounts).toHaveBeenCalledTimes(1)
+      focusManager.setFocused(false)
+      focusManager.setFocused(true)
+      await sleep(20)
+      expect(onFetch).toHaveBeenCalledTimes(2)
     })
   })
 

@@ -1,0 +1,21 @@
+import type { QueryClient } from "@tanstack/marko-query";
+
+export interface Input {
+  /** The client of the widget tag, which nothing else mounts. */
+  client: QueryClient;
+  /** How many times the query has run. */
+  onFetch: () => void;
+}
+
+<query/stats
+  client=() => input.client
+  options=() => ({
+    queryKey: ["stats"],
+    queryFn: async () => {
+      input.onFetch();
+      return "stats";
+    },
+    staleTime: 0,
+  })
+/>
+<p id="stats">${JSON.stringify(stats.data ?? null)}</p>

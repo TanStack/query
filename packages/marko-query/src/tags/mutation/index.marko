@@ -9,12 +9,13 @@ import type {
 } from "@tanstack/marko-query";
 import {
   MutationBinding,
+  holdClient,
   idleMutationResult,
   onPageClientChange,
   resolveClient,
   toPlainResult,
 } from "@tanstack/marko-query/internal";
-import type { Thrown } from "@tanstack/marko-query/internal";
+import type { ClientHold, Thrown } from "@tanstack/marko-query/internal";
 
 export interface Input<
   TData = unknown,
@@ -48,7 +49,11 @@ static function thrownOf(
 
 <let/result=(idleMutationResult() as MutationObserverResult<TData, TError, TVariables, TOnMutateResult>)>
 <let/thrown=undefined as Thrown | undefined>
-<const/holder={} as { binding?: MutationBinding; unwatch?: () => void }>
+<const/holder={hold: {} as ClientHold} as {
+  binding?: MutationBinding;
+  unwatch?: () => void;
+  hold: ClientHold;
+}>
 <const/connect=(() => {
   if (!holder.binding) {
     holder.binding = new MutationBinding(
@@ -65,12 +70,12 @@ static function thrownOf(
 
 <lifecycle
   onMount() {
-    connect();
+    holdClient(holder.hold, connect().client, !!input.client);
     holder.unwatch = onPageClientChange(
       () => {
         holder.binding?.destroy();
         holder.binding = undefined;
-        connect();
+        holdClient(holder.hold, connect().client, !!input.client);
       },
       () => !input.client,
     );
@@ -81,12 +86,14 @@ static function thrownOf(
       holder.binding.destroy();
       holder.binding = undefined;
     }
+    holdClient(holder.hold, connect().client, !!input.client);
     connect().setOptions(input.options());
     thrown = thrownOf(result, holder.binding);
   }
   onDestroy() {
     holder.unwatch?.();
     holder.binding?.destroy();
+    holdClient(holder.hold, undefined, false);
   }
 />
 
