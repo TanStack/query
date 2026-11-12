@@ -52,6 +52,7 @@ catalog:
   vue: ^3.5.44
 
   # marko
+  '@marko/compiler': ^5.42.14
   '@marko/type-check': ^3.2.1
   '@marko/vite': ^6.1.13
   marko: ^6.4.5

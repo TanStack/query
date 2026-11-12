@@ -84,6 +84,7 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
+    "@marko/compiler": "catalog:",
     "@marko/type-check": "catalog:",
     "@marko/vite": "catalog:",
     "marko": "catalog:",

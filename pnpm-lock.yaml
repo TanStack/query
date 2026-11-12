@@ -182,6 +182,9 @@ catalogs:
     '@eslint-react/eslint-plugin':
       specifier: ^5.28.8
       version: 5.28.8
+    '@marko/compiler':
+      specifier: ^5.42.14
+      version: 5.42.14
     '@marko/type-check':
       specifier: ^3.2.1
       version: 3.2.1
@@ -6696,6 +6699,9 @@ importers:
         specifier: workspace:*
         version: link:../query-core
     devDependencies:
+      '@marko/compiler':
+        specifier: 'catalog:'
+        version: 5.42.14
       '@marko/type-check':
         specifier: 'catalog:'
         version: 3.2.1

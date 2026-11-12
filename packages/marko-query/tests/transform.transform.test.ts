@@ -8,11 +8,7 @@ import { describe, expect, it } from 'vitest'
 // straight at `src/tags` and skips those definitions, so the transform is
 // compiled here instead.
 const require = createRequire(import.meta.url)
-const compiler = require(
-  require.resolve('@marko/compiler', {
-    paths: [fileURLToPath(new URL('../node_modules/marko', import.meta.url))],
-  }),
-) as {
+const compiler = require('@marko/compiler') as {
   compile: (
     source: string,
     filename: string,
