@@ -3,7 +3,7 @@ id: query-invalidation
 title: Query Invalidation
 ---
 
-Waiting for queries to become stale is not always enough. After a mutation succeeds, you often know that related cached data is out of date. Use `invalidateQueries` on the client to mark matching queries stale and refetch the ones that a tag is observing.
+Waiting for queries to become stale is not always enough. After a mutation succeeds, you often know that related cached data is out of date. Use `invalidateQueries` on the client to mark matching queries stale and refetch the enabled ones that a tag is observing (see the exceptions below).
 
 Get the client with `getQueryClient($global)`. See [The Query Client](./query-client.md).
 

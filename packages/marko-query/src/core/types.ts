@@ -43,8 +43,9 @@ export type CreateBaseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> & {
   /**
-   * Set to `false` to stop observing the query: the tag keeps its last result
-   * and no fetch is triggered by it.
+   * Set to `false` to stop observing the query: no fetch is triggered by it,
+   * and no cache update reaches the tag. The tag still applies new options, so
+   * a changed `queryKey` renders the result of the new query.
    */
   subscribed?: boolean
 }
@@ -108,8 +109,9 @@ export type CreateInfiniteQueryOptions<
   TPageParam
 > & {
   /**
-   * Set to `false` to stop observing the query: the tag keeps its last result
-   * and no fetch is triggered by it.
+   * Set to `false` to stop observing the query: no fetch is triggered by it,
+   * and no cache update reaches the tag. The tag still applies new options, so
+   * a changed `queryKey` renders the result of the new query.
    */
   subscribed?: boolean
 }

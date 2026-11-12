@@ -96,7 +96,7 @@ Two entries with the same query key share one cache entry and one fetch. Give ea
 
 ## Rendering Without Subscribing
 
-Each of the three reading tags takes `subscribed`: `<query>`, `<infinite-query>` and `<queries>`. It defaults to `true`. Setting it to `false` means the tag reads the result once and then stops: no fetch starts, and no later cache update reaches the tag.
+Each of the three reading tags takes `subscribed`: `<query>`, `<infinite-query>` and `<queries>`. It defaults to `true`. Setting it to `false` stops the subscription: no fetch starts, and no later cache update reaches the tag. The tag still applies new options, so a change to the options, for example a reactive `queryKey`, renders the result of the new query.
 
 Use it when a template needs to show a query without driving it:
 
@@ -119,7 +119,7 @@ The query itself is unaffected. `subscribed: false` is a property of the tag, no
 <infinite-query/feed options=() => ({ ...feedOptions, subscribed: false })/>
 ```
 
-For `<queries>` it is one flag for the whole tag, so it is not accepted inside an entry of `queries`. A tag that does not subscribe also reports the cache's real `fetchStatus`: an uncached query shows `idle` rather than a fetch that never starts.
+For `<queries>` it is one flag for the whole tag, so it is not accepted inside an entry of `queries`. A tag that does not subscribe also reports the cache's real `fetchStatus`: a query with no cached data shows `idle` rather than a fetch that never starts.
 
 A snapshot pane shows the difference. Both tags read one key; only the first one follows the cache:
 

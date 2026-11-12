@@ -11,7 +11,9 @@ To check the types of your templates, use [`@marko/type-check`](https://github.c
 
 ```ts
 // src/lib/api.ts
-const API_URL = 'http://localhost:3000' // the server has no page origin, so the URL must be absolute
+// This module runs on the server and in the browser, so the origin must be
+// reachable from both. Set VITE_API_URL to the app's API origin.
+const API_URL: string = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 
 export type Todo = {
   id: number

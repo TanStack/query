@@ -268,9 +268,10 @@ export interface QueriesInput {
   /** Maps the results to one value. */
   combine?: (results: any) => unknown
   /**
-   * Set to `false` to stop observing the queries: the tag keeps its last
-   * results and no fetch is triggered by it. One flag for the whole tag, not
-   * one per query.
+   * Set to `false` to stop observing the queries: no fetch is triggered by
+   * them, and no cache update reaches the tag. The tag still applies new
+   * options, so a changed `queryKey` renders the result of the new query. One
+   * flag for the whole tag, not one per query.
    */
   subscribed?: boolean
 }

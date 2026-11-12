@@ -227,7 +227,7 @@ Request B's handler calling `widgetClient.query(...)` does not help. While A's e
 
 The rule is absolute: a module-scope client may hold only data that every user may see, such as a public config or a shared lookup table. For anything that depends on the user, use the factory, which makes a new client for each request.
 
-The pattern is still useful for that shared data. The tag dehydrates the cache of the client it uses, so the server's copy of a module-scope client reaches the browser through the tag's own hydration, and the page does not refetch what the server already has.
+The pattern is still useful for that shared data. The tag dehydrates the cache of the client it uses, so the server's copy of a module-scope client reaches the browser through the tag's own hydration, and the page does not refetch that data while it is fresh.
 
 ### Choosing
 
