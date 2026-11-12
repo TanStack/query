@@ -1,4 +1,5 @@
 cleanupUnusedCatalogs: true
+autoDedupe: true
 minimumReleaseAge: 1440
 linkWorkspacePackages: true
 preferWorkspacePackages: true
