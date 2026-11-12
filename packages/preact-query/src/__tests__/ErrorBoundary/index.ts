@@ -4,6 +4,6 @@
  * and modified to server a preact use case
  */
 
-export * from './ErrorBoundary'
-export * from './ErrorBoundaryContext'
-export * from './types'
+export { ErrorBoundary } from './ErrorBoundary'
+export { ErrorBoundaryContext } from './ErrorBoundaryContext'
+export type { FallbackProps, ErrorBoundaryProps } from './types'
