@@ -106,3 +106,6 @@ allowBuilds:
 
   # nextJs
   sharp: false # not directly required for build
+minimumReleaseAgeExclude:
+  # Renovate security update: next@15.5.28
+  - next@15.5.28
