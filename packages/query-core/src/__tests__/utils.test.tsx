@@ -230,6 +230,32 @@ describe('core/utils', () => {
       expect(replaceEqualDeep(undefined, undefined)).toBeUndefined()
     })
 
+    it('should distinguish between positive and negative zero', () => {
+      expect(Object.is(replaceEqualDeep(-0, 0), 0)).toBe(true)
+      expect(Object.is(replaceEqualDeep(0, -0), -0)).toBe(true)
+    })
+
+    it('should distinguish between positive and negative zero in arrays', () => {
+      const prev = [-0]
+      const next = [0]
+
+      const result = replaceEqualDeep(prev, next)
+
+      expect(result).not.toBe(prev)
+      expect(Object.is(result[0], 0)).toBe(true)
+    })
+
+    it('should distinguish between positive and negative zero in nested objects', () => {
+      const prev = { value: { number: -0 } }
+      const next = { value: { number: 0 } }
+
+      const result = replaceEqualDeep(prev, next)
+
+      expect(result).not.toBe(prev)
+      expect(result.value).not.toBe(prev.value)
+      expect(Object.is(result.value.number, 0)).toBe(true)
+    })
+
     it('should return the next value when the previous value is a different value', () => {
       const date1 = new Date()
       const date2 = new Date()

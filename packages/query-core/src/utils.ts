@@ -376,6 +376,16 @@ export function partialMatchKey(a: any, b: any): boolean {
 const hasOwn = Object.prototype.hasOwnProperty
 
 /**
+ * Checks equality while distinguishing positive and negative zero.
+ * @param a - The first value to compare.
+ * @param b - The second value to compare.
+ * @returns Whether the values are equal, including their signed-zero distinction.
+ */
+function isEqual(a: unknown, b: unknown): boolean {
+  return a === b && (a !== 0 || Object.is(a, b))
+}
+
+/**
  * This function returns `a` if `b` is deeply equal.
  * If not, it will replace any deeply equal children of `b` with those of `a`.
  * This can be used for structural sharing between JSON values for example.
@@ -387,7 +397,7 @@ const hasOwn = Object.prototype.hasOwnProperty
  */
 export function replaceEqualDeep<T>(a: unknown, b: T, depth?: number): T
 export function replaceEqualDeep(a: any, b: any, depth = 0): any {
-  if (a === b) {
+  if (isEqual(a, b)) {
     return a
   }
 
@@ -410,7 +420,7 @@ export function replaceEqualDeep(a: any, b: any, depth = 0): any {
     const aItem = a[key]
     const bItem = b[key]
 
-    if (aItem === bItem) {
+    if (isEqual(aItem, bItem)) {
       copy[key] = aItem
       if (array ? i < aSize : hasOwn.call(a, key)) equalItems++
       continue

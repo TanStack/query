@@ -26,14 +26,23 @@ import type {
   RefetchOptions,
 } from './types'
 
+/**
+ * Checks equality while distinguishing positive and negative zero.
+ * @param a - The first data value.
+ * @param b - The second data value.
+ * @returns Whether the values are equal, including their signed-zero distinction.
+ */
 function areDataEqual(a: unknown, b: unknown): boolean {
   return a === b && (a !== 0 || Object.is(a, b))
 }
 
-function shallowEqualQueryObserverResults<
-  TData,
-  TError,
->(
+/**
+ * Compares query observer results, including signed-zero differences in data.
+ * @param a - The current query observer result.
+ * @param b - The previous query observer result.
+ * @returns Whether both observer results are equal.
+ */
+function shallowEqualQueryObserverResults<TData, TError>(
   a: QueryObserverResult<TData, TError>,
   b: QueryObserverResult<TData, TError> | undefined,
 ): boolean {
@@ -309,12 +318,7 @@ export class QueryObserver<
 
     const result = this.createResult(query, options)
 
-    if (
-      !shallowEqualQueryObserverResults(
-        this.getCurrentResult(),
-        result,
-      )
-    ) {
+    if (!shallowEqualQueryObserverResults(this.getCurrentResult(), result)) {
       // this assigns the optimistic result to the current Observer
       // because if the query function changes, useQuery will be performing
       // an effect where it would fetch again.
@@ -709,7 +713,7 @@ export class QueryObserver<
       // Memoize select result
       if (
         prevResult &&
-        data === prevResultState?.data &&
+        areDataEqual(data, prevResultState?.data) &&
         options.select === this.#selectFn
       ) {
         data = this.#selectResult
@@ -801,9 +805,7 @@ export class QueryObserver<
     }
 
     // Only notify and update result if something has changed
-    if (
-      shallowEqualQueryObserverResults(nextResult, prevResult)
-    ) {
+    if (shallowEqualQueryObserverResults(nextResult, prevResult)) {
       return
     }
 
@@ -837,8 +839,7 @@ export class QueryObserver<
       for (const key of notifyOnChangePropsValue ?? this.#trackedProps) {
         const currentValue =
           this.#currentResult[key as keyof QueryObserverResult]
-        const previousValue =
-          prevResult[key as keyof QueryObserverResult]
+        const previousValue = prevResult[key as keyof QueryObserverResult]
 
         if (
           key === 'data'
