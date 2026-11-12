@@ -16,6 +16,10 @@
   })
 </script>
 
+<svelte:head>
+  <title>TanStack Svelte Query Load-More Infinite Scroll Example</title>
+</svelte:head>
+
 <QueryClientProvider client={queryClient}>
   <main>
     {@render children()}

@@ -3,7 +3,7 @@ import type React from 'react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'TanStack Query — Optimistic Updates',
+  title: 'TanStack React Query Optimistic Updates Example',
   description: 'Next.js App Router example with optimistic updates',
 }
 
