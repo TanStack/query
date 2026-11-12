@@ -46,11 +46,7 @@ function shallowEqualQueryObserverResults<TData, TError>(
   a: QueryObserverResult<TData, TError>,
   b: QueryObserverResult<TData, TError> | undefined,
 ): boolean {
-  return (
-    !!b &&
-    shallowEqualObjects(a, b) &&
-    areDataEqual(a.data, b.data)
-  )
+  return !!b && shallowEqualObjects(a, b) && areDataEqual(a.data, b.data)
 }
 
 type QueryObserverListener<TData, TError> = (
