@@ -6752,7 +6752,7 @@
             },
             {
               "label": "Optimistic Updates (Next.js App Router)",
-              "to": "framework/react/examples/nextjs-app-optimistic-updates"
+              "to": "framework/react/examples/optimistic-updates-nextjs-app-router"
             },
             {
               "label": "Pagination (Next.js Pages Router)",
@@ -6791,16 +6791,16 @@
               "to": "framework/react/examples/rick-morty-react-router"
             },
             {
-              "label": "Next.js Pages",
-              "to": "framework/react/examples/nextjs"
+              "label": "Hydration (Next.js Pages Router)",
+              "to": "framework/react/examples/hydration-nextjs-pages-router"
             },
             {
-              "label": "Next.js app with prefetching",
-              "to": "framework/react/examples/nextjs-app-prefetching"
+              "label": "Prefetching (Next.js App Router)",
+              "to": "framework/react/examples/prefetching-nextjs-app-router"
             },
             {
-              "label": "Next.js app with streaming",
-              "to": "framework/react/examples/nextjs-suspense-streaming"
+              "label": "Suspense Streaming (Next.js App Router)",
+              "to": "framework/react/examples/suspense-streaming-nextjs-app-router"
             },
             {
               "label": "React Native",

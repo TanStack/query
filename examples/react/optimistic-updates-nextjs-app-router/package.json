@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-react-nextjs-app-optimistic-updates",
+  "name": "@tanstack/query-example-react-optimistic-updates-nextjs-app-router",
   "private": true,
   "type": "module",
   "scripts": {

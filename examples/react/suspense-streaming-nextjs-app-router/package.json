@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-react-nextjs-suspense-streaming",
+  "name": "@tanstack/query-example-react-suspense-streaming-nextjs-app-router",
   "private": true,
   "type": "module",
   "scripts": {

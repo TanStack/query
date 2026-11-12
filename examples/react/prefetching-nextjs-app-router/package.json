@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-react-nextjs-app-prefetching",
+  "name": "@tanstack/query-example-react-prefetching-nextjs-app-router",
   "private": true,
   "type": "module",
   "scripts": {
