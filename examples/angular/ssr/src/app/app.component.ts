@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { Component } from '@angular/core'
 import { PostsComponent } from './components/posts.component'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
   imports: [PostsComponent],
   template: `

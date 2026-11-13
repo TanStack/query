@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms'
 import { injectQuery, keepPreviousData } from '@tanstack/angular-query'
@@ -6,7 +6,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs'
 import { SuggestionsQueries } from '../services/suggestions/queries'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'example',
   templateUrl: './example.component.html',
   imports: [ReactiveFormsModule],

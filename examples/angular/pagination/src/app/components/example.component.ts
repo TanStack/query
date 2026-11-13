@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  effect,
-  inject,
-  signal,
-  untracked,
-} from '@angular/core'
+import { Component, effect, inject, signal, untracked } from '@angular/core'
 import {
   QueryClient,
   injectQuery,
@@ -15,7 +8,6 @@ import {
 import { ProjectsQueries } from '../services/projects/queries'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'example',
   templateUrl: './example.component.html',
 })

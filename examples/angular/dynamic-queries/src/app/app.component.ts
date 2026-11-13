@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core'
+import { Component, signal } from '@angular/core'
 import { injectQueries } from '@tanstack/angular-query'
 
 type Item = {
@@ -12,7 +12,6 @@ type ItemDetails = {
 }
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
   template: `
     <main>

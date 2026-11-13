@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from '@angular/core'
+import { Component, inject, signal } from '@angular/core'
 import {
   FormField,
   applyEach,
@@ -22,7 +17,6 @@ import {
 import { ValidationQueriesService } from './validation-queries.service'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
   imports: [FormField],
   styleUrl: './app.component.css',

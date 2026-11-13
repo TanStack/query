@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   Injector,
   computed,
@@ -15,7 +14,6 @@ import type { DevtoolsPanelRef } from '@tanstack/angular-query-devtools/devtools
 
 @Component({
   selector: 'lazy-load-devtools-panel-example',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <example-query />
     <h1>Lazy load devtools panel example</h1>

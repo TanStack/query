@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { Component } from '@angular/core'
 import { RouterLink, RouterOutlet } from '@angular/router'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
   template: `
     <ul>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { Component } from '@angular/core'
 import { injectQuery } from '@tanstack/angular-query'
 import { CLIENT_PERSIST_QUERY_ROOT } from '../query-persist-scope'
 
@@ -7,7 +7,6 @@ import { CLIENT_PERSIST_QUERY_ROOT } from '../query-persist-scope'
  * Pair with `dehydrateOptions.shouldDehydrateQuery` if you want only `client-persist` keys in storage.
  */
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'client-persist-demo',
   template: `
     <div class="panel">

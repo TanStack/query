@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { injectQuery } from '@tanstack/angular-query'
 import { lastValueFrom } from 'rxjs'
 import { PostsService } from '../services/posts.service'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'posts',
   template: `
     @if (postsQuery.isPending()) {

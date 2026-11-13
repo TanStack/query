@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { injectQuery } from '@tanstack/angular-query'
 import { ReposQueries } from '../services/repos/queries'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'example-query',
   template: `
     <div style="padding-bottom: 20px">

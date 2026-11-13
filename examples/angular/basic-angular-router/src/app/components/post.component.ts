@@ -1,16 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  input,
-  numberAttribute,
-} from '@angular/core'
+import { Component, inject, input, numberAttribute } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { injectQuery } from '@tanstack/angular-query'
 import { PostsQueries } from '../services/posts/queries'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'post',
   templateUrl: './post.component.html',
   imports: [RouterLink],

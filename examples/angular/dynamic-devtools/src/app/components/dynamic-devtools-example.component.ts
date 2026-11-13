@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { injectQuery } from '@tanstack/angular-query'
 import { lastValueFrom } from 'rxjs'
 
@@ -12,7 +12,6 @@ interface Response {
 }
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'dynamic-devtools-example',
   templateUrl: './dynamic-devtools-example.component.html',
 })

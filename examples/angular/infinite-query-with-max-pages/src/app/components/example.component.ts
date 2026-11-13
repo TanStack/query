@@ -1,15 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-} from '@angular/core'
+import { Component, computed, inject } from '@angular/core'
 import { injectInfiniteQuery } from '@tanstack/angular-query'
 import { ProjectStyleDirective } from '../directives/project-style.directive'
 import { ProjectsQueries } from '../services/projects/queries'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'example',
   templateUrl: './example.component.html',
   imports: [ProjectStyleDirective],

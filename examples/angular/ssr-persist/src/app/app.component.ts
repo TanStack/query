@@ -1,14 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  afterNextRender,
-  signal,
-} from '@angular/core'
+import { Component, afterNextRender, signal } from '@angular/core'
 import { ClientPersistDemoComponent } from './components/client-persist-demo.component'
 import { PostsComponent } from './components/posts.component'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
   imports: [ClientPersistDemoComponent, PostsComponent],
   template: `

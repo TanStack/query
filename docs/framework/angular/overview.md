@@ -59,13 +59,12 @@ In the example below, you can see TanStack Query in its most basic and simple fo
 [Open in StackBlitz](https://stackblitz.com/github/TanStack/query/tree/main/examples/angular/simple)
 
 ```angular-ts
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { injectQuery } from '@tanstack/angular-query'
 import { lastValueFrom } from 'rxjs'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'simple-example',
   template: `
     @if (repoDataQuery.isPending()) {
