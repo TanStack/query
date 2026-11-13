@@ -75,18 +75,6 @@ appElement.queryClient = queryClient
 await import('./app')
 ```
 
-Unmount the client when the page is unloaded if you mounted it manually:
-
-```ts
-window.addEventListener(
-  'pagehide',
-  () => {
-    queryClient.unmount()
-  },
-  { once: true },
-)
-```
-
 ## Component Pattern
 
 The SSR example creates its controllers only after a `queryClient` property is available:

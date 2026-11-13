@@ -14,14 +14,6 @@ const queryClient = makeQueryClient()
 queryClient.mount()
 hydrate(queryClient, window.__DEHYDRATED_STATE__)
 
-window.addEventListener(
-  'pagehide',
-  () => {
-    queryClient.unmount()
-  },
-  { once: true },
-)
-
 const appElement = document.querySelector('ssr-app')
 if (!appElement) {
   throw new Error('Expected the server-rendered <ssr-app> element')
