@@ -371,6 +371,28 @@ describe('query client', () => {
       expect(client.getMutationCache().getAll()).toHaveLength(2)
     })
 
+    it('keeps two paused mutations that share a key and a submittedAt', async () => {
+      // Two `mutate()` calls on one key inside one millisecond share a
+      // `submittedAt`, so the identity alone cannot tell them apart.
+      const now = vi.spyOn(Date, 'now').mockReturnValue(1_000)
+      try {
+        const first = await pausedState([1])
+        const client = createClient()
+        hydrateOnce(client, first)
+        expect(client.getMutationCache().getAll()).toHaveLength(1)
+
+        const both = await pausedState([1, 2])
+        expect(both.mutations).toHaveLength(2)
+        expect(both.mutations[0].state.submittedAt).toBe(
+          both.mutations[1].state.submittedAt,
+        )
+        hydrateOnce(client, both)
+        expect(client.getMutationCache().getAll()).toHaveLength(2)
+      } finally {
+        now.mockRestore()
+      }
+    })
+
     it('hydrates queries as core does', () => {
       const source = createClient()
       source.setQueryData(['q'], 'value')

@@ -202,7 +202,8 @@ function mutationIdentity(
  * the same state reaching the client through `$global` and through
  * `<hydration-boundary>`. A mutation with a `mutationKey` is also skipped when
  * the cache already holds one with the same key and `submittedAt`, which covers
- * a fresh `dehydrate` result of the same cache.
+ * a fresh `dehydrate` result of the same cache. Those matches are counted, so
+ * two mutations that share a key and a `submittedAt` are both kept.
  * @param client - The client to hydrate.
  * @param state - The dehydrated state, if there is one.
  * @param options - Extra options for `hydrate`.
@@ -219,25 +220,40 @@ export function hydrateOnce(
     return
   }
   const seen = mutationRegistry(client)
-  const existing = new Set<string>()
+  // Each identity is counted, so two `mutate()` calls on one key in the same
+  // millisecond — which share a `submittedAt` — both survive: every incoming
+  // mutation consumes one match, and the surplus is kept.
+  const existing = new Map<string, number>()
   for (const mutation of client.getMutationCache().getAll()) {
     const identity = mutationIdentity(
       mutation.options.mutationKey,
       mutation.state.submittedAt,
     )
-    if (identity) existing.add(identity)
+    if (identity) existing.set(identity, (existing.get(identity) ?? 0) + 1)
   }
   const fresh = mutations.filter((mutation) => {
-    const stateObject = mutation.state as object | undefined
-    if (stateObject && typeof stateObject === 'object') {
-      if (seen.has(stateObject)) return false
-      seen.add(stateObject)
-    }
     const identity = mutationIdentity(
       mutation.mutationKey,
       mutation.state.submittedAt,
     )
-    return !identity || !existing.has(identity)
+    // A state object that was hydrated before is a repeat of a mutation the
+    // client already has, so it consumes one match like any other copy.
+    const stateObject = mutation.state as object | undefined
+    const repeated =
+      !!stateObject && typeof stateObject === 'object' && seen.has(stateObject)
+    if (stateObject && typeof stateObject === 'object') seen.add(stateObject)
+    if (repeated) {
+      if (identity) {
+        const count = existing.get(identity)
+        if (count) existing.set(identity, count - 1)
+      }
+      return false
+    }
+    if (!identity) return true
+    const count = existing.get(identity)
+    if (!count) return true
+    existing.set(identity, count - 1)
+    return false
   })
   hydrate(client, { ...state, mutations: fresh }, options)
 }
