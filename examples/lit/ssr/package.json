@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "@lit-labs/ssr": "^3.3.0",
-    "@tanstack/lit-query": "^0.2.36",
+    "@tanstack/lit-query": "^0.2.38",
     "lit": "^3.3.3"
   },
   "devDependencies": {
     "@lit-labs/ssr-client": "^1.1.7",
-    "@tanstack/eslint-plugin-query": "^5.106.1",
+    "@tanstack/eslint-plugin-query": "^5.107.1",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "vite": "^8.3.5"

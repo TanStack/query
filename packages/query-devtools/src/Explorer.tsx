@@ -277,11 +277,12 @@ type ExplorerProps = {
 
 /**
  * Adds nested data search without changing the explorer's manual expansion.
- * @param props - Data explorer options and the selected query or mutation identity.
+ * @param props - Data explorer options, the selected query or mutation identity, and the search
+ * term to start with when another one is selected.
  * @returns The search controls and the original data tree.
  */
 export function SearchableExplorer(
-  props: ExplorerProps & { searchKey?: unknown },
+  props: ExplorerProps & { searchKey?: unknown; initialSearch?: string },
 ) {
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
@@ -297,7 +298,13 @@ export function SearchableExplorer(
     setDebouncedTerm('')
   }
   const searchKey = createMemo(() => props.searchKey)
-  createEffect(on(searchKey, clear))
+  createEffect(
+    on(searchKey, () => {
+      const initial = props.initialSearch ?? ''
+      setTerm(initial)
+      setDebouncedTerm(initial.toLowerCase())
+    }),
+  )
   createEffect(() => {
     const next = term().toLowerCase()
     if (!next) {
@@ -350,8 +357,8 @@ export function SearchableExplorer(
       <div class={styles().search}>
         <input
           type="search"
-          aria-label="Search data"
-          placeholder="Search data"
+          aria-label={`Search ${props.label.toLowerCase()}`}
+          placeholder={`Search ${props.label.toLowerCase()}`}
           class={styles().searchInput}
           value={term()}
           onInput={(event) => setTerm(event.currentTarget.value)}

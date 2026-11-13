@@ -3,6 +3,7 @@ import {
   computed,
   isReactive,
   isReadonly,
+  isRef,
   isVue2,
   isVue3,
   onScopeDispose,
@@ -102,6 +103,61 @@ describe('useQuery', () => {
       isFetched: { value: true },
       isSuccess: { value: true },
     })
+  })
+
+  it('should expose data, status, and isPending on state without ref unwrapping', async () => {
+    const key = createKey()
+    const query = useQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'Some data'),
+    })
+
+    expect(isRef(query.state)).toBe(false)
+    expect(isReadonly(query.state)).toBe(true)
+    expect(query.state.status).toBe('pending')
+    expect(query.state.isPending).toBe(true)
+    expect(query.state.data).toBeUndefined()
+    expect(query.state.error).toBeNull()
+
+    const status = computed(() => query.state.status)
+    const data = computed(() => query.state.data)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(query.state.status).toBe('success')
+    expect(query.state.isPending).toBe(false)
+    expect(query.state.isSuccess).toBe(true)
+    expect(query.state.data).toBe('Some data')
+    expect(query.state.error).toBeNull()
+    expect(query.data.value).toBe(query.state.data)
+    expect(query.status.value).toBe(query.state.status)
+    expect(status.value).toBe('success')
+    expect(data.value).toBe('Some data')
+    expect(query.state.refetch).toBeTypeOf('function')
+
+    const refetchResult = query.refetch()
+    await vi.advanceTimersByTimeAsync(10)
+    await refetchResult
+    expect(query.state.data).toBe('Some data')
+    expect(query.state.status).toBe('success')
+  })
+
+  it('should keep function-valued data on state when select returns a function', async () => {
+    const key = createKey()
+    const { state } = useQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'fetched'),
+      initialData: 'initial',
+      select: (value: string) => () => value,
+    })
+
+    expect(state.status).toBe('success')
+    expect(state.data()).toBe('initial')
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(state.status).toBe('success')
+    expect(state.data()).toBe('fetched')
   })
 
   it('should return pending status initially', () => {
@@ -334,6 +390,16 @@ describe('useQuery', () => {
         queryKey: [...key, 'key12'],
       }),
     )
+
+    keyRef.value = 'key13'
+    await query.state.refetch()
+    expect(queryFn).toHaveBeenCalledTimes(3)
+    expect(queryFn).toHaveBeenNthCalledWith(
+      3,
+      expect.objectContaining({
+        queryKey: [...key, 'key13'],
+      }),
+    )
   })
 
   it.runIf(isVue3)(
@@ -384,6 +450,27 @@ describe('useQuery', () => {
     expect(queryFn).toHaveBeenCalledWith(
       expect.objectContaining({ queryKey: key }),
     )
+  })
+
+  it('should pass the query to an enabled callback instead of calling it as a getter', () => {
+    const key = createKey()
+    const queryFn = vi.fn<() => string>(() => 'foo')
+    const enabled = vi.fn<
+      (query: { queryKey: ReadonlyArray<unknown> }) => boolean
+    >((query) => Array.isArray(query.queryKey))
+
+    useQuery({
+      queryKey: key,
+      queryFn,
+      enabled,
+    })
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(enabled.mock.calls.length).toBeGreaterThan(0)
+    for (const call of enabled.mock.calls) {
+      expect(call).toHaveLength(1)
+      expect(call[0]).toStrictEqual(expect.objectContaining({ queryKey: key }))
+    }
   })
 
   it('should allow getters for query keys', async () => {
@@ -780,6 +867,34 @@ describe('useQuery', () => {
       expect(onResolve).not.toHaveBeenCalled()
 
       isEnabled.value = true
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(onResolve).toHaveBeenCalledTimes(1)
+      expect(onResolve).toHaveBeenCalledWith(
+        expect.objectContaining({ data: 'Some data' }),
+      )
+    })
+
+    it('should keep suspense pending while an enabled callback returns false', async () => {
+      const key = createKey()
+      const phase = ref('off')
+      const queryFn = vi.fn<() => Promise<string>>(() =>
+        sleep(10).then(() => 'Some data'),
+      )
+      const onResolve =
+        vi.fn<(result: QueryObserverResult<string, Error>) => void>()
+      const query = useQuery({
+        queryKey: [...key, phase],
+        queryFn,
+        enabled: (currentQuery) => currentQuery.queryKey.at(-1) === 'on',
+      })
+
+      query.suspense().then(onResolve)
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryFn).not.toHaveBeenCalled()
+      expect(onResolve).not.toHaveBeenCalled()
+
+      phase.value = 'on'
       await vi.advanceTimersByTimeAsync(10)
       expect(queryFn).toHaveBeenCalledTimes(1)
       expect(onResolve).toHaveBeenCalledTimes(1)
