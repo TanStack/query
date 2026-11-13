@@ -46,7 +46,14 @@ export type {
   UseMutationOptions,
   UseMutationReturnType,
 } from './useMutation'
-export type { MutationOptions } from './types'
+export type {
+  DeepUnwrapRef,
+  MaybeRef,
+  MaybeRefDeep,
+  MaybeRefOrGetter,
+  MutationOptions,
+  ShallowOption,
+} from './types'
 export type { UseQueriesOptions, UseQueriesResults } from './useQueries'
 export type {
   MutationStateOptions,
