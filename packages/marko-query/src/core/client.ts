@@ -36,7 +36,8 @@ interface SharedState {
   browserClient: QueryClient | undefined
   /** The factory that made {@link SharedState.browserClient}. */
   browserClientFactory: (() => QueryClient) | undefined
-  hydratedStates: WeakSet<object>
+  /** The `$global` state objects each client has already hydrated. */
+  hydratedStates: WeakMap<QueryClient, WeakSet<object>>
   restoring: WeakMap<QueryClient, RestoringState>
   defaultFactoryWarned: boolean
   lateFactoryWarned: boolean
@@ -70,7 +71,7 @@ const shared: SharedState =
     factory: DEFAULT_FACTORY,
     browserClient: undefined,
     browserClientFactory: undefined,
-    hydratedStates: new WeakSet(),
+    hydratedStates: new WeakMap(),
     restoring: new WeakMap(),
     defaultFactoryWarned: false,
     lateFactoryWarned: false,
@@ -259,17 +260,29 @@ export function hydrateOnce(
 }
 
 /**
+ * The set of `$global` state objects that `client` has hydrated.
+ * @param client - The client to read.
+ * @returns The set, created on first use.
+ */
+function stateRegistry(client: QueryClient): WeakSet<object> {
+  let seen = shared.hydratedStates.get(client)
+  if (!seen) shared.hydratedStates.set(client, (seen = new WeakSet()))
+  return seen
+}
+
+/**
  * Hydrates `client` with the state that the server put on `$global`. Each
- * state object is hydrated once.
+ * state object is hydrated once per client, so a client that replaces the
+ * page's client receives the same state.
  * @param client - The client to hydrate.
  * @param global - The render's `$global`.
  */
 function hydrateGlobal(client: QueryClient, global: GlobalRecord): void {
   const state = global[DEHYDRATED_STATE_KEY] as DehydratedState | undefined
-  if (!state || typeof state !== 'object' || shared.hydratedStates.has(state)) {
-    return
-  }
-  shared.hydratedStates.add(state)
+  if (!state || typeof state !== 'object') return
+  const seen = stateRegistry(client)
+  if (seen.has(state)) return
+  seen.add(state)
   hydrateOnce(client, state)
 }
 

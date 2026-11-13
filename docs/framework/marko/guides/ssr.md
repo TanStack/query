@@ -24,7 +24,7 @@ For the common case, there is no `dehydrate` or `hydrate` in your application co
 2. **On the wire**, Marko Query sends the cache state to the browser in two ways:
    - The whole cache of the request client, as `$global.dehydratedQueryState`. Marko Query adds this key to `serializedGlobals`, so Marko serializes it. Marko Query dehydrates the client at the last moment, when Marko writes `$global` into the page that it sends to the browser, not when the client is created. So the state includes everything that your handlers, middleware, and page fetched before that moment.
    - The cache entries that each query tag rendered. Each `<query>`, `<queries>`, and `<infinite-query>` tag dehydrates only its own entries (the cache entries with the same query hash as the tag, which is the query key in a stable string form). Marko sends them with the tag.
-3. **In the browser**, the state is hydrated before it is read. `getQueryClient($global)` hydrates the client of the page with the state in `$global`, once for each state. Each query tag hydrates its own entries before it subscribes.
+3. **In the browser**, the state is hydrated before it is read. `getQueryClient($global)` hydrates the client of the page with the state in `$global`, once for each state and for each client. Each query tag hydrates its own entries before it subscribes.
 
 The second way exists because Marko writes `$global` once, in the first part of the response that contains data for the browser. Data that is fetched after that, for example inside `<await>`, is not in `$global`. It reaches the browser with the tags that render it.
 

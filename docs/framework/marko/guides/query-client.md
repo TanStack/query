@@ -124,7 +124,7 @@ The `$global` argument works differently in each environment:
 - In the browser, `$global` is optional. All calls return the same client, the client of the page. `$global` controls only hydration:
   - **With `$global`**, `getQueryClient($global)` reads the state that the server serialized into `$global.dehydratedQueryState` (the cache that the server prefetched) and hydrates the client with it.
   - **Without `$global`**, `getQueryClient()` does not read or hydrate anything. If no call with `$global` has run yet, the cache has no server data.
-  - **Hydration runs once for each state.** The first call with `$global` hydrates the client. Later calls with the same `$global` find that the state is already hydrated, so they change nothing in the cache. A paused mutation is also added only once when the same mutation reaches the client through `<hydration-boundary>` as well.
+  - **Hydration runs once for each state, for each client.** The first call with `$global` hydrates the client. Later calls with the same `$global` find that the state is already hydrated into that client, so they change nothing in the cache. A client that replaces the page's client receives the same state, because the record of hydrated states belongs to the client. A paused mutation is also added only once when the same mutation reaches the client through `<hydration-boundary>` as well.
   - **After the first call with `$global`**, you can call `getQueryClient()` without it. The client is already hydrated and is the same client.
 
 The query tags always pass `$global` to `getQueryClient`, so they hydrate the client for you. Pass `$global` yourself when your own code reads the client before any query tag has run:
@@ -146,7 +146,7 @@ In code that runs later, for example an event handler, `getQueryClient()` withou
 The factory covers most needs. To use a client that you created yourself, call `setQueryClient`:
 
 - On the server, `setQueryClient(client, $global)` makes `client` the client of the request. `$global` is required. Call it before anything else gets the client of that request.
-- In the browser, `setQueryClient(client)` replaces the client of the page. Marko Query mounts the new client and unmounts the previous one. When you also pass `$global`, Marko Query hydrates the new client with the state that the server put on `$global`, unless it already hydrated that state into a client. Marko Query hydrates each state once, so it does not hydrate it again into the new client.
+- In the browser, `setQueryClient(client)` replaces the client of the page. Marko Query mounts the new client and unmounts the previous one. When you also pass `$global`, Marko Query hydrates the new client with the state that the server put on `$global`. Marko Query hydrates each state once for each client, so a state that the previous client already hydrated still reaches the new client, and a second call for the same client changes nothing.
 
 Replacing the client of the page is not a one-way door. Every mounted tag that follows the client of the page reconnects to the new one, so its result and its subscription move with it. A tag that you gave its own `client` input keeps observing that client. The reconnect happens in the same tick as the call, so a tag never observes the old client after `setQueryClient` returns.
 
@@ -188,11 +188,11 @@ The factory runs once per request, not once per tag: every tag in a request read
 
 ### Browser: one client per page
 
-| Call                                               | Effect                                                                                                                             | Scope       |
-| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `<query-client-factory>` / `setQueryClientFactory` | Registers the factory. A factory that arrives after the page's client exists applies only to clients created later.                | Page bundle |
-| `getQueryClient($global)`                          | Creates the page's client on the first call, mounts it, and hydrates it from `$global` once.                                       | One page    |
-| `setQueryClient(client)`                           | Replaces the page's client, mounts it, unmounts the previous one, and reconnects every mounted tag that follows the page's client. | One page    |
+| Call                                               | Effect                                                                                                                                                         | Scope       |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `<query-client-factory>` / `setQueryClientFactory` | Registers the factory. A factory that arrives after the page's client exists applies only to clients created later.                                            | Page bundle |
+| `getQueryClient($global)`                          | Creates the page's client on the first call, mounts it, and hydrates it from `$global` once for each state.                                                    | One page    |
+| `setQueryClient(client)`                           | Replaces the page's client, mounts it, unmounts the previous one, hydrates `$global` into it, and reconnects every mounted tag that follows the page's client. | One page    |
 
 Every tag without a `client` input uses the page's client. A page has one client however many tags it renders.
 

@@ -185,6 +185,22 @@ describe('query client', () => {
       expect(client.getQueryData(['y'])).toBe('second')
     })
 
+    it('hydrates $global into a client that replaces the page client', async () => {
+      setServer(true)
+      const server = createClient()
+      await server.query({ queryKey: ['x'], queryFn: () => 'server' })
+      const global = { dehydratedQueryState: dehydrate(server) }
+      setServer(false)
+
+      // The page's client hydrates the state, so the guard has seen it.
+      expect(getQueryClient(global).getQueryData(['x'])).toBe('server')
+
+      // The guard is per client, so the replacement receives the same state.
+      const next = createClient()
+      setQueryClient(next, global)
+      expect(next.getQueryData(['x'])).toBe('server')
+    })
+
     it('setQueryClient replaces the page client', () => {
       const previous = getQueryClient()
       const next = createClient()
