@@ -9,15 +9,8 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "allowJs": true,
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "checkJs": true
   },
-  "include": [
-    "config/**/*.d.ts",
-    "src/**/*.ts",
-    "config/ports.js",
-    "scripts/dev.mjs",
-    "server/index.mjs",
-    "*.config.ts",
-    "*.config.js"
-  ]
+  "include": ["src", "server.js", "*.config.ts", "*.config.js"]
 }

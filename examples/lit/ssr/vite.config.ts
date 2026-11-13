@@ -1,18 +1,7 @@
 import { defineConfig } from 'vite'
-import { SSR_PORT } from './config/ports.js'
 
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   build: {
-    target: 'es2022',
+    copyPublicDir: !isSsrBuild,
   },
-  server: {
-    host: '127.0.0.1',
-    port: SSR_PORT,
-    strictPort: true,
-  },
-  preview: {
-    host: '127.0.0.1',
-    port: SSR_PORT,
-    strictPort: true,
-  },
-})
+}))

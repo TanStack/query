@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" type="image/svg+xml" href="/emblem-light.svg" />
-    <title>Lit Query SSR Example</title>
+    <title>TanStack Lit Query SSR Example</title>
   </head>
   <body>
-    __SSR_APP_HTML__
-    <script id="__QUERY_STATE__" type="application/json">
-      __QUERY_STATE_JSON__
+    <!--app-html-->
+    <script>
+      window.__DEHYDRATED_STATE__ = <!--app-state-->
     </script>
-    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/entry-client.ts"></script>
   </body>
 </html>

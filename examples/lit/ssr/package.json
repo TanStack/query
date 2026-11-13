@@ -3,20 +3,28 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node ./scripts/dev.mjs",
-    "build": "vite build",
-    "test:eslint": "eslint ./src",
+    "dev": "node server.js",
+    "build": "vite build --outDir dist/client && vite build --ssr src/entry-server.ts --outDir dist/server",
+    "preview": "cross-env NODE_ENV=production node server.js",
+    "test:eslint": "eslint ./src ./server.js",
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
     "@lit-labs/ssr": "^3.3.0",
     "@tanstack/lit-query": "^0.2.38",
-    "lit": "^3.3.3"
+    "compression": "^1.8.2",
+    "devalue": "^6.0.3",
+    "express": "^5.3.0",
+    "lit": "^3.3.3",
+    "sirv": "^3.0.2"
   },
   "devDependencies": {
     "@lit-labs/ssr-client": "^1.1.7",
     "@tanstack/eslint-plugin-query": "^5.107.1",
-    "tsx": "^4.23.15",
+    "@types/compression": "^1.8.1",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.19.2",
+    "cross-env": "^10.1.0",
     "typescript": "^6.0.3",
     "vite": "^8.3.5"
   }

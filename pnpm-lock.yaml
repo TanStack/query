@@ -1125,6 +1125,9 @@ importers:
       lit:
         specifier: ^3.3.3
         version: 3.3.3
+      msw:
+        specifier: ^2.15.0
+        version: 2.15.0(@types/node@24.19.2)(typescript@6.0.3)
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.107.1
@@ -1232,9 +1235,21 @@ importers:
       '@tanstack/lit-query':
         specifier: ^0.2.38
         version: link:../../../packages/lit-query
+      compression:
+        specifier: ^1.8.2
+        version: 1.8.2(supports-color@10.2.2)
+      devalue:
+        specifier: ^6.0.3
+        version: 6.0.3
+      express:
+        specifier: ^5.3.0
+        version: 5.3.0(supports-color@10.2.2)
       lit:
         specifier: ^3.3.3
         version: 3.3.3
+      sirv:
+        specifier: ^3.0.2
+        version: 3.0.2
     devDependencies:
       '@lit-labs/ssr-client':
         specifier: ^1.1.7
@@ -1242,9 +1257,18 @@ importers:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.107.1
         version: link:../../../packages/eslint-plugin-query
-      tsx:
-        specifier: ^4.23.15
-        version: 4.23.15
+      '@types/compression':
+        specifier: ^1.8.1
+        version: 1.8.1
+      '@types/express':
+        specifier: ^5.0.6
+        version: 5.0.6
+      '@types/node':
+        specifier: ^24.19.2
+        version: 24.19.2
+      cross-env:
+        specifier: ^10.1.0
+        version: 10.1.0
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -40831,6 +40855,7 @@ snapshots:
       esbuild: 0.28.2
     optionalDependencies:
       fsevents: 2.3.3
+    optional: true
 
   tty-browserify@0.0.0: {}
 
