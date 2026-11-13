@@ -8,7 +8,7 @@ import {
   provideTanStackQuery,
 } from '@tanstack/angular-query-experimental'
 import { withDevtools } from '@tanstack/angular-query-experimental/devtools'
-import { autocompleteMockInterceptor } from './api/autocomplete-mock.interceptor'
+import { autocompleteMockInterceptor } from './interceptor/autocomplete-mock.interceptor'
 import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
