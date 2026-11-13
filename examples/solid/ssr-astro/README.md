@@ -1,4 +1,4 @@
-# TanStack Solid Query Astro Example
+# TanStack Solid Query SSR Example (Astro)
 
 A Pokémon search with `keepPreviousData` and `<Suspense>`, rendered as a Solid island.
 

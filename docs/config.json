@@ -6868,8 +6868,8 @@
               "to": "framework/solid/examples/streaming-solid-start2"
             },
             {
-              "label": "Astro",
-              "to": "framework/solid/examples/astro"
+              "label": "SSR (Astro)",
+              "to": "framework/solid/examples/ssr-astro"
             },
             {
               "label": "Offline Queries and Mutations (TanStack Router)",
