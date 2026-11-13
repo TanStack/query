@@ -414,7 +414,6 @@ export function useQueries<
   const observer = new QueriesObserver<TCombinedResult>(
     client,
     defaultedQueries.value,
-    options as QueriesObserverOptions<TCombinedResult>,
   )
 
   const getOptimisticResult = () => {
@@ -474,10 +473,7 @@ export function useQueries<
   }
 
   watch(defaultedQueries, (queriesValue) => {
-    observer.setQueries(
-      queriesValue,
-      options as QueriesObserverOptions<TCombinedResult>,
-    )
+    observer.setQueries(queriesValue)
     updateState()
   })
 

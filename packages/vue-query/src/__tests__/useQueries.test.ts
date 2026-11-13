@@ -723,6 +723,39 @@ describe('useQueries', () => {
     )
 
     it.runIf(isVue3)(
+      'should throw from error watcher when the combined result does not change after the queries change',
+      async ({ onTestFinished }) => {
+        const key = ref(createKey())
+        useQueries({
+          queries: () => [
+            {
+              queryKey: [key.value],
+              queryFn: () =>
+                sleep(10).then(() => Promise.reject(new Error('Some error'))),
+              retry: false,
+              throwOnError: true,
+            },
+          ],
+          combine: (results) => results.map((queryResult) => queryResult.data),
+        })
+
+        const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
+        process.on('unhandledRejection', unhandledRejectionFn)
+        onTestFinished(() => {
+          process.off('unhandledRejection', unhandledRejectionFn)
+        })
+
+        key.value = createKey()
+        await vi.advanceTimersByTimeAsync(10)
+        expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
+        expect(unhandledRejectionFn).toHaveBeenCalledWith(
+          Error('Some error'),
+          expect.any(Promise),
+        )
+      },
+    )
+
+    it.runIf(isVue3)(
       'should throw only the errors of the queries whose throwOnError is or returns true',
       async ({ onTestFinished }) => {
         const key1 = createKey()
