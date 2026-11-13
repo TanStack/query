@@ -112,7 +112,9 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
                 ? oldPageParams[0] === undefined
                   ? options.initialPageParam
                   : oldPageParams[0]
-                : getNextPageParam(options, result)
+                : typeof options.getNextPageParam === 'function'
+                  ? getNextPageParam(options, result)
+                  : oldPageParams[currentPage]
             if (currentPage > 0 && param == null) {
               break
             }
@@ -191,7 +193,7 @@ export function hasNextPage(
   options: InfiniteQueryPageParamsOptions<any, any>,
   data?: InfiniteData<unknown>,
 ): boolean {
-  if (!data) return false
+  if (!data || !options.getNextPageParam) return false
   return getNextPageParam(options, data) != null
 }
 
