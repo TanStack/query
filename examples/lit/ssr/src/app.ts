@@ -1,151 +1,99 @@
-import { LitElement, css, html } from 'lit'
+import { LitElement, html } from 'lit'
 import { createQueryController } from '@tanstack/lit-query'
-import { dataQueries } from './services/data/queries.js'
+import { commentsQueries } from './services/comments/queries'
+import { postsQueries } from './services/posts/queries'
+import { usersQueries } from './services/users/queries'
 import type { QueryClient, QueryResultAccessor } from '@tanstack/lit-query'
-import type { DataResponse } from './services/data/types.js'
-
-const ssrQueryControllerCreationCounts = new WeakMap<QueryClient, number>()
-
-function incrementSsrQueryControllerCreationCount(
-  queryClient: QueryClient,
-): void {
-  ssrQueryControllerCreationCounts.set(
-    queryClient,
-    (ssrQueryControllerCreationCounts.get(queryClient) ?? 0) + 1,
-  )
-}
-
-export function resetSsrQueryControllerCreationCount(
-  queryClient: QueryClient,
-): void {
-  ssrQueryControllerCreationCounts.set(queryClient, 0)
-}
-
-export function getSsrQueryControllerCreationCount(
-  queryClient: QueryClient,
-): number {
-  return ssrQueryControllerCreationCounts.get(queryClient) ?? 0
-}
+import type { Comment } from './services/comments/types'
+import type { Post } from './services/posts/types'
+import type { User } from './services/users/types'
 
 export class SsrApp extends LitElement {
   static properties = {
-    apiBaseUrl: { attribute: 'api-base-url' },
     queryClient: { attribute: false },
   }
 
-  static styles = css`
-    :host {
-      color: #1f2937;
-      display: block;
-      font-family:
-        ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-        sans-serif;
-      max-width: 32rem;
-      padding: 1.5rem;
-    }
-
-    article {
-      background: #ffffff;
-      border: 1px solid #d1d5db;
-      border-radius: 1rem;
-      box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
-      padding: 1.25rem;
-    }
-
-    h1 {
-      font-size: 1.25rem;
-      margin: 0 0 1rem;
-    }
-
-    p {
-      margin: 0.5rem 0;
-    }
-
-    button {
-      background: #111827;
-      border: none;
-      border-radius: 999px;
-      color: #ffffff;
-      cursor: pointer;
-      font: inherit;
-      margin-top: 1rem;
-      padding: 0.65rem 1rem;
-    }
-
-    button[disabled] {
-      cursor: wait;
-      opacity: 0.65;
-    }
-  `
-
-  apiBaseUrl = ''
   queryClient?: QueryClient
 
-  private dataQuery?: QueryResultAccessor<DataResponse, Error>
+  private postsQuery?: QueryResultAccessor<Array<Post>, Error>
+  private authorQuery?: QueryResultAccessor<User, Error>
+  private commentsQuery?: QueryResultAccessor<Array<Comment>, Error>
 
   protected override willUpdate(): void {
-    if (!this.dataQuery && this.queryClient) {
-      incrementSsrQueryControllerCreationCount(this.queryClient)
-      this.dataQuery = createQueryController(
-        this,
-        dataQueries.detail(this.apiBaseUrl),
-        this.queryClient,
-      )
-    }
-  }
+    if (this.postsQuery || !this.queryClient) return
 
-  private readonly handleRefetch = (): void => {
-    void this.dataQuery?.refetch()
+    // This query was prefetched on the server, so its data is already in the
+    // server-rendered markup and is available immediately on the client
+    const postsQuery = createQueryController(
+      this,
+      postsQueries.list(),
+      this.queryClient,
+    )
+    this.postsQuery = postsQuery
+
+    // This query depends on the posts, and was prefetched on the server as well.
+    // The posts are already in the cache here, prefetched on the server and
+    // hydrated on the client, so the author's id is known when it's created
+    this.authorQuery = createQueryController(
+      this,
+      usersQueries.detail(postsQuery().data?.[0]?.userId),
+      this.queryClient,
+    )
+
+    // This query was not prefetched on the server and will not start
+    // fetching until on the client, both patterns are fine to mix
+    this.commentsQuery = createQueryController(
+      this,
+      commentsQueries.list(),
+      this.queryClient,
+    )
   }
 
   protected override render() {
-    if (!this.dataQuery) {
-      return html`
-        <article data-testid="content">
-          <h1>Lit Query SSR</h1>
-          <p data-testid="status">Loading...</p>
-        </article>
-      `
+    if (!this.postsQuery || !this.authorQuery || !this.commentsQuery) {
+      return html`<p>Loading...</p>`
     }
 
-    const query = this.dataQuery()
-
-    if (query.isPending) {
-      return html`
-        <article data-testid="content">
-          <h1>Lit Query SSR</h1>
-          <p data-testid="status">Loading...</p>
-        </article>
-      `
-    }
-
-    if (query.isError) {
-      return html`
-        <article data-testid="content">
-          <h1>Lit Query SSR</h1>
-          <p data-testid="status">Error</p>
-          <p data-testid="error-message">${query.error.message}</p>
-        </article>
-      `
-    }
+    const posts = this.postsQuery()
+    const author = this.authorQuery()
+    const comments = this.commentsQuery()
 
     return html`
-      <article data-testid="content">
-        <h1>Lit Query SSR</h1>
-        <p data-testid="status">${query.isFetching ? 'Refreshing' : 'Ready'}</p>
-        <p data-testid="message">${query.data.message}</p>
-        <p data-testid="request-count">
-          Request count: ${query.data.requestCount}
+      <div>
+        <h1>Server Rendering with Lit Query</h1>
+        <h2>Comments</h2>
+        <p>
+          ${
+            comments.isPending
+              ? 'Loading comments on the client...'
+              : comments.isError
+                ? `Error: ${comments.error.message}`
+                : `${comments.data.length} comments`
+          }
         </p>
-        <p data-testid="served-at">Served at: ${query.data.servedAt}</p>
-        <button
-          data-testid="refetch-button"
-          ?disabled=${query.isFetching}
-          @click=${this.handleRefetch}
-        >
-          Refetch
-        </button>
-      </article>
+        <h2>Author of the first post</h2>
+        <p>
+          ${
+            author.isPending
+              ? 'Loading author...'
+              : author.isError
+                ? `Error: ${author.error.message}`
+                : author.data.name
+          }
+        </p>
+        <h2>Posts</h2>
+        ${
+          posts.isPending
+            ? 'Loading posts...'
+            : posts.isError
+              ? html`<span>Error: ${posts.error.message}</span>`
+              : html`
+                  <ul>
+                    ${posts.data.map((post) => html`<li>${post.title}</li>`)}
+                  </ul>
+                `
+        }
+      </div>
     `
   }
 }

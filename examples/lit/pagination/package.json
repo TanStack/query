@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node ./scripts/dev.mjs",
+    "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "test:eslint": "eslint ./src",
@@ -11,11 +11,17 @@
   },
   "dependencies": {
     "@tanstack/lit-query": "^0.2.38",
-    "lit": "^3.3.3"
+    "lit": "^3.3.3",
+    "msw": "^2.15.0"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.107.1",
     "typescript": "^6.0.3",
     "vite": "^8.3.5"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
