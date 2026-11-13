@@ -6,16 +6,18 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit",
     "serve:ssr": "node dist/ssr-persist/server/server.mjs"
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "^22.0.0",
-    "@angular/compiler": "^22.0.0",
-    "@angular/core": "^22.0.0",
-    "@angular/platform-browser": "^22.0.0",
-    "@angular/platform-server": "^22.0.0",
-    "@angular/ssr": "^22.0.0",
+    "@angular/common": "^22.2.4",
+    "@angular/compiler": "^22.2.4",
+    "@angular/core": "^22.2.4",
+    "@angular/platform-browser": "^22.2.4",
+    "@angular/platform-server": "^22.2.4",
+    "@angular/ssr": "^22.2.5",
     "@tanstack/angular-query-devtools": "^5.0.0-rc.5",
     "@tanstack/angular-query": "^5.0.0-rc.5",
     "@tanstack/angular-query-persist-client": "^5.0.0-rc.5",
@@ -26,10 +28,11 @@
     "zone.js": "0.16.1"
   },
   "devDependencies": {
-    "@angular/build": "^22.0.0",
-    "@angular/cli": "^22.0.0",
-    "@angular/compiler-cli": "^22.0.0",
+    "@angular/build": "^22.2.5",
+    "@angular/cli": "^22.2.5",
+    "@angular/compiler-cli": "^22.2.4",
+    "@tanstack/eslint-plugin-query": "^5.107.1",
     "@types/express": "^5.0.1",
-    "typescript": "6.0.3"
+    "typescript": "^6.0.3"
   }
 }

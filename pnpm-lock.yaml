@@ -650,16 +650,16 @@ importers:
   examples/angular/dynamic-devtools:
     dependencies:
       '@angular/common':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2)
       '@angular/compiler':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4
       '@angular/core':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)
       '@angular/platform-browser':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
         specifier: ^5.0.0-rc.5
@@ -678,31 +678,34 @@ importers:
         version: 0.16.1
     devDependencies:
       '@angular/build':
-        specifier: ^22.0.0
+        specifier: ^22.2.5
         version: 22.2.5(5f85ac9c496058cbe4a6f75ea31b0b28)
       '@angular/cli':
-        specifier: ^22.0.0
+        specifier: ^22.2.5
         version: 22.2.5(@types/node@24.19.2)(chokidar@5.0.0)
       '@angular/compiler-cli':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/eslint-plugin-query
       typescript:
-        specifier: 6.0.3
+        specifier: ^6.0.3
         version: 6.0.3
 
   examples/angular/dynamic-queries:
     dependencies:
       '@angular/common':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2)
       '@angular/compiler':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4
       '@angular/core':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)
       '@angular/platform-browser':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
         specifier: ^5.0.0-rc.5
@@ -721,16 +724,19 @@ importers:
         version: 0.16.1
     devDependencies:
       '@angular/build':
-        specifier: ^22.0.0
+        specifier: ^22.2.5
         version: 22.2.5(5f85ac9c496058cbe4a6f75ea31b0b28)
       '@angular/cli':
-        specifier: ^22.0.0
+        specifier: ^22.2.5
         version: 22.2.5(@types/node@24.19.2)(chokidar@5.0.0)
       '@angular/compiler-cli':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/eslint-plugin-query
       typescript:
-        specifier: 6.0.3
+        specifier: ^6.0.3
         version: 6.0.3
 
   examples/angular/infinite-query-with-max-pages:
@@ -1018,22 +1024,22 @@ importers:
   examples/angular/ssr:
     dependencies:
       '@angular/common':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2)
       '@angular/compiler':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4
       '@angular/core':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)
       '@angular/platform-browser':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@angular/platform-server':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.6(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/compiler@22.2.4)(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)))(rxjs@7.8.2)
       '@angular/ssr':
-        specifier: ^22.0.0
+        specifier: ^22.2.5
         version: 22.2.6(11b48f3d8850c6fb5dc901c8e6976a5a)
       '@tanstack/angular-query':
         specifier: ^5.0.0-rc.5
@@ -1055,40 +1061,43 @@ importers:
         version: 0.16.1
     devDependencies:
       '@angular/build':
-        specifier: ^22.0.0
+        specifier: ^22.2.5
         version: 22.2.5(5f85ac9c496058cbe4a6f75ea31b0b28)
       '@angular/cli':
-        specifier: ^22.0.0
+        specifier: ^22.2.5
         version: 22.2.5(@types/node@24.19.2)(chokidar@5.0.0)
       '@angular/compiler-cli':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/eslint-plugin-query
       '@types/express':
         specifier: ^5.0.1
         version: 5.0.6
       typescript:
-        specifier: 6.0.3
+        specifier: ^6.0.3
         version: 6.0.3
 
   examples/angular/ssr-persist:
     dependencies:
       '@angular/common':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2)
       '@angular/compiler':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4
       '@angular/core':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)
       '@angular/platform-browser':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@angular/platform-server':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.6(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/compiler@22.2.4)(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)))(rxjs@7.8.2)
       '@angular/ssr':
-        specifier: ^22.0.0
+        specifier: ^22.2.5
         version: 22.2.6(11b48f3d8850c6fb5dc901c8e6976a5a)
       '@tanstack/angular-query':
         specifier: ^5.0.0-rc.5
@@ -1116,37 +1125,40 @@ importers:
         version: 0.16.1
     devDependencies:
       '@angular/build':
-        specifier: ^22.0.0
+        specifier: ^22.2.5
         version: 22.2.5(5f85ac9c496058cbe4a6f75ea31b0b28)
       '@angular/cli':
-        specifier: ^22.0.0
+        specifier: ^22.2.5
         version: 22.2.5(@types/node@24.19.2)(chokidar@5.0.0)
       '@angular/compiler-cli':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/eslint-plugin-query
       '@types/express':
         specifier: ^5.0.1
         version: 5.0.6
       typescript:
-        specifier: 6.0.3
+        specifier: ^6.0.3
         version: 6.0.3
 
   examples/angular/to-resource-signal-forms:
     dependencies:
       '@angular/common':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2)
       '@angular/compiler':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4
       '@angular/core':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)
       '@angular/forms':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)))(rxjs@7.8.2)
       '@angular/platform-browser':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
         specifier: ^5.0.0-rc.5
@@ -1165,16 +1177,19 @@ importers:
         version: 0.16.1
     devDependencies:
       '@angular/build':
-        specifier: ^22.0.0
+        specifier: ^22.2.5
         version: 22.2.5(5f85ac9c496058cbe4a6f75ea31b0b28)
       '@angular/cli':
-        specifier: ^22.0.0
+        specifier: ^22.2.5
         version: 22.2.5(@types/node@24.19.2)(chokidar@5.0.0)
       '@angular/compiler-cli':
-        specifier: ^22.0.0
+        specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.107.1
+        version: link:../../../packages/eslint-plugin-query
       typescript:
-        specifier: 6.0.3
+        specifier: ^6.0.3
         version: 6.0.3
 
   examples/lit/algolia:

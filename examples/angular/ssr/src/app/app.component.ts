@@ -3,7 +3,7 @@ import { PostsComponent } from './components/posts.component'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'ssr-example',
+  selector: 'app-root',
   imports: [PostsComponent],
   template: `
     <main class="page">
@@ -54,4 +54,4 @@ import { PostsComponent } from './components/posts.component'
     }
   `,
 })
-export class SsrExampleComponent {}
+export class AppComponent {}

@@ -1,27 +1,18 @@
-# TanStack Query Angular `toResource` with Signal Forms example
+# TanStack Angular Query toResource Signal Forms Example
 
-This example uses Angular Signal Forms' `validateAsync` with a Resource created
-from `injectQuery` and `toResource`. The username check is cached by its query
-key, debounced while typing, and cancelled when the value changes. The example
-also adds an invite-code field dynamically, giving it its own async validator,
-and includes a button that calls Signal Forms' `reloadValidation()` API. The
-invite-code validator is applied with `applyEach`, so its Resource factory is
-created only when an invite-code item is added to the form array. Query keys and
-request options live in `ValidationQueriesService`; the validators spread those
-options and add `enabled` based on the current field value.
-Submitting the form runs a mock `injectMutation`, disables the submit button while it is pending,
-and displays the variables passed to the mutation.
+A registration form that validates the username and invite codes with queries, through Signal Forms' `validateAsync`.
 
-This example intentionally uses Angular 22 because Signal Forms' `validateAsync`
-API is stable starting in Angular 22.
+## How it works
 
-The `debounce` option on `validateAsync` does not work with `toResource(query)`
-due to an [upstream Angular issue](https://github.com/angular/angular/issues/70884).
-Instead, the example uses `debounce(fieldPath, 300)` from `@angular/forms/signals`
-for the username and invite-code fields. This delays input updates to the form
-model; blurring a field or submitting the form flushes its pending update immediately.
+- `src/app/validation-queries.service.ts` is an `@Injectable` `ValidationQueriesService` whose `usernameAvailability(username)` and `inviteCodeValidation(code)` return `queryOptions`, and whose `submitRegistration()` returns `mutationOptions`. All three use mock requests.
+- `src/app/app.component.ts` passes a `factory` to `validateAsync` that creates a query with `injectQuery` and returns `toResource(query)`. Results are cached by query key, and the query is `enabled` only when the field has a value.
+- The invite-code validator is added with `applyEach`, so its query is created only when an invite code is added to the form array.
+- The fields use `debounce(path, 300)` from `@angular/forms/signals` because the `debounce` option of `validateAsync` does not work with `toResource(query)` ([angular/angular#70884](https://github.com/angular/angular/issues/70884)). Blurring a field or submitting the form applies a pending update immediately.
+- Submitting calls `registrationMutation.mutateAsync` from `injectMutation` inside Signal Forms' `submit`, and maps the errors the mutation returns to their fields. The "Request validation again" button calls `reloadValidation()`.
+
+Signal Forms' `validateAsync` is stable from Angular 22, so this example needs Angular 22.
 
 To run this example:
 
-- `pnpm install`
-- `pnpm start`
+- `npm install`
+- `npm start`

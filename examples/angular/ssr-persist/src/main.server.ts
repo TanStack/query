@@ -1,11 +1,9 @@
-import {
-  bootstrapApplication,
-  type BootstrapContext,
-} from '@angular/platform-browser'
+import { bootstrapApplication } from '@angular/platform-browser'
 import { serverConfig } from './app/app.config.server'
-import { SsrPersistExampleComponent } from './app/app.component'
+import { AppComponent } from './app/app.component'
+import type { BootstrapContext } from '@angular/platform-browser'
 
 const bootstrap = (context: BootstrapContext) =>
-  bootstrapApplication(SsrPersistExampleComponent, serverConfig, context)
+  bootstrapApplication(AppComponent, serverConfig, context)
 
 export default bootstrap

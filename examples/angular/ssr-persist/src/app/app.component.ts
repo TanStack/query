@@ -9,7 +9,7 @@ import { PostsComponent } from './components/posts.component'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'ssr-persist-example',
+  selector: 'app-root',
   imports: [ClientPersistDemoComponent, PostsComponent],
   template: `
     <main class="page">
@@ -115,7 +115,7 @@ import { PostsComponent } from './components/posts.component'
     }
   `,
 })
-export class SsrPersistExampleComponent {
+export class AppComponent {
   /** When `true`, `ClientPersistDemoComponent` exists only in the browser (not during SSR). */
   readonly showClientDemo = signal(false)
 

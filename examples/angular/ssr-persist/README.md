@@ -1,14 +1,20 @@
-# TanStack Query Angular SSR + persistence example
+# TanStack Angular Query SSR Persist Example
 
-Combines [SSR/hydration](https://tanstack.com/query/latest/docs/framework/angular/guides/ssr), a `localStorage` persister, and a **client-only island**: `ClientPersistDemoComponent` is mounted with `afterNextRender`, so its `injectQuery` `queryFn` does not run during SSR (unlike `@defer` main content, which is still rendered on the server for incremental hydration).
+The SSR posts example with a `localStorage` persister and a query that only runs in the browser.
 
-- **Server:** same bootstrap config shape as the base SSR example; `withPersistQueryClient` uses a factory and skips work when not in the browser.
-- **Client:** `showClientDemo` is set to `true` in `afterNextRender`, then `<client-persist-demo />` is created — optional `dehydrateOptions.shouldDehydrateQuery` can scope persistence to `client-persist` query keys only.
+Built with [Angular SSR](https://angular.dev/guide/ssr).
 
-To run:
+## How it works
 
-- From the repo root: `pnpm install` then
-  `pnpm --filter @tanstack/query-example-angular-ssr-persist start`
-- Production SSR server after build:
-  `pnpm --filter @tanstack/query-example-angular-ssr-persist run build`
-  then `pnpm --filter @tanstack/query-example-angular-ssr-persist run serve:ssr`
+- `src/app/components/posts.component.ts` reads in-memory posts from `src/app/services/posts.service.ts` with `injectQuery`. The query runs during server rendering and its result is transferred to the browser.
+- `src/app/app.config.ts` adds `withPersistQueryClient` to `provideTanStackQuery` with a `localStorage` persister from `createAsyncStoragePersister`. The options factory only runs in the browser, so `localStorage` is not touched on the server.
+- `src/app/app.component.ts` sets `showClientDemo` to `true` in `afterNextRender`, so `src/app/components/client-persist-demo.component.ts` is only created in the browser and its query never runs on the server.
+- That query stores a timestamp with `staleTime: Infinity`. After a hard reload, the posts come from the server again and the timestamp is restored from `localStorage`.
+- `src/app/query-client.ts` exports the `createQueryClient` factory, which turns off `retry` on the server and sets a `gcTime` of 24 hours so the persisted cache is kept.
+
+To run this example:
+
+- `npm install`
+- `npm start`
+
+To run the production server, run `npm run build` and then `npm run serve:ssr`.

@@ -52,6 +52,12 @@
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
             "styles": ["src/styles.css"],
             "scripts": [],
             "server": "src/main.server.ts",
@@ -90,7 +96,9 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "prebundle": { "exclude": ["@angular"] }
+            "prebundle": {
+              "exclude": ["@angular"]
+            }
           },
           "configurations": {
             "production": {

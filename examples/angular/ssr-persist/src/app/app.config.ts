@@ -1,5 +1,4 @@
 import { provideHttpClient, withFetch } from '@angular/common/http'
-import type { ApplicationConfig } from '@angular/core'
 import {
   provideClientHydration,
   withEventReplay,
@@ -9,6 +8,7 @@ import { withDevtools } from '@tanstack/angular-query-devtools'
 import { withPersistQueryClient } from '@tanstack/angular-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import { PERSIST_STORAGE_KEY, createQueryClient } from './query-client'
+import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
