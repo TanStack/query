@@ -150,7 +150,13 @@ The factory covers most needs. To use a client that you created yourself, call `
 
 Replacing the client of the page is not a one-way door. Every mounted tag that follows the client of the page reconnects to the new one, so its result and its subscription move with it. A tag that you gave its own `client` input keeps observing that client. The reconnect happens in the same tick as the call, so a tag never observes the old client after `setQueryClient` returns.
 
-The new client is not seeded with the data of the old one. A `<query>` that resumed from the server keeps its server snapshot for the render that made it, and the binding that Marko Query rebuilds for the replacement client starts empty. The tag then shows what the new client fetches, not the entries of the previous cache. This matters when the replacement is a different scope, such as another account or another tenant, and the query has a long `staleTime`.
+The new client is not seeded with the data of the old one. A `<query>` that resumed from the server keeps its server snapshot for the render that made it, and the binding that Marko Query rebuilds for the replacement client does not replay that snapshot. The tag then shows what the new client holds, not the entries of the previous cache. What the new client holds depends on how you replace it:
+
+- `setQueryClient(client)` with no `$global` leaves the new client empty, so the tag fetches for itself.
+- `setQueryClient(client, $global)` hydrates the state that the server put on `$global` into the new client, so the tag shows the server's data.
+- A client that you filled yourself, for example with `setQueryData`, keeps its own entries.
+
+This matters when the replacement is a different scope, such as another account or another tenant, and the query has a long `staleTime`.
 
 ## A Different Client for One Tag
 
@@ -192,7 +198,7 @@ The factory runs once per request, not once per tag: every tag in a request read
 | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | `<query-client-factory>` / `setQueryClientFactory` | Registers the factory. A factory that arrives after the page's client exists applies only to clients created later.                                            | Page bundle |
 | `getQueryClient($global)`                          | Creates the page's client on the first call, mounts it, and hydrates it from `$global` once for each state.                                                    | One page    |
-| `setQueryClient(client)`                           | Replaces the page's client, mounts it, unmounts the previous one, hydrates `$global` into it, and reconnects every mounted tag that follows the page's client. | One page    |
+| `setQueryClient(client, $global)`                  | Replaces the page's client, mounts it, unmounts the previous one, hydrates `$global` into it, and reconnects every mounted tag that follows the page's client. | One page    |
 
 Every tag without a `client` input uses the page's client. A page has one client however many tags it renders.
 
