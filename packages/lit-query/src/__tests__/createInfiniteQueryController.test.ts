@@ -998,4 +998,125 @@ describe('createInfiniteQueryController', () => {
     providerA.remove()
     providerB.remove()
   })
+
+  it('should render infinite query results based on the current status', async () => {
+    const key = createKey()
+
+    class Host extends LitElement {
+      readonly infinite = createInfiniteQueryController(
+        this,
+        {
+          queryKey: key,
+          initialPageParam: 0,
+          queryFn: ({ pageParam }) =>
+            sleep(10).then(() => Number(pageParam)),
+          getNextPageParam: (lastPage) =>
+            lastPage < 1 ? lastPage + 1 : undefined,
+          retry: false,
+        },
+        queryClient,
+      )
+
+      override render() {
+        return html`${this.infinite.render({
+          pending: () => 'pending-ui',
+          success: (result) => `success-${result.data?.pages.join(',')}`,
+          error: () => 'error-ui',
+        })}`
+      }
+    }
+
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    expect(
+      host.infinite.render({
+        pending: () => 'pending-ui',
+        success: () => 'success-ui',
+        error: () => 'error-ui',
+      }),
+    ).toBe('pending-ui')
+
+    container.append(host)
+    await host.updateComplete
+    expect(host.shadowRoot).toHaveTextContent('pending-ui')
+
+    await vi.advanceTimersByTimeAsync(10)
+    await host.updateComplete
+    expect(host.shadowRoot).toHaveTextContent('success-0')
+
+    host.infinite.destroy()
+  })
+
+  it('should render the error branch when an infinite query fails', async () => {
+    const key = createKey()
+
+    class Host extends LitElement {
+      readonly infinite = createInfiniteQueryController(
+        this,
+        {
+          queryKey: key,
+          initialPageParam: 0,
+          queryFn: async () => {
+            throw new Error('render-infinite-failed')
+          },
+          getNextPageParam: () => undefined,
+          retry: false,
+        },
+        queryClient,
+      )
+
+      override render() {
+        return html`${this.infinite.render({
+          pending: () => 'pending-ui',
+          success: () => 'success-ui',
+          error: (result) => result.error.message,
+        })}`
+      }
+    }
+
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await vi.advanceTimersByTimeAsync(0)
+    await host.updateComplete
+
+    expect(host.shadowRoot).toHaveTextContent('render-infinite-failed')
+    host.infinite.destroy()
+  })
+
+  it('should return undefined when no renderer matches the infinite query status', async () => {
+    const key = createKey()
+
+    class Host extends LitElement {
+      readonly infinite = createInfiniteQueryController(
+        this,
+        {
+          queryKey: key,
+          initialPageParam: 0,
+          queryFn: ({ pageParam }) =>
+            sleep(10).then(() => Number(pageParam)),
+          getNextPageParam: (lastPage) =>
+            lastPage < 1 ? lastPage + 1 : undefined,
+          retry: false,
+        },
+        queryClient,
+      )
+    }
+
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    expect(host.infinite.render({ error: () => 'error-ui' })).toBeUndefined()
+
+    container.append(host)
+    await vi.advanceTimersByTimeAsync(10)
+    await host.updateComplete
+    expect(
+      host.infinite.render({
+        pending: () => 'pending-ui',
+        error: () => 'error-ui',
+      }),
+    ).toBeUndefined()
+
+    host.infinite.destroy()
+  })
 })

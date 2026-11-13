@@ -2,6 +2,7 @@ import { MutationObserver } from '@tanstack/query-core'
 import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
+import { renderResult } from './render.js'
 import type { Accessor, ValueAccessor } from './accessor.js'
 import type {
   DefaultError,
@@ -11,6 +12,7 @@ import type {
   QueryClient,
 } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
+import type { RendererResult, ResultRenderers } from './render.js'
 
 /**
  * Options accepted by `createMutationController`.
@@ -65,6 +67,17 @@ export type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> =
     >['reset']
     /** Removes the controller from its Lit host and unsubscribes observers. */
     destroy: () => void
+    /** Renders the mutation result using the appropriate renderer from the given set, based on the result's `status`. */
+    render: <
+      TRenderers extends ResultRenderers<
+        MutationObserverResult<TData, TError, TVariables, TOnMutateResult>
+      >,
+    >(
+      renderers: TRenderers,
+    ) => RendererResult<
+      MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
+      TRenderers
+    >
   }
 
 /**
@@ -344,6 +357,13 @@ export function createMutationController<
       mutateAsync: controller.mutateAsync,
       reset: controller.reset,
       destroy: () => controller.destroy(),
+      render: <
+        TRenderers extends ResultRenderers<
+          MutationObserverResult<TData, TError, TVariables, TOnMutateResult>
+        >,
+      >(
+        renderers: TRenderers,
+      ) => renderResult(controller.current, renderers),
     },
   )
 }
