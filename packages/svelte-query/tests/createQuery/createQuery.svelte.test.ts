@@ -1271,6 +1271,43 @@ describe('createQuery', () => {
   )
 
   it(
+    'should return the latest value of a property first read after the query settled',
+    withEffectRoot(async () => {
+      const key1 = createKey()
+      const key2 = createKey()
+      const states: Array<string> = []
+
+      const query1 = createQuery(
+        () => ({
+          queryKey: key1,
+          queryFn: () => sleep(10).then(() => 'data1'),
+        }),
+        () => queryClient,
+      )
+      const query2 = createQuery(
+        () => ({
+          queryKey: key2,
+          queryFn: () => Promise.resolve('data2'),
+        }),
+        () => queryClient,
+      )
+
+      $effect(() => {
+        if (query1.isError || query2.isError) {
+          states.push('error')
+        } else if (query1.data === undefined || query2.data === undefined) {
+          states.push('pending')
+        } else {
+          states.push(`${query1.data} ${query2.data}`)
+        }
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(states.at(-1)).toBe('data1 data2')
+    }),
+  )
+
+  it(
     'should update query options',
     withEffectRoot(() => {
       const key = createKey()
