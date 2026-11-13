@@ -5,12 +5,12 @@ import {
 } from '@angular/common/http'
 import { QueryClient, provideTanStackQuery } from '@tanstack/angular-query'
 import { withDevtools } from '@tanstack/angular-query-devtools'
-import { mockInterceptor } from './interceptor/mock-api.interceptor'
+import { tasksMockInterceptor } from './interceptor/tasks-mock.interceptor'
 import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(withFetch(), withInterceptors([mockInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([tasksMockInterceptor])),
     provideTanStackQuery(
       () =>
         new QueryClient({
