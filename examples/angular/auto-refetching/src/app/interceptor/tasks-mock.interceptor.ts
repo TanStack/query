@@ -1,5 +1,5 @@
 /**
- * MockApiInterceptor is used to simulate API responses for `/api/tasks` endpoints.
+ * tasksMockInterceptor is used to simulate API responses for `/api/tasks` endpoints.
  * It handles the following operations:
  * - GET: Fetches all tasks from localStorage.
  * - POST: Adds a new task to localStorage.
@@ -16,7 +16,7 @@ import type {
 } from '@angular/common/http'
 import type { Observable } from 'rxjs'
 
-export const mockInterceptor: HttpInterceptorFn = (
+export const tasksMockInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
 ): Observable<HttpEvent<unknown>> => {
