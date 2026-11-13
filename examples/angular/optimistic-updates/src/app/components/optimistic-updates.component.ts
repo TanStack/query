@@ -1,15 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import {
   QueryClient,
   injectMutation,
   injectQuery,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 import { FormsModule } from '@angular/forms'
 import { DatePipe } from '@angular/common'
 import { TasksMutations, TasksQueries } from '../services/tasks/queries'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'optimistic-updates',
   imports: [FormsModule, DatePipe],
   template: `

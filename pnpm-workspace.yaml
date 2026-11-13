@@ -57,10 +57,14 @@ catalog:
 
   # angular
   '@analogjs/vite-plugin-angular': ^2.7.5
+  '@angular/build': ^22.2.5
   '@angular/common': ^22.2.4
   '@angular/compiler': ^22.2.4
+  '@angular/compiler-cli': ^22.2.4
   '@angular/core': ^22.2.4
   '@angular/platform-browser': ^22.2.4
+  '@angular/platform-server': ^22.2.4
+  '@angular/router': ^22.2.4
   '@testing-library/angular': ^19.6.0
 
 packages:

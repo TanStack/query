@@ -3,12 +3,9 @@ import {
   withFetch,
   withInterceptors,
 } from '@angular/common/http'
-import {
-  QueryClient,
-  provideTanStackQuery,
-} from '@tanstack/angular-query-experimental'
-import { withDevtools } from '@tanstack/angular-query-experimental/devtools'
-import { autocompleteMockInterceptor } from './api/autocomplete-mock.interceptor'
+import { QueryClient, provideTanStackQuery } from '@tanstack/angular-query'
+import { withDevtools } from '@tanstack/angular-query-devtools'
+import { autocompleteMockInterceptor } from './interceptor/autocomplete-mock.interceptor'
 import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
@@ -18,13 +15,14 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([autocompleteMockInterceptor]),
     ),
     provideTanStackQuery(
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            gcTime: 24 * 60 * 60 * 1000, // 24 hours
+      () =>
+        new QueryClient({
+          defaultOptions: {
+            queries: {
+              gcTime: 1000 * 60 * 60 * 24, // 24 hours
+            },
           },
-        },
-      }),
+        }),
       withDevtools(),
     ),
   ],

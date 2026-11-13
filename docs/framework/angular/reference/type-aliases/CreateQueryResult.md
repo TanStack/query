@@ -9,7 +9,7 @@ title: CreateQueryResult
 type CreateQueryResult<TData = unknown, TError = DefaultError> = CreateBaseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/types.ts:165](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L165)
+Defined in: [packages/angular-query/src/types.ts:267](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L267)
 
 The result of `injectQuery`. Same as [CreateBaseQueryResult](CreateBaseQueryResult.md).
 

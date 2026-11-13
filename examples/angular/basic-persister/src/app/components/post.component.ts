@@ -1,15 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  input,
-  output,
-} from '@angular/core'
-import { injectQuery } from '@tanstack/angular-query-experimental'
+import { Component, inject, input, output } from '@angular/core'
+import { injectQuery } from '@tanstack/angular-query'
 import { PostsQueries } from '../services/posts/queries'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'post',
   templateUrl: './post.component.html',
 })

@@ -9,12 +9,11 @@ title: CreateMutateFunction
 type CreateMutateFunction<TData = unknown, TError = DefaultError, TVariables = void, TOnMutateResult = unknown> = (...args: Parameters<MutateFunction<TData, TError, TVariables, TOnMutateResult>>) => void;
 ```
 
-Defined in: [packages/angular-query-experimental/src/types.ts:244](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L244)
+Defined in: [packages/angular-query/src/types.ts:352](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L352)
 
 The type of `mutate`, as returned by `injectMutation`. Forwards the variables (and an optional per-call
 `onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced
-through the mutation result instead of being thrown by `mutate`, unless `throwOnError` makes
-`injectMutation` rethrow them after emitting them on `ngZone.onError`.
+through the mutation result, not thrown.
 
 ## Type Parameters
 

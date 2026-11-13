@@ -7,13 +7,13 @@ Most Angular tests using TanStack Query will involve services or components that
 
 TanStack Query's `inject*` functions integrate with [`PendingTasks`](https://angular.dev/api/core/PendingTasks) which ensures the framework is aware of in-progress queries and mutations.
 
-This lets the framework, for example during SSR, wait until mutations and queries resolve. In unit tests, `ApplicationRef.whenStable()` and `fixture.whenStable()` work for both Zone.js and Zoneless setups when the work settles right away, such as a synchronous query function or a response flushed through `HttpTestingController`. They can resolve before a query or mutation that takes time settles, so advance fake timers instead, as shown in the sections below.
+This means tests and SSR can wait until mutations and queries resolve. In unit tests you can use `ApplicationRef.whenStable()` or `fixture.whenStable()` to await query completion. This works for both Zone.js and Zoneless setups.
 
-> This integration requires Angular 19 or later. Earlier versions of Angular do not support `PendingTasks`.
+> This adapter requires Angular 20.1 or later. It uses `PendingTasks` to keep application stability open while observed work is pending.
 
 ## TestBed setup
 
-Create a fresh `QueryClient` for every spec and provide it with `provideTanStackQuery` or `provideQueryClient`. This keeps caches isolated and lets you change default options per test:
+Create a fresh `QueryClient` for every spec and return it from the provider factory. Keeping a reference makes it easy to inspect or clear the cache:
 
 ```ts
 const queryClient = new QueryClient({
@@ -25,11 +25,11 @@ const queryClient = new QueryClient({
 })
 
 TestBed.configureTestingModule({
-  providers: [provideTanStackQuery(queryClient)],
+  providers: [provideTanStackQuery(() => queryClient)],
 })
 ```
 
-> If your applications actual TanStack Query config is used in unit tests, make sure `withDevtools` is not accidentally included in test providers. This can cause slow tests. It is best to keep test and production configs separate.
+> If your application's TanStack Query config is used in unit tests, make sure `withDevtools` is not accidentally included in test providers. This can cause slow tests. It is best to keep test and production configs separate.
 
 If you share helpers, remember to call `queryClient.clear()` (or build a new instance) in `afterEach` so data from one test never bleeds into another.
 
@@ -46,7 +46,7 @@ const query = TestBed.runInInjectionContext(() =>
   })),
 )
 
-TestBed.tick() // Trigger effect
+TestBed.tick() // Synchronize the test application
 
 // Application is stable when queries are idle
 await appRef.whenStable()
@@ -55,7 +55,7 @@ expect(query.status()).toBe('success')
 expect(query.data()).toBe('Hello')
 ```
 
-Here `whenStable()` resolves after the query settles because the query function returns right away. When using fake timers (Vitest), advance the clock and a microtask before awaiting stability:
+PendingTasks will have `whenStable()` resolve after the query settles. When using fake timers (Vitest), advance the clock and a microtask before awaiting stability:
 
 ```ts
 await vi.advanceTimersByTimeAsync(0)
@@ -65,89 +65,22 @@ await appRef.whenStable()
 
 ## Testing components
 
-For components, create them through `TestBed.createComponent`. `fixture.whenStable()` can resolve before the query data arrives, so with fake timers, advance the clock past the query function's delay, then run `fixture.detectChanges()` and assert on what the component renders:
-
-```angular-ts
-beforeEach(() => {
-  vi.useFakeTimers()
-})
-
-afterEach(() => {
-  vi.useRealTimers()
-})
-
-it('should render the query data', async () => {
-  @Component({
-    template: `<p>{{ query.data()?.value ?? 'Loading...' }}</p>`,
-  })
-  class ExampleComponent {
-    readonly query = injectQuery(() => ({
-      queryKey: ['example'],
-      queryFn: () =>
-        new Promise<{ value: number }>((resolve) =>
-          setTimeout(() => resolve({ value: 42 }), 10),
-        ),
-    }))
-  }
-
-  const fixture = TestBed.createComponent(ExampleComponent)
-  fixture.detectChanges()
-  expect(fixture.nativeElement.textContent).toContain('Loading...')
-
-  await vi.advanceTimersByTimeAsync(11)
-  fixture.detectChanges()
-
-  expect(fixture.nativeElement.textContent).toContain('42')
-})
-```
-
-If you use [Angular Testing Library](https://testing-library.com/docs/angular-testing-library/intro/), render the component with `render` and follow the same flow, running change detection through `rendered.fixture`:
-
-```angular-ts
-it('should render the query data', async () => {
-  @Component({
-    template: `<p>{{ query.data()?.value ?? 'Loading...' }}</p>`,
-  })
-  class ExampleComponent {
-    readonly query = injectQuery(() => ({
-      queryKey: ['example'],
-      queryFn: () =>
-        new Promise<{ value: number }>((resolve) =>
-          setTimeout(() => resolve({ value: 42 }), 10),
-        ),
-    }))
-  }
-
-  const rendered = await render(ExampleComponent)
-  expect(rendered.getByText('Loading...')).toBeInTheDocument()
-
-  await vi.advanceTimersByTimeAsync(11)
-  rendered.fixture.detectChanges()
-
-  expect(rendered.getByText('42')).toBeInTheDocument()
-})
-```
-
-To test the same query without a component, create it with `TestBed.runInInjectionContext`, advance the clock the same way, and assert on its signals:
+For components, bootstrap them through `TestBed.createComponent`, then await `fixture.whenStable()`:
 
 ```ts
-it('should resolve the query data', async () => {
-  const query = TestBed.runInInjectionContext(() =>
-    injectQuery(() => ({
-      queryKey: ['example'],
-      queryFn: () =>
-        new Promise<{ value: number }>((resolve) =>
-          setTimeout(() => resolve({ value: 42 }), 10),
-        ),
-    })),
-  )
-  expect(query.isPending()).toBe(true)
+const fixture = TestBed.createComponent(ExampleComponent)
+fixture.autoDetectChanges()
 
-  await vi.advanceTimersByTimeAsync(11)
-
-  expect(query.data()).toEqual({ value: 42 })
-})
+await fixture.whenStable()
+expect(fixture.componentInstance.query.data()).toEqual({ value: 42 })
 ```
+
+In zone-based tests, enable `fixture.autoDetectChanges()` so component effects can run again
+as the query settles. Zoneless fixtures enable automatic detection by default.
+
+When using Angular Testing Library, its `autoDetectChanges` option runs change detection around
+library operations; it does not call `fixture.autoDetectChanges()`. Enable the fixture's automatic
+detection explicitly when awaiting stability in a zone-based component test.
 
 ## Handling retries
 
@@ -155,14 +88,16 @@ Retries slow failing tests because the default backoff runs three times. Set `re
 
 ## HttpClient & network stubs
 
-Angular's `HttpClient` testing utilities play nicely with PendingTasks. Register `provideHttpClient()` and `provideHttpClientTesting()` alongside the Query provider and flush responses through `HttpTestingController`:
+Angular's `provideHttpClientTesting` plays nicely with PendingTasks. Register it after
+`provideHttpClient`, alongside the Query provider, and flush responses through
+`HttpTestingController`:
 
 ```ts
 TestBed.configureTestingModule({
   providers: [
     provideHttpClient(),
     provideHttpClientTesting(),
-    provideTanStackQuery(queryClient),
+    provideTanStackQuery(() => queryClient),
   ],
 })
 
@@ -174,6 +109,7 @@ const query = TestBed.runInInjectionContext(() =>
   })),
 )
 
+TestBed.tick() // Synchronize the test application so the request starts
 const fixturePromise = TestBed.inject(ApplicationRef).whenStable()
 httpCtrl.expectOne('/api/todos').flush([{ id: 1 }])
 await fixturePromise
@@ -182,69 +118,96 @@ expect(query.data()).toEqual([{ id: 1 }])
 httpCtrl.verify()
 ```
 
-## Infinite queries & pagination
-
-`whenStable()` can resolve before the pages of an infinite query reach the `data()` signal. With fake timers, advance the clock past the query function's delay instead, call `fetchNextPage()`, and advance it again before asserting on `data().pages`. Restore real timers in `afterEach`, so they are restored even when an assertion fails:
+Mutations can start their HTTP request asynchronously, after their `onMutate` callbacks finish.
+Wait for the request itself before flushing it. This Vitest example uses `vi.waitFor`:
 
 ```ts
-beforeEach(() => {
-  vi.useFakeTimers()
-})
+const http = TestBed.inject(HttpClient)
+const mutation = TestBed.runInInjectionContext(() =>
+  injectMutation(() => ({
+    mutationFn: (input: { email: string }) =>
+      lastValueFrom(http.post('/api/reset', input)),
+  })),
+)
 
-afterEach(() => {
-  vi.useRealTimers()
-})
+TestBed.tick()
+mutation.mutate({ email: 'person@example.com' })
 
-it('should load the next page', async () => {
-  const infinite = TestBed.runInInjectionContext(() =>
-    injectInfiniteQuery(() => ({
-      queryKey: ['pages'],
-      queryFn: ({ pageParam }) =>
-        new Promise<string>((resolve) =>
-          setTimeout(() => resolve(`page ${pageParam}`), 10),
-        ),
-      initialPageParam: 1,
-      getNextPageParam: (_lastPage, allPages) => allPages.length + 1,
-    })),
-  )
+const request = await vi.waitFor(() => httpCtrl.expectOne('/api/reset'))
+request.flush({ ok: true })
+await TestBed.inject(ApplicationRef).whenStable()
 
-  await vi.advanceTimersByTimeAsync(11)
-  expect(infinite.data()?.pages).toEqual(['page 1'])
+expect(mutation.isSuccess()).toBe(true)
+httpCtrl.verify()
+```
 
-  void infinite.fetchNextPage()
-  await vi.advanceTimersByTimeAsync(11)
-  expect(infinite.data()?.pages).toEqual(['page 1', 'page 2'])
-})
+Do not await stability before flushing a request controlled by the test: the unanswered request
+keeps the query or mutation stuck on pending.
+
+Test observable results after normal Angular initialization and updates. For components, render
+with `fixture.autoDetectChanges()` and await `fixture.whenStable()` when the operation should finish.
+For injection-context-only tests, synchronize the test application as shown above. When using
+HTTP mocks or fake timers, flush the request or advance time before awaiting stability.
+
+Avoid asserting an exact subscription order or a stale intermediate value during initialization.
+Those are implementation details. To test pending mutation or fetching state, hold the operation
+open with a controlled promise and assert after rendering; do not await stability until you
+resolve that promise. To test completed state, resolve the operation and await stability before
+asserting the result.
+
+## Infinite queries & pagination
+
+Use the same pattern for infinite queries: call `fetchNextPage()`, advance timers if you are faking time, then await stability and assert on `data().pages`.
+
+```ts
+const infinite = TestBed.runInInjectionContext(() =>
+  injectInfiniteQuery(() => ({
+    queryKey: ['pages'],
+    initialPageParam: 1,
+    queryFn: ({ pageParam }) => fetchPage(pageParam),
+    getNextPageParam: (last, all) => all.length + 1,
+  })),
+)
+
+TestBed.tick()
+await appRef.whenStable()
+expect(infinite.data()?.pages).toHaveLength(1)
+
+await infinite.fetchNextPage()
+await appRef.whenStable()
+
+expect(infinite.data()?.pages).toHaveLength(2)
 ```
 
 ## Mutations and optimistic updates
 
-`whenStable()` can resolve before a mutation started with `mutate()` settles. With fake timers enabled as in the examples above, advance the clock past the mutation function's delay before asserting on the result:
-
 ```ts
-it('should uppercase the input', async () => {
-  const mutation = TestBed.runInInjectionContext(() =>
-    injectMutation(() => ({
-      mutationFn: (input: string) =>
-        new Promise<string>((resolve) =>
-          setTimeout(() => resolve(input.toUpperCase()), 10),
-        ),
-    })),
-  )
+const mutation = TestBed.runInInjectionContext(() =>
+  injectMutation(() => ({
+    mutationFn: async (input: string) => input.toUpperCase(),
+  })),
+)
 
-  mutation.mutate('test')
-  await vi.advanceTimersByTimeAsync(11)
+mutation.mutate('test')
 
-  expect(mutation.isSuccess()).toBe(true)
-  expect(mutation.data()).toBe('TEST')
-})
+// Synchronize the test application
+TestBed.tick()
+
+await appRef.whenStable()
+
+expect(mutation.isSuccess()).toBe(true)
+expect(mutation.data()).toBe('TEST')
 ```
+
+`whenStable()` waits for every mutation invocation, including awaited lifecycle callbacks.
+Resolve or reject all outstanding mocked mutations before awaiting stability; calling `reset()`
+does not finish a request. Queries paused offline also keep stability open until resumed or cancelled.
 
 ## Quick checklist
 
 - Fresh `QueryClient` per test (and clear it afterwards)
 - Disable or control retries to avoid timeouts
 - Advance timers + microtasks before `whenStable()` when using fake timers
-- Use `provideHttpClientTesting()` or your preferred mock to assert network calls
-- Advance timers past the query or mutation function after every `refetch`, `fetchNextPage()`, or mutation instead of awaiting `whenStable()`
-- Prefer `TestBed.runInInjectionContext` for service tests, and `TestBed.createComponent` or Angular Testing Library's `render` with `fixture.detectChanges()` for component tests
+- Use `provideHttpClientTesting` or your preferred mock to assert network calls
+- Resolve controlled requests, then await `whenStable()` for settled-state assertions
+- Prefer `TestBed.runInInjectionContext` for service tests and `fixture.whenStable()` for component tests

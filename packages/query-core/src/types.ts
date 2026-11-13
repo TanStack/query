@@ -56,7 +56,7 @@ export type Override<TTargetA, TTargetB> = {
  * `mutationMeta` for {@link MutationMeta}. Leave a field out to keep that type's default.
  * Augment the module you install — `@tanstack/react-query`, `@tanstack/vue-query`,
  * `@tanstack/solid-query`, `@tanstack/svelte-query`, `@tanstack/preact-query`,
- * `@tanstack/angular-query-experimental` or `@tanstack/lit-query`. Augmenting `@tanstack/query-core`
+ * `@tanstack/angular-query` or `@tanstack/lit-query`. Augmenting `@tanstack/query-core`
  * works too and covers every adapter at once.
  * @example
  * ```ts

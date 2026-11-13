@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
-import { injectQuery } from '@tanstack/angular-query-experimental'
+import { Component, inject } from '@angular/core'
+import { injectQuery } from '@tanstack/angular-query'
 import { HttpClient } from '@angular/common/http'
 import { lastValueFrom } from 'rxjs'
 
@@ -12,7 +12,6 @@ interface Repo {
 }
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'simple-example',
   templateUrl: './simple-example.component.html',
 })

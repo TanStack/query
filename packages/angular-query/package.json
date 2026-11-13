@@ -1,0 +1,117 @@
+{
+  "name": "@tanstack/angular-query",
+  "version": "5.0.0-rc.5",
+  "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
+  "author": "Arnoud de Vries",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TanStack/query.git",
+    "directory": "packages/angular-query"
+  },
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "keywords": [
+    "angular query",
+    "angular",
+    "cache",
+    "performance",
+    "reactive",
+    "signals",
+    "state management",
+    "state",
+    "tanstack"
+  ],
+  "scripts": {
+    "clean": "premove ./dist ./coverage ./dist-ts ./.cache/test-types",
+    "compile": "tsc --project tsconfig.json",
+    "test:types": "npm-run-all --serial test:types:*",
+    "test:types:tscurrent": "tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
+    "test:lib": "pnpm run test:lib:both",
+    "test:lib:zoneless": "vitest run",
+    "test:lib:zoneful": "vitest run --config vitest.zoneful.config.ts",
+    "test:lib:both": "pnpm run test:lib:zoneless && pnpm run test:lib:zoneful",
+    "test:lib:dev": "vitest --watch",
+    "test:build": "pnpm run prepack && pnpm run test:schematics && publint --strict && attw ./dist --pack",
+    "test:schematics": "vitest run --config vitest.schematics.config.ts",
+    "build": "vite build && tsc -p tsconfig.schematics.json && node scripts/inject-schematic-package-info.js",
+    "prepack": "node scripts/prepack.js",
+    "test:oxlint": "oxlint ./src ./schematics ./schematics-build"
+  },
+  "type": "module",
+  "schematics": "./schematics/collection.json",
+  "ng-add": {
+    "save": "dependencies"
+  },
+  "types": "dist/index.d.ts",
+  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.mjs"
+    },
+    "./internal": {
+      "@tanstack/custom-condition": "./src/internal.ts",
+      "types": "./dist/internal.d.ts",
+      "default": "./dist/internal.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "**/*.d.ts",
+    "**/*.mjs",
+    "**/*.mjs.map"
+  ],
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@analogjs/vite-plugin-angular": "catalog:",
+    "@angular-devkit/schematics": "^22.0.0",
+    "@angular/build": "catalog:",
+    "@angular/common": "catalog:",
+    "@angular/compiler": "catalog:",
+    "@angular/compiler-cli": "catalog:",
+    "@angular/core": "catalog:",
+    "@angular/platform-browser": "catalog:",
+    "@angular/platform-server": "catalog:",
+    "@angular/router": "catalog:",
+    "@schematics/angular": "^22.0.0",
+    "@tanstack/query-test-utils": "workspace:*",
+    "@testing-library/angular": "catalog:",
+    "npm-run-all2": "^9.0.3",
+    "rxjs": "^7.8.2",
+    "typescript": "catalog:",
+    "vite-plugin-dts": "4.2.3",
+    "vite-tsconfig-paths": "^5.1.4",
+    "zone.js": "^0.16.0",
+    "vite": "^8.3.5"
+  },
+  "peerDependencies": {
+    "@angular/common": ">=20.1.0",
+    "@angular/core": ">=20.1.0",
+    "@angular-devkit/schematics": ">=20.1.0",
+    "@schematics/angular": ">=20.1.0",
+    "typescript": "^5.8.0 || ^6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@angular-devkit/schematics": {
+      "optional": true
+    },
+    "@schematics/angular": {
+      "optional": true
+    },
+    "typescript": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "directory": "dist",
+    "linkDirectory": false
+  }
+}

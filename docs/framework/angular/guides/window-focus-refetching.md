@@ -2,7 +2,7 @@
 id: window-focus-refetching
 title: Window Focus Refetching
 ref: docs/framework/react/guides/window-focus-refetching.md
-replace: { '@tanstack/react-query': '@tanstack/angular-query-experimental' }
+replace: { '@tanstack/react-query': '@tanstack/angular-query' }
 ---
 
 [//]: # 'Example'
@@ -11,13 +11,14 @@ replace: { '@tanstack/react-query': '@tanstack/angular-query-experimental' }
 export const appConfig: ApplicationConfig = {
   providers: [
     provideTanStackQuery(
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            refetchOnWindowFocus: false, // default: true
+      () =>
+        new QueryClient({
+          defaultOptions: {
+            queries: {
+              refetchOnWindowFocus: false, // default: true
+            },
           },
-        },
-      }),
+        }),
     ),
   ],
 }

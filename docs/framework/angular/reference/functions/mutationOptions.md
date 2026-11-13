@@ -25,7 +25,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function mutationOptions<TData = unknown, TError = Error, TVariables = void, TOnMutateResult = unknown>(options: WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/angular-query-experimental/src/mutation-options.ts:38](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L38)
+Defined in: [packages/angular-query/src/mutation-options.ts:38](https://github.com/TanStack/query/blob/main/packages/angular-query/src/mutation-options.ts#L38)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. A
 `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
@@ -72,7 +72,7 @@ The same options object, unchanged.
 
 Looking the mutation up elsewhere via its `mutationKey`, e.g. for a global "saving…" indicator:
 ```angular-ts
-import { mutationOptions, injectMutationState } from '@tanstack/angular-query-experimental'
+import { mutationOptions, injectMutationState } from '@tanstack/angular-query'
 
 const createPostOptions = mutationOptions({
   mutationKey: ['posts', 'create'],
@@ -103,7 +103,7 @@ export class SavingIndicator {
 function mutationOptions<TData = unknown, TError = Error, TVariables = void, TOnMutateResult = unknown>(options: Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/angular-query-experimental/src/mutation-options.ts:94](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L94)
+Defined in: [packages/angular-query/src/mutation-options.ts:94](https://github.com/TanStack/query/blob/main/packages/angular-query/src/mutation-options.ts#L94)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. No
 `mutationKey` is required on this overload — use this when you don't need to target the mutation via a
@@ -155,7 +155,7 @@ See the other overload's example for looking a mutation up via `injectMutationSt
 
 Sharing options across services, so `QueriesService` stays the single place a mutation is defined:
 ```angular-ts
-import { mutationOptions, injectMutation } from '@tanstack/angular-query-experimental'
+import { mutationOptions, injectMutation } from '@tanstack/angular-query'
 
 @Injectable({ providedIn: 'root' })
 export class QueriesService {

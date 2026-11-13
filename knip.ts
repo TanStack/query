@@ -1,4 +1,3 @@
-import angularQuery from './packages/angular-query-experimental/package.json'
 import reactQuery from './packages/react-query/package.json'
 import reactQueryDevtools from './packages/react-query-devtools/package.json'
 import reactQueryNextExperimental from './packages/react-query-next-experimental/package.json'
@@ -16,24 +15,24 @@ const optionalPeerDependencies = (pkg: {
     .map((dependency) => `${dependency}!`)
 
 export default {
-  ignore: ['scripts/*.{j,t}s', '**/ts-fixture/file.ts'],
+  ignore: [
+    'scripts/*.{j,t}s',
+    // Compiled by the Angular version matrix with ngc.
+    'scripts/angular-types/consumer.ts',
+    '**/ts-fixture/file.ts',
+  ],
   treatConfigHintsAsErrors: true,
   treatTagHintsAsErrors: true,
   ignoreDependencies: [
     '@oxc-project/runtime',
-    // Used by the ESLint configs of the React examples
+    // Used by the ESLint configs of the examples.
     '@tanstack/eslint-config',
   ],
   ignoreWorkspaces: ['examples/**', 'integrations/**'],
   rules: { duplicates: 'warn' },
   workspaces: {
-    'packages/angular-query-experimental': {
-      ignore: ['scripts/prepack.js'],
-      // Strict mode excludes optional dependencies. Read the declared names
-      // so removing a declaration still causes an unlisted dependency error.
-      ignoreDependencies: Object.keys(angularQuery.optionalDependencies).map(
-        (dependency) => `${dependency}!`,
-      ),
+    'packages/angular-query': {
+      entry: ['schematics/*/index.ts', 'src/__tests__/*.test-d.ts'],
     },
     'packages/query-codemods': {
       entry: ['src/v4/**/*.cjs', 'src/v5/**/*.cjs'],

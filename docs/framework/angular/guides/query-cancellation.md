@@ -14,10 +14,11 @@ However, if you consume the `AbortSignal`, the Promise will be cancelled (e.g. a
 ## Using `HttpClient`
 
 ```ts
-import { injectQuery } from '@tanstack/angular-query-experimental'
 import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
+import { injectQuery } from '@tanstack/angular-query'
 
 postQuery = injectQuery(() => ({
+  enabled: this.postId() > 0,
   queryKey: ['post', this.postId()],
   queryFn: (context): Promise<Post> => {
     const abort$ = fromEvent(context.signal, 'abort')
@@ -96,7 +97,7 @@ export class TodosComponent {
   readonly queryClient = inject(QueryClient)
 
   onCancel() {
-    this.queryClient.cancelQueries({ queryKey: ['todos'] })
+    this.queryClient.cancelQueries(['todos'])
   }
 }
 ```

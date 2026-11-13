@@ -1,23 +1,31 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
+  injectIsRestoring,
+  injectQueries,
   injectQuery,
   noop,
   provideTanStackQuery,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import {
   Component,
+  EnvironmentInjector,
+  InjectionToken,
+  PLATFORM_ID,
+  createEnvironmentInjector,
   effect,
+  inject,
   provideZonelessChangeDetection,
 } from '@angular/core'
+import { TestBed } from '@angular/core/testing'
 import { render } from '@testing-library/angular'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import * as persistClientCore from '@tanstack/query-persist-client-core'
 import { withPersistQueryClient } from '../with-persist-query-client'
 import type {
   PersistedClient,
   Persister,
-  Promisable,
 } from '@tanstack/query-persist-client-core'
 
 const createMockPersister = (): Persister => {
@@ -64,7 +72,7 @@ describe('withPersistQueryClient', () => {
     vi.useRealTimers()
   })
 
-  it('should restore cache from persister', async () => {
+  it('restores cache from persister', async () => {
     const key = createKey()
     const states: Array<{
       status: string
@@ -101,24 +109,21 @@ describe('withPersistQueryClient', () => {
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'fetched'),
       }))
-
-      constructor() {
-        effect(() => {
-          states.push({
-            status: this.state.status(),
-            fetchStatus: this.state.fetchStatus(),
-            data: this.state.data(),
-          })
+      _ = effect(() => {
+        states.push({
+          status: this.state.status(),
+          fetchStatus: this.state.fetchStatus(),
+          data: this.state.data(),
         })
-      }
+      })
     }
 
     const rendered = await render(Page, {
       providers: [
         provideZonelessChangeDetection(),
         provideTanStackQuery(
-          queryClient,
-          withPersistQueryClient({ persistOptions: { persister } }),
+          () => queryClient,
+          withPersistQueryClient(() => ({ persistOptions: { persister } })),
         ),
       ],
     })
@@ -152,9 +157,119 @@ describe('withPersistQueryClient', () => {
     })
   })
 
-  it.todo(
-    'should transition injectQueries to an idle state (once injectQueries is functional)',
-  )
+  it('restores cache for injectQueries and keeps it idle while restoring', async () => {
+    const key1 = createKey()
+    const key2 = createKey()
+    const states: Array<
+      Array<{
+        status: string
+        fetchStatus: string
+        data: string | undefined
+      }>
+    > = []
+
+    const queryClient = new QueryClient()
+    void queryClient
+      .query({
+        queryKey: key1,
+        queryFn: () => sleep(10).then(() => 'hydrated-1'),
+      })
+      .catch(noop)
+    void queryClient
+      .query({
+        queryKey: key2,
+        queryFn: () => sleep(10).then(() => 'hydrated-2'),
+      })
+      .catch(noop)
+    await vi.advanceTimersByTimeAsync(10)
+
+    const persister = createMockPersister()
+    persistQueryClientSave({ queryClient, persister })
+    await vi.advanceTimersByTimeAsync(0)
+    queryClient.clear()
+
+    @Component({
+      template: `
+        <div>
+          <h1>{{ formattedData() }}</h1>
+          <h2>fetchStatus: {{ formattedFetchStatus() }}</h2>
+        </div>
+      `,
+    })
+    class Page {
+      state = injectQueries(() => ({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => sleep(10).then(() => 'fetched-1'),
+          },
+          {
+            queryKey: key2,
+            queryFn: () => sleep(10).then(() => 'fetched-2'),
+          },
+        ],
+      }))
+
+      _ = effect(() => {
+        states.push(
+          this.state().map((query) => ({
+            status: query.status(),
+            fetchStatus: query.fetchStatus(),
+            data: query.data(),
+          })),
+        )
+      })
+
+      formattedData() {
+        return this.state()
+          .map((query) => query.data() ?? 'null')
+          .join(',')
+      }
+
+      formattedFetchStatus() {
+        return this.state()
+          .map((query) => query.fetchStatus())
+          .join(',')
+      }
+    }
+
+    const rendered = await render(Page, {
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          () => queryClient,
+          withPersistQueryClient(() => ({ persistOptions: { persister } })),
+        ),
+      ],
+    })
+
+    expect(rendered.getByText('fetchStatus: idle,idle')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('hydrated-1,hydrated-2')).toBeInTheDocument()
+    expect(
+      rendered.getByText('fetchStatus: fetching,fetching'),
+    ).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('fetched-1,fetched-2')).toBeInTheDocument()
+    expect(rendered.getByText('fetchStatus: idle,idle')).toBeInTheDocument()
+
+    expect(states[0]).toMatchObject([
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+    ])
+    expect(states).toContainEqual([
+      { status: 'success', fetchStatus: 'fetching', data: 'hydrated-1' },
+      { status: 'success', fetchStatus: 'fetching', data: 'hydrated-2' },
+    ])
+    expect(states[states.length - 1]).toMatchObject([
+      { status: 'success', fetchStatus: 'idle', data: 'fetched-1' },
+      { status: 'success', fetchStatus: 'idle', data: 'fetched-2' },
+    ])
+  })
 
   it('should show initialData while restoring', async () => {
     const key = createKey()
@@ -197,24 +312,21 @@ describe('withPersistQueryClient', () => {
         // otherwise initialData would be newer and takes precedence
         initialDataUpdatedAt: 1,
       }))
-
-      constructor() {
-        effect(() => {
-          states.push({
-            status: this.state.status(),
-            fetchStatus: this.state.fetchStatus(),
-            data: this.state.data(),
-          })
+      _ = effect(() => {
+        states.push({
+          status: this.state.status(),
+          fetchStatus: this.state.fetchStatus(),
+          data: this.state.data(),
         })
-      }
+      })
     }
 
     const rendered = await render(Page, {
       providers: [
         provideZonelessChangeDetection(),
         provideTanStackQuery(
-          queryClient,
-          withPersistQueryClient({ persistOptions: { persister } }),
+          () => queryClient,
+          withPersistQueryClient(() => ({ persistOptions: { persister } })),
         ),
       ],
     })
@@ -292,24 +404,21 @@ describe('withPersistQueryClient', () => {
           }),
         staleTime: Infinity,
       }))
-
-      constructor() {
-        effect(() => {
-          states.push({
-            status: this.state.status(),
-            fetchStatus: this.state.fetchStatus(),
-            data: this.state.data(),
-          })
+      _ = effect(() => {
+        states.push({
+          status: this.state.status(),
+          fetchStatus: this.state.fetchStatus(),
+          data: this.state.data(),
         })
-      }
+      })
     }
 
     const rendered = await render(Page, {
       providers: [
         provideZonelessChangeDetection(),
         provideTanStackQuery(
-          queryClient,
-          withPersistQueryClient({ persistOptions: { persister } }),
+          () => queryClient,
+          withPersistQueryClient(() => ({ persistOptions: { persister } })),
         ),
       ],
     })
@@ -374,11 +483,11 @@ describe('withPersistQueryClient', () => {
       providers: [
         provideZonelessChangeDetection(),
         provideTanStackQuery(
-          queryClient,
-          withPersistQueryClient({
+          () => queryClient,
+          withPersistQueryClient(() => ({
             persistOptions: { persister },
             onSuccess,
-          }),
+          })),
         ),
       ],
     })
@@ -393,13 +502,86 @@ describe('withPersistQueryClient', () => {
     expect(rendered.getByText('fetched')).toBeInTheDocument()
   })
 
+  it('should await onSuccess before refetching or subscribing', async () => {
+    const key = createKey()
+    const queryClient = new QueryClient()
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
+    await vi.advanceTimersByTimeAsync(10)
+
+    const persister = createMockPersister()
+    persistQueryClientSave({ queryClient, persister })
+    await vi.advanceTimersByTimeAsync(0)
+
+    queryClient.clear()
+
+    const fetchSpy = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'fetched'),
+    )
+    const onSuccess = vi.fn<() => Promise<void>>(async () => {
+      await sleep(20)
+    })
+
+    @Component({
+      template: `
+        <div>
+          <h1>{{ state.data() ?? 'null' }}</h1>
+          <h2>fetchStatus: {{ state.fetchStatus() }}</h2>
+        </div>
+      `,
+    })
+    class Page {
+      state = injectQuery(() => ({
+        queryKey: key,
+        queryFn: fetchSpy,
+      }))
+    }
+
+    const rendered = await render(Page, {
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          () => queryClient,
+          withPersistQueryClient(() => ({
+            persistOptions: { persister },
+            onSuccess,
+          })),
+        ),
+      ],
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(fetchSpy).toHaveBeenCalledTimes(0)
+    expect(rendered.getByText('fetchStatus: idle')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(19)
+    rendered.fixture.detectChanges()
+    expect(fetchSpy).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(1)
+    rendered.fixture.detectChanges()
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
+    expect(rendered.getByText('hydrated')).toBeInTheDocument()
+    expect(rendered.getByText('fetchStatus: fetching')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('fetched')).toBeInTheDocument()
+  })
+
   it('should remove cache after non-successful restoring', async () => {
     const key = createKey()
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockReturnValue(undefined)
     const queryClient = new QueryClient()
-    const removeClient = vi.fn<() => Promisable<void>>()
+    const removeClient = vi.fn<Persister['removeClient']>()
     const [error, persister] = createMockErrorPersister(removeClient)
     const onSuccess = vi.fn<() => void>()
     const onError = vi.fn<() => void>()
@@ -423,12 +605,12 @@ describe('withPersistQueryClient', () => {
       providers: [
         provideZonelessChangeDetection(),
         provideTanStackQuery(
-          queryClient,
-          withPersistQueryClient({
+          () => queryClient,
+          withPersistQueryClient(() => ({
             persistOptions: { persister },
             onSuccess,
             onError,
-          }),
+          })),
         ),
       ],
     })
@@ -444,5 +626,261 @@ describe('withPersistQueryClient', () => {
 
     expect(consoleErrorMock).toHaveBeenCalledTimes(1)
     expect(consoleErrorMock).toHaveBeenNthCalledWith(1, error)
+    consoleErrorMock.mockRestore()
+  })
+
+  it('should await onError before starting queries after restore failure', async () => {
+    const key = createKey()
+    const onErrorMock = vi.spyOn(console, 'error').mockReturnValue(undefined)
+    const queryClient = new QueryClient()
+    const removeClient = vi.fn<() => void>()
+    const [, persister] = createMockErrorPersister(removeClient)
+    const fetchSpy = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'fetched'),
+    )
+    const onError = vi.fn<() => Promise<void>>(async () => {
+      await sleep(20)
+    })
+
+    @Component({
+      template: `
+        <div>
+          <h1>{{ state.data() ?? 'null' }}</h1>
+          <h2>fetchStatus: {{ state.fetchStatus() }}</h2>
+        </div>
+      `,
+    })
+    class Page {
+      state = injectQuery(() => ({
+        queryKey: key,
+        queryFn: fetchSpy,
+      }))
+    }
+
+    const rendered = await render(Page, {
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          () => queryClient,
+          withPersistQueryClient(() => ({
+            persistOptions: { persister },
+            onError,
+          })),
+        ),
+      ],
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
+    expect(onError).toHaveBeenCalledTimes(1)
+    expect(fetchSpy).toHaveBeenCalledTimes(0)
+    expect(rendered.getByText('fetchStatus: idle')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(19)
+    rendered.fixture.detectChanges()
+    expect(fetchSpy).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(1)
+    rendered.fixture.detectChanges()
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
+    expect(rendered.getByText('fetchStatus: fetching')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('fetched')).toBeInTheDocument()
+
+    onErrorMock.mockRestore()
+  })
+
+  it('factory form can inject a token and restores cache', async () => {
+    const key = createKey()
+    const holder = { persister: createMockPersister() }
+    const HOLDER = new InjectionToken<{ persister: Persister }>(
+      'persist-test-holder',
+    )
+
+    const queryClient = new QueryClient()
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
+    await vi.advanceTimersByTimeAsync(10)
+
+    persistQueryClientSave({ queryClient, persister: holder.persister })
+    await vi.advanceTimersByTimeAsync(0)
+
+    queryClient.clear()
+
+    @Component({
+      template: `
+        <div>
+          <h1>{{ state.data() }}</h1>
+        </div>
+      `,
+    })
+    class Page {
+      state = injectQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'fetched'),
+      }))
+    }
+
+    const rendered = await render(Page, {
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: HOLDER, useValue: holder },
+        provideTanStackQuery(
+          () => queryClient,
+          withPersistQueryClient(() => ({
+            persistOptions: { persister: inject(HOLDER).persister },
+          })),
+        ),
+      ],
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('hydrated')).toBeInTheDocument()
+  })
+
+  it('factory callback runs only in browser mode', async () => {
+    const factory = vi.fn<
+      () => { persistOptions: { persister: persistClientCore.Persister } }
+    >(() => ({
+      persistOptions: {
+        persister: createMockPersister(),
+      },
+    }))
+
+    @Component({
+      template: `{{ isRestoring() }}`,
+    })
+    class Page {
+      isRestoring = injectIsRestoring()
+    }
+
+    const rendered = await render(Page, {
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: PLATFORM_ID, useValue: 'server' },
+        provideTanStackQuery(
+          () => new QueryClient(),
+          withPersistQueryClient(factory),
+        ),
+      ],
+    })
+
+    rendered.fixture.detectChanges()
+
+    expect(factory).not.toHaveBeenCalled()
+    expect(rendered.fixture.nativeElement.textContent.trim()).toBe('false')
+  })
+
+  it('cleanup subscription runs on injector destroy', async () => {
+    const key = createKey()
+    const queryClient = new QueryClient()
+    const persister = createMockPersister()
+    const cleanup = vi.fn<() => void>()
+    const subscribeSpy = vi
+      .spyOn(persistClientCore, 'persistQueryClientSubscribe')
+      .mockReturnValue(cleanup)
+
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
+    await vi.advanceTimersByTimeAsync(10)
+    persistQueryClientSave({ queryClient, persister })
+    await vi.advanceTimersByTimeAsync(0)
+    queryClient.clear()
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    })
+
+    const injector = createEnvironmentInjector(
+      [
+        provideTanStackQuery(
+          () => queryClient,
+          withPersistQueryClient(() => ({ persistOptions: { persister } })),
+        ),
+      ],
+      TestBed.inject(EnvironmentInjector),
+    )
+
+    await vi.advanceTimersByTimeAsync(10)
+    injector.destroy()
+
+    expect(subscribeSpy).toHaveBeenCalledTimes(1)
+    expect(cleanup).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not subscribe when the injector is destroyed during restore', async () => {
+    const subscribeSpy = vi.spyOn(
+      persistClientCore,
+      'persistQueryClientSubscribe',
+    )
+
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    })
+
+    const injector = createEnvironmentInjector(
+      [
+        provideTanStackQuery(
+          () => new QueryClient(),
+          withPersistQueryClient(() => ({
+            persistOptions: { persister: createMockPersister() },
+          })),
+        ),
+      ],
+      TestBed.inject(EnvironmentInjector),
+    )
+
+    injector.destroy()
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(subscribeSpy).not.toHaveBeenCalled()
+  })
+
+  it('keeps restoration state independent when a provider configuration is reused', async () => {
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    })
+    const resolutions: Array<(value: undefined) => void> = []
+    const providers = provideTanStackQuery(
+      () => new QueryClient(),
+      withPersistQueryClient(() => ({
+        persistOptions: {
+          persister: {
+            restoreClient: () =>
+              new Promise<undefined>((resolve) => resolutions.push(resolve)),
+            persistClient: () => {},
+            removeClient: () => {},
+          },
+        },
+      })),
+    )
+    const parent = TestBed.inject(EnvironmentInjector)
+    const first = createEnvironmentInjector([providers], parent)
+    const second = createEnvironmentInjector([providers], parent)
+    const firstState = first.runInContext(() => injectIsRestoring())
+    const secondState = second.runInContext(() => injectIsRestoring())
+    expect(firstState).not.toBe(secondState)
+    expect(firstState()).toBe(true)
+    expect(secondState()).toBe(true)
+    resolutions[0]!(undefined)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(firstState()).toBe(false)
+    expect(secondState()).toBe(true)
+    first.destroy()
+    expect(secondState()).toBe(true)
+    resolutions[1]!(undefined)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(secondState()).toBe(false)
+    second.destroy()
   })
 })
