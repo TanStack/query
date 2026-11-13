@@ -5,5 +5,3 @@
  */
 
 export { ErrorBoundary } from './ErrorBoundary'
-export { ErrorBoundaryContext } from './ErrorBoundaryContext'
-export type { FallbackProps, ErrorBoundaryProps } from './types'
