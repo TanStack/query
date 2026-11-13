@@ -156,7 +156,7 @@ The new client is not seeded with the data of the old one. A `<query>` that resu
 - `setQueryClient(client, $global)` hydrates the state that the server put on `$global` into the new client, so the tag shows the server's data.
 - A client that you filled yourself, for example with `setQueryData`, keeps its own entries.
 
-This matters when the replacement is a different scope, such as another account or another tenant, and the query has a long `staleTime`.
+This matters when the replacement is a different scope, such as another account or another tenant, and the query has a long `staleTime`. In that case, do not pass `$global`. It still holds the server state from the page's first render, which belongs to the previous scope.
 
 ## A Different Client for One Tag
 
