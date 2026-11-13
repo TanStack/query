@@ -6748,7 +6748,7 @@
             },
             {
               "label": "Optimistic Updates (Next.js App Router)",
-              "to": "framework/react/examples/nextjs-app-optimistic-updates"
+              "to": "framework/react/examples/optimistic-updates-nextjs-app-router"
             },
             {
               "label": "Pagination (Next.js Pages Router)",
@@ -6787,16 +6787,16 @@
               "to": "framework/react/examples/rick-morty-react-router"
             },
             {
-              "label": "Next.js Pages",
-              "to": "framework/react/examples/nextjs"
+              "label": "Hydration (Next.js Pages Router)",
+              "to": "framework/react/examples/hydration-nextjs-pages-router"
             },
             {
-              "label": "Next.js app with prefetching",
-              "to": "framework/react/examples/nextjs-app-prefetching"
+              "label": "Prefetching (Next.js App Router)",
+              "to": "framework/react/examples/prefetching-nextjs-app-router"
             },
             {
-              "label": "Next.js app with streaming",
-              "to": "framework/react/examples/nextjs-suspense-streaming"
+              "label": "Suspense Streaming (Next.js App Router)",
+              "to": "framework/react/examples/suspense-streaming-nextjs-app-router"
             },
             {
               "label": "React Native",
@@ -6860,12 +6860,12 @@
               "to": "framework/solid/examples/default-query-function"
             },
             {
-              "label": "SolidStart 1",
-              "to": "framework/solid/examples/solid-start-streaming"
+              "label": "Streaming (SolidStart 2)",
+              "to": "framework/solid/examples/streaming-solid-start2"
             },
             {
-              "label": "Astro",
-              "to": "framework/solid/examples/astro"
+              "label": "SSR (Astro)",
+              "to": "framework/solid/examples/ssr-astro"
             },
             {
               "label": "Offline Queries and Mutations (TanStack Router)",
@@ -7110,8 +7110,8 @@
               "to": "framework/svelte/examples/rick-morty-sveltekit"
             },
             {
-              "label": "SvelteKit",
-              "to": "framework/svelte/examples/sveltekit"
+              "label": "Contacts (SvelteKit)",
+              "to": "framework/svelte/examples/contacts-sveltekit"
             },
             {
               "label": "Offline Queries and Mutations (SvelteKit)",
@@ -7240,8 +7240,8 @@
               "to": "framework/angular/examples/infinite-query-with-max-pages"
             },
             {
-              "label": "Angular Router",
-              "to": "framework/angular/examples/router"
+              "label": "Basic (Angular Router)",
+              "to": "framework/angular/examples/basic-angular-router"
             },
             {
               "label": "RxJS autocomplete",

@@ -1,9 +1,27 @@
 /* istanbul ignore file */
 
 // Re-export core
+// oxlint-disable-next-line tanstack-query/no-restricted-syntax
 export * from '@tanstack/query-core'
 
-export type * from './types'
+export type {
+  CreateQueryOptions,
+  BaseQueryNarrowing,
+  DefinedQueryNarrowing,
+  BaseInfiniteQueryNarrowing,
+  DefinedInfiniteQueryNarrowing,
+  CreateInfiniteQueryOptions,
+  CreateBaseQueryResult,
+  CreateQueryResult,
+  DefinedCreateQueryResult,
+  CreateInfiniteQueryResult,
+  DefinedCreateInfiniteQueryResult,
+  CreateMutateFunction,
+  CreateMutateAsyncFunction,
+  CreateBaseMutationResult,
+  BaseMutationNarrowing,
+  CreateMutationResult,
+} from './types'
 export type { QueryResource } from './query-resource'
 export { toResource } from './query-resource'
 
