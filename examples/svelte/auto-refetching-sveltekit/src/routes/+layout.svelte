@@ -16,6 +16,10 @@
   })
 </script>
 
+<svelte:head>
+  <title>TanStack Svelte Query Auto Refetching Example (SvelteKit)</title>
+</svelte:head>
+
 <QueryClientProvider client={queryClient}>
   <main>
     {@render children()}

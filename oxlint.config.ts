@@ -183,7 +183,8 @@ export default defineConfig({
     ],
 
     /**
-     * Disallows direct calls to deprecated imperative query methods of `QueryClient`
+     * Disallows star exports and direct calls to deprecated imperative query
+     * methods of `QueryClient`
      * for new tests and code
      *
      * Existing tests that directly test the methods from before the refactoring
@@ -192,6 +193,10 @@ export default defineConfig({
      */
     'tanstack-query/no-restricted-syntax': [
       'error',
+      {
+        selector: 'ExportAllDeclaration',
+        message: 'Use explicit named exports.',
+      },
       {
         selector:
           'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="fetchQuery"], [callee.computed=true][callee.property.value="fetchQuery"])',
