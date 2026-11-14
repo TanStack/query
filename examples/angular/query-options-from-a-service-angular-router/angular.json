@@ -10,7 +10,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "query-options-from-a-service": {
+    "query-options-from-a-service-angular-router": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -47,11 +47,11 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/query-options-from-a-service",
+            "outputPath": "dist/query-options-from-a-service-angular-router",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [{ "glob": "**/*", "input": "public" }],
             "styles": [],
             "scripts": []
           },
@@ -83,10 +83,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "query-options-from-a-service:build:production"
+              "buildTarget": "query-options-from-a-service-angular-router:build:production"
             },
             "development": {
-              "buildTarget": "query-options-from-a-service:build:development"
+              "buildTarget": "query-options-from-a-service-angular-router:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -94,7 +94,7 @@
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n",
           "options": {
-            "buildTarget": "query-options-from-a-service:build"
+            "buildTarget": "query-options-from-a-service-angular-router:build"
           }
         }
       }

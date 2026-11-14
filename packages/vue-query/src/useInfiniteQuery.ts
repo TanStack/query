@@ -4,8 +4,10 @@ import type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
+import type { VueQueryEnabledOption } from './queryOptions'
 import type {
   DefaultError,
+  DefinedInfiniteQueryObserverResult,
   InfiniteData,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
@@ -25,9 +27,14 @@ import type {
 import type { QueryClient } from './queryClient'
 
 /**
- * The options accepted by `useInfiniteQuery`. Same as {@link InfiniteQueryObserverOptions} from
- * `@tanstack/query-core`, plus the `shallow` option. Each option except `shallow` can also be a `ref` (and
- * `enabled` a reactive getter).
+ * The options accepted by `useInfiniteQuery`. Extends {@link InfiniteQueryObserverOptions} from
+ * `@tanstack/query-core` with the `vue-query`-specific `shallow` option. Each option except `shallow` can also
+ * be a `ref` (and `enabled` a zero-argument getter or query-core's `(query) => boolean` callback).
+ * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs — defaults to `TQueryFnData`.
+ * @template TQueryKey - The type of your `queryKey`.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
  */
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -46,14 +53,11 @@ export type UseInfiniteQueryOptions<
         TPageParam
       >
     ]: Property extends 'enabled'
-      ? MaybeRefOrGetter<
-          InfiniteQueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            DeepUnwrapRef<TQueryKey>,
-            TPageParam
-          >[Property]
+      ? VueQueryEnabledOption<
+          TQueryFnData,
+          TError,
+          InfiniteData<TQueryFnData, TPageParam>,
+          DeepUnwrapRef<TQueryKey>
         >
       : MaybeRefDeep<
           InfiniteQueryObserverOptions<
@@ -78,15 +82,27 @@ export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
 >
 
 /**
+ * The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined` (unless a `select`
+ * changes `TData` to include `undefined`).
+ */
+export type UseInfiniteQueryDefinedReturnType<TData, TError> =
+  UseBaseQueryReturnType<
+    TData,
+    TError,
+    DefinedInfiniteQueryObserverResult<TData, TError>
+  >
+
+/**
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
  * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
  * `undefined` (unless a `select` changes `TData` to include `undefined`).
  *
- * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
- * individual entries — the array itself can't be a bare getter.
+ * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+ * tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+ * accepted too and is passed through untracked. `queryKey` reacts through a `ref` for the array itself, or
+ * `ref`s and reactive getters as individual entries — the array itself can't be a bare getter.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to
  * `useInfiniteQuery`, with `initialData` known to be defined.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
@@ -141,15 +157,16 @@ export function useInfiniteQuery<
     >
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryReturnType<TData, TError>
+): UseInfiniteQueryDefinedReturnType<TData, TError>
 
 /**
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
- * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
- * individual entries — the array itself can't be a bare getter.
+ * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+ * tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+ * accepted too and is passed through untracked. `queryKey` reacts through a `ref` for the array itself, or
+ * `ref`s and reactive getters as individual entries — the array itself can't be a bare getter.
  * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to
  * `useInfiniteQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
@@ -279,9 +296,10 @@ export function useInfiniteQuery<
  * `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
  * overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
  *
- * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
- * individual entries — the array itself can't be a bare getter.
+ * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+ * tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+ * accepted too and is passed through untracked. `queryKey` reacts through a `ref` for the array itself, or
+ * `ref`s and reactive getters as individual entries — the array itself can't be a bare getter.
  * @param options - A `ref`, plain value, or reactive getter resolving to the {@link UseInfiniteQueryOptions} to
  * use.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
