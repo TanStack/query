@@ -65,9 +65,9 @@ export function useQuery<
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current query result. `status` is `error` if the query has an error from a fetch that failed
- * after its retries or if `select` threw, `success` if the query has data to display (including
- * `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived booleans for
- * convenience.
+ * after its retries or if `select` threw, `success` if the query has cached data or `placeholderData` (even
+ * if `select` returns `undefined`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived
+ * booleans for convenience.
  * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @example
  * ```tsx
@@ -134,9 +134,9 @@ export function useQuery<
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current query result. `status` is `error` if the query has an error from a fetch that failed
- * after its retries or if `select` threw, `success` if the query has data to display (including
- * `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived booleans for
- * convenience.
+ * after its retries or if `select` threw, `success` if the query has cached data or `placeholderData` (even
+ * if `select` returns `undefined`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived
+ * booleans for convenience.
  * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @example
  * ```tsx

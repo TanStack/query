@@ -1019,7 +1019,7 @@ export interface QueryObserverBaseResult<
    */
   isLoading: boolean
   /**
-   * Will be `true` if the query has no data to display and no error.
+   * Will be `true` if the query has no cached data, no `placeholderData` and no error.
    */
   isPending: boolean
   /**
@@ -1055,7 +1055,7 @@ export interface QueryObserverBaseResult<
   isStale: boolean
   /**
    * A derived boolean from the `status` variable, provided for convenience.
-   * - `true` if the query has data to display (including `placeholderData`) and no error.
+   * - `true` if the query has cached data or `placeholderData` and no error.
    */
   isSuccess: boolean
   /**
@@ -1072,8 +1072,8 @@ export interface QueryObserverBaseResult<
    * The status of the query.
    * - Will be:
    *   - `error` if the query has an error from a fetch that failed after its retries, or if `select` threw.
-   *   - `success` if the query has data to display (including `placeholderData`) and no error.
-   *   - `pending` otherwise, since the query has no data to display and no error.
+   *   - `success` if the query has cached data or `placeholderData` and no error, even if `select` returns `undefined`.
+   *   - `pending` otherwise, since the query has no cached data, no `placeholderData` and no error.
    */
   status: QueryStatus
   /**
@@ -1106,7 +1106,7 @@ export interface QueryObserverPendingResult<
    */
   isError: false
   /**
-   * `true`, since the query has no data to display and no error.
+   * `true`, since the query has no cached data, no `placeholderData` and no error.
    */
   isPending: true
   /**
@@ -1126,7 +1126,7 @@ export interface QueryObserverPendingResult<
    */
   isPlaceholderData: false
   /**
-   * `'pending'`, since the query has no data to display and no error.
+   * `'pending'`, since the query has no cached data, no `placeholderData` and no error.
    */
   status: 'pending'
 }
@@ -1152,7 +1152,7 @@ export interface QueryObserverLoadingResult<
    */
   isError: false
   /**
-   * `true`, since the query has no data to display and no error.
+   * `true`, since the query has no cached data, no `placeholderData` and no error.
    */
   isPending: true
   /**
@@ -1176,7 +1176,7 @@ export interface QueryObserverLoadingResult<
    */
   isPlaceholderData: false
   /**
-   * `'pending'`, since the query has no data to display and no error.
+   * `'pending'`, since the query has no cached data, no `placeholderData` and no error.
    */
   status: 'pending'
 }
@@ -1189,7 +1189,7 @@ export interface QueryObserverLoadingErrorResult<
   TError = DefaultError,
 > extends QueryObserverBaseResult<TData, TError> {
   /**
-   * `undefined`, since a fetch or `select` failed before there was data to display.
+   * `undefined`, since there was no data to display when a fetch or `select` failed.
    */
   data: undefined
   /**
@@ -1201,7 +1201,7 @@ export interface QueryObserverLoadingErrorResult<
    */
   isError: true
   /**
-   * `false`, since the query has data to display or an error.
+   * `false`, since the query has cached data, `placeholderData` or an error.
    */
   isPending: false
   /**
@@ -1250,7 +1250,7 @@ export interface QueryObserverRefetchErrorResult<
    */
   isError: true
   /**
-   * `false`, since the query has data to display or an error.
+   * `false`, since the query has cached data, `placeholderData` or an error.
    */
   isPending: false
   /**
@@ -1299,7 +1299,7 @@ export interface QueryObserverSuccessResult<
    */
   isError: false
   /**
-   * `false`, since the query has data to display or an error.
+   * `false`, since the query has cached data, `placeholderData` or an error.
    */
   isPending: false
   /**
@@ -1323,7 +1323,7 @@ export interface QueryObserverSuccessResult<
    */
   isPlaceholderData: false
   /**
-   * `'success'`, since the query has data to display and no error from a fetch or from
+   * `'success'`, since the query has cached data and no error from a fetch or from
    * `select`.
    */
   status: 'success'
@@ -1350,7 +1350,7 @@ export interface QueryObserverPlaceholderResult<
    */
   error: null
   /**
-   * `false`, since the query has data to display or an error.
+   * `false`, since the query has cached data, `placeholderData` or an error.
    */
   isPending: false
   /**
@@ -1374,8 +1374,8 @@ export interface QueryObserverPlaceholderResult<
    */
   isPlaceholderData: true
   /**
-   * `'success'`, since the query has data to display and no error from a fetch or from
-   * `select`.
+   * `'success'`, since the query shows `placeholderData` and has no error from a fetch or
+   * from `select`.
    */
   status: 'success'
 }
@@ -1468,7 +1468,7 @@ export interface InfiniteQueryObserverPendingResult<
    */
   isError: false
   /**
-   * `true`, since the query has no data to display and no error.
+   * `true`, since the query has no cached data, no `placeholderData` and no error.
    */
   isPending: true
   /**
@@ -1496,7 +1496,7 @@ export interface InfiniteQueryObserverPendingResult<
    */
   isPlaceholderData: false
   /**
-   * `'pending'`, since the query has no data to display and no error.
+   * `'pending'`, since the query has no cached data, no `placeholderData` and no error.
    */
   status: 'pending'
 }
@@ -1522,7 +1522,7 @@ export interface InfiniteQueryObserverLoadingResult<
    */
   isError: false
   /**
-   * `true`, since the query has no data to display and no error.
+   * `true`, since the query has no cached data, no `placeholderData` and no error.
    */
   isPending: true
   /**
@@ -1554,7 +1554,7 @@ export interface InfiniteQueryObserverLoadingResult<
    */
   isPlaceholderData: false
   /**
-   * `'pending'`, since the query has no data to display and no error.
+   * `'pending'`, since the query has no cached data, no `placeholderData` and no error.
    */
   status: 'pending'
 }
@@ -1567,7 +1567,7 @@ export interface InfiniteQueryObserverLoadingErrorResult<
   TError = DefaultError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
   /**
-   * `undefined`, since a fetch or `select` failed before there was data to display.
+   * `undefined`, since there was no data to display when a fetch or `select` failed.
    */
   data: undefined
   /**
@@ -1579,7 +1579,7 @@ export interface InfiniteQueryObserverLoadingErrorResult<
    */
   isError: true
   /**
-   * `false`, since the query has data to display or an error.
+   * `false`, since the query has cached data, `placeholderData` or an error.
    */
   isPending: false
   /**
@@ -1637,7 +1637,7 @@ export interface InfiniteQueryObserverRefetchErrorResult<
    */
   isError: true
   /**
-   * `false`, since the query has data to display or an error.
+   * `false`, since the query has cached data, `placeholderData` or an error.
    */
   isPending: false
   /**
@@ -1686,7 +1686,7 @@ export interface InfiniteQueryObserverSuccessResult<
    */
   isError: false
   /**
-   * `false`, since the query has data to display or an error.
+   * `false`, since the query has cached data, `placeholderData` or an error.
    */
   isPending: false
   /**
@@ -1718,7 +1718,7 @@ export interface InfiniteQueryObserverSuccessResult<
    */
   isPlaceholderData: false
   /**
-   * `'success'`, since the query has data to display and no error from a fetch or from
+   * `'success'`, since the query has cached data and no error from a fetch or from
    * `select`.
    */
   status: 'success'
@@ -1745,7 +1745,7 @@ export interface InfiniteQueryObserverPlaceholderResult<
    */
   error: null
   /**
-   * `false`, since the query has data to display or an error.
+   * `false`, since the query has cached data, `placeholderData` or an error.
    */
   isPending: false
   /**
@@ -1777,8 +1777,8 @@ export interface InfiniteQueryObserverPlaceholderResult<
    */
   isFetchPreviousPageError: false
   /**
-   * `'success'`, since the query has data to display and no error from a fetch or from
-   * `select`.
+   * `'success'`, since the query shows `placeholderData` and has no error from a fetch or
+   * from `select`.
    */
   status: 'success'
 }

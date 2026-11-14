@@ -27,7 +27,7 @@ An infinite query result in the `error` state with no data to display, since a f
 
 | Property | Type | Description | Overrides |
 | ------ | ------ | ------ | ------ |
-| <a id="property-data"></a> `data` | `undefined` | `undefined`, since a fetch or `select` failed before there was data to display. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`data`](InfiniteQueryObserverBaseResult.md#property-data) |
+| <a id="property-data"></a> `data` | `undefined` | `undefined`, since there was no data to display when a fetch or `select` failed. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`data`](InfiniteQueryObserverBaseResult.md#property-data) |
 | <a id="property-dataupdatedat"></a> `dataUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"success"`. | - |
 | <a id="property-error"></a> `error` | `TError` | The error the fetch or `select` failed with. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`error`](InfiniteQueryObserverBaseResult.md#property-error) |
 | <a id="property-errorupdatecount"></a> `errorUpdateCount` | `number` | The sum of all errors. | - |
@@ -52,7 +52,7 @@ An infinite query result in the `error` state with no data to display, since a f
 | <a id="property-isloading"></a> `isLoading` | `false` | `false`, since the first fetch isn't in flight. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isLoading`](InfiniteQueryObserverBaseResult.md#property-isloading) |
 | <a id="property-isloadingerror"></a> `isLoadingError` | `true` | `true`, since the query has an error and no data to display. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isLoadingError`](InfiniteQueryObserverBaseResult.md#property-isloadingerror) |
 | <a id="property-ispaused"></a> `isPaused` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - The query wanted to fetch, but has been `paused`. | - |
-| <a id="property-ispending"></a> `isPending` | `false` | `false`, since the query has data to display or an error. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isPending`](InfiniteQueryObserverBaseResult.md#property-ispending) |
+| <a id="property-ispending"></a> `isPending` | `false` | `false`, since the query has cached data, `placeholderData` or an error. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isPending`](InfiniteQueryObserverBaseResult.md#property-ispending) |
 | <a id="property-isplaceholderdata"></a> `isPlaceholderData` | `false` | `false`, since the data shown isn't the `placeholderData`. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isPlaceholderData`](InfiniteQueryObserverBaseResult.md#property-isplaceholderdata) |
 | <a id="property-isrefetcherror"></a> `isRefetchError` | `false` | `false`, since the query didn't fail while refetching. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isRefetchError`](InfiniteQueryObserverBaseResult.md#property-isrefetcherror) |
 | <a id="property-isrefetching"></a> `isRefetching` | `boolean` | Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`. - Is the same as `isFetching && !isPending`. | - |

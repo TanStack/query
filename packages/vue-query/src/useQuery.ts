@@ -95,10 +95,11 @@ export function useQuery<
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns The current query result. `status` is `error` if the query has an error from a fetch that failed
- * after its retries or if `select` threw, `success` if the query has data to display (including
- * `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived boolean `ref`s for
- * convenience. `state` is that result as one readonly reactive object — `state.data`, `state.isPending`, and
- * the rest are plain values, and `state.status === 'success'` narrows `state.data` to `TData`.
+ * after its retries or if `select` threw, `success` if the query has cached data or `placeholderData` (even if
+ * `select` returns `undefined`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived boolean
+ * `ref`s for convenience. `state` is that result as one readonly reactive object — `state.data`,
+ * `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows `state.data` to
+ * `TData`.
  * @example
  * A query key built from a reactive `ref` — the query refetches whenever `postId` changes:
  * ```vue
@@ -263,10 +264,11 @@ export function useQuery<
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns The current query result. `status` is `error` if the query has an error from a fetch that failed
- * after its retries or if `select` threw, `success` if the query has data to display (including
- * `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived boolean `ref`s for
- * convenience. `state` is that result as one readonly reactive object — `state.data`, `state.isPending`, and
- * the rest are plain values, and `state.status === 'success'` narrows `state.data` to `TData`.
+ * after its retries or if `select` threw, `success` if the query has cached data or `placeholderData` (even if
+ * `select` returns `undefined`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived boolean
+ * `ref`s for convenience. `state` is that result as one readonly reactive object — `state.data`,
+ * `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows `state.data` to
+ * `TData`.
  * @example
  * Passing a whole-options getter so `staleTime` reacts to a setting stored elsewhere, not just `queryKey`:
  * ```vue
