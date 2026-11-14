@@ -11,15 +11,15 @@
   },
   "dependencies": {
     "@tanstack/svelte-pacer": "^0.2.0",
-    "@tanstack/svelte-query": "^6.4.1",
-    "@tanstack/svelte-query-devtools": "^6.4.1",
+    "@tanstack/svelte-query": "^6.4.2",
+    "@tanstack/svelte-query-devtools": "^6.4.2",
     "match-sorter": "^8.3.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^7.0.1",
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
-    "@tanstack/eslint-plugin-query": "^5.107.1",
+    "@tanstack/eslint-plugin-query": "^5.107.2",
     "@typescript-eslint/parser": "^8.72.0",
     "eslint-plugin-svelte": "^3.23.0",
     "svelte": "^5.57.1",
