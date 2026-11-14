@@ -1,3 +1,5 @@
+import { QueryClient } from '@tanstack/query-core'
+import { LitElement } from 'lit'
 import {
   afterEach,
   beforeAll,
@@ -7,8 +9,6 @@ import {
   it,
   vi,
 } from 'vitest'
-import { LitElement } from 'lit'
-import { QueryClient } from '@tanstack/query-core'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { BaseController } from '../controllers/BaseController.js'
 import { generateElementName } from './utils.js'

@@ -3,7 +3,10 @@
  * the observers, and the `FocusManager`/`OnlineManager` behind `focusManager` and `onlineManager`.
  * Subclasses decide what a listener receives and when it is called.
  */
-export class Subscribable<TListener extends Function> {
+export class Subscribable<
+  // oxlint-disable-next-line typescript/no-unsafe-function-type -- also accepts construct signatures and functions with extra properties, which a call signature would reject
+  TListener extends Function,
+> {
   protected listeners = new Set<TListener>()
 
   constructor() {

@@ -1,5 +1,5 @@
-import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
+import { describe, expectTypeOf, it } from 'vitest'
 import { useMutation } from '../useMutation'
 import type {
   DefaultError,

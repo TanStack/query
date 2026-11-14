@@ -1,5 +1,5 @@
-import { serialize } from 'superjson'
 import { createSignal, onCleanup, onMount } from 'solid-js'
+import { serialize } from 'superjson'
 import { getNativeObjectType } from './nativeObjectType'
 import type { Mutation, Query } from '@tanstack/query-core'
 import type { DevtoolsPosition } from './contexts'

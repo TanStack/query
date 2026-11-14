@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte'
-  import type { QueryClient } from '@tanstack/query-core'
   import { createQuery, setQueryClientContext } from '../../src/index.js'
+  import type { QueryClient } from '@tanstack/query-core'
   import type { Accessor, CreateQueryOptions } from '../../src/index.js'
 
   type Props = {

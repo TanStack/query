@@ -1,6 +1,5 @@
-import * as React from 'react'
 import { useDebouncedValue } from '@tanstack/react-pacer/debouncer'
-
+import * as React from 'react'
 import SearchResults from './SearchResults'
 
 export default function Search() {

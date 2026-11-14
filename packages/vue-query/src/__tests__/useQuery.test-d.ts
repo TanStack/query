@@ -1,6 +1,6 @@
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
-import { createKey, sleep } from '@tanstack/query-test-utils'
 import { queryOptions, skipToken, useQuery } from '..'
 import type { Ref } from 'vue-demi'
 import type { OmitKeyof, UseQueryOptions, UseQueryReturnType } from '..'

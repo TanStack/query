@@ -1,5 +1,5 @@
-import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { queryOptions, useQuery } from '../index'
 import type { OmitKeyof, QueryFunction, UseQueryOptions } from '..'
 

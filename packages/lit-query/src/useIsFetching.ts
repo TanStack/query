@@ -1,8 +1,8 @@
 import { createValueAccessor, readAccessor } from './accessor.js'
 import { BaseController } from './controllers/BaseController.js'
-import type { Accessor, ValueAccessor } from './accessor.js'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
+import type { Accessor, ValueAccessor } from './accessor.js'
 
 /**
  * Accessor returned by `useIsFetching`.

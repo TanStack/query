@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { createQuery } from '@tanstack/svelte-query'
   import CharacterItem from '$lib/CharacterItem.svelte'
   import { charactersQueries } from '$lib/services/characters/queries'
-  import { createQuery } from '@tanstack/svelte-query'
 
   let selectedChar = $state(1)
 

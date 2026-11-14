@@ -1,11 +1,10 @@
 /* @refresh reload */
-import { render } from 'solid-js/web'
-import { RouterProvider, createRouter } from '@tanstack/solid-router'
+
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-
+import { RouterProvider, createRouter } from '@tanstack/solid-router'
+import { render } from 'solid-js/web'
 import './index.css'
-
 import ErrorPage from './error-page'
 import { routeTree } from './routeTree.gen'
 

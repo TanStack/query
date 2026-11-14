@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { QueryClient } from '@tanstack/query-core'
   import { createKey, sleep } from '@tanstack/query-test-utils'
   import { setQueryClientContext } from '../../src/context.js'
   import { createQuery, useIsFetching } from '../../src/index.js'
+  import type { QueryClient } from '@tanstack/query-core'
 
   type Props = {
     queryClient: QueryClient

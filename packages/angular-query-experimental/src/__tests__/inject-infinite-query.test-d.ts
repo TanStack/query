@@ -1,7 +1,7 @@
-import { TestBed } from '@angular/core/testing'
-import { afterEach, beforeEach, describe, expectTypeOf, it, vi } from 'vitest'
 import { provideZonelessChangeDetection } from '@angular/core'
+import { TestBed } from '@angular/core/testing'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expectTypeOf, it, vi } from 'vitest'
 import {
   QueryClient,
   injectInfiniteQuery,

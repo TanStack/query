@@ -61,8 +61,8 @@ In the example below, you can see TanStack Query in its most basic and simple fo
 [Open in StackBlitz](https://stackblitz.com/github/TanStack/query/tree/main/examples/angular/simple)
 
 ```angular-ts
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { injectQuery } from '@tanstack/angular-query-experimental'
 import { lastValueFrom } from 'rxjs'
 

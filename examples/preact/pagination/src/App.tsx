@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'preact/hooks'
 import {
   keepPreviousData,
   noop,
@@ -6,6 +5,7 @@ import {
   useQueryClient,
 } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
+import { useEffect, useState } from 'preact/hooks'
 import { projectsQueries } from './services/projects/queries'
 
 export default function App() {

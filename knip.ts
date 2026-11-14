@@ -1,8 +1,8 @@
 import angularQuery from './packages/angular-query-experimental/package.json'
-import reactQuery from './packages/react-query/package.json'
 import reactQueryDevtools from './packages/react-query-devtools/package.json'
 import reactQueryNextExperimental from './packages/react-query-next-experimental/package.json'
 import reactQueryPersistClient from './packages/react-query-persist-client/package.json'
+import reactQuery from './packages/react-query/package.json'
 import type { KnipConfig } from 'knip'
 
 // Strict mode excludes optional peer dependencies. Read the declared names

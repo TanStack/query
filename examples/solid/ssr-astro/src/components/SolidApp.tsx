@@ -17,8 +17,8 @@ import {
   useContext,
 } from 'solid-js'
 import { isServer } from 'solid-js/web'
-import { getSearchParams, properCase } from '../utils'
 import { pokemonsQueries } from '../services/pokemons/queries'
+import { getSearchParams, properCase } from '../utils'
 import { Link } from './Link'
 
 const PokemonIdContext = createContext<() => string>()

@@ -1,6 +1,6 @@
+import { Injector, provideZonelessChangeDetection, signal } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { Injector, provideZonelessChangeDetection, signal } from '@angular/core'
 import {
   QueryClient,
   injectIsRestoring,

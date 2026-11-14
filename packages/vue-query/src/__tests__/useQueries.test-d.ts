@@ -1,6 +1,6 @@
+import { createKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 import { reactive } from 'vue'
-import { createKey } from '@tanstack/query-test-utils'
 import { skipToken, useQueries } from '..'
 import { queryOptions } from '../queryOptions'
 import type { OmitKeyof, QueryObserverResult } from '..'

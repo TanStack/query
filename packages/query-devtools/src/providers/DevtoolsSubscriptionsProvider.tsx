@@ -1,13 +1,13 @@
-import { createCacheSubscriptionRegistry } from '../createCacheSubscriptionRegistry'
 import { DevtoolsSubscriptionsContext } from '../contexts/DevtoolsSubscriptionsContext'
+import { createCacheSubscriptionRegistry } from '../createCacheSubscriptionRegistry'
 import type {
   MutationCache,
   MutationCacheNotifyEvent,
   QueryCache,
   QueryCacheNotifyEvent,
 } from '@tanstack/query-core'
-import type { DevtoolsSubscriptions } from '../contexts/types'
 import type { ParentProps } from 'solid-js'
+import type { DevtoolsSubscriptions } from '../contexts/types'
 
 /**
  * Provides the query and mutation cache subscription registries to its children.

@@ -1,5 +1,6 @@
-import { serialize, stringify } from 'superjson'
+import { Key } from '@solid-primitives/keyed'
 import { clsx as cx } from 'clsx'
+import * as goober from 'goober'
 import {
   Index,
   Match,
@@ -13,15 +14,9 @@ import {
   onCleanup,
   onMount,
 } from 'solid-js'
-import { Key } from '@solid-primitives/keyed'
-import * as goober from 'goober'
-import { tokens } from './theme'
-import {
-  deleteNestedDataByPath,
-  displayValue,
-  isPlainObject,
-  updateNestedDataByPath,
-} from './utils'
+import { serialize, stringify } from 'superjson'
+import { useQueryDevtoolsContext, useTheme } from './contexts'
+import { primitiveText, searchEntries, searchExplorer } from './explorerSearch'
 import {
   Check,
   CopiedCopier,
@@ -31,11 +26,16 @@ import {
   Pencil,
   Trash,
 } from './icons'
-import { useQueryDevtoolsContext, useTheme } from './contexts'
-import { primitiveText, searchEntries, searchExplorer } from './explorerSearch'
 import { getNativeObjectType } from './nativeObjectType'
-import type { ExplorerSearch } from './explorerSearch'
+import { tokens } from './theme'
+import {
+  deleteNestedDataByPath,
+  displayValue,
+  isPlainObject,
+  updateNestedDataByPath,
+} from './utils'
 import type { Query } from '@tanstack/query-core'
+import type { ExplorerSearch } from './explorerSearch'
 
 /**
  * Chunk elements in the array by size.

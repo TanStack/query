@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '..'
 import type {
   CancelOptions,
@@ -400,7 +400,9 @@ describe('query', () => {
       expectTypeOf(query.options.queryKey).toEqualTypeOf<
         ReadonlyArray<unknown> | undefined
       >()
-      expectTypeOf<Extract<typeof query.options.retry, Function>>()
+      expectTypeOf<
+        Extract<typeof query.options.retry, (...args: Array<any>) => any>
+      >()
         .parameter(1)
         .toEqualTypeOf<CustomError>()
       expectTypeOf(query.options.initialData).toEqualTypeOf<

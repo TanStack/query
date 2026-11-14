@@ -1,7 +1,7 @@
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/svelte'
 import { flushSync } from 'svelte'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   createQuery,

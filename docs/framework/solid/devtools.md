@@ -99,8 +99,8 @@ Embedded mode will show the development tools as a fixed element in your applica
 Place the following code as high in your Solid app as you can. The closer it is to the root of the page, the better it will work!
 
 ```tsx
-import { createSignal, Show } from 'solid-js'
 import { SolidQueryDevtoolsPanel } from '@tanstack/solid-query-devtools'
+import { createSignal, Show } from 'solid-js'
 
 function App() {
   const [isOpen, setIsOpen] = createSignal(false)
@@ -170,9 +170,9 @@ Select **Clear** or press **Escape** in the search field to restore your manual 
 Devtools are excluded in production builds. However, it might be desirable to lazy load the devtools in production:
 
 ```tsx
-import { createSignal, lazy, onMount, Show, Suspense } from 'solid-js'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
+import { createSignal, lazy, onMount, Show, Suspense } from 'solid-js'
 import { Example } from './Example'
 
 const queryClient = new QueryClient()

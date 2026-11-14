@@ -1,9 +1,9 @@
-import { LitElement, html } from 'lit'
 import {
   QueryClient,
   QueryClientProvider,
   createQueryController,
 } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 
 const queryClient = new QueryClient({
   defaultOptions: {

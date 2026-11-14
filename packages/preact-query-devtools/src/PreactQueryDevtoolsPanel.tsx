@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'preact/hooks'
 import { onlineManager, useQueryClient } from '@tanstack/preact-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
-import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import type { QueryClient } from '@tanstack/preact-query'
+import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { CSSProperties, VNode } from 'preact'
 
 /**

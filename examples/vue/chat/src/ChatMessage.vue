@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
-import { messagesQueries } from './services/messages/queries'
-
 import MessageBubble from './MessageBubble.vue'
+import { messagesQueries } from './services/messages/queries'
 
 const props = defineProps<{ id: string; question: string }>()
 

@@ -3,7 +3,6 @@ import { act, fireEvent } from '@testing-library/preact'
 import { Suspense } from 'preact/compat'
 import { useReducer, useState } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-
 import {
   QueryCache,
   QueryClient,

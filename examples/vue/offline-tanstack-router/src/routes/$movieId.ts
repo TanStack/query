@@ -1,5 +1,5 @@
-import { createFileRoute } from '@tanstack/vue-router'
 import { noop, onlineManager } from '@tanstack/vue-query'
+import { createFileRoute } from '@tanstack/vue-router'
 import { moviesQueries } from '../services/movies/queries'
 
 export const Route = createFileRoute('/$movieId')({

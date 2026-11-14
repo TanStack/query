@@ -1,9 +1,9 @@
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import * as React from 'react'
 import ReactDOM from 'react-dom/client'
-import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
-import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient({
   defaultOptions: {

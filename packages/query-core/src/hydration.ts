@@ -1,4 +1,7 @@
 import { noop } from './utils'
+import type { Mutation, MutationState } from './mutation'
+import type { Query, QueryState } from './query'
+import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
   MutationKey,
@@ -9,9 +12,6 @@ import type {
   QueryMeta,
   QueryOptions,
 } from './types'
-import type { QueryClient } from './queryClient'
-import type { Query, QueryState } from './query'
-import type { Mutation, MutationState } from './mutation'
 
 // TYPES
 type TransformerFn = (data: any) => any

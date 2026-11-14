@@ -1,5 +1,5 @@
-import { Suspense } from 'preact/compat'
 import { useSuspenseQuery } from '@tanstack/preact-query'
+import { Suspense } from 'preact/compat'
 import ErrorBoundary from './ErrorBoundary'
 import { waitQueries } from './services/wait/queries'
 

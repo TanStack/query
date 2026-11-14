@@ -1,6 +1,6 @@
 import { rules } from './rules'
-import type { ESLint, Linter } from 'eslint'
 import type { RuleModule } from '@typescript-eslint/utils/ts-eslint'
+import type { ESLint, Linter } from 'eslint'
 
 type RuleKey = keyof typeof rules
 

@@ -23,6 +23,7 @@ describe('subscribable', () => {
       // signature and a function carrying extra properties both satisfy the
       // former but not the latter.
       type Constructor = new () => object
+      // oxlint-disable-next-line typescript/no-unsafe-function-type -- checks that 'TListener' accepts any 'Function' subtype
       interface CallableWithProperty extends Function {
         custom: number
       }

@@ -1,7 +1,7 @@
 import { createSignal } from 'solid-js'
 import { DevtoolsStateContext } from '../contexts/DevtoolsStateContext'
-import type { DevtoolsState } from '../contexts/types'
 import type { ParentProps } from 'solid-js'
+import type { DevtoolsState } from '../contexts/types'
 
 /**
  * Provides the selected query and mutation and the panel width to its children.

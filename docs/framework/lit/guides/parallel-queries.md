@@ -10,8 +10,8 @@ Parallel queries are queries that run at the same time so the UI does not wait f
 When the number of queries is fixed, create multiple query controllers on the same host. They will all subscribe when the host connects.
 
 ```ts
-import { LitElement, html } from 'lit'
 import { createQueryController } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 
 class DashboardView extends LitElement {
   private readonly users = createQueryController(this, {
@@ -62,8 +62,8 @@ When the number of queries changes with host state, use [`createQueriesControlle
 Use an options getter when the query list depends on reactive host fields:
 
 ```ts
-import { LitElement, html } from 'lit'
 import { createQueriesController } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 
 class UsersDetails extends LitElement {
   static properties = {

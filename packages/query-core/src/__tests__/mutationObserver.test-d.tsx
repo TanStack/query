@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { MutationObserver, QueryClient } from '..'
-import type { Action } from '../mutation'
 import type {
   DefaultError,
   MutateFunction,
@@ -17,6 +16,7 @@ import type {
   MutationObserverSuccessResult,
   MutationState,
 } from '..'
+import type { Action } from '../mutation'
 
 class CustomError extends Error {
   override name = 'CustomError' as const

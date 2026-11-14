@@ -27,12 +27,12 @@ The adapter also re-exports TanStack Query Core APIs from `@tanstack/lit-query`,
 ## A First Query
 
 ```ts
-import { LitElement, html } from 'lit'
 import {
   QueryClient,
   QueryClientProvider,
   createQueryController,
 } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 
 const queryClient = new QueryClient()
 

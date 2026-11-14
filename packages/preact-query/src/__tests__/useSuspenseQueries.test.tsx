@@ -12,7 +12,6 @@ import {
   it,
   vi,
 } from 'vitest'
-
 import {
   QueryClient,
   skipToken,

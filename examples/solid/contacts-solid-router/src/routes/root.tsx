@@ -1,7 +1,7 @@
-import { ErrorBoundary, For, Show, Suspense } from 'solid-js'
 import { A, useIsRouting, useSearchParams } from '@solidjs/router'
 import { createDebouncer } from '@tanstack/solid-pacer/debouncer'
 import { noop, useIsFetching, useQuery } from '@tanstack/solid-query'
+import { ErrorBoundary, For, Show, Suspense } from 'solid-js'
 import ErrorPage from '../error-page'
 import { queryClient } from '../queryClient'
 import { contactsQueries } from '../services/contacts/queries'

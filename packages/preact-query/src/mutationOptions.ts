@@ -1,5 +1,4 @@
 import type { DefaultError, WithRequired } from '@tanstack/query-core'
-
 import type { UseMutationOptions } from './types'
 
 /**

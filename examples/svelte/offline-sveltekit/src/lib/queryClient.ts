@@ -1,5 +1,5 @@
-import { MutationCache, QueryClient } from '@tanstack/svelte-query'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
+import { MutationCache, QueryClient } from '@tanstack/svelte-query'
 import { toast } from 'svelte-sonner'
 import { moviesMutations, moviesQueries } from './services/movies/queries'
 

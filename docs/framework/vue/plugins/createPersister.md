@@ -44,8 +44,8 @@ This way, you do not need to store whole `QueryClient`, but choose what is worth
 Garbage collecting a Query from memory **does not** affect the persisted data. That means Queries can be kept in memory for a shorter period of time to be more **memory efficient**. If they are used the next time, they will just be restored from the persistent storage again.
 
 ```tsx
-import { QueryClient } from '@tanstack/vue-query'
 import { experimental_createQueryPersister } from '@tanstack/query-persist-client-core'
+import { QueryClient } from '@tanstack/vue-query'
 
 const persister = experimental_createQueryPersister({
   storage: localStorage,

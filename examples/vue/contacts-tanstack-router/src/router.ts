@@ -1,5 +1,5 @@
-import { h } from 'vue'
 import { createRouter } from '@tanstack/vue-router'
+import { h } from 'vue'
 import ErrorPage from './ErrorPage.vue'
 import { queryClient } from './queryClient'
 import { routeTree } from './routeTree.gen'

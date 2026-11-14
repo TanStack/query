@@ -1,4 +1,6 @@
 import { timeoutManager } from './timeoutManager'
+import type { Mutation } from './mutation'
+import type { FetchOptions, Query } from './query'
 import type {
   DefaultError,
   FetchStatus,
@@ -8,8 +10,6 @@ import type {
   QueryKey,
   QueryOptions,
 } from './types'
-import type { Mutation } from './mutation'
-import type { FetchOptions, Query } from './query'
 
 // TYPES
 

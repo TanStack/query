@@ -1,16 +1,16 @@
-import { notifyManager } from './notifyManager'
 import { Mutation } from './mutation'
-import { matchMutation, noop } from './utils'
+import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
+import { matchMutation, noop } from './utils'
+import type { Action, MutationState } from './mutation'
 import type { MutationObserver } from './mutationObserver'
+import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
   MutationFunctionContext,
   MutationOptions,
   NotifyEvent,
 } from './types'
-import type { QueryClient } from './queryClient'
-import type { Action, MutationState } from './mutation'
 import type { MutationFilters } from './utils'
 
 // TYPES

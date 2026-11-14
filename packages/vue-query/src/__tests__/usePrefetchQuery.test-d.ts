@@ -1,7 +1,7 @@
-import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { ref } from 'vue-demi'
 import { skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { ref } from 'vue-demi'
 import { usePrefetchQuery } from '..'
 
 describe('usePrefetchQuery', () => {

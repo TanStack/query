@@ -7,7 +7,6 @@ import type {
   QueryFunction,
   ThrowOnError,
 } from '@tanstack/query-core'
-
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
 
 // Avoid TS depth-limit error in case of large array literal

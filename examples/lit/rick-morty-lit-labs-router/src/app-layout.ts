@@ -1,5 +1,5 @@
-import { LitElement, html } from 'lit'
 import { Router } from '@lit-labs/router'
+import { LitElement, html } from 'lit'
 import './home-view'
 import './episode-list'
 import './episode-detail'

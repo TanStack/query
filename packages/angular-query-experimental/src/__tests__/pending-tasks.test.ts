@@ -1,17 +1,17 @@
+import { HttpClient, provideHttpClient } from '@angular/common/http'
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing'
 import {
   ApplicationRef,
   Component,
   provideZonelessChangeDetection,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { HttpClient, provideHttpClient } from '@angular/common/http'
-import {
-  HttpTestingController,
-  provideHttpClientTesting,
-} from '@angular/common/http/testing'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   injectMutation,

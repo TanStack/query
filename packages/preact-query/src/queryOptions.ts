@@ -8,7 +8,6 @@ import type {
   QueryKeyWithDataTag,
   SkipToken,
 } from '@tanstack/query-core'
-
 import type { UseQueryOptions } from './types'
 
 /**

@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { createQuery, noop, useQueryClient } from '@tanstack/svelte-query'
   import { resolve } from '$app/paths'
   import { charactersQueries } from './services/characters/queries'
-  import { createQuery, noop, useQueryClient } from '@tanstack/svelte-query'
   import type { Character } from './services/characters/types'
 
   let { char, onSelect }: { char: Character; onSelect: (id: number) => void } =

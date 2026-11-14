@@ -1,4 +1,3 @@
-import { useState } from 'preact/hooks'
 import {
   MutationCache,
   QueryClient,
@@ -12,9 +11,9 @@ import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/preact-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import { LocationProvider, Route, Router, useRoute } from 'preact-iso'
-
-import { moviesMutations, moviesQueries } from './services/movies/queries'
+import { useState } from 'preact/hooks'
 import { Toaster, toaster } from './Toaster'
+import { moviesMutations, moviesQueries } from './services/movies/queries'
 
 const persister = createAsyncStoragePersister({
   storage: window.localStorage,

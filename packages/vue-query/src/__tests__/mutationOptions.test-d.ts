@@ -1,8 +1,8 @@
-import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { mutationOptions } from '../mutationOptions'
 import { useMutation } from '../useMutation'
 import { useIsMutating, useMutationState } from '../useMutationState'
-import { mutationOptions } from '../mutationOptions'
 import type {
   DefaultError,
   MutationFunctionContext,

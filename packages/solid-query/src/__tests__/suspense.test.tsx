@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent } from '@solidjs/testing-library'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   ErrorBoundary,
   Show,
@@ -8,7 +8,7 @@ import {
   createSignal,
   on,
 } from 'solid-js'
-import { createKey, sleep } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryCache, QueryClient, useInfiniteQuery, useQuery } from '..'
 import { renderWithClient } from './utils'
 import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'

@@ -1,4 +1,3 @@
-import { assertType, describe, expectTypeOf, it } from 'vitest'
 import {
   QueryClient,
   dataTagErrorSymbol,
@@ -6,8 +5,9 @@ import {
   skipToken,
 } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
-import { useQuery } from '../useQuery'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { queryOptions } from '../queryOptions'
+import { useQuery } from '../useQuery'
 import type { InitialDataFunction } from '@tanstack/query-core'
 
 // Regression test for exported queryOptions inference under declaration emit.

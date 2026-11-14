@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent } from '@solidjs/testing-library'
-import { createEffect } from 'solid-js'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { createEffect } from 'solid-js'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, useMutation, useMutationState } from '..'
 import { renderWithClient } from './utils'
 

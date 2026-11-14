@@ -1,24 +1,26 @@
+import { tanstackConfig } from '@tanstack/oxfmt-config'
 import { defineConfig } from 'oxfmt'
+import type { SortImportsConfig } from 'oxfmt'
 
 export default defineConfig({
-  semi: false,
-  singleQuote: true,
-  trailingComma: 'all',
-  printWidth: 80,
-  sortPackageJson: false,
+  ...tanstackConfig,
   svelte: {},
   ignorePatterns: [
-    '**/.next',
-    '**/.nx/cache',
-    '**/.svelte-kit',
-    '**/build',
-    '**/coverage',
-    '**/dist',
+    ...tanstackConfig.ignorePatterns,
     '**/query-codemods/**/__testfixtures__',
     '**/routeTree.gen.ts',
-    '.changeset/*.md',
-    'pnpm-lock.yaml',
     '**/tsconfig.vitest-temp.json',
     'docs/framework/*/reference',
+  ],
+  overrides: [
+    {
+      files: ['examples/svelte/**'],
+      options: {
+        sortImports: {
+          ...(tanstackConfig.sortImports as SortImportsConfig),
+          internalPattern: ['~/', '@/', '#', '$app/', '$lib/'],
+        },
+      },
+    },
   ],
 })

@@ -5,8 +5,8 @@ import type {
   QueryKey,
   QueryKeyWithDataTag,
 } from '@tanstack/query-core'
-import type { QueryOptions } from './types'
 import type { Accessor } from 'solid-js'
+import type { QueryOptions } from './types'
 
 /**
  * The options accepted by the `queryOptions` overload selected when `initialData` is omitted, may be

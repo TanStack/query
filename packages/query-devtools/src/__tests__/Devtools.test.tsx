@@ -1,5 +1,5 @@
-import { createSignal } from 'solid-js'
-import { afterEach, assert, beforeEach, describe, expect, it, vi } from 'vitest'
+import { createLocalStorage } from '@solid-primitives/storage'
+import { cleanup, fireEvent, render, within } from '@solidjs/testing-library'
 import {
   QueryClient,
   QueryObserver,
@@ -8,16 +8,16 @@ import {
   noop,
   onlineManager,
 } from '@tanstack/query-core'
-import { cleanup, fireEvent, render, within } from '@solidjs/testing-library'
-import { createLocalStorage } from '@solid-primitives/storage'
-import { DevtoolsOfflineProvider } from '../providers/DevtoolsOfflineProvider'
-import { DevtoolsSubscriptionsProvider } from '../providers/DevtoolsSubscriptionsProvider'
-import DevtoolsComponent from '../DevtoolsComponent'
-import { DevtoolsStateProvider } from '../providers/DevtoolsStateProvider'
-import { useDevtoolsState } from '../contexts/DevtoolsStateContext'
-import DevtoolsPanelComponent from '../DevtoolsPanelComponent'
+import { createSignal } from 'solid-js'
+import { afterEach, assert, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Devtools } from '../Devtools'
+import DevtoolsComponent from '../DevtoolsComponent'
+import DevtoolsPanelComponent from '../DevtoolsPanelComponent'
 import { PiPProvider, QueryDevtoolsContext, ThemeContext } from '../contexts'
+import { useDevtoolsState } from '../contexts/DevtoolsStateContext'
+import { DevtoolsOfflineProvider } from '../providers/DevtoolsOfflineProvider'
+import { DevtoolsStateProvider } from '../providers/DevtoolsStateProvider'
+import { DevtoolsSubscriptionsProvider } from '../providers/DevtoolsSubscriptionsProvider'
 import type { QueryDevtoolsProps } from '../contexts'
 
 // `solid-transition-group` internally imports from

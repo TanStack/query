@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-
-import PostList from './PostList.vue'
 import PostDetail from './PostDetail.vue'
+import PostList from './PostList.vue'
 
 const postId = ref(-1)
 const setPostId = (id: number) => {

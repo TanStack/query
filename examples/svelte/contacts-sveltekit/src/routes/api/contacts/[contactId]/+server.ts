@@ -1,6 +1,6 @@
 import { error, json } from '@sveltejs/kit'
-import type { RequestHandler } from './$types'
 import { getContact } from '$lib/server/contacts'
+import type { RequestHandler } from './$types'
 
 export const GET: RequestHandler = async ({ params }) => {
   const contact = await getContact(params.contactId)

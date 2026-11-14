@@ -1,10 +1,10 @@
-import { LitElement, html } from 'lit'
 import {
   QueryClient,
   QueryClientProvider,
   createMutationController,
   createQueryController,
 } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import { resetTodoApi } from './services/todos/api'
 import { todosMutations, todosQueries } from './services/todos/queries'
 import type { TodosResponse } from './services/todos/types'

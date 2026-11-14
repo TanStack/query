@@ -1,13 +1,13 @@
 import { Transform } from 'node:stream'
-import { renderToPipeableStream } from 'preact-render-to-string/stream-node'
-import { uneval } from 'devalue'
 import { QueryClientProvider, dehydrate, noop } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
+import { uneval } from 'devalue'
+import { renderToPipeableStream } from 'preact-render-to-string/stream-node'
 import App, { combinedWaits, waits } from './App'
 import { makeQueryClient } from './makeQueryClient'
 import { waitQueries } from './services/wait/queries'
-import type { DehydratedState } from '@tanstack/preact-query'
 import type { Writable } from 'node:stream'
+import type { DehydratedState } from '@tanstack/preact-query'
 
 export function render(callbacks: {
   onShellReady: () => void

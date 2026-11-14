@@ -1,11 +1,11 @@
 import { addConsumeAwareSignal, addToEnd, fetchSignal } from './utils'
-import type { FetchSignalContext } from './utils'
 import type {
   OmitKeyof,
   QueryFunction,
   QueryFunctionContext,
   QueryKey,
 } from './types'
+import type { FetchSignalContext } from './utils'
 
 type BaseStreamedQueryParams<TQueryFnData, TQueryKey extends QueryKey> = {
   /** The function that returns an `AsyncIterable` to stream data from. */

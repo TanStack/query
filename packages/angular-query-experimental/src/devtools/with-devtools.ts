@@ -13,13 +13,13 @@ import {
 import { QueryClient, noop, onlineManager } from '@tanstack/query-core'
 import { queryFeature } from '../providers'
 import type { Signal } from '@angular/core'
+import type { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import type {
   DevtoolsOptions,
   WithDevtools,
   WithDevtoolsFn,
   WithDevtoolsOptions,
 } from './types'
-import type { TanstackQueryDevtools } from '@tanstack/query-devtools'
 
 /**
  * Internal token used to prevent double providing of devtools in child injectors

@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   HydrationBoundary,
   QueryClient,
@@ -6,6 +5,7 @@ import {
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import Head from 'next/head'
+import React from 'react'
 import type { AppProps } from 'next/app'
 
 export default function MyApp({ Component, pageProps }: AppProps) {

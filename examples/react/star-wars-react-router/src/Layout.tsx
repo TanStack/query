@@ -1,8 +1,8 @@
 import { Route, Link as RouterLink, Routes } from 'react-router'
-import Films from './Films'
-import Film from './Film'
-import Characters from './Characters'
 import Character from './Character'
+import Characters from './Characters'
+import Film from './Film'
+import Films from './Films'
 import Home from './Home'
 
 export default function Layout() {

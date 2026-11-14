@@ -1,6 +1,6 @@
+import { createQueryController, useQueryClient } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { styleMap } from 'lit/directives/style-map.js'
-import { createQueryController, useQueryClient } from '@tanstack/lit-query'
 import type { Post } from './types'
 
 class PostList extends LitElement {

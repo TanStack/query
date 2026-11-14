@@ -1,8 +1,8 @@
 import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 import { useQueryClientResolver } from './QueryClientProvider'
 import type { MutationFilters } from '@tanstack/query-core'
-import type { QueryClient } from './QueryClient'
 import type { Accessor } from 'solid-js'
+import type { QueryClient } from './QueryClient'
 
 /**
  * The `useIsMutating` primitive returns the `number` of mutations that your application currently has `pending`

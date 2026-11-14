@@ -1,5 +1,5 @@
-import React from 'react'
 import { noop, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import React from 'react'
 import { projectsQueries } from '../services/projects/queries'
 import Button from './Button'
 import Spinner from './Spinner'

@@ -1,5 +1,4 @@
 import { redirect } from 'react-router'
-
 import { contactsAPI } from '../services/contacts/api'
 import { contactsQueries } from '../services/contacts/queries'
 import { ContactForm } from './edit'

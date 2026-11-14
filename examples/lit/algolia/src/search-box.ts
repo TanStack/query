@@ -1,5 +1,5 @@
-import { LitElement, html } from 'lit'
 import { createDebouncedValue } from '@tanstack/lit-pacer/debouncer'
+import { LitElement, html } from 'lit'
 import './search-results'
 
 class SearchBox extends LitElement {

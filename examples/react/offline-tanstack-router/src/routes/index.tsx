@@ -1,5 +1,5 @@
-import { Link, createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { moviesQueries } from '../services/movies/queries'
 
 export const Route = createFileRoute('/')({

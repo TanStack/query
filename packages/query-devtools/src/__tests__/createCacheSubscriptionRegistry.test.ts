@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 import { createRoot, createSignal } from 'solid-js'
+import { describe, expect, it } from 'vitest'
 import { createCacheSubscriptionRegistry } from '../createCacheSubscriptionRegistry'
 
 describe('createCacheSubscriptionRegistry', () => {

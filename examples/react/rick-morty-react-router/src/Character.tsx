@@ -1,5 +1,5 @@
-import { Link as RouterLink, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
+import { Link as RouterLink, useParams } from 'react-router'
 import { charactersQueries } from './services/characters/queries'
 import { episodesQueries } from './services/episodes/queries'
 import { locationsQueries } from './services/locations/queries'

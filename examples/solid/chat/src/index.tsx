@@ -1,16 +1,16 @@
 /* @refresh reload */
-import { For, Show, createSignal } from 'solid-js'
-import { render } from 'solid-js/web'
+
 import {
   QueryClient,
   QueryClientProvider,
   useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-
+import { For, Show, createSignal } from 'solid-js'
+import { render } from 'solid-js/web'
 import './style.css'
-import { messagesQueries } from './services/messages/queries'
 import { Message } from './message'
+import { messagesQueries } from './services/messages/queries'
 
 const queryClient = new QueryClient()
 

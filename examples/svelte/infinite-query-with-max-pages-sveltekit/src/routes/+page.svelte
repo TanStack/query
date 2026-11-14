@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { projectsQueries } from '$lib/services/projects/queries'
   import { createInfiniteQuery } from '@tanstack/svelte-query'
+  import { projectsQueries } from '$lib/services/projects/queries'
 
   const query = createInfiniteQuery(() => projectsQueries.infinite())
 </script>

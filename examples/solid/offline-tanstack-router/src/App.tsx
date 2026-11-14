@@ -1,3 +1,4 @@
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import {
   MutationCache,
   QueryClient,
@@ -5,11 +6,9 @@ import {
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/solid-query-persist-client'
-import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import { RouterProvider, createRouter } from '@tanstack/solid-router'
-
-import { moviesMutations, moviesQueries } from './services/movies/queries'
 import { routeTree } from './routeTree.gen'
+import { moviesMutations, moviesQueries } from './services/movies/queries'
 
 const persister = createAsyncStoragePersister({
   storage: window.localStorage,

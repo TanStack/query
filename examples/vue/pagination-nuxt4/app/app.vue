@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
 import {
   keepPreviousData,
   noop,
@@ -7,6 +6,7 @@ import {
   useQueryClient,
 } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+import { ref, watchEffect } from 'vue'
 import { projectsQueries } from './services/projects/queries'
 
 const queryClient = useQueryClient()

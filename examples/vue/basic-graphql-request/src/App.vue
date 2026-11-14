@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
-
-import PostList from './PostList.vue'
+import { ref } from 'vue'
 import PostDetail from './PostDetail.vue'
+import PostList from './PostList.vue'
 
 const postId = ref<string | null>(null)
 const setPostId = (id: string | null) => {

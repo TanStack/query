@@ -1,7 +1,7 @@
 'use client'
-import * as React from 'react'
-import { onlineManager, useQueryClient } from '@tanstack/react-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
+import { onlineManager, useQueryClient } from '@tanstack/react-query'
+import * as React from 'react'
 import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 

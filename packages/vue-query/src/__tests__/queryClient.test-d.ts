@@ -1,6 +1,6 @@
+import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { ref } from 'vue-demi'
-import { createKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import type { DataTag, InfiniteData, QueryState } from '@tanstack/query-core'
 

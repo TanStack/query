@@ -1,8 +1,9 @@
-import { focusManager } from './focusManager'
 import { isServer as isServerEnvironment } from './environmentManager'
+import { focusManager } from './focusManager'
 import { notifyManager } from './notifyManager'
 import { fetchState } from './query'
 import { Subscribable } from './subscribable'
+import { timeoutManager } from './timeoutManager'
 import {
   isValidTimeout,
   noop,
@@ -11,10 +12,9 @@ import {
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
-import { timeoutManager } from './timeoutManager'
-import type { ManagedTimerId } from './timeoutManager'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
+import type { ManagedTimerId } from './timeoutManager'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,

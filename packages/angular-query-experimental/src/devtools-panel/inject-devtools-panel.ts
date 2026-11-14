@@ -1,3 +1,4 @@
+import { isPlatformBrowser } from '@angular/common'
 import {
   DestroyRef,
   Injector,
@@ -10,7 +11,6 @@ import {
   untracked,
 } from '@angular/core'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
-import { isPlatformBrowser } from '@angular/common'
 import type { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type {
   DevtoolsPanelOptions,

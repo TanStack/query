@@ -1,8 +1,8 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import { hydrateRoot } from 'react-dom/client'
-import { act } from 'react'
-import * as ReactDOMServer from 'react-dom/server'
 import { createKey } from '@tanstack/query-test-utils'
+import { act } from 'react'
+import { hydrateRoot } from 'react-dom/client'
+import * as ReactDOMServer from 'react-dom/server'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import {
   QueryCache,
   QueryClient,

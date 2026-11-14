@@ -1,5 +1,5 @@
-import { Link as RouterLink } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
+import { Link as RouterLink } from 'react-router'
 import { charactersQueries } from './services/characters/queries'
 
 export default function Characters() {

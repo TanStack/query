@@ -1,5 +1,5 @@
-import { LitElement, html, nothing } from 'lit'
 import { createQueryController } from '@tanstack/lit-query'
+import { LitElement, html, nothing } from 'lit'
 import { episodesQueries } from './services/episodes/queries'
 
 class CharacterEpisode extends LitElement {

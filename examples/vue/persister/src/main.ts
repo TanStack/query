@@ -1,5 +1,5 @@
-import { createApp } from 'vue'
 import { VueQueryPlugin } from '@tanstack/vue-query'
+import { createApp } from 'vue'
 import App from './App.vue'
 import type { VueQueryPluginOptions } from '@tanstack/vue-query'
 

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { createInfiniteQuery } from '../../src/index.js'
-  import { setQueryClientContext } from '../../src/context.js'
   import { sleep } from '@tanstack/query-test-utils'
+  import { setQueryClientContext } from '../../src/context.js'
+  import { createInfiniteQuery } from '../../src/index.js'
 
   type Props = {
     queryClient: QueryClient

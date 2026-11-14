@@ -1,9 +1,9 @@
-import { render } from 'preact'
-import { useState } from 'preact/hooks'
 import { QueryClient, useQuery, useQueryClient } from '@tanstack/preact-query'
+import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/preact-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
-import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
+import { render } from 'preact'
+import { useState } from 'preact/hooks'
 import { postsQueries } from './services/posts/queries'
 
 const queryClient = new QueryClient({

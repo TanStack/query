@@ -1,8 +1,8 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { QueryClient } from '../queryClient'
 import { MutationCache } from '../mutationCache'
-import type { MutationObserver } from '../mutationObserver'
+import { QueryClient } from '../queryClient'
 import type { Action, Mutation, MutationState } from '../mutation'
+import type { MutationObserver } from '../mutationObserver'
 import type {
   DefaultError,
   MutateFunction,

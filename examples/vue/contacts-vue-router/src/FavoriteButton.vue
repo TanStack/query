@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { computed } from 'vue'
 import { contactsAPI } from './services/contacts/api'
 import { contactsQueries } from './services/contacts/queries'
 import type { Contact } from './services/contacts/types'

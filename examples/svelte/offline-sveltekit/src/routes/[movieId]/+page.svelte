@@ -1,8 +1,8 @@
 <script lang="ts">
+  import { createMutation, createQuery } from '@tanstack/svelte-query'
   import { resolve } from '$app/paths'
   import { queryClient } from '$lib/queryClient'
   import { moviesMutations, moviesQueries } from '$lib/services/movies/queries'
-  import { createMutation, createQuery } from '@tanstack/svelte-query'
   import type { PageProps } from './$types'
 
   let { data }: PageProps = $props()
