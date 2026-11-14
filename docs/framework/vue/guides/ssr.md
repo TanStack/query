@@ -282,11 +282,38 @@ onServerPrefetch(async () => {
 
 ### High memory consumption on server
 
-In case you are creating the `QueryClient` for every request, Vue Query creates the isolated cache for this client, which is preserved in memory for the `gcTime` period. That may lead to high memory consumption on server in case of high number of requests during that period.
+On the server, `gcTime` defaults to `Infinity`. With `Infinity`, no garbage collection timer is scheduled, and the cache is freed from memory together with the `QueryClient` once the request finishes.
 
-On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
+Any finite `gcTime` schedules a timer for each query, and that timer keeps the query in memory until it fires. In Node.js, a timer also keeps alive the [`AsyncLocalStorage`](https://nodejs.org/api/async_context.html#class-asynclocalstorage) context it was created in. If your server framework stores the request in that context, the request stays in memory even after the response is sent, until the timer fires.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client.
+This is easy to miss: a `gcTime` set in `defaultOptions` applies on the server too, so a value intended for the client also replaces `Infinity` on the server.
+
+```ts
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // This also applies on the server
+      gcTime: 1000 * 60,
+    },
+  },
+})
+```
+
+If you only want a custom `gcTime` in the browser, keep `Infinity` on the server:
+
+```ts
+import { environmentManager, QueryClient } from '@tanstack/vue-query'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: environmentManager.isServer() ? Infinity : 1000 * 60,
+    },
+  },
+})
+```
+
+If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client and all of its queries have settled, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending timer. A fetch that is still in flight when you call `clear()` schedules a new timer once it settles, so wait for pending fetches to settle first.
 
 ## `dehydrate`/`hydrate` options
 
