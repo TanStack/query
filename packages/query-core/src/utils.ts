@@ -630,6 +630,15 @@ export const skipToken = Symbol()
 export type SkipToken = typeof skipToken
 
 /**
+ * The options each `defaultQueryOptions` result was made from, before client defaults filled them in.
+ * @internal
+ */
+export const ownQueryOptions = new WeakMap<
+  object,
+  Pick<QueryOptions<any, any, any, any>, 'retry' | 'retryDelay'>
+>()
+
+/**
  * Returns the function to call for a fetch. If there is no `queryFn` but the fetch was started from
  * an `initialPromise`, that promise is returned instead. If there is no usable `queryFn` (missing or
  * {@link skipToken}), the returned function rejects with a `Missing queryFn` error.

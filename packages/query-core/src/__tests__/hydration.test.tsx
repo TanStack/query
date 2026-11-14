@@ -5,6 +5,7 @@ import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 import { dehydrateQuery } from '../index'
 import { MutationCache } from '../mutationCache'
+import { QueryObserver } from '../queryObserver'
 import { noop } from '../utils'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
 import type { MutationFunction, MutationFunctionContext } from '../index'
@@ -1094,6 +1095,139 @@ describe('dehydration and rehydration', () => {
       isInvalidated: false,
       status: 'success',
     })
+  })
+
+  it("should retry a hydrated query that rejects with the observer's retry and retryDelay", async () => {
+    const key = createKey()
+    // 🖥️ Server: still pending at dehydrate, rejects later
+    const serverClient = new QueryClient()
+    void serverClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
+        retry: false,
+      })
+      .catch(noop)
+    // 🌐 Browser: retries off by default, so only the reader can retry
+    const browserClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    })
+    hydrate(
+      browserClient,
+      dehydrate(serverClient, { shouldDehydrateQuery: () => true }),
+    )
+
+    // 👀 Reader asks for 1 retry after 10ms
+    const observer = new QueryObserver(browserClient, {
+      queryKey: key,
+      queryFn: () => 'browser data',
+      retry: 1,
+      retryDelay: 10,
+    })
+    const unsubscribe = observer.subscribe(noop)
+
+    // ✅ 0ms: pending while the server's promise is in flight
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      failureCount: 0,
+    })
+
+    // ✅ 10ms: the promise rejected, and the query stays pending for the retry
+    await vi.advanceTimersByTimeAsync(10)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      failureCount: 1,
+      failureReason: new Error('redacted'),
+    })
+
+    // ✅ 20ms: the retry succeeded
+    await vi.advanceTimersByTimeAsync(10)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      failureCount: 0,
+      data: 'browser data',
+    })
+
+    unsubscribe()
+    browserClient.clear()
+    serverClient.clear()
+  })
+
+  it('should not retry a hydrated query that rejects when the observer sets retry: false', async () => {
+    const key = createKey()
+    // 🖥️ Server: still pending at dehydrate, rejects later
+    const serverClient = new QueryClient()
+    void serverClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
+        retry: false,
+      })
+      .catch(noop)
+    // 🌐 Browser: retries once by default, so the reader must turn them off
+    const browserClient = new QueryClient({
+      defaultOptions: { queries: { retry: 1 } },
+    })
+    hydrate(
+      browserClient,
+      dehydrate(serverClient, { shouldDehydrateQuery: () => true }),
+    )
+
+    // 👀 Reader asks for no retries
+    const observer = new QueryObserver(browserClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'browser data'),
+      retry: false,
+    })
+    const unsubscribe = observer.subscribe(noop)
+
+    await vi.advanceTimersByTimeAsync(10)
+    // ✅ Fails when the server's promise rejects, without a retry
+    expect(browserClient.getQueryState(key)?.status).toBe('error')
+
+    unsubscribe()
+    browserClient.clear()
+    serverClient.clear()
+  })
+
+  it("should use the hydrate retry over the client's default retry when a hydrated query rejects", async () => {
+    const key = createKey()
+    // 🖥️ Server: still pending at dehydrate, rejects later
+    const serverClient = new QueryClient()
+    void serverClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
+        retry: false,
+      })
+      .catch(noop)
+    // 🌐 Browser: retries once by default, but hydrate turns retries off
+    const browserClient = new QueryClient({
+      defaultOptions: { queries: { retry: 1, retryDelay: 10 } },
+    })
+    hydrate(
+      browserClient,
+      dehydrate(serverClient, { shouldDehydrateQuery: () => true }),
+      { defaultOptions: { queries: { retry: false } } },
+    )
+
+    // 👀 Reader sets no retry options, so hydrate's apply
+    const observer = new QueryObserver(browserClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'browser data'),
+    })
+    const unsubscribe = observer.subscribe(noop)
+
+    await vi.advanceTimersByTimeAsync(10)
+    // ✅ Fails when the server's promise rejects, without the client's retry
+    expect(browserClient.getQueryState(key)?.status).toBe('error')
+
+    unsubscribe()
+    browserClient.clear()
+    serverClient.clear()
   })
 
   it('should transform promise result', async () => {
