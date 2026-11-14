@@ -22,6 +22,10 @@
   })
 </script>
 
+<svelte:head>
+  <title>TanStack Svelte Query Basic Example (SvelteKit)</title>
+</svelte:head>
+
 <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
   <main>
     {@render children()}

@@ -160,7 +160,7 @@ async function readTemplate() {
 }
 
 async function serveAsset(pathname, res) {
-  if (!pathname.startsWith('/assets/')) {
+  if (!pathname.startsWith('/assets/') && pathname !== '/emblem-light.svg') {
     return false
   }
 

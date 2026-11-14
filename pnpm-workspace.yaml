@@ -1,19 +1,19 @@
 cleanupUnusedCatalogs: true
+autoDedupe: true
+lockfile:
+  includeResolutionSettings: true
 minimumReleaseAge: 1440
-minimumReleaseAgeExclude:
-  - '@tanstack/eslint-config@0.5.0' # Published by TanStack from TanStack/config.
-  - '@tanstack/oxfmt-config@0.1.0' # Published by TanStack from TanStack/config.
-  - '@tanstack/oxlint-config@0.2.0' # Published by TanStack from TanStack/config.
+minimumReleaseAgeExcludePrune: true
 linkWorkspacePackages: true
 preferWorkspacePackages: true
 blockExoticSubdeps: true
 shellEmulator: true
 trustPolicy: 'no-downgrade'
+trustPolicyExcludePrune: true
 trustPolicyExclude:
   - 'semver@5.7.2' # Socket score 100/100; popular and healthy.
   - 'semver@6.3.1' # Socket score 100/100; popular and healthy.
   - 'ua-parser-js@1.0.41' # Socket score 100/100; popular and healthy.
-  - 'undici-types@6.21.0' # Socket score 100/100; popular and healthy.
 
 catalog:
   typescript: 6.0.3

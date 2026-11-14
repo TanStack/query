@@ -16,7 +16,7 @@
 </script>
 
 <svelte:head>
-  <title>TanStack Query Svelte Pagination Example</title>
+  <title>TanStack Svelte Query Pagination Example (SvelteKit)</title>
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>

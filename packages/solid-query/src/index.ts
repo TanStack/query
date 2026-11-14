@@ -6,10 +6,10 @@ import { useQueries } from './useQueries'
 import { useQuery } from './useQuery'
 
 // Re-export core
+// oxlint-disable-next-line tanstack-query/no-restricted-syntax
 export * from '@tanstack/query-core'
 
 // Solid Query
-export type * from './types'
 
 export type {
   DefinedUseBaseQueryResult,
