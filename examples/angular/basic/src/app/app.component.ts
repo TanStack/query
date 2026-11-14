@@ -4,10 +4,10 @@ import { PostsComponent } from './components/posts.component'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'basic-example',
+  selector: 'app-root',
   templateUrl: './app.component.html',
   imports: [PostComponent, PostsComponent],
 })
-export class BasicExampleComponent {
+export class AppComponent {
   readonly postId = signal(-1)
 }

@@ -1,5 +1,25 @@
 # @tanstack/vue-query
 
+## 5.107.1
+
+### Patch Changes
+
+- [#12542](https://github.com/TanStack/query/pull/12542) [`025773a`](https://github.com/TanStack/query/commit/025773a83a7375078fb5ac46280222fe52c9b212) - fix(vue-query): keep query-core's `enabled(query)` callback. Zero-argument getters and refs stay reactive; the query callback is passed through to query-core.
+
+- [#12541](https://github.com/TanStack/query/pull/12541) [`f4199ab`](https://github.com/TanStack/query/commit/f4199ab51f4e54044e97bcbd520977728538a649) - feat(vue-query): return a reactive `state` from `useQuery` so `status === 'success'` narrows `data` without unwrapping refs
+- Updated dependencies []:
+  - @tanstack/query-core@5.107.1
+
+## 5.107.0
+
+### Patch Changes
+
+- [#12494](https://github.com/TanStack/query/pull/12494) [`00dc8de`](https://github.com/TanStack/query/commit/00dc8de8fe04f78ed24405f3ec19f20880b1c9f6) - Reset `isRestoring` in `VueQueryPlugin` when the `clientPersister` promise rejects, so queries no longer wait forever for a failed restore, and handle the rejection instead of leaving it unhandled.
+
+- [#12537](https://github.com/TanStack/query/pull/12537) [`2cdba60`](https://github.com/TanStack/query/commit/2cdba6053c8f3b03094b55b3fd64880b8fbd596b) - fix(vue-query/useInfiniteQuery): return 'UseInfiniteQueryDefinedReturnType' from the 'Defined' overload so 'data' is no longer typed as possibly 'undefined' when 'initialData' is defined
+- Updated dependencies [[`b6add89`](https://github.com/TanStack/query/commit/b6add891c1b846c1f276a4c0110edb58b62defaa)]:
+  - @tanstack/query-core@5.107.0
+
 ## 5.106.1
 
 ### Patch Changes
