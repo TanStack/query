@@ -24,10 +24,10 @@ import type {
  * pass to `useQuery`, with `initialData` known to be defined.
  * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
- * @returns The current query result, as a Solid store, typed so that `status` is `success` — or `error` if a
- * fetch attempt fails while keeping the existing data (`status` never resolves to `pending` in this overload's
- * type, since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for
- * convenience.
+ * @returns The current query result, as a Solid store, typed so that `status` is `success` or `error`
+ * (`status` never resolves to `pending` in this overload's type, since `initialData` guarantees data upfront).
+ * `status` is `error` if the last fetch failed after its retries or `select` threw, and `success` otherwise.
+ * `isSuccess`/`isError` are derived booleans for convenience.
  * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @example
  * ```tsx
@@ -71,9 +71,10 @@ export function useQuery<
  * pass to `useQuery`.
  * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
- * @returns The current query result, as a Solid store. `status` is `pending` if there is no cached data to
- * display, `error` if the last fetch attempt failed, or `success` if the query has data to display.
- * `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+ * @returns The current query result, as a Solid store. `status` is `error` if the last fetch failed after
+ * its retries or `select` threw, `success` if the query has data to display (including `placeholderData`),
+ * and `pending` otherwise. A refetch that starts without data to display clears the error and sets
+ * `status` back to `pending`. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
  * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @example
  * ```tsx

@@ -29,7 +29,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/useQuery.ts:49](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L49)
+Defined in: [packages/react-query/src/useQuery.ts:50](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L50)
 
 This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
 `undefined` (unless a `select` changes `TData` to include `undefined`).
@@ -71,9 +71,10 @@ be used.
 
 [`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
-fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
-since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for convenience.
+The current query result, typed so that `status` is `success` or `error` (`status` never
+resolves to `pending` in this overload's type, since `initialData` guarantees data upfront). `status` is
+`error` if the last fetch failed after its retries or `select` threw, and `success` otherwise.
+`isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
 
@@ -112,7 +113,7 @@ function Posts() {
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/useQuery.ts:116](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L116)
+Defined in: [packages/react-query/src/useQuery.ts:118](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L118)
 
 This overload is selected when `initialData` is omitted, may be `undefined`, or is a function that may
 return `undefined`, so the resulting `data` can be `undefined`.
@@ -154,9 +155,10 @@ be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result. `status` is `pending` if there is no cached data to display, `error` if
-the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
-are derived booleans for convenience.
+The current query result. `status` is `error` if the last fetch failed after its retries or `select`
+threw, `success` if the query has data to display (including `placeholderData`), and `pending` otherwise. A
+refetch that starts without data to display clears the error and sets `status` back to `pending`.
+`isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
 
@@ -218,7 +220,7 @@ function Posts() {
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/useQuery.ts:281](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L281)
+Defined in: [packages/react-query/src/useQuery.ts:284](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L284)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, an
 object typed as [UseQueryOptions](../interfaces/UseQueryOptions.md) rather than an object literal. Prefer one of the other overloads
@@ -261,9 +263,10 @@ be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result. `status` is `pending` if there is no cached data to display, `error` if
-the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
-are derived booleans for convenience.
+The current query result. `status` is `error` if the last fetch failed after its retries or `select`
+threw, `success` if the query has data to display (including `placeholderData`), and `pending` otherwise. A
+refetch that starts without data to display clears the error and sets `status` back to `pending`.
+`isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
 
@@ -471,9 +474,10 @@ be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result. `status` is `pending` if there is no cached data to display, `error` if
-the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
-are derived booleans for convenience.
+The current query result. `status` is `error` if the last fetch failed after its retries or `select`
+threw, `success` if the query has data to display (including `placeholderData`), and `pending` otherwise. A
+refetch that starts without data to display clears the error and sets `status` back to `pending`.
+`isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 <a id="result-properties"></a>
 

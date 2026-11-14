@@ -27,7 +27,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function createQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: Accessor<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): DefinedCreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:53](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L53)
+Defined in: [packages/svelte-query/src/createQuery.ts:54](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L54)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
@@ -73,9 +73,10 @@ be used.
 
 [`DefinedCreateQueryResult`](../type-aliases/DefinedCreateQueryResult.md)\<`TData`, `TError`\>
 
-The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
-fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
-since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for convenience.
+The current query result, typed so that `status` is `success` or `error` (`status` never
+resolves to `pending` in this overload's type, since `initialData` guarantees data upfront). `status` is
+`error` if the last fetch failed after its retries or `select` threw, and `success` otherwise.
+`isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
 
@@ -114,7 +115,7 @@ since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived 
 function createQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: Accessor<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:124](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L124)
+Defined in: [packages/svelte-query/src/createQuery.ts:126](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L126)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
@@ -157,9 +158,10 @@ be used.
 
 [`CreateQueryResult`](../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
 
-The current query result. `status` is `pending` if there is no cached data to display, `error` if
-the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
-are derived booleans for convenience.
+The current query result. `status` is `error` if the last fetch failed after its retries or `select`
+threw, `success` if the query has data to display (including `placeholderData`), and `pending` otherwise. A
+refetch that starts without data to display clears the error and sets `status` back to `pending`.
+`isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
 
@@ -222,7 +224,7 @@ The same query, checking `isPending`/`isError` instead of `status` — pick whic
 function createQuery<TQueryFnData, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:249](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L249)
+Defined in: [packages/svelte-query/src/createQuery.ts:252](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L252)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, an
 object typed as [CreateQueryOptions](../type-aliases/CreateQueryOptions.md) rather than an object literal. Prefer one of the other
@@ -266,9 +268,10 @@ be used.
 
 [`CreateQueryResult`](../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
 
-The current query result. `status` is `pending` if there is no cached data to display, `error` if
-the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
-are derived booleans for convenience.
+The current query result. `status` is `error` if the last fetch failed after its retries or `select`
+threw, `success` if the query has data to display (including `placeholderData`), and `pending` otherwise. A
+refetch that starts without data to display clears the error and sets `status` back to `pending`.
+`isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
 
@@ -434,9 +437,10 @@ be used.
 
 [`CreateQueryResult`](../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
 
-The current query result. `status` is `pending` if there is no cached data to display, `error` if
-the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
-are derived booleans for convenience.
+The current query result. `status` is `error` if the last fetch failed after its retries or `select`
+threw, `success` if the query has data to display (including `placeholderData`), and `pending` otherwise. A
+refetch that starts without data to display clears the error and sets `status` back to `pending`.
+`isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 <a id="result-properties"></a>
 

@@ -73,10 +73,10 @@ will be used.
 
 [`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result, as a Solid store, typed so that `status` is `success` — or `error` if a
-fetch attempt fails while keeping the existing data (`status` never resolves to `pending` in this overload's
-type, since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for
-convenience.
+The current query result, as a Solid store, typed so that `status` is `success` or `error`
+(`status` never resolves to `pending` in this overload's type, since `initialData` guarantees data upfront).
+`status` is `error` if the last fetch failed after its retries or `select` threw, and `success` otherwise.
+`isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
 
@@ -116,7 +116,7 @@ function Posts() {
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/useQuery.ts:228](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L228)
+Defined in: [packages/solid-query/src/useQuery.ts:229](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L229)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
@@ -159,9 +159,10 @@ will be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result, as a Solid store. `status` is `pending` if there is no cached data to
-display, `error` if the last fetch attempt failed, or `success` if the query has data to display.
-`isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+The current query result, as a Solid store. `status` is `error` if the last fetch failed after
+its retries or `select` threw, `success` if the query has data to display (including `placeholderData`),
+and `pending` otherwise. A refetch that starts without data to display clears the error and sets
+`status` back to `pending`. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
 
@@ -348,9 +349,10 @@ will be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result, as a Solid store. `status` is `pending` if there is no cached data to
-display, `error` if the last fetch attempt failed, or `success` if the query has data to display.
-`isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+The current query result, as a Solid store. `status` is `error` if the last fetch failed after
+its retries or `select` threw, `success` if the query has data to display (including `placeholderData`),
+and `pending` otherwise. A refetch that starts without data to display clears the error and sets
+`status` back to `pending`. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 <a id="result-properties"></a>
 

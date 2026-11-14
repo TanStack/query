@@ -116,7 +116,7 @@ export class Posts {
 function injectQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(injectQueryFn: () => UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, options?: InjectQueryOptions): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-query.ts:158](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L158)
+Defined in: [packages/angular-query-experimental/src/inject-query.ts:159](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L159)
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
@@ -158,9 +158,10 @@ Additional configuration
 
 [`CreateQueryResult`](../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
 
-The query result. `status()` is `'pending'` if there is no cached data to display, `'error'` if
-the last fetch attempt failed, or `'success'` if the query has data to display. `isPending`/`isSuccess`/
-`isError` are type-guard methods for convenience.
+The query result. `status()` is `'error'` if the last fetch failed after its retries or
+`select` threw, `'success'` if the query has data to display (including `placeholderData`), and
+`'pending'` otherwise. A refetch that starts without data to display clears the error and sets
+`status()` back to `'pending'`. `isPending`/`isSuccess`/`isError` are type-guard methods for convenience.
 
 ### See
 
@@ -236,7 +237,7 @@ export class Posts {
 function injectQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(injectQueryFn: () => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, options?: InjectQueryOptions): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-query.ts:184](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L184)
+Defined in: [packages/angular-query-experimental/src/inject-query.ts:185](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L185)
 
 This overload accepts the general [CreateQueryOptions](../interfaces/CreateQueryOptions.md) shape rather than the `initialData`-aware
 overloads above, so whether `data` is defined can't be inferred from the call site — useful when wrapping

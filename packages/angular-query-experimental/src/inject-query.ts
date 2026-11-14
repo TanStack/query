@@ -90,9 +90,10 @@ export function injectQuery<
  * you can pass to `injectQuery`. Similar to `computed` from Angular, this function runs in the reactive
  * context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive the query.
  * @param options - Additional configuration
- * @returns The query result. `status()` is `'pending'` if there is no cached data to display, `'error'` if
- * the last fetch attempt failed, or `'success'` if the query has data to display. `isPending`/`isSuccess`/
- * `isError` are type-guard methods for convenience.
+ * @returns The query result. `status()` is `'error'` if the last fetch failed after its retries or
+ * `select` threw, `'success'` if the query has data to display (including `placeholderData`), and
+ * `'pending'` otherwise. A refetch that starts without data to display clears the error and sets
+ * `status()` back to `'pending'`. `isPending`/`isSuccess`/`isError` are type-guard methods for convenience.
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  * @see {@link queryOptions} to share these options between `injectQuery` and imperative APIs like
  * `queryClient.fetchQuery`.
