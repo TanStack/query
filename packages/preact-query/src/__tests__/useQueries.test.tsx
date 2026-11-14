@@ -301,6 +301,50 @@ describe('useQueries', () => {
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
   })
 
+  it("should throw error if in one of queries' queryFn throws and throwOnError is in use while the combined result does not change", async () => {
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
+    const key = createKey()
+
+    function Page() {
+      const data = useQueries({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() =>
+                Promise.reject(new Error('single query error')),
+              ),
+            throwOnError: true,
+            retry: false,
+          },
+        ],
+        combine: (results) => results.map((result) => result.data),
+      })
+
+      return <div>data: {String(data[0])}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <div>
+            <div>error boundary</div>
+            <div>{error.message}</div>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    expect(rendered.getByText('data: undefined')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    expect(rendered.getByText('single query error')).toBeInTheDocument()
+  })
+
   it('should use provided custom queryClient', async () => {
     const key = createKey()
     const queryFn = async () => {
