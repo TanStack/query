@@ -51,7 +51,7 @@
             "index": "src/index.html",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/mockServiceWorker.js"],
+            "assets": [{ "glob": "**/*", "input": "public" }],
             "styles": [],
             "scripts": []
           },

@@ -316,9 +316,12 @@ describe('Devtools', () => {
       ).not.toBeInTheDocument()
 
       viewport.scrollTo({ top: viewport.scrollHeight })
-      fireEvent.input(rendered.getByLabelText('Filter queries by query key'), {
-        target: { value: 'mutation-target' },
-      })
+      fireEvent.input(
+        rendered.getByLabelText('Filter mutations by mutation key'),
+        {
+          target: { value: 'mutation-target' },
+        },
+      )
       viewport.scrollTo({ top: viewport.scrollTop })
       expect(
         rendered.getAllByLabelText(/^Mutation submitted at /),
@@ -764,6 +767,145 @@ describe('Devtools', () => {
       expect(
         rendered.queryByLabelText(/Query key \["users"\]/),
       ).not.toBeInTheDocument()
+    })
+
+    it('should cycle and persist the filter scope', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const scope = rendered.getByRole('button', { name: /^Filter scope: / })
+      expect(scope).toHaveAccessibleName('Filter scope: Key')
+      fireEvent.click(scope)
+      expect(scope).toHaveAccessibleName('Filter scope: Data')
+      expect(localStorage.getItem('TanstackQueryDevtools.filterScope')).toBe(
+        'data',
+      )
+      expect(
+        rendered.getByLabelText('Filter queries by query data'),
+      ).toBeInTheDocument()
+      fireEvent.click(scope)
+      expect(scope).toHaveAccessibleName('Filter scope: All')
+      expect(
+        rendered.getByLabelText('Filter queries by query key or data'),
+      ).toBeInTheDocument()
+      fireEvent.click(scope)
+      expect(scope).toHaveAccessibleName('Filter scope: Key')
+    })
+
+    it('should restore a persisted filter scope and ignore unknown values', () => {
+      const restored = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'all' },
+      )
+      expect(
+        restored.getByRole('button', { name: 'Filter scope: All' }),
+      ).toBeInTheDocument()
+      cleanup()
+
+      const fallback = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'bogus' },
+      )
+      expect(
+        fallback.getByRole('button', { name: 'Filter scope: Key' }),
+      ).toBeInTheDocument()
+    })
+
+    it('should filter queries by data keys and values in the "data" scope', () => {
+      queryClient.setQueryData(['posts'], [{ id: 1, author: 'Alice' }])
+      queryClient.setQueryData(['users'], { alice: { role: 'admin' } })
+      queryClient.setQueryData(['alice-settings'], { theme: 'dark' })
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'data' },
+      )
+      const filter = rendered.getByLabelText('Filter queries by query data')
+
+      fireEvent.input(filter, { target: { value: 'ALICE' } })
+      expect(rendered.getByLabelText('Query key ["posts"]')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Query key ["users"]')).toBeInTheDocument()
+      expect(
+        rendered.queryByLabelText('Query key ["alice-settings"]'),
+      ).not.toBeInTheDocument()
+
+      fireEvent.input(filter, { target: { value: 'admin' } })
+      expect(rendered.getAllByLabelText(/^Query key /)).toHaveLength(1)
+      expect(rendered.getByLabelText('Query key ["users"]')).toBeInTheDocument()
+    })
+
+    it('should match either the key or the data in the "all" scope', () => {
+      queryClient.setQueryData(['posts'], { author: 'alice' })
+      queryClient.setQueryData(['alice-settings'], { theme: 'dark' })
+      queryClient.setQueryData(['users'], { name: 'bob' })
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'all' },
+      )
+
+      fireEvent.input(
+        rendered.getByLabelText('Filter queries by query key or data'),
+        { target: { value: 'alice' } },
+      )
+      expect(rendered.getByLabelText('Query key ["posts"]')).toBeInTheDocument()
+      expect(
+        rendered.getByLabelText('Query key ["alice-settings"]'),
+      ).toBeInTheDocument()
+      expect(
+        rendered.queryByLabelText('Query key ["users"]'),
+      ).not.toBeInTheDocument()
+    })
+
+    it('should update data filter results when query data changes', async () => {
+      queryClient.setQueryData(['posts'], { status: 'draft' })
+      queryClient.setQueryData(['users'], { status: 'active' })
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'data' },
+      )
+
+      fireEvent.input(rendered.getByLabelText('Filter queries by query data'), {
+        target: { value: 'published' },
+      })
+      expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
+
+      queryClient.setQueryData(['posts'], { status: 'published' })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(rendered.getByLabelText('Query key ["posts"]')).toBeInTheDocument()
+
+      queryClient.setQueryData(['posts'], { status: 'archived' })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
+    })
+
+    it('should keep the previous results until a slow data search for the latest filter is ready', async () => {
+      for (let index = 0; index < 6; index++) {
+        queryClient.setQueryData(['item', index], {
+          name: index % 2 ? 'needle' : 'hay',
+        })
+      }
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'data' },
+      )
+      const filter = rendered.getByLabelText('Filter queries by query data')
+      // Every call takes 5ms, so each task only builds one search text
+      let now = 0
+      vi.spyOn(performance, 'now').mockImplementation(() => (now += 5))
+
+      fireEvent.input(filter, { target: { value: 'needle' } })
+      expect(rendered.getAllByLabelText(/^Query key /)).toHaveLength(6)
+      fireEvent.input(filter, { target: { value: 'hay' } })
+      expect(rendered.getAllByLabelText(/^Query key /)).toHaveLength(6)
+
+      await vi.advanceTimersByTimeAsync(50)
+      expect(
+        rendered
+          .getAllByLabelText(/^Query key /)
+          .map((row) => row.getAttribute('aria-label')),
+      ).toStrictEqual([
+        'Query key ["item",0]',
+        'Query key ["item",2]',
+        'Query key ["item",4]',
+      ])
     })
 
     it('should clear all queries when the clear cache button is clicked', () => {
@@ -1217,6 +1359,82 @@ describe('Devtools', () => {
         [...CSS.highlights.values()].every((highlight) => highlight.size === 0),
       ).toBe(true)
     })
+
+    it.each(['key', 'data', 'all'] as const)(
+      'should initialize the query Data search from the %s scope',
+      (scope) => {
+        queryClient.setQueryData(['needle-first'], { name: 'first needle' })
+        queryClient.setQueryData(['needle-second'], { name: 'second needle' })
+        const rendered = renderDevtools(
+          { initialIsOpen: true },
+          { 'TanstackQueryDevtools.filterScope': scope },
+        )
+        fireEvent.input(rendered.getByLabelText(/^Filter queries by/), {
+          target: { value: 'Needle' },
+        })
+        fireEvent.click(rendered.getByLabelText('Query key ["needle-first"]'))
+        const search = rendered.getByLabelText('Search data')
+        const initial = scope === 'key' ? '' : 'Needle'
+        expect(search).toHaveValue(initial)
+        expect(
+          rendered.container.querySelectorAll('[data-search-match="true"]'),
+        ).toHaveLength(scope === 'key' ? 0 : 1)
+        fireEvent.input(search, { target: { value: 'first' } })
+        fireEvent.click(rendered.getByLabelText('Query key ["needle-second"]'))
+        expect(search).toHaveValue(initial)
+      },
+    )
+
+    it.each(['key', 'data', 'all'] as const)(
+      'should initialize matching mutation explorers from the %s scope',
+      async (scope) => {
+        for (const source of ['data', 'variables', 'both']) {
+          await queryClient
+            .getMutationCache()
+            .build(queryClient, {
+              mutationKey: ['needle', source],
+              mutationFn: () =>
+                Promise.resolve({
+                  nested: {
+                    name: source === 'variables' ? 'other' : 'data needle',
+                  },
+                }),
+            })
+            .execute({
+              nested: { name: source === 'data' ? 'other' : 'variable needle' },
+            })
+        }
+        const rendered = renderDevtools(
+          { initialIsOpen: true },
+          { 'TanstackQueryDevtools.filterScope': scope },
+        )
+        fireEvent.click(rendered.getByText('Mutations'))
+        fireEvent.input(rendered.getByLabelText(/^Filter mutations by/), {
+          target: { value: 'Needle' },
+        })
+        const rows = rendered.getAllByLabelText(/^Mutation submitted at /)
+        for (const source of ['data', 'variables', 'both']) {
+          const row = rows.find((item) => item.textContent.includes(source))
+          assert(row)
+          fireEvent.click(row)
+          expect(rendered.getByLabelText('Search data')).toHaveValue(
+            scope !== 'key' && source !== 'variables' ? 'Needle' : '',
+          )
+          expect(rendered.getByLabelText('Search variables')).toHaveValue(
+            scope !== 'key' && source !== 'data' ? 'Needle' : '',
+          )
+          expect(rendered.queryByText('No matches')).not.toBeInTheDocument()
+          expect(
+            [...CSS.highlights.values()].some((highlight) =>
+              [...highlight].some((range) => range.toString() === 'needle'),
+            ),
+          ).toBe(scope !== 'key')
+          fireEvent.input(rendered.getByLabelText('Search variables'), {
+            target: { value: 'manual' },
+          })
+        }
+      },
+    )
   })
 
   describe('query details', () => {
@@ -1392,6 +1610,62 @@ describe('Devtools', () => {
   })
 
   describe('mutation filter', () => {
+    it.each(['key', 'data', 'all'] as const)(
+      'should refresh cached mutation variables after updates in the %s scope',
+      async (scope) => {
+        let resolve!: () => void
+        const variables = { name: 'before' }
+        const mutation = queryClient.getMutationCache().build(queryClient, {
+          mutationKey: ['update-variables'],
+          mutationFn: async (input: typeof variables) => {
+            await new Promise<void>((done) => {
+              resolve = done
+            })
+            input.name = 'after'
+            return 'ok'
+          },
+        })
+        const pending = mutation.execute(variables)
+        await vi.advanceTimersByTimeAsync(0)
+        const rendered = renderDevtools(
+          { initialIsOpen: true },
+          { 'TanstackQueryDevtools.filterScope': 'data' },
+        )
+        fireEvent.click(rendered.getByText('Mutations'))
+        const filter = rendered.getByLabelText(/^Filter mutations by/)
+        fireEvent.input(filter, { target: { value: 'before' } })
+        expect(
+          rendered.getAllByLabelText(/^Mutation submitted at /),
+        ).toHaveLength(1)
+        // Even changes while filtering by key or with an empty term must invalidate cached text.
+        const steps = { key: 2, data: 0, all: 1 }[scope]
+        for (let index = 0; index < steps; index++) {
+          fireEvent.click(
+            rendered.getByRole('button', { name: /^Filter scope:/ }),
+          )
+        }
+        fireEvent.input(filter, {
+          target: { value: scope === 'key' ? '' : 'before' },
+        })
+        resolve()
+        await pending
+        await vi.advanceTimersByTimeAsync(0)
+        for (let index = 0; index < (3 - steps) % 3; index++) {
+          fireEvent.click(
+            rendered.getByRole('button', { name: /^Filter scope:/ }),
+          )
+        }
+        fireEvent.input(filter, { target: { value: 'after' } })
+        expect(
+          rendered.getAllByLabelText(/^Mutation submitted at /),
+        ).toHaveLength(1)
+        fireEvent.input(filter, { target: { value: 'before' } })
+        expect(
+          rendered.queryAllByLabelText(/^Mutation submitted at /),
+        ).toHaveLength(0)
+      },
+    )
+
     it('should filter mutations by their "mutationKey"', async () => {
       const rendered = renderDevtools({ initialIsOpen: true })
       fireEvent.click(rendered.getByText('Mutations'))
@@ -1411,11 +1685,57 @@ describe('Devtools', () => {
         2,
       )
 
-      fireEvent.input(rendered.getByLabelText('Filter queries by query key'), {
-        target: { value: 'filter-match' },
-      })
+      fireEvent.input(
+        rendered.getByLabelText('Filter mutations by mutation key'),
+        { target: { value: 'filter-match' } },
+      )
       expect(rendered.getAllByLabelText(/Mutation submitted at/)).toHaveLength(
         1,
+      )
+    })
+
+    it('should filter mutations by their variables or data with the shared filter scope', async () => {
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.filterScope': 'data' },
+      )
+      fireEvent.click(rendered.getByText('Mutations'))
+      const execute = (key: string, variables: unknown, data: unknown) =>
+        queryClient
+          .getMutationCache()
+          .build(queryClient, {
+            mutationKey: [key],
+            mutationFn: () => Promise.resolve(data),
+          })
+          .execute(variables)
+      execute('by-variables', { title: 'Needle' }, 'ok')
+      execute('by-data', { title: 'other' }, { id: 'needle-1' })
+      execute('needle-key', { title: 'other' }, 'ok')
+      await vi.advanceTimersByTimeAsync(0)
+
+      fireEvent.input(
+        rendered.getByLabelText('Filter mutations by variables or data'),
+        { target: { value: 'needle' } },
+      )
+      const keys = () =>
+        rendered
+          .getAllByLabelText(/Mutation submitted at/)
+          .map((row) => row.textContent)
+      expect(keys()).toHaveLength(2)
+      expect(keys().join()).toContain('by-variables')
+      expect(keys().join()).toContain('by-data')
+
+      fireEvent.click(
+        rendered.getByRole('button', { name: 'Filter scope: Data' }),
+      )
+      expect(keys()).toHaveLength(3)
+      fireEvent.click(
+        rendered.getByRole('button', { name: 'Filter scope: All' }),
+      )
+      expect(keys()).toHaveLength(1)
+      expect(keys().join()).toContain('needle-key')
+      expect(localStorage.getItem('TanstackQueryDevtools.filterScope')).toBe(
+        'key',
       )
     })
   })

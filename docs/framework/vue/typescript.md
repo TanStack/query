@@ -53,6 +53,22 @@ const { data } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 [//]: # 'TypeNarrowing'
 
 ```tsx
+const { state } = useQuery({
+  queryKey: ['test'],
+  queryFn: () => Promise.resolve(5),
+})
+
+if (state.status === 'success') {
+  state.data
+  // ^? const data: number
+}
+```
+
+`state` is one readonly reactive object. `data`, `error`, `status`, `isPending`, and the other result fields are plain values, so you read `state.data` rather than `state.data.value`. Because those fields live on one discriminated union, `status === 'success'` (or `isSuccess`) makes `data` defined, and `status === 'pending'` (or `isPending`) makes `data` `undefined` and `error` `null`.
+
+Destructuring `useQuery()` directly gives you independent refs, and TypeScript cannot carry a narrowing from one ref to another — `if (isSuccess.value)` leaves `data.value` as `Group[] | undefined`. Wrapping the whole return in `reactive()` flattens those refs back into the same union:
+
+```tsx
 const { data, isSuccess } = reactive(
   useQuery({
     queryKey: ['test'],
@@ -66,14 +82,7 @@ if (isSuccess) {
 }
 ```
 
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPQBuOAtAEcc+KgFgAUKEixEcKOnqsYwbuiKlylKr3RUA3BImsIzeEgAm9BgBo4wVAGVkrVulSp1AXjkKlK9AAUaFjCeAEA2lQwbjBUALq2AQCUcJ4AfHAACpr26AB08qgQADaqAQCsSVWGkiRwAfZOLm6oKQgScJ1wlgwSnJydAHoA-BKEEkA)
-
-The `reactive()` wrapper is what makes this work: it flattens the result into
-plain values, so `isSuccess` and `data` stay part of the same discriminated
-union. Destructuring `useQuery()` directly gives you independent refs, and
-TypeScript cannot carry a narrowing from one ref to another — `if (isSuccess.value)`
-leaves `data.value` as `Group[] | undefined`. Without `reactive()`, narrow the
-value ref itself:
+You can also narrow the value ref itself:
 
 ```tsx
 const { data } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
