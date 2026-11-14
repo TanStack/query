@@ -162,11 +162,11 @@ will be used.
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
 The current query result. `status` is `error` if the query has an error from a fetch that failed
-after its retries or if `select` threw, `success` if the query has cached data or `placeholderData` (even if
-`select` returns `undefined`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived boolean
-`ref`s for convenience. `state` is that result as one readonly reactive object — `state.data`,
-`state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows `state.data` to
-`TData`.
+after its retries or if `select` threw, `success` if the query has cached data (even if `select` returns
+`undefined`) or data from `placeholderData`, and `pending` otherwise. `isPending`/`isSuccess`/`isError` are
+derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
+`state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows
+`state.data` to `TData`.
 
 ### Examples
 
@@ -367,11 +367,11 @@ will be used.
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
 The current query result. `status` is `error` if the query has an error from a fetch that failed
-after its retries or if `select` threw, `success` if the query has cached data or `placeholderData` (even if
-`select` returns `undefined`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived boolean
-`ref`s for convenience. `state` is that result as one readonly reactive object — `state.data`,
-`state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows `state.data` to
-`TData`.
+after its retries or if `select` threw, `success` if the query has cached data (even if `select` returns
+`undefined`) or data from `placeholderData`, and `pending` otherwise. `isPending`/`isSuccess`/`isError` are
+derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
+`state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows
+`state.data` to `TData`.
 
 ### Examples
 
@@ -446,8 +446,8 @@ will be used.
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
 The current query result. `status` is `error` if the query has an error from a fetch that failed
-after its retries or if `select` threw, `success` if the query has cached data or `placeholderData` (even if
-`select` returns `undefined`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived boolean
-`ref`s for convenience. `state` is that result as one readonly reactive object — `state.data`,
-`state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows `state.data` to
-`TData`.
+after its retries or if `select` threw, `success` if the query has cached data (even if `select` returns
+`undefined`) or data from `placeholderData`, and `pending` otherwise. `isPending`/`isSuccess`/`isError` are
+derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
+`state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows
+`state.data` to `TData`.

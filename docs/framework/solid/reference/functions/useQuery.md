@@ -161,8 +161,8 @@ will be used.
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
 The current query result, as a Solid store. `status` is `error` if the query has an error from
-a fetch that failed after its retries or if `select` threw, `success` if the query has cached data or
-`placeholderData` (even if `select` returns `undefined`), and `pending` otherwise.
+a fetch that failed after its retries or if `select` threw, `success` if the query has cached data
+(even if `select` returns `undefined`) or data from `placeholderData`, and `pending` otherwise.
 `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
@@ -351,8 +351,8 @@ will be used.
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
 The current query result, as a Solid store. `status` is `error` if the query has an error from
-a fetch that failed after its retries or if `select` threw, `success` if the query has cached data or
-`placeholderData` (even if `select` returns `undefined`), and `pending` otherwise.
+a fetch that failed after its retries or if `select` threw, `success` if the query has cached data
+(even if `select` returns `undefined`) or data from `placeholderData`, and `pending` otherwise.
 `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 <a id="result-properties"></a>
@@ -378,11 +378,11 @@ a fetch that failed after its retries or if `select` threw, `success` if the que
 | <a id="result-property-isloading"></a> `isLoading` | `boolean` | Is `true` whenever the first fetch for a query is in-flight. - Is the same as `isFetching && isPending`. |
 | <a id="result-property-isloadingerror"></a> `isLoadingError` | `boolean` | Will be `true` if the query has an error and no data to display. |
 | <a id="result-property-ispaused"></a> `isPaused` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - The query wanted to fetch, but has been `paused`. |
-| <a id="result-property-ispending"></a> `isPending` | `boolean` | Will be `true` if the query has no cached data, no `placeholderData` and no error. |
+| <a id="result-property-ispending"></a> `isPending` | `boolean` | Will be `true` if the query has no cached data, no data from `placeholderData` and no error. |
 | <a id="result-property-isplaceholderdata"></a> `isPlaceholderData` | `boolean` | Will be `true` if the data shown is the placeholder data. |
 | <a id="result-property-isrefetcherror"></a> `isRefetchError` | `boolean` | Will be `true` if the query has an error and still has data to display (for infinite queries, not after a failed page fetch). |
 | <a id="result-property-isrefetching"></a> `isRefetching` | `boolean` | Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`. - Is the same as `isFetching && !isPending`. |
 | <a id="result-property-isstale"></a> `isStale` | `boolean` | Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`. |
-| <a id="result-property-issuccess"></a> `isSuccess` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has cached data or `placeholderData` and no error. |
+| <a id="result-property-issuccess"></a> `isSuccess` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has cached data or data from `placeholderData`, and no error. |
 | <a id="result-property-refetch"></a> `refetch` | (`options?`: [`RefetchOptions`](../interfaces/RefetchOptions.md)) => `Promise`\<[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>\> | A function to manually refetch the query. |
-| <a id="result-property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` | The status of the query. - Will be: - `error` if the query has an error from a fetch that failed after its retries, or if `select` threw. - `success` if the query has cached data or `placeholderData` and no error, even if `select` returns `undefined`. - `pending` otherwise, since the query has no cached data, no `placeholderData` and no error. |
+| <a id="result-property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` | The status of the query. - Will be: - `error` if the query has an error from a fetch that failed after its retries, or if `select` threw. - `success` if the query has cached data (even if `select` returns `undefined`) or data from `placeholderData`, and no error. - `pending` otherwise, since the query has no cached data, no data from `placeholderData` and no error. |

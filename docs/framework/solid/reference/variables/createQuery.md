@@ -148,8 +148,8 @@ will be used.
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
 The current query result, as a Solid store. `status` is `error` if the query has an error from
-a fetch that failed after its retries or if `select` threw, `success` if the query has cached data or
-`placeholderData` (even if `select` returns `undefined`), and `pending` otherwise.
+a fetch that failed after its retries or if `select` threw, `success` if the query has cached data
+(even if `select` returns `undefined`) or data from `placeholderData`, and `pending` otherwise.
 `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
