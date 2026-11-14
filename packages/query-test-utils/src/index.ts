@@ -1,3 +1,7 @@
 export { sleep } from './sleep'
 export { createKey } from './createKey'
 export { mockVisibilityState } from './mockVisibilityState'
+export { fakeTimers } from './fakeTimers'
+export { clearOnDispose } from './clearOnDispose'
+export { subscribe } from './subscribe'
+export { unmountOnDispose } from './unmountOnDispose'
