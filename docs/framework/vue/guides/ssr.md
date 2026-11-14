@@ -313,7 +313,7 @@ const queryClient = new QueryClient({
 })
 ```
 
-If you set a finite `gcTime` on the server, add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client. This removes every query from the cache and cancels its pending timer.
+If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client and all of its queries have settled, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending timer. A fetch that is still in flight when you call `clear()` schedules a new timer once it settles, so wait for pending fetches to settle first.
 
 ## `dehydrate`/`hydrate` options
 
