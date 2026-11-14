@@ -1,17 +1,14 @@
-# `create-preact`
+# TanStack Preact Query Simple Example
 
-<h2 align="center">
-  <img height="256" width="256" src="./src/assets/preact.svg">
-</h2>
+Fetches a single GitHub repository and shows its stats.
 
-<h3 align="center">Get started using Preact and Vite!</h3>
+## How it works
 
-## Getting Started
+- `src/index.tsx` creates a `QueryClient` and provides it with `QueryClientProvider`.
+- `Example` in the same file calls `useQuery` with `queryKey: ['repoData']` and an inline `queryFn` that fetches the TanStack Query repository from the GitHub API.
+- It shows "Loading..." while `isPending` is `true`, the error message when `error` is set, and "Updating..." while `isFetching` is `true` during a background refetch.
 
-- `pnpm install` - Installs dependencies
+To run this example:
 
-- `pnpm dev` - Starts a dev server at http://localhost:5173/
-
-- `pnpm build` - Builds for production, emitting to `dist/`
-
-- `pnpm preview` - Starts a server at http://localhost:4173/ to test production build locally
+- `npm install`
+- `npm run dev`

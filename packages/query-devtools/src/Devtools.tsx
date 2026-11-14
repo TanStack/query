@@ -53,21 +53,25 @@ import {
   XCircle,
 } from './icons'
 import Explorer, { SearchableExplorer } from './Explorer'
+import { createSearchText } from './explorerSearch'
 import { VirtualList } from './VirtualList'
 import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
 import {
   BUTTON_POSITION,
+  DEFAULT_FILTER_SCOPE,
   DEFAULT_HEIGHT,
   DEFAULT_MUTATION_SORT_FN_NAME,
   DEFAULT_SORT_FN_NAME,
   DEFAULT_SORT_ORDER,
   DEFAULT_WIDTH,
+  FILTER_SCOPES,
   INITIAL_IS_OPEN,
   POSITION,
   firstBreakpoint,
   secondBreakpoint,
   thirdBreakpoint,
 } from './constants'
+import type { FilterScope } from './constants'
 import type {
   DevtoolsErrorType,
   DevtoolsPosition,
@@ -76,12 +80,87 @@ import type {
 import type {
   Mutation,
   MutationCache,
+  MutationCacheNotifyEvent,
   Query,
   QueryCache,
   QueryCacheNotifyEvent,
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
 import type { Accessor, Component, JSX } from 'solid-js'
+
+const filterScopeLabels: Record<FilterScope, string> = {
+  key: 'Key',
+  data: 'Data',
+  all: 'All',
+}
+
+const filterScopeAriaLabels: Record<
+  'queries' | 'mutations',
+  Record<FilterScope, string>
+> = {
+  queries: {
+    key: 'Filter queries by query key',
+    data: 'Filter queries by query data',
+    all: 'Filter queries by query key or data',
+  },
+  mutations: {
+    key: 'Filter mutations by mutation key',
+    data: 'Filter mutations by variables or data',
+    all: 'Filter mutations by mutation key, variables or data',
+  },
+}
+
+// Query data is immutable. Cached mutation text is invalidated when mutation state changes.
+const dataSearchTexts = new WeakMap<object, string>()
+
+/**
+ * Gets the cached search text of query or mutation data, building it if there is time left.
+ * @param data - The query data, or mutation variables or data.
+ * @param deadline - When to stop building search texts, compared to `performance.now()`.
+ * @returns The search text, or undefined if it isn't built and the deadline has passed.
+ */
+const getDataSearchText = (data: unknown, deadline = Infinity) => {
+  if (typeof data !== 'object' || data === null) return createSearchText(data)
+  let text = dataSearchTexts.get(data)
+  if (text === undefined && performance.now() < deadline) {
+    text = createSearchText(data)
+    dataSearchTexts.set(data, text)
+  }
+  return text
+}
+
+/**
+ * Checks whether data contains the term. Missing data never matches.
+ * @param data - The query data, or mutation variables or data.
+ * @param term - The lowercased search term.
+ * @returns Whether the data matches.
+ */
+const matchesData = (data: unknown, term: string) =>
+  data !== undefined && getDataSearchText(data)!.includes(term)
+
+/**
+ * Builds data search texts for a few milliseconds per task, so filtering by data doesn't block
+ * the page.
+ * @returns `version`, which changes when building continued in a later task, and `prepare`,
+ * which returns whether the search texts of all the data are built.
+ */
+const createDataSearchTexts = () => {
+  const [version, setVersion] = createSignal(0)
+  let timeout: ReturnType<typeof setTimeout> | undefined
+  onCleanup(() => clearTimeout(timeout))
+
+  const prepare = (data: Array<unknown>) => {
+    clearTimeout(timeout)
+    const deadline = performance.now() + 8
+    if (data.every((item) => getDataSearchText(item, deadline) !== undefined)) {
+      return true
+    }
+    timeout = setTimeout(() => setVersion((current) => current + 1))
+    return false
+  }
+
+  return { version, prepare }
+}
 
 interface DevtoolsPanelProps {
   localStore: StorageObject<string>
@@ -755,22 +834,64 @@ export const ContentView: Component<ContentViewProps> = (props) => {
         : useQueryDevtoolsContext().hideDisabledQueries || false
   })
 
+  const filterScope = createMemo<FilterScope>(() => {
+    const scope = props.localStore.filterScope as FilterScope
+    return FILTER_SCOPES.includes(scope) ? scope : DEFAULT_FILTER_SCOPE
+  })
+
+  const cycleFilterScope = () => {
+    const index = FILTER_SCOPES.indexOf(filterScope())
+    props.setLocalStore(
+      'filterScope',
+      FILTER_SCOPES[(index + 1) % FILTER_SCOPES.length]!,
+    )
+  }
+
+  // Data changes don't change the query count, so data searches need their own trigger
+  const queryDataVersion = createSubscribeToQueryCacheBatcher(
+    () => ({}),
+    false,
+    (event) =>
+      filterScope() !== 'key' &&
+      !!props.localStore.filter &&
+      event.type === 'updated' &&
+      (event.action.type === 'success' || event.action.type === 'setState'),
+  )
+
+  const queryDataSearchTexts = createDataSearchTexts()
+
   const queries = createMemo(
     on(
       () => [
         queryCount(),
         props.localStore.filter,
+        filterScope(),
+        queryDataVersion(),
+        queryDataSearchTexts.version(),
         sort(),
         sortOrder(),
         hideDisabledQueries(),
       ],
-      () => {
+      (_input, _prevInput, prev: Array<Query> | undefined) => {
         const curr = query_cache().getAll()
+        const filter = props.localStore.filter || ''
+        const scope = filterScope()
+        const dataTerm = filter.toLowerCase()
 
-        let filtered = props.localStore.filter
+        if (
+          filter &&
+          scope !== 'key' &&
+          !queryDataSearchTexts.prepare(curr.map((item) => item.state.data))
+        ) {
+          // Keeps the previous results until all search texts are built
+          return prev ?? []
+        }
+
+        let filtered = filter
           ? curr.filter(
               (item) =>
-                rankItem(item.queryHash, props.localStore.filter || '').passed,
+                (scope !== 'data' && rankItem(item.queryHash, filter).passed) ||
+                (scope !== 'key' && matchesData(item.state.data, dataTerm)),
             )
           : [...curr]
 
@@ -794,26 +915,68 @@ export const ContentView: Component<ContentViewProps> = (props) => {
     false,
   )
 
+  // Variables and data changes don't change the mutation count, so data searches need their own trigger
+  const mutationDataVersion = createSubscribeToMutationCacheBatcher(
+    () => ({}),
+    false,
+    (event) => {
+      if (event.type !== 'updated') return false
+      // Mutation functions can change variables in place, including when no data filter is active.
+      for (const value of [
+        event.mutation.state.variables,
+        event.mutation.state.data,
+      ]) {
+        if (typeof value === 'object' && value !== null) {
+          dataSearchTexts.delete(value)
+        }
+      }
+      return filterScope() !== 'key' && !!props.localStore.mutationFilter
+    },
+  )
+
+  const mutationDataSearchTexts = createDataSearchTexts()
+
   const mutations = createMemo(
     on(
       () => [
         mutationCount(),
         props.localStore.mutationFilter,
+        filterScope(),
+        mutationDataVersion(),
+        mutationDataSearchTexts.version(),
         mutationSort(),
         mutationSortOrder(),
       ],
-      () => {
+      (_input, _prevInput, prev: Array<Mutation> | undefined) => {
         const curr = mutation_cache().getAll()
+        const filter = props.localStore.mutationFilter || ''
+        const scope = filterScope()
+        const dataTerm = filter.toLowerCase()
 
-        const filtered = props.localStore.mutationFilter
+        if (
+          filter &&
+          scope !== 'key' &&
+          !mutationDataSearchTexts.prepare(
+            curr.flatMap((item) => [item.state.variables, item.state.data]),
+          )
+        ) {
+          // Keeps the previous results until all search texts are built
+          return prev ?? []
+        }
+
+        const filtered = filter
           ? curr.filter((item) => {
               const value = `${
                 item.options.mutationKey
                   ? JSON.stringify(item.options.mutationKey) + ' - '
                   : ''
               }${new Date(item.state.submittedAt).toLocaleString()}`
-              return rankItem(value, props.localStore.mutationFilter || '')
-                .passed
+              return (
+                (scope !== 'data' && rankItem(value, filter).passed) ||
+                (scope !== 'key' &&
+                  (matchesData(item.state.variables, dataTerm) ||
+                    matchesData(item.state.data, dataTerm)))
+              )
             })
           : [...curr]
 
@@ -939,7 +1102,9 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             >
               <Search />
               <input
-                aria-label="Filter queries by query key"
+                aria-label={
+                  filterScopeAriaLabels[selectedView()][filterScope()]
+                }
                 type="text"
                 placeholder="Filter"
                 onInput={(e) => {
@@ -957,6 +1122,19 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                     : props.localStore.mutationFilter || ''
                 }
               />
+              <button
+                type="button"
+                onClick={cycleFilterScope}
+                class={cx(
+                  styles().filterScopeBtn,
+                  'tsqd-query-filter-scope-btn',
+                )}
+                aria-label={`Filter scope: ${filterScopeLabels[filterScope()]}`}
+                title={`${filterScopeAriaLabels[selectedView()][filterScope()]}. Click to switch between key, data, and both.`}
+                data-scope={filterScope()}
+              >
+                {filterScopeLabels[filterScope()]}
+              </button>
             </div>
             <div
               class={cx(
@@ -1394,11 +1572,21 @@ export const ContentView: Component<ContentViewProps> = (props) => {
         </Show>
       </div>
       <Show when={selectedView() === 'queries' && selectedQueryHash()}>
-        <QueryDetails />
+        <QueryDetails
+          initialSearch={
+            filterScope() !== 'key' ? props.localStore.filter : undefined
+          }
+        />
       </Show>
 
       <Show when={selectedView() === 'mutations' && selectedMutationId()}>
-        <MutationDetails />
+        <MutationDetails
+          initialSearch={
+            filterScope() !== 'key'
+              ? props.localStore.mutationFilter
+              : undefined
+          }
+        />
       </Show>
     </>
   )
@@ -1788,7 +1976,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
   )
 }
 
-const QueryDetails = () => {
+const QueryDetails = (props: { initialSearch?: string }) => {
   const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsState()
 
   const theme = useTheme()
@@ -2227,6 +2415,7 @@ const QueryDetails = () => {
           >
             <SearchableExplorer
               searchKey={activeQuery()}
+              initialSearch={props.initialSearch}
               label="Data"
               defaultExpanded={['Data']}
               value={activeQueryStateData()}
@@ -2321,7 +2510,7 @@ const QueryDetails = () => {
   )
 }
 
-const MutationDetails = () => {
+const MutationDetails = (props: { initialSearch?: string }) => {
   const { selectedMutationId } = useDevtoolsState()
 
   const theme = useTheme()
@@ -2367,6 +2556,11 @@ const MutationDetails = () => {
         .find((mutation) => mutation.mutationId === selectedMutationId()),
     false,
   )
+
+  const matchingSearch = (value: unknown) =>
+    props.initialSearch && matchesData(value, props.initialSearch.toLowerCase())
+      ? props.initialSearch
+      : undefined
 
   const getQueryStatusColors = () => {
     if (color() === 'gray') {
@@ -2443,7 +2637,9 @@ const MutationDetails = () => {
           }}
           class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
         >
-          <Explorer
+          <SearchableExplorer
+            searchKey={activeMutation()}
+            initialSearch={matchingSearch(activeMutation()!.state.variables)}
             label="Variables"
             defaultExpanded={['Variables']}
             value={activeMutation()!.state.variables}
@@ -2483,6 +2679,7 @@ const MutationDetails = () => {
         >
           <SearchableExplorer
             searchKey={activeMutation()}
+            initialSearch={matchingSearch(activeMutation()!.state.data)}
             label="Data"
             defaultExpanded={['Data']}
             value={activeMutation()!.state.data}
@@ -2586,6 +2783,7 @@ const setupMutationCacheSubscription = () => {
 const createSubscribeToMutationCacheBatcher = <T,>(
   callback: (queryCache: Accessor<MutationCache>) => Exclude<T, Function>,
   equalityCheck: boolean = true,
+  shouldUpdate: (event: MutationCacheNotifyEvent) => boolean = () => true,
 ) => {
   const { mutationCacheSubscriptions } = useDevtoolsSubscriptions()
   const mutationCache = createMemo(() => {
@@ -2602,7 +2800,7 @@ const createSubscribeToMutationCacheBatcher = <T,>(
     setValue(callback(mutationCache))
   })
 
-  mutationCacheSubscriptions.register(callback, setValue)
+  mutationCacheSubscriptions.register(callback, setValue, shouldUpdate)
 
   return value
 }
@@ -3156,6 +3354,8 @@ const stylesFactory = (
       & input {
         font-size: ${font.size.xs};
         width: 100%;
+        min-width: 0;
+        flex: 1;
         background-color: ${t(colors.gray[100], colors.darkGray[400])};
         border: none;
         padding: 0;
@@ -3172,6 +3372,27 @@ const stylesFactory = (
       &:focus-within {
         outline-offset: 2px;
         border-radius: ${border.radius.xs};
+        outline: 2px solid ${colors.blue[800]};
+      }
+    `,
+    filterScopeBtn: css`
+      flex-shrink: 0;
+      cursor: pointer;
+      padding: 0 ${size[1]};
+      border-radius: ${border.radius.xs};
+      border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
+      background-color: ${t(colors.gray[200], colors.darkGray[500])};
+      color: ${t(colors.gray[700], colors.gray[300])};
+      font-size: ${font.size.xs};
+      line-height: ${font.lineHeight.xs};
+      &[data-scope='data'],
+      &[data-scope='all'] {
+        border-color: ${t(colors.blue[300], colors.blue[700])};
+        background-color: ${t(colors.blue[100], colors.blue[900])};
+        color: ${t(colors.blue[700], colors.blue[300])};
+      }
+      &:focus-visible {
+        outline-offset: 2px;
         outline: 2px solid ${colors.blue[800]};
       }
     `,

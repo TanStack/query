@@ -328,6 +328,32 @@ describe('VueQueryPlugin', () => {
       expect(clientPersisterOnSuccess).toHaveBeenCalledWith(customClient)
     })
 
+    it('should reset isRestoring and not call clientPersisterOnSuccess when restoring fails', async () => {
+      const key = createKey()
+      const appMock = getAppMock()
+      const customClient = new QueryClient()
+      const clientPersisterOnSuccess = vi.fn<(client: QueryClient) => void>()
+
+      VueQueryPlugin.install(appMock, {
+        queryClient: customClient,
+        clientPersister: () => [
+          vi.fn<() => void>(),
+          Promise.reject(new Error('Error restoring client')),
+        ],
+        clientPersisterOnSuccess,
+      })
+
+      const queryFn = vi.fn<() => string>(() => 'data')
+      useQuery({ queryKey: key, queryFn }, customClient)
+
+      expect(customClient.isRestoring?.value).toBe(true)
+      expect(queryFn).not.toHaveBeenCalled()
+      await vi.advanceTimersByTimeAsync(0)
+      expect(customClient.isRestoring?.value).toBe(false)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(clientPersisterOnSuccess).not.toHaveBeenCalled()
+    })
+
     it('should call the unmount returned by clientPersister when the app unmounts', () => {
       const appMock = getAppMock(true)
       const customClient = new QueryClient()

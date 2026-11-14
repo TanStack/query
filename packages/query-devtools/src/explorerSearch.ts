@@ -104,6 +104,46 @@ export function searchEntries(value: unknown): Array<SearchEntry> | undefined {
   }
 }
 
+// `toLowerCase` never outputs it, so a lowercased term can't match across two joined parts
+const SEARCH_TEXT_SEPARATOR = 'A'
+
+/**
+ * Builds the text that `searchExplorer` matches: every entry label and
+ * primitive value, lowercased. Visiting breadth-first reaches each object once
+ * at its shallowest depth, so shared data is searched once with the same depth
+ * bound.
+ * @param rootValue - The data to build the search text of.
+ * @returns Text that contains a lowercased term exactly when `searchExplorer` matches it.
+ */
+export function createSearchText(rootValue: unknown): string {
+  const rootText = primitiveText(rootValue)
+  if (rootText !== undefined) return rootText.toLowerCase()
+  const parts: Array<string> = []
+  const seen = new Set<unknown>([rootValue])
+  const queue: Array<{ value: unknown; depth: number }> = [
+    { value: rootValue, depth: 0 },
+  ]
+  // Also visits the entries pushed while iterating
+  for (const { value, depth } of queue) {
+    for (const entry of searchEntries(value) ?? []) {
+      parts.push(entry.label.toLowerCase())
+      if (entry.accessor) continue
+      const text = primitiveText(entry.value)
+      if (text !== undefined) {
+        parts.push(text.toLowerCase())
+      } else if (
+        depth < 500 &&
+        typeof entry.value === 'object' &&
+        !seen.has(entry.value)
+      ) {
+        seen.add(entry.value)
+        queue.push({ value: entry.value, depth: depth + 1 })
+      }
+    }
+  }
+  return parts.join(SEARCH_TEXT_SEPARATOR)
+}
+
 /**
  * Builds one search tree, stopping ancestor cycles while visiting shared siblings.
  * @param rootValue - The current root data.
