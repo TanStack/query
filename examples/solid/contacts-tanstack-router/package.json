@@ -11,14 +11,14 @@
   },
   "dependencies": {
     "@tanstack/solid-pacer": "^0.24.0",
-    "@tanstack/solid-query": "^5.106.1",
-    "@tanstack/solid-query-devtools": "^5.106.1",
+    "@tanstack/solid-query": "^5.107.1",
+    "@tanstack/solid-query-devtools": "^5.107.1",
     "@tanstack/solid-router": "^1.170.43",
     "match-sorter": "^8.3.0",
     "solid-js": "^1.9.18"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.106.1",
+    "@tanstack/eslint-plugin-query": "^5.107.1",
     "@tanstack/router-plugin": "^1.168.48",
     "eslint-plugin-solid": "^0.18.1",
     "typescript": "^6.0.3",

@@ -1,38 +1,17 @@
-# create-svelte
+# TanStack Svelte Query Load-More Infinite Scroll Example (SvelteKit)
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+An infinite list that loads the next page when a "Load more" button is clicked.
 
-## Creating a project
+Built with [SvelteKit](https://svelte.dev/docs/kit).
 
-If you're seeing this, you've probably already done this step. Congrats!
+## How it works
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+- `src/lib/services/planets/queries.ts` defines `planetsQueries.list()` with `infiniteQueryOptions`, starting at `initialPageParam: 1`. `getNextPageParam` reads the `page` search param from the response's `next` URL and returns `undefined` on the last page.
+- `src/lib/services/planets/api.ts` fetches a page of planets from SWAPI.
+- `src/lib/LoadMore.svelte` reads the pages with `createInfiniteQuery`, renders every planet in `data.pages`, and calls `fetchNextPage` from the "Load More" button while `hasNextPage` is `true`.
+- `src/routes/+layout.svelte` creates the `QueryClient` with `enabled: browser`, so queries only run in the browser.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+To run this example:
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn` or `bun install`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+- `npm install`
+- `npm run dev`

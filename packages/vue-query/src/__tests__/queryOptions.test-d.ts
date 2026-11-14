@@ -478,6 +478,29 @@ describe('queryOptions', () => {
     expectTypeOf(options.queryKey).not.toBeUndefined()
   })
 
+  it('should allow a getter that returns boolean or undefined', () => {
+    const someRef = ref<boolean | undefined>(false)
+
+    const options = queryOptions({
+      queryKey: createKey(),
+      queryFn: () => Promise.resolve(1),
+      enabled: () => someRef.value,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+
+  it('should type enabled with the query argument from query-core', () => {
+    queryOptions({
+      queryKey: ['post'] as const,
+      queryFn: () => Promise.resolve(1),
+      enabled: (query) => {
+        expectTypeOf(query.queryKey).toEqualTypeOf<readonly ['post']>()
+        return query.state.status !== 'pending'
+      },
+    })
+  })
+
   it('should allow computed ref as queryKey', () => {
     const id = ref<string | null>('1')
 
