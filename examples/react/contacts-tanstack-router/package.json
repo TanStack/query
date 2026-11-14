@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@tanstack/react-pacer": "^0.23.0",
-    "@tanstack/react-query": "^5.106.1",
-    "@tanstack/react-query-devtools": "^5.106.1",
+    "@tanstack/react-query": "^5.107.1",
+    "@tanstack/react-query-devtools": "^5.107.1",
     "@tanstack/react-router": "^1.170.46",
     "match-sorter": "^8.3.0",
     "react": "^19.3.1",
@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@eslint-react/eslint-plugin": "^5.28.8",
-    "@tanstack/eslint-plugin-query": "^5.106.1",
+    "@tanstack/eslint-plugin-query": "^5.107.1",
     "@tanstack/router-plugin": "^1.168.48",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
