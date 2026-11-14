@@ -1,38 +1,17 @@
-# create-svelte
+# TanStack Svelte Query Optimistic Updates Example (SvelteKit)
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Adds todos optimistically by writing to the cache in `onMutate` and rolling back on error.
 
-## Creating a project
+Built with [SvelteKit](https://svelte.dev/docs/kit).
 
-If you're seeing this, you've probably already done this step. Congrats!
+## How it works
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+- `src/lib/services/todos/queries.ts` defines `todosQueries.list()` with `queryOptions`, keyed by `['todos', 'list']`, and `todosMutations.create()` with `mutationOptions`. `src/lib/services/todos/api.ts` calls `/api/data`.
+- `src/routes/+page.svelte` reads the list with `createQuery` and adds todos with `createMutation`. In `onMutate` it cancels the list query, saves the current data and writes the new todo into the cache with `client.setQueryData`.
+- If the mutation fails, `onError` restores the saved data. `onSettled` invalidates the list either way, so it is refetched from the server.
+- `src/routes/api/data/+server.ts` is a SvelteKit endpoint that keeps the todos in server memory. `GET` waits 1 second, and `POST` uppercases the text and fails about 30% of the time.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+To run this example:
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn` or `bun install`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+- `npm install`
+- `npm run dev`
