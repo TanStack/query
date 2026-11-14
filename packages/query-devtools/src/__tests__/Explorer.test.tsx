@@ -123,7 +123,7 @@ describe('Explorer', () => {
       vi.stubGlobal('CSS', { highlights })
       vi.stubGlobal('Highlight', Set)
       const [value, setValue] = createSignal({
-        city: '\ud83d\udccd \u0130stanbul \u0130stanbul',
+        material: '\ud83d\udccd \u0130pek \u0130pek',
       })
       const rendered = renderSearchable({
         label: 'Data',
@@ -131,13 +131,13 @@ describe('Explorer', () => {
           return value()
         },
       })
-      searchData(rendered, 'BUL')
+      searchData(rendered, 'PEK')
       expect(highlights.size).toBe(1)
-      expect(highlightedText()).toStrictEqual(['bul', 'bul'])
+      expect(highlightedText()).toStrictEqual(['pek', 'pek'])
 
       searchData(rendered, 'i')
       expect(highlightedText()).toStrictEqual(['i', 'İ', 'İ'])
-      setValue({ city: 'Izmir' })
+      setValue({ material: 'Izmir' })
       expect(highlightedText().sort()).toStrictEqual(['I', 'i', 'i'])
 
       fireEvent.click(rendered.getByText('Clear'))
@@ -272,13 +272,13 @@ describe('Explorer', () => {
     it('highlights original text when Unicode lowercasing changes its length', () => {
       const rendered = renderSearchable({
         label: 'Data',
-        value: { city: '\ud83d\udccd \u0130stanbul' },
+        value: { material: '\ud83d\udccd \u0130pek' },
       })
-      searchData(rendered, 'BUL')
-      expect(highlightedText()).toContain('bul')
-      expect(rendered.getByText('city:').nextElementSibling).toHaveTextContent(
-        '"\ud83d\udccd \u0130stanbul"',
-      )
+      searchData(rendered, 'PEK')
+      expect(highlightedText()).toContain('pek')
+      expect(
+        rendered.getByText('material:').nextElementSibling,
+      ).toHaveTextContent('"\ud83d\udccd \u0130pek"')
       searchData(rendered, 'i')
       expect(highlightedText()).toContain('\u0130')
     })
@@ -476,6 +476,30 @@ describe('Explorer', () => {
       setKey('second')
       expect(rendered.getByLabelText('Search data')).toHaveValue('')
       expect(highlightedText()).toHaveLength(0)
+    })
+
+    it('starts with the initial search and restores it when the selected root changes', () => {
+      const [key, setKey] = createSignal('first')
+      const [initialSearch, setInitialSearch] = createSignal('Needle')
+      const rendered = renderSearchable({
+        label: 'Data',
+        value: { text: 'a needle' },
+        get searchKey() {
+          return key()
+        },
+        get initialSearch() {
+          return initialSearch()
+        },
+      })
+      const input = rendered.getByLabelText('Search data')
+      expect(input).toHaveValue('Needle')
+      expect(highlightedText()).toStrictEqual(['needle'])
+      searchData(rendered, 'other')
+      setInitialSearch('a')
+      expect(input).toHaveValue('other')
+      setKey('second')
+      expect(input).toHaveValue('a')
+      expect(highlightedText()).toStrictEqual(['a'])
     })
 
     it('searches Map and Set entries and keeps distinct object keys', () => {

@@ -3,7 +3,7 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import ApproachTabs from './components/ApproachTabs.vue'
 
 useHead({
-  title: 'TanStack Query — Optimistic Updates',
+  title: 'TanStack Vue Query Optimistic Updates Example (Nuxt 4)',
   meta: [
     {
       name: 'description',

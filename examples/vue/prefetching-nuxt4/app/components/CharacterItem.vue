@@ -24,7 +24,7 @@ const prefetch = () => {
 </script>
 
 <template>
-  <li @mouseenter="prefetch" @focus="prefetch">
+  <li @mouseenter="prefetch" @focusin="prefetch">
     <button
       type="button"
       :style="data ? { fontWeight: 'bold' } : {}"

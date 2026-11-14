@@ -585,7 +585,7 @@ A proxy of `result` that tracks property reads.
 updateResult(): void;
 ```
 
-Defined in: [packages/query-core/src/queryObserver.ts:765](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L765)
+Defined in: [packages/query-core/src/queryObserver.ts:766](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L766)
 
 Recomputes and stores the current result from the current query/options, notifying listeners
 if it changed. Framework adapters call this right after subscribing to make sure no query

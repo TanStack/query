@@ -494,6 +494,26 @@ describe('queryObserver', () => {
     expect(observerResult2.data).toMatchObject({ myCount: 1 })
   })
 
+  it('should keep the result stable when updating a cached selector error', () => {
+    const error = new Error('selector error')
+    const observer = new QueryObserver(queryClient, {
+      queryKey: createKey(),
+      initialData: 'data',
+      enabled: false,
+      select: () => {
+        throw error
+      },
+    })
+    const result = observer.getCurrentResult()
+
+    expect(result).toMatchObject({ status: 'error', error })
+
+    vi.advanceTimersByTime(1)
+    observer.updateResult()
+
+    expect(observer.getCurrentResult()).toBe(result)
+  })
+
   it('should always run the selector again if selector throws an error and selector is not referentially stable', async () => {
     const key = createKey()
     const results: Array<QueryObserverResult> = []
