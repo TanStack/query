@@ -73,7 +73,7 @@ Additional configuration
 [`DefinedCreateQueryResult`](../type-aliases/DefinedCreateQueryResult.md)\<`TData`, `TError`\>
 
 The query result, typed so that `data` is never `undefined` (unless a `select` changes `TData` to
-include `undefined`).
+include `undefined`). At runtime, `data` is still `undefined` if `select` throws on its first call.
 
 ### See
 
@@ -158,10 +158,10 @@ Additional configuration
 
 [`CreateQueryResult`](../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
 
-The query result. `status()` is `'error'` if the last fetch failed after its retries or
-`select` threw, `'success'` if the query has data to display (including `placeholderData`), and
-`'pending'` otherwise. A refetch that starts without data to display clears the error and sets
-`status()` back to `'pending'`. `isPending`/`isSuccess`/`isError` are type-guard methods for convenience.
+The query result. `status()` is `'error'` if the query has an error from a fetch that failed
+after its retries or if `select` threw, `'success'` if the query has data to display (including
+`placeholderData`), and `'pending'` otherwise. `isPending`/`isSuccess`/`isError` are type-guard methods
+for convenience.
 
 ### See
 

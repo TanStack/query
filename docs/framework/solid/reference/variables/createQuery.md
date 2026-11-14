@@ -23,8 +23,9 @@ Defined in: [packages/solid-query/src/index.ts:57](https://github.com/TanStack/q
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
 
-This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
-`undefined` (unless a `select` changes `TData` to include `undefined`).
+This overload is selected when `initialData` is known to be defined, so the resulting `data` is typed as never
+`undefined` (unless a `select` changes `TData` to include `undefined`). At runtime, `data` is still `undefined`
+if `select` throws on its first call.
 
 ### Type Parameters
 
@@ -66,8 +67,8 @@ will be used.
 
 The current query result, as a Solid store, typed so that `status` is `success` or `error`
 (`status` never resolves to `pending` in this overload's type, since `initialData` guarantees data upfront).
-`status` is `error` if the last fetch failed after its retries or `select` threw, and `success` otherwise.
-`isSuccess`/`isError` are derived booleans for convenience.
+`status` is `error` if the query has an error from a fetch that failed after its retries or if `select`
+threw, and `success` otherwise. `isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
 
@@ -146,10 +147,10 @@ will be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result, as a Solid store. `status` is `error` if the last fetch failed after
-its retries or `select` threw, `success` if the query has data to display (including `placeholderData`),
-and `pending` otherwise. A refetch that starts without data to display clears the error and sets
-`status` back to `pending`. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+The current query result, as a Solid store. `status` is `error` if the query has an error from
+a fetch that failed after its retries or if `select` threw, `success` if the query has data to display
+(including `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived
+booleans for convenience.
 
 ### See
 

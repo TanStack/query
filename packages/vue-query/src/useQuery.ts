@@ -35,8 +35,9 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
 >
 
 /**
- * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
- * `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * This overload is selected when `initialData` is known to be defined, so the resulting `data` is typed as never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`). At runtime, `data` is still `undefined`
+ * if `select` throws on its first call.
  *
  * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
  * tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
@@ -49,9 +50,9 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
  * will be used.
  * @returns The current query result, typed so that `status` is `success` or `error` (`status` never resolves
  * to `pending` in this overload's type, since `initialData` guarantees data upfront). `status` is `error` if
- * the last fetch failed after its retries or `select` threw, and `success` otherwise. `isSuccess`/`isError`
- * are derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
- * `state.data`, `state.isPending`, and the rest are plain values.
+ * the query has an error from a fetch that failed after its retries or if `select` threw, and `success`
+ * otherwise. `isSuccess`/`isError` are derived boolean `ref`s for convenience. `state` is that result as one
+ * readonly reactive object — `state.data`, `state.isPending`, and the rest are plain values.
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -93,12 +94,11 @@ export function useQuery<
  * @param options - The {@link UndefinedInitialQueryOptions} to use — everything you can pass to `useQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
- * @returns The current query result. `status` is `error` if the last fetch failed after its retries or `select`
- * threw, `success` if the query has data to display (including `placeholderData`), and `pending` otherwise. A
- * refetch that starts without data to display clears the error and sets `status` back to `pending`.
- * `isPending`/`isSuccess`/`isError` are derived boolean `ref`s for convenience. `state` is that result as one
- * readonly reactive object — `state.data`, `state.isPending`, and the rest are plain values, and
- * `state.status === 'success'` narrows `state.data` to `TData`.
+ * @returns The current query result. `status` is `error` if the query has an error from a fetch that failed
+ * after its retries or if `select` threw, `success` if the query has data to display (including
+ * `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived boolean `ref`s for
+ * convenience. `state` is that result as one readonly reactive object — `state.data`, `state.isPending`, and
+ * the rest are plain values, and `state.status === 'success'` narrows `state.data` to `TData`.
  * @example
  * A query key built from a reactive `ref` — the query refetches whenever `postId` changes:
  * ```vue
@@ -262,12 +262,11 @@ export function useQuery<
  * @param options - A `ref`, plain value, or reactive getter resolving to the {@link UseQueryOptions} to use.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
- * @returns The current query result. `status` is `error` if the last fetch failed after its retries or `select`
- * threw, `success` if the query has data to display (including `placeholderData`), and `pending` otherwise. A
- * refetch that starts without data to display clears the error and sets `status` back to `pending`.
- * `isPending`/`isSuccess`/`isError` are derived boolean `ref`s for convenience. `state` is that result as one
- * readonly reactive object — `state.data`, `state.isPending`, and the rest are plain values, and
- * `state.status === 'success'` narrows `state.data` to `TData`.
+ * @returns The current query result. `status` is `error` if the query has an error from a fetch that failed
+ * after its retries or if `select` threw, `success` if the query has data to display (including
+ * `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived boolean `ref`s for
+ * convenience. `state` is that result as one readonly reactive object — `state.data`, `state.isPending`, and
+ * the rest are plain values, and `state.status === 'success'` narrows `state.data` to `TData`.
  * @example
  * Passing a whole-options getter so `staleTime` reacts to a setting stored elsewhere, not just `queryKey`:
  * ```vue
