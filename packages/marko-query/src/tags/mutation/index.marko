@@ -1,0 +1,114 @@
+import type {
+  Accessor,
+  CreateMutationOptions,
+  CreateMutationResult,
+  DefaultError,
+  MutateOptions,
+  MutationObserverResult,
+  QueryClient,
+} from "@tanstack/marko-query";
+import {
+  MutationBinding,
+  holdClient,
+  idleMutationResult,
+  onPageClientChange,
+  resolveClient,
+  toPlainResult,
+} from "@tanstack/marko-query/internal";
+import type { ClientHold, Thrown } from "@tanstack/marko-query/internal";
+
+export interface Input<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TOnMutateResult = unknown,
+> {
+  /** The mutation's options. A function, so the tag follows the values it reads. */
+  options: Accessor<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>>;
+  /** The client to use instead of the one for this `$global`. */
+  client?: Accessor<QueryClient>;
+}
+
+static function raise(error: unknown): never {
+  throw error;
+}
+
+// `throwOnError` is read from the observer's current options, so the request
+// has to be recomputed whenever the options change, not only when the result
+// does: `MutationObserver.setOptions` reports no new result for a settled
+// mutation, so flipping `throwOnError` after a failure would otherwise never
+// reach the nearest `<try>`.
+static function thrownOf(
+  result: MutationObserverResult<any, any, any, any>,
+  binding: MutationBinding | undefined,
+): Thrown | undefined {
+  return result.isError && binding?.shouldThrow(result.error)
+    ? { error: result.error }
+    : undefined;
+}
+
+<let/result=(idleMutationResult() as MutationObserverResult<TData, TError, TVariables, TOnMutateResult>)>
+<let/thrown=undefined as Thrown | undefined>
+<const/holder={hold: {} as ClientHold} as {
+  binding?: MutationBinding;
+  unwatch?: () => void;
+  hold: ClientHold;
+}>
+<const/connect=(() => {
+  if (!holder.binding) {
+    holder.binding = new MutationBinding(
+      resolveClient($global, input.client),
+      input.options(),
+    );
+    holder.binding.subscribe((next) => {
+      result = toPlainResult(next);
+      thrown = thrownOf(result, holder.binding);
+    });
+  }
+  return holder.binding;
+})>
+
+<lifecycle
+  onMount() {
+    holdClient(holder.hold, connect().client, !!input.client);
+    holder.unwatch = onPageClientChange(
+      () => {
+        holder.binding?.destroy();
+        holder.binding = undefined;
+        holdClient(holder.hold, connect().client, !!input.client);
+      },
+      () => !input.client,
+    );
+  }
+  onUpdate() {
+    const client = resolveClient($global, input.client);
+    if (holder.binding && holder.binding.client !== client) {
+      holder.binding.destroy();
+      holder.binding = undefined;
+    }
+    holdClient(holder.hold, connect().client, !!input.client);
+    const binding = connect();
+    binding.setOptions(input.options());
+    // `setOptions` resets the observer when the `mutationKey` changes, and the
+    // reset notification is batched. Reading `result` here would report the
+    // previous mutation's error with the new `throwOnError`, so read the
+    // observer instead.
+    thrown = thrownOf(binding.getResult(), binding);
+  }
+  onDestroy() {
+    holder.unwatch?.();
+    holder.binding?.destroy();
+    holdClient(holder.hold, undefined, false);
+  }
+/>
+
+<if=thrown>${raise(thrown.error)}</if>
+
+<return=({
+  ...result,
+  mutate: (variables: TVariables, options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>) =>
+    connect().mutate(variables, options),
+  mutateAsync: (variables: TVariables, options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>) =>
+    connect().mutateAsync(variables, options) as Promise<TData>,
+  reset: () => connect().reset(),
+} as CreateMutationResult<TData, TError, TVariables, TOnMutateResult>)>

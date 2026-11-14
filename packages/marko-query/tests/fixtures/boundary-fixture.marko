@@ -1,0 +1,14 @@
+import type { DehydratedState, QueryClient } from "@tanstack/marko-query";
+
+export interface Input {
+  client: QueryClient;
+  state: DehydratedState;
+}
+
+<hydration-boundary state=input.state client=() => input.client>
+  <query/q
+    client=() => input.client
+    options=() => ({ queryKey: ["boundary"], queryFn: async () => "fetched", staleTime: Infinity })
+  />
+  <p id="data">${String(q.data)}</p>
+</hydration-boundary>

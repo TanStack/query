@@ -1,0 +1,8 @@
+export interface Input {
+  queryKey: unknown[];
+}
+
+<query/q options=() => ({ queryKey: input.queryKey, queryFn: async () => "fetched" })/>
+<p id="status">${q.status}</p>
+<p id="data">${String(q.data)}</p>
+<button onClick() { q.refetch() }>refetch</button>

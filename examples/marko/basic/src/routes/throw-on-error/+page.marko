@@ -1,0 +1,23 @@
+import { brokenThrowQueryOptions } from '../../lib/queries.ts'
+
+<page-header
+  title="throwOnError"
+  subtitle="With throwOnError the tag throws during render instead of returning isError, so a try tag can catch it and render a fallback."
+/>
+
+<try>
+  <query/broken options=() => brokenThrowQueryOptions/>
+  <if=broken.data>
+    <p>${broken.data}</p>
+  </if>
+  <@catch|error|>
+    <p class="error">Caught by &lt;@catch&gt;: ${(error as Error).message}</p>
+  </@catch>
+</try>
+
+<p class="muted">
+  The handler prefetches the failing query, so the error is in the cache when
+  the page renders and the catch block runs on the server. Compare with
+  <a href="/errors">Errors</a>, where the same failure stays in the result and
+  the page checks <code>isError</code>.
+</p>

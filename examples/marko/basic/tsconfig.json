@@ -1,0 +1,24 @@
+{
+  "include": [
+    "src/**/*",
+    ".marko-run/**/*.d.ts",
+    "config/port.js",
+    "*.config.ts"
+  ],
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "lib": ["dom", "ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ESNext",
+    "types": ["vite/client", "node"],
+    "verbatimModuleSyntax": true
+  }
+}

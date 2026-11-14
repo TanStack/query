@@ -1,0 +1,7 @@
+{
+  "exports": "./dist/tags",
+  "<query-client-factory>": {
+    "template": "./dist/tags/query-client-factory/index.marko",
+    "transform": "./transform/query-client-factory.cjs"
+  }
+}

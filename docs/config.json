@@ -225,6 +225,31 @@
               "to": "framework/preact/graphql"
             }
           ]
+        },
+        {
+          "label": "marko",
+          "children": [
+            {
+              "label": "Overview",
+              "to": "framework/marko/overview"
+            },
+            {
+              "label": "Installation",
+              "to": "framework/marko/installation"
+            },
+            {
+              "label": "Quick Start",
+              "to": "framework/marko/quick-start"
+            },
+            {
+              "label": "Devtools",
+              "to": "framework/marko/devtools"
+            },
+            {
+              "label": "TypeScript",
+              "to": "framework/marko/typescript"
+            }
+          ]
         }
       ]
     },
@@ -1008,6 +1033,43 @@
             {
               "label": "Does this replace [Redux, MobX, etc]?",
               "to": "framework/preact/guides/does-this-replace-client-state"
+            }
+          ]
+        },
+        {
+          "label": "marko",
+          "children": [
+            {
+              "label": "Tags vs Hooks",
+              "to": "framework/marko/guides/tags-vs-hooks"
+            },
+            {
+              "label": "The Query Client",
+              "to": "framework/marko/guides/query-client"
+            },
+            {
+              "label": "Queries",
+              "to": "framework/marko/guides/queries"
+            },
+            {
+              "label": "Parallel Queries",
+              "to": "framework/marko/guides/parallel-queries"
+            },
+            {
+              "label": "Mutations",
+              "to": "framework/marko/guides/mutations"
+            },
+            {
+              "label": "Query Invalidation",
+              "to": "framework/marko/guides/query-invalidation"
+            },
+            {
+              "label": "Infinite Queries",
+              "to": "framework/marko/guides/infinite-queries"
+            },
+            {
+              "label": "Server Rendering & Hydration",
+              "to": "framework/marko/guides/ssr"
             }
           ]
         }
@@ -7213,6 +7275,19 @@
             {
               "label": "Prefetching (@lit-labs/router)",
               "to": "framework/lit/examples/prefetching-lit-labs-router"
+            }
+          ]
+        },
+        {
+          "label": "marko",
+          "children": [
+            {
+              "label": "Basic (all features)",
+              "to": "framework/marko/examples/basic"
+            },
+            {
+              "label": "Custom Server (no Marko Run)",
+              "to": "framework/marko/examples/custom-server"
             }
           ]
         },

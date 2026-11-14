@@ -1,0 +1,28 @@
+import type { QueryClient } from "@tanstack/marko-query";
+
+export interface Input {
+  queryKey: unknown[];
+  queryFn: () => Promise<unknown>;
+  client: QueryClient;
+  extra?: Record<string, unknown>;
+}
+
+<let/page=0>
+<try>
+  <query/q
+    client=() => input.client
+    options=() => ({
+      queryKey: [...input.queryKey, page],
+      queryFn: input.queryFn,
+      ...input.extra,
+    })
+  />
+  <p id="status">${q.status}</p>
+  <p id="fetch">${q.fetchStatus}</p>
+  <p id="data">${JSON.stringify(q.data ?? null)}</p>
+  <button id="refetch" onClick() { q.refetch() }>refetch</button>
+  <@catch|error|>
+    <p id="caught">${(error as Error).message}</p>
+  </@catch>
+</try>
+<button id="next" onClick() { page++ }>next</button>

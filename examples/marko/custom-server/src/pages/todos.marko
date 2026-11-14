@@ -1,0 +1,34 @@
+import { todosQueryOptions } from '../lib/queries.ts'
+
+<layout>
+  <h1>Todos</h1>
+  <p>
+    Prefetched in <code>server.js</code> with <code>getQueryClient($global)</code>,
+    rendered on the server, hydrated in the browser without a refetch.
+  </p>
+
+  <query/todos options=() => todosQueryOptions/>
+
+  <if=todos.isPending>
+    <p>Loading…</p>
+  </if>
+  <else-if=todos.isError>
+    <p class="error">${todos.error.message}</p>
+  </else-if>
+  <else>
+    <ul>
+      <for|todo| of=todos.data by="id">
+        <li>${todo.completed ? '☑' : '☐'} ${todo.title}</li>
+      </for>
+    </ul>
+    <div class="row">
+      <button
+        type="button"
+        disabled=todos.isFetching
+        onClick() {
+          todos.refetch()
+        }
+      >${todos.isFetching ? 'Refreshing…' : 'Refetch'}</button>
+    </div>
+  </else>
+</layout>

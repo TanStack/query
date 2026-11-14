@@ -1,0 +1,37 @@
+import { todoFeedQueryOptions } from '../lib/queries.ts'
+
+<layout>
+  <h1>Infinite</h1>
+  <p>
+    The first cursor page is prefetched in <code>server.js</code> with
+    <code>infiniteQuery</code>. The rest load on demand.
+  </p>
+
+  <infinite-query/feed options=() => todoFeedQueryOptions/>
+
+  <if=feed.isPending>
+    <p>Loading…</p>
+  </if>
+  <else-if=feed.isError>
+    <p class="error">${feed.error.message}</p>
+  </else-if>
+  <else>
+    <for|page| of=feed.data.pages>
+      <ul>
+        <for|todo| of=page.todos by="id">
+          <li>${todo.completed ? '☑' : '☐'} ${todo.title}</li>
+        </for>
+      </ul>
+    </for>
+    <div class="row">
+      <button
+        type="button"
+        disabled=!feed.hasNextPage || feed.isFetchingNextPage
+        onClick() {
+          feed.fetchNextPage()
+        }
+      >${feed.isFetchingNextPage ? 'Loading…' : 'Load more'}</button>
+      <span class="muted">${feed.data.pages.length} page(s) loaded</span>
+    </div>
+  </else>
+</layout>

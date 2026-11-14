@@ -1,0 +1,33 @@
+import type { QueryClient } from "@tanstack/marko-query";
+
+export interface Input {
+  client: QueryClient;
+  ids: number[];
+}
+
+<queries/list
+  client=() => input.client
+  options=() => ({
+    queries: input.ids.map((id) => ({
+      queryKey: ["item", id],
+      queryFn: async () => `item ${id}`,
+    })),
+  })
+/>
+<queries/joined
+  client=() => input.client
+  options=() => ({
+    queries: input.ids.map((id) => ({
+      queryKey: ["item", id],
+      queryFn: async () => `item ${id}`,
+    })),
+    combine: (results) => ({
+      text: results.map((result) => result.data ?? "?").join(","),
+      pending: results.some((result) => result.isPending),
+    }),
+  })
+/>
+<p id="statuses">${list.map((result) => result.status).join(",")}</p>
+<p id="joined">${joined.text}</p>
+<p id="pending">${String(joined.pending)}</p>
+<button id="refetch-first" onClick() { list[0]?.refetch() }>refetch</button>

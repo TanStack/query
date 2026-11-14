@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "dist",
+    "rootDir": "src",
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2022",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "types": [],
+    "verbatimModuleSyntax": true
+  },
+  "include": ["src/tags/**/*.marko"]
+}

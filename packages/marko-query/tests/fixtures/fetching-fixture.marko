@@ -1,0 +1,10 @@
+import type { QueryClient } from "@tanstack/marko-query";
+
+export interface Input {
+  client: QueryClient;
+}
+
+<is-fetching/all client=() => input.client/>
+<is-fetching/slow client=() => input.client filters=() => ({ queryKey: ["slow"] })/>
+<p id="all">${all}</p>
+<p id="slow">${slow}</p>

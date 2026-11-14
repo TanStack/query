@@ -1,0 +1,25 @@
+{
+  "name": "@tanstack/query-example-marko-basic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "marko-run",
+    "build": "marko-run build",
+    "preview": "marko-run preview",
+    "test:eslint": "eslint ./src",
+    "test:types": "marko-run build --output .cache/types-build && mtc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@tanstack/marko-query": "workspace:^",
+    "@tanstack/marko-query-devtools": "workspace:^",
+    "marko": "catalog:"
+  },
+  "devDependencies": {
+    "@marko/run": "^0.11.17",
+    "@marko/type-check": "catalog:",
+    "@marko/vite": "catalog:",
+    "@tanstack/eslint-plugin-query": "workspace:^",
+    "typescript": "catalog:",
+    "vite": "^8.3.5"
+  }
+}

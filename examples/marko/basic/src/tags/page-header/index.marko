@@ -1,0 +1,9 @@
+export interface Input {
+  title: string
+  subtitle?: string
+}
+
+<h1>${input.title}</h1>
+<if=input.subtitle>
+  <p>${input.subtitle}</p>
+</if>

@@ -1,0 +1,19 @@
+import { selectQueryOptions } from '../../lib/queries.ts'
+
+<page-header
+  title="Select"
+  subtitle="The cache holds Todo objects. select maps them to titles, so the tag renders the derived value and the cache keeps the full objects."
+/>
+
+<query/titles options=() => selectQueryOptions/>
+
+<if=titles.data>
+  <ul>
+    <for|title| of=titles.data>
+      <li>${title}</li>
+    </for>
+  </ul>
+</if>
+<else-if=titles.error>
+  <p class="error">${titles.error.message}</p>
+</else-if>

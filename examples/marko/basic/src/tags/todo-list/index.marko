@@ -1,0 +1,14 @@
+import type { Todo } from '../../lib/api.ts'
+
+export interface Input {
+  todos: Array<Todo>
+}
+
+<ul>
+  <for|todo| of=input.todos by="id">
+    <li>
+      <if=todo.completed><s>${todo.title}</s></if>
+      <else>${todo.title}</else>
+    </li>
+  </for>
+</ul>

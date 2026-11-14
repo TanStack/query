@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.prod.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "rootDir": "."
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.marko",
+    "tests/**/*.ts",
+    "tests/**/*.marko"
+  ]
+}
