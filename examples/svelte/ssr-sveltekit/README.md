@@ -1,38 +1,17 @@
-# create-svelte
+# TanStack Svelte Query SSR Example (SvelteKit)
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Fills the cache in SvelteKit `load` functions with SvelteKit's `fetch`, so pages render on the server with data and the browser reuses the responses SvelteKit inlined instead of fetching again.
 
-## Creating a project
+Built with [SvelteKit](https://svelte.dev/docs/kit).
 
-If you're seeing this, you've probably already done this step. Congrats!
+## How it works
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+- `src/lib/services/posts/queries.ts` defines `postsQueries.list(limit, customFetch)` and `postsQueries.detail(id, customFetch)` with `queryOptions`. The optional `customFetch` lets a `load` function pass SvelteKit's `fetch` to `src/lib/services/posts/api.ts`.
+- `src/routes/+layout.ts` creates the `QueryClient` in a `load` function with a 1-minute `staleTime` and `enabled: browser`, and `src/routes/+layout.svelte` provides it with `QueryClientProvider`.
+- `src/routes/+page.ts` and `src/routes/[postId]/+page.ts` get the client from `parent()` and fill the cache with `queryClient.query(...)` using SvelteKit's `fetch`, so the page is rendered on the server with data.
+- `src/lib/Posts.svelte` and `src/lib/Post.svelte` read the same options with `createQuery`, and `src/lib/Posts.svelte` calls `client.getQueryData(postsQueries.detail(post.id).queryKey)` to style links whose detail is already cached.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+To run this example:
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn` or `bun install`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+- `npm install`
+- `npm run dev`

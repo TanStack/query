@@ -1,10 +1,37 @@
 /* istanbul ignore file */
 
 // Re-export core
+// oxlint-disable-next-line tanstack-query/no-restricted-syntax
 export * from '@tanstack/query-core'
 
 // React Query
-export type * from './types'
+export type {
+  AnyUseBaseQueryOptions,
+  UseBaseQueryOptions,
+  UsePrefetchQueryOptions,
+  UsePrefetchInfiniteQueryOptions,
+  AnyUseQueryOptions,
+  UseQueryOptions,
+  AnyUseSuspenseQueryOptions,
+  UseSuspenseQueryOptions,
+  AnyUseInfiniteQueryOptions,
+  UseInfiniteQueryOptions,
+  AnyUseSuspenseInfiniteQueryOptions,
+  UseSuspenseInfiniteQueryOptions,
+  UseBaseQueryResult,
+  UseQueryResult,
+  UseSuspenseQueryResult,
+  DefinedUseQueryResult,
+  UseInfiniteQueryResult,
+  DefinedUseInfiniteQueryResult,
+  UseSuspenseInfiniteQueryResult,
+  AnyUseMutationOptions,
+  UseMutationOptions,
+  UseMutateFunction,
+  UseMutateAsyncFunction,
+  UseBaseMutationResult,
+  UseMutationResult,
+} from './types'
 export { useQueries } from './useQueries'
 export type { QueriesResults, QueriesOptions } from './useQueries'
 export { useQuery } from './useQuery'

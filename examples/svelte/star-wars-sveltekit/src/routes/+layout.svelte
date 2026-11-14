@@ -18,7 +18,7 @@
 </script>
 
 <svelte:head>
-  <title>TanStack Query Svelte Star Wars Example</title>
+  <title>TanStack Svelte Query Star Wars Example (SvelteKit)</title>
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>

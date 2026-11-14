@@ -4,6 +4,4 @@
  * and modified to server a preact use case
  */
 
-export * from './ErrorBoundary'
-export * from './ErrorBoundaryContext'
-export * from './types'
+export { ErrorBoundary } from './ErrorBoundary'

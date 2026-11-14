@@ -734,7 +734,8 @@ export class QueryObserver<
     if (this.#selectError) {
       error = this.#selectError
       data = this.#selectResult
-      errorUpdatedAt = Date.now()
+      errorUpdatedAt =
+        prevResult?.error === error ? prevResult.errorUpdatedAt : Date.now()
       status = 'error'
       isPlaceholderData = false
     }
