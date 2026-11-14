@@ -57,6 +57,11 @@ export type {
   UnusedSkipTokenInfiniteOptions,
 } from './infiniteQueryOptions'
 export {
+  PauseManagerContext,
+  PauseManagerProvider,
+  usePauseManager,
+} from './PauseManagerProvider'
+export {
   QueryClientContext,
   QueryClientProvider,
   useQueryClient,
