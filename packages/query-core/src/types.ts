@@ -1023,7 +1023,7 @@ export interface QueryObserverBaseResult<
    */
   isPending: boolean
   /**
-   * Will be `true` if the query failed while fetching for the first time.
+   * Will be `true` if the query has an error and no data to display.
    */
   isLoadingError: boolean
   /**
@@ -1041,7 +1041,7 @@ export interface QueryObserverBaseResult<
    */
   isPlaceholderData: boolean
   /**
-   * Will be `true` if the query failed while refetching.
+   * Will be `true` if the query has an error and still has data to display.
    */
   isRefetchError: boolean
   /**
@@ -1182,18 +1182,18 @@ export interface QueryObserverLoadingResult<
 }
 
 /**
- * A query result in the `error` state when the first fetch failed, so there is no data.
+ * A query result in the `error` state with no data to display, since a fetch or `select` failed.
  */
 export interface QueryObserverLoadingErrorResult<
   TData = unknown,
   TError = DefaultError,
 > extends QueryObserverBaseResult<TData, TError> {
   /**
-   * `undefined`, since the first fetch failed before any data was cached.
+   * `undefined`, since a fetch or `select` failed before there was data to display.
    */
   data: undefined
   /**
-   * The error the first fetch failed with.
+   * The error the fetch or `select` failed with.
    */
   error: TError
   /**
@@ -1209,7 +1209,7 @@ export interface QueryObserverLoadingErrorResult<
    */
   isLoading: false
   /**
-   * `true`, since the query failed while fetching for the first time.
+   * `true`, since the query has an error and no data to display.
    */
   isLoadingError: true
   /**
@@ -1231,18 +1231,18 @@ export interface QueryObserverLoadingErrorResult<
 }
 
 /**
- * A query result in the `error` state when a refetch failed, so the data from before is kept.
+ * A query result in the `error` state that keeps the data from before a fetch or `select` failed.
  */
 export interface QueryObserverRefetchErrorResult<
   TData = unknown,
   TError = DefaultError,
 > extends QueryObserverBaseResult<TData, TError> {
   /**
-   * The data from before the failed refetch, which is kept.
+   * The data from before the fetch or `select` failed, which is kept.
    */
   data: TData
   /**
-   * The error the refetch failed with.
+   * The error the fetch or `select` failed with.
    */
   error: TError
   /**
@@ -1262,7 +1262,7 @@ export interface QueryObserverRefetchErrorResult<
    */
   isLoadingError: false
   /**
-   * `true`, since the query failed while refetching.
+   * `true`, since the query has an error and still has data to display.
    */
   isRefetchError: true
   /**
@@ -1560,18 +1560,18 @@ export interface InfiniteQueryObserverLoadingResult<
 }
 
 /**
- * An infinite query result in the `error` state when the first fetch failed, so there is no data.
+ * An infinite query result in the `error` state with no data to display, since a fetch or `select` failed.
  */
 export interface InfiniteQueryObserverLoadingErrorResult<
   TData = unknown,
   TError = DefaultError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
   /**
-   * `undefined`, since the first fetch failed before any data was cached.
+   * `undefined`, since a fetch or `select` failed before there was data to display.
    */
   data: undefined
   /**
-   * The error the first fetch failed with.
+   * The error the fetch or `select` failed with.
    */
   error: TError
   /**
@@ -1587,7 +1587,7 @@ export interface InfiniteQueryObserverLoadingErrorResult<
    */
   isLoading: false
   /**
-   * `true`, since the query failed while fetching for the first time.
+   * `true`, since the query has an error and no data to display.
    */
   isLoadingError: true
   /**
@@ -1617,19 +1617,19 @@ export interface InfiniteQueryObserverLoadingErrorResult<
 }
 
 /**
- * An infinite query result in the `error` state when a refetch failed, so the data from before is
- * kept.
+ * An infinite query result in the `error` state that keeps the data from before a fetch or `select`
+ * failed.
  */
 export interface InfiniteQueryObserverRefetchErrorResult<
   TData = unknown,
   TError = DefaultError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
   /**
-   * The data from before the failed refetch, which is kept.
+   * The data from before the fetch or `select` failed, which is kept.
    */
   data: TData
   /**
-   * The error the refetch failed with.
+   * The error the fetch or `select` failed with.
    */
   error: TError
   /**
@@ -1649,7 +1649,7 @@ export interface InfiniteQueryObserverRefetchErrorResult<
    */
   isLoadingError: false
   /**
-   * `true`, since the query failed while refetching.
+   * `true`, since the query has an error and still has data to display.
    */
   isRefetchError: true
   /**
