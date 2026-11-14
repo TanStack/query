@@ -1,5 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { computed, isReadonly, isVue3, onScopeDispose, ref } from 'vue-demi'
+import {
+  computed,
+  isReadonly,
+  isVue2,
+  isVue3,
+  onScopeDispose,
+  ref,
+} from 'vue-demi'
 import { skipToken } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useQueries } from '../useQueries'
@@ -590,5 +597,285 @@ describe('useQueries', () => {
     key5.value = 'key5-updated'
     await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(6)
+  })
+
+  describe('throwOnError', () => {
+    it.runIf(isVue2)(
+      'should throw from error watcher when throwOnError returns true, which Vue 2 logs via console.error',
+      async () => {
+        const consoleErrorMock = vi
+          .spyOn(console, 'error')
+          .mockReturnValue(undefined)
+        const key1 = createKey()
+        const key2 = createKey()
+        const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
+        useQueries({
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: () => sleep(0).then(() => 'Some data'),
+            },
+            {
+              queryKey: key2,
+              queryFn: () =>
+                sleep(10).then(() => Promise.reject(new Error('Some error'))),
+              retry: false,
+              throwOnError,
+            },
+          ],
+        })
+
+        await vi.advanceTimersByTimeAsync(10)
+        expect(throwOnError).toHaveBeenCalledTimes(1)
+        expect(throwOnError).toHaveBeenCalledWith(
+          Error('Some error'),
+          expect.objectContaining({
+            queryKey: key2,
+            state: expect.objectContaining({ status: 'error' }),
+          }),
+        )
+        expect(consoleErrorMock).toHaveBeenCalledWith(Error('Some error'))
+        consoleErrorMock.mockRestore()
+      },
+    )
+
+    it.runIf(isVue3)(
+      'should throw from error watcher when throwOnError returns true, which Vue 3 surfaces as an unhandled rejection',
+      async ({ onTestFinished }) => {
+        const key1 = createKey()
+        const key2 = createKey()
+        const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
+        useQueries({
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: () => sleep(20).then(() => 'Some data'),
+            },
+            {
+              queryKey: key2,
+              queryFn: () =>
+                sleep(10).then(() => Promise.reject(new Error('Some error'))),
+              retry: false,
+              throwOnError,
+            },
+          ],
+        })
+
+        const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
+        process.on('unhandledRejection', unhandledRejectionFn)
+        onTestFinished(() => {
+          process.off('unhandledRejection', unhandledRejectionFn)
+        })
+
+        await vi.advanceTimersByTimeAsync(10)
+        expect(throwOnError).toHaveBeenCalledTimes(1)
+        expect(throwOnError).toHaveBeenCalledWith(
+          Error('Some error'),
+          expect.objectContaining({
+            queryKey: key2,
+            state: expect.objectContaining({ status: 'error' }),
+          }),
+        )
+        expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
+        expect(unhandledRejectionFn).toHaveBeenCalledWith(
+          Error('Some error'),
+          expect.any(Promise),
+        )
+
+        await vi.advanceTimersByTimeAsync(10)
+        expect(throwOnError).toHaveBeenCalledTimes(1)
+        expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
+      },
+    )
+
+    it.runIf(isVue3)(
+      'should throw from error watcher when combine is used',
+      async ({ onTestFinished }) => {
+        const key = createKey()
+        const result = useQueries({
+          queries: [
+            {
+              queryKey: key,
+              queryFn: () =>
+                sleep(10).then(() => Promise.reject(new Error('Some error'))),
+              retry: false,
+              throwOnError: true,
+            },
+          ],
+          combine: (results) =>
+            results.some((queryResult) => queryResult.isError),
+        })
+
+        const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
+        process.on('unhandledRejection', unhandledRejectionFn)
+        onTestFinished(() => {
+          process.off('unhandledRejection', unhandledRejectionFn)
+        })
+
+        await vi.advanceTimersByTimeAsync(10)
+        expect(result.value).toBe(true)
+        expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
+        expect(unhandledRejectionFn).toHaveBeenCalledWith(
+          Error('Some error'),
+          expect.any(Promise),
+        )
+      },
+    )
+
+    it.runIf(isVue3)(
+      'should throw from error watcher when the combined result does not change after the queries change',
+      async ({ onTestFinished }) => {
+        const key = ref(createKey())
+        useQueries({
+          queries: () => [
+            {
+              queryKey: [key.value],
+              queryFn: () =>
+                sleep(10).then(() => Promise.reject(new Error('Some error'))),
+              retry: false,
+              throwOnError: true,
+            },
+          ],
+          combine: (results) => results.map((queryResult) => queryResult.data),
+        })
+
+        const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
+        process.on('unhandledRejection', unhandledRejectionFn)
+        onTestFinished(() => {
+          process.off('unhandledRejection', unhandledRejectionFn)
+        })
+
+        key.value = createKey()
+        await vi.advanceTimersByTimeAsync(10)
+        expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
+        expect(unhandledRejectionFn).toHaveBeenCalledWith(
+          Error('Some error'),
+          expect.any(Promise),
+        )
+      },
+    )
+
+    it.runIf(isVue3)(
+      'should throw only the errors of the queries whose throwOnError is or returns true',
+      async ({ onTestFinished }) => {
+        const key1 = createKey()
+        const key2 = createKey()
+        const key3 = createKey()
+        const key4 = createKey()
+        useQueries({
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: () =>
+                Promise.reject(
+                  new Error(
+                    'this should not throw because throwOnError is not set',
+                  ),
+                ),
+              retry: false,
+            },
+            {
+              queryKey: key2,
+              queryFn: () =>
+                Promise.reject(
+                  new Error(
+                    'this should not throw because throwOnError function resolves to false',
+                  ),
+                ),
+              throwOnError: () => false,
+              retry: false,
+            },
+            {
+              queryKey: key3,
+              queryFn: () => Promise.resolve(2),
+            },
+            {
+              queryKey: key4,
+              queryFn: () => Promise.reject(new Error('single query error')),
+              throwOnError: () => true,
+              retry: false,
+            },
+          ],
+        })
+
+        const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
+        process.on('unhandledRejection', unhandledRejectionFn)
+        onTestFinished(() => {
+          process.off('unhandledRejection', unhandledRejectionFn)
+        })
+
+        await vi.advanceTimersByTimeAsync(0)
+        expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
+        expect(unhandledRejectionFn).toHaveBeenCalledWith(
+          Error('single query error'),
+          expect.any(Promise),
+        )
+      },
+    )
+
+    it.runIf(isVue3)(
+      'should throw a falsy error when throwOnError is true',
+      async ({ onTestFinished }) => {
+        const key = createKey()
+        useQueries({
+          queries: [
+            {
+              queryKey: key,
+              queryFn: () => Promise.reject(),
+              retry: false,
+              throwOnError: true,
+            },
+          ],
+        })
+
+        const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
+        process.on('unhandledRejection', unhandledRejectionFn)
+        onTestFinished(() => {
+          process.off('unhandledRejection', unhandledRejectionFn)
+        })
+
+        await vi.advanceTimersByTimeAsync(0)
+        expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
+        expect(unhandledRejectionFn).toHaveBeenCalledWith(
+          undefined,
+          expect.any(Promise),
+        )
+      },
+    )
+
+    it('should not throw from error watcher when throwOnError returns false', async ({
+      onTestFinished,
+    }) => {
+      const key = createKey()
+      const throwOnError = vi.fn<() => boolean>().mockReturnValue(false)
+      const result = useQueries({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() => Promise.reject(new Error('Some error'))),
+            retry: false,
+            throwOnError,
+          },
+        ],
+      })
+
+      const consoleErrorMock = vi
+        .spyOn(console, 'error')
+        .mockReturnValue(undefined)
+      const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
+      process.on('unhandledRejection', unhandledRejectionFn)
+      onTestFinished(() => {
+        consoleErrorMock.mockRestore()
+        process.off('unhandledRejection', unhandledRejectionFn)
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(throwOnError).toHaveBeenCalledTimes(1)
+      expect(result.value[0].status).toBe('error')
+      expect(result.value[0].error).toStrictEqual(Error('Some error'))
+      expect(consoleErrorMock).not.toHaveBeenCalled()
+      expect(unhandledRejectionFn).not.toHaveBeenCalled()
+    })
   })
 })

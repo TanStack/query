@@ -1,4 +1,4 @@
-import { QueriesObserver } from '@tanstack/query-core'
+import { QueriesObserver, shouldThrowError } from '@tanstack/query-core'
 import {
   computed,
   getCurrentScope,
@@ -414,7 +414,6 @@ export function useQueries<
   const observer = new QueriesObserver<TCombinedResult>(
     client,
     defaultedQueries.value,
-    options as QueriesObserverOptions<TCombinedResult>,
   )
 
   const getOptimisticResult = () => {
@@ -423,7 +422,7 @@ export function useQueries<
       (options as QueriesObserverOptions<TCombinedResult>).combine,
     )
 
-    return getCombinedResult(
+    const combinedResult = getCombinedResult(
       results.map((result, index) => {
         return {
           ...result,
@@ -438,9 +437,19 @@ export function useQueries<
         }
       }),
     )
+
+    return [results, combinedResult] as const
   }
 
-  const state = shallowRef(getOptimisticResult())
+  const [initialResults, initialCombinedResult] = getOptimisticResult()
+  const results = shallowRef(initialResults)
+  const state = shallowRef(initialCombinedResult)
+
+  const updateState = () => {
+    const [nextResults, nextCombinedResult] = getOptimisticResult()
+    results.value = nextResults
+    state.value = nextCombinedResult
+  }
 
   let unsubscribe = () => {
     // noop
@@ -453,10 +462,10 @@ export function useQueries<
         if (!isRestoring) {
           unsubscribe()
           unsubscribe = observer.subscribe(() => {
-            state.value = getOptimisticResult()
+            updateState()
           })
 
-          state.value = getOptimisticResult()
+          updateState()
         }
       },
       { immediate: true },
@@ -464,11 +473,45 @@ export function useQueries<
   }
 
   watch(defaultedQueries, (queriesValue) => {
-    observer.setQueries(
-      queriesValue,
-      options as QueriesObserverOptions<TCombinedResult>,
+    observer.setQueries(queriesValue)
+    updateState()
+  })
+
+  const getErrorsByQueryHash = (queryResults: typeof initialResults) =>
+    new Map(
+      queryResults.flatMap((result, index) => {
+        const query = defaultedQueries.value[index]
+        return query ? [[query.queryHash, result.error] as const] : []
+      }),
     )
-    state.value = getOptimisticResult()
+
+  let previousErrors = getErrorsByQueryHash(initialResults)
+
+  // Handle error boundary
+  watch(results, (queryResults) => {
+    const errors = getErrorsByQueryHash(queryResults)
+    const resultToThrow = queryResults.find((result, index) => {
+      const query = defaultedQueries.value[index]
+      if (!query || !result.isError || result.isFetching) {
+        return false
+      }
+      if (
+        !previousErrors.has(query.queryHash) ||
+        previousErrors.get(query.queryHash) === result.error
+      ) {
+        return false
+      }
+      const cachedQuery = client.getQueryCache().get(query.queryHash)
+      return (
+        !!cachedQuery &&
+        shouldThrowError(query.throwOnError, [result.error, cachedQuery])
+      )
+    })
+    previousErrors = errors
+
+    if (resultToThrow) {
+      throw resultToThrow.error
+    }
   })
 
   onScopeDispose(() => {
