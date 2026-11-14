@@ -51,7 +51,7 @@ them, like `hasNextPage` and `isFetchingNextPage`.
 | <a id="property-hasnextpage"></a> `hasNextPage` | `boolean` | Will be `true` if there is a next page to be fetched (known via the `getNextPageParam` option). |
 | <a id="property-haspreviouspage"></a> `hasPreviousPage` | `boolean` | Will be `true` if there is a previous page to be fetched (known via the `getPreviousPageParam` option). |
 | <a id="property-isenabled"></a> `isEnabled` | `boolean` | `true` if this observer is enabled, `false` otherwise. |
-| <a id="property-iserror"></a> `isError` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query attempt resulted in an error. |
+| <a id="property-iserror"></a> `isError` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has an error from a fetch that failed after its retries, or if `select` threw. |
 | <a id="property-isfetched"></a> `isFetched` | `boolean` | Will be `true` if the query has been fetched. |
 | <a id="property-isfetchedaftermount"></a> `isFetchedAfterMount` | `boolean` | Will be `true` if the query has been fetched after the component mounted. - This property can be used to not show any previously cached data. |
 | <a id="property-isfetching"></a> `isFetching` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - `true` whenever the `queryFn` is executing, which includes initial `pending` as well as background refetch. |
@@ -61,13 +61,13 @@ them, like `hasNextPage` and `isFetchingNextPage`.
 | <a id="property-isfetchpreviouspageerror"></a> `isFetchPreviousPageError` | `boolean` | Will be `true` if the query failed while fetching the previous page. |
 | <a id="property-isinitialloading"></a> ~~`isInitialLoading`~~ | `boolean` | **Deprecated** `isInitialLoading` is being deprecated in favor of `isLoading` and will be removed in the next major version. |
 | <a id="property-isloading"></a> `isLoading` | `boolean` | Is `true` whenever the first fetch for a query is in-flight. - Is the same as `isFetching && isPending`. |
-| <a id="property-isloadingerror"></a> `isLoadingError` | `boolean` | Will be `true` if the query failed while fetching for the first time. |
+| <a id="property-isloadingerror"></a> `isLoadingError` | `boolean` | Will be `true` if the query has an error and no data to display. |
 | <a id="property-ispaused"></a> `isPaused` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - The query wanted to fetch, but has been `paused`. |
-| <a id="property-ispending"></a> `isPending` | `boolean` | Will be `pending` if there's no cached data and no query attempt was finished yet. |
+| <a id="property-ispending"></a> `isPending` | `boolean` | Will be `true` if the query has no cached data, no data from `placeholderData` and no error. |
 | <a id="property-isplaceholderdata"></a> `isPlaceholderData` | `boolean` | Will be `true` if the data shown is the placeholder data. |
-| <a id="property-isrefetcherror"></a> `isRefetchError` | `boolean` | Will be `true` if the query failed while refetching. |
+| <a id="property-isrefetcherror"></a> `isRefetchError` | `boolean` | Will be `true` if the query has an error and still has data to display (for infinite queries, not after a failed page fetch). |
 | <a id="property-isrefetching"></a> `isRefetching` | `boolean` | Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`. - Is the same as `isFetching && !isPending`. |
 | <a id="property-isstale"></a> `isStale` | `boolean` | Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`. |
-| <a id="property-issuccess"></a> `isSuccess` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has received a response with no errors and is ready to display its data. |
+| <a id="property-issuccess"></a> `isSuccess` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has cached data or data from `placeholderData`, and no error. |
 | <a id="property-refetch"></a> `refetch` | (`options?`: [`RefetchOptions`](RefetchOptions.md)) => `Promise`\<[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>\> | A function to manually refetch the query. |
-| <a id="property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` | The status of the query. - Will be: - `pending` if there's no cached data and no query attempt was finished yet. - `error` if the query attempt resulted in an error. - `success` if the query has received a response with no errors and is ready to display its data. |
+| <a id="property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` | The status of the query. - Will be: - `error` if the query has an error from a fetch that failed after its retries, or if `select` threw. - `success` if the query has cached data (even if `select` returns `undefined`) or data from `placeholderData`, and no error. - `pending` otherwise, since the query has no cached data, no data from `placeholderData` and no error. |

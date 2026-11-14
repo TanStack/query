@@ -7,7 +7,7 @@ title: QueryObserverRefetchErrorResult
 
 Defined in: [packages/query-core/src/types.ts:1236](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1236)
 
-A query result in the `error` state when a refetch failed, so the data from before is kept.
+A query result in the `error` state that keeps the data from before a fetch or `select` failed.
 
 ## Extends
 
@@ -27,9 +27,9 @@ A query result in the `error` state when a refetch failed, so the data from befo
 
 | Property | Type | Description | Overrides |
 | ------ | ------ | ------ | ------ |
-| <a id="property-data"></a> `data` | `TData` | The data from before the failed refetch, which is kept. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`data`](QueryObserverBaseResult.md#property-data) |
+| <a id="property-data"></a> `data` | `TData` | The data from before the fetch or `select` failed, which is kept. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`data`](QueryObserverBaseResult.md#property-data) |
 | <a id="property-dataupdatedat"></a> `dataUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"success"`. | - |
-| <a id="property-error"></a> `error` | `TError` | The error the refetch failed with. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`error`](QueryObserverBaseResult.md#property-error) |
+| <a id="property-error"></a> `error` | `TError` | The error the fetch or `select` failed with. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`error`](QueryObserverBaseResult.md#property-error) |
 | <a id="property-errorupdatecount"></a> `errorUpdateCount` | `number` | The sum of all errors. | - |
 | <a id="property-errorupdatedat"></a> `errorUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"error"`. | - |
 | <a id="property-failurecount"></a> `failureCount` | `number` | The failure count for the query. - Incremented every time the query fails. - Reset to `0` when the query succeeds. | - |
@@ -44,11 +44,11 @@ A query result in the `error` state when a refetch failed, so the data from befo
 | <a id="property-isloading"></a> `isLoading` | `false` | `false`, since the first fetch isn't in flight. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`isLoading`](QueryObserverBaseResult.md#property-isloading) |
 | <a id="property-isloadingerror"></a> `isLoadingError` | `false` | `false`, since the query didn't fail while fetching for the first time. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`isLoadingError`](QueryObserverBaseResult.md#property-isloadingerror) |
 | <a id="property-ispaused"></a> `isPaused` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - The query wanted to fetch, but has been `paused`. | - |
-| <a id="property-ispending"></a> `isPending` | `false` | `false`, since the query has data or a query attempt has finished. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`isPending`](QueryObserverBaseResult.md#property-ispending) |
+| <a id="property-ispending"></a> `isPending` | `false` | `false`, since the query has cached data, data from `placeholderData` or an error. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`isPending`](QueryObserverBaseResult.md#property-ispending) |
 | <a id="property-isplaceholderdata"></a> `isPlaceholderData` | `false` | `false`, since the data shown isn't the `placeholderData`. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`isPlaceholderData`](QueryObserverBaseResult.md#property-isplaceholderdata) |
-| <a id="property-isrefetcherror"></a> `isRefetchError` | `true` | `true`, since the query failed while refetching. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`isRefetchError`](QueryObserverBaseResult.md#property-isrefetcherror) |
+| <a id="property-isrefetcherror"></a> `isRefetchError` | `true` | `true`, since the query has an error and still has data to display. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`isRefetchError`](QueryObserverBaseResult.md#property-isrefetcherror) |
 | <a id="property-isrefetching"></a> `isRefetching` | `boolean` | Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`. - Is the same as `isFetching && !isPending`. | - |
 | <a id="property-isstale"></a> `isStale` | `boolean` | Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`. | - |
 | <a id="property-issuccess"></a> `isSuccess` | `false` | `false`, since the query isn't in the `success` state. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`isSuccess`](QueryObserverBaseResult.md#property-issuccess) |
 | <a id="property-refetch"></a> `refetch` | (`options?`: [`RefetchOptions`](RefetchOptions.md)) => `Promise`\<[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>\> | A function to manually refetch the query. | - |
-| <a id="property-status"></a> `status` | `"error"` | `'error'`, since the query attempt resulted in an error. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`status`](QueryObserverBaseResult.md#property-status) |
+| <a id="property-status"></a> `status` | `"error"` | `'error'`, since a fetch failed after its retries or `select` threw. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`status`](QueryObserverBaseResult.md#property-status) |
