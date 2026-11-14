@@ -11,6 +11,7 @@ import type {
   InfiniteData,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
+  NonUndefinedGuard,
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
@@ -22,6 +23,7 @@ import type {
   MaybeRef,
   MaybeRefDeep,
   MaybeRefOrGetter,
+  RefFreeQueryKey,
   ShallowOption,
 } from './types'
 import type { QueryClient } from './queryClient'
@@ -365,6 +367,89 @@ export function useInfiniteQuery<
  *   </ul>
  * </template>
  * ```
+ */
+export function useInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: MaybeRefOrGetter<
+    UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+  >,
+  queryClient?: QueryClient,
+): UseInfiniteQueryReturnType<TData, TError>
+
+// The `@tanstack/query-core` overloads come after the Vue overloads, so that options those accept resolve exactly as
+// before.
+/**
+ * Accepts a getter returning options from `@tanstack/query-core`, such as those created by its `queryOptions`
+ * helper. This overload is selected when `initialData` is known to be defined.
+ * @param options - A getter returning the options from `@tanstack/query-core` to use.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+ * will be used.
+ * @returns The current infinite query result, typed so that `data` is never `undefined` (unless a `select`
+ * changes `TData` to include `undefined`).
+ */
+export function useInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: () => InfiniteQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  > &
+    RefFreeQueryKey<TQueryKey> & {
+      initialData:
+        | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+        | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
+    },
+  queryClient?: QueryClient,
+): UseInfiniteQueryDefinedReturnType<TData, TError>
+
+/**
+ * Accepts a getter returning options from `@tanstack/query-core`, such as those created by its `queryOptions`
+ * helper.
+ * @param options - A getter returning the options from `@tanstack/query-core` to use.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+ * will be used.
+ * @returns The current infinite query result, with `data` typed as possibly `undefined`.
+ */
+export function useInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: () => InfiniteQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  > &
+    RefFreeQueryKey<TQueryKey>,
+  queryClient?: QueryClient,
+): UseInfiniteQueryReturnType<TData, TError>
+
+// Repeats the Vue fallback overload: `Parameters<typeof useInfiniteQuery>` reads the last overload, so it has to stay
+// `UseInfiniteQueryOptions`.
+/**
+ * Fallback overload for options whose `initialData` presence isn't statically known, with `data` typed as possibly
+ * `undefined`.
+ * @param options - A `ref`, plain value, or reactive getter resolving to the {@link UseInfiniteQueryOptions} to
+ * use.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+ * will be used.
+ * @returns The current infinite query result, with `data` typed as possibly `undefined`.
  */
 export function useInfiniteQuery<
   TQueryFnData,

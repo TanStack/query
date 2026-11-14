@@ -69,6 +69,8 @@ function _cloneDeep<T>(
     ) as unknown as T
   }
 
+  // Every plain object is walked, including `initialData`, `placeholderData` and `meta`. A cyclic one overflows the
+  // stack, and `Object.entries` skips symbol keys.
   if (typeof value === 'object' && isPlainObject(value)) {
     const entries = Object.entries(value as Record<string, any>).map(
       ([key, val]) => [key, _cloneDeep(val, customize, key, currentLevel + 1)],
