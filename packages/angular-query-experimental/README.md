@@ -111,7 +111,7 @@ export class TodosComponent {
 
 4. If you need to update options on your query dynamically, make sure to pass them as signals. The query will refetch automatically if data for an updated query key is stale or not present.
 
-[Open in StackBlitz](https://stackblitz.com/github/TanStack/query/tree/main/examples/angular/router)
+[Open in StackBlitz](https://stackblitz.com/github/TanStack/query/tree/main/examples/angular/basic-angular-router)
 
 ```ts
 @Component({})

@@ -16,10 +16,11 @@ import type {
 } from '@tanstack/query-core'
 
 /**
- * `enabled` for Vue Query. A `ref`, `computed`, or plain boolean is reactive. A zero-argument getter
- * (`() => ...`) is too: it is called while tracking dependencies. query-core's `(query) => boolean` is
- * kept as that callback and is not tracked by Vue — a `ref` read inside it is current when core calls it,
- * and a `ref` change does not by itself call it again.
+ * `enabled` for Vue Query. A `ref` or `computed` is reactive, while a plain boolean isn't tracked on its own. A
+ * zero-argument getter (`() => ...`) is reactive too: it is called while tracking dependencies. query-core's
+ * `(query) => boolean` is kept as that callback and is not tracked by Vue — a `ref` read inside it is current
+ * when core calls it, and a `ref` change does not by itself call it again. The two are told apart by the number
+ * of declared parameters, so declare `query` as a required parameter.
  */
 export type VueQueryEnabledOption<
   TQueryFnData,
@@ -36,7 +37,8 @@ export type VueQueryEnabledOption<
  * {@link UseQueryOptions}, which accepts the same options as `ref`s and `computed`s too.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
- * @template TData - The type `data` ends up as after `select` runs.
+ * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
+ * `select` is used.
  * @template TQueryData - The type of data stored in the cache, before `select` runs. Defaults to
  * `TQueryFnData` and can be configured independently of it.
  * @template TQueryKey - The type of your `queryKey`.
@@ -78,13 +80,13 @@ export type QueryOptions<
 type SkipTokenForUseQuery = symbol
 
 /**
- * The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `enabled` tracks reactive
- * dependencies as a `ref`, a plain boolean, or a zero-argument getter (`() => ...`). query-core's
- * `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts
- * through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual
- * entries. Other options are read once when passed as a plain value, and stay reactive when passed as a `ref`
- * or a `computed`. Only `enabled` and `queryKey` read a function as a getter, so `queryFn` reacts through a
- * `computed`: a function there is the query function itself.
+ * The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `enabled` accepts a `ref`, a
+ * plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is tracked, while a plain boolean
+ * isn't tracked on its own. query-core's `(query) => boolean` callback is accepted too and is passed through
+ * untracked. `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and reactive
+ * getters as individual entries. Other options are read once when passed as a plain value, and stay reactive
+ * when passed as a `ref` or a `computed`. Only `enabled` and `queryKey` read a function as a getter, so
+ * `queryFn` reacts through a `computed`: a function there is the query function itself.
  *
  * If you instead pass a getter for the whole options object (`useQuery(() => ({ ... }))`), every option
  * inside it — including `staleTime`, `retry`, and `select` — is re-evaluated whenever the getter's own
@@ -97,7 +99,8 @@ type SkipTokenForUseQuery = symbol
  * re-evaluates.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
- * @template TData - The type `data` ends up as after `select` runs.
+ * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
+ * `select` is used.
  * @template TQueryData - The type of data stored in the cache, before `select` runs. Defaults to
  * `TQueryFnData` and can be configured independently of it.
  * @template TQueryKey - The type of your `queryKey`.
