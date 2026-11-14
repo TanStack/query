@@ -1,5 +1,21 @@
 # @tanstack/vue-query-devtools
 
+## 6.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`025773a`](https://github.com/TanStack/query/commit/025773a83a7375078fb5ac46280222fe52c9b212), [`f4199ab`](https://github.com/TanStack/query/commit/f4199ab51f4e54044e97bcbd520977728538a649)]:
+  - @tanstack/vue-query@5.107.1
+  - @tanstack/query-devtools@5.107.1
+
+## 6.4.0
+
+### Patch Changes
+
+- Updated dependencies [[`a4d72f7`](https://github.com/TanStack/query/commit/a4d72f75c1c7a59e39aaf4f776f540c3814e46f7), [`00dc8de`](https://github.com/TanStack/query/commit/00dc8de8fe04f78ed24405f3ec19f20880b1c9f6), [`2cdba60`](https://github.com/TanStack/query/commit/2cdba6053c8f3b03094b55b3fd64880b8fbd596b)]:
+  - @tanstack/query-devtools@5.107.0
+  - @tanstack/vue-query@5.107.0
+
 ## 6.3.11
 
 ### Patch Changes

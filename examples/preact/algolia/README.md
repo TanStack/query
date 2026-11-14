@@ -1,4 +1,13 @@
-# Example
+# TanStack Preact Query Algolia Example
+
+Searches products on Algolia as you type, with a debounced search term and paginated results loaded with an infinite query.
+
+## How it works
+
+- `src/services/products/queries.ts` defines `productsQueries.search()`, an `infiniteQueryOptions` factory keyed by the index, search term, and page size. Its `queryFn` is `skipToken` while the term is empty, and `getNextPageParam` returns the next page until `nbPages` is reached.
+- `src/services/products/api.ts` calls `searchSingleIndex` from `@algolia/client-search` with the page passed in as `pageParam`.
+- `src/Search.tsx` debounces the input by 300 ms with `useDebouncedValue` from `@tanstack/preact-pacer` and passes the debounced term to `SearchResults`.
+- `src/SearchResults.tsx` calls `useInfiniteQuery` with `select` to flatten `data.pages` into one list of hits, plus `staleTime` and `gcTime`. The "more" button calls `fetchNextPage` while `hasNextPage` is `true`.
 
 To run this example:
 
