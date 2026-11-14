@@ -16,15 +16,17 @@ import type {
  * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
  * The query runs when the options call for it — `enabled: false` skips the initial fetch.
  *
- * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
- * `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * This overload is selected when `initialData` is known to be defined, so the resulting `data` is typed as never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`). At runtime, `data` is still `undefined`
+ * if `select` throws on its first call.
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `createQuery`,
  * with `initialData` known to be defined, wrapped in an {@link Accessor} so options can be reactive.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
- * fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
- * since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for convenience.
+ * @returns The current query result, typed so that `status` is `success` or `error` (`status` never
+ * resolves to `pending` in this overload's type, since `initialData` guarantees data upfront). `status` is
+ * `error` if the query has an error from a fetch that failed after its retries or if `select` threw, and
+ * `success` otherwise. `isSuccess`/`isError` are derived booleans for convenience.
  * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
  * @example
  * ```svelte
@@ -69,9 +71,10 @@ export function createQuery<
  * wrapped in an {@link Accessor} so options can be reactive.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
- * the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
- * are derived booleans for convenience.
+ * @returns The current query result. `status` is `error` if the query has an error from a fetch that failed
+ * after its retries or if `select` threw, `success` if the query has data to display (including
+ * `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived booleans for
+ * convenience.
  * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
  * @example
  * ```svelte
@@ -141,9 +144,10 @@ export function createQuery<
  * in an {@link Accessor} so options can be reactive.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
- * the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
- * are derived booleans for convenience.
+ * @returns The current query result. `status` is `error` if the query has an error from a fetch that failed
+ * after its retries or if `select` threw, `success` if the query has data to display (including
+ * `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived booleans for
+ * convenience.
  * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
  * @example
  * `select` derives whatever `data` a component needs from the cached value, without changing what's
