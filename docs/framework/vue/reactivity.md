@@ -159,6 +159,10 @@ More details on this option can be found on the [useQuery reference](./reference
 
 The other query options accept refs as well, and pick up changes to them. Reactive getters, however, are only resolved in `queryKey` and `enabled`, since a function is already a valid value for options such as `select` or `staleTime`.
 
+In `enabled`, only a zero-argument getter is resolved this way. TanStack Query Core's `(query) => boolean` callback is accepted too, and is passed through untracked: a ref read inside it is current when TanStack Query Core calls it, but a change to that ref doesn't call it again by itself.
+
+Vue Query tells the two apart by the number of parameters the function declares, so declare `query` as a required parameter. A callback with only a rest or a default parameter is treated as a getter and called without a query.
+
 ### Immutability
 
 Results from `useQuery` are always immutable. This is necessary for performance and caching purposes. If you need to mutate a value returned from `useQuery`, you must create a copy of the data.

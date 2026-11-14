@@ -16,7 +16,7 @@ function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, 
 ```
 
 - [`DefinedInitialQueryOptions` → `UseQueryDefinedReturnType`](#call-signature-1): This overload is selected when `initialData` is known to be defined, so the resulting `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
-- [`UndefinedInitialQueryOptions` → `UseQueryReturnType`](#call-signature-2): `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual entries. Other options are read once when passed as a plain value, and stay reactive when passed as a `ref` or a `computed`.
+- [`UndefinedInitialQueryOptions` → `UseQueryReturnType`](#call-signature-2): `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is accepted too and is passed through untracked. `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual entries. Other options are read once when passed as a plain value, and stay reactive when passed as a `ref` or a `computed`.
 - [`MaybeRefOrGetter` → `UseQueryReturnType`](#call-signature-3): Fallback overload for options whose `initialData` presence isn't statically known — for example, a `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
@@ -29,15 +29,16 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryDefinedReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:74](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L74)
+Defined in: [packages/vue-query/src/useQuery.ts:77](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L77)
 
 This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
 `undefined` (unless a `select` changes `TData` to include `undefined`).
 
-`enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
-(`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
-reactive getters as individual entries. Other options are read once when passed as a plain value, and stay
-reactive when passed as a `ref` or a `computed`.
+`enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+accepted too and is passed through untracked. `queryKey` reacts through a `ref` or a reactive getter for the
+array itself, or `ref`s and reactive getters as individual entries. Other options are read once when passed as
+a plain value, and stay reactive when passed as a `ref` or a `computed`.
 
 ### Type Parameters
 
@@ -77,9 +78,11 @@ will be used.
 
 [`UseQueryDefinedReturnType`](../type-aliases/UseQueryDefinedReturnType.md)\<`TData`, `TError`\>
 
-The current query result, typed so that `data` is never `undefined` (unless a `select` changes
-`TData` to include `undefined`). `status` never resolves to `pending` in this overload's type, since
-`initialData` guarantees data upfront.
+The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
+fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
+since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived boolean `ref`s for
+convenience. `state` is that result as one readonly reactive object — `state.data`, `state.isPending`, and
+the rest are plain values.
 
 ### Example
 
@@ -112,12 +115,13 @@ const { data, isError, error } = useQuery({
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:213](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L213)
+Defined in: [packages/vue-query/src/useQuery.ts:239](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L239)
 
-`enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
-(`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
-reactive getters as individual entries. Other options are read once when passed as a plain value, and stay
-reactive when passed as a `ref` or a `computed`.
+`enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+accepted too and is passed through untracked. `queryKey` reacts through a `ref` or a reactive getter for the
+array itself, or `ref`s and reactive getters as individual entries. Other options are read once when passed as
+a plain value, and stay reactive when passed as a `ref` or a `computed`.
 
 ### Type Parameters
 
@@ -157,7 +161,10 @@ will be used.
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
 The current query result. `status` is `pending` if there is no cached data to display, `error` if
-the last fetch attempt failed, or `success` if the query has data to display.
+the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+are derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
+`state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows
+`state.data` to `TData`.
 
 ### Examples
 
@@ -279,6 +286,25 @@ const { data, isPlaceholderData, isError, error } = useQuery({
 </template>
 ```
 
+`state` keeps `data`, `error`, `status`, and `isPending` on one reactive object, so a `status` check
+narrows `data` and you never read `.value`:
+```vue
+<script setup lang="ts">
+import { useQuery } from '@tanstack/vue-query'
+
+const { state } = useQuery({
+  queryKey: ['post'],
+  queryFn: fetchPost,
+})
+</script>
+
+<template>
+  <span v-if="state.status === 'pending'">Loading...</span>
+  <span v-else-if="state.status === 'error'">Error: {{ state.error.message }}</span>
+  <h1 v-else>{{ state.data.title }}</h1>
+</template>
+```
+
 <a id="call-signature-3"></a>
 
 ## Call Signature
@@ -287,15 +313,16 @@ const { data, isPlaceholderData, isError, error } = useQuery({
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: MaybeRefOrGetter<UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:286](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L286)
+Defined in: [packages/vue-query/src/useQuery.ts:317](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L317)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
 overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
-`enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
-(`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
-reactive getters as individual entries.
+`enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+accepted too and is passed through untracked. `queryKey` reacts through a `ref` or a reactive getter for the
+array itself, or `ref`s and reactive getters as individual entries.
 
 When `options` itself is a reactive getter, the whole object is re-evaluated on every change to its
 dependencies, so any option inside it — not just `queryKey` and `enabled` — can change over time.
@@ -337,7 +364,11 @@ will be used.
 
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
-The current query result, with `data` typed as possibly `undefined`.
+The current query result. `status` is `pending` if there is no cached data to display, `error` if
+the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+are derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
+`state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows
+`state.data` to `TData`.
 
 ### Examples
 
@@ -411,4 +442,8 @@ will be used.
 
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
-The current query result, with `data` typed as possibly `undefined`.
+The current query result. `status` is `pending` if there is no cached data to display, `error` if
+the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+are derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
+`state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows
+`state.data` to `TData`.
