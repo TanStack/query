@@ -1041,7 +1041,7 @@ export interface QueryObserverBaseResult<
    */
   isPlaceholderData: boolean
   /**
-   * Will be `true` if the query has an error and still has data to display.
+   * Will be `true` if the query has an error and still has data to display (for infinite queries, not after a failed page fetch).
    */
   isRefetchError: boolean
   /**
@@ -1649,7 +1649,7 @@ export interface InfiniteQueryObserverRefetchErrorResult<
    */
   isLoadingError: false
   /**
-   * `true`, since the query has an error and still has data to display.
+   * `true`, since the query has an error, still has data to display, and didn't fail fetching a page.
    */
   isRefetchError: true
   /**
