@@ -27,13 +27,14 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/useQuery.ts:57](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L57)
+Defined in: [packages/solid-query/src/useQuery.ts:58](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L58)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
 
-This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
-`undefined` (unless a `select` changes `TData` to include `undefined`).
+This overload is selected when `initialData` is known to be defined, so the resulting `data` is typed as never
+`undefined` (unless a `select` changes `TData` to include `undefined`). At runtime, `data` is still `undefined`
+if `select` throws on its first call.
 
 ### Type Parameters
 
@@ -73,10 +74,10 @@ will be used.
 
 [`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result, as a Solid store, typed so that `status` is `success` — or `error` if a
-fetch attempt fails while keeping the existing data (`status` never resolves to `pending` in this overload's
-type, since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for
-convenience.
+The current query result, as a Solid store, typed so that `status` is `success` or `error`
+(`status` never resolves to `pending` in this overload's type, since `initialData` guarantees data upfront).
+`status` is `error` if the query has an error from a fetch that failed after its retries or if `select`
+threw, and `success` otherwise. `isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
 
@@ -116,7 +117,7 @@ function Posts() {
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/useQuery.ts:228](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L228)
+Defined in: [packages/solid-query/src/useQuery.ts:230](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L230)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
@@ -159,9 +160,10 @@ will be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result, as a Solid store. `status` is `pending` if there is no cached data to
-display, `error` if the last fetch attempt failed, or `success` if the query has data to display.
-`isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+The current query result, as a Solid store. `status` is `error` if the query has an error from
+a fetch that failed after its retries or if `select` threw, `success` if the query has data to display
+(including `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived
+booleans for convenience.
 
 ### See
 
@@ -348,9 +350,10 @@ will be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result, as a Solid store. `status` is `pending` if there is no cached data to
-display, `error` if the last fetch attempt failed, or `success` if the query has data to display.
-`isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+The current query result, as a Solid store. `status` is `error` if the query has an error from
+a fetch that failed after its retries or if `select` threw, `success` if the query has data to display
+(including `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived
+booleans for convenience.
 
 <a id="result-properties"></a>
 
