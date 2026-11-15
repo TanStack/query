@@ -10,11 +10,12 @@ import { isServer } from '@solidjs/web'
 import type { Component, ComponentProps } from 'solid-js'
 import type { JSX } from '@solidjs/web'
 
-/*
-  This function has been taken from solid-start's codebase
-  This allows the devtools to be loaded only on the client and bypasses any server side rendering
-  https://github.com/solidjs/solid-start/blob/2967fc2db3f0df826f061020231dbdafdfa0746b/packages/start/islands/clientOnly.tsx
-*/
+/**
+ * Loads the devtools only on the client, so that they bypass any server side rendering. Taken from
+ * [solid-start's codebase](https://github.com/solidjs/solid-start/blob/2967fc2db3f0df826f061020231dbdafdfa0746b/packages/start/islands/clientOnly.tsx).
+ * @param fn - Dynamically imports the module whose default export is the component.
+ * @returns A component that renders `props.fallback` on the server and until the import resolves.
+ */
 export default function clientOnly<T extends Component<any>>(
   fn: () => Promise<{
     default: T

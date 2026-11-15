@@ -46,16 +46,32 @@ export type InfiniteQueryObserverOptions<
   TPageParam
 >
 
+/**
+ * The default options a `QueryClient` applies to every query and mutation.
+ * @template TError - The default type of errors thrown by queries and mutations using this `QueryClient`.
+ */
 export interface DefaultOptions<
   TError = DefaultError,
 > extends CoreDefaultOptions<TError> {
+  /**
+   * Default options applied to every query, unless overridden per-query.
+   */
   queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'>
 }
 
+/**
+ * The config accepted by `new QueryClient(config)`, with Solid's {@link DefaultOptions}.
+ */
 export interface QueryClientConfig extends QueryCoreClientConfig {
+  /**
+   * The default options of the queries and mutations of this `QueryClient`.
+   */
   defaultOptions?: DefaultOptions
 }
 
+/**
+ * The core `@tanstack/query-core` `QueryClient`, typed with Solid's {@link QueryClientConfig}.
+ */
 export class QueryClient extends QueryCoreClient {
   constructor(config: QueryClientConfig = {}) {
     super(config)

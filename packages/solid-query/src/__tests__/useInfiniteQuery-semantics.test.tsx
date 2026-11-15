@@ -5,7 +5,7 @@
 // page-boundary checks.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Loading } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useInfiniteQuery } from '..'
 import { renderWithClient } from './utils'
 
@@ -40,7 +40,7 @@ describe('useInfiniteQuery 2.0 read semantics', () => {
   }
 
   it('suspends on first load, then renders the first page', async () => {
-    const key = queryKey()
+    const key = createKey()
     function Page() {
       const query = useInfiniteQuery(() => pagedQuery(key))
       return (
@@ -64,7 +64,7 @@ describe('useInfiniteQuery 2.0 read semantics', () => {
   })
 
   it('fetchNextPage appends while committed pages stay visible, with observable direction', async () => {
-    const key = queryKey()
+    const key = createKey()
     function Page() {
       const query = useInfiniteQuery(() => pagedQuery(key))
       return (
@@ -104,7 +104,7 @@ describe('useInfiniteQuery 2.0 read semantics', () => {
   })
 
   it('hasNextPage turns false at the boundary', async () => {
-    const key = queryKey()
+    const key = createKey()
     function Page() {
       const query = useInfiniteQuery(() => pagedQuery(key, 2))
       return (
@@ -131,7 +131,7 @@ describe('useInfiniteQuery 2.0 read semantics', () => {
   })
 
   it('fetchPreviousPage prepends', async () => {
-    const key = queryKey()
+    const key = createKey()
     function Page() {
       const query = useInfiniteQuery(() => ({
         ...pagedQuery(key),
@@ -161,7 +161,7 @@ describe('useInfiniteQuery 2.0 read semantics', () => {
   })
 
   it('full refetch reports isRefetching, not a page fetch', async () => {
-    const key = queryKey()
+    const key = createKey()
     function Page() {
       const query = useInfiniteQuery(() => pagedQuery(key))
       return (

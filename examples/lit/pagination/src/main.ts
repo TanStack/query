@@ -5,15 +5,13 @@ import {
   createMutationController,
   createQueryController,
   keepPreviousData,
+  noop,
 } from '@tanstack/lit-query'
 import {
   armNextProjectMutationFailureOnServer,
-  createProjectOnServer,
-  fetchProjectsPage,
-  projectsQueryKey,
   resetProjectsApiState,
-  toggleProjectFavoriteOnServer,
-} from './api'
+} from './services/projects/api'
+import { projectsMutations, projectsQueries } from './services/projects/queries'
 import type {
   CreateQueryOptions,
   MutationResultAccessor,
@@ -24,11 +22,12 @@ import type {
   CreateProjectInput,
   Project,
   ProjectsPageResponse,
+  ProjectsQueryKey,
   ToggleProjectFavoriteInput,
-} from './api'
+} from './services/projects/types'
 
 type ProjectsCacheSnapshot = Array<[QueryKey, ProjectsPageResponse | undefined]>
-type FavoriteMutationContext = {
+type FavoriteMutationResult = {
   snapshots: ProjectsCacheSnapshot
 }
 
@@ -36,7 +35,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: false,
-      staleTime: 5_000,
+      staleTime: 5000,
     },
     mutations: {
       retry: false,
@@ -82,7 +81,10 @@ class PaginationDemo extends LitElement {
   private lastAutoPrefetchPage = 0
   private readonly projectsQueryOptions: CreateQueryOptions<
     ProjectsPageResponse,
-    Error
+    Error,
+    ProjectsPageResponse,
+    ProjectsPageResponse,
+    ProjectsQueryKey
   >
   private readonly projectsQuery: QueryResultAccessor<
     ProjectsPageResponse,
@@ -98,36 +100,23 @@ class PaginationDemo extends LitElement {
     Project,
     Error,
     ToggleProjectFavoriteInput,
-    FavoriteMutationContext
+    FavoriteMutationResult
   >
 
   constructor() {
     super()
 
     this.projectsQueryOptions = {
-      queryKey: projectsQueryKey(this.page, this.delayMs, this.forceErrorMode),
-      queryFn: () =>
-        fetchProjectsPage(this.page, this.delayMs, this.forceErrorMode),
+      ...projectsQueries.list(this.page, this.delayMs, this.forceErrorMode),
       placeholderData: keepPreviousData,
     }
 
-    this.projectsQuery = createQueryController<ProjectsPageResponse, Error>(
-      this,
-      this.projectsQueryOptions,
-    )
+    this.projectsQuery = createQueryController(this, this.projectsQueryOptions)
 
-    this.createProjectMutation = createMutationController<
-      Project,
-      Error,
-      CreateProjectInput
-    >(
+    this.createProjectMutation = createMutationController(
       this,
       {
-        mutationKey: ['create-project'],
-        mutationFn: async (input) => {
-          const response = await createProjectOnServer(input)
-          return response.project
-        },
+        ...projectsMutations.create(),
         onMutate: () => {
           this.mutationControlStatus = 'idle'
           this.mutationControlError = undefined
@@ -140,7 +129,7 @@ class PaginationDemo extends LitElement {
           this.draftOwner = 'Team 6'
           this.syncProjectsQueryOptions()
           await queryClient.invalidateQueries({
-            queryKey: ['projects'],
+            queryKey: projectsQueries.all(),
             refetchType: 'none',
           })
           await this.projectsQuery.refetch()
@@ -149,26 +138,17 @@ class PaginationDemo extends LitElement {
       queryClient,
     )
 
-    this.favoriteMutation = createMutationController<
-      Project,
-      Error,
-      ToggleProjectFavoriteInput,
-      FavoriteMutationContext
-    >(
+    this.favoriteMutation = createMutationController(
       this,
       {
-        mutationKey: ['toggle-project-favorite'],
-        mutationFn: async (input) => {
-          const response = await toggleProjectFavoriteOnServer(input)
-          return response.project
-        },
+        ...projectsMutations.updateFavorite(),
         onMutate: async (variables) => {
           this.mutationControlStatus = 'idle'
           this.mutationControlError = undefined
-          await queryClient.cancelQueries({ queryKey: ['projects'] })
+          await queryClient.cancelQueries({ queryKey: projectsQueries.all() })
 
           const snapshots = queryClient.getQueriesData<ProjectsPageResponse>({
-            queryKey: ['projects'],
+            queryKey: projectsQueries.all(),
           })
 
           for (const [key, existing] of snapshots) {
@@ -188,13 +168,15 @@ class PaginationDemo extends LitElement {
 
           return { snapshots }
         },
-        onError: (_error, _variables, context) => {
-          for (const [key, snapshot] of context?.snapshots ?? []) {
+        onError: (_error, _variables, onMutateResult) => {
+          for (const [key, snapshot] of onMutateResult?.snapshots ?? []) {
             queryClient.setQueryData(key, snapshot)
           }
         },
         onSettled: async () => {
-          await queryClient.invalidateQueries({ queryKey: ['projects'] })
+          await queryClient.invalidateQueries({
+            queryKey: projectsQueries.all(),
+          })
         },
       },
       queryClient,
@@ -210,13 +192,13 @@ class PaginationDemo extends LitElement {
   }
 
   private syncProjectsQueryOptions(): void {
-    this.projectsQueryOptions.queryKey = projectsQueryKey(
+    const { queryKey, queryFn } = projectsQueries.list(
       this.page,
       this.delayMs,
       this.forceErrorMode,
     )
-    this.projectsQueryOptions.queryFn = () =>
-      fetchProjectsPage(this.page, this.delayMs, this.forceErrorMode)
+    this.projectsQueryOptions.queryKey = queryKey
+    this.projectsQueryOptions.queryFn = queryFn
   }
 
   private refetchForCurrentState(): void {
@@ -272,15 +254,11 @@ class PaginationDemo extends LitElement {
     this.prefetchStatus = `pending:${targetPage}`
 
     try {
-      await queryClient.prefetchQuery({
-        queryKey: projectsQueryKey(
-          targetPage,
-          this.delayMs,
-          this.forceErrorMode,
-        ),
-        queryFn: () =>
-          fetchProjectsPage(targetPage, this.delayMs, this.forceErrorMode),
-      })
+      await queryClient
+        .query(
+          projectsQueries.list(targetPage, this.delayMs, this.forceErrorMode),
+        )
+        .catch(noop)
       this.prefetchStatus = `ready:${targetPage}`
     } catch (error) {
       this.prefetchStatus = `error:${String(error)}`
@@ -334,7 +312,7 @@ class PaginationDemo extends LitElement {
       this.syncProjectsQueryOptions()
       this.createProjectMutation.reset()
       this.favoriteMutation.reset()
-      await queryClient.resetQueries({ queryKey: ['projects'] })
+      await queryClient.resetQueries({ queryKey: projectsQueries.all() })
       await this.projectsQuery.refetch()
     } catch (error) {
       this.resetError = String(error)
@@ -416,12 +394,16 @@ class PaginationDemo extends LitElement {
           </div>
         </section>
 
-        ${query.isError
-          ? html`<p data-testid="query-error">${String(query.error)}</p>`
-          : null}
-        ${this.resetError
-          ? html`<p data-testid="reset-error">${this.resetError}</p>`
-          : null}
+        ${
+          query.isError
+            ? html`<p data-testid="query-error">${query.error.message}</p>`
+            : null
+        }
+        ${
+          this.resetError
+            ? html`<p data-testid="reset-error">${this.resetError}</p>`
+            : null
+        }
 
         <section>
           <label for="delayInput">Delay (ms)</label>
@@ -470,22 +452,26 @@ class PaginationDemo extends LitElement {
           <div data-testid="mutation-control-status">
             mutation-control: ${this.mutationControlStatus}
           </div>
-          ${this.mutationControlError
-            ? html`<div data-testid="mutation-control-error">
-                ${this.mutationControlError}
-              </div>`
-            : null}
+          ${
+            this.mutationControlError
+              ? html`<div data-testid="mutation-control-error">
+                  ${this.mutationControlError}
+                </div>`
+              : null
+          }
         </section>
 
         <section>
           <div data-testid="create-mutation-status">
             create-mutation: ${createProject.status}
           </div>
-          ${createProject.isError
-            ? html`<div data-testid="create-mutation-error">
-                ${String(createProject.error)}
-              </div>`
-            : null}
+          ${
+            createProject.isError
+              ? html`<div data-testid="create-mutation-error">
+                  ${createProject.error.message}
+                </div>`
+              : null
+          }
 
           <label for="projectNameInput">Project name</label>
           <input
@@ -516,11 +502,13 @@ class PaginationDemo extends LitElement {
           <div data-testid="favorite-mutation-status">
             favorite-mutation: ${favoriteProject.status}
           </div>
-          ${favoriteProject.isError
-            ? html`<div data-testid="favorite-mutation-error">
-                ${String(favoriteProject.error)}
-              </div>`
-            : null}
+          ${
+            favoriteProject.isError
+              ? html`<div data-testid="favorite-mutation-error">
+                  ${favoriteProject.error.message}
+                </div>`
+              : null
+          }
         </section>
 
         <section>

@@ -18,6 +18,17 @@ import type {
 } from './QueryClient'
 import type { Accessor } from 'solid-js'
 
+/**
+ * The options accepted by `useQuery`. Extends {@link QueryObserverOptions} from `@tanstack/query-core` with
+ * the `solid-query`-specific `deferStream` and `reconcile` options.
+ * @template TQueryFnData - The type your `queryFn` resolves to.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
+ * `select` is used.
+ * @template TQueryData - The type of the data actually held in the query cache — the input to `select` and
+ * `placeholderData`. Defaults to, and is usually the same as, `TQueryFnData`.
+ * @template TQueryKey - The type of your `queryKey`.
+ */
 export interface UseBaseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -47,6 +58,14 @@ export interface UseBaseQueryOptions<
   reconcile?: string | ((item: NonNullable<any>) => any) | null
 }
 
+/**
+ * The options accepted by `useQuery` and `queryOptions`.
+ * @template TQueryFnData - The type your `queryFn` resolves to.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
+ * `select` is used.
+ * @template TQueryKey - The type of your `queryKey`.
+ */
 export interface QueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -60,6 +79,15 @@ export interface QueryOptions<
   TQueryKey
 > {}
 
+/**
+ * The accessor `useQuery` expects as its first argument — Solid re-evaluates it reactively, so `queryKey` and
+ * other options can depend on signals.
+ * @template TQueryFnData - The type your `queryFn` resolves to.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
+ * `select` is used.
+ * @template TQueryKey - The type of your `queryKey`.
+ */
 export type UseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -85,6 +113,11 @@ export type UseBaseQueryResult<
   { data: TData }
 >
 
+/**
+ * The object `useQuery` returns. Same as {@link UseBaseQueryResult}.
+ * @template TData - The type `data` ends up as, after `select` runs (if set).
+ * @template TError - The type of errors this query may hold.
+ */
 export type UseQueryResult<
   TData = unknown,
   TError = DefaultError,
@@ -103,12 +136,26 @@ export type DefinedUseBaseQueryResult<
   TError = DefaultError,
 > = OmitIsInitialLoading<DefinedQueryObserverResult<TData, TError>>
 
+/**
+ * The object `useQuery` returns when `initialData` guarantees `data` is never `undefined` (unless a
+ * `select` changes `TData` to include `undefined`).
+ * @template TData - The type `data` ends up as, after `select` runs (if set).
+ * @template TError - The type of errors this query may hold.
+ */
 export type DefinedUseQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = DefinedUseBaseQueryResult<TData, TError>
 
 /* --- Create Infinite Queries Types --- */
+/**
+ * The options accepted by `useInfiniteQuery`.
+ * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs.
+ * @template TQueryKey - The type of your `queryKey`.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
+ */
 export interface InfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -125,6 +172,14 @@ export interface InfiniteQueryOptions<
   >,
   'queryKey' | 'suspense'
 > {
+  /**
+   * The query key to use for this query. Required here, unlike on the options this type extends.
+   *
+   * The query key will be hashed into a stable hash. See [Query Keys](https://tanstack.com/query/latest/docs/framework/solid/guides/query-keys)
+   * for more information.
+   *
+   * The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
+   */
   queryKey: TQueryKey
   /**
    * Defer the SSR stream flush until this query resolves on the server —
@@ -139,6 +194,15 @@ export interface InfiniteQueryOptions<
   reconcile?: string | ((item: NonNullable<any>) => any) | null
 }
 
+/**
+ * The accessor `useInfiniteQuery` expects as its first argument — Solid re-evaluates it reactively, so
+ * `queryKey` and other options can depend on signals.
+ * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs.
+ * @template TQueryKey - The type of your `queryKey`.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
+ */
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -158,12 +222,25 @@ export type UseInfiniteQueryResult<
   { data: TData }
 >
 
+/**
+ * The object `useInfiniteQuery` returns when `initialData` guarantees `data` is never `undefined` (unless a
+ * `select` changes `TData` to include `undefined`).
+ * @template TData - The type `data` ends up as, after `select` runs (if set).
+ * @template TError - The type of errors this query may hold.
+ */
 export type DefinedUseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = OmitIsInitialLoading<DefinedInfiniteQueryObserverResult<TData, TError>>
 
 /* --- Create Mutation Types --- */
+/**
+ * The options accepted by `useMutation` and `mutationOptions`.
+ * @template TData - The type your `mutationFn` resolves to.
+ * @template TError - The type of errors your `mutationFn` may throw.
+ * @template TVariables - The type of the variables your `mutationFn` accepts.
+ * @template TOnMutateResult - The type returned by `onMutate`, passed on to `onSuccess`/`onError`/`onSettled`.
+ */
 export interface MutationOptions<
   TData = unknown,
   TError = DefaultError,
@@ -174,6 +251,14 @@ export interface MutationOptions<
   '_defaulted'
 > {}
 
+/**
+ * The accessor `useMutation` expects as its first argument — Solid re-evaluates it reactively, so callbacks
+ * and other options can depend on signals.
+ * @template TData - The type your `mutationFn` resolves to.
+ * @template TError - The type of errors your `mutationFn` may throw.
+ * @template TVariables - The type of the variables your `mutationFn` accepts.
+ * @template TOnMutateResult - The type returned by `onMutate`, passed on to `onSuccess`/`onError`/`onSettled`.
+ */
 export type UseMutationOptions<
   TData = unknown,
   TError = DefaultError,
@@ -195,8 +280,21 @@ export type UseMutateFunction<
   TVariables = void,
   // eslint-disable-next-line @typescript-eslint/naming-convention
   _TOnMutateResult = unknown,
-> = (variables: TVariables) => Promise<TData>
+> = (
+  ...args: undefined extends TVariables
+    ? [variables?: TVariables]
+    : [variables: TVariables]
+) => Promise<TData>
 
+/**
+ * The result of `useMutation`. Same as {@link MutationObserverResult} from `@tanstack/query-core`, with
+ * `mutate` replaced by the promise-returning {@link UseMutateFunction}.
+ * @template TData - The type your `mutationFn` resolves to.
+ * @template TError - The type of errors your `mutationFn` may throw.
+ * @template TVariables - The type of the variable passed to `mutate`.
+ * @template TOnMutateResult - The type returned by `onMutate`, passed to `onSuccess`/`onError`/`onSettled` as
+ * their `onMutateResult` parameter — useful for optimistic-update rollback data.
+ */
 export type UseBaseMutationResult<
   TData = unknown,
   TError = DefaultError,
@@ -210,6 +308,14 @@ export type UseBaseMutationResult<
   { mutate: UseMutateFunction<TData, TError, TVariables, TOnMutateResult> }
 >
 
+/**
+ * The result of `useMutation`. Same as {@link UseBaseMutationResult}.
+ * @template TData - The type your `mutationFn` resolves to.
+ * @template TError - The type of errors your `mutationFn` may throw.
+ * @template TVariables - The type of the variable passed to `mutate`.
+ * @template TOnMutateResult - The type returned by `onMutate`, passed to `onSuccess`/`onError`/`onSettled` as
+ * their `onMutateResult` parameter — useful for optimistic-update rollback data.
+ */
 export type UseMutationResult<
   TData = unknown,
   TError = DefaultError,

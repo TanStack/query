@@ -6,7 +6,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent } from '@solidjs/testing-library'
 import { Errored, Loading, createSignal } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useInfiniteQuery, useQuery } from '..'
 import { renderWithClient } from './utils'
 
@@ -26,7 +26,7 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
   })
 
   it('should return the correct states for a successful infinite query', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [multiplier, setMultiplier] = createSignal(1)
@@ -70,9 +70,11 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
   })
 
   it('should not call the queryFn twice when used in Loading mode', async () => {
-    const key = queryKey()
+    const key = createKey()
 
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       useQuery(() => ({
@@ -91,12 +93,11 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
 
     expect(rendered.getByText('rendered')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(20)
-
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should remove query instance when component unmounted', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useQuery(() => ({
@@ -141,7 +142,7 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
 
   // https://github.com/tannerlinsley/react-query/issues/468
   it('should reset error state if new component instances are mounted', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     let succeed = false
 
@@ -196,7 +197,7 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
   })
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     let succeed = false
 
@@ -257,7 +258,7 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
   })
 
   it('should refetch when re-mounting', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     function Component() {
@@ -315,8 +316,8 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
   })
 
   it('should hold committed data when switching to a new query', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     function Component(props: { queryKey: Array<string> }) {
       const result = useQuery(() => ({
@@ -371,11 +372,9 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
   })
 
   it('should throw errors to the error boundary by default', async () => {
-    const key = queryKey()
+    const key = createKey()
 
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -408,8 +407,6 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when throwOnError: false', async () => {
@@ -418,7 +415,7 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
     // `throwOnError: false` preserves is the error-as-state channel:
     // metadata reads (status/error) never throw, so a component that does
     // not read `.data` renders the error without tripping the boundary.
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const state = useQuery(() => ({
@@ -463,11 +460,9 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
   })
 
   it('should throw errors to the error boundary when a throwOnError function returns true', async () => {
-    const key = queryKey()
+    const key = createKey()
 
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const state = useQuery(() => ({
@@ -501,15 +496,13 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when a throwOnError function returns false', async () => {
     // The throwOnError gate applies to reads that have a committed value to
     // keep serving: a failed refetch with stale data stays error-as-state
     // when the function returns false.
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     function Page() {
@@ -562,7 +555,7 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
   })
 
   it('should not call the queryFn when not enabled', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const queryFn = vi.fn(() => sleep(10).then(() => '23'))
     const [enabled, setEnabled] = createSignal(false)
@@ -602,11 +595,9 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
   })
 
   it('should error caught in error boundary without infinite loop', async () => {
-    const key = queryKey()
+    const key = createKey()
 
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     let succeed = true
 
@@ -655,16 +646,12 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
     // render error boundary fallback (error boundary)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleMock.mockRestore()
   })
 
   it('should error caught in error boundary without infinite loop when query keys changed', async () => {
     let succeed = true
 
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     function Page() {
       const [key, setKey] = createSignal(0)
@@ -713,14 +700,10 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
     // render error boundary fallback (error boundary)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleMock.mockRestore()
   })
 
   it('should error caught in error boundary without infinite loop when enabled changed', async () => {
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
 
     const [enabled, setEnabled] = createSignal(false)
 
@@ -776,12 +759,10 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
     // render error boundary fallback (error boundary)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-    consoleMock.mockRestore()
   })
 
   it('should render the correct amount of times in Loading mode when gcTime is set to 0', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     let count = 0
     const queryFn = vi.fn(() => sleep(10).then(() => ++count))

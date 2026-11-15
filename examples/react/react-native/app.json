@@ -1,15 +1,20 @@
 {
   "expo": {
-    "name": "react-query-basic-example",
-    "slug": "react-query-basic-example",
+    "name": "TanStack React Query React Native Example",
+    "slug": "tanstack-react-query-react-native-example",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ],
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -26,6 +31,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "React Query basic example"
+    "description": "TanStack React Query React Native example"
   }
 }

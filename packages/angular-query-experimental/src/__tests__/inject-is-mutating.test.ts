@@ -6,7 +6,7 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core'
 import { render } from '@testing-library/angular'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectIsMutating,
@@ -34,7 +34,7 @@ describe('injectIsMutating', () => {
   })
 
   it('should properly return isMutating state', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     @Component({
       template: `<div>mutating: {{ isMutating() }}</div>`,
@@ -52,19 +52,17 @@ describe('injectIsMutating', () => {
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
 
     rendered.fixture.componentInstance.mutation.mutate({ par1: 'par1' })
-
     await vi.advanceTimersByTimeAsync(0)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
   it('should be able to filter by mutationKey', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     @Component({
       template: `<div>mutating: {{ isMutating() }}</div>`,
@@ -85,11 +83,9 @@ describe('injectIsMutating', () => {
 
     rendered.fixture.componentInstance.mutation1.mutate()
     rendered.fixture.componentInstance.mutation2.mutate()
-
     await vi.advanceTimersByTimeAsync(0)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()

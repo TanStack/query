@@ -1,12 +1,12 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { QueryClient, skipToken } from '@tanstack/query-core'
+import { createKey } from '@tanstack/query-test-utils'
 import { createInfiniteQuery, infiniteQueryOptions } from '../src/index.js'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('infiniteQueryOptions', () => {
   it('should not allow excess properties', () => {
-    const key = queryKey()
+    const key = createKey()
     assertType(
       infiniteQueryOptions({
         queryKey: key,
@@ -20,7 +20,7 @@ describe('infiniteQueryOptions', () => {
   })
 
   it('should infer types for callbacks', () => {
-    const key = queryKey()
+    const key = createKey()
     infiniteQueryOptions({
       queryKey: key,
       queryFn: () => Promise.resolve('data'),
@@ -34,7 +34,7 @@ describe('infiniteQueryOptions', () => {
   })
 
   it('should work when passed to createInfiniteQuery', () => {
-    const key = queryKey()
+    const key = createKey()
     const options = infiniteQueryOptions({
       queryKey: key,
       queryFn: () => Promise.resolve('string'),
@@ -50,8 +50,78 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
+  it('should work when passed to createInfiniteQuery with initialData', () => {
+    const key = createKey()
+    const options = infiniteQueryOptions({
+      queryKey: key,
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      initialData: { pages: ['string'], pageParams: [1] },
+    })
+
+    const query = createInfiniteQuery(() => options)
+
+    // known issue: type of pageParams is unknown when returned from createInfiniteQuery
+    expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
+  })
+
+  it('should work when passed to infiniteQuery', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+  })
+
+  it('should work when passed to infiniteQuery with select', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      select: (data) => data.pages,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<Array<string>>()
+  })
+
+  it('should work when passed to infiniteQuery with enabled: false', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      enabled: false,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+  })
+
+  it('should work when passed to infiniteQuery with skipToken', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: skipToken,
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
+  })
+
   it('should work when passed to fetchInfiniteQuery', async () => {
-    const key = queryKey()
+    const key = createKey()
     const options = infiniteQueryOptions({
       queryKey: key,
       queryFn: () => Promise.resolve('string'),
@@ -59,6 +129,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchInfiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()

@@ -1,8 +1,15 @@
 import { serialize } from 'superjson'
 import { createSignal, onCleanup, onMount } from 'solid-js'
+import { getNativeObjectType } from './nativeObjectType'
 import type { Mutation, Query } from '@tanstack/query-core'
 import type { DevtoolsPosition } from './contexts'
 
+/**
+ * Returns the status label of a query: fetching, inactive (no observers), paused, stale, or fresh,
+ * checked in that order.
+ * @param query - The query to label.
+ * @returns One of `'fetching'`, `'inactive'`, `'paused'`, `'stale'`, or `'fresh'`.
+ */
 export function getQueryStatusLabel(query: Query) {
   return query.state.fetchStatus === 'fetching'
     ? 'fetching'
@@ -17,6 +24,12 @@ export function getQueryStatusLabel(query: Query) {
 
 type QueryStatusLabel = 'fresh' | 'stale' | 'paused' | 'inactive' | 'fetching'
 
+/**
+ * Appends a capitalized side to a CSS property name, e.g. `border` and `left` to `borderLeft`.
+ * @param prop - The property name.
+ * @param side - The side to append.
+ * @returns The sided property name.
+ */
 export function getSidedProp<T extends string>(
   prop: T,
   side: DevtoolsPosition,
@@ -26,6 +39,12 @@ export function getSidedProp<T extends string>(
   }` as `${T}${Capitalize<DevtoolsPosition>}`
 }
 
+/**
+ * Returns the color of a query's status: blue while fetching, gray without observers, purple while
+ * paused, yellow when stale, otherwise green.
+ * @param params - The query's `queryState`, `observerCount`, and `isStale`.
+ * @returns The color name.
+ */
 export function getQueryStatusColor({
   queryState,
   observerCount,
@@ -46,6 +65,12 @@ export function getQueryStatusColor({
           : 'green'
 }
 
+/**
+ * Returns the color of a mutation's status: purple while paused, red on error, yellow while pending,
+ * green on success, otherwise gray.
+ * @param params - The mutation's `status` and `isPaused`.
+ * @returns The color name.
+ */
 export function getMutationStatusColor({
   status,
   isPaused,
@@ -64,6 +89,11 @@ export function getMutationStatusColor({
           : 'gray'
 }
 
+/**
+ * Returns the color of a query status label.
+ * @param label - A label returned by {@link getQueryStatusLabel}.
+ * @returns The color name.
+ */
 export function getQueryStatusColorByLabel(label: QueryStatusLabel) {
   return label === 'fresh'
     ? 'green'
@@ -77,9 +107,10 @@ export function getQueryStatusColorByLabel(label: QueryStatusLabel) {
 }
 
 /**
- * Displays a string regardless the type of the data
- * @param {unknown} value Value to be stringified
- * @param {boolean} beautify Formats json to multiline
+ * Displays a string regardless of the type of the data.
+ * @param value - Value to be stringified
+ * @param beautify - Formats json to multiline
+ * @returns The value serialized with `superjson`, as a JSON string.
  */
 export const displayValue = (value: unknown, beautify: boolean = false) => {
   const { json } = serialize(value)
@@ -147,10 +178,20 @@ export const mutationSortFns: Record<string, MutationSortFn> = {
   'last updated': mutationDateSort,
 }
 
+/**
+ * Converts a length in `rem` to pixels, using the root element's font size.
+ * @param rem - The length in `rem`.
+ * @returns The length in pixels.
+ */
 export const convertRemToPixels = (rem: number) => {
   return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
 }
 
+/**
+ * Tracks the user's `prefers-color-scheme` setting.
+ * @returns An accessor of `'light'` or `'dark'`, updated when the setting
+ * changes.
+ */
 export const getPreferredColorScheme = () => {
   const [colorScheme, setColorScheme] = createSignal<'light' | 'dark'>('dark')
 
@@ -168,11 +209,37 @@ export const getPreferredColorScheme = () => {
 }
 
 /**
- * updates nested data by path
- *
- * @param {unknown} oldData Data to be updated
- * @param {Array<string>} updatePath Path to the data to be updated
- * @param {unknown} value New value
+ * Checks whether a value is a plain object without invoking accessors, including across realms.
+ * @param value - The data to inspect.
+ * @returns Whether the value can be copied as a record.
+ */
+export function isPlainObject(value: unknown): boolean {
+  if (value === null || typeof value !== 'object') return false
+  try {
+    const prototype = Object.getPrototypeOf(value)
+    if (prototype === null) return true
+    const constructor = Object.getOwnPropertyDescriptor(
+      prototype,
+      'constructor',
+    )?.value
+    return (
+      typeof constructor === 'function' &&
+      Object.getOwnPropertyDescriptor(constructor, 'prototype')?.value ===
+        prototype &&
+      Function.prototype.toString.call(constructor) ===
+        Function.prototype.toString.call(Object)
+    )
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Updates nested data by path.
+ * @param oldData - Data to be updated
+ * @param updatePath - Path to the data to be updated
+ * @param value - New value
+ * @returns A copy of `oldData` with the value at `updatePath` replaced.
  */
 export const updateNestedDataByPath = (
   oldData: unknown,
@@ -183,8 +250,11 @@ export const updateNestedDataByPath = (
     return value
   }
 
-  if (oldData instanceof Map) {
-    const newData = new Map(oldData)
+  const type = getNativeObjectType(oldData)
+  if (type === 'Map') {
+    const newData = new Map<unknown, unknown>(
+      Map.prototype.entries.call(oldData),
+    )
 
     if (updatePath.length === 1) {
       newData.set(updatePath[0], value)
@@ -196,9 +266,9 @@ export const updateNestedDataByPath = (
     return newData
   }
 
-  if (oldData instanceof Set) {
+  if (type === 'Set') {
     const setAsArray = updateNestedDataByPath(
-      Array.from(oldData),
+      Array.from(Set.prototype.values.call(oldData)),
       updatePath,
       value,
     )
@@ -222,38 +292,43 @@ export const updateNestedDataByPath = (
     return newData
   }
 
-  if (oldData instanceof Object) {
-    const newData = { ...oldData }
-
-    if (updatePath.length === 1) {
-      // @ts-expect-error
-      newData[updatePath[0]] = value
-      return newData
-    }
-
+  if (isPlainObject(oldData)) {
+    const descriptors = Object.getOwnPropertyDescriptors(oldData)
     const [head, ...tail] = updatePath
-    // @ts-expect-error
-    newData[head] = updateNestedDataByPath(newData[head], tail, value)
-
-    return newData
+    if (head === undefined) return oldData
+    const previous = Object.getOwnPropertyDescriptor(oldData, head)
+    if (tail.length && (!previous || !('value' in previous))) return oldData
+    return Object.create(Object.getPrototypeOf(oldData), {
+      ...descriptors,
+      [head]: {
+        value: tail.length
+          ? updateNestedDataByPath(previous?.value, tail, value)
+          : value,
+        enumerable: previous?.enumerable ?? true,
+        configurable: true,
+        writable: true,
+      },
+    })
   }
 
   return oldData
 }
 
 /**
- * Deletes nested data by path
- *
- * @param {unknown} oldData Data to be updated
- * @param {Array<string>} deletePath Path to the data to be deleted
+ * Deletes nested data by path.
+ * @param oldData - Data to be updated
+ * @param deletePath - Path to the data to be deleted
  * @returns newData without the deleted items by path
  */
 export const deleteNestedDataByPath = (
   oldData: unknown,
   deletePath: Array<string>,
 ): any => {
-  if (oldData instanceof Map) {
-    const newData = new Map(oldData)
+  const type = getNativeObjectType(oldData)
+  if (type === 'Map') {
+    const newData = new Map<unknown, unknown>(
+      Map.prototype.entries.call(oldData),
+    )
 
     if (deletePath.length === 1) {
       newData.delete(deletePath[0])
@@ -265,8 +340,11 @@ export const deleteNestedDataByPath = (
     return newData
   }
 
-  if (oldData instanceof Set) {
-    const setAsArray = deleteNestedDataByPath(Array.from(oldData), deletePath)
+  if (type === 'Set') {
+    const setAsArray = deleteNestedDataByPath(
+      Array.from(Set.prototype.values.call(oldData)),
+      deletePath,
+    )
     return new Set(setAsArray)
   }
 
@@ -285,32 +363,37 @@ export const deleteNestedDataByPath = (
     return newData
   }
 
-  if (oldData instanceof Object) {
-    const newData = { ...oldData }
-
-    if (deletePath.length === 1) {
-      // @ts-expect-error
-      delete newData[deletePath[0]]
-      return newData
-    }
-
+  if (isPlainObject(oldData)) {
+    const descriptors = Object.getOwnPropertyDescriptors(oldData)
     const [head, ...tail] = deletePath
-    // @ts-expect-error
-    newData[head] = deleteNestedDataByPath(newData[head], tail)
-
-    return newData
+    if (head === undefined) return oldData
+    if (tail.length === 0) {
+      delete descriptors[head]
+    } else {
+      const previous = Object.getOwnPropertyDescriptor(oldData, head)
+      if (!previous || !('value' in previous)) return oldData
+      descriptors[head] = {
+        ...previous,
+        value: deleteNestedDataByPath(previous.value, tail),
+      }
+    }
+    return Object.create(Object.getPrototypeOf(oldData), descriptors)
   }
 
   return oldData
 }
 
-// Sets up the goober stylesheet
-// Adds a nonce to the style tag if needed
+/**
+ * Sets up the goober stylesheet with a `nonce`, for pages with a Content Security Policy. Without a
+ * `nonce`, it does nothing and goober creates the stylesheet itself.
+ * @param nonce - The nonce to set on the style tag.
+ * @param target - The shadow root to add the style tag to, instead of `document.head`.
+ */
 export const setupStyleSheet = (nonce?: string, target?: ShadowRoot) => {
   if (!nonce)
     return // Goober reads window.__nonce__ every time it creates or accesses its style
-    // element (el.nonce = window.__nonce__). Without this, goober overwrites the
-    // nonce we set on the pre-created element with undefined, clearing it.
+  // element (el.nonce = window.__nonce__). Without this, goober overwrites the
+  // nonce we set on the pre-created element with undefined, clearing it.
   ;(window as any).__nonce__ = nonce
 
   const root = target ?? document.head

@@ -29,7 +29,7 @@ interface QuerySnapshot {
   state: { data: unknown; dataUpdatedAt: number; status: string }
 }
 
-export interface ServerReport {
+interface ServerReport {
   string: {
     html: string
     counts: {

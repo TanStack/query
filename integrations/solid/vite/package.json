@@ -1,0 +1,20 @@
+{
+  "name": "@tanstack/query-integration-solid-vite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/solid-query": "workspace:*",
+    "@tanstack/solid-query-devtools": "workspace:*",
+    "@solidjs/vite-plugin": "^3.0.0-next.46",
+    "@solidjs/web": "^2.0.0-rc.13",
+    "solid-js": "^2.0.0-rc.13",
+    "vite": "^8.3.5"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}

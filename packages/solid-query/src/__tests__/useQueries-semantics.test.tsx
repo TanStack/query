@@ -4,7 +4,7 @@
 // tail rows. `combine` is a derived read over the results.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { For, Loading, createSignal } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useQueries } from '..'
 import { renderWithClient } from './utils'
 
@@ -24,8 +24,8 @@ describe('useQueries 2.0 read semantics', () => {
   })
 
   it('suspends all first loads into <Loading> and renders when settled', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     function Page() {
       const results = useQueries(() => ({
@@ -55,8 +55,8 @@ describe('useQueries 2.0 read semantics', () => {
   })
 
   it('derives combine reactively over the results', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     function Page() {
       const summary = useQueries(() => ({
@@ -87,8 +87,8 @@ describe('useQueries 2.0 read semantics', () => {
   })
 
   it('creates and disposes rows as the queries array grows and shrinks', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const [keys, setKeys] = createSignal([key1])
 
     function Page() {

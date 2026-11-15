@@ -20,7 +20,10 @@ replace:
 import { injectQuery } from '@tanstack/angular-query-experimental'
 
 export class TodosComponent {
-  info = injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodoList }))
+  readonly todosQuery = injectQuery(() => ({
+    queryKey: ['todos'],
+    queryFn: fetchTodoList,
+  }))
 }
 ```
 
@@ -28,7 +31,10 @@ export class TodosComponent {
 [//]: # 'Example2'
 
 ```ts
-result = injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodoList }))
+todosQuery = injectQuery(() => ({
+  queryKey: ['todos'],
+  queryFn: fetchTodoList,
+}))
 ```
 
 [//]: # 'Example2'
@@ -38,13 +44,13 @@ result = injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodoList }))
 @Component({
   selector: 'todos',
   template: `
-    @if (todos.isPending()) {
+    @if (todosQuery.isPending()) {
       <span>Loading...</span>
-    } @else if (todos.isError()) {
-      <span>Error: {{ todos.error()?.message }}</span>
+    } @else if (todosQuery.isError()) {
+      <span>Error: {{ todosQuery.error()?.message }}</span>
     } @else {
       <!-- We can assume by this point that status === 'success' -->
-      @for (todo of todos.data(); track todo.id) {
+      @for (todo of todosQuery.data(); track todo.id) {
         <li>{{ todo.title }}</li>
       } @empty {
         <li>No todos found</li>
@@ -53,7 +59,7 @@ result = injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodoList }))
   `,
 })
 export class PostsComponent {
-  todos = injectQuery(() => ({
+  readonly todosQuery = injectQuery(() => ({
     queryKey: ['todos'],
     queryFn: fetchTodoList,
   }))
@@ -70,17 +76,17 @@ If booleans aren't your thing, you can always use the `status` state as well:
 @Component({
   selector: 'todos',
   template: `
-    @switch (todos.status()) {
+    @switch (todosQuery.status()) {
       @case ('pending') {
         <span>Loading...</span>
       }
       @case ('error') {
-        <span>Error: {{ todos.error()?.message }}</span>
+        <span>Error: {{ todosQuery.error()?.message }}</span>
       }
       <!-- also status === 'success', but "else" logic works, too -->
       @default {
         <ul>
-          @for (todo of todos.data(); track todo.id) {
+          @for (todo of todosQuery.data(); track todo.id) {
             <li>{{ todo.title }}</li>
           } @empty {
             <li>No todos found</li>

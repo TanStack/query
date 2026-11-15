@@ -57,7 +57,7 @@ Once you grasp the nature of server state in your application, **even more chall
 - Managing memory and garbage collection of server state
 - Memoizing query results with structural sharing
 
-This is where **Solid Query** comes in. The library wraps around `createResource` and provides a set of hooks and utilities to manage server state effectively. It works amazingly well **out-of-the-box, with zero-config, and can be customized** to your liking as your application grows.
+This is where **Solid Query** comes in. The library wraps around `createResource` and provides a set of primitives and utilities to manage server state effectively. It works amazingly well **out-of-the-box, with zero-config, and can be customized** to your liking as your application grows.
 
 On a more technical note, Solid Query will likely:
 
@@ -86,7 +86,7 @@ function App() {
       if (!result.ok) throw new Error('Failed to fetch data')
       return result.json()
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 5 * 60 * 1000, // 5 minutes
     throwOnError: true, // Throw an error if the query fails
   }))
 

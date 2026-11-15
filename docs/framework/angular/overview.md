@@ -63,7 +63,6 @@ In the example below, you can see TanStack Query in its most basic and simple fo
 ```angular-ts
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { CommonModule } from '@angular/common'
 import { injectQuery } from '@tanstack/angular-query-experimental'
 import { lastValueFrom } from 'rxjs'
 
@@ -71,13 +70,13 @@ import { lastValueFrom } from 'rxjs'
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'simple-example',
   template: `
-    @if (query.isPending()) {
+    @if (repoDataQuery.isPending()) {
       Loading...
     }
-    @if (query.error()) {
-      An error has occurred: {{ query.error().message }}
+    @if (repoDataQuery.isError()) {
+      An error has occurred: {{ repoDataQuery.error().message }}
     }
-    @if (query.data(); as data) {
+    @if (repoDataQuery.data(); as data) {
       <h1>{{ data.name }}</h1>
       <p>{{ data.description }}</p>
       <strong>👀 {{ data.subscribers_count }}</strong>
@@ -87,18 +86,18 @@ import { lastValueFrom } from 'rxjs'
   `,
 })
 export class SimpleExampleComponent {
-  http = inject(HttpClient)
+  readonly http = inject(HttpClient)
 
-  query = injectQuery(() => ({
+  readonly repoDataQuery = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(
-        this.http.get<Response>('https://api.github.com/repos/tanstack/query'),
+        this.http.get<Repo>('https://api.github.com/repos/TanStack/query'),
       ),
   }))
 }
 
-interface Response {
+interface Repo {
   name: string
   description: string
   subscribers_count: number

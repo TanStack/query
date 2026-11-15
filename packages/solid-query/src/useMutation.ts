@@ -154,7 +154,7 @@ export function useMutation<
       onSuccess: undefined,
       onError: undefined,
       onSettled: undefined,
-    }) as unknown as Mutation<TData, TError, TVariables>
+    })
     activeMutation = mutation
     if (!isServer) {
       // A rapid re-mutate replaces the previous flight's listener.
@@ -277,8 +277,8 @@ export function useMutation<
     TError,
     TVariables,
     TOnMutateResult
-  > = (variables) => {
-    const promise = invoke(variables)
+  > = (...args) => {
+    const promise = invoke(args[0] as TVariables)
     // Errors also land in reactive state; ignoring the promise must not
     // surface an unhandled rejection. Awaiting it still rejects.
     promise.catch(noop)
@@ -354,10 +354,5 @@ export function useMutation<
     },
   }
 
-  return result as unknown as UseMutationResult<
-    TData,
-    TError,
-    TVariables,
-    TOnMutateResult
-  >
+  return result
 }

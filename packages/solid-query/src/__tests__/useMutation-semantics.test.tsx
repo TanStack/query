@@ -7,7 +7,7 @@
 // rollback plumbing.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Loading, createOptimistic, createRenderEffect } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useMutation, useQuery } from '..'
 import { renderWithClient } from './utils'
 
@@ -106,7 +106,7 @@ describe('useMutation 2.0 semantics', () => {
   })
 
   it('onMutate optimistic overlay shows during flight and reverts on failure', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'alice')
 
     function Page() {
@@ -147,7 +147,7 @@ describe('useMutation 2.0 semantics', () => {
   })
 
   it('onMutate overlay + onSuccess cache write hand off without a gap', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'alice')
 
     function Page() {
@@ -189,7 +189,7 @@ describe('useMutation 2.0 semantics', () => {
   })
 
   it('settles atomically with invalidation-triggered refetches', async () => {
-    const key = queryKey()
+    const key = createKey()
     let serverCount = 0
     const commits: Array<string> = []
 

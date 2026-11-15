@@ -65,7 +65,8 @@ function metaFrom(state: QueryState<any, any>): MetaState {
   }
 }
 
-/** Internal seam: everything the read layer builds, for hooks that extend
+/**
+ * Internal seam: everything the read layer builds, for hooks that extend
  * the base result (`useInfiniteQuery` pagers ride the same entry). */
 interface BaseQueryLayer<
   TQueryFnData,
@@ -83,7 +84,15 @@ interface BaseQueryLayer<
   status: () => 'pending' | 'error' | 'success'
 }
 
-// Base Query Function that is used to create the query.
+/**
+ * Base Query Function that is used to create the query.
+ * @param options - A function that returns the query options.
+ * @param Observer - The observer class from query-core (`QueryObserver` or
+ * `InfiniteQueryObserver`).
+ * @param queryClient - A function that returns a custom `QueryClient`. Otherwise, the one from the
+ * nearest context is used.
+ * @returns The reactive query result.
+ */
 export function useBaseQuery<
   TQueryFnData,
   TError,
@@ -216,7 +225,8 @@ export function useBaseQueryLayer<
   let observerSub: (() => void) | null = null
   let cacheSub: (() => void) | null = null
   let disposed = false
-  /** Set once the mount flow decides the observer should be live — a client
+  /**
+   * Set once the mount flow decides the observer should be live — a client
    * swap re-attaches the rebuilt observer iff its predecessor was attached. */
   let shouldAttach = false
   let activeClient = untrack(client)
@@ -466,7 +476,7 @@ export function useBaseQueryLayer<
     const opts = defaultedOptions()
     const q = query()
     const state = q.state
-    const select = opts.select as ((d: TQueryData) => TData) | undefined
+    const select = opts.select
     const wrap = (d: any): { value: TData } => ({
       value: select ? select(d as TQueryData) : (d as TData),
     })
@@ -567,8 +577,8 @@ export function useBaseQueryLayer<
        * (and `q.fetch` dedupes into it), and the deferred effect later
        * sees the identical options object — a no-op diff.
        */
-      if (!isServer) observer.setOptions(opts as any)
-      return chainOnce(q.fetch(opts as any), select, wrap)
+      if (!isServer) observer.setOptions(opts)
+      return chainOnce(q.fetch(opts), select, wrap)
     }
     /**
      * Disabled, with nothing cached. The three guards above are all
@@ -609,8 +619,8 @@ export function useBaseQueryLayer<
    * snapshot.
    */
   const dataStore = createProjection<{ value: TData }>(
-    (draft) => computeData(draft.value as TData | undefined),
-    {} as { value: TData },
+    (draft) => computeData(draft.value),
+    {},
     {
       key: untrack(() => options().reconcile),
       deferStream: untrack(() => options().deferStream),
@@ -794,7 +804,7 @@ export function useBaseQueryLayer<
       // targets what the UI is currently asking for, not what last
       // committed.
       if (!isServer && latestOptions) {
-        observer.setOptions(latestOptions as any)
+        observer.setOptions(latestOptions)
       }
       return observer.refetch(refetchOptions)
     }) as QueryObserverResult<TData, TError>['refetch'],

@@ -5,23 +5,15 @@ import {
   useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-import { For, Loading, Match, Switch, createSignal } from 'solid-js'
-import { render } from '@solidjs/web'
-import { gql, request } from 'graphql-request'
-import type { Accessor, Setter } from 'solid-js'
-
-const endpoint = 'https://graphqlzero.almansi.me/api'
+import { For, Match, Show, Switch, createSignal } from 'solid-js'
+import { render } from 'solid-js/web'
+import { postsQueries } from './services/posts/queries'
+import type { Setter } from 'solid-js'
 
 const queryClient = new QueryClient()
 
-type Post = {
-  id: number
-  title: string
-  body: string
-}
-
 function App() {
-  const [postId, setPostId] = createSignal(-1)
+  const [postId, setPostId] = createSignal<string | null>(null)
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -36,43 +28,15 @@ function App() {
           loading sequences)
         </strong>
       </p>
-      <Loading fallback={<div>Loading...</div>}>
-        {postId() > -1 ? (
-          <Post postId={postId()} setPostId={setPostId} />
-        ) : (
-          <Posts setPostId={setPostId} />
-        )}
-      </Loading>
+      <Show when={postId()} fallback={<Posts setPostId={setPostId} />}>
+        {(id) => <Post postId={id()} setPostId={setPostId} />}
+      </Show>
     </QueryClientProvider>
   )
 }
 
-function createPosts() {
-  return useQuery(() => ({
-    queryKey: ['posts'],
-    queryFn: async () => {
-      const {
-        posts: { data },
-      } = await request<{ posts: { data: Array<Post> } }>(
-        endpoint,
-        gql`
-          query {
-            posts {
-              data {
-                id
-                title
-              }
-            }
-          }
-        `,
-      )
-      return data
-    },
-  }))
-}
-
-function Posts(props: { setPostId: Setter<number> }) {
-  const state = createPosts()
+function Posts(props: { setPostId: Setter<string | null> }) {
+  const state = useQuery(() => postsQueries.list())
 
   return (
     <div>
@@ -87,32 +51,28 @@ function Posts(props: { setPostId: Setter<number> }) {
             <>
               <div>
                 <For each={state.data}>
-                  {(postAccessor: any) => {
-                    const post =
-                      typeof postAccessor === 'function'
-                        ? postAccessor()
-                        : postAccessor
-                    return (
-                      <p>
-                        <a
-                          onClick={() => props.setPostId(post.id)}
-                          href="#"
-                          style={
-                            // We can find the existing query data here to show bold links for
-                            // ones that are cached
-                            queryClient.getQueryData(['post', post.id])
-                              ? {
-                                  'font-weight': 'bold',
-                                  color: 'green',
-                                }
-                              : {}
-                          }
-                        >
-                          {post.title}
-                        </a>
-                      </p>
-                    )
-                  }}
+                  {(post) => (
+                    <p>
+                      <a
+                        onClick={() => props.setPostId(post.id)}
+                        href="#"
+                        style={
+                          // We can find the existing query data here to show bold links for
+                          // ones that are cached
+                          queryClient.getQueryData(
+                            postsQueries.detail(post.id).queryKey,
+                          )
+                            ? {
+                                'font-weight': 'bold',
+                                color: 'green',
+                              }
+                            : {}
+                        }
+                      >
+                        {post.title}
+                      </a>
+                    </p>
+                  )}
                 </For>
               </div>
               <div>{state.isFetching ? 'Background Updating...' : ' '}</div>
@@ -124,43 +84,18 @@ function Posts(props: { setPostId: Setter<number> }) {
   )
 }
 
-function createPost(postId: Accessor<number>) {
-  return useQuery(() => ({
-    queryKey: ['post', postId()],
-    queryFn: async () => {
-      const { post } = await request<{ post: Post }>(
-        endpoint,
-        gql`
-        query {
-          post(id: ${postId()}) {
-            id
-            title
-            body
-          }
-        }
-        `,
-      )
-
-      return post
-    },
-    enabled: !!postId(),
-  }))
-}
-
-function Post(props: { postId: number; setPostId: Setter<number> }) {
-  const state = createPost(() => props.postId)
+function Post(props: { postId: string; setPostId: Setter<string | null> }) {
+  const state = useQuery(() => postsQueries.detail(props.postId))
 
   return (
     <div>
       <div>
-        <a onClick={() => props.setPostId(-1)} href="#">
+        <a onClick={() => props.setPostId(null)} href="#">
           Back
         </a>
       </div>
       <Switch>
-        <Match when={!props.postId || state.status === 'pending'}>
-          Loading...
-        </Match>
+        <Match when={state.status === 'pending'}>Loading...</Match>
         <Match when={state.status === 'error'}>
           <span>Error: {(state.error as Error).message}</span>
         </Match>

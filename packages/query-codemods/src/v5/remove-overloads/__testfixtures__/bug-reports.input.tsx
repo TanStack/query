@@ -21,7 +21,7 @@ export function useDetailsContainsIdentifierAsThirdArgument({ groupId }: { group
 export function useWhatever({ thing }: { thing: string }) {
   return useQuery(
     ['some-string', someVar],
-    async () => 'foo',
+    () => Promise.resolve('foo'),
     { enabled: Boolean(thing) },
   );
 }

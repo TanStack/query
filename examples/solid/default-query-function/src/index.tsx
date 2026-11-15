@@ -5,10 +5,16 @@ import {
   useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-import { For, Loading, Match, Show, Switch, createSignal } from 'solid-js'
-import { render } from '@solidjs/web'
+import { For, Match, Show, Switch, createSignal } from 'solid-js'
+import { render } from 'solid-js/web'
 import type { Setter } from 'solid-js'
 import type { QueryFunction } from '@tanstack/solid-query'
+
+type Post = {
+  id: number
+  title: string
+  body: string
+}
 
 // Define a default query function that will receive the query key
 const defaultQueryFn: QueryFunction<unknown> = async ({ queryKey }) => {
@@ -18,6 +24,7 @@ const defaultQueryFn: QueryFunction<unknown> = async ({ queryKey }) => {
       method: 'GET',
     },
   )
+  if (!response.ok) throw new Error('Failed to fetch data')
   return response.json()
 }
 
@@ -46,18 +53,16 @@ function App() {
           loading sequences)
         </strong>
       </p>
-      <Loading fallback={<div>Loading...</div>}>
-        <Show when={postId() > -1} fallback={<Posts setPostId={setPostId} />}>
-          <Post postId={postId()} setPostId={setPostId} />
-        </Show>
-      </Loading>
+      <Show when={postId() > -1} fallback={<Posts setPostId={setPostId} />}>
+        <Post postId={postId()} setPostId={setPostId} />
+      </Show>
     </QueryClientProvider>
   )
 }
 
 function Posts(props: { setPostId: Setter<number> }) {
   // All you have to do now is pass a key!
-  const state = useQuery<any[]>(() => ({ queryKey: ['/posts'] }))
+  const state = useQuery<Array<Post>>(() => ({ queryKey: ['/posts'] }))
 
   return (
     <div>
@@ -72,32 +77,26 @@ function Posts(props: { setPostId: Setter<number> }) {
             <>
               <div>
                 <For each={state.data}>
-                  {(postAccessor) => {
-                    const post =
-                      typeof postAccessor === 'function'
-                        ? (postAccessor as any)()
-                        : postAccessor
-                    return (
-                      <p>
-                        <a
-                          onClick={() => props.setPostId(post.id)}
-                          href="#"
-                          style={
-                            // We can use the queryCache here to show bold links for
-                            // ones that are cached
-                            queryClient.getQueryData(['post', post.id])
-                              ? {
-                                  'font-weight': 'bold',
-                                  color: 'green',
-                                }
-                              : {}
-                          }
-                        >
-                          {post.title}
-                        </a>
-                      </p>
-                    )
-                  }}
+                  {(post) => (
+                    <p>
+                      <a
+                        onClick={() => props.setPostId(post.id)}
+                        href="#"
+                        style={
+                          // We can use the queryCache here to show bold links for
+                          // ones that are cached
+                          queryClient.getQueryData([`/posts/${post.id}`])
+                            ? {
+                                'font-weight': 'bold',
+                                color: 'green',
+                              }
+                            : {}
+                        }
+                      >
+                        {post.title}
+                      </a>
+                    </p>
+                  )}
                 </For>
               </div>
               <div>{state.isFetching ? 'Background Updating...' : ' '}</div>
@@ -111,7 +110,7 @@ function Posts(props: { setPostId: Setter<number> }) {
 
 function Post(props: { postId: number; setPostId: Setter<number> }) {
   // You can even leave out the queryFn and just go straight into options
-  const state = useQuery<any>(() => ({
+  const state = useQuery<Post>(() => ({
     queryKey: [`/posts/${props.postId}`],
     enabled: !!props.postId,
   }))
@@ -132,9 +131,9 @@ function Post(props: { postId: number; setPostId: Setter<number> }) {
         </Match>
         <Match when={state.data !== undefined}>
           <>
-            <h1>{state.data.title}</h1>
+            <h1>{state.data?.title}</h1>
             <div>
-              <p>{state.data.body}</p>
+              <p>{state.data?.body}</p>
             </div>
             <div>{state.isFetching ? 'Background Updating...' : ' '}</div>
           </>

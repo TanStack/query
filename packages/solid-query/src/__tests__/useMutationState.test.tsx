@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent } from '@solidjs/testing-library'
 import { createRenderEffect } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, useMutation, useMutationState } from '..'
 import { renderWithClient } from './utils'
 import type { MutationOptions } from '@tanstack/query-core'
@@ -36,7 +36,7 @@ describe('useMutationState', () => {
   })
 
   it('should return all mutation states when called without options', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
 
     function States() {
       const mutationStates = useMutationState()
@@ -82,14 +82,13 @@ describe('useMutationState', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('count: 1')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(150)
     expect(rendered.getByText('count: 1')).toBeInTheDocument()
   })
 
   it('should return variables while the mutation is pending', async () => {
     const variables: Array<Array<unknown>> = []
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
 
     function Variables() {
       const states = useMutationState(() => ({
@@ -141,7 +140,7 @@ describe('useMutationState', () => {
   })
 
   it('should observe pending state of mutations started by useMutation', async () => {
-    const mutationKey = queryKey()
+    const mutationKey = createKey()
 
     function States() {
       const mutationStates = useMutationState(() => ({
@@ -154,7 +153,7 @@ describe('useMutationState', () => {
     function Mutate() {
       const mutation = useMutation(() => ({
         mutationKey,
-        mutationFn: (input: number) => sleep(150).then(() => 'data' + input),
+        mutationFn: (input: number) => sleep(150).then(() => `data${input}`),
       }))
 
       return <button onClick={() => mutation.mutate(1)}>mutate</button>

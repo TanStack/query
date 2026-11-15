@@ -5,8 +5,8 @@ import {
   injectQuery,
   keepPreviousData,
 } from '@tanstack/angular-query-experimental'
-import { debounceTime, distinctUntilChanged, lastValueFrom } from 'rxjs'
-import { AutocompleteService } from '../services/autocomplete-service'
+import { debounceTime, distinctUntilChanged } from 'rxjs'
+import { SuggestionsQueries } from '../services/suggestions/queries'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,7 +15,7 @@ import { AutocompleteService } from '../services/autocomplete-service'
   imports: [ReactiveFormsModule],
 })
 export class ExampleComponent {
-  readonly #autocompleteService = inject(AutocompleteService)
+  readonly #suggestionsQueries = inject(SuggestionsQueries)
   readonly #fb = inject(NonNullableFormBuilder)
 
   readonly form = this.#fb.group({
@@ -31,13 +31,8 @@ export class ExampleComponent {
   )
 
   readonly query = injectQuery(() => ({
-    queryKey: ['suggestions', this.term()],
-    queryFn: () => {
-      return lastValueFrom(
-        this.#autocompleteService.getSuggestions(this.term()),
-      )
-    },
+    ...this.#suggestionsQueries.list(this.term()),
     placeholderData: keepPreviousData,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 5 * 60 * 1000, // 5 minutes
   }))
 }

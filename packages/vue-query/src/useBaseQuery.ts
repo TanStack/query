@@ -20,10 +20,22 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryClient } from './queryClient'
-import type { UseQueryOptions } from './useQuery'
+import type { UseQueryOptions } from './queryOptions'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 import type { MaybeRefOrGetter } from './types'
 
+/**
+ * Readonly view of a union that stays a union. A single `Readonly<Union>` collapses the members, which
+ * drops the `status` / `isSuccess` / `isPending` discriminants.
+ */
+type ReadonlyQueryState<T> = T extends any
+  ? { readonly [K in keyof T]: T[K] }
+  : never
+
+/**
+ * The result of the query composables: every property of the observer result wrapped in a `Ref`, except
+ * the `refetch`, `fetchNextPage`, and `fetchPreviousPage` functions, plus `suspense` and `state`.
+ */
 export type UseBaseQueryReturnType<
   TData,
   TError,
@@ -36,7 +48,46 @@ export type UseBaseQueryReturnType<
     ? TResult[K]
     : Ref<Readonly<TResult>[K]>
 } & {
+  /**
+   * Returns a promise for use with Vue's `Suspense` or `onServerPrefetch`. It fetches the query if it has no
+   * data or its data is stale and resolves with the result once that fetch resolves (usually when the query
+   * function finishes, but earlier after the first chunk of a streamed query or when data is set during the
+   * fetch), or resolves immediately if the data is fresh. While the query is disabled, it waits until the query
+   * is enabled. If the fetch fails, it resolves with the error result, unless `throwOnError` is (or returns)
+   * `true`, in which case it rejects.
+   */
   suspense: () => Promise<TResult>
+  /**
+   * The query result as one readonly reactive object. `data`, `error`, `status`, `isPending`, and the other
+   * fields are plain values — read `state.data`, not `state.data.value`.
+   *
+   * The object is a discriminated union, so a check on `status`, `isSuccess`, `isPending`, or `isError`
+   * narrows the other fields. When `status` is `'success'` (or `isSuccess` is `true`), `data` is `TData`.
+   * When `status` is `'pending'` (or `isPending` is `true`), `data` is `undefined` and `error` is `null`.
+   * @example
+   * ```vue
+   * <script setup lang="ts">
+   * import { useQuery } from '@tanstack/vue-query'
+   *
+   * const { state } = useQuery({
+   *   queryKey: ['post'],
+   *   queryFn: fetchPost,
+   * })
+   *
+   * if (state.status === 'success') {
+   *   // `state.data` is `Post`, not `Post | undefined`
+   *   console.log(state.data.title)
+   * }
+   * </script>
+   *
+   * <template>
+   *   <span v-if="state.status === 'pending'">Loading...</span>
+   *   <span v-else-if="state.status === 'error'">Error: {{ state.error.message }}</span>
+   *   <h1 v-else>{{ state.data.title }}</h1>
+   * </template>
+   * ```
+   */
+  state: ReadonlyQueryState<TResult>
 }
 
 type UseQueryOptionsGeneric<
@@ -50,6 +101,14 @@ type UseQueryOptionsGeneric<
   | UseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   | UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
 
+/**
+ * Base implementation shared by `useQuery` and `useInfiniteQuery`.
+ * @param Observer - The observer class from query-core (`QueryObserver` or `InfiniteQueryObserver`).
+ * @param options - A `ref`, plain value, or reactive getter resolving to the query options.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+ * will be used.
+ * @returns The query result as `ref`s, plus the `suspense` function.
+ */
 export function useBaseQuery<
   TQueryFnData,
   TError,
@@ -88,7 +147,12 @@ export function useBaseQuery<
     }
     const clonedOptions = cloneDeepUnref(resolvedOptions as any)
 
-    if (typeof clonedOptions.enabled === 'function') {
+    // A zero-arg function is a Vue getter and must run here so its refs are tracked.
+    // `(query) => boolean` is query-core's callback and is left for core to call.
+    if (
+      typeof clonedOptions.enabled === 'function' &&
+      clonedOptions.enabled.length === 0
+    ) {
       clonedOptions.enabled = clonedOptions.enabled()
     }
 
@@ -117,6 +181,11 @@ export function useBaseQuery<
     // noop
   }
 
+  // Replaced below with the wrapper. Declared here so the subscriber can put it
+  // back after `updateState` copies the observer's own `refetch` onto `state`.
+  let refetch: (typeof state)['refetch'] = (...args) =>
+    observer.refetch(...args)
+
   if (client.isRestoring) {
     watch(
       client.isRestoring,
@@ -125,6 +194,7 @@ export function useBaseQuery<
           unsubscribe()
           unsubscribe = observer.subscribe((result) => {
             updateState(state, result)
+            state.refetch = refetch
           })
         }
       },
@@ -135,6 +205,7 @@ export function useBaseQuery<
   const updater = () => {
     observer.setOptions(defaultedOptions.value)
     updateState(state, observer.getCurrentResult())
+    state.refetch = refetch
   }
 
   watch(defaultedOptions, updater)
@@ -143,11 +214,13 @@ export function useBaseQuery<
     unsubscribe()
   })
 
-  // fix #5910
-  const refetch = (...args: Parameters<(typeof state)['refetch']>) => {
+  // fix #5910. Call `observer.refetch`: `state.refetch` is this wrapper, so
+  // calling it would recurse.
+  refetch = (...args) => {
     updater()
-    return state.refetch(...args)
+    return observer.refetch(...args)
   }
+  state.refetch = refetch
 
   const suspense = () => {
     return new Promise<QueryObserverResult<TData, TError>>(
@@ -156,9 +229,15 @@ export function useBaseQuery<
           // noop
         }
         const run = () => {
-          if (defaultedOptions.value.enabled !== false) {
-            // fix #6133
-            observer.setOptions(defaultedOptions.value)
+          // Apply the latest options before resolving `enabled`, so a query callback sees the current query.
+          // fix #6133
+          observer.setOptions(defaultedOptions.value)
+          const { enabled } = defaultedOptions.value
+          if (
+            (typeof enabled === 'function'
+              ? enabled(observer.getCurrentQuery())
+              : enabled) !== false
+          ) {
             const optimisticResult = observer.getOptimisticResult(
               defaultedOptions.value,
             )
@@ -223,6 +302,7 @@ export function useBaseQuery<
 
   object.suspense = suspense
   object.refetch = refetch
+  object.state = readonlyState
 
   return object as UseBaseQueryReturnType<TData, TError>
 }

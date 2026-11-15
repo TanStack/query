@@ -13,7 +13,7 @@ ref: docs/framework/react/guides/migrating-to-v5.md
 To fix compatibility with Vue 2, `useQueries` composable now returns `queries` array wrapped in `ref`.
 Previously `reactive` was returned which led to multiple problems:
 
-- User could spread return value loosing reactivity.
+- User could spread return value losing reactivity.
 - `readonly` wrapper used for return value was breaking Vue 2 reactivity detection mechanism. This was a silent issue in Vue 2.6, but appeared as error in Vue 2.7.
 - Vue 2 does not support arrays as a root value of `reactive`.
 

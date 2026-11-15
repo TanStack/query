@@ -7,7 +7,7 @@ title: SSR and SvelteKit
 
 SvelteKit defaults to rendering routes with SSR. Because of this, you need to disable the query on the server. Otherwise, your query will continue executing on the server asynchronously, even after the HTML has been sent to the client.
 
-The recommended way to achieve this is to use the `browser` module from SvelteKit in your `QueryClient` object. This will not disable `queryClient.prefetchQuery()`, which is used in one of the solutions below.
+The recommended way to achieve this is to use the `browser` module from SvelteKit in your `QueryClient` object. This will not disable `queryClient.query()`, which is used in one of the solutions below.
 
 **src/routes/+layout.svelte**
 
@@ -15,6 +15,8 @@ The recommended way to achieve this is to use the `browser` module from SvelteKi
 <script lang="ts">
   import { browser } from '$app/environment'
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
+
+  let { children } = $props()
 
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -26,7 +28,7 @@ The recommended way to achieve this is to use the `browser` module from SvelteKi
 </script>
 
 <QueryClientProvider client={queryClient}>
-  <slot />
+  {@render children()}
 </QueryClientProvider>
 ```
 
@@ -34,7 +36,7 @@ The recommended way to achieve this is to use the `browser` module from SvelteKi
 
 Svelte Query supports two ways of prefetching data on the server and passing that to the client with SvelteKit.
 
-If you wish to view the ideal SSR setup, please have a look at the [SSR example](./examples/ssr).
+If you wish to view the ideal SSR setup, please have a look at the [SSR example](./examples/ssr-sveltekit).
 
 ### Using `initialData`
 
@@ -52,11 +54,11 @@ export async function load() {
 **src/routes/+page.svelte**
 
 ```svelte
-<script>
+<script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import type { PageData } from './$types'
+  import type { PageProps } from './$types'
 
-  export let data: PageData
+  let { data }: PageProps = $props()
 
   const query = createQuery(() => ({
     queryKey: ['posts'],
@@ -77,7 +79,7 @@ Cons:
 - If you are calling `createQuery` with the same query in multiple locations, you need to pass `initialData` to all of them
 - There is no way to know at what time the query was fetched on the server, so `dataUpdatedAt` and determining if the query needs refetching is based on when the page loaded instead
 
-### Using `prefetchQuery`
+### Using `query`
 
 Svelte Query supports prefetching queries on the server. Using this setup below, you can fetch data and pass it into QueryClientProvider before it is sent to the user's browser. Therefore, this data is already available in the cache, and no initial fetch occurs client-side.
 
@@ -92,6 +94,9 @@ export async function load() {
     defaultOptions: {
       queries: {
         enabled: browser,
+        // With SSR, we usually want to set some default staleTime
+        // above 0 to avoid refetching immediately on the client
+        staleTime: 60 * 1000,
       },
     },
   })
@@ -105,27 +110,31 @@ export async function load() {
 ```svelte
 <script lang="ts">
   import { QueryClientProvider } from '@tanstack/svelte-query'
-  import type { LayoutData } from './$types'
+  import type { LayoutProps } from './$types'
 
-  export let data: LayoutData
+  let { data, children }: LayoutProps = $props()
 </script>
 
 <QueryClientProvider client={data.queryClient}>
-  <slot />
+  {@render children()}
 </QueryClientProvider>
 ```
 
 **src/routes/+page.ts**
 
 ```ts
+import { noop } from '@tanstack/svelte-query'
+
 export async function load({ parent, fetch }) {
   const { queryClient } = await parent()
 
   // You need to use the SvelteKit fetch function here
-  await queryClient.prefetchQuery({
-    queryKey: ['posts'],
-    queryFn: async () => (await fetch('/api/posts')).json(),
-  })
+  await queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: async () => (await fetch('/api/posts')).json(),
+    })
+    .catch(noop)
 }
 ```
 
@@ -135,7 +144,7 @@ export async function load({ parent, fetch }) {
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
 
-  // This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
+  // This data is cached by query in +page.ts so no fetch actually happens here
   const query = createQuery(() => ({
     queryKey: ['posts'],
     queryFn: async () => (await fetch('/api/posts')).json(),

@@ -113,6 +113,14 @@ export const QueryClientContext = createContext<(() => QueryClient) | null>(
   null,
 )
 
+/**
+ * The `useQueryClient` primitive returns the current `QueryClient` instance.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+ * be used.
+ * @returns The current `QueryClient` instance.
+ * @throws {Error} If no `queryClient` argument is passed and no `QueryClientProvider` is found in the
+ * component tree.
+ */
 export const useQueryClient = (queryClient?: QueryClient) => {
   if (queryClient) {
     return queryClient
@@ -126,8 +134,19 @@ export const useQueryClient = (queryClient?: QueryClient) => {
   return client()
 }
 
+/**
+ * The props accepted by `QueryClientProvider`.
+ */
 export type QueryClientProviderProps = {
+  /**
+   * **Required**
+   *
+   * The `QueryClient` instance to provide.
+   */
   client: QueryClient
+  /**
+   * The components that get access to the provided `QueryClient`.
+   */
   children?: JSX.Element
 }
 
@@ -227,8 +246,8 @@ export const QueryClientProvider = (
         FLIGHT_DATA_SOURCE,
         (data, context) => {
           // `data` is undefined for a response that carried metadata but
-          // no slice for this cache; `hydrate` ignores a non-object.
-          hydrate(props.client, data)
+          // no slice for this cache.
+          if (data) hydrate(props.client, data)
           // Fresh data first, then the declared-scope sweep: stale marks
           // land synchronously, refetches run in the background — the
           // mutation's promise never waits on them.

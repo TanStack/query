@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { QueryClient } from '@tanstack/query-core'
-  import { queryKey } from '@tanstack/query-test-utils'
+  import { createKey } from '@tanstack/query-test-utils'
   import {
     setIsRestoringContext,
     setQueryClientContext,
@@ -18,7 +18,7 @@
   setIsRestoringContext({ current: true })
 
   const query = createQuery(() => ({
-    queryKey: queryKey(),
+    queryKey: createKey(),
     queryFn,
   }))
 </script>

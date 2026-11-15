@@ -14,7 +14,7 @@ replace:
 [//]: # 'Example'
 
 ```ts
-result = injectQuery(() => ({
+todosQuery = injectQuery(() => ({
   queryKey: ['todos'],
   queryFn: () => fetch('/todos'),
   initialData: initialTodos,
@@ -27,7 +27,7 @@ result = injectQuery(() => ({
 ```ts
 // Will show initialTodos immediately, but also immediately refetch todos
 // when an instance of the component or service is created
-result = injectQuery(() => ({
+todosQuery = injectQuery(() => ({
   queryKey: ['todos'],
   queryFn: () => fetch('/todos'),
   initialData: initialTodos,
@@ -40,7 +40,7 @@ result = injectQuery(() => ({
 ```ts
 // Show initialTodos immediately, but won't refetch until
 // another interaction event is encountered after 1000 ms
-result = injectQuery(() => ({
+todosQuery = injectQuery(() => ({
   queryKey: ['todos'],
   queryFn: () => fetch('/todos'),
   initialData: initialTodos,
@@ -54,7 +54,7 @@ result = injectQuery(() => ({
 ```ts
 // Show initialTodos immediately, but won't refetch until
 // another interaction event is encountered after 1000 ms
-result = injectQuery(() => ({
+todosQuery = injectQuery(() => ({
   queryKey: ['todos'],
   queryFn: () => fetch('/todos'),
   initialData: initialTodos,
@@ -68,7 +68,7 @@ result = injectQuery(() => ({
 [//]: # 'Example5'
 
 ```ts
-result = injectQuery(() => ({
+todosQuery = injectQuery(() => ({
   queryKey: ['todos'],
   queryFn: () => fetch('/todos'),
   initialData: () => getExpensiveTodos(),
@@ -79,7 +79,7 @@ result = injectQuery(() => ({
 [//]: # 'Example6'
 
 ```ts
-result = injectQuery(() => ({
+todoQuery = injectQuery(() => ({
   queryKey: ['todo', this.todoId()],
   queryFn: () => fetch('/todos'),
   initialData: () => {
@@ -95,7 +95,7 @@ result = injectQuery(() => ({
 [//]: # 'Example7'
 
 ```ts
-result = injectQuery(() => ({
+todoQuery = injectQuery(() => ({
   queryKey: ['todos', this.todoId()],
   queryFn: () => fetch(`/todos/${this.todoId()}`),
   initialData: () =>
@@ -109,7 +109,7 @@ result = injectQuery(() => ({
 [//]: # 'Example8'
 
 ```ts
-result = injectQuery(() => ({
+todoQuery = injectQuery(() => ({
   queryKey: ['todo', this.todoId()],
   queryFn: () => fetch(`/todos/${this.todoId()}`),
   initialData: () => {

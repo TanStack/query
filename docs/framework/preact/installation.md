@@ -7,6 +7,8 @@ replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 
 [//]: # 'Compatibility'
 
+Preact Query is compatible with Preact v10+.
+
 > Wanna give it a spin before you download? Try out the [simple](./examples/simple) example
 
 [//]: # 'Compatibility'

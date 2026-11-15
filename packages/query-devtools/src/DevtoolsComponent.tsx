@@ -1,5 +1,9 @@
 import { createLocalStorage } from '@solid-primitives/storage'
+import { I18nProvider } from '@kobalte/core'
 import { createMemo } from 'solid-js'
+import { DevtoolsOfflineProvider } from './providers/DevtoolsOfflineProvider'
+import { DevtoolsSubscriptionsProvider } from './providers/DevtoolsSubscriptionsProvider'
+import { DevtoolsStateProvider } from './providers/DevtoolsStateProvider'
 import { Devtools } from './Devtools'
 import { getPreferredColorScheme } from './utils'
 import { THEME_PREFERENCE } from './constants'
@@ -24,11 +28,22 @@ const DevtoolsComponent: DevtoolsComponentType = (props) => {
 
   return (
     <QueryDevtoolsContext.Provider value={props}>
-      <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
-        <ThemeContext.Provider value={theme}>
-          <Devtools localStore={localStore} setLocalStore={setLocalStore} />
-        </ThemeContext.Provider>
-      </PiPProvider>
+      <DevtoolsStateProvider>
+        <DevtoolsOfflineProvider>
+          <DevtoolsSubscriptionsProvider>
+            <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
+              <ThemeContext.Provider value={theme}>
+                <I18nProvider locale="en-US">
+                  <Devtools
+                    localStore={localStore}
+                    setLocalStore={setLocalStore}
+                  />
+                </I18nProvider>
+              </ThemeContext.Provider>
+            </PiPProvider>
+          </DevtoolsSubscriptionsProvider>
+        </DevtoolsOfflineProvider>
+      </DevtoolsStateProvider>
     </QueryDevtoolsContext.Provider>
   )
 }

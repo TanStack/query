@@ -5,8 +5,8 @@ import {
   useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-import { Loading, Match, Switch } from 'solid-js'
-import { render } from '@solidjs/web'
+import { Match, Switch } from 'solid-js'
+import { render } from 'solid-js/web'
 
 const queryClient = new QueryClient()
 
@@ -14,9 +14,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <SolidQueryDevtools />
-      <Loading fallback={<div>Loading...</div>}>
-        <Example />
-      </Loading>
+      <Example />
     </QueryClientProvider>
   )
 }
@@ -28,6 +26,7 @@ function Example() {
       const response = await fetch(
         'https://api.github.com/repos/TanStack/query',
       )
+      if (!response.ok) throw new Error('Failed to fetch repo data')
       return await response.json()
     },
   }))

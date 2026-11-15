@@ -8,7 +8,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 })
@@ -23,23 +23,19 @@ type Post = {
   body: string
 }
 
-function usePosts() {
-  return useQuery({
-    queryKey: ['posts'],
-    queryFn: async (): Promise<Array<Post>> => {
-      const response = await fetch('https://jsonplaceholder.typicode.com/posts')
-      return await response.json()
-    },
-  })
-}
-
 function Posts({
   setPostId,
 }: {
   setPostId: React.Dispatch<React.SetStateAction<number>>
 }) {
   const queryClient = useQueryClient()
-  const { status, data, error, isFetching } = usePosts()
+  const { status, data, error, isFetching } = useQuery({
+    queryKey: ['posts'],
+    queryFn: async (): Promise<Array<Post>> => {
+      const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+      return await response.json()
+    },
+  })
 
   return (
     <div>
@@ -88,14 +84,6 @@ const getPostById = async (id: number): Promise<Post> => {
   return await response.json()
 }
 
-function usePost(postId: number) {
-  return useQuery({
-    queryKey: ['post', postId],
-    queryFn: () => getPostById(postId),
-    enabled: !!postId,
-  })
-}
-
 function Post({
   postId,
   setPostId,
@@ -103,7 +91,11 @@ function Post({
   postId: number
   setPostId: React.Dispatch<React.SetStateAction<number>>
 }) {
-  const { status, data, error, isFetching } = usePost(postId)
+  const { status, data, error, isFetching } = useQuery({
+    queryKey: ['post', postId],
+    queryFn: () => getPostById(postId),
+    enabled: !!postId,
+  })
 
   return (
     <div>

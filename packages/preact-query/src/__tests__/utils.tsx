@@ -1,11 +1,11 @@
-import { environmentManager, isServer } from '@tanstack/query-core'
+import { environmentManager } from '@tanstack/query-core'
 import { act, render } from '@testing-library/preact'
-import type { ComponentChildren, VNode } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
 import { vi } from 'vitest'
+import { QueryClientProvider, onlineManager } from '..'
 import type { MockInstance } from 'vitest'
 
-import { QueryClientProvider, onlineManager } from '..'
+import type { ComponentChildren, VNode } from 'preact'
 import type { QueryClient } from '..'
 
 export function renderWithClient(
@@ -59,8 +59,9 @@ export function setActTimeout(fn: () => void, ms?: number) {
 }
 
 export function setIsServer(value: boolean) {
+  const originalIsServer = environmentManager.isServer()
   environmentManager.setIsServer(() => value)
   return () => {
-    environmentManager.setIsServer(() => isServer)
+    environmentManager.setIsServer(() => originalIsServer)
   }
 }

@@ -1,36 +1,40 @@
 import * as coreModule from '@tanstack/query-core'
-import type { hydrate } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/preact'
 import { Suspense, startTransition } from 'preact/compat'
-import { afterEach, beforeEach, describe, expect, vi, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
   HydrationBoundary,
   QueryClient,
   QueryClientProvider,
   dehydrate,
+  noop,
   useQuery,
 } from '..'
+import type { hydrate } from '@tanstack/query-core'
 
 describe('Preact hydration', () => {
-  const stringKey = queryKey()
-  const addedKey = queryKey()
-  const promiseKey = queryKey()
+  const stringKey = createKey()
+  const addedKey = createKey()
+  const promiseKey = createKey()
   let stringifiedState: string
 
   beforeEach(async () => {
     vi.useFakeTimers()
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: stringKey,
-      queryFn: () => sleep(10).then(() => ['stringCached']),
-    })
+    void queryClient
+      .query({
+        queryKey: stringKey,
+        queryFn: () => sleep(10).then(() => ['stringCached']),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydrated = dehydrate(queryClient)
     stringifiedState = JSON.stringify(dehydrated)
     queryClient.clear()
   })
+
   afterEach(() => {
     vi.useRealTimers()
   })
@@ -132,14 +136,18 @@ describe('Preact hydration', () => {
 
       const intermediateClient = new QueryClient()
 
-      intermediateClient.prefetchQuery({
-        queryKey: stringKey,
-        queryFn: () => sleep(20).then(() => ['should change']),
-      })
-      intermediateClient.prefetchQuery({
-        queryKey: addedKey,
-        queryFn: () => sleep(20).then(() => [addedKey[0]]),
-      })
+      void intermediateClient
+        .query({
+          queryKey: stringKey,
+          queryFn: () => sleep(20).then(() => ['should change']),
+        })
+        .catch(noop)
+      void intermediateClient
+        .query({
+          queryKey: addedKey,
+          queryFn: () => sleep(20).then(() => [addedKey[0]]),
+        })
+        .catch(noop)
       await vi.advanceTimersByTimeAsync(20)
       const dehydrated = dehydrate(intermediateClient)
       intermediateClient.clear()
@@ -158,7 +166,6 @@ describe('Preact hydration', () => {
       expect(rendered.getByText(stringKey[0]!)).toBeInTheDocument()
       // New query data should be available immediately
       expect(rendered.getByText(addedKey[0]!)).toBeInTheDocument()
-
       await vi.advanceTimersByTimeAsync(0)
       // After effects phase has had time to run, the observer should have updated
       expect(rendered.queryByText(stringKey[0]!)).not.toBeInTheDocument()
@@ -202,14 +209,18 @@ describe('Preact hydration', () => {
       expect(rendered.getByText(stringKey[0]!)).toBeInTheDocument()
 
       const intermediateClient = new QueryClient()
-      intermediateClient.prefetchQuery({
-        queryKey: stringKey,
-        queryFn: () => sleep(20).then(() => ['should not change']),
-      })
-      intermediateClient.prefetchQuery({
-        queryKey: addedKey,
-        queryFn: () => sleep(20).then(() => [addedKey[0]]),
-      })
+      void intermediateClient
+        .query({
+          queryKey: stringKey,
+          queryFn: () => sleep(20).then(() => ['should not change']),
+        })
+        .catch(noop)
+      void intermediateClient
+        .query({
+          queryKey: addedKey,
+          queryFn: () => sleep(20).then(() => [addedKey[0]]),
+        })
+        .catch(noop)
       await vi.advanceTimersByTimeAsync(20)
 
       const newDehydratedState = dehydrate(intermediateClient)
@@ -335,7 +346,6 @@ describe('Preact hydration', () => {
       }),
     )
 
-    hydrateSpy.mockRestore()
     queryClient.clear()
   })
 
@@ -359,7 +369,6 @@ describe('Preact hydration', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(hydrateSpy).toHaveBeenCalledTimes(0)
 
-    hydrateSpy.mockRestore()
     queryClient.clear()
   })
 
@@ -383,7 +392,6 @@ describe('Preact hydration', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(hydrateSpy).toHaveBeenCalledTimes(0)
 
-    hydrateSpy.mockRestore()
     queryClient.clear()
   })
 
@@ -407,7 +415,6 @@ describe('Preact hydration', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(hydrateSpy).toHaveBeenCalledTimes(0)
 
-    hydrateSpy.mockRestore()
     queryClient.clear()
   })
 
@@ -431,10 +438,12 @@ describe('Preact hydration', () => {
     // For the bug to trigger, there needs to already be a query in the cache,
     // with a dataUpdatedAt earlier than the dehydratedAt of the next query
     const clientQueryClient = new QueryClient()
-    clientQueryClient.prefetchQuery({
-      queryKey: promiseKey,
-      queryFn: () => sleep(20).then(() => 'existing'),
-    })
+    void clientQueryClient
+      .query({
+        queryKey: promiseKey,
+        queryFn: () => sleep(20).then(() => 'existing'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(20)
 
     const prefetchQueryClient = new QueryClient({
@@ -444,11 +453,13 @@ describe('Preact hydration', () => {
         },
       },
     })
-    prefetchQueryClient.prefetchQuery({
-      queryKey: promiseKey,
-      queryFn: () =>
-        sleep(10).then(() => Promise.reject(new Error('Query failed'))),
-    })
+    void prefetchQueryClient
+      .query({
+        queryKey: promiseKey,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Query failed'))),
+      })
+      .catch(noop)
 
     const dehydratedState = dehydrate(prefetchQueryClient)
 
@@ -480,7 +491,6 @@ describe('Preact hydration', () => {
     await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('new')).toBeInTheDocument()
 
-    hydrateSpy.mockRestore()
     prefetchQueryClient.clear()
     clientQueryClient.clear()
   })

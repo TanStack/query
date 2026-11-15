@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@solidjs/testing-library'
 import { getFlightDataConsumer } from '@solidjs/web/server-functions'
 import { dehydrate } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import {
   FLIGHT_DATA_SOURCE,
   QueryClient,
@@ -52,7 +52,7 @@ describe('single-flight data source', () => {
   })
 
   it('hydrates the slice into the cache and mounted queries update', async () => {
-    const key = queryKey()
+    const key = createKey()
     let fetches = 0
 
     function Page() {
@@ -93,7 +93,7 @@ describe('single-flight data source', () => {
   })
 
   it('seeds entries no component has mounted', async () => {
-    const key = queryKey()
+    const key = createKey()
     render(() => (
       <QueryClientProvider client={queryClient}>
         <div />

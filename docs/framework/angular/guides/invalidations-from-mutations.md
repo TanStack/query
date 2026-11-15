@@ -8,7 +8,7 @@ replace: { 'useMutation': 'injectMutation', 'hook': 'function' }
 [//]: # 'Example'
 
 ```ts
-mutation = injectMutation(() => ({
+postTodoMutation = injectMutation(() => ({
   mutationFn: postTodo,
 }))
 ```
@@ -23,10 +23,10 @@ import {
 } from '@tanstack/angular-query-experimental'
 
 export class TodosComponent {
-  queryClient = inject(QueryClient)
+  readonly queryClient = inject(QueryClient)
 
   // When this mutation succeeds, invalidate any queries with the `todos` or `reminders` query key
-  mutation = injectMutation(() => ({
+  readonly addTodoMutation = injectMutation(() => ({
     mutationFn: addTodo,
     onSuccess: () => {
       this.queryClient.invalidateQueries({ queryKey: ['todos'] })

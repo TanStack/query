@@ -1,0 +1,39 @@
+import { useRoute } from 'preact-iso'
+import { useQuery } from '@tanstack/preact-query'
+import { charactersQueries } from './services/characters/queries'
+
+export default function CharacterPage() {
+  const { params } = useRoute()
+  const id = Number(params.id)
+  const isValidId = /^\d+$/.test(params.id) && id > 0
+
+  const { status, data, error, isFetching } = useQuery(
+    charactersQueries.detail(isValidId ? id : undefined),
+  )
+
+  return (
+    <div style={{ textAlign: 'center' }}>
+      {!isValidId ? (
+        'Invalid character ID'
+      ) : status === 'pending' ? (
+        'Loading...'
+      ) : status === 'error' ? (
+        <span>Error: {error.message}</span>
+      ) : (
+        <>
+          <h1>{data.name}</h1>
+          <div>
+            <p>status: {data.status}</p>
+            <p>species: {data.species}</p>
+            <p>gender: {data.gender}</p>
+            <p>origin: {data.origin.name}</p>
+          </div>
+          <div>{isFetching ? 'Background Updating...' : ' '}</div>
+        </>
+      )}
+      <br />
+      <br />
+      <a href="/">Back</a>
+    </div>
+  )
+}

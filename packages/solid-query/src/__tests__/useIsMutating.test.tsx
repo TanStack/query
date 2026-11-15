@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@solidjs/testing-library'
 import { createRenderEffect } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, useIsMutating, useMutation } from '..'
 import { renderWithClient, setActTimeout } from './utils'
 import type { MutationOptions } from '@tanstack/query-core'
@@ -36,8 +36,8 @@ describe('useIsMutating', () => {
   })
 
   it('should return the number of fetching mutations', async () => {
-    const mutationKey1 = queryKey()
-    const mutationKey2 = queryKey()
+    const mutationKey1 = createKey()
+    const mutationKey2 = createKey()
 
     function Page() {
       const isMutating = useIsMutating()
@@ -89,8 +89,8 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by mutationKey', async () => {
     const isMutatingArray: Array<number> = []
-    const mutationKey1 = queryKey()
-    const mutationKey2 = queryKey()
+    const mutationKey1 = createKey()
+    const mutationKey2 = createKey()
 
     function Page() {
       const isMutating = useIsMutating(() => ({ mutationKey: mutationKey1 }))
@@ -139,8 +139,8 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by predicate', async () => {
     const isMutatingArray: Array<number> = []
-    const mutationKey1 = queryKey()
-    const mutationKey2 = queryKey()
+    const mutationKey1 = createKey()
+    const mutationKey2 = createKey()
 
     function Page() {
       const isMutating = useIsMutating(() => ({
@@ -192,7 +192,7 @@ describe('useIsMutating', () => {
 
   it('should use provided custom queryClient', async () => {
     const customClient = new QueryClient()
-    const mutationKey1 = queryKey()
+    const mutationKey1 = createKey()
 
     function Page() {
       const isMutating = useIsMutating(undefined, () => customClient)
@@ -215,7 +215,7 @@ describe('useIsMutating', () => {
       )
     }
 
-    const rendered = render(() => <Page></Page>)
+    const rendered = render(() => <Page />)
 
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -225,7 +225,7 @@ describe('useIsMutating', () => {
   })
 
   it('should count mutations started by useMutation while in flight', async () => {
-    const mutationKey1 = queryKey()
+    const mutationKey1 = createKey()
 
     function Page() {
       const isMutating = useIsMutating()

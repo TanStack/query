@@ -1,6 +1,6 @@
 <script lang="ts">
   import { untrack } from 'svelte'
-  import { queryKey, sleep } from '@tanstack/query-test-utils'
+  import { createKey, sleep } from '@tanstack/query-test-utils'
   import { createInfiniteQuery } from '../../src/index.js'
   import { setQueryClientContext } from '../../src/context.js'
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
@@ -15,7 +15,7 @@
   setQueryClientContext(queryClient)
 
   const query = createInfiniteQuery(() => ({
-    queryKey: queryKey(),
+    queryKey: createKey(),
     queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
     getNextPageParam: (lastPage) => lastPage + 1,
     initialPageParam: 0,

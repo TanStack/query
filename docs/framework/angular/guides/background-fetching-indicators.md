@@ -31,7 +31,7 @@ replace:
   `,
 })
 class TodosComponent {
-  todosQuery = injectQuery(() => ({
+  readonly todosQuery = injectQuery(() => ({
     queryKey: ['todos'],
     queryFn: fetchTodos,
   }))
@@ -53,7 +53,7 @@ import { injectIsFetching } from '@tanstack/angular-query-experimental'
   `,
 })
 export class GlobalLoadingIndicatorComponent {
-  isFetching = injectIsFetching()
+  readonly isFetching = injectIsFetching()
 }
 ```
 

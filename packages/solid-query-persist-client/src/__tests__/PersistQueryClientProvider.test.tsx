@@ -10,11 +10,12 @@ import { render, screen } from '@solidjs/testing-library'
 import { QueryClient, useQueries, useQuery } from '@tanstack/solid-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { Loading, createSignal } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 import type {
   PersistedClient,
   Persister,
+  Promisable,
 } from '@tanstack/query-persist-client-core'
 
 const createMockPersister = (): Persister => {
@@ -57,7 +58,7 @@ const createMockErrorPersister = (
  * back an empty client to restore it into.
  */
 async function setup() {
-  const key = queryKey()
+  const key = createKey()
 
   const queryClient = new QueryClient()
   queryClient.prefetchQuery({
@@ -137,14 +138,14 @@ describe('PersistQueryClientProvider', () => {
       .mockImplementation(() => sleep(10).then(() => 'fetched'))
 
     function Page() {
-      const [state] = useQueries(() => ({
+      const queries = useQueries(() => ({
         queries: [{ queryKey: key, queryFn }],
       }))
 
       return (
         <div>
-          <h1>{state.data}</h1>
-          <h2>fetchStatus: {state.fetchStatus}</h2>
+          <h1>{queries[0].data}</h1>
+          <h2>fetchStatus: {queries[0].fetchStatus}</h2>
         </div>
       )
     }
@@ -278,7 +279,7 @@ describe('PersistQueryClientProvider', () => {
       )
     }
 
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<() => void>()
 
     render(() => (
       <Loading>
@@ -301,15 +302,15 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should remove cache after non-successful restoring', async () => {
-    const key = queryKey()
+    const key = createKey()
 
-    const onErrorMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+      .mockReturnValue(undefined)
     const queryClient = new QueryClient()
-    const removeClient = vi.fn()
-    const onSuccess = vi.fn()
-    const onError = vi.fn()
+    const removeClient = vi.fn<() => Promisable<void>>()
+    const onSuccess = vi.fn<() => void>()
+    const onError = vi.fn<() => void>()
 
     const [error, persister] = createMockErrorPersister(removeClient)
 
@@ -347,22 +348,21 @@ describe('PersistQueryClientProvider', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(screen.getByText('fetched')).toBeInTheDocument()
 
-    expect(onErrorMock).toHaveBeenCalledTimes(1)
-    expect(onErrorMock).toHaveBeenNthCalledWith(1, error)
-    onErrorMock.mockRestore()
+    expect(consoleErrorMock).toHaveBeenCalledTimes(1)
+    expect(consoleErrorMock).toHaveBeenNthCalledWith(1, error)
   })
 
   it('should be able to persist into multiple clients', async () => {
     const { key, persister } = await setup()
 
-    const onSuccess = vi.fn()
+    const onSuccess = vi.fn<() => void>()
 
-    const queryFn1 = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'queryFn1'))
-    const queryFn2 = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'queryFn2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'queryFn1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'queryFn2'),
+    )
 
     function App() {
       const [client, setClient] = createSignal(

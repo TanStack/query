@@ -5,6 +5,8 @@ title: TypeScript
 
 Lit Query is written in TypeScript and reuses TanStack Query Core's type system. The most important rule is the same as every other adapter: give your query and mutation functions well-defined return types, and the result accessors will infer from them.
 
+Set `useDefineForClassFields` to `false` in your `tsconfig.json` so reactive properties initialized as class fields keep triggering updates. See [Requirements](./installation.md#requirements) for details.
+
 ## Query Inference
 
 ```ts
@@ -90,6 +92,7 @@ import { LitElement } from 'lit'
 import {
   QueryClient,
   createQueryController,
+  noop,
   queryOptions,
 } from '@tanstack/lit-query'
 
@@ -97,7 +100,7 @@ function todosOptions() {
   return queryOptions({
     queryKey: ['todos'],
     queryFn: fetchTodos,
-    staleTime: 5_000,
+    staleTime: 5 * 1000,
   })
 }
 
@@ -107,7 +110,7 @@ class TodosView extends LitElement {
   private readonly todos = createQueryController(this, todosOptions())
 }
 
-void queryClient.prefetchQuery(todosOptions())
+void queryClient.query(todosOptions()).catch(noop)
 ```
 
 The branded `queryKey` returned from `queryOptions` also helps APIs like `queryClient.getQueryData` understand the data type.

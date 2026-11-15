@@ -29,8 +29,6 @@ useIsMutating({ mutationKey, ...filters }) // [!code ++]
 ```tsx
 queryClient.isFetching(key, filters) // [!code --]
 queryClient.isFetching({ queryKey, ...filters }) // [!code ++]
-queryClient.ensureQueryData(key, filters) // [!code --]
-queryClient.ensureQueryData({ queryKey, ...filters }) // [!code ++]
 queryClient.getQueriesData(key, filters) // [!code --]
 queryClient.getQueriesData({ queryKey, ...filters }) // [!code ++]
 queryClient.setQueriesData(key, updater, filters, options) // [!code --]
@@ -45,14 +43,6 @@ queryClient.invalidateQueries(key, filters, options) // [!code --]
 queryClient.invalidateQueries({ queryKey, ...filters }, options) // [!code ++]
 queryClient.refetchQueries(key, filters, options) // [!code --]
 queryClient.refetchQueries({ queryKey, ...filters }, options) // [!code ++]
-queryClient.fetchQuery(key, fn, options) // [!code --]
-queryClient.fetchQuery({ queryKey, queryFn, ...options }) // [!code ++]
-queryClient.prefetchQuery(key, fn, options) // [!code --]
-queryClient.prefetchQuery({ queryKey, queryFn, ...options }) // [!code ++]
-queryClient.fetchInfiniteQuery(key, fn, options) // [!code --]
-queryClient.fetchInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
-queryClient.prefetchInfiniteQuery(key, fn, options) // [!code --]
-queryClient.prefetchInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
 ```
 
 ```tsx
@@ -61,6 +51,39 @@ queryCache.find({ queryKey, ...filters }) // [!code ++]
 queryCache.findAll(key, filters) // [!code --]
 queryCache.findAll({ queryKey, ...filters }) // [!code ++]
 ```
+
+### Imperative QueryClient methods
+
+These methods are deprecated with the introduction of `queryClient.query` and `queryClient.infiniteQuery` and will be removed in v6.
+
+If you are coming from v4 or earlier:
+
+```tsx
+queryClient.fetchQuery(key, fn, options) // [!code --]
+queryClient.query({ queryKey: key, queryFn: fn, ...options }) // [!code ++]
+queryClient.fetchInfiniteQuery(key, fn, options) // [!code --]
+queryClient.infiniteQuery({
+  queryKey: key,
+  queryFn: fn,
+  ...options,
+}) // [!code ++]
+
+queryClient.prefetchQuery(key, fn, options) // [!code --]
+queryClient.query({ queryKey: key, queryFn: fn, ...options }).catch(noop) // [!code ++]
+
+queryClient.prefetchInfiniteQuery(key, fn, options) // [!code --]
+queryClient
+  .infiniteQuery({ queryKey: key, queryFn: fn, ...options })
+  .catch(noop) // [!code ++]
+
+queryClient.ensureQueryData(key, options) // [!code --]
+queryClient.query({ queryKey: key, ...options, staleTime: 'static' }) // [!code ++]
+
+queryClient.ensureInfiniteQueryData(key, options) // [!code --]
+queryClient.infiniteQuery({ queryKey: key, ...options, staleTime: 'static' }) // [!code ++]
+```
+
+If you are updating older v5 code, It will be the same as the above except for keeping the single options object
 
 ### `queryClient.getQueryData` now accepts queryKey only as an Argument
 
@@ -91,7 +114,7 @@ If you want to run it against `.js` or `.jsx` files, please use the command belo
 ```
 npx jscodeshift@latest ./path/to/src/ \
   --extensions=js,jsx \
-  --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.cjs
+  --transform=./node_modules/@tanstack/react-query/build/codemods/v5/remove-overloads/remove-overloads.cjs
 ```
 
 If you want to run it against `.ts` or `.tsx` files, please use the command below:
@@ -100,7 +123,7 @@ If you want to run it against `.ts` or `.tsx` files, please use the command belo
 npx jscodeshift@latest ./path/to/src/ \
   --extensions=ts,tsx \
   --parser=tsx \
-  --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.cjs
+  --transform=./node_modules/@tanstack/react-query/build/codemods/v5/remove-overloads/remove-overloads.cjs
 ```
 
 Please note in the case of `TypeScript` you need to use `tsx` as the parser; otherwise, the codemod won't be applied properly!
@@ -184,7 +207,7 @@ Almost everyone gets `cacheTime` wrong. It sounds like "the amount of time that 
 `gc` is referring to "garbage collect" time. It's a bit more technical, but also a quite [well known abbreviation](<https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)>) in computer science.
 
 ```tsx
-const MINUTE = 1000 * 60;
+const MINUTE = 60 * 1000;
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -256,7 +279,7 @@ An identity function, in the context of TanStack Query, refers to a function tha
 useQuery({
   queryKey,
   queryFn,
-  placeholderData: (previousData, previousQuery) => previousData, // identity function with the same behaviour as `keepPreviousData`
+  placeholderData: (previousData, previousQuery) => previousData, // identity function with the same behavior as `keepPreviousData`
 })
 ```
 
@@ -322,7 +345,7 @@ The v5 includes a new `maxPages` option for infinite queries to limit the number
 
 ### New `dehydrate` API
 
-The options you can pass to `dehydrate` have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behaviour, instead of using the removed boolean options `dehydrateMutations` and `dehydrateQueries` you can implement the function equivalents `shouldDehydrateQuery` or `shouldDehydrateMutation` instead. To get the old behaviour of not hydrating queries/mutations at all, pass in `() => false`.
+The options you can pass to `dehydrate` have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behavior, instead of using the removed boolean options `dehydrateMutations` and `dehydrateQueries` you can implement the function equivalents `shouldDehydrateQuery` or `shouldDehydrateMutation` instead. To get the old behavior of not hydrating queries/mutations at all, pass in `() => false`.
 
 ```tsx
 - dehydrateMutations?: boolean // [!code --]
@@ -432,16 +455,16 @@ For example:
 ```ts
 + queryClient.setQueryDefaults(['todo'], {   // [!code ++]
 +   retry: false,  // [!code ++]
-+   staleTime: 60_000,  // [!code ++]
++   staleTime: 60 * 1000,  // [!code ++]
 + })  // [!code ++]
 queryClient.setQueryDefaults(['todo', 'detail'], {
 +   retry: true,  // [!code --]
-  retryDelay: 1_000,
-  staleTime: 10_000,
+  retryDelay: 1000,
+  staleTime: 10 * 1000,
 })
 - queryClient.setQueryDefaults(['todo'], { // [!code --]
 -   retry: false, // [!code --]
--   staleTime: 60_000, // [!code --]
+-   staleTime: 60 * 1000, // [!code --]
 - }) // [!code --]
 ```
 
@@ -498,7 +521,7 @@ Infinite Queries can be prefetched like regular Queries. Per default, only the f
 
 ### New `combine` option for `useQueries`
 
-See the [useQueries docs](../reference/useQueries.md#combine) for more details.
+See the [useQueries docs](../reference/functions/useQueries.md#combine) for more details.
 
 ### Experimental `fine grained storage persister`
 

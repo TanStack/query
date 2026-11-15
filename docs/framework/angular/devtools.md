@@ -161,7 +161,87 @@ Of these options `loadDevtools`, `client`, `position`, `errorTypes`, `buttonPosi
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
 - `hideDisabledQueries?: boolean`
+  - Defaults to `false`.
   - Set this to true to hide disabled queries from the devtools panel.
 - `theme?: "light" | "dark" | "system"`
-  - Defaults to `system`.
-  - Set this to change the theme of the devtools panel.
+  - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
+  - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
+
+## Embedded Mode
+
+Embedded mode will show the development tools as a fixed element in your application, so you can use our panel in your own development tools.
+
+Use `injectDevtoolsPanel` to render the devtools panel inside an element of your component. Like `withDevtools`, it is only included in development mode bundles. To use it in production builds, import it from `@tanstack/angular-query-experimental/devtools-panel/production`.
+
+```angular-ts
+import { Component, signal, viewChild } from '@angular/core'
+import { injectDevtoolsPanel } from '@tanstack/angular-query-experimental/devtools-panel'
+import type { ElementRef } from '@angular/core'
+
+@Component({
+  selector: 'app-root',
+  template: `
+    <button type="button" (click)="isOpen.set(!isOpen())">
+      {{ isOpen() ? 'Close' : 'Open' }} the devtools panel
+    </button>
+    @if (isOpen()) {
+      <div #div style="height: 500px"></div>
+    }
+  `,
+})
+export class AppComponent {
+  readonly isOpen = signal(false)
+  readonly divEl = viewChild<ElementRef>('div')
+
+  readonly devtools = injectDevtoolsPanel(() => ({
+    hostElement: this.divEl(),
+    onClose: () => this.isOpen.set(false),
+  }))
+}
+```
+
+`injectDevtoolsPanel` must be called in an injection context, or be given an `Injector` through the `injector` option in its second argument: `injectDevtoolsPanel(() => ({ ... }), { injector })`.
+
+### Options
+
+Of these options `hostElement`, `client`, `errorTypes`, `onClose`, and `theme` support reactivity through signals.
+
+- `hostElement?: ElementRef`
+  - The element to render the devtools panel in. When it is `undefined` or `null`, the devtools panel is not created, or is destroyed if it exists.
+- `onClose?: () => void`
+  - Callback function that is called when the devtools panel is closed
+- `client?: QueryClient`,
+  - Use this to use a custom QueryClient. Otherwise, the QueryClient provided through `provideTanStackQuery` will be injected.
+- `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
+  - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
+- `styleNonce?: string`
+  - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+- `shadowDOMTarget?: ShadowRoot`
+  - Default behavior will apply the devtool's styles to the head tag within the DOM.
+  - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `hideDisabledQueries?: boolean`
+  - Defaults to `false`.
+  - Set this to true to hide disabled queries from the devtools panel.
+- `theme?: "light" | "dark" | "system"`
+  - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
+  - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
+
+## Filter queries and mutations
+
+The **Filter** input above the query and mutation lists uses the **Key** scope by default. Select the scope button inside the input to switch between **Key**, **Data**, and **All**:
+
+- **Key** matches the query hash, or the mutation key and submission time.
+- **Data** matches the query data, or the mutation variables or data, the same way **Search data** does below.
+- **All** matches either.
+
+The selected scope is remembered across reloads, like the other filter settings.
+
+## Search query and mutation data
+
+Select a query or mutation and use **Search data** in its Data Explorer to search nested property names and primitive values. Search uses case-insensitive text matching and treats special characters as plain text.
+
+Matching text is highlighted. Matching editable values have a highlighted input. The explorer opens matching branches and the first matching page in each paginated collection. Other pages with matches are highlighted so you can open them. You can still inspect other rows and edit query data.
+
+The Data Explorer highlights up to 1,000 matches at a time.
+
+Select **Clear** or press **Escape** in the search field to restore your manual expansion. Selecting another query or mutation clears the search, unless the filter scope is **Data** or **All**: then the search starts with the filter text. For a mutation, it starts only in the variables or data that match the filter.

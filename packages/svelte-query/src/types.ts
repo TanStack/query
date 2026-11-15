@@ -1,6 +1,7 @@
 import type { Snippet } from 'svelte'
 import type {
   DefaultError,
+  DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
@@ -18,6 +19,10 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 
+/**
+ * A function that returns a value. Options passed as an accessor are read inside reactive contexts, so they
+ * update when the state they read changes.
+ */
 export type Accessor<T> = () => T
 
 /** Options for createBaseQuery */
@@ -70,6 +75,12 @@ export type CreateInfiniteQueryResult<
   TError = DefaultError,
 > = InfiniteQueryObserverResult<TData, TError>
 
+/** Result from createInfiniteQuery with initialData */
+export type DefinedCreateInfiniteQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = DefinedInfiniteQueryObserverResult<TData, TError>
+
 /** Options for createBaseQuery with initialData */
 export type DefinedCreateBaseQueryResult<
   TData = unknown,
@@ -93,6 +104,11 @@ export type CreateMutationOptions<
   '_defaulted'
 >
 
+/**
+ * The type of `mutate`, as returned by `createMutation`. Forwards the variables (and an optional per-call
+ * `onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced
+ * through the mutation result, not thrown.
+ */
 export type CreateMutateFunction<
   TData = unknown,
   TError = DefaultError,
@@ -104,6 +120,10 @@ export type CreateMutateFunction<
   >
 ) => void
 
+/**
+ * The type of `mutateAsync`, as returned by `createMutation`. Similar to {@link CreateMutateFunction}, but
+ * returns a promise which can be awaited.
+ */
 export type CreateMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,
@@ -111,6 +131,11 @@ export type CreateMutateAsyncFunction<
   TOnMutateResult = unknown,
 > = MutateFunction<TData, TError, TVariables, TOnMutateResult>
 
+/**
+ * The result of `createMutation`. Same as {@link MutationObserverResult} from `@tanstack/query-core`, with
+ * `mutate` narrowed to the fire-and-forget {@link CreateMutateFunction} signature, plus the added
+ * `mutateAsync`.
+ */
 export type CreateBaseMutationResult<
   TData = unknown,
   TError = DefaultError,
@@ -136,15 +161,47 @@ export type CreateMutationResult<
   TOnMutateResult = unknown,
 > = CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult>
 
+/**
+ * Infers the `Mutation` type passed to `useMutationState`'s `select` from the `MutationState` type it
+ * returns, falling back to `Mutation` otherwise.
+ */
+export type MutationTypeFromResult<TResult> = [TResult] extends [
+  MutationState<
+    infer TData,
+    infer TError,
+    infer TVariables,
+    infer TOnMutateResult
+  >,
+]
+  ? Mutation<TData, TError, TVariables, TOnMutateResult>
+  : Mutation
+
 /** Options for useMutationState */
-export type MutationStateOptions<TResult = MutationState> = {
+export type MutationStateOptions<
+  TResult = MutationState,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
+> = {
+  /**
+   * The filters that select the mutations to return the state of.
+   */
   filters?: MutationFilters
-  select?: (
-    mutation: Mutation<unknown, DefaultError, unknown, unknown>,
-  ) => TResult
+  /**
+   * Maps each matching mutation to the value returned for it. Defaults to the mutation's `state`.
+   */
+  select?: (mutation: TMutation) => TResult
 }
 
+/**
+ * The props accepted by `QueryClientProvider`.
+ */
 export type QueryClientProviderProps = {
+  /**
+   * The `QueryClient` to provide to the children.
+   */
   client: QueryClient
+  /**
+   * The children that can use the provided `QueryClient`.
+   */
   children: Snippet
 }

@@ -7,7 +7,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent } from '@solidjs/testing-library'
 import { Errored, Loading, createSignal } from 'solid-js'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useQuery } from '..'
 import { renderWithClient } from './utils'
 
@@ -27,7 +27,7 @@ describe('useQuery 2.0 read semantics', () => {
   })
 
   it('suspends the first load into <Loading> and renders data on settle', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const state = useQuery(() => ({
@@ -49,7 +49,7 @@ describe('useQuery 2.0 read semantics', () => {
   })
 
   it('serves settled data without guards', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const state = useQuery(() => ({
@@ -72,7 +72,7 @@ describe('useQuery 2.0 read semantics', () => {
   })
 
   it('holds the committed UI through a refetch and swaps when it lands', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     function Page() {
@@ -103,7 +103,7 @@ describe('useQuery 2.0 read semantics', () => {
   })
 
   it('surfaces a first-load failure to <Errored>', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const state = useQuery(() => ({
@@ -131,7 +131,7 @@ describe('useQuery 2.0 read semantics', () => {
   })
 
   it('keeps stale data and exposes error state when a refetch fails', async () => {
-    const key = queryKey()
+    const key = createKey()
     let count = 0
 
     function Page() {
@@ -173,7 +173,7 @@ describe('useQuery 2.0 read semantics', () => {
   })
 
   it('renders placeholderData immediately without suspending', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const state = useQuery(() => ({
@@ -203,7 +203,7 @@ describe('useQuery 2.0 read semantics', () => {
   })
 
   it('renders initialData immediately while the mount refetch runs', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const state = useQuery(() => ({
@@ -227,7 +227,7 @@ describe('useQuery 2.0 read semantics', () => {
   })
 
   it('applies select to the settled value', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const state = useQuery(() => ({
@@ -249,7 +249,7 @@ describe('useQuery 2.0 read semantics', () => {
   })
 
   it('reflects setQueryData writes reactively', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const state = useQuery(() => ({
@@ -274,7 +274,7 @@ describe('useQuery 2.0 read semantics', () => {
   })
 
   it('suspends a disabled query until it is enabled', async () => {
-    const key = queryKey()
+    const key = createKey()
     const [enabled, setEnabled] = createSignal(false)
 
     function Page() {
@@ -303,7 +303,7 @@ describe('useQuery 2.0 read semantics', () => {
   })
 
   it('exposes background fetch state reactively', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const state = useQuery(() => ({
@@ -341,7 +341,7 @@ describe('useQuery 2.0 read semantics', () => {
     // the hold still serves the old options, so the settle event was dropped
     // — data landed (via the promise) but meta/isFetching stayed stale
     // forever. The filter now also matches the latest computed hash.
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [id, setId] = createSignal(1)
@@ -384,7 +384,7 @@ describe('useQuery 2.0 read semantics', () => {
   // are fine-grained and item identity survives across fetches.
   describe('data store face', () => {
     it('tracks deep reads at the leaf — unrelated changes do not re-run them', async () => {
-      const key = queryKey()
+      const key = createKey()
       let count = 0
       const nameRenders: Array<string> = []
       const doneRenders: Array<string> = []
@@ -442,7 +442,7 @@ describe('useQuery 2.0 read semantics', () => {
     })
 
     it('reconciles by a custom key', async () => {
-      const key = queryKey()
+      const key = createKey()
       let count = 0
       let state!: { data: Array<{ uuid: string; v: number }> }
 
@@ -490,7 +490,7 @@ describe('useQuery 2.0 read semantics', () => {
     })
 
     it('serves primitive data through the store face', async () => {
-      const key = queryKey()
+      const key = createKey()
 
       function Page() {
         const state = useQuery(() => ({
@@ -517,7 +517,7 @@ describe('useQuery 2.0 read semantics', () => {
     // 'removed' event, and rebuilding the entry there would re-point the
     // observer and let its mount-fetch policy repopulate the removed key.
     it('leaves a removed query out of the cache while an observer is mounted', async () => {
-      const key = queryKey()
+      const key = createKey()
       let fetches = 0
       const queryFn = () =>
         sleep(10).then(() => (++fetches === 1 ? 'v1' : 'v2'))
@@ -557,7 +557,7 @@ describe('useQuery 2.0 read semantics', () => {
     })
 
     it('picks up a real entry written after a removal', async () => {
-      const key = queryKey()
+      const key = createKey()
 
       function Page() {
         const state = useQuery(() => ({

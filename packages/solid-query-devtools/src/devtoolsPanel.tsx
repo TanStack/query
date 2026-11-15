@@ -5,6 +5,9 @@ import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/solid-query'
 import type { JSX } from '@solidjs/web'
 
+/**
+ * The props of `SolidQueryDevtoolsPanel`, which renders the devtools panel inline.
+ */
 export interface DevtoolsPanelOptions {
   /**
    * Custom instance of QueryClient
@@ -19,13 +22,14 @@ export interface DevtoolsPanelOptions {
    */
   styleNonce?: string
   /**
-   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
+   * within the shadow DOM instead of within the head tag in the light DOM.
    */
   shadowDOMTarget?: ShadowRoot
 
   /**
    * Custom styles for the devtools panel
-   * @default { height: '500px' }
+   * @default { height: '100%', display: 'flex', 'flex-direction': 'column' }
    * @example { height: '100%' }
    * @example { height: '100%', width: '100%' }
    */
@@ -41,11 +45,17 @@ export interface DevtoolsPanelOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * Defaults to 'system'.
+   * This overrides the theme selected in the devtools Settings menu. When omitted, the
+   * selected theme is used, or `'system'` if none is selected.
    */
   theme?: Theme
 }
 
+/**
+ * Renders the TanStack Query devtools panel inline, for the given or nearest `QueryClient`.
+ * @param props - The devtools panel options.
+ * @returns The element the devtools panel is mounted in.
+ */
 export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
   const queryClient = useQueryClient(props.client)
   const client = createMemo(() => queryClient)
@@ -89,7 +99,7 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
   createEffect(
     () => props.theme,
     (theme) => {
-      devtools.setTheme(theme || 'system')
+      devtools.setTheme(theme)
     },
   )
 
@@ -115,7 +125,12 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
 
   return (
     <div
-      style={{ height: '500px', ...props.style }}
+      style={{
+        height: '100%',
+        display: 'flex',
+        'flex-direction': 'column',
+        ...props.style,
+      }}
       class="tsqd-parent-container"
       ref={ref}
     />

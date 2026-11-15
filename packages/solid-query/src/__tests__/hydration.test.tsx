@@ -17,6 +17,7 @@ import {
   microtasks,
   tick,
 } from './hydration-utils'
+import type { DehydratedState } from '@tanstack/query-core'
 import type { ClientBundle, Harness } from './hydration-utils'
 
 let harness: Harness
@@ -327,7 +328,7 @@ describe('SSR hydration', () => {
         dehydratedAt: q.state.dataUpdatedAt,
       })),
       mutations: [],
-    })
+    } as unknown as DehydratedState)
 
     // Record every cache update from here on: the provider channel's
     // re-priming must not produce any for the already-primed fresh query.
