@@ -40,6 +40,7 @@ stats.html
 .angular
 .cache
 .idea
+.marko-run
 .nx/cache
 .nx/migrate-runs
 .nx/polygraph

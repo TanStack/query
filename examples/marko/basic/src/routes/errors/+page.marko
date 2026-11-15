@@ -1,0 +1,30 @@
+import { brokenQueryOptions } from '../../lib/queries.ts'
+
+<page-header
+  title="Errors"
+  subtitle="The query function always throws and retry is off. The tag reports isError with the real message and does not retry."
+/>
+
+<query/broken options=() => brokenQueryOptions/>
+
+<if=broken.isError>
+  <p class="error">${broken.error.message}</p>
+</if>
+<else-if=broken.isPending>
+  <p>Loading…</p>
+</else-if>
+
+<div class="row">
+  <button
+    type="button"
+    disabled=broken.isFetching
+    onClick() {
+      broken.refetch()
+    }
+  >${broken.isFetching ? 'Retrying…' : 'Refetch'}</button>
+</div>
+
+<p class="muted">
+  Set <code>throwOnError</code> on the options to raise the error instead, so a
+  <code>&lt;try&gt;</code> block can catch it.
+</p>

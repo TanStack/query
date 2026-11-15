@@ -1,0 +1,66 @@
+import type { Accessor, QueryClient, QueryFilters } from "@tanstack/marko-query";
+import {
+  holdClient,
+  onPageClientChange,
+  readIsFetching,
+  resolveClient,
+  watchIsFetching,
+} from "@tanstack/marko-query/internal";
+import type { ClientHold } from "@tanstack/marko-query/internal";
+
+export interface Input {
+  /** Which queries to count. A function, so the tag follows the values it reads. */
+  filters?: Accessor<QueryFilters>;
+  /** The client to use instead of the one for this `$global`. */
+  client?: Accessor<QueryClient>;
+}
+
+<let/count=readIsFetching(resolveClient($global, input.client), input.filters?.())>
+<const/holder={hold: {} as ClientHold} as {
+  watcher?: ReturnType<typeof watchIsFetching>;
+  client?: QueryClient;
+  unwatch?: () => void;
+  hold: ClientHold;
+}>
+
+<lifecycle
+  onMount() {
+    const client = resolveClient($global, input.client);
+    holder.client = client;
+    holdClient(holder.hold, client, !!input.client);
+    holder.watcher = watchIsFetching(client, input.filters?.(), (value) => {
+      count = value;
+    });
+    holder.unwatch = onPageClientChange(
+      () => {
+        holder.watcher?.destroy();
+        const next = resolveClient($global, input.client);
+        holder.client = next;
+        holder.watcher = watchIsFetching(next, input.filters?.(), (value) => {
+          count = value;
+        });
+      },
+      () => !input.client,
+    );
+  }
+  onUpdate() {
+    const client = resolveClient($global, input.client);
+    if (holder.client !== client) {
+      holder.watcher?.destroy();
+      holder.client = client;
+      holdClient(holder.hold, client, !!input.client);
+      holder.watcher = watchIsFetching(client, input.filters?.(), (value) => {
+        count = value;
+      });
+    } else {
+      holder.watcher?.setInput(input.filters?.());
+    }
+  }
+  onDestroy() {
+    holder.unwatch?.();
+    holder.watcher?.destroy();
+    holdClient(holder.hold, undefined, false);
+  }
+/>
+
+<return=count>

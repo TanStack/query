@@ -1,0 +1,10 @@
+import type { DehydratedState, QueryClient } from "@tanstack/marko-query";
+
+export interface Input {
+  client: QueryClient;
+  state: DehydratedState;
+}
+
+<hydration-boundary state=input.state client=() => input.client>
+  <p id="count">${String(input.client.getMutationCache().getAll().length)}</p>
+</hydration-boundary>

@@ -1,0 +1,25 @@
+import { getQueryClient } from '@tanstack/marko-query'
+import { todoSlowQueryOptions } from '../../lib/queries.ts'
+
+<page-header
+  title="Streaming"
+  subtitle="The handler does not wait. The shell streams at once and the slow query (1.5s) streams in through await."
+/>
+
+<const/ready=getQueryClient($global).query(todoSlowQueryOptions)>
+
+<p>This part is rendered on the server and sent immediately.</p>
+
+<await|_|=ready>
+  <query/slow options=() => todoSlowQueryOptions/>
+  <if=slow.data>
+    <todo-list todos=slow.data.todos/>
+  </if>
+  <else-if=slow.error>
+    <p class="error">${slow.error.message}</p>
+  </else-if>
+  <p class="muted">
+    This part is streamed when the promise resolves. The tag sends its cache
+    entry with the streamed HTML, so the browser does not refetch.
+  </p>
+</await>

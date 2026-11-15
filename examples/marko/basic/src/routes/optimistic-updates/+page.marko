@@ -1,0 +1,72 @@
+import { getQueryClient } from '@tanstack/marko-query'
+import { failNextToggleRequest, toggleTodo } from '../../lib/api.ts'
+import type { Todo } from '../../lib/api.ts'
+import { todosQueryKey } from '../../lib/query-keys.ts'
+import { todosQueryOptions } from '../../lib/queries.ts'
+
+<page-header
+  title="Optimistic updates"
+  subtitle="onMutate writes the cache before the request resolves, onError rolls it back, and onSettled invalidates. Use the fail button to see the rollback."
+/>
+
+<query/todos options=() => todosQueryOptions/>
+
+<mutation/toggle options() {
+  return {
+    mutationFn: toggleTodo,
+    onMutate: async (id: string) => {
+      const client = getQueryClient($global)
+      await client.cancelQueries({ queryKey: todosQueryKey })
+      const previous = client.getQueryData<Array<Todo>>(todosQueryKey)
+      client.setQueryData<Array<Todo>>(todosQueryKey, (old) =>
+        old?.map((todo) =>
+          todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+        ),
+      )
+      return { previous }
+    },
+    onError: (_error, _id, context) => {
+      getQueryClient($global).setQueryData(todosQueryKey, context?.previous)
+    },
+    onSettled: () =>
+      getQueryClient($global).invalidateQueries({ queryKey: todosQueryKey }),
+  }
+}/>
+
+<div class="row">
+  <button
+    type="button"
+    onClick() {
+      failNextToggleRequest()
+    }
+  >Fail the next toggle</button>
+  <if=toggle.isPending>
+    <span class="muted">Saving…</span>
+  </if>
+</div>
+
+<if=toggle.isError>
+  <p class="error">Rolled back: ${String(toggle.error)}</p>
+</if>
+
+<if=todos.data>
+  <ul>
+    <for|todo| of=todos.data by="id">
+      <li>
+        <button
+          type="button"
+          disabled=toggle.isPending
+          onClick() {
+            toggle.mutate(todo.id)
+          }
+        >${todo.completed ? '☑' : '☐'}</button>
+        ${todo.title}
+      </li>
+    </for>
+  </ul>
+</if>
+
+<p class="muted">
+  The checkbox flips immediately. When the request fails, the list returns to
+  the previous state and the error appears above.
+</p>

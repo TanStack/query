@@ -1,0 +1,7 @@
+import type { DevtoolsPanelOptions } from "../types.js";
+import DevtoolsPanel from "../components/devtools-panel.marko";
+
+/** `<query-devtools-panel>` that also mounts in production builds. */
+export interface Input extends DevtoolsPanelOptions {}
+
+<DevtoolsPanel ...input production=true/>

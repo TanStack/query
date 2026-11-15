@@ -55,6 +55,12 @@ catalog:
   unplugin-vue: ^8.0.0
   vue: ^3.5.44
 
+  # marko
+  '@marko/compiler': ^5.42.14
+  '@marko/type-check': ^3.2.1
+  '@marko/vite': ^6.1.13
+  marko: ^6.4.5
+
   # angular
   '@analogjs/vite-plugin-angular': ^2.7.5
   '@angular/common': ^22.2.4
@@ -70,6 +76,7 @@ packages:
   - 'examples/react/*'
   - 'examples/preact/*'
   - 'examples/lit/*'
+  - 'examples/marko/*'
   - 'examples/solid/*'
   - 'examples/svelte/*'
   - 'examples/vue/*'

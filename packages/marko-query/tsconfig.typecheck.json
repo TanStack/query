@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.tags.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "rootDir": ".",
+    "types": ["node"],
+    "paths": {
+      "@tanstack/marko-query": ["./src/index.ts"],
+      "@tanstack/marko-query/internal": ["./src/internal.ts"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.marko",
+    "tests/**/*.ts",
+    "tests/**/*.marko"
+  ]
+}

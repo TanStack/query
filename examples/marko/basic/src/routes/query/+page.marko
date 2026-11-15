@@ -1,0 +1,27 @@
+import { todosQueryOptions } from '../../lib/queries.ts'
+
+<page-header
+  title="Query"
+  subtitle="The handler does not prefetch. The server renders the pending state and the browser fetches once after hydration."
+/>
+
+<query/todos options=() => todosQueryOptions/>
+
+<if=todos.isPending>
+  <p>Loading…</p>
+</if>
+<else-if=todos.isError>
+  <p class="error">${todos.error.message}</p>
+</else-if>
+<else>
+  <todo-list todos=todos.data/>
+  <div class="row">
+    <button
+      type="button"
+      disabled=todos.isFetching
+      onClick() {
+        todos.refetch()
+      }
+    >${todos.isFetching ? 'Refreshing…' : 'Refetch'}</button>
+  </div>
+</else>

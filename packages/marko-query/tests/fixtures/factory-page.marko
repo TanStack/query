@@ -1,0 +1,12 @@
+import Layout from "./factory-layout.marko";
+
+<Layout>
+  <query/q
+    options=() => ({
+      queryKey: ["factory"],
+      queryFn: async () => "from factory",
+    })
+  />
+  <p id="status">${q.status}</p>
+  <p id="data">${String(q.data)}</p>
+</Layout>

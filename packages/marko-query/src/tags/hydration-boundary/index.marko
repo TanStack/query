@@ -1,0 +1,54 @@
+import type {
+  Accessor,
+  DehydratedState,
+  HydrateOptions,
+  QueryClient,
+} from "@tanstack/marko-query";
+import {
+  holdClient,
+  hydrateBoundary,
+  onPageClientChange,
+  resolveClient,
+} from "@tanstack/marko-query/internal";
+import type { ClientHold } from "@tanstack/marko-query/internal";
+
+export interface Input {
+  /** What `dehydrate` returned, e.g. on the server or from a loader. */
+  state: DehydratedState | null | undefined;
+  /** Passed to core `hydrate`. A function, as it can hold functions. */
+  options?: Accessor<HydrateOptions>;
+  /** The client to use instead of the one for this `$global`. */
+  client?: Accessor<QueryClient>;
+  content?: Marko.Body;
+}
+
+<const/client=resolveClient($global, input.client)>
+<const/hydrated=hydrateBoundary(client, input.state, input.options?.())>
+<lifecycle
+  onMount() {
+    hydrateBoundary(resolveClient($global, input.client), input.state, input.options?.());
+    // `onMount`'s return value becomes `this` in `onDestroy`. A `<const>` would
+    // not do: this tag never reads one in its render, so Marko would not
+    // evaluate it in the browser.
+    const hold = { client: undefined, release: undefined } as ClientHold;
+    holdClient(hold, resolveClient($global, input.client), !!input.client);
+    return {
+      hold,
+      unwatch: onPageClientChange(
+        () => {
+          holdClient(hold, resolveClient($global, input.client), !!input.client);
+          hydrateBoundary(resolveClient($global, input.client), input.state, input.options?.());
+        },
+        () => !input.client,
+      ),
+    };
+  }
+  onUpdate() {
+    holdClient(this.hold, resolveClient($global, input.client), !!input.client);
+  }
+  onDestroy() {
+    this.unwatch?.();
+    holdClient(this.hold, undefined, false);
+  }
+/>
+<${input.content}/>

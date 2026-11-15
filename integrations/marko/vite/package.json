@@ -1,0 +1,20 @@
+{
+  "name": "@tanstack/query-integration-marko-vite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "test:types": "mtc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@tanstack/marko-query": "workspace:*",
+    "@tanstack/query-core": "workspace:*",
+    "marko": "catalog:"
+  },
+  "devDependencies": {
+    "@marko/type-check": "catalog:",
+    "@marko/vite": "catalog:",
+    "typescript": "catalog:",
+    "vite": "^8.3.5"
+  }
+}

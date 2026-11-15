@@ -1,0 +1,33 @@
+import { devtoolsQueryOptions } from '../../lib/queries.ts'
+
+<let/isOpen=false>
+
+<page-header
+  title="Devtools panel"
+  subtitle="The embedded devtools panel, mounted inside the page instead of floating over it. The layout already renders the floating devtools."
+/>
+
+<div class="row">
+  <button
+    type="button"
+    class="primary"
+    onClick() {
+      isOpen = !isOpen
+    }
+  >${isOpen ? 'Close' : 'Open'} the devtools panel</button>
+</div>
+
+<if=isOpen>
+  <query-devtools-panel onClose() { isOpen = false }/>
+</if>
+
+<query/todos options=() => devtoolsQueryOptions/>
+
+<if=todos.data>
+  <todo-list todos=todos.data/>
+</if>
+
+<p class="muted">
+  Open the panel to inspect the cache. The query above is a separate entry, so
+  it shows up next to the ones the other routes created.
+</p>

@@ -1,0 +1,124 @@
+'use strict'
+
+// Compile-time half of `<query-client-factory factory=createClient/>`.
+//
+// A route handler or middleware that prefetches runs before the layout
+// renders, and the client it gets must already be made by the factory. The
+// browser has the same requirement: the first `<query>` creates the page's
+// client from its mount hook, and Marko mounts children before parents, so a
+// hook in the layout runs too late. Both realms therefore register the factory
+// when the template's module is evaluated, which precedes any handler,
+// middleware, render or mount. Loading a route loads the layout with it, so
+// the server registration also precedes the first request's handler.
+
+const TAG = '<query-client-factory>'
+const PACKAGE = '@tanstack/marko-query'
+
+module.exports = function transform(tag, t) {
+  const file = tag.hub.file
+
+  const attr = tag
+    .get('attributes')
+    .find((a) => a.isMarkoAttribute() && a.node.name === 'factory')
+  if (!attr || !attr.node.value) {
+    throw tag
+      .get('name')
+      .buildCodeFrameError(`${TAG} needs a \`factory\` attribute.`)
+  }
+  const value = attr.node.value
+  if (
+    !t.isIdentifier(value) ||
+    !isImported(file.path.node.body, value.name, t)
+  ) {
+    throw attr.buildCodeFrameError(
+      `${TAG} \`factory\` must be a function imported by this template ` +
+        '(`factory=createQueryClient`), not an inline expression. It is ' +
+        'registered when the template loads, before any route handler runs.',
+    )
+  }
+  if (file.metadata.queryClientFactoryTag) {
+    throw tag
+      .get('name')
+      .buildCodeFrameError(
+        `${TAG} can only be used once per template. Use it once, in the root layout.`,
+      )
+  }
+  file.metadata.queryClientFactoryTag = true
+
+  // A layout may already import `setQueryClientFactory` (the documented escape
+  // hatch for registering a factory by hand). Reuse that binding when it comes
+  // from this package, and otherwise take a name nothing else uses, so the
+  // injected import can never collide with one the template already has.
+  const existing = findImport(file.path.node.body, t, PACKAGE)
+  const local = existing
+    ? t.identifier(existing)
+    : file.path.scope.hasBinding('setQueryClientFactory')
+      ? file.path.scope.generateUidIdentifier('setQueryClientFactory')
+      : t.identifier('setQueryClientFactory')
+
+  file.path.pushContainer(
+    'body',
+    t.markoScriptlet(
+      [
+        ...(existing
+          ? []
+          : [
+              t.importDeclaration(
+                [
+                  t.importSpecifier(
+                    t.identifier(local.name),
+                    t.identifier('setQueryClientFactory'),
+                  ),
+                ],
+                t.stringLiteral(PACKAGE),
+              ),
+            ]),
+        t.expressionStatement(
+          t.callExpression(t.identifier(local.name), [
+            t.identifier(value.name),
+          ]),
+        ),
+      ],
+      true,
+      null,
+    ),
+  )
+
+  // The tag's input carries the factory to the browser as well, so the tag
+  // keeps working when a host renders it without this transform.
+  attr.node.value = t.arrowFunctionExpression(
+    [],
+    t.callExpression(t.identifier(value.name), []),
+  )
+}
+
+function isImported(body, name, t) {
+  return body.some(
+    (node) =>
+      t.isImportDeclaration(node) &&
+      node.specifiers.some((s) => s.local.name === name),
+  )
+}
+
+/**
+ * The local name that binds `setQueryClientFactory` from `source`, if the
+ * template has one. An aliased import counts: the binding is the same one.
+ * @param body - The template's top-level statements.
+ * @param t - The Babel types of the compiler.
+ * @param source - The module the binding must come from.
+ * @returns The local name, or `undefined`.
+ */
+function findImport(body, t, source) {
+  for (const node of body) {
+    if (!t.isImportDeclaration(node) || node.source.value !== source) continue
+    for (const s of node.specifiers) {
+      if (
+        t.isImportSpecifier(s) &&
+        s.imported.name === 'setQueryClientFactory'
+      ) {
+        return s.local.name
+      }
+    }
+  }
+  return undefined
+}

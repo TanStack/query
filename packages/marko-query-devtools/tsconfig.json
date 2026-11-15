@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-ts",
+    "rootDir": ".",
+    "types": ["node", "marko"]
+  },
+  "include": ["src/*.ts", "*.config.ts", "*.config.js", "package.json"],
+  "references": [{ "path": "../marko-query" }, { "path": "../query-devtools" }]
+}

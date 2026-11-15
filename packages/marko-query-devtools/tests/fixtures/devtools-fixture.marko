@@ -1,0 +1,6 @@
+export interface Input {
+  name: string;
+}
+
+<query-devtools errorTypes=() => [{ name: input.name, initializer: () => new Error("boom") }]/>
+<query-devtools-panel errorTypes=() => [{ name: input.name, initializer: () => new Error("boom") }] onClose() { }/>

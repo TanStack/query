@@ -1,0 +1,30 @@
+import { todoCountQueryOptions } from '../../lib/queries.ts'
+
+<page-header
+  title="Parallel"
+  subtitle="Three queries run as one list through the queries tag. combine maps the results to a single object."
+/>
+
+<queries/counts options() {
+  return {
+    queries: [
+      todoCountQueryOptions('all'),
+      todoCountQueryOptions('completed'),
+      todoCountQueryOptions('active'),
+    ],
+    combine: ([all, completed, active]) => ({
+      all: all.data ?? 0,
+      completed: completed.data ?? 0,
+      active: active.data ?? 0,
+    }),
+  }
+}/>
+
+<div class="card">
+  <p>All: <strong>${counts.all}</strong></p>
+  <p>Completed: <strong>${counts.completed}</strong></p>
+  <p>Active: <strong>${counts.active}</strong></p>
+</div>
+
+<is-fetching/fetches/>
+<p class="muted">Queries fetching right now: ${fetches}</p>

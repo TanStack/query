@@ -1,0 +1,10 @@
+import type { DehydratedState } from "@tanstack/marko-query";
+
+export interface Input {
+  state: DehydratedState;
+}
+
+<hydration-boundary state=input.state>
+  <query/q options=() => ({ queryKey: ["boundary"], queryFn: async () => "fetched" })/>
+  <p id="data">${String(q.data)}</p>
+</hydration-boundary>

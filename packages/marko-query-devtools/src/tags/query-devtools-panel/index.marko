@@ -1,0 +1,7 @@
+import type { DevtoolsPanelOptions } from "../../types.js";
+import DevtoolsPanel from "../../components/devtools-panel.marko";
+
+/** Renders nothing unless `NODE_ENV` is `development`; see `/production`. */
+export interface Input extends DevtoolsPanelOptions {}
+
+<DevtoolsPanel ...input production=false/>

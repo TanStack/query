@@ -1,0 +1,7 @@
+import type { DevtoolsOptions } from "../types.js";
+import Devtools from "../components/devtools.marko";
+
+/** `<query-devtools>` that also mounts in production builds. */
+export interface Input extends DevtoolsOptions {}
+
+<Devtools ...input production=true/>

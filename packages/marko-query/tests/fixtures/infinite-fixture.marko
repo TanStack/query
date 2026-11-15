@@ -1,0 +1,19 @@
+import type { QueryClient } from "@tanstack/marko-query";
+
+export interface Input {
+  client: QueryClient;
+}
+
+<infinite-query/q
+  client=() => input.client
+  options=() => ({
+    queryKey: ["pages"],
+    queryFn: async ({ pageParam }: { pageParam: number }) => pageParam * 10,
+    initialPageParam: 0,
+    getNextPageParam: (_last: number, all: number[]) => (all.length < 3 ? all.length : undefined),
+    getPreviousPageParam: () => undefined,
+  })
+/>
+<p id="pages">${JSON.stringify(q.data?.pages ?? [])}</p>
+<p id="has-next">${String(q.hasNextPage)}</p>
+<button id="more" onClick() { q.fetchNextPage() }>more</button>

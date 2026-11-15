@@ -107,6 +107,7 @@ body:
         - svelte-query
         - vue-query
         - angular-query
+        - marko-query
         - vanilla
   - type: input
     id: rq-version

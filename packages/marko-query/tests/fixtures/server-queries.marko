@@ -1,0 +1,11 @@
+<queries/total
+  options=() => ({
+    queries: [
+      { queryKey: ["a"], queryFn: async () => 1 },
+      { queryKey: ["b"], queryFn: async () => 2 },
+    ],
+    combine: (results) => results.reduce((sum, result) => sum + (result.data ?? 0), 0),
+  })
+/>
+<p id="total">${total}</p>
+<button onClick() { console.log(total) }>log</button>

@@ -1,0 +1,101 @@
+import { QueryObserver } from "@tanstack/marko-query";
+import type {
+  Accessor,
+  CreateQueryOptions,
+  CreateQueryResult,
+  DefaultError,
+  QueryClient,
+  QueryKey,
+  RefetchOptions,
+} from "@tanstack/marko-query";
+import {
+  QueryBinding,
+  holdClient,
+  onPageClientChange,
+  readQuery,
+  resolveClient,
+  toPlainResult,
+} from "@tanstack/marko-query/internal";
+import type { ClientHold, Snapshot } from "@tanstack/marko-query/internal";
+
+export interface Input<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> {
+  /** The query's options. A function, so the tag follows the values it reads. */
+  options: Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>;
+  /** The client to use instead of the one for this `$global`. */
+  client?: Accessor<QueryClient>;
+}
+
+static function raise(error: unknown): never {
+  throw error;
+}
+
+<const/snapshot=(readQuery(
+  resolveClient($global, input.client),
+  input.options(),
+) as Snapshot<CreateQueryResult<TData, TError>>)>
+<let/result=snapshot.result>
+<let/thrown=snapshot.thrown>
+<const/holder={hold: {} as ClientHold, hydrated: false} as {
+  binding?: QueryBinding;
+  unwatch?: () => void;
+  hold: ClientHold;
+  hydrated: boolean;
+}>
+<const/connect=(() => {
+  if (holder.binding) return holder.binding;
+  holder.binding = new QueryBinding(
+    resolveClient($global, input.client),
+    input.options(),
+    (next, error) => {
+      result = toPlainResult(next) as CreateQueryResult<TData, TError>;
+      thrown = error;
+    },
+    QueryObserver,
+    // The snapshot belongs to the render that made it. A binding built later,
+    // for a client that replaced the page's client, must not seed that client
+    // with the server's entries.
+    holder.hydrated ? undefined : snapshot.hydration,
+  );
+  holder.hydrated = true;
+  return holder.binding;
+})>
+
+<lifecycle
+  onMount() {
+    holdClient(holder.hold, connect().client, !!input.client);
+    holder.unwatch = onPageClientChange(
+      () => {
+        holder.binding?.destroy();
+        holder.binding = undefined;
+        holdClient(holder.hold, connect().client, !!input.client);
+      },
+      () => !input.client,
+    );
+  }
+  onUpdate() {
+    const client = resolveClient($global, input.client);
+    if (holder.binding && holder.binding.client !== client) {
+      holder.binding.destroy();
+      holder.binding = undefined;
+    }
+    holdClient(holder.hold, connect().client, !!input.client);
+    connect().setOptions(input.options());
+  }
+  onDestroy() {
+    holder.unwatch?.();
+    holder.binding?.destroy();
+    holdClient(holder.hold, undefined, false);
+  }
+/>
+
+<if=thrown>${raise(thrown.error)}</if>
+
+<return=({
+  ...result,
+  refetch: (options?: RefetchOptions) => connect().observer.refetch(options),
+} as CreateQueryResult<TData, TError>)>

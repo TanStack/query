@@ -1,0 +1,22 @@
+import { todosQueryOptions } from '../../lib/queries.ts'
+
+<page-header
+  title="Prefetch"
+  subtitle="The handler fills the cache before the page renders, so the HTML contains the data and the browser does not fetch it again."
+/>
+
+<query/todos options=() => todosQueryOptions/>
+
+<if=todos.isPending>
+  <p>Loading…</p>
+</if>
+<else-if=todos.isError>
+  <p class="error">${todos.error.message}</p>
+</else-if>
+<else>
+  <todo-list todos=todos.data/>
+  <p class="muted">
+    View source: the list is in the HTML. The browser hydrates it and, because
+    staleTime is 30s, does not refetch on mount.
+  </p>
+</else>

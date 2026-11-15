@@ -1,0 +1,52 @@
+import { queryOptions } from "@tanstack/marko-query";
+
+static const userOptions = queryOptions({
+  queryKey: ["user"],
+  queryFn: async () => ({ name: "Ada" }),
+});
+
+<query/q options=() => ({ queryKey: ["a"], queryFn: async () => "x" })/>
+<query/user options=() => userOptions/>
+<infinite-query/pages
+  options=() => ({
+    queryKey: ["pages"],
+    queryFn: async ({ pageParam }) => [pageParam],
+    initialPageParam: 0,
+    getNextPageParam: (last: number[]) => last[0]! + 1,
+  })
+/>
+<queries/list
+  options=() => ({
+    queries: [
+      { queryKey: ["n"], queryFn: async () => 1 },
+      { queryKey: ["s"], queryFn: async () => "s" },
+    ],
+  })
+/>
+<queries/total
+  options=() => ({
+    queries: [{ queryKey: ["n"], queryFn: async () => 1 }],
+    combine: (results) => results.reduce((sum, result) => sum + (result.data ?? 0), 0),
+  })
+/>
+<mutation/save options=() => ({ mutationFn: async (id: number) => `saved ${id}` })/>
+<is-fetching/fetching/>
+<mutation-state/states options=() => ({ select: (mutation) => mutation.state.variables as number })/>
+
+<const/checks=(() => {
+  const text: string = q.isSuccess ? q.data : "";
+  const name: string | undefined = user.data?.name;
+  const firstPage: number[] | undefined = pages.data?.pages[0];
+  const one: number | undefined = list[0].data;
+  const two: string | undefined = list[1].data;
+  const sum: number = total;
+  const count: number = fetching;
+  const variables: number[] = states;
+  save.mutate(1);
+  // @ts-expect-error the variables are numbers
+  save.mutate("1");
+  // @ts-expect-error data is a string
+  const wrong: number | undefined = q.data;
+  return [text, name, firstPage, one, two, sum, count, variables, wrong];
+})>
+<p>${checks.length}</p>

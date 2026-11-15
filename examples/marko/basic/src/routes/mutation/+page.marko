@@ -1,0 +1,48 @@
+import { getQueryClient } from '@tanstack/marko-query'
+import { createTodo } from '../../lib/api.ts'
+import { todosQueryKey } from '../../lib/query-keys.ts'
+import { todosQueryOptions } from '../../lib/queries.ts'
+
+<let/title='Write a mutation'>
+
+<page-header
+  title="Mutation"
+  subtitle="The mutation tag returns mutate, mutateAsync, reset and the mutation state. The list below is a separate query."
+/>
+
+<query/todos options=() => todosQueryOptions/>
+
+<mutation/create options() {
+  return {
+    mutationFn: createTodo,
+    onSuccess: () =>
+      getQueryClient($global).invalidateQueries({ queryKey: todosQueryKey }),
+  }
+}/>
+
+<div class="row">
+  <input
+    type="text"
+    aria-label="Todo title"
+    value=title
+    onInput(e) {
+      title = (e.target as HTMLInputElement).value
+    }
+  />
+  <button
+    type="button"
+    class="primary"
+    disabled=create.isPending
+    onClick() {
+      create.mutate(title)
+    }
+  >${create.isPending ? 'Saving…' : 'Add todo'}</button>
+</div>
+
+<if=create.isError>
+  <p class="error">${String(create.error)}</p>
+</if>
+
+<if=todos.data>
+  <todo-list todos=todos.data/>
+</if>

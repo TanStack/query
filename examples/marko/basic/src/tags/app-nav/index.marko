@@ -1,0 +1,77 @@
+static const links = [
+  { href: '/', label: 'Home' },
+  { href: '/query', label: 'Query' },
+  { href: '/prefetch', label: 'Prefetch' },
+  { href: '/pagination', label: 'Pagination' },
+  { href: '/infinite', label: 'Infinite' },
+  { href: '/parallel', label: 'Parallel' },
+  { href: '/mutation', label: 'Mutation' },
+  { href: '/form-mutation', label: 'Form' },
+  { href: '/invalidation', label: 'Invalidation' },
+  { href: '/optimistic-updates', label: 'Optimistic' },
+  { href: '/mutation-state', label: 'Mutation state' },
+  { href: '/streaming', label: 'Streaming' },
+  { href: '/hydration', label: 'Hydration' },
+  { href: '/disabled', label: 'Disabled' },
+  { href: '/subscribed', label: 'Subscribed' },
+  { href: '/select', label: 'Select' },
+  { href: '/query-key', label: 'Query key' },
+  { href: '/polling', label: 'Polling' },
+  { href: '/devtools-panel', label: 'Devtools' },
+  { href: '/errors', label: 'Errors' },
+  { href: '/throw-on-error', label: 'throwOnError' },
+]
+
+<nav>
+  <a class="brand" href="/">Marko Query</a>
+  <ul>
+    <for|link| of=links by="href">
+      <li>
+        <a
+          href=link.href
+          class={ active: link.href === $global.url.pathname }
+        >${link.label}</a>
+      </li>
+    </for>
+  </ul>
+</nav>
+
+<style>
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .brand {
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  nav a {
+    display: block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+  nav a:hover {
+    color: var(--text);
+  }
+  nav a.active {
+    color: var(--bg);
+    background: var(--accent);
+  }
+</style>

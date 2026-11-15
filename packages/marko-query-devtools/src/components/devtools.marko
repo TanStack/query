@@ -1,0 +1,57 @@
+import { getQueryClient, onlineManager } from "@tanstack/marko-query";
+import type { TanstackQueryDevtools } from "@tanstack/query-devtools";
+import type { DevtoolsOptions } from "../types.js";
+
+export interface Input extends DevtoolsOptions {
+  /** Mount outside development too (the `/production` tags). */
+  production: boolean;
+}
+
+<const/holder={} as { devtools?: TanstackQueryDevtools; destroyed?: boolean }>
+<div/host class="tsqd-parent-container"/>
+
+<lifecycle
+  onMount() {
+    if (!input.production && process.env.NODE_ENV !== "development") return;
+    void import("@tanstack/query-devtools")
+      .then(({ TanstackQueryDevtools }) => {
+        if (holder.destroyed) return;
+        const devtools = new TanstackQueryDevtools({
+          client: input.client ? input.client() : getQueryClient($global),
+          queryFlavor: "Marko Query",
+          version: "5",
+          onlineManager,
+          initialIsOpen: input.initialIsOpen ?? false,
+          buttonPosition: input.buttonPosition ?? "bottom-right",
+          position: input.position ?? "bottom",
+          errorTypes: input.errorTypes?.() ?? [],
+          styleNonce: input.styleNonce,
+          shadowDOMTarget: input.shadowDOMTarget?.(),
+          hideDisabledQueries: input.hideDisabledQueries ?? false,
+          theme: input.theme ?? "system",
+        });
+        devtools.mount(host());
+        holder.devtools = devtools;
+      })
+      .catch((error) => {
+        console.warn(
+          "[marko-query-devtools] The devtools failed to load. The page keeps running without them.",
+          error,
+        );
+      });
+  }
+  onUpdate() {
+    const devtools = holder.devtools;
+    if (!devtools) return;
+    devtools.setClient(input.client ? input.client() : getQueryClient($global));
+    devtools.setButtonPosition(input.buttonPosition ?? "bottom-right");
+    devtools.setPosition(input.position ?? "bottom");
+    devtools.setInitialIsOpen(input.initialIsOpen ?? false);
+    devtools.setErrorTypes(input.errorTypes?.() ?? []);
+    devtools.setTheme(input.theme ?? "system");
+  }
+  onDestroy() {
+    holder.destroyed = true;
+    holder.devtools?.unmount();
+  }
+/>

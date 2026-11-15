@@ -39,6 +39,14 @@ export default {
       entry: ['src/v4/**/*.cjs', 'src/v5/**/*.cjs'],
       ignore: ['**/__testfixtures__/**'],
     },
+    'packages/marko-query': {
+      // Marko loads the transform and the type fixture by path
+      entry: ['transform/*.cjs', 'tests/fixtures/*.marko'],
+    },
+    'packages/marko-query-devtools': {
+      // Published as `./production/*` and not imported inside the package
+      entry: ['src/production/*.marko'],
+    },
     'packages/react-query': {
       ignoreDependencies: optionalPeerDependencies(reactQuery),
     },
