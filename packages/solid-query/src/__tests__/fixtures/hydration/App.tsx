@@ -9,6 +9,7 @@
 import { Loading, Show } from 'solid-js'
 import {
   QueryClientProvider,
+  noop,
   useIsFetching,
   useQuery,
 } from '@tanstack/solid-query'
@@ -122,14 +123,16 @@ export function App(props: AppProps) {
   // provider's serializer catches the fetch dispatch while the request's
   // serialization context is live.
   if (isServer) {
-    void props.client.prefetchQuery({
-      queryKey: ['prefetched'],
-      queryFn: async () => {
-        props.counts.prefetched++
-        await sleep(5)
-        return `prefetched-${props.source}`
-      },
-    })
+    void props.client
+      .query({
+        queryKey: ['prefetched'],
+        queryFn: async () => {
+          props.counts.prefetched++
+          await sleep(5)
+          return `prefetched-${props.source}`
+        },
+      })
+      .catch(noop)
   }
   return (
     <QueryClientProvider client={props.client}>

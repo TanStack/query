@@ -50,6 +50,8 @@ const IDLE: SettledState<any, any, any> = {
  * has no interactive paint to keep atomic. Yielded thenable values are
  * awaited and their results passed back in, matching what `action` does
  * minus the transition bookkeeping.
+ * @param iterator - The mutation generator to run to completion.
+ * @returns A promise for the generator's return value.
  */
 async function drain<TReturn>(
   iterator: AsyncGenerator<unknown, TReturn, unknown>,
@@ -89,6 +91,10 @@ async function drain<TReturn>(
  *   branch from surfacing as an unhandled rejection. The
  *   `mutate`/`mutateAsync` split existed for React's callback-vs-promise
  *   error routing; it has no space here.
+ * @param options - An accessor returning the {@link UseMutationOptions} to use.
+ * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
+ * will be used.
+ * @returns The mutation state, with `mutate` to run the mutation and `reset` to clear its state.
  */
 export function useMutation<
   TData = unknown,
@@ -129,6 +135,13 @@ export function useMutation<
       unsubscribeFlight = null
     })
 
+  /**
+   * Runs one mutation: the flight overlay and `onMutate`, the fetch through query-core, then the
+   * options-level callbacks and the durable settle.
+   * @param variables - The variables passed to `mutate`.
+   * @returns The data the mutation resolved with.
+   * @yields {unknown} The promises the surrounding `action` (or `drain` on the server) awaits.
+   */
   async function* run(
     variables: TVariables,
   ): AsyncGenerator<unknown, TData, unknown> {
@@ -180,6 +193,8 @@ export function useMutation<
      * their own failures are reported as unhandled rejections but never
      * displace `error`, then the durable error state commits and the
      * mutate promise rejects with `error`.
+     * @param error - The error the mutation or one of its success callbacks failed with.
+     * @yields {unknown} The promises returned by `onError` and `onSettled`.
      */
     // Must be an async generator: async `yield` awaits its value in place,
     // so a rejecting callback promise throws at the yield inside the local

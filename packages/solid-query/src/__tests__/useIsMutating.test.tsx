@@ -134,7 +134,7 @@ describe('useIsMutating', () => {
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
 
     // the mutation with the other key must never leak through the filter
-    expect(isMutatingArray).toEqual(expect.not.arrayContaining([2]))
+    expect(isMutatingArray).toStrictEqual(expect.not.arrayContaining([2]))
   })
 
   it('should filter correctly by predicate', async () => {
@@ -187,7 +187,7 @@ describe('useIsMutating', () => {
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
 
     // the non-matching mutation must never be counted
-    expect(isMutatingArray).toEqual(expect.not.arrayContaining([2]))
+    expect(isMutatingArray).toStrictEqual(expect.not.arrayContaining([2]))
   })
 
   it('should use provided custom queryClient', async () => {

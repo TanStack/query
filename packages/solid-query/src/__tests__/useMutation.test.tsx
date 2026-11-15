@@ -119,7 +119,7 @@ describe('useMutation', () => {
       consoleMock.mock.calls.filter((args) =>
         args.some((arg) => String(arg).includes('STRICT_READ_UNTRACKED')),
       ),
-    ).toEqual([])
+    ).toStrictEqual([])
 
     consoleMock.mockRestore()
   })
@@ -272,8 +272,8 @@ describe('useMutation', () => {
   })
 
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
-    const onErrorMock = vi.fn()
-    const onSettledMock = vi.fn()
+    const onErrorMock = vi.fn<(...args: Array<unknown>) => void>()
+    const onSettledMock = vi.fn<(...args: Array<unknown>) => void>()
     let countRef = 0
     const [count, setCount] = createSignal(0)
 
@@ -957,8 +957,8 @@ describe('useMutation', () => {
   // running after unmount, options-level callbacks still fire, and gcTime 0
   // removes the settled mutation from the cache.
   it('should run the mutation and options callbacks when unmounted', async () => {
-    const onSuccess = vi.fn()
-    const onSettled = vi.fn()
+    const onSuccess = vi.fn<(...args: Array<unknown>) => void>()
+    const onSettled = vi.fn<(...args: Array<unknown>) => void>()
     const mutationKey = createKey()
     let count = 0
 
@@ -1011,8 +1011,8 @@ describe('useMutation', () => {
   // options callbacks fire for every mutate call and durable state reflects
   // the latest settle.
   it('should call options callbacks for every mutate and keep the latest result', async () => {
-    const onSuccess = vi.fn()
-    const onSettled = vi.fn()
+    const onSuccess = vi.fn<(...args: Array<unknown>) => void>()
+    const onSettled = vi.fn<(...args: Array<unknown>) => void>()
     let count = 0
 
     function Page() {
@@ -1116,7 +1116,7 @@ describe('useMutation', () => {
     // The onError rejection is reported as an unhandled rejection by
     // design (mirrors query-core's `void Promise.reject`); capture it so
     // it doesn't surface as runner noise.
-    const unhandledRejectionFn = vi.fn()
+    const unhandledRejectionFn = vi.fn<(...args: Array<unknown>) => void>()
     process.on('unhandledRejection', unhandledRejectionFn)
     onTestFinished(() => {
       process.off('unhandledRejection', unhandledRejectionFn)
@@ -1161,7 +1161,7 @@ describe('useMutation', () => {
     onTestFinished,
   }) => {
     // See above: the onSettled rejection is reported unhandled by design.
-    const unhandledRejectionFn = vi.fn()
+    const unhandledRejectionFn = vi.fn<(...args: Array<unknown>) => void>()
     process.on('unhandledRejection', unhandledRejectionFn)
     onTestFinished(() => {
       process.off('unhandledRejection', unhandledRejectionFn)

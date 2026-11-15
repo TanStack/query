@@ -32,6 +32,14 @@ export type QueryObserverOptions<
   TPageParam
 >
 
+/**
+ * The core `InfiniteQueryObserverOptions`, passed through unchanged.
+ * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs.
+ * @template TQueryKey - The type of your `queryKey`.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
+ */
 export type InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,

@@ -7,7 +7,7 @@
 // rewrite no longer produces.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@solidjs/testing-library'
-import { QueryClient, useQueries, useQuery } from '@tanstack/solid-query'
+import { QueryClient, noop, useQueries, useQuery } from '@tanstack/solid-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { Loading, createSignal } from 'solid-js'
 import { createKey, sleep } from '@tanstack/query-test-utils'
@@ -61,10 +61,12 @@ async function setup() {
   const key = createKey()
 
   const queryClient = new QueryClient()
-  queryClient.prefetchQuery({
-    queryKey: key,
-    queryFn: () => sleep(10).then(() => 'hydrated'),
-  })
+  void queryClient
+    .query({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    })
+    .catch(noop)
   await vi.advanceTimersByTimeAsync(10)
 
   const persister = createMockPersister()
@@ -89,9 +91,9 @@ describe('PersistQueryClientProvider', () => {
   it('restores cache from persister', async () => {
     const { key, queryClient, persister } = await setup()
 
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'fetched'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'fetched'),
+    )
 
     function Page() {
       const state = useQuery(() => ({ queryKey: key, queryFn }))
@@ -133,9 +135,9 @@ describe('PersistQueryClientProvider', () => {
   it('should also put useQueries into idle state', async () => {
     const { key, queryClient, persister } = await setup()
 
-    const queryFn = vi
-      .fn()
-      .mockImplementation(() => sleep(10).then(() => 'fetched'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'fetched'),
+    )
 
     function Page() {
       const queries = useQueries(() => ({

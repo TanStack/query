@@ -437,8 +437,8 @@ describe('useQuery 2.0 read semantics', () => {
       expect(rendered.getByText('done: true')).toBeInTheDocument()
 
       // The leaf that changed re-ran; the untouched leaf did not.
-      expect(doneRenders).toEqual(['false', 'true'])
-      expect(nameRenders).toEqual(['first'])
+      expect(doneRenders).toStrictEqual(['false', 'true'])
+      expect(nameRenders).toStrictEqual(['first'])
     })
 
     it('reconciles by a custom key', async () => {
@@ -546,7 +546,7 @@ describe('useQuery 2.0 read semantics', () => {
       await vi.advanceTimersByTimeAsync(30)
 
       // No 'added' behind the 'removed', so nothing re-created the entry.
-      expect(events).toEqual(['removed'])
+      expect(events).toStrictEqual(['removed'])
       expect(queryCache.getAll()).toHaveLength(0)
       expect(queryClient.getQueryData(key)).toBeUndefined()
       // The removal is not a refetch trigger.

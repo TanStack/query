@@ -557,7 +557,9 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
   it('should not call the queryFn when not enabled', async () => {
     const key = createKey()
 
-    const queryFn = vi.fn(() => sleep(10).then(() => '23'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => '23'),
+    )
     const [enabled, setEnabled] = createSignal(false)
 
     function Page() {
@@ -765,7 +767,9 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
     const key = createKey()
 
     let count = 0
-    const queryFn = vi.fn(() => sleep(10).then(() => ++count))
+    const queryFn = vi.fn<() => Promise<number>>(() =>
+      sleep(10).then(() => ++count),
+    )
 
     function Page() {
       const state = useQuery(() => ({

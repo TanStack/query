@@ -131,6 +131,12 @@ type OmitIsInitialLoading<T> = T extends unknown
   ? OmitKeyof<T, 'isInitialLoading' & keyof T>
   : never
 
+/**
+ * The object `useQuery` returns when `initialData` guarantees `data` is never `undefined` (unless a
+ * `select` changes `TData` to include `undefined`).
+ * @template TData - The type `data` ends up as, after `select` runs (if set).
+ * @template TError - The type of errors this query may hold.
+ */
 export type DefinedUseBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
@@ -275,10 +281,10 @@ export type UseMutationOptions<
  */
 export type UseMutateFunction<
   TData = unknown,
-  // eslint-disable-next-line @typescript-eslint/naming-convention
+  // oxlint-disable-next-line tanstack-query/type-parameter-naming
   _TError = DefaultError,
   TVariables = void,
-  // eslint-disable-next-line @typescript-eslint/naming-convention
+  // oxlint-disable-next-line tanstack-query/type-parameter-naming
   _TOnMutateResult = unknown,
 > = (
   ...args: undefined extends TVariables

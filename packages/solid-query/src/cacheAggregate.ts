@@ -41,6 +41,10 @@ const isServer = typeof window === 'undefined'
  * written: hydration id assignment is positional, so both sides must create
  * the same reactive nodes or every id downstream shifts and the subtree
  * key-misses.
+ * @param subscribe - Subscribes to the cache's events and returns the unsubscribe function.
+ * @param read - Computes the aggregate from the cache, given the previously committed value.
+ * @param empty - The value served on the server and while a hydrated mount is still hydrating.
+ * @returns An accessor for the current aggregate.
  */
 export function createCacheAggregate<T>(
   subscribe: (onEvent: () => void) => () => void,

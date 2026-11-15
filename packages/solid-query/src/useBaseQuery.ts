@@ -50,6 +50,11 @@ interface HydratedEntry {
   t: number
 }
 
+/**
+ * Copies the scalar fields of a query's state, leaving out `data` and `fetchMeta`.
+ * @param state - The query state to copy from.
+ * @returns The scalar metadata.
+ */
 function metaFrom(state: QueryState<any, any>): MetaState {
   return {
     dataUpdateCount: state.dataUpdateCount,
@@ -67,7 +72,8 @@ function metaFrom(state: QueryState<any, any>): MetaState {
 
 /**
  * Internal seam: everything the read layer builds, for hooks that extend
- * the base result (`useInfiniteQuery` pagers ride the same entry). */
+ * the base result (`useInfiniteQuery` pagers ride the same entry).
+ */
 interface BaseQueryLayer<
   TQueryFnData,
   TError,
@@ -109,6 +115,16 @@ export function useBaseQuery<
   return useBaseQueryLayer(options, Observer, queryClient).result
 }
 
+/**
+ * Builds the read layer behind `useBaseQuery` and exposes its internals to hooks that extend it.
+ * @param options - A function that returns the query options.
+ * @param Observer - The observer class from query-core (`QueryObserver` or
+ * `InfiniteQueryObserver`).
+ * @param queryClient - A function that returns a custom `QueryClient`. Otherwise, the one from the
+ * nearest context is used.
+ * @returns The query result, with the observer, the version-tracked query accessor, the defaulted
+ * options, and the `isFetching` and `status` accessors.
+ */
 export function useBaseQueryLayer<
   TQueryFnData,
   TError,
@@ -227,7 +243,8 @@ export function useBaseQueryLayer<
   let disposed = false
   /**
    * Set once the mount flow decides the observer should be live — a client
-   * swap re-attaches the rebuilt observer iff its predecessor was attached. */
+   * swap re-attaches the rebuilt observer iff its predecessor was attached.
+   */
   let shouldAttach = false
   let activeClient = untrack(client)
   /**
@@ -267,6 +284,7 @@ export function useBaseQueryLayer<
    * subscription moves to the new cache and the observer is rebuilt against
    * the new client, so policy fetches and cache events both follow the
    * client the hook is actually reading.
+   * @param c - The `QueryClient` the hook currently resolves to.
    */
   const syncClient = (c: QueryClient) => {
     if (isServer || c === activeClient) return
@@ -308,6 +326,7 @@ export function useBaseQueryLayer<
    * components go live while later boundaries still stream. No entry
    * (placeholder queries serialize nothing; SSR errors adopt at their
    * boundary) attaches immediately and lets mount policy decide.
+   * @param entry - The hydration registry entry for this query's hash, if one exists.
    */
   const prime = (entry?: Partial<HydratedEntry> | null) => {
     if (entry != null && typeof entry === 'object' && (entry.t ?? 0) > 0) {
@@ -394,6 +413,7 @@ export function useBaseQueryLayer<
    * it is a remount: the hydrated component is disposed and re-created as
    * a client render, and the server value stops holding the DOM. So the
    * snapshots read the cache, never the signal.
+   * @returns The cache entry for the current options.
    */
   const lookupQuery = (): Query<
     TQueryFnData,
@@ -647,6 +667,7 @@ export function useBaseQueryLayer<
    * node, which throws the pending read and holds the boundary until
    * settle. A disabled pending query is served as-is: 'pending' IS its
    * settled SSR truth, and the client hydrates the identical state.
+   * @returns The scalar metadata read live from the query's state.
    */
   const serverMeta = (): MetaState => {
     if (query().state.status === 'pending' && isEnabled()) data()
@@ -706,6 +727,7 @@ export function useBaseQueryLayer<
    * "a new answer is in flight" during a hold is core's pending probe.
    * The committed `fetchStatus` covers the first load (where the probe
    * would see an uninitialized node) and untracked/imperative reads.
+   * @returns `true` while a fetch for this query is in flight.
    */
   const isFetching = () =>
     meta.fetchStatus === 'fetching' || isValuePending(() => data())

@@ -24,6 +24,9 @@ import type { QueryClient } from './QueryClient'
  * dispatch more (dependent queries keyed off a first result) — so an
  * unconditionally self-refetching query would keep this pending; that's
  * an app bug mirrored, not guarded.
+ * @param client - The `QueryClient` whose cache is dehydrated.
+ * @param options - The `DehydrateOptions` forwarded to `dehydrate`.
+ * @returns A promise for the dehydrated state, taken once no fetch is in flight.
  */
 export async function dehydrateSettled(
   client: QueryClient,

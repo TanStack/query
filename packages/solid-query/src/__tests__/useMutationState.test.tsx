@@ -133,10 +133,10 @@ describe('useMutationState', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
-    expect(variables).toEqual([[], [1]])
+    expect(variables).toStrictEqual([[], [1]])
 
     await vi.advanceTimersByTimeAsync(150)
-    expect(variables).toEqual([[], [1], []])
+    expect(variables).toStrictEqual([[], [1], []])
   })
 
   it('should observe pending state of mutations started by useMutation', async () => {

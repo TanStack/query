@@ -42,6 +42,12 @@ interface PageParamsOptions {
   ) => unknown
 }
 
+/**
+ * Checks whether `getNextPageParam` yields a param for the page after the last cached one.
+ * @param options - The options holding `getNextPageParam`.
+ * @param data - The cached infinite data, if any.
+ * @returns `true` if there is a next page to fetch.
+ */
 function hasNextPage(
   options: PageParamsOptions,
   data?: InfiniteData<unknown>,
@@ -58,6 +64,12 @@ function hasNextPage(
   )
 }
 
+/**
+ * Checks whether `getPreviousPageParam` yields a param for the page before the first cached one.
+ * @param options - The options holding `getPreviousPageParam`.
+ * @param data - The cached infinite data, if any.
+ * @returns `true` if there is a previous page to fetch.
+ */
 function hasPreviousPage(
   options: PageParamsOptions,
   data?: InfiniteData<unknown>,
@@ -251,7 +263,9 @@ export function useInfiniteQuery<
 
   /**
    * Committed fetch direction — set when a page fetch dispatches,
-   * version-tracked through the layer's query accessor. */
+   * version-tracked through the layer's query accessor.
+   * @returns `'forward'` or `'backward'` for a page fetch, `undefined` otherwise.
+   */
   const direction = () =>
     (layer.query().state.fetchMeta as any)?.fetchMore?.direction
 

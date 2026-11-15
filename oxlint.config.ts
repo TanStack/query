@@ -166,6 +166,7 @@ export default defineConfig({
             'refetched', // Query refetch operations
             'refetches', // Query refetch operations
             'retryer', // Our public interface
+            'seroval', // Solid serialization library used in SSR
             'solidjs', // Our target framework
             'tabular-nums', // https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric
             'tanstack', // Our package scope

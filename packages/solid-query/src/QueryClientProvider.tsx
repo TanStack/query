@@ -80,6 +80,9 @@ const REVALIDATE_ALL = '*'
  * explicitly. The reserved key `*` (`revalidate: '*'`): every query in the
  * cache, minus what the payload covered — the way to say "all" to any
  * host, rather than relying on one host's default.
+ * @param client - The `QueryClient` whose queries are invalidated.
+ * @param payload - The dehydrated slice the response carried for this cache, if any.
+ * @param response - The mutation response, read for its `X-Revalidate` header.
  */
 function sweepRevalidatedQueries(
   client: QueryClient,
@@ -165,6 +168,7 @@ export type QueryClientProviderProps = {
  * long after) finds it by hash. One entry per hash regardless of how many
  * hooks read it; the payload object is the same reference the data nodes
  * serialize, so seroval's cross-reference dedupe emits it once.
+ * @param client - The request's `QueryClient`.
  */
 function serializeCacheOnServer(client: QueryClient): void {
   const writer = getHydrationWriter()
@@ -221,6 +225,8 @@ function serializeCacheOnServer(client: QueryClient): void {
  * Subscribing is inert when no server collector exists — the server just
  * folds nothing — so it is unconditional. One consumer per source: with
  * nested providers, the innermost mounted one owns the slice.
+ * @param props - The `client` to provide, and the `children` that get access to it.
+ * @returns The provided `children`, wrapped so they can read the `QueryClient` via `useQueryClient`.
  */
 export const QueryClientProvider = (
   props: QueryClientProviderProps,

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { noop } from '@tanstack/query-core'
 import { QueryClient } from '../QueryClient'
 import { dehydrateSettled } from '../dehydrateSettled'
 
@@ -8,13 +9,15 @@ describe('dehydrateSettled', () => {
   it('waits for in-flight fetches instead of snapshotting mid-fetch', async () => {
     const client = new QueryClient()
     // Fire-and-forget, the way loaders hint prefetches.
-    void client.prefetchQuery({
-      queryKey: ['slow'],
-      queryFn: async () => {
-        await sleep(20)
-        return 'slow-data'
-      },
-    })
+    void client
+      .query({
+        queryKey: ['slow'],
+        queryFn: async () => {
+          await sleep(20)
+          return 'slow-data'
+        },
+      })
+      .catch(noop)
 
     const state = await dehydrateSettled(client)
 
@@ -25,25 +28,29 @@ describe('dehydrateSettled', () => {
 
   it('chases fetches dispatched by earlier settlements to quiescence', async () => {
     const client = new QueryClient()
-    void client.prefetchQuery({
-      queryKey: ['first'],
-      queryFn: async () => {
-        await sleep(10)
-        // A dependent fetch that only exists once the first one lands.
-        void client.prefetchQuery({
-          queryKey: ['second'],
-          queryFn: async () => {
-            await sleep(10)
-            return 'second-data'
-          },
-        })
-        return 'first-data'
-      },
-    })
+    void client
+      .query({
+        queryKey: ['first'],
+        queryFn: async () => {
+          await sleep(10)
+          // A dependent fetch that only exists once the first one lands.
+          void client
+            .query({
+              queryKey: ['second'],
+              queryFn: async () => {
+                await sleep(10)
+                return 'second-data'
+              },
+            })
+            .catch(noop)
+          return 'first-data'
+        },
+      })
+      .catch(noop)
 
     const state = await dehydrateSettled(client)
 
-    expect(state.queries.map((q) => q.queryHash).sort()).toEqual([
+    expect(state.queries.map((q) => q.queryHash).sort()).toStrictEqual([
       '["first"]',
       '["second"]',
     ])
@@ -54,26 +61,30 @@ describe('dehydrateSettled', () => {
 
   it('settles failures without rejecting and forwards dehydrate options', async () => {
     const client = new QueryClient()
-    void client.prefetchQuery({
-      queryKey: ['ok'],
-      queryFn: async () => {
-        await sleep(5)
-        return 'ok-data'
-      },
-    })
-    void client.prefetchQuery({
-      queryKey: ['boom'],
-      retry: false,
-      queryFn: async () => {
-        await sleep(5)
-        throw new Error('nope')
-      },
-    })
+    void client
+      .query({
+        queryKey: ['ok'],
+        queryFn: async () => {
+          await sleep(5)
+          return 'ok-data'
+        },
+      })
+      .catch(noop)
+    void client
+      .query({
+        queryKey: ['boom'],
+        retry: false,
+        queryFn: async () => {
+          await sleep(5)
+          throw new Error('nope')
+        },
+      })
+      .catch(noop)
 
     const state = await dehydrateSettled(client, {
       shouldDehydrateQuery: (query) => query.state.status === 'success',
     })
 
-    expect(state.queries.map((q) => q.queryHash)).toEqual(['["ok"]'])
+    expect(state.queries.map((q) => q.queryHash)).toStrictEqual(['["ok"]'])
   })
 })

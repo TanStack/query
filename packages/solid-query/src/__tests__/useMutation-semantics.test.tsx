@@ -245,7 +245,7 @@ describe('useMutation 2.0 semantics', () => {
     // reappears, and (1, true) is not a frame either.
     await vi.advanceTimersByTimeAsync(20)
     expect(rendered.getByText('count: 1, pending: false')).toBeInTheDocument()
-    expect(commits).toEqual(['0:false', '0:true', '1:false'])
+    expect(commits).toStrictEqual(['0:false', '0:true', '1:false'])
   })
 
   it('reset returns to idle', async () => {
@@ -300,7 +300,7 @@ describe('useMutation 2.0 semantics', () => {
     const rendered = renderWithClient(queryClient, () => <Page />)
     rendered.getByRole('button').click()
     await vi.advanceTimersByTimeAsync(30)
-    expect(order).toEqual(['start:a', 'end:a', 'start:b', 'end:b'])
+    expect(order).toStrictEqual(['start:a', 'end:a', 'start:b', 'end:b'])
   })
 
   it('applies query-core retry policy', async () => {

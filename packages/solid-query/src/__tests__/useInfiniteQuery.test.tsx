@@ -100,14 +100,15 @@ describe('useInfiniteQuery', () => {
     expect(state.failureCount).toBe(0)
     expect(state.failureReason).toBeNull()
     expect(state.errorUpdateCount).toBe(0)
-    expect(state.fetchNextPage).toEqual(expect.any(Function))
-    expect(state.fetchPreviousPage).toEqual(expect.any(Function))
-    expect(state.refetch).toEqual(expect.any(Function))
+    expect(state.fetchNextPage).toStrictEqual(expect.any(Function))
+    expect(state.fetchPreviousPage).toStrictEqual(expect.any(Function))
+    expect(state.refetch).toStrictEqual(expect.any(Function))
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('pages: 0')).toBeInTheDocument()
 
     // Settled: guard-free data plus success metadata.
+    // oxlint-disable-next-line vitest/prefer-strict-equal -- store proxy
     expect(state.data).toEqual({ pages: [0], pageParams: [0] })
     expect(state.status).toBe('success')
     expect(state.fetchStatus).toBe('idle')
@@ -123,7 +124,7 @@ describe('useInfiniteQuery', () => {
     expect(state.isFetchingNextPage).toBe(false)
     expect(state.isFetchingPreviousPage).toBe(false)
     expect(state.isRefetching).toBe(false)
-    expect(state.dataUpdatedAt).toEqual(expect.any(Number))
+    expect(state.dataUpdatedAt).toStrictEqual(expect.any(Number))
     expect(state.dataUpdatedAt).toBeGreaterThan(0)
   })
 
@@ -872,6 +873,7 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(30)
     expect(rendered.getByText('data: 10')).toBeInTheDocument()
+    // oxlint-disable-next-line vitest/prefer-strict-equal -- store proxy
     expect(state.data).toEqual({ pages: [10], pageParams: [10] })
     expect(state.hasNextPage).toBe(true)
   })
@@ -1052,8 +1054,8 @@ describe('useInfiniteQuery', () => {
 
   it('should only refetch the first page when initialData is provided', async () => {
     const key = createKey()
-    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
-      sleep(10).then(() => pageParam),
+    const queryFn = vi.fn<(context: { pageParam: number }) => Promise<number>>(
+      ({ pageParam }) => sleep(10).then(() => pageParam),
     )
 
     function Page() {

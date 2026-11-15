@@ -122,7 +122,7 @@ describe('useQuery', () => {
     expect(state.failureCount).toBe(0)
     expect(state.failureReason).toBeNull()
     expect(state.dataUpdatedAt).toBe(0)
-    expect(state.refetch).toEqual(expect.any(Function))
+    expect(state.refetch).toStrictEqual(expect.any(Function))
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('test')).toBeInTheDocument()
@@ -436,7 +436,9 @@ describe('useQuery', () => {
 
   it('should not fetch when refetchOnMount is false and data has been fetched already', async () => {
     const key = createKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'test'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'test'),
+    )
 
     queryClient.setQueryData(key, 'prefetched')
 
@@ -558,13 +560,13 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: test')).toBeInTheDocument()
-    expect(dataEffects).toEqual(['test'])
+    expect(dataEffects).toStrictEqual(['test'])
 
     void state.refetch()
     await vi.advanceTimersByTimeAsync(10)
     // The refetch produced identical selected data — consumers do not re-run
     expect(rendered.getByText('data: test')).toBeInTheDocument()
-    expect(dataEffects).toEqual(['test'])
+    expect(dataEffects).toStrictEqual(['test'])
   })
 
   it('should throw an error when a selector throws', async () => {
@@ -1151,7 +1153,9 @@ describe('useQuery', () => {
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
     const key = createKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       const state = useQuery(() => ({
@@ -1897,7 +1901,9 @@ describe('useQuery', () => {
 
   it('should not fetch if initial data is set with a stale time', async () => {
     const key = createKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
     let state!: DefinedUseQueryResult<string>
 
     function Page() {
@@ -1994,7 +2000,9 @@ describe('useQuery', () => {
   it('should keep initial data when the query key changes', async () => {
     const key = createKey()
     const [count, setCount] = createSignal(0)
-    const queryFn = vi.fn(() => sleep(10).then(() => ({ count: 10 })))
+    const queryFn = vi.fn<() => Promise<{ count: number }>>(() =>
+      sleep(10).then(() => ({ count: 10 })),
+    )
 
     function Page() {
       const state = useQuery(() => ({
@@ -2315,11 +2323,13 @@ describe('useQuery', () => {
     const prefetchQueryFn = vi.fn<(...args: Array<unknown>) => string>()
     prefetchQueryFn.mockReturnValue('not yet...')
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: prefetchQueryFn,
-      staleTime: 10,
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: prefetchQueryFn,
+        staleTime: 10,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(11)
 
     function Page() {
@@ -2446,10 +2456,12 @@ describe('useQuery', () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
     expect(count).toBe(0)
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => Promise.resolve('prefetched data'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => Promise.resolve('prefetched data'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(0)
     // the cache write revives the parked read even while disabled
     expect(rendered.getByText('data: prefetched data')).toBeInTheDocument()
@@ -2826,8 +2838,10 @@ describe('useQuery', () => {
 
   it('should not cause memo churn when data does not change', async () => {
     const key = createKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
-    const memoFn = vi.fn()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
+    const memoFn = vi.fn<() => void>()
     let state!: UseQueryResult<string>
 
     function Page() {
@@ -2868,7 +2882,7 @@ describe('useQuery', () => {
 
     expect(queryFn).toHaveBeenCalledTimes(2)
     // identical data: the memo over `data` did not recompute
-    expect(memoFn.mock.calls).toHaveLength(computesAfterSettle)
+    expect(memoFn).toHaveBeenCalledTimes(computesAfterSettle)
   })
 
   it('should update data upon interval changes', async () => {
@@ -3325,13 +3339,13 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(5)
     expect(rendered.getByText('data: test')).toBeInTheDocument()
-    expect(dataEffects).toEqual(['test'])
+    expect(dataEffects).toStrictEqual(['test'])
 
     void state.refetch()
     await vi.advanceTimersByTimeAsync(5)
     // The refetch returned identical data — data consumers do not re-run
     expect(rendered.getByText('data: test')).toBeInTheDocument()
-    expect(dataEffects).toEqual(['test'])
+    expect(dataEffects).toStrictEqual(['test'])
     expect(state.isFetching).toBe(false)
   })
 
@@ -3376,6 +3390,7 @@ describe('useQuery', () => {
     expect(rendered.getByText('Data: [2,3]')).toBeInTheDocument()
     expect(dataRefs).toHaveLength(1)
     const initialRef = dataRefs.at(-1)
+    // oxlint-disable-next-line vitest/prefer-strict-equal -- store proxy
     expect(initialRef).toEqual([2, 3])
 
     fireEvent.click(rendered.getByRole('button', { name: /forceUpdate/i }))
