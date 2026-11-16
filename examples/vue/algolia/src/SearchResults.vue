@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useInfiniteQuery } from '@tanstack/vue-query'
+import { computed } from 'vue'
 import { productsQueries } from './services/products/queries'
 
 type Product = {

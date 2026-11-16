@@ -1,4 +1,3 @@
-import type { Snippet } from 'svelte'
 import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
@@ -18,6 +17,7 @@ import type {
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import type { Snippet } from 'svelte'
 
 /**
  * A function that returns a value. Options passed as an accessor are read inside reactive contexts, so they

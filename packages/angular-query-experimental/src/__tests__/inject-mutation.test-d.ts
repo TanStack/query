@@ -1,5 +1,5 @@
-import { describe, expectTypeOf, it } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
+import { describe, expectTypeOf, it } from 'vitest'
 import { injectMutation } from '..'
 import type { Signal } from '@angular/core'
 import type {

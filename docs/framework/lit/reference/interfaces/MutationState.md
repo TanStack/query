@@ -42,6 +42,6 @@ that observer results (e.g. `MutationObserverResult`) are derived from.
 | <a id="property-failurecount"></a> `failureCount` | `number` | The number of times the mutation function has failed for the current attempt. |
 | <a id="property-failurereason"></a> `failureReason` | `TError` \| `null` | The reason the current attempt failed, as reported by the retryer. |
 | <a id="property-ispaused"></a> `isPaused` | `boolean` | Whether the mutation is currently paused (see network mode), or is waiting for another mutation with the same `scope` to finish. |
-| <a id="property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` \| `"idle"` | The status of the mutation. |
+| <a id="property-status"></a> `status` | `"error"` \| `"idle"` \| `"pending"` \| `"success"` | The status of the mutation. |
 | <a id="property-submittedat"></a> `submittedAt` | `number` | The timestamp for when the mutation was submitted. |
 | <a id="property-variables"></a> `variables` | `TVariables` \| `undefined` | The variables the mutation was last called with. |

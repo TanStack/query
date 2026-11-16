@@ -1,8 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api'
-
-import Posts from './Posts.vue'
 import Post from './Post.vue'
+import Posts from './Posts.vue'
 
 export default defineComponent({
   name: 'App',

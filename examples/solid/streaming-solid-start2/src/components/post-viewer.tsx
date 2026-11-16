@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/solid-query'
 import { For, createSignal, resetErrorBoundaries, untrack } from 'solid-js'
+import { postsQueries } from '~/services/posts/queries'
 import { Example } from './example'
 import { QueryBoundary } from './query-boundary'
 import type { Component } from 'solid-js'
-import { postsQueries } from '~/services/posts/queries'
 
 export interface PostViewerProps {
   deferStream?: boolean

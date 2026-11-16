@@ -2,7 +2,6 @@ import { QueriesObserver, replaceEqualDeep } from '@tanstack/query-core'
 import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
-import type { Accessor, ValueAccessor } from './accessor.js'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -16,6 +15,7 @@ import type {
   ThrowOnError,
 } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
+import type { Accessor, ValueAccessor } from './accessor.js'
 
 /**
  * Options for one query inside `createQueriesController`.

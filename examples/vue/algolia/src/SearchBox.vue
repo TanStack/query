@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useDebouncedValue } from '@tanstack/vue-pacer/debouncer'
-
+import { ref } from 'vue'
 import SearchResults from './SearchResults.vue'
 
 const query = ref('')

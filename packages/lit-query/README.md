@@ -38,12 +38,12 @@ pnpm --dir packages/lit-query run build
 ## Quick Start
 
 ```ts
-import { LitElement, html } from 'lit'
 import {
   QueryClient,
   QueryClientProvider,
   createQueryController,
 } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 
 const client = new QueryClient({
   defaultOptions: { queries: { retry: false } },

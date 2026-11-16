@@ -14,9 +14,8 @@ Because React Query's fetching mechanisms are agnostically built on Promises, yo
 React Query, used in combination with `graphql-request^5` and [GraphQL Code Generator](https://graphql-code-generator.com/) provides full-typed GraphQL operations:
 
 ```tsx
-import request from 'graphql-request'
 import { useQuery } from '@tanstack/react-query'
-
+import request from 'graphql-request'
 import { graphql } from './gql/gql'
 
 const allFilmsWithVariablesQueryDocument = graphql(/* GraphQL */ `

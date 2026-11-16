@@ -1,5 +1,5 @@
-import { notFound } from '@tanstack/vue-router'
 import { mutationOptions, queryOptions } from '@tanstack/vue-query'
+import { notFound } from '@tanstack/vue-router'
 import { contactsAPI } from './api'
 import type { Contact } from './types'
 
