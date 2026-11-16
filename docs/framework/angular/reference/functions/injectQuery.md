@@ -65,7 +65,7 @@ in the reactive context, so signals read inside it (in `queryKey`, `enabled`, et
 [`DefinedCreateQueryResult`](../type-aliases/DefinedCreateQueryResult.md)\<`TData`, `TError`\>
 
 The query result, typed so that `data` is never `undefined` (unless a `select` changes `TData` to
-include `undefined`).
+include `undefined`). At runtime, `data` is still `undefined` if `select` throws on its first call.
 
 ### See
 
@@ -108,7 +108,7 @@ export class Posts {
 function injectQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(optionsFn: () => UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query/src/inject-query.ts:142](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-query.ts#L142)
+Defined in: [packages/angular-query/src/inject-query.ts:143](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-query.ts#L143)
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
@@ -144,9 +144,10 @@ context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive the qu
 
 [`CreateQueryResult`](../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
 
-The query result. `status()` is `'pending'` if there is no cached data to display, `'error'` if
-the last fetch attempt failed, or `'success'` if the query has data to display. `isPending`/`isSuccess`/
-`isError` are type-guard methods for convenience.
+The query result. `status()` is `'error'` if the query has an error from a fetch that failed
+after its retries or if `select` threw, `'success'` if the query has data to display (including
+`placeholderData`), and `'pending'` otherwise. `isPending`/`isSuccess`/`isError` are type-guard methods
+for convenience.
 
 ### See
 
@@ -221,7 +222,7 @@ export class Posts {
 function injectQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(optionsFn: () => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query/src/inject-query.ts:165](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-query.ts#L165)
+Defined in: [packages/angular-query/src/inject-query.ts:166](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-query.ts#L166)
 
 This overload accepts the general [CreateQueryOptions](../type-aliases/CreateQueryOptions.md) shape rather than the `initialData`-aware
 overloads above, so whether `data` is defined can't be inferred from the call site — useful when wrapping
