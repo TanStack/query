@@ -1,10 +1,10 @@
-import { ErrorBoundary, Suspense } from 'solid-js'
 import {
   QueryClient,
   QueryClientProvider,
   useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
+import { ErrorBoundary, Suspense } from 'solid-js'
 
 const Example = () => {
   const query = useQuery(() => ({

@@ -1,4 +1,3 @@
-import { Match, Show, Switch, createSignal } from 'solid-js'
 import { A, useParams } from '@solidjs/router'
 import {
   noop,
@@ -7,6 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/solid-query'
+import { Match, Show, Switch, createSignal } from 'solid-js'
 import { moviesMutations, moviesQueries } from '../services/movies/queries'
 import type { RoutePreloadFuncArgs } from '@solidjs/router'
 import type { QueryClient } from '@tanstack/solid-query'

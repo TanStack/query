@@ -1,6 +1,6 @@
-import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { createKey } from '@tanstack/query-test-utils'
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
+import { createKey } from '@tanstack/query-test-utils'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { infiniteQueryOptions } from '../infinite-query-options'
 import { injectInfiniteQuery } from '../inject-infinite-query'
 import { injectQuery } from '../inject-query'

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import Homeworld from './Homeworld.svelte'
-  import Film from './Film.svelte'
   import { charactersQueries } from '$lib/services/characters/queries'
+  import Film from './Film.svelte'
+  import Homeworld from './Homeworld.svelte'
   import type { PageProps } from './$types'
 
   let { params }: PageProps = $props()

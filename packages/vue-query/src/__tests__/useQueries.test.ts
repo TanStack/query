@@ -1,3 +1,5 @@
+import { skipToken } from '@tanstack/query-core'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   computed,
@@ -7,11 +9,9 @@ import {
   onScopeDispose,
   ref,
 } from 'vue-demi'
-import { skipToken } from '@tanstack/query-core'
-import { createKey, sleep } from '@tanstack/query-test-utils'
+import { QueryClient } from '../queryClient'
 import { useQueries } from '../useQueries'
 import { useQueryClient } from '../useQueryClient'
-import { QueryClient } from '../queryClient'
 
 vi.mock(import('../useQueryClient'))
 

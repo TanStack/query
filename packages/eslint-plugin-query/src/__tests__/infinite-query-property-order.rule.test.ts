@@ -1,6 +1,5 @@
 import { RuleTester } from '@typescript-eslint/rule-tester'
 import combinate from 'combinate'
-
 import {
   checkedProperties,
   infiniteQueryFunctions,

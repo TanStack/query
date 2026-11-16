@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { projectsQueries } from '$lib/services/projects/queries'
   import {
     createQuery,
     keepPreviousData,
     noop,
     useQueryClient,
   } from '@tanstack/svelte-query'
+  import { projectsQueries } from '$lib/services/projects/queries'
 
   const queryClient = useQueryClient()
   let page = $state(0)

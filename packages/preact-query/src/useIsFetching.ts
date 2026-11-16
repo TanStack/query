@@ -1,6 +1,5 @@
 import { notifyManager } from '@tanstack/query-core'
 import { useCallback } from 'preact/hooks'
-
 import { useQueryClient } from './QueryClientProvider'
 import { useSyncExternalStore } from './utils'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'

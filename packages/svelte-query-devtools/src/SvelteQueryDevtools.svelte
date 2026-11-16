@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { BROWSER } from 'esm-env'
   import { onlineManager, useQueryClient } from '@tanstack/svelte-query'
-  import type { QueryClient } from '@tanstack/svelte-query'
+  import { BROWSER } from 'esm-env'
+  import { onMount } from 'svelte'
   import type {
     DevtoolsButtonPosition,
     DevtoolsErrorType,
@@ -10,6 +9,7 @@
     TanstackQueryDevtools,
     Theme,
   } from '@tanstack/query-devtools'
+  import type { QueryClient } from '@tanstack/svelte-query'
 
   interface DevtoolsOptions {
     /**
