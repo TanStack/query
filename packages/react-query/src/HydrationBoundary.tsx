@@ -1,8 +1,8 @@
 'use client'
 import { hydrate } from '@tanstack/query-core'
 import * as React from 'react'
-import { useQueryClient } from './QueryClientProvider'
 import { IsHydratingProvider } from './IsHydratingProvider'
+import { useQueryClient } from './QueryClientProvider'
 import type {
   DehydratedState,
   HydrateOptions,
