@@ -1,7 +1,6 @@
 import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
-
-import { getDocsUrl } from './get-docs-url'
 import { detectTanstackQueryImports } from './detect-react-query-imports'
+import { getDocsUrl } from './get-docs-url'
 import { sortDataByOrder } from './sort-data-by-order'
 import type { ExtraRuleDocs } from '../types'
 

@@ -1,6 +1,6 @@
+import { skipToken } from '@tanstack/query-core'
 import { describe, expectTypeOf, it } from 'vitest'
 import { computed, ref } from 'vue-demi'
-import { skipToken } from '@tanstack/query-core'
 import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'

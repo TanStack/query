@@ -118,7 +118,6 @@ With just a little more setup, you can use a `queryClient` to prefetch queries d
 Server entry point:
 
 ```tsx
-import { renderToString } from 'preact-render-to-string'
 import {
   QueryCache,
   QueryClient,
@@ -127,6 +126,7 @@ import {
   hydrate,
   noop,
 } from '@tanstack/preact-query'
+import { renderToString } from 'preact-render-to-string'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -175,13 +175,13 @@ export async function render(url) {
 Client entry point:
 
 ```tsx
-import { hydrate as preactHydrate } from 'preact'
-import { useState } from 'preact/hooks'
 import {
   HydrationBoundary,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/preact-query'
+import { hydrate as preactHydrate } from 'preact'
+import { useState } from 'preact/hooks'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -357,9 +357,9 @@ Since the html is sent in chunks, there is no single point where you could `dehy
 
 ```tsx
 import { Transform } from 'node:stream'
-import { renderToPipeableStream } from 'preact-render-to-string/stream-node'
-import { uneval } from 'devalue'
 import { QueryClientProvider, dehydrate, noop } from '@tanstack/preact-query'
+import { uneval } from 'devalue'
+import { renderToPipeableStream } from 'preact-render-to-string/stream-node'
 
 export function render({ onShellReady, onError }) {
   const queryClient = makeQueryClient()
@@ -453,8 +453,8 @@ const abortTimeout = setTimeout(abort, 10000)
 On the client, `hydrate` all streamed states into the `queryClient` before hydrating the app. The client entry is a module script, so it only runs once the whole stream has been received:
 
 ```tsx
-import { hydrate as preactHydrate } from 'preact'
 import { QueryClientProvider, hydrate } from '@tanstack/preact-query'
+import { hydrate as preactHydrate } from 'preact'
 
 const queryClient = makeQueryClient()
 

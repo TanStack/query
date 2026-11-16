@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@solidjs/testing-library'
 import { QueryCache } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { createMemo, createRoot } from 'solid-js'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from '..'
 import { useQueryClientResolver } from '../QueryClientProvider'
 

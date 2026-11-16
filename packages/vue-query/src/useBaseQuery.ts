@@ -1,3 +1,4 @@
+import { shouldThrowError } from '@tanstack/query-core'
 import {
   computed,
   getCurrentScope,
@@ -9,20 +10,19 @@ import {
   toRefs,
   watch,
 } from 'vue-demi'
-import { shouldThrowError } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref, updateState } from './utils'
-import type { Ref } from 'vue-demi'
 import type {
   DefaultedQueryObserverOptions,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import type { Ref } from 'vue-demi'
 import type { QueryClient } from './queryClient'
 import type { UseQueryOptions } from './queryOptions'
-import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 import type { MaybeRefOrGetter } from './types'
+import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 
 /**
  * Readonly view of a union that stays a union. A single `Readonly<Union>` collapses the members, which

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { QueryClient } from '@tanstack/query-core'
   import { createQuery, setQueryClientContext } from '../../src/index.js'
+  import type { QueryClient } from '@tanstack/query-core'
   import type { CreateQueryOptions } from '../../src/index.js'
 
   type Props = {

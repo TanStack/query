@@ -1,21 +1,21 @@
-import { QueryObserver } from '@tanstack/query-core'
 import {
   Injector,
   assertInInjectionContext,
   inject,
   runInInjectionContext,
 } from '@angular/core'
+import { QueryObserver } from '@tanstack/query-core'
 import { createBaseQuery } from './create-base-query'
 import type { DefaultError, QueryKey } from '@tanstack/query-core'
+import type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './query-options'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
 } from './types'
-import type {
-  DefinedInitialDataOptions,
-  UndefinedInitialDataOptions,
-} from './query-options'
 
 /**
  * Options for `injectQuery`, passed after the function that returns the query options.

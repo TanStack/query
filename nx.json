@@ -70,7 +70,7 @@
         "default",
         "^production",
         "{workspaceRoot}/oxlint.config.ts",
-        "{workspaceRoot}/scripts/oxlint/*"
+        "{workspaceRoot}/scripts/oxlint-plugin.ts"
       ]
     },
     "test:lib": {

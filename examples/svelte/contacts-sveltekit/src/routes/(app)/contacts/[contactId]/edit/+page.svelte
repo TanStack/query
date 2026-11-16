@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { createQuery } from '@tanstack/svelte-query'
   import ContactForm from '$lib/ContactForm.svelte'
   import { contactsQueries } from '$lib/services/contacts/queries'
-  import { createQuery } from '@tanstack/svelte-query'
   import type { PageProps } from './$types'
 
   let { data }: PageProps = $props()

@@ -2,15 +2,15 @@ import { QueryObserver } from '@tanstack/query-core'
 import { createBaseQuery } from './createBaseQuery.svelte.js'
 import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 import type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './queryOptions.js'
+import type {
   Accessor,
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
 } from './types.js'
-import type {
-  DefinedInitialDataOptions,
-  UndefinedInitialDataOptions,
-} from './queryOptions.js'
 
 /**
  * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.

@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 
+import type { Signal } from '@angular/core'
 import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
@@ -15,7 +16,6 @@ import type {
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { Signal } from '@angular/core'
 import type { MapToSignals } from './signal-proxy'
 
 /**

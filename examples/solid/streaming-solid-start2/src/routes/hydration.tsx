@@ -1,9 +1,9 @@
+import { Title } from '@solidjs/meta'
 import { useQuery } from '@tanstack/solid-query'
 import { Suspense, createSignal } from 'solid-js'
 import { NoHydration } from 'solid-js/web'
-import { Title } from '@solidjs/meta'
-import type { UseQueryResult } from '@tanstack/solid-query'
 import { usersAPI } from '~/services/users/api'
+import type { UseQueryResult } from '@tanstack/solid-query'
 
 export default function Hydration() {
   const query = useQuery(() => ({

@@ -2,17 +2,17 @@ import { QueryObserver } from '@tanstack/query-core'
 import { createMemo } from 'solid-js'
 import { useBaseQuery } from './useBaseQuery'
 import type { DefaultError, QueryKey } from '@tanstack/query-core'
-import type { QueryClient } from './QueryClient'
 import type { Accessor } from 'solid-js'
+import type { QueryClient } from './QueryClient'
+import type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './queryOptions'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
   UseQueryResult,
 } from './types'
-import type {
-  DefinedInitialDataOptions,
-  UndefinedInitialDataOptions,
-} from './queryOptions'
 
 /**
  * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.

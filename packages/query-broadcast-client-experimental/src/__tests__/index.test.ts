@@ -1,10 +1,10 @@
 import { QueryClient } from '@tanstack/query-core'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { broadcastQueryClient } from '..'
-import type { BroadcastErrorEvent } from '..'
 import type { QueryCache } from '@tanstack/query-core'
 import type { BroadcastChannel } from 'broadcast-channel'
+import type { BroadcastErrorEvent } from '..'
 
 const mockPostMessage = vi
   .fn<BroadcastChannel['postMessage']>()

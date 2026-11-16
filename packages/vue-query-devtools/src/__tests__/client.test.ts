@@ -1,10 +1,10 @@
+import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createApp, h, nextTick, shallowRef } from 'vue'
-import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
 import Devtools from '../devtools.vue'
 import DevtoolsPanel from '../devtoolsPanel.vue'
-import type { App } from 'vue'
 import type { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
+import type { App } from 'vue'
 
 const { setClient, mount, unmount } = vi.hoisted(() => ({
   setClient: vi.fn<TanstackQueryDevtoolsPanel['setClient']>(),

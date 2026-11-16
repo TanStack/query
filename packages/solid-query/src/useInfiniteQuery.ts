@@ -7,17 +7,17 @@ import type {
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
+import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
+import type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infiniteQueryOptions'
 import type {
   DefinedUseInfiniteQueryResult,
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
 } from './types'
-import type { Accessor } from 'solid-js'
-import type {
-  DefinedInitialDataInfiniteOptions,
-  UndefinedInitialDataInfiniteOptions,
-} from './infiniteQueryOptions'
 
 /**
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
