@@ -5,7 +5,6 @@ import {
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useState } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-
 import { QueryCache, QueryClient, hashKey, useQuery } from '..'
 import { renderWithClient } from './utils'
 

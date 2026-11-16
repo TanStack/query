@@ -7,7 +7,8 @@ title: UndefinedInitialDataInfiniteOptions
 
 ```ts
 type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown> = Accessor<InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
-  initialData?: undefined;
+  initialData?:   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+     | InitialDataFunction<NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>>;
 }>;
 ```
 

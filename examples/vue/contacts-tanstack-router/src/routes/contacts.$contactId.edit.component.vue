@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useNavigate, useParams, useSearch } from '@tanstack/vue-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { useNavigate, useParams, useSearch } from '@tanstack/vue-router'
 import ContactForm from '../ContactForm.vue'
 import {
   contactsMutations,

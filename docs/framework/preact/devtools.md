@@ -99,8 +99,8 @@ Embedded mode will show the development tools as a fixed element in your applica
 Place the following code as high in your Preact app as you can. The closer it is to the root of the page, the better it will work!
 
 ```tsx
-import { useState } from 'preact/hooks'
 import { PreactQueryDevtoolsPanel } from '@tanstack/preact-query-devtools'
+import { useState } from 'preact/hooks'
 
 function App() {
   const [isOpen, setIsOpen] = useState(false)
@@ -168,10 +168,10 @@ Select **Clear** or press **Escape** in the search field to restore your manual 
 Devtools are excluded in production builds. However, it might be desirable to lazy load the devtools in production:
 
 ```tsx
-import { lazy, Suspense } from 'preact/compat'
-import { useEffect, useState } from 'preact/hooks'
 import { QueryClient, QueryClientProvider } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
+import { lazy, Suspense } from 'preact/compat'
+import { useEffect, useState } from 'preact/hooks'
 import { Example } from './Example'
 
 const queryClient = new QueryClient()

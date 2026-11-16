@@ -11,10 +11,14 @@ redirect_from:
 
 ```ts
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  initialData: TQueryFnData | (() => TQueryFnData);
+  initialData:   | NonUndefinedGuard<TQueryFnData>
+     | (() => NonUndefinedGuard<TQueryFnData>);
 }): ReturnType<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  initialData?: undefined;
+  initialData?:   | NonUndefinedGuard<TQueryFnData>
+     | (() => 
+     | NonUndefinedGuard<TQueryFnData>
+     | undefined);
 }): ReturnType<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
@@ -29,7 +33,8 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 
 ```ts
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  initialData: TQueryFnData | (() => TQueryFnData);
+  initialData:   | NonUndefinedGuard<TQueryFnData>
+     | (() => NonUndefinedGuard<TQueryFnData>);
 }): ReturnType<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
@@ -65,7 +70,8 @@ This overload is selected when `initialData` is known to be defined, so the resu
 #### options
 
 [`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & \{
-  `initialData`: `TQueryFnData` \| (() => `TQueryFnData`);
+  `initialData`:   \| [`NonUndefinedGuard`](../type-aliases/NonUndefinedGuard.md)\<`TQueryFnData`\>
+     \| (() => [`NonUndefinedGuard`](../type-aliases/NonUndefinedGuard.md)\<`TQueryFnData`\>);
 \}
 
 The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`, with `initialData` known to be defined.
@@ -114,7 +120,10 @@ function Posts() {
 
 ```ts
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  initialData?: undefined;
+  initialData?:   | NonUndefinedGuard<TQueryFnData>
+     | (() => 
+     | NonUndefinedGuard<TQueryFnData>
+     | undefined);
 }): ReturnType<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
@@ -147,7 +156,10 @@ is the query key to generate options for.
 #### options
 
 [`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & \{
-  `initialData?`: `undefined`;
+  `initialData?`:   \| [`NonUndefinedGuard`](../type-aliases/NonUndefinedGuard.md)\<`TQueryFnData`\>
+     \| (() => 
+     \| [`NonUndefinedGuard`](../type-aliases/NonUndefinedGuard.md)\<`TQueryFnData`\>
+     \| `undefined`);
 \}
 
 The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`.
@@ -197,7 +209,10 @@ function Post(props: { id: string }) {
 ### options
 
 [`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & \{
-  `initialData?`: `undefined`;
+  `initialData?`:   \| [`NonUndefinedGuard`](../type-aliases/NonUndefinedGuard.md)\<`TQueryFnData`\>
+     \| (() => 
+     \| [`NonUndefinedGuard`](../type-aliases/NonUndefinedGuard.md)\<`TQueryFnData`\>
+     \| `undefined`);
 \}
 
 The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`.

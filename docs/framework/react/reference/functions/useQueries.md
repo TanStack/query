@@ -16,7 +16,7 @@ function useQueries<T extends any[], TCombinedResult = T extends [] ? [] : T ext
 }, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/react-query/src/useQueries.ts:356](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L356)
+Defined in: [packages/react-query/src/useQueries.ts:355](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L355)
 
 The `useQueries` hook can be used to fetch a variable number of queries.
 

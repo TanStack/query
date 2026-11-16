@@ -7,7 +7,8 @@ title: UndefinedInitialDataOptions
 
 ```ts
 type UndefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = Accessor<QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  initialData?: undefined;
+  initialData?:   | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+     | NonUndefinedGuard<TQueryFnData>;
 }>;
 ```
 

@@ -1,6 +1,6 @@
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue-demi'
-import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useMutationState } from '../useMutationState'
 import { useQueryClient } from '../useQueryClient'

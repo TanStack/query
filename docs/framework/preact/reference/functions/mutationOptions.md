@@ -25,7 +25,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function mutationOptions<TData = unknown, TError = Error, TVariables = void, TOnMutateResult = unknown>(options: WithRequired<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/preact-query/src/mutationOptions.ts:32](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L32)
+Defined in: [packages/preact-query/src/mutationOptions.ts:31](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L31)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. A
 `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
@@ -96,7 +96,7 @@ function SavingIndicator() {
 function mutationOptions<TData = unknown, TError = Error, TVariables = void, TOnMutateResult = unknown>(options: Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/preact-query/src/mutationOptions.ts:70](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L70)
+Defined in: [packages/preact-query/src/mutationOptions.ts:69](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L69)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No
 `mutationKey` is required on this overload — use this when you don't need to target the mutation via a

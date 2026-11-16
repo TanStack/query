@@ -12,7 +12,7 @@ type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError = DefaultError, TD
 };
 ```
 
-Defined in: [packages/preact-query/src/infiniteQueryOptions.ts:25](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L25)
+Defined in: [packages/preact-query/src/infiniteQueryOptions.ts:24](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L24)
 
 The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted, may be
 `undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is

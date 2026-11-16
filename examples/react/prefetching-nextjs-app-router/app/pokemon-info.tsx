@@ -1,7 +1,7 @@
 'use client'
 
-import React from 'react'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import React from 'react'
 import { pokemonsQueries } from '../services/pokemons/queries'
 
 export function PokemonInfo() {

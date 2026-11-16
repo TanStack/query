@@ -2,10 +2,9 @@ import { createKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/preact'
 import { Suspense } from 'preact/compat'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-
 import { QueryClient, QueryClientProvider, useSuspenseQuery } from '..'
-import type { ComponentChildren } from 'preact'
 import type { StaleTime } from '@tanstack/query-core'
+import type { ComponentChildren } from 'preact'
 import type { QueryKey } from '..'
 
 function renderWithSuspense(client: QueryClient, ui: ComponentChildren) {

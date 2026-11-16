@@ -1,14 +1,14 @@
-import { setupDevtoolsPlugin } from '@vue/devtools-api'
 import { rankItem } from '@tanstack/match-sorter-utils'
 import { onlineManager } from '@tanstack/query-core'
+import { setupDevtoolsPlugin } from '@vue/devtools-api'
 import {
   getQueryStateLabel,
   getQueryStatusBg,
   getQueryStatusFg,
   sortFns,
 } from './utils'
-import type { CustomInspectorNode } from '@vue/devtools-api'
 import type { Query, QueryCacheNotifyEvent } from '@tanstack/query-core'
+import type { CustomInspectorNode } from '@vue/devtools-api'
 import type { QueryClient } from '../queryClient'
 
 const pluginId = 'vue-query'

@@ -13,7 +13,7 @@ type DefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultError, TD
 };
 ```
 
-Defined in: [packages/preact-query/src/queryOptions.ts:81](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L81)
+Defined in: [packages/preact-query/src/queryOptions.ts:80](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L80)
 
 The options accepted by the `queryOptions` overload selected when `initialData` is known to be defined —
 `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).

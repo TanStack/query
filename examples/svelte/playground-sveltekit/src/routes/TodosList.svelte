@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import { editingIndex } from '$lib/stores.svelte'
   import { todosQueries } from '$lib/services/todos/queries'
+  import { editingIndex } from '$lib/stores.svelte'
 
   type Props = {
     initialFilter: string

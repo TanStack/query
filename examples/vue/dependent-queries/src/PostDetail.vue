@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
+import { computed } from 'vue'
 import { authorsQueries } from './services/authors/queries'
 import { postsQueries } from './services/posts/queries'
 

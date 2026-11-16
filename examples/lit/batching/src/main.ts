@@ -1,5 +1,5 @@
-import { LitElement, html } from 'lit'
 import { QueryClient, QueryClientProvider } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import './character-list'
 
 const queryClient = new QueryClient({

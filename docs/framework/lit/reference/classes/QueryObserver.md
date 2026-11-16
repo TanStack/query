@@ -238,7 +238,7 @@ The result for the given options.
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:43](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L43)
+Defined in: [packages/query-core/src/subscribable.ts:46](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L46)
 
 Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
@@ -377,7 +377,7 @@ regains focus.
 subscribe(listener: QueryObserverListener): () => void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:28](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L28)
+Defined in: [packages/query-core/src/subscribable.ts:31](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L31)
 
 Registers a listener to be called on every update this object notifies about. Returns a function
 that removes the listener again — call it to stop listening. The base class never drops a listener
@@ -420,6 +420,8 @@ Subscribable.subscribe
 ```ts
 trackProp(key:
   | "error"
+  | "fetchStatus"
+  | "status"
   | "data"
   | "isError"
   | "isPending"
@@ -428,7 +430,6 @@ trackProp(key:
   | "isRefetchError"
   | "isSuccess"
   | "isPlaceholderData"
-  | "status"
   | "dataUpdatedAt"
   | "errorUpdatedAt"
   | "failureCount"
@@ -442,8 +443,7 @@ trackProp(key:
   | "isRefetching"
   | "isStale"
   | "isEnabled"
-  | "refetch"
-  | "fetchStatus"): void;
+  | "refetch"): void;
 ```
 
 Defined in: [packages/query-core/src/queryObserver.ts:363](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L363)
@@ -458,6 +458,8 @@ access themselves (e.g. through their own reactivity system) instead of via the 
 ##### key
 
   \| `"error"`
+  \| `"fetchStatus"`
+  \| `"status"`
   \| `"data"`
   \| `"isError"`
   \| `"isPending"`
@@ -466,7 +468,6 @@ access themselves (e.g. through their own reactivity system) instead of via the 
   \| `"isRefetchError"`
   \| `"isSuccess"`
   \| `"isPlaceholderData"`
-  \| `"status"`
   \| `"dataUpdatedAt"`
   \| `"errorUpdatedAt"`
   \| `"failureCount"`
@@ -481,7 +482,6 @@ access themselves (e.g. through their own reactivity system) instead of via the 
   \| `"isStale"`
   \| `"isEnabled"`
   \| `"refetch"`
-  \| `"fetchStatus"`
 
 The name of the property that was read.
 
@@ -496,6 +496,8 @@ The name of the property that was read.
 ```ts
 trackResult(result: QueryObserverResult<TData, TError>, onPropTracked?: (key:
   | "error"
+  | "fetchStatus"
+  | "status"
   | "data"
   | "isError"
   | "isPending"
@@ -504,7 +506,6 @@ trackResult(result: QueryObserverResult<TData, TError>, onPropTracked?: (key:
   | "isRefetchError"
   | "isSuccess"
   | "isPlaceholderData"
-  | "status"
   | "dataUpdatedAt"
   | "errorUpdatedAt"
   | "failureCount"
@@ -518,8 +519,7 @@ trackResult(result: QueryObserverResult<TData, TError>, onPropTracked?: (key:
   | "isRefetching"
   | "isStale"
   | "isEnabled"
-  | "refetch"
-| "fetchStatus") => void): QueryObserverResult<TData, TError>;
+| "refetch") => void): QueryObserverResult<TData, TError>;
 ```
 
 Defined in: [packages/query-core/src/queryObserver.ts:343](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L343)
@@ -541,6 +541,8 @@ The result to wrap.
 
 (`key`:
   \| `"error"`
+  \| `"fetchStatus"`
+  \| `"status"`
   \| `"data"`
   \| `"isError"`
   \| `"isPending"`
@@ -549,7 +551,6 @@ The result to wrap.
   \| `"isRefetchError"`
   \| `"isSuccess"`
   \| `"isPlaceholderData"`
-  \| `"status"`
   \| `"dataUpdatedAt"`
   \| `"errorUpdatedAt"`
   \| `"failureCount"`
@@ -563,8 +564,7 @@ The result to wrap.
   \| `"isRefetching"`
   \| `"isStale"`
   \| `"isEnabled"`
-  \| `"refetch"`
-  \| `"fetchStatus"`) => `void`
+  \| `"refetch"`) => `void`
 
 Called with the name of each property that is read.
 

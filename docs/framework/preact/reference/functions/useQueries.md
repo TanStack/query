@@ -14,7 +14,7 @@ function useQueries<T extends any[], TCombinedResult = T extends [] ? [] : T ext
 }, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/preact-query/src/useQueries.ts:304](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L304)
+Defined in: [packages/preact-query/src/useQueries.ts:303](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L303)
 
 The `useQueries` hook can be used to fetch a variable number of queries.
 

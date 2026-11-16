@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import TodoListUI from './TodoListUI.vue'
 import TodoListCache from './TodoListCache.vue'
+import TodoListUI from './TodoListUI.vue'
 import type { CSSProperties } from 'vue'
 
 type Tab = 'ui-variables' | 'cache'

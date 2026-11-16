@@ -15,7 +15,10 @@ function infiniteQueryOptions<TQueryFnData, TError = Error, TData = InfiniteData
      | (() => InfiniteData<TQueryFnData>);
 }): ReturnType<DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 function infiniteQueryOptions<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
-  initialData?: undefined;
+  initialData?:   | InfiniteData<TQueryFnData, TPageParam>
+     | (() => 
+     | InfiniteData<TQueryFnData, TPageParam>
+     | undefined);
 }): ReturnType<UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
@@ -124,7 +127,10 @@ function Projects() {
 
 ```ts
 function infiniteQueryOptions<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
-  initialData?: undefined;
+  initialData?:   | InfiniteData<TQueryFnData, TPageParam>
+     | (() => 
+     | InfiniteData<TQueryFnData, TPageParam>
+     | undefined);
 }): ReturnType<UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
@@ -161,7 +167,10 @@ These options can be shared across hooks and imperative APIs such as `queryClien
 #### options
 
 [`InfiniteQueryOptions`](../interfaces/InfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & \{
-  `initialData?`: `undefined`;
+  `initialData?`:   \| [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>
+     \| (() => 
+     \| [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>
+     \| `undefined`);
 \}
 
 The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything you can pass to `useInfiniteQuery`.
@@ -217,7 +226,10 @@ function Comments(props: { postId: string }) {
 ### options
 
 [`InfiniteQueryOptions`](../interfaces/InfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & \{
-  `initialData?`: `undefined`;
+  `initialData?`:   \| [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>
+     \| (() => 
+     \| [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>
+     \| `undefined`);
 \}
 
 The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything you can pass to `useInfiniteQuery`.

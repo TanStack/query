@@ -9,10 +9,8 @@ import {
   unref,
   watch,
 } from 'vue-demi'
-
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
-import type { Ref } from 'vue-demi'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -22,8 +20,9 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
-import type { UseQueryOptions } from './queryOptions'
+import type { Ref } from 'vue-demi'
 import type { QueryClient } from './queryClient'
+import type { UseQueryOptions } from './queryOptions'
 import type { DeepUnwrapRef, MaybeRefDeep, ShallowOption } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.

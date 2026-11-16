@@ -8,8 +8,7 @@ title: DefinedInitialDataInfiniteOptions
 ```ts
 type DefinedInitialDataInfiniteOptions<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown> = CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
   initialData:   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
-     | undefined;
+     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>);
 };
 ```
 
