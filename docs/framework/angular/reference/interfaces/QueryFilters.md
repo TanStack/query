@@ -26,7 +26,7 @@ All provided filters must match; filters that are left unspecified are ignored.
 | Property | Type | Default value | Description |
 | ------ | ------ | ------ | ------ |
 | <a id="property-exact"></a> `exact?` | `boolean` | `undefined` | Match query key exactly |
-| <a id="property-fetchstatus"></a> `fetchStatus?` | `"fetching"` \| `"paused"` \| `"idle"` | `undefined` | Include queries matching their fetchStatus |
+| <a id="property-fetchstatus"></a> `fetchStatus?` | `"idle"` \| `"fetching"` \| `"paused"` | `undefined` | Include queries matching their fetchStatus |
 | <a id="property-predicate"></a> `predicate?` | (`query`: [`Query`](../classes/Query.md)) => `boolean` | `undefined` | Include queries matching this predicate function |
 | <a id="property-querykey"></a> `queryKey?` | `TQueryKey` \| `TuplePrefixes`\<`TQueryKey`\> | `undefined` | Include queries matching this query key |
 | <a id="property-stale"></a> `stale?` | `boolean` | `undefined` | Include or exclude stale queries |

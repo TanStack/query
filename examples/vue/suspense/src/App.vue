@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { defineAsyncComponent, onErrorCaptured, provide, ref } from 'vue'
 import { noop, useQueryClient } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+import { defineAsyncComponent, onErrorCaptured, provide, ref } from 'vue'
+import BaseButton from './components/BaseButton.vue'
 import { projectsQueries } from './services/projects/queries'
 import { isPendingKey } from './transition'
-import BaseButton from './components/BaseButton.vue'
 
 const ProjectList = defineAsyncComponent(
   () => import('./components/ProjectList.vue'),

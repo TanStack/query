@@ -26,13 +26,6 @@ import {
   sleep,
   timeUntilStale,
 } from '../utils'
-import type {
-  MutationFilters,
-  QueryFilters,
-  QueryTypeFilter,
-  SkipToken,
-  Updater,
-} from '../utils'
 import type { Mutation } from '../mutation'
 import type { Query } from '../query'
 import type {
@@ -42,6 +35,13 @@ import type {
   QueryKey,
   QueryOptions,
 } from '../types'
+import type {
+  MutationFilters,
+  QueryFilters,
+  QueryTypeFilter,
+  SkipToken,
+  Updater,
+} from '../utils'
 
 class CustomError extends Error {
   override name = 'CustomError' as const
@@ -405,7 +405,7 @@ describe('Updater', () => {
 
   it('should keep the value branch assignable but not callable', () => {
     expectTypeOf<
-      Exclude<Updater<number, string>, Function>
+      Exclude<Updater<number, string>, (...args: Array<any>) => any>
     >().toEqualTypeOf<string>()
 
     // @ts-expect-error the value branch is not a function
@@ -414,7 +414,10 @@ describe('Updater', () => {
   })
 
   it('should type the function branch input as TInput and output as TOutput', () => {
-    type UpdaterFn = Extract<Updater<number, string>, Function>
+    type UpdaterFn = Extract<
+      Updater<number, string>,
+      (...args: Array<any>) => any
+    >
 
     expectTypeOf<UpdaterFn>().parameter(0).toEqualTypeOf<number>()
     expectTypeOf<UpdaterFn>().returns.toEqualTypeOf<string>()

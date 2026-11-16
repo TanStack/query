@@ -6,13 +6,13 @@ title: Mutations
 Unlike queries, mutations are used to create, update, delete, or otherwise perform server side effects. In Lit, use [`createMutationController`](../reference/functions/createMutationController.md).
 
 ```ts
-import { LitElement, html } from 'lit'
 import {
   QueryClient,
   QueryClientProvider,
   createMutationController,
   createQueryController,
 } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 
 const queryClient = new QueryClient()
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { Link, useParams } from '@tanstack/vue-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { Link, useParams } from '@tanstack/vue-router'
+import { computed, ref } from 'vue'
 import { moviesMutations, moviesQueries } from '../services/movies/queries'
 
 const movieId = useParams({

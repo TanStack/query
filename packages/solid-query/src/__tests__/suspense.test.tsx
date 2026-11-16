@@ -1,5 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent } from '@solidjs/testing-library'
+import { onlineManager } from '@tanstack/query-core'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   ErrorBoundary,
   Show,
@@ -9,8 +10,7 @@ import {
   on,
   startTransition,
 } from 'solid-js'
-import { createKey, sleep } from '@tanstack/query-test-utils'
-import { onlineManager } from '@tanstack/query-core'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   IsRestoringProvider,
   QueryCache,

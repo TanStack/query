@@ -4,8 +4,8 @@
     createQuery,
     createMutation,
   } from '@tanstack/svelte-query'
-  import { editingIndex } from '$lib/stores.svelte'
   import { todosMutations, todosQueries } from '$lib/services/todos/queries'
+  import { editingIndex } from '$lib/stores.svelte'
   import type { Todo } from '$lib/services/todos/types'
 
   type Props = {

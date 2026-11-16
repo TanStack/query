@@ -11,7 +11,7 @@ redirect_from:
 function useQueries<T extends any[], TCombinedResult = T extends [] ? [] : T extends [Head] ? [GetUseQueryResult<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseQueryResult<Head>, GetUseQueryResult<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseQueryResult<Head>, GetUseQueryResult<Head>, GetUseQueryResult<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : ... extends ... ? ... : ... : [...{ [K in (...)]: (...) }[]] : [...{ [K in string | number | symbol]: GetUseQueryResult<Tails[K]> }[]] : { [K in string | number | symbol]: GetUseQueryResult<T[K]> }>(options: ShallowOption & object, queryClient?: QueryClient): Readonly<Ref<TCombinedResult>>;
 ```
 
-Defined in: [packages/vue-query/src/useQueries.ts:354](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQueries.ts#L354)
+Defined in: [packages/vue-query/src/useQueries.ts:353](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQueries.ts#L353)
 
 The `useQueries` composable can be used to fetch a variable number of queries.
 

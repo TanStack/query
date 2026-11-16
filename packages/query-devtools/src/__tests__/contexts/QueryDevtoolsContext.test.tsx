@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest'
 import { render } from '@solidjs/testing-library'
-import { createEffect, createSignal } from 'solid-js'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
+import { createEffect, createSignal } from 'solid-js'
+import { describe, expect, it } from 'vitest'
 import { QueryDevtoolsContext, useQueryDevtoolsContext } from '../../contexts'
 
 describe('QueryDevtoolsContext', () => {

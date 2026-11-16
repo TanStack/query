@@ -1,9 +1,9 @@
-import { createRouter, createWebHistory } from 'vue-router'
 import { noop, onlineManager } from '@tanstack/vue-query'
+import { createRouter, createWebHistory } from 'vue-router'
 import { queryClient } from './queryClient'
-import { moviesQueries } from './services/movies/queries'
-import MovieListView from './routes/MovieListView.vue'
 import MovieDetailView from './routes/MovieDetailView.vue'
+import MovieListView from './routes/MovieListView.vue'
+import { moviesQueries } from './services/movies/queries'
 
 export const router = createRouter({
   history: createWebHistory(),

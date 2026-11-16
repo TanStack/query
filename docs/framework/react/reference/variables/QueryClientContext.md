@@ -9,6 +9,6 @@ title: QueryClientContext
 const QueryClientContext: Context<QueryClient | undefined>;
 ```
 
-Defined in: [packages/react-query/src/QueryClientProvider.tsx:9](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryClientProvider.tsx#L9)
+Defined in: [packages/react-query/src/QueryClientProvider.tsx:8](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryClientProvider.tsx#L8)
 
 The context that `useQueryClient` reads from. `QueryClientProvider` is the normal way to set it.
