@@ -1,8 +1,9 @@
 // @ts-nocheck
-import fs, { globSync } from 'node:fs'
-import path from 'node:path'
+
 import { execFileSync, execSync } from 'node:child_process'
+import fs, { globSync } from 'node:fs'
 import { tmpdir } from 'node:os'
+import path from 'node:path'
 
 const rootDir = path.join(import.meta.dirname, '..')
 const ghToken = process.env.GH_TOKEN || process.env.GITHUB_TOKEN

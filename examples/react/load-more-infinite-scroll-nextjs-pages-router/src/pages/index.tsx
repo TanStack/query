@@ -1,8 +1,8 @@
-import React from 'react'
-import Link from 'next/link'
-import { useInView } from 'react-intersection-observer'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import Link from 'next/link'
+import React from 'react'
+import { useInView } from 'react-intersection-observer'
 import { projectsQueries } from '../services/projects/queries'
 
 export default function Example() {

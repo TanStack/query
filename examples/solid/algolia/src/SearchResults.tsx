@@ -1,5 +1,5 @@
-import { For, Match, Show, Switch } from 'solid-js'
 import { useInfiniteQuery } from '@tanstack/solid-query'
+import { For, Match, Show, Switch } from 'solid-js'
 import { productsQueries } from './services/products/queries'
 
 type Product = {

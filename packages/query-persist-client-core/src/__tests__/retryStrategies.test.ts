@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { QueryClient, dehydrate } from '@tanstack/query-core'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { removeOldestQuery } from '../retryStrategies'
 import type { PersistedClient } from '../persist'
 

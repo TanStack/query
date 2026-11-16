@@ -1,8 +1,8 @@
 <script lang="ts">
   import PersistQueryClientProvider from '../../src/PersistQueryClientProvider.svelte'
   import RestoreCache from './RestoreCache.svelte'
-  import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
+  import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
   import type { StatelessRef, StatusResult } from '../utils.svelte.js'
 
   type Props = {

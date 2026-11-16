@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createSignal } from 'solid-js'
 import { render } from '@solidjs/testing-library'
-import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
+import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
+import { createSignal } from 'solid-js'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import SolidQueryDevtools from '../devtools'
 import type {
   DevtoolsButtonPosition,
