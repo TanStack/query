@@ -1,4 +1,3 @@
-import { LitElement, html } from 'lit'
 import {
   QueryClient,
   QueryClientProvider,

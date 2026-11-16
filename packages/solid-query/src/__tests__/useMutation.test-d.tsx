@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { useMutation } from '../useMutation'
 import { QueryClient } from '../QueryClient'
+import { useMutation } from '../useMutation'
 import type {
   DefaultError,
   MutationFunctionContext,

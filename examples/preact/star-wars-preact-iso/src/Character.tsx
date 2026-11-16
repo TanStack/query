@@ -1,7 +1,7 @@
-import { useRoute } from 'preact-iso'
 import { useQuery } from '@tanstack/preact-query'
-import { filmsQueries } from './services/films/queries'
+import { useRoute } from 'preact-iso'
 import { charactersQueries } from './services/characters/queries'
+import { filmsQueries } from './services/films/queries'
 import { planetsQueries } from './services/planets/queries'
 
 export default function Character() {

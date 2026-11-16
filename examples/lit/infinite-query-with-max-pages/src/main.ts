@@ -1,9 +1,9 @@
-import { LitElement, html } from 'lit'
 import {
   QueryClient,
   QueryClientProvider,
   createInfiniteQueryController,
 } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import { worker } from './mocks'
 import { projectsQueries } from './services/projects/queries'
 

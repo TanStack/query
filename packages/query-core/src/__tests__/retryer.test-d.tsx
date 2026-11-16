@@ -5,8 +5,8 @@ import {
   createRetryer,
   isCancelledError,
 } from '../retryer'
-import type { RetryDelayValue, RetryValue, Retryer } from '../retryer'
 import type { CancelOptions, DefaultError, NetworkMode } from '..'
+import type { RetryDelayValue, RetryValue, Retryer } from '../retryer'
 
 class CustomError extends Error {
   override name = 'CustomError' as const

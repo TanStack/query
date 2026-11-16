@@ -1,5 +1,4 @@
 import '@lit-labs/ssr-client/lit-element-hydrate-support.js'
-
 import { hydrate } from '@tanstack/lit-query'
 import { makeQueryClient } from './makeQueryClient'
 import type { DehydratedState } from '@tanstack/lit-query'

@@ -1,9 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import * as React from 'react'
-import { act, fireEvent, render } from '@testing-library/react'
-import { QueryClient, noop, useQueries, useQuery } from '@tanstack/react-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { QueryClient, noop, useQueries, useQuery } from '@tanstack/react-query'
+import { act, fireEvent, render } from '@testing-library/react'
+import * as React from 'react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 import type {
   PersistedClient,

@@ -1,4 +1,5 @@
-import { For, Show } from 'solid-js'
+import { createDebouncer } from '@tanstack/solid-pacer/debouncer'
+import { useIsFetching, useQuery } from '@tanstack/solid-query'
 import {
   Link,
   Outlet,
@@ -7,8 +8,7 @@ import {
   useNavigate,
   useRouterState,
 } from '@tanstack/solid-router'
-import { createDebouncer } from '@tanstack/solid-pacer/debouncer'
-import { useIsFetching, useQuery } from '@tanstack/solid-query'
+import { For, Show } from 'solid-js'
 import { contactsQueries } from '../services/contacts/queries'
 import type { QueryClient } from '@tanstack/solid-query'
 

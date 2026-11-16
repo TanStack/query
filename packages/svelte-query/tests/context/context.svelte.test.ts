@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 import { render } from '@testing-library/svelte'
+import { describe, expect, it } from 'vitest'
 import { getIsRestoringContext } from '../../src/index.js'
 import Base from './Base.svelte'
 

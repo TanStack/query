@@ -1,10 +1,10 @@
-import { describe, expectTypeOf, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
+import { describe, expectTypeOf, it } from 'vitest'
 import { skipToken } from '..'
 import { injectQueries } from '../inject-queries'
 import { queryOptions } from '../query-options'
-import type { CreateQueryOptions, CreateQueryResult, OmitKeyof } from '..'
 import type { Signal } from '@angular/core'
+import type { CreateQueryOptions, CreateQueryResult, OmitKeyof } from '..'
 
 describe('injectQueries', () => {
   describe('config object overload', () => {

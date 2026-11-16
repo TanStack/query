@@ -127,7 +127,7 @@ export function cloneDeepUnref<T>(
     if (unrefGetters && isFunction(val)) {
       // Cast due to older TS versions not allowing calling
       // on certain intersection types.
-      return cloneDeepUnref((val as Function)(), unrefGetters)
+      return cloneDeepUnref((val as () => any)(), unrefGetters)
     }
 
     // Unref refs and continue to recurse into the value.
@@ -159,7 +159,7 @@ function isPlainObject(value: unknown): value is Record<PropertyKey, unknown> {
  * @param value - The value to check.
  * @returns `true` if `value` is a function.
  */
-function isFunction(value: unknown): value is Function {
+function isFunction(value: unknown): value is (...args: Array<any>) => any {
   return typeof value === 'function'
 }
 

@@ -1,5 +1,5 @@
-import { LitElement, html } from 'lit'
 import { createQueryController } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import { commentsQueries } from './services/comments/queries'
 import { postsQueries } from './services/posts/queries'
 import { usersQueries } from './services/users/queries'

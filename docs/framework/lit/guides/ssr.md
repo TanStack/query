@@ -22,9 +22,9 @@ Never share one server `QueryClient` between users or requests.
 ```ts
 import { render as renderLit } from '@lit-labs/ssr'
 import { collectResult } from '@lit-labs/ssr/lib/render-result.js'
-import { html } from 'lit'
-import { uneval } from 'devalue'
 import { dehydrate, hydrate, noop } from '@tanstack/lit-query'
+import { uneval } from 'devalue'
+import { html } from 'lit'
 import { makeQueryClient } from './makeQueryClient'
 import { postsQueries } from './services/posts/queries'
 import { usersQueries } from './services/users/queries'
@@ -80,7 +80,6 @@ await import('./app')
 The SSR example creates its controllers only after a `queryClient` property is available:
 
 ```ts
-import { LitElement } from 'lit'
 import { createQueryController } from '@tanstack/lit-query'
 import { postsQueries } from './services/posts/queries'
 import { usersQueries } from './services/users/queries'
