@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { createQueries } from '@tanstack/svelte-query'
   import { sleep } from '@tanstack/query-test-utils'
+  import { createQueries } from '@tanstack/svelte-query'
   import type { StatelessRef, StatusResult } from '../utils.svelte.js'
 
   let { states }: { states: StatelessRef<Array<StatusResult<string>>> } =

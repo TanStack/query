@@ -12,15 +12,15 @@ import {
   notifyManager,
   shouldThrowError,
 } from '@tanstack/query-core'
-import { signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
 import { PENDING_TASKS } from './pending-tasks-compat'
-import type { PendingTaskRef } from './pending-tasks-compat'
+import { signalProxy } from './signal-proxy'
 import type {
   QueryKey,
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import type { PendingTaskRef } from './pending-tasks-compat'
 import type { CreateBaseQueryOptions } from './types'
 
 /**

@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
+import { describe, expect, it } from 'vitest'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 
 describe('infiniteQueryOptions', () => {

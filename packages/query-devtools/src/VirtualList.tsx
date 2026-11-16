@@ -1,6 +1,6 @@
-import { createEffect, createMemo, on, onCleanup } from 'solid-js'
 import { Key } from '@solid-primitives/keyed'
 import { createVirtualizer } from '@tanstack/solid-virtual'
+import { createEffect, createMemo, on, onCleanup } from 'solid-js'
 import type { VirtualItem } from '@tanstack/solid-virtual'
 import type { Accessor, JSX } from 'solid-js'
 

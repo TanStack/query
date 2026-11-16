@@ -12,7 +12,6 @@ import {
 } from '..'
 import { renderWithClient, setActTimeout } from './utils'
 import type { Mock } from 'vitest'
-
 import type {
   InfiniteData,
   QueryFunctionContext,

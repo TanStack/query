@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient, QueryObserver } from '..'
 import type {
   DefaultError,
@@ -127,10 +127,10 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf<
-          Extract<QueryObserverOptions['enabled'], Function>
+          Extract<QueryObserverOptions['enabled'], (...args: Array<any>) => any>
         >().returns.toEqualTypeOf<boolean>()
         expectTypeOf<
-          Exclude<QueryObserverOptions['enabled'], Function>
+          Exclude<QueryObserverOptions['enabled'], (...args: Array<any>) => any>
         >().toEqualTypeOf<boolean | undefined>()
       })
     })
@@ -158,7 +158,10 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf<
-          Extract<QueryObserverOptions['staleTime'], Function>
+          Extract<
+            QueryObserverOptions['staleTime'],
+            (...args: Array<any>) => any
+          >
         >().returns.toEqualTypeOf<number | 'static'>()
       })
     })
@@ -186,10 +189,16 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf<
-          Extract<QueryObserverOptions['refetchInterval'], Function>
+          Extract<
+            QueryObserverOptions['refetchInterval'],
+            (...args: Array<any>) => any
+          >
         >().returns.toEqualTypeOf<number | false | undefined>()
         expectTypeOf<
-          Exclude<QueryObserverOptions['refetchInterval'], Function>
+          Exclude<
+            QueryObserverOptions['refetchInterval'],
+            (...args: Array<any>) => any
+          >
         >().toEqualTypeOf<number | false | undefined>()
       })
     })
@@ -217,10 +226,16 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf<
-          Extract<QueryObserverOptions['refetchOnWindowFocus'], Function>
+          Extract<
+            QueryObserverOptions['refetchOnWindowFocus'],
+            (...args: Array<any>) => any
+          >
         >().returns.toEqualTypeOf<boolean | 'always'>()
         expectTypeOf<
-          Exclude<QueryObserverOptions['refetchOnWindowFocus'], Function>
+          Exclude<
+            QueryObserverOptions['refetchOnWindowFocus'],
+            (...args: Array<any>) => any
+          >
         >().toEqualTypeOf<boolean | 'always' | undefined>()
       })
     })
@@ -248,10 +263,16 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf<
-          Extract<QueryObserverOptions['refetchOnReconnect'], Function>
+          Extract<
+            QueryObserverOptions['refetchOnReconnect'],
+            (...args: Array<any>) => any
+          >
         >().returns.toEqualTypeOf<boolean | 'always'>()
         expectTypeOf<
-          Exclude<QueryObserverOptions['refetchOnReconnect'], Function>
+          Exclude<
+            QueryObserverOptions['refetchOnReconnect'],
+            (...args: Array<any>) => any
+          >
         >().toEqualTypeOf<boolean | 'always' | undefined>()
       })
     })
@@ -279,10 +300,16 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf<
-          Extract<QueryObserverOptions['refetchOnMount'], Function>
+          Extract<
+            QueryObserverOptions['refetchOnMount'],
+            (...args: Array<any>) => any
+          >
         >().returns.toEqualTypeOf<boolean | 'always'>()
         expectTypeOf<
-          Exclude<QueryObserverOptions['refetchOnMount'], Function>
+          Exclude<
+            QueryObserverOptions['refetchOnMount'],
+            (...args: Array<any>) => any
+          >
         >().toEqualTypeOf<boolean | 'always' | undefined>()
       })
     })
@@ -326,10 +353,16 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf<
-          Extract<QueryObserverOptions['throwOnError'], Function>
+          Extract<
+            QueryObserverOptions['throwOnError'],
+            (...args: Array<any>) => any
+          >
         >().returns.toEqualTypeOf<boolean>()
         expectTypeOf<
-          Exclude<QueryObserverOptions['throwOnError'], Function>
+          Exclude<
+            QueryObserverOptions['throwOnError'],
+            (...args: Array<any>) => any
+          >
         >().toEqualTypeOf<boolean | undefined>()
       })
     })
@@ -355,7 +388,7 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf<
-          Extract<QueryObserverOptions['retry'], Function>
+          Extract<QueryObserverOptions['retry'], (...args: Array<any>) => any>
         >().returns.toEqualTypeOf<boolean>()
       })
     })
@@ -381,7 +414,10 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf<
-          Extract<QueryObserverOptions['retryDelay'], Function>
+          Extract<
+            QueryObserverOptions['retryDelay'],
+            (...args: Array<any>) => any
+          >
         >().returns.toEqualTypeOf<number>()
       })
     })
@@ -409,7 +445,10 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf<
-          Extract<QueryObserverOptions['queryKeyHashFn'], Function>
+          Extract<
+            QueryObserverOptions['queryKeyHashFn'],
+            (...args: Array<any>) => any
+          >
         >().returns.toEqualTypeOf<string>()
       })
     })
@@ -429,10 +468,16 @@ describe('queryObserver', () => {
 
       it('should only accept unknown from a structuralSharing callback', () => {
         expectTypeOf<
-          Extract<QueryObserverOptions['structuralSharing'], Function>
+          Extract<
+            QueryObserverOptions['structuralSharing'],
+            (...args: Array<any>) => any
+          >
         >().returns.toEqualTypeOf<unknown>()
         expectTypeOf<
-          Exclude<QueryObserverOptions['structuralSharing'], Function>
+          Exclude<
+            QueryObserverOptions['structuralSharing'],
+            (...args: Array<any>) => any
+          >
         >().toEqualTypeOf<boolean | undefined>()
       })
     })
@@ -505,7 +550,7 @@ describe('queryObserver', () => {
             { count: number }
           >['placeholderData']
         >()
-          .extract<Function>()
+          .extract<(...args: Array<any>) => any>()
           .parameter(0)
           .toEqualTypeOf<{ count: number } | undefined>()
       })
@@ -554,7 +599,7 @@ describe('queryObserver', () => {
         expectTypeOf<
           Exclude<
             QueryObserverOptions<{ value: string }>['placeholderData'],
-            Function
+            (...args: Array<any>) => any
           >
         >().toEqualTypeOf<{ value: string } | undefined>()
       })
@@ -1451,7 +1496,12 @@ describe('queryObserver', () => {
         },
       )
 
-      expectTypeOf<Extract<typeof observer.options.throwOnError, Function>>()
+      expectTypeOf<
+        Extract<
+          typeof observer.options.throwOnError,
+          (...args: Array<any>) => any
+        >
+      >()
         .parameter(0)
         .toEqualTypeOf<CustomError>()
       expectTypeOf(observer.options.select).toEqualTypeOf<

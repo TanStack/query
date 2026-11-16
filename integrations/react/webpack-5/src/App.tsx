@@ -1,5 +1,5 @@
-import React from 'react'
 import { useQuery } from '@tanstack/react-query'
+import React from 'react'
 
 const App = () => {
   const query = useQuery({

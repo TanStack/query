@@ -1,3 +1,6 @@
+import { QueryClient, noop } from '@tanstack/query-core'
+import { createKey, sleep } from '@tanstack/query-test-utils'
+import { LitElement, html } from 'lit'
 import {
   afterEach,
   beforeAll,
@@ -7,9 +10,6 @@ import {
   it,
   vi,
 } from 'vitest'
-import { QueryClient, noop } from '@tanstack/query-core'
-import { createKey, sleep } from '@tanstack/query-test-utils'
-import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createMutationController } from '../createMutationController.js'
 import { generateElementName } from './utils.js'
