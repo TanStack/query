@@ -1,6 +1,5 @@
-import { createSignal } from 'solid-js'
 import { createDebouncedValue } from '@tanstack/solid-pacer/debouncer'
-
+import { createSignal } from 'solid-js'
 import SearchResults from './SearchResults'
 import type { JSX } from 'solid-js'
 

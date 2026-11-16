@@ -1,6 +1,6 @@
+import { isServer as isServerEnvironment } from './environmentManager'
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
-import { isServer as isServerEnvironment } from './environmentManager'
 import { noop, sleep } from './utils'
 import type { CancelOptions, DefaultError, NetworkMode } from './types'
 

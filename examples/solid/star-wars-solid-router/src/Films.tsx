@@ -1,6 +1,6 @@
-import { For, Match, Switch } from 'solid-js'
 import { A } from '@solidjs/router'
 import { useQuery } from '@tanstack/solid-query'
+import { For, Match, Switch } from 'solid-js'
 import { filmsQueries } from './services/films/queries'
 
 export default function Films() {

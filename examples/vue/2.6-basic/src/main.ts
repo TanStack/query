@@ -1,7 +1,6 @@
-import Vue from 'vue'
-import VueCompositionApi, { createApp, h } from '@vue/composition-api'
 import { VueQueryPlugin } from '@tanstack/vue-query'
-
+import VueCompositionApi, { createApp, h } from '@vue/composition-api'
+import Vue from 'vue'
 import App from './App.vue'
 
 Vue.use(VueCompositionApi)

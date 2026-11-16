@@ -1,7 +1,7 @@
-import { Fragment } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
 import { useInfiniteQuery } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
+import { Fragment } from 'preact'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import { projectsQueries } from './services/projects/queries'
 
 export default function Example() {

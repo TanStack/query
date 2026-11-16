@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from './HomeView.vue'
-import FilmList from './FilmList.vue'
-import FilmDetail from './FilmDetail.vue'
-import CharacterList from './CharacterList.vue'
 import CharacterDetail from './CharacterDetail.vue'
+import CharacterList from './CharacterList.vue'
+import FilmDetail from './FilmDetail.vue'
+import FilmList from './FilmList.vue'
+import HomeView from './HomeView.vue'
 
 export const router = createRouter({
   history: createWebHistory(),

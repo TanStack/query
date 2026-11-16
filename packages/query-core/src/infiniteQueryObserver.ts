@@ -1,5 +1,7 @@
-import { QueryObserver } from './queryObserver'
 import { hasNextPage, hasPreviousPage } from './infiniteQueryBehavior'
+import { QueryObserver } from './queryObserver'
+import type { Query } from './query'
+import type { QueryClient } from './queryClient'
 import type { Subscribable } from './subscribable'
 import type {
   DefaultError,
@@ -12,8 +14,6 @@ import type {
   InfiniteQueryObserverResult,
   QueryKey,
 } from './types'
-import type { QueryClient } from './queryClient'
-import type { Query } from './query'
 
 type InfiniteQueryObserverListener<TData, TError> = (
   result: InfiniteQueryObserverResult<TData, TError>,

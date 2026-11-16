@@ -1,11 +1,11 @@
+import { DatePipe } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+import { FormsModule } from '@angular/forms'
 import {
   QueryClient,
   injectMutation,
   injectQuery,
 } from '@tanstack/angular-query-experimental'
-import { FormsModule } from '@angular/forms'
-import { DatePipe } from '@angular/common'
 import { TasksMutations, TasksQueries } from '../services/tasks/queries'
 
 @Component({

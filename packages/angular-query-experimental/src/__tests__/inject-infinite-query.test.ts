@@ -1,13 +1,13 @@
-import { TestBed } from '@angular/core/testing'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   Component,
   Injector,
   provideZonelessChangeDetection,
   signal,
 } from '@angular/core'
-import { render } from '@testing-library/angular'
+import { TestBed } from '@angular/core/testing'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { render } from '@testing-library/angular'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   injectInfiniteQuery,

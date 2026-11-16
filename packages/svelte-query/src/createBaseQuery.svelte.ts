@@ -1,8 +1,8 @@
-import { onDestroy } from 'svelte'
 import { shouldThrowError } from '@tanstack/query-core'
+import { onDestroy } from 'svelte'
+import { createRawRef } from './containers.svelte.js'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
-import { createRawRef } from './containers.svelte.js'
 import { watchChanges } from './utils.svelte.js'
 import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 import type {

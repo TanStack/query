@@ -58,8 +58,8 @@ export const greetingOptions = queryOptions({
 **greeting-view.ts**
 
 ```ts
-import { LitElement, html } from 'lit'
 import { createQueryController } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import { greetingOptions } from './queries'
 
 export class GreetingView extends LitElement {
@@ -83,8 +83,8 @@ We can render the element under a `QueryClientProvider` with a fresh `QueryClien
 **greeting-view.test.ts**
 
 ```ts
-import { afterEach, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/lit-query'
+import { afterEach, expect, it, vi } from 'vitest'
 import type { QueryClientProvider } from '@tanstack/lit-query'
 import type { GreetingView } from './greeting-view'
 import './greeting-view'
@@ -120,9 +120,9 @@ It is possible to share a single `QueryClient` between tests, but if so we need 
 To test the query without rendering, attach the controller to a host element that only exists for the test, and pass the `QueryClient` as its last argument instead of rendering a provider. Then assert on the controller's result:
 
 ```ts
-import { afterEach, expect, it, vi } from 'vitest'
-import { LitElement } from 'lit'
 import { QueryClient, createQueryController } from '@tanstack/lit-query'
+import { LitElement } from 'lit'
+import { afterEach, expect, it, vi } from 'vitest'
 import { greetingOptions } from './queries'
 
 afterEach(() => {
@@ -157,8 +157,8 @@ Custom element names can only be registered once, so give each test host its own
 `vi.waitFor` retries until the assertion passes, which works for query functions that wait on real requests. When the query function waits on a timer, you can use fake timers and advance them instead, for example with [`vi.advanceTimersByTimeAsync`](https://vitest.dev/api/vi.html#vi-advancetimersbytimeasync). Restore real timers in `afterEach`, so they are restored even when an assertion fails:
 
 ```ts
-import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/lit-query'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import type { QueryClientProvider } from '@tanstack/lit-query'
 import type { GreetingView } from './greeting-view'
 import './greeting-view'

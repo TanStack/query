@@ -1,10 +1,10 @@
-import { Form, redirect, useLoaderData, useNavigate } from 'react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { Form, redirect, useLoaderData, useNavigate } from 'react-router'
 import { contactsAPI } from '../services/contacts/api'
 import { contactsQueries } from '../services/contacts/queries'
+import type { QueryClient } from '@tanstack/react-query'
 import type { ActionFunctionArgs } from 'react-router'
 import type { Contact } from '../services/contacts/types'
-import type { QueryClient } from '@tanstack/react-query'
 import type { loader } from './contact'
 
 export const action =
