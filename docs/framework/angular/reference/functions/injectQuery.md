@@ -159,9 +159,9 @@ Additional configuration
 [`CreateQueryResult`](../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
 
 The query result. `status()` is `'error'` if the query has an error from a fetch that failed
-after its retries or if `select` threw, `'success'` if the query has data to display (including
-`placeholderData`), and `'pending'` otherwise. `isPending`/`isSuccess`/`isError` are type-guard methods
-for convenience.
+after its retries or if `select` threw, `'success'` if the query has cached data (even if `select`
+returns `undefined`) or data from `placeholderData`, and `'pending'` otherwise.
+`isPending`/`isSuccess`/`isError` are type-guard methods for convenience.
 
 ### See
 

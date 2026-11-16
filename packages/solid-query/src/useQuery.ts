@@ -73,9 +73,9 @@ export function useQuery<
  * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns The current query result, as a Solid store. `status` is `error` if the query has an error from
- * a fetch that failed after its retries or if `select` threw, `success` if the query has data to display
- * (including `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived
- * booleans for convenience.
+ * a fetch that failed after its retries or if `select` threw, `success` if the query has cached data
+ * (even if `select` returns `undefined`) or data from `placeholderData`, and `pending` otherwise.
+ * `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
  * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @example
  * ```tsx
