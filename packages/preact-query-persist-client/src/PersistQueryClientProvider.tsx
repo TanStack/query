@@ -1,19 +1,18 @@
-import { useEffect, useRef, useState } from 'preact/hooks'
-
-import {
-  persistQueryClientRestore,
-  persistQueryClientSubscribe,
-} from '@tanstack/query-persist-client-core'
 import {
   IsRestoringProvider,
   QueryClientProvider,
 } from '@tanstack/preact-query'
-import type { VNode } from 'preact'
-import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
+import {
+  persistQueryClientRestore,
+  persistQueryClientSubscribe,
+} from '@tanstack/query-persist-client-core'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import type {
   OmitKeyof,
   QueryClientProviderProps,
 } from '@tanstack/preact-query'
+import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
+import type { VNode } from 'preact'
 
 /**
  * The props of `PersistQueryClientProvider`: the props of `QueryClientProvider`, plus the

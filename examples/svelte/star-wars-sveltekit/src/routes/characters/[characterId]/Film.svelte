@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { createQuery } from '@tanstack/svelte-query'
   import { resolve } from '$app/paths'
   import { filmsQueries } from '$lib/services/films/queries'
-  import { createQuery } from '@tanstack/svelte-query'
 
   type Props = {
     filmId: string

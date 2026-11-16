@@ -1,6 +1,6 @@
+import { createKey } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick, ref } from 'vue-demi'
-import { createKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { usePrefetchInfiniteQuery } from '../usePrefetchInfiniteQuery'
 

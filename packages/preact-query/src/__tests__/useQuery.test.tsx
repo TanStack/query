@@ -13,7 +13,6 @@ import {
   useState,
 } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-
 import {
   IsRestoringProvider,
   QueryCache,
@@ -32,8 +31,8 @@ import {
   renderWithClient,
   setActTimeout,
 } from './utils'
-import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
 import type { Mock } from 'vitest'
+import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
 
 describe('useQuery', () => {
   let queryCache: QueryCache

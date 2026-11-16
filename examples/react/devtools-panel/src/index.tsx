@@ -1,11 +1,11 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
 import {
   QueryClient,
   QueryClientProvider,
   useQuery,
 } from '@tanstack/react-query'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import { reposQueries } from './services/repos/queries'
 
 const queryClient = new QueryClient()

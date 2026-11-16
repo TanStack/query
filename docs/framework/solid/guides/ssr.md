@@ -31,8 +31,8 @@ As with any server-rendered app, create the `QueryClient` per request rather tha
 import { MetaProvider, Title } from '@solidjs/meta'
 import { Router } from '@solidjs/router'
 import { FileRoutes } from '@solidjs/start/router'
-import { Suspense } from 'solid-js'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
+import { Suspense } from 'solid-js'
 
 export default function App() {
   // Constructing the QueryClient inside the component (rather than at module

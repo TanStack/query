@@ -1,5 +1,5 @@
-import type { LayoutLoad } from './$types'
 import { contactsQueries } from '$lib/services/contacts/queries'
+import type { LayoutLoad } from './$types'
 
 export const load: LayoutLoad = async ({ parent, fetch, url }) => {
   const { queryClient } = await parent()

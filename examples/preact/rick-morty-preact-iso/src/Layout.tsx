@@ -1,8 +1,8 @@
 import { Route, Router } from 'preact-iso'
-import Episodes from './Episodes'
-import Episode from './Episode'
-import Characters from './Characters'
 import Character from './Character'
+import Characters from './Characters'
+import Episode from './Episode'
+import Episodes from './Episodes'
 import Home from './Home'
 
 export default function Layout() {

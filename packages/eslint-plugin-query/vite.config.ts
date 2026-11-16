@@ -1,5 +1,4 @@
 import { defineConfig } from 'vitest/config'
-
 import packageJson from './package.json'
 
 const config = defineConfig({

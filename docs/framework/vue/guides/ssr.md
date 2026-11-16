@@ -14,10 +14,6 @@ Vue Query supports prefetching multiple queries on the server and then _dehydrat
 First create `vue-query.ts` file in your `plugins` directory with the following content:
 
 ```ts
-import type {
-  DehydratedState,
-  VueQueryPluginOptions,
-} from '@tanstack/vue-query'
 import {
   VueQueryPlugin,
   QueryClient,
@@ -26,6 +22,10 @@ import {
 } from '@tanstack/vue-query'
 // Nuxt 3 app aliases
 import { defineNuxtPlugin, useState } from '#imports'
+import type {
+  DehydratedState,
+  VueQueryPluginOptions,
+} from '@tanstack/vue-query'
 
 export default defineNuxtPlugin((nuxt) => {
   const vueQueryState = useState<DehydratedState | null>('vue-query')
@@ -76,8 +76,8 @@ export default defineComponent({
 First create `vue-query.js` file in your `plugins` directory with the following content:
 
 ```js
-import Vue from 'vue'
 import { VueQueryPlugin, QueryClient, hydrate } from '@tanstack/vue-query'
+import Vue from 'vue'
 
 export default (context) => {
   // Modify your Vue Query global settings here
@@ -178,15 +178,15 @@ As demonstrated, it's fine to prefetch some queries and let others fetch on the 
 Sync VueQuery client state with [vite-ssr](https://github.com/frandiox/vite-ssr) in order to serialize it in the DOM:
 
 ```js
-// main.js (entry point)
-import App from './App.vue'
-import viteSSR from 'vite-ssr/vue'
 import {
   QueryClient,
   VueQueryPlugin,
   hydrate,
   dehydrate,
 } from '@tanstack/vue-query'
+import viteSSR from 'vite-ssr/vue'
+// main.js (entry point)
+import App from './App.vue'
 
 export default viteSSR(App, { routes: [] }, ({ app, initialState }) => {
   // -- This is Vite SSR main hook, which is called once per request

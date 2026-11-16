@@ -13,11 +13,11 @@ import type {
   QueryKey,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import type { Accessor } from 'solid-js'
 import type {
   InfiniteQueryObserverOptions,
   QueryObserverOptions,
 } from './QueryClient'
-import type { Accessor } from 'solid-js'
 
 /**
  * The options accepted by `useQuery`. Extends {@link QueryObserverOptions} from `@tanstack/query-core` with

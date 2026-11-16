@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import * as React from 'react'
-import { act, fireEvent } from '@testing-library/react'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { act, fireEvent } from '@testing-library/react'
+import * as React from 'react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryCache,
   QueryClient,

@@ -1,3 +1,10 @@
+import {
+  QueryObserver,
+  experimental_streamedQuery,
+  noop,
+  skipToken,
+} from '@tanstack/query-core'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   computed,
@@ -9,16 +16,9 @@ import {
   reactive,
   ref,
 } from 'vue-demi'
-import {
-  QueryObserver,
-  experimental_streamedQuery,
-  noop,
-  skipToken,
-} from '@tanstack/query-core'
-import { createKey, sleep } from '@tanstack/query-test-utils'
 import { keepPreviousData } from '..'
-import { useQuery } from '../useQuery'
 import { useBaseQuery } from '../useBaseQuery'
+import { useQuery } from '../useQuery'
 import { useQueryClient } from '../useQueryClient'
 import type { Query, QueryObserverResult } from '@tanstack/query-core'
 

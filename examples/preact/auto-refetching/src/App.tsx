@@ -1,7 +1,6 @@
-import { useState } from 'preact/hooks'
-
 import { useMutation, useQuery, useQueryClient } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
+import { useState } from 'preact/hooks'
 import { todosMutations, todosQueries } from './services/todos/queries'
 
 export default function App() {
