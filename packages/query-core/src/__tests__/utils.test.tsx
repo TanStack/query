@@ -1,6 +1,7 @@
-import { describe, expect, it, vi } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
+import { describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '..'
+import { Mutation } from '../mutation'
 import {
   addConsumeAwareSignal,
   addToEnd,
@@ -19,7 +20,6 @@ import {
   shouldThrowError,
   skipToken,
 } from '../utils'
-import { Mutation } from '../mutation'
 import type { QueryFunctionContext } from '..'
 
 describe('core/utils', () => {

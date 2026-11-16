@@ -1,6 +1,6 @@
-import { For, Match, Show, Switch } from 'solid-js'
-import { Link, createFileRoute } from '@tanstack/solid-router'
 import { useQuery } from '@tanstack/solid-query'
+import { Link, createFileRoute } from '@tanstack/solid-router'
+import { For, Match, Show, Switch } from 'solid-js'
 import { moviesQueries } from '../services/movies/queries'
 
 export const Route = createFileRoute('/')({

@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import React, { useState } from 'react'
 import { postsQueries } from '../services/posts/queries'
 
 export const PostList = () => {

@@ -1,5 +1,5 @@
-import React from 'react'
 import { QueryClient, dehydrate, noop } from '@tanstack/react-query'
+import React from 'react'
 import { Header, InfoBox, Layout, PostList } from '../components'
 import { postsQueries } from '../services/posts/queries'
 

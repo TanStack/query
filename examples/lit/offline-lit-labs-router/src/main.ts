@@ -1,7 +1,7 @@
-import { LitElement, html } from 'lit'
 import { Router } from '@lit-labs/router'
 import { QueryClientProvider, noop, onlineManager } from '@tanstack/lit-query'
 import { persistQueryClient } from '@tanstack/query-persist-client-core'
+import { LitElement, html } from 'lit'
 import { worker } from './mocks'
 import { persister, queryClient } from './queryClient'
 import { moviesQueries } from './services/movies/queries'

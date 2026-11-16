@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import { VueQueryDevtoolsPanel } from '@tanstack/vue-query-devtools'
+import { ref } from 'vue'
 import { reposQueries } from './services/repos/queries'
 
 const isOpen = ref(false)

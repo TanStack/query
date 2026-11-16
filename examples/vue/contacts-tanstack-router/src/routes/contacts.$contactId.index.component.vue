@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Link, useNavigate, useParams, useSearch } from '@tanstack/vue-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { Link, useNavigate, useParams, useSearch } from '@tanstack/vue-router'
 import FavoriteButton from '../FavoriteButton.vue'
 import {
   contactsMutations,

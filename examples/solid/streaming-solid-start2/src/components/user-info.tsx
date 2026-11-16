@@ -1,9 +1,9 @@
 import { queryOptions, useQuery } from '@tanstack/solid-query'
 import { createSignal, untrack } from 'solid-js'
+import { usersQueries } from '~/services/users/queries'
 import { Example } from './example'
 import { QueryBoundary } from './query-boundary'
 import type { Component } from 'solid-js'
-import { usersQueries } from '~/services/users/queries'
 
 export interface UserInfoProps {
   deferStream?: boolean

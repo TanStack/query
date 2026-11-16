@@ -1,11 +1,6 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type {
-  DefinedInitialDataInfiniteOptions,
-  UndefinedInitialDataInfiniteOptions,
-} from './infiniteQueryOptions'
-import type { VueQueryEnabledOption } from './queryOptions'
-import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
   InfiniteData,
@@ -14,9 +9,12 @@ import type {
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
-
-import type { UseBaseQueryReturnType } from './useBaseQuery'
-
+import type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infiniteQueryOptions'
+import type { QueryClient } from './queryClient'
+import type { VueQueryEnabledOption } from './queryOptions'
 import type {
   DeepUnwrapRef,
   MaybeRef,
@@ -24,7 +22,7 @@ import type {
   MaybeRefOrGetter,
   ShallowOption,
 } from './types'
-import type { QueryClient } from './queryClient'
+import type { UseBaseQueryReturnType } from './useBaseQuery'
 
 /**
  * The options accepted by `useInfiniteQuery`. Extends {@link InfiniteQueryObserverOptions} from

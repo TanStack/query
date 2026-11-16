@@ -1,10 +1,10 @@
-import { vi } from 'vitest'
-import * as React from 'react'
-import { act, render } from '@testing-library/react'
 import { environmentManager } from '@tanstack/query-core'
+import { act, render } from '@testing-library/react'
+import * as React from 'react'
+import { vi } from 'vitest'
 import { QueryClientProvider, onlineManager } from '..'
-import type { QueryClient } from '..'
 import type { MockInstance } from 'vitest'
+import type { QueryClient } from '..'
 
 export function renderWithClient(
   client: QueryClient,

@@ -1,13 +1,12 @@
 import { Route, Router } from '@solidjs/router'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-import Layout from './Layout'
-import Episodes from './Episodes'
-import Episode from './Episode'
-import Characters from './Characters'
 import Character from './Character'
+import Characters from './Characters'
+import Episode from './Episode'
+import Episodes from './Episodes'
 import Home from './Home'
-
+import Layout from './Layout'
 import './styles.css'
 
 const queryClient = new QueryClient()

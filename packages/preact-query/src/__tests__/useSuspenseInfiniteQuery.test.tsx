@@ -1,7 +1,6 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { Suspense } from 'preact/compat'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-
 import {
   QueryCache,
   QueryClient,
