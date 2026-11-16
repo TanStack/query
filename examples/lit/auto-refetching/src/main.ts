@@ -1,10 +1,10 @@
-import { LitElement, html } from 'lit'
 import {
   QueryClient,
   QueryClientProvider,
   createMutationController,
   createQueryController,
 } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import { worker } from './mocks'
 import { todosMutations, todosQueries } from './services/todos/queries'
 

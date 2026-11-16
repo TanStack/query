@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { onDestroy, onMount } from 'svelte'
   import { QueryClient } from '@tanstack/query-core'
+  import { onDestroy, onMount } from 'svelte'
   import { setQueryClientContext } from './context.js'
   import type { QueryClientProviderProps } from './types.js'
 

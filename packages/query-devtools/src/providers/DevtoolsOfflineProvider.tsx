@@ -1,8 +1,8 @@
 import { createEffect, createSignal, onCleanup } from 'solid-js'
-import { useQueryDevtoolsContext } from '../contexts/QueryDevtoolsContext'
 import { DevtoolsOfflineContext } from '../contexts/DevtoolsOfflineContext'
-import type { DevtoolsOfflineState } from '../contexts/types'
+import { useQueryDevtoolsContext } from '../contexts/QueryDevtoolsContext'
 import type { ParentProps } from 'solid-js'
+import type { DevtoolsOfflineState } from '../contexts/types'
 
 /**
  * Provides its children with the offline state of the devtools `onlineManager`, and a function

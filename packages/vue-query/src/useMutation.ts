@@ -1,3 +1,4 @@
+import { MutationObserver, shouldThrowError } from '@tanstack/query-core'
 import {
   computed,
   getCurrentScope,
@@ -9,18 +10,17 @@ import {
   toRefs,
   watch,
 } from 'vue-demi'
-import { MutationObserver, shouldThrowError } from '@tanstack/query-core'
-import { cloneDeepUnref, updateState } from './utils'
 import { useQueryClient } from './useQueryClient'
-import type { ToRefs } from 'vue-demi'
+import { cloneDeepUnref, updateState } from './utils'
 import type {
   DefaultError,
   DistributiveOmit,
   MutateFunction,
   MutationObserverResult,
 } from '@tanstack/query-core'
-import type { MaybeRefDeep, MutationOptions } from './types'
+import type { ToRefs } from 'vue-demi'
 import type { QueryClient } from './queryClient'
+import type { MaybeRefDeep, MutationOptions } from './types'
 
 /**
  * The {@link MutationObserverResult} properties without `mutate` and `reset`, which `useMutation` replaces with

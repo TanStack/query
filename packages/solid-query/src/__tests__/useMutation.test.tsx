@@ -1,20 +1,20 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render } from '@solidjs/testing-library'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   ErrorBoundary,
   createEffect,
   createRenderEffect,
   createSignal,
 } from 'solid-js'
-import { fireEvent, render } from '@solidjs/testing-library'
-import { createKey, sleep } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MutationCache, QueryCache, QueryClient, useMutation } from '..'
 import {
   mockOnlineManagerIsOnline,
   renderWithClient,
   setActTimeout,
 } from './utils'
-import type { UseMutationResult } from '../types'
 import type { MutationFunctionContext } from '..'
+import type { UseMutationResult } from '../types'
 
 describe('useMutation', () => {
   let queryCache: QueryCache

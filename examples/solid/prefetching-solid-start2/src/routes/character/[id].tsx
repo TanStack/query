@@ -1,6 +1,6 @@
-import { ErrorBoundary, Show, Suspense } from 'solid-js'
 import { A, useParams } from '@solidjs/router'
 import { useQuery } from '@tanstack/solid-query'
+import { ErrorBoundary, Show, Suspense } from 'solid-js'
 import { charactersQueries } from '~/services/characters/queries'
 
 export default function CharacterPage() {

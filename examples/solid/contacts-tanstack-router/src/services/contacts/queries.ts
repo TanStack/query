@@ -1,5 +1,5 @@
-import { notFound } from '@tanstack/solid-router'
 import { mutationOptions, queryOptions } from '@tanstack/solid-query'
+import { notFound } from '@tanstack/solid-router'
 import { contactsAPI } from './api'
 import type { Contact } from './types'
 

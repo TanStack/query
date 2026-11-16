@@ -1,3 +1,4 @@
+import { NgStyle } from '@angular/common'
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,7 +10,6 @@ import {
   injectMutation,
   injectQuery,
 } from '@tanstack/angular-query-experimental'
-import { NgStyle } from '@angular/common'
 import { TasksMutations, TasksQueries } from '../services/tasks/queries'
 
 @Component({

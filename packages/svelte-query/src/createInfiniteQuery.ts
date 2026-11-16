@@ -8,15 +8,15 @@ import type {
   QueryObserver,
 } from '@tanstack/query-core'
 import type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infiniteQueryOptions.js'
+import type {
   Accessor,
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
   DefinedCreateInfiniteQueryResult,
 } from './types.js'
-import type {
-  DefinedInitialDataInfiniteOptions,
-  UndefinedInitialDataInfiniteOptions,
-} from './infiniteQueryOptions.js'
 
 /**
  * The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of

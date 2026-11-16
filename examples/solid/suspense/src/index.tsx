@@ -1,6 +1,5 @@
 /* @refresh reload */
-import { ErrorBoundary, Show, Suspense, createSignal, lazy } from 'solid-js'
-import { render } from 'solid-js/web'
+
 import {
   QueryClient,
   QueryClientProvider,
@@ -8,10 +7,10 @@ import {
   useQueryClient,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-
-import { projectsQueries } from './services/projects/queries'
-
+import { ErrorBoundary, Show, Suspense, createSignal, lazy } from 'solid-js'
+import { render } from 'solid-js/web'
 import Button from './components/Button'
+import { projectsQueries } from './services/projects/queries'
 
 const Projects = lazy(() => import('./components/Projects'))
 const Project = lazy(() => import('./components/Project'))
