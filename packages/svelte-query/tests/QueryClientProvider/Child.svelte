@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { createQuery } from '../../src/index.js'
   import { sleep } from '@tanstack/query-test-utils'
+  import { createQuery } from '../../src/index.js'
 
   const query = createQuery(() => ({
     queryKey: ['hello'],

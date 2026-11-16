@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onMounted, onScopeDispose, ref, watchEffect } from 'vue'
-import { onlineManager, useQueryClient } from '@tanstack/vue-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
+import { onlineManager, useQueryClient } from '@tanstack/vue-query'
+import { onMounted, onScopeDispose, ref, watchEffect } from 'vue'
 import type { DevtoolsOptions } from './types'
 
 const props = defineProps<DevtoolsOptions>()

@@ -4,8 +4,8 @@
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
 import { QueryClientProvider, environmentManager } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import type { QueryClient } from '@tanstack/react-query'
 import { makeQueryClient } from '@/app/make-query-client'
+import type { QueryClient } from '@tanstack/react-query'
 
 let browserQueryClient: QueryClient | undefined = undefined
 

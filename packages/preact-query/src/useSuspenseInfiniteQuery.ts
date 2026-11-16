@@ -9,7 +9,6 @@ import type {
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
-
 import type {
   UseSuspenseInfiniteQueryOptions,
   UseSuspenseInfiniteQueryResult,

@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom/vitest'
+import { notifyManager } from '@tanstack/react-query'
 import { act, cleanup } from '@testing-library/react'
 import { afterEach } from 'vitest'
-import { notifyManager } from '@tanstack/react-query'
 
 // https://testing-library.com/docs/react-testing-library/api#cleanup
 afterEach(() => cleanup())
