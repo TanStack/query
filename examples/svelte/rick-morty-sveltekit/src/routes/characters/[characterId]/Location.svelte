@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { locationsQueries } from '$lib/services/locations/queries'
   import { createQuery } from '@tanstack/svelte-query'
+  import { locationsQueries } from '$lib/services/locations/queries'
 
   type Props = {
     locationId: string

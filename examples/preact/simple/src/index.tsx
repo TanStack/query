@@ -1,9 +1,9 @@
-import { render } from 'preact'
 import {
   QueryClient,
   QueryClientProvider,
   useQuery,
 } from '@tanstack/preact-query'
+import { render } from 'preact'
 
 const queryClient = new QueryClient()
 

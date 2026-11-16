@@ -1,21 +1,21 @@
-import { QueryObserver } from '@tanstack/query-core'
 import {
   Injector,
   assertInInjectionContext,
   inject,
   runInInjectionContext,
 } from '@angular/core'
+import { QueryObserver } from '@tanstack/query-core'
 import { createBaseQuery } from './create-base-query'
 import type { DefaultError, QueryKey } from '@tanstack/query-core'
+import type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './query-options'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
 } from './types'
-import type {
-  DefinedInitialDataOptions,
-  UndefinedInitialDataOptions,
-} from './query-options'
 
 /**
  * Options for `injectQuery`, passed after the function that returns the query options.
@@ -91,9 +91,9 @@ export function injectQuery<
  * context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive the query.
  * @param options - Additional configuration
  * @returns The query result. `status()` is `'error'` if the query has an error from a fetch that failed
- * after its retries or if `select` threw, `'success'` if the query has data to display (including
- * `placeholderData`), and `'pending'` otherwise. `isPending`/`isSuccess`/`isError` are type-guard methods
- * for convenience.
+ * after its retries or if `select` threw, `'success'` if the query has cached data (even if `select`
+ * returns `undefined`) or data from `placeholderData`, and `'pending'` otherwise.
+ * `isPending`/`isSuccess`/`isError` are type-guard methods for convenience.
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  * @see {@link queryOptions} to share these options between `injectQuery` and imperative APIs like
  * `queryClient.fetchQuery`.

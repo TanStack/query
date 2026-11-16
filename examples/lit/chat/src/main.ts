@@ -1,6 +1,6 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { repeat } from 'lit/directives/repeat.js'
-import { QueryClient, QueryClientProvider } from '@tanstack/lit-query'
 import './style.css'
 import './chat-message'
 

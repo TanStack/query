@@ -1,3 +1,5 @@
+import { noop } from '@tanstack/query-core'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   isReactive,
@@ -8,8 +10,6 @@ import {
   reactive,
   ref,
 } from 'vue-demi'
-import { noop } from '@tanstack/query-core'
-import { createKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
 import type { MutationFunctionContext } from '@tanstack/query-core'

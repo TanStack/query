@@ -2,15 +2,15 @@ import { QueryObserver } from '@tanstack/query-core'
 import { createBaseQuery } from './createBaseQuery.svelte.js'
 import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 import type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './queryOptions.js'
+import type {
   Accessor,
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
 } from './types.js'
-import type {
-  DefinedInitialDataOptions,
-  UndefinedInitialDataOptions,
-} from './queryOptions.js'
 
 /**
  * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
@@ -72,9 +72,9 @@ export function createQuery<
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current query result. `status` is `error` if the query has an error from a fetch that failed
- * after its retries or if `select` threw, `success` if the query has data to display (including
- * `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived booleans for
- * convenience.
+ * after its retries or if `select` threw, `success` if the query has cached data (even if `select` returns
+ * `undefined`) or data from `placeholderData`, and `pending` otherwise. `isPending`/`isSuccess`/`isError`
+ * are derived booleans for convenience.
  * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
  * @example
  * ```svelte
@@ -145,9 +145,9 @@ export function createQuery<
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current query result. `status` is `error` if the query has an error from a fetch that failed
- * after its retries or if `select` threw, `success` if the query has data to display (including
- * `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived booleans for
- * convenience.
+ * after its retries or if `select` threw, `success` if the query has cached data (even if `select` returns
+ * `undefined`) or data from `placeholderData`, and `pending` otherwise. `isPending`/`isSuccess`/`isError`
+ * are derived booleans for convenience.
  * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
  * @example
  * `select` derives whatever `data` a component needs from the cached value, without changing what's

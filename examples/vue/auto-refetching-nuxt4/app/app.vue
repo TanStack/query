@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+import { ref } from 'vue'
 import { todosMutations, todosQueries } from './services/todos/queries'
 
 const queryClient = useQueryClient()

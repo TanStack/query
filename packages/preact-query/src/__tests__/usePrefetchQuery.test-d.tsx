@@ -1,6 +1,5 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-
 import { skipToken, usePrefetchQuery } from '..'
 
 describe('usePrefetchQuery', () => {

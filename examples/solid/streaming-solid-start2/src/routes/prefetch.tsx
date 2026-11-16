@@ -1,5 +1,5 @@
-import { noop, useQueryClient } from '@tanstack/solid-query'
 import { Title } from '@solidjs/meta'
+import { noop, useQueryClient } from '@tanstack/solid-query'
 import { UserInfo, userInfoQueryOpts } from '~/components/user-info'
 
 export const route = {

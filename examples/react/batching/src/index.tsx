@@ -1,4 +1,3 @@
-import ReactDOM from 'react-dom/client'
 import {
   QueryClient,
   QueryClientProvider,
@@ -6,6 +5,7 @@ import {
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useState } from 'react'
+import ReactDOM from 'react-dom/client'
 import { charactersQueries } from './services/characters/queries'
 
 const queryClient = new QueryClient({

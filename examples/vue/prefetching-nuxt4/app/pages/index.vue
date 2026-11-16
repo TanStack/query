@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+import { ref } from 'vue'
 import CharacterItem from '../components/CharacterItem.vue'
 import { charactersQueries } from '../services/characters/queries'
 

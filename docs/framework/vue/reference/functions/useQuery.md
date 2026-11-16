@@ -116,7 +116,7 @@ const { data, isError, error } = useQuery({
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:240](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L240)
+Defined in: [packages/vue-query/src/useQuery.ts:241](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L241)
 
 `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
 tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
@@ -162,10 +162,11 @@ will be used.
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
 The current query result. `status` is `error` if the query has an error from a fetch that failed
-after its retries or if `select` threw, `success` if the query has data to display (including
-`placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived boolean `ref`s for
-convenience. `state` is that result as one readonly reactive object — `state.data`, `state.isPending`, and
-the rest are plain values, and `state.status === 'success'` narrows `state.data` to `TData`.
+after its retries or if `select` threw, `success` if the query has cached data (even if `select` returns
+`undefined`) or data from `placeholderData`, and `pending` otherwise. `isPending`/`isSuccess`/`isError` are
+derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
+`state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows
+`state.data` to `TData`.
 
 ### Examples
 
@@ -314,7 +315,7 @@ const { state } = useQuery({
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: MaybeRefOrGetter<UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:318](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L318)
+Defined in: [packages/vue-query/src/useQuery.ts:320](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L320)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
@@ -366,10 +367,11 @@ will be used.
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
 The current query result. `status` is `error` if the query has an error from a fetch that failed
-after its retries or if `select` threw, `success` if the query has data to display (including
-`placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived boolean `ref`s for
-convenience. `state` is that result as one readonly reactive object — `state.data`, `state.isPending`, and
-the rest are plain values, and `state.status === 'success'` narrows `state.data` to `TData`.
+after its retries or if `select` threw, `success` if the query has cached data (even if `select` returns
+`undefined`) or data from `placeholderData`, and `pending` otherwise. `isPending`/`isSuccess`/`isError` are
+derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
+`state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows
+`state.data` to `TData`.
 
 ### Examples
 
@@ -444,7 +446,8 @@ will be used.
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
 The current query result. `status` is `error` if the query has an error from a fetch that failed
-after its retries or if `select` threw, `success` if the query has data to display (including
-`placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived boolean `ref`s for
-convenience. `state` is that result as one readonly reactive object — `state.data`, `state.isPending`, and
-the rest are plain values, and `state.status === 'success'` narrows `state.data` to `TData`.
+after its retries or if `select` threw, `success` if the query has cached data (even if `select` returns
+`undefined`) or data from `placeholderData`, and `pending` otherwise. `isPending`/`isSuccess`/`isError` are
+derived boolean `ref`s for convenience. `state` is that result as one readonly reactive object —
+`state.data`, `state.isPending`, and the rest are plain values, and `state.status === 'success'` narrows
+`state.data` to `TData`.
