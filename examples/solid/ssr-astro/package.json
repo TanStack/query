@@ -15,15 +15,15 @@
     "@astrojs/node": "^11.1.9",
     "@astrojs/solid-js": "^7.0.2",
     "@tailwindcss/vite": "^4.3.3",
-    "@tanstack/solid-query": "^5.107.1",
-    "@tanstack/solid-query-devtools": "^5.107.1",
+    "@tanstack/solid-query": "^5.107.2",
+    "@tanstack/solid-query-devtools": "^5.107.2",
     "astro": "^7.4.4",
     "solid-js": "^1.9.18",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.107.1",
+    "@tanstack/eslint-plugin-query": "^5.107.2",
     "eslint-plugin-solid": "^0.18.1"
   }
 }

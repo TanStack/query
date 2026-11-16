@@ -1,5 +1,13 @@
 # @tanstack/query-devtools
 
+## 5.107.2
+
+### Patch Changes
+
+- [#12587](https://github.com/TanStack/query/pull/12587) [`b160291`](https://github.com/TanStack/query/commit/b160291d135f82ec650cc12365b53d567cac94fb) - Replace star exports with explicit exports while preserving the current public API. Adapters continue to re-export all of their corresponding core package.
+- Updated dependencies [[`b160291`](https://github.com/TanStack/query/commit/b160291d135f82ec650cc12365b53d567cac94fb)]:
+  - @tanstack/query-core@5.107.2
+
 ## 5.107.1
 
 ### Patch Changes

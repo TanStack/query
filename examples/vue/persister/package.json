@@ -9,13 +9,13 @@
     "test:eslint": "eslint ./src"
   },
   "dependencies": {
-    "@tanstack/query-persist-client-core": "^5.107.1",
-    "@tanstack/vue-query": "^5.107.1",
+    "@tanstack/query-persist-client-core": "^5.107.2",
+    "@tanstack/vue-query": "^5.107.2",
     "idb-keyval": "^6.3.0",
     "vue": "^3.5.44"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.107.1",
+    "@tanstack/eslint-plugin-query": "^5.107.2",
     "@vitejs/plugin-vue": "^6.0.9",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.12.0",
