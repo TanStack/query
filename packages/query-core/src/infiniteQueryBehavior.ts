@@ -16,6 +16,18 @@ import type {
 } from './types'
 
 /**
+ * `getNextPageParam` is required by the public option type, but cached or optimistically
+ * fetched queries can reach this module without it, so the page param helpers treat it as
+ * optional.
+ */
+type PageParamsOptions = Omit<
+  InfiniteQueryPageParamsOptions<any, any>,
+  'getNextPageParam'
+> & {
+  getNextPageParam?: InfiniteQueryPageParamsOptions<any, any>['getNextPageParam']
+}
+
+/**
  * Creates the behavior that fetches the pages of an infinite query: the next or previous page for
  * `fetchNextPage`/`fetchPreviousPage`, or all pages again from the start on a refetch.
  * @param pages - The number of pages to fetch from the start when all pages are fetched again,
@@ -152,12 +164,12 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
  * @returns The next page param, or `undefined` if there are no pages yet.
  */
 function getNextPageParam(
-  options: InfiniteQueryPageParamsOptions<any>,
+  options: PageParamsOptions,
   { pages, pageParams }: InfiniteData<unknown>,
 ): unknown | undefined {
   const lastIndex = pages.length - 1
   return pages.length > 0
-    ? options.getNextPageParam(
+    ? options.getNextPageParam?.(
         pages[lastIndex],
         pages,
         pageParams[lastIndex],
@@ -190,7 +202,7 @@ function getPreviousPageParam(
  * @returns `true` if `getNextPageParam` returns a value other than `null` or `undefined`.
  */
 export function hasNextPage(
-  options: InfiniteQueryPageParamsOptions<any, any>,
+  options: PageParamsOptions,
   data?: InfiniteData<unknown>,
 ): boolean {
   if (!data || !options.getNextPageParam) return false
