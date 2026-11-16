@@ -7,7 +7,7 @@ title: InfiniteQueryObserverLoadingErrorResult
 
 Defined in: [packages/query-core/src/types.ts:1565](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1565)
 
-An infinite query result in the `error` state when the first fetch failed, so there is no data.
+An infinite query result in the `error` state with no data to display, since a fetch or `select` failed.
 
 ## Extends
 
@@ -27,9 +27,9 @@ An infinite query result in the `error` state when the first fetch failed, so th
 
 | Property | Type | Description | Overrides |
 | ------ | ------ | ------ | ------ |
-| <a id="property-data"></a> `data` | `undefined` | `undefined`, since the first fetch failed before any data was cached. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`data`](InfiniteQueryObserverBaseResult.md#property-data) |
+| <a id="property-data"></a> `data` | `undefined` | `undefined`, since there was no data to display when a fetch or `select` failed. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`data`](InfiniteQueryObserverBaseResult.md#property-data) |
 | <a id="property-dataupdatedat"></a> `dataUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"success"`. | - |
-| <a id="property-error"></a> `error` | `TError` | The error the first fetch failed with. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`error`](InfiniteQueryObserverBaseResult.md#property-error) |
+| <a id="property-error"></a> `error` | `TError` | The error the fetch or `select` failed with. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`error`](InfiniteQueryObserverBaseResult.md#property-error) |
 | <a id="property-errorupdatecount"></a> `errorUpdateCount` | `number` | The sum of all errors. | - |
 | <a id="property-errorupdatedat"></a> `errorUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"error"`. | - |
 | <a id="property-failurecount"></a> `failureCount` | `number` | The failure count for the query. - Incremented every time the query fails. - Reset to `0` when the query succeeds. | - |
@@ -50,13 +50,13 @@ An infinite query result in the `error` state when the first fetch failed, so th
 | <a id="property-isfetchpreviouspageerror"></a> `isFetchPreviousPageError` | `false` | `false`, since fetching the previous page didn't fail. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isFetchPreviousPageError`](InfiniteQueryObserverBaseResult.md#property-isfetchpreviouspageerror) |
 | <a id="property-isinitialloading"></a> ~~`isInitialLoading`~~ | `boolean` | **Deprecated** `isInitialLoading` is being deprecated in favor of `isLoading` and will be removed in the next major version. | - |
 | <a id="property-isloading"></a> `isLoading` | `false` | `false`, since the first fetch isn't in flight. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isLoading`](InfiniteQueryObserverBaseResult.md#property-isloading) |
-| <a id="property-isloadingerror"></a> `isLoadingError` | `true` | `true`, since the query failed while fetching for the first time. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isLoadingError`](InfiniteQueryObserverBaseResult.md#property-isloadingerror) |
+| <a id="property-isloadingerror"></a> `isLoadingError` | `true` | `true`, since the query has an error and no data to display. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isLoadingError`](InfiniteQueryObserverBaseResult.md#property-isloadingerror) |
 | <a id="property-ispaused"></a> `isPaused` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - The query wanted to fetch, but has been `paused`. | - |
-| <a id="property-ispending"></a> `isPending` | `false` | `false`, since the query has data or a query attempt has finished. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isPending`](InfiniteQueryObserverBaseResult.md#property-ispending) |
+| <a id="property-ispending"></a> `isPending` | `false` | `false`, since the query has cached data, data from `placeholderData` or an error. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isPending`](InfiniteQueryObserverBaseResult.md#property-ispending) |
 | <a id="property-isplaceholderdata"></a> `isPlaceholderData` | `false` | `false`, since the data shown isn't the `placeholderData`. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isPlaceholderData`](InfiniteQueryObserverBaseResult.md#property-isplaceholderdata) |
 | <a id="property-isrefetcherror"></a> `isRefetchError` | `false` | `false`, since the query didn't fail while refetching. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isRefetchError`](InfiniteQueryObserverBaseResult.md#property-isrefetcherror) |
 | <a id="property-isrefetching"></a> `isRefetching` | `boolean` | Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`. - Is the same as `isFetching && !isPending`. | - |
 | <a id="property-isstale"></a> `isStale` | `boolean` | Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`. | - |
 | <a id="property-issuccess"></a> `isSuccess` | `false` | `false`, since the query isn't in the `success` state. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isSuccess`](InfiniteQueryObserverBaseResult.md#property-issuccess) |
 | <a id="property-refetch"></a> `refetch` | (`options?`: [`RefetchOptions`](RefetchOptions.md)) => `Promise`\<[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>\> | A function to manually refetch the query. | - |
-| <a id="property-status"></a> `status` | `"error"` | `'error'`, since the query attempt resulted in an error. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`status`](InfiniteQueryObserverBaseResult.md#property-status) |
+| <a id="property-status"></a> `status` | `"error"` | `'error'`, since a fetch failed after its retries or `select` threw. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`status`](InfiniteQueryObserverBaseResult.md#property-status) |
