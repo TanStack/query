@@ -25,7 +25,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function useSuspenseQueries<T extends any[], TCombinedResult = T extends [] ? [] : T extends [Head] ? [GetUseSuspenseQueryResult<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseSuspenseQueryResult<Head>, GetUseSuspenseQueryResult<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseSuspenseQueryResult<Head>, GetUseSuspenseQueryResult<Head>, GetUseSuspenseQueryResult<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : ... extends ... ? ... : ... : [...{ [K in (...)]: (...) }[]] : [...{ [K in string | number | symbol]: GetUseSuspenseQueryResult<Tails[K]> }[]] : { [K in string | number | symbol]: GetUseSuspenseQueryResult<T[K]> }>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/preact-query/src/useSuspenseQueries.ts:407](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L407)
+Defined in: [packages/preact-query/src/useSuspenseQueries.ts:406](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L406)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
 option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
@@ -297,7 +297,7 @@ function ErrorBoundary({
 function useSuspenseQueries<T extends any[], TCombinedResult = T extends [] ? [] : T extends [Head] ? [GetUseSuspenseQueryResult<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseSuspenseQueryResult<Head>, GetUseSuspenseQueryResult<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseSuspenseQueryResult<Head>, GetUseSuspenseQueryResult<Head>, GetUseSuspenseQueryResult<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : ... extends ... ? ... : ... : [...{ [K in (...)]: (...) }[]] : [...{ [K in string | number | symbol]: GetUseSuspenseQueryResult<Tails[K]> }[]] : { [K in string | number | symbol]: GetUseSuspenseQueryResult<T[K]> }>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/preact-query/src/useSuspenseQueries.ts:584](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L584)
+Defined in: [packages/preact-query/src/useSuspenseQueries.ts:583](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L583)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
 option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
