@@ -1,5 +1,5 @@
-import { Match, Switch } from 'solid-js'
 import { useQuery } from '@tanstack/solid-query'
+import { Match, Switch } from 'solid-js'
 
 const App = () => {
   const query = useQuery(() => ({

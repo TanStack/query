@@ -1,3 +1,7 @@
+import { createKey, sleep } from '@tanstack/query-test-utils'
+import { act, fireEvent, render } from '@testing-library/react'
+import * as React from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
 import {
   afterAll,
   afterEach,
@@ -8,10 +12,6 @@ import {
   it,
   vi,
 } from 'vitest'
-import { act, fireEvent, render } from '@testing-library/react'
-import * as React from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
-import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   skipToken,

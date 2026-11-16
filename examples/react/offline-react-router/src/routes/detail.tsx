@@ -1,5 +1,3 @@
-import * as React from 'react'
-import { Link, useLoaderData } from 'react-router'
 import {
   noop,
   onlineManager,
@@ -7,9 +5,11 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
+import * as React from 'react'
+import { Link, useLoaderData } from 'react-router'
 import { moviesMutations, moviesQueries } from '../services/movies/queries'
-import type { LoaderFunctionArgs } from 'react-router'
 import type { QueryClient } from '@tanstack/react-query'
+import type { LoaderFunctionArgs } from 'react-router'
 
 export const loader =
   (queryClient: QueryClient, isRestoring: () => boolean) =>

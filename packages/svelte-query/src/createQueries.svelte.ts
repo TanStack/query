@@ -1,13 +1,7 @@
 import { QueriesObserver } from '@tanstack/query-core'
-import { useIsRestoring } from './useIsRestoring.js'
 import { createRawRef } from './containers.svelte.js'
+import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
-import type {
-  Accessor,
-  CreateQueryOptions,
-  CreateQueryResult,
-  DefinedCreateQueryResult,
-} from './types.js'
 import type {
   DefaultError,
   OmitKeyof,
@@ -18,6 +12,12 @@ import type {
   QueryKey,
   ThrowOnError,
 } from '@tanstack/query-core'
+import type {
+  Accessor,
+  CreateQueryOptions,
+  CreateQueryResult,
+  DefinedCreateQueryResult,
+} from './types.js'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function always gets undefined passed

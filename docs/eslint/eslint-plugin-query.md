@@ -125,8 +125,8 @@ The plugin can also be used with [Oxlint](https://oxc.rs/docs/guide/usage/linter
 To enable all of the recommended rules for our plugin, add the plugin to `jsPlugins` and spread the rules of the `recommended` config:
 
 ```ts
-import { defineConfig } from 'oxlint'
 import pluginQuery from '@tanstack/eslint-plugin-query'
+import { defineConfig } from 'oxlint'
 
 export default defineConfig({
   jsPlugins: ['@tanstack/eslint-plugin-query'],

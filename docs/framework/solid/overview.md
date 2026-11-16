@@ -71,12 +71,12 @@ On a more technical note, Solid Query will likely:
 In the example below, you can see Solid Query in its most basic and simple form being used to fetch the GitHub stats for the TanStack Query GitHub project itself:
 
 ```tsx
-import { ErrorBoundary, Suspense } from 'solid-js'
 import {
   useQuery,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/solid-query'
+import { ErrorBoundary, Suspense } from 'solid-js'
 
 function App() {
   const repositoryQuery = useQuery(() => ({

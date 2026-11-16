@@ -1,7 +1,7 @@
-import { TestBed } from '@angular/core/testing'
-import { describe, expect, it } from 'vitest'
 import { InjectionToken, provideZonelessChangeDetection } from '@angular/core'
+import { TestBed } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
+import { describe, expect, it } from 'vitest'
 import { provideTanStackQuery } from '../providers'
 
 describe('provideTanStackQuery', () => {

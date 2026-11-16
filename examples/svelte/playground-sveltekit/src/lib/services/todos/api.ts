@@ -1,4 +1,3 @@
-import type { Todo, Todos } from './types'
 import {
   errorRate,
   queryTimeMax,
@@ -6,6 +5,7 @@ import {
   ref,
   snapshot,
 } from '$lib/stores.svelte'
+import type { Todo, Todos } from './types'
 
 let initialId = 0
 const initialList: Todos = [

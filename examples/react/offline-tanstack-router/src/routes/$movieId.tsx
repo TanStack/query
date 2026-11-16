@@ -1,11 +1,11 @@
-import * as React from 'react'
-import { Link, createFileRoute } from '@tanstack/react-router'
 import {
   onlineManager,
   useMutation,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
+import { Link, createFileRoute } from '@tanstack/react-router'
+import * as React from 'react'
 import { moviesMutations, moviesQueries } from '../services/movies/queries'
 
 export const Route = createFileRoute('/$movieId')({

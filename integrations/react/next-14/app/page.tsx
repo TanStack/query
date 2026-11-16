@@ -1,5 +1,5 @@
-import React from 'react'
 import { queryOptions } from '@tanstack/react-query'
+import React from 'react'
 import { ClientComponent } from './client-component'
 
 const options = queryOptions({
