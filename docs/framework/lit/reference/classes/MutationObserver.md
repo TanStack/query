@@ -114,7 +114,7 @@ The observer's latest result.
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:43](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L43)
+Defined in: [packages/query-core/src/subscribable.ts:46](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L46)
 
 Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
@@ -256,7 +256,7 @@ observer.setOptions({
 subscribe(listener: MutationObserverListener): () => void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:28](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L28)
+Defined in: [packages/query-core/src/subscribable.ts:31](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L31)
 
 Registers a listener to be called on every update this object notifies about. Returns a function
 that removes the listener again — call it to stop listening. The base class never drops a listener

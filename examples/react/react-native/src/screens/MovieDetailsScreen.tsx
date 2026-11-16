@@ -1,15 +1,15 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { LoadingIndicator } from '../components/LoadingIndicator'
 import { ErrorMessage } from '../components/ErrorMessage'
+import { LoadingIndicator } from '../components/LoadingIndicator'
 import { useRefreshByUser } from '../hooks/useRefreshByUser'
 import { moviesQueries } from '../services/movies/queries'
-import type { Movie, MovieDetails } from '../services/movies/types'
-import type { MoviesStackNavigator } from '../navigation/types'
-import type { StackNavigationProp } from '@react-navigation/stack'
 import type { RouteProp } from '@react-navigation/native'
+import type { StackNavigationProp } from '@react-navigation/stack'
+import type { MoviesStackNavigator } from '../navigation/types'
+import type { Movie, MovieDetails } from '../services/movies/types'
 
 type MoviesDetailsScreenNavigationProp = StackNavigationProp<
   MoviesStackNavigator,

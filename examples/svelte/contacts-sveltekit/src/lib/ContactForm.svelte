@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { useQueryClient } from '@tanstack/svelte-query'
   import { enhance } from '$app/forms'
   import { contactsQueries } from '$lib/services/contacts/queries'
-  import { useQueryClient } from '@tanstack/svelte-query'
   import type { Contact } from '$lib/services/contacts/types'
 
   type Props = {

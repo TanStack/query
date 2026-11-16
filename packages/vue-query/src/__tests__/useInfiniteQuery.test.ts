@@ -1,9 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { computed, ref } from 'vue-demi'
 import { skipToken } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { useInfiniteQuery } from '../useInfiniteQuery'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { computed, ref } from 'vue-demi'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
+import { useInfiniteQuery } from '../useInfiniteQuery'
 
 vi.mock(import('../useQueryClient'))
 

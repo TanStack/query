@@ -1,6 +1,6 @@
-import { del, entries, get, set } from 'idb-keyval'
-import { queryOptions } from '@tanstack/vue-query'
 import { experimental_createQueryPersister } from '@tanstack/query-persist-client-core'
+import { queryOptions } from '@tanstack/vue-query'
+import { del, entries, get, set } from 'idb-keyval'
 import { postsAPI } from './api'
 
 const postsPersister = experimental_createQueryPersister({

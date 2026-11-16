@@ -5,7 +5,6 @@ import {
   ensureQueryFn,
   fetchSignal,
 } from './utils'
-import type { FetchSignalContext } from './utils'
 import type { QueryBehavior } from './query'
 import type {
   InfiniteData,
@@ -14,6 +13,7 @@ import type {
   QueryFunctionContext,
   QueryKey,
 } from './types'
+import type { FetchSignalContext } from './utils'
 
 /**
  * Creates the behavior that fetches the pages of an infinite query: the next or previous page for

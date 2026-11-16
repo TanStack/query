@@ -1,8 +1,8 @@
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { onScopeDispose, reactive, ref } from 'vue-demi'
-import { createKey, sleep } from '@tanstack/query-test-utils'
-import { useQuery } from '../useQuery'
 import { useIsFetching } from '../useIsFetching'
+import { useQuery } from '../useQuery'
 
 vi.mock(import('../useQueryClient'))
 

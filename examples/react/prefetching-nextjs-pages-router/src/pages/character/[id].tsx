@@ -1,7 +1,7 @@
-import React from 'react'
+import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useQuery } from '@tanstack/react-query'
+import React from 'react'
 import { charactersQueries } from '../../services/characters/queries'
 
 export default function CharacterPage() {

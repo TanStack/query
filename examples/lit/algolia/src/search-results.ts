@@ -1,5 +1,5 @@
-import { LitElement, html } from 'lit'
 import { createInfiniteQueryController } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import { productsQueries } from './services/products/queries'
 
 type Product = {

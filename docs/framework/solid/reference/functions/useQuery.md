@@ -27,13 +27,14 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/useQuery.ts:57](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L57)
+Defined in: [packages/solid-query/src/useQuery.ts:58](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L58)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
 
-This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
-`undefined` (unless a `select` changes `TData` to include `undefined`).
+This overload is selected when `initialData` is known to be defined, so the resulting `data` is typed as never
+`undefined` (unless a `select` changes `TData` to include `undefined`). At runtime, `data` is still `undefined`
+if `select` throws on its first call.
 
 ### Type Parameters
 
@@ -73,10 +74,10 @@ will be used.
 
 [`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result, as a Solid store, typed so that `status` is `success` — or `error` if a
-fetch attempt fails while keeping the existing data (`status` never resolves to `pending` in this overload's
-type, since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for
-convenience.
+The current query result, as a Solid store, typed so that `status` is `success` or `error`
+(`status` never resolves to `pending` in this overload's type, since `initialData` guarantees data upfront).
+`status` is `error` if the query has an error from a fetch that failed after its retries or if `select`
+threw, and `success` otherwise. `isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
 
@@ -116,7 +117,7 @@ function Posts() {
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/useQuery.ts:228](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L228)
+Defined in: [packages/solid-query/src/useQuery.ts:230](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L230)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
@@ -159,8 +160,9 @@ will be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result, as a Solid store. `status` is `pending` if there is no cached data to
-display, `error` if the last fetch attempt failed, or `success` if the query has data to display.
+The current query result, as a Solid store. `status` is `error` if the query has an error from
+a fetch that failed after its retries or if `select` threw, `success` if the query has cached data
+(even if `select` returns `undefined`) or data from `placeholderData`, and `pending` otherwise.
 `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
@@ -348,8 +350,9 @@ will be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result, as a Solid store. `status` is `pending` if there is no cached data to
-display, `error` if the last fetch attempt failed, or `success` if the query has data to display.
+The current query result, as a Solid store. `status` is `error` if the query has an error from
+a fetch that failed after its retries or if `select` threw, `success` if the query has cached data
+(even if `select` returns `undefined`) or data from `placeholderData`, and `pending` otherwise.
 `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 <a id="result-properties"></a>
@@ -365,21 +368,21 @@ display, `error` if the last fetch attempt failed, or `success` if the query has
 | <a id="result-property-errorupdatedat"></a> `errorUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"error"`. |
 | <a id="result-property-failurecount"></a> `failureCount` | `number` | The failure count for the query. - Incremented every time the query fails. - Reset to `0` when the query succeeds. |
 | <a id="result-property-failurereason"></a> `failureReason` | `TError` \| `null` | The failure reason for the query retry. - Reset to `null` when the query succeeds. |
-| <a id="result-property-fetchstatus"></a> `fetchStatus` | `"fetching"` \| `"paused"` \| `"idle"` | The fetch status of the query. - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetch. - `paused`: The query wanted to fetch, but has been `paused`. - `idle`: The query is not fetching. - See [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
+| <a id="result-property-fetchstatus"></a> `fetchStatus` | `"idle"` \| `"fetching"` \| `"paused"` | The fetch status of the query. - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetch. - `paused`: The query wanted to fetch, but has been `paused`. - `idle`: The query is not fetching. - See [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
 | <a id="result-property-isenabled"></a> `isEnabled` | `boolean` | `true` if this observer is enabled, `false` otherwise. |
-| <a id="result-property-iserror"></a> `isError` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query attempt resulted in an error. |
+| <a id="result-property-iserror"></a> `isError` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has an error from a fetch that failed after its retries, or if `select` threw. |
 | <a id="result-property-isfetched"></a> `isFetched` | `boolean` | Will be `true` if the query has been fetched. |
 | <a id="result-property-isfetchedaftermount"></a> `isFetchedAfterMount` | `boolean` | Will be `true` if the query has been fetched after the component mounted. - This property can be used to not show any previously cached data. |
 | <a id="result-property-isfetching"></a> `isFetching` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - `true` whenever the `queryFn` is executing, which includes initial `pending` as well as background refetch. |
 | <a id="result-property-isinitialloading"></a> ~~`isInitialLoading`~~ | `boolean` | **Deprecated** `isInitialLoading` is being deprecated in favor of `isLoading` and will be removed in the next major version. |
 | <a id="result-property-isloading"></a> `isLoading` | `boolean` | Is `true` whenever the first fetch for a query is in-flight. - Is the same as `isFetching && isPending`. |
-| <a id="result-property-isloadingerror"></a> `isLoadingError` | `boolean` | Will be `true` if the query failed while fetching for the first time. |
+| <a id="result-property-isloadingerror"></a> `isLoadingError` | `boolean` | Will be `true` if the query has an error and no data to display. |
 | <a id="result-property-ispaused"></a> `isPaused` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - The query wanted to fetch, but has been `paused`. |
-| <a id="result-property-ispending"></a> `isPending` | `boolean` | Will be `pending` if there's no cached data and no query attempt was finished yet. |
+| <a id="result-property-ispending"></a> `isPending` | `boolean` | Will be `true` if the query has no cached data, no data from `placeholderData` and no error. |
 | <a id="result-property-isplaceholderdata"></a> `isPlaceholderData` | `boolean` | Will be `true` if the data shown is the placeholder data. |
-| <a id="result-property-isrefetcherror"></a> `isRefetchError` | `boolean` | Will be `true` if the query failed while refetching. |
+| <a id="result-property-isrefetcherror"></a> `isRefetchError` | `boolean` | Will be `true` if the query has an error and still has data to display (for infinite queries, not after a failed page fetch). |
 | <a id="result-property-isrefetching"></a> `isRefetching` | `boolean` | Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`. - Is the same as `isFetching && !isPending`. |
 | <a id="result-property-isstale"></a> `isStale` | `boolean` | Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`. |
-| <a id="result-property-issuccess"></a> `isSuccess` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has received a response with no errors and is ready to display its data. |
+| <a id="result-property-issuccess"></a> `isSuccess` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has cached data or data from `placeholderData`, and no error. |
 | <a id="result-property-refetch"></a> `refetch` | (`options?`: [`RefetchOptions`](../interfaces/RefetchOptions.md)) => `Promise`\<[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>\> | A function to manually refetch the query. |
-| <a id="result-property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` | The status of the query. - Will be: - `pending` if there's no cached data and no query attempt was finished yet. - `error` if the query attempt resulted in an error. - `success` if the query has received a response with no errors and is ready to display its data. |
+| <a id="result-property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` | The status of the query. - Will be: - `error` if the query has an error from a fetch that failed after its retries, or if `select` threw. - `success` if the query has cached data (even if `select` returns `undefined`) or data from `placeholderData`, and no error. - `pending` otherwise, since the query has no cached data, no data from `placeholderData` and no error. |
