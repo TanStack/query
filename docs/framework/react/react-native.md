@@ -69,10 +69,10 @@ onlineManager.setEventListener((setOnline) => {
 Instead of event listeners on `window`, React Native provides focus information through the [`AppState` module](https://reactnative.dev/docs/appstate#app-states). You can use the `AppState` "change" event to trigger an update when the app state changes to "active":
 
 ```tsx
+import { focusManager } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { AppState, Platform } from 'react-native'
 import type { AppStateStatus } from 'react-native'
-import { focusManager } from '@tanstack/react-query'
 
 function onAppStateChange(status: AppStateStatus) {
   if (Platform.OS !== 'web') {
@@ -93,9 +93,9 @@ In some situations, you may want to refetch the query when a React Native Screen
 This custom hook will refetch **all active stale queries** when the screen is focused again.
 
 ```tsx
-import React from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 import { useQueryClient } from '@tanstack/react-query'
+import React from 'react'
 
 export function useRefreshOnFocus() {
   const queryClient = useQueryClient()

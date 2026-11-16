@@ -1,6 +1,3 @@
-import { render } from 'preact'
-import { Suspense, lazy } from 'preact/compat'
-import { useState } from 'preact/hooks'
 import {
   QueryClient,
   QueryClientProvider,
@@ -9,11 +6,12 @@ import {
   useQueryClient,
 } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
-
-import { projectsQueries } from './services/projects/queries'
-
+import { render } from 'preact'
+import { Suspense, lazy } from 'preact/compat'
+import { useState } from 'preact/hooks'
 import Button from './components/Button'
 import ErrorBoundary from './components/ErrorBoundary'
+import { projectsQueries } from './services/projects/queries'
 
 const Projects = lazy(() => import('./components/Projects'))
 const Project = lazy(() => import('./components/Project'))

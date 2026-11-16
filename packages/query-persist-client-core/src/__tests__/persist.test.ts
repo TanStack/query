@@ -1,10 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   MutationObserver,
   QueriesObserver,
   QueryClient,
   dehydrate,
 } from '@tanstack/query-core'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   persistQueryClient,
   persistQueryClientRestore,

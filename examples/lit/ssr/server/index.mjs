@@ -1,24 +1,24 @@
-import { createServer } from 'node:http'
 import { readFile } from 'node:fs/promises'
+import { createServer } from 'node:http'
 import { dirname, extname, resolve, sep } from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 import { fileURLToPath } from 'node:url'
 import { render } from '@lit-labs/ssr'
 import { collectResult } from '@lit-labs/ssr/lib/render-result.js'
-import { html } from 'lit'
 import { QueryClient, dehydrate } from '@tanstack/lit-query'
+import { html } from 'lit'
 import {
   SSR_BASE_URL,
   SSR_HOST,
   SSR_PORT,
   SSR_PUBLIC_ORIGIN,
 } from '../config/ports.js'
-import { DEFAULT_MESSAGE } from '../src/services/data/api.js'
-import { QUERY_STALE_TIME, dataQueries } from '../src/services/data/queries.js'
 import {
   getSsrQueryControllerCreationCount,
   resetSsrQueryControllerCreationCount,
 } from '../src/app.ts'
+import { DEFAULT_MESSAGE } from '../src/services/data/api.js'
+import { QUERY_STALE_TIME, dataQueries } from '../src/services/data/queries.js'
 
 const serverDir = dirname(fileURLToPath(import.meta.url))
 const distDir = resolve(serverDir, '../dist')

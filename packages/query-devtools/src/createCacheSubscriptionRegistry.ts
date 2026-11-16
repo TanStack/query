@@ -23,7 +23,10 @@ export function createCacheSubscriptionRegistry<TCache, TEvent>() {
    * event.
    */
   function register<T>(
-    callback: (cache: Accessor<TCache>) => Exclude<T, Function>,
+    callback: (
+      cache: Accessor<TCache>,
+      // oxlint-disable-next-line typescript/no-unsafe-function-type -- matches the 'Exclude<T, Function>' that Solid's 'Setter' accepts
+    ) => Exclude<T, Function>,
     setter: Setter<T>,
     shouldUpdate: (event: TEvent) => boolean = () => true,
   ) {

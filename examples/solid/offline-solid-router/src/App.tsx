@@ -1,12 +1,11 @@
+import { Route, Router } from '@solidjs/router'
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import { MutationCache, QueryClient } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/solid-query-persist-client'
-import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
-import { Route, Router } from '@solidjs/router'
-
-import { moviesMutations, moviesQueries } from './services/movies/queries'
-import List from './routes/list'
 import Detail, { preload as detailPreload } from './routes/detail'
+import List from './routes/list'
+import { moviesMutations, moviesQueries } from './services/movies/queries'
 
 const persister = createAsyncStoragePersister({
   storage: window.localStorage,

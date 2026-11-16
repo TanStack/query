@@ -1,11 +1,4 @@
 import type {
-  DeepUnwrapRef,
-  MaybeRef,
-  MaybeRefDeep,
-  MaybeRefOrGetter,
-  ShallowOption,
-} from './types'
-import type {
   DefaultError,
   InitialDataFunction,
   NonUndefinedGuard,
@@ -14,6 +7,13 @@ import type {
   QueryKeyWithDataTag,
   QueryObserverOptions,
 } from '@tanstack/query-core'
+import type {
+  DeepUnwrapRef,
+  MaybeRef,
+  MaybeRefDeep,
+  MaybeRefOrGetter,
+  ShallowOption,
+} from './types'
 
 /**
  * `enabled` for Vue Query. A `ref` or `computed` is reactive, while a plain boolean isn't tracked on its own. A

@@ -1,5 +1,5 @@
-import { ErrorBoundary, For, Suspense, createSignal } from 'solid-js'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/solid-query'
+import { ErrorBoundary, For, Suspense, createSignal } from 'solid-js'
 import { todosMutations, todosQueries } from '~/services/todos/queries'
 
 export default function Example() {
