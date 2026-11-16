@@ -24,7 +24,7 @@ import type { Accessor } from 'solid-js'
  * ```
  */
 export function useIsMutating(
-  filters?: Accessor<MutationFilters>,
+  filters?: Accessor<Omit<MutationFilters, 'status'>>,
   queryClient?: Accessor<QueryClient>,
 ): Accessor<number> {
   const resolveClient = useQueryClientResolver(queryClient)

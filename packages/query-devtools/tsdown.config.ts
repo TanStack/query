@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module'
 import { defineConfig } from 'tsdown'
 import solid from 'unplugin-solid/rolldown'
+import type { UserConfig } from 'tsdown'
 
 const require = createRequire(import.meta.url)
 
@@ -27,13 +28,13 @@ const solidBrowserImports = () => ({
   },
 })
 
-const baseConfig = {
+const baseConfig: UserConfig = {
   target: 'esnext',
-  platform: 'neutral' as const,
+  platform: 'neutral',
   alias: {
     'solid-transition-group': 'solid-transition-group/dist/index.js',
   },
-  format: ['esm', 'cjs'] as ['esm', 'cjs'],
+  format: ['esm', 'cjs'],
   outDir: 'build',
   fixedExtension: false,
   // Published source needs these dependencies declared, but the compiled
@@ -41,6 +42,9 @@ const baseConfig = {
   deps: {
     alwaysBundle: [/./],
     dts: { alwaysBundle: [] },
+  },
+  outputOptions: {
+    postBanner: '/* @refresh skip */',
   },
   inputOptions: {
     // Keep package imports in declaration output. Runtime Solid imports are

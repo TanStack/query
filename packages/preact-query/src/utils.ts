@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
 
 /**
- * This is taken from https://github.com/preactjs/preact/blob/main/compat/src/hooks.js#L8-L54
- * which is taken from https://github.com/facebook/react/blob/main/packages/use-sync-external-store/src/useSyncExternalStoreShimClient.js#L84
+ * This is taken from https://github.com/preactjs/preact/blob/9903119ede99e949d4c146eb42935ee0008caf7f/compat/src/hooks.js#L8-L54
+ * which is taken from https://github.com/facebook/react/blob/9cdf8a99edcfd94d7420835ea663edca04237527/packages/use-sync-external-store/src/useSyncExternalStoreShimClient.js#L84
  * on a high level this cuts out the warnings, ... and attempts a smaller implementation.
  * This way we don't have to import preact/compat with side effects
  */
@@ -36,6 +36,7 @@ export function useSyncExternalStore(
     if (didSnapshotChange(_instance)) {
       forceUpdate({ _instance })
     }
+    // oxlint-disable-next-line react/exhaustive-deps -- '_instance' never changes, matching the upstream implementation
   }, [subscribe, value, getSnapshot])
 
   useEffect(() => {
@@ -48,6 +49,7 @@ export function useSyncExternalStore(
         forceUpdate({ _instance })
       }
     })
+    // oxlint-disable-next-line react/exhaustive-deps -- '_instance' never changes, matching the upstream implementation
   }, [subscribe])
 
   return value
@@ -87,7 +89,7 @@ export function useSyncExternalStoreWithSelector<TSnapshot, TSelected>(
   selector: (snapshot: TSnapshot) => TSelected,
   isEqual: (a: TSelected, b: TSelected) => boolean,
 ): TSelected {
-  const selectedSnapshotRef = useRef<TSelected | undefined>()
+  const selectedSnapshotRef = useRef<TSelected | undefined>(undefined)
 
   const getSelectedSnapshot = () => {
     const snapshot = getSnapshot()

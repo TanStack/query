@@ -25,7 +25,7 @@ it in production while the API is early.
 ## Install
 
 ```bash
-npm install @tanstack/lit-query @tanstack/query-core lit
+npm install @tanstack/lit-query
 ```
 
 For local development in this repository:
@@ -125,7 +125,7 @@ SSR_HOST=0.0.0.0 pnpm --dir examples/lit/ssr run dev
 For the framework build smoke used in CI:
 
 ```bash
-pnpm --dir integrations/lit-vite run build
+pnpm --dir integrations/lit/vite run build
 ```
 
 ## Quality Gates

@@ -9,25 +9,25 @@ TanStack Query comes with its own ESLint plugin. This plugin is used to enforce 
 
 The plugin is a separate package that you need to install:
 
-```bash
+```sh
 npm i -D @tanstack/eslint-plugin-query
 ```
 
 or
 
-```bash
+```sh
 pnpm add -D @tanstack/eslint-plugin-query
 ```
 
 or
 
-```bash
+```sh
 yarn add -D @tanstack/eslint-plugin-query
 ```
 
 or
 
-```bash
+```sh
 bun add -D @tanstack/eslint-plugin-query
 ```
 
@@ -113,6 +113,61 @@ Alternatively, add `@tanstack/query` to the plugins section, and configure the r
   }
 }
 ```
+
+## Oxlint
+
+The plugin can also be used with [Oxlint](https://oxc.rs/docs/guide/usage/linter) through its [JS plugins](https://oxc.rs/docs/guide/usage/linter/js-plugins) support, which is currently in alpha. Rule names are the same as in ESLint.
+
+### `oxlint.config.ts`
+
+#### Recommended setup
+
+To enable all of the recommended rules for our plugin, add the plugin to `jsPlugins` and spread the rules of the `recommended` config:
+
+```ts
+import { defineConfig } from 'oxlint'
+import pluginQuery from '@tanstack/eslint-plugin-query'
+
+export default defineConfig({
+  jsPlugins: ['@tanstack/eslint-plugin-query'],
+  rules: {
+    ...pluginQuery.configs.recommended.rules,
+  },
+})
+```
+
+Use `pluginQuery.configs.recommendedStrict.rules` instead for the recommended strict setup.
+
+#### Custom setup
+
+Alternatively, configure only the rules you want to use:
+
+```ts
+import { defineConfig } from 'oxlint'
+
+export default defineConfig({
+  jsPlugins: ['@tanstack/eslint-plugin-query'],
+  rules: {
+    '@tanstack/query/exhaustive-deps': 'error',
+  },
+})
+```
+
+### `.oxlintrc.json`
+
+A JSON config cannot import the configs of our plugin, so add the plugin to `jsPlugins` and configure the rules you want to use:
+
+```json
+{
+  "jsPlugins": ["@tanstack/eslint-plugin-query"],
+  "rules": {
+    "@tanstack/query/exhaustive-deps": "error"
+  }
+}
+```
+
+> [!NOTE]
+> [`no-void-query-fn`](./no-void-query-fn.md) needs type information, which Oxlint does not provide to JS plugins yet, so the rule does not report anything under Oxlint.
 
 ## Rules
 

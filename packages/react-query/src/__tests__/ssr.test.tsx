@@ -1,7 +1,16 @@
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -17,10 +26,13 @@ import {
 import { setIsServer } from './utils'
 
 describe('Server Side Rendering', () => {
-  setIsServer(true)
-
+  let restoreIsServer: () => void
   let queryCache: QueryCache
   let queryClient: QueryClient
+
+  beforeAll(() => {
+    restoreIsServer = setIsServer(true)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -33,9 +45,15 @@ describe('Server Side Rendering', () => {
     vi.useRealTimers()
   })
 
+  afterAll(() => {
+    restoreIsServer()
+  })
+
   it('should not trigger fetch', () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       const query = useQuery({ queryKey: key, queryFn })
@@ -60,7 +78,7 @@ describe('Server Side Rendering', () => {
   })
 
   it('should add prefetched data to cache', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     const promise = queryClient.query({
       queryKey: key,
@@ -75,8 +93,10 @@ describe('Server Side Rendering', () => {
   })
 
   it('should return existing data from the cache', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data'),
+    )
 
     function Page() {
       const query = useQuery({ queryKey: key, queryFn })
@@ -104,7 +124,7 @@ describe('Server Side Rendering', () => {
   })
 
   it('should add initialData to the cache', () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [page, setPage] = React.useState(1)
@@ -130,12 +150,14 @@ describe('Server Side Rendering', () => {
 
     const keys = queryCache.getAll().map((query) => query.queryKey)
 
-    expect(keys).toEqual([[key, 1]])
+    expect(keys).toStrictEqual([[key, 1]])
   })
 
   it('should return the correct state from useInfiniteQuery', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'page 1'))
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'page 1'),
+    )
 
     function Page() {
       const query = useInfiniteQuery({
@@ -173,7 +195,7 @@ describe('Server Side Rendering', () => {
   })
 
   it('should return 0 from useIsFetching after prefetch completes', async () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = () => sleep(10).then(() => 'data')
 
     function Page() {
@@ -202,8 +224,8 @@ describe('Server Side Rendering', () => {
   })
 
   it('should return existing data from the cache with useQueries', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = () => sleep(10).then(() => 'data1')
     const queryFn2 = () => sleep(10).then(() => 'data2')
 

@@ -9,6 +9,8 @@ The QueryClient contains the QueryCache, so you'd only want to create one instan
 
 ## Rule Details
 
+This rule checks function declarations, function expressions, and arrow functions used as React components or custom hooks. It also reports clients created directly in JSX. Automatic fixes are available when the client is assigned to a variable.
+
 Examples of **incorrect** code for this rule:
 
 ```tsx

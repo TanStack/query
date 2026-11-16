@@ -37,7 +37,9 @@ function reconcileFn<TData, TError>(
   store: QueryObserverResult<TData, TError>,
   result: QueryObserverResult<TData, TError>,
   reconcileOption:
-    string | false | ((oldData: TData | undefined, newData: TData) => TData),
+    | string
+    | false
+    | ((oldData: TData | undefined, newData: TData) => TData),
   queryHash?: string,
 ): QueryObserverResult<TData, TError> {
   if (reconcileOption === false) return result
@@ -350,8 +352,8 @@ export function useBaseQuery<
           unsubscribe()
         }
         const newObserver = new Observer(c, defaultedOptions())
-        unsubscribe = createClientSubscriber()
         setObserver(newObserver)
+        unsubscribe = createClientSubscriber()
       },
       {
         defer: true,

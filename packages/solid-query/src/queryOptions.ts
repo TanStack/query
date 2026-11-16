@@ -1,5 +1,7 @@
 import type {
   DefaultError,
+  InitialDataFunction,
+  NonUndefinedGuard,
   QueryKey,
   QueryKeyWithDataTag,
 } from '@tanstack/query-core'
@@ -7,10 +9,11 @@ import type { QueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 
 /**
- * The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
- * `undefined` while the query is `pending`. `queryOptions` itself accepts and returns a plain object (its
- * parameter type is `ReturnType<UndefinedInitialDataOptions<...>>`, i.e. this `Accessor` called); Solid's
- * reactivity applies where the result is consumed instead, e.g. `useQuery(() => options)`.
+ * The options accepted by the `queryOptions` overload selected when `initialData` is omitted, may be
+ * `undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is
+ * `pending`. `queryOptions` itself accepts and returns a plain object (its parameter type is
+ * `ReturnType<UndefinedInitialDataOptions<...>>`, i.e. this `Accessor` called); Solid's reactivity applies
+ * where the result is consumed instead, e.g. `useQuery(() => options)`.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
@@ -23,13 +26,16 @@ export type UndefinedInitialDataOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = Accessor<
   QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-    initialData?: undefined
+    initialData?:
+      | undefined
+      | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+      | NonUndefinedGuard<TQueryFnData>
   }
 >
 
 /**
- * The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
- * `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * The options accepted by the `queryOptions` overload selected when `initialData` is known to be defined —
+ * `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
@@ -42,7 +48,9 @@ export type DefinedInitialDataOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = Accessor<
   QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-    initialData: TQueryFnData | (() => TQueryFnData)
+    initialData:
+      | NonUndefinedGuard<TQueryFnData>
+      | (() => NonUndefinedGuard<TQueryFnData>)
   }
 >
 
@@ -51,9 +59,9 @@ export type DefinedInitialDataOptions<
  * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
  * is the query key to generate options for.
  *
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
- * a `select` changes `TData` to include `undefined`).
- * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` set.
+ * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` known to be defined.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  * @see {@link useQuery} to run a query with these options.
  * @example

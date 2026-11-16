@@ -1,5 +1,104 @@
 # @tanstack/vue-query
 
+## 5.107.1
+
+### Patch Changes
+
+- [#12542](https://github.com/TanStack/query/pull/12542) [`025773a`](https://github.com/TanStack/query/commit/025773a83a7375078fb5ac46280222fe52c9b212) - fix(vue-query): keep query-core's `enabled(query)` callback. Zero-argument getters and refs stay reactive; the query callback is passed through to query-core.
+
+- [#12541](https://github.com/TanStack/query/pull/12541) [`f4199ab`](https://github.com/TanStack/query/commit/f4199ab51f4e54044e97bcbd520977728538a649) - feat(vue-query): return a reactive `state` from `useQuery` so `status === 'success'` narrows `data` without unwrapping refs
+- Updated dependencies []:
+  - @tanstack/query-core@5.107.1
+
+## 5.107.0
+
+### Patch Changes
+
+- [#12494](https://github.com/TanStack/query/pull/12494) [`00dc8de`](https://github.com/TanStack/query/commit/00dc8de8fe04f78ed24405f3ec19f20880b1c9f6) - Reset `isRestoring` in `VueQueryPlugin` when the `clientPersister` promise rejects, so queries no longer wait forever for a failed restore, and handle the rejection instead of leaving it unhandled.
+
+- [#12537](https://github.com/TanStack/query/pull/12537) [`2cdba60`](https://github.com/TanStack/query/commit/2cdba6053c8f3b03094b55b3fd64880b8fbd596b) - fix(vue-query/useInfiniteQuery): return 'UseInfiniteQueryDefinedReturnType' from the 'Defined' overload so 'data' is no longer typed as possibly 'undefined' when 'initialData' is defined
+- Updated dependencies [[`b6add89`](https://github.com/TanStack/query/commit/b6add891c1b846c1f276a4c0110edb58b62defaa)]:
+  - @tanstack/query-core@5.107.0
+
+## 5.106.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.106.1
+
+## 5.106.0
+
+### Patch Changes
+
+- [#12525](https://github.com/TanStack/query/pull/12525) [`e712412`](https://github.com/TanStack/query/commit/e7124128ccab29f8dbbbdf1297df05aa13171b6d) - Accept reactive query options in Vue QueryClient execution methods.
+
+- [#12226](https://github.com/TanStack/query/pull/12226) [`3ccb007`](https://github.com/TanStack/query/commit/3ccb007cbda7bc44b0c449ff20e5533422ef5c85) - fix(vue-query/queryClient): preserve union narrowing in 'setQueryData' updaters for tagged query keys
+- Updated dependencies []:
+  - @tanstack/query-core@5.106.0
+
+## 5.105.3
+
+### Patch Changes
+
+- Updated dependencies [[`3f4de1b`](https://github.com/TanStack/query/commit/3f4de1b40cce4314f7572b515ad8fd26dd85fe04), [`969e580`](https://github.com/TanStack/query/commit/969e58019bf650fb17c273fddd0e8d2adf56d4d9)]:
+  - @tanstack/query-core@5.105.3
+
+## 5.105.2
+
+### Patch Changes
+
+- [#12480](https://github.com/TanStack/query/pull/12480) [`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1) - Exclude `status` from the filters accepted by `QueryClient.isMutating`, `useIsMutating`, and `injectIsMutating`. These APIs always count mutations with `status: 'pending'`.
+- Updated dependencies [[`2ee2fd9`](https://github.com/TanStack/query/commit/2ee2fd935acd88532255947c4b5e29baffd21ce8), [`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1), [`e69cac6`](https://github.com/TanStack/query/commit/e69cac69d99cc3c4f6f32b2ad8aad53da83b4a72), [`f2215d2`](https://github.com/TanStack/query/commit/f2215d25945e6461252b7c32bf822f31239e507e), [`86e7957`](https://github.com/TanStack/query/commit/86e79571fd45f29ab7d172102fdd718d3b8bde69), [`b6576b3`](https://github.com/TanStack/query/commit/b6576b388f2784839081358fa82744b0aacdeecd), [`af0e0ef`](https://github.com/TanStack/query/commit/af0e0ef5fc04e9d232fdc3aebd24ffe528b256d7), [`05d9b6a`](https://github.com/TanStack/query/commit/05d9b6a40b9d4ac49943e9d881789e098db5bdfa)]:
+  - @tanstack/query-core@5.105.2
+
+## 5.105.1
+
+### Patch Changes
+
+- [#11373](https://github.com/TanStack/query/pull/11373) [`7ccba6e`](https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6) - fix({react,preact,angular,solid,vue}-query/infiniteQueryOptions): correct the overload selected for a possibly-undefined 'initialData'
+
+- [#12390](https://github.com/TanStack/query/pull/12390) [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf) - Exclude `fetchStatus` from the filters accepted by `QueryClient.isFetching`, `useIsFetching`, and `injectIsFetching`. These APIs always count queries with `fetchStatus: 'fetching'`.
+- Updated dependencies [[`6f8a48d`](https://github.com/TanStack/query/commit/6f8a48d543b499b6d9b0e95050c28183c8c18ae0), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/query-core@5.105.1
+
+## 5.105.0
+
+### Patch Changes
+
+- [#11921](https://github.com/TanStack/query/pull/11921) [`c5de051`](https://github.com/TanStack/query/commit/c5de051d61f1ed20e5266b4086349589d51e2950) - fix(vue-query/queryClient): infer the data and error types of 'getQueryState' from a tagged query key
+- Updated dependencies []:
+  - @tanstack/query-core@5.105.0
+
+## 5.104.5
+
+### Patch Changes
+
+- Updated dependencies [[`f608f93`](https://github.com/TanStack/query/commit/f608f933a36da30670082e90d0a56b2569290563)]:
+  - @tanstack/query-core@5.104.5
+
+## 5.104.4
+
+### Patch Changes
+
+- Updated dependencies [[`1fee044`](https://github.com/TanStack/query/commit/1fee0443dbeb346b8401557ca286a66cdec7ad71), [`fce89dd`](https://github.com/TanStack/query/commit/fce89ddf7a35b14252096ff64a1217efd81b415c)]:
+  - @tanstack/query-core@5.104.4
+
+## 5.104.3
+
+### Patch Changes
+
+- Updated dependencies [[`0f15bc9`](https://github.com/TanStack/query/commit/0f15bc925db5813be6a17527988ec7d7b3c8cfc0)]:
+  - @tanstack/query-core@5.104.3
+
+## 5.104.2
+
+### Patch Changes
+
+- [#11796](https://github.com/TanStack/query/pull/11796) [`69e114a`](https://github.com/TanStack/query/commit/69e114aecfdbd0a05625065aea4e43415fa386b3) - Export the `MutationResult` type so inferred `useMutation` return types can be named when emitting declarations
+- Updated dependencies [[`03e8c39`](https://github.com/TanStack/query/commit/03e8c3955ddbf20f0a07b79982b52dfad8df5323)]:
+  - @tanstack/query-core@5.104.2
+
 ## 5.104.1
 
 ### Patch Changes

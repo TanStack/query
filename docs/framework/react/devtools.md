@@ -21,25 +21,25 @@ When you begin your React Query journey, you'll want these devtools by your side
 
 The devtools are a separate package that you need to install:
 
-```bash
+```sh
 npm i @tanstack/react-query-devtools
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/react-query-devtools
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/react-query-devtools
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/react-query-devtools
 ```
 
@@ -92,9 +92,12 @@ function App() {
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `hideDisabledQueries?: boolean`
+  - Defaults to `false`.
+  - Set this to true to hide disabled queries from the devtools panel.
 - `theme?: "light" | "dark" | "system"`
-  - Defaults to `system`.
-  - Set this to change the theme of the devtools panel.
+  - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
+  - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
 
 ## Embedded Mode
 
@@ -124,7 +127,8 @@ function App() {
 
 - `style?: React.CSSProperties`
   - Custom styles for the devtools panel
-  - Default: `{ height: '500px' }`
+  - Default: `{ height: '100%', display: 'flex', flexDirection: 'column' }`
+  - The panel fills the height of its container, or is `500px` tall when the container has no set height.
   - Example: `{ height: '100%' }`
   - Example: `{ height: '100%', width: '100%' }`
 - `onClose?: () => void`
@@ -138,9 +142,32 @@ function App() {
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `hideDisabledQueries?: boolean`
+  - Defaults to `false`.
+  - Set this to true to hide disabled queries from the devtools panel.
 - `theme?: "light" | "dark" | "system"`
-  - Defaults to `system`.
-  - Set this to change the theme of the devtools panel.
+  - Defaults to the theme selected in the devtools Settings menu, or `system` if none is selected.
+  - Set this to change the theme of the devtools panel. This overrides the theme selected in the Settings menu.
+
+## Filter queries and mutations
+
+The **Filter** input above the query and mutation lists uses the **Key** scope by default. Select the scope button inside the input to switch between **Key**, **Data**, and **All**:
+
+- **Key** matches the query hash, or the mutation key and submission time.
+- **Data** matches the query data, or the mutation variables or data, the same way **Search data** does below.
+- **All** matches either.
+
+The selected scope is remembered across reloads, like the other filter settings.
+
+## Search query and mutation data
+
+Select a query or mutation and use **Search data** in its Data Explorer to search nested property names and primitive values. Search uses case-insensitive text matching and treats special characters as plain text.
+
+Matching text is highlighted. Matching editable values have a highlighted input. The explorer opens matching branches and the first matching page in each paginated collection. Other pages with matches are highlighted so you can open them. You can still inspect other rows and edit query data.
+
+The Data Explorer highlights up to 1,000 matches at a time.
+
+Select **Clear** or press **Escape** in the search field to restore your manual expansion. Selecting another query or mutation clears the search, unless the filter scope is **Data** or **All**: then the search starts with the filter text. For a mutation, it starts only in the variables or data that match the filter.
 
 ## Devtools in production
 
@@ -166,8 +193,9 @@ function App() {
   const [showDevtools, setShowDevtools] = React.useState(false)
 
   React.useEffect(() => {
-    // @ts-expect-error
-    window.toggleDevtools = () => setShowDevtools((old) => !old)
+    Object.assign(window, {
+      toggleDevtools: () => setShowDevtools((old) => !old),
+    })
   }, [])
 
   return (

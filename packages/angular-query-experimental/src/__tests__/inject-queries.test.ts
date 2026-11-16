@@ -7,7 +7,7 @@ import {
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { render } from '@testing-library/angular'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, provideIsRestoring, provideTanStackQuery } from '..'
 import { injectQueries } from '../inject-queries'
 
@@ -30,8 +30,8 @@ describe('injectQueries', () => {
   })
 
   it('should return the correct states', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const results: Array<Array<Record<string, any>>> = []
 
     @Component({
@@ -72,15 +72,15 @@ describe('injectQueries', () => {
     rendered.fixture.detectChanges()
     expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
 
-    expect(results.length).toBe(3)
+    expect(results).toHaveLength(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
     expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
   it('should return the combined result when combine is provided', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const results: Array<Record<string, any>> = []
 
     @Component({
@@ -134,8 +134,8 @@ describe('injectQueries', () => {
   })
 
   it('should reflect error state when one of the queries rejects', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     @Component({
       template: `
@@ -178,10 +178,14 @@ describe('injectQueries', () => {
 
   describe('isRestoring', () => {
     it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const queryFn1 = vi.fn().mockImplementation(() => sleep(10).then(() => 1))
-      const queryFn2 = vi.fn().mockImplementation(() => sleep(10).then(() => 2))
+      const key1 = createKey()
+      const key2 = createKey()
+      const queryFn1 = vi.fn<() => Promise<number>>(() =>
+        sleep(10).then(() => 1),
+      )
+      const queryFn2 = vi.fn<() => Promise<number>>(() =>
+        sleep(10).then(() => 2),
+      )
 
       TestBed.configureTestingModule({
         providers: [provideIsRestoring(signal(true).asReadonly())],

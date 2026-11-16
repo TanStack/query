@@ -103,7 +103,7 @@ class LifecycleContractConsumer extends LitElement {
           payload: ${query.data?.payload ?? 'none'}
         </div>
         <div data-testid="contract-error">
-          error: ${query.error ? String(query.error) : 'none'}
+          error: ${query.error ? query.error.message : 'none'}
         </div>
       `
     } catch (error) {

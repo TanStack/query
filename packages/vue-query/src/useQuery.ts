@@ -15,8 +15,9 @@ import type {
 } from './queryOptions'
 
 /**
- * The result of `useQuery` when `initialData` is omitted or may be `undefined` — `data` may be `undefined`
- * while the query is `pending`. See {@link UseBaseQueryReturnType}.
+ * The result of `useQuery` when `initialData` is omitted, may be `undefined`, or is a function that may
+ * return `undefined` — `data` may be `undefined` while the query is `pending`. See
+ * {@link UseBaseQueryReturnType}.
  */
 export type UseQueryReturnType<TData, TError> = UseBaseQueryReturnType<
   TData,
@@ -34,20 +35,24 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
 >
 
 /**
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
- * a `select` changes `TData` to include `undefined`).
+ * This overload is selected when `initialData` is known to be defined, so the resulting `data` is typed as never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`). At runtime, `data` is still `undefined`
+ * if `select` throws on its first call.
  *
- * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
- * reactive getters as individual entries. Other options are read once when passed as a plain value, and stay
- * reactive when passed as a `ref` or a `computed`.
- * @param options - The {@link DefinedInitialQueryOptions} to use — everything you can pass to `useQuery`, with
- * `initialData` set.
+ * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+ * tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+ * accepted too and is passed through untracked. `queryKey` reacts through a `ref` or a reactive getter for the
+ * array itself, or `ref`s and reactive getters as individual entries. Other options are read once when passed as
+ * a plain value, and stay reactive when passed as a `ref` or a `computed`.
+ * @param options - The {@link DefinedInitialQueryOptions} to use — everything you can pass to `useQuery`,
+ * with `initialData` known to be defined.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
- * @returns The current query result, typed so that `data` is never `undefined` (unless a `select` changes
- * `TData` to include `undefined`). `status` never resolves to `pending` in this overload's type, since
- * `initialData` guarantees data upfront.
+ * @returns The current query result, typed so that `status` is `success` or `error` (`status` never resolves
+ * to `pending` in this overload's type, since `initialData` guarantees data upfront). `status` is `error` if
+ * the query has an error from a fetch that failed after its retries or if `select` threw, and `success`
+ * otherwise. `isSuccess`/`isError` are derived boolean `ref`s for convenience. `state` is that result as one
+ * readonly reactive object — `state.data`, `state.isPending`, and the rest are plain values.
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -81,15 +86,19 @@ export function useQuery<
 ): UseQueryDefinedReturnType<TData, TError>
 
 /**
- * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
- * reactive getters as individual entries. Other options are read once when passed as a plain value, and stay
- * reactive when passed as a `ref` or a `computed`.
+ * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+ * tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+ * accepted too and is passed through untracked. `queryKey` reacts through a `ref` or a reactive getter for the
+ * array itself, or `ref`s and reactive getters as individual entries. Other options are read once when passed as
+ * a plain value, and stay reactive when passed as a `ref` or a `computed`.
  * @param options - The {@link UndefinedInitialQueryOptions} to use — everything you can pass to `useQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
- * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
- * the last fetch attempt failed, or `success` if the query has data to display.
+ * @returns The current query result. `status` is `error` if the query has an error from a fetch that failed
+ * after its retries or if `select` threw, `success` if the query has data to display (including
+ * `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived boolean `ref`s for
+ * convenience. `state` is that result as one readonly reactive object — `state.data`, `state.isPending`, and
+ * the rest are plain values, and `state.status === 'success'` narrows `state.data` to `TData`.
  * @example
  * A query key built from a reactive `ref` — the query refetches whenever `postId` changes:
  * ```vue
@@ -208,6 +217,25 @@ export function useQuery<
  *   </template>
  * </template>
  * ```
+ * @example
+ * `state` keeps `data`, `error`, `status`, and `isPending` on one reactive object, so a `status` check
+ * narrows `data` and you never read `.value`:
+ * ```vue
+ * <script setup lang="ts">
+ * import { useQuery } from '@tanstack/vue-query'
+ *
+ * const { state } = useQuery({
+ *   queryKey: ['post'],
+ *   queryFn: fetchPost,
+ * })
+ * </script>
+ *
+ * <template>
+ *   <span v-if="state.status === 'pending'">Loading...</span>
+ *   <span v-else-if="state.status === 'error'">Error: {{ state.error.message }}</span>
+ *   <h1 v-else>{{ state.data.title }}</h1>
+ * </template>
+ * ```
  */
 export function useQuery<
   TQueryFnData = unknown,
@@ -224,16 +252,21 @@ export function useQuery<
  * `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
  * overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
  *
- * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
- * reactive getters as individual entries.
+ * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+ * tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+ * accepted too and is passed through untracked. `queryKey` reacts through a `ref` or a reactive getter for the
+ * array itself, or `ref`s and reactive getters as individual entries.
  *
  * When `options` itself is a reactive getter, the whole object is re-evaluated on every change to its
  * dependencies, so any option inside it — not just `queryKey` and `enabled` — can change over time.
  * @param options - A `ref`, plain value, or reactive getter resolving to the {@link UseQueryOptions} to use.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
- * @returns The current query result, with `data` typed as possibly `undefined`.
+ * @returns The current query result. `status` is `error` if the query has an error from a fetch that failed
+ * after its retries or if `select` threw, `success` if the query has data to display (including
+ * `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived boolean `ref`s for
+ * convenience. `state` is that result as one readonly reactive object — `state.data`, `state.isPending`, and
+ * the rest are plain values, and `state.status === 'success'` narrows `state.data` to `TData`.
  * @example
  * Passing a whole-options getter so `staleTime` reacts to a setting stored elsewhere, not just `queryKey`:
  * ```vue
@@ -305,6 +338,7 @@ export function useQuery<
   >,
   queryClient?: QueryClient,
 ):
-  UseQueryReturnType<TData, TError> | UseQueryDefinedReturnType<TData, TError> {
+  | UseQueryReturnType<TData, TError>
+  | UseQueryDefinedReturnType<TData, TError> {
   return useBaseQuery(QueryObserver, options, queryClient)
 }

@@ -80,7 +80,7 @@ export class ErrorBoundary extends Component<
         reason: 'keys',
       })
 
-      // eslint-disable-next-line
+      // oxlint-disable-next-line react/no-did-update-set-state -- resetting the boundary when 'resetKeys' change is intended
       this.setState(initialState)
     }
   }

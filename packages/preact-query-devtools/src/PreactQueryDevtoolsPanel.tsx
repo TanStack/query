@@ -31,6 +31,9 @@ export interface DevtoolsPanelOptions {
   shadowDOMTarget?: ShadowRoot
   /**
    * Custom styles for the devtools panel container.
+   * @default { height: '100%', display: 'flex', flexDirection: 'column' }
+   * @example { height: '100%' }
+   * @example { height: '100%', width: '100%' }
    */
   style?: CSSProperties
   /**
@@ -43,7 +46,8 @@ export interface DevtoolsPanelOptions {
   hideDisabledQueries?: boolean
   /**
    * Use this to set the theme of the devtools panel.
-   * @defaultValue system
+   * This overrides the theme selected in the devtools Settings menu. When omitted, the
+   * selected theme is used, or `'system'` if none is selected.
    */
   theme?: Theme
 }
@@ -111,7 +115,12 @@ export function PreactQueryDevtoolsPanel(
 
   return (
     <div
-      style={{ height: '500px', ...props.style }}
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        ...props.style,
+      }}
       className="tsqd-parent-container"
       ref={ref}
     />

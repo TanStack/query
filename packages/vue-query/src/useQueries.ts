@@ -393,8 +393,13 @@ export function useQueries<
     return queriesRaw.map((queryOptions) => {
       const clonedOptions = cloneDeepUnref(queryOptions)
 
-      if (typeof clonedOptions.enabled === 'function') {
-        clonedOptions.enabled = queryOptions.enabled()
+      // A zero-arg function is a Vue getter and must run here so its refs are tracked.
+      // `(query) => boolean` is query-core's callback and is left for core to call.
+      if (
+        typeof clonedOptions.enabled === 'function' &&
+        clonedOptions.enabled.length === 0
+      ) {
+        clonedOptions.enabled = clonedOptions.enabled()
       }
 
       const defaulted = client.defaultQueryOptions(clonedOptions)

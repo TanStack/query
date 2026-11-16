@@ -7,25 +7,25 @@ title: experimental_createQueryPersister
 
 This utility comes as a separate package and is available under the `'@tanstack/query-persist-client-core'` import.
 
-```bash
+```sh
 npm install @tanstack/query-persist-client-core
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/query-persist-client-core
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/query-persist-client-core
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/query-persist-client-core
 ```
 
@@ -48,14 +48,14 @@ import { QueryClient } from '@tanstack/vue-query'
 import { experimental_createQueryPersister } from '@tanstack/query-persist-client-core'
 
 const persister = experimental_createQueryPersister({
-  storage: AsyncStorage,
-  maxAge: 1000 * 60 * 60 * 12, // 12 hours
+  storage: localStorage,
+  maxAge: 12 * 60 * 60 * 1000, // 12 hours
 })
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 30, // 30 seconds
+      gcTime: 30 * 1000, // 30 seconds
       persister: persister.persisterFn,
     },
   },
@@ -77,8 +77,8 @@ This utility might be used along `setQueryData` to persist optimistic update to 
 
 ```tsx
 const persister = experimental_createQueryPersister({
-  storage: AsyncStorage,
-  maxAge: 1000 * 60 * 60 * 12, // 12 hours
+  storage: localStorage,
+  maxAge: 12 * 60 * 60 * 1000, // 12 hours
 })
 
 const queryClient = useQueryClient()
@@ -101,6 +101,8 @@ useMutation({
 This function would attempt to retrieve persisted query by `queryHash`.  
 If `query` is `expired`, `busted` or `malformed` it would be removed from the storage instead, and `undefined` would be returned.
 
+Persisted entries must have a string `queryHash`, an array `queryKey`, and a `state` object with a finite numeric `dataUpdatedAt`. Entries that do not meet these requirements are removed during retrieval, garbage collection, restoration, and filtered removal, without interrupting processing of other entries. `null` remains valid query data.
+
 ### `persisterGc(): Promise<void>`
 
 This function can be used to sporadically clean up storage from `expired`, `busted` or `malformed` entries.
@@ -112,6 +114,21 @@ For example `Object.entries(localStorage)` for `localStorage` or `entries` from 
 
 This function can be used to restore queries that are currently stored by persister.  
 For example when your app is starting up in offline mode, or you want all or only specific data from previous session to be immediately available without intermediate `loading` state.
+
+The filter object supports the following properties:
+
+- `queryKey?: QueryKey`
+  - Set this property to define a query key to match on.
+- `exact?: boolean`
+  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed.
+
+For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.  
+For example `Object.entries(localStorage)` for `localStorage` or `entries` from `idb-keyval`.
+
+### `removeQueries(filters): Promise<void>`
+
+When using `queryClient.removeQueries`, the data remains in the persister and needs to be removed separately.
+This function can be used to remove queries that are currently stored by persister.
 
 The filter object supports the following properties:
 
@@ -192,7 +209,7 @@ The default options are:
 ```tsx
 {
   prefix = 'tanstack-query',
-  maxAge = 1000 * 60 * 60 * 24,
+  maxAge = 24 * 60 * 60 * 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
   refetchOnRestore = true,

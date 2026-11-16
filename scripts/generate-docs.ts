@@ -16,7 +16,6 @@ type PackageReferenceDocsConfig = {
   tsconfig: string
   outputDir: string
   exclude?: Array<string>
-  excludeExternals?: boolean
   simplifyLitQueriesControllerTypes?: boolean
   trimGeneratedMarkdown?: boolean
   // Maps a generated page's path (relative to outputDir, no extension) to the flat
@@ -171,7 +170,7 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
     excludePrivate: true,
     excludeProtected: true,
     excludeInternal: true,
-    excludeExternals: pkg.excludeExternals,
+    excludeExternals: true,
     sourceLinkTemplate:
       'https://github.com/TanStack/query/blob/{gitRevision}/{path}#L{line}',
     gitRevision: 'main',
@@ -544,9 +543,7 @@ async function basePages(
   if (page) {
     return [page]
   }
-  const code = (await readPage(outputDir, from))?.match(
-    /```ts\ntype \w+(?:<[^\n=]*>)? = ([\s\S]*?);\n```/,
-  )?.[1]
+  const code = typeAliasBody(await readPage(outputDir, from))
   return code ? basePagesOfType(outputDir, code, seen) : []
 }
 
@@ -595,6 +592,30 @@ function signatureTypes(signature: string) {
   }
 }
 
+function typeAliasBody(source: string | undefined) {
+  const declaration = source?.match(/```ts\ntype \w+/)
+  if (!source || !declaration) {
+    return undefined
+  }
+  let index = declaration.index! + declaration[0].length
+  if (source[index] === '<') {
+    let depth = 0
+    for (; index < source.length; index++) {
+      if (source[index] === '<') {
+        depth++
+      } else if (
+        source[index] === '>' &&
+        source[index - 1] !== '=' &&
+        --depth === 0
+      ) {
+        index++
+        break
+      }
+    }
+  }
+  return source.slice(index).match(/^ = ([\s\S]*?);\n```/)?.[1]
+}
+
 function readPage(outputDir: string, from: string) {
   return readFile(resolve(outputDir, `${from}.md`), 'utf8').then(
     (source) => source,
@@ -616,9 +637,7 @@ async function resolveInterfacePages(
   if (source.includes('\n## Properties\n')) {
     return [from]
   }
-  const code = source.match(
-    /```ts\ntype \w+(?:<[^\n=]*>)? = ([\s\S]*?);\n```/,
-  )?.[1]
+  const code = typeAliasBody(source)
   if (!code) {
     return undefined
   }
@@ -1068,7 +1087,6 @@ const packages: Array<PackageReferenceDocsConfig> = [
     entryPoints: [resolve(__dirname, '../packages/lit-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/lit-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/lit/reference'),
-    excludeExternals: true,
     simplifyLitQueriesControllerTypes: true,
     trimGeneratedMarkdown: true,
   },

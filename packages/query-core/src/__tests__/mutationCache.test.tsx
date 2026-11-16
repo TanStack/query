@@ -1,7 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { MutationCache, MutationObserver, QueryClient } from '..'
 import { executeMutation } from './utils'
+import type {
+  DefaultError,
+  Mutation,
+  MutationCacheNotifyEvent,
+  MutationFunctionContext,
+} from '..'
 
 describe('mutationCache', () => {
   beforeEach(() => {
@@ -14,10 +20,38 @@ describe('mutationCache', () => {
 
   describe('MutationCacheConfig error callbacks', () => {
     it('should call onError and onSettled when a mutation errors', async () => {
-      const key = queryKey()
-      const onError = vi.fn()
-      const onSuccess = vi.fn()
-      const onSettled = vi.fn()
+      const key = createKey()
+      const onError =
+        vi.fn<
+          (
+            error: DefaultError,
+            variables: unknown,
+            onMutateResult: unknown,
+            mutation: Mutation<unknown, unknown, unknown>,
+            context: MutationFunctionContext,
+          ) => void
+        >()
+      const onSuccess =
+        vi.fn<
+          (
+            data: unknown,
+            variables: unknown,
+            onMutateResult: unknown,
+            mutation: Mutation<unknown, unknown, unknown>,
+            context: MutationFunctionContext,
+          ) => void
+        >()
+      const onSettled =
+        vi.fn<
+          (
+            data: unknown | undefined,
+            error: DefaultError | null,
+            variables: unknown,
+            onMutateResult: unknown,
+            mutation: Mutation<unknown, unknown, unknown>,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const testCache = new MutationCache({ onError, onSuccess, onSettled })
       const testClient = new QueryClient({ mutationCache: testCache })
 
@@ -64,7 +98,7 @@ describe('mutationCache', () => {
     })
 
     it('should be awaited', async () => {
-      const key = queryKey()
+      const key = createKey()
       const states: Array<number> = []
       const onError = () =>
         sleep(10).then(() => {
@@ -100,16 +134,44 @@ describe('mutationCache', () => {
         'vars',
       ).catch(() => undefined)
       await vi.advanceTimersByTimeAsync(50)
-      expect(states).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+      expect(states).toStrictEqual([1, 2, 3, 4, 5, 6, 7, 8])
     })
   })
 
   describe('MutationCacheConfig success callbacks', () => {
     it('should call onSuccess and onSettled when a mutation is successful', async () => {
-      const key = queryKey()
-      const onError = vi.fn()
-      const onSuccess = vi.fn()
-      const onSettled = vi.fn()
+      const key = createKey()
+      const onError =
+        vi.fn<
+          (
+            error: DefaultError,
+            variables: unknown,
+            onMutateResult: unknown,
+            mutation: Mutation<unknown, unknown, unknown>,
+            context: MutationFunctionContext,
+          ) => void
+        >()
+      const onSuccess =
+        vi.fn<
+          (
+            data: unknown,
+            variables: unknown,
+            onMutateResult: unknown,
+            mutation: Mutation<unknown, unknown, unknown>,
+            context: MutationFunctionContext,
+          ) => void
+        >()
+      const onSettled =
+        vi.fn<
+          (
+            data: unknown | undefined,
+            error: DefaultError | null,
+            variables: unknown,
+            onMutateResult: unknown,
+            mutation: Mutation<unknown, unknown, unknown>,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const testCache = new MutationCache({ onError, onSuccess, onSettled })
       const testClient = new QueryClient({ mutationCache: testCache })
 
@@ -155,7 +217,7 @@ describe('mutationCache', () => {
     })
 
     it('should be awaited', async () => {
-      const key = queryKey()
+      const key = createKey()
       const states: Array<number> = []
       const onSuccess = () =>
         sleep(10).then(() => {
@@ -189,14 +251,21 @@ describe('mutationCache', () => {
         'vars',
       )
       await vi.advanceTimersByTimeAsync(50)
-      expect(states).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+      expect(states).toStrictEqual([1, 2, 3, 4, 5, 6, 7, 8])
     })
   })
 
   describe('MutationCacheConfig.onMutate', () => {
     it('should be called before a mutation executes', () => {
-      const key = queryKey()
-      const onMutate = vi.fn()
+      const key = createKey()
+      const onMutate =
+        vi.fn<
+          (
+            variables: unknown,
+            mutation: Mutation<unknown, unknown, unknown>,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const testCache = new MutationCache({ onMutate })
       const testClient = new QueryClient({ mutationCache: testCache })
 
@@ -220,7 +289,7 @@ describe('mutationCache', () => {
     })
 
     it('should be awaited', async () => {
-      const key = queryKey()
+      const key = createKey()
       const states: Array<number> = []
       const onMutate = () =>
         sleep(10).then(() => {
@@ -244,11 +313,11 @@ describe('mutationCache', () => {
         'vars',
       )
       await vi.advanceTimersByTimeAsync(20)
-      expect(states).toEqual([1, 2, 3, 4])
+      expect(states).toStrictEqual([1, 2, 3, 4])
     })
 
     it('should run options.onMutate synchronously when mutationCache.config.onMutate is not defined', () => {
-      const key = queryKey()
+      const key = createKey()
       const states: Array<string> = []
 
       // No onMutate in cache config
@@ -267,7 +336,7 @@ describe('mutationCache', () => {
         },
         'vars',
       )
-      expect(states).toEqual(['onMutate'])
+      expect(states).toStrictEqual(['onMutate'])
     })
   })
 
@@ -288,16 +357,16 @@ describe('mutationCache', () => {
 
       const [mutation] = testCache.getAll()
 
-      expect(testCache.find({ mutationKey: key })).toEqual(mutation)
+      expect(testCache.find({ mutationKey: key })).toStrictEqual(mutation)
       expect(
         testCache.find({ mutationKey: ['mutation'], exact: false }),
-      ).toEqual(mutation)
-      expect(testCache.find({ mutationKey: ['unknown'] })).toEqual(undefined)
+      ).toStrictEqual(mutation)
+      expect(testCache.find({ mutationKey: ['unknown'] })).toBeUndefined()
       expect(
         testCache.find({
           predicate: (m) => m.options.mutationKey?.[0] === key[0],
         }),
-      ).toEqual(mutation)
+      ).toStrictEqual(mutation)
     })
   })
 
@@ -336,13 +405,13 @@ describe('mutationCache', () => {
       expect(
         testCache.findAll({ mutationKey: ['a'], exact: false }),
       ).toHaveLength(2)
-      expect(testCache.find({ mutationKey: ['a', 1] })).toEqual(mutation1)
+      expect(testCache.find({ mutationKey: ['a', 1] })).toStrictEqual(mutation1)
       expect(
         testCache.findAll({
           predicate: (m) => m.options.mutationKey?.[1] === 2,
         }),
-      ).toEqual([mutation2])
-      expect(testCache.findAll({ mutationKey: ['unknown'] })).toEqual([])
+      ).toStrictEqual([mutation2])
+      expect(testCache.findAll({ mutationKey: ['unknown'] })).toStrictEqual([])
     })
   })
 
@@ -350,7 +419,15 @@ describe('mutationCache', () => {
     it('should remove unused mutations after gcTime has elapsed', async () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
-      const onSuccess = vi.fn()
+      const onSuccess =
+        vi.fn<
+          (
+            data: undefined,
+            variables: number,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
 
       executeMutation(
         testClient,
@@ -391,7 +468,15 @@ describe('mutationCache', () => {
 
     it('should be garbage collected later when unsubscribed and mutation is pending', async () => {
       const queryClient = new QueryClient()
-      const onSuccess = vi.fn()
+      const onSuccess =
+        vi.fn<
+          (
+            data: string,
+            variables: number,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const observer = new MutationObserver(queryClient, {
         gcTime: 10,
         mutationFn: () => sleep(10).then(() => 'data'),
@@ -414,7 +499,15 @@ describe('mutationCache', () => {
 
     it('should call callbacks even with gcTime 0 and mutation still pending', async () => {
       const queryClient = new QueryClient()
-      const onSuccess = vi.fn()
+      const onSuccess =
+        vi.fn<
+          (
+            data: string,
+            variables: number,
+            onMutateResult: unknown,
+            context: MutationFunctionContext,
+          ) => void
+        >()
       const observer = new MutationObserver(queryClient, {
         gcTime: 0,
         mutationFn: () => sleep(10).then(() => 'data'),
@@ -428,6 +521,51 @@ describe('mutationCache', () => {
       await vi.advanceTimersByTimeAsync(10)
       expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
       expect(onSuccess).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('clear', () => {
+    it('should notify subscribers after all mutations have been removed', () => {
+      const testCache = new MutationCache()
+      const testClient = new QueryClient({ mutationCache: testCache })
+      const mutation1 = testCache.build(testClient, {})
+      const mutation2 = testCache.build(testClient, {})
+      const callback = vi.fn<
+        () => Array<Mutation<unknown, Error, unknown, unknown>>
+      >(() => testCache.getAll())
+      testCache.subscribe(callback)
+
+      testCache.clear()
+
+      expect(callback).toHaveBeenCalledTimes(2)
+      expect(callback).toHaveBeenNthCalledWith(1, {
+        type: 'removed',
+        mutation: mutation1,
+      })
+      expect(callback).toHaveBeenNthCalledWith(2, {
+        type: 'removed',
+        mutation: mutation2,
+      })
+      expect(callback).toHaveNthReturnedWith(1, [])
+      expect(callback).toHaveNthReturnedWith(2, [])
+      expect(testCache.getAll()).toStrictEqual([])
+    })
+
+    it('should preserve mutations added by removal subscribers', () => {
+      const testCache = new MutationCache()
+      const testClient = new QueryClient({ mutationCache: testCache })
+      const original = testCache.build(testClient, {})
+      const key = createKey()
+      testCache.subscribe((event) => {
+        if (event.type === 'removed' && event.mutation === original) {
+          testCache.build(testClient, { mutationKey: key })
+        }
+      })
+
+      testCache.clear()
+
+      expect(testCache.getAll()).toHaveLength(1)
+      expect(testCache.getAll()[0]?.options.mutationKey).toStrictEqual(key)
     })
   })
 
@@ -450,7 +588,7 @@ describe('mutationCache', () => {
       testCache.remove(mutation1)
 
       expect(testCache.getAll()).toHaveLength(1)
-      expect(testCache.getAll()).toEqual([mutation2])
+      expect(testCache.getAll()).toStrictEqual([mutation2])
     })
 
     it('should delete scope when removing the only mutation in that scope', () => {
@@ -482,7 +620,7 @@ describe('mutationCache', () => {
       expect(testCache.getAll()).toHaveLength(0)
 
       // Remove again — mutation is already gone from the cache
-      const callback = vi.fn()
+      const callback = vi.fn<(event: MutationCacheNotifyEvent) => void>()
       const unsubscribe = testCache.subscribe(callback)
       testCache.remove(mutation)
 

@@ -17,13 +17,65 @@ import type {
 /**
  * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
  * The query runs when the options call for it — `enabled: false` skips the initial fetch.
+ *
+ * This overload is selected when `initialData` is known to be defined, so the resulting `data` is typed as never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`). At runtime, `data` is still `undefined`
+ * if `select` throws on its first call.
+ * @param options - An accessor returning the {@link DefinedInitialDataOptions} to use — everything you can
+ * pass to `useQuery`, with `initialData` known to be defined.
+ * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
+ * will be used.
+ * @returns The current query result, as a Solid store, typed so that `status` is `success` or `error`
+ * (`status` never resolves to `pending` in this overload's type, since `initialData` guarantees data upfront).
+ * `status` is `error` if the query has an error from a fetch that failed after its retries or if `select`
+ * threw, and `success` otherwise. `isSuccess`/`isError` are derived booleans for convenience.
+ * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
+ * @example
+ * ```tsx
+ * import { For } from 'solid-js'
+ * import { useQuery } from '@tanstack/solid-query'
+ *
+ * function Posts() {
+ *   // `postsQuery.data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
+ *   // list stays visible alongside the error.
+ *   const postsQuery = useQuery(() => ({
+ *     queryKey: ['posts'],
+ *     queryFn: fetchPosts,
+ *     initialData: [],
+ *   }))
+ *
+ *   return (
+ *     <div>
+ *       {postsQuery.isError ? <span>Error: {postsQuery.error.message}</span> : null}
+ *       <ul>
+ *         <For each={postsQuery.data}>{(post) => <li>{post.title}</li>}</For>
+ *       </ul>
+ *     </div>
+ *   )
+ * }
+ * ```
+ */
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: () => QueryClient,
+): DefinedUseQueryResult<TData, TError>
+
+/**
+ * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+ * The query runs when the options call for it — `enabled: false` skips the initial fetch.
  * @param options - An accessor returning the {@link UndefinedInitialDataOptions} to use — everything you can
  * pass to `useQuery`.
  * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
- * @returns The current query result, as a Solid store. `status` is `pending` if there is no cached data to
- * display, `error` if the last fetch attempt failed, or `success` if the query has data to display.
- * `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+ * @returns The current query result, as a Solid store. `status` is `error` if the query has an error from
+ * a fetch that failed after its retries or if `select` threw, `success` if the query has data to display
+ * (including `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived
+ * booleans for convenience.
  * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @example
  * ```tsx
@@ -184,56 +236,6 @@ export function useQuery<
   options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: () => QueryClient,
 ): UseQueryResult<TData, TError>
-
-/**
- * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
- * The query runs when the options call for it — `enabled: false` skips the initial fetch.
- *
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
- * a `select` changes `TData` to include `undefined`).
- * @param options - An accessor returning the {@link DefinedInitialDataOptions} to use — everything you can
- * pass to `useQuery`, with `initialData` set.
- * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
- * will be used.
- * @returns The current query result, as a Solid store, typed so that `status` is `success` — or `error` if a
- * fetch attempt fails while keeping the existing data (`status` never resolves to `pending` in this overload's
- * type, since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for
- * convenience.
- * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
- * @example
- * ```tsx
- * import { For } from 'solid-js'
- * import { useQuery } from '@tanstack/solid-query'
- *
- * function Posts() {
- *   // `postsQuery.data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
- *   // list stays visible alongside the error.
- *   const postsQuery = useQuery(() => ({
- *     queryKey: ['posts'],
- *     queryFn: fetchPosts,
- *     initialData: [],
- *   }))
- *
- *   return (
- *     <div>
- *       {postsQuery.isError ? <span>Error: {postsQuery.error.message}</span> : null}
- *       <ul>
- *         <For each={postsQuery.data}>{(post) => <li>{post.title}</li>}</For>
- *       </ul>
- *     </div>
- *   )
- * }
- * ```
- */
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-  queryClient?: () => QueryClient,
-): DefinedUseQueryResult<TData, TError>
 export function useQuery<
   TQueryFnData,
   TError = DefaultError,

@@ -353,13 +353,13 @@ This is a technical limitation. When persisting to an external storage, only the
 [//]: # 'Example11'
 
 ```tsx
-const persister = createSyncStoragePersister({
+const persister = createAsyncStoragePersister({
   storage: window.localStorage,
 })
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 })
@@ -390,7 +390,7 @@ export default function App() {
 [//]: # 'Example11'
 [//]: # 'OfflineExampleLink'
 
-We also have an extensive [offline example](../examples/offline) that covers both queries and mutations.
+We also have an extensive [offline example](../examples/offline-tanstack-router) that covers both queries and mutations.
 
 [//]: # 'OfflineExampleLink'
 

@@ -80,10 +80,14 @@ export function useBaseQuery<
     }
   }
 
+  const subscribed = options.subscribed !== false
+
   // Make sure results are optimistically set in fetching state before subscribing or updating options
   defaultedOptions._optimisticResults = isRestoring
     ? 'isRestoring'
-    : 'optimistic'
+    : subscribed
+      ? 'optimistic'
+      : undefined
 
   ensureSuspenseTimers(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
@@ -101,7 +105,11 @@ export function useBaseQuery<
   // note: this must be called before useSyncExternalStore
   const result = observer.getOptimisticResult(defaultedOptions)
 
-  const shouldSubscribe = !isRestoring && options.subscribed !== false
+  useEffect(() => {
+    observer.setOptions(defaultedOptions)
+  }, [defaultedOptions, observer])
+
+  const shouldSubscribe = !isRestoring && subscribed
   useSyncExternalStore(
     useCallback(
       (onStoreChange) => {
@@ -119,10 +127,6 @@ export function useBaseQuery<
     ),
     () => observer.getCurrentResult(),
   )
-
-  useEffect(() => {
-    observer.setOptions(defaultedOptions)
-  }, [defaultedOptions, observer])
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {

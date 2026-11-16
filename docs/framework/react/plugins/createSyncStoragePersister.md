@@ -12,25 +12,25 @@ You can simply use ['@tanstack/query-async-storage-persister'](./createAsyncStor
 
 This utility comes as a separate package and is available under the `'@tanstack/query-sync-storage-persister'` import.
 
-```bash
+```sh
 npm install @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
 ```
 
@@ -47,7 +47,7 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 })

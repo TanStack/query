@@ -104,6 +104,10 @@ export function useBaseQuery<
   // note: this must be called before useSyncExternalStore
   const result = observer.getOptimisticResult(defaultedOptions)
 
+  React.useEffect(() => {
+    observer.setOptions(defaultedOptions)
+  }, [defaultedOptions, observer])
+
   const shouldSubscribe = !isRestoring && subscribed
   React.useSyncExternalStore(
     React.useCallback(
@@ -123,10 +127,6 @@ export function useBaseQuery<
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
   )
-
-  React.useEffect(() => {
-    observer.setOptions(defaultedOptions)
-  }, [defaultedOptions, observer])
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {

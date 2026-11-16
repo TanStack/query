@@ -4,8 +4,8 @@ import {
   QueryClientProvider,
   createQueryController,
 } from '@tanstack/lit-query'
-import { fetchTodosFromServer, resetTodoApi } from './todoApi'
-import type { TodosResponse } from './todoApi'
+import { resetTodoApi } from './services/todos/api'
+import { todosQueries } from './services/todos/queries'
 
 resetTodoApi()
 
@@ -29,10 +29,7 @@ class BasicQueryProvider extends QueryClientProvider {
 customElements.define('basic-query-provider', BasicQueryProvider)
 
 class BasicQueryExample extends LitElement {
-  private readonly todos = createQueryController<TodosResponse, Error>(this, {
-    queryKey: ['todos'],
-    queryFn: fetchTodosFromServer,
-  })
+  private readonly todos = createQueryController(this, todosQueries.list())
 
   protected override createRenderRoot(): HTMLElement | DocumentFragment {
     return this
@@ -61,7 +58,7 @@ class BasicQueryExample extends LitElement {
         ${
           query.isError
             ? html`<p data-testid="basic-error">
-                Error: ${String(query.error)}
+                Error: ${query.error.message}
               </p>`
             : null
         }

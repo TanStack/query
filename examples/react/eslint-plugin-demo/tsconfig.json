@@ -4,11 +4,12 @@
     "lib": ["ES2020", "DOM"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "allowJs": true,
     "moduleResolution": "Bundler",
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true
   },
-  "include": ["src", "eslint.config.js"]
+  "include": ["src", "*.config.ts", "*.config.js"]
 }

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import { createMutationController } from '../createMutationController.js'
 import { mutationOptions } from '../mutationOptions.js'
@@ -45,7 +45,7 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with useIsMutating (with mutationKey in mutationOptions)', async () => {
     const mutationOpts = mutationOptions({
-      mutationKey: queryKey(),
+      mutationKey: createKey(),
       mutationFn: () => sleep(10).then(() => 'data'),
     })
 
@@ -102,7 +102,7 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with useIsMutating', async () => {
     const mutationOpts1 = mutationOptions({
-      mutationKey: queryKey(),
+      mutationKey: createKey(),
       mutationFn: () => sleep(10).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -140,7 +140,7 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with useIsMutating (filter mutationOpts1.mutationKey)', async () => {
     const mutationOpts1 = mutationOptions({
-      mutationKey: queryKey(),
+      mutationKey: createKey(),
       mutationFn: () => sleep(10).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -182,7 +182,7 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (with mutationKey in mutationOptions)', async () => {
     const mutationOpts = mutationOptions({
-      mutationKey: queryKey(),
+      mutationKey: createKey(),
       mutationFn: () => sleep(10).then(() => 'data'),
     })
 
@@ -233,7 +233,7 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with queryClient.isMutating', async () => {
     const mutationOpts1 = mutationOptions({
-      mutationKey: queryKey(),
+      mutationKey: createKey(),
       mutationFn: () => sleep(10).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -268,7 +268,7 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (filter mutationOpts1.mutationKey)', async () => {
     const mutationOpts1 = mutationOptions({
-      mutationKey: queryKey(),
+      mutationKey: createKey(),
       mutationFn: () => sleep(10).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -309,7 +309,7 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with useMutationState (with mutationKey in mutationOptions)', async () => {
     const mutationOpts = mutationOptions({
-      mutationKey: queryKey(),
+      mutationKey: createKey(),
       mutationFn: () => sleep(10).then(() => 'data'),
     })
 
@@ -374,7 +374,7 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with useMutationState', async () => {
     const mutationOpts1 = mutationOptions({
-      mutationKey: queryKey(),
+      mutationKey: createKey(),
       mutationFn: () => sleep(10).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -416,7 +416,7 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with useMutationState (filter mutationOpts1.mutationKey)', async () => {
     const mutationOpts1 = mutationOptions({
-      mutationKey: queryKey(),
+      mutationKey: createKey(),
       mutationFn: () => sleep(10).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({

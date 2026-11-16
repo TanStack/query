@@ -9,7 +9,7 @@
     failOn?: string
   }
 
-  const { queryClient, strategy, failOn }: Props = $props()
+  let { queryClient, strategy, failOn }: Props = $props()
 
   let result = $state('idle')
 

@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushSync } from 'svelte'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient, noop } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { createMutation } from '../../src/index.js'
 import { withEffectRoot } from '../utils.svelte.js'
 import Reset from './Reset.svelte'
@@ -15,6 +15,7 @@ import PerCallSuccess from './PerCallSuccess.svelte'
 import MutationFnContext from './MutationFnContext.svelte'
 import ParallelMutateAsync from './ParallelMutateAsync.svelte'
 import ConcurrentMutate from './ConcurrentMutate.svelte'
+import type { MutationFunctionContext } from '@tanstack/query-core'
 
 describe('createMutation', () => {
   let queryClient: QueryClient
@@ -34,7 +35,7 @@ describe('createMutation', () => {
       props: { queryClient },
     })
 
-    expect(rendered.queryByText('Error: undefined')).toBeInTheDocument()
+    expect(rendered.getByText('Error: undefined')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     await vi.advanceTimersByTimeAsync(11)
@@ -62,7 +63,7 @@ describe('createMutation', () => {
         onSettled: () => callbacks.push('mutate.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutate.onSuccess', 'mutate.onSettled'])
+      expect(callbacks).toStrictEqual(['mutate.onSuccess', 'mutate.onSettled'])
     }),
   )
 
@@ -84,7 +85,7 @@ describe('createMutation', () => {
         onSettled: () => callbacks.push('mutate.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutate.onError', 'mutate.onSettled'])
+      expect(callbacks).toStrictEqual(['mutate.onError', 'mutate.onSettled'])
     }),
   )
 
@@ -104,7 +105,7 @@ describe('createMutation', () => {
         onSuccess: () => callbacks.push('mutate.onSuccess'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutate.onSuccess'])
+      expect(callbacks).toStrictEqual(['mutate.onSuccess'])
     }),
   )
 
@@ -125,7 +126,7 @@ describe('createMutation', () => {
         onError: () => callbacks.push('mutate.onError'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutate.onError'])
+      expect(callbacks).toStrictEqual(['mutate.onError'])
     }),
   )
 
@@ -145,7 +146,7 @@ describe('createMutation', () => {
         onSettled: () => callbacks.push('mutate.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutate.onSettled'])
+      expect(callbacks).toStrictEqual(['mutate.onSettled'])
     }),
   )
 
@@ -166,7 +167,7 @@ describe('createMutation', () => {
         onSettled: () => callbacks.push('mutateAsync.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual([
+      expect(callbacks).toStrictEqual([
         'mutateAsync.onSuccess',
         'mutateAsync.onSettled',
       ])
@@ -193,7 +194,7 @@ describe('createMutation', () => {
         })
         .catch(noop)
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual([
+      expect(callbacks).toStrictEqual([
         'mutateAsync.onError',
         'mutateAsync.onSettled',
       ])
@@ -216,7 +217,7 @@ describe('createMutation', () => {
         onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutateAsync.onSuccess'])
+      expect(callbacks).toStrictEqual(['mutateAsync.onSuccess'])
     }),
   )
 
@@ -239,7 +240,7 @@ describe('createMutation', () => {
         })
         .catch(noop)
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutateAsync.onError'])
+      expect(callbacks).toStrictEqual(['mutateAsync.onError'])
     }),
   )
 
@@ -259,13 +260,13 @@ describe('createMutation', () => {
         onSettled: () => callbacks.push('mutateAsync.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['mutateAsync.onSettled'])
+      expect(callbacks).toStrictEqual(['mutateAsync.onSettled'])
     }),
   )
 
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
-    const onSuccessMock = vi.fn()
-    const onSettledMock = vi.fn()
+    const onSuccessMock = vi.fn<(data: number) => void>()
+    const onSettledMock = vi.fn<(data: number | undefined) => void>()
 
     const rendered = render(Success, {
       props: {
@@ -275,13 +276,13 @@ describe('createMutation', () => {
       },
     })
 
-    expect(rendered.queryByText('Count: 0')).toBeInTheDocument()
+    expect(rendered.getByText('Count: 0')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(rendered.queryByText('Count: 3')).toBeInTheDocument()
+    expect(rendered.getByText('Count: 3')).toBeInTheDocument()
 
     expect(onSuccessMock).toHaveBeenCalledTimes(3)
     expect(onSuccessMock).toHaveBeenNthCalledWith(1, 1)
@@ -299,6 +300,7 @@ describe('createMutation', () => {
 
     const mutationFn = vi.fn<(value: Value) => Promise<Value>>()
 
+    // oxlint-disable-next-line vitest/prefer-mock-return-shorthand -- the promise must be created when the mock is called, not when it is set up
     mutationFn.mockImplementationOnce(() =>
       sleep(20).then(() => Promise.reject(`Expected mock error`)),
     )
@@ -312,7 +314,7 @@ describe('createMutation', () => {
       },
     })
 
-    expect(rendered.queryByText('Data: undefined')).toBeInTheDocument()
+    expect(rendered.getByText('Data: undefined')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     expect(rendered.getByText('Data: undefined')).toBeInTheDocument()
@@ -350,7 +352,7 @@ describe('createMutation', () => {
         onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual([
+      expect(callbacks).toStrictEqual([
         'useMutation.onSuccess',
         'mutateAsync.onSuccess',
       ])
@@ -377,7 +379,10 @@ describe('createMutation', () => {
         })
         .catch(noop)
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual(['useMutation.onError', 'mutateAsync.onError'])
+      expect(callbacks).toStrictEqual([
+        'useMutation.onError',
+        'mutateAsync.onError',
+      ])
     }),
   )
 
@@ -398,7 +403,7 @@ describe('createMutation', () => {
         onSettled: () => callbacks.push('mutateAsync.onSettled'),
       })
       await vi.advanceTimersByTimeAsync(10)
-      expect(callbacks).toEqual([
+      expect(callbacks).toStrictEqual([
         'useMutation.onSettled',
         'mutateAsync.onSettled',
       ])
@@ -428,7 +433,7 @@ describe('createMutation', () => {
         })
         .then((result) => callbacks.push(`mutateAsync.result:${result}`))
       await vi.advanceTimersByTimeAsync(30)
-      expect(callbacks).toEqual([
+      expect(callbacks).toStrictEqual([
         'useMutation.onSuccess',
         'useMutation.onSettled',
         'mutateAsync.onSuccess',
@@ -464,7 +469,7 @@ describe('createMutation', () => {
           callbacks.push(`mutateAsync.error:${(error as Error).message}`),
         )
       await vi.advanceTimersByTimeAsync(30)
-      expect(callbacks).toEqual([
+      expect(callbacks).toStrictEqual([
         'useMutation.onError',
         'useMutation.onSettled',
         'mutateAsync.onError',
@@ -502,7 +507,7 @@ describe('createMutation', () => {
   )
 
   it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
     const rendered = render(OptimisticUpdate, {
@@ -513,13 +518,13 @@ describe('createMutation', () => {
     // The optimistic value lands after onMutate's first await, so flush
     // microtasks before asserting.
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+    expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1', 'Todo 2'])
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
+    expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1'])
   })
 
   it('should keep the optimistic update in place when the mutation succeeds', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
 
     const rendered = render(OptimisticUpdate, {
@@ -528,11 +533,19 @@ describe('createMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /add/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+    expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1', 'Todo 2'])
   })
 
   it('should pass a non-undefined onMutateResult alongside context to onSuccess', async () => {
-    const onSuccessMock = vi.fn()
+    const onSuccessMock =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: { startedWith: string },
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const rendered = render(SuccessContext, {
       props: { queryClient, onSuccessMock },
@@ -545,14 +558,22 @@ describe('createMutation', () => {
       onSuccessMock.mock.calls[0]!
     expect(data).toBe('TODO')
     expect(variables).toBe('todo')
-    expect(onMutateResult).toEqual({ startedWith: 'todo' })
+    expect(onMutateResult).toStrictEqual({ startedWith: 'todo' })
     expect(context.client).toBe(queryClient)
     expect(context.meta).toBeUndefined()
     expect(context.mutationKey).toBeUndefined()
   })
 
   it('should include mutationKey in the context passed to hook-level callbacks', async () => {
-    const onSuccessMock = vi.fn()
+    const onSuccessMock =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: { startedWith: string },
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const rendered = render(SuccessContext, {
       props: { queryClient, mutationKey: ['todos', 'add'], onSuccessMock },
@@ -561,14 +582,14 @@ describe('createMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
     expect(onSuccessMock).toHaveBeenCalledTimes(1)
-    expect(onSuccessMock.mock.calls[0]?.[3].mutationKey).toEqual([
+    expect(onSuccessMock.mock.calls[0]?.[3].mutationKey).toStrictEqual([
       'todos',
       'add',
     ])
   })
 
   it('should give mutationFn the same QueryClient instance via context', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'tag-from-this-client')
 
     const rendered = render(MutationFnContext, {
@@ -581,7 +602,7 @@ describe('createMutation', () => {
   })
 
   it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {
-    const key = queryKey()
+    const key = createKey()
     queryClient.setQueryData(key, 'data')
 
     const rendered = render(InvalidateFromContext, {
@@ -596,7 +617,15 @@ describe('createMutation', () => {
   })
 
   it('should give a per-call onSuccess the same QueryClient instance via context', async () => {
-    const onSuccessMutate = vi.fn()
+    const onSuccessMutate =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const rendered = render(PerCallSuccess, {
       props: { queryClient, onSuccessMutate },
@@ -649,7 +678,15 @@ describe('createMutation', () => {
   })
 
   it('should only fire the per-call onSuccess for the last mutate() call', async () => {
-    const onSuccessMutate = vi.fn()
+    const onSuccessMutate =
+      vi.fn<
+        (
+          data: string,
+          variables: string,
+          onMutateResult: unknown,
+          context: MutationFunctionContext,
+        ) => void
+      >()
 
     const rendered = render(ConcurrentMutate, {
       props: { queryClient, onSuccessMutate },

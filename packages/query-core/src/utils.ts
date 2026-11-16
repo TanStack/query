@@ -448,8 +448,8 @@ export function shallowEqualObjects<T extends Record<string, any>>(
     return false
   }
 
-  for (const key in a) {
-    if (a[key] !== b[key]) {
+  for (const key of Object.keys(a)) {
+    if (!hasOwn.call(b, key) || a[key] !== b[key]) {
       return false
     }
   }
@@ -587,30 +587,28 @@ export function keepPreviousData<T>(
 
 /**
  * Returns a new array with `item` added at the end. If that makes the array longer than `max`,
- * the first item is dropped. Only one item is dropped, so the result can still exceed `max` if
- * `items` already did.
+ * excess items are removed from the start.
  * @param items - The current items.
  * @param item - The value to append.
- * @param max - The length above which an item is dropped. `0` (the default) means no limit.
+ * @param max - The maximum number of items to keep. `0` (the default) means no limit.
  * @returns A new array with `item` added.
  */
 export function addToEnd<T>(items: Array<T>, item: T, max = 0): Array<T> {
   const newItems = [...items, item]
-  return max && newItems.length > max ? newItems.slice(1) : newItems
+  return max && newItems.length > max ? newItems.slice(-max) : newItems
 }
 
 /**
  * Returns a new array with `item` added at the start. If that makes the array longer than `max`,
- * the last item is dropped. Only one item is dropped, so the result can still exceed `max` if
- * `items` already did.
+ * excess items are removed from the end.
  * @param items - The current items.
  * @param item - The value to prepend.
- * @param max - The length above which an item is dropped. `0` (the default) means no limit.
+ * @param max - The maximum number of items to keep. `0` (the default) means no limit.
  * @returns A new array with `item` added.
  */
 export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
   const newItems = [item, ...items]
-  return max && newItems.length > max ? newItems.slice(0, -1) : newItems
+  return max && newItems.length > max ? newItems.slice(0, max) : newItems
 }
 
 /**
@@ -702,6 +700,16 @@ export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
   return !!throwOnError
 }
 
+export const fetchSignal = Symbol()
+
+/** Internal view of a context that can expose its signal without consuming it. */
+export type FetchSignalContext = {
+  /** The public signal, whose getter can mark it consumed. */
+  readonly signal: AbortSignal
+  /** The original fetch signal, absent on application-created contexts. */
+  readonly [fetchSignal]?: AbortSignal
+}
+
 /**
  * Adds a lazy `signal` getter to an object, such as a query function context. The first time
  * `signal` is read, `onCancelled` is registered for the signal's `abort` event (or called right
@@ -709,32 +717,37 @@ export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
  * @param object - The object to add the `signal` property to.
  * @param getSignal - Returns the `AbortSignal`. Called once, when `signal` is first read.
  * @param onCancelled - Called when the signal is aborted, if `signal` was read.
+ * @param internalSignal - The fetch signal to forward without consuming the getter.
  * @returns The same object, with the `signal` property added.
  */
-export function addConsumeAwareSignal<T>(
+export function addConsumeAwareSignal<T extends object>(
   object: T,
   getSignal: () => AbortSignal,
-  onCancelled: VoidFunction,
+  onCancelled: () => void,
+  internalSignal?: AbortSignal,
 ): T & { signal: AbortSignal } {
   let consumed = false
   let signal: AbortSignal | undefined
 
-  Object.defineProperty(object, 'signal', {
-    enumerable: true,
-    get: () => {
-      signal ??= getSignal()
-      if (consumed) {
+  Object.defineProperties(object, {
+    [fetchSignal]: { value: internalSignal },
+    signal: {
+      enumerable: true,
+      get: () => {
+        signal ??= getSignal()
+        if (consumed) {
+          return signal
+        }
+
+        consumed = true
+        if (signal.aborted) {
+          onCancelled()
+        } else {
+          signal.addEventListener('abort', onCancelled, { once: true })
+        }
+
         return signal
-      }
-
-      consumed = true
-      if (signal.aborted) {
-        onCancelled()
-      } else {
-        signal.addEventListener('abort', onCancelled, { once: true })
-      }
-
-      return signal
+      },
     },
   })
 

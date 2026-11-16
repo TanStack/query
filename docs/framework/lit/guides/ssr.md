@@ -24,7 +24,7 @@ import { render } from '@lit-labs/ssr'
 import { collectResult } from '@lit-labs/ssr/lib/render-result.js'
 import { html } from 'lit'
 import { QueryClient, dehydrate, noop } from '@tanstack/lit-query'
-import { createDataQueryOptions } from './api.js'
+import { dataQueries } from './services/data/queries.js'
 import './app.js'
 
 async function renderPage() {
@@ -32,12 +32,12 @@ async function renderPage() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 30_000,
+        staleTime: 30 * 1000,
       },
     },
   })
 
-  await queryClient.query(createDataQueryOptions(apiBaseUrl)).catch(noop)
+  await queryClient.query(dataQueries.detail(apiBaseUrl)).catch(noop)
 
   const appHtml = await collectResult(
     render(
@@ -60,12 +60,13 @@ The server passes the same client into the Lit element with a property binding. 
 
 ```ts
 import '@lit-labs/ssr-client/lit-element-hydrate-support.js'
-import { QueryClient, hydrate, type DehydratedState } from '@tanstack/lit-query'
+import { QueryClient, hydrate } from '@tanstack/lit-query'
+import type { DehydratedState } from '@tanstack/lit-query'
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 30_000,
+      staleTime: 30 * 1000,
     },
   },
 })
@@ -78,7 +79,8 @@ queryClient.mount()
 hydrate(queryClient, dehydratedState)
 
 const appElement = document.querySelector('ssr-app') as
-  (HTMLElement & { queryClient?: QueryClient }) | null
+  | (HTMLElement & { queryClient?: QueryClient })
+  | null
 
 if (!appElement) {
   throw new Error('Expected the SSR app element to exist before hydration.')
@@ -106,12 +108,10 @@ The SSR example creates its controller only after a `queryClient` property is av
 
 ```ts
 import { LitElement } from 'lit'
-import {
-  createQueryController,
-  type QueryClient,
-  type QueryResultAccessor,
-} from '@tanstack/lit-query'
-import { createDataQueryOptions, type DataResponse } from './api.js'
+import { createQueryController } from '@tanstack/lit-query'
+import { dataQueries } from './services/data/queries.js'
+import type { QueryClient, QueryResultAccessor } from '@tanstack/lit-query'
+import type { DataResponse } from './services/data/types.js'
 
 class SsrApp extends LitElement {
   static properties = {
@@ -127,7 +127,7 @@ class SsrApp extends LitElement {
     if (!this.dataQuery && this.queryClient) {
       this.dataQuery = createQueryController(
         this,
-        createDataQueryOptions(this.apiBaseUrl),
+        dataQueries.detail(this.apiBaseUrl),
         this.queryClient,
       )
     }

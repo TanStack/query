@@ -84,4 +84,5 @@ If you don't care about the rules of the query keys, then you will not need this
 ## Attributes
 
 - [x] ✅ Recommended
-- [x] 🔧 Fixable
+- [ ] 🔧 Fixable
+- [x] 💡 Has suggestions

@@ -1,6 +1,6 @@
 import React from 'react'
 import { noop, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { fetchProject, fetchProjects } from '../queries'
+import { projectsQueries } from '../services/projects/queries'
 import Button from './Button'
 import Spinner from './Spinner'
 
@@ -10,10 +10,7 @@ export default function Projects({
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>
 }) {
   const queryClient = useQueryClient()
-  const { data, isFetching } = useSuspenseQuery({
-    queryKey: ['projects'],
-    queryFn: fetchProjects,
-  })
+  const { data, isFetching } = useSuspenseQuery(projectsQueries.list())
 
   return (
     <div>
@@ -24,10 +21,7 @@ export default function Projects({
             onClick={() => {
               // Prefetch the project query
               queryClient
-                .query({
-                  queryKey: ['project', project.full_name],
-                  queryFn: () => fetchProject(project.full_name),
-                })
+                .query(projectsQueries.detail(project.full_name))
                 .catch(noop)
               setActiveProject(project.full_name)
             }}

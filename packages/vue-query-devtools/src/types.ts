@@ -49,7 +49,8 @@ export interface DevtoolsOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * @defaultValue system
+   * This overrides the theme selected in the devtools Settings menu. When omitted, the
+   * selected theme is used, or `'system'` if none is selected.
    */
   theme?: Theme
 }
@@ -78,7 +79,7 @@ export interface DevtoolsPanelOptions {
 
   /**
    * Custom styles for the devtools panel
-   * @default { height: '500px' }
+   * @default { height: '100%', display: 'flex', flexDirection: 'column' }
    * @example { height: '100%' }
    * @example { height: '100%', width: '100%' }
    */
@@ -94,7 +95,8 @@ export interface DevtoolsPanelOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * @defaultValue system
+   * This overrides the theme selected in the devtools Settings menu. When omitted, the
+   * selected theme is used, or `'system'` if none is selected.
    */
   theme?: Theme
 }

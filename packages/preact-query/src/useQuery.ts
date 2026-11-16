@@ -13,14 +13,16 @@ import type {
 } from './types'
 
 /**
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
- * a `select` changes `TData` to include `undefined`).
- * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` set.
+ * This overload is selected when `initialData` is known to be defined, so the resulting `data` is typed as never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`). At runtime, `data` is still `undefined`
+ * if `select` throws on its first call.
+ * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` known to be defined.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
- * fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
- * since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for convenience.
+ * @returns The current query result, typed so that `status` is `success` or `error` (`status` never
+ * resolves to `pending` in this overload's type, since `initialData` guarantees data upfront). `status` is
+ * `error` if the query has an error from a fetch that failed after its retries or if `select` threw, and
+ * `success` otherwise. `isSuccess`/`isError` are derived booleans for convenience.
  * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @example
  * ```tsx
@@ -57,14 +59,15 @@ export function useQuery<
 ): DefinedUseQueryResult<TData, TError>
 
 /**
- * This overload is selected when `initialData` is omitted or may be `undefined`, so the resulting `data`
- * can be `undefined`.
+ * This overload is selected when `initialData` is omitted, may be `undefined`, or is a function that may
+ * return `undefined`, so the resulting `data` can be `undefined`.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
- * the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
- * are derived booleans for convenience.
+ * @returns The current query result. `status` is `error` if the query has an error from a fetch that failed
+ * after its retries or if `select` threw, `success` if the query has data to display (including
+ * `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived booleans for
+ * convenience.
  * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @example
  * ```tsx
@@ -130,9 +133,10 @@ export function useQuery<
  * @param options - The {@link UseQueryOptions} to use — everything you can pass to `useQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
- * the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
- * are derived booleans for convenience.
+ * @returns The current query result. `status` is `error` if the query has an error from a fetch that failed
+ * after its retries or if `select` threw, `success` if the query has data to display (including
+ * `placeholderData`), and `pending` otherwise. `isPending`/`isSuccess`/`isError` are derived booleans for
+ * convenience.
  * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @example
  * ```tsx

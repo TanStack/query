@@ -18,7 +18,7 @@ class IsMutatingController extends BaseController<number> {
 
   constructor(
     host: ReactiveControllerHost,
-    private readonly filters: Accessor<MutationFilters> = {},
+    private readonly filters: Accessor<Omit<MutationFilters, 'status'>> = {},
     queryClient?: QueryClient,
   ) {
     super(host, 0, queryClient)
@@ -140,7 +140,7 @@ class IsMutatingController extends BaseController<number> {
  */
 export function useIsMutating(
   host: ReactiveControllerHost,
-  filters: Accessor<MutationFilters> = {},
+  filters: Accessor<Omit<MutationFilters, 'status'>> = {},
   queryClient?: QueryClient,
 ): IsMutatingAccessor {
   const controller = new IsMutatingController(host, filters, queryClient)

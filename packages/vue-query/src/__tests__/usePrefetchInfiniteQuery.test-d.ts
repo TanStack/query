@@ -1,13 +1,13 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { ref } from 'vue-demi'
 import { skipToken } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { usePrefetchInfiniteQuery } from '..'
 
 describe('usePrefetchInfiniteQuery', () => {
   it('should return nothing', () => {
     const result = usePrefetchInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
@@ -20,7 +20,7 @@ describe('usePrefetchInfiniteQuery', () => {
     assertType(
       // @ts-expect-error TS2345
       usePrefetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
       }),
     )
@@ -29,7 +29,7 @@ describe('usePrefetchInfiniteQuery', () => {
   it('should not allow refetchInterval, enabled or throwOnError options', () => {
     assertType(
       usePrefetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -40,7 +40,7 @@ describe('usePrefetchInfiniteQuery', () => {
 
     assertType(
       usePrefetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -51,7 +51,7 @@ describe('usePrefetchInfiniteQuery', () => {
 
     assertType(
       usePrefetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -64,7 +64,7 @@ describe('usePrefetchInfiniteQuery', () => {
   it('should accept refs in infinite query options', () => {
     assertType(
       usePrefetchInfiniteQuery({
-        queryKey: [...queryKey(), ref('id')],
+        queryKey: [...createKey(), ref('id')],
         queryFn: () => Promise.resolve(5),
         initialPageParam: ref(1),
         getNextPageParam: () => 1,
@@ -76,7 +76,7 @@ describe('usePrefetchInfiniteQuery', () => {
   it('should not allow skipToken in queryFn', () => {
     assertType(
       usePrefetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         initialPageParam: 1,
         getNextPageParam: () => 1,
         // @ts-expect-error
@@ -86,7 +86,7 @@ describe('usePrefetchInfiniteQuery', () => {
 
     assertType(
       usePrefetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         initialPageParam: 1,
         getNextPageParam: () => 1,
         // @ts-expect-error

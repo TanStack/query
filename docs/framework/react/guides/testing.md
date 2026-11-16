@@ -7,17 +7,14 @@ React Query works by means of hooks - either the ones we offer or custom ones th
 
 [//]: # 'Install'
 
-With React 17 or earlier, writing unit tests for these custom hooks can be done by means of the [React Hooks Testing Library](https://react-hooks-testing-library.com/) library.
+Writing unit tests for these custom hooks can be done by means of the [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/), which provides `renderHook` and re-exports the `@testing-library/dom` helpers such as `waitFor`.
 
 Install this by running:
 
 ```sh
-npm install @testing-library/react-hooks react-test-renderer --save-dev
+npm install @testing-library/react @testing-library/dom --save-dev
 ```
 
-(The `react-test-renderer` library is needed as a peer dependency of `@testing-library/react-hooks`, and needs to correspond to the version of React that you are using.)
-
-_Note_: when using React 18 or later, `renderHook` is available directly through the `@testing-library/react` package, and `@testing-library/react-hooks` is no longer required.
 [//]: # 'Install'
 
 ## Our First Test
@@ -117,7 +114,7 @@ expect(result.current.data).toEqual({ answer: 42 })
 
 [//]: # 'NoteWaitFor1'
 
-Here we are making use of `waitFor` and waiting until the query status indicates that the request has succeeded. This way we know that our hook has finished and should have the correct data. _Note_: when using React 18, the semantics of `waitFor` have changed as noted above.
+Here we are making use of `waitFor` and waiting until the query status indicates that the request has succeeded. This way we know that our hook has finished and should have the correct data.
 [//]: # 'NoteWaitFor1'
 
 ## Testing Load More / Infinite Scroll
@@ -134,17 +131,17 @@ function generateMockedResponse(page) {
 ```
 
 Then, our `nock` configuration needs to differentiate responses based on the page, and we'll be using `uri` to do this.
-`uri`'s value here will be something like `"/?page=1` or `/?page=2`
+`uri`'s value here will be something like `/api/data?page=1` or `/api/data?page=2`
 
 ```tsx
 const expectation = nock('http://example.com')
   .persist()
-  .query(true)
   .get('/api/data')
+  .query(true)
   .reply(200, (uri) => {
     const url = new URL(`http://example.com${uri}`)
     const { page } = Object.fromEntries(url.searchParams)
-    return generateMockedResponse(page)
+    return generateMockedResponse(Number(page))
   })
 ```
 
@@ -159,14 +156,14 @@ const { result } = renderHook(() => useInfiniteQueryCustomHook(), {
 
 await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-expect(result.current.data.pages).toStrictEqual(generateMockedResponse(1))
+expect(result.current.data.pages).toStrictEqual([generateMockedResponse(1)])
 
 result.current.fetchNextPage()
 
 await waitFor(() =>
   expect(result.current.data.pages).toStrictEqual([
-    ...generateMockedResponse(1),
-    ...generateMockedResponse(2),
+    generateMockedResponse(1),
+    generateMockedResponse(2),
   ]),
 )
 
@@ -174,8 +171,6 @@ expectation.done()
 ```
 
 [//]: # 'NoteWaitFor2'
-
-_Note_: when using React 18, the semantics of `waitFor` have changed as noted above.
 [//]: # 'NoteWaitFor2'
 
 ## Further reading

@@ -7,7 +7,10 @@ import type { QueryClient } from '@tanstack/query-core'
 import type { ReactiveController, ReactiveControllerHost } from 'lit'
 
 type QueryClientResolutionState =
-  'pre-connect' | 'awaiting-context' | 'bound' | 'missing'
+  | 'pre-connect'
+  | 'awaiting-context'
+  | 'bound'
+  | 'missing'
 
 /**
  * Base class of the query controllers. It resolves the `QueryClient`, either
@@ -281,7 +284,7 @@ export abstract class BaseController<TResult> implements ReactiveController {
           }
 
           const resolutionChanged = this.updateQueryClientResolutionState(
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            // oxlint-disable-next-line typescript/no-unnecessary-condition -- the provider sends 'undefined' when its 'client' is removed
             value === undefined ? 'missing' : 'bound',
           )
           const clientChanged = this.contextClient !== value

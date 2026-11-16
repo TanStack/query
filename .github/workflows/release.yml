@@ -17,7 +17,7 @@ permissions:
 jobs:
   release:
     name: Release
-    if: github.repository_owner == 'TanStack'
+    if: github.repository_owner == 'TanStack' && github.actor != 'autofix-ci[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write

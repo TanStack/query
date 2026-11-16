@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useIsFetching, useQuery } from '..'
 import { renderWithClient, setActTimeout } from './utils'
+import type { Query } from '..'
 
 describe('useIsFetching', () => {
   beforeEach(() => {
@@ -17,7 +18,7 @@ describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
     const queryClient = new QueryClient()
-    const key = queryKey()
+    const key = createKey()
 
     function IsFetching() {
       const isFetching = useIsFetching()
@@ -60,8 +61,8 @@ describe('useIsFetching', () => {
   it('should not update state while rendering', async () => {
     const queryClient = new QueryClient()
 
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const isFetchingArray: Array<number> = []
 
@@ -111,25 +112,25 @@ describe('useIsFetching', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    expect(isFetchingArray[0]).toEqual(0)
+    expect(isFetchingArray[0]).toBe(0)
     await vi.advanceTimersByTimeAsync(0)
-    expect(isFetchingArray[1]).toEqual(1)
+    expect(isFetchingArray[1]).toBe(1)
     await vi.advanceTimersByTimeAsync(50)
-    expect(isFetchingArray[2]).toEqual(1)
+    expect(isFetchingArray[2]).toBe(1)
     await vi.advanceTimersByTimeAsync(1)
-    expect(isFetchingArray[3]).toEqual(2)
+    expect(isFetchingArray[3]).toBe(2)
     await vi.advanceTimersByTimeAsync(50)
-    expect(isFetchingArray[4]).toEqual(1)
+    expect(isFetchingArray[4]).toBe(1)
     await vi.advanceTimersByTimeAsync(50)
-    expect(isFetchingArray[5]).toEqual(0)
+    expect(isFetchingArray[5]).toBe(0)
 
-    expect(isFetchingArray).toEqual([0, 1, 1, 2, 1, 0])
+    expect(isFetchingArray).toStrictEqual([0, 1, 1, 2, 1, 0])
   })
 
   it('should be able to filter', async () => {
     const queryClient = new QueryClient()
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     const isFetchingArray: Array<number> = []
 
@@ -182,12 +183,12 @@ describe('useIsFetching', () => {
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
 
     // at no point should we have isFetching: 2
-    expect(isFetchingArray).toEqual(expect.not.arrayContaining([2]))
+    expect(isFetchingArray).toStrictEqual(expect.not.arrayContaining([2]))
   })
 
   it('should show the correct fetching state when mounted after a query', async () => {
     const queryClient = new QueryClient()
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useQuery({
@@ -212,11 +213,12 @@ describe('useIsFetching', () => {
   })
 
   it('should use provided custom queryClient', async () => {
-    const onSuccess = vi.fn()
+    const onSuccess =
+      vi.fn<(data: unknown, query: Query<unknown, unknown, unknown>) => void>()
 
     const queryCache = new QueryCache({ onSuccess })
     const queryClient = new QueryClient({ queryCache })
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useQuery(
@@ -241,6 +243,6 @@ describe('useIsFetching', () => {
     expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
-    expect(onSuccess).toHaveBeenCalledOnce()
+    expect(onSuccess).toHaveBeenCalledTimes(1)
   })
 })

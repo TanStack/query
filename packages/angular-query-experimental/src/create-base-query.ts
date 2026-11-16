@@ -168,7 +168,7 @@ export function createBaseQuery<
       const originalRefetch = result.refetch
       return {
         ...result,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion -- keeps the declared 'refetch' type, which the wrapper would widen to 'RefetchOptions | undefined'
         refetch: ((...args: Parameters<typeof originalRefetch>) => {
           observer.setOptions(defaultedOptionsSignal())
           return originalRefetch(...args)

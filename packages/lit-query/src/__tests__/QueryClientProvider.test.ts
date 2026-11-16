@@ -1,6 +1,14 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import { createQueryController } from '../createQueryController.js'
 import {
@@ -12,11 +20,14 @@ import { QueryClientProvider } from '../QueryClientProvider.js'
 import { generateElementName } from './utils.js'
 
 const tagName = generateElementName()
-customElements.define(tagName, QueryClientProvider)
 
 describe('QueryClientProvider/context', () => {
   let queryClient: QueryClient
   let container: HTMLElement
+
+  beforeAll(() => {
+    customElements.define(tagName, QueryClientProvider)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -141,11 +152,6 @@ describe('QueryClientProvider/context', () => {
     provider.remove()
     await vi.advanceTimersByTimeAsync(0)
     expect(unmountB).toHaveBeenCalledTimes(1)
-
-    mountA.mockRestore()
-    unmountA.mockRestore()
-    mountB.mockRestore()
-    unmountB.mockRestore()
   })
 
   it('should unmount the initial client when the client is replaced before the first update', async () => {
@@ -173,11 +179,6 @@ describe('QueryClientProvider/context', () => {
     provider.remove()
     expect(unmountB).toHaveBeenCalledTimes(1)
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
-
-    mountA.mockRestore()
-    unmountA.mockRestore()
-    mountB.mockRestore()
-    unmountB.mockRestore()
   })
 
   it('should not throw when the client is cleared on a disconnected provider', async () => {
@@ -194,7 +195,7 @@ describe('QueryClientProvider/context', () => {
   })
 
   it('should tear down the mounted client before surfacing the error when a connected client is updated to an invalid value', async () => {
-    const key = queryKey()
+    const key = createKey()
     const mount = vi.spyOn(queryClient, 'mount')
     const unmount = vi.spyOn(queryClient, 'unmount')
 
@@ -239,8 +240,5 @@ describe('QueryClientProvider/context', () => {
     provider.remove()
     await vi.advanceTimersByTimeAsync(0)
     expect(unmount).toHaveBeenCalledTimes(1)
-
-    mount.mockRestore()
-    unmount.mockRestore()
   })
 })

@@ -5,6 +5,7 @@
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
+    "allowImportingTsExtensions": true,
     "checkJs": true,
     "composite": true,
     "customConditions": ["@tanstack/custom-condition"],

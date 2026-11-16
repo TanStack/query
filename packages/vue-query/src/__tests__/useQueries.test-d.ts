@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { reactive } from 'vue'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { skipToken, useQueries } from '..'
 import { queryOptions } from '../queryOptions'
 import type { OmitKeyof, QueryObserverResult } from '..'
@@ -8,9 +8,9 @@ import type { UseQueryOptions } from '../queryOptions'
 
 describe('UseQueries config object overload', () => {
   it('should always define TData when initialData is provided as an object', () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
+    const key3 = createKey()
     const query1 = {
       queryKey: key1,
       queryFn: () => {
@@ -44,7 +44,7 @@ describe('UseQueries config object overload', () => {
   })
 
   it('should define TData when passed through queryOptions', () => {
-    const key = queryKey()
+    const key = createKey()
     const options = queryOptions({
       queryKey: key,
       queryFn: () => {
@@ -63,8 +63,8 @@ describe('UseQueries config object overload', () => {
   })
 
   it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQueries', () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const query1 = queryOptions({
       queryKey: key1,
       queryFn: () => Promise.resolve(1),
@@ -88,7 +88,7 @@ describe('UseQueries config object overload', () => {
   })
 
   it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
-    const key = queryKey()
+    const key = createKey()
     const { value: queriesState } = useQueries({
       queries: [
         {
@@ -109,7 +109,7 @@ describe('UseQueries config object overload', () => {
   })
 
   it('should have correct TData type when conditional skipToken is passed', () => {
-    const key = queryKey()
+    const key = createKey()
     const { value: queriesState } = useQueries({
       queries: [
         queryOptions({
@@ -140,7 +140,7 @@ describe('UseQueries config object overload', () => {
           queries: [
             {
               ...options,
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => Promise.resolve('data'),
             },
           ],
@@ -230,8 +230,8 @@ describe('UseQueries config object overload', () => {
   })
 
   it('should return correct data for dynamic queries with mixed result types', () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const Queries1 = {
       get: () =>
         queryOptions({
@@ -266,7 +266,7 @@ describe('UseQueries config object overload', () => {
 
   it('should infer correct data type from queryOptions without initialData in useQueries', () => {
     const options = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
     })
 
@@ -277,7 +277,7 @@ describe('UseQueries config object overload', () => {
 
   it('should infer correct data type from queryOptions with select in useQueries', () => {
     const options = queryOptions({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
       select: (data) => data.toString(),
     })

@@ -1,5 +1,5 @@
 import { QueryClient, skipToken } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import { describe, expectTypeOf, it } from 'vitest'
 import { createQueriesController } from '../createQueriesController.js'
@@ -19,7 +19,7 @@ describe('createQueriesController', () => {
   describe('config object overload', () => {
     it('should always define TData when initialData is provided as an object', () => {
       const query1 = {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => {
           return {
             wow: true,
@@ -31,13 +31,13 @@ describe('createQueriesController', () => {
       }
 
       const query2 = {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => 'Query Data',
         initialData: 'initial data',
       }
 
       const query3 = {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => 'Query Data',
       }
 
@@ -58,7 +58,7 @@ describe('createQueriesController', () => {
 
     it('should define TData when passed through queryOptions', () => {
       const options = queryOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => {
           return {
             wow: true,
@@ -81,13 +81,13 @@ describe('createQueriesController', () => {
 
     it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into createQueriesController', () => {
       const query1 = queryOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(1),
         select: (data) => data > 1,
       })
 
       const query2 = {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(1),
         select: (data: number) => data > 1,
       }
@@ -110,7 +110,7 @@ describe('createQueriesController', () => {
         {
           queries: [
             {
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => {
                 return {
                   wow: true,
@@ -141,7 +141,7 @@ describe('createQueriesController', () => {
               queries: [
                 {
                   ...options,
-                  queryKey: queryKey(),
+                  queryKey: createKey(),
                   queryFn: () => Promise.resolve('data'),
                 },
               ],
@@ -163,7 +163,7 @@ describe('createQueriesController', () => {
         {
           queries: [
             {
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn:
                 Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
             },
@@ -184,14 +184,14 @@ describe('createQueriesController', () => {
       const Queries1 = {
         get: () =>
           queryOptions({
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve(1),
           }),
       }
       const Queries2 = {
         get: () =>
           queryOptions({
-            queryKey: queryKey(),
+            queryKey: createKey(),
             queryFn: () => Promise.resolve(true),
           }),
       }
@@ -216,9 +216,9 @@ describe('createQueriesController', () => {
 
   describe('type parameters', () => {
     it('should handle type parameter - tuple of tuples', () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
+      const key3 = createKey()
 
       const result1 = createQueriesController<
         [[number], [string], [Array<string>, boolean]]
@@ -344,9 +344,9 @@ describe('createQueriesController', () => {
     })
 
     it('should handle type parameter - tuple of objects', () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
+      const key3 = createKey()
 
       const result1 = createQueriesController<
         [
@@ -524,7 +524,7 @@ describe('createQueriesController', () => {
         {
           queries: [
             queryOptions({
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => 'string',
               select: (a) => {
                 expectTypeOf(a).toEqualTypeOf<string>()
@@ -532,7 +532,7 @@ describe('createQueriesController', () => {
               },
             }),
             queryOptions({
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => 'string',
               select: (a) => {
                 expectTypeOf(a).toEqualTypeOf<string>()
@@ -554,11 +554,11 @@ describe('createQueriesController', () => {
     })
 
     it('should handle array literal without type parameter to infer result type', () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
-      const key4 = queryKey()
-      const key5 = queryKey()
+      const key1 = createKey()
+      const key2 = createKey()
+      const key3 = createKey()
+      const key4 = createKey()
+      const key5 = createKey()
 
       type BizError = { code: number }
       const throwOnError = (_error: BizError) => true
@@ -976,7 +976,7 @@ describe('createQueriesController', () => {
                   queryFn:
                     fn && fn !== skipToken
                       ? (ctx: QueryFunctionContext<TQueryKey>) => {
-                          // eslint-disable-next-line vitest/valid-expect
+                          // oxlint-disable-next-line vitest-js/valid-expect -- matchers cannot compare against an unresolved type parameter, so the type argument checks that 'ctx.queryKey' is assignable to 'TQueryKey'
                           expectTypeOf<TQueryKey>(ctx.queryKey)
                           return fn.call({}, ctx)
                         }
@@ -1066,7 +1066,7 @@ describe('createQueriesController', () => {
           {
             queries: [
               {
-                queryKey: queryKey(),
+                queryKey: createKey(),
                 queryFn: () => Promise.resolve(1),
                 select: (data) => {
                   expectTypeOf(data).toBeUnknown()
@@ -1086,7 +1086,7 @@ describe('createQueriesController', () => {
           {
             queries: [
               {
-                queryKey: queryKey(),
+                queryKey: createKey(),
                 queryFn: () => Promise.resolve(1),
                 select: (data: number) => data.toFixed(),
               },
@@ -1101,7 +1101,7 @@ describe('createQueriesController', () => {
     describe('with queryOptions passed directly', () => {
       it('should infer the queryFn data as the result without select', () => {
         const options = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
         })
         const queryResults = createQueriesController(
@@ -1114,7 +1114,7 @@ describe('createQueriesController', () => {
 
       it('should infer the select argument and the result with select', () => {
         const options = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
           select: (data) => {
             expectTypeOf(data).toEqualTypeOf<number>()
@@ -1131,7 +1131,7 @@ describe('createQueriesController', () => {
 
       it('should infer select when a base queryOptions is re-wrapped with queryOptions', () => {
         const baseOptions = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
         })
         const queryResults = createQueriesController(
@@ -1156,7 +1156,7 @@ describe('createQueriesController', () => {
 
       it('should infer an overriding select when a queryOptions with a select is re-wrapped with queryOptions', () => {
         const baseOptions = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
           select: (data) => data + 1,
         })
@@ -1182,7 +1182,7 @@ describe('createQueriesController', () => {
     describe('with queryOptions spread into an inline query object', () => {
       it('should leave an unannotated select as `unknown` without select in the factory', () => {
         const options = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
         })
         createQueriesController(
@@ -1205,7 +1205,7 @@ describe('createQueriesController', () => {
 
       it('should compile an annotated select without select in the factory', () => {
         const options = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
         })
         const queryResults = createQueriesController(
@@ -1220,7 +1220,7 @@ describe('createQueriesController', () => {
 
       it('should leave an unannotated overriding select as `unknown` with select in the factory', () => {
         const options = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
           select: (data) => data + 1,
         })
@@ -1244,7 +1244,7 @@ describe('createQueriesController', () => {
 
       it('should compile an annotated overriding select with select in the factory', () => {
         const options = queryOptions({
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
           select: (data) => data + 1,
         })
@@ -1267,11 +1267,11 @@ describe('createQueriesController', () => {
         {
           queries: [
             {
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => Promise.resolve(7),
             },
             {
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => Promise.resolve('ok'),
             },
           ],
@@ -1293,7 +1293,7 @@ describe('createQueriesController', () => {
         {
           queries: [
             queryOptions({
-              queryKey: queryKey(),
+              queryKey: createKey(),
               queryFn: () => Promise.resolve({ id: 5, name: 'Katherine' }),
               initialData: { id: 1, name: 'Init' },
             }),

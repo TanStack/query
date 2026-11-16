@@ -32,7 +32,7 @@ function tryResolveSync(promise: PromiseLike<unknown>) {
   }, noop) as Promise<unknown> | undefined
 
   // .catch can be unavailable on certain kinds of thenable's
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  // oxlint-disable-next-line typescript/no-unnecessary-condition
   thenResult?.catch?.(noop)
 
   if (data !== undefined) {

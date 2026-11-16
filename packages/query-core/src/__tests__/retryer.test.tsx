@@ -16,8 +16,43 @@ describe('createRetryer', () => {
     vi.useRealTimers()
   })
 
+  it.each([
+    {
+      condition: 'offline',
+      setUnavailable: () => onlineManager.setOnline(false),
+    },
+    {
+      condition: 'unfocused',
+      setUnavailable: () => focusManager.setFocused(false),
+    },
+  ])(
+    'should not pause a cancelled retry after its delay expires ($condition)',
+    async ({ setUnavailable }) => {
+      const onPause = vi.fn<() => void>()
+      const fn = vi
+        .fn<() => Promise<never>>()
+        .mockRejectedValue(new Error('synthetic failure'))
+      const retryer = createRetryer({
+        fn,
+        retry: 1,
+        retryDelay: 100,
+        onPause,
+        networkMode: 'online',
+        canRun: () => true,
+      })
+      const promise = retryer.start()
+      await vi.advanceTimersByTimeAsync(0)
+      retryer.cancel()
+      await expect(promise).rejects.toBeInstanceOf(CancelledError)
+      setUnavailable()
+      await vi.advanceTimersByTimeAsync(100)
+      expect(onPause).not.toHaveBeenCalled()
+      expect(fn).toHaveBeenCalledTimes(1)
+    },
+  )
+
   it('should resolve with the result of fn and set status to resolved', async () => {
-    const fn = vi.fn().mockResolvedValue('success')
+    const fn = vi.fn<() => Promise<string>>().mockResolvedValue('success')
     const retryer = createRetryer<string>({
       fn,
       networkMode: 'online',
@@ -32,8 +67,8 @@ describe('createRetryer', () => {
 
   it('should reject after exhausting the retry limit and report each failure', async () => {
     const error = new Error('failed')
-    const fn = vi.fn().mockRejectedValue(error)
-    const onFail = vi.fn()
+    const fn = vi.fn<() => Promise<never>>().mockRejectedValue(error)
+    const onFail = vi.fn<(failureCount: number, error: Error) => void>()
     const retryer = createRetryer({
       fn,
       retry: 2,
@@ -53,7 +88,7 @@ describe('createRetryer', () => {
 
   it('should retry a synchronous throw and resolve once fn succeeds', async () => {
     let calls = 0
-    const fn = vi.fn().mockImplementation(() => {
+    const fn = vi.fn<() => Promise<string>>().mockImplementation(() => {
       calls++
       if (calls === 1) {
         throw new Error('sync throw')
@@ -76,7 +111,7 @@ describe('createRetryer', () => {
   it('should use the default exponential backoff capped at 30 seconds', async () => {
     const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout')
     let calls = 0
-    const fn = vi.fn().mockImplementation(() => {
+    const fn = vi.fn<() => Promise<string>>().mockImplementation(() => {
       calls++
       return calls < 7
         ? Promise.reject(new Error('failed'))
@@ -95,12 +130,12 @@ describe('createRetryer', () => {
     const delays = setTimeoutSpy.mock.calls
       .filter((call) => typeof call[1] === 'number')
       .map((call) => call[1])
-    expect(delays).toEqual([1000, 2000, 4000, 8000, 16000, 30000])
+    expect(delays).toStrictEqual([1000, 2000, 4000, 8000, 16000, 30000])
   })
 
   it('should reject with a CancelledError carrying the cancel options and call onCancel', async () => {
-    const onCancel = vi.fn()
-    const fn = vi.fn().mockImplementation(() => new Promise(() => {}))
+    const onCancel = vi.fn<(error: Error) => void>()
+    const fn = vi.fn<() => Promise<unknown>>(() => new Promise(() => {}))
     const retryer = createRetryer({
       fn,
       onCancel,
@@ -124,8 +159,8 @@ describe('createRetryer', () => {
   })
 
   it('should ignore cancel after the retryer resolved', async () => {
-    const onCancel = vi.fn()
-    const fn = vi.fn().mockResolvedValue('success')
+    const onCancel = vi.fn<(error: Error) => void>()
+    const fn = vi.fn<() => Promise<string>>().mockResolvedValue('success')
     const retryer = createRetryer({
       fn,
       onCancel,
@@ -143,7 +178,7 @@ describe('createRetryer', () => {
 
   it('should reject the pending retry instead of re-running when cancelRetry was called', async () => {
     const error = new Error('failed')
-    const fn = vi.fn().mockRejectedValue(error)
+    const fn = vi.fn<() => Promise<never>>().mockRejectedValue(error)
     const retryer = createRetryer({
       fn,
       retry: 1,
@@ -164,7 +199,7 @@ describe('createRetryer', () => {
 
   it('should resume retrying after continueRetry reverts cancelRetry', async () => {
     let calls = 0
-    const fn = vi.fn().mockImplementation(() => {
+    const fn = vi.fn<() => Promise<string>>().mockImplementation(() => {
       calls++
       return calls === 1
         ? Promise.reject(new Error('failed'))
@@ -188,14 +223,14 @@ describe('createRetryer', () => {
 
   it('should pause when offline during a retry and continue when back online', async () => {
     let calls = 0
-    const fn = vi.fn().mockImplementation(() => {
+    const fn = vi.fn<() => Promise<string>>().mockImplementation(() => {
       calls++
       return calls === 1
         ? Promise.reject(new Error('failed'))
         : Promise.resolve('success')
     })
-    const onPause = vi.fn()
-    const onContinue = vi.fn()
+    const onPause = vi.fn<() => void>()
+    const onContinue = vi.fn<() => void>()
     const retryer = createRetryer({
       fn,
       retry: 1,
@@ -222,7 +257,7 @@ describe('createRetryer', () => {
 
   it('should run even when offline with networkMode "always"', async () => {
     onlineManager.setOnline(false)
-    const fn = vi.fn().mockResolvedValue('success')
+    const fn = vi.fn<() => Promise<string>>().mockResolvedValue('success')
     const retryer = createRetryer({
       fn,
       networkMode: 'always',
@@ -238,13 +273,13 @@ describe('createRetryer', () => {
   it('should start offline with networkMode "offlineFirst" but pause when the retry stays offline', async () => {
     onlineManager.setOnline(false)
     let calls = 0
-    const fn = vi.fn().mockImplementation(() => {
+    const fn = vi.fn<() => Promise<string>>().mockImplementation(() => {
       calls++
       return calls === 1
         ? Promise.reject(new Error('failed'))
         : Promise.resolve('success')
     })
-    const onPause = vi.fn()
+    const onPause = vi.fn<() => void>()
     const retryer = createRetryer({
       fn,
       retry: 1,
@@ -285,7 +320,7 @@ describe('createRetryer', () => {
   })
 
   it('should reuse the initialPromise on the first run and call fn only on retries', async () => {
-    const fn = vi.fn().mockResolvedValue('from fn')
+    const fn = vi.fn<() => Promise<string>>().mockResolvedValue('from fn')
     const retryer = createRetryer({
       fn,
       initialPromise: Promise.reject(new Error('initial failed')),

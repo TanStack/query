@@ -9,3 +9,8 @@ replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 [//]: # 'Info1'
 [//]: # 'Example2'
 [//]: # 'Example2'
+[//]: # 'OfflineExampleLink'
+
+We also have an extensive [offline example](../examples/offline-preact-iso) that covers both queries and mutations.
+
+[//]: # 'OfflineExampleLink'

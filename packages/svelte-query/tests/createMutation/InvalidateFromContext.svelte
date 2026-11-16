@@ -8,7 +8,7 @@
     queryKey: QueryKey
   }
 
-  const { queryClient, queryKey }: Props = $props()
+  let { queryClient, queryKey }: Props = $props()
 
   setQueryClientContext(queryClient)
 

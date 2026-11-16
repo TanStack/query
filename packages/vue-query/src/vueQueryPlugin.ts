@@ -99,12 +99,19 @@ export const VueQueryPlugin = {
       }
       const [unmount, promise] = options.clientPersister(client)
       persisterUnmount = unmount
-      promise.then(() => {
-        if (client.isRestoring) {
-          client.isRestoring.value = false
-        }
-        options.clientPersisterOnSuccess?.(client)
-      })
+      promise.then(
+        () => {
+          if (client.isRestoring) {
+            client.isRestoring.value = false
+          }
+          options.clientPersisterOnSuccess?.(client)
+        },
+        () => {
+          if (client.isRestoring) {
+            client.isRestoring.value = false
+          }
+        },
+      )
     }
 
     const cleanup = () => {

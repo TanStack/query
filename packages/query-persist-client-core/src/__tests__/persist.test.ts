@@ -42,6 +42,72 @@ describe('persist', () => {
 
       unsubscribe()
     })
+
+    it('should catch and log errors in `persistClient`', async () => {
+      const consoleErrorMock = vi
+        .spyOn(console, 'error')
+        .mockReturnValue(undefined)
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockReturnValue(undefined)
+
+      const persistError = new Error('Error persisting client')
+      const persister = createSpyPersister()
+      vi.spyOn(persister, 'persistClient').mockRejectedValue(persistError)
+
+      const unsubscribe = persistQueryClientSubscribe({
+        queryClient,
+        persister,
+      })
+
+      // Triggers 2 saves: the query being added and its data being updated
+      queryClient.setQueryData(['key'], 'data')
+      await vi.waitFor(() => expect(consoleErrorMock).toHaveBeenCalledTimes(2))
+
+      expect(persister.persistClient).toHaveBeenCalledTimes(2)
+      expect(consoleErrorMock).toHaveBeenNthCalledWith(1, persistError)
+      expect(consoleErrorMock).toHaveBeenNthCalledWith(2, persistError)
+      expect(consoleWarnMock).toHaveBeenCalledTimes(2)
+
+      unsubscribe()
+      consoleErrorMock.mockRestore()
+      consoleWarnMock.mockRestore()
+    })
+
+    it('should catch and log errors thrown while dehydrating', async () => {
+      const consoleErrorMock = vi
+        .spyOn(console, 'error')
+        .mockReturnValue(undefined)
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockReturnValue(undefined)
+
+      const dehydrateError = new Error('Error dehydrating query')
+      const persister = createSpyPersister()
+
+      const unsubscribe = persistQueryClientSubscribe({
+        queryClient,
+        persister,
+        dehydrateOptions: {
+          shouldDehydrateQuery: () => {
+            throw dehydrateError
+          },
+        },
+      })
+
+      // Triggers 2 saves: the query being added and its data being updated
+      queryClient.setQueryData(['key'], 'data')
+      await vi.waitFor(() => expect(consoleErrorMock).toHaveBeenCalledTimes(2))
+
+      expect(persister.persistClient).not.toHaveBeenCalled()
+      expect(consoleErrorMock).toHaveBeenNthCalledWith(1, dehydrateError)
+      expect(consoleErrorMock).toHaveBeenNthCalledWith(2, dehydrateError)
+      expect(consoleWarnMock).toHaveBeenCalledTimes(2)
+
+      unsubscribe()
+      consoleErrorMock.mockRestore()
+      consoleWarnMock.mockRestore()
+    })
   })
 
   describe('persistQueryClientSave', () => {
@@ -54,7 +120,7 @@ describe('persist', () => {
       })
 
       const queryKey = ['test']
-      const queryFn = vi.fn().mockReturnValue(1)
+      const queryFn = vi.fn<() => number>().mockReturnValue(1)
       const observer = new QueriesObserver(queryClient, [{ queryKey, queryFn }])
       const unsubscribeObserver = observer.subscribe(vi.fn())
       observer
@@ -107,11 +173,11 @@ describe('persist', () => {
     it('should rethrow exceptions in `restoreClient`', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const consoleWarnMock = vi
         .spyOn(console, 'warn')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const restoreError = new Error('Error restoring client')
 
@@ -127,19 +193,16 @@ describe('persist', () => {
       expect(consoleErrorMock).toHaveBeenCalledTimes(1)
       expect(consoleWarnMock).toHaveBeenCalledTimes(1)
       expect(consoleErrorMock).toHaveBeenNthCalledWith(1, restoreError)
-
-      consoleErrorMock.mockRestore()
-      consoleWarnMock.mockRestore()
     })
 
     it('should rethrow exceptions in `removeClient` before `restoreClient`', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const consoleWarnMock = vi
         .spyOn(console, 'warn')
-        .mockImplementation(() => undefined)
+        .mockReturnValue(undefined)
 
       const restoreError = new Error('Error restoring client')
       const removeError = new Error('Error removing client')
@@ -157,9 +220,6 @@ describe('persist', () => {
       expect(consoleErrorMock).toHaveBeenCalledTimes(1)
       expect(consoleWarnMock).toHaveBeenCalledTimes(1)
       expect(consoleErrorMock).toHaveBeenNthCalledWith(1, restoreError)
-
-      consoleErrorMock.mockRestore()
-      consoleWarnMock.mockRestore()
     })
 
     it('should rethrow error in `removeClient`', async () => {
@@ -264,7 +324,13 @@ describe('persist', () => {
       await restorePromise
 
       queryClient.setQueryData(['key'], 'data')
-      expect(persister.persistClient).toHaveBeenCalled()
+      expect(persister.persistClient).toHaveBeenCalledWith(
+        expect.objectContaining({
+          clientState: expect.objectContaining({
+            queries: [expect.objectContaining({ queryKey: ['key'] })],
+          }),
+        }),
+      )
 
       unsubscribe()
     })

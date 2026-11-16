@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { createQueries, queryOptions } from '../../src/index.js'
 import type {
   CreateQueryOptions,
@@ -13,8 +13,8 @@ import type {
 
 describe('createQueries', () => {
   it('should return correct data for dynamic queries with mixed result types', () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const Queries1 = {
       get: () =>
         queryOptions({
@@ -45,9 +45,9 @@ describe('createQueries', () => {
 
   it('should handle type parameter - tuple of tuples', () => {
     const queryClient = new QueryClient()
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
+    const key3 = createKey()
 
     const result1 = createQueries<
       [[number], [string], [Array<string>, boolean]]
@@ -160,9 +160,9 @@ describe('createQueries', () => {
 
   it('should handle type parameter - tuple of objects', () => {
     const queryClient = new QueryClient()
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
+    const key3 = createKey()
 
     const result1 = createQueries<
       [
@@ -317,10 +317,10 @@ describe('createQueries', () => {
 
   it('should handle array literal without type parameter to infer result type', () => {
     const queryClient = new QueryClient()
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
-    const key4 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
+    const key3 = createKey()
+    const key4 = createKey()
 
     // Array.map preserves TQueryFnData
     const result1 = createQueries(
@@ -610,7 +610,7 @@ describe('createQueries', () => {
                 queryKey: key,
                 queryFn: fn
                   ? (ctx: QueryFunctionContext<TQueryKey>) => {
-                      // eslint-disable-next-line vitest/valid-expect
+                      // oxlint-disable-next-line vitest-js/valid-expect -- matchers cannot compare against an unresolved type parameter, so the type argument checks that 'ctx.queryKey' is assignable to 'TQueryKey'
                       expectTypeOf<TQueryKey>(ctx.queryKey)
                       return (
                         fn as QueryFunction<TQueryFnData, TQueryKey>

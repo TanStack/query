@@ -33,7 +33,6 @@ export const rule = createRule({
       fixTo: 'Fix to {{result}}',
     },
     hasSuggestions: true,
-    fixable: 'code',
     schema: [
       {
         type: 'object',
