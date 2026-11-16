@@ -9,7 +9,7 @@ title: MutationOptions
 type MutationOptions<TData = unknown, TError = DefaultError, TVariables = void, TOnMutateResult = unknown> = OmitKeyof<MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>, "_defaulted"> & ShallowOption;
 ```
 
-Defined in: [packages/vue-query/src/types.ts:98](https://github.com/TanStack/query/blob/main/packages/vue-query/src/types.ts#L98)
+Defined in: [packages/vue-query/src/types.ts:100](https://github.com/TanStack/query/blob/main/packages/vue-query/src/types.ts#L100)
 
 The options of a mutation. Same as [MutationObserverOptions](../interfaces/MutationObserverOptions.md) from `@tanstack/query-core`, minus the
 internal `_defaulted` flag, plus the `shallow` option.

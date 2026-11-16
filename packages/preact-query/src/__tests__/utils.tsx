@@ -3,9 +3,8 @@ import { act, render } from '@testing-library/preact'
 import { useEffect, useState } from 'preact/hooks'
 import { vi } from 'vitest'
 import { QueryClientProvider, onlineManager } from '..'
-import type { MockInstance } from 'vitest'
-
 import type { ComponentChildren, VNode } from 'preact'
+import type { MockInstance } from 'vitest'
 import type { QueryClient } from '..'
 
 export function renderWithClient(

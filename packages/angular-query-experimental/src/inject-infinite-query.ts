@@ -1,10 +1,10 @@
-import { InfiniteQueryObserver } from '@tanstack/query-core'
 import {
   Injector,
   assertInInjectionContext,
   inject,
   runInInjectionContext,
 } from '@angular/core'
+import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { createBaseQuery } from './create-base-query'
 import type {
   DefaultError,
@@ -13,14 +13,14 @@ import type {
   QueryObserver,
 } from '@tanstack/query-core'
 import type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infinite-query-options'
+import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
   DefinedCreateInfiniteQueryResult,
 } from './types'
-import type {
-  DefinedInitialDataInfiniteOptions,
-  UndefinedInitialDataInfiniteOptions,
-} from './infinite-query-options'
 
 /**
  * Options for `injectInfiniteQuery`, passed after the function that returns the infinite

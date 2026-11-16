@@ -1,9 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   createKey,
   mockVisibilityState,
   sleep,
 } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   CancelledError,
   Query,

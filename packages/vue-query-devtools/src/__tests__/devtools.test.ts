@@ -1,9 +1,9 @@
+import { QueryClient } from '@tanstack/vue-query'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createApp, h, nextTick, shallowRef } from 'vue'
-import { QueryClient } from '@tanstack/vue-query'
 import Devtools from '../devtools.vue'
-import type { App } from 'vue'
 import type { TanstackQueryDevtools } from '@tanstack/query-devtools'
+import type { App } from 'vue'
 import type { DevtoolsOptions } from '../types'
 
 const {

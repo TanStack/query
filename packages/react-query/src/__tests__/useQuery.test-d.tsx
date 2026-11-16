@@ -1,7 +1,7 @@
-import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
-import { useQuery } from '../useQuery'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { queryOptions } from '../queryOptions'
+import { useQuery } from '../useQuery'
 import type { OmitKeyof, QueryFunction, UseQueryOptions } from '..'
 
 describe('useQuery', () => {

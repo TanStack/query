@@ -1,5 +1,3 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
 import {
   QueryClient,
   QueryClientProvider,
@@ -7,6 +5,8 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import type { QueryKey } from '@tanstack/react-query'
 
 type Post = {

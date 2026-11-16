@@ -1,16 +1,15 @@
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import {
   MutationCache,
   QueryClient,
   useIsRestoring,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { toast } from 'react-hot-toast'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
-import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
-
-import { moviesMutations, moviesQueries } from './services/movies/queries'
+import { toast } from 'react-hot-toast'
 import { routeTree } from './routeTree.gen'
+import { moviesMutations, moviesQueries } from './services/movies/queries'
 
 const persister = createAsyncStoragePersister({
   storage: window.localStorage,

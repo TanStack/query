@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom/vitest'
+import { notifyManager } from '@tanstack/query-core'
 import { act, cleanup as cleanupRTL } from '@testing-library/react'
 import { cleanup as cleanupRRS } from '@testing-library/react-render-stream'
 import { afterEach } from 'vitest'
-import { notifyManager } from '@tanstack/query-core'
 
 // https://testing-library.com/docs/react-testing-library/api#cleanup
 afterEach(() => {

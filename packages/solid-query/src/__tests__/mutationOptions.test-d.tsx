@@ -1,6 +1,6 @@
-import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { useIsMutating, useMutation, useMutationState } from '..'
 import { mutationOptions } from '../mutationOptions'
 import type {

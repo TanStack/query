@@ -1,9 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent } from '@testing-library/react'
-import { mutationOptions } from '../mutationOptions'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useIsMutating, useMutation, useMutationState } from '..'
+import { mutationOptions } from '../mutationOptions'
 import { renderWithClient } from './utils'
 import type { UseMutationOptions } from '../types'
 

@@ -8,7 +8,6 @@ export default defineConfig({
     'cspell/spellchecker': 'off',
     'typescript/no-unnecessary-condition': 'off',
     'import/no-duplicates': 'off',
-    'import-js/order': 'off',
     'no-shadow': 'off',
     'sort-imports': 'off',
   },
