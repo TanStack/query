@@ -19,15 +19,15 @@ describe('shared query options', () => {
     }
 
     expectTypeOf(queryClient.query(options)).toEqualTypeOf<Promise<number>>()
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- regression for shared Vue options
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- regression for shared Vue options
     expectTypeOf(queryClient.fetchQuery(options)).toEqualTypeOf<
       Promise<string>
     >()
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- regression for shared Vue options
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- regression for shared Vue options
     expectTypeOf(queryClient.ensureQueryData(options)).toEqualTypeOf<
       Promise<string>
     >()
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- regression for shared Vue options
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- regression for shared Vue options
     expectTypeOf(queryClient.prefetchQuery(options)).toEqualTypeOf<
       Promise<void>
     >()
@@ -41,15 +41,15 @@ describe('shared query options', () => {
     })
 
     expectTypeOf(queryClient.query(options)).toEqualTypeOf<Promise<string>>()
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- regression for shared Vue options
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- regression for shared Vue options
     expectTypeOf(queryClient.fetchQuery(options)).toEqualTypeOf<
       Promise<string>
     >()
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- regression for shared Vue options
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- regression for shared Vue options
     expectTypeOf(queryClient.ensureQueryData(options)).toEqualTypeOf<
       Promise<string>
     >()
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- regression for shared Vue options
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- regression for shared Vue options
     expectTypeOf(queryClient.prefetchQuery(options)).toEqualTypeOf<
       Promise<void>
     >()
@@ -67,15 +67,15 @@ describe('shared query options', () => {
       queryClient.query<string, Error, number, string, ['key'], never>(options),
     ).toEqualTypeOf<Promise<number>>()
     expectTypeOf(
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- regression for shared Vue options
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- regression for shared Vue options
       queryClient.fetchQuery<string, Error, string, ['key'], never>(options),
     ).toEqualTypeOf<Promise<string>>()
     expectTypeOf(
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- regression for shared Vue options
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- regression for shared Vue options
       queryClient.ensureQueryData<string, Error, string, ['key']>(options),
     ).toEqualTypeOf<Promise<string>>()
     expectTypeOf(
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- regression for shared Vue options
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- regression for shared Vue options
       queryClient.prefetchQuery<string, Error, string, ['key']>(options),
     ).toEqualTypeOf<Promise<void>>()
   })
@@ -91,15 +91,15 @@ describe('shared query options', () => {
     expectTypeOf(queryClient.query(sharedOptions)).toEqualTypeOf<
       Promise<number>
     >()
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- regression for shared Vue options
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- regression for shared Vue options
     expectTypeOf(queryClient.fetchQuery(sharedOptions)).toEqualTypeOf<
       Promise<number>
     >()
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- regression for shared Vue options
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- regression for shared Vue options
     expectTypeOf(queryClient.ensureQueryData(sharedOptions)).toEqualTypeOf<
       Promise<number>
     >()
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- regression for shared Vue options
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- regression for shared Vue options
     expectTypeOf(queryClient.prefetchQuery(sharedOptions)).toEqualTypeOf<
       Promise<void>
     >()

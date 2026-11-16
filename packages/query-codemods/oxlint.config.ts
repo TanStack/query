@@ -23,7 +23,7 @@ export default defineConfig({
       files: ['src/**/__testfixtures__/**'],
       rules: {
         // Codemod fixtures intentionally preserve historical QueryClient syntax.
-        'tanstack-query/no-restricted-syntax': 'off',
+        'eslint-js/no-restricted-syntax': 'off',
       },
     },
   ],

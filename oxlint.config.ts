@@ -1,4 +1,3 @@
-import { fileURLToPath } from 'node:url'
 import { tanstackConfig } from '@tanstack/oxlint-config'
 import pluginVitest from '@vitest/eslint-plugin'
 import pluginJestDom from 'eslint-plugin-jest-dom'
@@ -22,8 +21,7 @@ export default defineConfig({
   plugins: ['import', 'typescript', 'unicorn', 'vitest'],
   jsPlugins: [
     { name: 'cspell', specifier: '@cspell/eslint-plugin' },
-    // Absolute path so that package configs can extend this config
-    fileURLToPath(new URL('./scripts/oxlint-plugin.ts', import.meta.url)),
+    { name: 'eslint-js', specifier: 'oxlint-plugin-eslint' },
   ],
   env: tanstackConfig.env,
   settings: {
@@ -76,7 +74,7 @@ export default defineConfig({
      * will be grandfathered in and allowed to continue using the deprecated methods.
      * They should not be removed, but new tests should use the new methods instead.
      */
-    'tanstack-query/no-restricted-syntax': [
+    'eslint-js/no-restricted-syntax': [
       'error',
       {
         selector: 'ExportAllDeclaration',

@@ -78,7 +78,7 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
     })
 
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
@@ -122,7 +122,7 @@ describe('queryOptions', () => {
       select: (data) => data.toString(),
     })
 
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })

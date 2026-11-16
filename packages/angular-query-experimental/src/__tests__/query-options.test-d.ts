@@ -88,7 +88,7 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
     })
 
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
     const data = new QueryClient().fetchQuery(options)
     assertType<Promise<number>>(data)
   })
