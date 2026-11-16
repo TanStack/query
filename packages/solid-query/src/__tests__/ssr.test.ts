@@ -1,8 +1,8 @@
-// @vitest-environment node
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { Suspense, createComponent } from 'solid-js'
 import { renderToStringAsync } from 'solid-js/web'
-import { createKey, sleep } from '@tanstack/query-test-utils'
+// @vitest-environment node
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryCache,
   QueryClient,
