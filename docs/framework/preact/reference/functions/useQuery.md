@@ -13,7 +13,7 @@ function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, 
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-- [`DefinedInitialDataOptions` → `DefinedUseQueryResult`](#call-signature-1): This overload is selected when `initialData` is known to be defined, so the resulting `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+- [`DefinedInitialDataOptions` → `DefinedUseQueryResult`](#call-signature-1): This overload is selected when `initialData` is known to be defined, so the resulting `data` is typed as never `undefined` (unless a `select` changes `TData` to include `undefined`). At runtime, `data` is still `undefined` if `select` throws on its first call.
 - [`UndefinedInitialDataOptions` → `UseQueryResult`](#call-signature-2): This overload is selected when `initialData` is omitted, may be `undefined`, or is a function that may return `undefined`, so the resulting `data` can be `undefined`.
 - [`UseQueryOptions` → `UseQueryResult`](#call-signature-3): Fallback overload for options whose `initialData` presence isn't statically known — for example, an object typed as [UseQueryOptions](../interfaces/UseQueryOptions.md) rather than an object literal. Prefer one of the other overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
@@ -27,10 +27,11 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/preact-query/src/useQuery.ts:49](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L49)
+Defined in: [packages/preact-query/src/useQuery.ts:50](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L50)
 
-This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
-`undefined` (unless a `select` changes `TData` to include `undefined`).
+This overload is selected when `initialData` is known to be defined, so the resulting `data` is typed as never
+`undefined` (unless a `select` changes `TData` to include `undefined`). At runtime, `data` is still `undefined`
+if `select` throws on its first call.
 
 ### Type Parameters
 
@@ -69,9 +70,10 @@ be used.
 
 [`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
-fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
-since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for convenience.
+The current query result, typed so that `status` is `success` or `error` (`status` never
+resolves to `pending` in this overload's type, since `initialData` guarantees data upfront). `status` is
+`error` if the query has an error from a fetch that failed after its retries or if `select` threw, and
+`success` otherwise. `isSuccess`/`isError` are derived booleans for convenience.
 
 ### See
 
@@ -110,7 +112,7 @@ function Posts() {
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/preact-query/src/useQuery.ts:116](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L116)
+Defined in: [packages/preact-query/src/useQuery.ts:118](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L118)
 
 This overload is selected when `initialData` is omitted, may be `undefined`, or is a function that may
 return `undefined`, so the resulting `data` can be `undefined`.
@@ -152,8 +154,9 @@ be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result. `status` is `pending` if there is no cached data to display, `error` if
-the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+The current query result. `status` is `error` if the query has an error from a fetch that failed
+after its retries or if `select` threw, `success` if the query has cached data (even if `select` returns
+`undefined`) or data from `placeholderData`, and `pending` otherwise. `isPending`/`isSuccess`/`isError`
 are derived booleans for convenience.
 
 ### See
@@ -216,7 +219,7 @@ function Posts() {
 function useQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/preact-query/src/useQuery.ts:281](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L281)
+Defined in: [packages/preact-query/src/useQuery.ts:284](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L284)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, an
 object typed as [UseQueryOptions](../interfaces/UseQueryOptions.md) rather than an object literal. Prefer one of the other overloads
@@ -259,8 +262,9 @@ be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result. `status` is `pending` if there is no cached data to display, `error` if
-the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+The current query result. `status` is `error` if the query has an error from a fetch that failed
+after its retries or if `select` threw, `success` if the query has cached data (even if `select` returns
+`undefined`) or data from `placeholderData`, and `pending` otherwise. `isPending`/`isSuccess`/`isError`
 are derived booleans for convenience.
 
 ### See
@@ -435,7 +439,7 @@ The [UseQueryOptions](../interfaces/UseQueryOptions.md) to use — everything yo
 | <a id="options-property-maxpages"></a> `maxPages?` | `number` | `undefined` | Maximum number of pages to store in the data of an infinite query. |
 | <a id="options-property-meta"></a> `meta?` | `Record`\<`string`, `unknown`\> | `undefined` | Additional payload to be stored on each query. Use this property to pass information that can be used in other places. |
 | <a id="options-property-networkmode"></a> `networkMode?` | `"online"` \| `"always"` \| `"offlineFirst"` | `'online'` | Controls whether a query is allowed to run based on the current network connectivity. **See** [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
-| <a id="options-property-notifyonchangeprops"></a> `notifyOnChangeProps?` | \| ( \| `"error"` \| `"data"` \| `"isError"` \| `"isPending"` \| `"isLoading"` \| `"isLoadingError"` \| `"isRefetchError"` \| `"isSuccess"` \| `"isPlaceholderData"` \| `"status"` \| `"dataUpdatedAt"` \| `"errorUpdatedAt"` \| `"failureCount"` \| `"failureReason"` \| `"errorUpdateCount"` \| `"isFetched"` \| `"isFetchedAfterMount"` \| `"isFetching"` \| `"isInitialLoading"` \| `"isPaused"` \| `"isRefetching"` \| `"isStale"` \| `"isEnabled"` \| `"refetch"` \| `"fetchStatus"` \| `"fetchNextPage"` \| `"fetchPreviousPage"` \| `"hasNextPage"` \| `"hasPreviousPage"` \| `"isFetchNextPageError"` \| `"isFetchingNextPage"` \| `"isFetchPreviousPageError"` \| `"isFetchingPreviousPage"`)[] \| `"all"` \| (() => \| `"all"` \| ( \| `"error"` \| `"data"` \| `"isError"` \| `"isPending"` \| `"isLoading"` \| `"isLoadingError"` \| `"isRefetchError"` \| `"isSuccess"` \| `"isPlaceholderData"` \| `"status"` \| `"dataUpdatedAt"` \| `"errorUpdatedAt"` \| `"failureCount"` \| `"failureReason"` \| `"errorUpdateCount"` \| `"isFetched"` \| `"isFetchedAfterMount"` \| `"isFetching"` \| `"isInitialLoading"` \| `"isPaused"` \| `"isRefetching"` \| `"isStale"` \| `"isEnabled"` \| `"refetch"` \| `"fetchStatus"` \| `"fetchNextPage"` \| `"fetchPreviousPage"` \| `"hasNextPage"` \| `"hasPreviousPage"` \| `"isFetchNextPageError"` \| `"isFetchingNextPage"` \| `"isFetchPreviousPageError"` \| `"isFetchingPreviousPage"`)[] \| `undefined`) | `undefined` | If set, the component will only re-render if any of the listed properties change. When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change. When set to `'all'`, the component will re-render whenever a query is updated. When set to a function, the function will be executed to compute the list of properties. Defaults to `undefined`, in which case property access is tracked automatically, and the component only re-renders when one of the tracked properties changes. |
+| <a id="options-property-notifyonchangeprops"></a> `notifyOnChangeProps?` | \| `"all"` \| ( \| `"error"` \| `"fetchStatus"` \| `"status"` \| `"data"` \| `"isError"` \| `"isPending"` \| `"isLoading"` \| `"isLoadingError"` \| `"isRefetchError"` \| `"isSuccess"` \| `"isPlaceholderData"` \| `"fetchNextPage"` \| `"fetchPreviousPage"` \| `"hasNextPage"` \| `"hasPreviousPage"` \| `"isFetchNextPageError"` \| `"isFetchingNextPage"` \| `"isFetchPreviousPageError"` \| `"isFetchingPreviousPage"` \| `"dataUpdatedAt"` \| `"errorUpdatedAt"` \| `"failureCount"` \| `"failureReason"` \| `"errorUpdateCount"` \| `"isFetched"` \| `"isFetchedAfterMount"` \| `"isFetching"` \| `"isInitialLoading"` \| `"isPaused"` \| `"isRefetching"` \| `"isStale"` \| `"isEnabled"` \| `"refetch"`)[] \| (() => \| `"all"` \| ( \| `"error"` \| `"fetchStatus"` \| `"status"` \| `"data"` \| `"isError"` \| `"isPending"` \| `"isLoading"` \| `"isLoadingError"` \| `"isRefetchError"` \| `"isSuccess"` \| `"isPlaceholderData"` \| `"fetchNextPage"` \| `"fetchPreviousPage"` \| `"hasNextPage"` \| `"hasPreviousPage"` \| `"isFetchNextPageError"` \| `"isFetchingNextPage"` \| `"isFetchPreviousPageError"` \| `"isFetchingPreviousPage"` \| `"dataUpdatedAt"` \| `"errorUpdatedAt"` \| `"failureCount"` \| `"failureReason"` \| `"errorUpdateCount"` \| `"isFetched"` \| `"isFetchedAfterMount"` \| `"isFetching"` \| `"isInitialLoading"` \| `"isPaused"` \| `"isRefetching"` \| `"isStale"` \| `"isEnabled"` \| `"refetch"`)[] \| `undefined`) | `undefined` | If set, the component will only re-render if any of the listed properties change. When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change. When set to `'all'`, the component will re-render whenever a query is updated. When set to a function, the function will be executed to compute the list of properties. Defaults to `undefined`, in which case property access is tracked automatically, and the component only re-renders when one of the tracked properties changes. |
 | <a id="options-property-persister"></a> `persister?` | (`queryFn`: (`context`: `object`) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\>, `context`: `object`, `query`: [`Query`](../classes/Query.md)) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\> | `undefined` | This option can be used to persist the result of a query to an external storage, bypassing the need to actually call the `queryFn`. Useful for persisting a query's data across e.g. server/client boundaries. |
 | <a id="options-property-placeholderdata"></a> `placeholderData?` | \| `NonFunctionGuard`\<`TQueryFnData`\> \| ((`previousData`: `NonFunctionGuard`\<`TQueryFnData`\> \| `undefined`, `previousQuery`: \| [`Query`](../classes/Query.md)\<`NonFunctionGuard`\<`TQueryFnData`\>, `TError`, `NonFunctionGuard`\<`TQueryFnData`\>, `TQueryKey`\> \| `undefined`) => `NonFunctionGuard`\<`TQueryFnData`\> \| `undefined`) | `undefined` | If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided. |
 | <a id="options-property-queryfn"></a> `queryFn?` | \| *typeof* [`skipToken`](../variables/skipToken.md) \| ((`context`: `object`) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\>) | `undefined` | The function that the query will use to request data. Required, unless a default query function has been set via `queryClient.setQueryDefaults` or `queryClient.setDefaultOptions`. Receives a [QueryFunctionContext](../type-aliases/QueryFunctionContext.md). Must return a promise that will either resolve data or throw an error. The data cannot be `undefined`. |
@@ -469,8 +473,9 @@ be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result. `status` is `pending` if there is no cached data to display, `error` if
-the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+The current query result. `status` is `error` if the query has an error from a fetch that failed
+after its retries or if `select` threw, `success` if the query has cached data (even if `select` returns
+`undefined`) or data from `placeholderData`, and `pending` otherwise. `isPending`/`isSuccess`/`isError`
 are derived booleans for convenience.
 
 <a id="result-properties"></a>
@@ -486,21 +491,21 @@ are derived booleans for convenience.
 | <a id="result-property-errorupdatedat"></a> `errorUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"error"`. |
 | <a id="result-property-failurecount"></a> `failureCount` | `number` | The failure count for the query. - Incremented every time the query fails. - Reset to `0` when the query succeeds. |
 | <a id="result-property-failurereason"></a> `failureReason` | `TError` \| `null` | The failure reason for the query retry. - Reset to `null` when the query succeeds. |
-| <a id="result-property-fetchstatus"></a> `fetchStatus` | `"fetching"` \| `"paused"` \| `"idle"` | The fetch status of the query. - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetch. - `paused`: The query wanted to fetch, but has been `paused`. - `idle`: The query is not fetching. - See [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
+| <a id="result-property-fetchstatus"></a> `fetchStatus` | `"idle"` \| `"fetching"` \| `"paused"` | The fetch status of the query. - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetch. - `paused`: The query wanted to fetch, but has been `paused`. - `idle`: The query is not fetching. - See [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
 | <a id="result-property-isenabled"></a> `isEnabled` | `boolean` | `true` if this observer is enabled, `false` otherwise. |
-| <a id="result-property-iserror"></a> `isError` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query attempt resulted in an error. |
+| <a id="result-property-iserror"></a> `isError` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has an error from a fetch that failed after its retries, or if `select` threw. |
 | <a id="result-property-isfetched"></a> `isFetched` | `boolean` | Will be `true` if the query has been fetched. |
 | <a id="result-property-isfetchedaftermount"></a> `isFetchedAfterMount` | `boolean` | Will be `true` if the query has been fetched after the component mounted. - This property can be used to not show any previously cached data. |
 | <a id="result-property-isfetching"></a> `isFetching` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - `true` whenever the `queryFn` is executing, which includes initial `pending` as well as background refetch. |
 | <a id="result-property-isinitialloading"></a> ~~`isInitialLoading`~~ | `boolean` | **Deprecated** `isInitialLoading` is being deprecated in favor of `isLoading` and will be removed in the next major version. |
 | <a id="result-property-isloading"></a> `isLoading` | `boolean` | Is `true` whenever the first fetch for a query is in-flight. - Is the same as `isFetching && isPending`. |
-| <a id="result-property-isloadingerror"></a> `isLoadingError` | `boolean` | Will be `true` if the query failed while fetching for the first time. |
+| <a id="result-property-isloadingerror"></a> `isLoadingError` | `boolean` | Will be `true` if the query has an error and no data to display. |
 | <a id="result-property-ispaused"></a> `isPaused` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - The query wanted to fetch, but has been `paused`. |
-| <a id="result-property-ispending"></a> `isPending` | `boolean` | Will be `pending` if there's no cached data and no query attempt was finished yet. |
+| <a id="result-property-ispending"></a> `isPending` | `boolean` | Will be `true` if the query has no cached data, no data from `placeholderData` and no error. |
 | <a id="result-property-isplaceholderdata"></a> `isPlaceholderData` | `boolean` | Will be `true` if the data shown is the placeholder data. |
-| <a id="result-property-isrefetcherror"></a> `isRefetchError` | `boolean` | Will be `true` if the query failed while refetching. |
+| <a id="result-property-isrefetcherror"></a> `isRefetchError` | `boolean` | Will be `true` if the query has an error and still has data to display (for infinite queries, not after a failed page fetch). |
 | <a id="result-property-isrefetching"></a> `isRefetching` | `boolean` | Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`. - Is the same as `isFetching && !isPending`. |
 | <a id="result-property-isstale"></a> `isStale` | `boolean` | Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`. |
-| <a id="result-property-issuccess"></a> `isSuccess` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has received a response with no errors and is ready to display its data. |
+| <a id="result-property-issuccess"></a> `isSuccess` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has cached data or data from `placeholderData`, and no error. |
 | <a id="result-property-refetch"></a> `refetch` | (`options?`: [`RefetchOptions`](../interfaces/RefetchOptions.md)) => `Promise`\<[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>\> | A function to manually refetch the query. |
-| <a id="result-property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` | The status of the query. - Will be: - `pending` if there's no cached data and no query attempt was finished yet. - `error` if the query attempt resulted in an error. - `success` if the query has received a response with no errors and is ready to display its data. |
+| <a id="result-property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` | The status of the query. - Will be: - `error` if the query has an error from a fetch that failed after its retries, or if `select` threw. - `success` if the query has cached data (even if `select` returns `undefined`) or data from `placeholderData`, and no error. - `pending` otherwise, since the query has no cached data, no data from `placeholderData` and no error. |

@@ -1,5 +1,3 @@
-import { render } from 'preact'
-import { useState } from 'preact/hooks'
 import {
   QueryClient,
   QueryClientProvider,
@@ -7,6 +5,8 @@ import {
   useQueryClient,
 } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
+import { render } from 'preact'
+import { useState } from 'preact/hooks'
 import type { QueryKey } from '@tanstack/preact-query'
 
 type Post = {

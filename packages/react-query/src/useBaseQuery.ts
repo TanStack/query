@@ -1,7 +1,8 @@
 'use client'
-import * as React from 'react'
-
 import { noop, notifyManager } from '@tanstack/query-core'
+import * as React from 'react'
+import { useIsHydrating } from './IsHydratingProvider'
+import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -9,8 +10,6 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { useIsHydrating } from './IsHydratingProvider'
-import { useIsRestoring } from './IsRestoringProvider'
 import {
   ensureSuspenseTimers,
   fetchOptimistic,

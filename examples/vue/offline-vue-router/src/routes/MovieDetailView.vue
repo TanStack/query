@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { computed, ref } from 'vue'
 import { moviesMutations, moviesQueries } from '../services/movies/queries'
 
 const props = defineProps<{ movieId: string }>()

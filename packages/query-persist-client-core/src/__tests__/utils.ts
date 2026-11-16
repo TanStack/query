@@ -1,5 +1,5 @@
-import { vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
+import { vi } from 'vitest'
 import type { PersistedClient, Persister } from '../persist'
 
 export function createMockPersister(): Persister {

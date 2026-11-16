@@ -9,7 +9,7 @@ title: useIsMutating
 function useIsMutating(filters?: Omit<MutationFilters<unknown, Error, unknown, unknown>, "status">, queryClient?: QueryClient): number;
 ```
 
-Defined in: [packages/preact-query/src/useMutationState.ts:33](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L33)
+Defined in: [packages/preact-query/src/useMutationState.ts:32](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L32)
 
 The `useIsMutating` hook returns the `number` of mutations that your application currently has `pending`
 (useful for app-wide loading indicators).

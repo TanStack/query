@@ -183,8 +183,8 @@ ReactDOM.createRoot(rootElement).render(<App />)
 For this use-case, you can use the `PersistQueryClientProvider`. It will make sure to subscribe / unsubscribe correctly according to the React component lifecycle, and it will also make sure that queries will not start fetching while we are still restoring. Queries will still render though, they will just be put into `fetchingState: 'idle'` until data has been restored. Then, they will refetch unless the restored data is _fresh_ enough, and _initialData_ will also be respected. It can be used _instead of_ the normal [QueryClientProvider](../reference/functions/QueryClientProvider.md):
 
 ```tsx
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -266,11 +266,11 @@ import {
 You can persist however you like. Here is an example of how to build an [Indexed DB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) persister. Compared to `Web Storage API`, Indexed DB is faster, stores more than 5MB, and doesn't require serialization. That means it can readily store Javascript native types, such as `Date` and `File`.
 
 ```tsx
-import { get, set, del } from 'idb-keyval'
 import {
   PersistedClient,
   Persister,
 } from '@tanstack/react-query-persist-client'
+import { get, set, del } from 'idb-keyval'
 
 /**
  * Creates an Indexed DB persister

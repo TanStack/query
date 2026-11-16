@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { createQuery } from '@tanstack/svelte-query'
   import { resolve } from '$app/paths'
   import { episodesQueries } from '$lib/services/episodes/queries'
-  import { createQuery } from '@tanstack/svelte-query'
 
   const query = createQuery(() => episodesQueries.list())
 </script>

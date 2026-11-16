@@ -20,7 +20,6 @@ import {
   QueryClient,
   provideTanStackQuery,
 } from '@tanstack/angular-query-experimental'
-
 import { withDevtools } from '@tanstack/angular-query-experimental/devtools'
 
 export const appConfig: ApplicationConfig = {
@@ -59,9 +58,9 @@ When setting the option to true, the devtools will be loaded in both development
 This is useful if you want to load devtools based on [Angular environment configurations](https://angular.dev/tools/cli/environments). E.g. you could set this to true when the application is running on your production build staging environment.
 
 ```ts
-import { environment } from './environments/environment'
 // Make sure to use the production sub-path to load devtools in production builds
 import { withDevtools } from '@tanstack/angular-query-experimental/devtools/production'
+import { environment } from './environments/environment'
 
 provideTanStackQuery(
   new QueryClient(),
@@ -87,8 +86,8 @@ The example below always loads devtools in development mode and loads on-demand 
 
 ```ts
 import { Injectable, isDevMode } from '@angular/core'
-import { fromEvent, map, scan } from 'rxjs'
 import { toSignal } from '@angular/core/rxjs-interop'
+import { fromEvent, map, scan } from 'rxjs'
 
 @Injectable({ providedIn: 'root' })
 export class DevtoolsOptionsManager {

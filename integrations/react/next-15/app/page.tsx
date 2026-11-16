@@ -1,10 +1,10 @@
+import { Temporal } from '@js-temporal/polyfill'
+import { HydrationBoundary, dehydrate, noop } from '@tanstack/react-query'
 import { headers } from 'next/headers'
 import React from 'react'
-import { HydrationBoundary, dehydrate, noop } from '@tanstack/react-query'
-import { Temporal } from '@js-temporal/polyfill'
+import { queryExampleAction } from './_action'
 import { ClientComponent } from './client-component'
 import { makeQueryClient } from './make-query-client'
-import { queryExampleAction } from './_action'
 
 export default function Home() {
   const queryClient = makeQueryClient()

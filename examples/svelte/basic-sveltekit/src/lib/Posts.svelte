@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { resolve } from '$app/paths'
   import { useQueryClient, createQuery } from '@tanstack/svelte-query'
+  import { resolve } from '$app/paths'
   import { postsQueries } from './services/posts/queries'
 
   const client = useQueryClient()

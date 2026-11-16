@@ -1,3 +1,8 @@
+import { DropdownMenu, RadioGroup } from '@kobalte/core'
+import { createResizeObserver } from '@solid-primitives/resize-observer'
+import { rankItem } from '@tanstack/match-sorter-utils'
+import { clsx as cx } from 'clsx'
+import * as goober from 'goober'
 import {
   For,
   Show,
@@ -9,28 +14,30 @@ import {
   onCleanup,
   onMount,
 } from 'solid-js'
-import { rankItem } from '@tanstack/match-sorter-utils'
-import * as goober from 'goober'
-import { clsx as cx } from 'clsx'
-import { TransitionGroup } from 'solid-transition-group'
-import { createResizeObserver } from '@solid-primitives/resize-observer'
-import { DropdownMenu, RadioGroup } from '@kobalte/core'
 import { Portal } from 'solid-js/web'
-import { useDevtoolsOffline } from './contexts/DevtoolsOfflineContext'
-import { useDevtoolsSubscriptions } from './contexts/DevtoolsSubscriptionsContext'
-import { useDevtoolsState } from './contexts/DevtoolsStateContext'
-import { tokens } from './theme'
+import { TransitionGroup } from 'solid-transition-group'
+import Explorer, { SearchableExplorer } from './Explorer'
+import { VirtualList } from './VirtualList'
 import {
-  convertRemToPixels,
-  displayValue,
-  getMutationStatusColor,
-  getQueryStatusColor,
-  getQueryStatusColorByLabel,
-  getQueryStatusLabel,
-  getSidedProp,
-  mutationSortFns,
-  sortFns,
-} from './utils'
+  BUTTON_POSITION,
+  DEFAULT_FILTER_SCOPE,
+  DEFAULT_HEIGHT,
+  DEFAULT_MUTATION_SORT_FN_NAME,
+  DEFAULT_SORT_FN_NAME,
+  DEFAULT_SORT_ORDER,
+  DEFAULT_WIDTH,
+  FILTER_SCOPES,
+  INITIAL_IS_OPEN,
+  POSITION,
+  firstBreakpoint,
+  secondBreakpoint,
+  thirdBreakpoint,
+} from './constants'
+import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
+import { useDevtoolsOffline } from './contexts/DevtoolsOfflineContext'
+import { useDevtoolsState } from './contexts/DevtoolsStateContext'
+import { useDevtoolsSubscriptions } from './contexts/DevtoolsSubscriptionsContext'
+import { createSearchText } from './explorerSearch'
 import {
   ArrowDown,
   ArrowLeft,
@@ -52,31 +59,19 @@ import {
   Wifi,
   XCircle,
 } from './icons'
-import Explorer, { SearchableExplorer } from './Explorer'
-import { createSearchText } from './explorerSearch'
-import { VirtualList } from './VirtualList'
-import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
+import { tokens } from './theme'
 import {
-  BUTTON_POSITION,
-  DEFAULT_FILTER_SCOPE,
-  DEFAULT_HEIGHT,
-  DEFAULT_MUTATION_SORT_FN_NAME,
-  DEFAULT_SORT_FN_NAME,
-  DEFAULT_SORT_ORDER,
-  DEFAULT_WIDTH,
-  FILTER_SCOPES,
-  INITIAL_IS_OPEN,
-  POSITION,
-  firstBreakpoint,
-  secondBreakpoint,
-  thirdBreakpoint,
-} from './constants'
-import type { FilterScope } from './constants'
-import type {
-  DevtoolsErrorType,
-  DevtoolsPosition,
-  QueryDevtoolsProps,
-} from './contexts'
+  convertRemToPixels,
+  displayValue,
+  getMutationStatusColor,
+  getQueryStatusColor,
+  getQueryStatusColorByLabel,
+  getQueryStatusLabel,
+  getSidedProp,
+  mutationSortFns,
+  sortFns,
+} from './utils'
+import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
 import type {
   Mutation,
   MutationCache,
@@ -85,8 +80,13 @@ import type {
   QueryCache,
   QueryCacheNotifyEvent,
 } from '@tanstack/query-core'
-import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
 import type { Accessor, Component, JSX } from 'solid-js'
+import type { FilterScope } from './constants'
+import type {
+  DevtoolsErrorType,
+  DevtoolsPosition,
+  QueryDevtoolsProps,
+} from './contexts'
 
 const filterScopeLabels: Record<FilterScope, string> = {
   key: 'Key',
@@ -2728,7 +2728,10 @@ const setupQueryCacheSubscription = () => {
 }
 
 const createSubscribeToQueryCacheBatcher = <T,>(
-  callback: (queryCache: Accessor<QueryCache>) => Exclude<T, Function>,
+  callback: (
+    queryCache: Accessor<QueryCache>,
+    // oxlint-disable-next-line typescript/no-unsafe-function-type -- matches the 'Exclude<T, Function>' that Solid's 'Setter' accepts
+  ) => Exclude<T, Function>,
   equalityCheck: boolean = true,
   shouldUpdate: (event: QueryCacheNotifyEvent) => boolean = () => true,
 ) => {
@@ -2781,7 +2784,10 @@ const setupMutationCacheSubscription = () => {
 }
 
 const createSubscribeToMutationCacheBatcher = <T,>(
-  callback: (queryCache: Accessor<MutationCache>) => Exclude<T, Function>,
+  callback: (
+    queryCache: Accessor<MutationCache>,
+    // oxlint-disable-next-line typescript/no-unsafe-function-type -- matches the 'Exclude<T, Function>' that Solid's 'Setter' accepts
+  ) => Exclude<T, Function>,
   equalityCheck: boolean = true,
   shouldUpdate: (event: MutationCacheNotifyEvent) => boolean = () => true,
 ) => {

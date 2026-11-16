@@ -1,8 +1,8 @@
-import { LitElement, html } from 'lit'
 import {
   createMutationController,
   createQueryController,
 } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import { moviesMutations, moviesQueries } from './services/movies/queries'
 
 class MovieDetailView extends LitElement {

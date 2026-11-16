@@ -7,8 +7,8 @@ ref: docs/framework/react/guides/infinite-queries.md
 [//]: # 'Example'
 
 ```tsx
-import { Switch, Match, For, Show } from 'solid-js'
 import { useInfiniteQuery } from '@tanstack/solid-query'
+import { Switch, Match, For, Show } from 'solid-js'
 
 function Projects() {
   const fetchProjects = async ({ pageParam }) => {
