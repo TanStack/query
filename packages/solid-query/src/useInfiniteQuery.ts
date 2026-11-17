@@ -274,7 +274,7 @@ export function useInfiniteQuery<
   const infiniteData = () =>
     layer.query().state.data as InfiniteData<unknown> | undefined
 
-  // Read `direction()` before `isFetching()`: a first read behind a pending check is held until the fetch lands.
+  // Read `direction()` before `isFetching()` to work around solidjs/solid#4966.
   const isFetchingPage = (expected: 'forward' | 'backward') => {
     const current = direction()
     return layer.isFetching() && current === expected
