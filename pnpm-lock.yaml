@@ -6337,16 +6337,16 @@ importers:
     devDependencies:
       '@angular/common':
         specifier: ~20.1.0
-        version: 20.1.8(@angular/core@20.1.8(@angular/compiler@20.1.8)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        version: 20.1.8(@angular/core@20.1.8(@angular/compiler@20.3.35)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
       '@angular/compiler':
-        specifier: ~20.1.0
-        version: 20.1.8
+        specifier: ~20.3.0
+        version: 20.3.35
       '@angular/compiler-cli':
         specifier: ~20.1.0
-        version: 20.1.8(@angular/compiler@20.1.8)(supports-color@10.2.2)(typescript@5.8.3)
+        version: 20.1.8(@angular/compiler@20.3.35)(supports-color@10.2.2)(typescript@5.8.3)
       '@angular/core':
         specifier: ~20.1.0
-        version: 20.1.8(@angular/compiler@20.1.8)(rxjs@7.8.2)(zone.js@0.15.0)
+        version: 20.1.8(@angular/compiler@20.3.35)(rxjs@7.8.2)(zone.js@0.15.0)
       '@tanstack/angular-query':
         specifier: workspace:*
         version: link:../../../packages/angular-query
@@ -7921,8 +7921,8 @@ packages:
       typescript:
         optional: true
 
-  '@angular/compiler@20.1.8':
-    resolution: {integrity: sha512-EvPO+sCLx2kGowvexxB4FMdXlza6UpGBv+r3hxI0rolUDHJpuVvxmyIbOMadHCVWXs7V3OwwHG8uEZK6fgdfcQ==}
+  '@angular/compiler@20.3.35':
+    resolution: {integrity: sha512-dNJksUcX+e4IBG8Mm8CXqjmMpnmlNqjeF3fg667p4zWigGJgIE3lK2+NXSljF73dqucYzMr5HDwzpICfmlqS3w==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
   '@angular/compiler@21.2.26':
@@ -23723,9 +23723,9 @@ snapshots:
       - '@types/node'
       - chokidar
 
-  '@angular/common@20.1.8(@angular/core@20.1.8(@angular/compiler@20.1.8)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)':
+  '@angular/common@20.1.8(@angular/core@20.1.8(@angular/compiler@20.3.35)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)':
     dependencies:
-      '@angular/core': 20.1.8(@angular/compiler@20.1.8)(rxjs@7.8.2)(zone.js@0.15.0)
+      '@angular/core': 20.1.8(@angular/compiler@20.3.35)(rxjs@7.8.2)(zone.js@0.15.0)
       rxjs: 7.8.2
       tslib: 2.8.1
 
@@ -23747,9 +23747,9 @@ snapshots:
       rxjs: 7.8.2
       tslib: 2.8.1
 
-  '@angular/compiler-cli@20.1.8(@angular/compiler@20.1.8)(supports-color@10.2.2)(typescript@5.8.3)':
+  '@angular/compiler-cli@20.1.8(@angular/compiler@20.3.35)(supports-color@10.2.2)(typescript@5.8.3)':
     dependencies:
-      '@angular/compiler': 20.1.8
+      '@angular/compiler': 20.3.35
       '@babel/core': 7.28.0(supports-color@10.2.2)
       '@jridgewell/sourcemap-codec': 1.6.0
       chokidar: 5.0.0
@@ -23793,7 +23793,7 @@ snapshots:
     optionalDependencies:
       typescript: 6.0.3
 
-  '@angular/compiler@20.1.8':
+  '@angular/compiler@20.3.35':
     dependencies:
       tslib: 2.8.1
 
@@ -23805,12 +23805,12 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@angular/core@20.1.8(@angular/compiler@20.1.8)(rxjs@7.8.2)(zone.js@0.15.0)':
+  '@angular/core@20.1.8(@angular/compiler@20.3.35)(rxjs@7.8.2)(zone.js@0.15.0)':
     dependencies:
       rxjs: 7.8.2
       tslib: 2.8.1
     optionalDependencies:
-      '@angular/compiler': 20.1.8
+      '@angular/compiler': 20.3.35
       zone.js: 0.15.0
 
   '@angular/core@21.2.26(@angular/compiler@21.2.26)(rxjs@7.8.2)(zone.js@0.15.0)':
