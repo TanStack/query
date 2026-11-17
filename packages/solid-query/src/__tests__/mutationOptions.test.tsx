@@ -355,7 +355,7 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with useMutationState (with mutationKey in mutationOptions)', async () => {
-    const mutationStateArray: Array<Array<MutationState>> = []
+    const mutationStateArray: Array<ReadonlyArray<MutationState>> = []
     const key = createKey()
     const mutationOpts = mutationOptions({
       mutationKey: key,
@@ -395,7 +395,7 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with useMutationState (without mutationKey in mutationOptions)', async () => {
-    const mutationStateArray: Array<Array<MutationState>> = []
+    const mutationStateArray: Array<ReadonlyArray<MutationState>> = []
     const mutationOpts = mutationOptions({
       mutationFn: () => sleep(10).then(() => 'data'),
     })
@@ -433,7 +433,7 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with useMutationState', async () => {
-    const mutationStateArray: Array<Array<MutationState>> = []
+    const mutationStateArray: Array<ReadonlyArray<MutationState>> = []
     const key = createKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,
@@ -480,7 +480,7 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with useMutationState (filter mutationOpts1.mutationKey)', async () => {
-    const mutationStateArray: Array<Array<MutationState>> = []
+    const mutationStateArray: Array<ReadonlyArray<MutationState>> = []
     const key = createKey()
     const mutationOpts1 = mutationOptions({
       mutationKey: key,

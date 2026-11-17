@@ -640,7 +640,7 @@ export function useBaseQueryLayer<
    */
   const dataStore = createProjection<{ value: TData }>(
     (draft) => computeData(draft.value),
-    {},
+    {} as { value: TData },
     {
       key: untrack(() => options().reconcile),
       deferStream: untrack(() => options().deferStream),
