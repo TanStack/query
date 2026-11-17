@@ -12,12 +12,12 @@
   "dependencies": {
     "@solidjs/router": "^1.0.1",
     "@solidjs/start": "^2.2.0",
-    "@tanstack/solid-query": "^5.107.1",
-    "@tanstack/solid-query-devtools": "^5.107.1",
+    "@tanstack/solid-query": "^5.107.2",
+    "@tanstack/solid-query-devtools": "^5.107.2",
     "solid-js": "^1.9.18"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.107.1",
+    "@tanstack/eslint-plugin-query": "^5.107.2",
     "eslint-plugin-solid": "^0.18.1",
     "nitro": "^3.0.260903-beta",
     "typescript": "^6.0.3",
