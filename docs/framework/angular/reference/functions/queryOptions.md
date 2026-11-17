@@ -27,7 +27,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/angular-query/src/query-options.ts:132](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-options.ts#L132)
+Defined in: [packages/angular-query/src/query-options.ts:139](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-options.ts#L139)
 
 You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options
 can be shared across functions and imperative APIs such as `queryClient.query`. `options.queryKey` is
@@ -113,7 +113,7 @@ export class Posts {
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/angular-query/src/query-options.ts:179](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-options.ts#L179)
+Defined in: [packages/angular-query/src/query-options.ts:186](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-options.ts#L186)
 
 You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options
 can be shared across functions and imperative APIs such as `queryClient.query`. `options.queryKey` is
@@ -194,7 +194,7 @@ export class Post {
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/angular-query/src/query-options.ts:257](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-options.ts#L257)
+Defined in: [packages/angular-query/src/query-options.ts:264](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-options.ts#L264)
 
 You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options
 can be shared across functions and imperative APIs such as `queryClient.query`. `options.queryKey` is

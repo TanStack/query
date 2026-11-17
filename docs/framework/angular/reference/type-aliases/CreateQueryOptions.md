@@ -9,10 +9,12 @@ title: CreateQueryOptions
 type CreateQueryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = OmitKeyof<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>, "notifyOnChangeProps" | "suspense" | "throwOnError">;
 ```
 
-Defined in: [packages/angular-query/src/types.ts:32](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L32)
+Defined in: [packages/angular-query/src/types.ts:39](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L39)
 
-Options accepted by `injectQuery`, with cache data projected through an optional `select`.
-Angular owns result notifications and exposes errors through signals rather than error boundaries.
+The options accepted by `injectQuery`, with cache data projected through an optional `select`. Same as
+[QueryObserverOptions](../interfaces/QueryObserverOptions.md) from `@tanstack/query-core`, minus `notifyOnChangeProps`, `suspense`, and
+`throwOnError`: Angular owns result notifications and exposes errors through signals rather than error
+boundaries.
 
 ## Type Parameters
 
@@ -20,14 +22,23 @@ Angular owns result notifications and exposes errors through signals rather than
 
 `TQueryFnData` = `unknown`
 
+The type your `queryFn` resolves to.
+
 ### TError
 
 `TError` = [`DefaultError`](DefaultError.md)
+
+The type of errors your `queryFn` may throw.
 
 ### TData
 
 `TData` = `TQueryFnData`
 
+The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
+`select` is used.
+
 ### TQueryKey
 
 `TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
+
+The type of your `queryKey`.

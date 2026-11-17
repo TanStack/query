@@ -36,13 +36,22 @@ export type {
  * browser APIs such as `localStorage`.
  *
  * ```ts
- * withPersistQueryClient(() => ({
- *   persistOptions: {
- *     persister: createAsyncStoragePersister({ storage: localStorage }),
- *   },
- * }))
+ * export const appConfig: ApplicationConfig = {
+ *   providers: [
+ *     provideTanStackQuery(
+ *       () => new QueryClient(),
+ *       withPersistQueryClient(() => ({
+ *         persistOptions: {
+ *           persister: createAsyncStoragePersister({ storage: localStorage }),
+ *         },
+ *         onSuccess: () => console.log('Restoration completed successfully.'),
+ *       })),
+ *     ),
+ *   ],
+ * }
  * ```
- * @param optionsFactory - Creates the persistence options in the browser.
+ * @param optionsFactory - Creates the persistence options in the browser, and optional `onSuccess` and
+ * `onError` callbacks which get called when the restoration process is complete.
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public
  */

@@ -9,12 +9,10 @@ title: injectIsFetching
 function injectIsFetching(filters?: () => Omit<QueryFilters, "fetchStatus">): Signal<number>;
 ```
 
-Defined in: [packages/angular-query/src/inject-is-fetching.ts:15](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-is-fetching.ts#L15)
+Defined in: [packages/angular-query/src/inject-is-fetching.ts:46](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-is-fetching.ts#L46)
 
 Injects a signal that tracks the number of queries that your application is loading or fetching in the
 background (useful for app-wide loading indicators).
-
-Can be used for app-wide loading indicators.
 
 ## Parameters
 
@@ -22,7 +20,9 @@ Can be used for app-wide loading indicators.
 
 () => `Omit`\<[`QueryFilters`](../interfaces/QueryFilters.md), `"fetchStatus"`\>
 
-A reactive factory for the filters.
+A function returning the [QueryFilters](../interfaces/QueryFilters.md) to narrow down the matched queries. Similar
+to `computed` from Angular, this function runs in the reactive context, so signals read inside it
+re-narrow the matched queries.
 
 <a id="filters-properties"></a>
 
@@ -34,4 +34,37 @@ Built from [`QueryFilters`](../interfaces/QueryFilters.md#properties). See the t
 
 `Signal`\<`number`\>
 
-signal with number of loading or fetching queries.
+A `Signal` with the number of queries that your application is currently loading or fetching in
+the background.
+
+## Examples
+
+```angular-ts
+@Component({
+  selector: 'posts-fetching-indicator',
+  template: `
+    @if (isFetchingPosts()) {
+      <span>Refreshing posts...</span>
+    }
+  `,
+})
+export class PostsFetchingIndicator {
+  // How many queries matching the posts prefix are fetching?
+  readonly isFetchingPosts = injectIsFetching(() => ({ queryKey: ['posts'] }))
+}
+```
+
+A global loading indicator for any query fetching in the background, not just the ones on screen:
+```angular-ts
+@Component({
+  selector: 'global-loading-indicator',
+  template: `
+    @if (isFetching()) {
+      <div>Queries are fetching in the background...</div>
+    }
+  `,
+})
+export class GlobalLoadingIndicator {
+  readonly isFetching = injectIsFetching()
+}
+```

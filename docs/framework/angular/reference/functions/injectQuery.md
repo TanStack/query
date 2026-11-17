@@ -108,7 +108,7 @@ export class Posts {
 function injectQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(optionsFn: () => UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query/src/inject-query.ts:143](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-query.ts#L143)
+Defined in: [packages/angular-query/src/inject-query.ts:144](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-query.ts#L144)
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
@@ -209,6 +209,7 @@ export class Posts {
   readonly postsQuery = injectQuery(() => ({
     queryKey: ['posts', this.filter()],
     queryFn: () => fetchPosts(this.filter()),
+    // Signals can be combined with expressions
     enabled: !!this.filter(),
   }))
 }
@@ -222,7 +223,7 @@ export class Posts {
 function injectQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(optionsFn: () => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query/src/inject-query.ts:166](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-query.ts#L166)
+Defined in: [packages/angular-query/src/inject-query.ts:168](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-query.ts#L168)
 
 This overload accepts the general [CreateQueryOptions](../type-aliases/CreateQueryOptions.md) shape rather than the `initialData`-aware
 overloads above, so whether `data` is defined can't be inferred from the call site — useful when wrapping
@@ -253,7 +254,8 @@ overloads above, so whether `data` is defined can't be inferred from the call si
 () => [`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 A function that returns query options. Similar to `computed` from Angular, this
-function runs in the reactive context, so signals read inside it drive the query.
+function runs in the reactive context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive
+the query.
 
 ### Returns
 
@@ -274,7 +276,8 @@ https://tanstack.com/query/latest/docs/framework/angular/guides/queries
 () => [`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 A function that returns query options. Similar to `computed` from Angular, this
-function runs in the reactive context, so signals read inside it drive the query.
+function runs in the reactive context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive
+the query.
 
 <a id="optionsFn-properties"></a>
 
