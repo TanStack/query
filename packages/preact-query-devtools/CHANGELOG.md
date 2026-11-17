@@ -1,5 +1,13 @@
 # @tanstack/preact-query-devtools
 
+## 5.108.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.108.0
+  - @tanstack/query-devtools@5.108.0
+
 ## 5.107.2
 
 ### Patch Changes
