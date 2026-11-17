@@ -1,5 +1,47 @@
 # @tanstack/solid-query-persist-client
 
+## 6.0.0-rc.6
+
+### Major Changes
+
+- Support Solid 2.0
+
+### Patch Changes
+
+- chore: bumps solid v2 to beta.5
+
+- chore: bump vite-plugin-solid next.4
+
+- refactor: solid 2 reactivity compliance
+
+- chore: bumps solid v2 to beta.4
+
+- [#12613](https://github.com/TanStack/query/pull/12613) [`5e44698`](https://github.com/TanStack/query/commit/5e4469811a7c0bdb63086a2aff463e16b8f516d8) - Require the stable Solid 2.0 release: the `solid-js` and `@solidjs/web` peer ranges are now `^2.0.0`, and the packages build and test against `@solidjs/vite-plugin` 3.0.0.
+
+- chore: upgrade to solid v2 beta 15
+
+- chore: upgrade to solid v2 beta 21
+
+- chore: upgrade to solid v2 beta 29
+
+- chore: upgrade to solid v2 beta 33. `@tanstack/solid-query` now requires solid-js >= 2.0.0-beta.33 (peer range floor raised): the provider-owned hydration channel depends on beta.33's `normalizeIterator` buffered-replay conflation fix — on beta.32 and earlier, hydration that begins after multiple stream chunks have arrived silently drops later channel yields, leaving queries never primed and their components frozen.
+
+- Move off Solid's internal `sharedConfig` onto its public hydration API. The hydrating-mount checks read `isHydrating()`, the server cache stream writes through `getHydrationWriter()` gated on `isHydratable()` (so `<NoHydration>` is still respected), and `useQuery` consumes its streamed entry with `takeHydrationValue()`. `sharedConfig` is internal in Solid 2.0 and absent from the published `solid-js` declarations, so the previous imports no longer type-check.
+
+  These APIs ship in Solid `2.0.0-rc.13`, so the `solid-js` / `@solidjs/web` peer floor is now `>=2.0.0-rc.13`.
+
+- Require solid-js and @solidjs/web 2.0.0-rc.6+. rc.6 ships the named flight-data source API the single-flight consumer uses, plus the async settle fix the adapter depends on (rc.5's settle-walk regression breaks query hydration).
+
+- chore: upgrade to solid v2 rc and rename `vite-plugin-solid` to `@solidjs/vite-plugin`
+
+- Follow Solid 2.0.0-rc.9. The packages build with `@solidjs/babel-plugin` (the Solid 2.0 compiler, matching the rc.9 runtime's delegated-event contract) and test under vite 8; the `solid-js` / `@solidjs/web` peer floor is `2.0.0-rc.9`.
+
+  `useQuery`'s setup-time snapshots (the meta projection's seed, the mount counts) now read the cache directly instead of through the hook's version signal. Under hydration, priming writes that signal during setup, and a write made during the hydration pass is held: a computation in the pass that reads it — tracked or not — is served the pre-write value and replays when the pass ends. For the hook's own derived nodes that replay is the takeover; for the computation instantiating the component (a `<Loading>` boundary's children) it was a remount, re-creating the hydrated component as a client render and letting cache writes reach the DOM while the stream was still open.
+
+- chore: bump vite-plugin-solid next.5
+- Updated dependencies [[`5e44698`](https://github.com/TanStack/query/commit/5e4469811a7c0bdb63086a2aff463e16b8f516d8), [`6bab31b`](https://github.com/TanStack/query/commit/6bab31bc3746ddfc8d425e3ba92b1179a7a6df3c)]:
+  - @tanstack/solid-query@6.0.0-rc.6
+
 ## 6.0.0-rc.5
 
 ### Patch Changes

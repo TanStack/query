@@ -1,5 +1,125 @@
 # @tanstack/solid-query
 
+## 6.0.0-rc.6
+
+### Major Changes
+
+- feat: rewrite the adapter onto Solid 2.0's native async model. Query reads
+  are now a single async computation (suspends into `<Loading>`, holds
+  previous data through refetches, routes rejections to `<Errored>`,
+  serializes settled values for streaming hydration) served through an
+  auto-reconciling store projection — deep reads are fine-grained and item
+  identity survives across fetches (keyed by the `reconcile` option, default
+  `'id'`). Mutations ride Solid core's `action` primitive (transactional
+  settle, optimistic overlays, callbacks inside the transaction). The
+  observer notification/store layer is deleted —
+  `QueryObserver`/`MutationObserver` remain as lifecycle/policy engines only.
+  Hydration is single-channel and content-addressed (the Solid Router
+  `query()` pattern): the provider serializes every query the request
+  touches into Solid's hydration registry under `sq:<queryHash>` at
+  fetch-dispatch time, each client hook primes the query cache from its own
+  hash entry through query-core `hydrate()`, prefetched-never-rendered
+  queries transfer, late mounts adopt past hydration end, and the
+  provider-owned dehydration channel is deleted. Requires solid-js >=
+  2.0.0-rc.4 (hydration-end divergence takeover).
+
+  Breaking: `data` is non-optional on query results (reads suspend instead of
+  returning `undefined`) and is a readonly store view; `mutateAsync` removed
+  (`mutate` returns a promise); `reconcile` is now the reconciliation key for
+  the data store (`string | (item => any) | null`, default `'id'` — the v5
+  function form is gone, core auto-reconciles); `suspense` option removed
+  (suspension is the model, boundaries are the control point); the `create*`
+  runtime and `Create*` type aliases are removed, completing the deprecation
+  from [#8950](https://github.com/TanStack/query/issues/8950) — `use*` is the only naming; `isInitialLoading` (deprecated
+  alias of `isLoading`) is removed from query results. `deferStream` is now implemented
+  (it was declared but unwired on the v6 line): it passes through to Solid's
+  per-computation `deferStream` memo option.
+
+- Support Solid 2.0
+
+### Minor Changes
+
+- SSR lifecycle utilities: new `dehydrateSettled` awaits in-flight queries before dehydrating so streamed HTML carries settled data; `QueryClientProvider` tears the client down after server render disposal (`cancelQueries` + `clear`, preventing cross-request leaks) and dehydration now respects `defaultOptions.dehydrate.shouldDehydrateQuery` filtering.
+
+- Built-in single-flight consumer: `QueryClientProvider` now subscribes the query cache's slice of Solid's multi-source single-flight channel under the exported `FLIGHT_DATA_SOURCE` id (`"sq"`). Mutation responses carrying that slice — a `DehydratedState` produced by a server collector registered with `registerFlightDataSource(FLIGHT_DATA_SOURCE, hook)` — hydrate the provider's client before the mutation's promise resolves, so every mounted query on those keys updates with no follow-up refetches and no per-app wiring. Subscribing is inert when no server collector exists. Requires the `@solidjs/web` release following 2.0.0-rc.4 (the named-source single-flight protocol).
+
+### Patch Changes
+
+- chore: bumps solid v2 to beta.5
+
+- Sweep `X-Revalidate` keys in the single-flight consumer. A mutation can declare its invalidation scope with Solid's `reload`/`redirect` `revalidate` option; the flight payload covers what the server recomputed, and whatever a declared key matches beyond it (parameterized instances only the client holds, queries no loader owns) is now invalidated client-side — active queries refetch in the background, inactive ones are marked stale. Keys match by queryKey prefix, mirroring Solid Router's consumption of the same header.
+
+- chore: bump vite-plugin-solid next.4
+
+- refactor: solid 2 reactivity compliance
+
+- fix: scope useMutation's mutation-cache subscription to the flight. The
+  hook subscribed at mount with a bare reactive `client()` read (tripping
+  Solid's STRICT_READ_UNTRACKED dev diagnostic) and held the subscription
+  for its whole life even though the listener only matters while a mutation
+  is in flight. The subscription now starts in `run` against the same
+  client the mutation is built on and ends at settle: nothing reactive is
+  read at setup, the listener and the mutation can never sit on different
+  clients, and idle hooks hold no cache subscription.
+
+- chore: bumps solid v2 to beta.4
+
+- [#12613](https://github.com/TanStack/query/pull/12613) [`5e44698`](https://github.com/TanStack/query/commit/5e4469811a7c0bdb63086a2aff463e16b8f516d8) - Require the stable Solid 2.0 release: the `solid-js` and `@solidjs/web` peer ranges are now `^2.0.0`, and the packages build and test against `@solidjs/vite-plugin` 3.0.0.
+
+- chore: upgrade to solid v2 beta 15
+
+- chore: upgrade to solid v2 beta 21
+
+- chore: upgrade to solid v2 beta 29
+
+- chore: upgrade to solid v2 beta 33. `@tanstack/solid-query` now requires solid-js >= 2.0.0-beta.33 (peer range floor raised): the provider-owned hydration channel depends on beta.33's `normalizeIterator` buffered-replay conflation fix — on beta.32 and earlier, hydration that begins after multiple stream chunks have arrived silently drops later channel yields, leaving queries never primed and their components frozen.
+
+- fix: finish server renders that read a disabled query. Reading `.data` from a
+  `useQuery` with `enabled: false` and nothing cached stopped an SSR render from
+  ever completing — no bytes at all, since the data node was handed a promise
+  that can never settle. That parking is intended client behaviour (the reader
+  suspends into the nearest `<Loading>` until an enable, refetch or cache write
+  revives the compute), but on the server there is no later: the render has to
+  finish, and nothing will enable the query or write the cache before it does.
+  A disabled query with no data now commits its idle state on the server, which
+  is the contract the scalar metadata channel already honoured and the state the
+  client hydrates to. Client behaviour is unchanged.
+
+- fix: prime the query cache during hydration through a provider-owned dehydration channel, so SSR-fetched queries come up warm instead of refetching on mount. `QueryClientProvider` streams dehydrated cache entries (query-core `dehydrate()` shapes) as each query settles during SSR — entries ride the same flush as the content that awaited them — and applies them on the client via query-core `hydrate()` (newer-wins) as they arrive, attaching each hydrated component's observer as soon as its entry is primed. The vestigial per-observer-result `hydrationData` copy is no longer serialized.
+
+- The single-flight consumer applies `X-Revalidate` on responses that carried no slice for the query cache (no collector registered, a redirect leaving the app) instead of throwing on the missing payload — nothing is covered, so the declared scope is swept in full. The header's three states are three scopes: absent leaves the cache alone, an empty declaration (`revalidate: []`) sweeps nothing, and the reserved key `*` (`revalidate: '*'`) invalidates every query the payload did not cover.
+
+- Move off Solid's internal `sharedConfig` onto its public hydration API. The hydrating-mount checks read `isHydrating()`, the server cache stream writes through `getHydrationWriter()` gated on `isHydratable()` (so `<NoHydration>` is still respected), and `useQuery` consumes its streamed entry with `takeHydrationValue()`. `sharedConfig` is internal in Solid 2.0 and absent from the published `solid-js` declarations, so the previous imports no longer type-check.
+
+  These APIs ship in Solid `2.0.0-rc.13`, so the `solid-js` / `@solidjs/web` peer floor is now `>=2.0.0-rc.13`.
+
+- [#12034](https://github.com/TanStack/query/pull/12034) [`6bab31b`](https://github.com/TanStack/query/commit/6bab31bc3746ddfc8d425e3ba92b1179a7a6df3c) - fix: prevent cache notifications during a Solid transition landing from reading a query options memo that has no committed value.
+
+- Require solid-js and @solidjs/web 2.0.0-rc.6+. rc.6 ships the named flight-data source API the single-flight consumer uses, plus the async settle fix the adapter depends on (rc.5's settle-walk regression breaks query hydration).
+
+- chore: upgrade to solid v2 rc and rename `vite-plugin-solid` to `@solidjs/vite-plugin`
+
+- Follow Solid 2.0.0-rc.9. The packages build with `@solidjs/babel-plugin` (the Solid 2.0 compiler, matching the rc.9 runtime's delegated-event contract) and test under vite 8; the `solid-js` / `@solidjs/web` peer floor is `2.0.0-rc.9`.
+
+  `useQuery`'s setup-time snapshots (the meta projection's seed, the mount counts) now read the cache directly instead of through the hook's version signal. Under hydration, priming writes that signal during setup, and a write made during the hydration pass is held: a computation in the pass that reads it — tracked or not — is served the pre-write value and replays when the pass ends. For the hook's own derived nodes that replay is the takeover; for the computation instantiating the component (a `<Loading>` boundary's children) it was a remount, re-creating the hydrated component as a client render and letting cache writes reach the DOM while the stream was still open.
+
+- fix: stop a mounted observer from re-creating and refetching a removed
+  query. The read layer bumps its per-hook version signal on every cache
+  event for its hash, `removed` included, and the recompute that followed
+  called `queryCache.build()`, which put the entry the caller had just
+  deleted straight back. The resurrection was not passive: the rebuilt
+  entry also re-pointed the still-live observer, whose mount-fetch policy
+  then refetched and repopulated the key, so `removeQueries()` (and
+  `clear()`) could not be made to stick while any hook observed the key.
+  `query()` now reuses the entry it last read when the cache no longer
+  holds that hash, and only builds when the hash is genuinely new, so a
+  removal leaves the cache empty and fires no fetch, while the mounted
+  reader holds its last value until options change or a real entry returns
+  through `setQueryData`, a refetch or a later mount. This is the behavior
+  of the other adapters, and of solid-query at 6.0.0-rc.0.
+
+- chore: bump vite-plugin-solid next.5
+
 ## 6.0.0-rc.5
 
 ### Patch Changes
