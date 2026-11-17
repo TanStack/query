@@ -12,9 +12,7 @@
     [
       "@tanstack/angular-query",
       "@tanstack/angular-query-devtools",
-      "@tanstack/angular-query-persist-client"
-    ],
-    [
+      "@tanstack/angular-query-persist-client",
       "@tanstack/eslint-plugin-query",
       "@tanstack/preact-query",
       "@tanstack/preact-query-devtools",
