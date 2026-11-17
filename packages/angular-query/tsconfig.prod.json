@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "composite": false,
+    "rootDir": "../../",
+    "customConditions": null,
+    // vite-plugin-dts must not depend on a generated query-core build.
+    "paths": {
+      "@tanstack/query-core": ["../query-core/src/index.ts"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["src/__tests__"]
+}

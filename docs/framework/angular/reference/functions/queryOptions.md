@@ -13,9 +13,9 @@ function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnDa
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-- [`DefinedInitialDataOptions` → `DefinedInitialDataOptions & QueryKeyWithDataTag`](#call-signature-1): You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is required and is the query key to generate options for.
-- [`UnusedSkipTokenOptions` → `UnusedSkipTokenOptions & QueryKeyWithDataTag`](#call-signature-2): You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is required and is the query key to generate options for.
-- [`UndefinedInitialDataOptions` → `UndefinedInitialDataOptions & QueryKeyWithDataTag`](#call-signature-3): You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is required and is the query key to generate options for.
+- [`DefinedInitialDataOptions` → `DefinedInitialDataOptions & QueryKeyWithDataTag`](#call-signature-1): You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options can be shared across functions and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+- [`UnusedSkipTokenOptions` → `UnusedSkipTokenOptions & QueryKeyWithDataTag`](#call-signature-2): You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options can be shared across functions and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+- [`UndefinedInitialDataOptions` → `UndefinedInitialDataOptions & QueryKeyWithDataTag`](#call-signature-3): You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options can be shared across functions and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 
@@ -27,10 +27,10 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/query-options.ts:149](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L149)
+Defined in: [packages/angular-query/src/query-options.ts:132](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-options.ts#L132)
 
 You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options
-can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is
+can be shared across functions and imperative APIs such as `queryClient.query`. `options.queryKey` is
 required and is the query key to generate options for.
 
 This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
@@ -77,7 +77,7 @@ The same options object, typed so that `queryKey` carries the inferred data type
 ### Example
 
 ```angular-ts
-import { queryOptions, injectQuery } from '@tanstack/angular-query-experimental'
+import { queryOptions, injectQuery } from '@tanstack/angular-query'
 
 export const postsOptions = queryOptions({
   queryKey: ['posts'],
@@ -113,10 +113,10 @@ export class Posts {
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/query-options.ts:196](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L196)
+Defined in: [packages/angular-query/src/query-options.ts:179](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-options.ts#L179)
 
 You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options
-can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is
+can be shared across functions and imperative APIs such as `queryClient.query`. `options.queryKey` is
 required and is the query key to generate options for.
 
 ### Type Parameters
@@ -160,7 +160,7 @@ The same options object, typed so that `queryKey` carries the inferred data type
 
 A parameterized factory, so the same options object can be reused per `id`:
 ```angular-ts
-import { queryOptions, injectQuery } from '@tanstack/angular-query-experimental'
+import { queryOptions, injectQuery } from '@tanstack/angular-query'
 
 export const postOptions = (id: string) =>
   queryOptions({
@@ -194,10 +194,10 @@ export class Post {
 function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/query-options.ts:274](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L274)
+Defined in: [packages/angular-query/src/query-options.ts:257](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-options.ts#L257)
 
 You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options
-can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is
+can be shared across functions and imperative APIs such as `queryClient.query`. `options.queryKey` is
 required and is the query key to generate options for.
 
 ### Type Parameters
@@ -245,7 +245,7 @@ This is the only overload that accepts `queryFn: skipToken`, shown below.
 
 A parameterized factory, so the same options object can be reused per `id`:
 ```angular-ts
-import { queryOptions, injectQuery } from '@tanstack/angular-query-experimental'
+import { queryOptions, injectQuery } from '@tanstack/angular-query'
 
 export const postOptions = (id: string) =>
   queryOptions({
@@ -273,7 +273,7 @@ export class Post {
 
 A factory that disables the query, type safe, until `postId` is set:
 ```angular-ts
-import { queryOptions, skipToken, injectQuery } from '@tanstack/angular-query-experimental'
+import { queryOptions, skipToken, injectQuery } from '@tanstack/angular-query'
 
 export const postOptions = (postId: number | undefined) =>
   queryOptions({
@@ -315,7 +315,7 @@ The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md
 
 #### `options` properties
 
-Built from [`CreateQueryOptions`](../interfaces/CreateQueryOptions.md#properties). See the type above for what it changes.
+Built from [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md#properties). See the type above for what it changes.
 
 <a id="returns-summary"></a>
 
@@ -329,4 +329,4 @@ The same options object, typed so that `queryKey` carries the inferred data type
 
 ### Result properties
 
-Built from [`CreateQueryOptions`](../interfaces/CreateQueryOptions.md#properties), [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md#properties). See the type above for what it changes.
+Built from [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md#properties), [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md#properties). See the type above for what it changes.
