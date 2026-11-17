@@ -1,5 +1,17 @@
 # @tanstack/angular-query-devtools
 
+## 5.108.0
+
+### Minor Changes
+
+- [#12610](https://github.com/TanStack/query/pull/12610) [`5fc9a3e`](https://github.com/TanStack/query/commit/5fc9a3e9a8768eb3bc23da4ae903c966423a2286) - Release the Angular adapter packages in the same fixed version group as `@tanstack/query-core`, so they share the core version from now on.
+
+### Patch Changes
+
+- Updated dependencies [[`5fc9a3e`](https://github.com/TanStack/query/commit/5fc9a3e9a8768eb3bc23da4ae903c966423a2286)]:
+  - @tanstack/angular-query@5.108.0
+  - @tanstack/query-devtools@5.108.0
+
 ## 5.0.0
 
 ### Major Changes
