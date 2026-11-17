@@ -110,6 +110,3 @@ allowBuilds:
 
   # nextJs
   sharp: false # not directly required for build
-minimumReleaseAgeExclude:
-  # Renovate security update: @angular/common@20.3.34
-  - "@angular/common@20.3.34"
