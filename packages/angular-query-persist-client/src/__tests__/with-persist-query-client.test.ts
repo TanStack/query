@@ -1,13 +1,3 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import {
-  QueryClient,
-  injectIsRestoring,
-  injectQueries,
-  injectQuery,
-  noop,
-  provideTanStackQuery,
-} from '@tanstack/angular-query'
-import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import {
   Component,
   EnvironmentInjector,
@@ -19,9 +9,19 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { render } from '@testing-library/angular'
-import { createKey, sleep } from '@tanstack/query-test-utils'
+import {
+  QueryClient,
+  injectIsRestoring,
+  injectQueries,
+  injectQuery,
+  noop,
+  provideTanStackQuery,
+} from '@tanstack/angular-query'
+import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import * as persistClientCore from '@tanstack/query-persist-client-core'
+import { createKey, sleep } from '@tanstack/query-test-utils'
+import { render } from '@testing-library/angular'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { withPersistQueryClient } from '../with-persist-query-client'
 import type {
   PersistedClient,

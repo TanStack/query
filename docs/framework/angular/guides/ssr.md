@@ -39,7 +39,6 @@ cache is enabled by default with
 query results are not serialized once by each cache.
 
 ```ts
-import type { ApplicationConfig } from '@angular/core'
 import { provideHttpClient } from '@angular/common/http'
 import {
   provideClientHydration,
@@ -49,6 +48,7 @@ import {
 import { provideTanStackQuery } from '@tanstack/angular-query'
 import { withDevtools } from '@tanstack/angular-query-devtools'
 import { createQueryClient } from './query-client'
+import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [

@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/angular-query'
+import { isPlatformBrowser } from '@angular/common'
 import {
   DestroyRef,
   InjectionToken,
@@ -8,11 +8,11 @@ import {
   provideEnvironmentInitializer,
   signal,
 } from '@angular/core'
+import { QueryClient } from '@tanstack/angular-query'
 import {
   provideIsRestoring,
   queryFeature,
 } from '@tanstack/angular-query/internal'
-import { isPlatformBrowser } from '@angular/common'
 import {
   persistQueryClientRestore,
   persistQueryClientSubscribe,

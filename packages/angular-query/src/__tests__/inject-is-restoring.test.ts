@@ -1,8 +1,8 @@
+import { InjectionToken, inject, signal } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { describe, expect, it } from 'vitest'
-import { InjectionToken, inject, signal } from '@angular/core'
-import { provideIsRestoring } from '../internal'
 import { QueryClient, injectIsRestoring, provideTanStackQuery } from '..'
+import { provideIsRestoring } from '../internal'
 import { provideAngularQueryChangeDetection } from './test-utils'
 
 describe('injectIsRestoring', () => {

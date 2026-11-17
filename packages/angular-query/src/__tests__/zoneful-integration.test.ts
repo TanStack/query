@@ -8,7 +8,6 @@ import {
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { provideIsRestoring } from '../internal'
 import {
   QueryClient,
   injectMutation,
@@ -16,6 +15,7 @@ import {
   injectQuery,
   provideTanStackQuery,
 } from '..'
+import { provideIsRestoring } from '../internal'
 
 /**
  * These tests deliberately provide Angular's zone-based scheduler directly.

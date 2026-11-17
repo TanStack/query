@@ -1,9 +1,9 @@
-import { describe, expectTypeOf, it } from 'vitest'
 import { computed } from '@angular/core'
+import { describe, expectTypeOf, it } from 'vitest'
 import { injectQueries, skipToken, toResource } from '..'
 import { queryOptions } from '../query-options'
-import type { CreateQueryOptions, CreateQueryResult, OmitKeyof } from '..'
 import type { Resource, Signal } from '@angular/core'
+import type { CreateQueryOptions, CreateQueryResult, OmitKeyof } from '..'
 
 describe('InjectQueries config object overload', () => {
   it('keeps optional initial data in service queryOptions results undefined-capable', () => {

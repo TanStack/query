@@ -1,7 +1,7 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createLocalStorage } from '@solid-primitives/storage'
 import { render } from '@solidjs/testing-library'
 import { createEffect } from 'solid-js'
-import { createLocalStorage } from '@solid-primitives/storage'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { PiPProvider, usePiPWindow } from '../../contexts'
 
 type FakePipWindowOverrides = {

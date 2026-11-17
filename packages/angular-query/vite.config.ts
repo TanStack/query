@@ -1,7 +1,7 @@
 import { isBuiltin } from 'node:module'
 import { defineConfig } from 'vite'
-import tsconfigPaths from 'vite-tsconfig-paths'
 import dts from 'vite-plugin-dts'
+import tsconfigPaths from 'vite-tsconfig-paths'
 import packageJson from './package.json' with { type: 'json' }
 
 function ensureImportFileExtension({

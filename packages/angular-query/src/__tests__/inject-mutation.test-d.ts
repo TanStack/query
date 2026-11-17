@@ -1,13 +1,13 @@
-import { describe, expectTypeOf, it } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
+import { describe, expectTypeOf, it } from 'vitest'
 import { injectMutation } from '..'
-import type { CreateMutationOptions, CreateMutationResult } from '..'
 import type { Signal } from '@angular/core'
 import type {
   MutationFunctionContext,
   MutationKey,
   QueryClient,
 } from '@tanstack/query-core'
+import type { CreateMutationOptions, CreateMutationResult } from '..'
 
 describe('injectMutation', () => {
   it('supports reading data from a generic result type', () => {

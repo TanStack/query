@@ -1,9 +1,9 @@
 import { signal } from '@angular/core'
-import { describe, expectTypeOf, it } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
+import { describe, expectTypeOf, it } from 'vitest'
 import { injectQuery, queryOptions, skipToken, toResource } from '..'
-import type { CreateQueryOptions, CreateQueryResult } from '..'
 import type { Resource, Signal } from '@angular/core'
+import type { CreateQueryOptions, CreateQueryResult } from '..'
 
 describe('initialData', () => {
   describe('Config object overload', () => {

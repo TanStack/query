@@ -1,7 +1,7 @@
-import { TestBed } from '@angular/core/testing'
-import { describe, expect, it } from 'vitest'
 import { InjectionToken, PLATFORM_ID, inject } from '@angular/core'
+import { TestBed } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
+import { describe, expect, it } from 'vitest'
 import { provideTanStackQuery } from '../providers'
 import { provideAngularQueryChangeDetection } from './test-utils'
 

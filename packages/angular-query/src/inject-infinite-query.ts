@@ -1,9 +1,10 @@
-import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { assertInInjectionContext, untracked } from '@angular/core'
-import { injectQueryZone } from './utils/inject-query-zone'
+import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { injectBaseQuery } from './inject-base-query'
-import { signalProxy } from './utils/signal-proxy'
+import { injectQueryZone } from './utils/inject-query-zone'
 import { infiniteQueryResultFields } from './utils/result-fields'
+import { signalProxy } from './utils/signal-proxy'
+import type { Signal } from '@angular/core'
 import type {
   DefaultError,
   FetchNextPageOptions,
@@ -14,16 +15,15 @@ import type {
   QueryObserver,
   RefetchOptions,
 } from '@tanstack/query-core'
-import type { Signal } from '@angular/core'
+import type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infinite-query-options'
 import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
   DefinedCreateInfiniteQueryResult,
 } from './types'
-import type {
-  DefinedInitialDataInfiniteOptions,
-  UndefinedInitialDataInfiniteOptions,
-} from './infinite-query-options'
 
 /**
  * This overload is selected when `initialData` is set, so the resulting `data` signal is never `undefined`

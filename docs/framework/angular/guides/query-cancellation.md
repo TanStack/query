@@ -14,8 +14,8 @@ However, if you consume the `AbortSignal`, the Promise will be cancelled (e.g. a
 ## Using `HttpClient`
 
 ```ts
-import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
 import { injectQuery } from '@tanstack/angular-query'
+import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
 
 postQuery = injectQuery(() => ({
   enabled: this.postId() > 0,

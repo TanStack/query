@@ -7,8 +7,8 @@ import {
   isSignal,
   signal,
 } from '@angular/core'
-import { beforeEach, describe, expect, it } from 'vitest'
 import { TestBed } from '@angular/core/testing'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { signalProxy } from '../utils/signal-proxy'
 import { provideAngularQueryChangeDetection } from './test-utils'
 

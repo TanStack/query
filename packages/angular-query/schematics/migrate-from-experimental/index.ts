@@ -1,17 +1,17 @@
+import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks'
 import {
   NodeDependencyType,
   addPackageJsonDependency,
   removePackageJsonDependency,
 } from '@schematics/angular/utility/dependencies'
-import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks'
 import { CORE_PACKAGE, OLD_PACKAGE, migrateSource } from './source'
 import {
   migrationWorkspace,
   packageReferenceFiles,
   sourceManifest,
 } from './workspace'
-import type { Schema } from './schema'
 import type { Rule, Tree } from '@angular-devkit/schematics'
+import type { Schema } from './schema'
 
 const PACKAGE_NAME = '__ANGULAR_QUERY_PACKAGE_NAME__'
 const PACKAGE_VERSION = '__ANGULAR_QUERY_PACKAGE_VERSION__'

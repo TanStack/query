@@ -1,5 +1,5 @@
-import { createRequire } from 'node:module'
 import { readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import { dirname, resolve } from 'node:path'
 import type * as Schematics from '@angular-devkit/schematics'
 import type * as Testing from '@angular-devkit/schematics/testing'

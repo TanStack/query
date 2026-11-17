@@ -23,7 +23,6 @@ By default, Angular Query Devtools only load in development.
 
 ```ts
 import { QueryClient, provideTanStackQuery } from '@tanstack/angular-query'
-
 import { withDevtools } from '@tanstack/angular-query-devtools'
 
 export const appConfig: ApplicationConfig = {
@@ -62,9 +61,9 @@ When setting the option to true, the devtools will be rendered in both developme
 This is useful if you want to load devtools based on [Angular environment configurations](https://angular.dev/tools/cli/environments). E.g. you could set this to true when the application is running on your production build staging environment.
 
 ```ts
-import { environment } from './environments/environment'
 // Make sure to use the production sub-path to load devtools in production builds
 import { withDevtools } from '@tanstack/angular-query-devtools/production'
+import { environment } from './environments/environment'
 
 providers: [
   provideTanStackQuery(
@@ -137,8 +136,8 @@ Mutable options can be Angular signals. For example, a signal derived from a key
 
 ```ts
 import { Injectable, isDevMode } from '@angular/core'
-import { fromEvent, map, scan } from 'rxjs'
 import { toSignal } from '@angular/core/rxjs-interop'
+import { fromEvent, map, scan } from 'rxjs'
 
 @Injectable({ providedIn: 'root' })
 export class DevtoolsOptionsManager {

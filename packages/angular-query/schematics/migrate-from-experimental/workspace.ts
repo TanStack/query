@@ -1,6 +1,6 @@
 import { posix } from 'node:path'
-import { getWorkspace } from '@schematics/angular/utility/workspace'
 import { SchematicsException } from '@angular-devkit/schematics'
+import { getWorkspace } from '@schematics/angular/utility/workspace'
 import ts from 'typescript'
 import type { Tree } from '@angular-devkit/schematics'
 

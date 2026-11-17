@@ -9,8 +9,8 @@ import {
   provideServerRendering,
   renderApplication,
 } from '@angular/platform-server'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   injectQueries,

@@ -1,3 +1,8 @@
+import { focusManager } from './focusManager'
+import { MutationCache } from './mutationCache'
+import { notifyManager } from './notifyManager'
+import { onlineManager } from './onlineManager'
+import { QueryCache } from './queryCache'
 import {
   functionalUpdate,
   hashKey,
@@ -7,11 +12,7 @@ import {
   resolveQueryValue,
   skipToken,
 } from './utils'
-import { QueryCache } from './queryCache'
-import { MutationCache } from './mutationCache'
-import { focusManager } from './focusManager'
-import { onlineManager } from './onlineManager'
-import { notifyManager } from './notifyManager'
+import type { QueryState } from './query'
 import type {
   CancelOptions,
   DefaultError,
@@ -41,7 +42,6 @@ import type {
   ResetOptions,
   SetDataOptions,
 } from './types'
-import type { QueryState } from './query'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
 
 // TYPES

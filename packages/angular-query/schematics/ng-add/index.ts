@@ -1,3 +1,5 @@
+import { chain } from '@angular-devkit/schematics'
+import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks'
 import { addRootProvider } from '@schematics/angular/utility'
 import {
   NodeDependencyType,
@@ -12,8 +14,6 @@ import {
   findBootstrapApplicationCall,
   getMainFilePath,
 } from '@schematics/angular/utility/standalone/util'
-import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks'
-import { chain } from '@angular-devkit/schematics'
 import ts from 'typescript'
 import type { Rule, Tree } from '@angular-devkit/schematics'
 import type { Schema } from './schema'

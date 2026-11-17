@@ -1,5 +1,3 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { TestBed } from '@angular/core/testing'
 import {
   ApplicationRef,
   ENVIRONMENT_INITIALIZER,
@@ -12,9 +10,12 @@ import {
   provideZonelessChangeDetection,
   signal,
 } from '@angular/core'
+import { TestBed } from '@angular/core/testing'
 import { QueryClient, provideTanStackQuery } from '@tanstack/angular-query'
 import { getQueryFeatureProviders } from '@tanstack/angular-query/internal'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { withDevtools } from '../index'
+import type { WritableSignal } from '@angular/core'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
@@ -22,7 +23,6 @@ import type {
   TanstackQueryDevtools,
   Theme,
 } from '@tanstack/query-devtools'
-import type { WritableSignal } from '@angular/core'
 import type { DevtoolsOptions } from '../types'
 
 const { mockDevtoolsInstance, mockTanstackQueryDevtools } = vi.hoisted(() => {

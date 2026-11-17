@@ -9,14 +9,14 @@ import type {
   QueryObserver,
 } from '@tanstack/query-core'
 import type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infiniteQueryOptions'
+import type {
   DefinedUseInfiniteQueryResult,
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
 } from './types'
-import type {
-  DefinedInitialDataInfiniteOptions,
-  UndefinedInitialDataInfiniteOptions,
-} from './infiniteQueryOptions'
 
 /**
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of

@@ -1,5 +1,5 @@
-import { For, Match, Switch } from 'solid-js'
 import { useQuery } from '@tanstack/solid-query'
+import { For, Match, Switch } from 'solid-js'
 import { dogsQueries } from './services/dogs/queries'
 
 export const DogList = () => {

@@ -1,4 +1,3 @@
-import { QueriesObserver, QueryClient } from '@tanstack/query-core'
 import {
   assertInInjectionContext,
   computed,
@@ -6,21 +5,22 @@ import {
   inject,
   untracked,
 } from '@angular/core'
-import { injectQueryZone } from './utils/inject-query-zone'
-import { signalProxy } from './utils/signal-proxy'
-import { queryResultFields } from './utils/result-fields'
+import { QueriesObserver, QueryClient } from '@tanstack/query-core'
 import { injectIsRestoring } from './inject-is-restoring'
-import { injectPendingTasksLifecycle } from './utils/inject-pending-tasks-lifecycle'
 import { injectExternalStore } from './utils/inject-external-store'
-import type {
-  InjectQueriesOptions,
-  QueriesResults,
-} from './inject-queries.types'
+import { injectPendingTasksLifecycle } from './utils/inject-pending-tasks-lifecycle'
+import { injectQueryZone } from './utils/inject-query-zone'
+import { queryResultFields } from './utils/result-fields'
+import { signalProxy } from './utils/signal-proxy'
+import type { Signal } from '@angular/core'
 import type {
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { Signal } from '@angular/core'
+import type {
+  InjectQueriesOptions,
+  QueriesResults,
+} from './inject-queries.types'
 
 /**
  * Injects multiple queries that run in parallel and react to Angular signals.

@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 
+import type { Signal } from '@angular/core'
 import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
@@ -15,13 +16,12 @@ import type {
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { Signal } from '@angular/core'
-import type { MapToSignals } from './utils/signal-proxy'
 import type {
   InfiniteQueryResultFields,
   MutationResultFields,
   QueryResultFields,
 } from './utils/result-fields'
+import type { MapToSignals } from './utils/signal-proxy'
 
 type SignalFunction<T extends () => any> = T & Signal<ReturnType<T>>
 

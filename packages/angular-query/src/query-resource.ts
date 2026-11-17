@@ -1,7 +1,7 @@
 import { computed, untracked } from '@angular/core'
+import type { Resource, ResourceStatus, Signal } from '@angular/core'
 import type { QueryObserverResult } from '@tanstack/query-core'
 import type { ResourceSnapshot } from './utils/resource-types'
-import type { Resource, ResourceStatus, Signal } from '@angular/core'
 
 /**
  * A query-backed Angular Resource that also exposes an atomic state snapshot.

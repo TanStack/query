@@ -1,8 +1,8 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { injectInfiniteQuery, skipToken, toResource } from '..'
-import type { CreateInfiniteQueryOptions, CreateInfiniteQueryResult } from '..'
 import type { Signal } from '@angular/core'
 import type { InfiniteData } from '@tanstack/query-core'
+import type { CreateInfiniteQueryOptions, CreateInfiniteQueryResult } from '..'
 
 describe('injectInfiniteQuery', () => {
   it('supports reading data from a generic result type', () => {

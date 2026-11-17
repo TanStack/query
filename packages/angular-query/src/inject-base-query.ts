@@ -1,9 +1,9 @@
 import { computed, effect, inject, untracked } from '@angular/core'
 import { QueryClient } from '@tanstack/query-core'
-import { injectQueryZone } from './utils/inject-query-zone'
 import { injectIsRestoring } from './inject-is-restoring'
-import { injectPendingTasksLifecycle } from './utils/inject-pending-tasks-lifecycle'
 import { injectExternalStore } from './utils/inject-external-store'
+import { injectPendingTasksLifecycle } from './utils/inject-pending-tasks-lifecycle'
+import { injectQueryZone } from './utils/inject-query-zone'
 import type {
   QueryKey,
   QueryObserver,

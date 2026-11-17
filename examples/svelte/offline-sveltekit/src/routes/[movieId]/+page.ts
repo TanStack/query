@@ -1,7 +1,7 @@
 import { noop, onlineManager } from '@tanstack/svelte-query'
-import type { PageLoad } from './$types'
 import { queryClient } from '$lib/queryClient'
 import { moviesQueries } from '$lib/services/movies/queries'
+import type { PageLoad } from './$types'
 
 export const load: PageLoad = async ({ parent, params: { movieId } }) => {
   await parent()

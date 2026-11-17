@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+import { ref } from 'vue'
 import CharacterList from './CharacterList.vue'
 
 const ids = ref<Array<number>>([])

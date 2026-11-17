@@ -1,7 +1,7 @@
-import React from 'react'
-import Link from 'next/link'
 import { noop, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import Link from 'next/link'
+import React from 'react'
 import { charactersQueries } from '../services/characters/queries'
 import type { Character } from '../services/characters/types'
 

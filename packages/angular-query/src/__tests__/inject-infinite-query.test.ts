@@ -1,7 +1,7 @@
-import { TestBed } from '@angular/core/testing'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core'
+import { TestBed } from '@angular/core/testing'
 import { sleep } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, injectInfiniteQuery, skipToken } from '..'
 import { expectSignals, setupTanStackQueryTestBed } from './test-utils'
 

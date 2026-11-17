@@ -13,8 +13,8 @@ import {
 import { QueryClient, dehydrate, hydrate } from '@tanstack/query-core'
 import { INTERNAL_TANSTACK_QUERY_HYDRATION_TRANSFER_KEY } from './hydration-state-key'
 import { injectQueryZone } from './utils/inject-query-zone'
-import type { DehydratedState } from '@tanstack/query-core'
 import type { EnvironmentProviders } from '@angular/core'
+import type { DehydratedState } from '@tanstack/query-core'
 
 const INTERNAL_QUERY_CLIENT_SHOULD_HYDRATE = new InjectionToken<boolean>('', {
   providedIn: 'root',

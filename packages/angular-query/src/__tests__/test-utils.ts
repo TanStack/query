@@ -8,8 +8,8 @@ import {
 import { TestBed } from '@angular/core/testing'
 import { expect, vi } from 'vitest'
 import { provideTanStackQuery } from '..'
-import type { QueryClient } from '@tanstack/query-core'
 import type { EnvironmentProviders, Provider, Signal } from '@angular/core'
+import type { QueryClient } from '@tanstack/query-core'
 
 /**
  * Use the same change-detection mode as the test runner. The default runner

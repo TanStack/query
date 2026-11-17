@@ -1,8 +1,8 @@
 import { assertInInjectionContext, inject } from '@angular/core'
 import { QueryClient } from '@tanstack/query-core'
 import { injectExternalStore } from './utils/inject-external-store'
-import type { QueryFilters } from '@tanstack/query-core'
 import type { Signal } from '@angular/core'
+import type { QueryFilters } from '@tanstack/query-core'
 
 /**
  * Injects a signal that tracks the number of queries that your application is loading or fetching in the

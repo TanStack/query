@@ -1,4 +1,3 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   Component,
   EnvironmentInjector,
@@ -11,8 +10,9 @@ import {
   provideEnvironmentInitializer,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { render } from '@testing-library/angular'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { render } from '@testing-library/angular'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   dehydrate,

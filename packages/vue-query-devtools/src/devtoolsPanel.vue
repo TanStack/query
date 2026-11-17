@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, onScopeDispose, ref, watchEffect } from 'vue'
-import { onlineManager, useQueryClient } from '@tanstack/vue-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
+import { onlineManager, useQueryClient } from '@tanstack/vue-query'
+import { computed, onMounted, onScopeDispose, ref, watchEffect } from 'vue'
 import type { DevtoolsPanelOptions } from './types'
 
 const props = defineProps<DevtoolsPanelOptions>()

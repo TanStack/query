@@ -1,23 +1,23 @@
-import { QueryObserver } from '@tanstack/query-core'
 import { assertInInjectionContext, untracked } from '@angular/core'
-import { injectQueryZone } from './utils/inject-query-zone'
+import { QueryObserver } from '@tanstack/query-core'
 import { injectBaseQuery } from './inject-base-query'
-import { signalProxy } from './utils/signal-proxy'
+import { injectQueryZone } from './utils/inject-query-zone'
 import { queryResultFields } from './utils/result-fields'
+import { signalProxy } from './utils/signal-proxy'
 import type {
   DefaultError,
   QueryKey,
   RefetchOptions,
 } from '@tanstack/query-core'
 import type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './query-options'
+import type {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
 } from './types'
-import type {
-  DefinedInitialDataOptions,
-  UndefinedInitialDataOptions,
-} from './query-options'
 
 /**
  * This overload is selected when `initialData` is known to be defined on the options returned by `optionsFn`, so the
@@ -76,9 +76,9 @@ export function injectQuery<
  * you can pass to `injectQuery`. Similar to `computed` from Angular, this function runs in the reactive
  * context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive the query.
  * @returns The query result. `status()` is `'error'` if the query has an error from a fetch that failed
- * after its retries or if `select` threw, `'success'` if the query has data to display (including
- * `placeholderData`), and `'pending'` otherwise. `isPending`/`isSuccess`/`isError` are type-guard methods
- * for convenience.
+ * after its retries or if `select` threw, `'success'` if the query has cached data (even if `select`
+ * returns `undefined`) or data from `placeholderData`, and `'pending'` otherwise.
+ * `isPending`/`isSuccess`/`isError` are type-guard methods for convenience.
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  * @see {@link queryOptions} to share these options between `injectQuery` and imperative APIs like
  * `queryClient.query`.

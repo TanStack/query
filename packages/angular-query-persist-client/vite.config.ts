@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { defineConfig } from 'vitest/config'
 import angular from '@analogjs/vite-plugin-angular'
+import { defineConfig } from 'vitest/config'
 import packageJson from './package.json'
 
 const packageDir = path.dirname(fileURLToPath(import.meta.url))

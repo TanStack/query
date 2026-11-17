@@ -1,3 +1,8 @@
+import { HttpClient, provideHttpClient } from '@angular/common/http'
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing'
 import {
   ApplicationRef,
   ChangeDetectionStrategy,
@@ -10,11 +15,9 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { HttpClient, provideHttpClient } from '@angular/common/http'
-import {
-  HttpTestingController,
-  provideHttpClientTesting,
-} from '@angular/common/http/testing'
+import { createKey, sleep } from '@tanstack/query-test-utils'
+import { render } from '@testing-library/angular'
+import { lastValueFrom } from 'rxjs'
 import {
   afterEach,
   beforeEach,
@@ -24,10 +27,6 @@ import {
   it,
   vi,
 } from 'vitest'
-import { render } from '@testing-library/angular'
-import { createKey, sleep } from '@tanstack/query-test-utils'
-import { lastValueFrom } from 'rxjs'
-import { provideIsRestoring } from '../internal'
 import {
   QueryCache,
   QueryClient,
@@ -35,6 +34,7 @@ import {
   provideTanStackQuery,
   toResource,
 } from '..'
+import { provideIsRestoring } from '../internal'
 import { provideAngularQueryChangeDetection } from './test-utils'
 import type { CreateQueryOptions, OmitKeyof, QueryFunction } from '..'
 

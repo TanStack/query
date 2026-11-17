@@ -1,7 +1,7 @@
-import { Link as RouterLink, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import { filmsQueries } from './services/films/queries'
+import { Link as RouterLink, useParams } from 'react-router'
 import { charactersQueries } from './services/characters/queries'
+import { filmsQueries } from './services/films/queries'
 
 export default function Film() {
   const { filmId } = useParams()

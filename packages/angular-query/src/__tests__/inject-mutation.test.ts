@@ -9,8 +9,8 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { render } from '@testing-library/angular'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { render } from '@testing-library/angular'
 import { firstValueFrom } from 'rxjs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {

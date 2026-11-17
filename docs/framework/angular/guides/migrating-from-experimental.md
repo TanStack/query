@@ -86,8 +86,8 @@ npm install @tanstack/angular-query
 ```
 
 ```ts
-import { injectQuery } from '@tanstack/angular-query-experimental' // [!code --]
 import { injectQuery } from '@tanstack/angular-query' // [!code ++]
+import { injectQuery } from '@tanstack/angular-query-experimental' // [!code --]
 ```
 
 ## Provide a client factory
@@ -147,15 +147,15 @@ npm install @tanstack/angular-query-devtools
 ```
 
 ```ts
-import { withDevtools } from '@tanstack/angular-query-experimental/devtools' // [!code --]
 import { withDevtools } from '@tanstack/angular-query-devtools' // [!code ++]
+import { withDevtools } from '@tanstack/angular-query-experimental/devtools' // [!code --]
 ```
 
 The production and panel entrypoints move in the same way:
 
 ```ts
-import { withDevtools } from '@tanstack/angular-query-experimental/devtools/production' // [!code --]
 import { withDevtools } from '@tanstack/angular-query-devtools/production' // [!code ++]
+import { withDevtools } from '@tanstack/angular-query-experimental/devtools/production' // [!code --]
 ```
 
 The devtools options callback now runs in an injection context. Remove the `deps` option and call
@@ -179,10 +179,10 @@ options.
 injection context.
 
 ```ts
+import { injectQueries } from '@tanstack/angular-query' // [!code ++]
 import {
   injectQueries, // [!code --]
 } from '@tanstack/angular-query-experimental/inject-queries-experimental' // [!code --]
-import { injectQueries } from '@tanstack/angular-query' // [!code ++]
 
 const getQueries = () => ({ queries })
 const results = injectQueries(getQueries, injector) // [!code --]

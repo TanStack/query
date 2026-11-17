@@ -27,15 +27,14 @@ bootstrapApplication(AppComponent, {
 ### Component with query and mutation
 
 ```angular-ts
-import { Component, Injectable, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { lastValueFrom } from 'rxjs'
-
+import { Component, Injectable, inject } from '@angular/core'
 import {
   injectMutation,
   injectQuery,
   QueryClient,
 } from '@tanstack/angular-query'
+import { lastValueFrom } from 'rxjs'
 
 @Component({
   template: `

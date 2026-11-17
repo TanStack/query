@@ -1,3 +1,4 @@
+import { isPlatformBrowser } from '@angular/common'
 import {
   DestroyRef,
   PLATFORM_ID,
@@ -8,7 +9,6 @@ import {
   untracked,
 } from '@angular/core'
 import { QueryClient, onlineManager } from '@tanstack/angular-query'
-import { isPlatformBrowser } from '@angular/common'
 import type { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { DevtoolsPanelOptions, InjectDevtoolsPanel } from './types'
 
@@ -33,6 +33,7 @@ export const injectDevtoolsPanel: InjectDevtoolsPanel = (
 
   const queryOptions = computed(injectDevtoolsPanelFn)
   let devtools: TanstackQueryDevtoolsPanel | null = null
+  // oxlint-disable-next-line prefer-const -- assigned after the server early return, but `destroy` may run before it
   let optionsEffect: ReturnType<typeof effect> | undefined
   let manuallyDestroyed = false
   let loadGeneration = 0

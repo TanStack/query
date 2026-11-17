@@ -1,8 +1,8 @@
 import { Component, computed, input, inputBinding, signal } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { injectExternalStore } from '../inject-external-store'
 import { provideAngularQueryChangeDetection } from '../../__tests__/test-utils'
+import { injectExternalStore } from '../inject-external-store'
 import type { Signal } from '@angular/core'
 
 function store(initial: number) {

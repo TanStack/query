@@ -1,5 +1,3 @@
-import { render } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
 import {
   QueryClient,
   QueryClientProvider,
@@ -8,10 +6,12 @@ import {
   useQueryClient,
 } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
+import { render } from 'preact'
+import { useEffect, useState } from 'preact/hooks'
 import { serverConfig } from './services/todos/api'
 import { todosMutations, todosQueries } from './services/todos/queries'
-import type { Todo } from './services/todos/types'
 import type { TargetedEvent } from 'preact'
+import type { Todo } from './services/todos/types'
 import './styles.css'
 
 const initialStaleTime = 1000

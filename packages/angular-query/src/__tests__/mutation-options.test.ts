@@ -1,8 +1,8 @@
 import { Component } from '@angular/core'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { TestBed } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   injectIsMutating,
   injectMutation,

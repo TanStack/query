@@ -1,5 +1,3 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { render } from '@testing-library/angular'
 import {
   ApplicationRef,
   ChangeDetectionStrategy,
@@ -13,9 +11,11 @@ import {
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { provideIsRestoring } from '../internal'
+import { render } from '@testing-library/angular'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, onlineManager, provideTanStackQuery, skipToken } from '..'
 import { injectQueries } from '../inject-queries'
+import { provideIsRestoring } from '../internal'
 import {
   provideAngularQueryChangeDetection,
   setupTanStackQueryTestBed,

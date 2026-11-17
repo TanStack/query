@@ -6,11 +6,11 @@ import {
   untracked,
 } from '@angular/core'
 import { MutationObserver, QueryClient, noop } from '@tanstack/query-core'
-import { injectQueryZone } from './utils/inject-query-zone'
-import { signalProxy } from './utils/signal-proxy'
-import { mutationResultFields } from './utils/result-fields'
-import { injectPendingTasksLifecycle } from './utils/inject-pending-tasks-lifecycle'
 import { injectExternalStore } from './utils/inject-external-store'
+import { injectPendingTasksLifecycle } from './utils/inject-pending-tasks-lifecycle'
+import { injectQueryZone } from './utils/inject-query-zone'
+import { mutationResultFields } from './utils/result-fields'
+import { signalProxy } from './utils/signal-proxy'
 import type { DefaultError } from '@tanstack/query-core'
 import type {
   CreateMutateAsyncFunction,
