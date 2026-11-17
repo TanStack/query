@@ -255,8 +255,8 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 ```vue
 <script setup>
-import { computed, onServerPrefetch } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
+import { computed, onServerPrefetch } from 'vue'
 
 const { data: user, suspense: userSuspense } = useQuery({
   queryKey: ['user'],

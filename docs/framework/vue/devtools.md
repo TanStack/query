@@ -95,8 +95,8 @@ Place the following code as high in your Vue app as you can. The closer it is to
 
 ```vue
 <script setup>
-import { ref } from 'vue'
 import { VueQueryDevtoolsPanel } from '@tanstack/vue-query-devtools'
+import { ref } from 'vue'
 
 const isOpen = ref(false)
 </script>
@@ -162,8 +162,8 @@ Devtools are excluded in production builds. However, it might be desirable to la
 
 ```vue
 <script setup>
-import { defineAsyncComponent, onMounted, ref } from 'vue'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+import { defineAsyncComponent, onMounted, ref } from 'vue'
 
 const VueQueryDevtoolsProduction = defineAsyncComponent(() =>
   import('@tanstack/vue-query-devtools/production').then(
