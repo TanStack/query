@@ -135,6 +135,7 @@ export function injectQuery<
  *   readonly postsQuery = injectQuery(() => ({
  *     queryKey: ['posts', this.filter()],
  *     queryFn: () => fetchPosts(this.filter()),
+ *     // Signals can be combined with expressions
  *     enabled: !!this.filter(),
  *   }))
  * }
@@ -159,7 +160,8 @@ export function injectQuery<
  * overloads above, so whether `data` is defined can't be inferred from the call site — useful when wrapping
  * `injectQuery` in your own helper function that forwards caller-provided options.
  * @param optionsFn - A function that returns query options. Similar to `computed` from Angular, this
- * function runs in the reactive context, so signals read inside it drive the query.
+ * function runs in the reactive context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive
+ * the query.
  * @returns The query result.
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  */

@@ -143,7 +143,16 @@ type GetQueryObserverResult<T> = GenericGetDefinedOrUndefinedQueryResult<
 >
 
 /**
- * Maps a tuple of query descriptions to the options accepted by `injectQueries`.
+ * The `queries` array accepted by `injectQueries`. Recursively unwraps each tuple element so every entry's
+ * `queryFn`/`select` are inferred individually, up to 20 elements — past that, tuple
+ * recursion falls back to a single homogeneous options type. An opaque array (e.g. `unknown[]`) is returned
+ * as-is; a non-tuple array of a known element type is mapped to that element type instead, with no such
+ * limit.
+ * @template T - The type of the `queries` array as written at the call site.
+ * @template TResults - The internal accumulator that this type builds during recursion. It is not meant to
+ * be set explicitly.
+ * @template TDepth - The internal recursion-depth counter, checked against the 20-element limit. It is not
+ * meant to be set explicitly.
  */
 export type QueriesOptions<
   T extends Array<any>,
@@ -182,7 +191,15 @@ export type QueriesOptions<
             : Array<QueryObserverOptionsForCreateQueries>
 
 /**
- * Maps a tuple of query descriptions to their individual signal-backed results.
+ * The result type returned by `injectQueries`, when no `combine` is provided. Mirrors {@link QueriesOptions}:
+ * each tuple element's result type is inferred individually, up to 20 elements — past that, tuple recursion
+ * falls back to a single homogeneous {@link CreateQueryResult} type. A non-tuple array is mapped per-element
+ * instead, with no such limit — every entry keeps its individually inferred type regardless of array length.
+ * @template T - The type of the `queries` array, as inferred by {@link QueriesOptions}.
+ * @template TResults - The internal accumulator that this type builds during recursion. It is not meant to
+ * be set explicitly.
+ * @template TDepth - The internal recursion-depth counter, checked against the 20-element limit. It is not
+ * meant to be set explicitly.
  */
 export type QueriesResults<
   T extends Array<any>,
@@ -221,14 +238,16 @@ type RawQueriesResults<
         : { [K in keyof T]: GetQueryObserverResult<T[K]> }
 
 /**
- * A reactive group of query options and an optional projection of their combined results.
+ * The options for `injectQueries`: the `queries` to run, and an optional `combine` function that
+ * derives a single result from all the query results.
  */
 export interface InjectQueriesOptions<
   T extends Array<any>,
   TCombinedResult = QueriesResults<T>,
 > {
   /**
-   * The ordered query options to observe; entries can be added, removed, or replaced reactively.
+   * The array of query options to run, one query per element. Entries can be added, removed, or replaced
+   * reactively.
    */
   queries:
     | readonly [...QueriesOptions<T>]
@@ -236,7 +255,8 @@ export interface InjectQueriesOptions<
         ...{ [K in keyof T]: GetCreateQueryOptionsForCreateQueries<T[K]> },
       ]
   /**
-   * Projects the current plain observer results into a single reactively computed value.
+   * Combines the plain results of all the queries into a single value, which `injectQueries` returns
+   * instead of the results array. The value is recomputed reactively.
    */
   combine?: (result: RawQueriesResults<T>) => TCombinedResult
 }

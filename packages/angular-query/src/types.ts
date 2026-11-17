@@ -26,8 +26,15 @@ import type { MapToSignals } from './utils/signal-proxy'
 type SignalFunction<T extends () => any> = T & Signal<ReturnType<T>>
 
 /**
- * Options accepted by `injectQuery`, with cache data projected through an optional `select`.
- * Angular owns result notifications and exposes errors through signals rather than error boundaries.
+ * The options accepted by `injectQuery`, with cache data projected through an optional `select`. Same as
+ * {@link QueryObserverOptions} from `@tanstack/query-core`, minus `notifyOnChangeProps`, `suspense`, and
+ * `throwOnError`: Angular owns result notifications and exposes errors through signals rather than error
+ * boundaries.
+ * @template TQueryFnData - The type your `queryFn` resolves to.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
+ * `select` is used.
+ * @template TQueryKey - The type of your `queryKey`.
  */
 export type CreateQueryOptions<
   TQueryFnData = unknown,
@@ -67,7 +74,13 @@ type CreateStatusBasedDefinedInfiniteQueryResult<
 >
 
 /**
- * Signal-backed guards that narrow a query result and its data and error fields by status.
+ * Signal-backed guards that narrow a query result and its data and error fields by status: the
+ * `isSuccess`/`isError`/`isPending` methods on a query result. Unlike `react-query`'s derived booleans, each
+ * is a `Signal` you call to read its current boolean value reactively, and the call is also a type guard —
+ * `if (query.isSuccess())` — so that `query.data` narrows away `undefined` inside the branch, the same way
+ * `status` narrowing works on the plain object `react-query` returns.
+ * @template TData - The type `data` ends up as after `select` runs.
+ * @template TError - The type of errors your `queryFn` may throw.
  */
 export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
   /**
@@ -217,7 +230,17 @@ export interface DefinedInfiniteQueryNarrowing<
 }
 
 /**
- * Options accepted by `injectInfiniteQuery`, including page parameters and pagination callbacks.
+ * The options accepted by `injectInfiniteQuery`, including page parameters and pagination callbacks. Same as
+ * {@link InfiniteQueryObserverOptions} from `@tanstack/query-core` — for the infinite-query-specific options
+ * (`getNextPageParam`, `initialPageParam`, etc.) — minus `notifyOnChangeProps`, `suspense`, and
+ * `throwOnError`, like {@link CreateQueryOptions}.
+ * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` here, though
+ * `injectInfiniteQuery` itself defaults it to `InfiniteData<TQueryFnData>` — the shape `data` actually has
+ * when no `select` is used.
+ * @template TQueryKey - The type of your `queryKey`.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
  */
 export interface CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -418,7 +441,15 @@ type CreateStatusBasedMutationResult<
 >
 
 /**
- * Signal-backed guards that narrow mutation data, errors, and variables by the current status.
+ * Signal-backed guards that narrow mutation data, errors, and variables by the current status: the
+ * `isSuccess`/`isError`/`isPending`/`isIdle` methods on a mutation result. Each is a `Signal` you call to
+ * read its current boolean value reactively, and the call is also a type guard — `if (mutation.isSuccess())`
+ * — so that `mutation.data` narrows away `undefined` inside the branch.
+ * @template TData - The type your mutation function resolves to.
+ * @template TError - The type of errors your mutation function may throw.
+ * @template TVariables - The type of the variable passed to `mutate`/`mutateAsync`.
+ * @template TOnMutateResult - The type returned by `onMutate`, passed to `onSuccess`/`onError`/`onSettled` as
+ * their `onMutateResult` parameter — useful for optimistic-update rollback data.
  */
 export interface BaseMutationNarrowing<
   TData = unknown,

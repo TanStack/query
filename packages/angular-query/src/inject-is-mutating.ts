@@ -7,10 +7,25 @@ import type { MutationFilters } from '@tanstack/query-core'
 /**
  * Injects a signal that tracks the number of mutations that your application currently has `pending`
  * (useful for app-wide loading indicators).
- *
- * Can be used for app-wide loading indicators.
- * @param filters - A reactive factory for the filters.
- * @returns A read-only signal with the number of fetching mutations.
+ * @param filters - A function returning the {@link MutationFilters} to narrow down the matched mutations.
+ * Similar to `computed` from Angular, this function runs in the reactive context, so signals read inside it
+ * re-narrow the matched mutations.
+ * @returns A `Signal` with the number of mutations that your application currently has `pending`.
+ * @example
+ * ```angular-ts
+ * @Component({
+ *   selector: 'posts-mutating-indicator',
+ *   template: `
+ *     @if (isMutatingPosts()) {
+ *       <span>Saving posts...</span>
+ *     }
+ *   `,
+ * })
+ * export class PostsMutatingIndicator {
+ *   // How many mutations matching the posts prefix are in progress?
+ *   readonly isMutatingPosts = injectIsMutating(() => ({ mutationKey: ['posts'] }))
+ * }
+ * ```
  */
 export function injectIsMutating(
   filters: () => Omit<MutationFilters, 'status'> = () => ({}),

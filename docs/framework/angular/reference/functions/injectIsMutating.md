@@ -9,12 +9,10 @@ title: injectIsMutating
 function injectIsMutating(filters?: () => Omit<MutationFilters, "status">): Signal<number>;
 ```
 
-Defined in: [packages/angular-query/src/inject-is-mutating.ts:15](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-is-mutating.ts#L15)
+Defined in: [packages/angular-query/src/inject-is-mutating.ts:30](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-is-mutating.ts#L30)
 
 Injects a signal that tracks the number of mutations that your application currently has `pending`
 (useful for app-wide loading indicators).
-
-Can be used for app-wide loading indicators.
 
 ## Parameters
 
@@ -22,7 +20,9 @@ Can be used for app-wide loading indicators.
 
 () => `Omit`\<[`MutationFilters`](../interfaces/MutationFilters.md), `"status"`\>
 
-A reactive factory for the filters.
+A function returning the [MutationFilters](../interfaces/MutationFilters.md) to narrow down the matched mutations.
+Similar to `computed` from Angular, this function runs in the reactive context, so signals read inside it
+re-narrow the matched mutations.
 
 <a id="filters-properties"></a>
 
@@ -34,4 +34,21 @@ Built from [`MutationFilters`](../interfaces/MutationFilters.md#properties). See
 
 `Signal`\<`number`\>
 
-A read-only signal with the number of fetching mutations.
+A `Signal` with the number of mutations that your application currently has `pending`.
+
+## Example
+
+```angular-ts
+@Component({
+  selector: 'posts-mutating-indicator',
+  template: `
+    @if (isMutatingPosts()) {
+      <span>Saving posts...</span>
+    }
+  `,
+})
+export class PostsMutatingIndicator {
+  // How many mutations matching the posts prefix are in progress?
+  readonly isMutatingPosts = injectIsMutating(() => ({ mutationKey: ['posts'] }))
+}
+```

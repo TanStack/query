@@ -13,9 +13,9 @@ function injectInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<
 function injectInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(optionsFn: () => CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): CreateInfiniteQueryResult<TData, TError>;
 ```
 
-- [`() => DefinedInitialDataInfiniteOptions` → `DefinedCreateInfiniteQueryResult`](#call-signature-1): This overload is selected when `initialData` is set, so the resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
-- [`() => UndefinedInitialDataInfiniteOptions` → `CreateInfiniteQueryResult`](#call-signature-2): Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key. Infinite queries can additively "load more" data onto an existing set of data or support infinite scroll.
-- [`() => CreateInfiniteQueryOptions` → `CreateInfiniteQueryResult`](#call-signature-3): This overload accepts the general [CreateInfiniteQueryOptions](../interfaces/CreateInfiniteQueryOptions.md) shape rather than the `initialData`-aware overloads above, so whether `data` is defined can't be inferred from the call site — useful when wrapping `injectInfiniteQuery` in your own helper.
+- [`() => DefinedInitialDataInfiniteOptions` → `DefinedCreateInfiniteQueryResult`](#call-signature-1): The options for `injectInfiniteQuery` are identical to `injectQuery`, with the addition of `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`. Infinite queries can additively "load more" data onto an existing set of data, or "infinite scroll".
+- [`() => UndefinedInitialDataInfiniteOptions` → `CreateInfiniteQueryResult`](#call-signature-2): Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key. Infinite queries can additively "load more" data onto an existing set of data, or "infinite scroll".
+- [`() => CreateInfiniteQueryOptions` → `CreateInfiniteQueryResult`](#call-signature-3): This overload accepts the general [CreateInfiniteQueryOptions](../interfaces/CreateInfiniteQueryOptions.md) shape rather than the `initialData`-aware overloads above, so whether `data` is defined can't be inferred from the call site — useful when wrapping `injectInfiniteQuery` in your own helper function that forwards caller-provided options.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 
@@ -27,10 +27,15 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function injectInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(optionsFn: () => DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): DefinedCreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query/src/inject-infinite-query.ts:38](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-infinite-query.ts#L38)
+Defined in: [packages/angular-query/src/inject-infinite-query.ts:77](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-infinite-query.ts#L77)
 
-This overload is selected when `initialData` is set, so the resulting `data` signal is never `undefined`
-(unless a `select` changes `TData` to include `undefined`).
+The options for `injectInfiniteQuery` are identical to `injectQuery`, with the addition of
+`initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`. Infinite queries can
+additively "load more" data onto an existing set of data, or "infinite scroll".
+
+This overload is selected when `initialData` is known to be defined on the options returned by
+`optionsFn`, so the resulting `data` signal is never `undefined` (unless a `select` changes
+`TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -60,20 +65,59 @@ This overload is selected when `initialData` is set, so the resulting `data` sig
 
 () => [`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
-A function returning infinite-query options with `initialData` set. Similar to
-`computed` from Angular, this function runs in the reactive context.
+A function returning the [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfiniteOptions.md) to use —
+everything you can pass to `injectInfiniteQuery`, with `initialData` known to be defined. Similar to
+`computed` from Angular, this function runs in the reactive context, so signals read inside it drive the
+query.
 
 ### Returns
 
 [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>
 
-The infinite query result, typed so that `data` is never `undefined`.
+The same signals as `injectQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+`hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data().pages` and
+`data().pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+`InfiniteData<TQueryFnData>` shape.
+
+### Remarks
+
+Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+actions, or add conditions like `hasNextPage() && !isFetching()`.
 
 ### See
 
  - https://tanstack.com/query/latest/docs/framework/angular/guides/infinite-queries
- - [infiniteQueryOptions](infiniteQueryOptions.md) to share these options between `injectInfiniteQuery` and
-`queryClient.infiniteQuery`.
+ - [infiniteQueryOptions](infiniteQueryOptions.md) to share these options between `injectInfiniteQuery` and imperative APIs
+like `queryClient.infiniteQuery`.
+
+### Example
+
+```angular-ts
+@Component({
+  selector: 'projects',
+  template: `
+    <!-- projectsQuery.data() is never undefined, thanks to initialData — even if a
+    refetch fails, so the list stays visible alongside the error. -->
+    <ul>
+      @for (page of projectsQuery.data().pages; track $index) {
+        @for (project of page.projects; track project.id) {
+          <li>{{ project.name }}</li>
+        }
+      }
+    </ul>
+  `,
+})
+export class Projects {
+  readonly projectsQuery = injectInfiniteQuery(() => ({
+    queryKey: ['projects'],
+    queryFn: ({ pageParam }) => fetchProjects(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextId,
+    initialData: { pages: [], pageParams: [] },
+  }))
+}
+```
 
 <a id="call-signature-2"></a>
 
@@ -83,10 +127,11 @@ The infinite query result, typed so that `data` is never `undefined`.
 function injectInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(optionsFn: () => UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): CreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query/src/inject-infinite-query.ts:92](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-infinite-query.ts#L92)
+Defined in: [packages/angular-query/src/inject-infinite-query.ts:228](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-infinite-query.ts#L228)
 
-Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
-Infinite queries can additively "load more" data onto an existing set of data or support infinite scroll.
+Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a
+unique key. Infinite queries can additively "load more" data onto an existing set of data, or
+"infinite scroll".
 
 ### Type Parameters
 
@@ -116,47 +161,146 @@ Infinite queries can additively "load more" data onto an existing set of data or
 
 () => [`UndefinedInitialDataInfiniteOptions`](../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
-A function that returns infinite query options. Similar to `computed` from Angular,
-this function runs in the reactive context, so signals read inside it drive the query.
+A function returning the [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use
+— everything you can pass to `injectInfiniteQuery`. Similar to `computed` from Angular, this function runs
+in the reactive context, so signals read inside it drive the query.
 
 ### Returns
 
 [`CreateInfiniteQueryResult`](../type-aliases/CreateInfiniteQueryResult.md)\<`TData`, `TError`\>
 
-The infinite query result.
+The same signals as `injectQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+`hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data().pages` and
+`data().pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+`InfiniteData<TQueryFnData>` shape.
+
+### Remarks
+
+Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+actions, or add conditions like `hasNextPage() && !isFetching()`. `queryFn: skipToken` is also accepted,
+shown below.
 
 ### See
 
  - https://tanstack.com/query/latest/docs/framework/angular/guides/infinite-queries
- - [infiniteQueryOptions](infiniteQueryOptions.md) to share these options between `injectInfiniteQuery` and
-`queryClient.infiniteQuery`.
+ - [infiniteQueryOptions](infiniteQueryOptions.md) to share these options between `injectInfiniteQuery` and imperative APIs
+like `queryClient.infiniteQuery`.
 
-### Example
+### Examples
 
+Fetching the next page from a button click:
 ```angular-ts
 @Component({
-  selector: 'projects',
+  selector: 'projects-list',
   template: `
-    @if (query.isPending()) {
-      Loading...
-    } @else if (query.isError()) {
-      <span>Error: {{ query.error()?.message }}</span>
-    } @else {
-      @for (page of query.data().pages; track $index) {
-        @for (project of page; track project.id) {
-          <p>{{ project.name }}</p>
+    <ul>
+      @for (page of projectsQuery.data()?.pages; track $index) {
+        @for (project of page.projects; track project.id) {
+          <li>{{ project.name }}</li>
         }
       }
-      <button (click)="query.fetchNextPage()">Load more</button>
-    }
+    </ul>
+    <button
+      [disabled]="!projectsQuery.hasNextPage() || projectsQuery.isFetching()"
+      (click)="projectsQuery.fetchNextPage()"
+    >
+      Load More
+    </button>
   `,
 })
-export class Projects {
-  readonly query = injectInfiniteQuery(() => ({
+export class ProjectsList {
+  readonly projectsQuery = injectInfiniteQuery(() => ({
     queryKey: ['projects'],
     queryFn: ({ pageParam }) => fetchProjects(pageParam),
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getNextPageParam: (lastPage) => lastPage.nextId,
+  }))
+}
+```
+
+Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a sentinel
+element after the list:
+```angular-ts
+@Component({
+  selector: 'projects-list',
+  template: `
+    <ul>
+      @for (page of projectsQuery.data()?.pages; track $index) {
+        @for (project of page.projects; track project.id) {
+          <li>{{ project.name }}</li>
+        }
+      }
+    </ul>
+    <div #sentinel>{{ projectsQuery.isFetchingNextPage() ? 'Loading more...' : '' }}</div>
+  `,
+})
+export class ProjectsList {
+  readonly sentinel = viewChild<ElementRef<HTMLElement>>('sentinel')
+
+  readonly projectsQuery = injectInfiniteQuery(() => ({
+    queryKey: ['projects'],
+    queryFn: ({ pageParam }) => fetchProjects(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextId,
+  }))
+
+  constructor() {
+    effect((onCleanup) => {
+      const sentinel = this.sentinel()?.nativeElement
+      if (
+        sentinel == null ||
+        !this.projectsQuery.hasNextPage() ||
+        this.projectsQuery.isFetching()
+      ) {
+        return
+      }
+
+      const observer = new IntersectionObserver(([entry]) => {
+        if (entry?.isIntersecting) this.projectsQuery.fetchNextPage()
+      })
+      observer.observe(sentinel)
+
+      onCleanup(() => observer.disconnect())
+    })
+  }
+}
+```
+
+A query that's disabled, type safe, until `postId` is set — pass `skipToken` as `queryFn` instead of
+setting `enabled: false`:
+```angular-ts
+@Component({
+  selector: 'comments',
+  template: `
+    @if (postId() == null) {
+      Select a post
+    } @else if (commentsQuery.isPending()) {
+      Loading...
+    } @else if (commentsQuery.isError()) {
+      <span>Error: {{ commentsQuery.error()?.message }}</span>
+    } @else {
+      <ul>
+        @for (page of commentsQuery.data().pages; track $index) {
+          @for (comment of page.comments; track comment.id) {
+            <li>{{ comment.text }}</li>
+          }
+        }
+      </ul>
+    }
+  `,
+})
+export class Comments {
+  readonly postId = signal<string | undefined>(undefined)
+
+  readonly commentsQuery = injectInfiniteQuery(() => ({
+    queryKey: ['post', this.postId(), 'comments'],
+    queryFn:
+      this.postId() != null
+        ? ({ pageParam }) => fetchComments(this.postId()!, pageParam)
+        : skipToken,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextId,
   }))
 }
 ```
@@ -169,11 +313,12 @@ export class Projects {
 function injectInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(optionsFn: () => CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): CreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query/src/inject-infinite-query.ts:117](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-infinite-query.ts#L117)
+Defined in: [packages/angular-query/src/inject-infinite-query.ts:254](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-infinite-query.ts#L254)
 
 This overload accepts the general [CreateInfiniteQueryOptions](../interfaces/CreateInfiniteQueryOptions.md) shape rather than the
-`initialData`-aware overloads above, so whether `data` is defined can't be inferred from the call
-site — useful when wrapping `injectInfiniteQuery` in your own helper.
+`initialData`-aware overloads above, so whether `data` is defined can't be inferred from the call site —
+useful when wrapping `injectInfiniteQuery` in your own helper function that forwards caller-provided
+options.
 
 ### Type Parameters
 
@@ -203,8 +348,8 @@ site — useful when wrapping `injectInfiniteQuery` in your own helper.
 
 () => [`CreateInfiniteQueryOptions`](../interfaces/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
-A function that returns infinite query options. Similar to `computed` from Angular,
-this function runs in the reactive context, so signals read inside it drive the query.
+A function that returns infinite query options. Similar to `computed` from
+Angular, this function runs in the reactive context, so signals read inside it drive the query.
 
 ### Returns
 
@@ -224,8 +369,8 @@ https://tanstack.com/query/latest/docs/framework/angular/guides/infinite-queries
 
 () => [`CreateInfiniteQueryOptions`](../interfaces/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
-A function that returns infinite query options. Similar to `computed` from Angular,
-this function runs in the reactive context, so signals read inside it drive the query.
+A function that returns infinite query options. Similar to `computed` from
+Angular, this function runs in the reactive context, so signals read inside it drive the query.
 
 <a id="optionsFn-properties"></a>
 

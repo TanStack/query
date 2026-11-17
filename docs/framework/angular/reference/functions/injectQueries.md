@@ -9,9 +9,16 @@ title: injectQueries
 function injectQueries<T extends any[], TCombinedResult = T extends [] ? [] : T extends [Head] ? [GenericGetDefinedOrUndefinedQueryResult<Head, InferDataAndError<Head>["data"], CreateQueryResult<InferDataAndError<Head>["data"], InferDataAndError<Head>["error"]>, DefinedCreateQueryResult<InferDataAndError<Head>["data"], InferDataAndError<Head>["error"]>>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GenericGetDefinedOrUndefinedQueryResult<Head, InferDataAndError<Head>["data"], CreateQueryResult<InferDataAndError<Head>["data"], InferDataAndError<Head>["error"]>, DefinedCreateQueryResult<InferDataAndError<Head>["data"], InferDataAndError<Head>["error"]>>, GenericGetDefinedOrUndefinedQueryResult<Head, InferDataAndError<Head>["data"], CreateQueryResult<InferDataAndError<Head>["data"], InferDataAndError<Head>["error"]>, DefinedCreateQueryResult<InferDataAndError<Head>["data"], InferDataAndError<Head>["error"]>>] : [...Tails[]] extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GenericGetDefinedOrUndefinedQueryResult<Head, ...[...], CreateQueryResult<..., ...>, DefinedCreateQueryResult<..., ...>>, GenericGetDefinedOrUndefinedQueryResult<Head, ...[...], CreateQueryResult<..., ...>, DefinedCreateQueryResult<..., ...>>, GenericGetDefinedOrUndefinedQueryResult<Head, ...[...], CreateQueryResult<..., ...>, DefinedCreateQueryResult<..., ...>>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : ... extends ... ? ... : ... : [...{ [K in (...)]: (...) }[]] : [...{ [K in string | number | symbol]: GenericGetDefinedOrUndefinedQueryResult<Tails[K], InferDataAndError<(...)>["data"], CreateQueryResult<(...)[(...)], (...)[(...)]>, DefinedCreateQueryResult<(...)[(...)], (...)[(...)]>> }[]] : { [K in string | number | symbol]: GenericGetDefinedOrUndefinedQueryResult<T[K], InferDataAndError<T[K]>["data"], CreateQueryResult<InferDataAndError<T[K]>["data"], InferDataAndError<T[K]>["error"]>, DefinedCreateQueryResult<InferDataAndError<T[K]>["data"], InferDataAndError<T[K]>["error"]>> }>(optionsFn: () => InjectQueriesOptions<T, TCombinedResult>): Signal<TCombinedResult>;
 ```
 
-Defined in: [packages/angular-query/src/inject-queries.ts:55](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-queries.ts#L55)
+Defined in: [packages/angular-query/src/inject-queries.ts:153](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-queries.ts#L153)
 
-Injects multiple queries that run in parallel and react to Angular signals.
+Injects a signal to fetch a variable number of queries.
+
+The `queries` key accepts an array with query option objects mostly identical to `injectQuery`'s. Having
+the same query key more than once in the array of query objects may cause some data to be shared between
+queries. To avoid this, consider de-duplicating the queries and map the results back to the desired
+structure.
+
+The `combine` option can be used to combine the results of the queries into a single value.
 
 ## Type Parameters
 
@@ -29,8 +36,9 @@ Injects multiple queries that run in parallel and react to Angular signals.
 
 () => [`InjectQueriesOptions`](../interfaces/InjectQueriesOptions.md)\<`T`, `TCombinedResult`\>
 
-A function that returns the queries' options. Similar to `computed` from Angular,
-this function runs in the reactive context, so signals read inside it drive the queries.
+A function returning the queries' options — an array of query option objects under
+`queries`, and an optional `combine`. Similar to `computed` from Angular, this function runs in the
+reactive context, so signals read inside it (e.g. to build the `queries` array) drive the queries.
 
 <a id="optionsFn-properties"></a>
 
@@ -38,40 +46,133 @@ this function runs in the reactive context, so signals read inside it drive the 
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="optionsFn-property-combine"></a> `combine?` | (`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GenericGetDefinedOrUndefinedQueryResult`\<`Head`, `InferDataAndError`\<`Head`\>\[`"data"`\], [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`InferDataAndError`\<`Head`\>\[`"data"`\], `InferDataAndError`\<`Head`\>\[`"error"`\]\>, [`DefinedQueryObserverResult`](../type-aliases/DefinedQueryObserverResult.md)\<`InferDataAndError`\<`Head`\>\[`"data"`\], `InferDataAndError`\<`Head`\>\[`"error"`\]\>\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GenericGetDefinedOrUndefinedQueryResult`\<`Head`, `InferDataAndError`\<...\>\[`"data"`\], [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<...\[...\], ...\[...\]\>, [`DefinedQueryObserverResult`](../type-aliases/DefinedQueryObserverResult.md)\<...\[...\], ...\[...\]\>\>, `GenericGetDefinedOrUndefinedQueryResult`\<`Head`, `InferDataAndError`\<...\>\[`"data"`\], [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<...\[...\], ...\[...\]\>, [`DefinedQueryObserverResult`](../type-aliases/DefinedQueryObserverResult.md)\<...\[...\], ...\[...\]\>\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...(...)[]`\] *extends* \[...\] ? \[..., ..., ...\] : ... *extends* ... ? ... : ... : \[...\{ \[K in (...) \| (...) \| (...)\]: GenericGetDefinedOrUndefinedQueryResult\<(...), (...), (...), (...)\> \}\[\]\] : \{ \[K in string \| number \| symbol\]: GenericGetDefinedOrUndefinedQueryResult\<T\[K\], InferDataAndError\<T\[K\]\>\["data"\], QueryObserverResult\<InferDataAndError\<(...)\[(...)\]\>\["data"\], InferDataAndError\<(...)\[(...)\]\>\["error"\]\>, DefinedQueryObserverResult\<InferDataAndError\<(...)\[(...)\]\>\["data"\], InferDataAndError\<(...)\[(...)\]\>\["error"\]\>\> \}) => `TCombinedResult` | Projects the current plain observer results into a single reactively computed value. |
-| <a id="optionsFn-property-queries"></a> `queries` | \| readonly \[\{ \[K in string \| number \| symbol\]: GetCreateQueryOptionsForCreateQueries\<T\[K\]\> \}\] \| readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetCreateQueryOptionsForCreateQueries`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetCreateQueryOptionsForCreateQueries`\<`Head`\>, `GetCreateQueryOptionsForCreateQueries`\<`Head`\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...(...)[]`\] *extends* \[...\] ? \[..., ..., ...\] : ... *extends* ... ? ... : ... : readonly `unknown`[] *extends* \[`...Tails[]`\] ? \[`...Tails[]`\] : \[`...(...)[]`\] *extends* ...[] ? ...[] : ...[] : readonly `unknown`[] *extends* `T` ? `T` : `T` *extends* `QueryObserverOptionsForCreateQueries`\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>[] ? `QueryObserverOptionsForCreateQueries`\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>[] : `QueryObserverOptionsForCreateQueries`\<`unknown`, `Error`, `unknown`, readonly `unknown`[]\>[]\] | The ordered query options to observe; entries can be added, removed, or replaced reactively. |
+| <a id="optionsFn-property-combine"></a> `combine?` | (`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GenericGetDefinedOrUndefinedQueryResult`\<`Head`, `InferDataAndError`\<`Head`\>\[`"data"`\], [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`InferDataAndError`\<`Head`\>\[`"data"`\], `InferDataAndError`\<`Head`\>\[`"error"`\]\>, [`DefinedQueryObserverResult`](../type-aliases/DefinedQueryObserverResult.md)\<`InferDataAndError`\<`Head`\>\[`"data"`\], `InferDataAndError`\<`Head`\>\[`"error"`\]\>\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GenericGetDefinedOrUndefinedQueryResult`\<`Head`, `InferDataAndError`\<...\>\[`"data"`\], [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<...\[...\], ...\[...\]\>, [`DefinedQueryObserverResult`](../type-aliases/DefinedQueryObserverResult.md)\<...\[...\], ...\[...\]\>\>, `GenericGetDefinedOrUndefinedQueryResult`\<`Head`, `InferDataAndError`\<...\>\[`"data"`\], [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<...\[...\], ...\[...\]\>, [`DefinedQueryObserverResult`](../type-aliases/DefinedQueryObserverResult.md)\<...\[...\], ...\[...\]\>\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...(...)[]`\] *extends* \[...\] ? \[..., ..., ...\] : ... *extends* ... ? ... : ... : \[...\{ \[K in (...) \| (...) \| (...)\]: GenericGetDefinedOrUndefinedQueryResult\<(...), (...), (...), (...)\> \}\[\]\] : \{ \[K in string \| number \| symbol\]: GenericGetDefinedOrUndefinedQueryResult\<T\[K\], InferDataAndError\<T\[K\]\>\["data"\], QueryObserverResult\<InferDataAndError\<(...)\[(...)\]\>\["data"\], InferDataAndError\<(...)\[(...)\]\>\["error"\]\>, DefinedQueryObserverResult\<InferDataAndError\<(...)\[(...)\]\>\["data"\], InferDataAndError\<(...)\[(...)\]\>\["error"\]\>\> \}) => `TCombinedResult` | Combines the plain results of all the queries into a single value, which `injectQueries` returns instead of the results array. The value is recomputed reactively. |
+| <a id="optionsFn-property-queries"></a> `queries` | \| readonly \[\{ \[K in string \| number \| symbol\]: GetCreateQueryOptionsForCreateQueries\<T\[K\]\> \}\] \| readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetCreateQueryOptionsForCreateQueries`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetCreateQueryOptionsForCreateQueries`\<`Head`\>, `GetCreateQueryOptionsForCreateQueries`\<`Head`\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...(...)[]`\] *extends* \[...\] ? \[..., ..., ...\] : ... *extends* ... ? ... : ... : readonly `unknown`[] *extends* \[`...Tails[]`\] ? \[`...Tails[]`\] : \[`...(...)[]`\] *extends* ...[] ? ...[] : ...[] : readonly `unknown`[] *extends* `T` ? `T` : `T` *extends* `QueryObserverOptionsForCreateQueries`\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>[] ? `QueryObserverOptionsForCreateQueries`\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>[] : `QueryObserverOptionsForCreateQueries`\<`unknown`, `Error`, `unknown`, readonly `unknown`[]\>[]\] | The array of query options to run, one query per element. Entries can be added, removed, or replaced reactively. |
 
 ## Returns
 
 `Signal`\<`TCombinedResult`\>
 
-A signal containing the query results in the same order as the input queries.
+A `Signal` with the combined result. Without `combine`, this is an array with all the query
+results, in the same order as the input. When `combine` is provided, this is the value returned by
+`combine` instead.
+
+## Remarks
+
+Unlike `injectQuery`, `injectQueries` cannot infer the `data` argument of an _inline_ `select`
+from its sibling `queryFn`. Because `injectQueries` infers the type of the whole `queries` array at once,
+the `select` parameter of a query object written inline cannot be contextually typed from that same
+object's `queryFn`, so it falls back to `unknown` — a
+[known TypeScript limitation](https://github.com/TanStack/query/issues/6556). Annotate the `select`
+parameter explicitly, or define the query with [queryOptions](queryOptions.md), which resolves its types in a single
+object _before_ it reaches `injectQueries`, to work around this — see the example below.
 
 ## See
 
 https://tanstack.com/query/latest/docs/framework/angular/guides/parallel-queries
 
-## Example
+## Examples
 
 ```angular-ts
 @Component({
-  selector: 'users',
+  selector: 'posts',
   template: `
-    @for (query of userQueries(); track $index) {
-      @if (query.isSuccess()) {
-        <p>{{ query.data().name }}</p>
+    <ul>
+      @for (query of postQueries(); track $index) {
+        @if (query.isPending()) {
+          <li>Loading...</li>
+        } @else if (query.isError()) {
+          <li>Error: {{ query.error()?.message }}</li>
+        } @else {
+          <li>{{ query.data().title }}</li>
+        }
       }
+    </ul>
+  `,
+})
+export class Posts {
+  readonly ids = signal([1, 2, 3])
+
+  readonly postQueries = injectQueries(() => ({
+    queries: this.ids().map((id) => ({
+      queryKey: ['post', id],
+      queryFn: () => fetchPost(id),
+      staleTime: Infinity,
+    })),
+  }))
+}
+```
+
+Combining results into a single value:
+```angular-ts
+@Component({
+  selector: 'posts',
+  template: `
+    @if (combined().isPending) {
+      Loading...
+    } @else if (combined().isError) {
+      Error loading posts
+    } @else {
+      <ul>
+        @for (post of combined().data; track post?.id) {
+          <li>{{ post?.title }}</li>
+        }
+      </ul>
     }
   `,
 })
-export class UsersComponent {
-  readonly users = input.required<Array<User>>()
+export class Posts {
+  readonly ids = signal([1, 2, 3])
 
-  readonly userQueries = injectQueries(() => ({
-    queries: this.users().map((user) => ({
-      queryKey: ['user', user.id],
-      queryFn: () => fetchUserById(user.id),
+  readonly combined = injectQueries(() => ({
+    queries: this.ids().map((id) => ({
+      queryKey: ['post', id],
+      queryFn: () => fetchPost(id),
     })),
+    combine: (postQueries) => ({
+      data: postQueries.map((query) => query.data),
+      isPending: postQueries.some((query) => query.isPending),
+      isError: postQueries.some((query) => query.isError),
+    }),
+  }))
+}
+```
+
+Typing `select` via [queryOptions](queryOptions.md). Note that spreading a `queryOptions` result and overriding
+`select` inline still falls back to `unknown` — wrap the spread in `queryOptions` again so the override is
+resolved before it reaches `injectQueries`:
+```angular-ts
+const postOptions = (id: number) =>
+  queryOptions({
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id),
+  })
+
+@Component({
+  selector: 'post-title',
+  template: `<h1>{{ fixed()[0].data() }}</h1>`,
+})
+export class PostTitle {
+  readonly id = signal(1)
+
+  readonly broken = injectQueries(() => ({
+    queries: [
+      {
+        ...postOptions(this.id()),
+        // ❌ `data` is `unknown` here
+        select: (data) => data.title,
+      },
+    ],
+  }))
+
+  readonly fixed = injectQueries(() => ({
+    queries: [
+      queryOptions({
+        ...postOptions(this.id()),
+        // ✅ `data` is `Post`
+        select: (data) => data.title,
+      }),
+    ],
   }))
 }
 ```

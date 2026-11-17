@@ -14,9 +14,11 @@ const IS_RESTORING = new InjectionToken('', {
 })
 
 /**
- * Injects a readonly signal that is true while the persistence integration restores
- * cached query data. Returns false when no restoration is in progress.
- * @returns The current restoration state.
+ * Injects a signal that tracks whether a restore (e.g. from a persisted client, wired up via
+ * `withPersistQueryClient`) is currently in progress. `injectQuery` and friends also check this internally
+ * to avoid race conditions between the restore and initializing queries.
+ * @returns A readonly `Signal<boolean>` — `true` while a restore is in progress, `false` otherwise (the
+ * default when no persistence integration is registered).
  */
 export function injectIsRestoring() {
   if (typeof ngDevMode === 'undefined' || ngDevMode) {
