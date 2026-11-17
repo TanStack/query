@@ -11,7 +11,7 @@ redirect_from:
 function useIsFetching(filters?: Accessor<Omit<QueryFilters<readonly unknown[]>, "fetchStatus">>, queryClient?: Accessor<QueryClient>): Accessor<number>;
 ```
 
-Defined in: [packages/solid-query/src/useIsFetching.ts:27](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsFetching.ts#L27)
+Defined in: [packages/solid-query/src/useIsFetching.ts:28](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsFetching.ts#L28)
 
 The `useIsFetching` primitive returns the `number` of the queries that your application is loading or fetching
 in the background (useful for app-wide loading indicators).

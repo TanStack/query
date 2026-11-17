@@ -11,7 +11,7 @@ redirect_from:
 function useIsMutating(filters?: Accessor<Omit<MutationFilters<unknown, Error, unknown, unknown>, "status">>, queryClient?: Accessor<QueryClient>): Accessor<number>;
 ```
 
-Defined in: [packages/solid-query/src/useIsMutating.ts:26](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsMutating.ts#L26)
+Defined in: [packages/solid-query/src/useIsMutating.ts:27](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsMutating.ts#L27)
 
 The `useIsMutating` primitive returns the `number` of mutations that your application currently has `pending`
 (useful for app-wide loading indicators).

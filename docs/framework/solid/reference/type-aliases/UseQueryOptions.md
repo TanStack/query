@@ -9,7 +9,7 @@ title: UseQueryOptions
 type UseQueryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = Accessor<QueryOptions<TQueryFnData, TError, TData, TQueryKey>>;
 ```
 
-Defined in: [packages/solid-query/src/types.ts:88](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L88)
+Defined in: [packages/solid-query/src/types.ts:91](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L91)
 
 The accessor `useQuery` expects as its first argument — Solid re-evaluates it reactively, so `queryKey` and
 other options can depend on signals.

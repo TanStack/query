@@ -9,7 +9,7 @@ title: UseMutationResult
 type UseMutationResult<TData = unknown, TError = DefaultError, TVariables = unknown, TOnMutateResult = unknown> = UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/solid-query/src/types.ts:340](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L340)
+Defined in: [packages/solid-query/src/types.ts:325](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L325)
 
 The result of `useMutation`. Same as [UseBaseMutationResult](UseBaseMutationResult.md).
 
@@ -31,7 +31,7 @@ The type of errors your `mutationFn` may throw.
 
 `TVariables` = `unknown`
 
-The type of the variable passed to `mutate`/`mutateAsync`.
+The type of the variable passed to `mutate`.
 
 ### TOnMutateResult
 
