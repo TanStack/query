@@ -79,20 +79,20 @@
   "devDependencies": {
     "@babel/core": "^7.28.0",
     "@babel/preset-typescript": "^7.18.6",
-    "@solidjs/babel-plugin": "^2.0.0-rc.13",
-    "@solidjs/signals": "^2.0.0-rc.13",
+    "@solidjs/babel-plugin": "^2.0.0",
+    "@solidjs/signals": "^2.0.0",
     "@solidjs/testing-library": "catalog:",
-    "@solidjs/vite-plugin": "^3.0.0-next.46",
-    "@solidjs/web": "^2.0.0-rc.13",
+    "@solidjs/vite-plugin": "^3.0.0",
+    "@solidjs/web": "^2.0.0",
     "@tanstack/solid-query": "workspace:*",
     "@types/babel__core": "^7.20.5",
     "eslint-plugin-solid": "catalog:",
-    "solid-js": "^2.0.0-rc.13",
+    "solid-js": "^2.0.0",
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "@solidjs/web": ">=2.0.0-rc.13 <3.0.0",
+    "@solidjs/web": "^2.0.0",
     "@tanstack/solid-query": "workspace:^",
-    "solid-js": ">=2.0.0-rc.13 <3.0.0"
+    "solid-js": "^2.0.0"
   }
 }

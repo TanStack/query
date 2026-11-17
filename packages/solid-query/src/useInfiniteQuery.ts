@@ -274,10 +274,13 @@ export function useInfiniteQuery<
   const infiniteData = () =>
     layer.query().state.data as InfiniteData<unknown> | undefined
 
-  const isFetchingNextPage = () =>
-    layer.isFetching() && direction() === 'forward'
-  const isFetchingPreviousPage = () =>
-    layer.isFetching() && direction() === 'backward'
+  // Read `direction()` before `isFetching()` to work around solidjs/solid#4966.
+  const isFetchingPage = (expected: 'forward' | 'backward') => {
+    const current = direction()
+    return layer.isFetching() && current === expected
+  }
+  const isFetchingNextPage = () => isFetchingPage('forward')
+  const isFetchingPreviousPage = () => isFetchingPage('backward')
   const isError = () => layer.status() === 'error'
 
   // The base result's getters transfer as-is; the infinite surface layers
@@ -322,11 +325,15 @@ export function useInfiniteQuery<
         enumerable: true,
       },
       isRefetching: {
-        get: () =>
-          layer.isFetching() &&
-          layer.status() !== 'pending' &&
-          !isFetchingNextPage() &&
-          !isFetchingPreviousPage(),
+        get: () => {
+          const current = direction()
+          return (
+            layer.isFetching() &&
+            layer.status() !== 'pending' &&
+            current !== 'forward' &&
+            current !== 'backward'
+          )
+        },
         enumerable: true,
       },
       isRefetchError: {
