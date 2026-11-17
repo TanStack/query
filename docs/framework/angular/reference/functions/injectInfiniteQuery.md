@@ -97,7 +97,7 @@ like `queryClient.infiniteQuery`.
 @Component({
   selector: 'projects',
   template: `
-    <!-- `projectsQuery.data()` is never `undefined`, thanks to `initialData` — even if a
+    <!-- projectsQuery.data() is never undefined, thanks to initialData — even if a
     refetch fails, so the list stays visible alongside the error. -->
     <ul>
       @for (page of projectsQuery.data().pages; track $index) {
@@ -178,8 +178,8 @@ The same signals as `injectQuery`, with the addition of `fetchNextPage`, `fetchP
 
 Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
 refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
-actions, or add conditions like `hasNextPage() && !isFetching()`. This is the only overload that accepts
-`queryFn: skipToken`, shown below.
+actions, or add conditions like `hasNextPage() && !isFetching()`. `queryFn: skipToken` is also accepted,
+shown below.
 
 ### See
 

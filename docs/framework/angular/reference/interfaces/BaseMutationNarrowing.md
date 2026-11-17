@@ -8,9 +8,9 @@ title: BaseMutationNarrowing
 Defined in: [packages/angular-query/src/types.ts:454](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L454)
 
 Signal-backed guards that narrow mutation data, errors, and variables by the current status: the
-`isSuccess`/`isError`/`isPending`/`isIdle` methods on a mutation result. Each is both a `Signal` (its
-current boolean value is read reactively without calling it) and a type-guard function you can call —
-`if (mutation.isSuccess())` — so that `mutation.data` narrows away `undefined` inside the branch.
+`isSuccess`/`isError`/`isPending`/`isIdle` methods on a mutation result. Each is a `Signal` you call to
+read its current boolean value reactively, and the call is also a type guard — `if (mutation.isSuccess())`
+— so that `mutation.data` narrows away `undefined` inside the branch.
 
 ## Type Parameters
 

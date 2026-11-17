@@ -9,7 +9,7 @@ title: injectQueries
 function injectQueries<T extends any[], TCombinedResult = T extends [] ? [] : T extends [Head] ? [GenericGetDefinedOrUndefinedQueryResult<Head, InferDataAndError<Head>["data"], CreateQueryResult<InferDataAndError<Head>["data"], InferDataAndError<Head>["error"]>, DefinedCreateQueryResult<InferDataAndError<Head>["data"], InferDataAndError<Head>["error"]>>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GenericGetDefinedOrUndefinedQueryResult<Head, InferDataAndError<Head>["data"], CreateQueryResult<InferDataAndError<Head>["data"], InferDataAndError<Head>["error"]>, DefinedCreateQueryResult<InferDataAndError<Head>["data"], InferDataAndError<Head>["error"]>>, GenericGetDefinedOrUndefinedQueryResult<Head, InferDataAndError<Head>["data"], CreateQueryResult<InferDataAndError<Head>["data"], InferDataAndError<Head>["error"]>, DefinedCreateQueryResult<InferDataAndError<Head>["data"], InferDataAndError<Head>["error"]>>] : [...Tails[]] extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GenericGetDefinedOrUndefinedQueryResult<Head, ...[...], CreateQueryResult<..., ...>, DefinedCreateQueryResult<..., ...>>, GenericGetDefinedOrUndefinedQueryResult<Head, ...[...], CreateQueryResult<..., ...>, DefinedCreateQueryResult<..., ...>>, GenericGetDefinedOrUndefinedQueryResult<Head, ...[...], CreateQueryResult<..., ...>, DefinedCreateQueryResult<..., ...>>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : ... extends ... ? ... : ... : [...{ [K in (...)]: (...) }[]] : [...{ [K in string | number | symbol]: GenericGetDefinedOrUndefinedQueryResult<Tails[K], InferDataAndError<(...)>["data"], CreateQueryResult<(...)[(...)], (...)[(...)]>, DefinedCreateQueryResult<(...)[(...)], (...)[(...)]>> }[]] : { [K in string | number | symbol]: GenericGetDefinedOrUndefinedQueryResult<T[K], InferDataAndError<T[K]>["data"], CreateQueryResult<InferDataAndError<T[K]>["data"], InferDataAndError<T[K]>["error"]>, DefinedCreateQueryResult<InferDataAndError<T[K]>["data"], InferDataAndError<T[K]>["error"]>> }>(optionsFn: () => InjectQueriesOptions<T, TCombinedResult>): Signal<TCombinedResult>;
 ```
 
-Defined in: [packages/angular-query/src/inject-queries.ts:154](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-queries.ts#L154)
+Defined in: [packages/angular-query/src/inject-queries.ts:153](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-queries.ts#L153)
 
 Injects a signal to fetch a variable number of queries.
 
@@ -18,8 +18,7 @@ the same query key more than once in the array of query objects may cause some d
 queries. To avoid this, consider de-duplicating the queries and map the results back to the desired
 structure.
 
-The `combine` option can be used to combine the results of the queries into a single value. The result
-will be structurally shared to be as referentially stable as possible.
+The `combine` option can be used to combine the results of the queries into a single value.
 
 ## Type Parameters
 

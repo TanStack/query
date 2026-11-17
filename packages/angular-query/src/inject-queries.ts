@@ -30,8 +30,7 @@ import type {
  * queries. To avoid this, consider de-duplicating the queries and map the results back to the desired
  * structure.
  *
- * The `combine` option can be used to combine the results of the queries into a single value. The result
- * will be structurally shared to be as referentially stable as possible.
+ * The `combine` option can be used to combine the results of the queries into a single value.
  * @param optionsFn - A function returning the queries' options — an array of query option objects under
  * `queries`, and an optional `combine`. Similar to `computed` from Angular, this function runs in the
  * reactive context, so signals read inside it (e.g. to build the `queries` array) drive the queries.

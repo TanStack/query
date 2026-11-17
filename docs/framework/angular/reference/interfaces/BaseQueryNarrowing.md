@@ -9,9 +9,9 @@ Defined in: [packages/angular-query/src/types.ts:85](https://github.com/TanStack
 
 Signal-backed guards that narrow a query result and its data and error fields by status: the
 `isSuccess`/`isError`/`isPending` methods on a query result. Unlike `react-query`'s derived booleans, each
-is both a `Signal` (its current boolean value is read reactively without calling it) and a type-guard
-method you can call — `if (query.isSuccess())` — so that `query.data` narrows away `undefined` inside the
-branch, the same way `status` narrowing works on the plain object `react-query` returns.
+is a `Signal` you call to read its current boolean value reactively, and the call is also a type guard —
+`if (query.isSuccess())` — so that `query.data` narrows away `undefined` inside the branch, the same way
+`status` narrowing works on the plain object `react-query` returns.
 
 ## Type Parameters
 
