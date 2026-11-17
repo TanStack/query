@@ -423,10 +423,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -469,10 +469,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -518,10 +518,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)))(rxjs@7.8.2)
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -564,13 +564,13 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       '@tanstack/angular-query-persist-client':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-persist-client
       '@tanstack/query-async-storage-persister':
         specifier: ^5.107.1
@@ -619,10 +619,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)))(rxjs@7.8.2)
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -662,10 +662,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -708,10 +708,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -754,10 +754,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -803,10 +803,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -849,10 +849,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -898,10 +898,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(@angular/platform-browser@22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1)))(rxjs@7.8.2)
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -944,10 +944,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -990,10 +990,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
@@ -1042,10 +1042,10 @@ importers:
         specifier: ^22.2.5
         version: 22.2.6(11b48f3d8850c6fb5dc901c8e6976a5a)
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       express:
         specifier: ^5.1.0
@@ -1100,13 +1100,13 @@ importers:
         specifier: ^22.2.5
         version: 22.2.6(11b48f3d8850c6fb5dc901c8e6976a5a)
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       '@tanstack/angular-query-persist-client':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-persist-client
       '@tanstack/query-async-storage-persister':
         specifier: ^5.107.1
@@ -1161,10 +1161,10 @@ importers:
         specifier: ^22.2.4
         version: 22.2.4(@angular/common@22.2.4(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@22.2.4(@angular/compiler@22.2.4)(rxjs@7.8.2)(zone.js@0.16.1))
       '@tanstack/angular-query':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools':
-        specifier: ^5.0.0-rc.5
+        specifier: ^5.0.0
         version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2

@@ -1,5 +1,16 @@
 # @tanstack/angular-query-devtools
 
+## 5.0.0
+
+### Major Changes
+
+- [#12534](https://github.com/TanStack/query/pull/12534) [`d687805`](https://github.com/TanStack/query/commit/d68780535edd1f4837e66ee42260889b762dfab1) - Add the stable Angular Query adapter for Angular 20.1+. It includes SSR support, experimental Resource API interoperability, persistence integration, improved internal subscription and pending tasks management, stable `injectQueries` and consistency improvements in the API.
+
+### Patch Changes
+
+- Updated dependencies [[`d687805`](https://github.com/TanStack/query/commit/d68780535edd1f4837e66ee42260889b762dfab1), [`d687805`](https://github.com/TanStack/query/commit/d68780535edd1f4837e66ee42260889b762dfab1)]:
+  - @tanstack/angular-query@5.0.0
+
 ## 5.0.0-rc.5
 
 ### Patch Changes
