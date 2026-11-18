@@ -19,10 +19,8 @@ export interface DevtoolsPanelOptions {
    */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the `<style>` element that the devtools add in
-   * browsers without constructable stylesheets, such as Safari before 16.4.
-   * This is useful if you are using a Content Security Policy (CSP) nonce to
-   * allow inline styles. Other browsers need no nonce.
+   * @deprecated The devtools no longer add a `<style>` element, so they need no
+   * nonce. This option does nothing.
    */
   styleNonce?: string
   /**
@@ -64,13 +62,7 @@ export function PreactQueryDevtoolsPanel(
 ): VNode | null {
   const queryClient = useQueryClient(props.client)
   const ref = useRef<HTMLDivElement>(null)
-  const {
-    errorTypes,
-    styleNonce,
-    shadowDOMTarget,
-    hideDisabledQueries,
-    theme,
-  } = props
+  const { errorTypes, shadowDOMTarget, hideDisabledQueries, theme } = props
   const [devtools] = useState(
     () =>
       new TanstackQueryDevtoolsPanel({
@@ -82,7 +74,6 @@ export function PreactQueryDevtoolsPanel(
         position: 'bottom',
         initialIsOpen: true,
         errorTypes,
-        styleNonce,
         shadowDOMTarget,
         onClose: props.onClose,
         hideDisabledQueries,

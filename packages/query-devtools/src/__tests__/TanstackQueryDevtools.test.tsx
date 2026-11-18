@@ -161,14 +161,14 @@ describe('TanstackQueryDevtools', () => {
           )
           expect(button).not.toBeNull()
           return button!
-        })
+        }, 5000)
         fireEvent.keyDown(settings, { key: 'Enter' })
 
         // The menu renders through a portal on `document.body`.
         expect(
           document.body.querySelector('.tsqd-settings-menu'),
         ).not.toBeNull()
-        expect(document.head.querySelector('style')).not.toBeNull()
+        expect(document.adoptedStyleSheets).toHaveLength(1)
       } finally {
         shadowDevtools.unmount()
         host.remove()

@@ -222,8 +222,10 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
 
   let transitionsContainerRef!: HTMLDivElement
   onMount(() => {
-    const { styleNonce, shadowDOMTarget } = useQueryDevtoolsContext()
-    attachStyles(transitionsContainerRef, styleNonce, shadowDOMTarget)
+    attachStyles(
+      transitionsContainerRef,
+      useQueryDevtoolsContext().shadowDOMTarget,
+    )
   })
 
   createEffect(() => {
@@ -330,7 +332,7 @@ const PiPPanel: Component<{
 
   let panelRef!: HTMLDivElement
   onMount(() => {
-    attachStyles(panelRef, useQueryDevtoolsContext().styleNonce)
+    attachStyles(panelRef)
   })
 
   createEffect(() => {
@@ -390,8 +392,7 @@ export const ParentPanel: Component<{
   let panelRef!: HTMLDivElement
 
   onMount(() => {
-    const { styleNonce, shadowDOMTarget } = useQueryDevtoolsContext()
-    attachStyles(panelRef, styleNonce, shadowDOMTarget)
+    attachStyles(panelRef, useQueryDevtoolsContext().shadowDOMTarget)
     createResizeObserver(panelRef, ({ width }, el) => {
       if (el === panelRef) {
         setPanelWidth(width)
@@ -890,7 +891,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
   // Adds the styles and sets the font size variable on portal menu elements,
   // since they are outside the main panel container
   const setupPortal = (el: HTMLDivElement) => {
-    attachStyles(el, useQueryDevtoolsContext().styleNonce)
+    attachStyles(el)
     const computedStyle = getComputedStyle(containerRef)
     const variable = computedStyle.getPropertyValue('--tsqd-font-size')
     el.style.setProperty('--tsqd-font-size', variable)

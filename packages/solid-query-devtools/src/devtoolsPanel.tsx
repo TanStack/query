@@ -18,10 +18,8 @@ export interface DevtoolsPanelOptions {
    */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the `<style>` element that the devtools add in
-   * browsers without constructable stylesheets, such as Safari before 16.4.
-   * This is useful if you are using a Content Security Policy (CSP) nonce to
-   * allow inline styles. Other browsers need no nonce.
+   * @deprecated The devtools no longer add a `<style>` element, so they need no
+   * nonce. This option does nothing.
    */
   styleNonce?: string
   /**
@@ -64,7 +62,7 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
   const queryClient = useQueryClient(props.client)
   const client = createMemo(() => queryClient)
   let ref!: HTMLDivElement
-  const { errorTypes, styleNonce, shadowDOMTarget, hideDisabledQueries } = props
+  const { errorTypes, shadowDOMTarget, hideDisabledQueries } = props
   const devtools = new TanstackQueryDevtoolsPanel({
     client: client(),
     queryFlavor: 'Solid Query',
@@ -74,7 +72,6 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
     position: 'bottom',
     initialIsOpen: true,
     errorTypes,
-    styleNonce,
     shadowDOMTarget,
     onClose: props.onClose,
     hideDisabledQueries,

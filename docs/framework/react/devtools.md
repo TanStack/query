@@ -88,7 +88,7 @@ function App() {
 - `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
   - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
 - `styleNonce?: string`
-  - Use this to pass a nonce to the `<style>` element that the devtools add in browsers without constructable stylesheets, such as Safari before 16.4. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles. Other browsers need no nonce.
+  - Deprecated. The devtools no longer add a `<style>` element, so they need no nonce. This option does nothing.
 - `shadowDOMTarget?: ShadowRoot`
   - The shadow root to add the devtools styles to. By default, the styles are added to the shadow root the devtools render in, or to the document when they do not render in a shadow root.
 - `hideDisabledQueries?: boolean`
@@ -137,7 +137,7 @@ function App() {
 - `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
   - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
 - `styleNonce?: string`
-  - Use this to pass a nonce to the `<style>` element that the devtools add in browsers without constructable stylesheets, such as Safari before 16.4. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles. Other browsers need no nonce.
+  - Deprecated. The devtools no longer add a `<style>` element, so they need no nonce. This option does nothing.
 - `shadowDOMTarget?: ShadowRoot`
   - The shadow root to add the devtools styles to. By default, the styles are added to the shadow root the devtools render in, or to the document when they do not render in a shadow root.
 - `hideDisabledQueries?: boolean`

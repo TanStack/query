@@ -35,10 +35,8 @@ export interface DevtoolsOptions {
    */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the `<style>` element that the devtools add in
-   * browsers without constructable stylesheets, such as Safari before 16.4.
-   * This is useful if you are using a Content Security Policy (CSP) nonce to
-   * allow inline styles. Other browsers need no nonce.
+   * @deprecated The devtools no longer add a `<style>` element, so they need no
+   * nonce. This option does nothing.
    */
   styleNonce?: string
   /**
@@ -72,10 +70,8 @@ export interface DevtoolsPanelOptions {
    */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the `<style>` element that the devtools add in
-   * browsers without constructable stylesheets, such as Safari before 16.4.
-   * This is useful if you are using a Content Security Policy (CSP) nonce to
-   * allow inline styles. Other browsers need no nonce.
+   * @deprecated The devtools no longer add a `<style>` element, so they need no
+   * nonce. This option does nothing.
    */
   styleNonce?: string
   /**

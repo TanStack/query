@@ -19,9 +19,8 @@ import type {
  */
 export interface TanstackQueryDevtoolsPanelConfig extends QueryDevtoolsProps {
   /**
-   * Use this to pass a nonce to the `<style>` element that the devtools add in browsers without
-   * constructable stylesheets, such as Safari before 16.4. This is useful if you are using a
-   * Content Security Policy (CSP) nonce to allow inline styles. Other browsers need no nonce.
+   * @deprecated The devtools no longer add a `<style>` element, so they need no nonce. This option
+   * does nothing.
    */
   styleNonce?: string
   /**
@@ -41,7 +40,6 @@ class TanstackQueryDevtoolsPanel {
   #queryFlavor: string
   #version: string
   #isMounted = false
-  #styleNonce?: string
   #shadowDOMTarget?: ShadowRoot
   #buttonPosition: Signal<DevtoolsButtonPosition | undefined>
   #position: Signal<DevtoolsPosition | undefined>
@@ -63,7 +61,6 @@ class TanstackQueryDevtoolsPanel {
       position,
       initialIsOpen,
       errorTypes,
-      styleNonce,
       shadowDOMTarget,
       onClose,
       hideDisabledQueries,
@@ -73,7 +70,6 @@ class TanstackQueryDevtoolsPanel {
     this.#queryFlavor = queryFlavor
     this.#version = version
     this.#onlineManager = onlineManager
-    this.#styleNonce = styleNonce
     this.#shadowDOMTarget = shadowDOMTarget
     this.#buttonPosition = createSignal(buttonPosition)
     this.#position = createSignal(position)
@@ -140,7 +136,6 @@ class TanstackQueryDevtoolsPanel {
           version={this.#version}
           onlineManager={this.#onlineManager}
           shadowDOMTarget={this.#shadowDOMTarget}
-          styleNonce={this.#styleNonce}
           {...{
             get client() {
               return queryClient()

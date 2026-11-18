@@ -185,14 +185,9 @@ const sheets = new WeakMap<Window, CSSStyleSheet>()
  * document that owns `el`. Adopted stylesheets are not `<style>` elements, so
  * they need no CSP nonce and no Trusted Types policy.
  * @param el - A connected element of the devtools.
- * @param nonce - The nonce of the fallback `<style>` element.
  * @param shadowDOMTarget - The shadow root to add the styles to.
  */
-export function attachStyles(
-  el: Element,
-  nonce?: string,
-  shadowDOMTarget?: ShadowRoot,
-) {
+export function attachStyles(el: Element, shadowDOMTarget?: ShadowRoot) {
   const root = el.getRootNode()
   const container: Document | ShadowRoot =
     shadowDOMTarget ??
@@ -201,27 +196,10 @@ export function attachStyles(
     (root.nodeType === 11 && 'host' in root
       ? (root as ShadowRoot)
       : el.ownerDocument)
-  const view =
-    ('defaultView' in container
-      ? container.defaultView
-      : container.ownerDocument.defaultView) ?? window
+  // Not supported before Safari 16.4 and Firefox 101, nor in jsdom.
+  if (!('adoptedStyleSheets' in (container as object))) return
 
-  // Without adoptable stylesheets (Safari < 16.4, Firefox < 101), fall back
-  // to a <style> element.
-  if (!('adoptedStyleSheets' in (container as object))) {
-    const parent = container.nodeType === 9 ? view.document.head : container
-    if (!parent.querySelector('style[data-tsqd-styles]')) {
-      const style = view.document.createElement('style')
-      style.setAttribute('data-tsqd-styles', '')
-      if (nonce) {
-        style.setAttribute('nonce', nonce)
-      }
-      style.textContent = cssText
-      parent.appendChild(style)
-    }
-    return
-  }
-
+  const view = el.ownerDocument.defaultView ?? window
   let sheet = sheets.get(view)
   if (!sheet) {
     sheet = new view.CSSStyleSheet()

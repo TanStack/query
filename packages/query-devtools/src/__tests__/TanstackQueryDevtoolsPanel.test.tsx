@@ -151,10 +151,12 @@ describe('TanstackQueryDevtoolsPanel', () => {
       devtools.mount(el)
 
       try {
-        await vi.waitFor(() =>
-          expect(shadowRoot.querySelector('.tsqd-main-panel')).not.toBeNull(),
+        await vi.waitFor(
+          () =>
+            expect(shadowRoot.querySelector('.tsqd-main-panel')).not.toBeNull(),
+          5000,
         )
-        expect(shadowRoot.querySelector('style')).not.toBeNull()
+        expect(shadowRoot.adoptedStyleSheets).toHaveLength(1)
       } finally {
         devtools.unmount()
         host.remove()

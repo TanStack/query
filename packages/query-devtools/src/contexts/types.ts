@@ -86,12 +86,6 @@ export interface QueryDevtoolsProps {
    */
   shadowDOMTarget?: ShadowRoot
   /**
-   * Use this to pass a nonce to the `<style>` element that the devtools add in browsers without
-   * constructable stylesheets, such as Safari before 16.4. This is useful if you are using a
-   * Content Security Policy (CSP) nonce to allow inline styles. Other browsers need no nonce.
-   */
-  styleNonce?: string
-  /**
    * Callback function that is called when the devtools panel is closed. Only used by the panel
    * entry point.
    */
