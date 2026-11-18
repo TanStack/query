@@ -57,7 +57,7 @@ import {
   Wifi,
   XCircle,
 } from './icons'
-import { attachStyles, getStyles } from './styles'
+import { attachStyles, createThemed } from './styles'
 import { tokens } from './theme'
 import {
   convertRemToPixels,
@@ -195,8 +195,6 @@ export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
  * @returns The toggle button and the panel.
  */
 export const Devtools: Component<DevtoolsPanelProps> = (props) => {
-  const theme = useTheme()
-  const styles = createMemo(() => getStyles(theme()))
   const pip = usePiPWindow()
 
   const buttonPosition = createMemo(() => {
@@ -274,7 +272,7 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
       </Show>
       <div
         // styles for animating the panel in and out
-        class={`${styles().transitionsContainer(position() === 'top' || position() === 'bottom', buttonPosition())} tsqd-transitions-container`}
+        class={`tsqd-style-transitions tsqd-style-transitions-${position() === 'top' || position() === 'bottom' ? 'vertical' : 'horizontal'} tsqd-style-transitions-button-${buttonPosition()} tsqd-transitions-container`}
         dir="ltr"
         ref={transitionsContainerRef}
       >
@@ -289,7 +287,7 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
         <TransitionGroup name="tsqd-button-transition">
           <Show when={!isOpen()}>
             <div
-              class={`${styles().devtoolsBtn} ${styles()[`devtoolsBtn-position-${buttonPosition()}`]} tsqd-open-btn-container`}
+              class={`tsqd-style-devtools-btn tsqd-style-devtools-btn-position-${buttonPosition()} tsqd-open-btn-container`}
             >
               <div aria-hidden="true">
                 <TanstackLogo />
@@ -317,7 +315,7 @@ const PiPPanel: Component<{
 
   const pip = usePiPWindow()
   const theme = useTheme()
-  const styles = createMemo(() => getStyles(theme()))
+  const themed = createThemed(theme)
 
   let panelRef!: HTMLDivElement
   onMount(() => {
@@ -352,7 +350,7 @@ const PiPPanel: Component<{
         height: '100vh',
         width: '100vw',
       }}
-      class={`${styles().panel} ${styles().panelLayout(panelWidth() < secondBreakpoint)} ${panelWidth() < thirdBreakpoint ? styles().panelMinContent : ''} tsqd-main-panel`}
+      class={`${themed('tsqd-style-panel')} ${themed(panelWidth() < secondBreakpoint ? 'tsqd-style-panel-column' : 'tsqd-style-panel-row')} ${panelWidth() < thirdBreakpoint ? 'tsqd-style-panel-min-content' : ''} tsqd-main-panel`}
     >
       {props.children}
     </div>
@@ -371,7 +369,7 @@ export const ParentPanel: Component<{
   const { panelWidth, setPanelWidth } = useDevtoolsState()
 
   const theme = useTheme()
-  const styles = createMemo(() => getStyles(theme()))
+  const themed = createThemed(theme)
 
   let panelRef!: HTMLDivElement
 
@@ -391,7 +389,7 @@ export const ParentPanel: Component<{
         '--tsqd-font-size': '16px',
       }}
       ref={panelRef}
-      class={`${styles().parentPanel} ${styles().panelLayout(panelWidth() < secondBreakpoint)} ${panelWidth() < thirdBreakpoint ? styles().panelMinContent : ''} tsqd-main-panel`}
+      class={`${themed('tsqd-style-parent-panel')} ${themed(panelWidth() < secondBreakpoint ? 'tsqd-style-panel-column' : 'tsqd-style-panel-row')} ${panelWidth() < thirdBreakpoint ? 'tsqd-style-panel-min-content' : ''} tsqd-main-panel`}
     >
       {props.children}
     </div>
@@ -402,7 +400,7 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
   const { setSelectedQueryHash, panelWidth, setPanelWidth } = useDevtoolsState()
 
   const theme = useTheme()
-  const styles = createMemo(() => getStyles(theme()))
+  const themed = createThemed(theme)
 
   let closeBtnRef!: HTMLButtonElement
 
@@ -534,7 +532,7 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
       // -
       // min-width - When the panel is in the left or right position, the panel
       // width is set to min-content to allow the panel to shrink to the lowest possible width
-      class={`${styles().panel} ${styles()[`panel-position-${position()}`]} ${styles().panelLayout(panelWidth() < secondBreakpoint)} ${panelWidth() < thirdBreakpoint && (position() === 'right' || position() === 'left') ? styles().panelMinContent : ''} tsqd-main-panel`}
+      class={`${themed('tsqd-style-panel')} ${themed(`tsqd-style-panel-position-${position()}`)} ${themed(panelWidth() < secondBreakpoint ? 'tsqd-style-panel-column' : 'tsqd-style-panel-row')} ${panelWidth() < thirdBreakpoint && (position() === 'right' || position() === 'left') ? 'tsqd-style-panel-min-content' : ''} tsqd-main-panel`}
       style={{
         height:
           position() === 'bottom' || position() === 'top'
@@ -567,7 +565,7 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
             : Number(props.localStore.width || DEFAULT_WIDTH)
         }
         tabindex="0"
-        class={`${styles().dragHandle} ${styles()[`dragHandle-position-${position()}`]} tsqd-drag-handle`}
+        class={`${themed('tsqd-style-drag-handle')} tsqd-style-drag-handle-position-${position()} tsqd-drag-handle`}
         onMouseDown={handleDragStart}
         onKeyDown={(e) => {
           const step = 10
@@ -613,7 +611,7 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
       <button
         ref={closeBtnRef}
         aria-label="Close tanstack query devtools"
-        class={`${styles().closeBtn} ${styles()[`closeBtn-position-${position()}`]} tsqd-minimize-btn`}
+        class={`${themed('tsqd-style-close-btn')} ${themed(`tsqd-style-close-btn-position-${position()}`)} tsqd-minimize-btn`}
         onClick={() => props.setLocalStore('open', 'false')}
       >
         <ChevronDown />
@@ -646,7 +644,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
   setupMutationCacheSubscription()
   let containerRef!: HTMLDivElement
   const theme = useTheme()
-  const styles = createMemo(() => getStyles(theme()))
+  const themed = createThemed(theme)
 
   const pip = usePiPWindow()
 
@@ -864,13 +862,13 @@ export const ContentView: Component<ContentViewProps> = (props) => {
       <div
         // When the panels are stacked we use the height style
         // to divide the panels into two equal parts
-        class={`${styles().queriesContainer} ${panelWidth() < secondBreakpoint ? styles().queriesContainerHeight(!!(selectedQueryHash() || selectedMutationId())) : ''} tsqd-queries-container`}
+        class={`${themed('tsqd-style-queries-container')} ${panelWidth() < secondBreakpoint ? (selectedQueryHash() || selectedMutationId() ? 'tsqd-style-queries-container-half' : 'tsqd-style-queries-container-full') : ''} tsqd-queries-container`}
         ref={containerRef}
       >
-        <div class={`${styles().row} tsqd-header`}>
-          <div class={styles().logoAndToggleContainer}>
+        <div class={`${themed('tsqd-style-row')} tsqd-header`}>
+          <div class="tsqd-style-logo-and-toggle-container">
             <button
-              class={`${styles().logo} tsqd-text-logo-container`}
+              class="tsqd-style-logo tsqd-text-logo-container"
               onClick={() => {
                 if (!pip().pipWindow && !props.showPanelViewOnly) {
                   props.setLocalStore('open', 'false')
@@ -882,18 +880,20 @@ export const ContentView: Component<ContentViewProps> = (props) => {
               }}
               aria-label="Close Tanstack query devtools"
             >
-              <span class={`${styles().tanstackLogo} tsqd-text-logo-tanstack`}>
+              <span
+                class={`${themed('tsqd-style-tanstack-logo')} tsqd-text-logo-tanstack`}
+              >
                 TANSTACK
               </span>
               <span
-                class={`${styles().queryFlavorLogo} tsqd-text-logo-query-flavor`}
+                class={`${themed('tsqd-style-query-flavor-logo')} tsqd-text-logo-query-flavor`}
               >
                 {useQueryDevtoolsContext().queryFlavor} v
                 {useQueryDevtoolsContext().version}
               </span>
             </button>
             <RadioGroup.Root
-              class={styles().viewToggle}
+              class={themed('tsqd-style-view-toggle')}
               value={selectedView()}
               aria-label="Toggle between queries and mutations view"
               onChange={(value) => {
@@ -930,10 +930,14 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             <MutationStatusCount />
           </Show>
         </div>
-        <div class={`${styles().row} tsqd-filters-actions-container`}>
-          <div class={`${styles().filtersContainer} tsqd-filters-container`}>
+        <div
+          class={`${themed('tsqd-style-row')} tsqd-filters-actions-container`}
+        >
+          <div
+            class={`${themed('tsqd-style-filters-container')} tsqd-filters-container`}
+          >
             <div
-              class={`${styles().filterInput} tsqd-query-filter-textfield-container`}
+              class={`${themed('tsqd-style-filter-input')} tsqd-query-filter-textfield-container`}
             >
               <Search />
               <input
@@ -960,7 +964,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
               <button
                 type="button"
                 onClick={cycleFilterScope}
-                class={`${styles().filterScopeBtn} tsqd-query-filter-scope-btn`}
+                class={`${themed('tsqd-style-filter-scope-btn')} tsqd-query-filter-scope-btn`}
                 aria-label={`Filter scope: ${filterScopeLabels[filterScope()]}`}
                 title={`${filterScopeAriaLabels[selectedView()][filterScope()]}. Click to switch between key, data, and both.`}
                 data-scope={filterScope()}
@@ -969,7 +973,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
               </button>
             </div>
             <div
-              class={`${styles().filterSelect} tsqd-query-filter-sort-container`}
+              class={`${themed('tsqd-style-filter-select')} tsqd-query-filter-sort-container`}
             >
               <Show when={selectedView() === 'queries'}>
                 <select
@@ -1049,7 +1053,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             </button>
           </div>
 
-          <div class={`${styles().actionsContainer} tsqd-actions-container`}>
+          <div class="tsqd-style-actions-container tsqd-actions-container">
             <button
               onClick={() => {
                 if (selectedView() === 'queries') {
@@ -1060,7 +1064,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                   mutation_cache().clear()
                 }
               }}
-              class={`${styles().actionsBtn} tsqd-actions-btn tsqd-action-clear-cache`}
+              class={`${themed('tsqd-style-actions-btn')} tsqd-actions-btn tsqd-action-clear-cache`}
               aria-label="Clear query cache"
               title={`Clear ${selectedView()} cache`}
             >
@@ -1068,7 +1072,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             </button>
             <button
               onClick={toggleOffline}
-              class={`${styles().actionsBtn} ${offline() ? styles().actionsBtnOffline : ''} tsqd-actions-btn tsqd-action-mock-offline-behavior`}
+              class={`${themed('tsqd-style-actions-btn')} ${offline() ? themed('tsqd-style-actions-btn-offline') : ''} tsqd-actions-btn tsqd-action-mock-offline-behavior`}
               aria-label={`${
                 offline()
                   ? 'Unset offline mocking behavior'
@@ -1091,7 +1095,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                     Number(props.localStore.height ?? 500),
                   )
                 }}
-                class={`${styles().actionsBtn} tsqd-actions-btn tsqd-action-open-pip`}
+                class={`${themed('tsqd-style-actions-btn')} tsqd-actions-btn tsqd-action-open-pip`}
                 aria-label="Open in picture-in-picture mode"
                 title="Open in picture-in-picture mode"
               >
@@ -1101,7 +1105,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
 
             <DropdownMenu.Root gutter={4}>
               <DropdownMenu.Trigger
-                class={`${styles().actionsBtn} tsqd-actions-btn tsqd-action-settings`}
+                class={`${themed('tsqd-style-actions-btn')} tsqd-actions-btn tsqd-action-settings`}
                 aria-label="Open settings menu"
                 title="Open settings menu"
               >
@@ -1117,17 +1121,17 @@ export const ContentView: Component<ContentViewProps> = (props) => {
               >
                 <DropdownMenu.Content
                   dir="ltr"
-                  class={`${styles().settingsMenu} tsqd-settings-menu`}
+                  class={`${themed('tsqd-style-settings-menu')} tsqd-settings-menu`}
                 >
                   <div
-                    class={`${styles().settingsMenuHeader} tsqd-settings-menu-header`}
+                    class={`${themed('tsqd-style-settings-menu-header')} tsqd-settings-menu-header`}
                   >
                     Settings
                   </div>
                   <Show when={!props.showPanelViewOnly}>
                     <DropdownMenu.Sub overlap gutter={8} shift={-4}>
                       <DropdownMenu.SubTrigger
-                        class={`${styles().settingsSubTrigger} tsqd-settings-menu-sub-trigger tsqd-settings-menu-sub-trigger-position`}
+                        class={`${themed('tsqd-style-settings-sub-trigger')} tsqd-settings-menu-sub-trigger tsqd-settings-menu-sub-trigger-position`}
                       >
                         <span>Position</span>
                         <ChevronDown />
@@ -1142,7 +1146,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                       >
                         <DropdownMenu.SubContent
                           dir="ltr"
-                          class={`${styles().settingsMenu} tsqd-settings-submenu`}
+                          class={`${themed('tsqd-style-settings-menu')} tsqd-settings-submenu`}
                         >
                           <DropdownMenu.RadioGroup
                             aria-label="Position settings"
@@ -1153,28 +1157,28 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                           >
                             <DropdownMenu.RadioItem
                               value="top"
-                              class={`${styles().settingsSubButton} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-top`}
+                              class={`${themed('tsqd-style-settings-sub-button')} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-top`}
                             >
                               <span>Top</span>
                               <ArrowUp />
                             </DropdownMenu.RadioItem>
                             <DropdownMenu.RadioItem
                               value="bottom"
-                              class={`${styles().settingsSubButton} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-bottom`}
+                              class={`${themed('tsqd-style-settings-sub-button')} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-bottom`}
                             >
                               <span>Bottom</span>
                               <ArrowDown />
                             </DropdownMenu.RadioItem>
                             <DropdownMenu.RadioItem
                               value="left"
-                              class={`${styles().settingsSubButton} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-left`}
+                              class={`${themed('tsqd-style-settings-sub-button')} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-left`}
                             >
                               <span>Left</span>
                               <ArrowLeft />
                             </DropdownMenu.RadioItem>
                             <DropdownMenu.RadioItem
                               value="right"
-                              class={`${styles().settingsSubButton} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-right`}
+                              class={`${themed('tsqd-style-settings-sub-button')} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-right`}
                             >
                               <span>Right</span>
                               <ArrowRight />
@@ -1186,7 +1190,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                   </Show>
                   <DropdownMenu.Sub overlap gutter={8} shift={-4}>
                     <DropdownMenu.SubTrigger
-                      class={`${styles().settingsSubTrigger} tsqd-settings-menu-sub-trigger tsqd-settings-menu-sub-trigger-theme`}
+                      class={`${themed('tsqd-style-settings-sub-trigger')} tsqd-settings-menu-sub-trigger tsqd-settings-menu-sub-trigger-theme`}
                     >
                       <span>Theme</span>
                       <ChevronDown />
@@ -1201,7 +1205,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                     >
                       <DropdownMenu.SubContent
                         dir="ltr"
-                        class={`${styles().settingsMenu} tsqd-settings-submenu`}
+                        class={`${themed('tsqd-style-settings-menu')} tsqd-settings-submenu`}
                       >
                         <DropdownMenu.RadioGroup
                           value={props.localStore.theme_preference}
@@ -1212,21 +1216,21 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                         >
                           <DropdownMenu.RadioItem
                             value="light"
-                            class={`${styles().settingsSubButton} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-top`}
+                            class={`${themed('tsqd-style-settings-sub-button')} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-top`}
                           >
                             <span>Light</span>
                             <Sun />
                           </DropdownMenu.RadioItem>
                           <DropdownMenu.RadioItem
                             value="dark"
-                            class={`${styles().settingsSubButton} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-bottom`}
+                            class={`${themed('tsqd-style-settings-sub-button')} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-bottom`}
                           >
                             <span>Dark</span>
                             <Moon />
                           </DropdownMenu.RadioItem>
                           <DropdownMenu.RadioItem
                             value="system"
-                            class={`${styles().settingsSubButton} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-left`}
+                            class={`${themed('tsqd-style-settings-sub-button')} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-left`}
                           >
                             <span>System</span>
                             <Monitor />
@@ -1237,7 +1241,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                   </DropdownMenu.Sub>
                   <DropdownMenu.Sub overlap gutter={8} shift={-4}>
                     <DropdownMenu.SubTrigger
-                      class={`${styles().settingsSubTrigger} tsqd-settings-menu-sub-trigger tsqd-settings-menu-sub-trigger-disabled-queries`}
+                      class={`${themed('tsqd-style-settings-sub-trigger')} tsqd-settings-menu-sub-trigger tsqd-settings-menu-sub-trigger-disabled-queries`}
                     >
                       <span>Disabled Queries</span>
                       <ChevronDown />
@@ -1252,7 +1256,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                     >
                       <DropdownMenu.SubContent
                         dir="ltr"
-                        class={`${styles().settingsMenu} tsqd-settings-submenu`}
+                        class={`${themed('tsqd-style-settings-menu')} tsqd-settings-submenu`}
                       >
                         <DropdownMenu.RadioGroup
                           value={hideDisabledQueries() ? 'true' : 'false'}
@@ -1263,7 +1267,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                         >
                           <DropdownMenu.RadioItem
                             value="false"
-                            class={`${styles().settingsSubButton} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-show`}
+                            class={`${themed('tsqd-style-settings-sub-button')} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-show`}
                           >
                             <span>Show</span>
                             <Show when={!hideDisabledQueries()}>
@@ -1272,7 +1276,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                           </DropdownMenu.RadioItem>
                           <DropdownMenu.RadioItem
                             value="true"
-                            class={`${styles().settingsSubButton} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-hide`}
+                            class={`${themed('tsqd-style-settings-sub-button')} tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-hide`}
                           >
                             <span>Hide</span>
                             <Show when={hideDisabledQueries()}>
@@ -1294,7 +1298,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
               <VirtualList
                 each={queries()}
                 getKey={(query) => query.queryHash}
-                class={`${styles().overflowQueryContainer} tsqd-queries-overflow-container`}
+                class="tsqd-style-overflow-query-container tsqd-queries-overflow-container"
                 contentClass="tsqd-queries-container"
               >
                 {(query) => <QueryRow query={query()} />}
@@ -1308,7 +1312,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
               <VirtualList
                 each={mutations()}
                 getKey={(mutation) => mutation.mutationId}
-                class={`${styles().overflowQueryContainer} tsqd-mutations-overflow-container`}
+                class="tsqd-style-overflow-query-container tsqd-mutations-overflow-container"
                 contentClass="tsqd-mutations-container"
               >
                 {(mutation) => <MutationRow mutation={mutation()} />}
@@ -1342,7 +1346,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
   const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsState()
 
   const theme = useTheme()
-  const styles = createMemo(() => getStyles(theme()))
+  const themed = createThemed(theme)
 
   const queryState = createSubscribeToQueryCacheBatcher(
     (queryCache) => queryCache().get(props.query.queryHash)?.state,
@@ -1395,11 +1399,11 @@ const QueryRow: Component<{ query: Query }> = (props) => {
               : props.query.queryHash,
           )
         }
-        class={`${styles().queryRow} ${selectedQueryHash() === props.query.queryHash ? styles().selectedQueryRow : ''} tsqd-query-row`}
+        class={`${themed('tsqd-style-query-row')} ${selectedQueryHash() === props.query.queryHash ? themed('tsqd-style-selected-query-row') : ''} tsqd-query-row`}
         aria-label={`Query key ${props.query.queryHash}${isDisabled() ? ', disabled' : ''}${isStatic() ? ', static' : ''}`}
       >
         <div
-          class={`${styles().observerCount(color())} tsqd-query-observer-count`}
+          class={`${themed(`tsqd-style-observer-count-${color()}`)} tsqd-query-observer-count`}
         >
           {observers()}
         </div>
@@ -1423,7 +1427,7 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
   const { selectedMutationId, setSelectedMutationId } = useDevtoolsState()
 
   const theme = useTheme()
-  const styles = createMemo(() => getStyles(theme()))
+  const themed = createThemed(theme)
 
   const mutationState = createSubscribeToMutationCacheBatcher(
     () => props.mutation.state,
@@ -1454,13 +1458,13 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
               : props.mutation.mutationId,
           )
         }}
-        class={`${styles().queryRow} ${selectedMutationId() === props.mutation.mutationId ? styles().selectedQueryRow : ''} tsqd-query-row`}
+        class={`${themed('tsqd-style-query-row')} ${selectedMutationId() === props.mutation.mutationId ? themed('tsqd-style-selected-query-row') : ''} tsqd-query-row`}
         aria-label={`Mutation submitted at ${new Date(
           props.mutation.state.submittedAt,
         ).toLocaleString()}`}
       >
         <div
-          class={`${styles().observerCount(color())} tsqd-query-observer-count`}
+          class={`${themed(`tsqd-style-observer-count-${color()}`)} tsqd-query-observer-count`}
         >
           <Show when={color() === 'purple'}>
             <PauseCircle />
@@ -1495,11 +1499,8 @@ const QueryStatusCount: Component = () => {
     return tally
   })
 
-  const theme = useTheme()
-  const styles = createMemo(() => getStyles(theme()))
-
   return (
-    <div class={`${styles().queryStatusContainer} tsqd-query-status-container`}>
+    <div class="tsqd-style-query-status-container tsqd-query-status-container">
       <QueryStatus label="Fresh" color="green" count={counts().fresh} />
       <QueryStatus label="Fetching" color="blue" count={counts().fetching} />
       <QueryStatus label="Paused" color="purple" count={counts().paused} />
@@ -1518,11 +1519,8 @@ const MutationStatusCount: Component = () => {
     return tally
   })
 
-  const theme = useTheme()
-  const styles = createMemo(() => getStyles(theme()))
-
   return (
-    <div class={`${styles().queryStatusContainer} tsqd-query-status-container`}>
+    <div class="tsqd-style-query-status-container tsqd-query-status-container">
       <QueryStatus label="Paused" color="purple" count={counts().purple} />
       <QueryStatus label="Pending" color="yellow" count={counts().yellow} />
       <QueryStatus label="Success" color="green" count={counts().green} />
@@ -1535,7 +1533,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
   const { selectedQueryHash, panelWidth } = useDevtoolsState()
 
   const theme = useTheme()
-  const styles = createMemo(() => getStyles(theme()))
+  const themed = createThemed(theme)
 
   let tagRef!: HTMLButtonElement
 
@@ -1567,7 +1565,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
       disabled={showLabel()}
       ref={tagRef}
       aria-label={`${props.label}: ${props.count}`}
-      class={`${styles().queryStatusTag} ${!showLabel() ? styles().queryStatusTagClickable : ''} tsqd-query-status-tag tsqd-query-status-tag-${props.label.toLowerCase()}`}
+      class={`${themed('tsqd-style-query-status-tag')} ${!showLabel() ? themed('tsqd-style-query-status-tag-clickable') : ''} tsqd-query-status-tag tsqd-query-status-tag-${props.label.toLowerCase()}`}
       {...(mouseOver() || focused()
         ? {
             'aria-describedby': 'tsqd-status-tooltip',
@@ -1578,24 +1576,22 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
         <div
           role="tooltip"
           id="tsqd-status-tooltip"
-          class={`${styles().statusTooltip} tsqd-query-status-tooltip`}
+          class={`${themed('tsqd-style-status-tooltip')} tsqd-query-status-tooltip`}
         >
           {props.label}
         </div>
       </Show>
       <span
         aria-hidden="true"
-        class={`${styles().queryStatusDot(props.color)} tsqd-query-status-tag-dot`}
+        class={`tsqd-style-query-status-dot tsqd-style-query-status-dot-${props.color} tsqd-query-status-tag-dot`}
       />
       <Show when={showLabel()}>
-        <span
-          class={`${styles().queryStatusTagLabel} tsqd-query-status-tag-label`}
-        >
+        <span class="tsqd-style-query-status-tag-label tsqd-query-status-tag-label">
           {props.label}
         </span>
       </Show>
       <span
-        class={`${styles().queryStatusCount} ${props.count > 0 && props.color !== 'gray' ? styles().queryStatusCountColor(props.color) : ''} tsqd-query-status-tag-count`}
+        class={`${themed('tsqd-style-query-status-count')} ${props.count > 0 && props.color !== 'gray' ? themed(`tsqd-style-query-status-count-${props.color}`) : ''} tsqd-query-status-tag-count`}
       >
         {props.count}
       </span>
@@ -1607,7 +1603,7 @@ const QueryDetails = (props: { initialSearch?: string }) => {
   const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsState()
 
   const theme = useTheme()
-  const styles = createMemo(() => getStyles(theme()))
+  const themed = createThemed(theme)
 
   const queryClient = useQueryDevtoolsContext().client
 
@@ -1725,23 +1721,23 @@ const QueryDetails = (props: { initialSearch?: string }) => {
 
   return (
     <Show when={activeQuery() && activeQueryState()}>
-      <div class={`${styles().detailsContainer} tsqd-query-details-container`}>
+      <div
+        class={`${themed('tsqd-style-details-container')} tsqd-query-details-container`}
+      >
         <div
           role="heading"
           aria-level="2"
-          class={`${styles().detailsHeader} tsqd-query-details-header`}
+          class={`${themed('tsqd-style-details-header')} tsqd-query-details-header`}
         >
           Query Details
         </div>
-        <div
-          class={`${styles().detailsBody} tsqd-query-details-summary-container`}
-        >
+        <div class="tsqd-style-details-body tsqd-query-details-summary-container">
           <div class="tsqd-query-details-summary">
             <pre>
               <code>{displayValue(activeQuery()!.queryKey, true)}</code>
             </pre>
             <span
-              class={`${styles().queryDetailsStatus} ${styles().detailsStatus(color())}`}
+              class={`tsqd-style-query-details-status ${themed(`tsqd-style-details-status-${color()}`)}`}
               role="status"
               aria-live="polite"
             >
@@ -1762,23 +1758,26 @@ const QueryDetails = (props: { initialSearch?: string }) => {
         <div
           role="heading"
           aria-level="2"
-          class={`${styles().detailsHeader} tsqd-query-details-header`}
+          class={`${themed('tsqd-style-details-header')} tsqd-query-details-header`}
         >
           Actions
         </div>
         <div
-          class={`${styles().actionsBody} tsqd-query-details-actions-container`}
+          class={`${themed('tsqd-style-actions-body')} tsqd-query-details-actions-container`}
         >
           <button
-            class={`${styles().action('blue')} tsqd-query-details-actions-btn tsqd-query-details-action-refetch`}
+            class={`${themed('tsqd-style-action-blue')} tsqd-query-details-actions-btn tsqd-query-details-action-refetch`}
             onClick={handleRefetch}
             disabled={statusLabel() === 'fetching'}
           >
-            <span aria-hidden="true" class={styles().actionDot('blue')}></span>
+            <span
+              aria-hidden="true"
+              class={themed('tsqd-style-action-dot-blue')}
+            ></span>
             Refetch
           </button>
           <button
-            class={`${styles().action('yellow')} tsqd-query-details-actions-btn tsqd-query-details-action-invalidate`}
+            class={`${themed('tsqd-style-action-yellow')} tsqd-query-details-actions-btn tsqd-query-details-action-invalidate`}
             onClick={() => {
               sendDevToolsEvent({
                 type: 'INVALIDATE',
@@ -1793,12 +1792,12 @@ const QueryDetails = (props: { initialSearch?: string }) => {
           >
             <span
               aria-hidden="true"
-              class={styles().actionDot('yellow')}
+              class={themed('tsqd-style-action-dot-yellow')}
             ></span>
             Invalidate
           </button>
           <button
-            class={`${styles().action('gray')} tsqd-query-details-actions-btn tsqd-query-details-action-reset`}
+            class={`${themed('tsqd-style-action-gray')} tsqd-query-details-actions-btn tsqd-query-details-action-reset`}
             onClick={() => {
               sendDevToolsEvent({
                 type: 'RESET',
@@ -1811,11 +1810,14 @@ const QueryDetails = (props: { initialSearch?: string }) => {
             }}
             disabled={queryStatus() === 'pending'}
           >
-            <span aria-hidden="true" class={styles().actionDot('gray')}></span>
+            <span
+              aria-hidden="true"
+              class={themed('tsqd-style-action-dot-gray')}
+            ></span>
             Reset
           </button>
           <button
-            class={`${styles().action('pink')} tsqd-query-details-actions-btn tsqd-query-details-action-remove`}
+            class={`${themed('tsqd-style-action-pink')} tsqd-query-details-actions-btn tsqd-query-details-action-remove`}
             onClick={() => {
               sendDevToolsEvent({
                 type: 'REMOVE',
@@ -1829,11 +1831,14 @@ const QueryDetails = (props: { initialSearch?: string }) => {
             }}
             disabled={statusLabel() === 'fetching'}
           >
-            <span aria-hidden="true" class={styles().actionDot('pink')}></span>
+            <span
+              aria-hidden="true"
+              class={themed('tsqd-style-action-dot-pink')}
+            ></span>
             Remove
           </button>
           <button
-            class={`${styles().action('cyan')} tsqd-query-details-actions-btn tsqd-query-details-action-loading`}
+            class={`${themed('tsqd-style-action-cyan')} tsqd-query-details-actions-btn tsqd-query-details-action-loading`}
             disabled={restoringLoading()}
             onClick={() => {
               if (activeQuery()?.state.data === undefined) {
@@ -1868,12 +1873,15 @@ const QueryDetails = (props: { initialSearch?: string }) => {
               }
             }}
           >
-            <span aria-hidden="true" class={styles().actionDot('cyan')}></span>
+            <span
+              aria-hidden="true"
+              class={themed('tsqd-style-action-dot-cyan')}
+            ></span>
             {queryStatus() === 'pending' ? 'Restore' : 'Trigger'} Loading
           </button>
           <Show when={errorTypes().length === 0 || queryStatus() === 'error'}>
             <button
-              class={`${styles().action('red')} tsqd-query-details-actions-btn tsqd-query-details-action-error`}
+              class={`${themed('tsqd-style-action-red')} tsqd-query-details-actions-btn tsqd-query-details-action-error`}
               onClick={() => {
                 if (!activeQuery()!.state.error) {
                   triggerError()
@@ -1889,7 +1897,10 @@ const QueryDetails = (props: { initialSearch?: string }) => {
               }}
               disabled={queryStatus() === 'pending'}
             >
-              <span aria-hidden="true" class={styles().actionDot('red')}></span>
+              <span
+                aria-hidden="true"
+                class={themed('tsqd-style-action-dot-red')}
+              ></span>
               {queryStatus() === 'error' ? 'Restore' : 'Trigger'} Error
             </button>
           </Show>
@@ -1897,9 +1908,12 @@ const QueryDetails = (props: { initialSearch?: string }) => {
             when={!(errorTypes().length === 0 || queryStatus() === 'error')}
           >
             <div
-              class={`${styles().actionsSelect} tsqd-query-details-actions-btn tsqd-query-details-action-error-multiple`}
+              class={`${themed('tsqd-style-actions-select')} tsqd-query-details-actions-btn tsqd-query-details-action-error-multiple`}
             >
-              <span aria-hidden="true" class={styles().actionSelectDot}></span>
+              <span
+                aria-hidden="true"
+                class="tsqd-style-action-select-dot"
+              ></span>
               Trigger Error
               <select
                 disabled={queryStatus() === 'pending'}
@@ -1926,7 +1940,7 @@ const QueryDetails = (props: { initialSearch?: string }) => {
         <div
           role="heading"
           aria-level="2"
-          class={`${styles().detailsHeader} tsqd-query-details-header`}
+          class={`${themed('tsqd-style-details-header')} tsqd-query-details-header`}
         >
           Data {dataMode() === 'view' ? 'Explorer' : 'Editor'}
         </div>
@@ -1951,7 +1965,7 @@ const QueryDetails = (props: { initialSearch?: string }) => {
         </Show>
         <Show when={dataMode() === 'edit'}>
           <form
-            class={`${styles().devtoolsEditForm} tsqd-query-details-data-editor`}
+            class={`${themed('tsqd-style-devtools-edit-form')} tsqd-query-details-data-editor`}
             onSubmit={(e) => {
               e.preventDefault()
               const formData = new FormData(e.currentTarget)
@@ -1971,25 +1985,25 @@ const QueryDetails = (props: { initialSearch?: string }) => {
             <textarea
               name="data"
               aria-label="Edit query data as JSON"
-              class={styles().devtoolsEditTextarea}
+              class={themed('tsqd-style-devtools-edit-textarea')}
               onFocus={() => setDataEditError(false)}
               data-error={dataEditError()}
               value={JSON.stringify(activeQueryStateData(), null, 2)}
             ></textarea>
-            <div class={styles().devtoolsEditFormActions}>
-              <span class={styles().devtoolsEditFormError}>
+            <div class="tsqd-style-devtools-edit-form-actions">
+              <span class={themed('tsqd-style-devtools-edit-form-error')}>
                 {dataEditError() ? 'Invalid Value' : ''}
               </span>
-              <div class={styles().devtoolsEditFormActionContainer}>
+              <div class="tsqd-style-devtools-edit-form-action-container">
                 <button
-                  class={`${styles().devtoolsEditFormAction} ${styles().action('gray')}`}
+                  class={`${themed('tsqd-style-devtools-edit-form-action')} ${themed('tsqd-style-action-gray')}`}
                   type="button"
                   onClick={() => setDataMode('view')}
                 >
                   Cancel
                 </button>
                 <button
-                  class={`${styles().devtoolsEditFormAction} ${styles().action('blue')}`}
+                  class={`${themed('tsqd-style-devtools-edit-form-action')} ${themed('tsqd-style-action-blue')}`}
                 >
                   Save
                 </button>
@@ -2000,7 +2014,7 @@ const QueryDetails = (props: { initialSearch?: string }) => {
         <div
           role="heading"
           aria-level="2"
-          class={`${styles().detailsHeader} tsqd-query-details-header`}
+          class={`${themed('tsqd-style-details-header')} tsqd-query-details-header`}
         >
           Query Explorer
         </div>
@@ -2025,7 +2039,7 @@ const MutationDetails = (props: { initialSearch?: string }) => {
   const { selectedMutationId } = useDevtoolsState()
 
   const theme = useTheme()
-  const styles = createMemo(() => getStyles(theme()))
+  const themed = createThemed(theme)
 
   const isPaused = createSubscribeToMutationCacheBatcher((mutationCache) => {
     const mutations = mutationCache().getAll()
@@ -2067,17 +2081,17 @@ const MutationDetails = (props: { initialSearch?: string }) => {
 
   return (
     <Show when={activeMutation()}>
-      <div class={`${styles().detailsContainer} tsqd-query-details-container`}>
+      <div
+        class={`${themed('tsqd-style-details-container')} tsqd-query-details-container`}
+      >
         <div
           role="heading"
           aria-level="2"
-          class={`${styles().detailsHeader} tsqd-query-details-header`}
+          class={`${themed('tsqd-style-details-header')} tsqd-query-details-header`}
         >
           Mutation Details
         </div>
-        <div
-          class={`${styles().detailsBody} tsqd-query-details-summary-container`}
-        >
+        <div class="tsqd-style-details-body tsqd-query-details-summary-container">
           <div class="tsqd-query-details-summary">
             <pre>
               <code>
@@ -2090,7 +2104,7 @@ const MutationDetails = (props: { initialSearch?: string }) => {
               </code>
             </pre>
             <span
-              class={`${styles().queryDetailsStatus} ${styles().detailsStatus(color())}`}
+              class={`tsqd-style-query-details-status ${themed(`tsqd-style-details-status-${color()}`)}`}
               role="status"
               aria-live="polite"
             >
@@ -2110,7 +2124,7 @@ const MutationDetails = (props: { initialSearch?: string }) => {
         <div
           role="heading"
           aria-level="2"
-          class={`${styles().detailsHeader} tsqd-query-details-header`}
+          class={`${themed('tsqd-style-details-header')} tsqd-query-details-header`}
         >
           Variables Details
         </div>
@@ -2131,7 +2145,7 @@ const MutationDetails = (props: { initialSearch?: string }) => {
         <div
           role="heading"
           aria-level="2"
-          class={`${styles().detailsHeader} tsqd-query-details-header`}
+          class={`${themed('tsqd-style-details-header')} tsqd-query-details-header`}
         >
           Context Details
         </div>
@@ -2150,7 +2164,7 @@ const MutationDetails = (props: { initialSearch?: string }) => {
         <div
           role="heading"
           aria-level="2"
-          class={`${styles().detailsHeader} tsqd-query-details-header`}
+          class={`${themed('tsqd-style-details-header')} tsqd-query-details-header`}
         >
           Data Explorer
         </div>
@@ -2171,7 +2185,7 @@ const MutationDetails = (props: { initialSearch?: string }) => {
         <div
           role="heading"
           aria-level="2"
-          class={`${styles().detailsHeader} tsqd-query-details-header`}
+          class={`${themed('tsqd-style-details-header')} tsqd-query-details-header`}
         >
           Mutations Explorer
         </div>

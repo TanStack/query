@@ -25,7 +25,7 @@ import {
   Trash,
 } from './icons'
 import { getNativeObjectType } from './nativeObjectType'
-import { getExplorerStyles } from './styles'
+import { createThemed } from './styles'
 import {
   deleteNestedDataByPath,
   displayValue,
@@ -61,12 +61,9 @@ function chunkArray<T extends { label: string; value: unknown }>(
 }
 
 const Expander = (props: { expanded: boolean }) => {
-  const theme = useTheme()
-  const styles = createMemo(() => getExplorerStyles(theme()))
-
   return (
     <span
-      class={`${styles().expander} ${props.expanded ? styles().expanderExpanded : ''}`}
+      class={`tsqd-style-explorer-expander ${props.expanded ? 'tsqd-style-explorer-expander-expanded' : ''}`}
     >
       <svg
         width="16"
@@ -89,12 +86,12 @@ const Expander = (props: { expanded: boolean }) => {
 type CopyState = 'NoCopy' | 'SuccessCopy' | 'ErrorCopy'
 const CopyButton = (props: { value: unknown }) => {
   const theme = useTheme()
-  const styles = createMemo(() => getExplorerStyles(theme()))
+  const themed = createThemed(theme)
   const [copyState, setCopyState] = createSignal<CopyState>('NoCopy')
 
   return (
     <button
-      class={styles().actionButton}
+      class={themed('tsqd-style-explorer-action-button')}
       title="Copy object to clipboard"
       aria-label={`${
         copyState() === 'NoCopy'
@@ -145,12 +142,12 @@ const ClearArrayButton = (props: {
   activeQuery: Query
 }) => {
   const theme = useTheme()
-  const styles = createMemo(() => getExplorerStyles(theme()))
+  const themed = createThemed(theme)
   const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
-      class={styles().actionButton}
+      class={themed('tsqd-style-explorer-action-button')}
       title={'Remove all items'}
       aria-label={'Remove all items'}
       onClick={() => {
@@ -169,12 +166,12 @@ const DeleteItemButton = (props: {
   activeQuery: Query
 }) => {
   const theme = useTheme()
-  const styles = createMemo(() => getExplorerStyles(theme()))
+  const themed = createThemed(theme)
   const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
-      class={styles().actionButton}
+      class={themed('tsqd-style-explorer-action-button')}
       title={'Delete item'}
       aria-label={'Delete item'}
       onClick={() => {
@@ -194,12 +191,12 @@ const ToggleValueButton = (props: {
   value: boolean
 }) => {
   const theme = useTheme()
-  const styles = createMemo(() => getExplorerStyles(theme()))
+  const themed = createThemed(theme)
   const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
-      class={`${styles().actionButton} ${styles().toggleButton}`}
+      class={`${themed('tsqd-style-explorer-action-button')} tsqd-style-explorer-toggle-button`}
       title={'Toggle value'}
       aria-label={'Toggle value'}
       aria-pressed={props.value}
@@ -251,7 +248,7 @@ export function SearchableExplorer(
   props: ExplorerProps & { searchKey?: unknown; initialSearch?: string },
 ) {
   const theme = useTheme()
-  const styles = createMemo(() => getExplorerStyles(theme()))
+  const themed = createThemed(theme)
   const [term, setTerm] = createSignal('')
   const [debouncedTerm, setDebouncedTerm] = createSignal('')
   const clear = () => {
@@ -324,13 +321,13 @@ export function SearchableExplorer(
     )
   })
   return (
-    <div ref={root} class={styles().searchRoot}>
-      <div class={styles().search}>
+    <div ref={root} class={themed('tsqd-style-explorer-search-root')}>
+      <div class="tsqd-style-explorer-search">
         <input
           type="search"
           aria-label={`Search ${props.label.toLowerCase()}`}
           placeholder={`Search ${props.label.toLowerCase()}`}
-          class={styles().searchInput}
+          class={themed('tsqd-style-explorer-search-input')}
           value={term()}
           onInput={(event) => setTerm(event.currentTarget.value)}
           onKeyDown={(event) => {
@@ -343,7 +340,7 @@ export function SearchableExplorer(
         <Show when={term()}>
           <button
             type="button"
-            class={styles().clearSearch}
+            class="tsqd-style-explorer-clear-search"
             onClick={clear}
             aria-label="Clear search"
           >
@@ -438,7 +435,7 @@ function isIterable(x: any): x is Iterable<unknown> {
  */
 export default function Explorer(props: ExplorerProps) {
   const theme = useTheme()
-  const styles = createMemo(() => getExplorerStyles(theme()))
+  const themed = createThemed(theme)
   const queryClient = useQueryDevtoolsContext().client
 
   const [expanded, setExpanded] = createSignal(
@@ -596,22 +593,22 @@ export default function Explorer(props: ExplorerProps) {
   const inputId = createUniqueId()
 
   return (
-    <div class={styles().entry}>
+    <div class="tsqd-style-explorer-entry">
       <Show when={subEntryPages().length}>
-        <div class={styles().expanderButtonContainer}>
+        <div class="tsqd-style-explorer-expander-button-container">
           <button
-            class={styles().expanderButton}
+            class="tsqd-style-explorer-expander-button"
             onClick={() => toggleExpanded()}
             aria-expanded={isExpanded() ? 'true' : 'false'}
           >
             <Expander expanded={isExpanded()} /> <span>{label()}</span>{' '}
-            <span class={styles().info}>
+            <span class="tsqd-style-explorer-info">
               {String(type()).toLowerCase() === 'iterable' ? '(Iterable) ' : ''}
               {subEntries().length} {subEntries().length > 1 ? `items` : `item`}
             </span>
           </button>
           <Show when={props.editable}>
-            <div class={styles().actions}>
+            <div class="tsqd-style-explorer-actions">
               <CopyButton value={props.value} />
 
               <Show
@@ -640,7 +637,7 @@ export default function Explorer(props: ExplorerProps) {
                 }
               >
                 <button
-                  class={styles().actionButton}
+                  class={themed('tsqd-style-explorer-action-button')}
                   title={'Bulk Edit Data'}
                   aria-label={'Bulk Edit Data'}
                   onClick={() => {
@@ -655,7 +652,7 @@ export default function Explorer(props: ExplorerProps) {
         </div>
         <Show when={isExpanded()}>
           <Show when={subEntryPages().length === 1}>
-            <div class={styles().subEntry}>
+            <div class={themed('tsqd-style-explorer-sub-entry')}>
               <Key each={subEntries()} by={(item) => item.key}>
                 {(entry) => {
                   return (
@@ -680,11 +677,11 @@ export default function Explorer(props: ExplorerProps) {
             </div>
           </Show>
           <Show when={subEntryPages().length > 1}>
-            <div class={styles().subEntry}>
+            <div class={themed('tsqd-style-explorer-sub-entry')}>
               <Index each={subEntryPages()}>
                 {(entries, index) => (
                   <div>
-                    <div class={styles().entry}>
+                    <div class="tsqd-style-explorer-entry">
                       <button
                         onClick={() => {
                           if (matchingPage() === index) return
@@ -694,7 +691,7 @@ export default function Explorer(props: ExplorerProps) {
                               : [...old, index],
                           )
                         }}
-                        class={`${styles().expanderButton} ${pageHasMatch(index) ? styles().highlight : ''}`}
+                        class={`tsqd-style-explorer-expander-button ${pageHasMatch(index) ? themed('tsqd-style-explorer-highlight') : ''}`}
                         aria-expanded={isPageExpanded(index)}
                         aria-description={
                           pageHasMatch(index)
@@ -707,7 +704,7 @@ export default function Explorer(props: ExplorerProps) {
                         {index * 100 + 100 - 1}]
                       </button>
                       <Show when={isPageExpanded(index)}>
-                        <div class={styles().subEntry}>
+                        <div class={themed('tsqd-style-explorer-sub-entry')}>
                           <Key each={entries()} by={(entry) => entry.key}>
                             {(entry) => (
                               <Explorer
@@ -733,8 +730,8 @@ export default function Explorer(props: ExplorerProps) {
         </Show>
       </Show>
       <Show when={subEntryPages().length === 0}>
-        <div class={styles().row}>
-          <label for={inputId} class={styles().label}>
+        <div class="tsqd-style-explorer-row">
+          <label for={inputId} class={themed('tsqd-style-explorer-label')}>
             {label()}:
           </label>
           <Show
@@ -745,7 +742,11 @@ export default function Explorer(props: ExplorerProps) {
                 type() === 'number' ||
                 type() === 'boolean')
             }
-            fallback={<span class={styles().value}>{renderedValue()}</span>}
+            fallback={
+              <span class={themed('tsqd-style-explorer-value')}>
+                {renderedValue()}
+              </span>
+            }
           >
             <Show
               when={
@@ -757,7 +758,7 @@ export default function Explorer(props: ExplorerProps) {
               <input
                 id={inputId}
                 type={type() === 'number' ? 'number' : 'text'}
-                class={`${styles().value} ${styles().editableInput} ${props.search?.match.value ? styles().highlight : ''}`}
+                class={`${themed('tsqd-style-explorer-value')} ${themed('tsqd-style-explorer-editable-input')} ${props.search?.match.value ? themed('tsqd-style-explorer-highlight') : ''}`}
                 data-search-match={props.search?.match.value || undefined}
                 value={props.value as string | number}
                 onChange={(changeEvent) => {
@@ -778,7 +779,7 @@ export default function Explorer(props: ExplorerProps) {
 
             <Show when={type() === 'boolean'}>
               <span
-                class={`${styles().value} ${styles().actions} ${styles().editableInput}`}
+                class={`${themed('tsqd-style-explorer-value')} tsqd-style-explorer-actions ${themed('tsqd-style-explorer-editable-input')}`}
               >
                 <ToggleValueButton
                   activeQuery={props.activeQuery!}
