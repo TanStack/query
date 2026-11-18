@@ -29,7 +29,7 @@
     "svelte": "^5.57.1",
     "svelte-check": "^4.7.7",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5"
+    "vite": "^8.3.8"
   },
   "msw": {
     "workerDirectory": [

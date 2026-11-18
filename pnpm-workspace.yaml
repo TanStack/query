@@ -84,6 +84,10 @@ overrides:
   '@types/react': 'catalog:'
   '@types/react-dom': 'catalog:'
   '@types/node': '^24.19.2'
+  # GHSA-p4f5-76q4-ffq7: '@angular/build@22.2.x' pins 'vite@8.3.5'. Remove once a stable release pins '>=8.3.7'.
+  '@angular/build>vite': '8.3.8'
+  # '@astrojs/astro2tsx' pins '@emnapi/core@1.11.3'; keep the matching runtime instead of the '2.0.0-beta.2' from 'rolldown@1.2.19'.
+  '@napi-rs/wasm-runtime@1.2.4>@emnapi/runtime': '1.11.3'
 
 allowBuilds:
   # root dependency
