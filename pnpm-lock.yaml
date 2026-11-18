@@ -447,9 +447,15 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -493,9 +499,15 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -542,9 +554,15 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -594,9 +612,15 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -640,9 +664,15 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -686,9 +716,15 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -732,9 +768,15 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -778,9 +820,15 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -827,9 +875,15 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -873,9 +927,15 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -919,9 +979,15 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -968,9 +1034,15 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1014,9 +1086,15 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1069,12 +1147,18 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@types/express':
         specifier: ^5.0.1
         version: 5.0.6
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1133,12 +1217,18 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@types/express':
         specifier: ^5.0.1
         version: 5.0.6
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1185,9 +1275,15 @@ importers:
       '@angular/compiler-cli':
         specifier: ^22.2.4
         version: 22.2.4(@angular/compiler@22.2.4)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1207,9 +1303,15 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1229,9 +1331,15 @@ importers:
         specifier: ^2.15.0
         version: 2.15.0(@types/node@24.19.2)(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1248,9 +1356,15 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1273,9 +1387,15 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1295,9 +1415,15 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1317,9 +1443,15 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
@@ -1339,9 +1471,15 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1361,9 +1499,15 @@ importers:
         specifier: ^2.15.0
         version: 2.15.0(@types/node@24.19.2)(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1386,9 +1530,15 @@ importers:
         specifier: ^2.15.0
         version: 2.15.0(@types/node@24.19.2)(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1420,9 +1570,15 @@ importers:
         specifier: ^2.15.0
         version: 2.15.0(@types/node@24.19.2)(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1442,9 +1598,15 @@ importers:
         specifier: ^2.15.0
         version: 2.15.0(@types/node@24.19.2)(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1461,9 +1623,15 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1480,9 +1648,15 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1502,9 +1676,15 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1527,9 +1707,15 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
@@ -1549,9 +1735,15 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1574,9 +1766,15 @@ importers:
       '@lit-labs/ssr-client':
         specifier: ^1.1.7
         version: 1.1.8
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       tsx:
         specifier: ^4.23.15
         version: 4.23.15
@@ -1602,9 +1800,15 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
@@ -1636,6 +1840,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -1670,6 +1877,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -1707,6 +1917,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -1744,6 +1957,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -1778,6 +1994,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -1812,6 +2031,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -1846,6 +2068,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -1877,6 +2102,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -1911,6 +2139,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -1948,6 +2179,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -1997,6 +2231,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2031,6 +2268,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2065,6 +2305,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2096,6 +2339,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2130,6 +2376,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2167,6 +2416,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2201,6 +2453,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2229,6 +2484,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2275,6 +2533,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2333,6 +2594,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2382,6 +2646,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2416,6 +2683,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.10.6
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@11.0.1)(rollup@4.65.1)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2456,6 +2726,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2468,6 +2741,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -2496,6 +2772,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2508,6 +2787,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -2536,6 +2818,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2548,6 +2833,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -2579,6 +2867,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2591,6 +2882,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -2619,6 +2913,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2631,6 +2928,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -2659,6 +2959,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2671,6 +2974,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
@@ -2708,6 +3014,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2720,6 +3029,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -2754,6 +3066,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2769,6 +3084,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -2794,6 +3112,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2806,6 +3127,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -2831,6 +3155,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2843,6 +3170,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -2942,6 +3272,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2954,6 +3287,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -2979,6 +3315,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -2991,6 +3330,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3019,6 +3361,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -3031,6 +3376,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3068,6 +3416,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -3080,6 +3431,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3120,6 +3474,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -3135,6 +3492,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3163,6 +3523,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -3175,6 +3538,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3200,6 +3566,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -3212,6 +3581,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3234,6 +3606,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -3246,6 +3621,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3274,6 +3652,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -3286,6 +3667,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3311,6 +3695,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -3323,6 +3710,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3384,12 +3774,18 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.3.0
         version: 19.3.0
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
@@ -3418,6 +3814,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -3430,6 +3829,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
@@ -3458,6 +3860,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -3470,6 +3875,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3495,6 +3903,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -3507,6 +3918,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3538,6 +3952,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -3550,6 +3967,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
@@ -3581,6 +4001,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -3593,6 +4016,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3624,6 +4050,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^5.28.8
         version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -3636,6 +4065,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3658,9 +4090,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -3692,9 +4130,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -3720,9 +4164,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -3754,9 +4204,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -3785,9 +4241,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -3816,9 +4278,15 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -3856,9 +4324,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -3893,12 +4367,18 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@tanstack/router-plugin':
         specifier: ^1.168.48
         version: 1.168.48(@tanstack/react-router@1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(supports-color@10.2.2)(vite-plugin-solid@2.11.15(@testing-library/jest-dom@6.9.1)(solid-js@1.9.18)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -3924,9 +4404,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -3952,9 +4438,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -3992,9 +4484,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -4032,12 +4530,18 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@tanstack/router-plugin':
         specifier: ^1.168.48
         version: 1.168.48(@tanstack/react-router@1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(supports-color@10.2.2)(vite-plugin-solid@2.11.15(@testing-library/jest-dom@6.9.1)(solid-js@1.9.18)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0)))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))(webpack@5.112.2)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -4069,9 +4573,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -4103,9 +4613,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -4131,9 +4647,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -4165,9 +4687,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -4199,9 +4727,15 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -4230,9 +4764,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -4258,9 +4798,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -4307,9 +4853,15 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -4332,9 +4884,15 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -4372,9 +4930,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -4400,9 +4964,15 @@ importers:
         specifier: ^1.9.18
         version: 1.9.18
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-solid:
         specifier: ^0.18.1
         version: 0.18.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -4434,6 +5004,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -4443,6 +5016,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -4477,12 +5053,18 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -4517,6 +5099,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -4526,6 +5111,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -4566,12 +5154,18 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -4603,6 +5197,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -4612,6 +5209,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -4643,6 +5243,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -4652,6 +5255,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -4695,12 +5301,18 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -4729,6 +5341,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -4738,6 +5353,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -4772,12 +5390,18 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -4812,12 +5436,18 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -4864,12 +5494,18 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -4904,12 +5540,18 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -4944,12 +5586,18 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -4984,12 +5632,18 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -5024,12 +5678,18 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -5067,12 +5727,18 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -5104,6 +5770,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -5113,6 +5782,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -5141,6 +5813,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -5150,6 +5825,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -5184,12 +5862,18 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.1
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.72.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -5227,12 +5911,18 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.72.2))
@@ -5270,12 +5960,18 @@ importers:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5313,9 +6009,15 @@ importers:
       '@nuxt/eslint':
         specifier: ^1.17.0
         version: 1.17.0(@nuxt/schema@4.6.3)(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(@vue/compiler-sfc@3.5.44)(confbox@0.3.1)(crossws@0.4.16(srvx@1.0.8))(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(ocache@0.3.1)(oxc-parser@0.150.0)(rolldown@1.2.15)(rollup@4.65.1)(srvx@1.0.8)(supports-color@10.2.2)(typescript@6.0.3)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5341,12 +6043,18 @@ importers:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5381,12 +6089,18 @@ importers:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5418,12 +6132,18 @@ importers:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5455,12 +6175,18 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5501,6 +6227,9 @@ importers:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -5510,6 +6239,9 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5547,12 +6279,18 @@ importers:
         specifier: ^5.4.0
         version: 5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))(webpack@5.112.2)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5581,12 +6319,18 @@ importers:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5612,12 +6356,18 @@ importers:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5646,12 +6396,18 @@ importers:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5689,9 +6445,15 @@ importers:
       '@nuxt/eslint':
         specifier: ^1.17.0
         version: 1.17.0(@nuxt/schema@4.6.3)(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(@vue/compiler-sfc@3.5.44)(confbox@0.3.1)(crossws@0.4.16(srvx@1.0.8))(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(ocache@0.3.1)(oxc-parser@0.150.0)(rolldown@1.2.15)(rollup@4.65.1)(srvx@1.0.8)(supports-color@10.2.2)(typescript@6.0.3)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5729,9 +6491,15 @@ importers:
       '@nuxt/eslint':
         specifier: ^1.17.0
         version: 1.17.0(@nuxt/schema@4.6.3)(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(@vue/compiler-sfc@3.5.44)(confbox@0.3.1)(crossws@0.4.16(srvx@1.0.8))(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(ocache@0.3.1)(oxc-parser@0.150.0)(rolldown@1.2.15)(rollup@4.65.1)(srvx@1.0.8)(supports-color@10.2.2)(typescript@6.0.3)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5772,6 +6540,9 @@ importers:
         specifier: ^2.0.9
         version: 2.0.9(@nuxt/kit@4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.3.1)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)))(@nuxt/schema@4.6.3)(nuxt@4.6.3(27bb049d2cdfa0eb58b5b042a052fc6f))
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
@@ -5781,6 +6552,9 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5824,12 +6598,18 @@ importers:
         specifier: ^2.0.9
         version: 2.0.9(@nuxt/kit@4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.3.1)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)))(@nuxt/schema@4.6.3)(nuxt@4.6.3(be4db27bb7df6790609ef48f03ae9826))
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5867,9 +6647,15 @@ importers:
       '@nuxt/eslint':
         specifier: ^1.17.0
         version: 1.17.0(@nuxt/schema@4.6.3)(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(@vue/compiler-sfc@3.5.44)(confbox@0.3.1)(crossws@0.4.16(srvx@1.0.8))(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(ocache@0.3.1)(oxc-parser@0.150.0)(rolldown@1.2.15)(rollup@4.65.1)(srvx@1.0.8)(supports-color@10.2.2)(typescript@6.0.3)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5904,9 +6690,15 @@ importers:
       '@nuxt/eslint':
         specifier: ^1.17.0
         version: 1.17.0(@nuxt/schema@4.6.3)(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(@vue/compiler-sfc@3.5.44)(confbox@0.3.1)(crossws@0.4.16(srvx@1.0.8))(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(ocache@0.3.1)(oxc-parser@0.150.0)(rolldown@1.2.15)(rollup@4.65.1)(srvx@1.0.8)(supports-color@10.2.2)(typescript@6.0.3)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5935,12 +6727,18 @@ importers:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -5966,12 +6764,18 @@ importers:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -6009,9 +6813,15 @@ importers:
       '@nuxt/eslint':
         specifier: ^1.17.0
         version: 1.17.0(@nuxt/schema@4.6.3)(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(@vue/compiler-sfc@3.5.44)(confbox@0.3.1)(crossws@0.4.16(srvx@1.0.8))(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(ocache@0.3.1)(oxc-parser@0.150.0)(rolldown@1.2.15)(rollup@4.65.1)(srvx@1.0.8)(supports-color@10.2.2)(typescript@6.0.3)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -6043,12 +6853,18 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -6080,12 +6896,18 @@ importers:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -6114,12 +6936,18 @@ importers:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -6157,9 +6985,15 @@ importers:
       '@nuxt/eslint':
         specifier: ^1.17.0
         version: 1.17.0(@nuxt/schema@3.21.11)(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(@vue/compiler-sfc@3.5.44)(confbox@0.3.1)(crossws@0.4.16(srvx@0.11.22))(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(jiti@2.7.0)(magic-string@0.30.21)(ocache@0.3.1)(oxc-parser@0.143.0)(rolldown@1.2.15)(rollup@4.65.1)(srvx@0.11.22)(supports-color@10.2.2)(typescript@6.0.3)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -6194,9 +7028,15 @@ importers:
       '@nuxt/eslint':
         specifier: ^1.17.0
         version: 1.17.0(@nuxt/schema@4.6.3)(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(@vue/compiler-sfc@3.5.44)(confbox@0.3.1)(crossws@0.4.16(srvx@1.0.8))(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(ocache@0.3.1)(oxc-parser@0.150.0)(rolldown@1.2.15)(rollup@4.65.1)(srvx@1.0.8)(supports-color@10.2.2)(typescript@6.0.3)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -6228,12 +7068,18 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -6265,12 +7111,18 @@ importers:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
+      '@tanstack/eslint-config':
+        specifier: ^0.5.0
+        version: 0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.108.0
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
         version: 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
@@ -6833,7 +7685,7 @@ importers:
         version: link:../../../packages/vue-query-devtools
       nuxt:
         specifier: ^3.21.11
-        version: 3.21.11(@oxc-project/types@0.155.0)(@parcel/watcher@2.6.0)(@types/node@24.19.2)(@vercel/functions@2.2.13)(@vue/compiler-sfc@3.5.44)(cac@6.7.14)(confbox@0.3.1)(db0@0.4.1)(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(idb-keyval@6.3.0)(ioredis@5.11.1(supports-color@10.2.2))(lightningcss@1.33.0)(magicast@0.5.5)(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(rolldown@1.2.15)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.15)(rollup@4.65.1))(rollup@4.65.1)(sass-embedded@1.104.1)(sass@1.104.1)(srvx@1.0.8)(supports-color@10.2.2)(terser@5.51.2)(tsx@4.23.15)(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3))(webpack@5.112.2)(yaml@2.9.1)
+        version: 3.21.11(@oxc-project/types@0.155.0)(@parcel/watcher@2.6.0)(@types/node@24.19.2)(@vercel/functions@2.2.13)(@vue/compiler-sfc@3.5.44)(cac@6.7.14)(confbox@0.3.1)(db0@0.4.1)(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(giget@3.3.1)(idb-keyval@6.3.0)(ioredis@5.11.1(supports-color@10.2.2))(lightningcss@1.33.0)(magicast@0.5.5)(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(rolldown@1.2.15)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.15)(rollup@4.65.1))(rollup@4.65.1)(sass-embedded@1.104.1)(sass@1.104.1)(srvx@1.0.8)(supports-color@10.2.2)(terser@5.51.2)(tsx@4.23.15)(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3))(webpack@5.112.2)(yaml@2.9.1)
       vue:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
@@ -6858,7 +7710,7 @@ importers:
         version: link:../../../packages/vue-query-devtools
       nuxt:
         specifier: ^4.6.3
-        version: 4.6.3(be4db27bb7df6790609ef48f03ae9826)
+        version: 4.6.3(7f27f217de864d1dd8c0a721c2543d94)
       vue:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
@@ -28053,7 +28905,7 @@ snapshots:
       - magic-string
       - unplugin
 
-  '@nuxt/nitro-server@3.21.11(33008c647ddb2ee76c997193e544e0b0)':
+  '@nuxt/nitro-server@3.21.11(5fce61116dfa8cd05b30cc97a2d135fa)':
     dependencies:
       '@nuxt/devalue': 2.0.2
       '@nuxt/kit': 3.21.11(magicast@0.5.5)
@@ -28071,7 +28923,7 @@ snapshots:
       klona: 2.0.6
       mocked-exports: 0.1.1
       nitropack: 2.13.5(@parcel/watcher@2.6.0)(@vercel/functions@2.2.13)(idb-keyval@6.3.0)(oxc-parser@0.143.0)(rolldown@1.2.15)(srvx@1.0.8)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
-      nuxt: 3.21.11(@oxc-project/types@0.155.0)(@parcel/watcher@2.6.0)(@types/node@24.19.2)(@vercel/functions@2.2.13)(@vue/compiler-sfc@3.5.44)(cac@6.7.14)(confbox@0.3.1)(db0@0.4.1)(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(idb-keyval@6.3.0)(ioredis@5.11.1(supports-color@10.2.2))(lightningcss@1.33.0)(magicast@0.5.5)(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(rolldown@1.2.15)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.15)(rollup@4.65.1))(rollup@4.65.1)(sass-embedded@1.104.1)(sass@1.104.1)(srvx@1.0.8)(supports-color@10.2.2)(terser@5.51.2)(tsx@4.23.15)(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3))(webpack@5.112.2)(yaml@2.9.1)
+      nuxt: 3.21.11(@oxc-project/types@0.155.0)(@parcel/watcher@2.6.0)(@types/node@24.19.2)(@vercel/functions@2.2.13)(@vue/compiler-sfc@3.5.44)(cac@6.7.14)(confbox@0.3.1)(db0@0.4.1)(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(giget@3.3.1)(idb-keyval@6.3.0)(ioredis@5.11.1(supports-color@10.2.2))(lightningcss@1.33.0)(magicast@0.5.5)(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(rolldown@1.2.15)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.15)(rollup@4.65.1))(rollup@4.65.1)(sass-embedded@1.104.1)(sass@1.104.1)(srvx@1.0.8)(supports-color@10.2.2)(terser@5.51.2)(tsx@4.23.15)(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3))(webpack@5.112.2)(yaml@2.9.1)
       ohash: 2.0.12
       pathe: 2.0.3
       pkg-types: 2.4.0
@@ -28204,6 +29056,100 @@ snapshots:
       - supports-color
       - typescript
       - unloader
+      - uploadthing
+      - vite
+      - webpack
+      - xml2js
+
+  '@nuxt/nitro-server@4.6.3(7f58007af99b09db0cad432cf16aa755)':
+    dependencies:
+      '@nuxt/kit': 4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.3.1)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))
+      '@unhead/vue': 3.4.3(@oxc-project/types@0.155.0)(esbuild@0.28.2)(lightningcss@1.33.0)(oxc-parser@0.150.0)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))(webpack@5.112.2)
+      consola: 3.4.2
+      defu: 6.1.7
+      destr: 2.0.5
+      devalue: 6.0.3
+      errx: 0.2.2
+      escape-string-regexp: 5.0.0
+      exsolve: 1.1.3
+      flru: 1.0.2
+      h3: 1.15.11
+      impound: 1.2.1(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      klona: 2.0.6
+      mocked-exports: 0.1.1
+      my-bad: 0.2.11(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      nitropack: 2.13.5(@parcel/watcher@2.6.0)(@vercel/functions@2.2.13)(idb-keyval@6.3.0)(oxc-parser@0.150.0)(rolldown@1.2.15)(srvx@1.0.8)(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      nostics: 1.3.0
+      nuxt: 4.6.3(7f27f217de864d1dd8c0a721c2543d94)
+      ohash: 2.0.12
+      pathe: 2.0.3
+      radix3: 1.1.2
+      rou3: 0.9.2
+      std-env: 4.3.0
+      ufo: 1.6.4
+      unctx: 3.0.1(magic-string@1.4.3)(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))
+      unrouting: 0.3.1
+      unstorage: 1.17.6(@vercel/functions@2.2.13)(db0@0.4.1)(idb-keyval@6.3.0)(ioredis@5.11.1(supports-color@10.2.2))
+      vue: 3.5.44(typescript@6.0.3)
+      vue-bundle-renderer: 2.4.0
+      vue-devtools-stub: 0.1.0
+    optionalDependencies:
+      '@babel/plugin-proposal-decorators': 7.29.0(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2)
+      '@babel/plugin-syntax-typescript': 7.29.7(@babel/core@7.29.7(supports-color@10.2.2))
+    transitivePeerDependencies:
+      - '@azure/app-configuration'
+      - '@azure/cosmos'
+      - '@azure/data-tables'
+      - '@azure/identity'
+      - '@azure/keyvault-secrets'
+      - '@azure/storage-blob'
+      - '@capacitor/preferences'
+      - '@deno/kv'
+      - '@electric-sql/pglite'
+      - '@farmfe/core'
+      - '@libsql/client'
+      - '@netlify/blobs'
+      - '@nuxt/schema'
+      - '@oxc-project/types'
+      - '@parcel/watcher'
+      - '@planetscale/database'
+      - '@rsbuild/core'
+      - '@rspack/core'
+      - '@unhead/cli'
+      - '@upstash/redis'
+      - '@vercel/blob'
+      - '@vercel/functions'
+      - '@vercel/kv'
+      - '@vitejs/devtools-kit'
+      - aws4fetch
+      - bare-abort-controller
+      - bare-buffer
+      - better-sqlite3
+      - bun-types-no-globals
+      - confbox
+      - db0
+      - dotenv
+      - drizzle-orm
+      - encoding
+      - esbuild
+      - giget
+      - idb-keyval
+      - ioredis
+      - jiti
+      - lightningcss
+      - magic-string
+      - mlly
+      - mysql2
+      - oxc-parser
+      - react-native-b4a
+      - rolldown
+      - rollup
+      - sqlite3
+      - srvx
+      - supports-color
+      - typescript
+      - unloader
+      - unplugin
       - uploadthing
       - vite
       - webpack
@@ -28430,7 +29376,7 @@ snapshots:
       rc9: 3.1.0
       std-env: 4.3.0
 
-  '@nuxt/vite-builder@3.21.11(73d16006b4fdcdcc41a8483399198203)':
+  '@nuxt/vite-builder@3.21.11(63de6b193bf972a6647ac488df697b85)':
     dependencies:
       '@nuxt/kit': 3.21.11(magicast@0.5.5)
       '@rollup/plugin-replace': 6.0.3(rollup@4.65.1)
@@ -28450,7 +29396,7 @@ snapshots:
       magic-string: 0.30.21
       mlly: 1.8.2
       mocked-exports: 0.1.1
-      nuxt: 3.21.11(@oxc-project/types@0.155.0)(@parcel/watcher@2.6.0)(@types/node@24.19.2)(@vercel/functions@2.2.13)(@vue/compiler-sfc@3.5.44)(cac@6.7.14)(confbox@0.3.1)(db0@0.4.1)(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(idb-keyval@6.3.0)(ioredis@5.11.1(supports-color@10.2.2))(lightningcss@1.33.0)(magicast@0.5.5)(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(rolldown@1.2.15)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.15)(rollup@4.65.1))(rollup@4.65.1)(sass-embedded@1.104.1)(sass@1.104.1)(srvx@0.11.22)(supports-color@10.2.2)(terser@5.51.2)(tsx@4.23.15)(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3))(webpack@5.112.2)(yaml@2.9.1)
+      nuxt: 3.21.11(@oxc-project/types@0.155.0)(@parcel/watcher@2.6.0)(@types/node@24.19.2)(@vercel/functions@2.2.13)(@vue/compiler-sfc@3.5.44)(cac@6.7.14)(confbox@0.3.1)(db0@0.4.1)(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(giget@3.3.1)(idb-keyval@6.3.0)(ioredis@5.11.1(supports-color@10.2.2))(lightningcss@1.33.0)(magicast@0.5.5)(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(rolldown@1.2.15)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.15)(rollup@4.65.1))(rollup@4.65.1)(sass-embedded@1.104.1)(sass@1.104.1)(srvx@1.0.8)(supports-color@10.2.2)(terser@5.51.2)(tsx@4.23.15)(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3))(webpack@5.112.2)(yaml@2.9.1)
       nypm: 0.6.12
       ohash: 2.0.12
       pathe: 2.0.3
@@ -28463,7 +29409,7 @@ snapshots:
       unenv: 2.0.0-rc.24
       vite: 7.3.7(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
       vite-node: 5.3.0(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
-      vite-plugin-checker: 0.14.5(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(typescript@6.0.3)(vite@7.3.7(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3))
+      vite-plugin-checker: 0.14.5(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(typescript@6.0.3)(vite@7.3.7(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3))
       vue: 3.5.44(typescript@6.0.3)
       vue-bundle-renderer: 2.4.0
     optionalDependencies:
@@ -28492,7 +29438,7 @@ snapshots:
       - vue-tsc
       - yaml
 
-  '@nuxt/vite-builder@3.21.11(ad8c0e9bca584e65eaad99c92a33b483)':
+  '@nuxt/vite-builder@3.21.11(73d16006b4fdcdcc41a8483399198203)':
     dependencies:
       '@nuxt/kit': 3.21.11(magicast@0.5.5)
       '@rollup/plugin-replace': 6.0.3(rollup@4.65.1)
@@ -28512,7 +29458,7 @@ snapshots:
       magic-string: 0.30.21
       mlly: 1.8.2
       mocked-exports: 0.1.1
-      nuxt: 3.21.11(@oxc-project/types@0.155.0)(@parcel/watcher@2.6.0)(@types/node@24.19.2)(@vercel/functions@2.2.13)(@vue/compiler-sfc@3.5.44)(cac@6.7.14)(confbox@0.3.1)(db0@0.4.1)(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(idb-keyval@6.3.0)(ioredis@5.11.1(supports-color@10.2.2))(lightningcss@1.33.0)(magicast@0.5.5)(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(rolldown@1.2.15)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.15)(rollup@4.65.1))(rollup@4.65.1)(sass-embedded@1.104.1)(sass@1.104.1)(srvx@1.0.8)(supports-color@10.2.2)(terser@5.51.2)(tsx@4.23.15)(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3))(webpack@5.112.2)(yaml@2.9.1)
+      nuxt: 3.21.11(@oxc-project/types@0.155.0)(@parcel/watcher@2.6.0)(@types/node@24.19.2)(@vercel/functions@2.2.13)(@vue/compiler-sfc@3.5.44)(cac@6.7.14)(confbox@0.3.1)(db0@0.4.1)(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(idb-keyval@6.3.0)(ioredis@5.11.1(supports-color@10.2.2))(lightningcss@1.33.0)(magicast@0.5.5)(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(rolldown@1.2.15)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.15)(rollup@4.65.1))(rollup@4.65.1)(sass-embedded@1.104.1)(sass@1.104.1)(srvx@0.11.22)(supports-color@10.2.2)(terser@5.51.2)(tsx@4.23.15)(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3))(webpack@5.112.2)(yaml@2.9.1)
       nypm: 0.6.12
       ohash: 2.0.12
       pathe: 2.0.3
@@ -28704,6 +29650,81 @@ snapshots:
       - webpack
       - yaml
 
+  '@nuxt/vite-builder@4.6.3(@babel/plugin-proposal-decorators@7.29.0(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@babel/plugin-syntax-jsx@7.29.7(@babel/core@7.29.7(supports-color@10.2.2)))(@nuxt/schema@4.6.3)(@types/node@24.19.2)(confbox@0.3.1)(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nuxt@4.6.3(7f27f217de864d1dd8c0a721c2543d94))(optionator@0.9.4)(oxc-parser@0.150.0)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(rolldown@1.2.15)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.15)(rollup@4.65.1))(rollup@4.65.1)(sass-embedded@1.104.1)(sass@1.104.1)(supports-color@10.2.2)(terser@5.51.2)(tsx@4.23.15)(typescript@6.0.3)(vue-tsc@3.3.13(typescript@6.0.3))(vue@3.5.44(typescript@6.0.3))(webpack@5.112.2)(yaml@2.9.1)':
+    dependencies:
+      '@nuxt/kit': 4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.3.1)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))
+      '@vitejs/plugin-vue': 6.0.10(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      '@vitejs/plugin-vue-jsx': 5.1.6(supports-color@10.2.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      autoprefixer: 10.6.2(postcss@8.5.32)
+      clickable-path: 0.1.1
+      consola: 3.4.2
+      cssnano: 9.9.0(postcss@8.5.32)
+      defu: 6.1.7
+      escape-string-regexp: 5.0.0
+      exsolve: 1.1.3
+      generic-names: 4.0.0
+      get-port-please: 3.2.0
+      js-tokens: 10.0.0
+      knitwork: 1.3.0
+      mocked-exports: 0.1.1
+      my-bad: 0.2.11(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      nuxt: 4.6.3(7f27f217de864d1dd8c0a721c2543d94)
+      pathe: 2.0.3
+      pkg-types: 2.4.0
+      postcss: 8.5.32
+      rolldown-string: 0.3.1(rolldown@1.2.15)
+      seroval: 1.7.6
+      std-env: 4.3.0
+      ufo: 1.6.4
+      unenv: 2.0.0-rc.24
+      unplugin: 3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      vite: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
+      vite-node: 6.0.0(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
+      vite-plugin-checker: 0.14.5(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3))
+      vue: 3.5.44(typescript@6.0.3)
+      vue-bundle-renderer: 2.4.0
+    optionalDependencies:
+      '@babel/plugin-proposal-decorators': 7.29.0(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2)
+      '@babel/plugin-syntax-jsx': 7.29.7(@babel/core@7.29.7(supports-color@10.2.2))
+      rolldown: 1.2.15
+      rollup-plugin-visualizer: 7.1.1(rolldown@1.2.15)(rollup@4.65.1)
+    transitivePeerDependencies:
+      - '@biomejs/biome'
+      - '@farmfe/core'
+      - '@nuxt/schema'
+      - '@rsbuild/core'
+      - '@rspack/core'
+      - '@types/node'
+      - '@vitejs/devtools'
+      - bun-types-no-globals
+      - confbox
+      - dotenv
+      - esbuild
+      - eslint
+      - giget
+      - jiti
+      - less
+      - magic-string
+      - meow
+      - mlly
+      - optionator
+      - oxc-parser
+      - oxlint
+      - rollup
+      - sass
+      - sass-embedded
+      - stylelint
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - typescript
+      - unloader
+      - vue-tsc
+      - webpack
+      - yaml
+
   '@nuxt/vite-server@4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.3.1)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nuxt@4.6.3(27bb049d2cdfa0eb58b5b042a052fc6f))(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))':
     dependencies:
       '@nuxt/kit': 4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.3.1)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))
@@ -28713,6 +29734,33 @@ snapshots:
       mocked-exports: 0.1.1
       my-bad: 0.2.11(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
       nuxt: 4.6.3(27bb049d2cdfa0eb58b5b042a052fc6f)
+      pathe: 2.0.3
+      rou3: 0.9.2
+      srvx: 1.0.5
+      ufo: 1.6.4
+      ultrahtml: 1.7.0
+      vite: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
+    transitivePeerDependencies:
+      - '@nuxt/schema'
+      - confbox
+      - dotenv
+      - giget
+      - jiti
+      - magic-string
+      - mlly
+      - oxc-parser
+      - rolldown
+      - unplugin
+
+  '@nuxt/vite-server@4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.3.1)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nuxt@4.6.3(7f27f217de864d1dd8c0a721c2543d94))(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))':
+    dependencies:
+      '@nuxt/kit': 4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.3.1)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))
+      clickable-path: 0.1.1
+      defu: 6.1.7
+      exsolve: 1.1.3
+      mocked-exports: 0.1.1
+      my-bad: 0.2.11(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      nuxt: 4.6.3(7f27f217de864d1dd8c0a721c2543d94)
       pathe: 2.0.3
       rou3: 0.9.2
       srvx: 1.0.5
@@ -30408,6 +31456,22 @@ snapshots:
 
   '@tanstack/devtools-event-client@0.5.0': {}
 
+  '@tanstack/eslint-config@0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)':
+    dependencies:
+      '@eslint/js': 10.0.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
+      '@stylistic/eslint-plugin': 5.10.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-plugin-import-x: 4.17.1(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      eslint-plugin-n: 17.24.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(typescript@6.0.3)
+      globals: 17.13.0
+      typescript-eslint: 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      vue-eslint-parser: 10.4.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+    transitivePeerDependencies:
+      - '@typescript-eslint/utils'
+      - eslint-import-resolver-node
+      - supports-color
+      - typescript
+
   '@tanstack/eslint-config@0.5.0(@typescript-eslint/utils@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
     dependencies:
       '@eslint/js': 10.0.1(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
@@ -30943,6 +32007,22 @@ snapshots:
     dependencies:
       '@eslint-community/regexpp': 4.12.2
       '@typescript-eslint/parser': 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@typescript-eslint/scope-manager': 8.72.2
+      '@typescript-eslint/type-utils': 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@typescript-eslint/utils': 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@typescript-eslint/visitor-keys': 8.72.2
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
+      ignore: 7.0.14
+      natural-compare: 1.4.0
+      ts-api-utils: 2.5.0(typescript@6.0.3)
+      typescript: 6.0.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)':
+    dependencies:
+      '@eslint-community/regexpp': 4.12.2
+      '@typescript-eslint/parser': 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
       '@typescript-eslint/scope-manager': 8.72.2
       '@typescript-eslint/type-utils': 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@typescript-eslint/utils': 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -34229,6 +35309,11 @@ snapshots:
 
   escape-string-regexp@5.0.0: {}
 
+  eslint-compat-utils@0.5.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2)):
+    dependencies:
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
+      semver: 7.8.5
+
   eslint-compat-utils@0.5.1(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0)):
     dependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
@@ -34284,6 +35369,13 @@ snapshots:
       globals: 15.15.0
       lodash.memoize: 4.1.2
       semver: 7.8.5
+
+  eslint-plugin-es-x@7.8.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2)):
+    dependencies:
+      '@eslint-community/eslint-utils': 4.9.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
+      '@eslint-community/regexpp': 4.12.2
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-compat-utils: 0.5.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
 
   eslint-plugin-es-x@7.8.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0)):
     dependencies:
@@ -34379,6 +35471,21 @@ snapshots:
       typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
+
+  eslint-plugin-n@17.24.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(typescript@6.0.3):
+    dependencies:
+      '@eslint-community/eslint-utils': 4.9.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
+      enhanced-resolve: 5.26.0
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-plugin-es-x: 7.8.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
+      get-tsconfig: 4.14.3
+      globals: 15.15.0
+      globrex: 0.1.2
+      ignore: 5.3.2
+      semver: 7.8.5
+      ts-declaration-location: 1.0.7(typescript@6.0.3)
+    transitivePeerDependencies:
+      - typescript
 
   eslint-plugin-n@17.24.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(typescript@6.0.3):
     dependencies:
@@ -38233,16 +39340,16 @@ snapshots:
       - xml2js
       - yaml
 
-  nuxt@3.21.11(@oxc-project/types@0.155.0)(@parcel/watcher@2.6.0)(@types/node@24.19.2)(@vercel/functions@2.2.13)(@vue/compiler-sfc@3.5.44)(cac@6.7.14)(confbox@0.3.1)(db0@0.4.1)(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(idb-keyval@6.3.0)(ioredis@5.11.1(supports-color@10.2.2))(lightningcss@1.33.0)(magicast@0.5.5)(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(rolldown@1.2.15)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.15)(rollup@4.65.1))(rollup@4.65.1)(sass-embedded@1.104.1)(sass@1.104.1)(srvx@1.0.8)(supports-color@10.2.2)(terser@5.51.2)(tsx@4.23.15)(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3))(webpack@5.112.2)(yaml@2.9.1):
+  nuxt@3.21.11(@oxc-project/types@0.155.0)(@parcel/watcher@2.6.0)(@types/node@24.19.2)(@vercel/functions@2.2.13)(@vue/compiler-sfc@3.5.44)(cac@6.7.14)(confbox@0.3.1)(db0@0.4.1)(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(giget@3.3.1)(idb-keyval@6.3.0)(ioredis@5.11.1(supports-color@10.2.2))(lightningcss@1.33.0)(magicast@0.5.5)(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(rolldown@1.2.15)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.15)(rollup@4.65.1))(rollup@4.65.1)(sass-embedded@1.104.1)(sass@1.104.1)(srvx@1.0.8)(supports-color@10.2.2)(terser@5.51.2)(tsx@4.23.15)(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3))(webpack@5.112.2)(yaml@2.9.1):
     dependencies:
       '@dxup/nuxt': 0.5.10(@nuxt/schema@3.21.11)(confbox@0.3.1)(dotenv@17.3.1)(esbuild@0.28.2)(giget@3.3.1)(jiti@2.7.0)(mlly@1.8.2)(oxc-parser@0.143.0)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
       '@nuxt/cli': 3.37.0(@nuxt/schema@3.21.11)(@parcel/watcher@2.6.0)(cac@6.7.14)(magicast@0.5.5)(supports-color@10.2.2)
       '@nuxt/devtools': 3.4.4(@nuxt/schema@3.21.11)(@vercel/functions@2.2.13)(confbox@0.3.1)(db0@0.4.1)(dotenv@17.3.1)(giget@3.3.1)(idb-keyval@6.3.0)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(magic-string@0.30.21)(mlly@1.8.2)(oxc-parser@0.143.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
       '@nuxt/kit': 3.21.11(magicast@0.5.5)
-      '@nuxt/nitro-server': 3.21.11(33008c647ddb2ee76c997193e544e0b0)
+      '@nuxt/nitro-server': 3.21.11(5fce61116dfa8cd05b30cc97a2d135fa)
       '@nuxt/schema': 3.21.11
       '@nuxt/telemetry': 2.9.1(@nuxt/kit@3.21.11(magicast@0.5.5))
-      '@nuxt/vite-builder': 3.21.11(ad8c0e9bca584e65eaad99c92a33b483)
+      '@nuxt/vite-builder': 3.21.11(63de6b193bf972a6647ac488df697b85)
       '@unhead/vue': 2.1.17(vue@3.5.44(typescript@6.0.3))
       '@vue/shared': 3.5.44
       c12: 3.3.4(magicast@0.5.5)
@@ -38381,6 +39488,160 @@ snapshots:
       '@nuxt/telemetry': 2.9.1(@nuxt/kit@4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.3.1)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)))
       '@nuxt/vite-builder': 4.6.3(@babel/plugin-proposal-decorators@7.29.0(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@babel/plugin-syntax-jsx@7.29.7(@babel/core@7.29.7(supports-color@10.2.2)))(@nuxt/schema@4.6.3)(@types/node@24.19.2)(confbox@0.3.1)(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nuxt@4.6.3(27bb049d2cdfa0eb58b5b042a052fc6f))(optionator@0.9.4)(oxc-parser@0.150.0)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(rolldown@1.2.15)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.15)(rollup@4.65.1))(rollup@4.65.1)(sass-embedded@1.104.1)(sass@1.104.1)(supports-color@10.2.2)(terser@5.51.2)(tsx@4.23.15)(typescript@6.0.3)(vue-tsc@3.3.13(typescript@6.0.3))(vue@3.5.44(typescript@6.0.3))(webpack@5.112.2)(yaml@2.9.1)
       '@nuxt/vite-server': 4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.3.1)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nuxt@4.6.3(27bb049d2cdfa0eb58b5b042a052fc6f))(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@unhead/vue': 3.4.3(@oxc-project/types@0.155.0)(esbuild@0.28.2)(lightningcss@1.33.0)(oxc-parser@0.150.0)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))(webpack@5.112.2)
+      '@vue/shared': 3.5.44
+      chokidar: 5.0.0
+      clickable-path: 0.1.1
+      compatx: 0.2.0
+      consola: 3.4.2
+      cookie-es: 3.1.1
+      defu: 6.1.7
+      destr: 2.0.5
+      devalue: 6.0.3
+      errx: 0.2.2
+      escape-string-regexp: 5.0.0
+      exsolve: 1.1.3
+      fetchdts: 0.2.0
+      fnv1a-64: 0.1.2
+      hookable: 6.1.2
+      ignore: 7.0.14
+      impound: 1.2.1(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      iron-webcrypto: 2.0.0
+      jiti: 2.7.0
+      klona: 2.0.6
+      knitwork: 1.3.0
+      magic-string: 1.4.3
+      my-bad: 0.2.11(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      nanotar: 0.3.0
+      nostics: 1.3.0
+      object-identity: 0.2.3
+      ofetch: 1.5.1
+      ohash: 2.0.12
+      on-change: 6.0.2
+      oxc-walker: 1.1.1(@oxc-project/types@0.155.0)(oxc-parser@0.150.0)(rolldown@1.2.15)
+      pathe: 2.0.3
+      perfect-debounce: 2.1.0
+      picomatch: 4.0.7
+      pkg-types: 2.4.0
+      rolldown: 1.2.15
+      rolldown-string: 0.3.1(rolldown@1.2.15)
+      rou3: 0.9.2
+      scule: 1.3.0
+      std-env: 4.3.0
+      tinyglobby: 0.2.17
+      ufo: 1.6.4
+      ultrahtml: 1.7.0
+      uncrypto: 0.1.3
+      unctx: 3.0.1(magic-string@1.4.3)(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))
+      undici: 8.12.3
+      unhead: 3.4.3(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      unimport: 7.0.2(acorn@8.18.0)(esbuild@0.28.2)(oxc-parser@0.150.0)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      unplugin: 3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      unrouting: 0.3.1
+      untyped: 2.0.0
+      verkit: 0.5.0
+      vue: 3.5.44(typescript@6.0.3)
+      vue-bundle-renderer: 2.4.0
+      vue-component-type-helpers: 3.3.13
+      vue-router: 5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))(webpack@5.112.2)
+    optionalDependencies:
+      '@parcel/watcher': 2.6.0
+      '@types/node': 24.19.2
+    transitivePeerDependencies:
+      - '@azure/app-configuration'
+      - '@azure/cosmos'
+      - '@azure/data-tables'
+      - '@azure/identity'
+      - '@azure/keyvault-secrets'
+      - '@azure/storage-blob'
+      - '@babel/plugin-proposal-decorators'
+      - '@babel/plugin-syntax-jsx'
+      - '@babel/plugin-syntax-typescript'
+      - '@biomejs/biome'
+      - '@capacitor/preferences'
+      - '@deno/kv'
+      - '@electric-sql/pglite'
+      - '@farmfe/core'
+      - '@libsql/client'
+      - '@netlify/blobs'
+      - '@nuxt/docs'
+      - '@oxc-project/types'
+      - '@pinia/colada'
+      - '@planetscale/database'
+      - '@rollup/plugin-babel'
+      - '@rsbuild/core'
+      - '@rspack/core'
+      - '@unhead/cli'
+      - '@upstash/redis'
+      - '@vercel/blob'
+      - '@vercel/functions'
+      - '@vercel/kv'
+      - '@vitejs/devtools'
+      - '@vitejs/devtools-kit'
+      - '@vue/compiler-sfc'
+      - acorn
+      - aws4fetch
+      - bare-abort-controller
+      - bare-buffer
+      - better-sqlite3
+      - bufferutil
+      - bun-types-no-globals
+      - confbox
+      - db0
+      - dotenv
+      - drizzle-orm
+      - encoding
+      - esbuild
+      - eslint
+      - giget
+      - idb-keyval
+      - ioredis
+      - less
+      - lightningcss
+      - meow
+      - mlly
+      - mysql2
+      - optionator
+      - oxc-parser
+      - oxlint
+      - pinia
+      - react-native-b4a
+      - rollup
+      - rollup-plugin-visualizer
+      - sass
+      - sass-embedded
+      - serve
+      - sqlite3
+      - srvx
+      - stylelint
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - typescript
+      - unloader
+      - uploadthing
+      - utf-8-validate
+      - vite
+      - vue-tsc
+      - webpack
+      - xml2js
+      - yaml
+
+  nuxt@4.6.3(7f27f217de864d1dd8c0a721c2543d94):
+    dependencies:
+      '@dxup/nuxt': 0.5.10(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.3.1)(esbuild@0.28.2)(giget@3.3.1)(jiti@2.7.0)(mlly@1.8.2)(oxc-parser@0.150.0)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)
+      '@jridgewell/trace-mapping': 0.3.31
+      '@nuxt/cli': 4.0.1(@nuxt/schema@4.6.3)(jiti@2.7.0)(oxc-parser@0.150.0)(rolldown@1.2.15)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@nuxt/devalue': 2.0.2
+      '@nuxt/devtools': 3.4.4(@nuxt/schema@4.6.3)(@vercel/functions@2.2.13)(confbox@0.3.1)(db0@0.4.1)(dotenv@17.3.1)(giget@3.3.1)(idb-keyval@6.3.0)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      '@nuxt/kit': 4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.3.1)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))
+      '@nuxt/nitro-server': 4.6.3(7f58007af99b09db0cad432cf16aa755)
+      '@nuxt/schema': 4.6.3
+      '@nuxt/telemetry': 2.9.1(@nuxt/kit@4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.3.1)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2)))
+      '@nuxt/vite-builder': 4.6.3(@babel/plugin-proposal-decorators@7.29.0(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@babel/plugin-syntax-jsx@7.29.7(@babel/core@7.29.7(supports-color@10.2.2)))(@nuxt/schema@4.6.3)(@types/node@24.19.2)(confbox@0.3.1)(dotenv@17.3.1)(esbuild@0.28.2)(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nuxt@4.6.3(7f27f217de864d1dd8c0a721c2543d94))(optionator@0.9.4)(oxc-parser@0.150.0)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(rolldown@1.2.15)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.15)(rollup@4.65.1))(rollup@4.65.1)(sass-embedded@1.104.1)(sass@1.104.1)(supports-color@10.2.2)(terser@5.51.2)(tsx@4.23.15)(typescript@6.0.3)(vue-tsc@3.3.13(typescript@6.0.3))(vue@3.5.44(typescript@6.0.3))(webpack@5.112.2)(yaml@2.9.1)
+      '@nuxt/vite-server': 4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.3.1)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nuxt@4.6.3(7f27f217de864d1dd8c0a721c2543d94))(oxc-parser@0.150.0)(rolldown@1.2.15)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
       '@unhead/vue': 3.4.3(@oxc-project/types@0.155.0)(esbuild@0.28.2)(lightningcss@1.33.0)(oxc-parser@0.150.0)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))(webpack@5.112.2)
       '@vue/shared': 3.5.44
       chokidar: 5.0.0
@@ -41769,7 +43030,7 @@ snapshots:
 
   typescript-eslint@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@typescript-eslint/eslint-plugin': 8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@typescript-eslint/parser': 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@typescript-eslint/typescript-estree': 8.72.2(supports-color@10.2.2)(typescript@6.0.3)
       '@typescript-eslint/utils': 8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
@@ -42448,6 +43709,40 @@ snapshots:
       vite: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
     optionalDependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
+      optionator: 0.9.4
+      oxlint: 1.87.0(oxlint-tsgolint@7.0.2003)
+      typescript: 6.0.3
+      vue-tsc: 3.3.13(typescript@6.0.3)
+
+  vite-plugin-checker@0.14.5(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(typescript@6.0.3)(vite@7.3.7(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3)):
+    dependencies:
+      '@babel/code-frame': 7.29.7
+      chokidar: 5.0.0
+      npm-run-path: 6.0.0
+      picocolors: 1.1.1
+      picomatch: 4.0.7
+      proper-lockfile: 4.1.2
+      tiny-invariant: 1.3.3
+      vite: 7.3.7(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
+    optionalDependencies:
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
+      optionator: 0.9.4
+      oxlint: 1.87.0(oxlint-tsgolint@7.0.2003)
+      typescript: 6.0.3
+      vue-tsc: 3.3.13(typescript@6.0.3)
+
+  vite-plugin-checker@0.14.5(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(optionator@0.9.4)(oxlint@1.87.0(oxlint-tsgolint@7.0.2003))(typescript@6.0.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue-tsc@3.3.13(typescript@6.0.3)):
+    dependencies:
+      '@babel/code-frame': 7.29.7
+      chokidar: 5.0.0
+      npm-run-path: 6.0.0
+      picocolors: 1.1.1
+      picomatch: 4.0.7
+      proper-lockfile: 4.1.2
+      tiny-invariant: 1.3.3
+      vite: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
+    optionalDependencies:
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
       optionator: 0.9.4
       oxlint: 1.87.0(oxlint-tsgolint@7.0.2003)
       typescript: 6.0.3
