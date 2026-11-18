@@ -1,5 +1,3 @@
-// @ts-check
-
 import node from '@astrojs/node'
 import solidJs from '@astrojs/solid-js'
 import tailwindcss from '@tailwindcss/vite'

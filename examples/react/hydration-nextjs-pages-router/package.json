@@ -18,10 +18,12 @@
   },
   "devDependencies": {
     "@eslint-react/eslint-plugin": "^5.28.8",
+    "@tanstack/eslint-config": "^0.5.0",
     "@tanstack/eslint-plugin-query": "^5.108.0",
     "@types/node": "^24.19.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "eslint": "^9.39.5",
     "typescript": "^6.0.3"
   }
 }
