@@ -1,5 +1,17 @@
 # @tanstack/query-core
 
+## 5.108.0
+
+### Minor Changes
+
+- [#12610](https://github.com/TanStack/query/pull/12610) [`5fc9a3e`](https://github.com/TanStack/query/commit/5fc9a3e9a8768eb3bc23da4ae903c966423a2286) - Release the Angular adapter packages in the same fixed version group as `@tanstack/query-core`, so they share the core version from now on.
+
+## 5.107.2
+
+### Patch Changes
+
+- [#12587](https://github.com/TanStack/query/pull/12587) [`b160291`](https://github.com/TanStack/query/commit/b160291d135f82ec650cc12365b53d567cac94fb) - Replace star exports with explicit exports while preserving the current public API. Adapters continue to re-export all of their corresponding core package.
+
 ## 5.107.1
 
 No changes in this release.
