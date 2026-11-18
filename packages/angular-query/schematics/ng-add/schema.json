@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "$id": "TanStackAngularQueryNgAdd",
+  "title": "TanStack Angular Query ng-add options",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "The Angular project to configure.",
+      "$default": {
+        "$source": "projectName"
+      }
+    }
+  },
+  "required": ["project"],
+  "additionalProperties": false
+}
