@@ -17,7 +17,6 @@ The options of a `QueryObserver`, and of the hooks built on it like `useQuery`: 
 
 ## Extended by
 
-- [`CreateBaseQueryOptions`](CreateBaseQueryOptions.md)
 - [`InfiniteQueryObserverOptions`](InfiniteQueryObserverOptions.md)
 
 ## Type Parameters
