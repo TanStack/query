@@ -1,0 +1,29 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "incremental": false,
+    "noEmit": true,
+    "emitDeclarationOnly": false,
+    "declaration": false,
+    "declarationMap": false,
+    "customConditions": [],
+    "experimentalDecorators": true,
+    "target": "ES2022"
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true,
+    "strictInjectionParameters": true
+  },
+  "include": [
+    "consumer.ts",
+    "../../packages/angular-query/src/**/*.ts",
+    "../../packages/angular-query-devtools/src/**/*.ts",
+    "../../packages/angular-query-persist-client/src/**/*.ts"
+  ],
+  "exclude": [
+    "../../packages/**/src/**/*.test.ts",
+    "../../packages/**/src/**/test-utils.ts",
+    "../../packages/**/src/**/*.tmp.ts"
+  ]
+}
