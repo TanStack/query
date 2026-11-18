@@ -1,21 +1,13 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  effect,
-  inject,
-  signal,
-  untracked,
-} from '@angular/core'
+import { Component, effect, inject, signal, untracked } from '@angular/core'
 import {
   QueryClient,
   injectQuery,
   keepPreviousData,
   noop,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 import { ProjectsQueries } from '../services/projects/queries'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'example',
   templateUrl: './example.component.html',
 })

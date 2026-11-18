@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core'
-import { queryOptions } from '@tanstack/angular-query-experimental'
+import { queryOptions } from '@tanstack/angular-query'
 import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
 import { PostsAPI } from './api'
 
