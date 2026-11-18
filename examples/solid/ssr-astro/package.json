@@ -23,7 +23,9 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
+    "@tanstack/eslint-config": "^0.5.0",
     "@tanstack/eslint-plugin-query": "^5.108.0",
+    "eslint": "^9.39.5",
     "eslint-plugin-solid": "^0.18.1"
   }
 }
