@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build"
+    "build": "next build",
+    "test:types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@js-temporal/polyfill": "^0.5.1",
@@ -16,6 +17,7 @@
   },
   "devDependencies": {
     "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0"
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^6.0.3"
   }
 }
