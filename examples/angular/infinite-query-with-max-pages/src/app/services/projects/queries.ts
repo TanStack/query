@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core'
-import { infiniteQueryOptions } from '@tanstack/angular-query-experimental'
+import { infiniteQueryOptions } from '@tanstack/angular-query'
 import { lastValueFrom } from 'rxjs'
 import { ProjectsAPI } from './api'
 

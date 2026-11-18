@@ -16,16 +16,17 @@ const defaultQueryFn: QueryFunction = async ({ queryKey }) => {
 }
 
 // provide the default query function to your app with defaultOptions
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      queryFn: defaultQueryFn,
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        queryFn: defaultQueryFn,
+      },
     },
-  },
-})
+  })
 
 bootstrapApplication(MyAppComponent, {
-  providers: [provideTanStackQuery(queryClient)],
+  providers: [provideTanStackQuery(createQueryClient)],
 })
 
 export class PostsComponent {
