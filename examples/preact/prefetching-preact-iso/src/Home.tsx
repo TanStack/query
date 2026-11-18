@@ -1,6 +1,6 @@
-import { useState } from 'preact/hooks'
 import { noop, useQuery, useQueryClient } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
+import { useState } from 'preact/hooks'
 import { charactersQueries } from './services/characters/queries'
 import type { Character } from './services/characters/types'
 

@@ -3,7 +3,6 @@ import { act } from '@testing-library/preact'
 import { hydrate as preactHydrate, render } from 'preact'
 import { renderToString } from 'preact-render-to-string'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-
 import {
   QueryCache,
   QueryClient,

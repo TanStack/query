@@ -1,3 +1,6 @@
+import { QueryClient, skipToken } from '@tanstack/query-core'
+import { createKey, sleep } from '@tanstack/query-test-utils'
+import { LitElement, html } from 'lit'
 import {
   afterEach,
   beforeAll,
@@ -7,15 +10,12 @@ import {
   it,
   vi,
 } from 'vitest'
-import { QueryClient, skipToken } from '@tanstack/query-core'
-import { createKey, sleep } from '@tanstack/query-test-utils'
-import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
 import { generateElementName } from './utils.js'
-import type { InfiniteQueryResultAccessor } from '../createInfiniteQueryController.js'
 import type { InfiniteData, QueryFunctionContext } from '@tanstack/query-core'
 import type { Mock } from 'vitest'
+import type { InfiniteQueryResultAccessor } from '../createInfiniteQueryController.js'
 
 const providerTagName = generateElementName()
 

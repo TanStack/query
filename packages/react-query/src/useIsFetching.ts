@@ -1,7 +1,6 @@
 'use client'
-import * as React from 'react'
 import { notifyManager } from '@tanstack/query-core'
-
+import * as React from 'react'
 import { useQueryClient } from './QueryClientProvider'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 

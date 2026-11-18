@@ -139,8 +139,8 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import * as React from 'react'
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
+import * as React from 'react'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -187,5 +187,5 @@ export function Providers(props: { children: React.ReactNode }) {
 }
 ```
 
-For more information, check out the [NextJs Suspense Streaming Example](../examples/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](./advanced-ssr.md) guide.
+For more information, check out the [NextJs Suspense Streaming Example](../examples/suspense-streaming-nextjs-app-router) and the [Advanced Rendering & Hydration](./advanced-ssr.md) guide.
 [//]: # 'Streaming'

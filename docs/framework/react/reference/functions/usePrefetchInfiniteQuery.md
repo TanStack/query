@@ -11,7 +11,7 @@ redirect_from:
 function usePrefetchInfiniteQuery<TQueryFnData = unknown, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(options: UsePrefetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: QueryClient): void;
 ```
 
-Defined in: [packages/react-query/src/usePrefetchInfiniteQuery.tsx:53](https://github.com/TanStack/query/blob/main/packages/react-query/src/usePrefetchInfiniteQuery.tsx#L53)
+Defined in: [packages/react-query/src/usePrefetchInfiniteQuery.tsx:52](https://github.com/TanStack/query/blob/main/packages/react-query/src/usePrefetchInfiniteQuery.tsx#L52)
 
 `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render,
 before a suspense boundary that wraps a component that uses `useSuspenseInfiniteQuery`. You can pass

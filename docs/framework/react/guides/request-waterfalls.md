@@ -292,7 +292,7 @@ Consider this a slightly modified version of the Feed example.
 
 ```tsx
 // This lazy loads the GraphFeedItem component, meaning
-// it wont start loading until something renders it
+// it won't start loading until something renders it
 const GraphFeedItem = React.lazy(() => import('./GraphFeedItem'))
 
 function Feed() {

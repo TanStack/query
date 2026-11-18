@@ -3,25 +3,23 @@ import {
   withFetch,
   withInterceptors,
 } from '@angular/common/http'
-import {
-  QueryClient,
-  provideTanStackQuery,
-} from '@tanstack/angular-query-experimental'
-import { withDevtools } from '@tanstack/angular-query-experimental/devtools'
-import { projectsMockInterceptor } from './api/projects-mock.interceptor'
+import { QueryClient, provideTanStackQuery } from '@tanstack/angular-query'
+import { withDevtools } from '@tanstack/angular-query-devtools'
+import { projectsMockInterceptor } from './interceptor/projects-mock.interceptor'
 import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(withInterceptors([projectsMockInterceptor]), withFetch()),
     provideTanStackQuery(
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            gcTime: 24 * 60 * 60 * 1000, // 24 hours
+      () =>
+        new QueryClient({
+          defaultOptions: {
+            queries: {
+              gcTime: 1000 * 60 * 60 * 24, // 24 hours
+            },
           },
-        },
-      }),
+        }),
       withDevtools(),
     ),
   ],

@@ -1,8 +1,8 @@
 import { Router } from '@solidjs/router'
 import { FileRoutes } from '@solidjs/start/router'
-import { Suspense } from 'solid-js'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
+import { Suspense } from 'solid-js'
 
 export default function App() {
   const queryClient = new QueryClient()

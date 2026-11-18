@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { browser } from '$app/environment'
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
+  import { browser } from '$app/environment'
   import type { LayoutProps } from './$types'
 
   let { children }: LayoutProps = $props()
@@ -16,7 +16,7 @@
 </script>
 
 <svelte:head>
-  <title>TanStack Query Svelte Prefetching Example</title>
+  <title>TanStack Svelte Query Prefetching Example (SvelteKit)</title>
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>

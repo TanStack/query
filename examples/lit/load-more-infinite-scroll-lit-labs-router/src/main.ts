@@ -1,6 +1,6 @@
-import { LitElement, html } from 'lit'
 import { Router } from '@lit-labs/router'
 import { QueryClient, QueryClientProvider } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import { worker } from './mocks'
 import './about-view'
 import './example-view'
