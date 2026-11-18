@@ -1,5 +1,4 @@
 import { Key } from '@solid-primitives/keyed'
-import { clsx as cx } from 'clsx'
 import {
   Index,
   Match,
@@ -67,7 +66,7 @@ const Expander = (props: { expanded: boolean }) => {
 
   return (
     <span
-      class={cx(styles().expander, props.expanded && styles().expanderExpanded)}
+      class={`${styles().expander} ${props.expanded ? styles().expanderExpanded : ''}`}
     >
       <svg
         width="16"
@@ -175,7 +174,7 @@ const DeleteItemButton = (props: {
 
   return (
     <button
-      class={cx(styles().actionButton)}
+      class={styles().actionButton}
       title={'Delete item'}
       aria-label={'Delete item'}
       onClick={() => {
@@ -200,7 +199,7 @@ const ToggleValueButton = (props: {
 
   return (
     <button
-      class={cx(styles().actionButton, styles().toggleButton)}
+      class={`${styles().actionButton} ${styles().toggleButton}`}
       title={'Toggle value'}
       aria-label={'Toggle value'}
       aria-pressed={props.value}
@@ -695,10 +694,7 @@ export default function Explorer(props: ExplorerProps) {
                               : [...old, index],
                           )
                         }}
-                        class={cx(
-                          styles().expanderButton,
-                          pageHasMatch(index) && styles().highlight,
-                        )}
+                        class={`${styles().expanderButton} ${pageHasMatch(index) ? styles().highlight : ''}`}
                         aria-expanded={isPageExpanded(index)}
                         aria-description={
                           pageHasMatch(index)
@@ -761,11 +757,7 @@ export default function Explorer(props: ExplorerProps) {
               <input
                 id={inputId}
                 type={type() === 'number' ? 'number' : 'text'}
-                class={cx(
-                  styles().value,
-                  styles().editableInput,
-                  props.search?.match.value && styles().highlight,
-                )}
+                class={`${styles().value} ${styles().editableInput} ${props.search?.match.value ? styles().highlight : ''}`}
                 data-search-match={props.search?.match.value || undefined}
                 value={props.value as string | number}
                 onChange={(changeEvent) => {
@@ -786,11 +778,7 @@ export default function Explorer(props: ExplorerProps) {
 
             <Show when={type() === 'boolean'}>
               <span
-                class={cx(
-                  styles().value,
-                  styles().actions,
-                  styles().editableInput,
-                )}
+                class={`${styles().value} ${styles().actions} ${styles().editableInput}`}
               >
                 <ToggleValueButton
                   activeQuery={props.activeQuery!}
