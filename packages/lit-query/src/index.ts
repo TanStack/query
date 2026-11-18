@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-// oxlint-disable-next-line tanstack-query/no-restricted-syntax
+// oxlint-disable-next-line eslint-js/no-restricted-syntax
 export * from '@tanstack/query-core'
 
 export type { Accessor, ValueAccessor } from './accessor.js'

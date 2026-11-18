@@ -149,7 +149,7 @@ export class QueryClient extends QC {
       EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<TData> {
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.ensureQueryData(
       cloneDeepUnref(
         options as MaybeRefDeep<
@@ -440,7 +440,7 @@ export class QueryClient extends QC {
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
     >,
   ): Promise<TData> {
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.fetchQuery(
       cloneDeepUnref(
         options as MaybeRefDeep<
@@ -490,7 +490,7 @@ export class QueryClient extends QC {
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<void> {
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.prefetchQuery(
       cloneDeepUnref(
         options as MaybeRefDeep<
@@ -628,7 +628,7 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.fetchInfiniteQuery(cloneDeepUnref(options))
   }
 
@@ -693,7 +693,7 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<void> {
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.prefetchInfiniteQuery(cloneDeepUnref(options))
   }
 

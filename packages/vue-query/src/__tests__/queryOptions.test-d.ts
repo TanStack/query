@@ -278,7 +278,7 @@ describe('queryOptions', () => {
     // Should not error
     const data = queryClient.invalidateQueries(options)
     // Should not error
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
     const data2 = queryClient.fetchQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<Promise<void>>()

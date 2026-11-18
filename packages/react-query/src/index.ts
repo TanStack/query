@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
 // Re-export core
-// oxlint-disable-next-line tanstack-query/no-restricted-syntax
+// oxlint-disable-next-line eslint-js/no-restricted-syntax
 export * from '@tanstack/query-core'
 
 // React Query
