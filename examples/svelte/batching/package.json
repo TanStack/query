@@ -16,9 +16,11 @@
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@tanstack/eslint-config": "^0.5.0",
     "@tanstack/eslint-plugin-query": "^5.108.0",
     "@tsconfig/svelte": "^5.0.4",
     "@typescript-eslint/parser": "^8.72.1",
+    "eslint": "^9.39.5",
     "eslint-plugin-svelte": "^3.23.0",
     "svelte": "^5.57.1",
     "svelte-check": "^4.7.7",
