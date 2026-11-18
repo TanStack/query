@@ -474,6 +474,57 @@ describe('queriesObserver', () => {
     expect(newCombined.count).toBe(2)
   })
 
+  it('should keep the optimistic combined result when an old query updates', async () => {
+    const combine = vi.fn<
+      (results: Array<QueryObserverResult>) => Array<unknown>
+    >((results) => results.map((result) => result.data))
+
+    const initialQueries = Array.from({ length: 3 }, () => ({
+      queryKey: createKey(),
+      queryFn: () => 'data',
+    }))
+    const observer = new QueriesObserver(queryClient, initialQueries, {
+      combine,
+    })
+    const unsubscribe = observer.subscribe(() => undefined)
+    await vi.advanceTimersByTimeAsync(0)
+
+    const [, getInitialCombined] = observer.getOptimisticResult(
+      initialQueries,
+      combine,
+    )
+    expect(getInitialCombined()).toHaveLength(3)
+
+    const updatedQueries = [
+      ...initialQueries,
+      ...Array.from({ length: 2 }, () => ({
+        queryKey: createKey(),
+        queryFn: () => 'data',
+      })),
+    ]
+    const [updatedRaw, getUpdatedCombined] = observer.getOptimisticResult(
+      updatedQueries,
+      combine,
+    )
+    expect(getUpdatedCombined(updatedRaw)).toHaveLength(5)
+
+    observer.setQueries(
+      initialQueries.map((query) => ({
+        ...query,
+        select: (data: unknown) => `${data}!`,
+      })),
+      { combine },
+    )
+
+    const [currentRaw, getCurrentCombined] = observer.getOptimisticResult(
+      updatedQueries,
+      combine,
+    )
+    expect(getCurrentCombined(currentRaw)).toHaveLength(5)
+
+    unsubscribe()
+  })
+
   it('should skip combine notifications while suspense queries have no data', () => {
     const key = createKey()
     const combine = vi.fn<
