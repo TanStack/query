@@ -16,7 +16,7 @@ import {
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { render } from '@testing-library/angular'
+import { fireEvent, render } from '@testing-library/angular'
 import { lastValueFrom } from 'rxjs'
 import {
   afterEach,
@@ -31,6 +31,7 @@ import {
   QueryCache,
   QueryClient,
   injectQuery,
+  keepPreviousData,
   provideTanStackQuery,
   toResource,
 } from '..'
@@ -534,7 +535,7 @@ describe('injectQuery', () => {
     expect(resource.reload()).toBe(false)
   })
 
-  it('should show placeholderData until queryFn resolves and then expose real data', async () => {
+  it('should use placeholder data while the query loads', async () => {
     const key = createKey()
 
     @Component({
@@ -562,6 +563,50 @@ describe('injectQuery', () => {
     expect(rendered.getByText('data: real-data')).toBeInTheDocument()
     expect(rendered.getByText('isPlaceholderData: false')).toBeInTheDocument()
     expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()
+  })
+
+  it('should keep the previous data when placeholderData is set', async () => {
+    const key = createKey()
+
+    @Component({
+      template: `
+        <button (click)="count.set(count() + 1)">increment</button>
+        <div>data: {{ query.data() ?? 'undefined' }}</div>
+        <div>isFetching: {{ query.isFetching() }}</div>
+        <div>isPlaceholderData: {{ query.isPlaceholderData() }}</div>
+      `,
+    })
+    class Page {
+      readonly count = signal(0)
+      readonly query = injectQuery(() => ({
+        queryKey: [...key, this.count()],
+        queryFn: () => sleep(10).then(() => this.count()),
+        placeholderData: keepPreviousData,
+      }))
+    }
+
+    const rendered = await render(Page)
+
+    expect(rendered.getByText('data: undefined')).toBeInTheDocument()
+    expect(rendered.getByText('isFetching: true')).toBeInTheDocument()
+    expect(rendered.getByText('isPlaceholderData: false')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('data: 0')).toBeInTheDocument()
+    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+    expect(rendered.getByText('isPlaceholderData: false')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /increment/i }))
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('data: 0')).toBeInTheDocument()
+    expect(rendered.getByText('isFetching: true')).toBeInTheDocument()
+    expect(rendered.getByText('isPlaceholderData: true')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+    expect(rendered.getByText('isPlaceholderData: false')).toBeInTheDocument()
   })
 
   it('should update query on options contained signal change', async () => {
