@@ -2,7 +2,6 @@ import { DropdownMenu, RadioGroup } from '@kobalte/core'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { rankItem } from '@tanstack/match-sorter-utils'
 import { clsx as cx } from 'clsx'
-import * as goober from 'goober'
 import {
   For,
   Show,
@@ -59,6 +58,7 @@ import {
   Wifi,
   XCircle,
 } from './icons'
+import { attachStyles, getStyles } from './styles'
 import { tokens } from './theme'
 import {
   convertRemToPixels,
@@ -197,12 +197,7 @@ export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
  */
 export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const styles = createMemo(() => getStyles(theme()))
   const pip = usePiPWindow()
 
   const buttonPosition = createMemo(() => {
@@ -226,6 +221,11 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   })
 
   let transitionsContainerRef!: HTMLDivElement
+  onMount(() => {
+    const { styleNonce, shadowDOMTarget } = useQueryDevtoolsContext()
+    attachStyles(transitionsContainerRef, styleNonce, shadowDOMTarget)
+  })
+
   createEffect(() => {
     const root = transitionsContainerRef.parentElement as HTMLElement
     const height = props.localStore.height || DEFAULT_HEIGHT
@@ -274,45 +274,10 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
       <div
         // styles for animating the panel in and out
         class={cx(
-          css`
-            & .tsqd-panel-transition-exit-active,
-            & .tsqd-panel-transition-enter-active {
-              transition:
-                opacity 0.3s,
-                transform 0.3s;
-            }
-
-            & .tsqd-panel-transition-exit-to,
-            & .tsqd-panel-transition-enter {
-              ${
-                position() === 'top' || position() === 'bottom'
-                  ? `transform: translateY(var(--tsqd-panel-height));`
-                  : `transform: translateX(var(--tsqd-panel-width));`
-              }
-            }
-
-            & .tsqd-button-transition-exit-active,
-            & .tsqd-button-transition-enter-active {
-              transition:
-                opacity 0.3s,
-                transform 0.3s;
-              opacity: 1;
-            }
-
-            & .tsqd-button-transition-exit-to,
-            & .tsqd-button-transition-enter {
-              transform: ${
-                buttonPosition() === 'relative'
-                  ? `none;`
-                  : buttonPosition() === 'top-left'
-                    ? `translateX(-72px);`
-                    : buttonPosition() === 'top-right'
-                      ? `translateX(72px);`
-                      : `translateY(72px);`
-              };
-              opacity: 0;
-            }
-          `,
+          styles().transitionsContainer(
+            position() === 'top' || position() === 'bottom',
+            buttonPosition(),
+          ),
           'tsqd-transitions-container',
         )}
         dir="ltr"
@@ -361,28 +326,12 @@ const PiPPanel: Component<{
 
   const pip = usePiPWindow()
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const styles = createMemo(() => getStyles(theme()))
 
-  const getPanelDynamicStyles = () => {
-    const { colors } = tokens
-    const t = (light: string, dark: string) =>
-      theme() === 'dark' ? dark : light
-    if (panelWidth() < secondBreakpoint) {
-      return css`
-        flex-direction: column;
-        background-color: ${t(colors.gray[300], colors.gray[600])};
-      `
-    }
-    return css`
-      flex-direction: row;
-      background-color: ${t(colors.gray[200], colors.darkGray[900])};
-    `
-  }
+  let panelRef!: HTMLDivElement
+  onMount(() => {
+    attachStyles(panelRef, useQueryDevtoolsContext().styleNonce)
+  })
 
   createEffect(() => {
     const win = pip().pipWindow
@@ -404,6 +353,7 @@ const PiPPanel: Component<{
 
   return (
     <div
+      ref={panelRef}
       dir="ltr"
       style={{
         '--tsqd-font-size': '16px',
@@ -413,12 +363,8 @@ const PiPPanel: Component<{
       }}
       class={cx(
         styles().panel,
-        getPanelDynamicStyles(),
-        {
-          [css`
-            min-width: min-content;
-          `]: panelWidth() < thirdBreakpoint,
-        },
+        styles().panelLayout(panelWidth() < secondBreakpoint),
+        panelWidth() < thirdBreakpoint && styles().panelMinContent,
         'tsqd-main-panel',
       )}
     >
@@ -439,38 +385,19 @@ export const ParentPanel: Component<{
   const { panelWidth, setPanelWidth } = useDevtoolsState()
 
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const styles = createMemo(() => getStyles(theme()))
 
   let panelRef!: HTMLDivElement
 
   onMount(() => {
+    const { styleNonce, shadowDOMTarget } = useQueryDevtoolsContext()
+    attachStyles(panelRef, styleNonce, shadowDOMTarget)
     createResizeObserver(panelRef, ({ width }, el) => {
       if (el === panelRef) {
         setPanelWidth(width)
       }
     })
   })
-
-  const getPanelDynamicStyles = () => {
-    const { colors } = tokens
-    const t = (light: string, dark: string) =>
-      theme() === 'dark' ? dark : light
-    if (panelWidth() < secondBreakpoint) {
-      return css`
-        flex-direction: column;
-        background-color: ${t(colors.gray[300], colors.gray[600])};
-      `
-    }
-    return css`
-      flex-direction: row;
-      background-color: ${t(colors.gray[200], colors.darkGray[900])};
-    `
-  }
 
   return (
     <div
@@ -481,12 +408,8 @@ export const ParentPanel: Component<{
       ref={panelRef}
       class={cx(
         styles().parentPanel,
-        getPanelDynamicStyles(),
-        {
-          [css`
-            min-width: min-content;
-          `]: panelWidth() < thirdBreakpoint,
-        },
+        styles().panelLayout(panelWidth() < secondBreakpoint),
+        panelWidth() < thirdBreakpoint && styles().panelMinContent,
         'tsqd-main-panel',
       )}
     >
@@ -499,12 +422,7 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
   const { setSelectedQueryHash, panelWidth, setPanelWidth } = useDevtoolsState()
 
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const styles = createMemo(() => getStyles(theme()))
 
   let closeBtnRef!: HTMLButtonElement
 
@@ -628,22 +546,6 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
     })
   })
 
-  const getPanelDynamicStyles = () => {
-    const { colors } = tokens
-    const t = (light: string, dark: string) =>
-      theme() === 'dark' ? dark : light
-    if (panelWidth() < secondBreakpoint) {
-      return css`
-        flex-direction: column;
-        background-color: ${t(colors.gray[300], colors.gray[600])};
-      `
-    }
-    return css`
-      flex-direction: row;
-      background-color: ${t(colors.gray[200], colors.darkGray[900])};
-    `
-  }
-
   return (
     <aside
       // Some context for styles here
@@ -655,14 +557,10 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
       class={cx(
         styles().panel,
         styles()[`panel-position-${position()}`],
-        getPanelDynamicStyles(),
-        {
-          [css`
-            min-width: min-content;
-          `]:
-            panelWidth() < thirdBreakpoint &&
-            (position() === 'right' || position() === 'left'),
-        },
+        styles().panelLayout(panelWidth() < secondBreakpoint),
+        panelWidth() < thirdBreakpoint &&
+          (position() === 'right' || position() === 'left') &&
+          styles().panelMinContent,
         'tsqd-main-panel',
       )}
       style={{
@@ -784,12 +682,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
   setupMutationCacheSubscription()
   let containerRef!: HTMLDivElement
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const styles = createMemo(() => getStyles(theme()))
 
   const pip = usePiPWindow()
 
@@ -994,9 +887,10 @@ export const ContentView: Component<ContentViewProps> = (props) => {
     props.setLocalStore('position', pos)
   }
 
-  // Sets the Font Size variable on portal menu elements since they will be outside
-  // the main panel container
-  const setComputedVariables = (el: HTMLDivElement) => {
+  // Adds the styles and sets the font size variable on portal menu elements,
+  // since they are outside the main panel container
+  const setupPortal = (el: HTMLDivElement) => {
+    attachStyles(el, useQueryDevtoolsContext().styleNonce)
     const computedStyle = getComputedStyle(containerRef)
     const variable = computedStyle.getPropertyValue('--tsqd-font-size')
     el.style.setProperty('--tsqd-font-size', variable)
@@ -1009,17 +903,9 @@ export const ContentView: Component<ContentViewProps> = (props) => {
         class={cx(
           styles().queriesContainer,
           panelWidth() < secondBreakpoint &&
-            (selectedQueryHash() || selectedMutationId()) &&
-            css`
-              height: 50%;
-              max-height: 50%;
-            `,
-          panelWidth() < secondBreakpoint &&
-            !(selectedQueryHash() || selectedMutationId()) &&
-            css`
-              height: 100%;
-              max-height: 100%;
-            `,
+            styles().queriesContainerHeight(
+              !!(selectedQueryHash() || selectedMutationId()),
+            ),
           'tsqd-queries-container',
         )}
         ref={containerRef}
@@ -1296,7 +1182,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                 <Settings />
               </DropdownMenu.Trigger>
               <DropdownMenu.Portal
-                ref={(el) => setComputedVariables(el as HTMLDivElement)}
+                ref={(el) => setupPortal(el as HTMLDivElement)}
                 mount={
                   pip().pipWindow
                     ? pip().pipWindow!.document.body
@@ -1328,7 +1214,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                         <ChevronDown />
                       </DropdownMenu.SubTrigger>
                       <DropdownMenu.Portal
-                        ref={(el) => setComputedVariables(el as HTMLDivElement)}
+                        ref={(el) => setupPortal(el as HTMLDivElement)}
                         mount={
                           pip().pipWindow
                             ? pip().pipWindow!.document.body
@@ -1410,7 +1296,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                       <ChevronDown />
                     </DropdownMenu.SubTrigger>
                     <DropdownMenu.Portal
-                      ref={(el) => setComputedVariables(el as HTMLDivElement)}
+                      ref={(el) => setupPortal(el as HTMLDivElement)}
                       mount={
                         pip().pipWindow
                           ? pip().pipWindow!.document.body
@@ -1480,7 +1366,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                       <ChevronDown />
                     </DropdownMenu.SubTrigger>
                     <DropdownMenu.Portal
-                      ref={(el) => setComputedVariables(el as HTMLDivElement)}
+                      ref={(el) => setupPortal(el as HTMLDivElement)}
                       mount={
                         pip().pipWindow
                           ? pip().pipWindow!.document.body
@@ -1596,15 +1482,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
   const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsState()
 
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
-
-  const { colors, alpha } = tokens
-  const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
+  const styles = createMemo(() => getStyles(theme()))
 
   const queryState = createSubscribeToQueryCacheBatcher(
     (queryCache) => queryCache().get(props.query.queryHash)?.state,
@@ -1647,23 +1525,6 @@ const QueryRow: Component<{ query: Query }> = (props) => {
     }),
   )
 
-  const getObserverCountColorStyles = () => {
-    if (color() === 'gray') {
-      return css`
-        background-color: ${t(colors[color()][200], colors[color()][700])};
-        color: ${t(colors[color()][700], colors[color()][300])};
-      `
-    }
-
-    return css`
-      background-color: ${t(
-        colors[color()][200] + alpha[80],
-        colors[color()][900],
-      )};
-      color: ${t(colors[color()][800], colors[color()][300])};
-    `
-  }
-
   return (
     <Show when={queryState()}>
       <button
@@ -1683,7 +1544,10 @@ const QueryRow: Component<{ query: Query }> = (props) => {
         aria-label={`Query key ${props.query.queryHash}${isDisabled() ? ', disabled' : ''}${isStatic() ? ', static' : ''}`}
       >
         <div
-          class={cx(getObserverCountColorStyles(), 'tsqd-query-observer-count')}
+          class={cx(
+            styles().observerCount(color()),
+            'tsqd-query-observer-count',
+          )}
         >
           {observers()}
         </div>
@@ -1707,15 +1571,7 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
   const { selectedMutationId, setSelectedMutationId } = useDevtoolsState()
 
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
-
-  const { colors, alpha } = tokens
-  const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
+  const styles = createMemo(() => getStyles(theme()))
 
   const mutationState = createSubscribeToMutationCacheBatcher(
     () => props.mutation.state,
@@ -1735,23 +1591,6 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
       status: status(),
     }),
   )
-
-  const getObserverCountColorStyles = () => {
-    if (color() === 'gray') {
-      return css`
-        background-color: ${t(colors[color()][200], colors[color()][700])};
-        color: ${t(colors[color()][700], colors[color()][300])};
-      `
-    }
-
-    return css`
-      background-color: ${t(
-        colors[color()][200] + alpha[80],
-        colors[color()][900],
-      )};
-      color: ${t(colors[color()][800], colors[color()][300])};
-    `
-  }
 
   return (
     <Show when={mutationState()}>
@@ -1774,7 +1613,10 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
         ).toLocaleString()}`}
       >
         <div
-          class={cx(getObserverCountColorStyles(), 'tsqd-query-observer-count')}
+          class={cx(
+            styles().observerCount(color()),
+            'tsqd-query-observer-count',
+          )}
         >
           <Show when={color() === 'purple'}>
             <PauseCircle />
@@ -1810,12 +1652,7 @@ const QueryStatusCount: Component = () => {
   })
 
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const styles = createMemo(() => getStyles(theme()))
 
   return (
     <div
@@ -1840,12 +1677,7 @@ const MutationStatusCount: Component = () => {
   })
 
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const styles = createMemo(() => getStyles(theme()))
 
   return (
     <div
@@ -1863,15 +1695,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
   const { selectedQueryHash, panelWidth } = useDevtoolsState()
 
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
-
-  const { colors, alpha } = tokens
-  const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
+  const styles = createMemo(() => getStyles(theme()))
 
   let tagRef!: HTMLButtonElement
 
@@ -1905,16 +1729,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
       aria-label={`${props.label}: ${props.count}`}
       class={cx(
         styles().queryStatusTag,
-        !showLabel() &&
-          css`
-            cursor: pointer;
-            &:hover {
-              background: ${t(
-                  colors.gray[200],
-                  colors.darkGray[400],
-                )}${alpha[80]};
-            }
-          `,
+        !showLabel() && styles().queryStatusTagClickable,
         'tsqd-query-status-tag',
         `tsqd-query-status-tag-${props.label.toLowerCase()}`,
       )}
@@ -1936,12 +1751,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
       <span
         aria-hidden="true"
         class={cx(
-          css`
-            width: ${tokens.size[1.5]};
-            height: ${tokens.size[1.5]};
-            border-radius: ${tokens.border.radius.full};
-            background-color: ${tokens.colors[props.color][500]};
-          `,
+          styles().queryStatusDot(props.color),
           'tsqd-query-status-tag-dot',
         )}
       />
@@ -1960,13 +1770,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
           styles().queryStatusCount,
           props.count > 0 &&
             props.color !== 'gray' &&
-            css`
-              background-color: ${t(
-                colors[props.color][100],
-                colors[props.color][900],
-              )};
-              color: ${t(colors[props.color][700], colors[props.color][300])};
-            `,
+            styles().queryStatusCountColor(props.color),
           'tsqd-query-status-tag-count',
         )}
       >
@@ -1980,15 +1784,7 @@ const QueryDetails = (props: { initialSearch?: string }) => {
   const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsState()
 
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
-
-  const { colors } = tokens
-  const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
+  const styles = createMemo(() => getStyles(theme()))
 
   const queryClient = useQueryDevtoolsContext().client
 
@@ -2104,21 +1900,6 @@ const QueryDetails = (props: { initialSearch?: string }) => {
     }
   })
 
-  const getQueryStatusColors = () => {
-    if (color() === 'gray') {
-      return css`
-        background-color: ${t(colors[color()][200], colors[color()][700])};
-        color: ${t(colors[color()][700], colors[color()][300])};
-        border-color: ${t(colors[color()][400], colors[color()][600])};
-      `
-    }
-    return css`
-      background-color: ${t(colors[color()][100], colors[color()][900])};
-      color: ${t(colors[color()][700], colors[color()][300])};
-      border-color: ${t(colors[color()][400], colors[color()][600])};
-    `
-  }
-
   return (
     <Show when={activeQuery() && activeQueryState()}>
       <div
@@ -2142,7 +1923,10 @@ const QueryDetails = (props: { initialSearch?: string }) => {
               <code>{displayValue(activeQuery()!.queryKey, true)}</code>
             </pre>
             <span
-              class={cx(styles().queryDetailsStatus, getQueryStatusColors())}
+              class={cx(
+                styles().queryDetailsStatus,
+                styles().detailsStatus(color()),
+              )}
               role="status"
               aria-live="polite"
             >
@@ -2175,28 +1959,19 @@ const QueryDetails = (props: { initialSearch?: string }) => {
         >
           <button
             class={cx(
-              css`
-                color: ${t(colors.blue[600], colors.blue[400])};
-              `,
+              styles().action('blue'),
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-refetch',
             )}
             onClick={handleRefetch}
             disabled={statusLabel() === 'fetching'}
           >
-            <span
-              aria-hidden="true"
-              class={css`
-                background-color: ${t(colors.blue[600], colors.blue[400])};
-              `}
-            ></span>
+            <span aria-hidden="true" class={styles().actionDot('blue')}></span>
             Refetch
           </button>
           <button
             class={cx(
-              css`
-                color: ${t(colors.yellow[600], colors.yellow[400])};
-              `,
+              styles().action('yellow'),
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-invalidate',
             )}
@@ -2214,17 +1989,13 @@ const QueryDetails = (props: { initialSearch?: string }) => {
           >
             <span
               aria-hidden="true"
-              class={css`
-                background-color: ${t(colors.yellow[600], colors.yellow[400])};
-              `}
+              class={styles().actionDot('yellow')}
             ></span>
             Invalidate
           </button>
           <button
             class={cx(
-              css`
-                color: ${t(colors.gray[600], colors.gray[300])};
-              `,
+              styles().action('gray'),
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-reset',
             )}
@@ -2240,19 +2011,12 @@ const QueryDetails = (props: { initialSearch?: string }) => {
             }}
             disabled={queryStatus() === 'pending'}
           >
-            <span
-              aria-hidden="true"
-              class={css`
-                background-color: ${t(colors.gray[600], colors.gray[400])};
-              `}
-            ></span>
+            <span aria-hidden="true" class={styles().actionDot('gray')}></span>
             Reset
           </button>
           <button
             class={cx(
-              css`
-                color: ${t(colors.pink[500], colors.pink[400])};
-              `,
+              styles().action('pink'),
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-remove',
             )}
@@ -2269,19 +2033,12 @@ const QueryDetails = (props: { initialSearch?: string }) => {
             }}
             disabled={statusLabel() === 'fetching'}
           >
-            <span
-              aria-hidden="true"
-              class={css`
-                background-color: ${t(colors.pink[500], colors.pink[400])};
-              `}
-            ></span>
+            <span aria-hidden="true" class={styles().actionDot('pink')}></span>
             Remove
           </button>
           <button
             class={cx(
-              css`
-                color: ${t(colors.cyan[500], colors.cyan[400])};
-              `,
+              styles().action('cyan'),
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-loading',
             )}
@@ -2319,20 +2076,13 @@ const QueryDetails = (props: { initialSearch?: string }) => {
               }
             }}
           >
-            <span
-              aria-hidden="true"
-              class={css`
-                background-color: ${t(colors.cyan[500], colors.cyan[400])};
-              `}
-            ></span>
+            <span aria-hidden="true" class={styles().actionDot('cyan')}></span>
             {queryStatus() === 'pending' ? 'Restore' : 'Trigger'} Loading
           </button>
           <Show when={errorTypes().length === 0 || queryStatus() === 'error'}>
             <button
               class={cx(
-                css`
-                  color: ${t(colors.red[500], colors.red[400])};
-                `,
+                styles().action('red'),
                 'tsqd-query-details-actions-btn',
                 'tsqd-query-details-action-error',
               )}
@@ -2351,12 +2101,7 @@ const QueryDetails = (props: { initialSearch?: string }) => {
               }}
               disabled={queryStatus() === 'pending'}
             >
-              <span
-                aria-hidden="true"
-                class={css`
-                  background-color: ${t(colors.red[500], colors.red[400])};
-                `}
-              ></span>
+              <span aria-hidden="true" class={styles().actionDot('red')}></span>
               {queryStatus() === 'error' ? 'Restore' : 'Trigger'} Error
             </button>
           </Show>
@@ -2370,12 +2115,7 @@ const QueryDetails = (props: { initialSearch?: string }) => {
                 'tsqd-query-details-action-error-multiple',
               )}
             >
-              <span
-                aria-hidden="true"
-                class={css`
-                  background-color: ${tokens.colors.red[400]};
-                `}
-              ></span>
+              <span aria-hidden="true" class={styles().actionSelectDot}></span>
               Trigger Error
               <select
                 disabled={queryStatus() === 'pending'}
@@ -2463,9 +2203,7 @@ const QueryDetails = (props: { initialSearch?: string }) => {
                 <button
                   class={cx(
                     styles().devtoolsEditFormAction,
-                    css`
-                      color: ${t(colors.gray[600], colors.gray[300])};
-                    `,
+                    styles().action('gray'),
                   )}
                   type="button"
                   onClick={() => setDataMode('view')}
@@ -2475,9 +2213,7 @@ const QueryDetails = (props: { initialSearch?: string }) => {
                 <button
                   class={cx(
                     styles().devtoolsEditFormAction,
-                    css`
-                      color: ${t(colors.blue[600], colors.blue[400])};
-                    `,
+                    styles().action('blue'),
                   )}
                 >
                   Save
@@ -2514,15 +2250,7 @@ const MutationDetails = (props: { initialSearch?: string }) => {
   const { selectedMutationId } = useDevtoolsState()
 
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
-
-  const { colors } = tokens
-  const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
+  const styles = createMemo(() => getStyles(theme()))
 
   const isPaused = createSubscribeToMutationCacheBatcher((mutationCache) => {
     const mutations = mutationCache().getAll()
@@ -2562,21 +2290,6 @@ const MutationDetails = (props: { initialSearch?: string }) => {
       ? props.initialSearch
       : undefined
 
-  const getQueryStatusColors = () => {
-    if (color() === 'gray') {
-      return css`
-        background-color: ${t(colors[color()][200], colors[color()][700])};
-        color: ${t(colors[color()][700], colors[color()][300])};
-        border-color: ${t(colors[color()][400], colors[color()][600])};
-      `
-    }
-    return css`
-      background-color: ${t(colors[color()][100], colors[color()][900])};
-      color: ${t(colors[color()][700], colors[color()][300])};
-      border-color: ${t(colors[color()][400], colors[color()][600])};
-    `
-  }
-
   return (
     <Show when={activeMutation()}>
       <div
@@ -2607,7 +2320,10 @@ const MutationDetails = (props: { initialSearch?: string }) => {
               </code>
             </pre>
             <span
-              class={cx(styles().queryDetailsStatus, getQueryStatusColors())}
+              class={cx(
+                styles().queryDetailsStatus,
+                styles().detailsStatus(color()),
+              )}
               role="status"
               aria-live="polite"
             >
@@ -2841,1085 +2557,3 @@ const sendDevToolsEvent = ({
   })
   window.dispatchEvent(event)
 }
-
-const stylesFactory = (
-  theme: 'light' | 'dark',
-  css: (typeof goober)['css'],
-) => {
-  const { colors, font, size, alpha, shadow, border } = tokens
-
-  const t = (light: string, dark: string) => (theme === 'light' ? light : dark)
-
-  return {
-    devtoolsBtn: css`
-      z-index: 100000;
-      position: fixed;
-      padding: 4px;
-      text-align: left;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 9999px;
-      box-shadow: ${shadow.md()};
-      overflow: hidden;
-
-      & div {
-        position: absolute;
-        top: -8px;
-        left: -8px;
-        right: -8px;
-        bottom: -8px;
-        border-radius: 9999px;
-        -webkit-transform: translateZ(0);
-        transform: translateZ(0);
-
-        & svg {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-        }
-        filter: blur(6px) saturate(1.2) contrast(1.1);
-      }
-
-      &:focus-within {
-        outline-offset: 2px;
-        outline: 3px solid ${colors.green[600]};
-      }
-
-      & button {
-        position: relative;
-        z-index: 1;
-        padding: 0;
-        border-radius: 9999px;
-        background-color: transparent;
-        border: none;
-        height: 40px;
-        display: flex;
-        width: 40px;
-        overflow: hidden;
-        cursor: pointer;
-        outline: none;
-        & svg {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-        }
-      }
-    `,
-    panel: css`
-      position: fixed;
-      z-index: 9999;
-      display: flex;
-      gap: ${tokens.size[0.5]};
-      & * {
-        box-sizing: border-box;
-        text-transform: none;
-      }
-
-      & *::-webkit-scrollbar {
-        width: 7px;
-      }
-
-      & *::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      & *::-webkit-scrollbar-thumb {
-        background: ${t(colors.gray[300], colors.darkGray[200])};
-      }
-
-      & *::-webkit-scrollbar-thumb:hover {
-        background: ${t(colors.gray[400], colors.darkGray[300])};
-      }
-    `,
-    parentPanel: css`
-      z-index: 9999;
-      display: flex;
-      height: 100%;
-      flex: 1 1 500px;
-      min-height: 0;
-      gap: ${tokens.size[0.5]};
-      & * {
-        box-sizing: border-box;
-        text-transform: none;
-      }
-
-      & *::-webkit-scrollbar {
-        width: 7px;
-      }
-
-      & *::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      & *::-webkit-scrollbar-thumb {
-        background: ${t(colors.gray[300], colors.darkGray[200])};
-      }
-
-      & *::-webkit-scrollbar-thumb:hover {
-        background: ${t(colors.gray[400], colors.darkGray[300])};
-      }
-    `,
-    'devtoolsBtn-position-bottom-right': css`
-      bottom: 12px;
-      right: 12px;
-    `,
-    'devtoolsBtn-position-bottom-left': css`
-      bottom: 12px;
-      left: 12px;
-    `,
-    'devtoolsBtn-position-top-left': css`
-      top: 12px;
-      left: 12px;
-    `,
-    'devtoolsBtn-position-top-right': css`
-      top: 12px;
-      right: 12px;
-    `,
-    'devtoolsBtn-position-relative': css`
-      position: relative;
-    `,
-    'panel-position-top': css`
-      top: 0;
-      right: 0;
-      left: 0;
-      max-height: 90%;
-      min-height: ${size[14]};
-      border-bottom: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-    `,
-    'panel-position-bottom': css`
-      bottom: 0;
-      right: 0;
-      left: 0;
-      max-height: 90%;
-      min-height: ${size[14]};
-      border-top: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-    `,
-    'panel-position-right': css`
-      bottom: 0;
-      right: 0;
-      top: 0;
-      border-left: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-      max-width: 90%;
-    `,
-    'panel-position-left': css`
-      bottom: 0;
-      left: 0;
-      top: 0;
-      border-right: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-      max-width: 90%;
-    `,
-    closeBtn: css`
-      position: absolute;
-      cursor: pointer;
-      z-index: 5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      outline: none;
-      background-color: ${t(colors.gray[50], colors.darkGray[700])};
-      &:hover {
-        background-color: ${t(colors.gray[200], colors.darkGray[500])};
-      }
-      &:focus-visible {
-        outline: 2px solid ${colors.blue[600]};
-      }
-      & svg {
-        color: ${t(colors.gray[600], colors.gray[400])};
-        width: ${size[2]};
-        height: ${size[2]};
-      }
-    `,
-    'closeBtn-position-top': css`
-      bottom: 0;
-      right: ${size[2]};
-      transform: translate(0, 100%);
-      border-right: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-      border-left: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-      border-top: none;
-      border-bottom: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-      border-radius: 0px 0px ${border.radius.sm} ${border.radius.sm};
-      padding: ${size[0.5]} ${size[1.5]} ${size[1]} ${size[1.5]};
-
-      &::after {
-        content: ' ';
-        position: absolute;
-        bottom: 100%;
-        left: -${size[2.5]};
-        height: ${size[1.5]};
-        width: calc(100% + ${size[5]});
-      }
-
-      & svg {
-        transform: rotate(180deg);
-      }
-    `,
-    'closeBtn-position-bottom': css`
-      top: 0;
-      right: ${size[2]};
-      transform: translate(0, -100%);
-      border-right: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-      border-left: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-      border-top: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-      border-bottom: none;
-      border-radius: ${border.radius.sm} ${border.radius.sm} 0px 0px;
-      padding: ${size[1]} ${size[1.5]} ${size[0.5]} ${size[1.5]};
-
-      &::after {
-        content: ' ';
-        position: absolute;
-        top: 100%;
-        left: -${size[2.5]};
-        height: ${size[1.5]};
-        width: calc(100% + ${size[5]});
-      }
-    `,
-    'closeBtn-position-right': css`
-      bottom: ${size[2]};
-      left: 0;
-      transform: translate(-100%, 0);
-      border-right: none;
-      border-left: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-      border-top: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-      border-bottom: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-      border-radius: ${border.radius.sm} 0px 0px ${border.radius.sm};
-      padding: ${size[1.5]} ${size[0.5]} ${size[1.5]} ${size[1]};
-
-      &::after {
-        content: ' ';
-        position: absolute;
-        left: 100%;
-        height: calc(100% + ${size[5]});
-        width: ${size[1.5]};
-      }
-
-      & svg {
-        transform: rotate(-90deg);
-      }
-    `,
-    'closeBtn-position-left': css`
-      bottom: ${size[2]};
-      right: 0;
-      transform: translate(100%, 0);
-      border-left: none;
-      border-right: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-      border-top: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-      border-bottom: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
-      border-radius: 0px ${border.radius.sm} ${border.radius.sm} 0px;
-      padding: ${size[1.5]} ${size[1]} ${size[1.5]} ${size[0.5]};
-
-      &::after {
-        content: ' ';
-        position: absolute;
-        right: 100%;
-        height: calc(100% + ${size[5]});
-        width: ${size[1.5]};
-      }
-
-      & svg {
-        transform: rotate(90deg);
-      }
-    `,
-    queriesContainer: css`
-      flex: 1 1 700px;
-      background-color: ${t(colors.gray[50], colors.darkGray[700])};
-      display: flex;
-      flex-direction: column;
-      & * {
-        font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
-      }
-    `,
-    dragHandle: css`
-      position: absolute;
-      transition: background-color 0.125s ease;
-      &:hover {
-        background-color: ${colors.purple[400]}${t('', alpha[90])};
-      }
-      &:focus {
-        outline: none;
-        background-color: ${colors.purple[400]}${t('', alpha[90])};
-      }
-      &:focus-visible {
-        outline: 2px solid ${colors.blue[800]};
-        outline-offset: -2px;
-        background-color: ${colors.purple[400]}${t('', alpha[90])};
-      }
-      z-index: 4;
-    `,
-    'dragHandle-position-top': css`
-      bottom: 0;
-      width: 100%;
-      height: 3px;
-      cursor: ns-resize;
-    `,
-    'dragHandle-position-bottom': css`
-      top: 0;
-      width: 100%;
-      height: 3px;
-      cursor: ns-resize;
-    `,
-    'dragHandle-position-right': css`
-      left: 0;
-      width: 3px;
-      height: 100%;
-      cursor: ew-resize;
-    `,
-    'dragHandle-position-left': css`
-      right: 0;
-      width: 3px;
-      height: 100%;
-      cursor: ew-resize;
-    `,
-    row: css`
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: ${tokens.size[2]} ${tokens.size[2.5]};
-      gap: ${tokens.size[2.5]};
-      border-bottom: ${t(colors.gray[300], colors.darkGray[500])} 1px solid;
-      align-items: center;
-      & > button {
-        padding: 0;
-        background: transparent;
-        border: none;
-        display: flex;
-        gap: ${size[0.5]};
-        flex-direction: column;
-      }
-    `,
-    logoAndToggleContainer: css`
-      display: flex;
-      gap: ${tokens.size[3]};
-      align-items: center;
-    `,
-    logo: css`
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      background-color: transparent;
-      border: none;
-      gap: ${tokens.size[0.5]};
-      padding: 0px;
-      &:hover {
-        opacity: 0.7;
-      }
-      &:focus-visible {
-        outline-offset: 4px;
-        border-radius: ${border.radius.xs};
-        outline: 2px solid ${colors.blue[800]};
-      }
-    `,
-    tanstackLogo: css`
-      font-size: ${font.size.md};
-      font-weight: ${font.weight.bold};
-      line-height: ${font.lineHeight.xs};
-      white-space: nowrap;
-      color: ${t(colors.gray[600], colors.gray[300])};
-    `,
-    queryFlavorLogo: css`
-      font-weight: ${font.weight.semibold};
-      font-size: ${font.size.xs};
-      background: linear-gradient(
-        to right,
-        ${t('#ea4037, #ff9b11', '#dd524b, #e9a03b')}
-      );
-      background-clip: text;
-      -webkit-background-clip: text;
-      line-height: 1;
-      -webkit-text-fill-color: transparent;
-      white-space: nowrap;
-    `,
-    queryStatusContainer: css`
-      display: flex;
-      gap: ${tokens.size[2]};
-      height: min-content;
-    `,
-    queryStatusTag: css`
-      display: flex;
-      gap: ${tokens.size[1.5]};
-      box-sizing: border-box;
-      height: ${tokens.size[6.5]};
-      background: ${t(colors.gray[50], colors.darkGray[500])};
-      color: ${t(colors.gray[700], colors.gray[300])};
-      border-radius: ${tokens.border.radius.sm};
-      font-size: ${font.size.sm};
-      padding: ${tokens.size[1]};
-      padding-left: ${tokens.size[1.5]};
-      align-items: center;
-      font-weight: ${font.weight.medium};
-      border: ${t('1px solid ' + colors.gray[300], '1px solid transparent')};
-      user-select: none;
-      position: relative;
-      &:focus-visible {
-        outline-offset: 2px;
-        outline: 2px solid ${colors.blue[800]};
-      }
-    `,
-    queryStatusTagLabel: css`
-      font-size: ${font.size.xs};
-    `,
-    queryStatusCount: css`
-      font-size: ${font.size.xs};
-      padding: 0 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: ${t(colors.gray[500], colors.gray[400])};
-      background-color: ${t(colors.gray[200], colors.darkGray[300])};
-      border-radius: 2px;
-      font-variant-numeric: tabular-nums;
-      height: ${tokens.size[4.5]};
-    `,
-    statusTooltip: css`
-      position: absolute;
-      z-index: 1;
-      background-color: ${t(colors.gray[50], colors.darkGray[500])};
-      top: 100%;
-      left: 50%;
-      transform: translate(-50%, calc(${tokens.size[2]}));
-      padding: ${tokens.size[0.5]} ${tokens.size[2]};
-      border-radius: ${tokens.border.radius.sm};
-      font-size: ${font.size.xs};
-      border: 1px solid ${t(colors.gray[400], colors.gray[600])};
-      color: ${t(colors['gray'][600], colors['gray'][300])};
-
-      &::before {
-        top: 0px;
-        content: ' ';
-        display: block;
-        left: 50%;
-        transform: translate(-50%, -100%);
-        position: absolute;
-        border-color: transparent transparent
-          ${t(colors.gray[400], colors.gray[600])} transparent;
-        border-style: solid;
-        border-width: 7px;
-        /* transform: rotate(180deg); */
-      }
-
-      &::after {
-        top: 0px;
-        content: ' ';
-        display: block;
-        left: 50%;
-        transform: translate(-50%, calc(-100% + 2px));
-        position: absolute;
-        border-color: transparent transparent
-          ${t(colors.gray[100], colors.darkGray[500])} transparent;
-        border-style: solid;
-        border-width: 7px;
-      }
-    `,
-    filtersContainer: css`
-      display: flex;
-      gap: ${tokens.size[2]};
-      & > button {
-        cursor: pointer;
-        padding: ${tokens.size[0.5]} ${tokens.size[1.5]} ${tokens.size[0.5]}
-          ${tokens.size[2]};
-        border-radius: ${tokens.border.radius.sm};
-        background-color: ${t(colors.gray[100], colors.darkGray[400])};
-        border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
-        color: ${t(colors.gray[700], colors.gray[300])};
-        font-size: ${font.size.xs};
-        display: flex;
-        align-items: center;
-        line-height: ${font.lineHeight.sm};
-        gap: ${tokens.size[1.5]};
-        max-width: 160px;
-        &:focus-visible {
-          outline-offset: 2px;
-          border-radius: ${border.radius.xs};
-          outline: 2px solid ${colors.blue[800]};
-        }
-        & svg {
-          width: ${tokens.size[3]};
-          height: ${tokens.size[3]};
-          color: ${t(colors.gray[500], colors.gray[400])};
-        }
-      }
-    `,
-    filterInput: css`
-      padding: ${size[0.5]} ${size[2]};
-      border-radius: ${tokens.border.radius.sm};
-      background-color: ${t(colors.gray[100], colors.darkGray[400])};
-      display: flex;
-      box-sizing: content-box;
-      align-items: center;
-      gap: ${tokens.size[1.5]};
-      max-width: 160px;
-      min-width: 100px;
-      border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
-      height: min-content;
-      color: ${t(colors.gray[600], colors.gray[400])};
-      & > svg {
-        width: ${size[3]};
-        height: ${size[3]};
-      }
-      & input {
-        font-size: ${font.size.xs};
-        width: 100%;
-        min-width: 0;
-        flex: 1;
-        background-color: ${t(colors.gray[100], colors.darkGray[400])};
-        border: none;
-        padding: 0;
-        line-height: ${font.lineHeight.sm};
-        color: ${t(colors.gray[700], colors.gray[300])};
-        &::placeholder {
-          color: ${t(colors.gray[700], colors.gray[300])};
-        }
-        &:focus {
-          outline: none;
-        }
-      }
-
-      &:focus-within {
-        outline-offset: 2px;
-        border-radius: ${border.radius.xs};
-        outline: 2px solid ${colors.blue[800]};
-      }
-    `,
-    filterScopeBtn: css`
-      flex-shrink: 0;
-      cursor: pointer;
-      padding: 0 ${size[1]};
-      border-radius: ${border.radius.xs};
-      border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
-      background-color: ${t(colors.gray[200], colors.darkGray[500])};
-      color: ${t(colors.gray[700], colors.gray[300])};
-      font-size: ${font.size.xs};
-      line-height: ${font.lineHeight.xs};
-      &[data-scope='data'],
-      &[data-scope='all'] {
-        border-color: ${t(colors.blue[300], colors.blue[700])};
-        background-color: ${t(colors.blue[100], colors.blue[900])};
-        color: ${t(colors.blue[700], colors.blue[300])};
-      }
-      &:focus-visible {
-        outline-offset: 2px;
-        outline: 2px solid ${colors.blue[800]};
-      }
-    `,
-    filterSelect: css`
-      padding: ${tokens.size[0.5]} ${tokens.size[2]};
-      border-radius: ${tokens.border.radius.sm};
-      background-color: ${t(colors.gray[100], colors.darkGray[400])};
-      display: flex;
-      align-items: center;
-      gap: ${tokens.size[1.5]};
-      box-sizing: content-box;
-      max-width: 160px;
-      border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
-      height: min-content;
-      & > svg {
-        color: ${t(colors.gray[600], colors.gray[400])};
-        width: ${tokens.size[2]};
-        height: ${tokens.size[2]};
-      }
-      & > select {
-        appearance: none;
-        color: ${t(colors.gray[700], colors.gray[300])};
-        min-width: 100px;
-        line-height: ${font.lineHeight.sm};
-        font-size: ${font.size.xs};
-        background-color: ${t(colors.gray[100], colors.darkGray[400])};
-        border: none;
-        &:focus {
-          outline: none;
-        }
-      }
-      &:focus-within {
-        outline-offset: 2px;
-        border-radius: ${border.radius.xs};
-        outline: 2px solid ${colors.blue[800]};
-      }
-    `,
-    actionsContainer: css`
-      display: flex;
-      gap: ${tokens.size[2]};
-    `,
-    actionsBtn: css`
-      border-radius: ${tokens.border.radius.sm};
-      background-color: ${t(colors.gray[100], colors.darkGray[400])};
-      border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
-      width: ${tokens.size[6.5]};
-      height: ${tokens.size[6.5]};
-      justify-content: center;
-      display: flex;
-      align-items: center;
-      gap: ${tokens.size[1.5]};
-      max-width: 160px;
-      cursor: pointer;
-      padding: 0;
-      &:hover {
-        background-color: ${t(colors.gray[200], colors.darkGray[500])};
-      }
-      & svg {
-        color: ${t(colors.gray[700], colors.gray[300])};
-        width: ${tokens.size[3]};
-        height: ${tokens.size[3]};
-      }
-      &:focus-visible {
-        outline-offset: 2px;
-        border-radius: ${border.radius.xs};
-        outline: 2px solid ${colors.blue[800]};
-      }
-    `,
-    actionsBtnOffline: css`
-      & svg {
-        stroke: ${t(colors.yellow[700], colors.yellow[500])};
-        fill: ${t(colors.yellow[700], colors.yellow[500])};
-      }
-    `,
-    overflowQueryContainer: css`
-      flex: 1;
-      min-height: 0;
-      overflow-y: auto;
-      & > div {
-        display: flex;
-        flex-direction: column;
-      }
-    `,
-    queryRow: css`
-      display: flex;
-      width: 100%;
-      align-items: center;
-      padding: 0;
-      border: none;
-      cursor: pointer;
-      color: ${t(colors.gray[700], colors.gray[300])};
-      background-color: ${t(colors.gray[50], colors.darkGray[700])};
-      line-height: 1;
-      &:focus {
-        outline: none;
-      }
-      &:focus-visible {
-        outline-offset: -2px;
-        border-radius: ${border.radius.xs};
-        outline: 2px solid ${colors.blue[800]};
-      }
-      &:hover .tsqd-query-hash {
-        background-color: ${t(colors.gray[200], colors.darkGray[600])};
-      }
-
-      & .tsqd-query-observer-count {
-        padding: 0 ${tokens.size[1]};
-        user-select: none;
-        min-width: ${tokens.size[6.5]};
-        align-self: stretch;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: ${font.size.xs};
-        font-weight: ${font.weight.medium};
-        border-bottom-width: 1px;
-        border-bottom-style: solid;
-        border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[700])};
-      }
-      & .tsqd-query-hash {
-        user-select: text;
-        font-size: ${font.size.xs};
-        display: flex;
-        align-items: center;
-        min-height: ${tokens.size[6]};
-        flex: 1;
-        padding: ${tokens.size[1]} ${tokens.size[2]};
-        font-family:
-          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-          'Liberation Mono', 'Courier New', monospace;
-        border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
-        text-align: left;
-        text-overflow: clip;
-        word-break: break-word;
-      }
-
-      & .tsqd-query-disabled-indicator {
-        align-self: stretch;
-        display: flex;
-        align-items: center;
-        padding: 0 ${tokens.size[2]};
-        color: ${t(colors.gray[800], colors.gray[300])};
-        background-color: ${t(colors.gray[300], colors.darkGray[600])};
-        border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
-        font-size: ${font.size.xs};
-      }
-
-      & .tsqd-query-static-indicator {
-        align-self: stretch;
-        display: flex;
-        align-items: center;
-        padding: 0 ${tokens.size[2]};
-        color: ${t(colors.teal[800], colors.teal[300])};
-        background-color: ${t(colors.teal[100], colors.teal[900])};
-        border-bottom: 1px solid ${t(colors.teal[300], colors.teal[700])};
-        font-size: ${font.size.xs};
-      }
-    `,
-    selectedQueryRow: css`
-      background-color: ${t(colors.gray[200], colors.darkGray[500])};
-    `,
-    detailsContainer: css`
-      flex: 1 1 700px;
-      background-color: ${t(colors.gray[50], colors.darkGray[700])};
-      color: ${t(colors.gray[700], colors.gray[300])};
-      font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      display: flex;
-      text-align: left;
-    `,
-    detailsHeader: css`
-      font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      background-color: ${t(colors.gray[200], colors.darkGray[600])};
-      padding: ${tokens.size[1.5]} ${tokens.size[2]};
-      font-weight: ${font.weight.medium};
-      font-size: ${font.size.xs};
-      line-height: ${font.lineHeight.xs};
-      text-align: left;
-    `,
-    detailsBody: css`
-      margin: ${tokens.size[1.5]} 0px ${tokens.size[2]} 0px;
-      & > div {
-        display: flex;
-        align-items: stretch;
-        padding: 0 ${tokens.size[2]};
-        line-height: ${font.lineHeight.sm};
-        justify-content: space-between;
-        & > span {
-          font-size: ${font.size.xs};
-        }
-        & > span:nth-child(2) {
-          font-variant-numeric: tabular-nums;
-        }
-      }
-
-      & > div:first-child {
-        margin-bottom: ${tokens.size[1.5]};
-      }
-
-      & code {
-        font-family:
-          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-          'Liberation Mono', 'Courier New', monospace;
-        margin: 0;
-        font-size: ${font.size.xs};
-        line-height: ${font.lineHeight.xs};
-        max-width: 100%;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-      }
-
-      & pre {
-        margin: 0;
-        display: flex;
-        align-items: center;
-      }
-    `,
-    queryDetailsStatus: css`
-      border: 1px solid ${colors.darkGray[200]};
-      border-radius: ${tokens.border.radius.sm};
-      font-weight: ${font.weight.medium};
-      padding: ${tokens.size[1]} ${tokens.size[2.5]};
-    `,
-    actionsBody: css`
-      flex-wrap: wrap;
-      margin: ${tokens.size[2]} 0px ${tokens.size[2]} 0px;
-      display: flex;
-      gap: ${tokens.size[2]};
-      padding: 0px ${tokens.size[2]};
-      & > button {
-        font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
-        font-size: ${font.size.xs};
-        padding: ${tokens.size[1]} ${tokens.size[2]};
-        display: flex;
-        border-radius: ${tokens.border.radius.sm};
-        background-color: ${t(colors.gray[100], colors.darkGray[600])};
-        border: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
-        align-items: center;
-        gap: ${tokens.size[2]};
-        font-weight: ${font.weight.medium};
-        line-height: ${font.lineHeight.xs};
-        cursor: pointer;
-        &:focus-visible {
-          outline-offset: 2px;
-          border-radius: ${border.radius.xs};
-          outline: 2px solid ${colors.blue[800]};
-        }
-        &:hover {
-          background-color: ${t(colors.gray[200], colors.darkGray[500])};
-        }
-
-        &:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        & > span {
-          width: ${size[1.5]};
-          height: ${size[1.5]};
-          border-radius: ${tokens.border.radius.full};
-        }
-      }
-    `,
-    actionsSelect: css`
-      font-size: ${font.size.xs};
-      padding: ${tokens.size[0.5]} ${tokens.size[2]};
-      display: flex;
-      border-radius: ${tokens.border.radius.sm};
-      overflow: hidden;
-      background-color: ${t(colors.gray[100], colors.darkGray[600])};
-      border: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
-      align-items: center;
-      gap: ${tokens.size[2]};
-      font-weight: ${font.weight.medium};
-      line-height: ${font.lineHeight.sm};
-      color: ${t(colors.red[500], colors.red[400])};
-      cursor: pointer;
-      position: relative;
-      &:hover {
-        background-color: ${t(colors.gray[200], colors.darkGray[500])};
-      }
-      & > span {
-        width: ${size[1.5]};
-        height: ${size[1.5]};
-        border-radius: ${tokens.border.radius.full};
-      }
-      &:focus-within {
-        outline-offset: 2px;
-        border-radius: ${border.radius.xs};
-        outline: 2px solid ${colors.blue[800]};
-      }
-      & select {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        appearance: none;
-        background-color: transparent;
-        border: none;
-        color: transparent;
-        outline: none;
-      }
-
-      & svg path {
-        stroke: ${tokens.colors.red[400]};
-      }
-      & svg {
-        width: ${tokens.size[2]};
-        height: ${tokens.size[2]};
-      }
-    `,
-    settingsMenu: css`
-      display: flex;
-      & * {
-        font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
-      }
-      flex-direction: column;
-      gap: ${size[0.5]};
-      border-radius: ${tokens.border.radius.sm};
-      border: 1px solid ${t(colors.gray[300], colors.gray[700])};
-      background-color: ${t(colors.gray[50], colors.darkGray[600])};
-      font-size: ${font.size.xs};
-      color: ${t(colors.gray[700], colors.gray[300])};
-      z-index: 99999;
-      min-width: 120px;
-      padding: ${size[0.5]};
-    `,
-    settingsSubTrigger: css`
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-radius: ${tokens.border.radius.xs};
-      padding: ${tokens.size[1]} ${tokens.size[1]};
-      cursor: pointer;
-      background-color: transparent;
-      border: none;
-      color: ${t(colors.gray[700], colors.gray[300])};
-      & svg {
-        color: ${t(colors.gray[600], colors.gray[400])};
-        transform: rotate(-90deg);
-        width: ${tokens.size[2]};
-        height: ${tokens.size[2]};
-      }
-      &:hover {
-        background-color: ${t(colors.gray[200], colors.darkGray[500])};
-      }
-      &:focus-visible {
-        outline-offset: 2px;
-        outline: 2px solid ${colors.blue[800]};
-      }
-      &.data-disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-    `,
-    settingsMenuHeader: css`
-      padding: ${tokens.size[1]} ${tokens.size[1]};
-      font-weight: ${font.weight.medium};
-      border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
-      color: ${t(colors.gray[500], colors.gray[400])};
-      font-size: ${font.size['xs']};
-    `,
-    settingsSubButton: css`
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: ${t(colors.gray[700], colors.gray[300])};
-      font-size: ${font.size['xs']};
-      border-radius: ${tokens.border.radius.xs};
-      padding: ${tokens.size[1]} ${tokens.size[1]};
-      cursor: pointer;
-      background-color: transparent;
-      border: none;
-      & svg {
-        color: ${t(colors.gray[600], colors.gray[400])};
-      }
-      &:hover {
-        background-color: ${t(colors.gray[200], colors.darkGray[500])};
-      }
-      &:focus-visible {
-        outline-offset: 2px;
-        outline: 2px solid ${colors.blue[800]};
-      }
-      &[data-checked] {
-        background-color: ${t(colors.purple[100], colors.purple[900])};
-        color: ${t(colors.purple[700], colors.purple[300])};
-        & svg {
-          color: ${t(colors.purple[700], colors.purple[300])};
-        }
-        &:hover {
-          background-color: ${t(colors.purple[100], colors.purple[900])};
-        }
-      }
-    `,
-    viewToggle: css`
-      border-radius: ${tokens.border.radius.sm};
-      background-color: ${t(colors.gray[200], colors.darkGray[600])};
-      border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
-      display: flex;
-      padding: 0;
-      font-size: ${font.size.xs};
-      color: ${t(colors.gray[700], colors.gray[300])};
-      overflow: hidden;
-
-      &:has(:focus-visible) {
-        outline: 2px solid ${colors.blue[800]};
-      }
-
-      & .tsqd-radio-toggle {
-        opacity: 0.5;
-        display: flex;
-        & label {
-          display: flex;
-          align-items: center;
-          cursor: pointer;
-          line-height: ${font.lineHeight.md};
-        }
-
-        & label:hover {
-          background-color: ${t(colors.gray[100], colors.darkGray[500])};
-        }
-      }
-
-      & > [data-checked] {
-        opacity: 1;
-        background-color: ${t(colors.gray[100], colors.darkGray[400])};
-        & label:hover {
-          background-color: ${t(colors.gray[100], colors.darkGray[400])};
-        }
-      }
-
-      & .tsqd-radio-toggle:first-child {
-        & label {
-          padding: 0 ${tokens.size[1.5]} 0 ${tokens.size[2]};
-        }
-        border-right: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
-      }
-
-      & .tsqd-radio-toggle:nth-child(2) {
-        & label {
-          padding: 0 ${tokens.size[2]} 0 ${tokens.size[1.5]};
-        }
-      }
-    `,
-    devtoolsEditForm: css`
-      padding: ${size[2]};
-      & > [data-error='true'] {
-        outline: 2px solid ${t(colors.red[200], colors.red[800])};
-        outline-offset: 2px;
-        border-radius: ${border.radius.xs};
-      }
-    `,
-    devtoolsEditTextarea: css`
-      width: 100%;
-      max-height: 500px;
-      font-family: 'Fira Code', monospace;
-      font-size: ${font.size.xs};
-      border-radius: ${border.radius.sm};
-      field-sizing: content;
-      padding: ${size[2]};
-      background-color: ${t(colors.gray[100], colors.darkGray[800])};
-      color: ${t(colors.gray[900], colors.gray[100])};
-      border: 1px solid ${t(colors.gray[200], colors.gray[700])};
-      resize: none;
-      &:focus {
-        outline-offset: 2px;
-        border-radius: ${border.radius.xs};
-        outline: 2px solid ${t(colors.blue[200], colors.blue[800])};
-      }
-    `,
-    devtoolsEditFormActions: css`
-      display: flex;
-      justify-content: space-between;
-      gap: ${size[2]};
-      align-items: center;
-      padding-top: ${size[1]};
-      font-size: ${font.size.xs};
-    `,
-    devtoolsEditFormError: css`
-      color: ${t(colors.red[700], colors.red[500])};
-    `,
-    devtoolsEditFormActionContainer: css`
-      display: flex;
-      gap: ${size[2]};
-    `,
-    devtoolsEditFormAction: css`
-      font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
-      font-size: ${font.size.xs};
-      padding: ${size[1]} ${tokens.size[2]};
-      display: flex;
-      border-radius: ${border.radius.sm};
-      background-color: ${t(colors.gray[100], colors.darkGray[600])};
-      border: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
-      align-items: center;
-      gap: ${size[2]};
-      font-weight: ${font.weight.medium};
-      line-height: ${font.lineHeight.xs};
-      cursor: pointer;
-      &:focus-visible {
-        outline-offset: 2px;
-        border-radius: ${border.radius.xs};
-        outline: 2px solid ${colors.blue[800]};
-      }
-      &:hover {
-        background-color: ${t(colors.gray[200], colors.darkGray[500])};
-      }
-
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-    `,
-  }
-}
-
-const lightStyles = (css: (typeof goober)['css']) => stylesFactory('light', css)
-const darkStyles = (css: (typeof goober)['css']) => stylesFactory('dark', css)

@@ -81,10 +81,16 @@ export interface QueryDevtoolsProps {
    */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
-   * within the shadow DOM instead of within the head tag in the light DOM.
+   * The shadow root to add the devtools styles to. By default, the styles are added to the shadow
+   * root the devtools render in, or to the document when they do not render in a shadow root.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * Use this to pass a nonce to the `<style>` element that the devtools add in browsers without
+   * constructable stylesheets, such as Safari before 16.4. This is useful if you are using a
+   * Content Security Policy (CSP) nonce to allow inline styles. Other browsers need no nonce.
+   */
+  styleNonce?: string
   /**
    * Callback function that is called when the devtools panel is closed. Only used by the panel
    * entry point.

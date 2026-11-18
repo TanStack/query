@@ -1,6 +1,5 @@
 import { Key } from '@solid-primitives/keyed'
 import { clsx as cx } from 'clsx'
-import * as goober from 'goober'
 import {
   Index,
   Match,
@@ -27,7 +26,7 @@ import {
   Trash,
 } from './icons'
 import { getNativeObjectType } from './nativeObjectType'
-import { tokens } from './theme'
+import { getExplorerStyles } from './styles'
 import {
   deleteNestedDataByPath,
   displayValue,
@@ -64,27 +63,11 @@ function chunkArray<T extends { label: string; value: unknown }>(
 
 const Expander = (props: { expanded: boolean }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const styles = createMemo(() => getExplorerStyles(theme()))
 
   return (
     <span
-      class={cx(
-        styles().expander,
-        css`
-          transform: rotate(${props.expanded ? 90 : 0}deg);
-        `,
-        props.expanded &&
-          css`
-            & svg {
-              top: -1px;
-            }
-          `,
-      )}
+      class={cx(styles().expander, props.expanded && styles().expanderExpanded)}
     >
       <svg
         width="16"
@@ -107,12 +90,7 @@ const Expander = (props: { expanded: boolean }) => {
 type CopyState = 'NoCopy' | 'SuccessCopy' | 'ErrorCopy'
 const CopyButton = (props: { value: unknown }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const styles = createMemo(() => getExplorerStyles(theme()))
   const [copyState, setCopyState] = createSignal<CopyState>('NoCopy')
 
   return (
@@ -168,12 +146,7 @@ const ClearArrayButton = (props: {
   activeQuery: Query
 }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const styles = createMemo(() => getExplorerStyles(theme()))
   const queryClient = useQueryDevtoolsContext().client
 
   return (
@@ -197,12 +170,7 @@ const DeleteItemButton = (props: {
   activeQuery: Query
 }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const styles = createMemo(() => getExplorerStyles(theme()))
   const queryClient = useQueryDevtoolsContext().client
 
   return (
@@ -227,23 +195,12 @@ const ToggleValueButton = (props: {
   value: boolean
 }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const styles = createMemo(() => getExplorerStyles(theme()))
   const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
-      class={cx(
-        styles().actionButton,
-        css`
-          width: ${tokens.size[3.5]};
-          height: ${tokens.size[3.5]};
-        `,
-      )}
+      class={cx(styles().actionButton, styles().toggleButton)}
       title={'Toggle value'}
       aria-label={'Toggle value'}
       aria-pressed={props.value}
@@ -272,7 +229,17 @@ type ExplorerProps = {
   itemsDeletable?: boolean
   onEdit?: () => void
   search?: ExplorerSearch
-  highlight?: Highlight
+  highlight?: SearchHighlight
+}
+
+/** The name of the native highlight that marks search matches. */
+const HIGHLIGHT_NAME = 'tsqd-data-search'
+
+/** The ranges that one search adds to the native highlight. */
+type SearchHighlight = {
+  readonly size: number
+  add: (range: Range) => void
+  delete: (range: Range) => void
 }
 
 /**
@@ -285,12 +252,7 @@ export function SearchableExplorer(
   props: ExplorerProps & { searchKey?: unknown; initialSearch?: string },
 ) {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() =>
-    theme() === 'dark' ? darkStyles(css) : lightStyles(css),
-  )
+  const styles = createMemo(() => getExplorerStyles(theme()))
   const [term, setTerm] = createSignal('')
   const [debouncedTerm, setDebouncedTerm] = createSignal('')
   const clear = () => {
@@ -320,40 +282,50 @@ export function SearchableExplorer(
       ? { term: activeTerm, match: searchExplorer(props.value, activeTerm) }
       : undefined
   })
-  const highlightName = `tsqd-data-search-${createUniqueId()}`
-  const [nativeHighlight, setNativeHighlight] = createSignal<Highlight>()
+  const [nativeHighlight, setNativeHighlight] = createSignal<SearchHighlight>()
   let root!: HTMLDivElement
   onMount(() => {
     const view = root.ownerDocument.defaultView!
     const registry = view.CSS.highlights
+    // Explorers share one highlight per window, so styles.css can style it by
+    // name. Each search adds and removes only its own ranges.
+    const getHighlight = () => {
+      let highlight = registry.get(HIGHLIGHT_NAME)
+      if (!highlight) {
+        highlight = new view.Highlight()
+        registry.set(HIGHLIGHT_NAME, highlight)
+      }
+      return highlight
+    }
     createEffect(
       on(search, () => {
-        const highlight = new view.Highlight()
-        registry.set(highlightName, highlight)
+        getHighlight()
+        const ranges = new Set<Range>()
+        const highlight: SearchHighlight = {
+          get size() {
+            return ranges.size
+          },
+          add(range) {
+            ranges.add(range)
+            getHighlight().add(range)
+          },
+          delete(range) {
+            ranges.delete(range)
+            registry.get(HIGHLIGHT_NAME)?.delete(range)
+          },
+        }
         setNativeHighlight(highlight)
         onCleanup(() => {
-          registry.delete(highlightName)
-          highlight.clear()
+          for (const range of ranges) highlight.delete(range)
+          if (registry.get(HIGHLIGHT_NAME)?.size === 0) {
+            registry.delete(HIGHLIGHT_NAME)
+          }
         })
       }),
     )
   })
-  const nativeHighlightStyle = createMemo(
-    () => css`
-      & ::highlight(${highlightName}) {
-        color: ${
-          theme() === 'dark' ? tokens.colors.gray[100] : tokens.colors.gray[900]
-        };
-        background-color: ${
-          theme() === 'dark'
-            ? tokens.colors.yellow[900]
-            : tokens.colors.yellow[200]
-        };
-      }
-    `,
-  )
   return (
-    <div ref={root} class={nativeHighlightStyle()}>
+    <div ref={root} class={styles().searchRoot}>
       <div class={styles().search}>
         <input
           type="search"
@@ -398,7 +370,7 @@ const MAX_HIGHLIGHT_RANGES = 1000
 function HighlightedText(props: {
   text: string
   term?: string
-  highlight?: Highlight
+  highlight?: SearchHighlight
 }) {
   const matches = createMemo(() => {
     const term = props.term
@@ -467,12 +439,7 @@ function isIterable(x: any): x is Iterable<unknown> {
  */
 export default function Explorer(props: ExplorerProps) {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const styles = createMemo(() => getExplorerStyles(theme()))
   const queryClient = useQueryDevtoolsContext().client
 
   const [expanded, setExpanded] = createSignal(
@@ -852,166 +819,3 @@ export default function Explorer(props: ExplorerProps) {
     </div>
   )
 }
-
-const stylesFactory = (
-  theme: 'light' | 'dark',
-  css: (typeof goober)['css'],
-) => {
-  const { colors, font, size, border } = tokens
-  const t = (light: string, dark: string) => (theme === 'light' ? light : dark)
-  return {
-    search: css`
-      display: flex;
-      gap: ${size[2]};
-      margin-bottom: ${size[2]};
-    `,
-    searchInput: css`
-      min-width: 0;
-      flex: 1;
-      padding: ${size[1]} ${size[2]};
-      color: inherit;
-      background: ${t(colors.gray[100], colors.darkGray[600])};
-      border: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
-      border-radius: ${border.radius.xs};
-    `,
-    clearSearch: css`
-      color: inherit;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-    `,
-    highlight: css`
-      && {
-        color: ${t(colors.gray[900], colors.gray[100])};
-        background-color: ${t(colors.yellow[200], colors.yellow[900])};
-      }
-    `,
-    entry: css`
-      & * {
-        font-size: ${font.size.xs};
-        font-family:
-          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-          'Liberation Mono', 'Courier New', monospace;
-      }
-      position: relative;
-      outline: none;
-      word-break: break-word;
-    `,
-    subEntry: css`
-      margin: 0 0 0 0.5em;
-      padding-left: 0.75em;
-      border-left: 2px solid ${t(colors.gray[300], colors.darkGray[400])};
-      /* outline: 1px solid ${colors.teal[400]}; */
-    `,
-    expander: css`
-      & path {
-        stroke: ${colors.gray[400]};
-      }
-      & svg {
-        width: ${size[3]};
-        height: ${size[3]};
-      }
-      display: inline-flex;
-      align-items: center;
-      transition: all 0.1s ease;
-      /* outline: 1px solid ${colors.blue[400]}; */
-    `,
-    expanderButtonContainer: css`
-      display: flex;
-      align-items: center;
-      line-height: ${size[4]};
-      min-height: ${size[4]};
-      gap: ${size[2]};
-    `,
-    expanderButton: css`
-      cursor: pointer;
-      color: inherit;
-      font: inherit;
-      outline: inherit;
-      height: ${size[5]};
-      background: transparent;
-      border: none;
-      padding: 0;
-      display: inline-flex;
-      align-items: center;
-      gap: ${size[1]};
-      position: relative;
-      /* outline: 1px solid ${colors.green[400]}; */
-
-      &:focus-visible {
-        border-radius: ${border.radius.xs};
-        outline: 2px solid ${colors.blue[800]};
-      }
-
-      & svg {
-        position: relative;
-        left: 1px;
-      }
-    `,
-    info: css`
-      color: ${t(colors.gray[500], colors.gray[500])};
-      font-size: ${font.size.xs};
-      margin-left: ${size[1]};
-      /* outline: 1px solid ${colors.yellow[400]}; */
-    `,
-    label: css`
-      color: ${t(colors.gray[700], colors.gray[300])};
-      white-space: nowrap;
-    `,
-    value: css`
-      color: ${t(colors.purple[600], colors.purple[400])};
-      flex-grow: 1;
-    `,
-    actions: css`
-      display: inline-flex;
-      gap: ${size[2]};
-      align-items: center;
-    `,
-    row: css`
-      display: inline-flex;
-      gap: ${size[2]};
-      width: 100%;
-      margin: ${size[0.25]} 0px;
-      line-height: ${size[4.5]};
-      align-items: center;
-    `,
-    editableInput: css`
-      border: none;
-      padding: ${size[0.5]} ${size[1]} ${size[0.5]} ${size[1.5]};
-      flex-grow: 1;
-      border-radius: ${border.radius.xs};
-      background-color: ${t(colors.gray[200], colors.darkGray[500])};
-
-      &:hover {
-        background-color: ${t(colors.gray[300], colors.darkGray[600])};
-      }
-    `,
-    actionButton: css`
-      background-color: transparent;
-      color: ${t(colors.gray[500], colors.gray[500])};
-      border: none;
-      display: inline-flex;
-      padding: 0px;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      width: ${size[3]};
-      height: ${size[3]};
-      position: relative;
-      z-index: 1;
-
-      &:hover svg {
-        color: ${t(colors.gray[600], colors.gray[400])};
-      }
-
-      &:focus-visible {
-        border-radius: ${border.radius.xs};
-        outline: 2px solid ${colors.blue[800]};
-        outline-offset: 2px;
-      }
-    `,
-  }
-}
-
-const lightStyles = (css: (typeof goober)['css']) => stylesFactory('light', css)
-const darkStyles = (css: (typeof goober)['css']) => stylesFactory('dark', css)

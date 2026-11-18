@@ -8129,9 +8129,6 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      goober:
-        specifier: ^2.1.19
-        version: 2.1.19(csstype@3.2.3)
       solid-js:
         specifier: ^1.9.15
         version: 1.9.18

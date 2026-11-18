@@ -1,6 +1,12 @@
+import { fireEvent } from '@solidjs/testing-library'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { TanstackQueryDevtools } from '..'
+
+// `solid-transition-group` resolves to its unpublished source under Vite.
+vi.mock(import('solid-transition-group'), () => ({
+  TransitionGroup: (props) => props.children,
+}))
 
 describe('TanstackQueryDevtools', () => {
   let devtools: TanstackQueryDevtools
@@ -111,6 +117,62 @@ describe('TanstackQueryDevtools', () => {
           devtools.unmount()
         }
       })
+    })
+  })
+
+  describe('styles', () => {
+    it('should style the settings menu outside the "shadowDOMTarget"', async () => {
+      vi.stubGlobal(
+        'matchMedia',
+        vi.fn().mockImplementation((query: string) => ({
+          matches: false,
+          media: query,
+          addEventListener: vi.fn<MediaQueryList['addEventListener']>(),
+          removeEventListener: vi.fn<MediaQueryList['removeEventListener']>(),
+        })),
+      )
+      vi.stubGlobal(
+        'ResizeObserver',
+        class {
+          observe() {}
+          unobserve() {}
+          disconnect() {}
+        },
+      )
+      const host = document.createElement('div')
+      document.body.appendChild(host)
+      const shadowRoot = host.attachShadow({ mode: 'open' })
+      const el = document.createElement('div')
+      shadowRoot.appendChild(el)
+      const shadowDevtools = new TanstackQueryDevtools({
+        client: new QueryClient(),
+        queryFlavor: 'TanStack Query',
+        version: '5',
+        onlineManager,
+        shadowDOMTarget: shadowRoot,
+        initialIsOpen: true,
+      })
+      shadowDevtools.mount(el)
+
+      try {
+        const settings = await vi.waitFor(() => {
+          const button = shadowRoot.querySelector<HTMLElement>(
+            '[aria-label="Open settings menu"]',
+          )
+          expect(button).not.toBeNull()
+          return button!
+        })
+        fireEvent.keyDown(settings, { key: 'Enter' })
+
+        // The menu renders through a portal on `document.body`.
+        expect(
+          document.body.querySelector('.tsqd-settings-menu'),
+        ).not.toBeNull()
+        expect(document.head.querySelector('style')).not.toBeNull()
+      } finally {
+        shadowDevtools.unmount()
+        host.remove()
+      }
     })
   })
 })

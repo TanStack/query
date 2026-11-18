@@ -69,7 +69,6 @@
     "@tanstack/query-core": "workspace:*",
     "@tanstack/solid-virtual": "^3.13.52",
     "clsx": "^2.1.1",
-    "goober": "^2.1.19",
     "solid-js": "^1.9.15",
     "solid-transition-group": "^0.2.3",
     "superjson": "^2.2.6"
