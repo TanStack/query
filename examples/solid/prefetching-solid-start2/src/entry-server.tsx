@@ -8,7 +8,12 @@ export default createHandler(() => (
         <head>
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/favicon.ico" />
+          <title>TanStack Solid Query Prefetching Example (SolidStart)</title>
+          <link
+            rel="shortcut icon"
+            type="image/svg+xml"
+            href="/emblem-light.svg"
+          />
           {assets}
         </head>
         <body>

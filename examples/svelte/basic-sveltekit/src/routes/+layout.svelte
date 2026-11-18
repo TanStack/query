@@ -1,10 +1,10 @@
 <script lang="ts">
   import '../app.css'
-  import { browser } from '$app/environment'
+  import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
   import { QueryClient } from '@tanstack/svelte-query'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
   import { PersistQueryClientProvider } from '@tanstack/svelte-query-persist-client'
-  import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
+  import { browser } from '$app/environment'
   import type { LayoutProps } from './$types'
 
   let { children }: LayoutProps = $props()
@@ -21,6 +21,10 @@
     storage: browser ? window.localStorage : null,
   })
 </script>
+
+<svelte:head>
+  <title>TanStack Svelte Query Basic Example (SvelteKit)</title>
+</svelte:head>
 
 <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
   <main>

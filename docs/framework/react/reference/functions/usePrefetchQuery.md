@@ -11,7 +11,7 @@ redirect_from:
 function usePrefetchQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>, queryClient?: QueryClient): void;
 ```
 
-Defined in: [packages/react-query/src/usePrefetchQuery.tsx:39](https://github.com/TanStack/query/blob/main/packages/react-query/src/usePrefetchQuery.tsx#L39)
+Defined in: [packages/react-query/src/usePrefetchQuery.tsx:38](https://github.com/TanStack/query/blob/main/packages/react-query/src/usePrefetchQuery.tsx#L38)
 
 `usePrefetchQuery` does not return anything, it should be used just to fire a prefetch during render, before
 a suspense boundary that wraps a component that uses `useSuspenseQuery`. You can pass everything to

@@ -1,6 +1,5 @@
 import { noop } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-
 import type {
   DefaultError,
   InfiniteData,

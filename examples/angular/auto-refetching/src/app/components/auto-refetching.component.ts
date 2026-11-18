@@ -1,19 +1,13 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from '@angular/core'
+import { NgStyle } from '@angular/common'
+import { Component, inject, signal } from '@angular/core'
 import {
   QueryClient,
   injectMutation,
   injectQuery,
-} from '@tanstack/angular-query-experimental'
-import { NgStyle } from '@angular/common'
+} from '@tanstack/angular-query'
 import { TasksMutations, TasksQueries } from '../services/tasks/queries'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'auto-refetching-example',
   templateUrl: './auto-refetching.component.html',
   imports: [NgStyle],

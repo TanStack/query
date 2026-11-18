@@ -9,7 +9,7 @@ title: UseInfiniteQueryOptions
 type UseInfiniteQueryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown> = MaybeRef<{ [Property in keyof InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>]: Property extends "enabled" ? VueQueryEnabledOption<TQueryFnData, TError, InfiniteData<TQueryFnData, TPageParam>, DeepUnwrapRef<TQueryKey>> : MaybeRefDeep<InfiniteQueryObserverOptions<TQueryFnData, TError, TData, DeepUnwrapRef<TQueryKey>, TPageParam>[Property]> } & ShallowOption>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:39](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L39)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:37](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L37)
 
 The options accepted by `useInfiniteQuery`. Extends [InfiniteQueryObserverOptions](../interfaces/InfiniteQueryObserverOptions.md) from
 `@tanstack/query-core` with the `vue-query`-specific `shallow` option. Each option except `shallow` can also

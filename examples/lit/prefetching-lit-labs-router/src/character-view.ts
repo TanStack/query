@@ -1,5 +1,5 @@
-import { LitElement, html } from 'lit'
 import { createQueryController } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import { charactersQueries } from './services/characters/queries'
 
 class CharacterView extends LitElement {

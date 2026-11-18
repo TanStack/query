@@ -1,16 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  signal,
-  viewChild,
-} from '@angular/core'
-import { injectDevtoolsPanel } from '@tanstack/angular-query-experimental/devtools-panel'
+import { Component, signal, viewChild } from '@angular/core'
+import { injectDevtoolsPanel } from '@tanstack/angular-query-devtools/devtools-panel'
 import { ExampleQueryComponent } from './example-query.component'
 import type { ElementRef } from '@angular/core'
 
 @Component({
   selector: 'basic-devtools-panel-example',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <example-query />
     <h1>Basic devtools panel example</h1>

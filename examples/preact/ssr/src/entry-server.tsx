@@ -1,5 +1,3 @@
-import { renderToString } from 'preact-render-to-string'
-import { uneval } from 'devalue'
 import {
   QueryClientProvider,
   dehydrate,
@@ -7,6 +5,8 @@ import {
   noop,
 } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
+import { uneval } from 'devalue'
+import { renderToString } from 'preact-render-to-string'
 import App from './App'
 import { makeQueryClient } from './makeQueryClient'
 import { postsQueries } from './services/posts/queries'

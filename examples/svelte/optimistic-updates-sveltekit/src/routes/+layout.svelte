@@ -1,8 +1,8 @@
 <script lang="ts">
   import '../app.css'
-  import { browser } from '$app/environment'
   import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
+  import { browser } from '$app/environment'
   import type { LayoutProps } from './$types'
 
   let { children }: LayoutProps = $props()
@@ -15,6 +15,10 @@
     },
   })
 </script>
+
+<svelte:head>
+  <title>TanStack Svelte Query Optimistic Updates Example (SvelteKit)</title>
+</svelte:head>
 
 <QueryClientProvider client={queryClient}>
   <main>

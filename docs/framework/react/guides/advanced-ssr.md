@@ -235,8 +235,8 @@ import {
   HydrationBoundary,
   QueryClient,
 } from '@tanstack/react-query'
-import Posts from './posts'
 import CommentsServerComponent from './comments-server'
+import Posts from './posts'
 
 export default async function PostsPage() {
   const queryClient = new QueryClient()
@@ -507,8 +507,8 @@ import {
   QueryClient,
 } from '@tanstack/react-query'
 import { getQueryClient } from './get-query-client'
-import { serialize } from './transformer'
 import Posts from './posts'
+import { serialize } from './transformer'
 
 export default function PostsPage() {
   const queryClient = getQueryClient()
@@ -542,7 +542,7 @@ export default function Posts() {
 
 Now, your `getPosts` function can return e.g. `Temporal` datetime objects and the data will be serialized and deserialized on the client, assuming your transformer can serialize and deserialize those data types.
 
-For more information, check out the [Next.js App with Prefetching Example](../examples/nextjs-app-prefetching).
+For more information, check out the [Next.js App with Prefetching Example](../examples/prefetching-nextjs-app-router).
 
 ### Using the Persist Adapter with Streaming
 
@@ -580,8 +580,8 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import * as React from 'react'
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
+import * as React from 'react'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -628,7 +628,7 @@ export function Providers(props: { children: React.ReactNode }) {
 }
 ```
 
-For more information, check out the [NextJs Suspense Streaming Example](../examples/nextjs-suspense-streaming).
+For more information, check out the [NextJs Suspense Streaming Example](../examples/suspense-streaming-nextjs-app-router).
 
 The big upside is that you no longer need to prefetch queries manually to have SSR work, and it even still streams in the result! This gives you phenomenal DX and lower code complexity.
 

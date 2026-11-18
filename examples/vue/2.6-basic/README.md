@@ -1,6 +1,15 @@
-# 2.6 Basic example
+# TanStack Vue Query 2.6 Basic Example
+
+The basic posts example on Vue 2.6.
+
+## How it works
+
+- `src/services/posts/queries.ts` defines `postsQueries.list()` and `postsQueries.detail(id)`, `queryOptions` factories keyed by `['posts', 'list']` and `['posts', 'detail', id]`.
+- `src/Posts.vue` reads the list with `useQuery(postsQueries.list())` and marks a post as visited when `queryClient.getQueryData(postsQueries.detail(item.id).queryKey)` returns data.
+- `src/Post.vue` passes a getter, `useQuery(() => postsQueries.detail(props.postId))`, so the query follows the `postId` prop. A cached post renders at once and shows "Background Updating..." while `isFetching` is `true`.
+- `src/main.ts` installs `@vue/composition-api` and `VueQueryPlugin` with `Vue.use`, then mounts the app with `createApp` from `@vue/composition-api`.
 
 To run this example:
 
-- `npm install` or `yarn` or `pnpm i` or `bun i`
-- `npm run dev` or `yarn dev` or `pnpm dev` or `bun dev`
+- `npm install`
+- `npm run dev`

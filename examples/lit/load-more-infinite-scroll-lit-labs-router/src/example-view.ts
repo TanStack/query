@@ -1,6 +1,6 @@
+import { createInfiniteQueryController } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { ref } from 'lit/directives/ref.js'
-import { createInfiniteQueryController } from '@tanstack/lit-query'
 import { projectsQueries } from './services/projects/queries'
 
 class ExampleView extends LitElement {

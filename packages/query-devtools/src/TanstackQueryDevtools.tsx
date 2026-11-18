@@ -1,10 +1,11 @@
-import { render } from 'solid-js/web'
 import { createSignal, lazy } from 'solid-js'
+import { render } from 'solid-js/web'
 import { setupStyleSheet } from './utils'
 import type {
   QueryClient,
   onlineManager as TOnlineManager,
 } from '@tanstack/query-core'
+import type { Signal } from 'solid-js'
 import type { DevtoolsComponentType } from './Devtools'
 import type {
   DevtoolsButtonPosition,
@@ -13,7 +14,6 @@ import type {
   QueryDevtoolsProps,
   Theme,
 } from './contexts/types'
-import type { Signal } from 'solid-js'
 
 /**
  * The options for `TanstackQueryDevtools`, which mounts the floating devtools.
