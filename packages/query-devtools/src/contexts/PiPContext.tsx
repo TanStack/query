@@ -72,10 +72,10 @@ export const PiPProvider = (props: PiPProviderProps) => {
       )
     }
 
-    // Remove existing styles
-    pip.document.head.innerHTML = ''
-    // Remove existing body
-    pip.document.body.innerHTML = ''
+    // Remove existing styles and body. `replaceChildren` instead of
+    // `innerHTML = ''`, which Trusted Types block.
+    pip.document.head.replaceChildren()
+    pip.document.body.replaceChildren()
     // Clear Delegated Events
     clearDelegatedEvents(pip.document)
 
