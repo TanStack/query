@@ -534,6 +534,36 @@ describe('injectQuery', () => {
     expect(resource.reload()).toBe(false)
   })
 
+  it('should show placeholderData until queryFn resolves and then expose real data', async () => {
+    const key = createKey()
+
+    @Component({
+      template: `
+        <div>data: {{ query.data() }}</div>
+        <div>isPlaceholderData: {{ query.isPlaceholderData() }}</div>
+        <div>isSuccess: {{ query.isSuccess() }}</div>
+      `,
+    })
+    class Page {
+      readonly query = injectQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'real-data'),
+        placeholderData: 'placeholder',
+      }))
+    }
+
+    const rendered = await render(Page)
+
+    expect(rendered.getByText('data: placeholder')).toBeInTheDocument()
+    expect(rendered.getByText('isPlaceholderData: true')).toBeInTheDocument()
+    expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('data: real-data')).toBeInTheDocument()
+    expect(rendered.getByText('isPlaceholderData: false')).toBeInTheDocument()
+    expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()
+  })
+
   it('should update query on options contained signal change', async () => {
     const key = signal(['key6', 'key7'])
     const spy = vi.fn<() => Promise<string>>(() =>
