@@ -9,7 +9,7 @@ title: QueriesResults
 type QueriesResults<T extends any[], TResults extends any[] = [], TDepth extends ReadonlyArray<number> = []> = TDepth["length"] extends MAXIMUM_DEPTH ? CreateQueryResult[] : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetCreateQueryResult<Head>] : T extends [infer Head, ...(infer Tails)] ? QueriesResults<[...Tails], [...TResults, GetCreateQueryResult<Head>], [...TDepth, 1]> : { [K in keyof T]: GetCreateQueryResult<T[K]> };
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-queries.ts:203](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-queries.ts#L203)
+Defined in: [packages/angular-query/src/inject-queries.types.ts:204](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-queries.types.ts#L204)
 
 The result type returned by `injectQueries`, when no `combine` is provided. Mirrors [QueriesOptions](QueriesOptions.md):
 each tuple element's result type is inferred individually, up to 20 elements — past that, tuple recursion
