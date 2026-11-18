@@ -28,6 +28,6 @@
     "@vitejs/plugin-react": "^6.2.1",
     "eslint": "^9.39.5",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5"
+    "vite": "^8.3.8"
   }
 }
