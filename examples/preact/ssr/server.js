@@ -49,8 +49,8 @@ app.use('*all', async (req, res) => {
     const rendered = await render()
 
     const html = template
-      .replace(`<!--app-html-->`, rendered.html)
-      .replace(`<!--app-state-->`, rendered.state)
+      .replace(`<!--app-html-->`, () => rendered.html)
+      .replace(`<!--app-state-->`, () => rendered.state)
 
     res.status(200).set({ 'Content-Type': 'text/html' }).send(html)
   } catch (error) {
