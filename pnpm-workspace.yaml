@@ -84,8 +84,6 @@ overrides:
   '@types/react': 'catalog:'
   '@types/react-dom': 'catalog:'
   '@types/node': '^24.19.2'
-  # GHSA-p4f5-76q4-ffq7: '@angular/build@22.2.x' pins 'vite@8.3.5'. Remove once a stable release pins '>=8.3.7'.
-  '@angular/build>vite': '8.3.8'
 
 allowBuilds:
   # root dependency
