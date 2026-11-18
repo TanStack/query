@@ -1,5 +1,13 @@
 # @tanstack/solid-query-persist-client
 
+## 6.0.0-rc.6
+
+### Patch Changes
+
+- [#12613](https://github.com/TanStack/query/pull/12613) [`5e44698`](https://github.com/TanStack/query/commit/5e4469811a7c0bdb63086a2aff463e16b8f516d8) - Require the stable Solid 2.0 release: the `solid-js` and `@solidjs/web` peer ranges are now `^2.0.0`, and the packages build and test against `@solidjs/vite-plugin` 3.0.0.
+- Updated dependencies [[`5e44698`](https://github.com/TanStack/query/commit/5e4469811a7c0bdb63086a2aff463e16b8f516d8), [`6bab31b`](https://github.com/TanStack/query/commit/6bab31bc3746ddfc8d425e3ba92b1179a7a6df3c)]:
+  - @tanstack/solid-query@6.0.0-rc.6
+
 ## 6.0.0-rc.5
 
 ### Patch Changes
