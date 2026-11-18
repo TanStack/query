@@ -10,7 +10,7 @@ replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 ```tsx
 import { lazy } from 'preact/iso'
 // This lazy loads the GraphFeedItem component, meaning
-// it wont start loading until something renders it
+// it won't start loading until something renders it
 const GraphFeedItem = lazy(() => import('./GraphFeedItem'))
 
 function Feed() {
