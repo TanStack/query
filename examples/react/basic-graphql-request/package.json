@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "mock": "node server/index.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "test:eslint": "eslint ./src",

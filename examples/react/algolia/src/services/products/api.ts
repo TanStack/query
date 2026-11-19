@@ -1,4 +1,5 @@
 import { searchClient } from '@algolia/client-search'
+import { createQueryVerbRequester } from './query-verb'
 import type { SearchOptions, SearchResponse } from './types'
 
 // From Algolia example
@@ -13,7 +14,9 @@ export const productsAPI = {
     pageParam,
     hitsPerPage = 10,
   }: SearchOptions): Promise<SearchResponse<TData>> => {
-    const client = searchClient(ALGOLIA_APP_ID, ALGOLIA_SEARCH_API_KEY)
+    const client = searchClient(ALGOLIA_APP_ID, ALGOLIA_SEARCH_API_KEY, {
+      requester: createQueryVerbRequester(),
+    })
 
     console.log('algolia:search', { indexName, query, pageParam, hitsPerPage })
 

@@ -13,3 +13,7 @@ To run this example:
 
 - `npm install`
 - `npm run dev`
+
+## HTTP QUERY verb (RFC 10008)
+
+The fetches in this example stay plain GraphQL-over-HTTP POST requests, as always. If you set `VITE_HTTP_QUERY_VERB=1`, read-only operations are instead sent with the new HTTP QUERY verb. By default the app first sends a preflight OPTIONS request to check that the endpoint advertises QUERY support (via the `Accept-Query` or `Allow` header) and falls back to POST if it does not; set `VITE_HTTP_QUERY_VERB_TRUST=1` to skip that check and send QUERY right away. To see it work end to end, run `pnpm mock` (a local QUERY-capable GraphQL mock on port 8047) and point the app at it with `VITE_GQL_ENDPOINT=http://localhost:8047/api`. Mutations are never sent as QUERY — they always use POST.

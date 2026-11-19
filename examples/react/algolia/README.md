@@ -13,3 +13,7 @@ To run this example:
 
 - `npm install`
 - `npm run dev`
+
+## HTTP QUERY verb (RFC 10008)
+
+The Algolia search calls in this example normally ride on POST, like every other Algolia request. If you set `VITE_HTTP_QUERY_VERB=1`, the two read search endpoints are upgraded to the new HTTP QUERY verb, and nothing else is touched — so no write operation can ever become a QUERY. By default the client first sends an OPTIONS preflight to check that the server advertises QUERY support (via the `Accept-Query` or `Allow` header) and falls back to POST when it does not. Set `VITE_HTTP_QUERY_VERB_TRUST=1` to skip that check if you already know the endpoint supports QUERY. To see it end to end, run `pnpm mock` (a local QUERY-capable mock on port 8048 that stands in for Algolia's search endpoints) together with `VITE_ALGOLIA_MOCK_BASE=http://localhost:8048`.
