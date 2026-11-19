@@ -437,6 +437,7 @@ describe('QueryCache', () => {
       // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.fetchInfiniteQuery({
         queryKey: queryKeyRef,
+        getNextPageParam: () => undefined,
         initialPageParam: 0,
       })
 
@@ -533,6 +534,7 @@ describe('QueryCache', () => {
       queryClient.prefetchInfiniteQuery({
         queryKey: queryKeyRef,
         queryFn: fn,
+        getNextPageParam: () => undefined,
         initialPageParam: 0,
       })
 
