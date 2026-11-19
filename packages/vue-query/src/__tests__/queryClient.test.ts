@@ -529,12 +529,13 @@ describe('QueryCache', () => {
   describe('prefetchInfiniteQuery', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
+      const getNextPageParam = () => undefined
 
       // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchInfiniteQuery({
         queryKey: queryKeyRef,
         queryFn: fn,
-        getNextPageParam: () => undefined,
+        getNextPageParam,
         initialPageParam: 0,
       })
 
@@ -544,6 +545,7 @@ describe('QueryCache', () => {
         initialPageParam: 0,
         queryKey: queryKeyUnref,
         queryFn: fn,
+        getNextPageParam,
       })
     })
   })
