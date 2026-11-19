@@ -474,6 +474,68 @@ describe('queriesObserver', () => {
     expect(newCombined.count).toBe(2)
   })
 
+  it('should not cache old results under new query hashes before setQueries', () => {
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => Promise<number>>().mockResolvedValue(1)
+    const queryFn2 = vi.fn<() => Promise<number>>().mockResolvedValue(2)
+    const query = (
+      queryKey: Array<string>,
+      queryFn: () => Promise<number>,
+    ) => ({
+      queryKey,
+      queryFn,
+      staleTime: Infinity,
+    })
+    const initialQueries = [
+      query(key1, queryFn1),
+      query(createKey(), queryFn2),
+      query(createKey(), queryFn2),
+    ]
+    const nextQueries = [
+      ...initialQueries,
+      query(key2, queryFn2),
+      query(createKey(), queryFn2),
+    ]
+    const combine = (results: Array<QueryObserverResult>) =>
+      results.map((result) => result.data)
+    const observer = new QueriesObserver<Array<unknown>>(
+      queryClient,
+      initialQueries,
+      {
+        combine,
+      },
+    )
+    const listener = vi.fn<(result: Array<QueryObserverResult>) => void>()
+    const unsubscribe = observer.subscribe(listener)
+
+    const [, getInitialCombined, trackInitial] = observer.getOptimisticResult(
+      initialQueries,
+      combine,
+    )
+    observer.setQueries(initialQueries, { combine })
+    expect(getInitialCombined(trackInitial())).toHaveLength(3)
+
+    const [, getNextCombined, trackNext] = observer.getOptimisticResult(
+      nextQueries,
+      combine,
+    )
+    expect(getNextCombined(trackNext())).toHaveLength(5)
+
+    // A render can optimistically read the next list before its effect commits
+    // it. An update from the old list in between must not poison that cache.
+    queryClient.setQueryData(key1, 'updated')
+    expect(listener).toHaveBeenCalledWith(
+      expect.arrayContaining([expect.objectContaining({ data: 'updated' })]),
+    )
+    const [, getRerenderCombined, trackRerender] = observer.getOptimisticResult(
+      nextQueries,
+      combine,
+    )
+    expect(getRerenderCombined(trackRerender())).toHaveLength(5)
+    unsubscribe()
+  })
+
   it('should skip combine notifications while suspense queries have no data', () => {
     const key = createKey()
     const combine = vi.fn<
