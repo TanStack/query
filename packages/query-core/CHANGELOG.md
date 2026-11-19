@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.108.1
+
+### Patch Changes
+
+- [#12636](https://github.com/TanStack/query/pull/12636) [`0cf8f49`](https://github.com/TanStack/query/commit/0cf8f49e8f9cf24a8c6a7f17efb7cf4d91ea8f01) - Require `getNextPageParam` in the types for `queryClient.infiniteQuery`, the deprecated infinite query methods, and `usePrefetchInfiniteQuery`. If you omit `pages`, a stale query can still refetch multiple cached pages and needs the callback to compute their page parameters. Reuse the same `infiniteQueryOptions` you pass to `useInfiniteQuery` to supply the callback.
+
 ## 5.108.0
 
 ### Minor Changes
