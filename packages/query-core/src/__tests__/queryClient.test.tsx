@@ -1715,6 +1715,36 @@ describe('queryClient', () => {
         queryFn.mock.calls.map(([context]) => context.pageParam),
       ).toStrictEqual([0, 1])
     })
+
+    it('should refetch cached pages when pageParam is nullish and getNextPageParam is not provided', async () => {
+      const key = createKey()
+
+      queryClient.setQueryData(key, {
+        pages: ['cached page 0', 'cached page 1'],
+        pageParams: [0, null],
+      })
+
+      const queryFn = vi.fn<
+        (context: { pageParam: number | null }) => Promise<string>
+      >(({ pageParam }: { pageParam: number | null }) =>
+        Promise.resolve(`page ${String(pageParam)}`),
+      )
+
+      const result = await queryClient.infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+      })
+
+      expect(result).toStrictEqual({
+        pages: ['page 0', 'page null'],
+        pageParams: [0, null],
+      })
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(
+        queryFn.mock.calls.map(([context]) => context.pageParam),
+      ).toStrictEqual([0, null])
+    })
   })
 
   /** @deprecated */

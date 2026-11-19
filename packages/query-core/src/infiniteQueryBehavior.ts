@@ -69,12 +69,13 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           data: InfiniteData<unknown>,
           param: unknown,
           previous?: boolean,
+          allowNullish = false,
         ): Promise<InfiniteData<unknown>> => {
           if (cancelled) {
             return Promise.reject(context.signal.reason)
           }
 
-          if (param == null && data.pages.length) {
+          if (param == null && data.pages.length && !allowNullish) {
             return Promise.resolve(data)
           }
 
@@ -130,10 +131,17 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
                 : typeof options.getNextPageParam === 'function'
                   ? getNextPageParam(options, result)
                   : oldPageParams[currentPage]
-            if (currentPage > 0 && param == null) {
+            const useCachedPageParam =
+              currentPage > 0 && typeof options.getNextPageParam !== 'function'
+            if (
+              currentPage > 0 &&
+              (useCachedPageParam
+                ? !(currentPage in oldPageParams)
+                : param == null)
+            ) {
               break
             }
-            result = await fetchPage(result, param)
+            result = await fetchPage(result, param, false, useCachedPageParam)
             currentPage++
           } while (currentPage < remainingPages)
         }
