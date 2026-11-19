@@ -474,6 +474,54 @@ describe('queriesObserver', () => {
     expect(newCombined.count).toBe(2)
   })
 
+  it('should update combined result when a query updates before setQueries is called with added queries', async () => {
+    const combine = vi.fn<
+      (results: Array<QueryObserverResult>) => Array<unknown>
+    >((results: Array<QueryObserverResult>) =>
+      results.map((result) => result.data),
+    )
+
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = () => sleep(10).then(() => 1)
+    const queryFn2 = () => sleep(10).then(() => 2)
+    const initialQueries = [{ queryKey: key1, queryFn: queryFn1 }]
+    const newQueries = [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+    ]
+
+    const observer = new QueriesObserver<Array<unknown>>(
+      queryClient,
+      initialQueries,
+      { combine },
+    )
+    const unsubscribe = observer.subscribe(() => undefined)
+
+    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+      initialQueries,
+      combine,
+    )
+    expect(getInitialCombined(initialRaw)).toHaveLength(1)
+    observer.setQueries(initialQueries, { combine })
+
+    const [newRaw, getNewCombined] = observer.getOptimisticResult(
+      newQueries,
+      combine,
+    )
+    expect(getNewCombined(newRaw)).toHaveLength(2)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    const [rerenderRaw, getRerenderCombined] = observer.getOptimisticResult(
+      newQueries,
+      combine,
+    )
+    expect(getRerenderCombined(rerenderRaw)).toHaveLength(2)
+
+    unsubscribe()
+  })
+
   it('should skip combine notifications while suspense queries have no data', () => {
     const key = createKey()
     const combine = vi.fn<
