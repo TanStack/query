@@ -174,6 +174,24 @@ describe('InfiniteQueryObserver', () => {
     expect(observer.getCurrentResult().hasNextPage).toBe(false)
   })
 
+  it('should report no next page when getNextPageParam is not provided', () => {
+    const key = createKey()
+
+    queryClient.setQueryData(key, {
+      pages: ['page 0', 'page 1'],
+      pageParams: [0, 1],
+    })
+
+    // @ts-expect-error getNextPageParam is optional when no pages are requested
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'page'),
+      initialPageParam: 0,
+    })
+
+    expect(observer.getCurrentResult().hasNextPage).toBe(false)
+  })
+
   it('should stop refetching if null is returned from getNextPageParam', async () => {
     const key = createKey()
     let next: number | null = 2

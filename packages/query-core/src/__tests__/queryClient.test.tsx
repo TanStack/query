@@ -1685,6 +1685,36 @@ describe('queryClient', () => {
       })
       expect(result).toStrictEqual([20])
     })
+
+    it('should refetch all cached pages using their pageParams when getNextPageParam is not provided', async () => {
+      const key = createKey()
+
+      queryClient.setQueryData(key, {
+        pages: ['cached page 0', 'cached page 1'],
+        pageParams: [0, 1],
+      })
+
+      const queryFn = vi.fn<
+        (context: { pageParam: number }) => Promise<string>
+      >(({ pageParam }: { pageParam: number }) =>
+        Promise.resolve(`page ${String(pageParam)}`),
+      )
+
+      const result = await queryClient.infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+      })
+
+      expect(result).toStrictEqual({
+        pages: ['page 0', 'page 1'],
+        pageParams: [0, 1],
+      })
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(
+        queryFn.mock.calls.map(([context]) => context.pageParam),
+      ).toStrictEqual([0, 1])
+    })
   })
 
   /** @deprecated */
@@ -1778,6 +1808,35 @@ describe('queryClient', () => {
 
       // this check ensures we're exiting the fetch loop early
       expect(count).toBe(3)
+    })
+
+    it('should refetch cached pages using their pageParams when getNextPageParam is not provided', async () => {
+      const key = createKey()
+
+      queryClient.setQueryData(key, {
+        pages: ['cached page 0', 'cached page 1'],
+        pageParams: [0, 1],
+      })
+
+      const queryFn = vi.fn<
+        (context: { pageParam: number }) => Promise<string>
+      >(({ pageParam }: { pageParam: number }) =>
+        Promise.resolve(`page ${String(pageParam)}`),
+      )
+
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      await queryClient.prefetchInfiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+      })
+
+      expect(queryClient.getQueryState(key)?.status).toBe('success')
+      expect(queryClient.getQueryData(key)).toStrictEqual({
+        pages: ['page 0', 'page 1'],
+        pageParams: [0, 1],
+      })
+      expect(queryFn).toHaveBeenCalledTimes(2)
     })
   })
 
