@@ -117,7 +117,11 @@ const server = http.createServer(async (req, res) => {
 
   try {
     const body = JSON.parse((await readBody(req)) || '{}')
-    sendJson(res, 200, searchResult(extractSearchParams(body, url.pathname)), {
+    const result = searchResult(extractSearchParams(body, url.pathname))
+    const payload = url.pathname.endsWith('/queries')
+      ? { results: [result] }
+      : result
+    sendJson(res, 200, payload, {
       'x-query-verb-mock': req.method,
     })
   } catch {
