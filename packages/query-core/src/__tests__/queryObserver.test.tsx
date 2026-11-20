@@ -625,6 +625,39 @@ describe('queryObserver', () => {
     })
   })
 
+  it('should not restore removed data when select throws for placeholderData after reset', async () => {
+    const key = createKey()
+    queryClient.setQueryData(key, { label: 'first' })
+    const placeholder: { label: string | null } = { label: null }
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => new Promise<{ label: string | null }>(() => {}),
+      enabled: false,
+      placeholderData: placeholder,
+      select: (row) => {
+        if (row.label === null) throw new Error('label not ready')
+        return row.label
+      },
+    })
+    const unsubscribe = observer.subscribe(() => {})
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'first',
+      isPlaceholderData: false,
+    })
+
+    await queryClient.resetQueries({ queryKey: key })
+
+    expect(queryClient.getQueryData(key)).toBeUndefined()
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'error',
+      data: undefined,
+      isPlaceholderData: false,
+    })
+    unsubscribe()
+  })
+
   it('should not leak the select error of the previous query into the result of a different query', async () => {
     const key1 = createKey()
     const key2 = createKey()
