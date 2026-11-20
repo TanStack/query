@@ -1,5 +1,5 @@
 import { createSignal, lazy } from 'solid-js'
-import { render } from 'solid-js/web'
+import { render, setTrustedTypesPolicy } from 'solid-js/web'
 import type {
   QueryClient,
   onlineManager as TOnlineManager,
@@ -28,6 +28,12 @@ export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {
    * root the devtools render in, or to the document when they do not render in a shadow root.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * The Trusted Types policy the devtools use to create their HTML templates.
+   * Pass one when your page enforces `require-trusted-types-for 'script'`.
+   * The devtools only pass it their own markup.
+   */
+  trustedTypesPolicy?: { createHTML: (html: string) => unknown }
 }
 
 class TanstackQueryDevtools {
@@ -37,6 +43,7 @@ class TanstackQueryDevtools {
   #version: string
   #isMounted = false
   #shadowDOMTarget?: ShadowRoot
+  #trustedTypesPolicy?: { createHTML: (html: string) => unknown }
   #buttonPosition: Signal<DevtoolsButtonPosition | undefined>
   #position: Signal<DevtoolsPosition | undefined>
   #initialIsOpen: Signal<boolean | undefined>
@@ -57,6 +64,7 @@ class TanstackQueryDevtools {
       initialIsOpen,
       errorTypes,
       shadowDOMTarget,
+      trustedTypesPolicy,
       hideDisabledQueries,
       theme,
     } = config
@@ -65,6 +73,7 @@ class TanstackQueryDevtools {
     this.#version = version
     this.#onlineManager = onlineManager
     this.#shadowDOMTarget = shadowDOMTarget
+    this.#trustedTypesPolicy = trustedTypesPolicy
     this.#buttonPosition = createSignal(buttonPosition)
     this.#position = createSignal(position)
     this.#initialIsOpen = createSignal(initialIsOpen)
@@ -100,6 +109,11 @@ class TanstackQueryDevtools {
   mount<T extends HTMLElement>(el: T) {
     if (this.#isMounted) {
       throw new Error('Devtools is already mounted')
+    }
+    // Solid creates each template once, so set the policy before rendering.
+    // It is shared by every devtools instance, so never reset it.
+    if (this.#trustedTypesPolicy) {
+      setTrustedTypesPolicy(this.#trustedTypesPolicy)
     }
     const dispose = render(() => {
       const [btnPosition] = this.#buttonPosition

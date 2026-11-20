@@ -101,6 +101,7 @@ export const withDevtools: WithDevtools = (withDevtoolsFn) =>
           initialIsOpen: resolveOption(options.initialIsOpen),
           errorTypes: resolveOption(options.errorTypes),
           shadowDOMTarget: options.shadowDOMTarget,
+          trustedTypesPolicy: options.trustedTypesPolicy,
           hideDisabledQueries: options.hideDisabledQueries,
           theme: resolveOption(options.theme),
         })

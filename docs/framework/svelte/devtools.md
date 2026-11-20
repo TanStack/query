@@ -80,6 +80,8 @@ Place the following code as high in your Svelte app as you can. The closer it is
   - Deprecated. The devtools no longer add a `<style>` element, so they need no nonce. This option does nothing.
 - `shadowDOMTarget?: ShadowRoot`
   - The shadow root to add the devtools styles to. By default, the styles are added to the shadow root the devtools render in, or to the document when they do not render in a shadow root.
+- `trustedTypesPolicy?: { createHTML: (html: string) => unknown }`
+  - The Trusted Types policy the devtools use to create their HTML templates. Pass one when your page enforces `require-trusted-types-for 'script'`. The devtools only pass it their own markup, so a policy that returns its input is enough, for example `trustedTypes.createPolicy('devtools', { createHTML: (html) => html })`.
 - `hideDisabledQueries?: boolean`
   - Defaults to `false`.
   - Set this to true to hide disabled queries from the devtools panel.

@@ -50,6 +50,12 @@ export interface DevtoolsOptions {
    */
   shadowDOMTarget?: ShadowRoot
   /**
+   * The Trusted Types policy the devtools use to create their HTML templates.
+   * Pass one when your page enforces `require-trusted-types-for 'script'`.
+   * The devtools only pass it their own markup.
+   */
+  trustedTypesPolicy?: { createHTML: (html: string) => unknown }
+  /**
    * Set this to true to hide disabled queries from the devtools panel.
    */
   hideDisabledQueries?: boolean
@@ -87,8 +93,9 @@ export interface DevtoolsOptions {
 /**
  * Returns devtools options. The function runs once in an Angular injection
  * context, so it can call `inject()`. Pass signals as option values to make
- * mutable options reactive. `styleNonce`, `shadowDOMTarget`, and
- * `hideDisabledQueries` are read only when the devtools are constructed.
+ * mutable options reactive. `styleNonce`, `shadowDOMTarget`,
+ * `trustedTypesPolicy`, and `hideDisabledQueries` are read only when the
+ * devtools are constructed.
  */
 export type WithDevtoolsFn = () => DevtoolsOptions
 
