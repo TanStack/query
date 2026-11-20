@@ -22,6 +22,86 @@ describe('useQueries', () => {
     vi.useRealTimers()
   })
 
+  it('should settle when a class placeholder is recreated on rerender', () => {
+    const key = createKey()
+    class Row {
+      constructor(readonly name: string) {}
+    }
+    let renders = 0
+
+    function Page() {
+      renders++
+      const [result] = useQueries({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () => new Promise<Row>(() => {}),
+            placeholderData: new Row('row'),
+          },
+        ],
+      })
+      return <p>{String(result.isPlaceholderData)}</p>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    rendered.rerender(<Page />)
+
+    expect(renders).toBe(2)
+    expect(rendered.getByText('true')).toBeInTheDocument()
+  })
+
+  it('should settle and update a changing plain placeholder', () => {
+    const key = createKey()
+    let renders = 0
+
+    function Page() {
+      renders++
+      const [result] = useQueries({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () => new Promise<{ label: string }>(() => {}),
+            placeholderData: { label: `row ${renders}` },
+          },
+        ],
+      })
+      return <p>{result.data?.label}</p>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    rendered.rerender(<Page />)
+
+    expect(renders).toBe(2)
+    expect(rendered.getByText('row 2')).toBeInTheDocument()
+  })
+
+  it('should settle when selecting a Set from an equal placeholder', () => {
+    const key = createKey()
+    const select = (row: { label: string }) => new Set([row.label])
+    let renders = 0
+
+    function Page() {
+      renders++
+      const [result] = useQueries({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () => new Promise<{ label: string }>(() => {}),
+            placeholderData: { label: 'row' },
+            select,
+          },
+        ],
+      })
+      return <p>{String(result.isPlaceholderData)}</p>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    rendered.rerender(<Page />)
+
+    expect(renders).toBe(2)
+    expect(rendered.getByText('true')).toBeInTheDocument()
+  })
+
   it('should return the correct states', async () => {
     const key1 = createKey()
     const key2 = createKey()

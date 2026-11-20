@@ -50,6 +50,55 @@ describe('useQuery', () => {
     vi.useRealTimers()
   })
 
+  it('should settle when selecting a Set from an equal placeholder', () => {
+    const key = createKey()
+    const select = (row: { label: string }) => new Set([row.label])
+    let renders = 0
+
+    function Page() {
+      renders++
+      const result = useQuery({
+        queryKey: key,
+        queryFn: () => new Promise<{ label: string }>(() => {}),
+        placeholderData: { label: 'row' },
+        select,
+      })
+      return <p>{String(result.isPlaceholderData)}</p>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    rendered.rerender(<Page />)
+
+    expect(renders).toBe(2)
+    expect(rendered.getByText('true')).toBeInTheDocument()
+  })
+
+  it('should settle when select throws for a stable placeholder', () => {
+    const key = createKey()
+    const placeholder = { label: 'row' }
+    const select = () => {
+      throw new Error('select failed')
+    }
+    let renders = 0
+
+    function Page() {
+      renders++
+      const result = useQuery({
+        queryKey: key,
+        queryFn: () => new Promise<{ label: string }>(() => {}),
+        placeholderData: placeholder,
+        select,
+      })
+      return <p>{String(result.isError)}</p>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    rendered.rerender(<Page />)
+
+    expect(renders).toBe(3)
+    expect(rendered.getByText('true')).toBeInTheDocument()
+  })
+
   it.each([false, true])(
     'should stay idle after a cancelled retry delay (StrictMode: %s)',
     async (strict) => {

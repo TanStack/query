@@ -5,6 +5,8 @@ import { fetchState } from './query'
 import { Subscribable } from './subscribable'
 import { timeoutManager } from './timeoutManager'
 import {
+  isPlainArray,
+  isPlainObject,
   isValidTimeout,
   noop,
   replaceData,
@@ -74,6 +76,8 @@ export class QueryObserver<
   >
   #selectError: TError | null
   #selectFn?: (data: TQueryData) => TData
+  #selectInput?: TQueryData
+  #selectInputState?: QueryState<TQueryData, TError>
   #selectResult?: TData
   // This property keeps track of the last query with defined data.
   // It will be used to pass the previous data and query to the placeholder function between renders.
@@ -672,7 +676,9 @@ export class QueryObserver<
       if (placeholderData !== undefined) {
         status = 'success'
         data = replaceData(
-          prevResult?.data,
+          skipSelect
+            ? prevResult?.data
+            : (this.#selectInput ?? prevResult?.data),
           placeholderData as unknown,
           options,
         ) as TData
@@ -683,16 +689,28 @@ export class QueryObserver<
     // Select data if needed
     // this also runs placeholderData through the select function
     if (options.select && data !== undefined && !skipSelect) {
-      // Memoize select result
+      // Memoize select result. Optimistic results initially reuse the previous
+      // query state, so only reuse selection after reaching the same state again.
+      const canReusePlaceholderSelect =
+        isPlaceholderData &&
+        prevResultState === this.#selectInputState &&
+        data === this.#selectInput &&
+        (this.#selectError !== null ||
+          (typeof this.#selectResult === 'object' &&
+            this.#selectResult !== null &&
+            !isPlainArray(this.#selectResult) &&
+            !isPlainObject(this.#selectResult)))
       if (
         prevResult &&
-        data === prevResultState?.data &&
+        (data === prevResultState?.data || canReusePlaceholderSelect) &&
         options.select === this.#selectFn
       ) {
         data = this.#selectResult
       } else {
         try {
           this.#selectFn = options.select
+          this.#selectInput = data as unknown as TQueryData
+          this.#selectInputState = state
           data = options.select(data as any)
           data = replaceData(prevResult?.data, data, options)
           this.#selectResult = data

@@ -262,6 +262,17 @@ export class QueriesObserver<
     const result = matches.map((match) =>
       match.observer.getOptimisticResult(match.defaultedQueryOptions),
     )
+    if (
+      matches.length === this.#observers.length &&
+      result.some(
+        (currentResult, index) =>
+          !shallowEqualObjects(currentResult, this.#result[index]),
+      ) &&
+      matches.every((match, index) => match.observer === this.#observers[index])
+    ) {
+      this.#observerMatches = matches
+      this.#result = result
+    }
     const queryHashes = matches.map(
       (match) => match.defaultedQueryOptions.queryHash,
     )
