@@ -4,6 +4,8 @@ lockfile:
   includeResolutionSettings: true
 minimumReleaseAge: 1440
 minimumReleaseAgeExcludePrune: true
+minimumReleaseAgeExclude:
+  - 'solid-js@1.9.20' # Adds setTrustedTypesPolicy, which the devtools use.
 linkWorkspacePackages: true
 preferWorkspacePackages: true
 blockExoticSubdeps: true
@@ -13,6 +15,7 @@ trustPolicyExcludePrune: true
 trustPolicyExclude:
   - 'semver@5.7.2' # Socket score 100/100; popular and healthy.
   - 'semver@6.3.1' # Socket score 100/100; popular and healthy.
+  - 'solid-js@1.9.20' # Published by hand, without the provenance of the 2.x releases. Adds setTrustedTypesPolicy.
   - 'ua-parser-js@1.0.41' # Socket score 100/100; popular and healthy.
 
 catalog:

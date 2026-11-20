@@ -28,6 +28,12 @@ export interface DevtoolsPanelOptions {
    * they do not render in a shadow root.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * The Trusted Types policy the devtools use to create their HTML templates.
+   * Pass one when your page enforces `require-trusted-types-for 'script'`.
+   * The devtools only pass it their own markup.
+   */
+  trustedTypesPolicy?: { createHTML: (html: string) => unknown }
 
   /**
    * Custom styles for the devtools panel
@@ -63,7 +69,13 @@ export function ReactQueryDevtoolsPanel(
 ): React.ReactElement | null {
   const queryClient = useQueryClient(props.client)
   const ref = React.useRef<HTMLDivElement>(null)
-  const { errorTypes, shadowDOMTarget, hideDisabledQueries, theme } = props
+  const {
+    errorTypes,
+    shadowDOMTarget,
+    trustedTypesPolicy,
+    hideDisabledQueries,
+    theme,
+  } = props
   const [devtools] = React.useState(
     () =>
       new TanstackQueryDevtoolsPanel({
@@ -76,6 +88,7 @@ export function ReactQueryDevtoolsPanel(
         initialIsOpen: true,
         errorTypes,
         shadowDOMTarget,
+        trustedTypesPolicy,
         onClose: props.onClose,
         hideDisabledQueries,
         theme,

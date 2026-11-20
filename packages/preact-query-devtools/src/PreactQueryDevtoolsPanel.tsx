@@ -30,6 +30,12 @@ export interface DevtoolsPanelOptions {
    */
   shadowDOMTarget?: ShadowRoot
   /**
+   * The Trusted Types policy the devtools use to create their HTML templates.
+   * Pass one when your page enforces `require-trusted-types-for 'script'`.
+   * The devtools only pass it their own markup.
+   */
+  trustedTypesPolicy?: { createHTML: (html: string) => unknown }
+  /**
    * Custom styles for the devtools panel container.
    * @default { height: '100%', display: 'flex', flexDirection: 'column' }
    * @example { height: '100%' }
@@ -62,7 +68,13 @@ export function PreactQueryDevtoolsPanel(
 ): VNode | null {
   const queryClient = useQueryClient(props.client)
   const ref = useRef<HTMLDivElement>(null)
-  const { errorTypes, shadowDOMTarget, hideDisabledQueries, theme } = props
+  const {
+    errorTypes,
+    shadowDOMTarget,
+    trustedTypesPolicy,
+    hideDisabledQueries,
+    theme,
+  } = props
   const [devtools] = useState(
     () =>
       new TanstackQueryDevtoolsPanel({
@@ -75,6 +87,7 @@ export function PreactQueryDevtoolsPanel(
         initialIsOpen: true,
         errorTypes,
         shadowDOMTarget,
+        trustedTypesPolicy,
         onClose: props.onClose,
         hideDisabledQueries,
         theme,

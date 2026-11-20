@@ -163,4 +163,52 @@ describe('TanstackQueryDevtoolsPanel', () => {
       }
     })
   })
+
+  describe('trustedTypesPolicy', () => {
+    it('should create the devtools markup with the policy', async () => {
+      vi.stubGlobal(
+        'matchMedia',
+        vi.fn().mockImplementation((query: string) => ({
+          matches: false,
+          media: query,
+          addEventListener: vi.fn<MediaQueryList['addEventListener']>(),
+          removeEventListener: vi.fn<MediaQueryList['removeEventListener']>(),
+        })),
+      )
+      vi.stubGlobal(
+        'ResizeObserver',
+        class {
+          observe() {}
+          unobserve() {}
+          disconnect() {}
+        },
+      )
+      // Solid creates each template once, so use a fresh copy of the devtools.
+      vi.resetModules()
+      const { TanstackQueryDevtoolsPanel: FreshTanstackQueryDevtoolsPanel } =
+        await import('..')
+      const createHTML = vi.fn<(html: string) => string>((html) => html)
+      const policyDevtools = new FreshTanstackQueryDevtoolsPanel({
+        client: new QueryClient(),
+        queryFlavor: 'TanStack Query',
+        version: '5',
+        onlineManager,
+        trustedTypesPolicy: { createHTML },
+      })
+      const el = document.createElement('div')
+      document.body.appendChild(el)
+      policyDevtools.mount(el)
+
+      try {
+        await vi.waitFor(
+          () => expect(el.querySelector('.tsqd-main-panel')).not.toBeNull(),
+          5000,
+        )
+        expect(createHTML).toHaveBeenCalledWith(expect.stringContaining('<'))
+      } finally {
+        policyDevtools.unmount()
+        el.remove()
+      }
+    })
+  })
 })

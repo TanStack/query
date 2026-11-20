@@ -28,6 +28,12 @@ export interface DevtoolsPanelOptions {
    * they do not render in a shadow root.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * The Trusted Types policy the devtools use to create their HTML templates.
+   * Pass one when your page enforces `require-trusted-types-for 'script'`.
+   * The devtools only pass it their own markup.
+   */
+  trustedTypesPolicy?: { createHTML: (html: string) => unknown }
 
   /**
    * Custom styles for the devtools panel
@@ -62,7 +68,12 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
   const queryClient = useQueryClient(props.client)
   const client = createMemo(() => queryClient)
   let ref!: HTMLDivElement
-  const { errorTypes, shadowDOMTarget, hideDisabledQueries } = props
+  const {
+    errorTypes,
+    shadowDOMTarget,
+    trustedTypesPolicy,
+    hideDisabledQueries,
+  } = props
   const devtools = new TanstackQueryDevtoolsPanel({
     client: client(),
     queryFlavor: 'Solid Query',
@@ -73,6 +84,7 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
     initialIsOpen: true,
     errorTypes,
     shadowDOMTarget,
+    trustedTypesPolicy,
     onClose: props.onClose,
     hideDisabledQueries,
     theme: props.theme,
