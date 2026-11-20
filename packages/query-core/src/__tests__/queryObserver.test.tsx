@@ -28,6 +28,40 @@ describe('queryObserver', () => {
     vi.useRealTimers()
   })
 
+  it.each([false, true])(
+    'should update selected placeholder data when select changes (function: %s)',
+    (functional) => {
+      const key = createKey()
+      const placeholderData = functional ? () => 2 : 2
+      const options = {
+        queryKey: key,
+        queryFn: () => 2,
+        enabled: false,
+        placeholderData,
+      }
+      const observer = new QueryObserver(queryClient, {
+        ...options,
+        select: (value) => value * 2,
+      })
+      expect(observer.getCurrentResult().data).toBe(4)
+      observer.setOptions({ ...options, select: (value) => value * 3 })
+      expect(observer.getCurrentResult()).toMatchObject({
+        data: 6,
+        isPlaceholderData: true,
+      })
+      observer.setOptions(options)
+      expect(observer.getCurrentResult()).toMatchObject({
+        data: 2,
+        isPlaceholderData: true,
+      })
+      observer.setOptions({ ...options, select: (value) => value * 4 })
+      expect(observer.getCurrentResult()).toMatchObject({
+        data: 8,
+        isPlaceholderData: true,
+      })
+    },
+  )
+
   it('should trigger a fetch when subscribed', () => {
     const key = createKey()
     const queryFn = vi
@@ -1941,6 +1975,103 @@ describe('queryObserver', () => {
     const updatedResult = observer.getOptimisticResult(defaultedOptions)
     expect(updatedResult.data).toBe('updated')
     expect(observer.getCurrentResult().data).toBe('updated')
+  })
+
+  it('should not reuse placeholder data selected by an interrupted render with a different select', () => {
+    const key = createKey()
+
+    const optionsA = queryClient.defaultQueryOptions({
+      queryKey: key,
+      queryFn: () => 'data',
+      placeholderData: 'placeholder',
+      select: (value: string) => `A:${value}`,
+    })
+
+    const observer = new QueryObserver(queryClient, optionsA)
+
+    // First render with the current (A) options
+    const initialResult = observer.getOptimisticResult(optionsA)
+    expect(initialResult.data).toBe('A:placeholder')
+    expect(initialResult.isPlaceholderData).toBe(true)
+
+    // A background render with a changed selector (options B) moves the
+    // optimistic cursor, then gets interrupted before setOptions runs
+    const optionsB = queryClient.defaultQueryOptions({
+      queryKey: key,
+      queryFn: () => 'data',
+      placeholderData: 'placeholder',
+      select: (value: string) => `B:${value}`,
+    })
+    const interruptedResult = observer.getOptimisticResult(optionsB)
+    expect(interruptedResult.data).toBe('B:placeholder')
+
+    // The next render still uses the old (A) options and must recompute from
+    // the placeholder instead of reusing the value selected by the discarded
+    // render.
+    const nextResult = observer.getOptimisticResult(optionsA)
+    expect(nextResult.data).toBe('A:placeholder')
+  })
+
+  it('should not reuse a selection cached from a different query placeholder', () => {
+    const keyA = createKey()
+    const keyB = createKey()
+    queryClient.setQueryData(keyA, 'A-data')
+
+    // a stable selector shared by both queries
+    const select = (value: string) => `sel:${value}`
+
+    const optionsA = queryClient.defaultQueryOptions({
+      queryKey: keyA,
+      queryFn: () => 'A-data',
+      select,
+    })
+    const optionsB = queryClient.defaultQueryOptions({
+      queryKey: keyB,
+      queryFn: () => 'B-data',
+      placeholderData: 'B-placeholder',
+      select,
+    })
+
+    const observer = new QueryObserver(queryClient, optionsA)
+
+    // First render: query A with populated data
+    expect(observer.getOptimisticResult(optionsA).data).toBe('sel:A-data')
+
+    // An interrupted background render for query B (pending, placeholder)
+    // overwrites the selection cache
+    expect(observer.getOptimisticResult(optionsB).data).toBe(
+      'sel:B-placeholder',
+    )
+
+    // The next render is back on query A and must re-select A's data instead
+    // of reusing the selection cached from B's placeholder
+    expect(observer.getOptimisticResult(optionsA).data).toBe('sel:A-data')
+  })
+
+  it('should not reuse a placeholder selected by the previous selector when updates are shallow-equal', () => {
+    const key = createKey()
+    const base = {
+      queryKey: key,
+      queryFn: () => 1,
+      enabled: false,
+      placeholderData: 1,
+      structuralSharing: false,
+    }
+    const optionsA = queryClient.defaultQueryOptions({
+      ...base,
+      select: () => -0,
+    })
+    const optionsB = queryClient.defaultQueryOptions({
+      ...base,
+      select: () => 0,
+    })
+
+    const observer = new QueryObserver(queryClient, optionsA)
+    observer.setOptions(optionsB)
+
+    const result = observer.getOptimisticResult(optionsB)
+    expect(Object.is(result.data, -0)).toBe(false)
+    expect(result.data).toBe(0)
   })
 
   describe('StrictMode behavior', () => {

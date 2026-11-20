@@ -75,6 +75,10 @@ export class QueryObserver<
   #selectError: TError | null
   #selectFn?: (data: TQueryData) => TData
   #selectResult?: TData
+  // The raw query data the cached selection in `#selectResult` was computed
+  // from. Speculative renders (e.g. an interrupted render for another query)
+  // can overwrite this cache, so reuse must verify the input matches.
+  #selectInput?: TQueryData
   // This property keeps track of the last query with defined data.
   // It will be used to pass the previous data and query to the placeholder function between renders.
   #lastQueryWithDefinedData?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
@@ -309,7 +313,11 @@ export class QueryObserver<
       // When keeping the previous data, the result doesn't change until new
       // data arrives.
       this.#currentResult = result
-      this.#currentResultOptions = this.options
+      // record the options the result was actually created from, not
+      // observer options: `setOptions` runs in an effect and may not have
+      // applied the render's options yet (e.g. an interrupted background
+      // render with a changed `select`).
+      this.#currentResultOptions = options
       this.#currentResultState = this.#currentQuery.state
     }
     return result
@@ -601,7 +609,6 @@ export class QueryObserver<
     const prevResult = this.#currentResult as
       | QueryObserverResult<TData, TError>
       | undefined
-    const prevResultState = this.#currentResultState
     const prevResultOptions = this.#currentResultOptions
     const queryChange = query !== prevQuery
     const queryInitialState = queryChange
@@ -650,7 +657,8 @@ export class QueryObserver<
       // Memoize placeholder data
       if (
         prevResult?.isPlaceholderData &&
-        options.placeholderData === prevResultOptions?.placeholderData
+        options.placeholderData === prevResultOptions?.placeholderData &&
+        options.select === prevResultOptions.select
       ) {
         placeholderData = prevResult.data
         // we have to skip select when reading this memoization
@@ -686,13 +694,21 @@ export class QueryObserver<
       // Memoize select result
       if (
         prevResult &&
-        data === prevResultState?.data &&
+        data === this.#selectInput &&
         options.select === this.#selectFn
       ) {
         data = this.#selectResult
       } else {
         try {
           this.#selectFn = options.select
+          // associate the cached selection with the input it was computed
+          // from: `prevResultState` can still describe the previous query
+          // when a speculative render for another query overwrote the cache.
+          // Recorded before `select` runs on purpose: a throwing selector is
+          // cached as errored (see the "should not re-run a stable select
+          // when it re-renders if selector throws an error" test in
+          // react-query), so re-renders must not re-invoke it.
+          this.#selectInput = data as TQueryData
           data = options.select(data as any)
           data = replaceData(prevResult?.data, data, options)
           this.#selectResult = data
@@ -771,7 +787,6 @@ export class QueryObserver<
     const nextResult = this.createResult(this.#currentQuery, this.options)
 
     this.#currentResultState = this.#currentQuery.state
-    this.#currentResultOptions = this.options
 
     if (this.#currentResultState.data !== undefined) {
       this.#lastQueryWithDefinedData = this.#currentQuery
@@ -779,10 +794,15 @@ export class QueryObserver<
 
     // Only notify and update result if something has changed
     if (shallowEqualObjects(nextResult, prevResult)) {
+      // keep `#currentResult` and `#currentResultOptions` paired: recording
+      // the new options while keeping the previous result would let the
+      // placeholder memoization (which compares against these options)
+      // reuse a value the previous selector produced.
       return
     }
 
     this.#currentResult = nextResult
+    this.#currentResultOptions = this.options
 
     const shouldNotifyListeners = (): boolean => {
       if (!prevResult) {
