@@ -190,6 +190,71 @@ describe('broadcastQueryClient', () => {
         value: 'from other tab',
       })
     })
+
+    it('should not overwrite an existing query in error when an "added" message with a fresh state arrives for it', async () => {
+      const existingKey = queryKey()
+      const error = new Error('down')
+
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
+
+      await queryClient
+        .query({
+          queryKey: existingKey,
+          queryFn: () => Promise.reject(error),
+          retry: false,
+        })
+        .catch(() => undefined)
+      const existingQuery = queryCache.find({ queryKey: existingKey })!
+
+      lastCreatedChannel.onmessage?.({
+        type: 'added',
+        queryHash: existingQuery.queryHash,
+        queryKey: existingKey,
+        state: {
+          status: 'pending',
+          fetchStatus: 'idle',
+          data: undefined,
+          dataUpdatedAt: 0,
+          error: null,
+          errorUpdatedAt: 0,
+        },
+      })
+      expect(queryClient.getQueryState(existingKey)?.status).toBe('error')
+      expect(queryClient.getQueryState(existingKey)?.error).toBe(error)
+    })
+
+    it('should adopt an "added" message\'s error state for an existing query that has no data yet', () => {
+      const existingKey = queryKey()
+      const error = new Error('down')
+
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
+
+      const existingQuery = queryCache.build(queryClient, {
+        queryKey: existingKey,
+      })
+
+      lastCreatedChannel.onmessage?.({
+        type: 'added',
+        queryHash: existingQuery.queryHash,
+        queryKey: existingKey,
+        state: {
+          status: 'error',
+          fetchStatus: 'idle',
+          data: undefined,
+          dataUpdatedAt: 0,
+          error,
+          errorUpdatedAt: 0,
+        },
+      })
+      expect(queryClient.getQueryState(existingKey)?.status).toBe('error')
+      expect(queryClient.getQueryState(existingKey)?.error).toBe(error)
+    })
   })
 
   describe('postMessage error handling', () => {
