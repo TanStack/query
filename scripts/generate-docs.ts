@@ -275,6 +275,7 @@ async function isWrapperAlias(outputDir: string, from: string) {
     !!code &&
     code[2]!
       .split(' | ')
+      .map((member) => member.replace(/^\((.*)\)$/, '$1'))
       .every((member) => member === code[1] || member === `() => ${code[1]}`)
   )
 }
