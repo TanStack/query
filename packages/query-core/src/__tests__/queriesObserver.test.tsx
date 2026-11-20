@@ -17,6 +17,22 @@ describe('queriesObserver', () => {
     vi.useRealTimers()
   })
 
+  it('keeps the current snapshot during an optimistic read for a different query list', () => {
+    const first = { queryKey: createKey(), enabled: false, placeholderData: 1 }
+    const second = { queryKey: createKey(), enabled: false, placeholderData: 2 }
+    const third = { queryKey: createKey(), enabled: false, placeholderData: 3 }
+    const observer = new QueriesObserver(queryClient, [first, second])
+    const current = observer.getCurrentResult()
+
+    const [optimistic] = observer.getOptimisticResult(
+      [{ ...first, placeholderData: 4 }, third],
+      undefined,
+    )
+
+    expect(optimistic.map((result) => result.data)).toStrictEqual([4, 3])
+    expect(observer.getCurrentResult()).toBe(current)
+  })
+
   it('should return an array with all query results', async () => {
     const key1 = createKey()
     const key2 = createKey()

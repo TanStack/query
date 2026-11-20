@@ -64,7 +64,6 @@ export class QueryObserver<
   #currentQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> = undefined!
   #currentQueryInitialState: QueryState<TQueryData, TError> = undefined!
   #currentResult: QueryObserverResult<TData, TError> = undefined!
-  #currentResultState?: QueryState<TQueryData, TError>
   #currentResultOptions?: QueryObserverOptions<
     TQueryFnData,
     TError,
@@ -74,6 +73,7 @@ export class QueryObserver<
   >
   #selectError: TError | null
   #selectFn?: (data: TQueryData) => TData
+  #selectInput?: unknown
   #selectResult?: TData
   // This property keeps track of the last query with defined data.
   // It will be used to pass the previous data and query to the placeholder function between renders.
@@ -309,8 +309,7 @@ export class QueryObserver<
       // When keeping the previous data, the result doesn't change until new
       // data arrives.
       this.#currentResult = result
-      this.#currentResultOptions = this.options
-      this.#currentResultState = this.#currentQuery.state
+      this.#currentResultOptions = options
     }
     return result
   }
@@ -601,7 +600,6 @@ export class QueryObserver<
     const prevResult = this.#currentResult as
       | QueryObserverResult<TData, TError>
       | undefined
-    const prevResultState = this.#currentResultState
     const prevResultOptions = this.#currentResultOptions
     const queryChange = query !== prevQuery
     const queryInitialState = queryChange
@@ -673,7 +671,7 @@ export class QueryObserver<
       if (isMemoizedPlaceholder || placeholderData !== undefined) {
         status = 'success'
         data = replaceData(
-          prevResult?.data,
+          options.select && !skipSelect ? this.#selectInput : prevResult?.data,
           placeholderData as unknown,
           options,
         ) as TData
@@ -685,16 +683,13 @@ export class QueryObserver<
     // this also runs placeholderData through the select function
     if (options.select && data !== undefined && !skipSelect) {
       // Memoize select result
-      if (
-        prevResult &&
-        data === prevResultState?.data &&
-        options.select === this.#selectFn
-      ) {
+      if (data === this.#selectInput && options.select === this.#selectFn) {
         data = this.#selectResult
       } else {
         try {
           this.#selectFn = options.select
-          data = options.select(data as any)
+          this.#selectInput = data
+          data = options.select(data as unknown as TQueryData)
           data = replaceData(prevResult?.data, data, options)
           this.#selectResult = data
           this.#selectError = null
@@ -705,6 +700,7 @@ export class QueryObserver<
     } else if (data === undefined) {
       // a stored select error belongs to previously selected data; once that
       // data is gone (query switch or reset), it must not leak into this result
+      this.#selectInput = undefined
       this.#selectError = null
     }
 
@@ -771,10 +767,9 @@ export class QueryObserver<
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
 
-    this.#currentResultState = this.#currentQuery.state
     this.#currentResultOptions = this.options
 
-    if (this.#currentResultState.data !== undefined) {
+    if (this.#currentQuery.state.data !== undefined) {
       this.#lastQueryWithDefinedData = this.#currentQuery
     }
 

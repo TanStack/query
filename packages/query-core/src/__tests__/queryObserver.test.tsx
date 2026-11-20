@@ -29,6 +29,29 @@ describe('queryObserver', () => {
     vi.useRealTimers()
   })
 
+  it('should select again when an input that threw comes back', () => {
+    const queryKey = createKey()
+    queryClient.setQueryData(queryKey, 'cached')
+    const options = {
+      queryKey,
+      enabled: false,
+      select: () => {
+        throw new Error('selection failed')
+      },
+    }
+    const observer = new QueryObserver(queryClient, options)
+    expect(observer.getCurrentResult().error?.message).toBe('selection failed')
+
+    observer.setOptions({ ...options, queryKey: createKey() })
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      error: null,
+    })
+
+    observer.setOptions(options)
+    expect(observer.getCurrentResult().error?.message).toBe('selection failed')
+  })
+
   it('should trigger a fetch when subscribed', () => {
     const key = createKey()
     const queryFn = vi
