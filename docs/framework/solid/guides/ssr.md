@@ -9,7 +9,7 @@ If you haven't already, it's worth reading the [Prefetching & Router Integration
 
 ## Solid Query's hydration model
 
-Solid Query's `useQuery` is built on top of Solid's own [`createResource`](https://docs.solidjs.com/reference/basic-reactivity/create-resource), rather than a `dehydrate`/`hydrate` pair you call yourself. That has a consequence for this guide: **there is no `dehydrate`, `hydrate`, or `HydrationBoundary` in your application code.**
+Solid Query's `useQuery` is built on top of Solid's own [`createResource`](https://v1.solidjs.com/reference/basic-reactivity/create-resource), rather than a `dehydrate`/`hydrate` pair you call yourself. That has a consequence for this guide: **there is no `dehydrate`, `hydrate`, or `HydrationBoundary` in your application code.**
 
 Instead, when `useQuery` runs on the server:
 
