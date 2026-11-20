@@ -338,8 +338,10 @@ export class QueriesObserver<
     return (
       !this.#options?.combine ||
       this.#observers.some((observer, index) => {
+        const result = this.#result[index]
         return (
-          observer.options.suspense && this.#result[index]?.data === undefined
+          (observer.options.suspense && result?.data === undefined) ||
+          (!!observer.options.throwOnError && !!result?.isError)
         )
       })
     )

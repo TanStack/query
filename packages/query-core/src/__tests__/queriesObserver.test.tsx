@@ -554,6 +554,69 @@ describe('queriesObserver', () => {
     unsubscribe()
   })
 
+  it('should notify listeners when a query with throwOnError fails without changing the combined result', async () => {
+    const key = createKey()
+    const combine = (results: Array<QueryObserverResult>) =>
+      results.map((result) => result.data)
+    const query = {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
+      retry: false,
+      throwOnError: true,
+    }
+
+    const observer = new QueriesObserver<Array<unknown>>(queryClient, [query])
+    observer.setQueries([query], { combine })
+
+    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
+      [query],
+      combine,
+    )
+    expect(getCombinedResult(rawResult)).toStrictEqual([undefined])
+
+    const results: Array<Array<QueryObserverResult>> = []
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(results).toHaveLength(1)
+    expect(results[0]?.[0]).toMatchObject({
+      status: 'error',
+      error: new Error('error'),
+    })
+
+    unsubscribe()
+  })
+
+  it('should not notify listeners when a query without throwOnError fails without changing the combined result', async () => {
+    const key = createKey()
+    const combine = (results: Array<QueryObserverResult>) =>
+      results.map((result) => result.data)
+    const query = {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
+      retry: false,
+    }
+
+    const observer = new QueriesObserver<Array<unknown>>(queryClient, [query])
+    observer.setQueries([query], { combine })
+
+    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
+      [query],
+      combine,
+    )
+    expect(getCombinedResult(rawResult)).toStrictEqual([undefined])
+
+    const listener = vi.fn<(result: Array<QueryObserverResult>) => void>()
+    const unsubscribe = observer.subscribe(listener)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(listener).not.toHaveBeenCalled()
+
+    unsubscribe()
+  })
+
   it('should handle queries being removed with stable combine reference', () => {
     const combine = vi.fn<
       (results: Array<QueryObserverResult>) => {
