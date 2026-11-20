@@ -686,6 +686,33 @@ describe('queryObserver', () => {
     })
   })
 
+  it('should preserve the selection when another query real data fails to select', async () => {
+    const key = createKey()
+    const otherKey = createKey()
+    queryClient.setQueryData(key, { label: 'first' })
+    queryClient.setQueryData(otherKey, { label: 'bad' })
+    const options = {
+      queryKey: key,
+      queryFn: () => new Promise<{ label: string }>(() => {}),
+      enabled: false,
+      placeholderData: { label: 'placeholder' },
+      select: (row: { label: string }) => {
+        if (row.label === 'bad') throw new Error('cannot select')
+        return row.label
+      },
+    }
+    const observer = new QueryObserver(queryClient, options)
+    const unsubscribe = observer.subscribe(() => {})
+    await queryClient.resetQueries({ queryKey: key })
+
+    const result = observer.getOptimisticResult(
+      queryClient.defaultQueryOptions({ ...options, queryKey: otherKey }),
+    )
+
+    expect(result).toMatchObject({ status: 'error', data: 'placeholder' })
+    unsubscribe()
+  })
+
   it('should not leak the select error of the previous query into the result of a different query', async () => {
     const key1 = createKey()
     const key2 = createKey()

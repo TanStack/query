@@ -699,7 +699,10 @@ export class QueryObserver<
           this.#selectError = null
         } catch (selectError) {
           this.#selectError = selectError as TError
-          if (this.#currentQuery.state.data === undefined) {
+          if (
+            state.data === undefined &&
+            this.#currentQuery.state.data === undefined
+          ) {
             this.#selectResult = undefined
           }
         }
