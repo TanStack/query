@@ -658,6 +658,34 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
+  it('should keep the current query selection after an optimistic placeholder select error', () => {
+    const key1 = createKey()
+    const key2 = createKey()
+    queryClient.setQueryData(key1, { label: 'first' })
+    const placeholder: { label: string | null } = { label: null }
+    const options = {
+      queryKey: key1,
+      queryFn: () => new Promise<{ label: string | null }>(() => {}),
+      enabled: false,
+      placeholderData: placeholder,
+      select: (row: { label: string | null }) => {
+        if (row.label === null) throw new Error('label not ready')
+        return row.label
+      },
+    }
+    const observer = new QueryObserver(queryClient, options)
+
+    observer.getOptimisticResult(
+      queryClient.defaultQueryOptions({ ...options, queryKey: key2 }),
+    )
+    observer.updateResult()
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'error',
+      data: 'first',
+    })
+  })
+
   it('should not leak the select error of the previous query into the result of a different query', async () => {
     const key1 = createKey()
     const key2 = createKey()
