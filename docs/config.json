@@ -344,6 +344,10 @@
               "to": "framework/react/guides/prefetching"
             },
             {
+              "label": "Query Handles (experimental)",
+              "to": "framework/react/guides/query-handles"
+            },
+            {
               "label": "Server Rendering & Hydration",
               "to": "framework/react/guides/ssr"
             },
