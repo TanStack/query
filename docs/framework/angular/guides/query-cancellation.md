@@ -3,7 +3,7 @@ id: query-cancellation
 title: Query Cancellation
 ---
 
-TanStack Query provides each query function with an [`AbortSignal` instance](https://developer.mozilla.org/docs/Web/API/AbortSignal). When a query becomes out-of-date or inactive, this `signal` will become aborted. This means that all queries are cancellable, and you can respond to the cancellation inside your query function if desired. The best part about this is that it allows you to continue to use normal async/await syntax while getting all the benefits of automatic cancellation.
+TanStack Query provides each query function with an [`AbortSignal` instance](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal). When a query becomes out-of-date or inactive, this `signal` will become aborted. This means that all queries are cancellable, and you can respond to the cancellation inside your query function if desired. The best part about this is that it allows you to continue to use normal async/await syntax while getting all the benefits of automatic cancellation.
 
 ## Default behavior
 
@@ -14,10 +14,11 @@ However, if you consume the `AbortSignal`, the Promise will be cancelled (e.g. a
 ## Using `HttpClient`
 
 ```ts
-import { injectQuery } from '@tanstack/angular-query-experimental'
+import { injectQuery } from '@tanstack/angular-query'
 import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
 
 postQuery = injectQuery(() => ({
+  enabled: this.postId() > 0,
   queryKey: ['post', this.postId()],
   queryFn: (context): Promise<Post> => {
     const abort$ = fromEvent(context.signal, 'abort')
@@ -96,7 +97,7 @@ export class TodosComponent {
   readonly queryClient = inject(QueryClient)
 
   onCancel() {
-    this.queryClient.cancelQueries({ queryKey: ['todos'] })
+    this.queryClient.cancelQueries(['todos'])
   }
 }
 ```

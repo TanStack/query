@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { render } from '@testing-library/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { render } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ReactQueryDevtools as ReactQueryDevtoolsComponent } from '../ReactQueryDevtools'
 
 const mountMock = vi.fn<TanstackQueryDevtools['mount']>()
@@ -116,14 +116,6 @@ describe('ReactQueryDevtools', () => {
     render(<ReactQueryDevtools client={queryClient} />)
 
     expect(setClientMock).toHaveBeenCalledWith(queryClient)
-  })
-
-  it('should forward "styleNonce" to the devtools constructor', () => {
-    render(<ReactQueryDevtools client={queryClient} styleNonce="abc" />)
-
-    expect(TanstackQueryDevtools).toHaveBeenCalledWith(
-      expect.objectContaining({ styleNonce: 'abc' }),
-    )
   })
 
   it('should forward "shadowDOMTarget" to the devtools constructor', () => {

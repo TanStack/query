@@ -1,3 +1,10 @@
+import {
+  QueryObserver,
+  experimental_streamedQuery,
+  noop,
+  skipToken,
+} from '@tanstack/query-core'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   computed,
@@ -9,16 +16,9 @@ import {
   reactive,
   ref,
 } from 'vue-demi'
-import {
-  QueryObserver,
-  experimental_streamedQuery,
-  noop,
-  skipToken,
-} from '@tanstack/query-core'
-import { createKey, sleep } from '@tanstack/query-test-utils'
 import { keepPreviousData } from '..'
-import { useQuery } from '../useQuery'
 import { useBaseQuery } from '../useBaseQuery'
+import { useQuery } from '../useQuery'
 import { useQueryClient } from '../useQueryClient'
 import type { Query, QueryObserverResult } from '@tanstack/query-core'
 
@@ -689,6 +689,28 @@ describe('useQuery', () => {
       status: { value: 'error' },
       data: { value: 'initial' },
       isError: { value: true },
+    })
+  })
+
+  it('should use placeholder data while the query loads', async () => {
+    const key = createKey()
+
+    const query = useQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      placeholderData: 'placeholder',
+    })
+
+    expect(query).toMatchObject({
+      data: { value: 'placeholder' },
+      isSuccess: { value: true },
+      isPlaceholderData: { value: true },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(query).toMatchObject({
+      data: { value: 'data' },
+      isSuccess: { value: true },
+      isPlaceholderData: { value: false },
     })
   })
 

@@ -1,5 +1,5 @@
-import { timeoutManager } from './timeoutManager'
 import { isServer as isServerEnvironment } from './environmentManager'
+import { timeoutManager } from './timeoutManager'
 import { isValidTimeout } from './utils'
 import type { ManagedTimerId } from './timeoutManager'
 

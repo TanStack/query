@@ -1,17 +1,8 @@
-import { nextTick, ref } from 'vue-demi'
 import { QueryClient as QC } from '@tanstack/query-core'
-import { cloneDeepUnref } from './utils'
-import { QueryCache } from './queryCache'
+import { nextTick, ref } from 'vue-demi'
 import { MutationCache } from './mutationCache'
-import type { UseQueryOptions } from './queryOptions'
-import type { Ref } from 'vue-demi'
-import type {
-  MaybeRef,
-  MaybeRefDeep,
-  MaybeRefOrGetter,
-  NoUnknown,
-  QueryClientConfig,
-} from './types'
+import { QueryCache } from './queryCache'
+import { cloneDeepUnref } from './utils'
 import type {
   CancelOptions,
   DefaultError,
@@ -40,6 +31,15 @@ import type {
   SetDataOptions,
   Updater,
 } from '@tanstack/query-core'
+import type { Ref } from 'vue-demi'
+import type { UseQueryOptions } from './queryOptions'
+import type {
+  MaybeRef,
+  MaybeRefDeep,
+  MaybeRefOrGetter,
+  NoUnknown,
+  QueryClientConfig,
+} from './types'
 
 type VueQueryExecutionOptions<TOptions extends { queryKey: unknown }> =
   MaybeRef<{
@@ -569,8 +569,7 @@ export class QueryClient extends QC {
 
   /**
    * Fetches and caches an infinite query, or returns its cached data if it isn't stale.
-   * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
-   * `initialPageParam`.
+   * @param options - The infinite query options, including `initialPageParam` and `getNextPageParam`.
    * @returns A promise that resolves to the cached or fetched {@link InfiniteData}, or rejects with
    * the fetch error.
    * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
@@ -635,8 +634,7 @@ export class QueryClient extends QC {
   /**
    * Fetches and caches an infinite query like {@link QueryClient#fetchInfiniteQuery}, but ignores
    * the result and any error.
-   * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
-   * `initialPageParam`.
+   * @param options - The infinite query options, including `initialPageParam` and `getNextPageParam`.
    * @returns A promise that resolves once the fetch settles. It never rejects.
    * @deprecated use void queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */

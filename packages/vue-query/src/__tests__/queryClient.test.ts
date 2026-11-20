@@ -1,10 +1,10 @@
+import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref, unref } from 'vue-demi'
-import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
-import { QueryClient } from '../queryClient'
-import { QueryCache } from '../queryCache'
-import { MutationCache } from '../mutationCache'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
+import { MutationCache } from '../mutationCache'
+import { QueryCache } from '../queryCache'
+import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 
 // Get the prototype methods dynamically
@@ -437,6 +437,7 @@ describe('QueryCache', () => {
       // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.fetchInfiniteQuery({
         queryKey: queryKeyRef,
+        getNextPageParam: () => undefined,
         initialPageParam: 0,
       })
 
@@ -528,11 +529,13 @@ describe('QueryCache', () => {
   describe('prefetchInfiniteQuery', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
+      const getNextPageParam = () => undefined
 
       // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchInfiniteQuery({
         queryKey: queryKeyRef,
         queryFn: fn,
+        getNextPageParam,
         initialPageParam: 0,
       })
 
@@ -542,6 +545,7 @@ describe('QueryCache', () => {
         initialPageParam: 0,
         queryKey: queryKeyUnref,
         queryFn: fn,
+        getNextPageParam,
       })
     })
   })

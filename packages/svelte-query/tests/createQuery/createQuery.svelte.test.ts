@@ -1,7 +1,7 @@
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/svelte'
 import { flushSync } from 'svelte'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   createQuery,
@@ -900,6 +900,29 @@ describe('createQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('false')
+  })
+
+  it('should use placeholder data while the query loads', async () => {
+    const key = createKey()
+
+    const rendered = render(Base, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'data'),
+          placeholderData: 'placeholder',
+        }),
+      },
+    })
+
+    expect(rendered.getByTestId('data')).toHaveTextContent('placeholder')
+    expect(rendered.getByTestId('isSuccess')).toHaveTextContent('true')
+    expect(rendered.getByTestId('isPlaceholderData')).toHaveTextContent('true')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByTestId('data')).toHaveTextContent('data')
+    expect(rendered.getByTestId('isSuccess')).toHaveTextContent('true')
+    expect(rendered.getByTestId('isPlaceholderData')).toHaveTextContent('false')
   })
 
   it('should keep the previous data when placeholderData is set', async () => {

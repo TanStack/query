@@ -1,8 +1,8 @@
-import { For, Match, Show, Switch } from 'solid-js'
 import { A, useParams } from '@solidjs/router'
 import { useQuery } from '@tanstack/solid-query'
-import { filmsQueries } from './services/films/queries'
+import { For, Match, Show, Switch } from 'solid-js'
 import { charactersQueries } from './services/characters/queries'
+import { filmsQueries } from './services/films/queries'
 
 export default function Film() {
   const params = useParams<{ filmId: string }>()

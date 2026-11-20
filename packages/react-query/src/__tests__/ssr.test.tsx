@@ -1,3 +1,4 @@
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
 import {
@@ -10,7 +11,6 @@ import {
   it,
   vi,
 } from 'vitest'
-import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -179,6 +179,7 @@ describe('Server Side Rendering', () => {
       .infiniteQuery({
         queryKey: key,
         queryFn,
+        getNextPageParam: () => undefined,
         initialPageParam: 0,
       })
       .catch(noop)

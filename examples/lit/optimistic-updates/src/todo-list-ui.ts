@@ -1,8 +1,8 @@
-import { LitElement, html } from 'lit'
 import {
   createMutationController,
   createQueryController,
 } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import { todosMutations, todosQueries } from './services/todos/queries'
 
 class TodoListUI extends LitElement {

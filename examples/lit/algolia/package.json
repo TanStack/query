@@ -12,12 +12,14 @@
   "dependencies": {
     "@algolia/client-search": "5.59.0",
     "@tanstack/lit-pacer": "^0.2.0",
-    "@tanstack/lit-query": "^0.2.38",
+    "@tanstack/lit-query": "^0.2.42",
     "lit": "^3.3.3"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.107.1",
+    "@tanstack/eslint-config": "^0.5.0",
+    "@tanstack/eslint-plugin-query": "^5.108.2",
+    "eslint": "^9.39.5",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5"
+    "vite": "^8.3.8"
   }
 }

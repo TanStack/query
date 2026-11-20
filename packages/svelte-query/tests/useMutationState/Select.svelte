@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { QueryClient } from '@tanstack/query-core'
   import {
     createMutation,
     setQueryClientContext,
     useMutationState,
   } from '../../src/index.js'
+  import type { QueryClient } from '@tanstack/query-core'
   import type {
     Accessor,
     CreateMutationOptions,

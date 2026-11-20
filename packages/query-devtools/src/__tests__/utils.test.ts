@@ -1,7 +1,7 @@
 import { runInNewContext } from 'node:vm'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, QueryObserver } from '@tanstack/query-core'
 import { createRoot } from 'solid-js'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   convertRemToPixels,
   deleteNestedDataByPath,
@@ -13,7 +13,6 @@ import {
   getQueryStatusLabel,
   getSidedProp,
   mutationSortFns,
-  setupStyleSheet,
   sortFns,
   updateNestedDataByPath,
 } from '../utils'
@@ -1030,97 +1029,6 @@ describe('Utils tests', () => {
     it('should support non-integer font sizes', () => {
       document.documentElement.style.fontSize = '15.5px'
       expect(convertRemToPixels(1)).toBe(15.5)
-    })
-  })
-
-  describe('setupStyleSheet', () => {
-    afterEach(() => {
-      document.head.querySelector('#_goober')?.remove()
-      delete (window as any).__nonce__
-    })
-
-    it('should not insert any style tag when "nonce" is missing', () => {
-      setupStyleSheet()
-
-      expect(document.head.querySelector('#_goober')).toBeNull()
-    })
-
-    it('should not insert any style tag when "nonce" is an empty string', () => {
-      setupStyleSheet('')
-
-      expect(document.head.querySelector('#_goober')).toBeNull()
-    })
-
-    it('should append a style tag with id "_goober" to "document.head"', () => {
-      setupStyleSheet('test-nonce')
-
-      const styleTag = document.head.querySelector('#_goober')
-      expect(styleTag).not.toBeNull()
-      expect(styleTag?.tagName).toBe('STYLE')
-    })
-
-    it('should set the "nonce" attribute on the inserted style tag', () => {
-      setupStyleSheet('test-nonce')
-
-      expect(
-        document.head.querySelector('#_goober')?.getAttribute('nonce'),
-      ).toBe('test-nonce')
-    })
-
-    it('should not insert a duplicate style tag when "document.head" already has one', () => {
-      setupStyleSheet('first-nonce')
-      setupStyleSheet('second-nonce')
-
-      const styleTags = document.head.querySelectorAll('#_goober')
-      expect(styleTags).toHaveLength(1)
-      expect(styleTags[0]?.getAttribute('nonce')).toBe('first-nonce')
-    })
-
-    it('should append the style tag to the provided "ShadowRoot" target', () => {
-      const host = document.createElement('div')
-      const shadow = host.attachShadow({ mode: 'open' })
-
-      setupStyleSheet('test-nonce', shadow)
-
-      expect(shadow.querySelector('#_goober')).not.toBeNull()
-      expect(document.head.querySelector('#_goober')).toBeNull()
-    })
-
-    it('should not insert a duplicate style tag when the target already has one', () => {
-      const host = document.createElement('div')
-      const shadow = host.attachShadow({ mode: 'open' })
-
-      setupStyleSheet('first-nonce', shadow)
-      setupStyleSheet('second-nonce', shadow)
-
-      const styleTags = shadow.querySelectorAll('#_goober')
-      expect(styleTags).toHaveLength(1)
-      expect(styleTags[0]?.getAttribute('nonce')).toBe('first-nonce')
-    })
-
-    it('should install the style tag into the "ShadowRoot" target even when "document.head" already has one', () => {
-      const host = document.createElement('div')
-      const shadow = host.attachShadow({ mode: 'open' })
-
-      setupStyleSheet('host-nonce')
-      setupStyleSheet('shadow-nonce', shadow)
-
-      expect(shadow.querySelector('#_goober')).not.toBeNull()
-      expect(shadow.querySelector('#_goober')?.getAttribute('nonce')).toBe(
-        'shadow-nonce',
-      )
-    })
-
-    it('should set window.__nonce__ so goober preserves the nonce on its style element', () => {
-      setupStyleSheet('test-nonce')
-
-      expect((window as any).__nonce__).toBe('test-nonce')
-    })
-
-    it('should not set window.__nonce__ when nonce is missing', () => {
-      setupStyleSheet()
-
-      expect((window as any).__nonce__).toBeUndefined()
     })
   })
 

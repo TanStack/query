@@ -1,6 +1,6 @@
 import { useState } from 'preact/hooks'
-import TodoListUI from './TodoListUI'
 import TodoListCache from './TodoListCache'
+import TodoListUI from './TodoListUI'
 import type { CSSProperties } from 'preact'
 
 type Tab = 'ui-variables' | 'cache'

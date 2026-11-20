@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { act, render } from '@testing-library/preact'
 import { QueryClient, QueryClientProvider } from '@tanstack/preact-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
+import { act, render } from '@testing-library/preact'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { PreactQueryDevtoolsPanel as PreactQueryDevtoolsPanelComponent } from '../PreactQueryDevtoolsPanel'
 
 const mountMock = vi.fn<TanstackQueryDevtoolsPanel['mount']>()
@@ -104,14 +104,6 @@ describe('PreactQueryDevtoolsPanel', () => {
     render(<PreactQueryDevtoolsPanel client={queryClient} />)
 
     expect(setClientMock).toHaveBeenCalledWith(queryClient)
-  })
-
-  it('should forward "styleNonce" to the devtools constructor', () => {
-    render(<PreactQueryDevtoolsPanel client={queryClient} styleNonce="abc" />)
-
-    expect(TanstackQueryDevtoolsPanel).toHaveBeenCalledWith(
-      expect.objectContaining({ styleNonce: 'abc' }),
-    )
   })
 
   it('should forward "shadowDOMTarget" to the devtools constructor', () => {

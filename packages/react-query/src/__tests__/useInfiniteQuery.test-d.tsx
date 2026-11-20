@@ -1,6 +1,6 @@
-import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
+import { describe, expectTypeOf, it } from 'vitest'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 import type { UseInfiniteQueryOptions } from '../types'
@@ -36,6 +36,7 @@ describe('pageParam', () => {
       queryFn: ({ pageParam }) => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
       },
+      getNextPageParam: () => undefined,
       initialPageParam: 1,
     })
   })
@@ -48,6 +49,7 @@ describe('pageParam', () => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
         return Promise.resolve(pageParam)
       },
+      getNextPageParam: () => undefined,
       initialPageParam: 1,
     })
   })
@@ -60,6 +62,7 @@ describe('pageParam', () => {
       queryFn: ({ pageParam }) => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
       },
+      getNextPageParam: () => undefined,
       initialPageParam: 1,
     })
   })

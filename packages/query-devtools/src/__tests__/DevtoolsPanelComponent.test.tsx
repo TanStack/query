@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, onlineManager } from '@tanstack/query-core'
 import { render } from '@solidjs/testing-library'
+import { QueryClient, onlineManager } from '@tanstack/query-core'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import DevtoolsPanelComponent from '../DevtoolsPanelComponent'
 
 // `solid-transition-group` internally imports from
@@ -10,18 +10,6 @@ import DevtoolsPanelComponent from '../DevtoolsPanelComponent'
 vi.mock(import('solid-transition-group'), () => ({
   TransitionGroup: (props) => props.children,
 }))
-
-// `goober` compiles every `css\`...\`` template literal at mount time
-// (template parsing + class hashing + style serialization), which
-// dominates mount cost and produces no value for label/role-based
-// assertions, so we replace it with a no-op factory.
-vi.mock(import('goober'), () => {
-  let counter = 0
-  const css = Object.assign(() => `tsqd-${++counter}`, {
-    bind: () => css,
-  })
-  return { css, glob: () => {}, setup: () => {} }
-})
 
 describe('DevtoolsPanelComponent', () => {
   const storage: { [key: string]: string } = {}

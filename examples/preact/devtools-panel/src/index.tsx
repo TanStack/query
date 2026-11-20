@@ -1,11 +1,11 @@
-import { render } from 'preact'
-import { useState } from 'preact/hooks'
 import {
   QueryClient,
   QueryClientProvider,
   useQuery,
 } from '@tanstack/preact-query'
 import { PreactQueryDevtoolsPanel } from '@tanstack/preact-query-devtools'
+import { render } from 'preact'
+import { useState } from 'preact/hooks'
 import { reposQueries } from './services/repos/queries'
 
 const queryClient = new QueryClient()

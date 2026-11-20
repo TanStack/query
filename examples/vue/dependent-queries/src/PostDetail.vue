@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
+import { computed } from 'vue'
 import { authorsQueries } from './services/authors/queries'
 import { postsQueries } from './services/posts/queries'
 
@@ -26,9 +26,7 @@ const { data: author } = useQuery(() => authorsQueries.detail(authorId.value))
   <div v-if="isPending" class="update">Loading...</div>
   <div v-else-if="isError">An error has occurred: {{ error }}</div>
   <div v-else-if="post">
-    <h1>
-      {{ post.title }} <span v-if="author">by {{ author.name }}</span>
-    </h1>
+    <h1>{{ post.title }} <span v-if="author">by {{ author.name }}</span></h1>
     <div>
       <p>{{ post.body }}</p>
     </div>

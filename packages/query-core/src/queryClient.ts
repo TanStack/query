@@ -1,3 +1,8 @@
+import { focusManager } from './focusManager'
+import { MutationCache } from './mutationCache'
+import { notifyManager } from './notifyManager'
+import { onlineManager } from './onlineManager'
+import { QueryCache } from './queryCache'
 import {
   functionalUpdate,
   hashKey,
@@ -7,11 +12,7 @@ import {
   resolveQueryValue,
   skipToken,
 } from './utils'
-import { QueryCache } from './queryCache'
-import { MutationCache } from './mutationCache'
-import { focusManager } from './focusManager'
-import { onlineManager } from './onlineManager'
-import { notifyManager } from './notifyManager'
+import type { QueryState } from './query'
 import type {
   CancelOptions,
   DefaultError,
@@ -41,7 +42,6 @@ import type {
   ResetOptions,
   SetDataOptions,
 } from './types'
-import type { QueryState } from './query'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
 
 // TYPES
@@ -703,20 +703,24 @@ export class QueryClient {
    * Asynchronous method to fetch and cache an infinite query, resolving with an
    * {@link InfiniteData} object or throwing with the error.
    *
-   * Behaves like {@link QueryClient#query}, accepting the same options (minus
-   * `initialPageParam`), plus the required `initialPageParam`, and an optional `pages` /
-   * `getNextPageParam` pair used to refetch a fixed number of pages from the start.
+   * Requires `initialPageParam` and `getNextPageParam`. Use `pages` to specify how many
+   * pages to fetch. If you omit `pages`, the client fetches up to the number of cached
+   * pages, or one page if the cache has no pages.
    *
    * This method replaces the deprecated `fetchInfiniteQuery`, and — combined with
    * `{ staleTime: 'static' }` — the deprecated `ensureInfiniteQueryData`.
-   * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
-   * `initialPageParam`.
+   * @param options - The query to fetch and the options that control which pages to fetch.
    * @returns A promise that resolves to the {@link InfiniteData}, or to the result of `select` if
    * provided. It rejects with the error from the fetch or from `select`.
    * @example
    * ```ts
    * try {
-   *   const data = await queryClient.infiniteQuery({ queryKey, queryFn, initialPageParam: 0 })
+   *   const data = await queryClient.infiniteQuery({
+   *     queryKey,
+   *     queryFn,
+   *     initialPageParam: 0,
+   *     getNextPageParam: (lastPage) => lastPage.nextCursor,
+   *   })
    *   console.log(data.pages)
    * } catch (error) {
    *   console.log(error)
@@ -748,8 +752,7 @@ export class QueryClient {
 
   /**
    * Fetches and caches an infinite query, or returns its cached data if it isn't stale.
-   * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
-   * `initialPageParam`.
+   * @param options - The infinite query options, including `initialPageParam` and `getNextPageParam`.
    * @returns A promise that resolves to the cached or fetched {@link InfiniteData}, or rejects with
    * the fetch error.
    * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
@@ -777,8 +780,7 @@ export class QueryClient {
   /**
    * Fetches and caches an infinite query like {@link QueryClient#fetchInfiniteQuery}, but ignores
    * the result and any error.
-   * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
-   * `initialPageParam`.
+   * @param options - The infinite query options, including `initialPageParam` and `getNextPageParam`.
    * @returns A promise that resolves once the fetch settles. It never rejects.
    * @deprecated Use queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */
@@ -804,8 +806,7 @@ export class QueryClient {
   /**
    * Returns the cached data of an infinite query, or fetches it if there is none. With
    * `revalidateIfStale`, stale cached data is also refetched in the background.
-   * @param options - The infinite query options. If the query has no cached data yet, it is fetched
-   * with these options.
+   * @param options - The infinite query options, including `initialPageParam` and `getNextPageParam`.
    * @returns A promise that resolves to the cached {@link InfiniteData}, or to the fetched data if
    * nothing was cached yet.
    * @deprecated Use queryClient.infiniteQuery({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.

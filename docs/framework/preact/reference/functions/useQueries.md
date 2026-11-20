@@ -9,7 +9,7 @@ title: useQueries
 function useQueries<T extends any[], TCombinedResult = T extends [] ? [] : T extends [Head] ? [GetUseQueryResult<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseQueryResult<Head>, GetUseQueryResult<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetUseQueryResult<Head>, GetUseQueryResult<Head>, GetUseQueryResult<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : ... extends ... ? ... : ... : [...{ [K in (...)]: (...) }[]] : [...{ [K in string | number | symbol]: GetUseQueryResult<Tails[K]> }[]] : { [K in string | number | symbol]: GetUseQueryResult<T[K]> }>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/preact-query/src/useQueries.ts:304](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L304)
+Defined in: [packages/preact-query/src/useQueries.ts:303](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L303)
 
 The `useQueries` hook can be used to fetch a variable number of queries.
 

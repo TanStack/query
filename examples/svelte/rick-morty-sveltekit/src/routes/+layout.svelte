@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { resolve } from '$app/paths'
-  import '../app.css'
-  import { browser } from '$app/environment'
   import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
+  import '../app.css'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
+  import { browser } from '$app/environment'
+  import { resolve } from '$app/paths'
   import type { LayoutProps } from './$types'
 
   let { children }: LayoutProps = $props()
@@ -18,7 +18,7 @@
 </script>
 
 <svelte:head>
-  <title>TanStack Query Svelte Rick And Morty Example</title>
+  <title>TanStack Svelte Query Rick And Morty Example (SvelteKit)</title>
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>

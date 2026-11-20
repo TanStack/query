@@ -220,7 +220,7 @@ One neat thing about the examples above is that the only thing that is Next.js-s
 
 In the SSR guide, we noted that you could get rid of the boilerplate of having `<HydrationBoundary>` in every route. This is not possible with Server Components.
 
-> NOTE: If you encounter a type error while using async Server Components with TypeScript versions lower than `5.1.3` and `@types/react` versions lower than `18.2.8`, it is recommended to update to the latest versions of both. Alternatively, you can use the temporary workaround of adding `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [Async Server Component TypeScript Error](https://nextjs.org/docs/app/building-your-application/configuring/typescript#async-server-component-typescript-error) in the Next.js TypeScript docs.
+> NOTE: If you encounter a type error while using async Server Components with TypeScript versions lower than `5.1.3` and `@types/react` versions lower than `18.2.8`, it is recommended to update to the latest versions of both. Alternatively, you can use the temporary workaround of adding `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [Async Server Component TypeScript Error](https://nextjs.org/docs/app/api-reference/config/typescript#with-async-server-components) in the Next.js TypeScript docs.
 
 > WARNING: We do **not** recommend using Next.js Server Actions to _fetch_ data in a `queryFn`. When called from the client, Server Actions [run serially, not in parallel](https://react.dev/reference/rsc/use-server#caveats), which conflicts with how React Query fetches and refetches queries. This can leave queries stuck in a pending state or cause the action to never run at all (see [#7934](https://github.com/TanStack/query/issues/7934)). Passing a Server Action reference to `queryFn` can also fail with `Only plain objects, and a few built-ins, can be passed to Server Actions...`, since you have to _call_ the action rather than pass it as a reference (see [#6264](https://github.com/TanStack/query/issues/6264)). For fetching data on the client, `fetch` from an API route or use an RPC layer such as tRPC instead. Server Actions remain a good fit for **mutations** (`useMutation`).
 
@@ -235,8 +235,8 @@ import {
   HydrationBoundary,
   QueryClient,
 } from '@tanstack/react-query'
-import Posts from './posts'
 import CommentsServerComponent from './comments-server'
+import Posts from './posts'
 
 export default async function PostsPage() {
   const queryClient = new QueryClient()
@@ -293,7 +293,7 @@ Note that because we are awaiting `getPosts` before rendering `CommentsServerCom
 
 If the server latency to the data is low, this might not be a huge issue, but is still worth pointing out.
 
-In Next.js, besides prefetching data in `page.tsx`, you can also do it in `layout.tsx`, and in [parallel routes](https://nextjs.org/docs/app/building-your-application/routing/parallel-routes). Because these are all part of the routing, Next.js knows how to fetch them all in parallel. So if `CommentsServerComponent` above was instead expressed as a parallel route, the waterfall would be flattened automatically.
+In Next.js, besides prefetching data in `page.tsx`, you can also do it in `layout.tsx`, and in [parallel routes](https://nextjs.org/docs/app/api-reference/file-conventions/parallel-routes). Because these are all part of the routing, Next.js knows how to fetch them all in parallel. So if `CommentsServerComponent` above was instead expressed as a parallel route, the waterfall would be flattened automatically.
 
 As more frameworks start supporting Server Components, they might have other routing conventions. Read your framework docs for details.
 
@@ -507,8 +507,8 @@ import {
   QueryClient,
 } from '@tanstack/react-query'
 import { getQueryClient } from './get-query-client'
-import { serialize } from './transformer'
 import Posts from './posts'
+import { serialize } from './transformer'
 
 export default function PostsPage() {
   const queryClient = getQueryClient()
@@ -542,7 +542,7 @@ export default function Posts() {
 
 Now, your `getPosts` function can return e.g. `Temporal` datetime objects and the data will be serialized and deserialized on the client, assuming your transformer can serialize and deserialize those data types.
 
-For more information, check out the [Next.js App with Prefetching Example](../examples/nextjs-app-prefetching).
+For more information, check out the [Next.js App with Prefetching Example](../examples/prefetching-nextjs-app-router).
 
 ### Using the Persist Adapter with Streaming
 
@@ -580,8 +580,8 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import * as React from 'react'
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
+import * as React from 'react'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -628,7 +628,7 @@ export function Providers(props: { children: React.ReactNode }) {
 }
 ```
 
-For more information, check out the [NextJs Suspense Streaming Example](../examples/nextjs-suspense-streaming).
+For more information, check out the [NextJs Suspense Streaming Example](../examples/suspense-streaming-nextjs-app-router).
 
 The big upside is that you no longer need to prefetch queries manually to have SSR work, and it even still streams in the result! This gives you phenomenal DX and lower code complexity.
 

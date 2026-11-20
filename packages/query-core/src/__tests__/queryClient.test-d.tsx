@@ -1,12 +1,11 @@
-import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { createKey } from '@tanstack/query-test-utils'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import { skipToken } from '../utils'
-import type { MutationFilters, QueryFilters, Updater } from '../utils'
 import type { Mutation } from '../mutation'
+import type { MutationCache } from '../mutationCache'
 import type { Query, QueryState } from '../query'
 import type { QueryCache } from '../queryCache'
-import type { MutationCache } from '../mutationCache'
 import type {
   DataTag,
   DefaultError,
@@ -27,6 +26,7 @@ import type {
   SetDataOptions,
   UnsetMarker,
 } from '../types'
+import type { MutationFilters, QueryFilters, Updater } from '../utils'
 
 type TypedData = { foo: string }
 type TypedError = DefaultError & { bar: string }
@@ -440,14 +440,13 @@ describe('queryClient', () => {
       ])
     })
 
-    it('should not allow passing pages without getNextPageParam', () => {
+    it('should require getNextPageParam even without pages', () => {
       assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
         // @ts-expect-error Property 'getNextPageParam' is missing
         {
           queryKey: ['key'],
           queryFn: () => Promise.resolve('string'),
           initialPageParam: 1,
-          pages: 5,
         },
       ])
     })
@@ -567,19 +566,16 @@ describe('queryClient', () => {
       >()
     })
 
-    it('should type pages as a number', () => {
+    it('should type pages as an optional number', () => {
       expectTypeOf<
-        Extract<
-          InfiniteQueryExecuteOptions<
-            { count: number },
-            Error,
-            unknown,
-            QueryKey,
-            number
-          >,
-          { pages: unknown }
+        InfiniteQueryExecuteOptions<
+          { count: number },
+          Error,
+          unknown,
+          QueryKey,
+          number
         >['pages']
-      >().toEqualTypeOf<number>()
+      >().toEqualTypeOf<number | undefined>()
     })
 
     it('should allow passing getNextPageParam without pages', () => {
@@ -593,14 +589,13 @@ describe('queryClient', () => {
       ])
     })
 
-    it('should not allow passing pages without getNextPageParam', () => {
+    it('should require getNextPageParam even without pages', () => {
       assertType<Parameters<QueryClient['infiniteQuery']>>([
         // @ts-expect-error Property 'getNextPageParam' is missing
         {
           queryKey: ['key'],
           queryFn: () => Promise.resolve('string'),
           initialPageParam: 1,
-          pages: 5,
         },
       ])
     })

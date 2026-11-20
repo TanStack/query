@@ -51,7 +51,7 @@
             "index": "src/index.html",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico"],
+            "assets": [{ "glob": "**/*", "input": "public" }],
             "styles": [],
             "scripts": []
           },
@@ -81,6 +81,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "prebundle": { "exclude": ["@angular"] }
+          },
           "configurations": {
             "production": {
               "buildTarget": "pagination:build:production"

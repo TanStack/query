@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
+import { computed } from 'vue'
 import CharacterEpisode from './CharacterEpisode.vue'
 import LocationDetail from './LocationDetail.vue'
 import { charactersQueries } from './services/characters/queries'

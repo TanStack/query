@@ -3,14 +3,13 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  onCleanup,
   useContext,
 } from 'solid-js'
 import { clearDelegatedEvents, delegateEvents } from 'solid-js/web'
 import { PIP_DEFAULT_HEIGHT } from '../constants'
 import { useQueryDevtoolsContext } from './QueryDevtoolsContext'
-import type { Accessor, JSX } from 'solid-js'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
+import type { Accessor, JSX } from 'solid-js'
 
 interface PiPProviderProps {
   children: JSX.Element
@@ -73,10 +72,10 @@ export const PiPProvider = (props: PiPProviderProps) => {
       )
     }
 
-    // Remove existing styles
-    pip.document.head.innerHTML = ''
-    // Remove existing body
-    pip.document.body.innerHTML = ''
+    // Remove existing styles and body. `replaceChildren` instead of
+    // `innerHTML = ''`, which Trusted Types block.
+    pip.document.head.replaceChildren()
+    pip.document.body.replaceChildren()
     // Clear Delegated Events
     clearDelegatedEvents(pip.document)
 
@@ -159,32 +158,6 @@ export const PiPProvider = (props: PiPProviderProps) => {
         }
         throw error
       }
-    }
-  })
-
-  createEffect(() => {
-    // Setup mutation observer for goober styles with id `_goober
-    const gooberStyles = (
-      useQueryDevtoolsContext().shadowDOMTarget || document
-    ).querySelector('#_goober')
-    const w = pipWindow()
-    if (gooberStyles && w) {
-      const observer = new MutationObserver(() => {
-        const pip_style = (
-          useQueryDevtoolsContext().shadowDOMTarget || w.document
-        ).querySelector('#_goober')
-        if (pip_style) {
-          pip_style.textContent = gooberStyles.textContent
-        }
-      })
-      observer.observe(gooberStyles, {
-        childList: true, // observe direct children
-        subtree: true, // and lower descendants too
-        characterDataOldValue: true, // pass old data to callback
-      })
-      onCleanup(() => {
-        observer.disconnect()
-      })
     }
   })
 
