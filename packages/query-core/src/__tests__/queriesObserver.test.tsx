@@ -603,6 +603,50 @@ describe('queriesObserver', () => {
     expect(newCombined.count).toBe(1)
   })
 
+  it('should not return a stale combined result when a query updates before setQueries is called with the new queries', async () => {
+    const combine = vi.fn<
+      (results: Array<QueryObserverResult>) => {
+        count: number
+        results: Array<QueryObserverResult>
+      }
+    >((results: Array<QueryObserverResult>) => ({
+      count: results.length,
+      results,
+    }))
+
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 1))
+    const queryFn2 = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 2))
+
+    const queries1 = [{ queryKey: key1, queryFn: queryFn1 }]
+    const queries2 = [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+    ]
+
+    const observer = new QueriesObserver<{
+      count: number
+      results: Array<QueryObserverResult>
+    }>(queryClient, queries1, { combine })
+    const unsubscribe = observer.subscribe(() => undefined)
+    // like the effect in `useQueries` after the first render
+    observer.setQueries(queries1, { combine })
+
+    // render with the new queries, before an effect calls `setQueries`
+    const [raw1, getCombined1] = observer.getOptimisticResult(queries2, combine)
+    expect(getCombined1(raw1).count).toBe(2)
+
+    // the already-observed query resolves before `setQueries` runs
+    await vi.advanceTimersByTimeAsync(10)
+
+    // re-render with the same new queries
+    const [raw2, getCombined2] = observer.getOptimisticResult(queries2, combine)
+    expect(getCombined2(raw2).count).toBe(2)
+
+    unsubscribe()
+  })
+
   it('should update combined result when queries are replaced with different ones (same length)', () => {
     const combine = vi.fn<
       (results: Array<QueryObserverResult>) => {
