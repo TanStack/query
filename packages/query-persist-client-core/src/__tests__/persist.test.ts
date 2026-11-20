@@ -335,6 +335,32 @@ describe('persist', () => {
       unsubscribe()
     })
 
+    it('should subscribe to the query cache after a failed restore', async () => {
+      vi.spyOn(console, 'error').mockReturnValue(undefined)
+      vi.spyOn(console, 'warn').mockReturnValue(undefined)
+
+      const restoreError = new Error('Error restoring client')
+      const persister = createSpyPersister()
+      persister.restoreClient = () => Promise.reject(restoreError)
+
+      const [unsubscribe, restorePromise] = persistQueryClient({
+        queryClient,
+        persister,
+      })
+      await expect(restorePromise).rejects.toBe(restoreError)
+
+      queryClient.setQueryData(['key'], 'data')
+      expect(persister.persistClient).toHaveBeenCalledWith(
+        expect.objectContaining({
+          clientState: expect.objectContaining({
+            queries: [expect.objectContaining({ queryKey: ['key'] })],
+          }),
+        }),
+      )
+
+      unsubscribe()
+    })
+
     it('should not subscribe when unsubscribed before the restore completes', async () => {
       const persister = createSpyPersister()
       let resolveRestore: () => void
