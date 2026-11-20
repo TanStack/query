@@ -18,12 +18,14 @@ export interface DevtoolsPanelOptions {
    */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   * @deprecated The devtools no longer add a `<style>` element, so they need no
+   * nonce. This option does nothing.
    */
   styleNonce?: string
   /**
-   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
-   * within the shadow DOM instead of within the head tag in the light DOM.
+   * The shadow root to add the devtools styles to. By default, the styles are
+   * added to the shadow root the devtools render in, or to the document when
+   * they do not render in a shadow root.
    */
   shadowDOMTarget?: ShadowRoot
 
@@ -61,13 +63,7 @@ export function ReactQueryDevtoolsPanel(
 ): React.ReactElement | null {
   const queryClient = useQueryClient(props.client)
   const ref = React.useRef<HTMLDivElement>(null)
-  const {
-    errorTypes,
-    styleNonce,
-    shadowDOMTarget,
-    hideDisabledQueries,
-    theme,
-  } = props
+  const { errorTypes, shadowDOMTarget, hideDisabledQueries, theme } = props
   const [devtools] = React.useState(
     () =>
       new TanstackQueryDevtoolsPanel({
@@ -79,7 +75,6 @@ export function ReactQueryDevtoolsPanel(
         position: 'bottom',
         initialIsOpen: true,
         errorTypes,
-        styleNonce,
         shadowDOMTarget,
         onClose: props.onClose,
         hideDisabledQueries,

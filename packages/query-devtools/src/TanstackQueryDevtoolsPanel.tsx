@@ -1,6 +1,5 @@
 import { createSignal, lazy } from 'solid-js'
 import { render } from 'solid-js/web'
-import { setupStyleSheet } from './utils'
 import type {
   QueryClient,
   onlineManager as TOnlineManager,
@@ -20,13 +19,13 @@ import type {
  */
 export interface TanstackQueryDevtoolsPanelConfig extends QueryDevtoolsProps {
   /**
-   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if
-   * you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   * @deprecated The devtools no longer add a `<style>` element, so they need no nonce. This option
+   * does nothing.
    */
   styleNonce?: string
   /**
-   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
-   * within the shadow DOM instead of within the head tag in the light DOM.
+   * The shadow root to add the devtools styles to. By default, the styles are added to the shadow
+   * root the devtools render in, or to the document when they do not render in a shadow root.
    */
   shadowDOMTarget?: ShadowRoot
   /**
@@ -41,7 +40,6 @@ class TanstackQueryDevtoolsPanel {
   #queryFlavor: string
   #version: string
   #isMounted = false
-  #styleNonce?: string
   #shadowDOMTarget?: ShadowRoot
   #buttonPosition: Signal<DevtoolsButtonPosition | undefined>
   #position: Signal<DevtoolsPosition | undefined>
@@ -63,7 +61,6 @@ class TanstackQueryDevtoolsPanel {
       position,
       initialIsOpen,
       errorTypes,
-      styleNonce,
       shadowDOMTarget,
       onClose,
       hideDisabledQueries,
@@ -73,7 +70,6 @@ class TanstackQueryDevtoolsPanel {
     this.#queryFlavor = queryFlavor
     this.#version = version
     this.#onlineManager = onlineManager
-    this.#styleNonce = styleNonce
     this.#shadowDOMTarget = shadowDOMTarget
     this.#buttonPosition = createSignal(buttonPosition)
     this.#position = createSignal(position)
@@ -134,7 +130,6 @@ class TanstackQueryDevtoolsPanel {
         this.#Component = Devtools
       }
 
-      setupStyleSheet(this.#styleNonce, this.#shadowDOMTarget)
       return (
         <Devtools
           queryFlavor={this.#queryFlavor}

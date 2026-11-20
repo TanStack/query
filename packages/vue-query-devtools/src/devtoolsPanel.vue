@@ -25,7 +25,6 @@ const devtools = new TanstackQueryDevtoolsPanel({
   position: 'bottom',
   initialIsOpen: true,
   errorTypes: props.errorTypes,
-  styleNonce: props.styleNonce,
   shadowDOMTarget: props.shadowDOMTarget,
   hideDisabledQueries: props.hideDisabledQueries,
   onClose: props.onClose,
