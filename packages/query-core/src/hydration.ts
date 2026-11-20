@@ -21,10 +21,12 @@ type TransformerFn = (data: any) => any
  * resolves within its `then` call.
  * @param promise - The promise to read.
  * @returns An object with the resolved `data`, or `undefined` if the promise hasn't resolved
- * synchronously (or resolved with `undefined`).
+ * synchronously.
  */
+const UNRESOLVED = Symbol('unresolved')
+
 function tryResolveSync(promise: PromiseLike<unknown>) {
-  let data: unknown
+  let data: unknown = UNRESOLVED
 
   const thenResult = promise.then((result) => {
     data = result
@@ -35,7 +37,7 @@ function tryResolveSync(promise: PromiseLike<unknown>) {
   // oxlint-disable-next-line typescript/no-unnecessary-condition
   thenResult?.catch?.(noop)
 
-  if (data !== undefined) {
+  if (data !== UNRESOLVED) {
     return { data }
   }
 
