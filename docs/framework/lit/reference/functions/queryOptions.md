@@ -8,9 +8,15 @@ title: queryOptions
 ## Overview
 
 ```ts
-function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object;
-function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> & object;
-function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object;
+function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>;
+};
+function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>;
+};
+function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>;
+};
 ```
 
 - [`DefinedInitialDataOptions` → `DefinedInitialDataOptions & { queryKey }`](#call-signature-1): Brands query options so the `queryKey` carries the query function data and error types across TanStack Query APIs.
@@ -24,7 +30,9 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object;
+function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>;
+};
 ```
 
 Defined in: [packages/lit-query/src/queryOptions.ts:92](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L92)
@@ -60,7 +68,9 @@ Query options to preserve and brand.
 
 ### Returns
 
-[`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object`
+[`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & \{
+  `queryKey`: [`DataTag`](../type-aliases/DataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>;
+\}
 
 The same options object with a typed `queryKey`.
 
@@ -81,7 +91,9 @@ const todosOptions = queryOptions({
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> & object;
+function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>;
+};
 ```
 
 Defined in: [packages/lit-query/src/queryOptions.ts:109](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L109)
@@ -117,7 +129,9 @@ Query options to preserve and brand.
 
 ### Returns
 
-[`UnusedSkipTokenOptions`](../type-aliases/UnusedSkipTokenOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object`
+[`UnusedSkipTokenOptions`](../type-aliases/UnusedSkipTokenOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & \{
+  `queryKey`: [`DataTag`](../type-aliases/DataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>;
+\}
 
 The same options object with a typed `queryKey`.
 
@@ -126,7 +140,9 @@ The same options object with a typed `queryKey`.
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object;
+function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>;
+};
 ```
 
 Defined in: [packages/lit-query/src/queryOptions.ts:126](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L126)
@@ -162,7 +178,9 @@ Query options to preserve and brand.
 
 ### Returns
 
-[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object`
+[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & \{
+  `queryKey`: [`DataTag`](../type-aliases/DataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>;
+\}
 
 The same options object with a typed `queryKey`.
 
@@ -186,7 +204,9 @@ Built from [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md#proper
 
 ## Returns
 
-[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object`
+[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & \{
+  `queryKey`: [`DataTag`](../type-aliases/DataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>;
+\}
 
 The same options object with a typed `queryKey`.
 
