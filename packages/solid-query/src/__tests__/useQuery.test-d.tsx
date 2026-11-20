@@ -207,6 +207,18 @@ describe('useQuery', () => {
         expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
       })
 
+      it('should define TData when queryOptions is called inline in the accessor', () => {
+        const query = useQuery(() =>
+          queryOptions({
+            queryKey: createKey(),
+            queryFn: () => ({ wow: true }),
+            initialData: { wow: true },
+          }),
+        )
+
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
+      })
+
       it('should always define TData when initialData is provided as a function which ALWAYS returns the data', () => {
         const query = useQuery(() => ({
           queryKey: createKey(),
@@ -222,6 +234,17 @@ describe('useQuery', () => {
           queryKey: createKey(),
           queryFn: () => ({ wow: true }),
         }))
+
+        expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean } | undefined>()
+      })
+
+      it('should have undefined in the TData union when queryOptions is called inline in the accessor without initialData', () => {
+        const query = useQuery(() =>
+          queryOptions({
+            queryKey: createKey(),
+            queryFn: () => ({ wow: true }),
+          }),
+        )
 
         expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
@@ -277,6 +300,44 @@ describe('useQuery', () => {
 
         expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
+    })
+  })
+
+  describe('reconcile', () => {
+    it('should be able to use reconcile with unknown types', () => {
+      useQuery(() => ({
+        queryKey: createKey(),
+        queryFn: () => ({ wow: true }),
+        reconcile: (oldData, newData) => {
+          expectTypeOf(oldData).toBeUnknown()
+          expectTypeOf(newData).toBeUnknown()
+          return newData
+        },
+      }))
+    })
+
+    it('should infer TData from select when reconcile is defined before select', () => {
+      const query = useQuery(() => ({
+        queryKey: createKey(),
+        queryFn: () => ({ wow: true }),
+        reconcile: (oldData, newData) => oldData ?? newData,
+        select: (data) => data.wow,
+      }))
+
+      expectTypeOf(query.data).toEqualTypeOf<boolean | undefined>()
+    })
+
+    it('should infer TData from select when spreading the result of queryOptions', () => {
+      const options = queryOptions({
+        queryKey: createKey(),
+        queryFn: () => ({ wow: true }),
+      })
+      const query = useQuery(() => ({
+        ...options,
+        select: (data) => data.wow,
+      }))
+
+      expectTypeOf(query.data).toEqualTypeOf<boolean | undefined>()
     })
   })
 
