@@ -85,7 +85,7 @@ function App() {
 - `shadowDOMTarget?: ShadowRoot`
   - The shadow root to add the devtools styles to. By default, the styles are added to the shadow root the devtools render in, or to the document when they do not render in a shadow root.
 - `trustedTypesPolicy?: { createHTML: (html: string) => unknown }`
-  - The Trusted Types policy the devtools use to create their HTML templates. Pass one when your page enforces `require-trusted-types-for 'script'`. The devtools only pass it their own markup, so a policy that returns its input is enough, for example `trustedTypes.createPolicy('devtools', { createHTML: (html) => html })`.
+  - The Trusted Types policy the devtools use to create their HTML templates. Pass one when your page enforces `require-trusted-types-for 'script'`. The devtools only pass it their own markup, so a policy that returns its input is enough, for example `trustedTypes.createPolicy('devtools', { createHTML: (html) => html })`. The devtools bundle their own Solid runtime, so this is separate from the policy your app sets with `setTrustedTypesPolicy` from `solid-js/web` (1.9.20+).
 - `hideDisabledQueries?: boolean`
   - Defaults to `false`.
   - Set this to true to hide disabled queries from the devtools panel.
@@ -139,7 +139,7 @@ function App() {
 - `shadowDOMTarget?: ShadowRoot`
   - The shadow root to add the devtools styles to. By default, the styles are added to the shadow root the devtools render in, or to the document when they do not render in a shadow root.
 - `trustedTypesPolicy?: { createHTML: (html: string) => unknown }`
-  - The Trusted Types policy the devtools use to create their HTML templates. Pass one when your page enforces `require-trusted-types-for 'script'`. The devtools only pass it their own markup, so a policy that returns its input is enough, for example `trustedTypes.createPolicy('devtools', { createHTML: (html) => html })`.
+  - The Trusted Types policy the devtools use to create their HTML templates. Pass one when your page enforces `require-trusted-types-for 'script'`. The devtools only pass it their own markup, so a policy that returns its input is enough, for example `trustedTypes.createPolicy('devtools', { createHTML: (html) => html })`. The devtools bundle their own Solid runtime, so this is separate from the policy your app sets with `setTrustedTypesPolicy` from `solid-js/web` (1.9.20+).
 - `hideDisabledQueries?: boolean`
   - Defaults to `false`.
   - Set this to true to hide disabled queries from the devtools panel.
