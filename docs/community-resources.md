@@ -177,7 +177,7 @@ others:
     },
     {
       title: 'oRPC',
-      url: 'https://orpc.unnoq.com/docs/integrations/tanstack-query',
+      url: 'https://orpc.dev/docs/integrations/tanstack-query',
       description: 'Easy to build APIs that are end-to-end type-safe and adhere to OpenAPI standards.',
     },
     {
