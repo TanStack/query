@@ -7263,7 +7263,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/angular-query-persist-client
       typescript:
-        specifier: 'catalog:'
+        specifier: 6.0.3
         version: 6.0.3
 
   integrations/lit/vite:
