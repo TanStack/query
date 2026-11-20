@@ -11,7 +11,14 @@ export const ExhaustiveDepsUtils = {
     filename: string
   }) {
     const { sourceCode, reference, scopeManager, node, filename } = params
-    const component = ASTUtils.getFunctionAncestor(sourceCode, node)
+    const isSvelteFile = filename.endsWith('.svelte')
+    const functionAncestor = ASTUtils.getFunctionAncestor(sourceCode, node)
+    const component =
+      isSvelteFile &&
+      functionAncestor?.parent.type === AST_NODE_TYPES.CallExpression &&
+      functionAncestor.parent.arguments.some((arg) => arg === functionAncestor)
+        ? undefined
+        : functionAncestor
     const queryFnScope = scopeManager.acquire(node)
 
     if (queryFnScope === null || reference.isValueReference === false) {
@@ -40,7 +47,7 @@ export const ExhaustiveDepsUtils = {
     } else {
       const isVueFile = filename.endsWith('.vue')
 
-      if (!isVueFile) {
+      if (!isVueFile && !isSvelteFile) {
         return false
       }
 
