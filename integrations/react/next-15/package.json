@@ -19,5 +19,16 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "typescript": "^6.0.3"
+  },
+  "nx": {
+    "targets": {
+      "test:types": {
+        "dependsOn": [
+          "^compile",
+          "^build",
+          "build"
+        ]
+      }
+    }
   }
 }
