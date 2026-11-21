@@ -413,6 +413,11 @@ export class QueriesObserver<
         : this.#combineResult(
             this.#trackResult(this.#result, this.#observerMatches),
             this.#options?.combine,
+            this.#options?.combine
+              ? this.#observerMatches.map(
+                  (match) => match.defaultedQueryOptions.queryHash,
+                )
+              : undefined,
           )
 
       if (shouldSkipCombine || previousResult !== newResult) {
