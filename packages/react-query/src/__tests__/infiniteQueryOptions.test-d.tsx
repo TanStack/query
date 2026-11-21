@@ -159,19 +159,6 @@ describe('infiniteQueryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
   })
 
-  it('should work when passed to infiniteQuery', async () => {
-    const options = infiniteQueryOptions({
-      queryKey: createKey(),
-      queryFn: () => Promise.resolve('string'),
-      getNextPageParam: () => 1,
-      initialPageParam: 1,
-    })
-
-    const data = await new QueryClient().infiniteQuery(options)
-
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
-  })
-
   it('should tag the queryKey with the result type of the QueryFn', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: createKey(),

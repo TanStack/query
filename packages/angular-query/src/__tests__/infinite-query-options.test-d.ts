@@ -66,20 +66,6 @@ describe('infiniteQueryOptions', () => {
   })
 
   it('should work when passed to infiniteQuery', async () => {
-    const key = createKey()
-    const options = infiniteQueryOptions({
-      queryKey: key,
-      queryFn: () => Promise.resolve('string'),
-      getNextPageParam: () => 1,
-      initialPageParam: 1,
-    })
-
-    const data = await new QueryClient().infiniteQuery(options)
-
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
-  })
-
-  it('should work when passed to infiniteQuery', async () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),

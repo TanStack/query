@@ -78,17 +78,6 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<unknown>()
   })
 
-  it('should work when passed to query', async () => {
-    const key = createKey()
-    const options = queryOptions({
-      queryKey: key,
-      queryFn: () => Promise.resolve(5),
-    })
-
-    const data = await new QueryClient().query(options)
-    expectTypeOf(data).toEqualTypeOf<number>()
-  })
-
   it('should work when passed to createQueries', () => {
     const key = createKey()
     const options = queryOptions({

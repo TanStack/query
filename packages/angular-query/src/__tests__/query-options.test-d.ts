@@ -82,17 +82,6 @@ describe('queryOptions', () => {
   })
 
   it('should work when passed to query', () => {
-    const key = createKey()
-    const options = queryOptions({
-      queryKey: key,
-      queryFn: () => Promise.resolve(5),
-    })
-
-    const data = new QueryClient().query(options)
-    assertType<Promise<number>>(data)
-  })
-
-  it('should work when passed to query', () => {
     const options = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),

@@ -20,18 +20,6 @@ describe('pageParam', () => {
   it('should define type of param passed to queryFunctionContext with initialPageParam for infiniteQuery', () => {
     const queryClient = new QueryClient()
     queryClient.infiniteQuery({
-      queryKey: createKey(),
-      queryFn: ({ pageParam }) => {
-        expectTypeOf(pageParam).toEqualTypeOf<number>()
-      },
-      getNextPageParam: () => undefined,
-      initialPageParam: 1,
-    })
-  })
-
-  it('should define type of param passed to queryFunctionContext with initialPageParam for infiniteQuery', () => {
-    const queryClient = new QueryClient()
-    queryClient.infiniteQuery({
       queryKey: ['key'],
       queryFn: ({ pageParam }) => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()

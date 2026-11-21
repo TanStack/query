@@ -224,6 +224,7 @@ describe("useQuery's in Suspense mode", () => {
             return 'data'
           }),
         retryDelay: 10,
+        throwOnError: true,
       }))
 
       // Suspense only triggers if used in JSX
@@ -281,6 +282,7 @@ describe("useQuery's in Suspense mode", () => {
             return 'data'
           }),
         retry: false,
+        throwOnError: true,
       }))
 
       // Suspense only triggers if used in JSX
@@ -432,7 +434,7 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText(`data: ${key2}`)).toBeInTheDocument()
   })
 
-  it('should throw errors to the error boundary by default', async () => {
+  it('should throw errors to the error boundary when throwOnError is true', async () => {
     const key = createKey()
 
     vi.spyOn(console, 'error').mockReturnValue(undefined)
@@ -443,6 +445,7 @@ describe("useQuery's in Suspense mode", () => {
         queryFn: () =>
           sleep(10).then(() => Promise.reject(new Error('Suspense Error a1x'))),
         retry: false,
+        throwOnError: true,
       }))
 
       // read state.data to trigger suspense.
@@ -666,6 +669,7 @@ describe("useQuery's in Suspense mode", () => {
             return nonce()
           }),
         retry: false,
+        throwOnError: true,
       }))
 
       return (
@@ -722,6 +726,7 @@ describe("useQuery's in Suspense mode", () => {
             return 'data'
           }),
         retry: false,
+        throwOnError: true,
       }))
 
       return (
@@ -778,6 +783,7 @@ describe("useQuery's in Suspense mode", () => {
           ),
         retry: false,
         enabled: enabled(),
+        throwOnError: true,
       }))
 
       return (
