@@ -747,6 +747,91 @@ describe('queryObserver', () => {
     })
   })
 
+  it('should clear the select error and return cached data when the select is removed', async () => {
+    const key = createKey()
+    const queryFn = () => sleep(10).then(() => 'data')
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      select: () => {
+        throw new Error('selector error')
+      },
+    })
+    const unsubscribe = observer.subscribe(() => {})
+    await vi.advanceTimersByTimeAsync(10)
+    expect(observer.getCurrentResult()).toMatchObject({ status: 'error' })
+
+    observer.setOptions({ queryKey: key, queryFn })
+
+    expect(queryClient.getQueryData(key)).toBe('data')
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'data',
+      error: null,
+      isSuccess: true,
+    })
+    unsubscribe()
+  })
+
+  it('should run a select again when it is re-added after being removed', async () => {
+    const key = createKey()
+    const queryFn = () => sleep(10).then(() => 'data')
+    let selectRuns = 0
+    const select = () => {
+      selectRuns++
+      throw new Error('selector error')
+    }
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      select,
+    })
+    const unsubscribe = observer.subscribe(() => {})
+    await vi.advanceTimersByTimeAsync(10)
+    expect(selectRuns).toBe(1)
+    expect(observer.getCurrentResult()).toMatchObject({ status: 'error' })
+
+    observer.setOptions({ queryKey: key, queryFn })
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'data',
+    })
+
+    observer.setOptions({ queryKey: key, queryFn, select })
+    expect(selectRuns).toBe(2)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'error',
+      data: undefined,
+    })
+    unsubscribe()
+  })
+
+  it('should not leak a select error to a different cached query without select', async () => {
+    const key1 = createKey()
+    const key2 = createKey()
+    queryClient.setQueryData(key2, 'other data')
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key1,
+      queryFn: () => sleep(10).then(() => 'data'),
+      select: () => {
+        throw new Error('selector error')
+      },
+    })
+    const unsubscribe = observer.subscribe(() => {})
+    await vi.advanceTimersByTimeAsync(10)
+    expect(observer.getCurrentResult()).toMatchObject({ status: 'error' })
+
+    observer.setOptions({ queryKey: key2, staleTime: Infinity })
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'other data',
+      error: null,
+    })
+    unsubscribe()
+  })
+
   it('should structurally share the selector', async () => {
     const key = createKey()
     let count = 0
