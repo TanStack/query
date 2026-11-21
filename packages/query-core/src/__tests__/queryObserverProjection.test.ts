@@ -184,7 +184,7 @@ describe('observer callback errors', () => {
     }
   })
 
-  it('should reuse a fresh placeholder within one reader and recompute it for new options', () => {
+  it('should reuse the placeholder across readers until the factory changes', () => {
     const client = new QueryClient()
     const placeholderData = vi.fn<() => { value: number }>(() => ({ value: 1 }))
     const options = client.defaultQueryOptions<{ value: number }>({
@@ -201,7 +201,14 @@ describe('observer callback errors', () => {
       expect(firstReader.getSnapshot()).toBe(first)
       expect(placeholderData).toHaveBeenCalledTimes(1)
 
-      const secondReader = observer.createResultReader({ ...options })
+      const sameFactory = observer.createResultReader({ ...options })
+      expect(sameFactory.getSnapshot()).toBe(first)
+      expect(placeholderData).toHaveBeenCalledTimes(1)
+
+      const secondReader = observer.createResultReader({
+        ...options,
+        placeholderData: () => placeholderData(),
+      })
       const second = secondReader.getSnapshot()
       expect(secondReader.getSnapshot()).toBe(second)
       expect(second.data).toStrictEqual(first.data)
