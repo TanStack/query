@@ -355,8 +355,9 @@ describe('useSuspenseQueries', () => {
 
     shouldError = true
 
-    await act(() => {
+    await act(async () => {
       fireEvent.click(rendered.getByText('reset'))
+      await vi.advanceTimersByTimeAsync(0)
     })
 
     await act(() => vi.advanceTimersByTimeAsync(10))

@@ -1,5 +1,5 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -2007,8 +2007,7 @@ describe('useMutation', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     fireEvent.click(rendered.getByRole('button', { name: /chain/i }))
-    await vi.advanceTimersByTimeAsync(10)
-    await vi.advanceTimersByTimeAsync(11)
+    await act(() => vi.advanceTimersByTimeAsync(20))
     expect(
       rendered.getByText('result: profile updated for 1'),
     ).toBeInTheDocument()
@@ -2053,7 +2052,7 @@ describe('useMutation', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     fireEvent.click(rendered.getByRole('button', { name: /chain/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await act(() => vi.advanceTimersByTimeAsync(10))
     expect(
       rendered.getByText('result: error: create failed'),
     ).toBeInTheDocument()
@@ -2404,7 +2403,7 @@ describe('useMutation', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await act(() => vi.advanceTimersByTimeAsync(10))
     expect(
       rendered.getByText(
         'result: uploaded: file1, uploaded: file2, uploaded: file3',
@@ -2503,7 +2502,7 @@ describe('useMutation', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await act(() => vi.advanceTimersByTimeAsync(10))
     expect(
       rendered.getByText(
         'result: uploaded: file1, error: upload failed, uploaded: file3',
