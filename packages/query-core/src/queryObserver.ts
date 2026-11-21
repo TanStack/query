@@ -324,27 +324,6 @@ export class QueryObserver<
   }
 
   /**
-   * Computes the result the observer would produce for the given (already-defaulted) options
-   * right now, building the underlying `Query` if it doesn't exist yet, without waiting for a
-   * subscription callback. Uses a separate result reader, so reading does not change the
-   * observer's committed result, options, or selection state.
-   * @param options - The defaulted observer options to compute the result for.
-   * @returns The result for the given options.
-   * @deprecated Use `createResultReader(options).getSnapshot()` instead.
-   */
-  getOptimisticResult(
-    options: DefaultedQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >,
-  ): QueryObserverResult<TData, TError> {
-    return this.createResultReader(options).getSnapshot()
-  }
-
-  /**
    * Creates a result reader that captures the supplied query options.
    * Reads cache the complete result locally and retain its reference while its
    * fields are unchanged. They do not update this observer's committed result,
@@ -834,7 +813,6 @@ export class QueryObserver<
       isPending,
       isSuccess: status === 'success',
       isError,
-      isInitialLoading: isLoading,
       isLoading,
       data,
       dataUpdatedAt: newState.dataUpdatedAt,

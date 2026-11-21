@@ -1,15 +1,7 @@
 import { noop } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import {
-  isReactive,
-  isReadonly,
-  isVue2,
-  isVue3,
-  onScopeDispose,
-  reactive,
-  ref,
-} from 'vue-demi'
+import { isReactive, isReadonly, onScopeDispose, reactive, ref } from 'vue'
 import { useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
 import type { MutationFunctionContext } from '@tanstack/query-core'
@@ -579,20 +571,17 @@ describe('useMutation', () => {
     expect(mutation.status.value).toBe('idle')
   })
 
-  it.runIf(isVue3)(
-    'should return deeply reactive and readonly data by default',
-    async () => {
-      const { mutate, data } = useMutation({
-        mutationFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
-      })
+  it('should return deeply reactive and readonly data by default', async () => {
+    const { mutate, data } = useMutation({
+      mutationFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
+    })
 
-      mutate()
-      await vi.advanceTimersByTimeAsync(10)
-      expect(data.value).toStrictEqual({ nested: { count: 0 } })
-      expect(isReactive(data.value?.nested)).toBe(true)
-      expect(isReadonly(data.value?.nested)).toBe(true)
-    },
-  )
+    mutate()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(data.value).toStrictEqual({ nested: { count: 0 } })
+    expect(isReactive(data.value?.nested)).toBe(true)
+    expect(isReadonly(data.value?.nested)).toBe(true)
+  })
 
   it('should return data in a shallow ref when shallow is true', async () => {
     const { mutate, data } = useMutation({
@@ -637,54 +626,32 @@ describe('useMutation', () => {
       expect(throwOnError).toHaveBeenCalledWith(err)
     })
 
-    it.runIf(isVue2)(
-      'should throw from error watcher when throwOnError returns true, which Vue 2 logs via console.error',
-      async () => {
-        const consoleErrorMock = vi
-          .spyOn(console, 'error')
-          .mockReturnValue(undefined)
-        const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
-        const { mutate } = useMutation({
-          mutationFn: () =>
-            sleep(10).then(() => Promise.reject(new Error('Some error'))),
-          throwOnError,
-        })
+    it('should throw from error watcher when throwOnError returns true, which Vue 3 surfaces as an unhandled rejection', async ({
+      onTestFinished,
+    }) => {
+      const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
+      const { mutate } = useMutation({
+        mutationFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        throwOnError,
+      })
 
-        mutate()
-        await vi.advanceTimersByTimeAsync(10)
-        expect(throwOnError).toHaveBeenCalledTimes(1)
-        expect(throwOnError).toHaveBeenCalledWith(Error('Some error'))
-        expect(consoleErrorMock).toHaveBeenCalledWith(Error('Some error'))
-      },
-    )
+      const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
+      process.on('unhandledRejection', unhandledRejectionFn)
+      onTestFinished(() => {
+        process.off('unhandledRejection', unhandledRejectionFn)
+      })
 
-    it.runIf(isVue3)(
-      'should throw from error watcher when throwOnError returns true, which Vue 3 surfaces as an unhandled rejection',
-      async ({ onTestFinished }) => {
-        const throwOnError = vi.fn<() => boolean>().mockReturnValue(true)
-        const { mutate } = useMutation({
-          mutationFn: () =>
-            sleep(10).then(() => Promise.reject(new Error('Some error'))),
-          throwOnError,
-        })
-
-        const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
-        process.on('unhandledRejection', unhandledRejectionFn)
-        onTestFinished(() => {
-          process.off('unhandledRejection', unhandledRejectionFn)
-        })
-
-        mutate()
-        await vi.advanceTimersByTimeAsync(10)
-        expect(throwOnError).toHaveBeenCalledTimes(1)
-        expect(throwOnError).toHaveBeenCalledWith(Error('Some error'))
-        expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
-        expect(unhandledRejectionFn).toHaveBeenCalledWith(
-          Error('Some error'),
-          expect.any(Promise),
-        )
-      },
-    )
+      mutate()
+      await vi.advanceTimersByTimeAsync(10)
+      expect(throwOnError).toHaveBeenCalledTimes(1)
+      expect(throwOnError).toHaveBeenCalledWith(Error('Some error'))
+      expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
+      expect(unhandledRejectionFn).toHaveBeenCalledWith(
+        Error('Some error'),
+        expect.any(Promise),
+      )
+    })
   })
 
   describe('optimistic updates', () => {

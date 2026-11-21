@@ -1,7 +1,7 @@
 import { skipToken } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { computed, isReadonly, isVue3, onScopeDispose, ref } from 'vue-demi'
+import { computed, isReadonly, onScopeDispose, ref } from 'vue'
 import { QueryClient } from '../queryClient'
 import { useQueries } from '../useQueries'
 import { useQueryClient } from '../useQueryClient'
@@ -419,7 +419,7 @@ describe('useQueries', () => {
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
-  it.runIf(isVue3)('should return readonly results by default', async () => {
+  it('should return readonly results by default', async () => {
     const key = createKey()
     const queriesState = useQueries({
       queries: [

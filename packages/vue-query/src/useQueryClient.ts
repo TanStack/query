@@ -1,4 +1,4 @@
-import { hasInjectionContext, inject } from 'vue-demi'
+import { hasInjectionContext, inject } from 'vue'
 import { getClientKey } from './utils'
 import type { QueryClient } from './queryClient'
 

@@ -119,19 +119,4 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
   })
-
-  it('should work when passed to fetchInfiniteQuery', async () => {
-    const key = createKey()
-    const options = infiniteQueryOptions({
-      queryKey: key,
-      queryFn: () => Promise.resolve('string'),
-      getNextPageParam: () => 1,
-      initialPageParam: 1,
-    })
-
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-    const data = await new QueryClient().fetchInfiniteQuery(options)
-
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
-  })
 })

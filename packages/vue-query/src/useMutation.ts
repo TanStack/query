@@ -9,7 +9,7 @@ import {
   shallowReadonly,
   toRefs,
   watch,
-} from 'vue-demi'
+} from 'vue'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref, updateState } from './utils'
 import type {
@@ -18,7 +18,7 @@ import type {
   MutateFunction,
   MutationObserverResult,
 } from '@tanstack/query-core'
-import type { ToRefs } from 'vue-demi'
+import type { ToRefs } from 'vue'
 import type { QueryClient } from './queryClient'
 import type { MaybeRefDeep, MutationOptions } from './types'
 

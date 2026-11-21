@@ -1,7 +1,7 @@
 import { dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { computed, reactive, ref } from 'vue-demi'
+import { computed, reactive, ref } from 'vue'
 import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQueries } from '../useQueries'
@@ -265,7 +265,7 @@ describe('queryOptions', () => {
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<unknown>()
   })
 
-  it('should allow to be passed to QueryClient methods while containing getter', () => {
+  it('should support using getter options with imperative methods', () => {
     const ref1 = ref(1)
     const ref2 = ref(2)
     const options = queryOptions(() => ({
@@ -275,11 +275,8 @@ describe('queryOptions', () => {
 
     const queryClient = new QueryClient()
 
-    // Should not error
     const data = queryClient.invalidateQueries(options)
-    // Should not error
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-    const data2 = queryClient.fetchQuery(options)
+    const data2 = queryClient.query(options())
 
     expectTypeOf(data).toEqualTypeOf<Promise<void>>()
     expectTypeOf(data2).toEqualTypeOf<Promise<number>>()

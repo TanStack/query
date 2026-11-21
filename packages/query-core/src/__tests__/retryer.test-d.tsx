@@ -1,10 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import {
-  CancelledError,
-  canFetch,
-  createRetryer,
-  isCancelledError,
-} from '../retryer'
+import { CancelledError, canFetch, createRetryer } from '../retryer'
 import type { CancelOptions, DefaultError, NetworkMode } from '..'
 import type { RetryDelayValue, RetryValue, Retryer } from '../retryer'
 
@@ -592,34 +587,6 @@ describe('retryer', () => {
       canFetch('sometimes')
 
       expectTypeOf(canFetch('offlineFirst')).toEqualTypeOf<boolean>()
-    })
-  })
-
-  describe('isCancelledError', () => {
-    it('should narrow an unknown value to a CancelledError', () => {
-      const value: unknown = new CancelledError()
-
-      if (isCancelledError(value)) {
-        expectTypeOf(value).toEqualTypeOf<CancelledError>()
-      } else {
-        expectTypeOf(value).toEqualTypeOf<unknown>()
-      }
-    })
-
-    it('should accept any value and return a type predicate', () => {
-      expectTypeOf(isCancelledError).toEqualTypeOf<
-        (value: any) => value is CancelledError
-      >()
-    })
-
-    it('should narrow a union down to the CancelledError member', () => {
-      const value = {} as CancelledError | CustomError
-
-      if (isCancelledError(value)) {
-        expectTypeOf(value).toEqualTypeOf<CancelledError>()
-      } else {
-        expectTypeOf(value).toEqualTypeOf<CustomError>()
-      }
     })
   })
 })

@@ -159,35 +159,6 @@ describe('infiniteQueryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
   })
 
-  it('should work when passed to fetchInfiniteQuery', async () => {
-    const options = infiniteQueryOptions({
-      queryKey: createKey(),
-      queryFn: () => Promise.resolve('string'),
-      getNextPageParam: () => 1,
-      initialPageParam: 1,
-    })
-
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-    const data = await new QueryClient().fetchInfiniteQuery(options)
-
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
-  })
-
-  it('should ignore select when passed to fetchInfiniteQuery', async () => {
-    const options = infiniteQueryOptions({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve('string'),
-      getNextPageParam: () => 1,
-      initialPageParam: 1,
-      select: (data) => data.pages,
-    })
-
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-    const data = await new QueryClient().fetchInfiniteQuery(options)
-
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
-  })
-
   it('should tag the queryKey with the result type of the QueryFn', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: createKey(),
@@ -287,23 +258,6 @@ describe('infiniteQueryOptions', () => {
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
       queryClient.query(options),
-    )
-
-    // deprecated methods to be removed in v6
-    assertType(
-      // @ts-expect-error cannot pass infinite options to non-infinite query functions
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      queryClient.ensureQueryData(options),
-    )
-    assertType(
-      // @ts-expect-error cannot pass infinite options to non-infinite query functions
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      queryClient.fetchQuery(options),
-    )
-    assertType(
-      // @ts-expect-error cannot pass infinite options to non-infinite query functions
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      queryClient.prefetchQuery(options),
     )
   })
 

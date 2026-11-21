@@ -10,7 +10,6 @@ import {
   hashQueryKeyByOptions,
   isPlainArray,
   isPlainObject,
-  isServer,
   isValidTimeout,
   keepPreviousData,
   matchMutation,
@@ -838,12 +837,6 @@ describe('addConsumeAwareSignal', () => {
     expectTypeOf(addConsumeAwareSignal<{ a: number }>)
       .parameter(2)
       .toEqualTypeOf<() => void>()
-  })
-})
-
-describe('isServer', () => {
-  it('should be typed as a boolean', () => {
-    expectTypeOf(isServer).toEqualTypeOf<boolean>()
   })
 })
 

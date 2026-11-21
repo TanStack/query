@@ -1,9 +1,9 @@
-import { isServer as defaultIsServer } from './utils'
-
 /**
  * A function that returns whether the code is running on the server.
  */
 export type IsServerValue = () => boolean
+
+const defaultIsServer = typeof window === 'undefined' || 'Deno' in globalThis
 
 let isServerFn: IsServerValue = () => defaultIsServer
 

@@ -9,9 +9,7 @@ These composables need the `QueryClient` that `VueQueryPlugin` provides, so they
 
 ## Setup
 
-Following the [Testing Composables](https://vuejs.org/guide/scaling-up/testing.html#testing-composables) approach of the Vue docs, we write a `withSetup` helper that mounts a component, runs the composable in its `setup` and installs `VueQueryPlugin` with a `QueryClient`. The helper differs between Vue 3 and Vue 2, because they use different major versions of Vue Test Utils.
-
-### Vue 3
+Following the [Testing Composables](https://vuejs.org/guide/scaling-up/testing.html#testing-composables) approach of the Vue docs, we write a `withSetup` helper that mounts a component, runs the composable in its `setup` and installs `VueQueryPlugin` with a `QueryClient`.
 
 Install Vue Test Utils 2 by running:
 
@@ -39,39 +37,6 @@ function withSetup<T>(composable: () => T, queryClient = new QueryClient()) {
 }
 ```
 
-### Vue 2
-
-Vue Test Utils 1 does not export `flushPromises`, so install the `flush-promises` package along with it:
-
-```sh
-npm install @vue/test-utils@1 flush-promises --save-dev
-```
-
-```ts
-import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
-import { createLocalVue, mount } from '@vue/test-utils'
-import flushPromises from 'flush-promises'
-import { defineComponent } from 'vue'
-
-function withSetup<T>(composable: () => T, queryClient = new QueryClient()) {
-  let result!: T
-  const localVue = createLocalVue()
-  localVue.use(VueQueryPlugin, { queryClient })
-  const wrapper = mount(
-    defineComponent({
-      setup() {
-        result = composable()
-        return () => null
-      },
-    }),
-    { localVue },
-  )
-  return [result, wrapper] as const
-}
-```
-
-With Vue 2.6, also call `localVue.use(VueCompositionApi)` before installing `VueQueryPlugin`, and import `VueCompositionApi` and `defineComponent` from `@vue/composition-api`.
-
 ## Our First Test
 
 Once set up, a simple test can be written. Given the following custom composable:
@@ -94,8 +59,6 @@ expect(result.data.value).toEqual('Hello')
 
 wrapper.unmount()
 ```
-
-With Vue Test Utils 1, call `wrapper.destroy()` instead of `wrapper.unmount()`.
 
 Note that `withSetup` creates a new `QueryClient` for every call. This helps to ensure that our test is completely isolated from any other tests. Unmounting the wrapper at the end of the test removes the query observers that the composable created.
 

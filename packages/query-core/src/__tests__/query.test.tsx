@@ -279,7 +279,7 @@ describe('query', () => {
     expect(count).toBe(0)
   })
 
-  it('should not throw a CancelledError when fetchQuery is in progress and the last observer unsubscribes when AbortSignal is consumed', async () => {
+  it('should not throw a CancelledError when query is in progress and the last observer unsubscribes when AbortSignal is consumed', async () => {
     const key = createKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -507,7 +507,7 @@ describe('query', () => {
     expect(query.state.fetchStatus).toBe('idle') // not be loading any longer
     expect(query.state.data).toBeUndefined() // have no data
 
-    // the call to fetchQuery must reject
+    // the call to query must reject
     // because it was reset and not reverted
     // so it would resolve with undefined otherwise
     expect(error).toBeInstanceOf(CancelledError)

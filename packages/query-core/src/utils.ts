@@ -111,11 +111,6 @@ export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 // UTILS
 
 /**
- * @deprecated use `environmentManager.isServer()` instead.
- */
-export const isServer = typeof window === 'undefined' || 'Deno' in globalThis
-
-/**
  * A function that does nothing.
  */
 export function noop(): void

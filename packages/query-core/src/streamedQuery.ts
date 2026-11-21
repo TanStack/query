@@ -113,7 +113,6 @@ export function streamedQuery<
         meta: context.meta,
         queryKey: context.queryKey,
         pageParam: context.pageParam,
-        direction: context.direction,
       },
       () => context.signal,
       () => (cancelled = true),

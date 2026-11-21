@@ -278,8 +278,8 @@ export function queryOptions<
 
 /**
  * Same as the plain-object overload, but for options that close over reactive state (`ref`s read inside the
- * function body). Wrap them in a getter so `queryClient` methods like `invalidateQueries`/`fetchQuery` always
- * read the current values instead of the ones captured when the options were created.
+ * function body). Wrap them in a getter so `queryClient` methods like `invalidateQueries` always
+ * read the current values. Call the getter before passing its options to `queryClient.query`.
  * @param options - A function returning the {@link DefinedInitialQueryOptions} to use, re-evaluated on demand.
  * @returns A function that returns the same options object, typed so that `queryKey` carries the inferred data
  * type.
@@ -362,8 +362,8 @@ export function queryOptions<
 /**
  * Same as the plain-object overload, but for options that close over reactive state (`ref`s read inside the
  * function body). Wrap them in a getter so the `queryKey` — and anything else derived from a `ref` — reacts
- * to changes, and so `queryClient` methods like `invalidateQueries`/`fetchQuery` always read the current
- * values instead of the ones captured when the options were created.
+ * to changes, and so `queryClient` methods like `invalidateQueries` always read the current
+ * values. Call the getter before passing its options to `queryClient.query`.
  * @param options - A function returning the {@link UndefinedInitialQueryOptions} to use, re-evaluated on
  * demand.
  * @returns A function that returns the same options object, typed so that `queryKey` carries the inferred

@@ -29,7 +29,7 @@ or
 bun add @tanstack/angular-query-persist-client
 ```
 
-You also need a persister. `@tanstack/query-async-storage-persister` and `@tanstack/query-sync-storage-persister` provide persisters for the Web Storage API and compatible stores, or you can [build your own](#persisters).
+You also need a persister. `@tanstack/query-async-storage-persister` provides a persister for the Web Storage API and compatible stores, or you can [build your own](#persisters).
 
 ## Usage
 
@@ -176,15 +176,7 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 const persister = createAsyncStoragePersister({ storage: localStorage })
 ```
 
-`createSyncStoragePersister` accepts a synchronous storage, such as `window.localStorage` or `window.sessionStorage`.
-
-```ts
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
-
-const persister = createSyncStoragePersister({ storage: localStorage })
-```
-
-Both throttle saving to happen at most every 1 second to save on potentially expensive writes.
+By default, the persister limits writes to once per second.
 
 ### Persisters Interface
 

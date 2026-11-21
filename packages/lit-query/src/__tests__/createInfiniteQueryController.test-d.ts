@@ -27,21 +27,6 @@ describe('pageParam', () => {
       new QueryClient(),
     )
   })
-
-  it('should pass direction to queryFn of createInfiniteQueryController', () => {
-    createInfiniteQueryController(
-      new Host(),
-      {
-        queryKey: createKey(),
-        queryFn: ({ direction }) => {
-          expectTypeOf(direction).toEqualTypeOf<'forward' | 'backward'>()
-        },
-        initialPageParam: 1,
-        getNextPageParam: () => undefined,
-      },
-      new QueryClient(),
-    )
-  })
 })
 
 describe('select', () => {

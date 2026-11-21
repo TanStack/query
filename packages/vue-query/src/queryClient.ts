@@ -1,5 +1,5 @@
 import { QueryClient as QC } from '@tanstack/query-core'
-import { nextTick, ref } from 'vue-demi'
+import { nextTick, ref } from 'vue'
 import { MutationCache } from './mutationCache'
 import { QueryCache } from './queryCache'
 import { cloneDeepUnref } from './utils'
@@ -7,9 +7,6 @@ import type {
   CancelOptions,
   DefaultError,
   DefaultOptions,
-  EnsureQueryDataOptions,
-  FetchInfiniteQueryOptions,
-  FetchQueryOptions,
   InferDataFromTag,
   InferErrorFromTag,
   InfiniteData,
@@ -31,7 +28,7 @@ import type {
   SetDataOptions,
   Updater,
 } from '@tanstack/query-core'
-import type { Ref } from 'vue-demi'
+import type { Ref } from 'vue'
 import type { UseQueryOptions } from './queryOptions'
 import type {
   MaybeRef,
@@ -106,57 +103,6 @@ export class QueryClient extends QC {
     queryKey: MaybeRefDeep<QueryKey>,
   ): TData | undefined {
     return super.getQueryData(cloneDeepUnref(queryKey))
-  }
-
-  /**
-   * Returns the cached data of a query, or fetches it if there is none. With `revalidateIfStale`,
-   * stale cached data is also refetched in the background.
-   * @param options - The query options. If the query has no cached data yet, it is fetched with
-   * these options.
-   * @returns A promise that resolves to the cached data, or to the fetched data if nothing was
-   * cached yet.
-   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
-   */
-  override ensureQueryData<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-  >(
-    options: EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-  ): Promise<TData>
-  /**
-   * {@inheritDoc QueryClient.ensureQueryData:0}
-   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
-   */
-  override ensureQueryData<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-  >(
-    options: VueQueryExecutionOptions<
-      EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
-    >,
-  ): Promise<TData>
-  override ensureQueryData<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-  >(
-    options: VueQueryExecutionOptions<
-      EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
-    >,
-  ): Promise<TData> {
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.ensureQueryData(
-      cloneDeepUnref(
-        options as MaybeRefDeep<
-          EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
-        >,
-      ),
-    )
   }
 
   override getQueriesData<TData = unknown>(
@@ -382,124 +328,6 @@ export class QueryClient extends QC {
     )
   }
 
-  /**
-   * Fetches and caches a query, or returns its cached data if it isn't stale. Unlike in observers,
-   * the fetch isn't retried unless `retry` is set.
-   * @param options - The query options, including the `queryKey` and the `queryFn` used if the
-   * query needs to fetch.
-   * @returns A promise that resolves to the cached or fetched data, or rejects with the fetch
-   * error.
-   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
-   */
-  override fetchQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = never,
-  >(
-    options: FetchQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-  ): Promise<TData>
-  /**
-   * {@inheritDoc QueryClient.fetchQuery:0}
-   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
-   */
-  override fetchQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = never,
-  >(
-    options:
-      | VueQueryExecutionOptions<
-          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
-        >
-      | (() => FetchQueryOptions<
-          TQueryFnData,
-          TError,
-          TData,
-          TQueryKey,
-          TPageParam
-        >),
-  ): Promise<TData>
-  override fetchQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = never,
-  >(
-    options: VueQueryExecutionOptions<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
-    >,
-  ): Promise<TData> {
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.fetchQuery(
-      cloneDeepUnref(
-        options as MaybeRefDeep<
-          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
-        >,
-      ),
-    )
-  }
-
-  /**
-   * Fetches and caches a query like {@link QueryClient#fetchQuery}, but ignores the result and any
-   * error.
-   * @param options - The query options, including the `queryKey` and the `queryFn` used if the
-   * query needs to fetch.
-   * @returns A promise that resolves once the fetch settles. It never rejects.
-   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
-   */
-  override prefetchQuery<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-  >(
-    options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  ): Promise<void>
-  /**
-   * {@inheritDoc QueryClient.prefetchQuery:0}
-   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
-   */
-  override prefetchQuery<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-  >(
-    options: VueQueryExecutionOptions<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
-    >,
-  ): Promise<void>
-  override prefetchQuery<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-  >(
-    options: VueQueryExecutionOptions<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
-    >,
-  ): Promise<void> {
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.prefetchQuery(
-      cloneDeepUnref(
-        options as MaybeRefDeep<
-          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
-        >,
-      ),
-    )
-  }
-
   // These one-shot imperative methods do not resolve top-level option getters.
   // Resolve getters explicitly before calling, e.g. queryClient.infiniteQuery(options()).
   override infiniteQuery<
@@ -565,134 +393,6 @@ export class QueryClient extends QC {
       : TData
   > {
     return super.infiniteQuery(cloneDeepUnref(options))
-  }
-
-  /**
-   * Fetches and caches an infinite query, or returns its cached data if it isn't stale.
-   * @param options - The infinite query options, including `initialPageParam` and `getNextPageParam`.
-   * @returns A promise that resolves to the cached or fetched {@link InfiniteData}, or rejects with
-   * the fetch error.
-   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
-   */
-  override fetchInfiniteQuery<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: FetchInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-  ): Promise<InfiniteData<TData, TPageParam>>
-  /**
-   * {@inheritDoc QueryClient.fetchInfiniteQuery:0}
-   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
-   */
-  override fetchInfiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: MaybeRefDeep<
-      FetchInfiniteQueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey,
-        TPageParam
-      >
-    >,
-  ): Promise<InfiniteData<TData, TPageParam>>
-  override fetchInfiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: MaybeRefDeep<
-      FetchInfiniteQueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey,
-        TPageParam
-      >
-    >,
-  ): Promise<InfiniteData<TData, TPageParam>> {
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.fetchInfiniteQuery(cloneDeepUnref(options))
-  }
-
-  /**
-   * Fetches and caches an infinite query like {@link QueryClient#fetchInfiniteQuery}, but ignores
-   * the result and any error.
-   * @param options - The infinite query options, including `initialPageParam` and `getNextPageParam`.
-   * @returns A promise that resolves once the fetch settles. It never rejects.
-   * @deprecated use void queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
-   */
-  override prefetchInfiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: FetchInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-  ): Promise<void>
-  /**
-   * {@inheritDoc QueryClient.prefetchInfiniteQuery:0}
-   * @deprecated use void queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
-   */
-  override prefetchInfiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: MaybeRefDeep<
-      FetchInfiniteQueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey,
-        TPageParam
-      >
-    >,
-  ): Promise<void>
-  override prefetchInfiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: MaybeRefDeep<
-      FetchInfiniteQueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey,
-        TPageParam
-      >
-    >,
-  ): Promise<void> {
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.prefetchInfiniteQuery(cloneDeepUnref(options))
   }
 
   override setDefaultOptions(options: MaybeRefDeep<DefaultOptions>): void {
