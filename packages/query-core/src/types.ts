@@ -617,6 +617,7 @@ export interface QueryObserverOptions<
    * the returned `data` value, but does not affect what gets stored in the query cache.
    * The `select` function will only run if `data` changed, or if the reference to the `select` function itself
    * changes. To optimize, memoize the function so its reference stays stable across calls.
+   * If the selector throws, the observer reports the error and can keep the last valid selection.
    */
   select?: (data: TQueryData) => TData
   /**
@@ -627,6 +628,7 @@ export interface QueryObserverOptions<
   suspense?: boolean
   /**
    * If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
+   * If the placeholder function throws, the observer reports the error with no data. The query state in the cache is unaffected.
    */
   placeholderData?:
     | NonFunctionGuard<TQueryData>

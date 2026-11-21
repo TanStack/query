@@ -23,6 +23,7 @@ import type {
   QueryObserverBaseResult,
   QueryObserverOptions,
   QueryObserverResult,
+  QueryOptions,
   RefetchOptions,
 } from './types'
 
@@ -42,6 +43,11 @@ export interface QueryObserverResultReader<TResult> {
   commit: () => void
 }
 
+type ProjectionFailure<TError> = {
+  error: TError
+  errorUpdatedAt: number
+}
+
 /**
  * Selection and placeholder computation state shared by reads of the same result.
  * @internal
@@ -53,27 +59,25 @@ export interface QueryObserverResultContext<
   TQueryData,
   TQueryKey extends QueryKey,
 > {
-  /** The options used for the most recent computation. */
-  options?: QueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >
-  /** The selector used for the cached data. */
-  selectFn?: (data: TQueryData) => TData
-  /** The unselected data passed to the cached selector. */
-  selectData?: TQueryData
-  /** The cached value returned by the selector. */
-  selectResult?: TData
-  /** The error from the most recent selector call, if any. */
-  selectError: TError | null
-  /** The time of the most recent selector error. */
-  selectErrorUpdatedAt?: number
-  /** The cached placeholder and the inputs used to compute it. */
+  /** The memo key and failure of the most recent selection. */
+  selection?: {
+    input: TQueryData
+    select: (data: TQueryData) => TData
+    structuralSharing: QueryOptions<
+      TQueryFnData,
+      TError,
+      TQueryData,
+      TQueryKey
+    >['structuralSharing']
+    failure?: ProjectionFailure<TError>
+  }
+  /** The last successful selection, used if selection fails. */
+  selected?: {
+    data: TData
+    query?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+  }
+  /** The unselected placeholder or factory error. */
   placeholder?: {
-    /** The options used to compute the placeholder. */
     options: QueryObserverOptions<
       TQueryFnData,
       TError,
@@ -81,14 +85,15 @@ export interface QueryObserverResultContext<
       TQueryData,
       TQueryKey
     >
-    /** The last query with defined data. */
     previousQuery:
       | Query<TQueryFnData, TError, TQueryData, TQueryKey>
       | undefined
-    /** The data from that previous query. */
-    previousData: TQueryData | undefined
-    /** The placeholder after structural sharing. */
-    data: TData | undefined
+    previousState: QueryState<TQueryData, TError> | undefined
+    previousOptions:
+      | QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>
+      | undefined
+    input: TQueryData | undefined
+    failure?: ProjectionFailure<TError>
   }
 }
 
@@ -128,7 +133,7 @@ export class QueryObserver<
     TData,
     TQueryData,
     TQueryKey
-  > = { selectError: null }
+  > = {}
   // This property keeps track of the last query with defined data.
   // It will be used to pass the previous data and query to the placeholder function between renders.
   #lastQueryWithDefinedData?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
@@ -342,48 +347,46 @@ export class QueryObserver<
       TQueryKey
     >,
   ): QueryObserverResultReader<QueryObserverResult<TData, TError>> {
-    options = { ...options }
+    const readerOptions = { ...options }
     const context = { ...this.#resultContext }
     let result = this.#currentResult
 
     const getSnapshot = () => {
-      const query = this.#client.getQueryCache().build(this.#client, options)
-      const committed = this.#resultContext
+      const query = this.#client
+        .getQueryCache()
+        .build(this.#client, readerOptions)
+      const { selection, selected } = this.#resultContext
 
-      // A query update may already have selected this data. Copy its memo,
-      // without sharing the mutable computation context with this reader.
+      // A query update may already have selected this data.
       if (
         query.state.data !== undefined &&
-        committed.selectData === query.state.data &&
-        committed.selectFn === options.select &&
-        committed.options?.structuralSharing === options.structuralSharing
+        selection?.input === query.state.data &&
+        selection.select === readerOptions.select &&
+        selection.structuralSharing === readerOptions.structuralSharing
       ) {
-        context.selectFn = committed.selectFn
-        context.selectData = committed.selectData
-        context.selectResult = committed.selectResult
-        context.selectError = committed.selectError
-        context.selectErrorUpdatedAt = committed.selectErrorUpdatedAt
+        context.selection = selection
+        context.selected = selected
       }
 
-      const nextResult = this.createResult(query, options, context, result)
+      const nextResult = this.createResult(
+        query,
+        readerOptions,
+        context,
+        result,
+      )
       if (!shallowEqualObjects(nextResult, result)) {
         result = nextResult
       }
-      context.options = options
       return result
     }
 
     return {
       getSnapshot,
       commit: () => {
-        // Reuse any matching selection the observer computed after the last
-        // read, so adopting this reader's memo does not rerun the selector
-        // or replace the selected data reference during setOptions.
+        // Reuse selections computed since the last read.
         getSnapshot()
-        // Reuse the computation while retaining the stored result for
-        // updateResult's comparison and subscriber notifications.
         this.#resultContext = { ...context }
-        this.setOptions(options)
+        this.setOptions(readerOptions)
       },
     }
   }
@@ -681,126 +684,140 @@ export class QueryObserver<
       : this.#currentQueryInitialState
 
     const { state } = query
-    let newState = { ...state }
-    let isPlaceholderData = false
-    let data: TData | undefined
-
-    // Optimistically set result in fetching state if needed
-    if (options._optimisticResults) {
-      const mounted = this.hasListeners()
-
-      const fetchOnMount = !mounted && shouldFetchOnMount(query, options)
-
-      const fetchOptionally =
-        mounted && shouldFetchOptionally(query, prevQuery, options, prevOptions)
-
-      if (fetchOnMount || fetchOptionally) {
-        newState = {
-          ...newState,
-          ...fetchState(state.data, query.options),
-        }
-      }
-      if (options._optimisticResults === 'isRestoring') {
-        newState.fetchStatus = 'idle'
+    const fetchOptimistically =
+      options._optimisticResults &&
+      (this.hasListeners()
+        ? shouldFetchOptionally(query, prevQuery, options, prevOptions)
+        : shouldFetchOnMount(query, options))
+    const newState = fetchOptimistically
+      ? { ...state, ...fetchState(state.data, query.options) }
+      : state
+    const fetchStatus =
+      options._optimisticResults === 'isRestoring'
+        ? 'idle'
+        : newState.fetchStatus
+    const selectedQuery = context.selected?.query
+    if (selectedQuery && selectedQuery.state.data === undefined) {
+      context.selected = undefined
+      // Keep a cached error stable, but a successful selection needs its data.
+      if (!context.selection?.failure) {
+        context.selection = undefined
       }
     }
 
-    let { error, errorUpdatedAt, status } = newState
-
-    // Per default, use query data
-    data = newState.data as unknown as TData
-
-    // Cache the unselected placeholder, including when selection throws. The
-    // result's isPlaceholderData flag is false after a selection error, so it
-    // cannot serve as the memo's validity check.
-    if (
-      options.placeholderData !== undefined &&
-      data === undefined &&
-      status === 'pending'
-    ) {
-      const previousQuery = this.#lastQueryWithDefinedData
-      const previousData = previousQuery?.state.data
-      const placeholder = context.placeholder
-
+    const usePlaceholder =
+      newState.data === undefined &&
+      newState.status === 'pending' &&
+      options.placeholderData !== undefined
+    const previousQuery = usePlaceholder
+      ? this.#lastQueryWithDefinedData
+      : undefined
+    const previousState = previousQuery?.state
+    const previousOptions = previousQuery?.options
+    let input = newState.data
+    let placeholderFailure: ProjectionFailure<TError> | undefined
+    if (usePlaceholder) {
+      const { placeholderData } = options
+      const memo = context.placeholder
       if (
-        placeholder &&
-        placeholder.options.placeholderData === options.placeholderData &&
-        placeholder.options.structuralSharing === options.structuralSharing &&
-        placeholder.previousQuery === previousQuery &&
-        placeholder.previousData === previousData
+        memo &&
+        memo.options.placeholderData === placeholderData &&
+        memo.options.structuralSharing === options.structuralSharing &&
+        memo.previousQuery === previousQuery &&
+        memo.previousState === previousState &&
+        memo.previousOptions === previousOptions
       ) {
-        data = placeholder.data
+        input = memo.input
+        placeholderFailure = memo.failure
       } else {
-        const placeholderData =
-          typeof options.placeholderData === 'function'
-            ? (
-                options.placeholderData as unknown as PlaceholderDataFunction<TQueryData>
-              )(previousData, previousQuery as any)
-            : options.placeholderData
-
-        data =
-          placeholderData === undefined
-            ? undefined
-            : (replaceData(
-                prevResult?.data,
-                placeholderData as unknown,
-                options,
-              ) as TData)
+        try {
+          input =
+            typeof placeholderData === 'function'
+              ? (
+                  placeholderData as unknown as PlaceholderDataFunction<
+                    TQueryFnData,
+                    TError,
+                    TQueryData,
+                    TQueryKey
+                  >
+                )(previousState?.data, previousQuery)
+              : placeholderData
+        } catch (error) {
+          placeholderFailure = {
+            error: error as TError,
+            errorUpdatedAt: Date.now(),
+          }
+        }
+        if (input !== undefined) {
+          input = replaceData(
+            prevResult?.data,
+            input as unknown,
+            options,
+          ) as TQueryData
+        }
         context.placeholder =
-          data === undefined
-            ? undefined
-            : { options, previousQuery, previousData, data }
-      }
-
-      if (data !== undefined) {
-        status = 'success'
-        isPlaceholderData = true
+          input !== undefined || placeholderFailure
+            ? {
+                options,
+                previousQuery,
+                previousState,
+                previousOptions,
+                input,
+                failure: placeholderFailure,
+              }
+            : undefined
       }
     } else {
       context.placeholder = undefined
     }
 
-    // Select data if needed
-    // this also runs placeholderData through the select function
-    if (options.select && data !== undefined) {
-      // Memoize select result
-      if (
-        prevResult &&
-        data === context.selectData &&
-        options.select === context.selectFn
-      ) {
-        data = context.selectResult
-      } else {
-        try {
-          context.selectFn = options.select
-          context.selectData = data as unknown as TQueryData
-          data = options.select(data as any)
-          data = replaceData(prevResult?.data, data, options)
-          context.selectResult = data
-          context.selectError = null
-          context.selectErrorUpdatedAt = undefined
-        } catch (selectError) {
-          context.selectError = selectError as TError
-          context.selectErrorUpdatedAt = Date.now()
+    const { select, structuralSharing } = options
+    const memo = context.selection
+    if (!select || input === undefined) {
+      context.selection = undefined
+    } else if (
+      !memo ||
+      memo.input !== input ||
+      memo.select !== select ||
+      memo.structuralSharing !== structuralSharing
+    ) {
+      const selection = { input, select, structuralSharing }
+      try {
+        const data = replaceData(prevResult?.data, select(input), options)
+        const placeholderSource =
+          usePlaceholder &&
+          typeof options.placeholderData === 'function' &&
+          previousState?.data !== undefined
+            ? previousQuery
+            : undefined
+        context.selected = {
+          data,
+          query: usePlaceholder ? placeholderSource : query,
+        }
+        context.selection = selection
+      } catch (error) {
+        context.selection = {
+          ...selection,
+          failure: {
+            error: error as TError,
+            errorUpdatedAt: Date.now(),
+          },
         }
       }
-    } else if (data === undefined) {
-      // a stored select error belongs to previously selected data; once that
-      // data is gone (query switch or reset), it must not leak into this result
-      context.selectError = null
-      context.selectErrorUpdatedAt = undefined
-      context.selectData = undefined
     }
 
-    if (context.selectError) {
-      error = context.selectError
-      data = context.selectResult
-      errorUpdatedAt = context.selectErrorUpdatedAt ?? Date.now()
-      status = 'error'
-      isPlaceholderData = false
-    }
-
-    const isFetching = newState.fetchStatus === 'fetching'
+    const failure = placeholderFailure ?? context.selection?.failure
+    const data = context.selection
+      ? context.selected?.data
+      : (input as unknown as TData | undefined)
+    const isPlaceholderData = usePlaceholder && input !== undefined && !failure
+    const { error, errorUpdatedAt } = failure ?? newState
+    const status = failure
+      ? 'error'
+      : isPlaceholderData
+        ? 'success'
+        : newState.status
+    const isFetching = fetchStatus === 'fetching'
     const isPending = status === 'pending'
     const isError = status === 'error'
 
@@ -809,7 +826,7 @@ export class QueryObserver<
 
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
-      fetchStatus: newState.fetchStatus,
+      fetchStatus,
       isPending,
       isSuccess: status === 'success',
       isError,
@@ -828,7 +845,7 @@ export class QueryObserver<
       isFetching,
       isRefetching: isFetching && !isPending,
       isLoadingError: isError && !hasData,
-      isPaused: newState.fetchStatus === 'paused',
+      isPaused: fetchStatus === 'paused',
       isPlaceholderData,
       isRefetchError: isError && hasData,
       isStale: isStale(query, options),
@@ -852,8 +869,6 @@ export class QueryObserver<
       | undefined
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
-
-    this.#resultContext.options = this.options
 
     if (this.#currentQuery.state.data !== undefined) {
       this.#lastQueryWithDefinedData = this.#currentQuery
