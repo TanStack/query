@@ -313,7 +313,6 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(isMutatingArray[1]).toBe(2)
     await vi.advanceTimersByTimeAsync(501)
-    expect(isMutatingArray[2]).toBe(0)
     expect(isMutatingArray[isMutatingArray.length - 1]).toBe(0)
   })
 

@@ -717,6 +717,7 @@ describe('useSuspenseQuery', () => {
     // reset query -> and throw error
     await act(() => {
       fireEvent.click(rendered.getByLabelText('fail'))
+      return Promise.resolve()
     })
     // render error boundary fallback (error boundary)
     await act(() => vi.advanceTimersByTimeAsync(10))

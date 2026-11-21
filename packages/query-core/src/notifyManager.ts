@@ -1,7 +1,3 @@
-// TYPES
-
-import { systemSetTimeoutZero } from './timeoutManager'
-
 type NotifyCallback = () => void
 
 type NotifyFunction = (callback: () => void) => void
@@ -14,9 +10,9 @@ type ScheduleFunction = (callback: () => void) => void
 
 /**
  * Default scheduling function used by the notify manager.
- * Schedules the callback with the system's `setTimeout(callback, 0)`.
+ * Schedules the callback in a microtask with `queueMicrotask`.
  */
-export const defaultScheduler: ScheduleFunction = systemSetTimeoutZero
+export const defaultScheduler: ScheduleFunction = queueMicrotask
 
 /**
  * Creates a notify manager, which schedules and batches notifications to subscribers. Query uses a
@@ -95,7 +91,7 @@ export function createNotifyManager() {
     },
     /**
      * Schedules a function to be run on the next batch.
-     * By default, the batch is run with a `setTimeout`, but this can be configured via `setScheduler`.
+     * By default, the batch runs in a microtask. Use `setScheduler` to change when it runs.
      */
     schedule,
     /**
@@ -124,14 +120,14 @@ export function createNotifyManager() {
     },
     /**
      * Configures a custom callback that schedules when the next batch runs.
-     * The default behavior is `setTimeout(callback, 0)`.
+     * The default behavior is `queueMicrotask(callback)`.
      * @param fn - Receives a callback that runs the next batch, and schedules it.
      * @example
      * ```ts
      * import { notifyManager } from '@tanstack/query-core'
      *
-     * // Schedule batches in the next microtask
-     * notifyManager.setScheduler(queueMicrotask)
+     * // Use the v5 timer-based scheduler
+     * notifyManager.setScheduler((cb) => setTimeout(cb, 0))
      *
      * // Schedule batches before the next frame is rendered
      * notifyManager.setScheduler(requestAnimationFrame)

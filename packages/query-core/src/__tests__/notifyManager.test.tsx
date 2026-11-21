@@ -11,15 +11,16 @@ describe('notifyManager', () => {
     vi.useRealTimers()
   })
 
-  it('should use default notifyFn', async () => {
+  it('should notify in a microtask by default', async () => {
     const notifyManagerTest = createNotifyManager()
     const callbackSpy = vi.fn<() => void>()
     notifyManagerTest.schedule(callbackSpy)
-    await vi.advanceTimersByTimeAsync(0)
+    expect(callbackSpy).not.toHaveBeenCalled()
+    await Promise.resolve()
     expect(callbackSpy).toHaveBeenCalledWith()
   })
 
-  it('should use default batchNotifyFn', async () => {
+  it('should flush nested batches in a microtask by default', async () => {
     const notifyManagerTest = createNotifyManager()
     const callbackScheduleSpy = vi.fn<() => Promise<void>>(() => sleep(20))
     const callbackBatchLevel2Spy = vi
@@ -34,7 +35,8 @@ describe('notifyManager', () => {
       })
     notifyManagerTest.batch(callbackBatchLevel1Spy)
 
-    await vi.advanceTimersByTimeAsync(0)
+    expect(callbackScheduleSpy).not.toHaveBeenCalled()
+    await Promise.resolve()
     expect(callbackBatchLevel1Spy).toHaveBeenCalledTimes(1)
     expect(callbackBatchLevel2Spy).toHaveBeenCalledTimes(1)
     expect(callbackScheduleSpy).toHaveBeenCalledTimes(1)
