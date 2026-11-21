@@ -680,6 +680,49 @@ describe('queryObserver', () => {
     expect(observer.getCurrentResult()).toBe(result)
   })
 
+  it.each([0, false, null, undefined])(
+    'should report %s thrown by a selector as an error',
+    (error) => {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: createKey(),
+        initialData: 1,
+        enabled: false,
+        select: () => {
+          throw error
+        },
+      })
+
+      expect(observer.getCurrentResult()).toMatchObject({
+        status: 'error',
+        error,
+        data: undefined,
+      })
+    },
+  )
+
+  it('should clear the selector error when the selector is removed', () => {
+    const options = {
+      queryKey: createKey(),
+      initialData: 1,
+      enabled: false,
+    }
+    const observer = new QueryObserver(queryClient, {
+      ...options,
+      select: () => {
+        throw new Error('selector error')
+      },
+    })
+    expect(observer.getCurrentResult().isError).toBe(true)
+
+    observer.setOptions(options)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      error: null,
+      data: 1,
+    })
+  })
+
   it('should always run the selector again if selector throws an error and selector is not referentially stable', async () => {
     const key = createKey()
     const results: Array<QueryObserverResult> = []
@@ -737,6 +780,75 @@ describe('queryObserver', () => {
     expect(result.isError).toBe(true)
     expect(result.isPlaceholderData).toBe(false)
     expect(result.data).toBeUndefined()
+  })
+
+  it('should report a placeholder error without interrupting other observers', async () => {
+    const queryKey = createKey()
+    const error = new Error('placeholder error')
+    const options = { queryKey, enabled: false }
+    queryClient.setQueryData(queryKey, 1)
+
+    const observer = new QueryObserver<number>(queryClient, {
+      ...options,
+      placeholderData: () => {
+        throw error
+      },
+    })
+    const otherObserver = new QueryObserver<number>(queryClient, options)
+    const unsubscribe = observer.subscribe(noop)
+    const unsubscribeOther = otherObserver.subscribe(noop)
+
+    await queryClient.resetQueries({ queryKey })
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'error',
+      error,
+      data: undefined,
+      isLoadingError: true,
+      isPlaceholderData: false,
+    })
+    expect(otherObserver.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      error: null,
+      data: undefined,
+    })
+    expect(queryClient.getQueryState(queryKey)).toMatchObject({
+      status: 'pending',
+      error: null,
+    })
+
+    queryClient.setQueryData(queryKey, 2)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      error: null,
+      data: 2,
+    })
+
+    unsubscribe()
+    unsubscribeOther()
+  })
+
+  it('should keep the published placeholder after an equal optimistic result', () => {
+    const placeholderData = vi.fn<() => number>(() => 1)
+    const options = queryClient.defaultQueryOptions<number, Error, string>({
+      queryKey: createKey(),
+      enabled: false,
+      placeholderData,
+      select: () => 'selected',
+    })
+    const observer = new QueryObserver<number, Error, string>(
+      queryClient,
+      options,
+    )
+    const result = observer.getCurrentResult()
+
+    expect(
+      observer.getOptimisticResult({ ...options, placeholderData: 2 }),
+    ).toStrictEqual(result)
+    observer.updateResult()
+
+    expect(observer.getCurrentResult()).toBe(result)
+    expect(placeholderData).toHaveBeenCalledTimes(1)
   })
 
   it('should return stale data if selector throws an error', async () => {

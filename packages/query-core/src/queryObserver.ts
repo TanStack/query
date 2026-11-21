@@ -83,10 +83,12 @@ export class QueryObserver<
     TQueryData,
     TQueryKey
   >
-  #selectError: TError | null
-  #selectFn?: (data: TQueryData) => TData
-  #selectInput?: unknown
-  #selectResult?: TData
+  #selectedData?: TData
+  #selection?: {
+    input: TQueryData
+    select: (input: TQueryData) => TData
+    failure?: { error: TError }
+  }
   // This property keeps track of the last query with defined data.
   // It will be used to pass the previous data and query to the placeholder function between renders.
   #lastQueryWithDefinedData?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
@@ -108,7 +110,6 @@ export class QueryObserver<
     super()
 
     this.#client = client
-    this.#selectError = null
 
     this.bindMethods()
     this.setOptions(options)
@@ -621,6 +622,139 @@ export class QueryObserver<
     }
   }
 
+  #projectError(error: TError, data: TData | undefined) {
+    const previous = this.#currentResult as
+      | QueryObserverResult<TData, TError>
+      | undefined
+    return {
+      status: 'error' as const,
+      data,
+      error,
+      errorUpdatedAt:
+        previous?.isError && Object.is(previous.error, error)
+          ? previous.errorUpdatedAt
+          : Date.now(),
+      isPlaceholderData: false,
+    }
+  }
+
+  #select(
+    input: TQueryData,
+    select: (input: TQueryData) => TData,
+    previousData: TData | undefined,
+    options: QueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+  ) {
+    const previous = this.#selection
+    if (previous?.select === select && previous.input === input) {
+      return previous.failure
+    }
+
+    try {
+      this.#selectedData = replaceData(previousData, select(input), options)
+      this.#selection = { input, select }
+      return undefined
+    } catch (error) {
+      const failure = { error: error as TError }
+      this.#selection = { input, select, failure }
+      return failure
+    }
+  }
+
+  #project(
+    state: QueryState<TQueryData, TError>,
+    options: QueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+  ): Pick<
+    QueryObserverBaseResult<TData, TError>,
+    'status' | 'data' | 'error' | 'errorUpdatedAt'
+  > & { isPlaceholderData?: boolean } {
+    const { select } = options
+    const previous = this.#currentResult as
+      | QueryObserverResult<TData, TError>
+      | undefined
+    const placeholder =
+      state.status === 'pending' && state.data === undefined
+        ? options.placeholderData
+        : undefined
+    let rawPlaceholder: TQueryData | undefined
+    if (placeholder !== undefined) {
+      if (
+        previous?.isPlaceholderData &&
+        placeholder === this.#currentResultOptions?.placeholderData
+      ) {
+        return {
+          status: 'success',
+          data: replaceData(previous.data, previous.data, options),
+          error: state.error,
+          errorUpdatedAt: state.errorUpdatedAt,
+          isPlaceholderData: true,
+        }
+      }
+
+      const previousQuery = this.#lastQueryWithDefinedData
+      try {
+        rawPlaceholder =
+          typeof placeholder === 'function'
+            ? (
+                placeholder as unknown as PlaceholderDataFunction<
+                  TQueryFnData,
+                  TError,
+                  TQueryData,
+                  TQueryKey
+                >
+              )(previousQuery?.state.data, previousQuery)
+            : placeholder
+      } catch (error) {
+        this.#selection = undefined
+        return this.#projectError(error as TError, undefined)
+      }
+    }
+
+    const isPlaceholderData = rawPlaceholder !== undefined
+    const input = isPlaceholderData
+      ? (replaceData(
+          select ? this.#selection?.input : previous?.data,
+          rawPlaceholder,
+          options,
+        ) as TQueryData | undefined)
+      : state.data
+    if (input === undefined || !select) {
+      this.#selection = undefined
+      return isPlaceholderData
+        ? {
+            status: 'success',
+            data: input as unknown as TData,
+            error: state.error,
+            errorUpdatedAt: state.errorUpdatedAt,
+            isPlaceholderData,
+          }
+        : (state as unknown as QueryState<TData, TError>)
+    }
+
+    const failure = this.#select(input, select, previous?.data, options)
+    if (failure) {
+      return this.#projectError(failure.error, this.#selectedData)
+    }
+    return {
+      status: isPlaceholderData ? 'success' : state.status,
+      data: this.#selectedData,
+      error: state.error,
+      errorUpdatedAt: state.errorUpdatedAt,
+      isPlaceholderData,
+    }
+  }
+
   /**
    * Computes the result for a query and options from the query's state, applying `select`,
    * `placeholderData`, and the derived flags. Subclasses override it to add their own fields.
@@ -640,123 +774,32 @@ export class QueryObserver<
   ): QueryObserverResult<TData, TError> {
     const prevQuery = this.#currentQuery
     const prevOptions = this.options
-    const prevResult = this.#currentResult as
-      | QueryObserverResult<TData, TError>
-      | undefined
-    const prevResultOptions = this.#currentResultOptions
     const queryChange = query !== prevQuery
     const queryInitialState = queryChange
       ? query.state
       : this.#currentQueryInitialState
 
     const { state } = query
-    let newState = { ...state }
-    let isPlaceholderData = false
-    let data: TData | undefined
-
-    // Optimistically set result in fetching state if needed
-    if (options._optimisticResults) {
-      const mounted = this.hasListeners()
-
-      const fetchOnMount = !mounted && shouldFetchOnMount(query, options)
-
-      const fetchOptionally =
-        mounted && shouldFetchOptionally(query, prevQuery, options, prevOptions)
-
-      if (fetchOnMount || fetchOptionally) {
-        newState = {
-          ...newState,
-          ...fetchState(state.data, query.options),
-        }
-      }
-      if (options._optimisticResults === 'isRestoring') {
-        newState.fetchStatus = 'idle'
-      }
-    }
-
-    let { error, errorUpdatedAt, status } = newState
-
-    // Per default, use query data
-    data = newState.data as unknown as TData
-    let skipSelect = false
-
-    // use placeholderData if needed
-    if (
-      options.placeholderData !== undefined &&
-      data === undefined &&
-      status === 'pending'
-    ) {
-      let placeholderData
-
-      // Memoize placeholder data
-      const isMemoizedPlaceholder =
-        prevResult?.isPlaceholderData &&
-        options.placeholderData === prevResultOptions?.placeholderData
-      if (isMemoizedPlaceholder) {
-        placeholderData = prevResult.data
-        // we have to skip select when reading this memoization
-        // because prevResult.data is already "selected"
-        skipSelect = true
-      } else {
-        // compute placeholderData
-        placeholderData =
-          typeof options.placeholderData === 'function'
-            ? (
-                options.placeholderData as unknown as PlaceholderDataFunction<TQueryData>
-              )(
-                this.#lastQueryWithDefinedData?.state.data,
-                this.#lastQueryWithDefinedData as any,
-              )
-            : options.placeholderData
-      }
-
-      // A memoized placeholder stays one even when `select` turned it into undefined
-      if (isMemoizedPlaceholder || placeholderData !== undefined) {
-        status = 'success'
-        data = replaceData(
-          options.select && !skipSelect ? this.#selectInput : prevResult?.data,
-          placeholderData as unknown,
-          options,
-        ) as TData
-        isPlaceholderData = true
-      }
-    }
-
-    // Select data if needed
-    // this also runs placeholderData through the select function
-    if (options.select && data !== undefined && !skipSelect) {
-      // Memoize select result
-      if (data === this.#selectInput && options.select === this.#selectFn) {
-        data = this.#selectResult
-      } else {
-        try {
-          this.#selectFn = options.select
-          this.#selectInput = data
-          data = options.select(data as unknown as TQueryData)
-          data = replaceData(prevResult?.data, data, options)
-          this.#selectResult = data
-          this.#selectError = null
-        } catch (selectError) {
-          this.#selectError = selectError as TError
-        }
-      }
-    } else if (data === undefined) {
-      // a stored select error belongs to previously selected data; once that
-      // data is gone (query switch or reset), it must not leak into this result
-      this.#selectInput = undefined
-      this.#selectError = null
-    }
-
-    if (this.#selectError) {
-      error = this.#selectError
-      data = this.#selectResult
-      errorUpdatedAt =
-        prevResult?.error === error ? prevResult.errorUpdatedAt : Date.now()
-      status = 'error'
-      isPlaceholderData = false
-    }
-
-    const isFetching = newState.fetchStatus === 'fetching'
+    const fetchOptimistically =
+      options._optimisticResults &&
+      (this.hasListeners()
+        ? shouldFetchOptionally(query, prevQuery, options, prevOptions)
+        : shouldFetchOnMount(query, options))
+    const newState = fetchOptimistically
+      ? { ...state, ...fetchState(state.data, query.options) }
+      : state
+    const fetchStatus =
+      options._optimisticResults === 'isRestoring'
+        ? 'idle'
+        : newState.fetchStatus
+    const {
+      data,
+      status,
+      error,
+      errorUpdatedAt,
+      isPlaceholderData = false,
+    } = this.#project(newState, options)
+    const isFetching = fetchStatus === 'fetching'
     const isPending = status === 'pending'
     const isError = status === 'error'
 
@@ -765,7 +808,7 @@ export class QueryObserver<
 
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
-      fetchStatus: newState.fetchStatus,
+      fetchStatus,
       isPending,
       isSuccess: status === 'success',
       isError,
@@ -785,7 +828,7 @@ export class QueryObserver<
       isFetching,
       isRefetching: isFetching && !isPending,
       isLoadingError: isError && !hasData,
-      isPaused: newState.fetchStatus === 'paused',
+      isPaused: fetchStatus === 'paused',
       isPlaceholderData,
       isRefetchError: isError && hasData,
       isStale: isStale(query, options),
