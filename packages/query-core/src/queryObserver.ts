@@ -344,33 +344,40 @@ export class QueryObserver<
       TQueryKey
     >,
   ): QueryObserverResultReader<QueryObserverResult<TData, TError>> {
-    const sourceOptions = options
-    options = { ...options }
-    const context = { ...this.#resultContext }
-    const projection = context.projection
-    context.projection =
-      projection?.options === sourceOptions
-        ? { ...projection, options }
-        : undefined
+    const readerOptions = { ...options }
+    const { projection } = this.#resultContext
+    const context = {
+      ...this.#resultContext,
+      projection:
+        projection?.options === options
+          ? { ...projection, options: readerOptions }
+          : undefined,
+    }
     let result = this.#currentResult
 
     const getSnapshot = () => {
-      const query = this.#client.getQueryCache().build(this.#client, options)
-      const committed = this.#resultContext
+      const query = this.#client
+        .getQueryCache()
+        .build(this.#client, readerOptions)
+      const { selection, selected } = this.#resultContext
 
-      // A query update may already have selected this data. Copy its memo,
-      // without sharing the mutable computation context with this reader.
+      // A query update may already have selected this data.
       if (
         query.state.data !== undefined &&
-        committed.selection?.input === query.state.data &&
-        committed.selection.select === options.select &&
-        committed.selection.structuralSharing === options.structuralSharing
+        selection?.input === query.state.data &&
+        selection.select === readerOptions.select &&
+        selection.structuralSharing === readerOptions.structuralSharing
       ) {
-        context.selection = committed.selection
-        context.selected = committed.selected
+        context.selection = selection
+        context.selected = selected
       }
 
-      const nextResult = this.createResult(query, options, context, result)
+      const nextResult = this.createResult(
+        query,
+        readerOptions,
+        context,
+        result,
+      )
       if (!shallowEqualObjects(nextResult, result)) {
         result = nextResult
       }
@@ -380,14 +387,10 @@ export class QueryObserver<
     return {
       getSnapshot,
       commit: () => {
-        // Reuse any matching selection the observer computed after the last
-        // read, so adopting this reader's memo does not rerun the selector
-        // or replace the selected data reference during setOptions.
+        // Reuse selections computed since the last read.
         getSnapshot()
-        // Reuse the computation while retaining the stored result for
-        // updateResult's comparison and subscriber notifications.
         this.#resultContext = { ...context }
-        this.setOptions(options)
+        this.setOptions(readerOptions)
       },
     }
   }
@@ -750,35 +753,37 @@ export class QueryObserver<
 
     const { select, structuralSharing } = options
     const memo = context.selection
-    if (select && input !== undefined) {
-      if (
-        !memo ||
-        memo.input !== input ||
-        memo.select !== select ||
-        memo.structuralSharing !== structuralSharing
-      ) {
-        const selection = { input, select, structuralSharing }
-        try {
-          context.selected = {
-            data: replaceData(previous?.data, select(input), options),
-            query: usePlaceholder
-              ? typeof options.placeholderData === 'function' &&
-                previousState?.data !== undefined
-                ? previousQuery
-                : undefined
-              : query,
-          }
-          context.selection = selection
-        } catch (error) {
-          const failure = {
+    if (!select || input === undefined) {
+      context.selection = undefined
+    } else if (
+      !memo ||
+      memo.input !== input ||
+      memo.select !== select ||
+      memo.structuralSharing !== structuralSharing
+    ) {
+      const selection = { input, select, structuralSharing }
+      try {
+        const data = replaceData(previous?.data, select(input), options)
+        const placeholderSource =
+          usePlaceholder &&
+          typeof options.placeholderData === 'function' &&
+          previousState?.data !== undefined
+            ? previousQuery
+            : undefined
+        context.selected = {
+          data,
+          query: usePlaceholder ? placeholderSource : query,
+        }
+        context.selection = selection
+      } catch (error) {
+        context.selection = {
+          ...selection,
+          failure: {
             error: error as TError,
             errorUpdatedAt: Date.now(),
-          }
-          context.selection = { ...selection, failure }
+          },
         }
       }
-    } else {
-      context.selection = undefined
     }
 
     const failure = context.selection?.failure
