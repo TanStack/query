@@ -3,8 +3,8 @@ import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 import { startTransition, useDeferredValue } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, keepPreviousData, useSuspenseQuery } from '..'
-import { renderWithSuspense } from './utils'
+import { QueryClient, keepPreviousData, useQuery, useSuspenseQuery } from '..'
+import { renderWithClient, renderWithSuspense } from './utils'
 
 describe('react transitions', () => {
   let queryClient: QueryClient
@@ -17,6 +17,64 @@ describe('react transitions', () => {
   afterEach(() => {
     queryClient.clear()
     vi.useRealTimers()
+  })
+
+  it('keeps the committed observer result when a render for another key suspends', async () => {
+    const key = createKey()
+    queryClient.setQueryData([key, 1], { value: 1 })
+    queryClient.setQueryData([key, 2], { value: 2 })
+    const pending = new Promise<void>(() => {})
+    const renderB = vi.fn<(data: { selected: number } | undefined) => void>()
+    const select = (data: { value: number }) => ({ selected: data.value })
+
+    function Page() {
+      const [id, setId] = React.useState(1)
+      const { data } = useQuery({
+        queryKey: [key, id],
+        queryFn: () => Promise.resolve({ value: id }),
+        staleTime: Infinity,
+        select,
+      })
+      if (id === 2) {
+        renderB(data)
+        throw pending
+      }
+      return (
+        <>
+          <button onClick={() => startTransition(() => setId(2))}>
+            switch
+          </button>
+          <div>data: {data?.selected}</div>
+        </>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>,
+    )
+    const queryA = queryClient.getQueryCache().find({ queryKey: [key, 1] })!
+    const observer = queryA.observers[0]!
+    const committed = observer.getCurrentResult()
+    await act(() =>
+      fireEvent.click(rendered.getByRole('button', { name: 'switch' })),
+    )
+    expect(renderB).toHaveBeenCalledWith({ selected: 2 })
+    expect(observer.getCurrentResult()).toBe(committed)
+    expect(observer.getCurrentQuery()).toBe(queryA)
+    rendered.getByText('data: 1')
+
+    await act(async () => {
+      queryClient.setQueryData([key, 1], { value: 3 })
+      await vi.advanceTimersByTimeAsync(0)
+    })
+    rendered.getByText('data: 3')
+    expect(observer.getCurrentResult().data).toStrictEqual({ selected: 3 })
+    expect(
+      queryClient.getQueryCache().find({ queryKey: [key, 2] })!.observers,
+    ).toStrictEqual([])
   })
 
   it('should keep values of old key around with useDeferredValue', async () => {

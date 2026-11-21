@@ -8,7 +8,7 @@ import {
   mergeProps,
   on,
   onCleanup,
-  onMount,
+  untrack,
 } from 'solid-js'
 import { createStore, unwrap } from 'solid-js/store'
 import { useQueryClientResolver } from './QueryClientProvider'
@@ -291,34 +291,27 @@ export function useQueries<
     ),
   )
 
-  const observer = new QueriesObserver(
+  const observer = new QueriesObserver<TCombinedResult>(
     client(),
     defaultedQueries(),
-    queriesOptions().combine
-      ? ({
-          combine: queriesOptions().combine,
-        } as QueriesObserverOptions<TCombinedResult>)
-      : undefined,
   )
-
-  const [state, setState] = createStore<TCombinedResult>(
-    observer.getOptimisticResult(
+  const reader = createMemo(() =>
+    observer.createResultReader(
       defaultedQueries(),
-      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
-    )[1](),
+      queriesOptions() as QueriesObserverOptions<TCombinedResult>,
+    ),
   )
+  const readResult = () => {
+    const current = reader()
+    return current.combineResult(current.getSnapshot())
+  }
+
+  const [state, setState] = createStore<TCombinedResult>(readResult())
 
   createRenderEffect(
     on(
       () => queriesOptions().queries.length,
-      () =>
-        setState(
-          observer.getOptimisticResult(
-            defaultedQueries(),
-            (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-              .combine,
-          )[1](),
-        ),
+      () => setState(readResult()),
     ),
   )
 
@@ -347,28 +340,36 @@ export function useQueries<
   })
 
   let taskQueue: Array<() => void> = []
-  const subscribeToObserver = () =>
-    observer.subscribe((result) => {
-      taskQueue.push(() => {
-        batch(() => {
-          const dataResources_ = dataResources()
-          for (let index = 0; index < dataResources_.length; index++) {
-            const dataResource = dataResources_[index]!
-            const unwrappedResult = { ...unwrap(result[index]) }
-            // @ts-expect-error typescript pedantry regarding the possible range of index
-            setState(index, unwrap(unwrappedResult))
-            dataResource[1].mutate(() => unwrap(state[index]!.data))
-            dataResource[1].refetch()
-          }
-        })
-      })
-
-      queueMicrotask(() => {
-        const taskToRun = taskQueue.pop()
-        if (taskToRun) taskToRun()
-        taskQueue = []
+  const queueResult = (result: Array<QueryObserverResult>) => {
+    taskQueue.push(() => {
+      batch(() => {
+        const dataResources_ = dataResources()
+        for (let index = 0; index < dataResources_.length; index++) {
+          const dataResource = dataResources_[index]!
+          const unwrappedResult = { ...unwrap(result[index]) }
+          // @ts-expect-error typescript pedantry regarding the possible range of index
+          setState(index, unwrap(unwrappedResult))
+          dataResource[1].mutate(() => unwrap(state[index]!.data))
+          dataResource[1].refetch()
+        }
       })
     })
+
+    queueMicrotask(() => {
+      const taskToRun = taskQueue.pop()
+      if (taskToRun) taskToRun()
+      taskQueue = []
+    })
+  }
+
+  const subscribeToObserver = () => {
+    const stop = observer.subscribe(queueResult)
+    // Restored data may already be in the observer before it has a listener.
+    queueResult(untrack(() => reader().getSnapshot()))
+    return stop
+  }
+
+  createComputed(on(reader, (current) => current.commit()))
 
   let unsubscribe: () => void = noop
   createComputed<() => void>((cleanup) => {
@@ -378,28 +379,6 @@ export function useQueries<
     return () => queueMicrotask(unsubscribe)
   })
   onCleanup(unsubscribe)
-
-  onMount(() => {
-    observer.setQueries(
-      defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
-    )
-  })
-
-  createComputed(() => {
-    observer.setQueries(
-      defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
-    )
-  })
 
   const handler = (index: number) => ({
     get(target: QueryObserverResult, prop: keyof QueryObserverResult): any {

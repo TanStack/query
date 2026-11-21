@@ -22,6 +22,7 @@ export { QueryCache } from './queryCache'
 export type { QueryCacheNotifyEvent } from './queryCache'
 export { QueryClient } from './queryClient'
 export { QueryObserver } from './queryObserver'
+export type { QueryObserverResultReader } from './queryObserver'
 export { CancelledError } from './retryer'
 export {
   timeoutManager,
@@ -54,7 +55,10 @@ export type {
 export { Mutation } from './mutation'
 export type { MutationState } from './mutation'
 export type { MutationCacheConfig } from './mutationCache'
-export type { QueriesObserverOptions } from './queriesObserver'
+export type {
+  QueriesObserverOptions,
+  QueriesObserverResultReader,
+} from './queriesObserver'
 export { Query } from './query'
 export type { QueryState } from './query'
 export type { QueryCacheConfig } from './queryCache'

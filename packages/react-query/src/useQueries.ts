@@ -423,34 +423,13 @@ export function useQueries<
       ),
   )
 
-  // note: this must be called before useSyncExternalStore
-  const [optimisticResult, getCombinedResult, trackResult] =
-    observer.getOptimisticResult(
-      defaultedQueries,
-      (options as QueriesObserverOptions<TCombinedResult>).combine,
-    )
-
-  React.useEffect(() => {
-    observer.setQueries(
-      defaultedQueries,
-      options as QueriesObserverOptions<TCombinedResult>,
-    )
-  }, [defaultedQueries, options, observer])
-
-  const shouldSubscribe = !isRestoring && subscribed
-  React.useSyncExternalStore(
-    React.useCallback(
-      (onStoreChange) =>
-        shouldSubscribe
-          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
-          : noop,
-      [observer, shouldSubscribe],
-    ),
-    () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
+  const reader = observer.createResultReader(
+    defaultedQueries,
+    options as QueriesObserverOptions<TCombinedResult>,
   )
+  const snapshot = reader.getSnapshot()
 
-  const suspensePromises = optimisticResult.map((result, index) => {
+  const suspensePromises = snapshot.map((result, index) => {
     const opts = defaultedQueries[index]
 
     if (!opts?.suspense) {
@@ -481,25 +460,48 @@ export function useQueries<
       React.use(promise)
     }
   }
-  const firstSingleResultWhichShouldThrow = optimisticResult.find(
-    (result, index) => {
-      const query = defaultedQueries[index]
-      return (
-        query &&
-        getHasError({
-          result,
-          errorResetBoundary,
-          throwOnError: query.throwOnError,
-          query: client.getQueryCache().get(query.queryHash),
-          suspense: query.suspense,
-        })
-      )
-    },
+  // Commit the combine cache before subscription can start a fetch.
+  React.useEffect(() => {
+    reader.commit()
+  }, [reader])
+
+  const shouldSubscribe = !isRestoring && subscribed
+  const result = React.useSyncExternalStore(
+    React.useCallback(
+      (onStoreChange) => {
+        const unsubscribe = shouldSubscribe
+          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
+          : noop
+
+        // Include cache updates that occurred before subscription.
+        observer
+          .getObservers()
+          .forEach((queryObserver) => queryObserver.updateResult())
+        return unsubscribe
+      },
+      [observer, shouldSubscribe],
+    ),
+    reader.getSnapshot,
+    reader.getSnapshot,
   )
+
+  const firstSingleResultWhichShouldThrow = result.find((result, index) => {
+    const query = defaultedQueries[index]
+    return (
+      query &&
+      getHasError({
+        result,
+        errorResetBoundary,
+        throwOnError: query.throwOnError,
+        query: client.getQueryCache().get(query.queryHash),
+        suspense: query.suspense,
+      })
+    )
+  })
 
   if (firstSingleResultWhichShouldThrow) {
     throw firstSingleResultWhichShouldThrow.error
   }
 
-  return getCombinedResult(trackResult())
+  return reader.combineResult(result)
 }

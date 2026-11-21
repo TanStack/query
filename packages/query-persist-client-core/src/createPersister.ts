@@ -1,9 +1,4 @@
-import {
-  hashKey,
-  matchQuery,
-  notifyManager,
-  partialMatchKey,
-} from '@tanstack/query-core'
+import { hashKey, matchQuery, partialMatchKey } from '@tanstack/query-core'
 import type {
   Query,
   QueryClient,
@@ -227,10 +222,8 @@ export function experimental_createQueryPersister<TStorageValue = string>({
             await storage.removeItem(storageKey)
           } else {
             if (afterRestoreMacroTask) {
-              // Just after restoring we want to get fresh data from the server if it's stale
-              notifyManager.schedule(() =>
-                afterRestoreMacroTask(persistedQuery),
-              )
+              // Wait for the query to apply the restored data before refetching.
+              setTimeout(() => afterRestoreMacroTask(persistedQuery), 0)
             }
             // We must resolve the promise here, as otherwise we will have `loading` state in the app until `queryFn` resolves
             return persistedQuery.state.data as T
@@ -341,10 +334,10 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     const queryFnResult = await queryFn(ctx)
 
     if (matchesFilter && storage != null) {
-      // Persist if we have storage defined, we use timeout to get proper state to be persisted
-      notifyManager.schedule(() => {
+      // Wait for the query to apply the fetched data before persisting its state.
+      setTimeout(() => {
         persistQuery(query)
-      })
+      }, 0)
     }
 
     return Promise.resolve(queryFnResult)

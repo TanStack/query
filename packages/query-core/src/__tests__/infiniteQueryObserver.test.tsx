@@ -204,7 +204,7 @@ describe('InfiniteQueryObserver', () => {
     expect(observer.getCurrentResult().hasNextPage).toBe(false)
   })
 
-  it('should set infinite query behavior via getOptimisticResult and return the initial state', () => {
+  it('should compute an infinite result without changing the supplied options', () => {
     const key = createKey()
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
@@ -232,7 +232,10 @@ describe('InfiniteQueryObserver', () => {
 
     const result = observer.getOptimisticResult(options)
 
-    expect(options._type).toBe('infinite')
+    expect(options._type).toBeUndefined()
+    expect(
+      queryClient.getQueryCache().get(options.queryHash)?.options._type,
+    ).toBe('infinite')
 
     expect(result).toMatchObject({
       data: undefined,
