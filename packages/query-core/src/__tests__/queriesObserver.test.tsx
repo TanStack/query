@@ -228,10 +228,9 @@ describe('queriesObserver', () => {
     const observer = new QueriesObserver(queryClient, [first, second])
     const current = observer.getCurrentResult()
 
-    const [optimistic] = observer.getOptimisticResult(
-      [{ ...first, placeholderData: 4 }, third],
-      undefined,
-    )
+    const optimistic = observer
+      .createResultReader([{ ...first, placeholderData: 4 }, third])
+      .getSnapshot()
 
     expect(optimistic.map((result) => result.data)).toStrictEqual([4, 3])
     expect(observer.getCurrentResult()).toBe(current)
@@ -549,14 +548,13 @@ describe('queriesObserver', () => {
     const results: Array<Array<QueryObserverResult>> = []
 
     results.push(
-      observer.getOptimisticResult(
-        [
+      observer
+        .createResultReader([
           { queryKey: key1, queryFn: queryFn1 },
           { queryKey: key2, queryFn: queryFn2 },
           { queryKey: key1, queryFn: queryFn1 },
-        ],
-        undefined,
-      )[0],
+        ])
+        .getSnapshot(),
     )
 
     const unsubscribe = observer.subscribe((result) => {
@@ -673,11 +671,13 @@ describe('queriesObserver', () => {
       results: Array<QueryObserverResult>
     }>(queryClient, [{ queryKey: key1, queryFn: queryFn1 }], { combine })
 
-    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+    const initialCombinedReader = observer.createResultReader(
       [{ queryKey: key1, queryFn: queryFn1 }],
-      combine,
+      { combine: combine },
     )
-    const initialCombined = getInitialCombined(initialRaw)
+    const initialCombined = initialCombinedReader.combineResult(
+      initialCombinedReader.getSnapshot(),
+    )
 
     expect(initialCombined.count).toBe(1)
 
@@ -685,11 +685,12 @@ describe('queriesObserver', () => {
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ]
-    const [newRaw, getNewCombined] = observer.getOptimisticResult(
-      newQueries,
+    const newCombinedReader = observer.createResultReader(newQueries, {
       combine,
+    })
+    const newCombined = newCombinedReader.combineResult(
+      newCombinedReader.getSnapshot(),
     )
-    const newCombined = getNewCombined(newRaw)
 
     expect(newCombined.count).toBe(2)
   })
@@ -714,10 +715,11 @@ describe('queriesObserver', () => {
       combine,
     })
 
-    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
-      [query],
+    const combinedResultReader = observer.createResultReader([query], {
       combine,
-    )
+    })
+    const rawResult = combinedResultReader.getSnapshot()
+    const getCombinedResult = combinedResultReader.combineResult
     expect(getCombinedResult(rawResult)).toStrictEqual(['data'])
     expect(combine).toHaveBeenCalledTimes(1)
 
@@ -749,10 +751,11 @@ describe('queriesObserver', () => {
       combine,
     })
 
-    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
-      [query],
+    const combinedResultReader = observer.createResultReader([query], {
       combine,
-    )
+    })
+    const rawResult = combinedResultReader.getSnapshot()
+    const getCombinedResult = combinedResultReader.combineResult
     expect(getCombinedResult(rawResult)).toStrictEqual(['data'])
     expect(combine).toHaveBeenCalledTimes(1)
 
@@ -802,23 +805,26 @@ describe('queriesObserver', () => {
       { combine },
     )
 
-    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+    const initialCombinedReader = observer.createResultReader(
       [
         { queryKey: key1, queryFn: queryFn1 },
         { queryKey: key2, queryFn: queryFn2 },
       ],
-      combine,
+      { combine: combine },
     )
-    const initialCombined = getInitialCombined(initialRaw)
+    const initialCombined = initialCombinedReader.combineResult(
+      initialCombinedReader.getSnapshot(),
+    )
 
     expect(initialCombined.count).toBe(2)
 
     const newQueries = [{ queryKey: key1, queryFn: queryFn1 }]
-    const [newRaw, getNewCombined] = observer.getOptimisticResult(
-      newQueries,
+    const newCombinedReader = observer.createResultReader(newQueries, {
       combine,
+    })
+    const newCombined = newCombinedReader.combineResult(
+      newCombinedReader.getSnapshot(),
     )
-    const newCombined = getNewCombined(newRaw)
 
     expect(newCombined.count).toBe(1)
   })
@@ -846,19 +852,23 @@ describe('queriesObserver', () => {
       results: Array<QueryObserverResult>
     }>(queryClient, [{ queryKey: key1, queryFn: queryFn1 }], { combine })
 
-    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+    const initialCombinedReader = observer.createResultReader(
       [{ queryKey: key1, queryFn: queryFn1 }],
-      combine,
+      { combine: combine },
     )
-    const initialCombined = getInitialCombined(initialRaw)
+    const initialCombined = initialCombinedReader.combineResult(
+      initialCombinedReader.getSnapshot(),
+    )
 
     expect(initialCombined.keys).toStrictEqual(['success'])
 
-    const [newRaw, getNewCombined] = observer.getOptimisticResult(
+    const newCombinedReader = observer.createResultReader(
       [{ queryKey: key2, queryFn: queryFn2 }],
-      combine,
+      { combine: combine },
     )
-    const newCombined = getNewCombined(newRaw)
+    const newCombined = newCombinedReader.combineResult(
+      newCombinedReader.getSnapshot(),
+    )
 
     expect(newCombined.keys).toStrictEqual(['pending'])
   })
@@ -891,39 +901,22 @@ describe('queriesObserver', () => {
       { combine: combine1 },
     )
 
-    const [raw1, getCombined1] = observer.getOptimisticResult(queries, combine1)
-    const combined1 = getCombined1(raw1)
+    const combined1Reader = observer.createResultReader(queries, {
+      combine: combine1,
+    })
+    const combined1 = combined1Reader.combineResult(
+      combined1Reader.getSnapshot(),
+    )
 
-    const [raw2, getCombined2] = observer.getOptimisticResult(queries, combine2)
-    const combined2 = getCombined2(raw2)
+    const combined2Reader = observer.createResultReader(queries, {
+      combine: combine2,
+    })
+    const combined2 = combined2Reader.combineResult(
+      combined2Reader.getSnapshot(),
+    )
 
     expect(combined1.total).toBe(2)
     expect(combined2.total).toBe(8)
-  })
-
-  it('should use fallback result when combineResult is called without raw argument', () => {
-    const combine = vi.fn<
-      (results: Array<QueryObserverResult>) => { count: number }
-    >((results: Array<QueryObserverResult>) => ({
-      count: results.length,
-    }))
-
-    const key = createKey()
-    const queryFn = vi.fn<() => number>().mockReturnValue(1)
-
-    const observer = new QueriesObserver<{ count: number }>(
-      queryClient,
-      [{ queryKey: key, queryFn }],
-      { combine },
-    )
-
-    const [, getCombined] = observer.getOptimisticResult(
-      [{ queryKey: key, queryFn }],
-      combine,
-    )
-    const combined = getCombined()
-
-    expect(combined.count).toBe(1)
   })
 
   it('should return observer result directly when notifyOnChangeProps is set', () => {
@@ -936,12 +929,10 @@ describe('queriesObserver', () => {
 
     const trackResultSpy = vi.spyOn(QueryObserver.prototype, 'trackResult')
 
-    const [, , trackResult] = observer.getOptimisticResult(
-      [{ queryKey: key, queryFn, notifyOnChangeProps: ['data'] }],
-      undefined,
-    )
-
-    const trackedResults = trackResult()
+    const reader = observer.createResultReader([
+      { queryKey: key, queryFn, notifyOnChangeProps: ['data'] },
+    ])
+    const trackedResults = reader.combineResult(reader.getSnapshot())
 
     expect(trackedResults).toHaveLength(1)
     // trackResult should NOT be called when notifyOnChangeProps is set
@@ -966,11 +957,10 @@ describe('queriesObserver', () => {
       { combine },
     )
 
-    const [raw1, getCombined1] = observer.getOptimisticResult(queries, combine)
-    const combined1 = getCombined1(raw1)
+    const reader = observer.createResultReader(queries, { combine })
+    const combined1 = reader.combineResult(reader.getSnapshot())
 
-    const [raw2, getCombined2] = observer.getOptimisticResult(queries, combine)
-    const combined2 = getCombined2(raw2)
+    const combined2 = reader.combineResult(reader.getSnapshot())
 
     // Same combine, same queries → cached result returned
     expect(combined1).toBe(combined2)
@@ -997,17 +987,9 @@ describe('queriesObserver', () => {
         combine,
       })
 
-      const [raw1, getCombined1] = observer.getOptimisticResult(
-        queries,
-        combine,
-      )
-      getCombined1(raw1)
-
-      const [raw2, getCombined2] = observer.getOptimisticResult(
-        queries,
-        combine,
-      )
-      getCombined2(raw2)
+      const reader = observer.createResultReader(queries, { combine })
+      reader.combineResult(reader.getSnapshot())
+      reader.combineResult(reader.getSnapshot())
 
       expect(combine).toHaveBeenCalledTimes(1)
     },
@@ -1026,15 +1008,11 @@ describe('queriesObserver', () => {
 
     const trackPropSpy = vi.spyOn(QueryObserver.prototype, 'trackProp')
 
-    const [, , trackResult] = observer.getOptimisticResult(
-      [
-        { queryKey: key1, queryFn: queryFn1 },
-        { queryKey: key2, queryFn: queryFn2 },
-      ],
-      undefined,
-    )
-
-    const trackedResults = trackResult()
+    const reader = observer.createResultReader([
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+    ])
+    const trackedResults = reader.combineResult(reader.getSnapshot())
 
     expect(trackedResults).toHaveLength(2)
 

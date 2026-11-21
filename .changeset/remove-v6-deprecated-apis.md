@@ -20,3 +20,4 @@ Remove deprecated APIs for v6.
 - Remove `styleNonce` from Devtools options.
 - Replace `@tanstack/query-sync-storage-persister` with `@tanstack/query-async-storage-persister`. The async persister accepts synchronous storage such as `localStorage`.
 - Vue Query requires Vue 3.3 or later and imports directly from `vue`. If you passed an options getter to `fetchQuery`, call the getter before passing its options to `queryClient.query`.
+- Replace `getOptimisticResult` on query observers with `createResultReader(options).getSnapshot()`. For multiple queries, pass the queries and combine options to `createResultReader`, then pass the snapshot to `reader.combineResult`.

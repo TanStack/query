@@ -351,64 +351,6 @@ export class QueriesObserver<
     }
   }
 
-  /**
-   * The `QueriesObserver` counterpart of {@link QueryObserver#getOptimisticResult} — computes
-   * the result for the given (already-defaulted) queries right now, synchronously. Called by
-   * framework adapters (e.g. `useQueries`) ahead of subscribing, returning a tuple of the raw
-   * per-query results, a function to compute the combined result from them, and a function to
-   * wrap the results for property-access tracking. When the queries match the observed ones, the
-   * results also become the current result, so a later `setQueries` call with the same queries
-   * does not notify the listeners about them.
-   * @param queries - The defaulted options of the queries to compute the result for.
-   * @param combine - The `combine` function used by the returned `combineResult`, if any.
-   * @returns A tuple of the per-query results, a function that computes the combined result, and a
-   * function that returns the results wrapped for property-access tracking.
-   * @deprecated Use `createResultReader` instead.
-   */
-  getOptimisticResult(
-    queries: Array<QueryObserverOptions>,
-    combine: CombineFn<TCombinedResult> | undefined,
-  ): [
-    rawResult: Array<QueryObserverResult>,
-    combineResult: (r?: Array<QueryObserverResult>) => TCombinedResult,
-    trackResult: () => Array<QueryObserverResult>,
-  ] {
-    const matches = this.#findMatchingObservers(queries)
-    const result = matches.map((match) =>
-      match.observer
-        .createResultReader(match.defaultedQueryOptions)
-        .getSnapshot(),
-    )
-    // The observers now hold the optimistic results as their current results.
-    // Hold them here too, so that `setQueries` does not find a change (and
-    // notify) for results that the caller already has.
-    if (
-      matches.length === this.#observers.length &&
-      matches.some(
-        (match, index) =>
-          match.observer.getCurrentResult() !== this.#result[index],
-      ) &&
-      matches.every((match, index) => match.observer === this.#observers[index])
-    ) {
-      this.#result = matches.map((match) => match.observer.getCurrentResult())
-    }
-    const queryHashes = matches.map(
-      (match) => match.defaultedQueryOptions.queryHash,
-    )
-
-    return [
-      result,
-      (r?: Array<QueryObserverResult>) => {
-        const combined = this.#combineResult(r ?? result, combine, queryHashes)
-        this.#combinedResult = combined
-        return combined
-      },
-      () => {
-        return this.#trackResult(result, matches)
-      },
-    ]
-  }
-
   #trackResult(
     result: Array<QueryObserverResult>,
     matches: Array<QueryObserverMatch>,
