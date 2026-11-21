@@ -9,7 +9,6 @@ import type { QueryBehavior } from './query'
 import type {
   InfiniteData,
   InfiniteQueryPageParamsOptions,
-  OmitKeyof,
   QueryFunctionContext,
   QueryKey,
 } from './types'
@@ -63,22 +62,14 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             return Promise.resolve(data)
           }
 
-          const createQueryFnContext = () => {
-            const queryFnContext: OmitKeyof<
-              QueryFunctionContext<QueryKey, unknown>,
-              'signal'
-            > = {
-              client: context.client,
-              queryKey: context.queryKey,
-              pageParam: param,
-              direction: previous ? 'backward' : 'forward',
-              meta: context.options.meta,
-            }
-            addSignalProperty(queryFnContext)
-            return queryFnContext as QueryFunctionContext<QueryKey, unknown>
-          }
-
-          const queryFnContext = createQueryFnContext()
+          const queryFnContext = {
+            client: context.client,
+            queryKey: context.queryKey,
+            pageParam: param,
+            direction: previous ? 'backward' : 'forward',
+            meta: context.options.meta,
+          } as QueryFunctionContext<QueryKey, unknown>
+          addSignalProperty(queryFnContext)
 
           const page = await queryFn(queryFnContext)
 

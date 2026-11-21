@@ -18,7 +18,7 @@ import {
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import { renderWithSuspense } from './utils'
+import { renderWithClient, renderWithSuspense } from './utils'
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from '..'
 
 describe('useSuspenseQueries', () => {
@@ -670,6 +670,73 @@ describe('useSuspenseQueries', () => {
     expect(consoleErrorMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
+  })
+
+  it('keeps the current selection active while a query change is suspended', async () => {
+    const key = createKey()
+    const extraKey = createKey()
+    queryClient.setQueryData(key, 'First')
+
+    function Page() {
+      const [expanded, setExpanded] = React.useState(false)
+      const result = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () => Promise.resolve('First'),
+            staleTime: Infinity,
+            select: (data: string) =>
+              expanded ? data.toUpperCase() : data.toLowerCase(),
+          },
+          ...(expanded
+            ? [
+                {
+                  queryKey: extraKey,
+                  queryFn: () => sleep(50).then(() => 'extra'),
+                },
+              ]
+            : []),
+        ],
+        combine: (results) => results.map((result) => result.data).join('|'),
+      })
+      return (
+        <button onClick={() => React.startTransition(() => setExpanded(true))}>
+          {result}
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.StrictMode>
+        <React.Suspense fallback="loading">
+          <Page />
+        </React.Suspense>
+      </React.StrictMode>,
+    )
+    fireEvent.click(rendered.getByRole('button'))
+    await act(() => vi.advanceTimersByTimeAsync(1))
+    expect(rendered.getByText('first')).toBeInTheDocument()
+    expect(
+      queryClient
+        .getQueryCache()
+        .find({ queryKey: extraKey })!
+        .getObserversCount(),
+    ).toBe(0)
+
+    act(() => {
+      queryClient.setQueryData(key, 'Second')
+    })
+    await act(() => vi.advanceTimersByTimeAsync(1))
+    expect(rendered.getByText('second')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(50))
+    expect(rendered.getByText('SECOND|extra')).toBeInTheDocument()
+    expect(
+      queryClient
+        .getQueryCache()
+        .find({ queryKey: extraKey })!
+        .getObserversCount(),
+    ).toBe(1)
   })
 
   it('should keep previous data when wrapped in a transition', async () => {

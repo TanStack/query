@@ -100,39 +100,15 @@ export function useBaseQuery<
       ),
   )
 
-  // note: this must be called before useSyncExternalStore
-  const result = observer.getOptimisticResult(defaultedOptions)
+  const reader = observer.createResultReader(defaultedOptions)
 
-  React.useEffect(() => {
-    observer.setOptions(defaultedOptions)
-  }, [defaultedOptions, observer])
-
-  const shouldSubscribe = !isRestoring && subscribed
-  React.useSyncExternalStore(
-    React.useCallback(
-      (onStoreChange) => {
-        const unsubscribe = shouldSubscribe
-          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
-          : noop
-
-        // Update result to make sure we did not miss any query updates
-        // between creating the observer and subscribing to it.
-        observer.updateResult()
-
-        return unsubscribe
-      },
-      [observer, shouldSubscribe],
-    ),
-    () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
-  )
-
-  // Handle suspense
+  // Let the reader initialize the query before starting a Suspense fetch.
   if (defaultedOptions.suspense) {
+    const snapshot = reader.getSnapshot()
     const suspenseQuery = client.getQueryCache().build(client, defaultedOptions)
     const suspend = shouldSuspend(
       defaultedOptions,
-      result,
+      snapshot,
       errorResetBoundary,
       suspenseQuery,
     )
@@ -150,6 +126,30 @@ export function useBaseQuery<
       }
     }
   }
+
+  React.useEffect(() => {
+    reader.commit()
+  }, [reader])
+
+  const shouldSubscribe = !isRestoring && subscribed
+  const result = React.useSyncExternalStore(
+    React.useCallback(
+      (onStoreChange) => {
+        const unsubscribe = shouldSubscribe
+          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
+          : noop
+
+        // Update result to make sure we did not miss any query updates
+        // between creating the observer and subscribing to it.
+        observer.updateResult()
+
+        return unsubscribe
+      },
+      [observer, shouldSubscribe],
+    ),
+    reader.getSnapshot,
+    reader.getSnapshot,
+  )
 
   // Handle error boundary
   if (

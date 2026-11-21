@@ -130,7 +130,7 @@ class QueryController<
     const observer = new QueryObserver(initialClient, defaulted)
     this.queryClient = initialClient
     this.observer = observer
-    this.assignObserverResult(observer.getOptimisticResult(defaulted))
+    this.setObserverResult(observer.getOptimisticResult(defaulted))
   }
 
   protected override onConnected(): void {

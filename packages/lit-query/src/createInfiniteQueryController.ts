@@ -166,7 +166,7 @@ class InfiniteQueryController<
     const observer = new InfiniteQueryObserver(queryClient, defaulted)
     this.queryClient = queryClient
     this.observer = observer
-    this.assignObserverResult(observer.getOptimisticResult(defaulted))
+    this.setObserverResult(observer.getOptimisticResult(defaulted))
   }
 
   protected override onConnected(): void {
