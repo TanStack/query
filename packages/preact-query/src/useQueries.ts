@@ -4,6 +4,7 @@ import {
   noop,
   notifyManager,
 } from '@tanstack/query-core'
+import { use } from 'preact/compat'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
@@ -15,7 +16,7 @@ import {
 } from './errorBoundaryUtils'
 import {
   ensureSuspenseTimers,
-  fetchOptimistic,
+  getSuspensePromise,
   shouldSuspend,
 } from './suspense'
 import { useSyncExternalStore } from './utils'
@@ -407,14 +408,20 @@ export function useQueries<
 
         if (opts && shouldSuspend(opts, result)) {
           const queryObserver = new QueryObserver(client, opts)
-          return fetchOptimistic(opts, queryObserver, errorResetBoundary)
+          return getSuspensePromise(
+            opts,
+            queryObserver,
+            errorResetBoundary,
+            queryObserver.getCurrentQuery(),
+          )
         }
         return []
       })
     : []
 
   if (suspensePromises.length > 0) {
-    throw Promise.all(suspensePromises)
+    // Keep the boundary suspended until every pending query has settled.
+    use(Promise.all(suspensePromises))
   }
   const firstSingleResultWhichShouldThrow = optimisticResult.find(
     (result, index) => {
