@@ -98,27 +98,39 @@ describe('placeholder updates', () => {
     },
   )
 
-  it('shows fetched data after the selection of a computed placeholder throws', async () => {
-    const queryKey = createKey()
-    const placeholderData = () => ({ value: 0 })
-    const select = ({ value }: { value: number }) => {
-      if (value === 0) throw new Error('selection failed')
-      return value
-    }
-    const queryFn = () => sleep(10).then(() => ({ value: 1 }))
-    const { result, rerender } = renderHook(() => {
-      const [{ data, error }] = useQueries(
-        { queries: [{ queryKey, queryFn, placeholderData, select }] },
-        client,
-      )
-      return { data, error }
-    })
+  it.each([true, false])(
+    'shows fetched data after the selection of a computed placeholder throws (structural sharing: %s)',
+    async (structuralSharing) => {
+      const queryKey = createKey()
+      const placeholderData = () => ({ value: 0 })
+      const select = ({ value }: { value: number }) => {
+        if (value === 0) throw new Error('selection failed')
+        return value
+      }
+      const queryFn = () => sleep(50).then(() => ({ value: 1 }))
+      let renders = 0
+      const { result, rerender } = renderHook(() => {
+        renders++
+        const [{ data, error }] = useQueries(
+          {
+            queries: [
+              { queryKey, queryFn, placeholderData, select, structuralSharing },
+            ],
+          },
+          client,
+        )
+        return { data, error }
+      })
 
-    rerender()
-    await vi.advanceTimersByTimeAsync(1)
-    expect(result.current.error?.message).toBe('selection failed')
+      rerender()
+      await vi.advanceTimersByTimeAsync(10)
+      expect(result.current.error?.message).toBe('selection failed')
+      const settledRenders = renders
+      await vi.advanceTimersByTimeAsync(10)
+      expect(renders).toBe(settledRenders)
 
-    await vi.advanceTimersByTimeAsync(20)
-    expect(result.current).toStrictEqual({ data: 1, error: null })
-  })
+      await vi.advanceTimersByTimeAsync(40)
+      expect(result.current).toStrictEqual({ data: 1, error: null })
+    },
+  )
 })

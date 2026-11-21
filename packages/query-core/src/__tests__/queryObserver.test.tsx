@@ -29,6 +29,148 @@ describe('queryObserver', () => {
     vi.useRealTimers()
   })
 
+  it('should compute the result again when it joins a fetch that is in progress', async () => {
+    const keyA = createKey()
+    const keyB = createKey()
+    const queryFn = () =>
+      sleep(10).then(() => Promise.reject(new Error('fetch failed')))
+    queryClient
+      .query({ queryKey: keyB, queryFn, retry: 3, retryDelay: 100 })
+      .catch(noop)
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryClient.getQueryState(keyB)?.fetchFailureCount).toBe(1)
+
+    const observer = new QueryObserver<string>(queryClient, {
+      queryKey: keyA,
+      queryFn: () => 'a',
+    })
+    const unsubscribe = observer.subscribe(() => {})
+
+    const options = queryClient.defaultQueryOptions<string>({
+      queryKey: keyB,
+      queryFn,
+      retry: 3,
+      retryDelay: 100,
+      _optimisticResults: 'optimistic',
+    })
+    const state = queryClient.getQueryState(keyB)
+    // The optimistic result shows a new fetch.
+    expect(observer.getOptimisticResult(options).failureCount).toBe(0)
+
+    observer.setOptions(options)
+
+    // The observer joined the fetch, and the query state did not change.
+    expect(queryClient.getQueryState(keyB)).toBe(state)
+    expect(observer.getCurrentResult().failureCount).toBe(1)
+    unsubscribe()
+  })
+
+  it('reuses a failed placeholder selection once', () => {
+    let value = 0
+    const options = queryClient.defaultQueryOptions({
+      queryKey: createKey(),
+      enabled: false,
+      structuralSharing: false,
+      placeholderData: () => ({ value }),
+      select: (row: { value: number }) => {
+        if (row.value === 0) throw new Error('waiting')
+        return row
+      },
+    })
+    const observer = new QueryObserver(queryClient, options)
+    const { error } = observer.getOptimisticResult(options)
+    expect(error?.message).toBe('waiting')
+
+    observer.setOptions(options)
+    expect(observer.getCurrentResult().error).toBe(error)
+
+    value = 1
+    observer.setOptions(options)
+    expect(observer.getCurrentResult().data).toStrictEqual({ value: 1 })
+  })
+
+  it('refreshes stale status if stale time elapses after the optimistic read', () => {
+    const queryKey = createKey()
+    queryClient.setQueryData(queryKey, 'cached')
+    const observer = new QueryObserver(queryClient, {
+      queryKey,
+      staleTime: 100,
+    })
+    const options = queryClient.defaultQueryOptions({
+      queryKey,
+      staleTime: 10,
+      select: () => 'selected',
+    })
+    expect(observer.getOptimisticResult(options)).toMatchObject({
+      data: 'selected',
+      isStale: false,
+    })
+
+    vi.advanceTimersByTime(11)
+    observer.setOptions(options)
+    expect(observer.getCurrentResult().isStale).toBe(true)
+  })
+
+  it.each([
+    {
+      change: 'fetch status',
+      updatePreviousQuery: (previousKey: Array<string>) => {
+        void queryClient
+          .query({
+            queryKey: previousKey,
+            queryFn: () => new Promise<{ value: number }>(() => {}),
+          })
+          .catch(noop)
+      },
+    },
+    {
+      change: 'metadata',
+      updatePreviousQuery: (previousKey: Array<string>) => {
+        const previous = queryClient
+          .getQueryCache()
+          .find({ queryKey: previousKey })!
+        previous.setOptions({ ...previous.options, meta: { ready: true } })
+      },
+    },
+  ])(
+    'recomputes a placeholder when the previous query changes $change',
+    ({ updatePreviousQuery }) => {
+      const previousKey = createKey()
+      queryClient.setQueryData(previousKey, { value: 1 })
+      const observer = new QueryObserver<{ value: number }>(queryClient, {
+        queryKey: previousKey,
+      })
+      const options = queryClient.defaultQueryOptions<{ value: number }>({
+        queryKey: createKey(),
+        enabled: false,
+        structuralSharing: false,
+        placeholderData: (_data, previousQuery) => ({
+          value:
+            previousQuery?.state.fetchStatus === 'fetching' ||
+            previousQuery?.meta?.ready
+              ? 1
+              : 0,
+        }),
+        select: (row: { value: number }) => {
+          if (row.value === 0) throw new Error('waiting')
+          return row
+        },
+      })
+      expect(observer.getOptimisticResult(options).error?.message).toBe(
+        'waiting',
+      )
+
+      updatePreviousQuery(previousKey)
+
+      observer.setOptions(options)
+      expect(observer.getCurrentResult()).toMatchObject({
+        isPlaceholderData: true,
+        data: { value: 1 },
+        error: null,
+      })
+    },
+  )
+
   it('should select again when an input that threw comes back', () => {
     const queryKey = createKey()
     queryClient.setQueryData(queryKey, 'cached')
