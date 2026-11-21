@@ -22,6 +22,44 @@ describe('useQueries', () => {
     vi.useRealTimers()
   })
 
+  it('settles after selecting a fresh placeholder throws without structural sharing', async () => {
+    const queryKey = createKey()
+    const queryFn = () => sleep(50).then(() => ({ value: 1 }))
+    const placeholderData = () => ({ value: 0 })
+    const select = ({ value }: { value: number }) => {
+      if (value === 0) throw new Error('selection failed')
+      return value
+    }
+    let renders = 0
+
+    function Page() {
+      renders++
+      const [{ data, error }] = useQueries({
+        queries: [
+          {
+            queryKey,
+            queryFn,
+            placeholderData,
+            select,
+            structuralSharing: false,
+          },
+        ],
+      })
+      return <div>{error?.message ?? data}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    rendered.rerender(<Page />)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('selection failed')).toBeInTheDocument()
+    const settledRenders = renders
+    await vi.advanceTimersByTimeAsync(10)
+    expect(renders).toBe(settledRenders)
+
+    await vi.advanceTimersByTimeAsync(40)
+    expect(rendered.getByText('1')).toBeInTheDocument()
+  })
+
   it.each([false, true])(
     'should settle after fetched data reaches an inline selector (throws: %s)',
     async (throws) => {

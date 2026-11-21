@@ -64,6 +64,18 @@ export class QueryObserver<
   #currentQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> = undefined!
   #currentQueryInitialState: QueryState<TQueryData, TError> = undefined!
   #currentResult: QueryObserverResult<TData, TError> = undefined!
+  #optimisticRead?: {
+    query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+    state: QueryState<TQueryData, TError>
+    previousQuery:
+      | Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      | undefined
+    previousState: QueryState<TQueryData, TError> | undefined
+    previousOptions:
+      | Query<TQueryFnData, TError, TQueryData, TQueryKey>['options']
+      | undefined
+    result: QueryObserverResult<TData, TError>
+  }
   #currentResultOptions?: QueryObserverOptions<
     TQueryFnData,
     TError,
@@ -195,6 +207,8 @@ export class QueryObserver<
       TQueryKey
     >,
   ): void {
+    const optimisticRead = this.#optimisticRead
+    this.#optimisticRead = undefined
     const prevOptions = this.options
     const prevQuery = this.#currentQuery
 
@@ -229,7 +243,7 @@ export class QueryObserver<
     const mounted = this.hasListeners()
 
     // Fetch if there are subscribers
-    if (
+    const fetch =
       mounted &&
       shouldFetchOptionally(
         this.#currentQuery,
@@ -237,12 +251,27 @@ export class QueryObserver<
         this.options,
         prevOptions,
       )
-    ) {
+
+    if (fetch) {
       this.#executeFetch()
     }
 
-    // Update result
-    this.updateResult()
+    const previousQuery = this.#lastQueryWithDefinedData
+    if (
+      fetch ||
+      this.#currentResultOptions !== this.options ||
+      optimisticRead?.query !== this.#currentQuery ||
+      optimisticRead.state !== this.#currentQuery.state ||
+      optimisticRead.result !== this.#currentResult ||
+      optimisticRead.previousQuery !== previousQuery ||
+      optimisticRead.previousState !== previousQuery?.state ||
+      optimisticRead.previousOptions !== previousQuery?.options ||
+      this.#currentResult.isStale !== isStale(this.#currentQuery, this.options)
+    ) {
+      this.updateResult()
+    } else if (this.#currentQuery.state.data !== undefined) {
+      this.#lastQueryWithDefinedData = this.#currentQuery
+    }
 
     // Update stale interval if needed
     if (
@@ -275,6 +304,7 @@ export class QueryObserver<
    * right now, building the underlying `Query` if it doesn't exist yet, without waiting for a
    * subscription callback. Called by framework adapters on every render (e.g. `useQuery`) so the
    * returned value is available synchronously, ahead of `setOptions` triggering an actual fetch.
+   * The next options update can reuse this result if its inputs are unchanged.
    * @param options - The defaulted observer options to compute the result for.
    * @returns The result for the given options.
    */
@@ -289,6 +319,11 @@ export class QueryObserver<
   ): QueryObserverResult<TData, TError> {
     const query = this.#client.getQueryCache().build(this.#client, options)
 
+    this.#optimisticRead = undefined
+    const state = query.state
+    const previousQuery = this.#lastQueryWithDefinedData
+    const previousState = previousQuery?.state
+    const previousOptions = previousQuery?.options
     const result = this.createResult(query, options)
 
     if (!shallowEqualObjects(this.getCurrentResult(), result)) {
@@ -310,6 +345,14 @@ export class QueryObserver<
       // data arrives.
       this.#currentResult = result
       this.#currentResultOptions = options
+      this.#optimisticRead = {
+        query,
+        state,
+        previousQuery,
+        previousState,
+        previousOptions,
+        result,
+      }
     }
     return result
   }
@@ -765,6 +808,7 @@ export class QueryObserver<
       | QueryObserverResult<TData, TError>
       | undefined
 
+    this.#optimisticRead = undefined
     const nextResult = this.createResult(this.#currentQuery, this.options)
 
     this.#currentResultOptions = this.options
