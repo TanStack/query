@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
-import { injectQuery } from '@tanstack/angular-query-experimental'
 import { HttpClient } from '@angular/common/http'
+import { Component, inject } from '@angular/core'
+import { injectQuery } from '@tanstack/angular-query'
 import { lastValueFrom } from 'rxjs'
 
-interface Response {
+interface Repo {
   name: string
   description: string
   subscribers_count: number
@@ -12,7 +12,6 @@ interface Response {
 }
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'simple-example',
   templateUrl: './simple-example.component.html',
 })
@@ -23,7 +22,7 @@ export class SimpleExampleComponent {
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(
-        this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+        this.#http.get<Repo>('https://api.github.com/repos/TanStack/query'),
       ),
   }))
 }

@@ -70,8 +70,8 @@ focusManager.setEventListener((handleFocus) => {
 Instead of event listeners on `window`, React Native provides focus information through the [`AppState` module](https://reactnative.dev/docs/appstate#app-states). You can use the `AppState` "change" event to trigger an update when the app state changes to "active":
 
 ```tsx
-import { AppState } from 'react-native'
 import { focusManager } from '@tanstack/react-query'
+import { AppState } from 'react-native'
 
 function onAppStateChange(status: AppStateStatus) {
   if (Platform.OS !== 'web') {
@@ -103,3 +103,9 @@ focusManager.setFocused(undefined)
 ```
 
 [//]: # 'Example4'
+
+## Troubleshooting
+
+If stale queries do not refetch when you return to a tab, check whether **Emulate a focused page** is enabled in Chrome DevTools. This setting keeps `document.visibilityState` set to `visible` and prevents `visibilitychange` events, which TanStack Query uses for its default focus handling.
+
+Disable **Emulate a focused page** in the DevTools **Rendering** panel, then switch to another tab and return to test window focus refetching. See the [Chrome DevTools documentation](https://developer.chrome.com/docs/devtools/rendering/apply-effects#emulate_a_focused_page) for more details.

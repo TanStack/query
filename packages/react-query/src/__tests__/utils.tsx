@@ -1,10 +1,10 @@
-import { vi } from 'vitest'
-import * as React from 'react'
+import { environmentManager } from '@tanstack/query-core'
 import { act, render } from '@testing-library/react'
-import { environmentManager, isServer } from '@tanstack/query-core'
+import * as React from 'react'
+import { vi } from 'vitest'
 import { QueryClientProvider, onlineManager } from '..'
-import type { QueryClient } from '..'
 import type { MockInstance } from 'vitest'
+import type { QueryClient } from '..'
 
 export function renderWithClient(
   client: QueryClient,
@@ -49,6 +49,7 @@ export function Blink({
   const [shouldShow, setShouldShow] = React.useState<boolean>(true)
 
   React.useEffect(() => {
+    // oxlint-disable-next-line react-hooks-js/set-state-in-effect -- shows the children again whenever they or 'duration' change, before the timeout hides them
     setShouldShow(true)
     const timeout = setActTimeout(() => setShouldShow(false), duration)
     return () => {
@@ -74,8 +75,9 @@ export function setActTimeout(fn: () => void, ms?: number) {
 }
 
 export function setIsServer(value: boolean) {
+  const originalIsServer = environmentManager.isServer()
   environmentManager.setIsServer(() => value)
   return () => {
-    environmentManager.setIsServer(() => isServer)
+    environmentManager.setIsServer(() => originalIsServer)
   }
 }

@@ -17,11 +17,20 @@ replace:
 [//]: # 'Example'
 
 ```ts
+@Component({
+  // ...
+})
 export class AppComponent {
   // The following queries will execute in parallel
-  usersQuery = injectQuery(() => ({ queryKey: ['users'], queryFn: fetchUsers }))
-  teamsQuery = injectQuery(() => ({ queryKey: ['teams'], queryFn: fetchTeams }))
-  projectsQuery = injectQuery(() => ({
+  readonly usersQuery = injectQuery(() => ({
+    queryKey: ['users'],
+    queryFn: fetchUsers,
+  }))
+  readonly teamsQuery = injectQuery(() => ({
+    queryKey: ['teams'],
+    queryFn: fetchTeams,
+  }))
+  readonly projectsQuery = injectQuery(() => ({
     queryKey: ['projects'],
     queryFn: fetchProjects,
   }))
@@ -39,12 +48,14 @@ TanStack Query provides `injectQueries`, which you can use to dynamically execut
 [//]: # 'Example2'
 
 ```ts
+@Component({
+  // ...
+})
 export class AppComponent {
   users = signal<Array<User>>([])
 
-  // Please note injectQueries is under development and this code does not work yet
   userQueries = injectQueries(() => ({
-    queries: users().map((user) => {
+    queries: this.users().map((user) => {
       return {
         queryKey: ['user', user.id],
         queryFn: () => fetchUserById(user.id),

@@ -1,11 +1,10 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
 import {
   QueryClient,
   QueryClientProvider,
   useQuery,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import ReactDOM from 'react-dom/client'
 
 const queryClient = new QueryClient()
 
@@ -25,6 +24,7 @@ function Example() {
       const response = await fetch(
         'https://api.github.com/repos/TanStack/query',
       )
+      if (!response.ok) throw new Error('Failed to fetch repo data')
       return await response.json()
     },
   })

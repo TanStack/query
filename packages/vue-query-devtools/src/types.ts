@@ -6,6 +6,9 @@ import type {
 } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/vue-query'
 
+/**
+ * The props of `VueQueryDevtools`, which renders the devtools with a toggle button that opens them.
+ */
 export interface DevtoolsOptions {
   /**
    * Set this true if you want the dev tools to default to being open
@@ -14,13 +17,13 @@ export interface DevtoolsOptions {
   /**
    * The position of the TanStack logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
-   * Defaults to 'bottom-right'.
+   * @defaultValue bottom-right
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
    * The position of the Vue Query devtools panel.
    * 'top' | 'bottom' | 'left' | 'right'
-   * Defaults to 'bottom'.
+   * @defaultValue bottom
    */
   position?: DevtoolsPosition
   /**
@@ -32,24 +35,37 @@ export interface DevtoolsOptions {
    */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   * @deprecated The devtools no longer add a `<style>` element, so they need no
+   * nonce. This option does nothing.
    */
   styleNonce?: string
   /**
-   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   * The shadow root to add the devtools styles to. By default, the styles are
+   * added to the shadow root the devtools render in, or to the document when
+   * they do not render in a shadow root.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * The Trusted Types policy the devtools use to create their HTML templates.
+   * Pass one when your page enforces `require-trusted-types-for 'script'`.
+   * The devtools only pass it their own markup.
+   */
+  trustedTypesPolicy?: { createHTML: (html: string) => unknown }
   /**
    * Set this to true to hide disabled queries from the devtools panel.
    */
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * Defaults to 'system'.
+   * This overrides the theme selected in the devtools Settings menu. When omitted, the
+   * selected theme is used, or `'system'` if none is selected.
    */
   theme?: Theme
 }
 
+/**
+ * The props of `VueQueryDevtoolsPanel`, which renders the devtools panel inline.
+ */
 export interface DevtoolsPanelOptions {
   /**
    * Custom instance of QueryClient
@@ -60,17 +76,26 @@ export interface DevtoolsPanelOptions {
    */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   * @deprecated The devtools no longer add a `<style>` element, so they need no
+   * nonce. This option does nothing.
    */
   styleNonce?: string
   /**
-   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   * The shadow root to add the devtools styles to. By default, the styles are
+   * added to the shadow root the devtools render in, or to the document when
+   * they do not render in a shadow root.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * The Trusted Types policy the devtools use to create their HTML templates.
+   * Pass one when your page enforces `require-trusted-types-for 'script'`.
+   * The devtools only pass it their own markup.
+   */
+  trustedTypesPolicy?: { createHTML: (html: string) => unknown }
 
   /**
    * Custom styles for the devtools panel
-   * @default { height: '500px' }
+   * @default { height: '100%', display: 'flex', flexDirection: 'column' }
    * @example { height: '100%' }
    * @example { height: '100%', width: '100%' }
    */
@@ -86,7 +111,8 @@ export interface DevtoolsPanelOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * Defaults to 'system'.
+   * This overrides the theme selected in the devtools Settings menu. When omitted, the
+   * selected theme is used, or `'system'` if none is selected.
    */
   theme?: Theme
 }

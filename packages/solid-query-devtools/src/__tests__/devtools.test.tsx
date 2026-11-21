@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createSignal } from 'solid-js'
 import { render } from '@solidjs/testing-library'
-import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
+import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
+import { createSignal } from 'solid-js'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import SolidQueryDevtools from '../devtools'
 import type {
   DevtoolsButtonPosition,
@@ -118,11 +118,11 @@ describe('SolidQueryDevtools', () => {
     expect(setTheme).toHaveBeenCalledWith('dark')
   })
 
-  it('should default "theme" to "system" when the prop is omitted', () => {
+  it('should forward an undefined "theme" to the devtools instance when the prop is omitted', () => {
     const setTheme = vi.spyOn(TanstackQueryDevtools.prototype, 'setTheme')
     render(() => <SolidQueryDevtools client={queryClient} />)
 
-    expect(setTheme).toHaveBeenCalledWith('system')
+    expect(setTheme).toHaveBeenCalledWith(undefined)
   })
 
   it('should forward the resolved "QueryClient" via "setClient"', () => {
@@ -149,7 +149,6 @@ describe('SolidQueryDevtools', () => {
     setButtonPosition.mockClear()
 
     setButtonPositionSignal('top-left')
-
     expect(setButtonPosition).toHaveBeenCalledWith('top-left')
   })
 
@@ -164,7 +163,6 @@ describe('SolidQueryDevtools', () => {
     setPosition.mockClear()
 
     setPositionSignal('top')
-
     expect(setPosition).toHaveBeenCalledWith('top')
   })
 
@@ -184,7 +182,6 @@ describe('SolidQueryDevtools', () => {
     setInitialIsOpen.mockClear()
 
     setInitialIsOpenSignal(true)
-
     expect(setInitialIsOpen).toHaveBeenCalledWith(true)
   })
 
@@ -206,7 +203,6 @@ describe('SolidQueryDevtools', () => {
       { name: 'Network', initializer: () => new Error('Network') },
     ]
     setErrorTypesSignal(nextErrorTypes)
-
     expect(setErrorTypes).toHaveBeenCalledWith(nextErrorTypes)
   })
 
@@ -218,7 +214,6 @@ describe('SolidQueryDevtools', () => {
     setTheme.mockClear()
 
     setThemeSignal('dark')
-
     expect(setTheme).toHaveBeenCalledWith('dark')
   })
 
@@ -229,21 +224,17 @@ describe('SolidQueryDevtools', () => {
     ))
     unmountComponent()
 
-    expect(unmount).toHaveBeenCalled()
+    expect(unmount).toHaveBeenCalledWith()
   })
 
   it('should return null in non-development environments', async () => {
-    vi.doMock('solid-js/web', async (importOriginal) => {
-      const actual = await importOriginal()
-      return Object.assign({}, actual, { isDev: false })
-    })
+    vi.stubEnv('NODE_ENV', 'production')
     vi.resetModules()
 
     try {
       const { SolidQueryDevtools: ProductionDevtools } = await import('..')
       expect(ProductionDevtools({})).toBeNull()
     } finally {
-      vi.doUnmock('solid-js/web')
       vi.resetModules()
     }
   })

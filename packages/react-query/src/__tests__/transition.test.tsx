@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import * as React from 'react'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act, fireEvent } from '@testing-library/react'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import * as React from 'react'
 import { startTransition, useDeferredValue } from 'react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, keepPreviousData, useSuspenseQuery } from '..'
 import { renderWithSuspense } from './utils'
 
@@ -20,7 +20,7 @@ describe('react transitions', () => {
   })
 
   it('should keep values of old key around with useDeferredValue', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -41,25 +41,20 @@ describe('react transitions', () => {
     const rendered = await renderWithSuspense(queryClient, <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
-
     expect(rendered.getByText('data: test0')).toBeInTheDocument()
 
     await act(() =>
       fireEvent.click(rendered.getByRole('button', { name: 'increment' })),
     )
-
     expect(rendered.getByText('data: test0')).toBeVisible()
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
-
     expect(rendered.getByText('data: test1')).toBeInTheDocument()
   })
 
   it('should keep values of old key around with startTransition', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -81,20 +76,15 @@ describe('react transitions', () => {
     const rendered = await renderWithSuspense(queryClient, <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
-
     expect(rendered.getByText('data: test0')).toBeInTheDocument()
 
     await act(() =>
       fireEvent.click(rendered.getByRole('button', { name: 'increment' })),
     )
-
     expect(rendered.getByText('data: test0')).toBeVisible()
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
-
     expect(rendered.getByText('data: test1')).toBeInTheDocument()
   })
 
@@ -106,9 +96,9 @@ describe('react transitions', () => {
   ] as const)(
     'should use %s with %s placeholderData',
     async (transition, placeholderMode) => {
-      const key = queryKey()
-      const queryFn = vi.fn((count: number) =>
-        sleep(10).then(() => `test${count}`),
+      const key = createKey()
+      const queryFn = vi.fn<(count: number) => Promise<string>>(
+        (count: number) => sleep(10).then(() => `test${count}`),
       )
 
       function Page() {
@@ -182,12 +172,12 @@ describe('react transitions', () => {
   ] as const)(
     'should start a %s placeholder query with %s before a sibling suspends',
     async (transition, placeholderMode) => {
-      const key = queryKey()
-      const placeholderQueryFn = vi.fn((count: number) =>
-        sleep(10).then(() => `placeholder-query-${count}`),
+      const key = createKey()
+      const placeholderQueryFn = vi.fn<(count: number) => Promise<string>>(
+        (count: number) => sleep(10).then(() => `placeholder-query-${count}`),
       )
-      const suspenseQueryFn = vi.fn((count: number) =>
-        sleep(10).then(() => `suspense-query-${count}`),
+      const suspenseQueryFn = vi.fn<(count: number) => Promise<string>>(
+        (count: number) => sleep(10).then(() => `suspense-query-${count}`),
       )
 
       function PlaceholderQuery({ count }: { count: number }) {
@@ -260,12 +250,12 @@ describe('react transitions', () => {
   )
 
   it('should fetch a placeholder query for an abandoned transition', async () => {
-    const key = queryKey()
-    const placeholderQueryFn = vi.fn((count: number) =>
-      sleep(10).then(() => `placeholder-query-${count}`),
+    const key = createKey()
+    const placeholderQueryFn = vi.fn<(count: number) => Promise<string>>(
+      (count: number) => sleep(10).then(() => `placeholder-query-${count}`),
     )
-    const suspenseQueryFn = vi.fn((count: number) =>
-      sleep(10).then(() => `suspense-query-${count}`),
+    const suspenseQueryFn = vi.fn<(count: number) => Promise<string>>(
+      (count: number) => sleep(10).then(() => `suspense-query-${count}`),
     )
 
     queryClient.setQueryData([...key, 'placeholder', 0], 'placeholder-query-0')

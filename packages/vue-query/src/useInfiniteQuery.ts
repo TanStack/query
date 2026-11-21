@@ -1,20 +1,20 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type {
-  DefinedInitialDataInfiniteOptions,
-  UndefinedInitialDataInfiniteOptions,
-} from './infiniteQueryOptions'
-import type {
   DefaultError,
+  DefinedInfiniteQueryObserverResult,
   InfiniteData,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
-
-import type { UseBaseQueryReturnType } from './useBaseQuery'
-
+import type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infiniteQueryOptions'
+import type { QueryClient } from './queryClient'
+import type { VueQueryEnabledOption } from './queryOptions'
 import type {
   DeepUnwrapRef,
   MaybeRef,
@@ -22,8 +22,18 @@ import type {
   MaybeRefOrGetter,
   ShallowOption,
 } from './types'
-import type { QueryClient } from './queryClient'
+import type { UseBaseQueryReturnType } from './useBaseQuery'
 
+/**
+ * The options accepted by `useInfiniteQuery`. Extends {@link InfiniteQueryObserverOptions} from
+ * `@tanstack/query-core` with the `vue-query`-specific `shallow` option. Each option except `shallow` can also
+ * be a `ref` (and `enabled` a zero-argument getter or query-core's `(query) => boolean` callback).
+ * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs — defaults to `TQueryFnData`.
+ * @template TQueryKey - The type of your `queryKey`.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
+ */
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -32,21 +42,20 @@ export type UseInfiniteQueryOptions<
   TPageParam = unknown,
 > = MaybeRef<
   {
-    [Property in keyof InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >]: Property extends 'enabled'
-      ? MaybeRefOrGetter<
-          InfiniteQueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            DeepUnwrapRef<TQueryKey>,
-            TPageParam
-          >[Property]
+    [
+      Property in keyof InfiniteQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    ]: Property extends 'enabled'
+      ? VueQueryEnabledOption<
+          TQueryFnData,
+          TError,
+          InfiniteData<TQueryFnData, TPageParam>,
+          DeepUnwrapRef<TQueryKey>
         >
       : MaybeRefDeep<
           InfiniteQueryObserverOptions<
@@ -60,12 +69,75 @@ export type UseInfiniteQueryOptions<
   } & ShallowOption
 >
 
+/**
+ * The result of `useInfiniteQuery`: {@link InfiniteQueryObserverResult} from `@tanstack/query-core`, with
+ * its properties wrapped in `Ref`s as in {@link UseBaseQueryReturnType}.
+ */
 export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
   TData,
   TError,
   InfiniteQueryObserverResult<TData, TError>
 >
 
+/**
+ * The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined` (unless a `select`
+ * changes `TData` to include `undefined`).
+ */
+export type UseInfiniteQueryDefinedReturnType<TData, TError> =
+  UseBaseQueryReturnType<
+    TData,
+    TError,
+    DefinedInfiniteQueryObserverResult<TData, TError>
+  >
+
+/**
+ * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
+ * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
+ *
+ * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
+ *
+ * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+ * tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+ * accepted too and is passed through untracked. `queryKey` reacts through a `ref` for the array itself, or
+ * `ref`s and reactive getters as individual entries — the array itself can't be a bare getter.
+ * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to
+ * `useInfiniteQuery`, with `initialData` known to be defined.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+ * will be used.
+ * @returns The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+ * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.value.pages` and
+ * `data.value.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+ * `InfiniteData<TQueryFnData>` shape.
+ * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+ * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+ * actions, or add conditions like `hasNextPage && !isFetching`.
+ * @example
+ * ```vue
+ * <script setup lang="ts">
+ * import { useInfiniteQuery } from '@tanstack/vue-query'
+ *
+ * // `data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
+ * // list stays visible alongside the error.
+ * const { data, isError, error } = useInfiniteQuery({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ *   initialData: { pages: [], pageParams: [] },
+ * })
+ * </script>
+ *
+ * <template>
+ *   <span v-if="isError">Error: {{ error.message }}</span>
+ *   <ul>
+ *     <template v-for="page in data.pages" :key="page.nextId">
+ *       <li v-for="project in page.projects" :key="project.id">{{ project.name }}</li>
+ *     </template>
+ *   </ul>
+ * </template>
+ * ```
+ */
 export function useInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
@@ -83,8 +155,121 @@ export function useInfiniteQuery<
     >
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryReturnType<TData, TError>
+): UseInfiniteQueryDefinedReturnType<TData, TError>
 
+/**
+ * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
+ * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
+ *
+ * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+ * tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+ * accepted too and is passed through untracked. `queryKey` reacts through a `ref` for the array itself, or
+ * `ref`s and reactive getters as individual entries — the array itself can't be a bare getter.
+ * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to
+ * `useInfiniteQuery`.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+ * will be used.
+ * @returns The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+ * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.value.pages` and
+ * `data.value.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+ * `InfiniteData<TQueryFnData>` shape.
+ * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+ * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+ * actions, or add conditions like `hasNextPage && !isFetching`.
+ * @example
+ * Fetching the next page from a "Load More" button click:
+ * ```vue
+ * <script setup lang="ts">
+ * import { useInfiniteQuery } from '@tanstack/vue-query'
+ *
+ * const {
+ *   data,
+ *   isPending,
+ *   isError,
+ *   error,
+ *   fetchNextPage,
+ *   hasNextPage,
+ *   isFetching,
+ *   isFetchingNextPage,
+ * } = useInfiniteQuery({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ * })
+ * </script>
+ *
+ * <template>
+ *   <span v-if="isPending">Loading...</span>
+ *   <span v-else-if="isError">Error: {{ error.message }}</span>
+ *   <template v-else>
+ *     <ul>
+ *       <template v-for="page in data.pages" :key="page.nextId">
+ *         <li v-for="project in page.projects" :key="project.id">{{ project.name }}</li>
+ *       </template>
+ *     </ul>
+ *     <button @click="fetchNextPage()" :disabled="!hasNextPage || isFetching">
+ *       {{ isFetchingNextPage ? 'Loading more...' : hasNextPage ? 'Load More' : 'Nothing more to load' }}
+ *     </button>
+ *   </template>
+ * </template>
+ * ```
+ * @example
+ * Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a
+ * sentinel element after the list:
+ * ```vue
+ * <script setup lang="ts">
+ * import { onUnmounted, ref, watch } from 'vue'
+ * import { useInfiniteQuery } from '@tanstack/vue-query'
+ *
+ * const {
+ *   data,
+ *   isPending,
+ *   isError,
+ *   error,
+ *   fetchNextPage,
+ *   hasNextPage,
+ *   isFetching,
+ *   isFetchingNextPage,
+ * } = useInfiniteQuery({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ * })
+ *
+ * const sentinel = ref<HTMLElement>()
+ * let observer: IntersectionObserver | undefined
+ *
+ * watch(sentinel, (el) => {
+ *   observer?.disconnect()
+ *   if (el == null) return
+ *
+ *   observer = new IntersectionObserver(([entry]) => {
+ *     if (entry?.isIntersecting && hasNextPage.value && !isFetching.value) {
+ *       fetchNextPage()
+ *     }
+ *   })
+ *   observer.observe(el)
+ * })
+ *
+ * onUnmounted(() => observer?.disconnect())
+ * </script>
+ *
+ * <template>
+ *   <span v-if="isPending">Loading...</span>
+ *   <span v-else-if="isError">Error: {{ error.message }}</span>
+ *   <template v-else>
+ *     <ul>
+ *       <template v-for="page in data.pages" :key="page.nextId">
+ *         <li v-for="project in page.projects" :key="project.id">{{ project.name }}</li>
+ *       </template>
+ *     </ul>
+ *     <div ref="sentinel">{{ isFetchingNextPage ? 'Loading more...' : '' }}</div>
+ *   </template>
+ * </template>
+ * ```
+ */
 export function useInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
@@ -104,6 +289,81 @@ export function useInfiniteQuery<
   queryClient?: QueryClient,
 ): UseInfiniteQueryReturnType<TData, TError>
 
+/**
+ * Fallback overload for options whose `initialData` presence isn't statically known — for example, a
+ * `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
+ * overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
+ *
+ * `enabled` accepts a `ref`, a plain boolean, or a zero-argument getter (`() => ...`): a `ref` or a getter is
+ * tracked, while a plain boolean isn't tracked on its own. query-core's `(query) => boolean` callback is
+ * accepted too and is passed through untracked. `queryKey` reacts through a `ref` for the array itself, or
+ * `ref`s and reactive getters as individual entries — the array itself can't be a bare getter.
+ * @param options - A `ref`, plain value, or reactive getter resolving to the {@link UseInfiniteQueryOptions} to
+ * use.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+ * will be used.
+ * @returns The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+ * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`.
+ * @example
+ * Passing a whole-options getter so `maxPages` reacts to a setting stored elsewhere, not just `queryKey`:
+ * ```vue
+ * <script setup lang="ts">
+ * import { useInfiniteQuery } from '@tanstack/vue-query'
+ *
+ * const props = defineProps<{ projectId: number; maxPages: number }>()
+ *
+ * const { data } = useInfiniteQuery(() => ({
+ *   queryKey: ['project', props.projectId, 'issues'],
+ *   queryFn: ({ pageParam }) => fetchIssues(props.projectId, pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ *   maxPages: props.maxPages,
+ * }))
+ * </script>
+ *
+ * <template>
+ *   <template v-for="page in data?.pages" :key="page.nextId">
+ *     <li v-for="issue in page.issues" :key="issue.id">{{ issue.title }}</li>
+ *   </template>
+ * </template>
+ * ```
+ * @example
+ * A query that's disabled, type-safe, until `postId` is set — pass `skipToken` as `queryFn` instead of
+ * setting `enabled: false`. This requires a whole-options getter: `queryFn` isn't itself reactive, so the
+ * getter is what re-evaluates it on every change to `props.postId`:
+ * ```vue
+ * <script setup lang="ts">
+ * import { skipToken, useInfiniteQuery } from '@tanstack/vue-query'
+ *
+ * const props = defineProps<{ postId: string | undefined }>()
+ *
+ * // Use `isLoading`, not `isPending`, so the loading state doesn't show while the query is disabled.
+ * const { data, isLoading, isError, error } = useInfiniteQuery(() => {
+ *   const postId = props.postId
+ *   return {
+ *     queryKey: ['post', postId, 'comments'],
+ *     queryFn:
+ *       postId != null
+ *         ? ({ pageParam }) => fetchComments(postId, pageParam)
+ *         : skipToken,
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   }
+ * })
+ * </script>
+ *
+ * <template>
+ *   <span v-if="props.postId == null">Select a post</span>
+ *   <span v-else-if="isLoading">Loading...</span>
+ *   <span v-else-if="isError">Error: {{ error.message }}</span>
+ *   <ul v-else>
+ *     <template v-for="page in data.pages" :key="page.nextId">
+ *       <li v-for="comment in page.comments" :key="comment.id">{{ comment.text }}</li>
+ *     </template>
+ *   </ul>
+ * </template>
+ * ```
+ */
 export function useInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,

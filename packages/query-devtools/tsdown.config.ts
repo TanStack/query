@@ -1,6 +1,9 @@
+import { readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
+import { dirname, resolve } from 'node:path'
 import { defineConfig } from 'tsdown'
 import solid from 'unplugin-solid/rolldown'
+import type { UserConfig } from 'tsdown'
 
 const require = createRequire(import.meta.url)
 
@@ -27,15 +30,45 @@ const solidBrowserImports = () => ({
   },
 })
 
-const baseConfig = {
+// Loads `./styles.css?inline` as a string, as Vite does in the tests. The CSS
+// is not minified by the JS minifier, so remove comments and extra whitespace.
+const inlineCss = () => ({
+  name: 'inline-css',
+  resolveId(id: string, importer?: string) {
+    if (id.endsWith('.css?inline') && importer) {
+      return resolve(dirname(importer), id)
+    }
+    return undefined
+  },
+  load(id: string) {
+    if (!id.endsWith('.css?inline')) return undefined
+    const css = readFileSync(id.slice(0, -'?inline'.length), 'utf8')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/\s+/g, ' ')
+      .replace(/ ?([{};]) ?/g, '$1')
+      .trim()
+    return { code: `export default ${JSON.stringify(css)}`, moduleType: 'js' }
+  },
+})
+
+const baseConfig: UserConfig = {
   target: 'esnext',
-  platform: 'neutral' as const,
+  platform: 'neutral',
   alias: {
     'solid-transition-group': 'solid-transition-group/dist/index.js',
   },
-  format: ['esm', 'cjs'] as ['esm', 'cjs'],
+  format: ['esm', 'cjs'],
   outDir: 'build',
   fixedExtension: false,
+  // Published source needs these dependencies declared, but the compiled
+  // devtools must still bundle them with the Solid browser runtime.
+  deps: {
+    alwaysBundle: [/./],
+    dts: { alwaysBundle: [] },
+  },
+  outputOptions: {
+    postBanner: '/* @refresh skip */',
+  },
   inputOptions: {
     // Keep package imports in declaration output. Runtime Solid imports are
     // bundled from the browser files by solidBrowserImports above.
@@ -65,7 +98,7 @@ export default defineConfig([
         dropDebugger: true,
       },
     },
-    plugins: [solid(), solidBrowserImports()],
+    plugins: [solid(), solidBrowserImports(), inlineCss()],
   },
   {
     ...baseConfig,
@@ -73,6 +106,6 @@ export default defineConfig([
     clean: false,
     dts: false,
     env: environment(true),
-    plugins: [solid(), solidBrowserImports()],
+    plugins: [solid(), solidBrowserImports(), inlineCss()],
   },
 ])

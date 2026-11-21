@@ -15,3 +15,7 @@ export const DEFAULT_WIDTH = 500
 export const DEFAULT_SORT_FN_NAME = Object.keys(sortFns)[0]
 export const DEFAULT_SORT_ORDER = 1
 export const DEFAULT_MUTATION_SORT_FN_NAME = Object.keys(mutationSortFns)[0]
+export const FILTER_SCOPES = ['key', 'data', 'all'] as const
+/** What the query and mutation list filters match: the key, the data, or either. */
+export type FilterScope = (typeof FILTER_SCOPES)[number]
+export const DEFAULT_FILTER_SCOPE: FilterScope = 'key'

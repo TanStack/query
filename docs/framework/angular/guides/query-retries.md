@@ -15,10 +15,10 @@ replace:
 [//]: # 'Example'
 
 ```ts
-import { injectQuery } from '@tanstack/angular-query-experimental'
+import { injectQuery } from '@tanstack/angular-query'
 
 // Make a specific query retry a certain number of times
-const result = injectQuery(() => ({
+const todoQuery = injectQuery(() => ({
   queryKey: ['todos', 1],
   queryFn: fetchTodoListPage,
   retry: 10, // Will retry failed requests 10 times before displaying an error
@@ -33,19 +33,20 @@ const result = injectQuery(() => ({
 import {
   QueryCache,
   QueryClient,
-  provideTanStackQuery,
-} from '@tanstack/angular-query-experimental'
+  QueryClientProvider,
+} from '@tanstack/angular-query'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      },
     },
-  },
-})
+  })
 
 bootstrapApplication(AppComponent, {
-  providers: [provideTanStackQuery(queryClient)],
+  providers: [provideTanStackQuery(createQueryClient)],
 })
 ```
 
@@ -56,7 +57,7 @@ Though it is not recommended, you can obviously override the `retryDelay` functi
 [//]: # 'Example3'
 
 ```ts
-const result = injectQuery(() => ({
+const todosQuery = injectQuery(() => ({
   queryKey: ['todos'],
   queryFn: fetchTodoList,
   retryDelay: 1000, // Will always wait 1000ms to retry, regardless of how many retries

@@ -1,8 +1,8 @@
-import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
-import { useInfiniteQuery } from '../useInfiniteQuery'
+import { createKey } from '@tanstack/query-test-utils'
+import { describe, expectTypeOf, it } from 'vitest'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
+import { useInfiniteQuery } from '../useInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 import type {
   DefinedInitialDataInfiniteOptions,
@@ -76,7 +76,7 @@ describe('infiniteQueryOptions', () => {
   it('should infer defined types', () => {
     const options = infiniteQueryOptions({
       getNextPageParam: () => 10,
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => ({ wow: true }),
       initialData: {
         pageParams: [undefined],
@@ -109,7 +109,7 @@ describe('infiniteQueryOptions', () => {
   it('should work without defined types', () => {
     const options = infiniteQueryOptions({
       getNextPageParam: () => undefined,
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => ({ wow: true }),
       initialPageParam: 0,
     })
@@ -134,6 +134,23 @@ describe('infiniteQueryOptions', () => {
       InfiniteData<{
         wow: boolean
       }>
+    >()
+  })
+
+  it('should keep data possibly undefined when initialData is a ternary that can be undefined', () => {
+    const options = infiniteQueryOptions({
+      queryKey: createKey(),
+      queryFn: () => Promise.resolve({ example: true }),
+      initialData:
+        Math.random() > 0.5
+          ? { pages: [{ example: true }], pageParams: [1] }
+          : undefined,
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    expectTypeOf(useInfiniteQuery(() => options).data).toEqualTypeOf<
+      InfiniteData<{ example: boolean }, unknown> | undefined
     >()
   })
 })

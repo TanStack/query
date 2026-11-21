@@ -1,6 +1,5 @@
 import solid from 'vite-plugin-solid'
 import { defineConfig } from 'vitest/config'
-
 import packageJson from './package.json'
 
 export default defineConfig({
@@ -29,6 +28,7 @@ export default defineConfig({
     },
     typecheck: { enabled: true },
     restoreMocks: true,
+    unstubGlobals: true,
     setupFiles: ['test-setup.ts'],
   },
 })

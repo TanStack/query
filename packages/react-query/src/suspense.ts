@@ -1,4 +1,3 @@
-import * as React from 'react'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -9,45 +8,7 @@ import type {
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
-type SuspenseThenable<T> = Promise<T> & {
-  status?: 'pending' | 'fulfilled' | 'rejected'
-  value?: T
-  reason?: unknown
-}
-
-export const fallbackUse = <T>(thenable: SuspenseThenable<T>): T => {
-  switch (thenable.status) {
-    case 'pending':
-      throw thenable
-    case 'fulfilled':
-      return thenable.value as T
-    case 'rejected':
-      throw thenable.reason
-    default:
-      thenable.status = 'pending'
-      thenable.then(
-        (value) => {
-          thenable.status = 'fulfilled'
-          thenable.value = value
-        },
-        (reason) => {
-          thenable.status = 'rejected'
-          thenable.reason = reason
-        },
-      )
-      throw thenable
-  }
-}
-
-// React 18 does not have `use`
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-export const use = React.use || fallbackUse
-
-export const resolvedThenable = Promise.resolve(
-  undefined,
-) as SuspenseThenable<void>
-resolvedThenable.status = 'fulfilled'
-resolvedThenable.value = undefined
+const resolvedThenable = Promise.resolve()
 
 type SuspensePromiseEntry = {
   fetchPromise: Promise<unknown>
@@ -60,6 +21,12 @@ const suspensePromiseCache = new WeakMap<
   SuspensePromiseEntry
 >()
 
+/**
+ * Uses the nearest error boundary when the query has no data to show.
+ * @param _error - The query error.
+ * @param query - The query that failed.
+ * @returns Whether the query has no data.
+ */
 export const defaultThrowOnError = <
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -70,6 +37,12 @@ export const defaultThrowOnError = <
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
 ) => query.state.data === undefined
 
+/**
+ * Raises `staleTime` and a numeric `gcTime` to at least 1000ms when `suspense` is enabled, so a
+ * component that remounts after suspending doesn't refetch right away or find the query garbage
+ * collected. A `'static'` `staleTime` is kept as is. Mutates the options.
+ * @param defaultedOptions - The defaulted query options to adjust.
+ */
 export const ensureSuspenseTimers = (
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
 ) => {
@@ -98,8 +71,14 @@ export const ensureSuspenseTimers = (
   }
 }
 
-// `undefined` skips the fetch, `false` fetches without suspending,
-// and `true` fetches and suspends.
+/**
+ * Decides whether a Suspense query needs to fetch during render.
+ * @param defaultedOptions - The options of the query.
+ * @param result - The result for this render.
+ * @param errorResetBoundary - The nearest query error reset boundary.
+ * @param query - The query to fetch.
+ * @returns `undefined` to skip the fetch, `false` to fetch in the background, or `true` to suspend.
+ */
 export const shouldSuspend = (
   defaultedOptions:
     | DefaultedQueryObserverOptions<any, any, any, any, any>
@@ -126,6 +105,15 @@ export const shouldSuspend = (
   return undefined
 }
 
+/**
+ * Starts a fetch during render or reuses a promise for an existing fetch.
+ * @param defaultedOptions - The options of the query.
+ * @param observer - The observer that starts the fetch.
+ * @param errorResetBoundary - The nearest query error reset boundary.
+ * @param query - The query used to key the promise cache.
+ * @param shouldFetch - Whether to start a fetch when none is pending.
+ * @returns A promise that resolves when the fetch settles.
+ */
 export function getSuspensePromise(
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
   observer: QueryObserver<any, any, any, any, any>,

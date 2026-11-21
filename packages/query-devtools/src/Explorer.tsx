@@ -1,22 +1,20 @@
-import { serialize, stringify } from 'superjson'
-import { clsx as cx } from 'clsx'
+import { Key } from '@solid-primitives/keyed'
 import {
   Index,
   Match,
   Show,
   Switch,
+  createEffect,
   createMemo,
   createSignal,
   createUniqueId,
+  on,
+  onCleanup,
+  onMount,
 } from 'solid-js'
-import { Key } from '@solid-primitives/keyed'
-import * as goober from 'goober'
-import { tokens } from './theme'
-import {
-  deleteNestedDataByPath,
-  displayValue,
-  updateNestedDataByPath,
-} from './utils'
+import { serialize, stringify } from 'superjson'
+import { useQueryDevtoolsContext, useTheme } from './contexts'
+import { primitiveText, searchEntries, searchExplorer } from './explorerSearch'
 import {
   Check,
   CopiedCopier,
@@ -26,15 +24,25 @@ import {
   Pencil,
   Trash,
 } from './icons'
-import { useQueryDevtoolsContext, useTheme } from './contexts'
+import { getNativeObjectType } from './nativeObjectType'
+import { createThemed } from './styles'
+import {
+  deleteNestedDataByPath,
+  displayValue,
+  isPlainObject,
+  updateNestedDataByPath,
+} from './utils'
 import type { Query } from '@tanstack/query-core'
+import type { ExplorerSearch } from './explorerSearch'
 
 /**
- * Chunk elements in the array by size
+ * Chunk elements in the array by size.
  *
- * when the array cannot be chunked evenly by size, the last chunk will be
- * filled with the remaining elements
- *
+ * When the array cannot be chunked evenly by size, the last chunk will be
+ * filled with the remaining elements.
+ * @param array - The elements to chunk.
+ * @param size - The number of elements per chunk. Below `1`, no chunks are returned.
+ * @returns The chunks.
  * @example
  * chunkArray(['a','b', 'c', 'd', 'e'], 2) // returns [['a','b'], ['c', 'd'], ['e']]
  */
@@ -53,28 +61,9 @@ function chunkArray<T extends { label: string; value: unknown }>(
 }
 
 const Expander = (props: { expanded: boolean }) => {
-  const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
-
   return (
     <span
-      class={cx(
-        styles().expander,
-        css`
-          transform: rotate(${props.expanded ? 90 : 0}deg);
-        `,
-        props.expanded &&
-          css`
-            & svg {
-              top: -1px;
-            }
-          `,
-      )}
+      class={`tsqd-style-explorer-expander ${props.expanded ? 'tsqd-style-explorer-expander-expanded' : ''}`}
     >
       <svg
         width="16"
@@ -97,17 +86,12 @@ const Expander = (props: { expanded: boolean }) => {
 type CopyState = 'NoCopy' | 'SuccessCopy' | 'ErrorCopy'
 const CopyButton = (props: { value: unknown }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const themed = createThemed(theme)
   const [copyState, setCopyState] = createSignal<CopyState>('NoCopy')
 
   return (
     <button
-      class={styles().actionButton}
+      class={themed('tsqd-style-explorer-action-button')}
       title="Copy object to clipboard"
       aria-label={`${
         copyState() === 'NoCopy'
@@ -158,17 +142,12 @@ const ClearArrayButton = (props: {
   activeQuery: Query
 }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const themed = createThemed(theme)
   const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
-      class={styles().actionButton}
+      class={themed('tsqd-style-explorer-action-button')}
       title={'Remove all items'}
       aria-label={'Remove all items'}
       onClick={() => {
@@ -187,17 +166,12 @@ const DeleteItemButton = (props: {
   activeQuery: Query
 }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const themed = createThemed(theme)
   const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
-      class={cx(styles().actionButton)}
+      class={themed('tsqd-style-explorer-action-button')}
       title={'Delete item'}
       aria-label={'Delete item'}
       onClick={() => {
@@ -217,25 +191,15 @@ const ToggleValueButton = (props: {
   value: boolean
 }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const themed = createThemed(theme)
   const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
-      class={cx(
-        styles().actionButton,
-        css`
-          width: ${tokens.size[3.5]};
-          height: ${tokens.size[3.5]};
-        `,
-      )}
+      class={`${themed('tsqd-style-explorer-action-button')} tsqd-style-explorer-toggle-button`}
       title={'Toggle value'}
       aria-label={'Toggle value'}
+      aria-pressed={props.value}
       onClick={() => {
         const oldData = props.activeQuery.state.data
         const newData = updateNestedDataByPath(
@@ -260,33 +224,267 @@ type ExplorerProps = {
   activeQuery?: Query
   itemsDeletable?: boolean
   onEdit?: () => void
+  search?: ExplorerSearch
+  highlight?: SearchHighlight
 }
 
+/** The name of the native highlight that marks search matches. */
+const HIGHLIGHT_NAME = 'tsqd-data-search'
+
+/** The ranges that one search adds to the native highlight. */
+type SearchHighlight = {
+  readonly size: number
+  add: (range: Range) => void
+  delete: (range: Range) => void
+}
+
+/**
+ * Adds nested data search without changing the explorer's manual expansion.
+ * @param props - Data explorer options, the selected query or mutation identity, and the search
+ * term to start with when another one is selected.
+ * @returns The search controls and the original data tree.
+ */
+export function SearchableExplorer(
+  props: ExplorerProps & { searchKey?: unknown; initialSearch?: string },
+) {
+  const theme = useTheme()
+  const themed = createThemed(theme)
+  const [term, setTerm] = createSignal('')
+  const [debouncedTerm, setDebouncedTerm] = createSignal('')
+  const clear = () => {
+    setTerm('')
+    setDebouncedTerm('')
+  }
+  const searchKey = createMemo(() => props.searchKey)
+  createEffect(
+    on(searchKey, () => {
+      const initial = props.initialSearch ?? ''
+      setTerm(initial)
+      setDebouncedTerm(initial.toLowerCase())
+    }),
+  )
+  createEffect(() => {
+    const next = term().toLowerCase()
+    if (!next) {
+      setDebouncedTerm('')
+      return
+    }
+    const timeout = setTimeout(() => setDebouncedTerm(next), 150)
+    onCleanup(() => clearTimeout(timeout))
+  })
+  const search = createMemo<ExplorerSearch | undefined>(() => {
+    const activeTerm = debouncedTerm()
+    return activeTerm
+      ? { term: activeTerm, match: searchExplorer(props.value, activeTerm) }
+      : undefined
+  })
+  const [nativeHighlight, setNativeHighlight] = createSignal<SearchHighlight>()
+  let root!: HTMLDivElement
+  onMount(() => {
+    const view = root.ownerDocument.defaultView!
+    const registry = view.CSS.highlights
+    // Explorers share one highlight per window, so styles.css can style it by
+    // name. Each search adds and removes only its own ranges.
+    const getHighlight = () => {
+      let highlight = registry.get(HIGHLIGHT_NAME)
+      if (!highlight) {
+        highlight = new view.Highlight()
+        registry.set(HIGHLIGHT_NAME, highlight)
+      }
+      return highlight
+    }
+    createEffect(
+      on(search, () => {
+        getHighlight()
+        const ranges = new Set<Range>()
+        const highlight: SearchHighlight = {
+          get size() {
+            return ranges.size
+          },
+          add(range) {
+            ranges.add(range)
+            getHighlight().add(range)
+          },
+          delete(range) {
+            ranges.delete(range)
+            registry.get(HIGHLIGHT_NAME)?.delete(range)
+          },
+        }
+        setNativeHighlight(highlight)
+        onCleanup(() => {
+          for (const range of ranges) highlight.delete(range)
+          if (registry.get(HIGHLIGHT_NAME)?.size === 0) {
+            registry.delete(HIGHLIGHT_NAME)
+          }
+        })
+      }),
+    )
+  })
+  return (
+    <div ref={root} class={themed('tsqd-style-explorer-search-root')}>
+      <div class="tsqd-style-explorer-search">
+        <input
+          type="search"
+          aria-label={`Search ${props.label.toLowerCase()}`}
+          placeholder={`Search ${props.label.toLowerCase()}`}
+          class={themed('tsqd-style-explorer-search-input')}
+          value={term()}
+          onInput={(event) => setTerm(event.currentTarget.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              event.stopPropagation()
+              clear()
+            }
+          }}
+        />
+        <Show when={term()}>
+          <button
+            type="button"
+            class="tsqd-style-explorer-clear-search"
+            onClick={clear}
+            aria-label="Clear search"
+          >
+            Clear
+          </button>
+        </Show>
+      </div>
+      <div role="status" aria-live="polite">
+        {search() && !search()!.match.hasMatch ? 'No matches' : ''}
+      </div>
+      <Explorer {...props} search={search()} highlight={nativeHighlight()} />
+    </div>
+  )
+}
+
+const MAX_HIGHLIGHT_RANGES = 1000
+
+/**
+ * Marks literal, case-insensitive matches in a label or primitive value.
+ * @param props - The text, normalized search term, and shared highlight instance.
+ * @returns Text with matching substrings marked.
+ */
+function HighlightedText(props: {
+  text: string
+  term?: string
+  highlight?: SearchHighlight
+}) {
+  const matches = createMemo(() => {
+    const term = props.term
+    if (!term) return []
+    const lower = props.text.toLowerCase()
+    let originalStart = 0
+    let originalEnd = 0
+    let lowercaseEnd = 0
+    const originalPosition = (index: number) => {
+      while (lowercaseEnd <= index) {
+        const character = String.fromCodePoint(
+          props.text.codePointAt(originalEnd)!,
+        )
+        originalStart = originalEnd
+        originalEnd += character.length
+        lowercaseEnd += character.toLowerCase().length
+      }
+      return { start: originalStart, end: originalEnd }
+    }
+    const ranges: Array<{ start: number; end: number }> = []
+    let index = lower.indexOf(term)
+    while (index !== -1 && ranges.length < MAX_HIGHLIGHT_RANGES) {
+      const from = originalPosition(index).start
+      const to = originalPosition(index + term.length - 1).end
+      ranges.push({ start: from, end: to })
+      index = lower.indexOf(term, index + term.length)
+    }
+    return ranges
+  })
+  const text = document.createTextNode('')
+  createEffect(() => {
+    text.data = props.text
+    const highlight = props.highlight
+    if (!highlight) return
+    const ranges: Array<Range> = []
+    for (const match of matches()) {
+      if (highlight.size >= MAX_HIGHLIGHT_RANGES) break
+      const range = text.ownerDocument.createRange()
+      range.setStart(text, match.start)
+      range.setEnd(text, match.end)
+      highlight.add(range)
+      ranges.push(range)
+    }
+    onCleanup(() => {
+      for (const range of ranges) highlight.delete(range)
+    })
+  })
+  return text
+}
+
+/**
+ * Checks whether a value is iterable.
+ * @param x - The value to check.
+ * @returns `true` if `x` has a `Symbol.iterator` method.
+ */
 function isIterable(x: any): x is Iterable<unknown> {
   return Symbol.iterator in x
 }
 
+/**
+ * Renders an expandable tree view of a value, used to explore a query's data in the devtools. It
+ * can also edit and delete entries in the query's data.
+ * @param props - The value to show and its label, plus the options for expanding, editing, and
+ * deleting entries.
+ * @returns The tree view.
+ */
 export default function Explorer(props: ExplorerProps) {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const themed = createThemed(theme)
   const queryClient = useQueryDevtoolsContext().client
 
   const [expanded, setExpanded] = createSignal(
     (props.defaultExpanded || []).includes(props.label),
   )
-  const toggleExpanded = () => setExpanded((old) => !old)
+  const hasSearchMatchingChild = () =>
+    !!props.search &&
+    [...props.search.match.children.values()].some((child) => child.hasMatch)
+  const isExpanded = () => expanded() || hasSearchMatchingChild()
+  const toggleExpanded = () => {
+    if (!hasSearchMatchingChild()) setExpanded((old) => !old)
+  }
   const [expandedPages, setExpandedPages] = createSignal<Array<number>>([])
+  const nativeObjectType = createMemo(() => getNativeObjectType(props.value))
+  const childrenEditable = createMemo(
+    () =>
+      props.editable &&
+      (Array.isArray(props.value) ||
+        nativeObjectType() === 'Map' ||
+        nativeObjectType() === 'Set' ||
+        isPlainObject(props.value)),
+  )
 
   const subEntries = createMemo(() => {
+    if (props.search) {
+      return props.search.match.kind === 'branch'
+        ? (searchEntries(props.value) ?? [])
+        : []
+    }
     if (Array.isArray(props.value)) {
       return props.value.map((d, i) => ({
         label: i.toString(),
+        key: i.toString(),
         value: d,
+      }))
+    } else if (nativeObjectType() === 'Map') {
+      return Array.from(
+        Map.prototype.entries.call(props.value),
+        ([key, val]) => ({
+          label: primitiveText(key) ?? '[Object key]',
+          key,
+          value: val,
+        }),
+      )
+    } else if (nativeObjectType() === 'Set') {
+      return Array.from(Set.prototype.values.call(props.value), (val, i) => ({
+        label: i.toString(),
+        key: i.toString(),
+        value: val,
       }))
     } else if (
       props.value !== null &&
@@ -294,19 +492,15 @@ export default function Explorer(props: ExplorerProps) {
       isIterable(props.value) &&
       typeof props.value[Symbol.iterator] === 'function'
     ) {
-      if (props.value instanceof Map) {
-        return Array.from(props.value, ([key, val]) => ({
-          label: key,
-          value: val,
-        }))
-      }
       return Array.from(props.value, (val, i) => ({
         label: i.toString(),
+        key: i.toString(),
         value: val,
       }))
     } else if (typeof props.value === 'object' && props.value !== null) {
       return Object.entries(props.value).map(([key, val]) => ({
         label: key,
+        key,
         value: val,
       }))
     }
@@ -314,6 +508,12 @@ export default function Explorer(props: ExplorerProps) {
   })
 
   const type = createMemo<string>(() => {
+    if (props.search) {
+      if (Array.isArray(props.value)) return 'array'
+      if (nativeObjectType() === 'Map' || nativeObjectType() === 'Set')
+        return 'Iterable'
+      return props.value === null ? 'object' : typeof props.value
+    }
     if (Array.isArray(props.value)) {
       return 'array'
     } else if (
@@ -331,27 +531,84 @@ export default function Explorer(props: ExplorerProps) {
 
   const subEntryPages = createMemo(() => chunkArray(subEntries(), 100))
 
+  const pageHasMatch = (index: number) =>
+    !!(
+      props.search &&
+      subEntryPages()[index]?.some(
+        (entry) => props.search?.match.children.get(entry.key)?.hasMatch,
+      )
+    )
+  const matchingPage = createMemo(() =>
+    subEntryPages().findIndex((_, index) => pageHasMatch(index)),
+  )
+  const isPageExpanded = (index: number) =>
+    expandedPages().includes(index) || matchingPage() === index
+  const childSearch = (key: unknown): ExplorerSearch | undefined => {
+    const search = props.search
+    const match = search?.match.children.get(key)
+    return search && match ? { term: search.term, match } : undefined
+  }
+  const label = () => (
+    <HighlightedText
+      text={props.label}
+      term={props.search?.match.label ? props.search.term : undefined}
+      highlight={props.highlight}
+    />
+  )
+  const valueText = () => {
+    if (!props.search) return displayValue(props.value)
+    switch (props.search.match.kind) {
+      case 'circular':
+        return '[Circular]'
+      case 'accessor':
+        return '[Getter]'
+      case 'opaque':
+        return '[Object]'
+      case 'branch':
+        return Array.isArray(props.value)
+          ? '[]'
+          : nativeObjectType() === 'Map'
+            ? 'Map(0)'
+            : nativeObjectType() === 'Set'
+              ? 'Set(0)'
+              : '{}'
+      case 'value':
+        return primitiveText(props.value)
+    }
+  }
+  const renderedValue = () => (
+    <>
+      {props.search && typeof props.value === 'string' ? '"' : ''}
+      <HighlightedText
+        text={valueText() ?? ''}
+        term={props.search?.match.value ? props.search.term : undefined}
+        highlight={props.highlight}
+      />
+      {props.search && typeof props.value === 'string' ? '"' : ''}
+    </>
+  )
+
   const currentDataPath = props.dataPath ?? []
 
   const inputId = createUniqueId()
 
   return (
-    <div class={styles().entry}>
+    <div class="tsqd-style-explorer-entry">
       <Show when={subEntryPages().length}>
-        <div class={styles().expanderButtonContainer}>
+        <div class="tsqd-style-explorer-expander-button-container">
           <button
-            class={styles().expanderButton}
+            class="tsqd-style-explorer-expander-button"
             onClick={() => toggleExpanded()}
-            aria-expanded={expanded() ? 'true' : 'false'}
+            aria-expanded={isExpanded() ? 'true' : 'false'}
           >
-            <Expander expanded={expanded()} /> <span>{props.label}</span>{' '}
-            <span class={styles().info}>
+            <Expander expanded={isExpanded()} /> <span>{label()}</span>{' '}
+            <span class="tsqd-style-explorer-info">
               {String(type()).toLowerCase() === 'iterable' ? '(Iterable) ' : ''}
               {subEntries().length} {subEntries().length > 1 ? `items` : `item`}
             </span>
           </button>
           <Show when={props.editable}>
-            <div class={styles().actions}>
+            <div class="tsqd-style-explorer-actions">
               <CopyButton value={props.value} />
 
               <Show
@@ -372,9 +629,15 @@ export default function Explorer(props: ExplorerProps) {
                 />
               </Show>
 
-              <Show when={!!props.onEdit && !serialize(props.value).meta}>
+              <Show
+                when={
+                  !!props.onEdit &&
+                  !props.search &&
+                  !serialize(props.value).meta
+                }
+              >
                 <button
-                  class={styles().actionButton}
+                  class={themed('tsqd-style-explorer-action-button')}
                   title={'Bulk Edit Data'}
                   aria-label={'Bulk Edit Data'}
                   onClick={() => {
@@ -387,18 +650,20 @@ export default function Explorer(props: ExplorerProps) {
             </div>
           </Show>
         </div>
-        <Show when={expanded()}>
+        <Show when={isExpanded()}>
           <Show when={subEntryPages().length === 1}>
-            <div class={styles().subEntry}>
-              <Key each={subEntries()} by={(item) => item.label}>
+            <div class={themed('tsqd-style-explorer-sub-entry')}>
+              <Key each={subEntries()} by={(item) => item.key}>
                 {(entry) => {
                   return (
                     <Explorer
                       defaultExpanded={props.defaultExpanded}
                       label={entry().label}
+                      search={childSearch(entry().key)}
+                      highlight={props.highlight}
                       value={entry().value}
-                      editable={props.editable}
-                      dataPath={[...currentDataPath, entry().label]}
+                      editable={childrenEditable()}
+                      dataPath={[...currentDataPath, entry().key]}
                       activeQuery={props.activeQuery}
                       itemsDeletable={
                         type() === 'array' ||
@@ -412,35 +677,44 @@ export default function Explorer(props: ExplorerProps) {
             </div>
           </Show>
           <Show when={subEntryPages().length > 1}>
-            <div class={styles().subEntry}>
+            <div class={themed('tsqd-style-explorer-sub-entry')}>
               <Index each={subEntryPages()}>
                 {(entries, index) => (
                   <div>
-                    <div class={styles().entry}>
+                    <div class="tsqd-style-explorer-entry">
                       <button
-                        onClick={() =>
+                        onClick={() => {
+                          if (matchingPage() === index) return
                           setExpandedPages((old) =>
                             old.includes(index)
                               ? old.filter((d) => d !== index)
                               : [...old, index],
                           )
+                        }}
+                        class={`tsqd-style-explorer-expander-button ${pageHasMatch(index) ? themed('tsqd-style-explorer-highlight') : ''}`}
+                        aria-expanded={isPageExpanded(index)}
+                        aria-description={
+                          pageHasMatch(index)
+                            ? 'Contains search matches'
+                            : undefined
                         }
-                        class={styles().expanderButton}
                       >
-                        <Expander expanded={expandedPages().includes(index)} />{' '}
-                        [{index * 100}...
+                        <Expander expanded={isPageExpanded(index)} /> [
+                        {index * 100}...
                         {index * 100 + 100 - 1}]
                       </button>
-                      <Show when={expandedPages().includes(index)}>
-                        <div class={styles().subEntry}>
-                          <Key each={entries()} by={(entry) => entry.label}>
+                      <Show when={isPageExpanded(index)}>
+                        <div class={themed('tsqd-style-explorer-sub-entry')}>
+                          <Key each={entries()} by={(entry) => entry.key}>
                             {(entry) => (
                               <Explorer
                                 defaultExpanded={props.defaultExpanded}
                                 label={entry().label}
+                                search={childSearch(entry().key)}
+                                highlight={props.highlight}
                                 value={entry().value}
-                                editable={props.editable}
-                                dataPath={[...currentDataPath, entry().label]}
+                                editable={childrenEditable()}
+                                dataPath={[...currentDataPath, entry().key]}
                                 activeQuery={props.activeQuery}
                               />
                             )}
@@ -456,9 +730,9 @@ export default function Explorer(props: ExplorerProps) {
         </Show>
       </Show>
       <Show when={subEntryPages().length === 0}>
-        <div class={styles().row}>
-          <label for={inputId} class={styles().label}>
-            {props.label}:
+        <div class="tsqd-style-explorer-row">
+          <label for={inputId} class={themed('tsqd-style-explorer-label')}>
+            {label()}:
           </label>
           <Show
             when={
@@ -469,7 +743,9 @@ export default function Explorer(props: ExplorerProps) {
                 type() === 'boolean')
             }
             fallback={
-              <span class={styles().value}>{displayValue(props.value)}</span>
+              <span class={themed('tsqd-style-explorer-value')}>
+                {renderedValue()}
+              </span>
             }
           >
             <Show
@@ -482,7 +758,8 @@ export default function Explorer(props: ExplorerProps) {
               <input
                 id={inputId}
                 type={type() === 'number' ? 'number' : 'text'}
-                class={cx(styles().value, styles().editableInput)}
+                class={`${themed('tsqd-style-explorer-value')} ${themed('tsqd-style-explorer-editable-input')} ${props.search?.match.value ? themed('tsqd-style-explorer-highlight') : ''}`}
+                data-search-match={props.search?.match.value || undefined}
                 value={props.value as string | number}
                 onChange={(changeEvent) => {
                   const oldData = props.activeQuery!.state.data
@@ -502,18 +779,14 @@ export default function Explorer(props: ExplorerProps) {
 
             <Show when={type() === 'boolean'}>
               <span
-                class={cx(
-                  styles().value,
-                  styles().actions,
-                  styles().editableInput,
-                )}
+                class={`${themed('tsqd-style-explorer-value')} tsqd-style-explorer-actions ${themed('tsqd-style-explorer-editable-input')}`}
               >
                 <ToggleValueButton
                   activeQuery={props.activeQuery!}
                   dataPath={currentDataPath}
                   value={props.value as boolean}
                 />
-                {displayValue(props.value)}
+                {renderedValue()}
               </span>
             </Show>
           </Show>
@@ -535,140 +808,3 @@ export default function Explorer(props: ExplorerProps) {
     </div>
   )
 }
-
-const stylesFactory = (
-  theme: 'light' | 'dark',
-  css: (typeof goober)['css'],
-) => {
-  const { colors, font, size, border } = tokens
-  const t = (light: string, dark: string) => (theme === 'light' ? light : dark)
-  return {
-    entry: css`
-      & * {
-        font-size: ${font.size.xs};
-        font-family:
-          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-          'Liberation Mono', 'Courier New', monospace;
-      }
-      position: relative;
-      outline: none;
-      word-break: break-word;
-    `,
-    subEntry: css`
-      margin: 0 0 0 0.5em;
-      padding-left: 0.75em;
-      border-left: 2px solid ${t(colors.gray[300], colors.darkGray[400])};
-      /* outline: 1px solid ${colors.teal[400]}; */
-    `,
-    expander: css`
-      & path {
-        stroke: ${colors.gray[400]};
-      }
-      & svg {
-        width: ${size[3]};
-        height: ${size[3]};
-      }
-      display: inline-flex;
-      align-items: center;
-      transition: all 0.1s ease;
-      /* outline: 1px solid ${colors.blue[400]}; */
-    `,
-    expanderButtonContainer: css`
-      display: flex;
-      align-items: center;
-      line-height: ${size[4]};
-      min-height: ${size[4]};
-      gap: ${size[2]};
-    `,
-    expanderButton: css`
-      cursor: pointer;
-      color: inherit;
-      font: inherit;
-      outline: inherit;
-      height: ${size[5]};
-      background: transparent;
-      border: none;
-      padding: 0;
-      display: inline-flex;
-      align-items: center;
-      gap: ${size[1]};
-      position: relative;
-      /* outline: 1px solid ${colors.green[400]}; */
-
-      &:focus-visible {
-        border-radius: ${border.radius.xs};
-        outline: 2px solid ${colors.blue[800]};
-      }
-
-      & svg {
-        position: relative;
-        left: 1px;
-      }
-    `,
-    info: css`
-      color: ${t(colors.gray[500], colors.gray[500])};
-      font-size: ${font.size.xs};
-      margin-left: ${size[1]};
-      /* outline: 1px solid ${colors.yellow[400]}; */
-    `,
-    label: css`
-      color: ${t(colors.gray[700], colors.gray[300])};
-      white-space: nowrap;
-    `,
-    value: css`
-      color: ${t(colors.purple[600], colors.purple[400])};
-      flex-grow: 1;
-    `,
-    actions: css`
-      display: inline-flex;
-      gap: ${size[2]};
-      align-items: center;
-    `,
-    row: css`
-      display: inline-flex;
-      gap: ${size[2]};
-      width: 100%;
-      margin: ${size[0.25]} 0px;
-      line-height: ${size[4.5]};
-      align-items: center;
-    `,
-    editableInput: css`
-      border: none;
-      padding: ${size[0.5]} ${size[1]} ${size[0.5]} ${size[1.5]};
-      flex-grow: 1;
-      border-radius: ${border.radius.xs};
-      background-color: ${t(colors.gray[200], colors.darkGray[500])};
-
-      &:hover {
-        background-color: ${t(colors.gray[300], colors.darkGray[600])};
-      }
-    `,
-    actionButton: css`
-      background-color: transparent;
-      color: ${t(colors.gray[500], colors.gray[500])};
-      border: none;
-      display: inline-flex;
-      padding: 0px;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      width: ${size[3]};
-      height: ${size[3]};
-      position: relative;
-      z-index: 1;
-
-      &:hover svg {
-        color: ${t(colors.gray[600], colors.gray[400])};
-      }
-
-      &:focus-visible {
-        border-radius: ${border.radius.xs};
-        outline: 2px solid ${colors.blue[800]};
-        outline-offset: 2px;
-      }
-    `,
-  }
-}
-
-const lightStyles = (css: (typeof goober)['css']) => stylesFactory('light', css)
-const darkStyles = (css: (typeof goober)['css']) => stylesFactory('dark', css)

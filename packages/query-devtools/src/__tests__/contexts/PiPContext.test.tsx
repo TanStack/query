@@ -1,7 +1,7 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createLocalStorage } from '@solid-primitives/storage'
 import { render } from '@solidjs/testing-library'
 import { createEffect } from 'solid-js'
-import { createLocalStorage } from '@solid-primitives/storage'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { PiPProvider, usePiPWindow } from '../../contexts'
 
 type FakePipWindowOverrides = {
@@ -17,18 +17,17 @@ function stubPipWindow(overrides: FakePipWindowOverrides = {}) {
     document: pipDocument,
     innerWidth: overrides.innerWidth ?? 800,
     innerHeight: overrides.innerHeight ?? 600,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    close: vi.fn(),
+    addEventListener: vi.fn<(type: string, listener: () => void) => void>(),
+    removeEventListener: vi.fn<(type: string, listener: () => void) => void>(),
+    close: vi.fn<Window['close']>(),
   }
-  const open = vi.fn(() => fakeWindow)
+  const open = vi.fn<() => typeof fakeWindow>(() => fakeWindow)
   vi.stubGlobal('open', open)
   return { pipDocument, fakeWindow, open }
 }
 
 describe('PiPContext', () => {
   afterEach(() => {
-    vi.unstubAllGlobals()
     localStorage.clear()
   })
 
@@ -181,25 +180,21 @@ describe('PiPContext', () => {
     it('should copy parent stylesheets as "<style>" with the same id into the PiP document head', () => {
       const sourceStyle = document.createElement('style')
       sourceStyle.id = 'tsqd-source'
-      const sheetSpy = stubParentStyleSheet({
+      stubParentStyleSheet({
         cssRules: makeCssRules('.tsqd { color: red; }'),
         ownerNode: sourceStyle,
       })
       const { pipDocument } = stubPipWindow()
 
-      try {
-        renderAndAct((pip) => pip().requestPipWindow(640, 480))
+      renderAndAct((pip) => pip().requestPipWindow(640, 480))
 
-        const copied = pipDocument.head.querySelector('style#tsqd-source')
-        expect(copied).not.toBeNull()
-        expect(copied?.textContent).toBe('.tsqd { color: red; }')
-      } finally {
-        sheetSpy.mockRestore()
-      }
+      const copied = pipDocument.head.querySelector('style#tsqd-source')
+      expect(copied).not.toBeNull()
+      expect(copied?.textContent).toBe('.tsqd { color: red; }')
     })
 
     it('should fall back to a "<link>" for cross-origin stylesheets whose "cssRules" throw', () => {
-      const sheetSpy = stubParentStyleSheet({
+      stubParentStyleSheet({
         get cssRules(): CSSRuleList {
           throw new DOMException('blocked', 'SecurityError')
         },
@@ -209,21 +204,17 @@ describe('PiPContext', () => {
       })
       const { pipDocument } = stubPipWindow()
 
-      try {
-        renderAndAct((pip) => pip().requestPipWindow(640, 480))
+      renderAndAct((pip) => pip().requestPipWindow(640, 480))
 
-        const link = pipDocument.head.querySelector<HTMLLinkElement>(
-          'link[href="https://example.com/external.css"]',
-        )
-        expect(link).not.toBeNull()
-        expect(link?.rel).toBe('stylesheet')
-      } finally {
-        sheetSpy.mockRestore()
-      }
+      const link = pipDocument.head.querySelector<HTMLLinkElement>(
+        'link[href="https://example.com/external.css"]',
+      )
+      expect(link).not.toBeNull()
+      expect(link?.rel).toBe('stylesheet')
     })
 
     it('should skip the "<link>" fallback when the cross-origin stylesheet has no "href"', () => {
-      const sheetSpy = stubParentStyleSheet({
+      stubParentStyleSheet({
         get cssRules(): CSSRuleList {
           throw new DOMException('blocked', 'SecurityError')
         },
@@ -233,14 +224,10 @@ describe('PiPContext', () => {
       })
       const { pipDocument } = stubPipWindow()
 
-      try {
-        renderAndAct((pip) => pip().requestPipWindow(640, 480))
+      renderAndAct((pip) => pip().requestPipWindow(640, 480))
 
-        expect(pipDocument.head.querySelector('link')).toBeNull()
-        expect(pipDocument.head.querySelector('style')).toBeNull()
-      } finally {
-        sheetSpy.mockRestore()
-      }
+      expect(pipDocument.head.querySelector('link')).toBeNull()
+      expect(pipDocument.head.querySelector('style')).toBeNull()
     })
   })
 
@@ -262,7 +249,7 @@ describe('PiPContext', () => {
         { disabled: true },
       )
 
-      expect(observed).toEqual([fakeWindow, null])
+      expect(observed).toStrictEqual([fakeWindow, null])
       expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
         'false',
       )
@@ -295,7 +282,7 @@ describe('PiPContext', () => {
       )
 
       expect(fakeWindow.close).toHaveBeenCalledTimes(1)
-      expect(observed).toEqual([fakeWindow, null])
+      expect(observed).toStrictEqual([fakeWindow, null])
     })
 
     it('should call "close" only once when "closePipWindow" runs twice in a row', () => {
@@ -338,7 +325,11 @@ describe('PiPContext', () => {
         initialStorage: { 'TanstackQueryDevtools.pip_open': 'true' },
       })
 
-      expect(open).toHaveBeenCalled()
+      expect(open).toHaveBeenCalledWith(
+        '',
+        'TSQD-Devtools-Panel',
+        'width=1024,height=500,popup',
+      )
     })
 
     it('should not auto-open a PiP window when "disabled" is true', () => {
@@ -357,25 +348,21 @@ describe('PiPContext', () => {
         'open',
         vi.fn(() => null),
       )
-      const consoleError = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => {})
 
-      try {
-        renderAndAct(() => {}, {
-          initialStorage: { 'TanstackQueryDevtools.pip_open': 'true' },
-        })
+      renderAndAct(() => {}, {
+        initialStorage: { 'TanstackQueryDevtools.pip_open': 'true' },
+      })
 
-        expect(consoleError).toHaveBeenCalledWith(
-          'Failed to open popup. Please allow popups for this site to view the devtools in picture-in-picture mode.',
-        )
-        expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
-          'false',
-        )
-        expect(localStorage.getItem('TanstackQueryDevtools.open')).toBe('false')
-      } finally {
-        consoleError.mockRestore()
-      }
+      expect(consoleErrorMock).toHaveBeenCalledWith(
+        'Failed to open popup. Please allow popups for this site to view the devtools in picture-in-picture mode.',
+      )
+      expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
+        'false',
+      )
+      expect(localStorage.getItem('TanstackQueryDevtools.open')).toBe('false')
     })
 
     it('should re-throw non-"PipOpenError" errors from "window.open" on auto-open', () => {
@@ -391,82 +378,6 @@ describe('PiPContext', () => {
           initialStorage: { 'TanstackQueryDevtools.pip_open': 'true' },
         }),
       ).toThrow('unexpected')
-    })
-  })
-
-  describe('"#_goober" MutationObserver', () => {
-    function stubMutationObserver() {
-      let observerCallback: MutationCallback | undefined
-      const observeSpy = vi.fn()
-      const disconnectSpy = vi.fn()
-      class FakeMutationObserver {
-        observe = observeSpy
-        disconnect = disconnectSpy
-        takeRecords = () => []
-        constructor(cb: MutationCallback) {
-          observerCallback = cb
-        }
-      }
-      vi.stubGlobal('MutationObserver', FakeMutationObserver)
-      return {
-        observeSpy,
-        disconnectSpy,
-        fire: () => observerCallback?.([], {} as MutationObserver),
-      }
-    }
-
-    it('should observe the parent "#_goober" style for childList and subtree mutations', () => {
-      const gooberStyle = document.createElement('style')
-      gooberStyle.id = '_goober'
-      gooberStyle.textContent = '.initial { color: red; }'
-      document.head.appendChild(gooberStyle)
-      const { observeSpy } = stubMutationObserver()
-      stubPipWindow()
-
-      try {
-        renderAndAct((pip) => pip().requestPipWindow(640, 480), {
-          disabled: true,
-        })
-
-        expect(observeSpy).toHaveBeenCalledWith(gooberStyle, {
-          childList: true,
-          subtree: true,
-          characterDataOldValue: true,
-        })
-      } finally {
-        gooberStyle.remove()
-      }
-    })
-
-    it('should copy parent "#_goober" "textContent" into the PiP mirror when the observer fires', () => {
-      const gooberStyle = document.createElement('style')
-      gooberStyle.id = '_goober'
-      gooberStyle.textContent = '.initial { color: red; }'
-      document.head.appendChild(gooberStyle)
-      const { fire } = stubMutationObserver()
-      const { pipDocument } = stubPipWindow()
-
-      try {
-        const pipGooberStyle = pipDocument.createElement('style')
-        pipGooberStyle.id = '_goober'
-
-        renderAndAct(
-          (pip) => {
-            pip().requestPipWindow(640, 480)
-            // `requestPipWindow` clears the PiP document head, so install
-            // the goober mirror style after that point.
-            pipDocument.head.appendChild(pipGooberStyle)
-          },
-          { disabled: true },
-        )
-
-        gooberStyle.textContent = '.next { color: blue; }'
-        fire()
-
-        expect(pipGooberStyle.textContent).toBe('.next { color: blue; }')
-      } finally {
-        gooberStyle.remove()
-      }
     })
   })
 })

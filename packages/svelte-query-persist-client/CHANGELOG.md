@@ -1,5 +1,199 @@
 # @tanstack/svelte-query-persist-client
 
+## 6.4.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.108.2
+  - @tanstack/svelte-query@6.4.5
+
+## 6.4.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.108.1
+  - @tanstack/svelte-query@6.4.4
+
+## 6.4.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.108.0
+  - @tanstack/svelte-query@6.4.3
+
+## 6.4.2
+
+### Patch Changes
+
+- Updated dependencies [[`b160291`](https://github.com/TanStack/query/commit/b160291d135f82ec650cc12365b53d567cac94fb)]:
+  - @tanstack/query-persist-client-core@5.107.2
+  - @tanstack/svelte-query@6.4.2
+
+## 6.4.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.107.1
+  - @tanstack/svelte-query@6.4.1
+
+## 6.4.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.107.0
+  - @tanstack/svelte-query@6.4.0
+
+## 6.3.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.106.1
+  - @tanstack/svelte-query@6.3.11
+
+## 6.3.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.106.0
+  - @tanstack/svelte-query@6.3.10
+
+## 6.3.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.105.3
+  - @tanstack/svelte-query@6.3.9
+
+## 6.3.8
+
+### Patch Changes
+
+- Updated dependencies [[`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1)]:
+  - @tanstack/svelte-query@6.3.8
+  - @tanstack/query-persist-client-core@5.105.2
+
+## 6.3.7
+
+### Patch Changes
+
+- Updated dependencies [[`db79da7`](https://github.com/TanStack/query/commit/db79da70ede675b8f41c7b2227d0123cfdd14839), [`8be136b`](https://github.com/TanStack/query/commit/8be136b02214fe7b073673fa1cb30110a8de8482), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/query-persist-client-core@5.105.1
+  - @tanstack/svelte-query@6.3.7
+
+## 6.3.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.105.0
+  - @tanstack/svelte-query@6.3.6
+
+## 6.3.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.104.5
+  - @tanstack/svelte-query@6.3.5
+
+## 6.3.4
+
+### Patch Changes
+
+- Updated dependencies [[`fc3a384`](https://github.com/TanStack/query/commit/fc3a3848f25adec750e6ee6d3abf9280c7e3a990), [`2bb82df`](https://github.com/TanStack/query/commit/2bb82dfd23dc570b06e452c30b12ec0fd1ea7daf)]:
+  - @tanstack/svelte-query@6.3.4
+  - @tanstack/query-persist-client-core@5.104.4
+
+## 6.3.3
+
+### Patch Changes
+
+- Updated dependencies [[`ed4d849`](https://github.com/TanStack/query/commit/ed4d849731bfe6404be9d40aec84eda54f958d7f)]:
+  - @tanstack/query-persist-client-core@5.104.3
+  - @tanstack/svelte-query@6.3.3
+
+## 6.3.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.104.2
+  - @tanstack/svelte-query@6.3.2
+
+## 6.3.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.104.1
+  - @tanstack/svelte-query@6.3.1
+
+## 6.3.0
+
+### Minor Changes
+
+- [#11650](https://github.com/TanStack/query/pull/11650) [`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e) - Build projects with Vite 8
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/svelte-query@6.3.0
+  - @tanstack/query-persist-client-core@5.104.0
+
+## 6.2.5
+
+### Patch Changes
+
+- Updated dependencies [[`d038065`](https://github.com/TanStack/query/commit/d03806572aea427e34acc4cf53779942962874cb)]:
+  - @tanstack/svelte-query@6.2.5
+  - @tanstack/query-persist-client-core@5.103.3
+
+## 6.2.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/svelte-query@6.2.4
+
+## 6.2.3
+
+### Patch Changes
+
+- Updated dependencies [[`1490a4b`](https://github.com/TanStack/query/commit/1490a4b2aef372bff00af88c31ab896646ce1e99)]:
+  - @tanstack/svelte-query@6.2.3
+
+## 6.2.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.103.2
+  - @tanstack/svelte-query@6.2.2
+
+## 6.2.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.103.1
+  - @tanstack/svelte-query@6.2.1
+
+## 6.2.0
+
+### Patch Changes
+
+- Updated dependencies [[`4c7cdbb`](https://github.com/TanStack/query/commit/4c7cdbb86d8196e646985cd8a3476d3ac8c12ff5), [`f6ae1cc`](https://github.com/TanStack/query/commit/f6ae1ccdf74a61ea15e845d4643e6d4b0a0b7bdf)]:
+  - @tanstack/query-persist-client-core@5.103.0
+  - @tanstack/svelte-query@6.2.0
+
 ## 6.1.48
 
 ### Patch Changes

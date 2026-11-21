@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest'
 import { render } from '@solidjs/testing-library'
 import { createEffect, createSignal } from 'solid-js'
+import { describe, expect, it } from 'vitest'
 import { ThemeContext, useTheme } from '../../contexts'
 
 type Theme = ReturnType<ReturnType<typeof useTheme>>
@@ -39,10 +39,10 @@ describe('ThemeContext', () => {
         </ThemeContext.Provider>
       ))
 
-      expect(observed).toEqual(['dark'])
+      expect(observed).toStrictEqual(['dark'])
 
       setTheme('light')
-      expect(observed).toEqual(['dark', 'light'])
+      expect(observed).toStrictEqual(['dark', 'light'])
     })
   })
 })

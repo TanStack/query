@@ -8,7 +8,7 @@ ref: docs/framework/react/guides/placeholder-query-data.md
 
 ```ts
 class TodosComponent {
-  result = injectQuery(() => ({
+  readonly todosQuery = injectQuery(() => ({
     queryKey: ['todos'],
     queryFn: () => fetch('/todos'),
     placeholderData: placeholderTodos,
@@ -23,7 +23,7 @@ class TodosComponent {
 
 ```ts
 class TodosComponent {
-  result = injectQuery(() => ({
+  readonly todoQuery = injectQuery(() => ({
     queryKey: ['todos', id()],
     queryFn: () => fetch(`/todos/${id}`),
     placeholderData: (previousData, previousQuery) => previousData,
@@ -37,9 +37,9 @@ class TodosComponent {
 ```ts
 export class BlogPostComponent {
   postId = input.required<number>()
-  queryClient = inject(QueryClient)
+  readonly queryClient = inject(QueryClient)
 
-  result = injectQuery(() => ({
+  readonly blogPostQuery = injectQuery(() => ({
     queryKey: ['blogPost', this.postId()],
     queryFn: () => fetch(`/blogPosts/${this.postId()}`),
     placeholderData: () => {

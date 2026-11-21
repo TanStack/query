@@ -1,11 +1,22 @@
 import { rules } from './rules'
-import type { ESLint, Linter } from 'eslint'
 import type { RuleModule } from '@typescript-eslint/utils/ts-eslint'
+import type { ESLint, Linter } from 'eslint'
 
 type RuleKey = keyof typeof rules
 
+/**
+ * The ESLint plugin object: its `rules`, and its configs — the legacy `recommended` and
+ * `recommendedStrict`, and the flat `flat/recommended` and `flat/recommended-strict`.
+ */
 export interface Plugin extends Omit<ESLint.Plugin, 'rules'> {
+  /**
+   * The rules of the plugin, keyed by rule name.
+   */
   rules: Record<RuleKey, RuleModule<any, any, any>>
+  /**
+   * The shareable configs: the legacy `recommended` and `recommendedStrict`, and the flat
+   * `flat/recommended` and `flat/recommended-strict`.
+   */
   configs: {
     recommended: ESLint.ConfigData
     recommendedStrict: ESLint.ConfigData

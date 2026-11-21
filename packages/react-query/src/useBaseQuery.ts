@@ -1,7 +1,7 @@
 'use client'
-import * as React from 'react'
-
 import { noop, notifyManager } from '@tanstack/query-core'
+import * as React from 'react'
+import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -9,12 +9,10 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { useIsRestoring } from './IsRestoringProvider'
 import {
   ensureSuspenseTimers,
   getSuspensePromise,
   shouldSuspend,
-  use,
 } from './suspense'
 import type {
   QueryClient,
@@ -24,6 +22,19 @@ import type {
 } from '@tanstack/query-core'
 import type { UseBaseQueryOptions } from './types'
 
+/**
+ * Base implementation shared by `useQuery`, `useInfiniteQuery`, `useSuspenseQuery`, and
+ * `useSuspenseInfiniteQuery`.
+ * @param options - The options passed to the calling hook.
+ * @param Observer - The observer class from query-core (`QueryObserver` or
+ * `InfiniteQueryObserver`).
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest
+ * context will be used.
+ * @returns The query result, tracking which properties are read unless `notifyOnChangeProps` is
+ * set.
+ * @throws {Error} If `options` is not an object (outside production), or the query error when it should be
+ * thrown to the nearest error boundary (see `throwOnError`). While suspending, it throws a promise instead.
+ */
 export function useBaseQuery<
   TQueryFnData,
   TError,
@@ -56,12 +67,9 @@ export function useBaseQuery<
 
   const query = client
     .getQueryCache()
-    .get<
-      TQueryFnData,
-      TError,
-      TQueryData,
-      TQueryKey
-    >(defaultedOptions.queryHash)
+    .get<TQueryFnData, TError, TQueryData, TQueryKey>(
+      defaultedOptions.queryHash,
+    )
 
   if (process.env.NODE_ENV !== 'production') {
     if (!defaultedOptions.queryFn) {
@@ -95,6 +103,10 @@ export function useBaseQuery<
   // note: this must be called before useSyncExternalStore
   const result = observer.getOptimisticResult(defaultedOptions)
 
+  React.useEffect(() => {
+    observer.setOptions(defaultedOptions)
+  }, [defaultedOptions, observer])
+
   const shouldSubscribe = !isRestoring && subscribed
   React.useSyncExternalStore(
     React.useCallback(
@@ -115,10 +127,6 @@ export function useBaseQuery<
     () => observer.getCurrentResult(),
   )
 
-  React.useEffect(() => {
-    observer.setOptions(defaultedOptions)
-  }, [defaultedOptions, observer])
-
   // Handle suspense
   if (defaultedOptions.suspense) {
     const suspenseQuery = client.getQueryCache().build(client, defaultedOptions)
@@ -138,7 +146,7 @@ export function useBaseQuery<
       )
 
       if (suspend) {
-        use(promise)
+        React.use(promise)
       }
     }
   }

@@ -114,7 +114,7 @@ If you want to run it against `.js` or `.jsx` files, please use the command belo
 ```
 npx jscodeshift@latest ./path/to/src/ \
   --extensions=js,jsx \
-  --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.cjs
+  --transform=./node_modules/@tanstack/react-query/build/codemods/v5/remove-overloads/remove-overloads.cjs
 ```
 
 If you want to run it against `.ts` or `.tsx` files, please use the command below:
@@ -123,7 +123,7 @@ If you want to run it against `.ts` or `.tsx` files, please use the command belo
 npx jscodeshift@latest ./path/to/src/ \
   --extensions=ts,tsx \
   --parser=tsx \
-  --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.cjs
+  --transform=./node_modules/@tanstack/react-query/build/codemods/v5/remove-overloads/remove-overloads.cjs
 ```
 
 Please note in the case of `TypeScript` you need to use `tsx` as the parser; otherwise, the codemod won't be applied properly!
@@ -207,7 +207,7 @@ Almost everyone gets `cacheTime` wrong. It sounds like "the amount of time that 
 `gc` is referring to "garbage collect" time. It's a bit more technical, but also a quite [well known abbreviation](<https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)>) in computer science.
 
 ```tsx
-const MINUTE = 1000 * 60;
+const MINUTE = 60 * 1000;
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -279,7 +279,7 @@ An identity function, in the context of TanStack Query, refers to a function tha
 useQuery({
   queryKey,
   queryFn,
-  placeholderData: (previousData, previousQuery) => previousData, // identity function with the same behaviour as `keepPreviousData`
+  placeholderData: (previousData, previousQuery) => previousData, // identity function with the same behavior as `keepPreviousData`
 })
 ```
 
@@ -345,7 +345,7 @@ The v5 includes a new `maxPages` option for infinite queries to limit the number
 
 ### New `dehydrate` API
 
-The options you can pass to `dehydrate` have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behaviour, instead of using the removed boolean options `dehydrateMutations` and `dehydrateQueries` you can implement the function equivalents `shouldDehydrateQuery` or `shouldDehydrateMutation` instead. To get the old behaviour of not hydrating queries/mutations at all, pass in `() => false`.
+The options you can pass to `dehydrate` have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behavior, instead of using the removed boolean options `dehydrateMutations` and `dehydrateQueries` you can implement the function equivalents `shouldDehydrateQuery` or `shouldDehydrateMutation` instead. To get the old behavior of not hydrating queries/mutations at all, pass in `() => false`.
 
 ```tsx
 - dehydrateMutations?: boolean // [!code --]
@@ -427,7 +427,7 @@ To better support concurrent features and transitions we've made some changes to
 
 The `HydrationBoundary` no longer hydrates mutations, only queries. To hydrate mutations, use the low level `hydrate` API or the `persistQueryClient` plugin.
 
-Finally, as a technical detail, the timing for when queries are hydrated have changed slightly. New queries are still hydrated in the render phase so that SSR works as usual, but any queries that already exist in the cache are now hydrated in an effect instead (as long as their data is fresher than what is in the cache). If you are hydrating just once at the start of your application as is common, this wont affect you, but if you are using Server Components and pass down fresh data for hydration on a page navigation, you might notice a flash of the old data before the page immediately rerenders.
+Finally, as a technical detail, the timing for when queries are hydrated have changed slightly. New queries are still hydrated in the render phase so that SSR works as usual, but any queries that already exist in the cache are now hydrated in an effect instead (as long as their data is fresher than what is in the cache). If you are hydrating just once at the start of your application as is common, this won't affect you, but if you are using Server Components and pass down fresh data for hydration on a page navigation, you might notice a flash of the old data before the page immediately rerenders.
 
 This last change is technically a breaking one, and was made so we don't prematurely update content on the _existing_ page before a page transition has been fully committed. No action is required on your part.
 
@@ -455,16 +455,16 @@ For example:
 ```ts
 + queryClient.setQueryDefaults(['todo'], {   // [!code ++]
 +   retry: false,  // [!code ++]
-+   staleTime: 60_000,  // [!code ++]
++   staleTime: 60 * 1000,  // [!code ++]
 + })  // [!code ++]
 queryClient.setQueryDefaults(['todo', 'detail'], {
 +   retry: true,  // [!code --]
-  retryDelay: 1_000,
-  staleTime: 10_000,
+  retryDelay: 1000,
+  staleTime: 10 * 1000,
 })
 - queryClient.setQueryDefaults(['todo'], { // [!code --]
 -   retry: false, // [!code --]
--   staleTime: 60_000, // [!code --]
+-   staleTime: 60 * 1000, // [!code --]
 - }) // [!code --]
 ```
 
@@ -521,7 +521,7 @@ Infinite Queries can be prefetched like regular Queries. Per default, only the f
 
 ### New `combine` option for `useQueries`
 
-See the [useQueries docs](../reference/useQueries.md#combine) for more details.
+See the [useQueries docs](../reference/functions/useQueries.md#combine) for more details.
 
 ### Experimental `fine grained storage persister`
 

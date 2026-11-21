@@ -1,5 +1,9 @@
 import { Show, createUniqueId } from 'solid-js'
 
+/**
+ * Renders the search icon.
+ * @returns The icon's SVG element.
+ */
 export function Search() {
   return (
     <svg
@@ -20,6 +24,10 @@ export function Search() {
   )
 }
 
+/**
+ * Renders the trash icon.
+ * @returns The icon's SVG element.
+ */
 export function Trash() {
   return (
     <svg
@@ -40,6 +48,10 @@ export function Trash() {
   )
 }
 
+/**
+ * Renders the chevron-down icon.
+ * @returns The icon's SVG element.
+ */
 export function ChevronDown() {
   return (
     <svg
@@ -60,6 +72,10 @@ export function ChevronDown() {
   )
 }
 
+/**
+ * Renders the up arrow icon.
+ * @returns The icon's SVG element.
+ */
 export function ArrowUp() {
   return (
     <svg
@@ -80,6 +96,10 @@ export function ArrowUp() {
   )
 }
 
+/**
+ * Renders the down arrow icon.
+ * @returns The icon's SVG element.
+ */
 export function ArrowDown() {
   return (
     <svg
@@ -100,6 +120,10 @@ export function ArrowDown() {
   )
 }
 
+/**
+ * Renders the left arrow icon.
+ * @returns The icon's SVG element.
+ */
 export function ArrowLeft() {
   return (
     <svg
@@ -123,6 +147,10 @@ export function ArrowLeft() {
   )
 }
 
+/**
+ * Renders the right arrow icon.
+ * @returns The icon's SVG element.
+ */
 export function ArrowRight() {
   return (
     <svg
@@ -146,6 +174,10 @@ export function ArrowRight() {
   )
 }
 
+/**
+ * Renders the sun (light theme) icon.
+ * @returns The icon's SVG element.
+ */
 export function Sun() {
   return (
     <svg
@@ -166,6 +198,10 @@ export function Sun() {
   )
 }
 
+/**
+ * Renders the moon (dark theme) icon.
+ * @returns The icon's SVG element.
+ */
 export function Moon() {
   return (
     <svg
@@ -186,6 +222,10 @@ export function Moon() {
   )
 }
 
+/**
+ * Renders the monitor (system theme) icon.
+ * @returns The icon's SVG element.
+ */
 export function Monitor() {
   return (
     <svg
@@ -206,6 +246,10 @@ export function Monitor() {
   )
 }
 
+/**
+ * Renders the Wi-Fi (online) icon.
+ * @returns The icon's SVG element.
+ */
 export function Wifi() {
   return (
     <svg
@@ -223,6 +267,10 @@ export function Wifi() {
   )
 }
 
+/**
+ * Renders the offline icon.
+ * @returns The icon's SVG element.
+ */
 export function Offline() {
   return (
     <svg
@@ -241,6 +289,10 @@ export function Offline() {
   )
 }
 
+/**
+ * Renders the settings icon.
+ * @returns The icon's SVG element.
+ */
 export function Settings() {
   return (
     <svg
@@ -268,6 +320,10 @@ export function Settings() {
   )
 }
 
+/**
+ * Renders the picture-in-picture icon.
+ * @returns The icon's SVG element.
+ */
 export function PiPIcon() {
   return (
     <svg
@@ -288,6 +344,10 @@ export function PiPIcon() {
   )
 }
 
+/**
+ * Renders the copy icon.
+ * @returns The icon's SVG element.
+ */
 export function Copier() {
   return (
     <svg
@@ -309,6 +369,10 @@ export function Copier() {
   )
 }
 
+/**
+ * Renders the pencil (edit) icon.
+ * @returns The icon's SVG element.
+ */
 export function Pencil() {
   return (
     <svg
@@ -329,6 +393,11 @@ export function Pencil() {
   )
 }
 
+/**
+ * Renders the icon shown after a value was copied.
+ * @param props - The `theme` that decides the icon's color.
+ * @returns The icon's SVG element.
+ */
 export function CopiedCopier(props: { theme: 'light' | 'dark' }) {
   return (
     <svg
@@ -349,6 +418,10 @@ export function CopiedCopier(props: { theme: 'light' | 'dark' }) {
   )
 }
 
+/**
+ * Renders the copy error icon.
+ * @returns The icon's SVG element.
+ */
 export function ErrorCopier() {
   return (
     <svg
@@ -369,6 +442,10 @@ export function ErrorCopier() {
   )
 }
 
+/**
+ * Renders the list icon.
+ * @returns The icon's SVG element.
+ */
 export function List() {
   return (
     <svg
@@ -388,6 +465,11 @@ export function List() {
   )
 }
 
+/**
+ * Renders a checkbox icon.
+ * @param props - Whether the checkbox is `checked`, and the `theme` that decides its color.
+ * @returns The checked or unchecked checkbox icon.
+ */
 export function Check(props: { checked: boolean; theme: 'light' | 'dark' }) {
   return (
     <>
@@ -429,6 +511,10 @@ export function Check(props: { checked: boolean; theme: 'light' | 'dark' }) {
   )
 }
 
+/**
+ * Renders the check circle icon.
+ * @returns The icon's SVG element.
+ */
 export function CheckCircle() {
   return (
     <svg
@@ -449,6 +535,10 @@ export function CheckCircle() {
   )
 }
 
+/**
+ * Renders the loading circle icon.
+ * @returns The icon's SVG element.
+ */
 export function LoadingCircle() {
   return (
     <svg
@@ -478,6 +568,10 @@ export function LoadingCircle() {
   )
 }
 
+/**
+ * Renders the X circle icon.
+ * @returns The icon's SVG element.
+ */
 export function XCircle() {
   return (
     <svg
@@ -498,6 +592,10 @@ export function XCircle() {
   )
 }
 
+/**
+ * Renders the pause circle icon.
+ * @returns The icon's SVG element.
+ */
 export function PauseCircle() {
   return (
     <svg
@@ -518,6 +616,10 @@ export function PauseCircle() {
   )
 }
 
+/**
+ * Renders the TanStack logo.
+ * @returns The logo's SVG element.
+ */
 export function TanstackLogo() {
   const id = createUniqueId()
   return (

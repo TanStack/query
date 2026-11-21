@@ -10,7 +10,7 @@ replace:
     'useQuery[(]': 'useQuery(() => ',
     'useQueries[(]': 'useQueries(() => ',
     'useInfiniteQuery[(]': 'useInfiniteQuery(() => ',
-    'hooks': 'functions',
+    'hooks': 'primitives',
   }
 ---
 

@@ -75,8 +75,8 @@ function Todos() {
 [//]: # 'Example3'
 
 ```tsx
-import { createSignal } from 'solid-js'
 import { skipToken, useQuery } from '@tanstack/solid-query'
+import { createSignal } from 'solid-js'
 
 function Todos() {
   const [filter, setFilter] = createSignal<string | undefined>()

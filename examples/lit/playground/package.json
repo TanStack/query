@@ -1,0 +1,23 @@
+{
+  "name": "@tanstack/query-example-lit-playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/lit-query": "^0.2.42",
+    "lit": "^3.3.3"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-config": "^0.5.0",
+    "@tanstack/eslint-plugin-query": "^5.108.2",
+    "eslint": "^9.39.5",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.8"
+  }
+}

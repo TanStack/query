@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { QueryClient } from '@tanstack/query-core'
   import {
     HydrationBoundary,
     createQuery,
     setQueryClientContext,
   } from '../../src/index.js'
+  import type { QueryClient } from '@tanstack/query-core'
   import type { DehydratedState } from '@tanstack/query-core'
 
   type Props = {
@@ -23,10 +23,6 @@
   }))
 </script>
 
-<HydrationBoundary
-  state={dehydratedState}
-  options={undefined}
-  queryClient={undefined}
->
+<HydrationBoundary state={dehydratedState}>
   <div>data: {query.data ?? 'undefined'}</div>
 </HydrationBoundary>

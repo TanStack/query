@@ -1,32 +1,21 @@
+import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref, unref } from 'vue-demi'
-import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
-import { QueryClient } from '../queryClient'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
+import { MutationCache } from '../mutationCache'
+import { QueryCache } from '../queryCache'
+import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 
-vi.mock('@tanstack/query-core', async () => {
-  const actual = await vi.importActual<{
-    QueryClient: typeof QueryClientOrigin
-  }>('@tanstack/query-core')
-
-  // Get the prototype methods dynamically
-  const prototypeMethods = Object.getOwnPropertyNames(
-    actual.QueryClient.prototype,
-  ).filter((prop): prop is keyof typeof actual.QueryClient.prototype => {
-    const descriptor = Object.getOwnPropertyDescriptor(
-      actual.QueryClient.prototype,
-      prop,
-    )
-    return typeof descriptor?.value === 'function' && prop !== 'constructor'
-  })
-
-  // Spy on all methods in the prototype
-  prototypeMethods.forEach((method) => {
-    vi.spyOn(actual.QueryClient.prototype, method)
-  })
-
-  return actual
+// Get the prototype methods dynamically
+const prototypeMethods = Object.getOwnPropertyNames(
+  QueryClientOrigin.prototype,
+).filter((prop): prop is keyof typeof QueryClientOrigin.prototype => {
+  const descriptor = Object.getOwnPropertyDescriptor(
+    QueryClientOrigin.prototype,
+    prop,
+  )
+  return typeof descriptor?.value === 'function' && prop !== 'constructor'
 })
 
 const queryKeyRef = ['foo', ref('bar')]
@@ -37,11 +26,25 @@ const fn = () => 'mock'
 describe('QueryCache', () => {
   beforeEach(() => {
     vi.useFakeTimers()
-    vi.clearAllMocks()
+    // Spy on all methods in the prototype
+    prototypeMethods.forEach((method) => {
+      vi.spyOn(QueryClientOrigin.prototype, method)
+    })
   })
 
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  describe('constructor', () => {
+    it('should use the queryCache and mutationCache passed in the config', () => {
+      const queryCache = new QueryCache()
+      const mutationCache = new MutationCache()
+      const queryClient = new QueryClient({ queryCache, mutationCache })
+
+      expect(queryClient.getQueryCache()).toBe(queryCache)
+      expect(queryClient.getMutationCache()).toBe(mutationCache)
+    })
   })
 
   describe('isFetching', () => {
@@ -88,6 +91,7 @@ describe('QueryCache', () => {
     it('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.ensureQueryData({
         queryKey: queryKeyRef,
         queryFn: fn,
@@ -273,12 +277,36 @@ describe('QueryCache', () => {
         queryKey: queryKeyRef,
       })
 
-      expect(invalidateQueries).toHaveBeenCalled()
+      expect(invalidateQueries).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref, refetchType: 'none' },
+        {},
+      )
       expect(refetchQueries).not.toHaveBeenCalled()
+      await vi.advanceTimersByTimeAsync(0)
+      expect(refetchQueries).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref, type: 'active' },
+        {},
+      )
+    })
+
+    it('should pass refetchType as type and the options to refetchQueries', async () => {
+      const refetchQueries = vi.spyOn(
+        QueryClientOrigin.prototype,
+        'refetchQueries',
+      )
+
+      const queryClient = new QueryClient()
+
+      queryClient.invalidateQueries(
+        { queryKey: queryKeyRef, refetchType: 'all', type: 'inactive' },
+        { cancelRefetch: ref(false) },
+      )
 
       await vi.advanceTimersByTimeAsync(0)
-
-      expect(refetchQueries).toHaveBeenCalled()
+      expect(refetchQueries).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref, refetchType: 'all', type: 'all' },
+        { cancelRefetch: false },
+      )
     })
 
     it('should call invalidateQueries immediately and not call refetchQueries', async () => {
@@ -298,11 +326,12 @@ describe('QueryCache', () => {
         refetchType: 'none',
       })
 
-      expect(invalidateQueries).toHaveBeenCalled()
+      expect(invalidateQueries).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref, refetchType: 'none' },
+        {},
+      )
       expect(refetchQueries).not.toHaveBeenCalled()
-
       await vi.advanceTimersByTimeAsync(0)
-
       expect(refetchQueries).not.toHaveBeenCalled()
     })
   })
@@ -331,6 +360,7 @@ describe('QueryCache', () => {
     it('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.fetchQuery({
         queryKey: queryKeyRef,
       })
@@ -390,6 +420,7 @@ describe('QueryCache', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchQuery({ queryKey: queryKeyRef, queryFn: fn })
 
       expect(QueryClientOrigin.prototype.prefetchQuery).toHaveBeenCalledWith({
@@ -403,8 +434,10 @@ describe('QueryCache', () => {
     it('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.fetchInfiniteQuery({
         queryKey: queryKeyRef,
+        getNextPageParam: () => undefined,
         initialPageParam: 0,
       })
 
@@ -417,6 +450,7 @@ describe('QueryCache', () => {
         }),
       )
     })
+
     it('should properly unwrap parameter using infiniteQueryOptions with unref', () => {
       const queryClient = new QueryClient()
 
@@ -426,6 +460,7 @@ describe('QueryCache', () => {
         getNextPageParam: () => 12,
       })
 
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.fetchInfiniteQuery(options)
 
       expect(
@@ -453,7 +488,7 @@ describe('QueryCache', () => {
         select: ref(select),
       })
 
-      expect(QueryClientOrigin.prototype.infiniteQuery).toBeCalledWith(
+      expect(QueryClientOrigin.prototype.infiniteQuery).toHaveBeenCalledWith(
         expect.objectContaining({
           queryKey: queryKeyUnref,
           initialPageParam: 0,
@@ -494,10 +529,13 @@ describe('QueryCache', () => {
   describe('prefetchInfiniteQuery', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
+      const getNextPageParam = () => undefined
 
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchInfiniteQuery({
         queryKey: queryKeyRef,
         queryFn: fn,
+        getNextPageParam,
         initialPageParam: 0,
       })
 
@@ -507,6 +545,7 @@ describe('QueryCache', () => {
         initialPageParam: 0,
         queryKey: queryKeyUnref,
         queryFn: fn,
+        getNextPageParam,
       })
     })
   })

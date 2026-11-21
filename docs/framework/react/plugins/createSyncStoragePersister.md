@@ -12,25 +12,25 @@ You can simply use ['@tanstack/query-async-storage-persister'](./createAsyncStor
 
 This utility comes as a separate package and is available under the `'@tanstack/query-sync-storage-persister'` import.
 
-```bash
+```sh
 npm install @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
 ```
 
@@ -41,13 +41,13 @@ bun add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-cli
 - Pass it to the [`persistQueryClient`](./persistQueryClient.md) function
 
 ```tsx
-import { persistQueryClient } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { persistQueryClient } from '@tanstack/react-query-persist-client'
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 })
@@ -138,10 +138,9 @@ There is a limit to the amount of data which can be stored in `localStorage`.
 If you need to store more data in `localStorage`, you can override the `serialize` and `deserialize` functions to compress and decompress the data using a library like [lz-string](https://github.com/pieroxy/lz-string/).
 
 ```tsx
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { QueryClient } from '@tanstack/react-query'
 import { persistQueryClient } from '@tanstack/react-query-persist-client'
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
-
 import { compress, decompress } from 'lz-string'
 
 const queryClient = new QueryClient({

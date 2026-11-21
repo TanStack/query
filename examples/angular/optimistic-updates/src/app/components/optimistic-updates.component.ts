@@ -1,14 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+import { DatePipe } from '@angular/common'
+import { Component, inject } from '@angular/core'
+import { FormsModule } from '@angular/forms'
 import {
+  QueryClient,
   injectMutation,
   injectQuery,
-} from '@tanstack/angular-query-experimental'
-import { FormsModule } from '@angular/forms'
-import { DatePipe } from '@angular/common'
-import { TasksService } from '../services/tasks.service'
+} from '@tanstack/angular-query'
+import { TasksMutations, TasksQueries } from '../services/tasks/queries'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'optimistic-updates',
   imports: [FormsModule, DatePipe],
   template: `
@@ -52,11 +52,55 @@ import { TasksService } from '../services/tasks.service'
   `,
 })
 export class OptimisticUpdatesComponent {
-  #tasksService = inject(TasksService)
+  #queryClient = inject(QueryClient)
+  #tasksQueries = inject(TasksQueries)
+  #tasksMutations = inject(TasksMutations)
 
-  tasks = injectQuery(() => this.#tasksService.allTasks())
-  clearMutation = injectMutation(() => this.#tasksService.addTask())
-  addMutation = injectMutation(() => this.#tasksService.addTask())
+  tasks = injectQuery(() => this.#tasksQueries.list())
+  addMutation = injectMutation(() => ({
+    ...this.#tasksMutations.create(),
+    onSuccess: () => {
+      this.#queryClient.invalidateQueries({
+        queryKey: this.#tasksQueries.list().queryKey,
+      })
+    },
+    onMutate: async ({ task }) => {
+      // Cancel any outgoing refetches
+      // (so they don't overwrite our optimistic update)
+      await this.#queryClient.cancelQueries({
+        queryKey: this.#tasksQueries.list().queryKey,
+      })
+
+      // Snapshot the previous value
+      const previousTodos = this.#queryClient.getQueryData(
+        this.#tasksQueries.list().queryKey,
+      )
+
+      // Optimistically update to the new value
+      if (previousTodos) {
+        this.#queryClient.setQueryData(this.#tasksQueries.list().queryKey, [
+          ...previousTodos,
+          task,
+        ])
+      }
+
+      return previousTodos
+    },
+    onError: (_err, _variables, onMutateResult) => {
+      if (onMutateResult) {
+        this.#queryClient.setQueryData(
+          this.#tasksQueries.list().queryKey,
+          onMutateResult,
+        )
+      }
+    },
+    // Always refetch after error or success:
+    onSettled: () => {
+      this.#queryClient.invalidateQueries({
+        queryKey: this.#tasksQueries.list().queryKey,
+      })
+    },
+  }))
 
   newItem = ''
   failMutation = false

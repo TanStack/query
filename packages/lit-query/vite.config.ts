@@ -1,5 +1,4 @@
 import { defineConfig } from 'vitest/config'
-
 import packageJson from './package.json'
 
 export default defineConfig({
@@ -19,12 +18,12 @@ export default defineConfig({
     dir: './src',
     watch: false,
     environment: 'jsdom',
-    include: ['tests/**/*.test.ts'],
+    setupFiles: ['test-setup.ts'],
     coverage: {
       enabled: !!process.env.CI,
       provider: 'istanbul',
       include: ['src/**/*'],
-      exclude: ['src/tests/**'],
+      exclude: ['src/__tests__/**'],
     },
     typecheck: { enabled: true },
     restoreMocks: true,

@@ -1,7 +1,7 @@
 'use client'
-import * as React from 'react'
-import { onlineManager, useQueryClient } from '@tanstack/react-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
+import { onlineManager, useQueryClient } from '@tanstack/react-query'
+import * as React from 'react'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
@@ -10,6 +10,10 @@ import type {
 } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 
+/**
+ * The props of `ReactQueryDevtools`, which renders the devtools with a toggle button that opens
+ * them.
+ */
 export interface DevtoolsOptions {
   /**
    * Set this true if you want the dev tools to default to being open
@@ -18,13 +22,13 @@ export interface DevtoolsOptions {
   /**
    * The position of the TanStack logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
-   * Defaults to 'bottom-right'.
+   * @defaultValue bottom-right
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
    * The position of the React Query devtools panel.
    * 'top' | 'bottom' | 'left' | 'right'
-   * Defaults to 'bottom'.
+   * @defaultValue bottom
    */
   position?: DevtoolsPosition
   /**
@@ -36,24 +40,40 @@ export interface DevtoolsOptions {
    */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   * @deprecated The devtools no longer add a `<style>` element, so they need no
+   * nonce. This option does nothing.
    */
   styleNonce?: string
   /**
-   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   * The shadow root to add the devtools styles to. By default, the styles are
+   * added to the shadow root the devtools render in, or to the document when
+   * they do not render in a shadow root.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * The Trusted Types policy the devtools use to create their HTML templates.
+   * Pass one when your page enforces `require-trusted-types-for 'script'`.
+   * The devtools only pass it their own markup.
+   */
+  trustedTypesPolicy?: { createHTML: (html: string) => unknown }
   /**
    * Set this to true to hide disabled queries from the devtools panel.
    */
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * Defaults to 'system'.
+   * This overrides the theme selected in the devtools Settings menu. When omitted, the
+   * selected theme is used, or `'system'` if none is selected.
    */
   theme?: Theme
 }
 
+/**
+ * Renders the TanStack Query devtools, with a toggle button that opens them, for the given or
+ * nearest `QueryClient`.
+ * @param props - The devtools options.
+ * @returns The element the devtools are mounted in.
+ */
 export function ReactQueryDevtools(
   props: DevtoolsOptions,
 ): React.ReactElement | null {
@@ -64,26 +84,27 @@ export function ReactQueryDevtools(
     position,
     initialIsOpen,
     errorTypes,
-    styleNonce,
     shadowDOMTarget,
+    trustedTypesPolicy,
     hideDisabledQueries,
     theme,
   } = props
   const [devtools] = React.useState(
-    new TanstackQueryDevtools({
-      client: queryClient,
-      queryFlavor: 'React Query',
-      version: '5',
-      onlineManager,
-      buttonPosition,
-      position,
-      initialIsOpen,
-      errorTypes,
-      styleNonce,
-      shadowDOMTarget,
-      hideDisabledQueries,
-      theme,
-    }),
+    () =>
+      new TanstackQueryDevtools({
+        client: queryClient,
+        queryFlavor: 'React Query',
+        version: '5',
+        onlineManager,
+        buttonPosition,
+        position,
+        initialIsOpen,
+        errorTypes,
+        shadowDOMTarget,
+        trustedTypesPolicy,
+        hideDisabledQueries,
+        theme,
+      }),
   )
 
   React.useEffect(() => {
@@ -124,5 +145,5 @@ export function ReactQueryDevtools(
     }
   }, [devtools])
 
-  return <div dir="ltr" className="tsqd-parent-container" ref={ref}></div>
+  return <div className="tsqd-parent-container" ref={ref}></div>
 }

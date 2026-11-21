@@ -1,11 +1,11 @@
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Paragraph, TouchableRipple } from 'react-native-paper'
-import type { MovieDetails } from '../lib/api'
+import { Text, TouchableRipple } from 'react-native-paper'
+import type { Movie } from '../services/movies/types'
 
 type Props = {
-  item: MovieDetails
-  onPress: (item: MovieDetails) => void
+  item: Movie
+  onPress: (item: Movie) => void
 }
 
 export function ListItem({ item, onPress }: Props) {
@@ -13,10 +13,12 @@ export function ListItem({ item, onPress }: Props) {
     <TouchableRipple onPress={() => onPress(item)} accessibilityRole="button">
       <View style={styles.item}>
         <View style={styles.firstRow}>
-          <Paragraph style={styles.title}>{item.title}</Paragraph>
+          <Text variant="bodyMedium" style={styles.title}>
+            {item.title}
+          </Text>
         </View>
         <View style={styles.secondRow}>
-          <Paragraph>{item.year}</Paragraph>
+          <Text variant="bodyMedium">{item.year}</Text>
         </View>
       </View>
     </TouchableRipple>

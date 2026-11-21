@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { QueryClient } from '@tanstack/query-core'
-  import { queryKey, sleep } from '@tanstack/query-test-utils'
+  import { createKey, sleep } from '@tanstack/query-test-utils'
   import { setQueryClientContext } from '../../src/context.js'
   import { createQuery, useIsFetching } from '../../src/index.js'
+  import type { QueryClient } from '@tanstack/query-core'
 
   type Props = {
     queryClient: QueryClient
@@ -15,7 +15,7 @@
   let ready = $state(false)
 
   const query = createQuery(() => ({
-    queryKey: queryKey(),
+    queryKey: createKey(),
     queryFn: () => sleep(10).then(() => 'test'),
     enabled: ready,
   }))

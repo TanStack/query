@@ -1,11 +1,15 @@
+import { I18nProvider } from '@kobalte/core'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { createMemo } from 'solid-js'
 import { ContentView, ParentPanel } from './Devtools'
-import { getPreferredColorScheme } from './utils'
 import { THEME_PREFERENCE } from './constants'
 import { PiPProvider, QueryDevtoolsContext, ThemeContext } from './contexts'
-import type { Theme } from './contexts'
+import { DevtoolsOfflineProvider } from './providers/DevtoolsOfflineProvider'
+import { DevtoolsStateProvider } from './providers/DevtoolsStateProvider'
+import { DevtoolsSubscriptionsProvider } from './providers/DevtoolsSubscriptionsProvider'
+import { getPreferredColorScheme } from './utils'
 import type { DevtoolsComponentType } from './Devtools'
+import type { Theme } from './contexts'
 
 const DevtoolsPanelComponent: DevtoolsComponentType = (props) => {
   const [localStore, setLocalStore] = createLocalStorage({
@@ -24,22 +28,30 @@ const DevtoolsPanelComponent: DevtoolsComponentType = (props) => {
 
   return (
     <QueryDevtoolsContext.Provider value={props}>
-      <PiPProvider
-        disabled
-        localStore={localStore}
-        setLocalStore={setLocalStore}
-      >
-        <ThemeContext.Provider value={theme}>
-          <ParentPanel>
-            <ContentView
+      <DevtoolsStateProvider>
+        <DevtoolsOfflineProvider>
+          <DevtoolsSubscriptionsProvider>
+            <PiPProvider
+              disabled
               localStore={localStore}
               setLocalStore={setLocalStore}
-              onClose={props.onClose}
-              showPanelViewOnly
-            />
-          </ParentPanel>
-        </ThemeContext.Provider>
-      </PiPProvider>
+            >
+              <ThemeContext.Provider value={theme}>
+                <I18nProvider locale="en-US">
+                  <ParentPanel>
+                    <ContentView
+                      localStore={localStore}
+                      setLocalStore={setLocalStore}
+                      onClose={props.onClose}
+                      showPanelViewOnly
+                    />
+                  </ParentPanel>
+                </I18nProvider>
+              </ThemeContext.Provider>
+            </PiPProvider>
+          </DevtoolsSubscriptionsProvider>
+        </DevtoolsOfflineProvider>
+      </DevtoolsStateProvider>
     </QueryDevtoolsContext.Provider>
   )
 }

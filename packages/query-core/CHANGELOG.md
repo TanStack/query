@@ -1,5 +1,153 @@
 # @tanstack/query-core
 
+## 5.108.2
+
+No changes in this release.
+
+## 5.108.1
+
+### Patch Changes
+
+- [#12636](https://github.com/TanStack/query/pull/12636) [`0cf8f49`](https://github.com/TanStack/query/commit/0cf8f49e8f9cf24a8c6a7f17efb7cf4d91ea8f01) - Require `getNextPageParam` in the types for `queryClient.infiniteQuery`, the deprecated infinite query methods, and `usePrefetchInfiniteQuery`. If you omit `pages`, a stale query can still refetch multiple cached pages and needs the callback to compute their page parameters. Reuse the same `infiniteQueryOptions` you pass to `useInfiniteQuery` to supply the callback.
+
+## 5.108.0
+
+### Minor Changes
+
+- [#12610](https://github.com/TanStack/query/pull/12610) [`5fc9a3e`](https://github.com/TanStack/query/commit/5fc9a3e9a8768eb3bc23da4ae903c966423a2286) - Release the Angular adapter packages in the same fixed version group as `@tanstack/query-core`, so they share the core version from now on.
+
+## 5.107.2
+
+### Patch Changes
+
+- [#12587](https://github.com/TanStack/query/pull/12587) [`b160291`](https://github.com/TanStack/query/commit/b160291d135f82ec650cc12365b53d567cac94fb) - Replace star exports with explicit exports while preserving the current public API. Adapters continue to re-export all of their corresponding core package.
+
+## 5.107.1
+
+No changes in this release.
+
+## 5.107.0
+
+### Patch Changes
+
+- [#12540](https://github.com/TanStack/query/pull/12540) [`b6add89`](https://github.com/TanStack/query/commit/b6add891c1b846c1f276a4c0110edb58b62defaa) - Keep the timestamp stable for the same selector error to prevent infinite render loops.
+
+## 5.106.1
+
+No changes in this release.
+
+## 5.106.0
+
+No changes in this release.
+
+## 5.105.3
+
+### Patch Changes
+
+- [#11537](https://github.com/TanStack/query/pull/11537) [`3f4de1b`](https://github.com/TanStack/query/commit/3f4de1b40cce4314f7572b515ad8fd26dd85fe04) - Prevent a cancelled retry from pausing the query when its retry delay expires.
+
+- [#12497](https://github.com/TanStack/query/pull/12497) [`969e580`](https://github.com/TanStack/query/commit/969e58019bf650fb17c273fddd0e8d2adf56d4d9) - Allow static queries without data to refetch after reset, invalidation, or an explicit refetch. A query is static only when it has data.
+
+## 5.105.2
+
+### Patch Changes
+
+- [#10969](https://github.com/TanStack/query/pull/10969) [`2ee2fd9`](https://github.com/TanStack/query/commit/2ee2fd935acd88532255947c4b5e29baffd21ce8) - Fix infinite queries to respect a reduced `maxPages` limit when fetching in either direction.
+
+- [#12480](https://github.com/TanStack/query/pull/12480) [`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1) - Exclude `status` from the filters accepted by `QueryClient.isMutating`, `useIsMutating`, and `injectIsMutating`. These APIs always count mutations with `status: 'pending'`.
+
+- [#12442](https://github.com/TanStack/query/pull/12442) [`e69cac6`](https://github.com/TanStack/query/commit/e69cac69d99cc3c4f6f32b2ad8aad53da83b4a72) - Handle the rejection of a paused refetch started by `refetchQueries` with `throwOnError`, so cancelling it later no longer causes an unhandled `CancelledError`.
+
+- [#12447](https://github.com/TanStack/query/pull/12447) [`f2215d2`](https://github.com/TanStack/query/commit/f2215d25945e6461252b7c32bf822f31239e507e) - Use `() => void` instead of the DOM-only `VoidFunction` type in `addConsumeAwareSignal`, so the published declarations type-check without the DOM lib.
+
+- [#10777](https://github.com/TanStack/query/pull/10777) [`86e7957`](https://github.com/TanStack/query/commit/86e79571fd45f29ab7d172102fdd718d3b8bde69) - Fix `shallowEqualObjects` to compare own property keys and values and ignore inherited properties. Objects with different own keys now compare as unequal, including when the differing values are `undefined`.
+
+- [#12489](https://github.com/TanStack/query/pull/12489) [`b6576b3`](https://github.com/TanStack/query/commit/b6576b388f2784839081358fa82744b0aacdeecd) - Keep all callers of an in-flight query waiting for the replacement fetch when invalidation cancels it, including after repeated invalidations.
+
+- [#12481](https://github.com/TanStack/query/pull/12481) [`af0e0ef`](https://github.com/TanStack/query/commit/af0e0ef5fc04e9d232fdc3aebd24ffe528b256d7) - Prevent cancelled streamed queries from writing to the cache or starting a delayed stream, even when the stream does not consume the abort signal.
+
+- [#11788](https://github.com/TanStack/query/pull/11788) [`05d9b6a`](https://github.com/TanStack/query/commit/05d9b6a40b9d4ac49943e9d881789e098db5bdfa) - Clear `isPaused` on a mutation that can start once its `onMutate` resolves, so it is no longer dehydrated and resumed a second time while its request is in flight.
+
+## 5.105.1
+
+### Patch Changes
+
+- [#12406](https://github.com/TanStack/query/pull/12406) [`6f8a48d`](https://github.com/TanStack/query/commit/6f8a48d543b499b6d9b0e95050c28183c8c18ae0) - Reduce temporary allocations when checking tracked result properties for observer notifications.
+
+- [#12390](https://github.com/TanStack/query/pull/12390) [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf) - Exclude `fetchStatus` from the filters accepted by `QueryClient.isFetching`, `useIsFetching`, and `injectIsFetching`. These APIs always count queries with `fetchStatus: 'fetching'`.
+
+## 5.105.0
+
+No changes in this release.
+
+## 5.104.5
+
+### Patch Changes
+
+- [#12131](https://github.com/TanStack/query/pull/12131) [`f608f93`](https://github.com/TanStack/query/commit/f608f933a36da30670082e90d0a56b2569290563) - Use the supplied query options when fetching optimistically so Suspense queries can fetch after their cache entry is recreated without a query function.
+
+## 5.104.4
+
+### Patch Changes
+
+- [#11470](https://github.com/TanStack/query/pull/11470) [`1fee044`](https://github.com/TanStack/query/commit/1fee0443dbeb346b8401557ca286a66cdec7ad71) - Clear the mutation cache before notifying subscribers so `useMutationState` and `useIsMutating` update correctly after `queryClient.clear()`.
+
+- [#11527](https://github.com/TanStack/query/pull/11527) [`fce89dd`](https://github.com/TanStack/query/commit/fce89ddf7a35b14252096ff64a1217efd81b415c) - Preserve a stored `null` first page parameter when refetching an infinite query.
+
+## 5.104.3
+
+### Patch Changes
+
+- [#11935](https://github.com/TanStack/query/pull/11935) [`0f15bc9`](https://github.com/TanStack/query/commit/0f15bc925db5813be6a17527988ec7d7b3c8cfc0) - fix(query-core): preserve discriminated union narrowing in setQueryData updaters
+
+## 5.104.2
+
+### Patch Changes
+
+- [#11679](https://github.com/TanStack/query/pull/11679) [`03e8c39`](https://github.com/TanStack/query/commit/03e8c3955ddbf20f0a07b79982b52dfad8df5323) - fix(query-core): start queued scoped mutations when the window is not focused
+
+## 5.104.1
+
+No changes in this release.
+
+## 5.104.0
+
+### Minor Changes
+
+- [#11650](https://github.com/TanStack/query/pull/11650) [`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e) - Build projects with Vite 8
+
+## 5.103.3
+
+No changes in this release.
+
+## 5.103.2
+
+### Patch Changes
+
+- [#11524](https://github.com/TanStack/query/pull/11524) [`8a28904`](https://github.com/TanStack/query/commit/8a28904aaccb6bc26398b751400a181c0f6d7f0e) - Ignore removal requests for query instances that are no longer stored in the cache.
+
+## 5.103.1
+
+### Patch Changes
+
+- [#11512](https://github.com/TanStack/query/pull/11512) [`8330b2f`](https://github.com/TanStack/query/commit/8330b2f2d431f226d7bb95eb727c637be9d4c6d8) - Handle plain objects with an own `constructor` data property during structural sharing and query-key hashing.
+
+- [#11510](https://github.com/TanStack/query/pull/11510) [`3212966`](https://github.com/TanStack/query/commit/3212966a3681e02d14eb79e9cce0d3265b046877) - Preserve `null` values returned by custom `streamedQuery` reducers instead of replacing them with `initialValue`.
+
+## 5.103.0
+
+### Minor Changes
+
+- [#11438](https://github.com/TanStack/query/pull/11438) [`e57f816`](https://github.com/TanStack/query/commit/e57f8163b18ab3abfe52ad69cdbdda4d31453393) - Export the `FocusManager`, `OnlineManager`, and `TimeoutManager` types so their methods appear in the generated reference docs.
+
+### Patch Changes
+
+- [#11332](https://github.com/TanStack/query/pull/11332) [`fdae2ce`](https://github.com/TanStack/query/commit/fdae2ce4e5382af7326c7c38ce5d5a12751ada12) - Reuse the shared query option resolver for refetch intervals to reduce bundle size.
+
+- [#11436](https://github.com/TanStack/query/pull/11436) [`a1119e5`](https://github.com/TanStack/query/commit/a1119e5a3ffa52534de7390f17c7183d17658051) - ref(hydration): remove outdated dehydratedAt fallback
+
+- [#11502](https://github.com/TanStack/query/pull/11502) [`cbf77bf`](https://github.com/TanStack/query/commit/cbf77bf8e1a9ce09caef0cdd9a8ed10fef57edf0) - Prevent longer partial query-key filters with trailing undefined values from matching shorter query keys.
+
 ## 5.102.8
 
 ## 5.102.7

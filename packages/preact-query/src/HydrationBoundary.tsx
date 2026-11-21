@@ -1,15 +1,14 @@
 import { hydrate } from '@tanstack/query-core'
+import { Fragment } from 'preact'
+import { useEffect, useMemo, useRef } from 'preact/hooks'
+import { useQueryClient } from './QueryClientProvider'
 import type {
   DehydratedState,
   HydrateOptions,
   OmitKeyof,
   QueryClient,
 } from '@tanstack/query-core'
-import { Fragment } from 'preact'
 import type { ComponentChildren } from 'preact'
-import { useEffect, useMemo, useRef } from 'preact/hooks'
-
-import { useQueryClient } from './QueryClientProvider'
 
 /**
  * The props accepted by `HydrationBoundary`.
@@ -47,11 +46,11 @@ export interface HydrationBoundaryProps {
  * update timestamp.
  *
  * Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
- *
+ * @param props - The dehydrated `state` to hydrate, the hydrate `options`, an optional custom
+ * `queryClient`, and the `children` to render.
  * @returns The provided `children`, rendered unconditionally. New queries in `state` are hydrated into the
  * cache during render; for queries already in the cache, only newer dehydrated data is hydrated, in an effect
  * after commit.
- *
  * @example
  * ```tsx
  * import { HydrationBoundary } from '@tanstack/preact-query'
@@ -60,7 +59,6 @@ export interface HydrationBoundaryProps {
  *   return <HydrationBoundary state={dehydratedState}>...</HydrationBoundary>
  * }
  * ```
- *
  * @example
  * Server-side prefetch handed off to the client via `dehydrate`:
  * ```tsx
@@ -122,6 +120,7 @@ export const HydrationBoundary = ({
       // State is supplied from the outside and we might as well fail
       // gracefully if it has the wrong shape, so while we type `queries`
       // as required, we still provide a fallback.
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
       const queries = state.queries || []
 
       const newQueries: DehydratedState['queries'] = []
@@ -138,7 +137,6 @@ export const HydrationBoundary = ({
             (dehydratedQuery.promise &&
               existingQuery.state.status !== 'pending' &&
               existingQuery.state.fetchStatus !== 'fetching' &&
-              dehydratedQuery.dehydratedAt !== undefined &&
               dehydratedQuery.dehydratedAt > existingQuery.state.dataUpdatedAt)
 
           if (hydrationIsNewer) {

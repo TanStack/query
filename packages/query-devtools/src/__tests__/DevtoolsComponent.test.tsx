@@ -1,14 +1,14 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, onlineManager } from '@tanstack/query-core'
 import { render } from '@solidjs/testing-library'
+import { QueryClient, onlineManager } from '@tanstack/query-core'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import DevtoolsComponent from '../DevtoolsComponent'
 
 // `solid-transition-group` internally imports from
 // `@solid-primitives/transition-group`, whose `exports` field points at
 // `src/index.ts` (not published) under a `@solid-primitives/source` condition
 // that Vite can't fall through, so we stub it with a transparent pass-through.
-vi.mock('solid-transition-group', () => ({
-  TransitionGroup: (props: { children: unknown }) => props.children,
+vi.mock(import('solid-transition-group'), () => ({
+  TransitionGroup: (props) => props.children,
 }))
 
 describe('DevtoolsComponent', () => {
@@ -37,26 +37,25 @@ describe('DevtoolsComponent', () => {
         matches: false,
         media: query,
         onchange: null,
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        dispatchEvent: vi.fn(),
+        addEventListener: vi.fn<MediaQueryList['addEventListener']>(),
+        removeEventListener: vi.fn<MediaQueryList['removeEventListener']>(),
+        addListener: vi.fn<MediaQueryList['addListener']>(),
+        removeListener: vi.fn<MediaQueryList['removeListener']>(),
+        dispatchEvent: vi.fn<MediaQueryList['dispatchEvent']>(),
       })),
     )
     vi.stubGlobal(
       'ResizeObserver',
       class {
-        observe = vi.fn()
-        unobserve = vi.fn()
-        disconnect = vi.fn()
+        observe = vi.fn<ResizeObserver['observe']>()
+        unobserve = vi.fn<ResizeObserver['unobserve']>()
+        disconnect = vi.fn<ResizeObserver['disconnect']>()
       },
     )
     queryClient = new QueryClient()
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
   })

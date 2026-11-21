@@ -1,10 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import * as React from 'react'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act, fireEvent } from '@testing-library/react'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import * as React from 'react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryCache,
   QueryClient,
+  noop,
   usePrefetchInfiniteQuery,
   useSuspenseInfiniteQuery,
 } from '..'
@@ -26,7 +27,9 @@ describe('usePrefetchInfiniteQuery', () => {
   })
 
   it('should prefetch an infinite query if query state does not exist', async () => {
-    const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
+    const Fallback = vi
+      .fn<() => React.JSX.Element>()
+      .mockReturnValue(<div>Loading...</div>)
     const data = [
       'Do you fetch on render?',
       'Or do you render as you fetch?',
@@ -34,7 +37,7 @@ describe('usePrefetchInfiniteQuery', () => {
     ]
 
     const queryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: vi
         .fn<(context: { pageParam: number }) => Promise<string>>()
         .mockImplementation(({ pageParam }) =>
@@ -50,8 +53,8 @@ describe('usePrefetchInfiniteQuery', () => {
 
       return (
         <div>
-          {state.data.pages.map((page, index) => (
-            <div key={index}>data: {page}</div>
+          {state.data.pages.map((page) => (
+            <div key={page}>data: {page}</div>
           ))}
           <button onClick={() => state.fetchNextPage()}>Next Page</button>
         </div>
@@ -72,13 +75,13 @@ describe('usePrefetchInfiniteQuery', () => {
 
     await act(() => vi.advanceTimersByTimeAsync(30))
     rendered.getByText('data: Do you fetch on render?')
-    await act(async () => {
+    await act(() => {
       fireEvent.click(rendered.getByText('Next Page'))
     })
     expect(
       rendered.getByText('data: Or do you render as you fetch?'),
     ).toBeInTheDocument()
-    await act(async () => {
+    await act(() => {
       fireEvent.click(rendered.getByText('Next Page'))
     })
     expect(
@@ -89,7 +92,9 @@ describe('usePrefetchInfiniteQuery', () => {
   })
 
   it('should not display fallback if the query cache is already populated', async () => {
-    const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
+    const Fallback = vi
+      .fn<() => React.JSX.Element>()
+      .mockReturnValue(<div>Loading...</div>)
     const data = [
       'Prefetch rocks!',
       'No waterfalls, boy!',
@@ -97,7 +102,7 @@ describe('usePrefetchInfiniteQuery', () => {
     ]
 
     const queryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: vi
         .fn<(context: { pageParam: number }) => Promise<string>>()
         .mockImplementation(({ pageParam }) =>
@@ -108,7 +113,7 @@ describe('usePrefetchInfiniteQuery', () => {
         allPages.length < data.length ? allPages.length : undefined,
     }
 
-    queryClient.prefetchInfiniteQuery({ ...queryOpts, pages: 3 })
+    void queryClient.infiniteQuery({ ...queryOpts, pages: 3 }).catch(noop)
     await vi.advanceTimersByTimeAsync(30)
     queryOpts.queryFn.mockClear()
 
@@ -117,8 +122,8 @@ describe('usePrefetchInfiniteQuery', () => {
 
       return (
         <div>
-          {state.data.pages.map((page, index) => (
-            <div key={index}>data: {page}</div>
+          {state.data.pages.map((page) => (
+            <div key={page}>data: {page}</div>
           ))}
           <button onClick={() => state.fetchNextPage()}>Next Page</button>
         </div>
@@ -138,11 +143,11 @@ describe('usePrefetchInfiniteQuery', () => {
     const rendered = await renderWithSuspense(queryClient, <App />)
 
     expect(rendered.getByText('data: Prefetch rocks!')).toBeInTheDocument()
-    await act(async () => {
+    await act(() => {
       fireEvent.click(rendered.getByText('Next Page'))
     })
     expect(rendered.getByText('data: No waterfalls, boy!')).toBeInTheDocument()
-    await act(async () => {
+    await act(() => {
       fireEvent.click(rendered.getByText('Next Page'))
     })
     expect(rendered.getByText('data: Tanstack Query #ftw')).toBeInTheDocument()
@@ -154,7 +159,7 @@ describe('usePrefetchInfiniteQuery', () => {
     const data = ['Infinite Page 1', 'Infinite Page 2', 'Infinite Page 3']
 
     const queryOpts = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: vi
         .fn<(context: { pageParam: number }) => Promise<string>>()
         .mockImplementation(({ pageParam }) =>
@@ -177,8 +182,8 @@ describe('usePrefetchInfiniteQuery', () => {
 
       return (
         <div>
-          {state.data.pages.map((page, index) => (
-            <div key={index}>data: {page}</div>
+          {state.data.pages.map((page) => (
+            <div key={page}>data: {page}</div>
           ))}
           <button onClick={() => state.fetchNextPage()}>Next Page</button>
         </div>
@@ -199,12 +204,12 @@ describe('usePrefetchInfiniteQuery', () => {
 
     await act(() => vi.advanceTimersByTimeAsync(10))
     rendered.getByText('data: Infinite Page 1')
-    await act(async () => {
+    await act(() => {
       fireEvent.click(rendered.getByText('Next Page'))
     })
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: Infinite Page 2')).toBeInTheDocument()
-    await act(async () => {
+    await act(() => {
       fireEvent.click(rendered.getByText('Next Page'))
     })
     await vi.advanceTimersByTimeAsync(11)

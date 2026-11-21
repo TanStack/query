@@ -1,0 +1,18 @@
+<p class="hint">
+  Devtools load in development automatically. For a production build, press
+  <kbd>⌘</kbd><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>D</kbd> once to load them.
+</p>
+
+@if (query.isPending()) {
+  <div>Loading...</div>
+}
+@if (query.isError()) {
+  <div>An error has occurred: {{ query.error().message }}</div>
+}
+@if (query.data(); as data) {
+  <h1>{{ data.name }}</h1>
+  <p>{{ data.description }}</p>
+  <strong>👀 {{ data.subscribers_count }}</strong>
+  <strong>✨ {{ data.stargazers_count }}</strong>
+  <strong>🍴 {{ data.forks_count }}</strong>
+}

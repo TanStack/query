@@ -16,8 +16,8 @@ An infinite query result contains:
 ## Load More Example
 
 ```ts
-import { LitElement, html } from 'lit'
 import { createInfiniteQueryController } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 
 class ProjectsList extends LitElement {
   private readonly projects = createInfiniteQueryController(this, {
@@ -45,11 +45,13 @@ class ProjectsList extends LitElement {
         ?disabled=${!query.hasNextPage || query.isFetching}
         @click=${() => this.projects.fetchNextPage()}
       >
-        ${query.isFetchingNextPage
-          ? 'Loading more...'
-          : query.hasNextPage
-            ? 'Load More'
-            : 'Nothing more to load'}
+        ${
+          query.isFetchingNextPage
+            ? 'Loading more...'
+            : query.hasNextPage
+              ? 'Load More'
+              : 'Nothing more to load'
+        }
       </button>
     `
   }

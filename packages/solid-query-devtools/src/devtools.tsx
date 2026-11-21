@@ -1,6 +1,6 @@
-import { createEffect, createMemo, onCleanup, onMount } from 'solid-js'
-import { onlineManager, useQueryClient } from '@tanstack/solid-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
+import { onlineManager, useQueryClient } from '@tanstack/solid-query'
+import { createEffect, createMemo, onCleanup, onMount } from 'solid-js'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
@@ -17,13 +17,13 @@ interface DevtoolsOptions {
   /**
    * The position of the TanStack logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
-   * Defaults to 'bottom-right'.
+   * @defaultValue bottom-right
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
    * The position of the Solid Query devtools panel.
    * 'top' | 'bottom' | 'left' | 'right'
-   * Defaults to 'bottom'.
+   * @defaultValue bottom
    */
   position?: DevtoolsPosition
   /**
@@ -35,24 +35,40 @@ interface DevtoolsOptions {
    */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   * @deprecated The devtools no longer add a `<style>` element, so they need no
+   * nonce. This option does nothing.
    */
   styleNonce?: string
   /**
-   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   * The shadow root to add the devtools styles to. By default, the styles are
+   * added to the shadow root the devtools render in, or to the document when
+   * they do not render in a shadow root.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * The Trusted Types policy the devtools use to create their HTML templates.
+   * Pass one when your page enforces `require-trusted-types-for 'script'`.
+   * The devtools only pass it their own markup.
+   */
+  trustedTypesPolicy?: { createHTML: (html: string) => unknown }
   /**
    * Set this to true to hide disabled queries from the devtools panel.
    */
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * Defaults to 'system'.
+   * This overrides the theme selected in the devtools Settings menu. When omitted, the
+   * selected theme is used, or `'system'` if none is selected.
    */
   theme?: Theme
 }
 
+/**
+ * Renders the TanStack Query devtools, with a toggle button that opens them, for the given or
+ * nearest `QueryClient`.
+ * @param props - The devtools options.
+ * @returns The element the devtools are mounted in.
+ */
 export default function SolidQueryDevtools(props: DevtoolsOptions) {
   const queryClient = useQueryClient(props.client)
   const client = createMemo(() => queryClient)
@@ -66,8 +82,8 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
     position: props.position,
     initialIsOpen: props.initialIsOpen,
     errorTypes: props.errorTypes,
-    styleNonce: props.styleNonce,
     shadowDOMTarget: props.shadowDOMTarget,
+    trustedTypesPolicy: props.trustedTypesPolicy,
     hideDisabledQueries: props.hideDisabledQueries,
     theme: props.theme,
   })
@@ -99,7 +115,7 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
   })
 
   createEffect(() => {
-    devtools.setTheme(props.theme || 'system')
+    devtools.setTheme(props.theme)
   })
 
   onMount(() => {
@@ -107,5 +123,5 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
     onCleanup(() => devtools.unmount())
   })
 
-  return <div class="tsqd-parent-container" ref={ref}></div>
+  return <div class="tsqd-parent-container" ref={ref} />
 }

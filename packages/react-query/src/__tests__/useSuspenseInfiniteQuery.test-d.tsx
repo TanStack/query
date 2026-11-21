@@ -1,6 +1,6 @@
-import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { keepPreviousData, skipToken } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 import type { UseSuspenseInfiniteQueryOptions } from '../types'
@@ -8,7 +8,7 @@ import type { UseSuspenseInfiniteQueryOptions } from '../types'
 describe('useSuspenseInfiniteQuery', () => {
   it('should always have data defined', () => {
     const { data } = useSuspenseInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
@@ -20,7 +20,7 @@ describe('useSuspenseInfiniteQuery', () => {
   it('should not allow skipToken in queryFn', () => {
     assertType(
       useSuspenseInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         // @ts-expect-error
         queryFn: skipToken,
       }),
@@ -28,7 +28,7 @@ describe('useSuspenseInfiniteQuery', () => {
 
     assertType(
       useSuspenseInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         // @ts-expect-error
         queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
       }),
@@ -37,7 +37,7 @@ describe('useSuspenseInfiniteQuery', () => {
 
   it('should not have pending status', () => {
     const { status } = useSuspenseInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
@@ -48,7 +48,7 @@ describe('useSuspenseInfiniteQuery', () => {
 
   it('should allow placeholderData', () => {
     const query = useSuspenseInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
@@ -59,7 +59,7 @@ describe('useSuspenseInfiniteQuery', () => {
     expectTypeOf(query.isPlaceholderData).toEqualTypeOf<boolean>()
 
     const selected = useSuspenseInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
@@ -78,7 +78,7 @@ describe('useSuspenseInfiniteQuery', () => {
   it('should not allow enabled or throwOnError props', () => {
     assertType(
       useSuspenseInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -90,7 +90,7 @@ describe('useSuspenseInfiniteQuery', () => {
 
     assertType(
       useSuspenseInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -101,7 +101,7 @@ describe('useSuspenseInfiniteQuery', () => {
 
     assertType(
       useSuspenseInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -113,7 +113,7 @@ describe('useSuspenseInfiniteQuery', () => {
 
   it('should default TData of UseSuspenseInfiniteQueryOptions to InfiniteData<TQueryFnData>', () => {
     const options: UseSuspenseInfiniteQueryOptions<number, Error> = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
@@ -125,7 +125,7 @@ describe('useSuspenseInfiniteQuery', () => {
 
   it('should return isPlaceholderData', () => {
     const query = useSuspenseInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,

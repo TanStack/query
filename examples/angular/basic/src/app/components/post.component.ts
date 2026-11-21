@@ -1,34 +1,18 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  input,
-  output,
-} from '@angular/core'
-import { injectQuery } from '@tanstack/angular-query-experimental'
-import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
-import { PostsService } from '../services/posts-service'
+import { Component, inject, input, output } from '@angular/core'
+import { injectQuery } from '@tanstack/angular-query'
+import { PostsQueries } from '../services/posts/queries'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'post',
   templateUrl: './post.component.html',
 })
 export class PostComponent {
-  readonly #postsService = inject(PostsService)
+  readonly #postsQueries = inject(PostsQueries)
 
   readonly setPostId = output<number>()
-  readonly postId = input(0)
+  readonly postId = input.required<number>()
 
-  readonly postQuery = injectQuery(() => ({
-    enabled: this.postId() > 0,
-    queryKey: ['post', this.postId()],
-    queryFn: (context) => {
-      // Cancels the request when component is destroyed before the request finishes
-      const abort$ = fromEvent(context.signal, 'abort')
-      return lastValueFrom(
-        this.#postsService.postById$(this.postId()).pipe(takeUntil(abort$)),
-      )
-    },
-  }))
+  readonly postQuery = injectQuery(() =>
+    this.#postsQueries.detail(this.postId()),
+  )
 }

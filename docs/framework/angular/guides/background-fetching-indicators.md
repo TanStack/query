@@ -6,7 +6,7 @@ replace:
   {
     'useIsFetching': 'injectIsFetching',
     'hook': 'function',
-    '@tanstack/react-query': '@tanstack/angular-query-experimental',
+    '@tanstack/react-query': '@tanstack/angular-query',
   }
 ---
 
@@ -31,7 +31,7 @@ replace:
   `,
 })
 class TodosComponent {
-  todosQuery = injectQuery(() => ({
+  readonly todosQuery = injectQuery(() => ({
     queryKey: ['todos'],
     queryFn: fetchTodos,
   }))
@@ -42,7 +42,7 @@ class TodosComponent {
 [//]: # 'Example2'
 
 ```angular-ts
-import { injectIsFetching } from '@tanstack/angular-query-experimental'
+import { injectIsFetching } from '@tanstack/angular-query'
 
 @Component({
   selector: 'global-loading-indicator',
@@ -53,8 +53,19 @@ import { injectIsFetching } from '@tanstack/angular-query-experimental'
   `,
 })
 export class GlobalLoadingIndicatorComponent {
-  isFetching = injectIsFetching()
+  readonly isFetching = injectIsFetching()
 }
 ```
 
 [//]: # 'Example2'
+
+## Reactive filters
+
+Pass a factory when filtering activity. It can read signals or required component inputs:
+
+```ts
+readonly isFetching = injectIsFetching(() => ({ queryKey: ['todos', this.userId()] }))
+readonly isMutating = injectIsMutating(() => ({ mutationKey: ['save', this.userId()] }))
+```
+
+The count updates when these dependencies change.

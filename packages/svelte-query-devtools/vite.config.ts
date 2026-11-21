@@ -1,11 +1,18 @@
-import { svelte } from '@sveltejs/vite-plugin-svelte'
-import { defineConfig } from 'vitest/config'
+import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 import { svelteTesting } from '@testing-library/svelte/vite'
-
+import { defineConfig } from 'vitest/config'
 import packageJson from './package.json'
 
 export default defineConfig({
-  plugins: [svelte(), svelteTesting()],
+  plugins: [
+    svelte({
+      preprocess: vitePreprocess(),
+      compilerOptions: {
+        runes: true,
+      },
+    }),
+    svelteTesting(),
+  ],
   // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {
     conditions: ['@tanstack/custom-condition'],
@@ -29,5 +36,6 @@ export default defineConfig({
       include: ['src/**/*'],
     },
     typecheck: { enabled: true },
+    restoreMocks: true,
   },
 })

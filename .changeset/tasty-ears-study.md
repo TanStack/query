@@ -1,5 +1,5 @@
 ---
-'@tanstack/react-query': patch
+'@tanstack/react-query': major
 ---
 
-react(suspense): switch from throwing promises to use()
+Require React 19 and use its native `use()` API for Suspense queries.

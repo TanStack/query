@@ -1,15 +1,16 @@
-import * as React from 'react'
-import { AppStateStatus, Platform } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import {
   QueryClient,
   QueryClientProvider,
   focusManager,
 } from '@tanstack/react-query'
-
+import * as React from 'react'
+import { Platform } from 'react-native'
+import { Devtools } from './src/components/Devtools'
 import { useAppState } from './src/hooks/useAppState'
-import { MoviesStack } from './src/navigation/MoviesStack'
 import { useOnlineManager } from './src/hooks/useOnlineManager'
+import { MoviesStack } from './src/navigation/MoviesStack'
+import type { AppStateStatus } from 'react-native'
 
 function onAppStateChange(status: AppStateStatus) {
   // React Query already supports in web browser refetch on window focus by default
@@ -32,6 +33,7 @@ export default function App() {
       <NavigationContainer>
         <MoviesStack />
       </NavigationContainer>
+      <Devtools />
     </QueryClientProvider>
   )
 }

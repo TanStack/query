@@ -1,15 +1,14 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
   import { sleep } from '@tanstack/query-test-utils'
+  import { createQuery } from '@tanstack/svelte-query'
   import type { StatelessRef, StatusResult } from '../utils.svelte.js'
 
-  let {
-    states,
-    onFetch,
-  }: {
+  type Props = {
     states: StatelessRef<Array<StatusResult<string>>>
     onFetch: () => void
-  } = $props()
+  }
+
+  let { states, onFetch }: Props = $props()
 
   const query = createQuery(() => ({
     queryKey: ['test'],

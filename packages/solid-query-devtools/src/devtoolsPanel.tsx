@@ -1,10 +1,13 @@
-import { createEffect, createMemo, onCleanup, onMount } from 'solid-js'
-import { onlineManager, useQueryClient } from '@tanstack/solid-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
+import { onlineManager, useQueryClient } from '@tanstack/solid-query'
+import { createEffect, createMemo, onCleanup, onMount } from 'solid-js'
 import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/solid-query'
 import type { JSX } from 'solid-js'
 
+/**
+ * The props of `SolidQueryDevtoolsPanel`, which renders the devtools panel inline.
+ */
 export interface DevtoolsPanelOptions {
   /**
    * Custom instance of QueryClient
@@ -15,17 +18,26 @@ export interface DevtoolsPanelOptions {
    */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   * @deprecated The devtools no longer add a `<style>` element, so they need no
+   * nonce. This option does nothing.
    */
   styleNonce?: string
   /**
-   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   * The shadow root to add the devtools styles to. By default, the styles are
+   * added to the shadow root the devtools render in, or to the document when
+   * they do not render in a shadow root.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * The Trusted Types policy the devtools use to create their HTML templates.
+   * Pass one when your page enforces `require-trusted-types-for 'script'`.
+   * The devtools only pass it their own markup.
+   */
+  trustedTypesPolicy?: { createHTML: (html: string) => unknown }
 
   /**
    * Custom styles for the devtools panel
-   * @default { height: '500px' }
+   * @default { height: '100%', display: 'flex', 'flex-direction': 'column' }
    * @example { height: '100%' }
    * @example { height: '100%', width: '100%' }
    */
@@ -41,16 +53,27 @@ export interface DevtoolsPanelOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * Defaults to 'system'.
+   * This overrides the theme selected in the devtools Settings menu. When omitted, the
+   * selected theme is used, or `'system'` if none is selected.
    */
   theme?: Theme
 }
 
+/**
+ * Renders the TanStack Query devtools panel inline, for the given or nearest `QueryClient`.
+ * @param props - The devtools panel options.
+ * @returns The element the devtools panel is mounted in.
+ */
 export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
   const queryClient = useQueryClient(props.client)
   const client = createMemo(() => queryClient)
   let ref!: HTMLDivElement
-  const { errorTypes, styleNonce, shadowDOMTarget, hideDisabledQueries } = props
+  const {
+    errorTypes,
+    shadowDOMTarget,
+    trustedTypesPolicy,
+    hideDisabledQueries,
+  } = props
   const devtools = new TanstackQueryDevtoolsPanel({
     client: client(),
     queryFlavor: 'Solid Query',
@@ -60,8 +83,8 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
     position: 'bottom',
     initialIsOpen: true,
     errorTypes,
-    styleNonce,
     shadowDOMTarget,
+    trustedTypesPolicy,
     onClose: props.onClose,
     hideDisabledQueries,
     theme: props.theme,
@@ -78,7 +101,7 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
   })
 
   createEffect(() => {
-    devtools.setTheme(props.theme || 'system')
+    devtools.setTheme(props.theme)
   })
 
   onMount(() => {
@@ -88,7 +111,12 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
 
   return (
     <div
-      style={{ height: '500px', ...props.style }}
+      style={{
+        height: '100%',
+        display: 'flex',
+        'flex-direction': 'column',
+        ...props.style,
+      }}
       class="tsqd-parent-container"
       ref={ref}
     />

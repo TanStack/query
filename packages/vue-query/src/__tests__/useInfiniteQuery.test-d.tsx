@@ -1,13 +1,13 @@
-import { describe, expectTypeOf, it } from 'vitest'
-import { computed, reactive } from 'vue-demi'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { useInfiniteQuery } from '../useInfiniteQuery'
+import { createKey, sleep } from '@tanstack/query-test-utils'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { computed, reactive, ref } from 'vue-demi'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
+import { useInfiniteQuery } from '../useInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('Discriminated union return type', () => {
-  it('data should be possibly undefined by default', () => {
-    const key = queryKey()
+  it('should have possibly undefined data by default', () => {
+    const key = createKey()
     const query = reactive(
       useInfiniteQuery({
         queryKey: key,
@@ -23,8 +23,38 @@ describe('Discriminated union return type', () => {
     >()
   })
 
-  it('data should be defined when query is success', () => {
-    const key = queryKey()
+  it('should have defined data when initialData is provided as an object', () => {
+    const key = createKey()
+    const query = reactive(
+      useInfiniteQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+        getNextPageParam: () => undefined,
+        initialPageParam: 0,
+        initialData: { pages: ['Some data'], pageParams: [0] },
+      }),
+    )
+
+    expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
+  })
+
+  it('should have defined data when initialData is provided as a function which always returns the data', () => {
+    const key = createKey()
+    const query = reactive(
+      useInfiniteQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+        getNextPageParam: () => undefined,
+        initialPageParam: 0,
+        initialData: () => ({ pages: ['Some data'], pageParams: [0] }),
+      }),
+    )
+
+    expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
+  })
+
+  it('should have defined data when query is success', () => {
+    const key = createKey()
     const query = reactive(
       useInfiniteQuery({
         queryKey: key,
@@ -40,8 +70,8 @@ describe('Discriminated union return type', () => {
     }
   })
 
-  it('error should be null when query is success', () => {
-    const key = queryKey()
+  it('should have null error when query is success', () => {
+    const key = createKey()
     const query = reactive(
       useInfiniteQuery({
         queryKey: key,
@@ -56,8 +86,8 @@ describe('Discriminated union return type', () => {
     }
   })
 
-  it('data should be undefined when query is pending', () => {
-    const key = queryKey()
+  it('should have undefined data when query is pending', () => {
+    const key = createKey()
     const query = reactive(
       useInfiniteQuery({
         queryKey: key,
@@ -72,8 +102,8 @@ describe('Discriminated union return type', () => {
     }
   })
 
-  it('error should be defined when query is error', () => {
-    const key = queryKey()
+  it('should have defined error when query is error', () => {
+    const key = createKey()
     const query = reactive(
       useInfiniteQuery({
         queryKey: key,
@@ -89,7 +119,7 @@ describe('Discriminated union return type', () => {
   })
 
   it('should accept computed options', () => {
-    const key = queryKey()
+    const key = createKey()
     const options = computed(() => ({
       queryKey: key,
       queryFn: () => sleep(0).then(() => 'Some data'),
@@ -104,7 +134,7 @@ describe('Discriminated union return type', () => {
   })
 
   it('should accept computed options using infiniteQueryOptions', () => {
-    const key = queryKey()
+    const key = createKey()
     const options = computed(() =>
       infiniteQueryOptions({
         queryKey: key,
@@ -121,7 +151,7 @@ describe('Discriminated union return type', () => {
   })
 
   it('should accept plain options using infiniteQueryOptions', () => {
-    const key = queryKey()
+    const key = createKey()
     const options = () =>
       infiniteQueryOptions({
         queryKey: key,
@@ -134,5 +164,21 @@ describe('Discriminated union return type', () => {
     if (query.isSuccess) {
       expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
     }
+  })
+})
+
+describe('queryKey reactivity rules', () => {
+  it('should reject a bare reactive getter for the whole queryKey array', () => {
+    const id = ref(1)
+    assertType(
+      useInfiniteQuery({
+        // @ts-expect-error when passed directly to useInfiniteQuery, queryKey cannot be a bare
+        // reactive getter for the whole array (queryOptions() allows this)
+        queryKey: () => ['post', id.value],
+        queryFn: () => sleep(0).then(() => 'Some data'),
+        getNextPageParam: () => undefined,
+        initialPageParam: 0,
+      }),
+    )
   })
 })
