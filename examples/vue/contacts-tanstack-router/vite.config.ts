@@ -5,6 +5,6 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [tanstackRouter({ target: 'vue', autoCodeSplitting: true }), vue()],
   optimizeDeps: {
-    exclude: ['@tanstack/vue-query', 'vue-demi'],
+    exclude: ['@tanstack/vue-query'],
   },
 })

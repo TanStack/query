@@ -8,7 +8,7 @@ import type {
   QueryCache,
   QueryObserverOptions,
 } from '@tanstack/query-core'
-import type { ComputedRef, Ref, UnwrapRef } from 'vue-demi'
+import type { ComputedRef, Ref, UnwrapRef } from 'vue'
 
 type Primitive = string | number | boolean | bigint | symbol | undefined | null
 type UnwrapLeaf =

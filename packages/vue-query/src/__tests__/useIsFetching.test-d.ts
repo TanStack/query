@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { ref } from 'vue-demi'
+import { ref } from 'vue'
 import { useIsFetching } from '../useIsFetching'
 
 describe('useIsFetching', () => {

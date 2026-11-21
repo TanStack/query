@@ -1,6 +1,6 @@
 import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { ref, unref } from 'vue-demi'
+import { ref, unref } from 'vue'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { MutationCache } from '../mutationCache'
 import { QueryCache } from '../queryCache'
@@ -84,23 +84,6 @@ describe('QueryCache', () => {
       expect(QueryClientOrigin.prototype.getQueryData).toHaveBeenCalledWith(
         queryKeyUnref,
       )
-    })
-  })
-
-  describe('ensureQueryData', () => {
-    it('should properly unwrap parameter', () => {
-      const queryClient = new QueryClient()
-
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      queryClient.ensureQueryData({
-        queryKey: queryKeyRef,
-        queryFn: fn,
-      })
-
-      expect(QueryClientOrigin.prototype.ensureQueryData).toHaveBeenCalledWith({
-        queryKey: queryKeyUnref,
-        queryFn: fn,
-      })
     })
   })
 
@@ -356,21 +339,6 @@ describe('QueryCache', () => {
     })
   })
 
-  describe('fetchQuery', () => {
-    it('should properly unwrap parameter', () => {
-      const queryClient = new QueryClient()
-
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      queryClient.fetchQuery({
-        queryKey: queryKeyRef,
-      })
-
-      expect(QueryClientOrigin.prototype.fetchQuery).toHaveBeenCalledWith({
-        queryKey: queryKeyUnref,
-      })
-    })
-  })
-
   describe('query', () => {
     it('should properly unwrap queryKey', () => {
       const queryClient = new QueryClient()
@@ -413,64 +381,6 @@ describe('QueryCache', () => {
       expect(QueryClientOrigin.prototype.query).toHaveBeenCalledWith({
         queryKey: queryKeyUnref,
       })
-    })
-  })
-
-  describe('prefetchQuery', () => {
-    it('should properly unwrap parameters', () => {
-      const queryClient = new QueryClient()
-
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      queryClient.prefetchQuery({ queryKey: queryKeyRef, queryFn: fn })
-
-      expect(QueryClientOrigin.prototype.prefetchQuery).toHaveBeenCalledWith({
-        queryKey: queryKeyUnref,
-        queryFn: fn,
-      })
-    })
-  })
-
-  describe('fetchInfiniteQuery', () => {
-    it('should properly unwrap parameter', () => {
-      const queryClient = new QueryClient()
-
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      queryClient.fetchInfiniteQuery({
-        queryKey: queryKeyRef,
-        getNextPageParam: () => undefined,
-        initialPageParam: 0,
-      })
-
-      expect(
-        QueryClientOrigin.prototype.fetchInfiniteQuery,
-      ).toHaveBeenCalledWith(
-        expect.objectContaining({
-          initialPageParam: 0,
-          queryKey: queryKeyUnref,
-        }),
-      )
-    })
-
-    it('should properly unwrap parameter using infiniteQueryOptions with unref', () => {
-      const queryClient = new QueryClient()
-
-      const options = infiniteQueryOptions({
-        queryKey: queryKeyUnref,
-        initialPageParam: 0,
-        getNextPageParam: () => 12,
-      })
-
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      queryClient.fetchInfiniteQuery(options)
-
-      expect(
-        QueryClientOrigin.prototype.fetchInfiniteQuery,
-      ).toHaveBeenCalledWith(
-        expect.objectContaining({
-          initialPageParam: 0,
-          queryKey: queryKeyUnref,
-        }),
-      )
     })
   })
 
@@ -523,30 +433,6 @@ describe('QueryCache', () => {
           getNextPageParam,
         }),
       )
-    })
-  })
-
-  describe('prefetchInfiniteQuery', () => {
-    it('should properly unwrap parameters', () => {
-      const queryClient = new QueryClient()
-      const getNextPageParam = () => undefined
-
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      queryClient.prefetchInfiniteQuery({
-        queryKey: queryKeyRef,
-        queryFn: fn,
-        getNextPageParam,
-        initialPageParam: 0,
-      })
-
-      expect(
-        QueryClientOrigin.prototype.prefetchInfiniteQuery,
-      ).toHaveBeenCalledWith({
-        initialPageParam: 0,
-        queryKey: queryKeyUnref,
-        queryFn: fn,
-        getNextPageParam,
-      })
     })
   })
 

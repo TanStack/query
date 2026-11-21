@@ -6945,14 +6945,6 @@
               "to": "framework/vue/examples/basic"
             },
             {
-              "label": "Vue 2.6",
-              "to": "framework/vue/examples/2.6-basic"
-            },
-            {
-              "label": "Vue 2.7",
-              "to": "framework/vue/examples/2.7-basic"
-            },
-            {
               "label": "Simple (Nuxt 3)",
               "to": "framework/vue/examples/simple-nuxt3"
             },
@@ -7388,10 +7380,6 @@
               "to": "framework/react/plugins/persistQueryClient"
             },
             {
-              "label": "createSyncStoragePersister",
-              "to": "framework/react/plugins/createSyncStoragePersister"
-            },
-            {
               "label": "createAsyncStoragePersister",
               "to": "framework/react/plugins/createAsyncStoragePersister"
             },
@@ -7446,10 +7434,6 @@
             {
               "label": "persistQueryClient",
               "to": "framework/preact/plugins/persistQueryClient"
-            },
-            {
-              "label": "createSyncStoragePersister",
-              "to": "framework/preact/plugins/createSyncStoragePersister"
             },
             {
               "label": "createAsyncStoragePersister",

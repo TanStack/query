@@ -33,8 +33,6 @@
     "typescript71",
     "vue",
     "vue-tsc",
-    "vue2",
-    "vue2.7",
     "webpack"
   ]
 }

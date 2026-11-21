@@ -234,7 +234,7 @@ export function defaultShouldDehydrateQuery(query: Query) {
  * ```ts
  * const queryClient = new QueryClient()
  *
- * await queryClient.prefetchQuery({
+ * await queryClient.query({
  *   queryKey: ['posts'],
  *   queryFn: getPosts,
  * })

@@ -11,11 +11,10 @@ import {
   isReactive,
   isReadonly,
   isRef,
-  isVue3,
   onScopeDispose,
   reactive,
   ref,
-} from 'vue-demi'
+} from 'vue'
 import { keepPreviousData } from '..'
 import { useBaseQuery } from '../useBaseQuery'
 import { useQuery } from '../useQuery'
@@ -402,21 +401,18 @@ describe('useQuery', () => {
     )
   })
 
-  it.runIf(isVue3)(
-    'should return deeply reactive and readonly data by default',
-    async () => {
-      const key = createKey()
-      const { data } = useQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
-      })
+  it('should return deeply reactive and readonly data by default', async () => {
+    const key = createKey()
+    const { data } = useQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
+    })
 
-      await vi.advanceTimersByTimeAsync(10)
-      expect(data.value).toStrictEqual({ nested: { count: 0 } })
-      expect(isReactive(data.value?.nested)).toBe(true)
-      expect(isReadonly(data.value?.nested)).toBe(true)
-    },
-  )
+    await vi.advanceTimersByTimeAsync(10)
+    expect(data.value).toStrictEqual({ nested: { count: 0 } })
+    expect(isReactive(data.value?.nested)).toBe(true)
+    expect(isReadonly(data.value?.nested)).toBe(true)
+  })
 
   it('should return data in a shallow ref when shallow is true', async () => {
     const key = createKey()

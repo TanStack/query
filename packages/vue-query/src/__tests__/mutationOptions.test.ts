@@ -1,6 +1,6 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { isReactive, ref } from 'vue-demi'
+import { isReactive, ref } from 'vue'
 import { mutationOptions } from '../mutationOptions'
 import { useMutation } from '../useMutation'
 import { useIsMutating, useMutationState } from '../useMutationState'

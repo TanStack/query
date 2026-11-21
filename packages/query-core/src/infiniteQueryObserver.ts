@@ -124,26 +124,6 @@ export class InfiniteQueryObserver<
   }
 
   /**
-   * The infinite-query counterpart of {@link QueryObserver#getOptimisticResult}.
-   * Computes the result through a separate result reader without changing the
-   * observer's committed result, options, or selection state.
-   * @param options - The defaulted infinite query observer options to compute the result for.
-   * @returns The result for the given options.
-   * @deprecated Use `createResultReader(options).getSnapshot()` instead.
-   */
-  override getOptimisticResult(
-    options: DefaultedInfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-  ): InfiniteQueryObserverResult<TData, TError> {
-    return this.createResultReader(options).getSnapshot()
-  }
-
-  /**
    * Creates a cached snapshot reader for an infinite query.
    * @param options - The defaulted options used to read and commit the query result.
    * @returns A reader that keeps its result and computation state until commit.

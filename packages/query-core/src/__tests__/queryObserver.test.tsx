@@ -1941,7 +1941,7 @@ describe('queryObserver', () => {
     expect(result.isEnabled).toBe(true)
   })
 
-  it('should read changed cache data without updating currentResult in getOptimisticResult', () => {
+  it('should read changed cache data without updating currentResult in a result reader', () => {
     const key = createKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1955,7 +1955,9 @@ describe('queryObserver', () => {
     })
 
     // First render: no data yet
-    const initialResult = observer.getOptimisticResult(defaultedOptions)
+    const initialResult = observer
+      .createResultReader(defaultedOptions)
+      .getSnapshot()
     expect(initialResult.data).toBeUndefined()
     const currentResult = observer.getCurrentResult()
 
@@ -1963,7 +1965,9 @@ describe('queryObserver', () => {
     queryClient.setQueryData(key, 'updated')
 
     // Reading picks up the cache update without changing the committed result.
-    const updatedResult = observer.getOptimisticResult(defaultedOptions)
+    const updatedResult = observer
+      .createResultReader(defaultedOptions)
+      .getSnapshot()
     expect(updatedResult.data).toBe('updated')
     expect(observer.getCurrentResult()).toBe(currentResult)
     expect(observer.getCurrentResult().data).toBeUndefined()
@@ -2048,7 +2052,9 @@ describe('queryObserver', () => {
     // render: an optimistic result, then the options
     for (const id of ['b', '']) {
       for (let i = 0; i < 2; i++) {
-        expect(observer.getOptimisticResult(options(id)).status).toBe('success')
+        expect(
+          observer.createResultReader(options(id)).getSnapshot().status,
+        ).toBe('success')
         observer.setOptions(options(id))
         expect(observer.getCurrentResult()).toMatchObject({
           status: 'success',

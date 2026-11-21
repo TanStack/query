@@ -22,7 +22,6 @@
       "@tanstack/query-core",
       "@tanstack/query-devtools",
       "@tanstack/query-persist-client-core",
-      "@tanstack/query-sync-storage-persister",
       "@tanstack/react-query",
       "@tanstack/react-query-devtools",
       "@tanstack/react-query-next-experimental",

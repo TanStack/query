@@ -4,6 +4,6 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [vue()],
   optimizeDeps: {
-    exclude: ['@tanstack/vue-query', 'vue-demi'],
+    exclude: ['@tanstack/vue-query'],
   },
 })

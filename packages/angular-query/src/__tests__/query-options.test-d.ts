@@ -81,18 +81,6 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<Signal<number | undefined>>()
   })
 
-  it('should work when passed to fetchQuery', () => {
-    const key = createKey()
-    const options = queryOptions({
-      queryKey: key,
-      queryFn: () => Promise.resolve(5),
-    })
-
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-    const data = new QueryClient().fetchQuery(options)
-    assertType<Promise<number>>(data)
-  })
-
   it('should work when passed to query', () => {
     const options = queryOptions({
       queryKey: ['key'],

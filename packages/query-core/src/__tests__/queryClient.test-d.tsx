@@ -1,4 +1,3 @@
-import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import { skipToken } from '../utils'
@@ -11,8 +10,6 @@ import type {
   DefaultError,
   DefaultOptions,
   DefaultedQueryObserverOptions,
-  EnsureQueryDataOptions,
-  FetchInfiniteQueryOptions,
   InfiniteData,
   InfiniteQueryExecuteOptions,
   MutationFunctionContext,
@@ -21,6 +18,7 @@ import type {
   MutationOptions,
   OmitKeyof,
   QueryClientConfig,
+  QueryExecuteOptions,
   QueryKey,
   QueryObserverOptions,
   SetDataOptions,
@@ -45,23 +43,6 @@ const typedInfiniteQueryOptions: InfiniteQueryExecuteOptions<
   initialPageParam: 0,
 }
 
-const typedQueryOptions: EnsureQueryDataOptions<TypedData, TypedError> = {
-  queryKey: ['key', 'query'],
-}
-
-const typedFetchInfiniteQueryOptions: FetchInfiniteQueryOptions<
-  TypedData,
-  TypedError
-> = {
-  queryKey: ['key', 'infinite'],
-  pages: 5,
-  getNextPageParam: (lastPage) => {
-    expectTypeOf(lastPage).toEqualTypeOf<TypedData>()
-    return 0
-  },
-  initialPageParam: 0,
-}
-
 const typedMutationOptions: MutationOptions<TypedData, TypedError> = {}
 
 const typedQueryFilters: QueryFilters<
@@ -73,11 +54,15 @@ const typedMutationFilters: MutationFilters<TypedData, TypedError> = {}
 const typedFilterKey = typedQueryFilters.queryKey!
 const typedMutationKey = typedMutationOptions.mutationKey!
 
-const untypedQueryOptions: EnsureQueryDataOptions = {
+const typedQueryOptions: QueryExecuteOptions<TypedData, TypedError> = {
+  queryKey: ['key', 'query'],
+}
+
+const untypedQueryOptions: QueryExecuteOptions = {
   queryKey: ['key'],
 }
 
-const untypedFetchInfiniteQueryOptions: FetchInfiniteQueryOptions = {
+const untypedInfiniteQueryOptions: InfiniteQueryExecuteOptions = {
   queryKey: ['key'],
   pages: 5,
   getNextPageParam: (lastPage) => {
@@ -370,108 +355,6 @@ describe('queryClient', () => {
     })
   })
 
-  describe('fetchQuery', () => {
-    it('should not allow passing select option', () => {
-      assertType<Parameters<QueryClient['fetchQuery']>>([
-        {
-          queryKey: ['key'],
-          queryFn: () => Promise.resolve('string'),
-          // @ts-expect-error `select` is not supported on fetchQuery options
-          select: (data: string) => data.length,
-        },
-      ])
-    })
-
-    it('should resolve with the data type', async () => {
-      const queryClient = new QueryClient()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      const data = await queryClient.fetchQuery(typedQueryOptions)
-
-      expectTypeOf(data).toEqualTypeOf<TypedData>()
-    })
-
-    it('should resolve with unknown when untyped', async () => {
-      const queryClient = new QueryClient()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      const data = await queryClient.fetchQuery(untypedQueryOptions)
-
-      expectTypeOf(data).toEqualTypeOf<unknown>()
-    })
-  })
-
-  describe('fetchInfiniteQuery', () => {
-    it('should not allow passing select option', () => {
-      assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
-        {
-          queryKey: ['key'],
-          queryFn: () => Promise.resolve({ count: 1 }),
-          initialPageParam: 1,
-          getNextPageParam: () => 2,
-          // @ts-expect-error `select` is not supported on fetchInfiniteQuery options
-          select: (data: InfiniteData<{ count: number }, number>) => ({
-            pages: data.pages.map((x) => `count: ${x.count}`),
-            pageParams: data.pageParams,
-          }),
-        },
-      ])
-    })
-
-    it('should allow passing pages', async () => {
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      const data = await new QueryClient().fetchInfiniteQuery({
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve('string'),
-        getNextPageParam: () => 1,
-        initialPageParam: 1,
-        pages: 5,
-      })
-
-      expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
-    })
-
-    it('should allow passing getNextPageParam without pages', () => {
-      assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
-        {
-          queryKey: ['key'],
-          queryFn: () => Promise.resolve('string'),
-          initialPageParam: 1,
-          getNextPageParam: () => 1,
-        },
-      ])
-    })
-
-    it('should require getNextPageParam even without pages', () => {
-      assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
-        // @ts-expect-error Property 'getNextPageParam' is missing
-        {
-          queryKey: ['key'],
-          queryFn: () => Promise.resolve('string'),
-          initialPageParam: 1,
-        },
-      ])
-    })
-
-    it('should resolve with InfiniteData of the data type', async () => {
-      const queryClient = new QueryClient()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      const data = await queryClient.fetchInfiniteQuery(
-        typedFetchInfiniteQueryOptions,
-      )
-
-      expectTypeOf(data).toEqualTypeOf<InfiniteData<TypedData, unknown>>()
-    })
-
-    it('should resolve with InfiniteData of unknown when untyped', async () => {
-      const queryClient = new QueryClient()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      const data = await queryClient.fetchInfiniteQuery(
-        untypedFetchInfiniteQueryOptions,
-      )
-
-      expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, unknown>>()
-    })
-  })
-
   describe('query', () => {
     it('should allow passing select option', () => {
       const result = new QueryClient().query({
@@ -514,24 +397,6 @@ describe('queryClient', () => {
     it('should resolve with unknown when untyped', async () => {
       const queryClient = new QueryClient()
       const data = await queryClient.query(untypedQueryOptions)
-
-      expectTypeOf(data).toEqualTypeOf<unknown>()
-    })
-  })
-
-  describe('ensureQueryData', () => {
-    it('should resolve with the data type', async () => {
-      const queryClient = new QueryClient()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      const data = await queryClient.ensureQueryData(typedQueryOptions)
-
-      expectTypeOf(data).toEqualTypeOf<TypedData>()
-    })
-
-    it('should resolve with unknown when untyped', async () => {
-      const queryClient = new QueryClient()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      const data = await queryClient.ensureQueryData(untypedQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<unknown>()
     })
@@ -628,48 +493,9 @@ describe('queryClient', () => {
 
     it('should resolve with InfiniteData of unknown when untyped', async () => {
       const queryClient = new QueryClient()
-      const data = await queryClient.infiniteQuery(
-        untypedFetchInfiniteQueryOptions,
-      )
+      const data = await queryClient.infiniteQuery(untypedInfiniteQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, unknown>>()
-    })
-  })
-
-  describe('ensureInfiniteQueryData', () => {
-    it('should resolve with InfiniteData of the data type', async () => {
-      const queryClient = new QueryClient()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      const data = await queryClient.ensureInfiniteQueryData(
-        typedFetchInfiniteQueryOptions,
-      )
-
-      expectTypeOf(data).toEqualTypeOf<InfiniteData<TypedData, unknown>>()
-    })
-
-    it('should resolve with InfiniteData of unknown when untyped', async () => {
-      const queryClient = new QueryClient()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      const data = await queryClient.ensureInfiniteQueryData(
-        untypedFetchInfiniteQueryOptions,
-      )
-
-      expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, unknown>>()
-    })
-
-    it('should accept a revalidateIfStale that FetchInfiniteQueryOptions does not have', () => {
-      const queryClient = new QueryClient()
-
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      queryClient.ensureInfiniteQueryData({
-        ...typedFetchInfiniteQueryOptions,
-        revalidateIfStale: true,
-      })
-
-      type RevalidateIfStale = NonNullable<
-        Parameters<QueryClient['ensureInfiniteQueryData']>[0]
-      >['revalidateIfStale']
-      expectTypeOf<RevalidateIfStale>().toEqualTypeOf<boolean | undefined>()
     })
   })
 
@@ -998,34 +824,6 @@ describe('queryClient', () => {
       const data = queryClient.getQueriesData(untypedQueryFilters)
 
       expectTypeOf(data).toEqualTypeOf<Array<[QueryKey, unknown]>>()
-    })
-  })
-
-  describe('prefetchQuery', () => {
-    it('should return a promise of void rather than the data', () => {
-      const queryClient = new QueryClient()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      const result = queryClient.prefetchQuery({
-        queryKey: ['key'],
-        queryFn: () => Promise.resolve('string'),
-      })
-
-      expectTypeOf(result).toEqualTypeOf<Promise<void>>()
-    })
-  })
-
-  describe('prefetchInfiniteQuery', () => {
-    it('should return a promise of void rather than the pages', () => {
-      const queryClient = new QueryClient()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      const result = queryClient.prefetchInfiniteQuery({
-        queryKey: ['key'],
-        queryFn: () => Promise.resolve('string'),
-        initialPageParam: 1,
-        getNextPageParam: () => 2,
-      })
-
-      expectTypeOf(result).toEqualTypeOf<Promise<void>>()
     })
   })
 
@@ -1378,7 +1176,6 @@ describe('queryClient', () => {
                   meta: Record<string, unknown> | undefined
                   signal: AbortSignal
                   pageParam?: unknown
-                  direction?: unknown
                 }>()
                 return Promise.resolve('data')
               },

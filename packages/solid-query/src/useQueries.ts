@@ -37,16 +37,9 @@ type UseQueryOptionsForUseQueries<
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
   QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'placeholderData' | 'suspense'
+  'placeholderData'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
-  /**
-   * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
-   * The `data` property on useQueries is a plain object and not a SolidJS Resource.
-   * It will not suspend when the data is loading.
-   * Setting `suspense` to `true` will be a no-op.
-   */
-  suspense?: boolean
 }
 
 // Avoid TS depth-limit error in case of large array literal

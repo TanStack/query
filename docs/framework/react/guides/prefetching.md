@@ -18,9 +18,6 @@ One specific use of prefetching is to avoid Request Waterfalls, for an in-depth 
 
 ## Using `query` to prefetch
 
-> [!NOTE]
-> These tips replace the use of the now deprecated `prefetchQuery` and `ensureQueryData` methods. If you used an earlier version of this guide, note that those methods will be removed in the next major version of TanStack Query
-
 Prefetching a query uses the `query` method. This method by default will
 
 - Run the query function
@@ -65,7 +62,7 @@ Pass `getNextPageParam` when you prefetch an infinite query. On an empty cache, 
 ```tsx
 import { noop } from '@tanstack/react-query'
 
-const prefetchProjects = () => {
+const prefetchProjects = async () => {
   await queryClient
     .infiniteQuery({
       queryKey: ['projects'],

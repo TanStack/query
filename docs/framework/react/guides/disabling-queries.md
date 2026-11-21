@@ -83,7 +83,7 @@ function Todos() {
 
 [//]: # 'Example2'
 
-### isLoading (Previously: `isInitialLoading`)
+### isLoading
 
 Lazy queries will be in `status: 'pending'` right from the start because `pending` means that there is no data yet. This is technically true, however, since we are not currently fetching any data (as the query is not _enabled_), it also means you likely cannot use this flag to show a loading spinner.
 

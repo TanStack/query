@@ -1,6 +1,6 @@
 import { sleep } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
-import { reactive } from 'vue-demi'
+import { reactive } from 'vue'
 import { useMutation } from '../useMutation'
 import type {
   MutationFunctionContext,

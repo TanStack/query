@@ -184,7 +184,7 @@ export const appConfig: ApplicationConfig = {
 `initialIsOpen`, and `theme` accept either their documented static value or a
 signal containing that value.
 
-`styleNonce`, `shadowDOMTarget`, `trustedTypesPolicy`, and `hideDisabledQueries`
+`shadowDOMTarget`, `trustedTypesPolicy`, and `hideDisabledQueries`
 are construction-time options and do not accept signals.
 
 - `loadDevtools?: 'auto' | boolean`
@@ -203,8 +203,6 @@ are construction-time options and do not accept signals.
   - Use this to use a custom QueryClient. Otherwise, the QueryClient provided through `provideTanStackQuery` will be injected.
 - `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
   - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
-- `styleNonce?: string`
-  - Deprecated. The devtools no longer add a `<style>` element, so they need no nonce. This option does nothing.
 - `shadowDOMTarget?: ShadowRoot`
   - The shadow root to add the devtools styles to. By default, the styles are added to the shadow root the devtools render in, or to the document when they do not render in a shadow root.
 - `trustedTypesPolicy?: { createHTML: (html: string) => unknown }`
@@ -257,7 +255,7 @@ See the [devtools panel example](./examples/devtools-panel-angular-router) for b
 
 The callback is reactive: `hostElement`, `client`, `errorTypes`, `onClose`, and `theme` are applied whenever a signal read in the callback changes.
 
-`styleNonce`, `shadowDOMTarget`, `trustedTypesPolicy`, and `hideDisabledQueries`
+`shadowDOMTarget`, `trustedTypesPolicy`, and `hideDisabledQueries`
 are construction-time options, read when the panel is created.
 
 - `hostElement?: ElementRef | null`
@@ -268,8 +266,6 @@ are construction-time options, read when the panel is created.
   - Use this to use a custom QueryClient. Otherwise, the QueryClient provided through `provideTanStackQuery` will be injected.
 - `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
   - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
-- `styleNonce?: string`
-  - Deprecated. The devtools no longer add a `<style>` element, so they need no nonce. This option does nothing.
 - `shadowDOMTarget?: ShadowRoot`
   - The shadow root to add the devtools styles to. By default, the styles are added to the shadow root the devtools render in, or to the document when they do not render in a shadow root.
 - `trustedTypesPolicy?: { createHTML: (html: string) => unknown }`

@@ -1,13 +1,17 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { environmentManager, isServer } from '..'
+import { environmentManager } from '..'
+
+const defaultIsServer = environmentManager.isServer()
 
 describe('environmentManager', () => {
   afterEach(() => {
-    environmentManager.setIsServer(() => isServer)
+    environmentManager.setIsServer(() => defaultIsServer)
   })
 
   it('should use the default isServer detection', () => {
-    expect(environmentManager.isServer()).toBe(isServer)
+    expect(environmentManager.isServer()).toBe(
+      typeof window === 'undefined' || 'Deno' in globalThis,
+    )
   })
 
   it('should allow overriding isServer globally', () => {

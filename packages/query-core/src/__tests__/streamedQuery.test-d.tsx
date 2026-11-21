@@ -174,7 +174,6 @@ describe('streamedQuery', () => {
           expectTypeOf(context.signal).toEqualTypeOf<AbortSignal>()
           expectTypeOf(context.meta).toEqualTypeOf<QueryMeta | undefined>()
           expectTypeOf(context.pageParam).toEqualTypeOf<unknown>()
-          expectTypeOf(context.direction).toEqualTypeOf<unknown>()
           return numberStream()
         },
       })

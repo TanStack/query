@@ -5,6 +5,6 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [tailwindcss(), vue()],
   optimizeDeps: {
-    exclude: ['@tanstack/vue-query', 'vue-demi'],
+    exclude: ['@tanstack/vue-query'],
   },
 })

@@ -109,7 +109,7 @@ allowBuilds:
   msgpackr-extract: false # optional dep of @angular/build
 
   # @tanstack/vue-store
-  vue-demi: false # only required for vue 2 support
+  vue-demi: false
 
   # nextJs
   sharp: false # not directly required for build
