@@ -12,7 +12,7 @@ import {
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import { renderWithClient } from './utils'
+import { renderWithClient, renderWithSuspense } from './utils'
 
 describe('QueryErrorResetBoundary', () => {
   let queryCache: QueryCache
@@ -82,7 +82,9 @@ describe('QueryErrorResetBoundary', () => {
 
       succeed = true
 
-      fireEvent.click(rendered.getByText('retry'))
+      await act(() => {
+        fireEvent.click(rendered.getByText('retry'))
+      })
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('data')).toBeInTheDocument()
     })
@@ -145,7 +147,9 @@ describe('QueryErrorResetBoundary', () => {
 
       succeed = true
 
-      fireEvent.click(rendered.getByText('retry'))
+      await act(() => {
+        fireEvent.click(rendered.getByText('retry'))
+      })
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('status: error')).toBeInTheDocument()
     })
@@ -209,7 +213,9 @@ describe('QueryErrorResetBoundary', () => {
 
       succeed = true
 
-      fireEvent.click(rendered.getByText('retry'))
+      await act(() => {
+        fireEvent.click(rendered.getByText('retry'))
+      })
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('data')).toBeInTheDocument()
     })
@@ -559,7 +565,7 @@ describe('QueryErrorResetBoundary', () => {
         return <div>{data}</div>
       }
 
-      const rendered = renderWithClient(
+      const rendered = await renderWithSuspense(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -578,9 +584,7 @@ describe('QueryErrorResetBoundary', () => {
                 </div>
               )}
             >
-              <React.Suspense fallback={<div>loading</div>}>
-                <Page />
-              </React.Suspense>
+              <Page />
             </ErrorBoundary>
           )}
         </QueryErrorResetBoundary>,
@@ -591,13 +595,17 @@ describe('QueryErrorResetBoundary', () => {
       expect(rendered.getByText('error boundary')).toBeInTheDocument()
       expect(rendered.getByText('retry')).toBeInTheDocument()
 
-      fireEvent.click(rendered.getByText('retry'))
+      await act(() => {
+        fireEvent.click(rendered.getByText('retry'))
+      })
       expect(rendered.getByText('loading')).toBeInTheDocument()
       await act(() => vi.advanceTimersByTimeAsync(10))
       expect(rendered.getByText('error boundary')).toBeInTheDocument()
       expect(rendered.getByText('retry')).toBeInTheDocument()
 
-      fireEvent.click(rendered.getByText('retry'))
+      await act(() => {
+        fireEvent.click(rendered.getByText('retry'))
+      })
       expect(rendered.getByText('loading')).toBeInTheDocument()
       await act(() => vi.advanceTimersByTimeAsync(10))
       expect(rendered.getByText('data')).toBeInTheDocument()
@@ -680,7 +688,9 @@ describe('QueryErrorResetBoundary', () => {
 
       succeed = true
 
-      fireEvent.click(rendered.getByText('retry'))
+      await act(() => {
+        fireEvent.click(rendered.getByText('retry'))
+      })
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('data')).toBeInTheDocument()
     })
@@ -852,7 +862,7 @@ describe('QueryErrorResetBoundary', () => {
         return <div>{data}</div>
       }
 
-      const rendered = renderWithClient(
+      const rendered = await renderWithSuspense(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -871,9 +881,7 @@ describe('QueryErrorResetBoundary', () => {
                 </div>
               )}
             >
-              <React.Suspense fallback="loading">
-                <Page />
-              </React.Suspense>
+              <Page />
             </ErrorBoundary>
           )}
         </QueryErrorResetBoundary>,
@@ -886,7 +894,9 @@ describe('QueryErrorResetBoundary', () => {
 
       succeed = true
 
-      fireEvent.click(rendered.getByText('retry'))
+      await act(() => {
+        fireEvent.click(rendered.getByText('retry'))
+      })
       expect(rendered.getByText('loading')).toBeInTheDocument()
       await act(() => vi.advanceTimersByTimeAsync(10))
       expect(rendered.getByText('data')).toBeInTheDocument()

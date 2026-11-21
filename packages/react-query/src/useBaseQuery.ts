@@ -11,7 +11,7 @@ import {
 } from './errorBoundaryUtils'
 import {
   ensureSuspenseTimers,
-  fetchOptimistic,
+  getSuspensePromise,
   shouldSuspend,
 } from './suspense'
 import type {
@@ -128,8 +128,27 @@ export function useBaseQuery<
   )
 
   // Handle suspense
-  if (shouldSuspend(defaultedOptions, result)) {
-    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+  if (defaultedOptions.suspense) {
+    const suspenseQuery = client.getQueryCache().build(client, defaultedOptions)
+    const suspend = shouldSuspend(
+      defaultedOptions,
+      result,
+      errorResetBoundary,
+      suspenseQuery,
+    )
+
+    if (suspend !== undefined) {
+      const promise = getSuspensePromise(
+        defaultedOptions,
+        observer,
+        errorResetBoundary,
+        suspenseQuery,
+      )
+
+      if (suspend) {
+        React.use(promise)
+      }
+    }
   }
 
   // Handle error boundary

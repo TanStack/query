@@ -11,7 +11,7 @@ import {
   useQueryErrorResetBoundary,
   useSuspenseQuery,
 } from '..'
-import { renderWithClient } from './utils'
+import { renderWithClient, renderWithSuspense } from './utils'
 
 describe('usePrefetchQuery', () => {
   let queryCache: QueryCache
@@ -56,7 +56,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />)
+    const rendered = await renderWithSuspense(queryClient, <App />)
 
     expect(rendered.getByText('Loading...')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -90,7 +90,7 @@ describe('usePrefetchQuery', () => {
     queryClient.query(queryOpts)
     await vi.advanceTimersByTimeAsync(10)
     queryOpts.queryFn.mockClear()
-    const rendered = renderWithClient(queryClient, <App />)
+    const rendered = await renderWithSuspense(queryClient, <App />)
 
     expect(rendered.queryByText('fetching: true')).not.toBeInTheDocument()
     expect(
@@ -138,7 +138,7 @@ describe('usePrefetchQuery', () => {
     void queryClient.query(queryOpts).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     queryFn.mockClear()
-    const rendered = renderWithClient(queryClient, <App />)
+    const rendered = await renderWithSuspense(queryClient, <App />)
 
     expect(rendered.getByText('Oops!')).toBeInTheDocument()
     expect(rendered.queryByText('data: Not an error')).not.toBeInTheDocument()
@@ -175,8 +175,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />)
-
+    const rendered = await renderWithSuspense(queryClient, <App />)
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data: prefetchedQuery')).toBeInTheDocument()
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
@@ -234,8 +233,9 @@ describe('usePrefetchQuery', () => {
     const rendered = renderWithClient(queryClient, <App />)
 
     expect(rendered.getByText('Oops!')).toBeInTheDocument()
-
-    fireEvent.click(rendered.getByText('Try again'))
+    await act(() => {
+      fireEvent.click(rendered.getByText('Try again'))
+    })
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(
       rendered.getByText('data: This is fine :dog: :fire:'),
@@ -310,8 +310,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />)
-
+    const rendered = await renderWithSuspense(queryClient, <App />)
     expect(
       queryClient.getQueryState(firstQueryOpts.queryKey)?.fetchStatus,
     ).toBe('fetching')

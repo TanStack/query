@@ -5,7 +5,6 @@ import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   InfiniteData,
-  InfiniteQueryObserverSuccessResult,
   QueryClient,
   QueryKey,
   QueryObserver,
@@ -127,9 +126,8 @@ export function useSuspenseInfiniteQuery<
       enabled: true,
       suspense: true,
       throwOnError: defaultThrowOnError,
-      placeholderData: undefined,
     },
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
-  ) as InfiniteQueryObserverSuccessResult<TData, TError>
+  ) as UseSuspenseInfiniteQueryResult<TData, TError>
 }

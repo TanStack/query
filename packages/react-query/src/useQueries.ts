@@ -16,7 +16,7 @@ import {
 } from './errorBoundaryUtils'
 import {
   ensureSuspenseTimers,
-  fetchOptimistic,
+  getSuspensePromise,
   shouldSuspend,
 } from './suspense'
 import type {
@@ -450,24 +450,36 @@ export function useQueries<
     () => observer.getCurrentResult(),
   )
 
-  const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
-    shouldSuspend(defaultedQueries[index], result),
-  )
+  const suspensePromises = optimisticResult.map((result, index) => {
+    const opts = defaultedQueries[index]
 
-  const suspensePromises = shouldAtLeastOneSuspend
-    ? optimisticResult.flatMap((result, index) => {
-        const opts = defaultedQueries[index]
+    if (!opts?.suspense) {
+      return undefined
+    }
 
-        if (opts && shouldSuspend(opts, result)) {
-          const queryObserver = new QueryObserver(client, opts)
-          return fetchOptimistic(opts, queryObserver, errorResetBoundary)
-        }
-        return []
-      })
-    : []
+    const query = client.getQueryCache().build(client, opts)
+    const suspend = shouldSuspend(opts, result, errorResetBoundary, query)
 
-  if (suspensePromises.length > 0) {
-    throw Promise.all(suspensePromises)
+    if (suspend === undefined) {
+      return undefined
+    }
+
+    const queryObserver = new QueryObserver(client, opts)
+    const promise = getSuspensePromise(
+      opts,
+      queryObserver,
+      errorResetBoundary,
+      query,
+    )
+
+    return suspend ? promise : undefined
+  })
+
+  // Start every fetch before calling use(), because use() suspends immediately.
+  for (const promise of suspensePromises) {
+    if (promise) {
+      React.use(promise)
+    }
   }
   const firstSingleResultWhichShouldThrow = optimisticResult.find(
     (result, index) => {

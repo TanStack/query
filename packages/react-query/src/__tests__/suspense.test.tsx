@@ -1,18 +1,13 @@
+import { QueryObserver } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { act, render } from '@testing-library/react'
+import { act } from '@testing-library/react'
 import { Suspense } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, QueryClientProvider, useSuspenseQuery } from '..'
+import { getSuspensePromise } from '../suspense'
+import { renderWithSuspense } from './utils'
 import type { StaleTime } from '@tanstack/query-core'
 import type { QueryKey } from '..'
-
-function renderWithSuspense(client: QueryClient, ui: React.ReactNode) {
-  return render(
-    <QueryClientProvider client={client}>
-      <Suspense fallback="loading">{ui}</Suspense>
-    </QueryClientProvider>,
-  )
-}
 
 function createTestQuery(options: {
   fetchCount: { count: number }
@@ -54,6 +49,74 @@ describe('Suspense Timer Tests', () => {
     vi.useRealTimers()
   })
 
+  it('should reuse the suspense promise while a query is pending', async () => {
+    const key = createKey()
+    const options = queryClient.defaultQueryOptions({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      suspense: true,
+    })
+    const observer = new QueryObserver(queryClient, options)
+    const errorResetBoundary = {
+      clearReset: vi.fn<() => void>(),
+      isReset: () => false,
+      reset: vi.fn<() => void>(),
+    }
+
+    const firstPromise = getSuspensePromise(
+      options,
+      observer,
+      errorResetBoundary,
+      observer.getCurrentQuery(),
+    )
+    const secondPromise = getSuspensePromise(
+      options,
+      observer,
+      errorResetBoundary,
+      observer.getCurrentQuery(),
+    )
+
+    expect(secondPromise).toBe(firstPromise)
+
+    await vi.advanceTimersByTimeAsync(10)
+    await firstPromise
+  })
+
+  it('should keep the suspense promise stable after it settles', async () => {
+    const key = createKey()
+    const options = queryClient.defaultQueryOptions({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      suspense: true,
+    })
+    const observer = new QueryObserver(queryClient, options)
+    const errorResetBoundary = {
+      clearReset: vi.fn<() => void>(),
+      isReset: () => false,
+      reset: vi.fn<() => void>(),
+    }
+
+    const firstPromise = getSuspensePromise(
+      options,
+      observer,
+      errorResetBoundary,
+      observer.getCurrentQuery(),
+    )
+
+    await vi.advanceTimersByTimeAsync(10)
+    await firstPromise
+
+    const secondPromise = getSuspensePromise(
+      options,
+      observer,
+      errorResetBoundary,
+      observer.getCurrentQuery(),
+      false,
+    )
+
+    expect(secondPromise).toBe(firstPromise)
+  })
+
   it('should enforce minimum staleTime of 1000ms when using suspense with number', async () => {
     const TestComponent = createTestQuery({
       fetchCount,
@@ -61,7 +124,7 @@ describe('Suspense Timer Tests', () => {
       staleTime: 10,
     })
 
-    const rendered = renderWithSuspense(queryClient, <TestComponent />)
+    const rendered = await renderWithSuspense(queryClient, <TestComponent />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -86,7 +149,7 @@ describe('Suspense Timer Tests', () => {
       staleTime: () => 10,
     })
 
-    const rendered = renderWithSuspense(queryClient, <TestComponent />)
+    const rendered = await renderWithSuspense(queryClient, <TestComponent />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -111,7 +174,7 @@ describe('Suspense Timer Tests', () => {
       staleTime: 2000,
     })
 
-    const rendered = renderWithSuspense(queryClient, <TestComponent />)
+    const rendered = await renderWithSuspense(queryClient, <TestComponent />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -136,7 +199,7 @@ describe('Suspense Timer Tests', () => {
       staleTime: undefined,
     })
 
-    const rendered = renderWithSuspense(queryClient, <TestComponent />)
+    const rendered = await renderWithSuspense(queryClient, <TestComponent />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -161,7 +224,7 @@ describe('Suspense Timer Tests', () => {
       staleTime: 'static',
     })
 
-    const rendered = renderWithSuspense(queryClient, <TestComponent />)
+    const rendered = await renderWithSuspense(queryClient, <TestComponent />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -186,7 +249,7 @@ describe('Suspense Timer Tests', () => {
       staleTime: () => 'static',
     })
 
-    const rendered = renderWithSuspense(queryClient, <TestComponent />)
+    const rendered = await renderWithSuspense(queryClient, <TestComponent />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -211,7 +274,7 @@ describe('Suspense Timer Tests', () => {
       staleTime: () => 3000,
     })
 
-    const rendered = renderWithSuspense(queryClient, <TestComponent />)
+    const rendered = await renderWithSuspense(queryClient, <TestComponent />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))

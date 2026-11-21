@@ -9,7 +9,7 @@ import {
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import { renderWithClient } from './utils'
+import { renderWithSuspense } from './utils'
 
 type Options = {
   queryKey: Array<string>
@@ -81,14 +81,14 @@ describe.each([
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClient,
       <App mode="visible" filter="a" />,
     )
     await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('data: a')).toBeVisible()
 
-    rendered.rerender(<App mode="hidden" filter="b" />)
+    await act(() => rendered.rerender(<App mode="hidden" filter="b" />))
     // Hidden trees render without running effects. Also let suspense's minimum
     // staleTime elapse so that subscribing to the old key would refetch it.
     await act(() => vi.advanceTimersByTimeAsync(1100))
@@ -105,7 +105,7 @@ describe.each([
         .getObserversCount(),
     ).toBe(0)
 
-    rendered.rerender(<App mode="visible" filter="b" />)
+    await act(() => rendered.rerender(<App mode="visible" filter="b" />))
     await act(() => vi.advanceTimersByTimeAsync(50))
 
     expect(rendered.getByText('data: b')).toBeVisible()
