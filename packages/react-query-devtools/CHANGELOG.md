@@ -1,5 +1,31 @@
 # @tanstack/react-query-devtools
 
+## 5.108.2
+
+### Patch Changes
+
+- [#12628](https://github.com/TanStack/query/pull/12628) [`80d6c41`](https://github.com/TanStack/query/commit/80d6c41fb8ee27db069874d1be75646bf48a64b0) - The devtools no longer use goober. Their styles are a static stylesheet adopted into the document or shadow root the devtools render in, instead of a `<style>` element in `<head>`. This means:
+
+  - The devtools are styled on pages with a Content Security Policy that blocks inline `<style>` elements. `styleNonce` is no longer needed and is deprecated.
+  - Devtools rendered inside a shadow root are styled without passing `shadowDOMTarget`.
+  - With `shadowDOMTarget`, the settings menu is styled.
+  - The picture-in-picture window gets all styles, including ones the devtools use only after it opened.
+  - The devtools no longer write to the shared `#_goober` style element or set `window.__nonce__`.
+  - Browsers without adoptable stylesheets (before Safari 16.4 and Firefox 101) show the devtools unstyled.
+
+- [#12643](https://github.com/TanStack/query/pull/12643) [`fd62c95`](https://github.com/TanStack/query/commit/fd62c9583ec0e1fe65ae56542876f47184534930) - Add a `trustedTypesPolicy` option, so the devtools render on pages that enforce `require-trusted-types-for 'script'`.
+- Updated dependencies [[`f7abc93`](https://github.com/TanStack/query/commit/f7abc938a8a7fe801d78f4cfdb98d65422f276b2), [`80d6c41`](https://github.com/TanStack/query/commit/80d6c41fb8ee27db069874d1be75646bf48a64b0), [`fd62c95`](https://github.com/TanStack/query/commit/fd62c9583ec0e1fe65ae56542876f47184534930)]:
+  - @tanstack/query-devtools@5.108.2
+  - @tanstack/react-query@5.108.2
+
+## 5.108.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.108.1
+  - @tanstack/react-query@5.108.1
+
 ## 5.108.0
 
 ### Patch Changes

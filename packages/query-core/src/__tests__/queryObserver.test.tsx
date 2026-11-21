@@ -4,6 +4,7 @@ import {
   QueryClient,
   QueryObserver,
   focusManager,
+  keepPreviousData,
   noop,
   timeoutManager,
 } from '..'
@@ -1999,5 +2000,45 @@ describe('queryObserver', () => {
 
       unsubscribe2()
     })
+  })
+
+  it('should keep a placeholder that select maps to undefined', async () => {
+    const key = createKey()
+    const options = (id: string) =>
+      queryClient.defaultQueryOptions({
+        queryKey: [...key, id],
+        queryFn: () => [id],
+        enabled: id !== '',
+        placeholderData: keepPreviousData,
+        select: (items: Array<string>) => items.find((item) => item === id),
+      })
+    const observer = new QueryObserver(queryClient, options('a'))
+    const unsubscribe = observer.subscribe(() => undefined)
+    await vi.advanceTimersByTimeAsync(0)
+
+    // 'b' is still loading, '' is disabled. What useQuery does on every
+    // render: an optimistic result, then the options
+    for (const id of ['b', '']) {
+      for (let i = 0; i < 2; i++) {
+        expect(observer.getOptimisticResult(options(id)).status).toBe('success')
+        observer.setOptions(options(id))
+        expect(observer.getCurrentResult()).toMatchObject({
+          status: 'success',
+          isPlaceholderData: true,
+          data: undefined,
+        })
+      }
+      await vi.advanceTimersByTimeAsync(0)
+    }
+
+    // A new placeholderData is not memoized, so its undefined means pending
+    observer.setOptions({ ...options(''), placeholderData: () => undefined })
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      isPlaceholderData: false,
+      data: undefined,
+    })
+
+    unsubscribe()
   })
 })
