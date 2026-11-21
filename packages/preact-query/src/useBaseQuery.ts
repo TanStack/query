@@ -1,4 +1,5 @@
 import { noop, notifyManager } from '@tanstack/query-core'
+import { use } from 'preact/compat'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
@@ -10,7 +11,7 @@ import {
 } from './errorBoundaryUtils'
 import {
   ensureSuspenseTimers,
-  fetchOptimistic,
+  getSuspensePromise,
   shouldSuspend,
 } from './suspense'
 import { useSyncExternalStore } from './utils'
@@ -129,7 +130,15 @@ export function useBaseQuery<
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
-    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+    const suspenseQuery = client.getQueryCache().build(client, defaultedOptions)
+    use(
+      getSuspensePromise(
+        defaultedOptions,
+        observer,
+        errorResetBoundary,
+        suspenseQuery,
+      ),
+    )
   }
 
   // Handle error boundary
