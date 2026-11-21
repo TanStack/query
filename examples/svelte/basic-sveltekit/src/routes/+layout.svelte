@@ -4,7 +4,7 @@
   import { QueryClient } from '@tanstack/svelte-query'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
   import { PersistQueryClientProvider } from '@tanstack/svelte-query-persist-client'
-  import { browser } from '$app/environment'
+  import { browser } from '$app/env'
   import type { LayoutProps } from './$types'
 
   let { children }: LayoutProps = $props()
