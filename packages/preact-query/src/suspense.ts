@@ -8,6 +8,11 @@ import type {
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
+const suspensePromises = new WeakMap<
+  Query<any, any, any, any>,
+  { fetchPromise: Promise<unknown>; promise: Promise<void> }
+>()
+
 /**
  * The default `throwOnError` of the suspense hooks: throws the error to the nearest error boundary
  * only if the query has no data to show.
@@ -73,14 +78,14 @@ export const shouldSuspend = (
 ) => defaultedOptions?.suspense && result.isPending
 
 /**
- * Fetches the query for a suspending component, without affecting the observer's own result. If
- * the fetch fails, the reset state of the error boundary is cleared, so the error is thrown to it.
+ * Starts or reuses a Suspense fetch without affecting the observer's own result.
  * @param defaultedOptions - The defaulted query options to fetch with.
  * @param observer - The observer of the query.
  * @param errorResetBoundary - The value of the nearest `QueryErrorResetBoundary`.
+ * @param query - The query used to key the promise cache.
  * @returns A promise that resolves once the fetch settles. It never rejects.
  */
-export const fetchOptimistic = <
+export const getSuspensePromise = <
   TQueryFnData,
   TError,
   TData,
@@ -96,7 +101,23 @@ export const fetchOptimistic = <
   >,
   observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   errorResetBoundary: QueryErrorResetBoundaryValue,
-) =>
-  observer.fetchOptimistic(defaultedOptions).catch(() => {
+  query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+): Promise<void> => {
+  const cached = suspensePromises.get(query)
+  if (cached) {
+    cached.fetchPromise.catch(() => errorResetBoundary.clearReset())
+    return cached.promise
+  }
+
+  const fetchPromise = observer.fetchOptimistic(defaultedOptions)
+  const settle = () => {
+    suspensePromises.delete(query)
+  }
+  const promise = fetchPromise.then(settle, settle)
+
+  suspensePromises.set(query, { fetchPromise, promise })
+  fetchPromise.catch(() => {
     errorResetBoundary.clearReset()
   })
+  return promise
+}
