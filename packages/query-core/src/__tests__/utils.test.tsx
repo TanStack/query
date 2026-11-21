@@ -218,6 +218,11 @@ describe('core/utils', () => {
         partialMatchKey(queryKeyWithUndefined, queryKeyWithoutProperty),
       ).toBe(true)
     })
+
+    it('should return `false` if one key element is an array and the other is an object', () => {
+      expect(partialMatchKey(['todos', ['a']], ['todos', {}])).toBe(false)
+      expect(partialMatchKey(['todos', {}], ['todos', ['a']])).toBe(false)
+    })
   })
 
   describe('replaceEqualDeep', () => {

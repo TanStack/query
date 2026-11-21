@@ -351,6 +351,10 @@ export function partialMatchKey(a: any, b: any): boolean {
   }
 
   if (a && b && typeof a === 'object' && typeof b === 'object') {
+    if (Array.isArray(a) !== Array.isArray(b)) {
+      return false
+    }
+
     if (Array.isArray(a) && Array.isArray(b)) {
       if (b.length > a.length) return false
       for (let i = 0; i < b.length; i++) {
