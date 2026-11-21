@@ -13,7 +13,7 @@
     "@tanstack/angular-query": "workspace:*",
     "@tanstack/angular-query-devtools": "workspace:*",
     "@tanstack/angular-query-persist-client": "workspace:*",
-    "typescript": "catalog:"
+    "typescript": "6.0.3"
   },
   "nx": {
     "targets": {
