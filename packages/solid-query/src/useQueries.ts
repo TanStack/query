@@ -8,7 +8,6 @@ import {
   mergeProps,
   on,
   onCleanup,
-  onMount,
 } from 'solid-js'
 import { createStore, unwrap } from 'solid-js/store'
 import { useQueryClientResolver } from './QueryClientProvider'
@@ -298,34 +297,27 @@ export function useQueries<
     ),
   )
 
-  const observer = new QueriesObserver(
+  const observer = new QueriesObserver<TCombinedResult>(
     client(),
     defaultedQueries(),
-    queriesOptions().combine
-      ? ({
-          combine: queriesOptions().combine,
-        } as QueriesObserverOptions<TCombinedResult>)
-      : undefined,
   )
-
-  const [state, setState] = createStore<TCombinedResult>(
-    observer.getOptimisticResult(
+  const reader = createMemo(() =>
+    observer.createResultReader(
       defaultedQueries(),
-      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
-    )[1](),
+      queriesOptions() as QueriesObserverOptions<TCombinedResult>,
+    ),
   )
+  const readResult = () => {
+    const current = reader()
+    return current.combineResult(current.getSnapshot())
+  }
+
+  const [state, setState] = createStore<TCombinedResult>(readResult())
 
   createRenderEffect(
     on(
       () => queriesOptions().queries.length,
-      () =>
-        setState(
-          observer.getOptimisticResult(
-            defaultedQueries(),
-            (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-              .combine,
-          )[1](),
-        ),
+      () => setState(readResult()),
     ),
   )
 
@@ -377,6 +369,8 @@ export function useQueries<
       })
     })
 
+  createComputed(on(reader, (current) => current.commit()))
+
   let unsubscribe: () => void = noop
   createComputed<() => void>((cleanup) => {
     cleanup?.()
@@ -385,28 +379,6 @@ export function useQueries<
     return () => queueMicrotask(unsubscribe)
   })
   onCleanup(unsubscribe)
-
-  onMount(() => {
-    observer.setQueries(
-      defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
-    )
-  })
-
-  createComputed(() => {
-    observer.setQueries(
-      defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
-    )
-  })
 
   const handler = (index: number) => ({
     get(target: QueryObserverResult, prop: keyof QueryObserverResult): any {
