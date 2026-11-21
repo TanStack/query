@@ -50,8 +50,5 @@ export default {
     'packages/react-query-persist-client': {
       ignoreDependencies: optionalPeerDependencies(reactQueryPersistClient),
     },
-    'packages/vue-query': {
-      ignoreDependencies: ['vue2', 'vue2.7'],
-    },
   },
 } satisfies KnipConfig

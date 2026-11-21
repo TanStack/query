@@ -61,16 +61,20 @@ export function injectBaseQuery<
     () => new Observer(queryClient, untracked(defaultedOptionsSignal)),
   )
 
+  const readerSignal = computed(() =>
+    observerSignal().createResultReader(defaultedOptionsSignal()),
+  )
+
   effect(() => {
-    const options = defaultedOptionsSignal()
-    outsideZone(() => untracked(() => observerSignal().setOptions(options)))
+    const reader = readerSignal()
+    outsideZone(() => untracked(reader.commit))
   })
 
   const resultSignal = injectExternalStore(() => {
     const observer = observerSignal()
     const restoring = isRestoring()
     return {
-      getSnapshot: () => observer.getOptimisticResult(defaultedOptionsSignal()),
+      getSnapshot: () => readerSignal().getSnapshot(),
       subscribe: restoring
         ? undefined
         : (onStoreChange) => {
@@ -78,6 +82,7 @@ export function injectBaseQuery<
               if (lifecycle.destroyed) return
               onStoreChange()
             })
+            observer.updateResult()
             return () => {
               lifecycle.setPending(false)
               unsubscribe()
@@ -102,7 +107,7 @@ export function injectBaseQuery<
   const getObserver = () =>
     untracked(() => {
       const observer = observerSignal()
-      observer.setOptions(defaultedOptionsSignal())
+      readerSignal().commit()
       return observer
     })
 

@@ -26,8 +26,6 @@
 
 Hooks for fetching, caching and updating asynchronous data in Vue.
 
-Support for Vue 2.x via [vue-demi](https://github.com/vueuse/vue-demi)
-
 # Documentation
 
 Visit https://tanstack.com/query/latest/docs/vue/overview
@@ -72,8 +70,6 @@ Visit https://tanstack.com/query/latest/docs/vue/overview
    ```bash
    $ bun add @tanstack/vue-query
    ```
-
-   > If you are using Vue 2.6, make sure to also setup [@vue/composition-api](https://github.com/vuejs/composition-api)
 
 2. Initialize **Vue Query** via **VueQueryPlugin**
 

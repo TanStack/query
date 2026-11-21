@@ -1,6 +1,6 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { onScopeDispose, reactive, ref } from 'vue-demi'
+import { onScopeDispose, reactive, ref } from 'vue'
 import { useIsFetching } from '../useIsFetching'
 import { useQuery } from '../useQuery'
 

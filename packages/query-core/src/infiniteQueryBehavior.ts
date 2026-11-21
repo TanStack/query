@@ -66,7 +66,6 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             client: context.client,
             queryKey: context.queryKey,
             pageParam: param,
-            direction: previous ? 'backward' : 'forward',
             meta: context.options.meta,
           } as QueryFunctionContext<QueryKey, unknown>
           addSignalProperty(queryFnContext)

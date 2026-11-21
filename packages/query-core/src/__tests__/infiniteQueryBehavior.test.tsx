@@ -93,7 +93,6 @@ describe('InfiniteQueryBehavior', () => {
       client: queryClient,
       pageParam: 1,
       meta: undefined,
-      direction: 'forward',
       signal: abortSignal,
     })
 
@@ -105,7 +104,6 @@ describe('InfiniteQueryBehavior', () => {
       queryKey: key,
       client: queryClient,
       pageParam: 2,
-      direction: 'forward',
       meta: undefined,
       signal: abortSignal,
     })
@@ -123,7 +121,6 @@ describe('InfiniteQueryBehavior', () => {
       queryKey: key,
       client: queryClient,
       pageParam: 0,
-      direction: 'backward',
       meta: undefined,
       signal: abortSignal,
     })
@@ -143,7 +140,6 @@ describe('InfiniteQueryBehavior', () => {
       client: queryClient,
       pageParam: -1,
       meta: undefined,
-      direction: 'backward',
       signal: abortSignal,
     })
 
@@ -161,7 +157,6 @@ describe('InfiniteQueryBehavior', () => {
       client: queryClient,
       pageParam: 1,
       meta: undefined,
-      direction: 'forward',
       signal: abortSignal,
     })
 
@@ -183,7 +178,6 @@ describe('InfiniteQueryBehavior', () => {
       client: queryClient,
       pageParam: 0,
       meta: undefined,
-      direction: 'forward',
       signal: abortSignal,
     })
 
@@ -192,7 +186,6 @@ describe('InfiniteQueryBehavior', () => {
       client: queryClient,
       pageParam: 1,
       meta: undefined,
-      direction: 'forward',
       signal: abortSignal,
     })
 
@@ -246,7 +239,6 @@ describe('InfiniteQueryBehavior', () => {
       client: queryClient,
       pageParam: 1,
       meta: undefined,
-      direction: 'forward',
       signal: abortSignal,
     })
 
@@ -303,7 +295,6 @@ describe('InfiniteQueryBehavior', () => {
       client: queryClient,
       pageParam: 2,
       meta: undefined,
-      direction: 'forward',
       signal: abortSignal,
     })
 

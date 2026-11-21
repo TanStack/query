@@ -96,7 +96,6 @@ describe("useQuery's in Suspense mode", () => {
         queryFn: ({ pageParam }) =>
           sleep(10).then(() => pageParam * multiplier()),
         initialPageParam: 1,
-        suspense: true,
         getNextPageParam: (lastPage) => lastPage + 1,
       }))
 
@@ -151,7 +150,6 @@ describe("useQuery's in Suspense mode", () => {
       useQuery(() => ({
         queryKey: [key],
         queryFn,
-        suspense: true,
       }))
 
       return <>rendered</>
@@ -226,7 +224,7 @@ describe("useQuery's in Suspense mode", () => {
             return 'data'
           }),
         retryDelay: 10,
-        suspense: true,
+        throwOnError: true,
       }))
 
       // Suspense only triggers if used in JSX
@@ -284,7 +282,7 @@ describe("useQuery's in Suspense mode", () => {
             return 'data'
           }),
         retry: false,
-        suspense: true,
+        throwOnError: true,
       }))
 
       // Suspense only triggers if used in JSX
@@ -344,7 +342,6 @@ describe("useQuery's in Suspense mode", () => {
         queryKey: key,
         queryFn: () => sleep(100).then(() => ++count),
         retry: false,
-        suspense: true,
         staleTime: 0,
       }))
 
@@ -402,7 +399,6 @@ describe("useQuery's in Suspense mode", () => {
         queryKey: props.queryKey,
         queryFn: () => sleep(100).then(() => props.queryKey),
         retry: false,
-        suspense: true,
       }))
 
       return <div>data: {result.data}</div>
@@ -438,7 +434,7 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText(`data: ${key2}`)).toBeInTheDocument()
   })
 
-  it('should throw errors to the error boundary by default', async () => {
+  it('should throw errors to the error boundary when throwOnError is true', async () => {
     const key = createKey()
 
     vi.spyOn(console, 'error').mockReturnValue(undefined)
@@ -449,7 +445,7 @@ describe("useQuery's in Suspense mode", () => {
         queryFn: () =>
           sleep(10).then(() => Promise.reject(new Error('Suspense Error a1x'))),
         retry: false,
-        suspense: true,
+        throwOnError: true,
       }))
 
       // read state.data to trigger suspense.
@@ -580,7 +576,6 @@ describe("useQuery's in Suspense mode", () => {
         queryFn: () =>
           sleep(10).then(() => Promise.reject(new Error('Local Error'))),
         retry: false,
-        suspense: true,
         throwOnError: (err) => err.message !== 'Local Error',
       }))
 
@@ -628,7 +623,6 @@ describe("useQuery's in Suspense mode", () => {
       const result = useQuery(() => ({
         queryKey: [key],
         queryFn,
-        suspense: true,
         enabled: enabled(),
       }))
 
@@ -675,7 +669,7 @@ describe("useQuery's in Suspense mode", () => {
             return nonce()
           }),
         retry: false,
-        suspense: true,
+        throwOnError: true,
       }))
 
       return (
@@ -732,7 +726,7 @@ describe("useQuery's in Suspense mode", () => {
             return 'data'
           }),
         retry: false,
-        suspense: true,
+        throwOnError: true,
       }))
 
       return (
@@ -788,8 +782,8 @@ describe("useQuery's in Suspense mode", () => {
             Promise.reject(new Error('Suspense Error Bingo')),
           ),
         retry: false,
-        suspense: true,
         enabled: enabled(),
+        throwOnError: true,
       }))
 
       return (

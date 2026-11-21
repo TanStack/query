@@ -230,7 +230,7 @@ describe('InfiniteQueryObserver', () => {
       behavior: undefined,
     }
 
-    const result = observer.getOptimisticResult(options)
+    const result = observer.createResultReader(options).getSnapshot()
 
     expect(options._type).toBeUndefined()
     expect(

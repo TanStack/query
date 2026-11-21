@@ -1,5 +1,4 @@
 import { environmentManager } from '@tanstack/query-core'
-import { isVue2 } from 'vue-demi'
 import { setupDevtools } from './devtools/devtools'
 import { QueryClient } from './queryClient'
 import { getClientKey } from './utils'
@@ -128,35 +127,13 @@ export const VueQueryPlugin = {
       }
     }
 
-    if (isVue2) {
-      app.mixin({
-        beforeCreate() {
-          // HACK: taken from provide(): https://github.com/vuejs/composition-api/blob/master/src/apis/inject.ts#L30
-          if (!this._provided) {
-            const provideCache = {}
-            Object.defineProperty(this, '_provided', {
-              get: () => provideCache,
-              set: (v) => Object.assign(provideCache, v),
-            })
-          }
+    app.provide(clientKey, client)
 
-          this._provided[clientKey] = client
-
-          if (process.env.NODE_ENV === 'development') {
-            if (this === this.$root && options.enableDevtoolsV6Plugin) {
-              setupDevtools(this, client)
-            }
-          }
-        },
-      })
-    } else {
-      app.provide(clientKey, client)
-
-      if (process.env.NODE_ENV === 'development') {
-        if (options.enableDevtoolsV6Plugin) {
-          setupDevtools(app, client)
-        }
-      }
+    if (
+      process.env.NODE_ENV === 'development' &&
+      options.enableDevtoolsV6Plugin
+    ) {
+      setupDevtools(app, client)
     }
   },
 }

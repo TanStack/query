@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { reactive, ref } from 'vue-demi'
+import { reactive, ref } from 'vue'
 import { cloneDeep, cloneDeepUnref, updateState } from '../utils'
 
 describe('utils', () => {

@@ -163,7 +163,9 @@ export function useBaseQuery<
     new Observer(client(), defaultedOptions()),
   )
 
-  let observerResult = observer().getOptimisticResult(defaultedOptions())
+  const initialReader = observer().createResultReader(initialOptions)
+  let observerResult = initialReader.getSnapshot()
+  initialReader.commit()
   const [state, setState] =
     createStore<QueryObserverResult<TData, TError>>(observerResult)
 
@@ -337,8 +339,9 @@ export function useBaseQuery<
         }
         // Setting the options as an immutable object to prevent
         // wonky behavior with observer subscriptions
-        observer().setOptions(newOptions)
-        setStateWithReconciliation(observer().getOptimisticResult(newOptions))
+        const reader = observer().createResultReader(newOptions)
+        reader.commit()
+        setStateWithReconciliation(reader.getSnapshot())
         unsubscribe = createClientSubscriber()
       },
     },
@@ -392,8 +395,9 @@ export function useBaseQuery<
     on(
       [observer, defaultedOptions],
       ([obs, opts]) => {
-        obs.setOptions(opts)
-        setStateWithReconciliation(obs.getOptimisticResult(opts))
+        const reader = obs.createResultReader(opts)
+        reader.commit()
+        setStateWithReconciliation(reader.getSnapshot())
         refetch()
       },
       { defer: true },

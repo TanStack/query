@@ -8162,22 +8162,6 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
 
-  packages/query-sync-storage-persister:
-    dependencies:
-      '@tanstack/query-core':
-        specifier: workspace:*
-        version: link:../query-core
-      '@tanstack/query-persist-client-core':
-        specifier: workspace:*
-        version: link:../query-persist-client-core
-    devDependencies:
-      '@tanstack/query-test-utils':
-        specifier: workspace:*
-        version: link:../query-test-utils
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.3
-
   packages/query-test-utils:
     dependencies:
       vitest:
@@ -8532,16 +8516,10 @@ importers:
       '@vue/devtools-api':
         specifier: ^6.6.3
         version: 6.6.4
-      vue-demi:
-        specifier: ^0.14.10
-        version: 0.14.10(@vue/composition-api@1.7.2(vue@3.5.44(typescript@6.0.3)))(vue@3.5.44(typescript@6.0.3))
     devDependencies:
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
-      '@vue/composition-api':
-        specifier: 1.7.2
-        version: 1.7.2(vue@3.5.44(typescript@6.0.3))
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -8551,12 +8529,6 @@ importers:
       vue:
         specifier: 'catalog:'
         version: 3.5.44(typescript@6.0.3)
-      vue2:
-        specifier: npm:vue@2.6
-        version: vue@2.6.14
-      vue2.7:
-        specifier: npm:vue@2.7
-        version: vue@2.7.16
 
   packages/vue-query-devtools:
     dependencies:
@@ -15392,9 +15364,6 @@ packages:
 
   '@vue/compiler-dom@3.5.44':
     resolution: {integrity: sha512-W5AoBFWdw1lQAKiHowkfgFKFab82oSRT6sGsPfw/q1GRjsy/ZJFLHGhJyBRIFN9APLTUduDH9U2JAiPOIyKuYg==}
-
-  '@vue/compiler-sfc@2.7.16':
-    resolution: {integrity: sha512-KWhJ9k5nXuNtygPU7+t1rX6baZeqOYLEforUPjgNDBnLicfHCoi48H87Q8XyLZOrNNsmhuwKqtpDQWjEFe6Ekg==}
 
   '@vue/compiler-sfc@3.5.44':
     resolution: {integrity: sha512-dzHmQ4jXTpdr5FjIQUeykVakN/uzqFbUo9/C5ikBFg3a3PeM6uRxeczx1ZbXBML0/zJstEh3ygYipzR5Z7b2Pw==}
@@ -24089,14 +24058,6 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: '>=5.0.0'
-
-  vue@2.6.14:
-    resolution: {integrity: sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ==}
-    deprecated: Vue 2 has reached EOL and is no longer actively maintained. See https://v2.vuejs.org/eol/ for more details.
-
-  vue@2.7.16:
-    resolution: {integrity: sha512-4gCtFXaAA3zYZdTp5s4Hl2sozuySsgz4jy1EnpBHNfpMa9dK1ZCG7viqBPCwXtmgc8nHqUsAu3G4gtmXkkY3Sw==}
-    deprecated: Vue 2 has reached EOL and is no longer actively maintained. See https://v2.vuejs.org/eol/ for more details.
 
   vue@3.5.44:
     resolution: {integrity: sha512-dvvmaOCG7lAMkJTPqPwWeGMsPS6DIsFsfZDUgBp9V6mHf9b3+/wyVwYR4Es+WV6uJC0FKRxp81Obcq0ZwUcGFQ==}
@@ -33634,14 +33595,6 @@ snapshots:
     dependencies:
       '@vue/compiler-core': 3.5.44
       '@vue/shared': 3.5.44
-
-  '@vue/compiler-sfc@2.7.16':
-    dependencies:
-      '@babel/parser': 7.29.12
-      postcss: 8.5.32
-      source-map: 0.6.1
-    optionalDependencies:
-      prettier: 2.8.8
 
   '@vue/compiler-sfc@3.5.44':
     dependencies:
@@ -45860,13 +45813,6 @@ snapshots:
       '@volar/typescript': 2.4.28(typescript@6.0.3)
       '@vue/language-core': 3.3.13
       typescript: 6.0.3
-
-  vue@2.6.14: {}
-
-  vue@2.7.16:
-    dependencies:
-      '@vue/compiler-sfc': 2.7.16
-      csstype: 3.2.3
 
   vue@3.5.44(typescript@6.0.3):
     dependencies:

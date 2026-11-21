@@ -960,19 +960,6 @@ describe('queryObserver', () => {
         })
       })
 
-      describe('isInitialLoading', () => {
-        it('should be typed as a boolean', () => {
-          const observer = new QueryObserver(queryClient, {
-            queryKey: createKey(),
-            queryFn: () => Promise.resolve({ value: 'data' }),
-          })
-
-          const result = observer.getCurrentResult()
-
-          expectTypeOf(result.isInitialLoading).toEqualTypeOf<boolean>()
-        })
-      })
-
       describe('data', () => {
         it('should be typed from the observed data type', () => {
           expectTypeOf<
@@ -1507,77 +1494,6 @@ describe('queryObserver', () => {
       expectTypeOf(observer.options.select).toEqualTypeOf<
         ((data: { value: string }) => { value: string }) | undefined
       >()
-    })
-  })
-
-  describe('getOptimisticResult', () => {
-    it('should be typed from the options it is given', () => {
-      const observer = new QueryObserver(queryClient, {
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve({ value: 'data' }),
-      })
-
-      const options = queryClient.defaultQueryOptions({
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve({ value: 'data' }),
-      })
-
-      expectTypeOf(observer.getOptimisticResult(options)).toEqualTypeOf<
-        QueryObserverResult<{ value: string }, DefaultError>
-      >()
-
-      const withCustomError = new QueryObserver<{ value: string }, CustomError>(
-        queryClient,
-        {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        },
-      )
-
-      const customErrorOptions = queryClient.defaultQueryOptions<
-        { value: string },
-        CustomError
-      >({
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve({ value: 'data' }),
-      })
-
-      expectTypeOf(
-        withCustomError.getOptimisticResult(customErrorOptions),
-      ).toEqualTypeOf<QueryObserverResult<{ value: string }, CustomError>>()
-
-      expectTypeOf(observer.getOptimisticResult)
-        .parameter(0)
-        .toEqualTypeOf<typeof options>()
-    })
-
-    it('should require the options that are always defaulted', () => {
-      const observer = new QueryObserver(queryClient, {
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve({ value: 'data' }),
-      })
-
-      type Options = Parameters<typeof observer.getOptimisticResult>[0]
-      type OptionalKeys = {
-        [K in keyof Options]-?: {} extends Pick<Options, K> ? K : never
-      }[keyof Options]
-
-      expectTypeOf<
-        'throwOnError' extends OptionalKeys ? true : false
-      >().toEqualTypeOf<false>()
-      expectTypeOf<
-        'refetchOnReconnect' extends OptionalKeys ? true : false
-      >().toEqualTypeOf<false>()
-      expectTypeOf<
-        'queryHash' extends OptionalKeys ? true : false
-      >().toEqualTypeOf<false>()
-      expectTypeOf<Options['select']>().toEqualTypeOf<
-        ((data: { value: string }) => { value: string }) | undefined
-      >()
-      expectTypeOf<Options['_optimisticResults']>().toEqualTypeOf<
-        'optimistic' | 'isRestoring' | undefined
-      >()
-      expectTypeOf<Options['_defaulted']>().toEqualTypeOf<boolean | undefined>()
     })
   })
 

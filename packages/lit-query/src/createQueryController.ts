@@ -67,7 +67,6 @@ function createPendingQueryResult<TData, TError>(): QueryObserverResult<
     isFetched: false,
     isFetchedAfterMount: false,
     isFetching: false,
-    isInitialLoading: false,
     isLoading: false,
     isLoadingError: false,
     isPaused: false,
@@ -130,7 +129,7 @@ class QueryController<
     const observer = new QueryObserver(initialClient, defaulted)
     this.queryClient = initialClient
     this.observer = observer
-    this.setObserverResult(observer.getOptimisticResult(defaulted))
+    this.setObserverResult(observer.createResultReader(defaulted).getSnapshot())
   }
 
   protected override onConnected(): void {
@@ -190,8 +189,9 @@ class QueryController<
     }
 
     const options = this.defaultOptions(this.queryClient)
-    this.observer.setOptions(options)
-    const optimistic = this.observer.getOptimisticResult(options)
+    const reader = this.observer.createResultReader(options)
+    const optimistic = reader.getSnapshot()
+    reader.commit()
     if (options.enabled !== false && optimistic.isStale) {
       return this.observer.fetchOptimistic(options)
     }
@@ -245,7 +245,9 @@ class QueryController<
     this.queryClient = nextClient
     const options = this.defaultOptions()
     this.observer = new QueryObserver(this.queryClient, options)
-    this.setObserverResult(this.observer.getOptimisticResult(options))
+    this.setObserverResult(
+      this.observer.createResultReader(options).getSnapshot(),
+    )
     return true
   }
 

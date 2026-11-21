@@ -21,7 +21,7 @@ import type {
 
 /**
  * The options accepted by `useQuery`. Extends {@link QueryObserverOptions} from `@tanstack/query-core` with
- * the `solid-query`-specific `deferStream` and `suspense` options.
+ * the `solid-query`-specific `deferStream` option.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
@@ -36,9 +36,12 @@ export interface UseBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends OmitKeyof<
-  QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-  'suspense'
+> extends QueryObserverOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey
 > {
   /**
    * Only applicable while rendering queries on the server with streaming.
@@ -47,12 +50,6 @@ export interface UseBaseQueryOptions<
    * @defaultValue false
    */
   deferStream?: boolean
-  /**
-   * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
-   * The `data` property on useQuery is a SolidJS resource and will automatically suspend when the data is loading.
-   * Setting `suspense` to `false` will be a no-op.
-   */
-  suspense?: boolean
 }
 
 /**
@@ -162,7 +159,7 @@ export interface InfiniteQueryOptions<
     TQueryKey,
     TPageParam
   >,
-  'queryKey' | 'suspense'
+  'queryKey'
 > {
   /**
    * The query key to use for this query. Required here, unlike on the options this type extends.
@@ -180,12 +177,6 @@ export interface InfiniteQueryOptions<
    * @defaultValue false
    */
   deferStream?: boolean
-  /**
-   * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
-   * The `data` property on useInfiniteQuery is a SolidJS resource and will automatically suspend when the data is loading.
-   * Setting `suspense` to `false` will be a no-op.
-   */
-  suspense?: boolean
 }
 
 /**

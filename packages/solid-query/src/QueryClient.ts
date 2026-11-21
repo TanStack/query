@@ -35,7 +35,7 @@ export interface QueryObserverOptions<
     TQueryKey,
     TPageParam
   >,
-  'structuralSharing'
+  'structuralSharing' | 'suspense'
 > {
   /**
    * Set this to a reconciliation key to enable reconciliation between query results.
@@ -71,7 +71,7 @@ export interface InfiniteQueryObserverOptions<
     TQueryKey,
     TPageParam
   >,
-  'structuralSharing'
+  'structuralSharing' | 'suspense'
 > {
   /**
    * Set this to a reconciliation key to enable reconciliation between query results.

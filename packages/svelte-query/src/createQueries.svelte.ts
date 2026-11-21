@@ -1,4 +1,5 @@
 import { QueriesObserver } from '@tanstack/query-core'
+import { untrack } from 'svelte'
 import { createRawRef } from './containers.svelte.js'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
@@ -285,13 +286,16 @@ export function createQueries<
     }),
   )
 
-  // can't do same as createMutation, as QueriesObserver has no `setOptions` method
   const observer = $derived(
     new QueriesObserver<TCombinedResult>(
       client,
-      resolvedQueryOptions,
-      combine as QueriesObserverOptions<TCombinedResult>,
+      untrack(() => resolvedQueryOptions),
     ),
+  )
+  const reader = $derived(
+    observer.createResultReader(resolvedQueryOptions, {
+      combine,
+    } as QueriesObserverOptions<TCombinedResult>),
   )
 
   /**
@@ -299,11 +303,7 @@ export function createQueries<
    * @returns The combined result, built from the tracked per-query results.
    */
   function createResult() {
-    const [_, getCombinedResult, trackResult] = observer.getOptimisticResult(
-      resolvedQueryOptions,
-      combine as QueriesObserverOptions<TCombinedResult>['combine'],
-    )
-    return getCombinedResult(trackResult())
+    return reader.combineResult(reader.getSnapshot())
   }
 
   // @ts-expect-error - the crazy-complex TCombinedResult type doesn't like being called an array
@@ -318,10 +318,11 @@ export function createQueries<
   })
 
   $effect.pre(() => {
-    observer.setQueries(resolvedQueryOptions, {
-      combine,
-    } as QueriesObserverOptions<TCombinedResult>)
-    update(createResult())
+    const current = reader
+    untrack(() => {
+      current.commit()
+      update(createResult())
+    })
   })
 
   return results

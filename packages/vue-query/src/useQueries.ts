@@ -8,7 +8,7 @@ import {
   shallowRef,
   unref,
   watch,
-} from 'vue-demi'
+} from 'vue'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type {
@@ -20,7 +20,7 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
-import type { Ref } from 'vue-demi'
+import type { Ref } from 'vue'
 import type { QueryClient } from './queryClient'
 import type { UseQueryOptions } from './queryOptions'
 import type { DeepUnwrapRef, MaybeRefDeep, ShallowOption } from './types'
@@ -416,30 +416,30 @@ export function useQueries<
     options as QueriesObserverOptions<TCombinedResult>,
   )
 
-  const getOptimisticResult = () => {
-    const [results, getCombinedResult] = observer.getOptimisticResult(
+  const reader = computed(() =>
+    observer.createResultReader(
       defaultedQueries.value,
-      (options as QueriesObserverOptions<TCombinedResult>).combine,
-    )
+      options as QueriesObserverOptions<TCombinedResult>,
+    ),
+  )
 
-    return getCombinedResult(
-      results.map((result, index) => {
-        return {
-          ...result,
-          refetch: async (...args: Array<any>) => {
-            const [{ [index]: query }] = observer.getOptimisticResult(
-              defaultedQueries.value,
-              (options as QueriesObserverOptions<TCombinedResult>).combine,
-            )
-
-            return query!.refetch(...args)
-          },
-        }
-      }),
+  const readResult = () => {
+    const current = reader.value
+    return current.combineResult(
+      current.getSnapshot().map((result, index) => ({
+        ...result,
+        refetch: async (
+          ...args: Parameters<QueryObserverResult['refetch']>
+        ) => {
+          reader.value.commit()
+          return observer.getObservers()[index]!.refetch(...args)
+        },
+      })),
     )
   }
 
-  const state = shallowRef(getOptimisticResult())
+  const state = shallowRef(readResult())
+  reader.value.commit()
 
   let unsubscribe = () => {
     // noop
@@ -452,22 +452,19 @@ export function useQueries<
         if (!isRestoring) {
           unsubscribe()
           unsubscribe = observer.subscribe(() => {
-            state.value = getOptimisticResult()
+            state.value = readResult()
           })
 
-          state.value = getOptimisticResult()
+          state.value = readResult()
         }
       },
       { immediate: true },
     )
   }
 
-  watch(defaultedQueries, (queriesValue) => {
-    observer.setQueries(
-      queriesValue,
-      options as QueriesObserverOptions<TCombinedResult>,
-    )
-    state.value = getOptimisticResult()
+  watch(reader, (current) => {
+    current.commit()
+    state.value = readResult()
   })
 
   onScopeDispose(() => {

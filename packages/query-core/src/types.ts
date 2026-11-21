@@ -3,7 +3,7 @@
 import type { DehydrateOptions, HydrateOptions } from './hydration'
 import type { MutationState } from './mutation'
 import type { MutationCache } from './mutationCache'
-import type { FetchDirection, Query, QueryBehavior } from './query'
+import type { Query, QueryBehavior } from './query'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type { RetryDelayValue, RetryValue } from './retryer'
@@ -241,22 +241,12 @@ export type QueryFunctionContext<
       signal: AbortSignal
       meta: QueryMeta | undefined
       pageParam?: unknown
-      /**
-       * @deprecated
-       * if you want access to the direction, you can add it to the pageParam
-       */
-      direction?: unknown
     }
   : {
       client: QueryClient
       queryKey: TQueryKey
       signal: AbortSignal
       pageParam: TPageParam
-      /**
-       * @deprecated
-       * if you want access to the direction, you can add it to the pageParam
-       */
-      direction: FetchDirection
       meta: QueryMeta | undefined
     }
 
@@ -750,65 +740,6 @@ export interface QueryExecuteOptions<
   staleTime?: StaleTimeFunction<TQueryFnData, TError, TQueryData, TQueryKey>
 }
 
-/** @deprecated */
-export interface FetchQueryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = never,
-> extends WithRequired<
-  QueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
-  'queryKey'
-> {
-  /**
-   * Not allowed here, since `initialPageParam` only applies to infinite queries.
-   */
-  initialPageParam?: never
-  /**
-   * The time in milliseconds after data is considered stale.
-   * If the data is fresh it will be returned from the cache.
-   */
-  staleTime?: StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>
-}
-
-/** @deprecated */
-export interface EnsureQueryDataOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = never,
-> extends FetchQueryOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam
-> {
-  /**
-   * If `true`, stale cached data is returned and also refetched in the background.
-   */
-  revalidateIfStale?: boolean
-}
-
-/** @deprecated */
-export type EnsureInfiniteQueryDataOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
-> = FetchInfiniteQueryOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam
-> & {
-  revalidateIfStale?: boolean
-}
-
 type InfiniteQueryFetchPageOptions<TQueryFnData, TPageParam> = Pick<
   InfiniteQueryPageParamsOptions<TQueryFnData, TPageParam>,
   'initialPageParam' | 'getNextPageParam'
@@ -836,25 +767,6 @@ export type InfiniteQueryExecuteOptions<
     TError,
     TData,
     InfiniteData<TQueryFnData, TPageParam>,
-    TQueryKey,
-    TPageParam
-  >,
-  'initialPageParam'
-> &
-  InfiniteQueryFetchPageOptions<TQueryFnData, TPageParam>
-
-/** @deprecated */
-export type FetchInfiniteQueryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
-> = Omit<
-  FetchQueryOptions<
-    TQueryFnData,
-    TError,
-    InfiniteData<TData, TPageParam>,
     TQueryKey,
     TPageParam
   >,
@@ -1029,11 +941,6 @@ export interface QueryObserverBaseResult<
    * Will be `true` if the query has an error and no data to display.
    */
   isLoadingError: boolean
-  /**
-   * @deprecated `isInitialLoading` is being deprecated in favor of `isLoading`
-   * and will be removed in the next major version.
-   */
-  isInitialLoading: boolean
   /**
    * A derived boolean from the `fetchStatus` variable, provided for convenience.
    * - The query wanted to fetch, but has been `paused`.

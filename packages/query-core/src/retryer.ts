@@ -128,16 +128,6 @@ export class CancelledError extends Error {
 }
 
 /**
- * Checks whether a value is a `CancelledError`.
- * @param value - The value to check.
- * @returns `true` if `value` is a `CancelledError`.
- * @deprecated Use instanceof `CancelledError` instead.
- */
-export function isCancelledError(value: any): value is CancelledError {
-  return value instanceof CancelledError
-}
-
-/**
  * Creates a retryer, which runs a function and retries it on failure according to the `retry` and
  * `retryDelay` options. It pauses while the network mode doesn't allow fetching or `canRun` returns
  * `false`, and can be cancelled. Queries and mutations use it to run their `queryFn` and

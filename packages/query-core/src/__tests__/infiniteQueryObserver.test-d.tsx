@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { InfiniteQueryObserver, QueryClient } from '..'
 import type {
   DefaultError,
-  DefaultedInfiniteQueryObserverOptions,
   DefinedInfiniteQueryObserverResult,
   FetchNextPageOptions,
   FetchPreviousPageOptions,
@@ -246,20 +245,6 @@ describe('infiniteQueryObserver', () => {
         })
       })
 
-      it('should type the direction of the context it is given', () => {
-        new InfiniteQueryObserver(queryClient, {
-          queryKey: createKey(),
-          initialPageParam: 1,
-          getNextPageParam: () => 1,
-          queryFn: (context) => {
-            expectTypeOf(context.direction).toEqualTypeOf<
-              'forward' | 'backward'
-            >()
-            return Promise.resolve('data')
-          },
-        })
-      })
-
       it('should type the remaining fields of the context it is given', () => {
         const key = ['a', 1] as const
 
@@ -288,17 +273,11 @@ describe('infiniteQueryObserver', () => {
         expectTypeOf<
           'pageParam' extends OptionalKeys ? true : false
         >().toEqualTypeOf<false>()
-        expectTypeOf<
-          'direction' extends OptionalKeys ? true : false
-        >().toEqualTypeOf<false>()
       })
 
       it('should leave the page param unknown on an unpaged context type', () => {
         expectTypeOf<
           QueryFunctionContext<ReadonlyArray<unknown>>['pageParam']
-        >().toEqualTypeOf<unknown>()
-        expectTypeOf<
-          QueryFunctionContext<ReadonlyArray<unknown>>['direction']
         >().toEqualTypeOf<unknown>()
       })
     })
@@ -1047,7 +1026,6 @@ describe('infiniteQueryObserver', () => {
       >[0]
 
       expectTypeOf<Context['pageParam']>().toEqualTypeOf<unknown>()
-      expectTypeOf<Context['direction']>().toEqualTypeOf<unknown>()
     })
 
     it('should expose the paged data type through the options it holds', () => {
@@ -1064,70 +1042,6 @@ describe('infiniteQueryObserver', () => {
           ) => InfiniteData<{ value: string }, unknown>)
         | undefined
       >()
-    })
-  })
-
-  describe('getOptimisticResult', () => {
-    it('should be typed from the options it is given', () => {
-      const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve({ value: 'data' }),
-        initialPageParam: 1,
-        getNextPageParam: () => 1,
-      })
-
-      const options: DefaultedInfiniteQueryObserverOptions<
-        { value: string },
-        DefaultError,
-        InfiniteData<{ value: string }, unknown>,
-        Array<string>,
-        number
-      > = {
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve({ value: 'data' }),
-        initialPageParam: 1,
-        getNextPageParam: () => 1,
-        queryHash: 'hash',
-        throwOnError: false,
-        refetchOnReconnect: true,
-      }
-
-      expectTypeOf(observer.getOptimisticResult(options)).toEqualTypeOf<
-        InfiniteQueryObserverResult<
-          InfiniteData<{ value: string }, unknown>,
-          DefaultError
-        >
-      >()
-    })
-
-    it('should require the options that are always defaulted', () => {
-      const observer = new InfiniteQueryObserver(queryClient, {
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve({ value: 'data' }),
-        initialPageParam: 1,
-        getNextPageParam: () => 1,
-      })
-
-      type Options = Parameters<typeof observer.getOptimisticResult>[0]
-      type OptionalKeys = {
-        [K in keyof Options]-?: {} extends Pick<Options, K> ? K : never
-      }[keyof Options]
-
-      expectTypeOf<
-        'throwOnError' extends OptionalKeys ? true : false
-      >().toEqualTypeOf<false>()
-      expectTypeOf<
-        'refetchOnReconnect' extends OptionalKeys ? true : false
-      >().toEqualTypeOf<false>()
-      expectTypeOf<
-        'queryHash' extends OptionalKeys ? true : false
-      >().toEqualTypeOf<false>()
-      expectTypeOf<
-        'initialPageParam' extends OptionalKeys ? true : false
-      >().toEqualTypeOf<false>()
-      expectTypeOf<
-        'getNextPageParam' extends OptionalKeys ? true : false
-      >().toEqualTypeOf<false>()
     })
   })
 

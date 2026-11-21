@@ -9,7 +9,7 @@ import {
   shallowReadonly,
   toRefs,
   watch,
-} from 'vue-demi'
+} from 'vue'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref, updateState } from './utils'
 import type {
@@ -18,7 +18,7 @@ import type {
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { Ref } from 'vue-demi'
+import type { Ref } from 'vue'
 import type { QueryClient } from './queryClient'
 import type { UseQueryOptions } from './queryOptions'
 import type { MaybeRefOrGetter } from './types'
@@ -229,18 +229,17 @@ export function useBaseQuery<
           // noop
         }
         const run = () => {
-          // Apply the latest options before resolving `enabled`, so a query callback sees the current query.
-          // fix #6133
-          observer.setOptions(defaultedOptions.value)
-          const { enabled } = defaultedOptions.value
+          const options = defaultedOptions.value
+          const reader = observer.createResultReader(options)
+          // Commit before resolving `enabled` so its callback sees the current query.
+          reader.commit()
+          const { enabled } = options
           if (
             (typeof enabled === 'function'
               ? enabled(observer.getCurrentQuery())
               : enabled) !== false
           ) {
-            const optimisticResult = observer.getOptimisticResult(
-              defaultedOptions.value,
-            )
+            const optimisticResult = reader.getSnapshot()
             if (optimisticResult.isStale) {
               stopWatch()
               observer

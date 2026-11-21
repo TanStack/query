@@ -18,10 +18,6 @@ import type {
   DefaultError,
   DefaultOptions,
   DefaultedQueryObserverOptions,
-  EnsureInfiniteQueryDataOptions,
-  EnsureQueryDataOptions,
-  FetchInfiniteQueryOptions,
-  FetchQueryOptions,
   InferDataFromTag,
   InferErrorFromTag,
   InfiniteData,
@@ -194,43 +190,6 @@ export class QueryClient {
 
     return this.#queryCache.get<TInferredQueryFnData>(options.queryHash)?.state
       .data
-  }
-
-  /**
-   * Returns the cached data of a query, or fetches it if there is none. With `revalidateIfStale`,
-   * stale cached data is also refetched in the background.
-   * @param options - The query options. If the query has no cached data yet, it is fetched with
-   * these options.
-   * @returns A promise that resolves to the cached data, or to the fetched data if nothing was
-   * cached yet.
-   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
-   */
-  ensureQueryData<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-  >(
-    options: EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-  ): Promise<TData> {
-    const defaultedOptions = this.defaultQueryOptions(options)
-    const query = this.#queryCache.build(this, defaultedOptions)
-    const cachedData = query.state.data
-
-    if (cachedData === undefined) {
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax
-      return this.fetchQuery(options)
-    }
-
-    if (
-      options.revalidateIfStale &&
-      query.isStaleByTime(resolveQueryValue(defaultedOptions.staleTime, query))
-    ) {
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax
-      void this.prefetchQuery(defaultedOptions)
-    }
-
-    return Promise.resolve(cachedData)
   }
 
   /**
@@ -580,9 +539,6 @@ export class QueryClient {
    * `refetchOnWindowFocus`, `refetchOnReconnect`, `refetchOnMount`, `retryOnMount`,
    * `notifyOnChangeProps`, `throwOnError`, `suspense`, and `placeholderData` are not part of this
    * method's options.
-   *
-   * This method replaces the deprecated `fetchQuery`, and — combined with
-   * `{ staleTime: 'static' }` — the deprecated `ensureQueryData`.
    * @param options - The query options, including the `queryKey` and the `queryFn` used if the
    * query needs to fetch.
    * @returns A promise that resolves to the data, or to the result of `select` if provided. It
@@ -640,75 +596,12 @@ export class QueryClient {
   }
 
   /**
-   * Fetches and caches a query, or returns its cached data if it isn't stale. Unlike in observers,
-   * the fetch isn't retried unless `retry` is set.
-   * @param options - The query options, including the `queryKey` and the `queryFn` used if the
-   * query needs to fetch.
-   * @returns A promise that resolves to the cached or fetched data, or rejects with the fetch
-   * error.
-   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
-   */
-  fetchQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = never,
-  >(
-    options: FetchQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-  ): Promise<TData> {
-    const defaultedOptions = this.defaultQueryOptions(options)
-
-    // https://github.com/tannerlinsley/react-query/issues/652
-    if (defaultedOptions.retry === undefined) {
-      defaultedOptions.retry = false
-    }
-
-    const query = this.#queryCache.build(this, defaultedOptions)
-
-    return query.isStaleByTime(
-      resolveQueryValue(defaultedOptions.staleTime, query),
-    )
-      ? query.fetch(defaultedOptions)
-      : Promise.resolve(query.state.data as TData)
-  }
-
-  /**
-   * Fetches and caches a query like {@link QueryClient#fetchQuery}, but ignores the result and any
-   * error.
-   * @param options - The query options, including the `queryKey` and the `queryFn` used if the
-   * query needs to fetch.
-   * @returns A promise that resolves once the fetch settles. It never rejects.
-   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
-   */
-  prefetchQuery<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-  >(
-    options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  ): Promise<void> {
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax
-    return this.fetchQuery(options).then(noop, noop)
-  }
-
-  /**
    * Asynchronous method to fetch and cache an infinite query, resolving with an
    * {@link InfiniteData} object or throwing with the error.
    *
    * Requires `initialPageParam` and `getNextPageParam`. Use `pages` to specify how many
    * pages to fetch. If you omit `pages`, the client fetches up to the number of cached
    * pages, or one page if the cache has no pages.
-   *
-   * This method replaces the deprecated `fetchInfiniteQuery`, and — combined with
-   * `{ staleTime: 'static' }` — the deprecated `ensureInfiniteQueryData`.
    * @param options - The query to fetch and the options that control which pages to fetch.
    * @returns A promise that resolves to the {@link InfiniteData}, or to the result of `select` if
    * provided. It rejects with the error from the fetch or from `select`.
@@ -748,88 +641,6 @@ export class QueryClient {
   > {
     options._type = 'infinite'
     return this.query(options as any)
-  }
-
-  /**
-   * Fetches and caches an infinite query, or returns its cached data if it isn't stale.
-   * @param options - The infinite query options, including `initialPageParam` and `getNextPageParam`.
-   * @returns A promise that resolves to the cached or fetched {@link InfiniteData}, or rejects with
-   * the fetch error.
-   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
-   */
-  fetchInfiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: FetchInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-  ): Promise<InfiniteData<TData, TPageParam>> {
-    options._type = 'infinite'
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax
-    return this.fetchQuery(options as any)
-  }
-
-  /**
-   * Fetches and caches an infinite query like {@link QueryClient#fetchInfiniteQuery}, but ignores
-   * the result and any error.
-   * @param options - The infinite query options, including `initialPageParam` and `getNextPageParam`.
-   * @returns A promise that resolves once the fetch settles. It never rejects.
-   * @deprecated Use queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
-   */
-  prefetchInfiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: FetchInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-  ): Promise<void> {
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax
-    return this.fetchInfiniteQuery(options).then(noop, noop)
-  }
-
-  /**
-   * Returns the cached data of an infinite query, or fetches it if there is none. With
-   * `revalidateIfStale`, stale cached data is also refetched in the background.
-   * @param options - The infinite query options, including `initialPageParam` and `getNextPageParam`.
-   * @returns A promise that resolves to the cached {@link InfiniteData}, or to the fetched data if
-   * nothing was cached yet.
-   * @deprecated Use queryClient.infiniteQuery({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
-   */
-  ensureInfiniteQueryData<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: EnsureInfiniteQueryDataOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-  ): Promise<InfiniteData<TData, TPageParam>> {
-    options._type = 'infinite'
-
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax
-    return this.ensureQueryData(options as any)
   }
 
   /**

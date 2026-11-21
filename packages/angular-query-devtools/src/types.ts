@@ -39,11 +39,6 @@ export interface DevtoolsOptions {
    */
   errorTypes?: MaybeSignal<Array<DevtoolsErrorType>>
   /**
-   * @deprecated The devtools no longer add a `<style>` element, so they need no
-   * nonce. This option does nothing.
-   */
-  styleNonce?: string
-  /**
    * The shadow root to add the devtools styles to. By default, the styles are
    * added to the shadow root the devtools render in, or to the document when
    * they do not render in a shadow root.
@@ -93,7 +88,7 @@ export interface DevtoolsOptions {
 /**
  * Returns devtools options. The function runs once in an Angular injection
  * context, so it can call `inject()`. Pass signals as option values to make
- * mutable options reactive. `styleNonce`, `shadowDOMTarget`,
+ * mutable options reactive. `shadowDOMTarget`,
  * `trustedTypesPolicy`, and `hideDisabledQueries` are read only when the
  * devtools are constructed.
  */

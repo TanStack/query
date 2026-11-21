@@ -202,9 +202,13 @@ export function injectQueries<
       ),
   )
 
+  const readerSignal = computed(() =>
+    observerSignal().createResultReader(defaultedQueries()),
+  )
+
   effect(() => {
-    const queries = defaultedQueries()
-    outsideZone(() => untracked(() => observerSignal().setQueries(queries)))
+    const reader = readerSignal()
+    outsideZone(() => untracked(reader.commit))
   })
 
   // Methods address the current array slot, including methods handed to combine.
@@ -214,7 +218,7 @@ export function injectQueries<
       outsideZone(() =>
         untracked(() => {
           const observer = observerSignal()
-          observer.setQueries(defaultedQueries())
+          readerSignal().commit()
           const queryObserver = observer.getObservers()[index]
           if (!queryObserver) {
             return Promise.reject(
@@ -230,10 +234,7 @@ export function injectQueries<
     const restoring = isRestoring()
     return {
       getSnapshot: () => {
-        const results = observer.getOptimisticResult(
-          defaultedQueries(),
-          undefined,
-        )[0]
+        const results = readerSignal().getSnapshot()
         refetches.length = results.length
         return results.map((result, index) => ({
           ...result,
@@ -247,6 +248,7 @@ export function injectQueries<
               if (lifecycle.destroyed) return
               onStoreChange()
             })
+            observer.getObservers().forEach((query) => query.updateResult())
             return () => {
               lifecycle.setPending(false)
               unsubscribe()

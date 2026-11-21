@@ -31,7 +31,6 @@ describe('queriesObserver', () => {
         | 'getCurrentResult'
         | 'getQueries'
         | 'getObservers'
-        | 'getOptimisticResult'
         | 'createResultReader'
       >()
     })
@@ -204,81 +203,6 @@ describe('queriesObserver', () => {
 
       expectTypeOf(observer.getObservers()).toEqualTypeOf<
         Array<QueryObserver>
-      >()
-    })
-  })
-
-  describe('getOptimisticResult', () => {
-    it('should take an array of query options', () => {
-      const observer = new QueriesObserver(queryClient, [])
-
-      expectTypeOf(observer.getOptimisticResult)
-        .parameter(0)
-        .toEqualTypeOf<Array<QueryObserverOptions>>()
-    })
-
-    it('should take a combine function that accepts undefined but is required', () => {
-      const observer = new QueriesObserver(queryClient, [], {
-        combine: (results) => results.length,
-      })
-
-      expectTypeOf(observer.getOptimisticResult)
-        .parameter(1)
-        .toEqualTypeOf<
-          ((result: Array<QueryObserverResult>) => number) | undefined
-        >()
-
-      expectTypeOf<
-        Parameters<typeof observer.getOptimisticResult>['length']
-      >().toEqualTypeOf<2>()
-
-      // @ts-expect-error the combine argument may be undefined but must be passed
-      observer.getOptimisticResult([])
-
-      observer.getOptimisticResult([], undefined)
-    })
-
-    it('should return the raw results as the first tuple member', () => {
-      const observer = new QueriesObserver(queryClient, [], {
-        combine: (results) => results.length,
-      })
-
-      expectTypeOf(
-        observer.getOptimisticResult([], undefined)[0],
-      ).toEqualTypeOf<Array<QueryObserverResult>>()
-    })
-
-    it('should return a combine function producing the combined result as the second tuple member', () => {
-      const observer = new QueriesObserver(queryClient, [], {
-        combine: (results) => results.length,
-      })
-
-      expectTypeOf(
-        observer.getOptimisticResult([], undefined)[1],
-      ).toEqualTypeOf<(r?: Array<QueryObserverResult>) => number>()
-    })
-
-    it('should return a track function producing the raw results as the third tuple member', () => {
-      const observer = new QueriesObserver(queryClient, [], {
-        combine: (results) => results.length,
-      })
-
-      expectTypeOf(
-        observer.getOptimisticResult([], undefined)[2],
-      ).toEqualTypeOf<() => Array<QueryObserverResult>>()
-    })
-
-    it('should return a tuple of exactly three members', () => {
-      const observer = new QueriesObserver(queryClient, [])
-
-      expectTypeOf(observer.getOptimisticResult([], undefined)).toEqualTypeOf<
-        [
-          rawResult: Array<QueryObserverResult>,
-          combineResult: (
-            r?: Array<QueryObserverResult>,
-          ) => Array<QueryObserverResult>,
-          trackResult: () => Array<QueryObserverResult>,
-        ]
       >()
     })
   })
