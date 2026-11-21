@@ -1,4 +1,7 @@
-import { QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  mutationOptions as coreMutationOptions,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import {
@@ -7,6 +10,7 @@ import {
   injectMutationState,
   mutationOptions,
 } from '..'
+import type { Signal } from '@angular/core'
 import type {
   DefaultError,
   MutationFunctionContext,
@@ -172,6 +176,20 @@ describe('mutationOptions', () => {
           },
         }),
     )
+  })
+
+  it('should infer types when core mutationOptions are used with injectMutation', () => {
+    const mutation = injectMutation(() =>
+      coreMutationOptions({
+        mutationFn: (input: { id: string }) => Promise.resolve(input.id),
+      }),
+    )
+
+    expectTypeOf(mutation.data).toEqualTypeOf<Signal<string | undefined>>()
+    expectTypeOf(mutation.variables).toEqualTypeOf<
+      Signal<{ id: string } | undefined>
+    >()
+    expectTypeOf(mutation.mutate).toBeCallableWith({ id: '1' })
   })
 
   it('should infer types when used with injectIsMutating', () => {
