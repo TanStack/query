@@ -702,29 +702,20 @@ export class QueryObserver<
       : this.#currentQueryInitialState
 
     const { state } = query
-    let newState = { ...state }
+    const fetchOptimistically =
+      options._optimisticResults &&
+      (this.hasListeners()
+        ? shouldFetchOptionally(query, prevQuery, options, prevOptions)
+        : shouldFetchOnMount(query, options))
+    const newState = fetchOptimistically
+      ? { ...state, ...fetchState(state.data, query.options) }
+      : state
+    const fetchStatus =
+      options._optimisticResults === 'isRestoring'
+        ? 'idle'
+        : newState.fetchStatus
     let isPlaceholderData = false
     let data: TData | undefined
-
-    // Optimistically set result in fetching state if needed
-    if (options._optimisticResults) {
-      const mounted = this.hasListeners()
-
-      const fetchOnMount = !mounted && shouldFetchOnMount(query, options)
-
-      const fetchOptionally =
-        mounted && shouldFetchOptionally(query, prevQuery, options, prevOptions)
-
-      if (fetchOnMount || fetchOptionally) {
-        newState = {
-          ...newState,
-          ...fetchState(state.data, query.options),
-        }
-      }
-      if (options._optimisticResults === 'isRestoring') {
-        newState.fetchStatus = 'idle'
-      }
-    }
 
     let { error, errorUpdatedAt, status } = newState
 
@@ -821,7 +812,7 @@ export class QueryObserver<
       isPlaceholderData = false
     }
 
-    const isFetching = newState.fetchStatus === 'fetching'
+    const isFetching = fetchStatus === 'fetching'
     const isPending = status === 'pending'
     const isError = status === 'error'
 
@@ -830,7 +821,7 @@ export class QueryObserver<
 
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
-      fetchStatus: newState.fetchStatus,
+      fetchStatus,
       isPending,
       isSuccess: status === 'success',
       isError,
@@ -850,7 +841,7 @@ export class QueryObserver<
       isFetching,
       isRefetching: isFetching && !isPending,
       isLoadingError: isError && !hasData,
-      isPaused: newState.fetchStatus === 'paused',
+      isPaused: fetchStatus === 'paused',
       isPlaceholderData,
       isRefetchError: isError && hasData,
       isStale: isStale(query, options),
