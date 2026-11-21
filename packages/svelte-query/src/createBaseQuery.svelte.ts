@@ -62,13 +62,15 @@ export function createBaseQuery<
     },
   )
 
+  const reader = $derived(observer.createResultReader(resolvedOptions))
+
   /**
    * Computes the observer's current result for the resolved options, tracking property access unless
    * `notifyOnChangeProps` is set.
    * @returns The current query result.
    */
   function createResult() {
-    const result = observer.getOptimisticResult(resolvedOptions)
+    const result = reader.getSnapshot()
     return !resolvedOptions.notifyOnChangeProps
       ? observer.trackResult(result)
       : result
@@ -108,16 +110,10 @@ export function createBaseQuery<
   } catch (e) {}
 
   watchChanges(
-    () => resolvedOptions,
+    () => reader,
     'pre',
     () => {
-      observer.setOptions(resolvedOptions)
-    },
-  )
-  watchChanges(
-    () => [resolvedOptions, observer],
-    'pre',
-    () => {
+      reader.commit()
       // The only reason this is necessary is because of `isRestoring`.
       // Because we don't subscribe while restoring, the following can occur:
       // - `isRestoring` is true
