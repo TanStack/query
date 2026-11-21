@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import { describe, expectTypeOf, it } from 'vitest'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
@@ -17,7 +17,7 @@ describe('pageParam', () => {
     createInfiniteQueryController(
       new Host(),
       {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           expectTypeOf(pageParam).toEqualTypeOf<number>()
         },
@@ -32,7 +32,7 @@ describe('pageParam', () => {
     createInfiniteQueryController(
       new Host(),
       {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ direction }) => {
           expectTypeOf(direction).toEqualTypeOf<'forward' | 'backward'>()
         },
@@ -49,7 +49,7 @@ describe('select', () => {
     const infiniteQuery = createInfiniteQueryController(
       new Host(),
       {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return pageParam * 5
         },
@@ -69,7 +69,7 @@ describe('select', () => {
     const infiniteQuery = createInfiniteQueryController(
       new Host(),
       {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return pageParam * 5
         },
@@ -92,7 +92,7 @@ describe('getNextPageParam / getPreviousPageParam', () => {
     const infiniteQuery = createInfiniteQueryController(
       new Host(),
       {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return String(pageParam)
         },
@@ -137,7 +137,7 @@ describe('error booleans', () => {
     const infiniteQuery = createInfiniteQueryController(
       new Host(),
       {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           return pageParam * 5
         },
@@ -163,7 +163,7 @@ describe('error booleans', () => {
 describe('CreateInfiniteQueryOptions', () => {
   it('should default TData to InfiniteData<TQueryFnData>', () => {
     const options: CreateInfiniteQueryOptions<number, Error> = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => 5,
       initialPageParam: 1,
       getNextPageParam: () => undefined,
@@ -185,7 +185,7 @@ describe('refetch / fetchNextPage / fetchPreviousPage', () => {
     const infiniteQuery = createInfiniteQueryController(
       new Host(),
       {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => pageParam,
         initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage + 1,
@@ -203,7 +203,7 @@ describe('refetch / fetchNextPage / fetchPreviousPage', () => {
     const infiniteQuery = createInfiniteQueryController(
       new Host(),
       {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => pageParam,
         initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage + 1,
@@ -221,7 +221,7 @@ describe('refetch / fetchNextPage / fetchPreviousPage', () => {
     const infiniteQuery = createInfiniteQueryController(
       new Host(),
       {
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: ({ pageParam }) => pageParam,
         initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage + 1,

@@ -8,6 +8,7 @@ import type {
   InfiniteData,
   InfiniteQueryExecuteOptions,
   InfiniteQueryObserverOptions,
+  InfiniteQueryObserverPlaceholderResult,
   InfiniteQueryObserverResult,
   MutateFunction,
   MutationObserverOptions,
@@ -17,6 +18,7 @@ import type {
   QueryExecuteOptions,
   QueryKey,
   QueryObserverOptions,
+  QueryObserverPlaceholderResult,
   QueryObserverResult,
   SkipToken,
 } from '@tanstack/query-core'
@@ -194,7 +196,7 @@ export interface UseSuspenseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > extends OmitKeyof<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+  'queryFn' | 'enabled' | 'throwOnError'
 > {
   /**
    * `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
@@ -276,7 +278,7 @@ export interface UseSuspenseInfiniteQueryOptions<
   TPageParam = unknown,
 > extends OmitKeyof<
   UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
-  'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+  'queryFn' | 'enabled' | 'throwOnError'
 > {
   /**
    * `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
@@ -316,23 +318,13 @@ export type UseQueryResult<
   TError = DefaultError,
 > = UseBaseQueryResult<TData, TError>
 
-/**
- * The result of `useSuspenseQuery`. Same as {@link DefinedUseQueryResult}, minus `isPlaceholderData` — always
- * `false` on that type, so this drops the dead field rather than an active state.
- * @template TData - The type `data` ends up as after `select` runs.
- * @template TError - The type of errors your `queryFn` may throw.
- */
-export type UseSuspenseQueryResult<
-  TData = unknown,
-  TError = DefaultError,
-> = DistributiveOmit<
-  DefinedQueryObserverResult<TData, TError>,
-  'isPlaceholderData'
->
+/** The result of `useSuspenseQuery`, including defined placeholder data when configured. */
+export type UseSuspenseQueryResult<TData = unknown, TError = DefaultError> =
+  | DefinedQueryObserverResult<TData, TError>
+  | QueryObserverPlaceholderResult<TData, TError>
 
 /**
- * The result of `useQuery` when `initialData` is set, or of `useSuspenseQuery` before the `isPlaceholderData`
- * omission — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * The result of `useQuery` when `initialData` is set. The `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
  * Re-exports {@link DefinedQueryObserverResult} from `@tanstack/query-core`.
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -366,18 +358,16 @@ export type DefinedUseInfiniteQueryResult<
 > = DefinedInfiniteQueryObserverResult<TData, TError>
 
 /**
- * The result of `useSuspenseInfiniteQuery`. Same as {@link DefinedUseInfiniteQueryResult}, minus
- * `isPlaceholderData` — Suspense hooks never render placeholder data.
+ * The result of `useSuspenseInfiniteQuery`, including defined placeholder data when configured.
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
 export type UseSuspenseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = OmitKeyof<
-  DefinedInfiniteQueryObserverResult<TData, TError>,
-  'isPlaceholderData'
->
+> =
+  | DefinedInfiniteQueryObserverResult<TData, TError>
+  | InfiniteQueryObserverPlaceholderResult<TData, TError>
 
 /**
  * {@link UseMutationOptions} with all type parameters set to `any`, useful when the specific types aren't

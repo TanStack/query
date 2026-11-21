@@ -1,5 +1,5 @@
+import { createKey } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
 import { QueriesObserver, QueryClient } from '..'
 import type {
   Query,
@@ -70,7 +70,7 @@ describe('queriesObserver', () => {
   describe('constructor', () => {
     it('should default the combined result to the array of results', () => {
       const observer = new QueriesObserver(queryClient, [
-        { queryKey: queryKey(), queryFn: () => Promise.resolve(1) },
+        { queryKey: createKey(), queryFn: () => Promise.resolve(1) },
       ])
 
       expectTypeOf(observer).toEqualTypeOf<
@@ -81,7 +81,7 @@ describe('queriesObserver', () => {
     it('should infer the combined result from combine', () => {
       const observer = new QueriesObserver(
         queryClient,
-        [{ queryKey: queryKey(), queryFn: () => Promise.resolve(1) }],
+        [{ queryKey: createKey(), queryFn: () => Promise.resolve(1) }],
         { combine: (results) => results.length },
       )
 
@@ -123,11 +123,11 @@ describe('queriesObserver', () => {
     it('should reject an option it does not declare on an observed query', () => {
       new QueriesObserver(queryClient, [
         // @ts-expect-error staleTimes is not a query option
-        { queryKey: queryKey(), staleTimes: 1000 },
+        { queryKey: createKey(), staleTimes: 1000 },
       ])
 
       const observer = new QueriesObserver(queryClient, [
-        { queryKey: queryKey(), staleTime: 1000 },
+        { queryKey: createKey(), staleTime: 1000 },
       ])
 
       expectTypeOf(observer).toEqualTypeOf<

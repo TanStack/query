@@ -1,5 +1,5 @@
-import { getCurrentScope, unref, watchEffect } from 'vue-demi'
 import { noop } from '@tanstack/query-core'
+import { getCurrentScope, unref, watchEffect } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type {

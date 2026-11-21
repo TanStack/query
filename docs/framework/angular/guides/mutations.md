@@ -270,5 +270,9 @@ queryClient.resumePausedMutations()
 [//]: # 'Example10'
 [//]: # 'Example11'
 [//]: # 'Example11'
+[//]: # 'OfflineExampleLink'
+[//]: # 'OfflineExampleLink'
 [//]: # 'Materials'
 [//]: # 'Materials'
+
+See [Error handling](./error-handling.md) to connect cache failures to Angular’s `ErrorHandler`.

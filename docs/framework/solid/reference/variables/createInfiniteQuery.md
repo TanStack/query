@@ -23,7 +23,7 @@ Defined in: [packages/solid-query/src/index.ts:72](https://github.com/TanStack/q
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
 
-This overload is selected when `initialData` is set.
+This overload is selected when `initialData` is known to be defined.
 
 ### Type Parameters
 
@@ -53,8 +53,8 @@ This overload is selected when `initialData` is set.
 
 [`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
-An accessor returning the [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfiniteOptions.md) to use — everything you
-can pass to `useInfiniteQuery`, with `initialData` set.
+An accessor returning the [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfiniteOptions.md) to use — everything
+you can pass to `useInfiniteQuery`, with `initialData` known to be defined.
 
 #### queryClient?
 

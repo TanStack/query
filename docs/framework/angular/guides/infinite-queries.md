@@ -10,7 +10,7 @@ replace:
 
 ```angular-ts
 import { Component, computed, inject } from '@angular/core'
-import { injectInfiniteQuery } from '@tanstack/angular-query-experimental'
+import { injectInfiniteQuery } from '@tanstack/angular-query'
 import { lastValueFrom } from 'rxjs'
 import { ProjectsService } from './projects-service'
 
@@ -102,6 +102,7 @@ export class Example {
 projectsQuery = injectInfiniteQuery(() => ({
   queryKey: ['projects'],
   queryFn: fetchProjects,
+  initialPageParam: 0,
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
 }))

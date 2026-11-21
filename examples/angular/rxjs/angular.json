@@ -50,9 +50,8 @@
             "outputPath": "dist/rxjs",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/mockServiceWorker.js"],
+            "assets": [{ "glob": "**/*", "input": "public" }],
             "styles": [],
             "scripts": []
           },
@@ -82,6 +81,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "prebundle": { "exclude": ["@angular"] }
+          },
           "configurations": {
             "production": {
               "buildTarget": "rxjs:build:production"

@@ -86,6 +86,11 @@ utilities:
       url: 'https://github.com/lukemorales/query-key-factory',
       description: 'A library for creating typesafe standardized query keys, useful for cache management in @tanstack/query',
     },
+    {
+      title: 'Query Key Kit',
+      url: 'https://github.com/amjadiqbal/query-key-kit',
+      description: 'Typed query-key hierarchy and scoped invalidation helpers for TanStack Query v5, returning queryOptions()-shaped objects with DataTag keys. Same API as query-key-factory (see the migration notes); framework-agnostic (built on query-core types).',
+    },
 
     {
       title: 'React Query Kit',

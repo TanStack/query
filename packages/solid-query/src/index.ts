@@ -1,15 +1,15 @@
 /* istanbul ignore file */
 
-import { useQuery } from './useQuery'
 import { useInfiniteQuery } from './useInfiniteQuery'
 import { useMutation } from './useMutation'
 import { useQueries } from './useQueries'
+import { useQuery } from './useQuery'
 
 // Re-export core
+// oxlint-disable-next-line tanstack-query/no-restricted-syntax
 export * from '@tanstack/query-core'
 
 // Solid Query
-export * from './types'
 
 export type {
   DefinedUseBaseQueryResult,

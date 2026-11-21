@@ -50,9 +50,8 @@
             "outputPath": "dist/simple",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [{ "glob": "**/*", "input": "public" }],
             "styles": ["src/styles.css"],
             "scripts": []
           },
@@ -82,6 +81,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "prebundle": { "exclude": ["@angular"] }
+          },
           "configurations": {
             "production": {
               "buildTarget": "simple:build:production"

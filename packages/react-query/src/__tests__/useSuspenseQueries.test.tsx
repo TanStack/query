@@ -1,3 +1,7 @@
+import { createKey, sleep } from '@tanstack/query-test-utils'
+import { act, fireEvent, render } from '@testing-library/react'
+import * as React from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
 import {
   afterAll,
   afterEach,
@@ -8,23 +12,19 @@ import {
   it,
   vi,
 } from 'vitest'
-import { act, fireEvent, render } from '@testing-library/react'
-import * as React from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   skipToken,
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import { renderWithClient } from './utils'
-import type { UseSuspenseQueryOptions } from '..'
+import { renderWithClient, renderWithSuspense } from './utils'
+import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from '..'
 
 describe('useSuspenseQueries', () => {
   let queryClient: QueryClient
-  const onSuspend = vi.fn()
-  const onQueriesResolution = vi.fn()
+  const onSuspend = vi.fn<() => void>()
+  const onQueriesResolution = vi.fn<(result: unknown) => void>()
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -46,7 +46,7 @@ describe('useSuspenseQueries', () => {
     return <div>loading</div>
   }
 
-  it('should suspend on mount', () => {
+  it('should suspend on mount', async () => {
     function Page() {
       const queriesResults = useSuspenseQueries(
         {
@@ -66,13 +66,15 @@ describe('useSuspenseQueries', () => {
       return null
     }
 
-    render(
-      <React.Suspense fallback={<SuspenseFallback />}>
-        <Page />
-      </React.Suspense>,
-    )
+    await act(() => {
+      render(
+        <React.Suspense fallback={<SuspenseFallback />}>
+          <Page />
+        </React.Suspense>,
+      )
+    })
 
-    expect(onSuspend).toHaveBeenCalledOnce()
+    expect(onSuspend).toHaveBeenCalledTimes(1)
   })
 
   it('should resolve queries', async () => {
@@ -88,26 +90,55 @@ describe('useSuspenseQueries', () => {
         queryClient,
       )
 
-      React.useEffect(() => {
-        onQueriesResolution(queriesResults)
-      }, [queriesResults])
-
-      return null
+      return <div>data: {queriesResults.join(',')}</div>
     }
 
-    render(
-      <React.Suspense fallback={<SuspenseFallback />}>
-        <Page />
-      </React.Suspense>,
+    const rendered = await renderWithSuspense(
+      queryClient,
+      <Page />,
+      <SuspenseFallback />,
     )
 
+    expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(1000))
-    expect(onQueriesResolution).toHaveBeenCalledTimes(1)
-    expect(onQueriesResolution).toHaveBeenLastCalledWith([1, 2])
+
+    expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
+  })
+
+  it('should start all suspense queries before suspending', async () => {
+    const queryFn1 = vi.fn<() => Promise<number>>(() =>
+      sleep(100).then(() => 1),
+    )
+    const queryFn2 = vi.fn<() => Promise<number>>(() =>
+      sleep(200).then(() => 2),
+    )
+
+    function Page() {
+      const results = useSuspenseQueries({
+        queries: [
+          { queryKey: [1], queryFn: queryFn1 },
+          { queryKey: [2], queryFn: queryFn2 },
+        ],
+      })
+
+      return <div>data: {results.map((result) => result.data).join(',')}</div>
+    }
+
+    const rendered = await renderWithSuspense(queryClient, <Page />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    expect(queryFn1).toHaveBeenCalledTimes(1)
+    expect(queryFn2).toHaveBeenCalledTimes(1)
+
+    await act(() => vi.advanceTimersByTimeAsync(100))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    await act(() => vi.advanceTimersByTimeAsync(100))
+    expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
   })
 
   it('should not suspend on mount if query has been already fetched', () => {
-    const key = queryKey()
+    const key = createKey()
     const queryFn = () => sleep(1000).then(() => 1)
 
     queryClient.setQueryData(key, queryFn)
@@ -160,29 +191,28 @@ describe('useSuspenseQueries', () => {
         queryClient,
       )
 
-      React.useEffect(() => {
-        onQueriesResolution(queriesResults)
-      }, [queriesResults])
-
-      return null
+      return <div>data: {queriesResults.join(',')}</div>
     }
 
-    const { rerender } = render(
-      <React.Suspense fallback={<SuspenseFallback />}>
-        <Page queries={initQueries} />
-      </React.Suspense>,
+    const rendered = await renderWithSuspense(
+      queryClient,
+      <Page queries={initQueries} />,
+      <SuspenseFallback />,
     )
 
-    rerender(
-      <React.Suspense fallback={<SuspenseFallback />}>
-        <Page queries={nextQueries} />
-      </React.Suspense>,
-    )
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    await act(() => {
+      rendered.rerender(
+        <React.Suspense fallback={<SuspenseFallback />}>
+          <Page queries={nextQueries} />
+        </React.Suspense>,
+      )
+    })
 
     await act(() => vi.advanceTimersByTimeAsync(1000))
     expect(onSuspend).toHaveBeenCalledTimes(1)
-    expect(onQueriesResolution).toHaveBeenCalledTimes(1)
-    expect(onQueriesResolution).toHaveBeenLastCalledWith([3, 4, 5, 6])
+    expect(rendered.getByText('data: 3,4,5,6')).toBeInTheDocument()
   })
 
   it('should suspend only once per queries change', async () => {
@@ -208,36 +238,41 @@ describe('useSuspenseQueries', () => {
         queryClient,
       )
 
-      React.useEffect(() => {
-        onQueriesResolution(queriesResults)
-      }, [queriesResults])
-
-      return null
+      return <div>data: {queriesResults.join(',')}</div>
     }
 
-    const { rerender } = render(
-      <React.Suspense fallback={<SuspenseFallback />}>
-        <Page queries={initQueries} />
-      </React.Suspense>,
+    const rendered = await renderWithSuspense(
+      queryClient,
+      <Page queries={initQueries} />,
+      <SuspenseFallback />,
     )
 
     await act(() => vi.advanceTimersByTimeAsync(1000))
 
-    rerender(
-      <React.Suspense fallback={<SuspenseFallback />}>
-        <Page queries={nextQueries} />
-      </React.Suspense>,
-    )
+    expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
 
+    await act(() => {
+      rendered.rerender(
+        <React.Suspense fallback={<SuspenseFallback />}>
+          <Page queries={nextQueries} />
+        </React.Suspense>,
+      )
+    })
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(1000))
     expect(onSuspend).toHaveBeenCalledTimes(2)
-    expect(onQueriesResolution).toHaveBeenCalledTimes(2)
-    expect(onQueriesResolution).toHaveBeenLastCalledWith([3, 4, 5, 6])
+    expect(rendered.getByText('data: 3,4,5,6')).toBeInTheDocument()
   })
 
   it('should only call combine after resolving', async () => {
-    const spy = vi.fn()
-    const key = queryKey()
+    const spy =
+      vi.fn<
+        (
+          result: Array<UseSuspenseQueryResult<{ value: number }, Error>>,
+        ) => void
+      >()
+    const key = createKey()
 
     function Page() {
       const data = useSuspenseQueries({
@@ -254,12 +289,7 @@ describe('useSuspenseQueries', () => {
       return <h1>{data}</h1>
     }
 
-    const rendered = renderWithClient(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
-    )
+    const rendered = await renderWithSuspense(queryClient, <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
 
@@ -267,14 +297,18 @@ describe('useSuspenseQueries', () => {
     await act(() => vi.advanceTimersByTimeAsync(30))
     expect(rendered.getByText('data')).toBeInTheDocument()
 
-    expect(spy).toHaveBeenCalled()
+    expect(spy).toHaveBeenCalledWith([
+      expect.objectContaining({ data: { value: 10 } }),
+      expect.objectContaining({ data: { value: 20 } }),
+      expect.objectContaining({ data: { value: 30 } }),
+    ])
   })
 
   it('should not call combine while reset queries are pending again', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-    const key = queryKey()
+      .mockReturnValue(undefined)
+    const key = createKey()
     let shouldError = false
 
     function Page() {
@@ -308,12 +342,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClient,
       <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-        <React.Suspense fallback="loading">
-          <Page />
-        </React.Suspense>
+        <Page />
       </ErrorBoundary>,
     )
 
@@ -323,21 +355,20 @@ describe('useSuspenseQueries', () => {
 
     shouldError = true
 
-    expect(() => {
+    await act(() => {
       fireEvent.click(rendered.getByText('reset'))
-    }).not.toThrow()
+    })
+
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
     expect(consoleErrorMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
-
-    consoleErrorMock.mockRestore()
   })
 
   it('should handle duplicate query keys without infinite loops', async () => {
-    const key = queryKey()
+    const key = createKey()
     const localDuration = 10
     let renderCount = 0
 
@@ -382,12 +413,7 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    renderWithClient(
-      queryClient,
-      <React.Suspense fallback={<SuspenseFallback />}>
-        <App />
-      </React.Suspense>,
-    )
+    await renderWithSuspense(queryClient, <App />, <SuspenseFallback />)
 
     await act(() => vi.advanceTimersByTimeAsync(localDuration))
     expect(onSuspend).toHaveBeenCalledTimes(1)
@@ -405,8 +431,8 @@ describe('useSuspenseQueries', () => {
   })
 
   it('should suspend all queries in parallel', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const results: Array<string> = []
 
     function Fallback() {
@@ -443,23 +469,22 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<Fallback />}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <Fallback />,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(20))
     expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
 
-    expect(results).toEqual(['loading', '1', '2'])
+    expect(results).toStrictEqual(['loading', '1', '2'])
   })
 
   it('should not unmount before all promises fetched', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const results: Array<string> = []
     const refs: Array<number> = []
 
@@ -500,18 +525,17 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<Fallback />}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <Fallback />,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(20))
     expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
 
-    expect(refs.length).toBe(2)
+    expect(refs).toHaveLength(2)
     expect(refs[0]).toBe(refs[1])
   })
 
@@ -539,11 +563,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<div>loading</div>}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <div>loading</div>,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -553,13 +576,17 @@ describe('useSuspenseQueries', () => {
     // go offline
     document.dispatchEvent(new CustomEvent('offline'))
 
-    fireEvent.click(rendered.getByText('fetch'))
+    await act(() => {
+      fireEvent.click(rendered.getByText('fetch'))
+    })
     expect(rendered.getByText('Data 0')).toBeInTheDocument()
 
     // go back online
     document.dispatchEvent(new CustomEvent('online'))
 
-    fireEvent.click(rendered.getByText('fetch'))
+    await act(() => {
+      fireEvent.click(rendered.getByText('fetch'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     // query should resume
@@ -567,10 +594,8 @@ describe('useSuspenseQueries', () => {
   })
 
   it('should throw error when a queryFn rejects with a falsy error', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-    const key = queryKey()
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
+    const key = createKey()
 
     function Page() {
       const [query] = useSuspenseQueries({
@@ -586,26 +611,23 @@ describe('useSuspenseQueries', () => {
       return <div>data: {String(query.data)}</div>
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClient,
       <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-        <React.Suspense fallback="loading">
-          <Page />
-        </React.Suspense>
+        <Page />
       </ErrorBoundary>,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-    consoleErrorMock.mockRestore()
   })
 
   it('should throw error when queryKey changes and new query fails', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-    const key = queryKey()
+      .mockReturnValue(undefined)
+    const key = createKey()
 
     function Page() {
       const [fail, setFail] = React.useState(false)
@@ -627,12 +649,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClient,
       <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-        <React.Suspense fallback="loading">
-          <Page />
-        </React.Suspense>
+        <Page />
       </ErrorBoundary>,
     )
 
@@ -640,7 +660,9 @@ describe('useSuspenseQueries', () => {
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('rendered: data')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByText('trigger fail'))
+    await act(() => {
+      fireEvent.click(rendered.getByText('trigger fail'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
@@ -648,13 +670,11 @@ describe('useSuspenseQueries', () => {
     expect(consoleErrorMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
-
-    consoleErrorMock.mockRestore()
   })
 
   it('keeps the current selection active while a query change is suspended', async () => {
-    const key = queryKey()
-    const extraKey = queryKey()
+    const key = createKey()
+    const extraKey = createKey()
     queryClient.setQueryData(key, 'First')
 
     function Page() {
@@ -720,7 +740,7 @@ describe('useSuspenseQueries', () => {
   })
 
   it('should keep previous data when wrapped in a transition', async () => {
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -741,25 +761,22 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = renderWithClient(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
-    )
+    const rendered = await renderWithSuspense(queryClient, <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data0')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByText('inc'))
+    await act(() => {
+      fireEvent.click(rendered.getByText('inc'))
+    })
     expect(rendered.getByText('pending')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data1')).toBeInTheDocument()
   })
 
   it('should not request old data inside transitions (issue #6486)', async () => {
-    const key = queryKey()
+    const key = createKey()
     let queryFnCount = 0
 
     function App() {
@@ -796,7 +813,7 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClient,
 
       <App />,
@@ -806,63 +823,191 @@ describe('useSuspenseQueries', () => {
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data0')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByText('inc'))
+    await act(() => {
+      fireEvent.click(rendered.getByText('inc'))
+    })
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data1')).toBeInTheDocument()
 
     expect(queryFnCount).toBe(2)
   })
 
-  it('should still suspense if queryClient has placeholderData config', async () => {
-    const key = queryKey()
+  it('should use queryClient placeholderData config', async () => {
+    const key = createKey()
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
-          placeholderData: (previousData: any) => previousData,
+          placeholderData: 'placeholder',
         },
       },
     })
+    const queryFn1 = vi.fn<(count: number) => Promise<string>>(
+      (count: number) => sleep(10).then(() => 'data1-' + count),
+    )
+    const queryFn2 = vi.fn<(count: number) => Promise<string>>(
+      (count: number) => sleep(10).then(() => 'data2-' + count),
+    )
 
     function Page() {
       const [count, setCount] = React.useState(0)
-      const [isPending, startTransition] = React.useTransition()
-      const { data } = useSuspenseQuery({
-        queryKey: [key, count],
-        queryFn: () => sleep(10).then(() => 'data' + count),
+      const [result1, result2] = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: [...key, 1, count],
+            queryFn: () => queryFn1(count),
+          },
+          {
+            queryKey: [...key, 2, count],
+            queryFn: () => queryFn2(count),
+          },
+        ],
       })
 
       return (
         <div>
-          <button onClick={() => startTransition(() => setCount(count + 1))}>
+          <button
+            onClick={() =>
+              React.startTransition(() => setCount((value) => value + 1))
+            }
+          >
             inc
           </button>
-          <div>{isPending ? 'pending' : data}</div>
+          <div>data1: {result1.data}</div>
+          <div>data2: {result2.data}</div>
+          <div>
+            placeholder: {String(result1.isPlaceholderData)},
+            {String(result2.isPlaceholderData)}
+          </div>
         </div>
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClientWithPlaceholder,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
+      <Page />,
+    )
+
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('data1: placeholder')).toBeInTheDocument()
+    expect(rendered.getByText('data2: placeholder')).toBeInTheDocument()
+    expect(rendered.getByText('placeholder: true,true')).toBeInTheDocument()
+    expect(queryFn1).toHaveBeenCalledTimes(1)
+    expect(queryFn2).toHaveBeenCalledTimes(1)
+
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data1: data1-0')).toBeInTheDocument()
+    expect(rendered.getByText('data2: data2-0')).toBeInTheDocument()
+
+    await act(() => {
+      fireEvent.click(rendered.getByText('inc'))
+    })
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('data1: placeholder')).toBeInTheDocument()
+    expect(rendered.getByText('data2: placeholder')).toBeInTheDocument()
+    expect(queryFn1).toHaveBeenCalledTimes(2)
+    expect(queryFn2).toHaveBeenCalledTimes(2)
+
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data1: data1-1')).toBeInTheDocument()
+    expect(rendered.getByText('data2: data2-1')).toBeInTheDocument()
+    expect(rendered.getByText('placeholder: false,false')).toBeInTheDocument()
+  })
+
+  it('should start placeholder and pending queries before suspending', async () => {
+    const key = createKey()
+    const placeholderQueryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data1'),
+    )
+    const pendingQueryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data2'),
+    )
+    const fallback = vi.fn<() => React.JSX.Element>(() => <div>loading</div>)
+
+    function Page() {
+      const [result1, result2] = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: [...key, 1],
+            queryFn: placeholderQueryFn,
+            placeholderData: 'placeholder',
+          },
+          { queryKey: [...key, 2], queryFn: pendingQueryFn },
+        ],
+      })
+
+      return (
+        <div>
+          {result1.data},{result2.data}
+        </div>
+      )
+    }
+
+    const rendered = await renderWithSuspense(
+      queryClient,
+      <Page />,
+      React.createElement(fallback),
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(10))
-    expect(rendered.getByText('data0')).toBeInTheDocument()
+    expect(fallback).toHaveBeenCalledTimes(1)
+    expect(placeholderQueryFn).toHaveBeenCalledTimes(1)
+    expect(pendingQueryFn).toHaveBeenCalledTimes(1)
 
-    fireEvent.click(rendered.getByText('inc'))
-    expect(rendered.getByText('pending')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(10))
-    expect(rendered.getByText('data1')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data1,data2')).toBeInTheDocument()
+    expect(fallback).toHaveBeenCalledTimes(1)
+    expect(placeholderQueryFn).toHaveBeenCalledTimes(1)
+    expect(pendingQueryFn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should use placeholderData with useDeferredValue', async () => {
+    const key = createKey()
+    const queryFn = vi.fn<(count: number) => Promise<string>>((count: number) =>
+      sleep(10).then(() => 'data' + count),
+    )
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      const deferredCount = React.useDeferredValue(count)
+      const [result] = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: [...key, deferredCount],
+            queryFn: () => queryFn(deferredCount),
+            placeholderData: 'placeholder',
+          },
+        ],
+      })
+
+      return (
+        <div>
+          <button onClick={() => setCount((value) => value + 1)}>inc</button>
+          <div>data: {result.data}</div>
+        </div>
+      )
+    }
+
+    const rendered = await renderWithSuspense(queryClient, <Page />)
+
+    expect(rendered.getByText('data: placeholder')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data: data0')).toBeInTheDocument()
+
+    await act(() => {
+      fireEvent.click(rendered.getByText('inc'))
+    })
+
+    expect(rendered.getByText('data: placeholder')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(2)
+
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data: data1')).toBeInTheDocument()
   })
 
   it('should show error boundary even with gcTime:0 (#7853)', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-    const key = queryKey()
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
+    const key = createKey()
     let count = 0
 
     function Page() {
@@ -894,15 +1039,13 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />)
+    const rendered = await renderWithSuspense(queryClient, <App />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('There was an error!')).toBeInTheDocument()
 
     expect(count).toBe(1)
-
-    consoleErrorMock.mockRestore()
   })
 
   describe('gc (with fake timers)', () => {
@@ -915,7 +1058,7 @@ describe('useSuspenseQueries', () => {
     })
 
     it('should gc when unmounted while fetching with low gcTime (#8159)', async () => {
-      const key = queryKey()
+      const key = createKey()
 
       function Page() {
         return (
@@ -950,26 +1093,28 @@ describe('useSuspenseQueries', () => {
         )
       }
 
-      const rendered = renderWithClient(queryClient, <App />)
+      const rendered = await renderWithSuspense(queryClient, <App />)
 
       expect(rendered.getByText('loading')).toBeInTheDocument()
 
-      fireEvent.click(rendered.getByText('hide'))
+      await act(() => {
+        fireEvent.click(rendered.getByText('hide'))
+      })
       expect(rendered.getByText('page2')).toBeInTheDocument()
       // wait for query to be resolved
       await vi.advanceTimersByTimeAsync(3000)
       expect(queryClient.getQueryData(key)).toBe('data')
       // wait for gc
       await vi.advanceTimersByTimeAsync(1000)
-      expect(queryClient.getQueryData(key)).toBe(undefined)
+      expect(queryClient.getQueryData(key)).toBeUndefined()
     })
   })
 
-  it('should log an error when skipToken is passed as queryFn', () => {
+  it('should log an error when skipToken is passed as queryFn', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useSuspenseQueries({
@@ -993,22 +1138,21 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    renderWithClient(queryClient, <App />)
+    await renderWithSuspense(queryClient, <App />)
 
     expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseQueries',
     )
-    consoleErrorMock.mockRestore()
   })
 
-  it('should log an error when skipToken is used in development environment', () => {
+  it('should log an error when skipToken is used in development environment', async () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-    const key = queryKey()
+      .mockReturnValue(undefined)
+    const key = createKey()
 
     function Page() {
       useSuspenseQueries({
@@ -1023,28 +1167,22 @@ describe('useSuspenseQueries', () => {
       return null
     }
 
-    renderWithClient(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
-    )
+    await renderWithSuspense(queryClient, <Page />)
 
     expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseQueries',
     )
-    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 
-  it('should not log an error when skipToken is used in production environment', () => {
+  it('should not log an error when skipToken is used in production environment', async () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'production'
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-    const key = queryKey()
+      .mockReturnValue(undefined)
+    const key = createKey()
 
     function Page() {
       useSuspenseQueries({
@@ -1059,21 +1197,15 @@ describe('useSuspenseQueries', () => {
       return null
     }
 
-    renderWithClient(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
-    )
+    await renderWithSuspense(queryClient, <Page />)
 
     expect(consoleErrorMock).not.toHaveBeenCalled()
-    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 
   it('should only suspend queries that are pending when the slower query already has data', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     queryClient.setQueryData(key1, 'cached')
 
@@ -1099,11 +1231,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<div>loading</div>}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <div>loading</div>,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1123,8 +1254,8 @@ describe('useSuspenseQueries', () => {
   })
 
   it('should only suspend queries that are pending when the faster query already has data', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     queryClient.setQueryData(key2, 'cached')
 
@@ -1150,11 +1281,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<div>loading</div>}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <div>loading</div>,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1173,15 +1303,19 @@ describe('useSuspenseQueries', () => {
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
   })
 
-  it('should not suspend and not refetch when all queries have fresh cached data', () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+  it('should not suspend and not refetch when all queries have fresh cached data', async () => {
+    const key1 = createKey()
+    const key2 = createKey()
 
     queryClient.setQueryData(key1, 'cached1')
     queryClient.setQueryData(key2, 'cached2')
 
-    const queryFn1 = vi.fn(() => sleep(20).then(() => 'data1'))
-    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data1'),
+    )
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'data2'),
+    )
 
     function Page() {
       const [result1, result2] = useSuspenseQueries({
@@ -1205,11 +1339,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<div>loading</div>}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <div>loading</div>,
     )
 
     // No suspend, fresh cached data shown immediately
@@ -1222,8 +1355,8 @@ describe('useSuspenseQueries', () => {
   })
 
   it('should not suspend and only refetch the stale query when one query has fresh and the other has stale cached data', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     queryClient.setQueryData(key1, 'cached1')
     queryClient.setQueryData(key2, 'cached2')
@@ -1234,7 +1367,9 @@ describe('useSuspenseQueries', () => {
     // Make key1 fresh again by resetting its data
     queryClient.setQueryData(key1, 'cached1')
 
-    const queryFn1 = vi.fn(() => sleep(20).then(() => 'data1'))
+    const queryFn1 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data1'),
+    )
 
     function Page() {
       const [result1, result2] = useSuspenseQueries({
@@ -1258,11 +1393,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<div>loading</div>}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <div>loading</div>,
     )
 
     // No suspend, cached data shown immediately
@@ -1288,8 +1422,8 @@ describe('useSuspenseQueries', () => {
   })
 
   it('should not suspend and only refetch the stale query when one query has stale and the other has fresh cached data', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     queryClient.setQueryData(key1, 'cached1')
     queryClient.setQueryData(key2, 'cached2')
@@ -1300,7 +1434,9 @@ describe('useSuspenseQueries', () => {
     // Make key2 fresh again by resetting its data
     queryClient.setQueryData(key2, 'cached2')
 
-    const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
+    const queryFn2 = vi.fn<() => Promise<string>>(() =>
+      sleep(20).then(() => 'data2'),
+    )
 
     function Page() {
       const [result1, result2] = useSuspenseQueries({
@@ -1324,11 +1460,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<div>loading</div>}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <div>loading</div>,
     )
 
     // No suspend, cached data shown immediately
@@ -1354,8 +1489,8 @@ describe('useSuspenseQueries', () => {
   })
 
   it('should not suspend but refetch when all queries have stale cached data', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
 
     queryClient.setQueryData(key1, 'cached1')
     queryClient.setQueryData(key2, 'cached2')
@@ -1385,11 +1520,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<div>loading</div>}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <div>loading</div>,
     )
 
     // No suspend, stale cached data shown immediately with background refetch started

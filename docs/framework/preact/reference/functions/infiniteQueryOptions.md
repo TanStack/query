@@ -33,7 +33,7 @@ You can generally pass everything to `infiniteQueryOptions` that you can also pa
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
 `options.queryKey` is required and is the query key to generate options for.
 
-This overload is selected when `initialData` is set.
+This overload is selected when `initialData` is known to be defined.
 
 ### Type Parameters
 
@@ -63,7 +63,7 @@ This overload is selected when `initialData` is set.
 
 [`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
-The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfiniteOptions.md) to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
+The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfiniteOptions.md) to use — everything you can pass to `useInfiniteQuery`, with `initialData` known to be defined.
 
 ### Returns
 

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query",
-  "version": "5.104.3",
+  "version": "5.108.2",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -80,8 +80,8 @@
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "@types/react": "^18 || ^19",
-    "react": "^18 || ^19"
+    "@types/react": "^19",
+    "react": "^19"
   },
   "peerDependenciesMeta": {
     "@types/react": {

@@ -1,27 +1,29 @@
+import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createApp, h, nextTick, shallowRef } from 'vue'
-import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
 import Devtools from '../devtools.vue'
 import DevtoolsPanel from '../devtoolsPanel.vue'
+import type { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { App } from 'vue'
 
 const { setClient, mount, unmount } = vi.hoisted(() => ({
-  setClient: vi.fn(),
-  mount: vi.fn(),
-  unmount: vi.fn(),
+  setClient: vi.fn<TanstackQueryDevtoolsPanel['setClient']>(),
+  mount: vi.fn<TanstackQueryDevtoolsPanel['mount']>(),
+  unmount: vi.fn<TanstackQueryDevtoolsPanel['unmount']>(),
 }))
 
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the mocked devtools classes have '#private' fields, and this environment cannot load the real Solid module
 vi.mock('@tanstack/query-devtools', () => {
   class MockDevtools {
     setClient = setClient
     mount = mount
     unmount = unmount
-    setButtonPosition = vi.fn()
-    setPosition = vi.fn()
-    setInitialIsOpen = vi.fn()
-    setErrorTypes = vi.fn()
-    setTheme = vi.fn()
-    setOnClose = vi.fn()
+    setButtonPosition = vi.fn<TanstackQueryDevtoolsPanel['setButtonPosition']>()
+    setPosition = vi.fn<TanstackQueryDevtoolsPanel['setPosition']>()
+    setInitialIsOpen = vi.fn<TanstackQueryDevtoolsPanel['setInitialIsOpen']>()
+    setErrorTypes = vi.fn<TanstackQueryDevtoolsPanel['setErrorTypes']>()
+    setTheme = vi.fn<TanstackQueryDevtoolsPanel['setTheme']>()
+    setOnClose = vi.fn<TanstackQueryDevtoolsPanel['setOnClose']>()
   }
   return {
     TanstackQueryDevtools: MockDevtools,
@@ -50,11 +52,11 @@ describe.each([
     app = createApp(() => h(component, { client: client.value }))
     app.mount(container)
 
-    expect(setClient).toHaveBeenLastCalledWith(first)
+    expect(setClient.mock.lastCall?.[0]).toBe(first)
     client.value = second
     await nextTick()
 
-    expect(setClient).toHaveBeenLastCalledWith(second)
+    expect(setClient.mock.lastCall?.[0]).toBe(second)
     expect(mount).toHaveBeenCalledTimes(1)
     expect(unmount).not.toHaveBeenCalled()
   })
@@ -68,14 +70,14 @@ describe.each([
     app.use(VueQueryPlugin, { queryClient: contextClient })
     app.mount(container)
 
-    expect(setClient).toHaveBeenLastCalledWith(contextClient)
+    expect(setClient.mock.lastCall?.[0]).toBe(contextClient)
     client.value = override
     await nextTick()
-    expect(setClient).toHaveBeenLastCalledWith(override)
+    expect(setClient.mock.lastCall?.[0]).toBe(override)
 
     client.value = undefined
     await nextTick()
-    expect(setClient).toHaveBeenLastCalledWith(contextClient)
+    expect(setClient.mock.lastCall?.[0]).toBe(contextClient)
     expect(mount).toHaveBeenCalledTimes(1)
   })
 })

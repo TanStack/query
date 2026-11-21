@@ -1,11 +1,10 @@
 'use client'
 import { InfiniteQueryObserver, skipToken } from '@tanstack/query-core'
-import { useBaseQuery } from './useBaseQuery'
 import { defaultThrowOnError } from './suspense'
+import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   InfiniteData,
-  InfiniteQueryObserverSuccessResult,
   QueryClient,
   QueryKey,
   QueryObserver,
@@ -127,9 +126,8 @@ export function useSuspenseInfiniteQuery<
       enabled: true,
       suspense: true,
       throwOnError: defaultThrowOnError,
-      placeholderData: undefined,
     },
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
-  ) as InfiniteQueryObserverSuccessResult<TData, TError>
+  ) as UseSuspenseInfiniteQueryResult<TData, TError>
 }

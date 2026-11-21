@@ -1,14 +1,14 @@
 <script lang="ts">
-  import type { QueryClient, QueryKey } from '@tanstack/query-core'
-  import { createMutation, setQueryClientContext } from '../../src/index.js'
   import { sleep } from '@tanstack/query-test-utils'
+  import { createMutation, setQueryClientContext } from '../../src/index.js'
+  import type { QueryClient, QueryKey } from '@tanstack/query-core'
 
   type Props = {
     queryClient: QueryClient
     queryKey: QueryKey
   }
 
-  const { queryClient, queryKey }: Props = $props()
+  let { queryClient, queryKey }: Props = $props()
 
   setQueryClientContext(queryClient)
 

@@ -9,7 +9,7 @@ title: SuspenseQueriesResults
 type SuspenseQueriesResults<T extends any[], TResults extends any[] = [], TDepth extends ReadonlyArray<number> = []> = TDepth["length"] extends MAXIMUM_DEPTH ? UseSuspenseQueryResult[] : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetUseSuspenseQueryResult<Head>] : T extends [infer Head, ...(infer Tails)] ? SuspenseQueriesResults<[...Tails], [...TResults, GetUseSuspenseQueryResult<Head>], [...TDepth, 1]> : { [K in keyof T]: GetUseSuspenseQueryResult<T[K]> };
 ```
 
-Defined in: [packages/preact-query/src/useSuspenseQueries.ts:167](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L167)
+Defined in: [packages/preact-query/src/useSuspenseQueries.ts:166](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L166)
 
 The result type returned by `useSuspenseQueries`, when no `combine` is provided. Mirrors
 [SuspenseQueriesOptions](SuspenseQueriesOptions.md): each tuple element's result type is inferred individually, up to 20 elements.

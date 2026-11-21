@@ -1,13 +1,20 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { LitElement } from 'lit'
 import { QueryClient } from '@tanstack/query-core'
+import { LitElement } from 'lit'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { BaseController } from '../controllers/BaseController.js'
 import { generateElementName } from './utils.js'
 import type { ReactiveControllerHost } from 'lit'
 
 const providerTagName = generateElementName()
-customElements.define(providerTagName, QueryClientProvider)
 
 class RecordingController extends BaseController<string> {
   readonly lifecycle: Array<string> = []
@@ -36,6 +43,10 @@ class RecordingController extends BaseController<string> {
 describe('BaseController', () => {
   let queryClient: QueryClient
   let container: HTMLElement
+
+  beforeAll(() => {
+    customElements.define(providerTagName, QueryClientProvider)
+  })
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -66,7 +77,7 @@ describe('BaseController', () => {
 
     const controller = new RecordingController(host)
     await vi.advanceTimersByTimeAsync(0)
-    expect(controller.lifecycle).toEqual([
+    expect(controller.lifecycle).toStrictEqual([
       'connected:missing',
       'changed:client',
     ])
@@ -87,7 +98,7 @@ describe('BaseController', () => {
     controller.hostConnected()
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(controller.lifecycle).toEqual([
+    expect(controller.lifecycle).toStrictEqual([
       'connected:missing',
       'changed:missing',
     ])

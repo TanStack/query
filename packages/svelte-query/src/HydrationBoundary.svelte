@@ -1,11 +1,11 @@
 <script lang="ts">
   import { useHydrate } from './useHydrate.js'
-  import type { Snippet } from 'svelte'
   import type {
     DehydratedState,
     HydrateOptions,
     QueryClient,
   } from '@tanstack/query-core'
+  import type { Snippet } from 'svelte'
 
   type Props = {
     children: Snippet
@@ -14,7 +14,7 @@
     queryClient?: QueryClient
   }
 
-  const { children, state, options, queryClient }: Props = $props()
+  let { children, state, options, queryClient }: Props = $props()
 
   useHydrate(state, options, queryClient)
 </script>

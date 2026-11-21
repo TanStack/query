@@ -1,8 +1,8 @@
 import { createValueAccessor, readAccessor } from './accessor.js'
 import { BaseController } from './controllers/BaseController.js'
-import type { Accessor, ValueAccessor } from './accessor.js'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
+import type { Accessor, ValueAccessor } from './accessor.js'
 
 /**
  * Accessor returned by `useIsFetching`.
@@ -18,7 +18,7 @@ class IsFetchingController extends BaseController<number> {
 
   constructor(
     host: ReactiveControllerHost,
-    private readonly filters: Accessor<QueryFilters> = {},
+    private readonly filters: Accessor<Omit<QueryFilters, 'fetchStatus'>> = {},
     queryClient?: QueryClient,
   ) {
     super(host, 0, queryClient)
@@ -140,7 +140,7 @@ class IsFetchingController extends BaseController<number> {
  */
 export function useIsFetching(
   host: ReactiveControllerHost,
-  filters: Accessor<QueryFilters> = {},
+  filters: Accessor<Omit<QueryFilters, 'fetchStatus'>> = {},
   queryClient?: QueryClient,
 ): IsFetchingAccessor {
   const controller = new IsFetchingController(host, filters, queryClient)

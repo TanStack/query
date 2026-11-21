@@ -1,10 +1,10 @@
-import { vi } from 'vitest'
-import * as React from 'react'
-import { act, render } from '@testing-library/react'
 import { environmentManager } from '@tanstack/query-core'
+import { act, render } from '@testing-library/react'
+import * as React from 'react'
+import { vi } from 'vitest'
 import { QueryClientProvider, onlineManager } from '..'
-import type { QueryClient } from '..'
 import type { MockInstance } from 'vitest'
+import type { QueryClient } from '..'
 
 export function renderWithClient(
   client: QueryClient,
@@ -22,6 +22,23 @@ export function renderWithClient(
   } as any
 }
 
+export async function renderWithSuspense(
+  client: QueryClient,
+  ui: React.ReactNode,
+  fallback: React.ReactNode = 'loading',
+): Promise<ReturnType<typeof renderWithClient>> {
+  let rendered!: ReturnType<typeof renderWithClient>
+
+  await act(() => {
+    rendered = renderWithClient(
+      client,
+      <React.Suspense fallback={fallback}>{ui}</React.Suspense>,
+    )
+  })
+
+  return rendered
+}
+
 export function Blink({
   duration,
   children,
@@ -32,7 +49,7 @@ export function Blink({
   const [shouldShow, setShouldShow] = React.useState<boolean>(true)
 
   React.useEffect(() => {
-    // oxlint-disable-next-line react-hooks-js/set-state-in-effect
+    // oxlint-disable-next-line react-hooks-js/set-state-in-effect -- shows the children again whenever they or 'duration' change, before the timeout hides them
     setShouldShow(true)
     const timeout = setActTimeout(() => setShouldShow(false), duration)
     return () => {

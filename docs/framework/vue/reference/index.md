@@ -147,6 +147,7 @@ title: "@tanstack/vue-query"
 - [UndefinedInitialQueryOptionsWithDataTag](type-aliases/UndefinedInitialQueryOptionsWithDataTag.md)
 - [UnsetMarker](type-aliases/UnsetMarker.md)
 - [Updater](type-aliases/Updater.md)
+- [UseInfiniteQueryDefinedReturnType](type-aliases/UseInfiniteQueryDefinedReturnType.md)
 - [UseInfiniteQueryOptions](type-aliases/UseInfiniteQueryOptions.md)
 - [UseInfiniteQueryReturnType](type-aliases/UseInfiniteQueryReturnType.md)
 - [UseIsFetchingFilters](type-aliases/UseIsFetchingFilters.md)
@@ -160,6 +161,7 @@ title: "@tanstack/vue-query"
 - [UseQueryDefinedReturnType](type-aliases/UseQueryDefinedReturnType.md)
 - [UseQueryOptions](type-aliases/UseQueryOptions.md)
 - [UseQueryReturnType](type-aliases/UseQueryReturnType.md)
+- [VueQueryEnabledOption](type-aliases/VueQueryEnabledOption.md)
 - [VueQueryPluginOptions](type-aliases/VueQueryPluginOptions.md)
 - [WithRequired](type-aliases/WithRequired.md)
 

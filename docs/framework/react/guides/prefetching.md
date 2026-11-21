@@ -31,7 +31,7 @@ Prefetching a query uses the `query` method. This method by default will
 For prefetching you often want to modify these defaults:
 
 - Out of the box, `query` uses the default `staleTime` configured for the `queryClient` to determine whether existing data in the cache is fresh or needs to be fetched again
-- You can also pass a specific `staleTime` like this: `query({ queryKey: ['todos'], queryFn: fn, staleTime: 5000 })`
+- You can also pass a specific `staleTime` like this: `query({ queryKey: ['todos'], queryFn: fn, staleTime: 5 * 1000 })`
   - This `staleTime` is only used for that query fetch, you still need to set it for any `useQuery` call as well
   - If you want to always return data if it's available in the cache regardless of the default `staleTime`, you can pass `"static"` in for `staleTime`.
   - Tip: If you are prefetching on the server, set a default `staleTime` higher than `0` for that `queryClient` to avoid having to pass in a specific `staleTime` to each prefetch call
@@ -58,7 +58,7 @@ const prefetchTodos = async () => {
 
 [//]: # 'ExamplePrefetchQuery'
 
-Infinite Queries can be prefetched like regular Queries. By default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option, in which case you also have to provide a `getNextPageParam` function:
+Pass `getNextPageParam` when you prefetch an infinite query. On an empty cache, the client fetches the first page by default. Use `pages` to request more pages. If the cache already contains stale pages and you omit `pages`, the client refetches up to the number of cached pages.
 
 [//]: # 'ExamplePrefetchInfiniteQuery'
 
@@ -98,7 +98,7 @@ function ShowDetailsButton() {
       queryFn: getDetailsData,
       // Prefetch only fires when data is older than the staleTime,
       // so in a case like this you definitely want to set one
-      staleTime: 60000,
+      staleTime: 60 * 1000,
     }).catch(noop)
   }
 
@@ -442,7 +442,7 @@ const articleRoute = new Route({
 })
 ```
 
-Integration with other routers is also possible, see the [react-router](../examples/react-router) for another demonstration.
+Integration with other routers is also possible, see the [contacts-react-router](../examples/contacts-react-router) for another demonstration.
 
 [//]: # 'Router'
 

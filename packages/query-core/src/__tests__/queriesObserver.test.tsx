@@ -1,5 +1,5 @@
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueriesObserver, QueryClient, QueryObserver } from '..'
 import type { QueryObserverResult } from '..'
 
@@ -19,22 +19,26 @@ describe('queriesObserver', () => {
 
   describe('result readers', () => {
     it('keeps active queries and combine state unchanged until commit', () => {
-      const keyA = queryKey()
-      const keyB = queryKey()
+      const keyA = createKey()
+      const keyB = createKey()
       queryClient.setQueryData(keyA, 1)
       queryClient.setQueryData(keyB, 10)
       const optionsA = { queryKey: keyA, staleTime: Infinity }
       const optionsB = { queryKey: keyB, staleTime: Infinity }
-      const combineA = vi.fn((results: Array<QueryObserverResult>) => ({
+      const combineA = vi.fn<
+        (results: Array<QueryObserverResult>) => { data: unknown }
+      >((results: Array<QueryObserverResult>) => ({
         data: results[0]!.data,
       }))
-      const combineB = vi.fn((results: Array<QueryObserverResult>) => ({
+      const combineB = vi.fn<
+        (results: Array<QueryObserverResult>) => { data: unknown }
+      >((results: Array<QueryObserverResult>) => ({
         data: results[0]!.data,
       }))
       const observer = new QueriesObserver(queryClient, [optionsA], {
         combine: combineA,
       })
-      const listener = vi.fn()
+      const listener = vi.fn<() => void>()
       const unsubscribe = observer.subscribe(listener)
       const readerA = observer.createResultReader([optionsA], {
         combine: combineA,
@@ -48,7 +52,7 @@ describe('queriesObserver', () => {
         combine: combineB,
       })
       const snapshotB = readerB.getSnapshot()
-      expect(readerB.combineResult(snapshotB)).toEqual({ data: 10 })
+      expect(readerB.combineResult(snapshotB)).toStrictEqual({ data: 10 })
       expect(readerA.getSnapshot()).toBe(snapshotA)
       expect(readerA.combineResult(snapshotA)).toBe(combinedA)
       expect(observer.getCurrentResult()).toBe(current)
@@ -62,19 +66,21 @@ describe('queriesObserver', () => {
 
       queryClient.setQueryData(keyA, 2)
       expect(listener).toHaveBeenCalledTimes(1)
-      expect(readerA.combineResult(readerA.getSnapshot())).toEqual({ data: 2 })
+      expect(readerA.combineResult(readerA.getSnapshot())).toStrictEqual({
+        data: 2,
+      })
       expect(combineB).toHaveBeenCalledTimes(1)
 
       listener.mockClear()
       readerB.commit()
       expect(listener).toHaveBeenCalledTimes(1)
-      expect(observer.getQueries()[0]!.queryKey).toEqual(keyB)
+      expect(observer.getQueries()[0]!.queryKey).toStrictEqual(keyB)
       listener.mockClear()
       queryClient.setQueryData(keyA, 3)
       expect(listener).not.toHaveBeenCalled()
       queryClient.setQueryData(keyB, 11)
       expect(listener).toHaveBeenCalledTimes(1)
-      expect(readerB.combineResult(readerB.getSnapshot())).toEqual({
+      expect(readerB.combineResult(readerB.getSnapshot())).toStrictEqual({
         data: 11,
       })
       unsubscribe()
@@ -82,7 +88,7 @@ describe('queriesObserver', () => {
 
     it('keeps the snapshot stable when predicted fetching starts', async () => {
       const options = queryClient.defaultQueryOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => sleep(10).then(() => 'data'),
         _optimisticResults: 'optimistic',
       })
@@ -101,11 +107,13 @@ describe('queriesObserver', () => {
     })
 
     it('reuses selection when committing added and reordered queries', () => {
-      const keyA = queryKey()
-      const keyB = queryKey()
+      const keyA = createKey()
+      const keyB = createKey()
       queryClient.setQueryData(keyA, { value: 1 })
       queryClient.setQueryData(keyB, { value: 2 })
-      const select = vi.fn((data: { value: number }) => [data.value])
+      const select = vi.fn<(data: { value: number }) => Array<number>>(
+        (data: { value: number }) => [data.value],
+      )
       const optionsA = { queryKey: keyA, staleTime: Infinity }
       const optionsB = {
         queryKey: keyB,
@@ -120,36 +128,39 @@ describe('queriesObserver', () => {
       reader.commit()
       expect(select).toHaveBeenCalledTimes(1)
       expect(observer.getCurrentResult()[0]!.data).toBe(snapshot[0]!.data)
-      expect(observer.getQueries().map((query) => query.queryKey)).toEqual([
-        keyB,
-        keyA,
-      ])
+      expect(
+        observer.getQueries().map((query) => query.queryKey),
+      ).toStrictEqual([keyB, keyA])
       unsubscribe()
     })
 
     it('checks cache updates between reading and committing', () => {
-      const key = queryKey()
+      const key = createKey()
       queryClient.setQueryData(key, 1)
-      const select = vi.fn((data: number) => [data])
+      const select = vi.fn<(data: number) => Array<number>>((data: number) => [
+        data,
+      ])
       const options = { queryKey: key, select, structuralSharing: false }
       const observer = new QueriesObserver(queryClient, [])
       const reader = observer.createResultReader([options])
       const snapshot = reader.getSnapshot()
       queryClient.setQueryData(key, 2)
       reader.commit()
-      expect(observer.getCurrentResult()[0]!.data).toEqual([2])
+      expect(observer.getCurrentResult()[0]!.data).toStrictEqual([2])
       expect(observer.getCurrentResult()[0]!.data).not.toBe(snapshot[0]!.data)
       expect(select).toHaveBeenCalledTimes(2)
     })
 
     it('combines the complete result when several selectors change on commit', () => {
-      const keys = [queryKey(), queryKey()]
+      const keys = [createKey(), createKey()]
       keys.forEach((key, index) => queryClient.setQueryData(key, index + 1))
       const queries = keys.map((key) => ({
         queryKey: key,
         staleTime: Infinity,
       }))
-      const combine = vi.fn((results: Array<QueryObserverResult>) =>
+      const combine = vi.fn<
+        (results: Array<QueryObserverResult>) => Array<unknown>
+      >((results: Array<QueryObserverResult>) =>
         results.map((result) => result.data),
       )
       const observer = new QueriesObserver(queryClient, queries, { combine })
@@ -166,47 +177,71 @@ describe('queriesObserver', () => {
         { combine },
       )
       const snapshot = reader.getSnapshot()
-      expect(reader.combineResult(snapshot)).toEqual([10, 20])
+      expect(reader.combineResult(snapshot)).toStrictEqual([10, 20])
       reader.commit()
       expect(combine).toHaveBeenCalledTimes(1)
-      expect(observer.getCurrentResult().map((result) => result.data)).toEqual([
-        10, 20,
-      ])
+      expect(
+        observer.getCurrentResult().map((result) => result.data),
+      ).toStrictEqual([10, 20])
       unsubscribe()
     })
 
     it('updates a stable combine when only selection options change', () => {
-      const key = queryKey()
+      const key = createKey()
       queryClient.setQueryData(key, 2)
       const options = { queryKey: key, staleTime: Infinity }
-      const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+      const combine = vi.fn<
+        (results: Array<QueryObserverResult>) => { data: unknown }
+      >((results: Array<QueryObserverResult>) => ({
         data: results[0]!.data,
       }))
       const observer = new QueriesObserver(queryClient, [options], { combine })
       const first = observer.createResultReader([options], { combine })
-      expect(first.combineResult(first.getSnapshot())).toEqual({ data: 2 })
+      expect(first.combineResult(first.getSnapshot())).toStrictEqual({
+        data: 2,
+      })
       first.commit()
       const second = observer.createResultReader(
         [{ ...options, select: (data: number) => data * 3 }],
         { combine },
       )
-      expect(second.combineResult(second.getSnapshot())).toEqual({ data: 6 })
+      expect(second.combineResult(second.getSnapshot())).toStrictEqual({
+        data: 6,
+      })
       expect(observer.getCurrentResult()[0]!.data).toBe(2)
       second.commit()
       const third = observer.createResultReader(
         [{ ...options, select: (data: number) => data * 3 }],
         { combine },
       )
-      expect(third.combineResult(third.getSnapshot())).toEqual({ data: 6 })
+      expect(third.combineResult(third.getSnapshot())).toStrictEqual({
+        data: 6,
+      })
       expect(combine).toHaveBeenCalledTimes(2)
     })
   })
 
+  it('keeps the current snapshot during an optimistic read for a different query list', () => {
+    const first = { queryKey: createKey(), enabled: false, placeholderData: 1 }
+    const second = { queryKey: createKey(), enabled: false, placeholderData: 2 }
+    const third = { queryKey: createKey(), enabled: false, placeholderData: 3 }
+    const observer = new QueriesObserver(queryClient, [first, second])
+    const current = observer.getCurrentResult()
+
+    const [optimistic] = observer.getOptimisticResult(
+      [{ ...first, placeholderData: 4 }, third],
+      undefined,
+    )
+
+    expect(optimistic.map((result) => result.data)).toStrictEqual([4, 3])
+    expect(observer.getCurrentResult()).toBe(current)
+  })
+
   it('should return an array with all query results', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -222,10 +257,10 @@ describe('queriesObserver', () => {
   })
 
   it('should return current queries via getQueries', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -236,17 +271,17 @@ describe('queriesObserver', () => {
     const queries = observer.getQueries()
 
     expect(queries).toHaveLength(2)
-    expect(queries[0]?.queryKey).toEqual(key1)
-    expect(queries[1]?.queryKey).toEqual(key2)
+    expect(queries[0]?.queryKey).toStrictEqual(key1)
+    expect(queries[1]?.queryKey).toStrictEqual(key2)
 
     unsubscribe()
   })
 
   it('should update when a query updates', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -260,7 +295,7 @@ describe('queriesObserver', () => {
     queryClient.setQueryData(key2, 3)
     unsubscribe()
 
-    expect(results.length).toBe(6)
+    expect(results).toHaveLength(6)
     expect(results[0]).toMatchObject([
       { status: 'pending', fetchStatus: 'idle', data: undefined },
       { status: 'pending', fetchStatus: 'idle', data: undefined },
@@ -288,10 +323,10 @@ describe('queriesObserver', () => {
   })
 
   it('should return current observers via getObservers', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -309,10 +344,10 @@ describe('queriesObserver', () => {
   })
 
   it('should update when a query is removed', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -330,12 +365,12 @@ describe('queriesObserver', () => {
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
     expect(
       queryCache.find({ queryKey: key2, type: 'active' })?.queryKey,
-    ).toEqual(key2)
+    ).toStrictEqual(key2)
 
     unsubscribe()
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
     expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeUndefined()
-    expect(results.length).toBe(6)
+    expect(results).toHaveLength(6)
     expect(results[0]).toMatchObject([
       { status: 'pending', fetchStatus: 'idle', data: undefined },
       { status: 'pending', fetchStatus: 'idle', data: undefined },
@@ -360,10 +395,10 @@ describe('queriesObserver', () => {
   })
 
   it('should update when a query changed position', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -381,7 +416,7 @@ describe('queriesObserver', () => {
 
     unsubscribe()
 
-    expect(results.length).toBe(6)
+    expect(results).toHaveLength(6)
     expect(results[0]).toMatchObject([
       { status: 'pending', fetchStatus: 'idle', data: undefined },
       { status: 'pending', fetchStatus: 'idle', data: undefined },
@@ -409,10 +444,10 @@ describe('queriesObserver', () => {
   })
 
   it('should not update when nothing has changed', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -430,7 +465,7 @@ describe('queriesObserver', () => {
 
     unsubscribe()
 
-    expect(results.length).toBe(5)
+    expect(results).toHaveLength(5)
     expect(results[0]).toMatchObject([
       { status: 'pending', fetchStatus: 'idle', data: undefined },
       { status: 'pending', fetchStatus: 'idle', data: undefined },
@@ -454,10 +489,10 @@ describe('queriesObserver', () => {
   })
 
   it('should trigger all fetches when subscribed', () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -471,7 +506,7 @@ describe('queriesObserver', () => {
   })
 
   it('should not destroy the observer if there is still a subscription', async () => {
-    const key1 = queryKey()
+    const key1 = createKey()
     const observer = new QueriesObserver(queryClient, [
       {
         queryKey: key1,
@@ -479,8 +514,10 @@ describe('queriesObserver', () => {
       },
     ])
 
-    const subscription1Handler = vi.fn()
-    const subscription2Handler = vi.fn()
+    const subscription1Handler =
+      vi.fn<(result: Array<QueryObserverResult>) => void>()
+    const subscription2Handler =
+      vi.fn<(result: Array<QueryObserverResult>) => void>()
 
     const unsubscribe1 = observer.subscribe(subscription1Handler)
     const unsubscribe2 = observer.subscribe(subscription2Handler)
@@ -498,10 +535,10 @@ describe('queriesObserver', () => {
   })
 
   it('should handle duplicate query keys in different positions', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
 
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
@@ -529,7 +566,7 @@ describe('queriesObserver', () => {
 
     unsubscribe()
 
-    expect(results.length).toBe(6)
+    expect(results).toHaveLength(6)
     expect(results[0]).toMatchObject([
       { status: 'pending', fetchStatus: 'idle', data: undefined },
       { status: 'pending', fetchStatus: 'idle', data: undefined },
@@ -567,10 +604,10 @@ describe('queriesObserver', () => {
   })
 
   it('should notify when results change during early return', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
 
     queryClient.setQueryData(key1, 1)
     queryClient.setQueryData(key2, 2)
@@ -583,9 +620,11 @@ describe('queriesObserver', () => {
     const results: Array<Array<QueryObserverResult>> = []
     results.push(observer.getCurrentResult())
 
-    const onUpdate = vi.fn((result: Array<QueryObserverResult>) => {
-      results.push(result)
-    })
+    const onUpdate = vi.fn<(result: Array<QueryObserverResult>) => void>(
+      (result: Array<QueryObserverResult>) => {
+        results.push(result)
+      },
+    )
     const unsubscribe = observer.subscribe(onUpdate)
     const baseline = results.length
 
@@ -614,15 +653,20 @@ describe('queriesObserver', () => {
   })
 
   it('should update combined result when queries are added with stable combine reference', () => {
-    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+    const combine = vi.fn<
+      (results: Array<QueryObserverResult>) => {
+        count: number
+        results: Array<QueryObserverResult>
+      }
+    >((results: Array<QueryObserverResult>) => ({
       count: results.length,
       results,
     }))
 
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
 
     const observer = new QueriesObserver<{
       count: number
@@ -651,8 +695,10 @@ describe('queriesObserver', () => {
   })
 
   it('should skip combine notifications while suspense queries have no data', () => {
-    const key = queryKey()
-    const combine = vi.fn((results: Array<QueryObserverResult>) =>
+    const key = createKey()
+    const combine = vi.fn<
+      (results: Array<QueryObserverResult>) => Array<unknown>
+    >((results: Array<QueryObserverResult>) =>
       results.map((result) => result.data),
     )
     const query = {
@@ -672,7 +718,7 @@ describe('queriesObserver', () => {
       [query],
       combine,
     )
-    expect(getCombinedResult(rawResult)).toEqual(['data'])
+    expect(getCombinedResult(rawResult)).toStrictEqual(['data'])
     expect(combine).toHaveBeenCalledTimes(1)
 
     const unsubscribe = observer.subscribe(() => undefined)
@@ -684,8 +730,10 @@ describe('queriesObserver', () => {
   })
 
   it('should skip combine notifications after suspense is enabled without structural changes', () => {
-    const key = queryKey()
-    const combine = vi.fn((results: Array<QueryObserverResult>) =>
+    const key = createKey()
+    const combine = vi.fn<
+      (results: Array<QueryObserverResult>) => Array<unknown>
+    >((results: Array<QueryObserverResult>) =>
       results.map((result) => result.data),
     )
     const query = {
@@ -705,7 +753,7 @@ describe('queriesObserver', () => {
       [query],
       combine,
     )
-    expect(getCombinedResult(rawResult)).toEqual(['data'])
+    expect(getCombinedResult(rawResult)).toStrictEqual(['data'])
     expect(combine).toHaveBeenCalledTimes(1)
 
     const unsubscribe = observer.subscribe(() => undefined)
@@ -727,15 +775,20 @@ describe('queriesObserver', () => {
   })
 
   it('should handle queries being removed with stable combine reference', () => {
-    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+    const combine = vi.fn<
+      (results: Array<QueryObserverResult>) => {
+        count: number
+        results: Array<QueryObserverResult>
+      }
+    >((results: Array<QueryObserverResult>) => ({
       count: results.length,
       results,
     }))
 
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
 
     const observer = new QueriesObserver<{
       count: number
@@ -771,15 +824,20 @@ describe('queriesObserver', () => {
   })
 
   it('should update combined result when queries are replaced with different ones (same length)', () => {
-    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+    const combine = vi.fn<
+      (results: Array<QueryObserverResult>) => {
+        keys: Array<'error' | 'success' | 'pending'>
+        results: Array<QueryObserverResult>
+      }
+    >((results: Array<QueryObserverResult>) => ({
       keys: results.map((r) => r.status),
       results,
     }))
 
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
 
     queryClient.setQueryData(key1, 'cached-1')
 
@@ -794,7 +852,7 @@ describe('queriesObserver', () => {
     )
     const initialCombined = getInitialCombined(initialRaw)
 
-    expect(initialCombined.keys).toEqual(['success'])
+    expect(initialCombined.keys).toStrictEqual(['success'])
 
     const [newRaw, getNewCombined] = observer.getOptimisticResult(
       [{ queryKey: key2, queryFn: queryFn2 }],
@@ -802,21 +860,25 @@ describe('queriesObserver', () => {
     )
     const newCombined = getNewCombined(newRaw)
 
-    expect(newCombined.keys).toEqual(['pending'])
+    expect(newCombined.keys).toStrictEqual(['pending'])
   })
 
   it('should recalculate combined result when combine function changes', () => {
-    const combine1 = vi.fn((results: Array<QueryObserverResult>) => ({
+    const combine1 = vi.fn<
+      (results: Array<QueryObserverResult>) => { total: number }
+    >((results: Array<QueryObserverResult>) => ({
       total: results.length,
     }))
-    const combine2 = vi.fn((results: Array<QueryObserverResult>) => ({
+    const combine2 = vi.fn<
+      (results: Array<QueryObserverResult>) => { total: number }
+    >((results: Array<QueryObserverResult>) => ({
       total: results.length * 4,
     }))
 
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
 
     const queries = [
       { queryKey: key1, queryFn: queryFn1 },
@@ -840,12 +902,14 @@ describe('queriesObserver', () => {
   })
 
   it('should use fallback result when combineResult is called without raw argument', () => {
-    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+    const combine = vi.fn<
+      (results: Array<QueryObserverResult>) => { count: number }
+    >((results: Array<QueryObserverResult>) => ({
       count: results.length,
     }))
 
-    const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue(1)
+    const key = createKey()
+    const queryFn = vi.fn<() => number>().mockReturnValue(1)
 
     const observer = new QueriesObserver<{ count: number }>(
       queryClient,
@@ -863,8 +927,8 @@ describe('queriesObserver', () => {
   })
 
   it('should return observer result directly when notifyOnChangeProps is set', () => {
-    const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue(1)
+    const key = createKey()
+    const queryFn = vi.fn<() => number>().mockReturnValue(1)
 
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key, queryFn, notifyOnChangeProps: ['data'] },
@@ -882,17 +946,17 @@ describe('queriesObserver', () => {
     expect(trackedResults).toHaveLength(1)
     // trackResult should NOT be called when notifyOnChangeProps is set
     expect(trackResultSpy).not.toHaveBeenCalled()
-
-    trackResultSpy.mockRestore()
   })
 
   it('should return cached combined result when nothing has changed', () => {
-    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+    const combine = vi.fn<
+      (results: Array<QueryObserverResult>) => { count: number }
+    >((results: Array<QueryObserverResult>) => ({
       count: results.length,
     }))
 
-    const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue(1)
+    const key = createKey()
+    const queryFn = vi.fn<() => number>().mockReturnValue(1)
 
     const queries = [{ queryKey: key, queryFn }]
 
@@ -924,8 +988,10 @@ describe('queriesObserver', () => {
   ])(
     'should cache the falsy combined result %s when nothing has changed',
     (_name, value) => {
-      const combine = vi.fn(() => value)
-      const key = queryKey()
+      const combine = vi.fn<
+        () => string | number | bigint | boolean | null | undefined
+      >(() => value)
+      const key = createKey()
       const queries = [{ queryKey: key, queryFn: () => 1 }]
       const observer = new QueriesObserver<typeof value>(queryClient, queries, {
         combine,
@@ -948,8 +1014,8 @@ describe('queriesObserver', () => {
   )
 
   it('should track properties on all observers when trackResult is called', () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
+    const key1 = createKey()
+    const key2 = createKey()
     const queryFn1 = () => 'data1'
     const queryFn2 = () => 'data2'
 
@@ -983,17 +1049,15 @@ describe('queriesObserver', () => {
     void trackedResults[1]!.status
 
     expect(trackPropSpy).toHaveBeenCalledTimes(4)
-
-    trackPropSpy.mockRestore()
   })
 
   it('should subscribe to new observers when a query is added while subscribed', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
-    const queryFn1 = vi.fn().mockReturnValue(1)
-    const queryFn2 = vi.fn().mockReturnValue(2)
-    const queryFn3 = vi.fn(() => sleep(10).then(() => 3))
+    const key1 = createKey()
+    const key2 = createKey()
+    const key3 = createKey()
+    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
+    const queryFn3 = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 3))
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },

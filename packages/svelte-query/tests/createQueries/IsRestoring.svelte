@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { QueryClient } from '@tanstack/query-core'
-  import { queryKey } from '@tanstack/query-test-utils'
+  import { createKey } from '@tanstack/query-test-utils'
   import {
     setIsRestoringContext,
     setQueryClientContext,
   } from '../../src/context.js'
   import { createQueries } from '../../src/index.js'
+  import type { QueryClient } from '@tanstack/query-core'
 
   type Props = {
     queryClient: QueryClient
@@ -20,8 +20,8 @@
 
   const result = createQueries(() => ({
     queries: [
-      { queryKey: queryKey(), queryFn: queryFn1 },
-      { queryKey: queryKey(), queryFn: queryFn2 },
+      { queryKey: createKey(), queryFn: queryFn1 },
+      { queryKey: createKey(), queryFn: queryFn2 },
     ],
   }))
 </script>

@@ -1,9 +1,9 @@
-import { LitElement, html } from 'lit'
 import {
   QueryClient,
   QueryClientProvider,
   createQueryController,
 } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 
 type ContractProbeData = {
   provider: 'provider-a' | 'provider-b'
@@ -103,7 +103,7 @@ class LifecycleContractConsumer extends LitElement {
           payload: ${query.data?.payload ?? 'none'}
         </div>
         <div data-testid="contract-error">
-          error: ${query.error ? String(query.error) : 'none'}
+          error: ${query.error ? query.error.message : 'none'}
         </div>
       `
     } catch (error) {

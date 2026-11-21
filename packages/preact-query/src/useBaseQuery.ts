@@ -1,6 +1,5 @@
 import { noop, notifyManager } from '@tanstack/query-core'
 import { useCallback, useEffect, useState } from 'preact/hooks'
-
 import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
@@ -15,13 +14,13 @@ import {
   shouldSuspend,
 } from './suspense'
 import { useSyncExternalStore } from './utils'
-import type { UseBaseQueryOptions } from './types'
 import type {
   QueryClient,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import type { UseBaseQueryOptions } from './types'
 
 /**
  * Base implementation shared by `useQuery`, `useInfiniteQuery`, `useSuspenseQuery`, and
@@ -109,6 +108,10 @@ export function useBaseQuery<
     throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
   }
 
+  useEffect(() => {
+    reader.commit()
+  }, [reader])
+
   const shouldSubscribe = !isRestoring && subscribed
   const result = useSyncExternalStore(
     useCallback(
@@ -127,10 +130,6 @@ export function useBaseQuery<
     ),
     reader.getSnapshot,
   )
-
-  useEffect(() => {
-    reader.commit()
-  }, [reader])
 
   // Handle error boundary
   if (

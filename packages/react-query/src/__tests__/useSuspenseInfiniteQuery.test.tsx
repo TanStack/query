@@ -1,14 +1,15 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryCache,
   QueryClient,
+  keepPreviousData,
   skipToken,
   useSuspenseInfiniteQuery,
 } from '..'
-import { renderWithClient } from './utils'
+import { renderWithSuspense } from './utils'
 import type { InfiniteData, UseSuspenseInfiniteQueryResult } from '..'
 
 describe('useSuspenseInfiniteQuery', () => {
@@ -27,7 +28,7 @@ describe('useSuspenseInfiniteQuery', () => {
   })
 
   it('should return the correct states for a successful infinite query', async () => {
-    const key = queryKey()
+    const key = createKey()
     const states: Array<UseSuspenseInfiniteQueryResult<InfiniteData<number>>> =
       []
 
@@ -51,40 +52,37 @@ describe('useSuspenseInfiniteQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
-    )
+    const rendered = await renderWithSuspense(queryClient, <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
-    expect(states.length).toBe(1)
+    expect(states).toHaveLength(1)
     expect(states[0]).toMatchObject({
       data: { pages: [1], pageParams: [1] },
       status: 'success',
     })
 
-    fireEvent.click(rendered.getByText('next'))
+    await act(() => {
+      fireEvent.click(rendered.getByText('next'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
-    expect(states.length).toBe(2)
+    expect(states).toHaveLength(2)
     expect(states[1]).toMatchObject({
       data: { pages: [2], pageParams: [1] },
       status: 'success',
     })
   })
 
-  it('should log an error when skipToken is passed as queryFn', () => {
+  it('should log an error when skipToken is passed as queryFn', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useSuspenseInfiniteQuery({
@@ -106,22 +104,21 @@ describe('useSuspenseInfiniteQuery', () => {
       )
     }
 
-    renderWithClient(queryClient, <App />)
+    await renderWithSuspense(queryClient, <App />)
 
     expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseInfiniteQuery',
     )
-    consoleErrorMock.mockRestore()
   })
 
-  it('should log an error when skipToken is used in development environment', () => {
+  it('should log an error when skipToken is used in development environment', async () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-    const key = queryKey()
+      .mockReturnValue(undefined)
+    const key = createKey()
 
     function Page() {
       useSuspenseInfiniteQuery({
@@ -134,29 +131,23 @@ describe('useSuspenseInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(
-      queryClient,
-      <React.Suspense fallback="Loading...">
-        <Page />
-      </React.Suspense>,
-    )
+    await renderWithSuspense(queryClient, <Page />)
 
     expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseInfiniteQuery',
     )
 
-    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 
-  it('should not log an error when skipToken is used in production environment', () => {
+  it('should not log an error when skipToken is used in production environment', async () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'production'
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-    const key = queryKey()
+      .mockReturnValue(undefined)
+    const key = createKey()
 
     function Page() {
       useSuspenseInfiniteQuery({
@@ -169,25 +160,52 @@ describe('useSuspenseInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(
-      queryClient,
-      <React.Suspense fallback="Loading...">
-        <Page />
-      </React.Suspense>,
-    )
+    await renderWithSuspense(queryClient, <Page />)
 
     expect(consoleErrorMock).not.toHaveBeenCalled()
 
-    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 
-  it('should still suspense if queryClient has placeholderData config', async () => {
-    const key = queryKey()
+  it('should use static placeholderData without suspending', async () => {
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 1))
+    const states: Array<UseSuspenseInfiniteQueryResult<InfiniteData<number>>> =
+      []
+
+    function Page() {
+      const state = useSuspenseInfiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 1,
+        getNextPageParam: () => undefined,
+        placeholderData: { pages: [0], pageParams: [1] },
+      })
+
+      states.push(state)
+      return <div>data: {state.data.pages.join(',')}</div>
+    }
+
+    const rendered = await renderWithSuspense(queryClient, <Page />)
+
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('data: 0')).toBeInTheDocument()
+    expect(states.at(-1)?.isPlaceholderData).toBe(true)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    await act(() => vi.advanceTimersByTimeAsync(11))
+
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(states.at(-1)?.isPlaceholderData).toBe(false)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should use keepPreviousData from queryClient defaults', async () => {
+    const key = createKey()
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
-          placeholderData: (previousData: any) => previousData,
+          placeholderData: keepPreviousData,
         },
       },
     })
@@ -210,26 +228,91 @@ describe('useSuspenseInfiniteQuery', () => {
 
       return (
         <div>
-          <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+          <button
+            aria-label="toggle"
+            onClick={() => setStateKey(createKey())}
+          />
           data: {String(state.data?.pages.join(','))}
         </div>
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithSuspense(
       queryClientWithPlaceholder,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
+      <Page />,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByLabelText('toggle'))
-    expect(rendered.getByText('loading')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await act(() => {
+      fireEvent.click(rendered.getByLabelText('toggle'))
+    })
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(states.at(-1)).toMatchObject({
+      data: { pages: [1], pageParams: [1] },
+      isPlaceholderData: true,
+      isFetching: true,
+    })
+    await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
+    expect(states.at(-1)).toMatchObject({
+      data: { pages: [2], pageParams: [1] },
+      isPlaceholderData: false,
+      isFetching: false,
+    })
+  })
+
+  it('should start a keepPreviousData fetch during a transition', async () => {
+    const key = createKey()
+    const queryFn = vi.fn<(count: number) => Promise<number>>((count: number) =>
+      sleep(10).then(() => count),
+    )
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      const state = useSuspenseInfiniteQuery({
+        queryKey: [...key, count],
+        queryFn: () => queryFn(count),
+        initialPageParam: 1,
+        getNextPageParam: () => undefined,
+        placeholderData: keepPreviousData,
+      })
+
+      return (
+        <div>
+          <button
+            onClick={() =>
+              React.startTransition(() => setCount((value) => value + 1))
+            }
+          >
+            next
+          </button>
+          <div>data: {state.data.pages.join(',')}</div>
+          <div>placeholder: {String(state.isPlaceholderData)}</div>
+        </div>
+      )
+    }
+
+    const rendered = await renderWithSuspense(queryClient, <Page />)
+
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: 0')).toBeInTheDocument()
+
+    await act(() => {
+      fireEvent.click(rendered.getByText('next'))
+    })
+
+    expect(rendered.getByText('data: 0')).toBeInTheDocument()
+    expect(rendered.getByText('placeholder: true')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(2)
+
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(rendered.getByText('placeholder: false')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 })

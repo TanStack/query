@@ -1,15 +1,14 @@
-import ReactDOM from 'react-dom/client'
 import {
   QueryClient,
   QueryClientProvider,
   useQuery,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-
-import './style.css'
 import { useState } from 'react'
-import { chatQueryOptions } from './chat'
+import './style.css'
+import ReactDOM from 'react-dom/client'
 import { Message } from './message'
+import { messagesQueries } from './services/messages/queries'
 
 const queryClient = new QueryClient()
 
@@ -27,7 +26,7 @@ function ChatMessage({ id, question }: { id: string; question: string }) {
     error,
     data = [],
     isFetching,
-  } = useQuery(chatQueryOptions(id, question))
+  } = useQuery(messagesQueries.detail(id, question))
 
   if (error) return 'An error has occurred: ' + error.message
 

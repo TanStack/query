@@ -1,14 +1,13 @@
 'use client'
-import * as React from 'react'
-
 import {
   QueriesObserver,
   QueryObserver,
   noop,
   notifyManager,
 } from '@tanstack/query-core'
-import { useQueryClient } from './QueryClientProvider'
+import * as React from 'react'
 import { useIsRestoring } from './IsRestoringProvider'
+import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
   ensurePreventErrorBoundaryRetry,
@@ -17,14 +16,9 @@ import {
 } from './errorBoundaryUtils'
 import {
   ensureSuspenseTimers,
-  fetchOptimistic,
+  getSuspensePromise,
   shouldSuspend,
 } from './suspense'
-import type {
-  DefinedUseQueryResult,
-  UseQueryOptions,
-  UseQueryResult,
-} from './types'
 import type {
   DefaultError,
   OmitKeyof,
@@ -36,6 +30,11 @@ import type {
   QueryObserverOptions,
   ThrowOnError,
 } from '@tanstack/query-core'
+import type {
+  DefinedUseQueryResult,
+  UseQueryOptions,
+  UseQueryResult,
+} from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function always gets undefined passed
@@ -430,24 +429,36 @@ export function useQueries<
   )
   const snapshot = reader.getSnapshot()
 
-  const shouldAtLeastOneSuspend = snapshot.some((result, index) =>
-    shouldSuspend(defaultedQueries[index], result),
-  )
+  const suspensePromises = snapshot.map((result, index) => {
+    const opts = defaultedQueries[index]
 
-  const suspensePromises = shouldAtLeastOneSuspend
-    ? snapshot.flatMap((result, index) => {
-        const opts = defaultedQueries[index]
+    if (!opts?.suspense) {
+      return undefined
+    }
 
-        if (opts && shouldSuspend(opts, result)) {
-          const queryObserver = new QueryObserver(client, opts)
-          return fetchOptimistic(opts, queryObserver, errorResetBoundary)
-        }
-        return []
-      })
-    : []
+    const query = client.getQueryCache().build(client, opts)
+    const suspend = shouldSuspend(opts, result, errorResetBoundary, query)
 
-  if (suspensePromises.length > 0) {
-    throw Promise.all(suspensePromises)
+    if (suspend === undefined) {
+      return undefined
+    }
+
+    const queryObserver = new QueryObserver(client, opts)
+    const promise = getSuspensePromise(
+      opts,
+      queryObserver,
+      errorResetBoundary,
+      query,
+    )
+
+    return suspend ? promise : undefined
+  })
+
+  // Start every fetch before calling use(), because use() suspends immediately.
+  for (const promise of suspensePromises) {
+    if (promise) {
+      React.use(promise)
+    }
   }
   // Commit the combine cache before subscription can start a fetch.
   React.useEffect(() => {

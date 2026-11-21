@@ -1,7 +1,6 @@
 import { Component, createElement } from 'preact'
 import { ErrorBoundaryContext } from './ErrorBoundaryContext'
 import type { ErrorInfo } from 'preact'
-
 import type { ErrorBoundaryProps, FallbackProps } from './types'
 
 type ErrorBoundaryState =
@@ -80,7 +79,7 @@ export class ErrorBoundary extends Component<
         reason: 'keys',
       })
 
-      // oxlint-disable-next-line
+      // oxlint-disable-next-line react/no-did-update-set-state -- resetting the boundary when 'resetKeys' change is intended
       this.setState(initialState)
     }
   }

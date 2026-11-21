@@ -28,10 +28,9 @@ This works nicely in TypeScript, because `data` is guaranteed to be defined (as 
 
 On the flip side, you therefore can't conditionally enable / disable the Query. This generally shouldn't be necessary for dependent Queries because with suspense, all your Queries inside one component are fetched in serial.
 
-[//]: # 'PlaceholderData'
+`placeholderData` is supported. When it returns defined data, the Query renders that data in `success` state and fetches the full data in the background without showing the Suspense fallback. This is useful when a detail Query can show preview data from a cached list Query.
 
-`placeholderData` also doesn't exist for this Query. To prevent the UI from being replaced by a fallback during an update, wrap your updates that change the QueryKey into [startTransition](https://react.dev/reference/react/Suspense#preventing-unwanted-fallbacks).
-[//]: # 'PlaceholderData'
+You can also use `placeholderData: keepPreviousData` to keep data from the previous QueryKey. If keeping the currently rendered screen is your only goal, prefer wrapping updates that change the QueryKey in [startTransition](https://react.dev/reference/react/Suspense#preventing-unwanted-fallbacks) or using `useDeferredValue`. These React APIs keep the complete current screen in place and do not require placeholder data.
 
 ### throwOnError default
 
@@ -139,8 +138,8 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import * as React from 'react'
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
+import * as React from 'react'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -187,5 +186,5 @@ export function Providers(props: { children: React.ReactNode }) {
 }
 ```
 
-For more information, check out the [NextJs Suspense Streaming Example](../examples/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](./advanced-ssr.md) guide.
+For more information, check out the [NextJs Suspense Streaming Example](../examples/suspense-streaming-nextjs-app-router) and the [Advanced Rendering & Hydration](./advanced-ssr.md) guide.
 [//]: # 'Streaming'

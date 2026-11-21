@@ -1,8 +1,8 @@
 import { createValueAccessor, readAccessor } from './accessor.js'
 import { BaseController } from './controllers/BaseController.js'
-import type { Accessor, ValueAccessor } from './accessor.js'
 import type { MutationFilters, QueryClient } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
+import type { Accessor, ValueAccessor } from './accessor.js'
 
 /**
  * Accessor returned by `useIsMutating`.
@@ -18,7 +18,7 @@ class IsMutatingController extends BaseController<number> {
 
   constructor(
     host: ReactiveControllerHost,
-    private readonly filters: Accessor<MutationFilters> = {},
+    private readonly filters: Accessor<Omit<MutationFilters, 'status'>> = {},
     queryClient?: QueryClient,
   ) {
     super(host, 0, queryClient)
@@ -140,7 +140,7 @@ class IsMutatingController extends BaseController<number> {
  */
 export function useIsMutating(
   host: ReactiveControllerHost,
-  filters: Accessor<MutationFilters> = {},
+  filters: Accessor<Omit<MutationFilters, 'status'>> = {},
   queryClient?: QueryClient,
 ): IsMutatingAccessor {
   const controller = new IsMutatingController(host, filters, queryClient)

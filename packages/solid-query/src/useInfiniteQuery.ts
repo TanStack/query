@@ -7,25 +7,25 @@ import type {
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
+import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
+import type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infiniteQueryOptions'
 import type {
   DefinedUseInfiniteQueryResult,
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
 } from './types'
-import type { Accessor } from 'solid-js'
-import type {
-  DefinedInitialDataInfiniteOptions,
-  UndefinedInitialDataInfiniteOptions,
-} from './infiniteQueryOptions'
 
 /**
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
- * This overload is selected when `initialData` is set.
- * @param options - An accessor returning the {@link DefinedInitialDataInfiniteOptions} to use — everything you
- * can pass to `useInfiniteQuery`, with `initialData` set.
+ * This overload is selected when `initialData` is known to be defined.
+ * @param options - An accessor returning the {@link DefinedInitialDataInfiniteOptions} to use — everything
+ * you can pass to `useInfiniteQuery`, with `initialData` known to be defined.
  * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,

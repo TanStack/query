@@ -149,13 +149,15 @@ The managed query observers.
 getOptimisticResult(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], combine: CombineFn<TCombinedResult> | undefined): [rawResult: QueryObserverResult[], combineResult: (r?: QueryObserverResult[]) => TCombinedResult, trackResult: () => QueryObserverResult[]];
 ```
 
-Defined in: [packages/query-core/src/queriesObserver.ts:253](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L253)
+Defined in: [packages/query-core/src/queriesObserver.ts:255](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L255)
 
 The `QueriesObserver` counterpart of [QueryObserver#getOptimisticResult](QueryObserver.md#getoptimisticresult) — computes
 the result for the given (already-defaulted) queries right now, synchronously. Called by
 framework adapters (e.g. `useQueries`) ahead of subscribing, returning a tuple of the raw
 per-query results, a function to compute the combined result from them, and a function to
-wrap the results for property-access tracking.
+wrap the results for property-access tracking. When the queries match the observed ones, the
+results also become the current result, so a later `setQueries` call with the same queries
+does not notify the listeners about them.
 
 #### Parameters
 
@@ -205,7 +207,7 @@ The observed queries.
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:43](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L43)
+Defined in: [packages/query-core/src/subscribable.ts:46](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L46)
 
 Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
@@ -271,7 +273,7 @@ observer.setQueries([
 subscribe(listener: QueriesObserverListener): () => void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:28](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L28)
+Defined in: [packages/query-core/src/subscribable.ts:31](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L31)
 
 Registers a listener to be called on every update this object notifies about. Returns a function
 that removes the listener again — call it to stop listening. The base class never drops a listener

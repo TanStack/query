@@ -26,13 +26,6 @@ import {
   sleep,
   timeUntilStale,
 } from '../utils'
-import type {
-  MutationFilters,
-  QueryFilters,
-  QueryTypeFilter,
-  SkipToken,
-  Updater,
-} from '../utils'
 import type { Mutation } from '../mutation'
 import type { Query } from '../query'
 import type {
@@ -42,6 +35,13 @@ import type {
   QueryKey,
   QueryOptions,
 } from '../types'
+import type {
+  MutationFilters,
+  QueryFilters,
+  QueryTypeFilter,
+  SkipToken,
+  Updater,
+} from '../utils'
 
 class CustomError extends Error {
   override name = 'CustomError' as const
@@ -117,8 +117,6 @@ describe('QueryFilters', () => {
     >()
   })
 
-  // we test that there are not type errors here
-  // oxlint-disable-next-line vitest/expect-expect
   it('should work with unions of different lengths', () => {
     type Key =
       | readonly ['foo']
@@ -127,7 +125,9 @@ describe('QueryFilters', () => {
 
     const queryKey: Key = ['foo', 'bar'] as any as Key
 
-    new QueryClient().invalidateQueries({ queryKey })
+    expectTypeOf(new QueryClient().invalidateQueries).toBeCallableWith({
+      queryKey,
+    })
   })
 
   it('should error on invalid query keys', () => {
@@ -405,7 +405,7 @@ describe('Updater', () => {
 
   it('should keep the value branch assignable but not callable', () => {
     expectTypeOf<
-      Exclude<Updater<number, string>, Function>
+      Exclude<Updater<number, string>, (...args: Array<any>) => any>
     >().toEqualTypeOf<string>()
 
     // @ts-expect-error the value branch is not a function
@@ -414,7 +414,10 @@ describe('Updater', () => {
   })
 
   it('should type the function branch input as TInput and output as TOutput', () => {
-    type UpdaterFn = Extract<Updater<number, string>, Function>
+    type UpdaterFn = Extract<
+      Updater<number, string>,
+      (...args: Array<any>) => any
+    >
 
     expectTypeOf<UpdaterFn>().parameter(0).toEqualTypeOf<number>()
     expectTypeOf<UpdaterFn>().returns.toEqualTypeOf<string>()
@@ -630,8 +633,7 @@ describe('matchMutation', () => {
 
 describe('replaceEqualDeep', () => {
   it('should return the type of b and not relate it to a', () => {
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    const result = replaceEqualDeep({ a: 1 } as unknown, { b: '1' })
+    const result = replaceEqualDeep({ a: 1 }, { b: '1' })
     expectTypeOf(result).toEqualTypeOf<{ b: string }>()
 
     expectTypeOf(replaceEqualDeep<number>)
@@ -643,10 +645,8 @@ describe('replaceEqualDeep', () => {
   })
 
   it('should accept the depth argument optionally', () => {
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    expectTypeOf(replaceEqualDeep(1 as unknown, 2)).toEqualTypeOf<number>()
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    expectTypeOf(replaceEqualDeep(1 as unknown, 2, 0)).toEqualTypeOf<number>()
+    expectTypeOf(replaceEqualDeep(1, 2)).toEqualTypeOf<number>()
+    expectTypeOf(replaceEqualDeep(1, 2, 0)).toEqualTypeOf<number>()
   })
 })
 
@@ -837,7 +837,7 @@ describe('addConsumeAwareSignal', () => {
   it('should only accept an onCancelled callback taking no arguments', () => {
     expectTypeOf(addConsumeAwareSignal<{ a: number }>)
       .parameter(2)
-      .toEqualTypeOf<VoidFunction>()
+      .toEqualTypeOf<() => void>()
   })
 })
 

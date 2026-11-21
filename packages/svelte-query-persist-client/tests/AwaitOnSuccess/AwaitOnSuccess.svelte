@@ -1,9 +1,13 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
   import { sleep } from '@tanstack/query-test-utils'
+  import { createQuery } from '@tanstack/svelte-query'
   import { StatelessRef } from '../utils.svelte.js'
 
-  let { states }: { states: StatelessRef<Array<string>> } = $props()
+  type Props = {
+    states: StatelessRef<Array<string>>
+  }
+
+  let { states }: Props = $props()
 
   const query = createQuery(() => ({
     queryKey: ['test'],

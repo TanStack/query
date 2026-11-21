@@ -1,7 +1,7 @@
 'use client'
-import * as React from 'react'
-
 import { noop, notifyManager } from '@tanstack/query-core'
+import * as React from 'react'
+import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -9,10 +9,9 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { useIsRestoring } from './IsRestoringProvider'
 import {
   ensureSuspenseTimers,
-  fetchOptimistic,
+  getSuspensePromise,
   shouldSuspend,
 } from './suspense'
 import type {
@@ -103,10 +102,34 @@ export function useBaseQuery<
 
   const reader = observer.createResultReader(defaultedOptions)
 
-  // Suspend before registering external-store effects for this render.
-  if (shouldSuspend(defaultedOptions, reader.getSnapshot())) {
-    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+  // Let the reader initialize the query before starting a Suspense fetch.
+  if (defaultedOptions.suspense) {
+    const snapshot = reader.getSnapshot()
+    const suspenseQuery = client.getQueryCache().build(client, defaultedOptions)
+    const suspend = shouldSuspend(
+      defaultedOptions,
+      snapshot,
+      errorResetBoundary,
+      suspenseQuery,
+    )
+
+    if (suspend !== undefined) {
+      const promise = getSuspensePromise(
+        defaultedOptions,
+        observer,
+        errorResetBoundary,
+        suspenseQuery,
+      )
+
+      if (suspend) {
+        React.use(promise)
+      }
+    }
   }
+
+  React.useEffect(() => {
+    reader.commit()
+  }, [reader])
 
   const shouldSubscribe = !isRestoring && subscribed
   const result = React.useSyncExternalStore(
@@ -127,10 +150,6 @@ export function useBaseQuery<
     reader.getSnapshot,
     reader.getSnapshot,
   )
-
-  React.useEffect(() => {
-    reader.commit()
-  }, [reader])
 
   // Handle error boundary
   if (

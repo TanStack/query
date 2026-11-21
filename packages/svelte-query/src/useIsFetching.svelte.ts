@@ -38,7 +38,7 @@ import type { QueryClient, QueryFilters } from '@tanstack/query-core'
  * ```
  */
 export function useIsFetching(
-  filters?: QueryFilters,
+  filters?: Omit<QueryFilters, 'fetchStatus'>,
   queryClient?: QueryClient,
 ): ReactiveValue<number> {
   const client = useQueryClient(queryClient)

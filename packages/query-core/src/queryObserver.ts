@@ -1,8 +1,9 @@
-import { focusManager } from './focusManager'
 import { isServer as isServerEnvironment } from './environmentManager'
+import { focusManager } from './focusManager'
 import { notifyManager } from './notifyManager'
 import { fetchState } from './query'
 import { Subscribable } from './subscribable'
+import { timeoutManager } from './timeoutManager'
 import {
   isValidTimeout,
   noop,
@@ -11,10 +12,9 @@ import {
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
-import { timeoutManager } from './timeoutManager'
-import type { ManagedTimerId } from './timeoutManager'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
+import type { ManagedTimerId } from './timeoutManager'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -539,7 +539,7 @@ export class QueryObserver<
 
     return Promise.race([
       query
-        .fetch()
+        .fetch(defaultedOptions)
         .then(() => {
           const result = this.createResult(query, defaultedOptions)
           // Settle the subscriber promise so both branches always settle.
@@ -906,20 +906,22 @@ export class QueryObserver<
         return true
       }
 
-      const includedProps = new Set(
-        notifyOnChangePropsValue ?? this.#trackedProps,
-      )
-
-      if (this.options.throwOnError) {
-        includedProps.add('error')
+      if (
+        this.options.throwOnError &&
+        this.#currentResult.error !== prevResult.error
+      ) {
+        return true
       }
 
-      return Object.keys(this.#currentResult).some((key) => {
-        const typedKey = key as keyof QueryObserverResult
-        const changed = this.#currentResult[typedKey] !== prevResult[typedKey]
-
-        return changed && includedProps.has(typedKey)
-      })
+      for (const key of notifyOnChangePropsValue ?? this.#trackedProps) {
+        if (
+          this.#currentResult[key as keyof QueryObserverResult] !==
+          prevResult[key as keyof QueryObserverResult]
+        ) {
+          return true
+        }
+      }
+      return false
     }
 
     const notifyListeners = shouldNotifyListeners()

@@ -1,0 +1,28 @@
+{
+  "name": "@tanstack/query-example-vue-devtools-panel",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src",
+    "test:types": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/vue-query": "^5.108.2",
+    "@tanstack/vue-query-devtools": "^6.4.5",
+    "vue": "^3.5.44"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-config": "^0.5.0",
+    "@tanstack/eslint-plugin-query": "^5.108.2",
+    "@vitejs/plugin-vue": "^6.0.9",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.12.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.8",
+    "vue-tsc": "^3.3.13"
+  }
+}

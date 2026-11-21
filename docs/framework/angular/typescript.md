@@ -6,12 +6,14 @@ replace:
   {
     'useQuery': 'injectQuery',
     'useMutation': 'injectMutation',
-    'react-query': 'angular-query-experimental',
-    'public API of React Query': 'public API of TanStack Query and - after the experimental phase, the angular-query package',
+    'react-query': 'angular-query',
+    '@tanstack/angular-query': '@tanstack/angular-query',
+    'public API of React Query': 'public API of TanStack Query and the Angular Query package',
     'still follows': 'still follow',
     'React Query': 'TanStack Query',
     '`success`': '`isSuccess()`',
     'function:': 'function.',
+    "TanStack Query follows \\[DefinitelyTyped's support window\\]\\(https://github\\.com/DefinitelyTyped/DefinitelyTyped#support-window\\) and supports TypeScript versions released within the last 2 years\\. At the moment, that means TypeScript \\*\\*5\\.4\\*\\* and newer\\.": 'Angular Query supports the TypeScript versions required by your Angular version. See [Angular version compatibility](https://angular.dev/reference/versions).',
   }
 ---
 
@@ -149,9 +151,9 @@ computed(() => {
 [//]: # 'RegisterErrorType'
 
 ```ts
-import '@tanstack/angular-query-experimental'
+import '@tanstack/angular-query'
 
-declare module '@tanstack/angular-query-experimental' {
+declare module '@tanstack/angular-query' {
   interface Register {
     // Use unknown so call sites must narrow explicitly.
     defaultError: unknown
@@ -177,7 +179,7 @@ computed(() => {
 If you inline query options into `injectQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `injectQuery` and e.g. `queryClient.query`, or manage them in a service. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
 
 ```ts
-import { noop } from '@tanstack/angular-query-experimental'
+import { noop } from '@tanstack/angular-query'
 
 @Injectable({
   providedIn: 'root',
@@ -225,7 +227,7 @@ export class Component {
 Further, the `queryKey` returned from `queryOptions` knows about the `queryFn` associated with it, and we can leverage that type information to make functions like `queryClient.getQueryData` aware of those types as well:
 
 ```ts
-data = this.queryClient.getQueryData(groupOptions().queryKey)
+data = this.queryClient.getQueryData(this.queries.post(1).queryKey)
 // ^? data: Post | undefined
 ```
 
@@ -241,7 +243,7 @@ Similarly to `queryOptions`, you can use `mutationOptions` to extract mutation o
 
 ```ts
 export class QueriesService {
-  private http = inject(HttpClient)
+  private queryClient = inject(QueryClient)
 
   updatePost(id: number) {
     return mutationOptions({

@@ -1,17 +1,20 @@
+import { infiniteQueryBehavior } from './infiniteQueryBehavior'
+import { notifyManager } from './notifyManager'
+import { Removable } from './removable'
+import { CancelledError, canFetch, createRetryer } from './retryer'
 import {
   ensureQueryFn,
+  fetchSignal,
   noop,
   replaceData,
   resolveQueryValue,
   skipToken,
   timeUntilStale,
 } from './utils'
-import { notifyManager } from './notifyManager'
-import { CancelledError, canFetch, createRetryer } from './retryer'
-import { Removable } from './removable'
-import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
+import type { QueryObserver } from './queryObserver'
+import type { Retryer } from './retryer'
 import type {
   CancelOptions,
   DefaultError,
@@ -25,8 +28,6 @@ import type {
   SetDataOptions,
   StaleTime,
 } from './types'
-import type { QueryObserver } from './queryObserver'
-import type { Retryer } from './retryer'
 
 // TYPES
 
@@ -296,6 +297,7 @@ export class Query<
   #cache: QueryCache
   #client: QueryClient
   #retryer?: Retryer<TData>
+  #fetchPromise?: Promise<TData>
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
@@ -358,7 +360,7 @@ export class Query<
 
     this.updateGcTime(this.options.gcTime)
 
-    // oxlint-disable-next-line typescript/no-unnecessary-condition
+    // oxlint-disable-next-line typescript/no-unnecessary-condition -- the constructor calls 'setOptions' before it assigns 'state'
     if (this.state && this.state.data === undefined) {
       const defaultState = getDefaultState(this.options)
       if (defaultState.data !== undefined) {
@@ -498,11 +500,15 @@ export class Query<
   }
 
   /**
-   * Returns `true` if the query has at least one observer configured with
+   * Returns `true` if the query has data and at least one observer configured with
    * `staleTime: 'static'`, meaning it is treated as never stale.
    * @returns `true` if the query is static.
    */
   isStatic(): boolean {
+    if (this.state.data === undefined) {
+      return false
+    }
+
     if (this.getObserversCount() > 0) {
       return this.observers.some(
         (observer) =>
@@ -554,7 +560,7 @@ export class Query<
    * @see {@link Query#isStale}
    * @example
    * ```ts
-   * const isStale = query.isStaleByTime(1000 * 60)
+   * const isStale = query.isStaleByTime(60 * 1000)
    * ```
    */
   isStaleByTime(staleTime: StaleTime = 0): boolean {
@@ -713,11 +719,11 @@ export class Query<
       if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
         // Silently cancel current fetch if the user wants to cancel refetch
         this.cancel({ silent: true })
-      } else if (this.#retryer) {
+      } else if (this.#retryer && this.#fetchPromise) {
         // make sure that retries that were potentially cancelled due to unmounts can continue
         this.#retryer.continueRetry()
         // Return current promise if we are already fetching
-        return this.#retryer.promise
+        return this.#fetchPromise
       }
     }
 
@@ -748,12 +754,15 @@ export class Query<
     // Adds an enumerable signal property to the object that
     // which sets abortSignalConsumed to true when the signal
     // is read.
-    const addSignalProperty = (object: unknown) => {
-      Object.defineProperty(object, 'signal', {
-        enumerable: true,
-        get: () => {
-          this.#abortSignalConsumed = true
-          return abortController.signal
+    const addSignalProperty = (object: object) => {
+      Object.defineProperties(object, {
+        [fetchSignal]: { value: abortController.signal, enumerable: true },
+        signal: {
+          enumerable: true,
+          get: () => {
+            this.#abortSignalConsumed = true
+            return abortController.signal
+          },
         },
       })
     }
@@ -842,70 +851,79 @@ export class Query<
       canRun: () => true,
     }))
 
-    try {
-      const data = await retryer.start()
-      // this is more of a runtime guard
-      if (data === undefined) {
-        if (process.env.NODE_ENV !== 'production') {
-          console.error(
-            `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
-          )
-        }
-        throw new Error(`${this.queryHash} data is undefined`)
-      }
-
-      this.setData(data)
-
-      // Notify cache callback
-      this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
-      this.#cache.config.onSettled?.(
-        data,
-        this.state.error as any,
-        this as Query<any, any, any, any>,
-      )
-      return data
-    } catch (error) {
-      if (error instanceof CancelledError) {
-        if (error.silent) {
-          // silent cancellation implies a new fetch is going to be started,
-          // so we piggyback onto that promise
-          return this.#retryer.promise
-        } else if (error.revert) {
-          // transform error into reverted state data
-          // if the initial fetch was cancelled, we have no data, so we have
-          // to get reject with a CancelledError
-          if (this.state.data === undefined) {
-            throw error
+    const fetchPromise = (async () => {
+      try {
+        const data = await retryer.promise
+        // this is more of a runtime guard
+        if (data === undefined) {
+          if (process.env.NODE_ENV !== 'production') {
+            console.error(
+              `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
+            )
           }
-          return this.state.data
+          throw new Error(`${this.queryHash} data is undefined`)
         }
-      }
-      this.#dispatch({
-        type: 'error',
-        error: error as TError,
-      })
 
-      // Notify cache callback
-      this.#cache.config.onError?.(
-        error as any,
-        this as Query<any, any, any, any>,
-      )
-      this.#cache.config.onSettled?.(
-        this.state.data,
-        error as any,
-        this as Query<any, any, any, any>,
-      )
+        this.setData(data)
 
-      throw error // rethrow the error for further handling
-    } finally {
-      // The settled retryer's promise would otherwise pin this fetch's raw
-      // result (a second copy after structural sharing) for the query's lifetime
-      if (this.#retryer === retryer) {
-        this.#retryer = undefined
+        // Notify cache callback
+        this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
+        this.#cache.config.onSettled?.(
+          data,
+          this.state.error as any,
+          this as Query<any, any, any, any>,
+        )
+        return data
+      } catch (error) {
+        if (error instanceof CancelledError) {
+          if (error.silent) {
+            if (this.#retryer !== retryer && this.#fetchPromise) {
+              // A new fetch replaced the silently cancelled one,
+              // so we piggyback onto that promise.
+              return this.#fetchPromise
+            }
+            throw error
+          } else if (error.revert) {
+            // transform error into reverted state data
+            // if the initial fetch was cancelled, we have no data, so we have
+            // to get reject with a CancelledError
+            if (this.state.data === undefined) {
+              throw error
+            }
+            return this.state.data
+          }
+        }
+        this.#dispatch({
+          type: 'error',
+          error: error as TError,
+        })
+
+        // Notify cache callback
+        this.#cache.config.onError?.(
+          error as any,
+          this as Query<any, any, any, any>,
+        )
+        this.#cache.config.onSettled?.(
+          this.state.data,
+          error as any,
+          this as Query<any, any, any, any>,
+        )
+
+        throw error // rethrow the error for further handling
+      } finally {
+        // The settled retryer's promise would otherwise pin this fetch's raw
+        // result (a second copy after structural sharing) for the query's lifetime
+        if (this.#retryer === retryer) {
+          this.#retryer = undefined
+          this.#fetchPromise = undefined
+        }
+        // Schedule query gc after fetching
+        this.scheduleGc()
       }
-      // Schedule query gc after fetching
-      this.scheduleGc()
-    }
+    })()
+    this.#fetchPromise = fetchPromise
+    retryer.start()
+    return fetchPromise
   }
 
   #dispatch(action: Action<TData, TError>): void {
@@ -935,7 +953,7 @@ export class Query<
             ...fetchState(state.data, this.options),
             fetchMeta: action.meta ?? null,
           }
-        case 'success':
+        case 'success': {
           const newState = {
             ...state,
             ...successState(action.data, action.dataUpdatedAt),
@@ -951,7 +969,8 @@ export class Query<
           this.#revertState = action.manual ? newState : undefined
 
           return newState
-        case 'error':
+        }
+        case 'error': {
           const error = action.error
           return {
             ...state,
@@ -966,6 +985,7 @@ export class Query<
             // note that "no data" always means stale so we can set unconditionally here
             isInvalidated: true,
           }
+        }
         case 'invalidate':
           return {
             ...state,

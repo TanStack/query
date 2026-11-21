@@ -9,25 +9,25 @@ TanStack Query comes with its own ESLint plugin. This plugin is used to enforce 
 
 The plugin is a separate package that you need to install:
 
-```bash
+```sh
 npm i -D @tanstack/eslint-plugin-query
 ```
 
 or
 
-```bash
+```sh
 pnpm add -D @tanstack/eslint-plugin-query
 ```
 
 or
 
-```bash
+```sh
 yarn add -D @tanstack/eslint-plugin-query
 ```
 
 or
 
-```bash
+```sh
 bun add -D @tanstack/eslint-plugin-query
 ```
 
@@ -125,8 +125,8 @@ The plugin can also be used with [Oxlint](https://oxc.rs/docs/guide/usage/linter
 To enable all of the recommended rules for our plugin, add the plugin to `jsPlugins` and spread the rules of the `recommended` config:
 
 ```ts
-import { defineConfig } from 'oxlint'
 import pluginQuery from '@tanstack/eslint-plugin-query'
+import { defineConfig } from 'oxlint'
 
 export default defineConfig({
   jsPlugins: ['@tanstack/eslint-plugin-query'],

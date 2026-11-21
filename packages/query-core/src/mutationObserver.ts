@@ -2,6 +2,7 @@ import { getDefaultState } from './mutation'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
 import { hashKey, shallowEqualObjects } from './utils'
+import type { Action, Mutation } from './mutation'
 import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
@@ -10,7 +11,6 @@ import type {
   MutationObserverOptions,
   MutationObserverResult,
 } from './types'
-import type { Action, Mutation } from './mutation'
 
 // TYPES
 

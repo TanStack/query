@@ -1,5 +1,132 @@
 # @tanstack/react-query-devtools
 
+## 5.108.2
+
+### Patch Changes
+
+- [#12628](https://github.com/TanStack/query/pull/12628) [`80d6c41`](https://github.com/TanStack/query/commit/80d6c41fb8ee27db069874d1be75646bf48a64b0) - The devtools no longer use goober. Their styles are a static stylesheet adopted into the document or shadow root the devtools render in, instead of a `<style>` element in `<head>`. This means:
+
+  - The devtools are styled on pages with a Content Security Policy that blocks inline `<style>` elements. `styleNonce` is no longer needed and is deprecated.
+  - Devtools rendered inside a shadow root are styled without passing `shadowDOMTarget`.
+  - With `shadowDOMTarget`, the settings menu is styled.
+  - The picture-in-picture window gets all styles, including ones the devtools use only after it opened.
+  - The devtools no longer write to the shared `#_goober` style element or set `window.__nonce__`.
+  - Browsers without adoptable stylesheets (before Safari 16.4 and Firefox 101) show the devtools unstyled.
+
+- [#12643](https://github.com/TanStack/query/pull/12643) [`fd62c95`](https://github.com/TanStack/query/commit/fd62c9583ec0e1fe65ae56542876f47184534930) - Add a `trustedTypesPolicy` option, so the devtools render on pages that enforce `require-trusted-types-for 'script'`.
+- Updated dependencies [[`f7abc93`](https://github.com/TanStack/query/commit/f7abc938a8a7fe801d78f4cfdb98d65422f276b2), [`80d6c41`](https://github.com/TanStack/query/commit/80d6c41fb8ee27db069874d1be75646bf48a64b0), [`fd62c95`](https://github.com/TanStack/query/commit/fd62c9583ec0e1fe65ae56542876f47184534930)]:
+  - @tanstack/query-devtools@5.108.2
+  - @tanstack/react-query@5.108.2
+
+## 5.108.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.108.1
+  - @tanstack/react-query@5.108.1
+
+## 5.108.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.108.0
+  - @tanstack/react-query@5.108.0
+
+## 5.107.2
+
+### Patch Changes
+
+- Updated dependencies [[`b160291`](https://github.com/TanStack/query/commit/b160291d135f82ec650cc12365b53d567cac94fb)]:
+  - @tanstack/query-devtools@5.107.2
+  - @tanstack/react-query@5.107.2
+
+## 5.107.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.107.1
+  - @tanstack/react-query@5.107.1
+
+## 5.107.0
+
+### Patch Changes
+
+- Updated dependencies [[`a4d72f7`](https://github.com/TanStack/query/commit/a4d72f75c1c7a59e39aaf4f776f540c3814e46f7)]:
+  - @tanstack/query-devtools@5.107.0
+  - @tanstack/react-query@5.107.0
+
+## 5.106.1
+
+### Patch Changes
+
+- [#12528](https://github.com/TanStack/query/pull/12528) [`c4ed956`](https://github.com/TanStack/query/commit/c4ed956bb97e381a2875e59f134bb99eecb92a02) - fix({query,react-query,preact-query}-devtools): always render the devtools left-to-right regardless of the page direction or browser language
+- Updated dependencies [[`c4ed956`](https://github.com/TanStack/query/commit/c4ed956bb97e381a2875e59f134bb99eecb92a02)]:
+  - @tanstack/query-devtools@5.106.1
+  - @tanstack/react-query@5.106.1
+
+## 5.106.0
+
+### Patch Changes
+
+- [#12499](https://github.com/TanStack/query/pull/12499) [`46d0477`](https://github.com/TanStack/query/commit/46d0477df2311d496cca006eb5ec885c024875a1) - Let inline devtools panels fill their container height while keeping a 500px default height when the container has no set height.
+- Updated dependencies [[`46d0477`](https://github.com/TanStack/query/commit/46d0477df2311d496cca006eb5ec885c024875a1), [`f69b28a`](https://github.com/TanStack/query/commit/f69b28a1dd2a2b4ca9b8f9117e0f60cc70443775), [`1176d37`](https://github.com/TanStack/query/commit/1176d373d161e0acca98d00244203778ff99c4fb), [`254350f`](https://github.com/TanStack/query/commit/254350f9cba47fd87304e057fac1a314093423f0)]:
+  - @tanstack/query-devtools@5.106.0
+  - @tanstack/react-query@5.106.0
+
+## 5.105.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.105.3
+  - @tanstack/react-query@5.105.3
+
+## 5.105.2
+
+### Patch Changes
+
+- Updated dependencies [[`1e1caa5`](https://github.com/TanStack/query/commit/1e1caa5a32847969f7157627cd805bd8103cd873), [`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1)]:
+  - @tanstack/react-query@5.105.2
+  - @tanstack/query-devtools@5.105.2
+
+## 5.105.1
+
+### Patch Changes
+
+- Updated dependencies [[`7ccba6e`](https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/react-query@5.105.1
+  - @tanstack/query-devtools@5.105.1
+
+## 5.105.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.105.0
+  - @tanstack/react-query@5.105.0
+
+## 5.104.5
+
+### Patch Changes
+
+- Updated dependencies [[`1f8d134`](https://github.com/TanStack/query/commit/1f8d134ea3fa356072b40c69d5cd0227886b89bd)]:
+  - @tanstack/react-query@5.104.5
+  - @tanstack/query-devtools@5.104.5
+
+## 5.104.4
+
+### Patch Changes
+
+- [#11722](https://github.com/TanStack/query/pull/11722) [`0992a92`](https://github.com/TanStack/query/commit/0992a9291469d02d677f10a4994b1af0fdb8ac74) - fix(react-query-devtools): create the devtools instance only once instead of on every render
+
+- [#11728](https://github.com/TanStack/query/pull/11728) [`a108398`](https://github.com/TanStack/query/commit/a10839824cecec8ea141330191c2e0ad0ae2b53f) - fix(react-query*): declare '@types/react' as an optional peer dependency
+- Updated dependencies [[`c8f5eac`](https://github.com/TanStack/query/commit/c8f5eac9df24c3cf987dc23865493ebd0d346caa), [`c208861`](https://github.com/TanStack/query/commit/c20886163a3759725cceafb421e864e7d213ec26), [`b61abc2`](https://github.com/TanStack/query/commit/b61abc2033f9e2fbf24d6753baedeaa74b2f1c17), [`a108398`](https://github.com/TanStack/query/commit/a10839824cecec8ea141330191c2e0ad0ae2b53f)]:
+  - @tanstack/query-devtools@5.104.4
+  - @tanstack/react-query@5.104.4
+
 ## 5.104.3
 
 ### Patch Changes

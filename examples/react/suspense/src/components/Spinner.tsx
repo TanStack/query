@@ -1,11 +1,5 @@
+import styles from './Spinner.module.css'
+
 export default function Spinner() {
-  return (
-    <span
-      className="fa fa-circle-o-notch fa-spin"
-      style={{
-        marginLeft: 4,
-        fontSize: 'small',
-      }}
-    />
-  )
+  return <span className={styles.spinner} />
 }

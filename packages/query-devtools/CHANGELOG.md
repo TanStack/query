@@ -1,5 +1,133 @@
 # @tanstack/query-devtools
 
+## 5.108.2
+
+### Patch Changes
+
+- [#12629](https://github.com/TanStack/query/pull/12629) [`f7abc93`](https://github.com/TanStack/query/commit/f7abc938a8a7fe801d78f4cfdb98d65422f276b2) - The picture-in-picture window no longer clears its document with `innerHTML`, which pages that enforce Trusted Types block.
+
+- [#12628](https://github.com/TanStack/query/pull/12628) [`80d6c41`](https://github.com/TanStack/query/commit/80d6c41fb8ee27db069874d1be75646bf48a64b0) - The devtools no longer use goober. Their styles are a static stylesheet adopted into the document or shadow root the devtools render in, instead of a `<style>` element in `<head>`. This means:
+
+  - The devtools are styled on pages with a Content Security Policy that blocks inline `<style>` elements. `styleNonce` is no longer needed and is deprecated.
+  - Devtools rendered inside a shadow root are styled without passing `shadowDOMTarget`.
+  - With `shadowDOMTarget`, the settings menu is styled.
+  - The picture-in-picture window gets all styles, including ones the devtools use only after it opened.
+  - The devtools no longer write to the shared `#_goober` style element or set `window.__nonce__`.
+  - Browsers without adoptable stylesheets (before Safari 16.4 and Firefox 101) show the devtools unstyled.
+
+- [#12643](https://github.com/TanStack/query/pull/12643) [`fd62c95`](https://github.com/TanStack/query/commit/fd62c9583ec0e1fe65ae56542876f47184534930) - Add a `trustedTypesPolicy` option, so the devtools render on pages that enforce `require-trusted-types-for 'script'`.
+- Updated dependencies []:
+  - @tanstack/query-core@5.108.2
+
+## 5.108.1
+
+### Patch Changes
+
+- Updated dependencies [[`0cf8f49`](https://github.com/TanStack/query/commit/0cf8f49e8f9cf24a8c6a7f17efb7cf4d91ea8f01)]:
+  - @tanstack/query-core@5.108.1
+
+## 5.108.0
+
+### Patch Changes
+
+- Updated dependencies [[`5fc9a3e`](https://github.com/TanStack/query/commit/5fc9a3e9a8768eb3bc23da4ae903c966423a2286)]:
+  - @tanstack/query-core@5.108.0
+
+## 5.107.2
+
+### Patch Changes
+
+- [#12587](https://github.com/TanStack/query/pull/12587) [`b160291`](https://github.com/TanStack/query/commit/b160291d135f82ec650cc12365b53d567cac94fb) - Replace star exports with explicit exports while preserving the current public API. Adapters continue to re-export all of their corresponding core package.
+- Updated dependencies [[`b160291`](https://github.com/TanStack/query/commit/b160291d135f82ec650cc12365b53d567cac94fb)]:
+  - @tanstack/query-core@5.107.2
+
+## 5.107.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.107.1
+
+## 5.107.0
+
+### Minor Changes
+
+- [#12538](https://github.com/TanStack/query/pull/12538) [`a4d72f7`](https://github.com/TanStack/query/commit/a4d72f75c1c7a59e39aaf4f776f540c3814e46f7) - feat(query-devtools): add a filter scope toggle to filter queries and mutations by key, data (mutation variables or data), or both. Data and All scopes initialize explorer searches with the filter. Mutation explorers initialize searches only for matching variables or data, and filtering refreshes when mutation variables change in place.
+
+### Patch Changes
+
+- Updated dependencies [[`b6add89`](https://github.com/TanStack/query/commit/b6add891c1b846c1f276a4c0110edb58b62defaa)]:
+  - @tanstack/query-core@5.107.0
+
+## 5.106.1
+
+### Patch Changes
+
+- [#12528](https://github.com/TanStack/query/pull/12528) [`c4ed956`](https://github.com/TanStack/query/commit/c4ed956bb97e381a2875e59f134bb99eecb92a02) - fix({query,react-query,preact-query}-devtools): always render the devtools left-to-right regardless of the page direction or browser language
+- Updated dependencies []:
+  - @tanstack/query-core@5.106.1
+
+## 5.106.0
+
+### Minor Changes
+
+- [#12522](https://github.com/TanStack/query/pull/12522) [`f69b28a`](https://github.com/TanStack/query/commit/f69b28a1dd2a2b4ca9b8f9117e0f60cc70443775) - Add search for nested property names and values in the query and mutation Data Explorer, with highlighted matches and automatic expansion.
+
+### Patch Changes
+
+- [#12499](https://github.com/TanStack/query/pull/12499) [`46d0477`](https://github.com/TanStack/query/commit/46d0477df2311d496cca006eb5ec885c024875a1) - Let inline devtools panels fill their container height while keeping a 500px default height when the container has no set height.
+
+- [#12517](https://github.com/TanStack/query/pull/12517) [`1176d37`](https://github.com/TanStack/query/commit/1176d373d161e0acca98d00244203778ff99c4fb) - chore(query-devtools/tsdown.config): add '@refresh skip' banner so the app's 'solid-refresh' does not wrap the bundled Solid runtime
+
+- [#12502](https://github.com/TanStack/query/pull/12502) [`254350f`](https://github.com/TanStack/query/commit/254350f9cba47fd87304e057fac1a314093423f0) - Virtualize query and mutation lists to keep large caches responsive, and reduce repeated cache scans.
+- Updated dependencies []:
+  - @tanstack/query-core@5.106.0
+
+## 5.105.3
+
+### Patch Changes
+
+- Updated dependencies [[`3f4de1b`](https://github.com/TanStack/query/commit/3f4de1b40cce4314f7572b515ad8fd26dd85fe04), [`969e580`](https://github.com/TanStack/query/commit/969e58019bf650fb17c273fddd0e8d2adf56d4d9)]:
+  - @tanstack/query-core@5.105.3
+
+## 5.105.2
+
+### Patch Changes
+
+- Updated dependencies [[`2ee2fd9`](https://github.com/TanStack/query/commit/2ee2fd935acd88532255947c4b5e29baffd21ce8), [`8d0dc27`](https://github.com/TanStack/query/commit/8d0dc278a728a97eb677b6f2baf37d1677c2edc1), [`e69cac6`](https://github.com/TanStack/query/commit/e69cac69d99cc3c4f6f32b2ad8aad53da83b4a72), [`f2215d2`](https://github.com/TanStack/query/commit/f2215d25945e6461252b7c32bf822f31239e507e), [`86e7957`](https://github.com/TanStack/query/commit/86e79571fd45f29ab7d172102fdd718d3b8bde69), [`b6576b3`](https://github.com/TanStack/query/commit/b6576b388f2784839081358fa82744b0aacdeecd), [`af0e0ef`](https://github.com/TanStack/query/commit/af0e0ef5fc04e9d232fdc3aebd24ffe528b256d7), [`05d9b6a`](https://github.com/TanStack/query/commit/05d9b6a40b9d4ac49943e9d881789e098db5bdfa)]:
+  - @tanstack/query-core@5.105.2
+
+## 5.105.1
+
+### Patch Changes
+
+- Updated dependencies [[`6f8a48d`](https://github.com/TanStack/query/commit/6f8a48d543b499b6d9b0e95050c28183c8c18ae0), [`18e54bf`](https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf)]:
+  - @tanstack/query-core@5.105.1
+
+## 5.105.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.105.0
+
+## 5.104.5
+
+### Patch Changes
+
+- Updated dependencies [[`f608f93`](https://github.com/TanStack/query/commit/f608f933a36da30670082e90d0a56b2569290563)]:
+  - @tanstack/query-core@5.104.5
+
+## 5.104.4
+
+### Patch Changes
+
+- [#11983](https://github.com/TanStack/query/pull/11983) [`c8f5eac`](https://github.com/TanStack/query/commit/c8f5eac9df24c3cf987dc23865493ebd0d346caa) - fix(query-devtools): expose the pressed state of the boolean "Toggle value" button to assistive technologies
+
+- [#11638](https://github.com/TanStack/query/pull/11638) [`b61abc2`](https://github.com/TanStack/query/commit/b61abc2033f9e2fbf24d6753baedeaa74b2f1c17) - fix(query-devtools/Devtools): apply the 'hideDisabledQueries' prop to the query list
+- Updated dependencies [[`1fee044`](https://github.com/TanStack/query/commit/1fee0443dbeb346b8401557ca286a66cdec7ad71), [`fce89dd`](https://github.com/TanStack/query/commit/fce89ddf7a35b14252096ff64a1217efd81b415c)]:
+  - @tanstack/query-core@5.104.4
+
 ## 5.104.3
 
 ### Patch Changes

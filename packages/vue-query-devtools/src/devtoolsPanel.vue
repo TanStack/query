@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { computed, onMounted, onScopeDispose, ref, watchEffect } from 'vue'
-import { onlineManager, useQueryClient } from '@tanstack/vue-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
+import { onlineManager, useQueryClient } from '@tanstack/vue-query'
+import { computed, onMounted, onScopeDispose, ref, watchEffect } from 'vue'
 import type { DevtoolsPanelOptions } from './types'
 
 const props = defineProps<DevtoolsPanelOptions>()
 const style = computed<any>(() => {
   return {
-    height: '500px',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
     ...props.style,
   }
 })
@@ -23,8 +25,8 @@ const devtools = new TanstackQueryDevtoolsPanel({
   position: 'bottom',
   initialIsOpen: true,
   errorTypes: props.errorTypes,
-  styleNonce: props.styleNonce,
   shadowDOMTarget: props.shadowDOMTarget,
+  trustedTypesPolicy: props.trustedTypesPolicy,
   hideDisabledQueries: props.hideDisabledQueries,
   onClose: props.onClose,
   theme: props.theme,

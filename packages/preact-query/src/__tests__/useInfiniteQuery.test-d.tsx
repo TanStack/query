@@ -1,15 +1,14 @@
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
-
 import { useInfiniteQuery } from '../useInfiniteQuery'
-import type { UseInfiniteQueryOptions } from '../types'
 import type { InfiniteData } from '@tanstack/query-core'
+import type { UseInfiniteQueryOptions } from '../types'
 
 describe('pageParam', () => {
   it('should define type of param passed to queryFunctionContext with initialPageParam', () => {
     useInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: ({ pageParam }) => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
       },
@@ -20,7 +19,7 @@ describe('pageParam', () => {
 
   it('should pass direction to queryFn of useInfiniteQuery', () => {
     useInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: ({ direction }) => {
         expectTypeOf(direction).toEqualTypeOf<'forward' | 'backward'>()
       },
@@ -33,10 +32,11 @@ describe('pageParam', () => {
     const queryClient = new QueryClient()
     // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
     queryClient.fetchInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: ({ pageParam }) => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
       },
+      getNextPageParam: () => undefined,
       initialPageParam: 1,
     })
   })
@@ -49,6 +49,7 @@ describe('pageParam', () => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
         return Promise.resolve(pageParam)
       },
+      getNextPageParam: () => undefined,
       initialPageParam: 1,
     })
   })
@@ -57,18 +58,20 @@ describe('pageParam', () => {
     const queryClient = new QueryClient()
     // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
     queryClient.prefetchInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: ({ pageParam }) => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
       },
+      getNextPageParam: () => undefined,
       initialPageParam: 1,
     })
   })
 })
+
 describe('select', () => {
   it('should still return paginated data if no select result', () => {
     const infiniteQuery = useInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: ({ pageParam }) => {
         return pageParam * 5
       },
@@ -84,7 +87,7 @@ describe('select', () => {
 
   it('should be able to transform data to arbitrary result', () => {
     const infiniteQuery = useInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: ({ pageParam }) => {
         return pageParam * 5
       },
@@ -99,10 +102,11 @@ describe('select', () => {
     expectTypeOf(infiniteQuery.data).toEqualTypeOf<'selected' | undefined>()
   })
 })
+
 describe('getNextPageParam / getPreviousPageParam', () => {
   it('should get typed params', () => {
     const infiniteQuery = useInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: ({ pageParam }) => {
         return String(pageParam)
       },
@@ -143,7 +147,7 @@ describe('error booleans', () => {
       isLoadingError,
       isRefetchError,
     } = useInfiniteQuery({
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: ({ pageParam }) => {
         return pageParam * 5
       },
@@ -161,7 +165,7 @@ describe('error booleans', () => {
 describe('UseInfiniteQueryOptions', () => {
   it('should default TData to InfiniteData<TQueryFnData>', () => {
     const options: UseInfiniteQueryOptions<number, Error> = {
-      queryKey: queryKey(),
+      queryKey: createKey(),
       queryFn: () => 5,
       initialPageParam: 1,
       getNextPageParam: () => undefined,

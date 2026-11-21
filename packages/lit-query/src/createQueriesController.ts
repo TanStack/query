@@ -2,7 +2,6 @@ import { QueriesObserver, replaceEqualDeep } from '@tanstack/query-core'
 import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
-import type { Accessor, ValueAccessor } from './accessor.js'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -16,6 +15,7 @@ import type {
   ThrowOnError,
 } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
+import type { Accessor, ValueAccessor } from './accessor.js'
 
 /**
  * Options for one query inside `createQueriesController`.
@@ -599,13 +599,13 @@ class QueriesController<
     const observers = this.observer.getObservers()
 
     return rawResult.map((result, index) => {
-      const observer = observers[index]
+      const resultObserver = observers[index]
 
-      if (!observer || observer.options.notifyOnChangeProps) {
+      if (!resultObserver || resultObserver.options.notifyOnChangeProps) {
         return result
       }
 
-      return observer.trackResult(result, (accessedProp) => {
+      return resultObserver.trackResult(result, (accessedProp) => {
         observers.forEach((observer) => {
           observer.trackProp(accessedProp)
         })

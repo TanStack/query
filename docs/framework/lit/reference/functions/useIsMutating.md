@@ -8,7 +8,7 @@ title: useIsMutating
 ```ts
 function useIsMutating(
    host: ReactiveControllerHost,
-   filters?: Accessor<MutationFilters<unknown, Error, unknown, unknown>>,
+   filters?: Accessor<Omit<MutationFilters<unknown, Error, unknown, unknown>, "status">>,
    queryClient?: QueryClient
 ): IsMutatingAccessor;
 ```
@@ -33,7 +33,7 @@ subscription.
 
 ### filters?
 
-[`Accessor`](../type-aliases/Accessor.md)\<[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>\> = `{}`
+[`Accessor`](../type-aliases/Accessor.md)\<`Omit`\<[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>, `"status"`\>\> = `{}`
 
 Mutation filters, or a getter that returns mutation filters.
 

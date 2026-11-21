@@ -1,9 +1,8 @@
-import { isVue2 } from 'vue-demi'
 import { environmentManager } from '@tanstack/query-core'
-
+import { isVue2 } from 'vue-demi'
+import { setupDevtools } from './devtools/devtools'
 import { QueryClient } from './queryClient'
 import { getClientKey } from './utils'
-import { setupDevtools } from './devtools/devtools'
 import type { QueryClientConfig } from './types'
 
 type ClientPersister = (client: QueryClient) => [() => void, Promise<void>]
@@ -99,12 +98,19 @@ export const VueQueryPlugin = {
       }
       const [unmount, promise] = options.clientPersister(client)
       persisterUnmount = unmount
-      promise.then(() => {
-        if (client.isRestoring) {
-          client.isRestoring.value = false
-        }
-        options.clientPersisterOnSuccess?.(client)
-      })
+      promise.then(
+        () => {
+          if (client.isRestoring) {
+            client.isRestoring.value = false
+          }
+          options.clientPersisterOnSuccess?.(client)
+        },
+        () => {
+          if (client.isRestoring) {
+            client.isRestoring.value = false
+          }
+        },
+      )
     }
 
     const cleanup = () => {

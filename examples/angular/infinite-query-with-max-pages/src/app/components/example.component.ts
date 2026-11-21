@@ -1,31 +1,18 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-} from '@angular/core'
-import { injectInfiniteQuery } from '@tanstack/angular-query-experimental'
-import { lastValueFrom } from 'rxjs'
+import { Component, computed, inject } from '@angular/core'
+import { injectInfiniteQuery } from '@tanstack/angular-query'
 import { ProjectStyleDirective } from '../directives/project-style.directive'
-import { ProjectsService } from '../services/projects.service'
+import { ProjectsQueries } from '../services/projects/queries'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'example',
   templateUrl: './example.component.html',
   imports: [ProjectStyleDirective],
 })
 export class ExampleComponent {
-  readonly projectsService = inject(ProjectsService)
+  readonly #projectsQueries = inject(ProjectsQueries)
 
   readonly query = injectInfiniteQuery(() => ({
-    queryKey: ['projects'],
-    queryFn: ({ pageParam }) => {
-      return lastValueFrom(this.projectsService.getProjects(pageParam))
-    },
-    initialPageParam: 0,
-    getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
-    getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
+    ...this.#projectsQueries.list(),
     maxPages: 3,
   }))
 
@@ -42,7 +29,7 @@ export class ExampleComponent {
   )
 
   readonly previousButtonDisabled = computed(
-    () => !this.#hasPreviousPage() || this.#isFetchingNextPage(),
+    () => !this.#hasPreviousPage() || this.#isFetchingPreviousPage(),
   )
   readonly previousButtonText = computed(() =>
     this.#isFetchingPreviousPage()

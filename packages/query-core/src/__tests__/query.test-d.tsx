@@ -1,5 +1,5 @@
+import { createKey } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '..'
 import type {
   CancelOptions,
@@ -357,7 +357,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -370,7 +370,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -385,7 +385,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -400,7 +400,9 @@ describe('query', () => {
       expectTypeOf(query.options.queryKey).toEqualTypeOf<
         ReadonlyArray<unknown> | undefined
       >()
-      expectTypeOf<Extract<typeof query.options.retry, Function>>()
+      expectTypeOf<
+        Extract<typeof query.options.retry, (...args: Array<any>) => any>
+      >()
         .parameter(1)
         .toEqualTypeOf<CustomError>()
       expectTypeOf(query.options.initialData).toEqualTypeOf<
@@ -425,7 +427,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -440,7 +442,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -455,7 +457,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -468,7 +470,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -483,7 +485,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -498,7 +500,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -514,7 +516,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -535,7 +537,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -553,7 +555,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -569,7 +571,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -588,7 +590,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -599,7 +601,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -618,7 +620,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -632,7 +634,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -646,7 +648,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -659,7 +661,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -672,7 +674,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -685,7 +687,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -698,7 +700,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -711,7 +713,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -722,7 +724,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -743,7 +745,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -756,7 +758,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -770,7 +772,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -784,7 +786,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -798,7 +800,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -814,7 +816,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -830,17 +832,17 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
       query.setOptions()
       query.setOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
       query.setOptions({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         // @ts-expect-error the queryFn must return the query data type
         queryFn: () => 42,
       })
@@ -854,7 +856,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -867,7 +869,7 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError, number>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
@@ -889,17 +891,17 @@ describe('query', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
       query.fetch()
       query.fetch({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
       query.fetch({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         // @ts-expect-error the queryFn must return the query data type
         queryFn: () => 42,
       })

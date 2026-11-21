@@ -1,9 +1,9 @@
-import { render } from 'preact'
 import {
   QueryClient,
   QueryClientProvider,
   useQuery,
 } from '@tanstack/preact-query'
+import { render } from 'preact'
 
 const queryClient = new QueryClient()
 
@@ -22,6 +22,7 @@ const Example = () => {
       const response = await fetch(
         'https://api.github.com/repos/TanStack/query',
       )
+      if (!response.ok) throw new Error('Failed to fetch repo data')
       return await response.json()
     },
   })

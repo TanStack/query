@@ -1,7 +1,7 @@
 import { defineConfig } from 'oxlint'
-import rootConfig from './root.oxlint.config.ts'
+import rootConfig, { vueConfig } from './root.oxlint.config.ts'
 
 export default defineConfig({
-  extends: [rootConfig],
+  extends: [rootConfig, vueConfig],
   settings: rootConfig.settings,
 })

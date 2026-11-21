@@ -1,9 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { sleep } from '@tanstack/query-test-utils'
+import { QueryClient, useQueries } from '@tanstack/react-query'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { act, render } from '@testing-library/react'
 import * as React from 'react'
-import { QueryClient, useQueries } from '@tanstack/react-query'
-import { sleep } from '@tanstack/query-test-utils'
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type {
   PersistedClient,
   Persister,
@@ -42,7 +42,7 @@ describe('useQueries with persist and memoized combine', () => {
       defaultOptions: {
         queries: {
           staleTime: 30000,
-          gcTime: 1000 * 60 * 60 * 24,
+          gcTime: 24 * 60 * 60 * 1000,
         },
       },
     })

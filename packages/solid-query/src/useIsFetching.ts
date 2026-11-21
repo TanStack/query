@@ -1,8 +1,8 @@
 import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 import { useQueryClientResolver } from './QueryClientProvider'
 import type { QueryFilters } from '@tanstack/query-core'
-import type { QueryClient } from './QueryClient'
 import type { Accessor } from 'solid-js'
+import type { QueryClient } from './QueryClient'
 
 /**
  * The `useIsFetching` primitive returns the `number` of the queries that your application is loading or fetching
@@ -25,7 +25,7 @@ import type { Accessor } from 'solid-js'
  * ```
  */
 export function useIsFetching(
-  filters?: Accessor<QueryFilters>,
+  filters?: Accessor<Omit<QueryFilters, 'fetchStatus'>>,
   queryClient?: Accessor<QueryClient>,
 ): Accessor<number> {
   const resolveClient = useQueryClientResolver(queryClient)

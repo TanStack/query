@@ -21,9 +21,9 @@ Instead, destructure the return value of the query hook and pass the destructure
 Examples of **incorrect** code for this rule:
 
 ```tsx
+import { useMutation } from '@tanstack/react-query'
 /* eslint "@tanstack/query/no-unstable-deps": "warn" */
 import { useCallback } from 'react'
-import { useMutation } from '@tanstack/react-query'
 
 function Component() {
   const mutation = useMutation({ mutationFn: (value: string) => value })
@@ -37,9 +37,9 @@ function Component() {
 Examples of **correct** code for this rule:
 
 ```tsx
+import { useMutation } from '@tanstack/react-query'
 /* eslint "@tanstack/query/no-unstable-deps": "warn" */
 import { useCallback } from 'react'
-import { useMutation } from '@tanstack/react-query'
 
 function Component() {
   const { mutate } = useMutation({ mutationFn: (value: string) => value })

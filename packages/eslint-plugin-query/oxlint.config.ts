@@ -12,6 +12,15 @@ export default defineConfig({
           'warn',
           { assertFunctionNames: ['expect', 'expectArrayEqualIgnoreOrder'] },
         ],
+        'vitest/require-hook': [
+          'error',
+          {
+            allowedFunctionCalls: [
+              'ruleTester.run',
+              'ruleTesterTypeChecked.run',
+            ],
+          },
+        ],
       },
     },
   ],

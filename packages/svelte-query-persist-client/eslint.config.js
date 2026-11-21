@@ -3,7 +3,6 @@
 import tsParser from '@typescript-eslint/parser'
 import pluginSvelte from 'eslint-plugin-svelte'
 import { defineConfig } from 'eslint/config'
-import svelteConfig from './svelte.config.js'
 
 // Only the Svelte rules, which need the component template; everything else is linted by Oxlint
 export default defineConfig([
@@ -14,7 +13,6 @@ export default defineConfig([
       parserOptions: {
         parser: tsParser,
         extraFileExtensions: ['.svelte'],
-        svelteConfig,
       },
     },
   },

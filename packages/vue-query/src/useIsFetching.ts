@@ -1,18 +1,18 @@
 import { getCurrentScope, onScopeDispose, ref, watchEffect } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
-import type { Ref } from 'vue-demi'
 import type { QueryFilters } from '@tanstack/query-core'
-import type { MaybeRefDeep } from './types'
+import type { Ref } from 'vue-demi'
 import type { QueryClient } from './queryClient'
+import type { MaybeRefDeep } from './types'
 
 /**
  * The filters accepted by `useIsFetching`: {@link QueryFilters} as a plain object, a `ref`, or a reactive
  * getter.
  */
 export type UseIsFetchingFilters =
-  | MaybeRefDeep<QueryFilters>
-  | (() => MaybeRefDeep<QueryFilters>)
+  | MaybeRefDeep<Omit<QueryFilters, 'fetchStatus'>>
+  | (() => MaybeRefDeep<Omit<QueryFilters, 'fetchStatus'>>)
 
 /**
  * The `useIsFetching` composable returns a `ref` to the `number` of the queries that your application is

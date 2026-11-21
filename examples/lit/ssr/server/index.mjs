@@ -1,12 +1,12 @@
-import { createServer } from 'node:http'
 import { readFile } from 'node:fs/promises'
+import { createServer } from 'node:http'
 import { dirname, extname, resolve, sep } from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 import { fileURLToPath } from 'node:url'
 import { render } from '@lit-labs/ssr'
 import { collectResult } from '@lit-labs/ssr/lib/render-result.js'
-import { html } from 'lit'
 import { QueryClient, dehydrate } from '@tanstack/lit-query'
+import { html } from 'lit'
 import {
   SSR_BASE_URL,
   SSR_HOST,
@@ -14,14 +14,11 @@ import {
   SSR_PUBLIC_ORIGIN,
 } from '../config/ports.js'
 import {
-  DEFAULT_MESSAGE,
-  QUERY_STALE_TIME,
-  createDataQueryOptions,
-} from '../src/api.js'
-import {
   getSsrQueryControllerCreationCount,
   resetSsrQueryControllerCreationCount,
 } from '../src/app.ts'
+import { DEFAULT_MESSAGE } from '../src/services/data/api.js'
+import { QUERY_STALE_TIME, dataQueries } from '../src/services/data/queries.js'
 
 const serverDir = dirname(fileURLToPath(import.meta.url))
 const distDir = resolve(serverDir, '../dist')
@@ -163,7 +160,7 @@ async function readTemplate() {
 }
 
 async function serveAsset(pathname, res) {
-  if (!pathname.startsWith('/assets/')) {
+  if (!pathname.startsWith('/assets/') && pathname !== '/emblem-light.svg') {
     return false
   }
 
@@ -187,7 +184,7 @@ async function serveAsset(pathname, res) {
 async function renderPage(res) {
   const queryClient = createBrowserQueryClient()
   resetSsrQueryControllerCreationCount(queryClient)
-  const dataQueryOptions = createDataQueryOptions(SSR_PUBLIC_ORIGIN)
+  const dataQueryOptions = dataQueries.detail(SSR_PUBLIC_ORIGIN)
   await queryClient.query(dataQueryOptions).catch((error) => {
     throw new Error(
       'SSR prefetch did not complete successfully. Refusing to render loading HTML.',

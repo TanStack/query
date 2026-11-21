@@ -1,0 +1,20 @@
+{
+  "name": "@tanstack/query-integration-solid-astro-7",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "test:types": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/solid-js": "^7.0.2",
+    "@tanstack/solid-query": "workspace:*",
+    "@tanstack/solid-query-devtools": "workspace:*",
+    "astro": "^7.4.4",
+    "solid-js": "^1.9.18"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^6.0.3"
+  }
+}

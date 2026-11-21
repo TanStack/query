@@ -9,10 +9,10 @@ title: DefinedInitialDataOptions
 type DefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object;
 ```
 
-Defined in: [packages/react-query/src/queryOptions.ts:77](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L77)
+Defined in: [packages/react-query/src/queryOptions.ts:80](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L80)
 
-The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
-`undefined` (unless a `select` changes `TData` to include `undefined`).
+The options accepted by the `queryOptions` overload selected when `initialData` is known to be defined —
+`data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ## Type Parameters
 

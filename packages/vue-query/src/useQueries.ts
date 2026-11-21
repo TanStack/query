@@ -9,10 +9,8 @@ import {
   unref,
   watch,
 } from 'vue-demi'
-
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
-import type { Ref } from 'vue-demi'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -22,8 +20,9 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
-import type { UseQueryOptions } from './queryOptions'
+import type { Ref } from 'vue-demi'
 import type { QueryClient } from './queryClient'
+import type { UseQueryOptions } from './queryOptions'
 import type { DeepUnwrapRef, MaybeRefDeep, ShallowOption } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
@@ -393,8 +392,13 @@ export function useQueries<
     return queriesRaw.map((queryOptions) => {
       const clonedOptions = cloneDeepUnref(queryOptions)
 
-      if (typeof clonedOptions.enabled === 'function') {
-        clonedOptions.enabled = queryOptions.enabled()
+      // A zero-arg function is a Vue getter and must run here so its refs are tracked.
+      // `(query) => boolean` is query-core's callback and is left for core to call.
+      if (
+        typeof clonedOptions.enabled === 'function' &&
+        clonedOptions.enabled.length === 0
+      ) {
+        clonedOptions.enabled = clonedOptions.enabled()
       }
 
       const defaulted = client.defaultQueryOptions(clonedOptions)

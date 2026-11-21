@@ -61,7 +61,7 @@ export function detectTanstackQueryImports(create: EnhancedCreate): Create {
       ImportDeclaration(node) {
         if (
           node.specifiers.length > 0 &&
-          // oxlint-disable-next-line typescript/no-unnecessary-condition
+          // oxlint-disable-next-line typescript/no-unnecessary-condition -- 'importKind' is undefined when the file is not parsed as TypeScript
           (node.importKind === 'value' || node.importKind === undefined) &&
           node.source.value.startsWith('@tanstack/') &&
           node.source.value.endsWith('-query')

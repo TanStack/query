@@ -1,7 +1,6 @@
-import { queryKey } from '@tanstack/query-test-utils'
+import { createKey } from '@tanstack/query-test-utils'
 import { Suspense } from 'preact/compat'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-
 import {
   QueryCache,
   QueryClient,
@@ -27,7 +26,7 @@ describe('useSuspenseInfiniteQuery', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
-    const key = queryKey()
+    const key = createKey()
 
     function Page() {
       useSuspenseInfiniteQuery({
@@ -54,7 +53,6 @@ describe('useSuspenseInfiniteQuery', () => {
     expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseInfiniteQuery',
     )
-    consoleErrorMock.mockRestore()
   })
 
   it('should log an error when skipToken is used in development environment', () => {
@@ -63,8 +61,8 @@ describe('useSuspenseInfiniteQuery', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-    const key = queryKey()
+      .mockReturnValue(undefined)
+    const key = createKey()
 
     function Page() {
       useSuspenseInfiniteQuery({
@@ -88,7 +86,6 @@ describe('useSuspenseInfiniteQuery', () => {
       'skipToken is not allowed for useSuspenseInfiniteQuery',
     )
 
-    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 
@@ -98,8 +95,8 @@ describe('useSuspenseInfiniteQuery', () => {
 
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-    const key = queryKey()
+      .mockReturnValue(undefined)
+    const key = createKey()
 
     function Page() {
       useSuspenseInfiniteQuery({
@@ -121,7 +118,6 @@ describe('useSuspenseInfiniteQuery', () => {
 
     expect(consoleErrorMock).not.toHaveBeenCalled()
 
-    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 })

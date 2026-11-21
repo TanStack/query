@@ -8,15 +8,15 @@ import {
 } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
-import type { Ref } from 'vue-demi'
 import type {
   Mutation,
   MutationFilters,
   MutationState,
 } from '@tanstack/query-core'
+import type { Ref } from 'vue-demi'
+import type { MutationCache } from './mutationCache'
 import type { QueryClient } from './queryClient'
 import type { MaybeRefDeep } from './types'
-import type { MutationCache } from './mutationCache'
 
 type VueMutationFilters = MaybeRefDeep<MutationFilters>
 
@@ -25,8 +25,8 @@ type VueMutationFilters = MaybeRefDeep<MutationFilters>
  * getter.
  */
 export type UseIsMutatingFilters =
-  | VueMutationFilters
-  | (() => VueMutationFilters)
+  | MaybeRefDeep<Omit<MutationFilters, 'status'>>
+  | (() => MaybeRefDeep<Omit<MutationFilters, 'status'>>)
 
 /**
  * The `useIsMutating` composable returns a `ref` to the `number` of mutations that your application currently

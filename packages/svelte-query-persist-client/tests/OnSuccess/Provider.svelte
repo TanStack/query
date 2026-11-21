@@ -1,10 +1,10 @@
 <script lang="ts">
   import PersistQueryClientProvider from '../../src/PersistQueryClientProvider.svelte'
   import OnSuccess from './OnSuccess.svelte'
-  import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
+  import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
 
-  interface Props {
+  type Props = {
     queryClient: QueryClient
     persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
     onSuccess: () => void

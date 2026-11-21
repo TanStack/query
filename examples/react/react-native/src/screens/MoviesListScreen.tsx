@@ -1,16 +1,16 @@
+import { useQuery } from '@tanstack/react-query'
 import * as React from 'react'
 import { FlatList, RefreshControl } from 'react-native'
-import { useQuery } from '@tanstack/react-query'
-import { LoadingIndicator } from '../components/LoadingIndicator'
-import { ErrorMessage } from '../components/ErrorMessage'
 import { Divider } from '../components/Divider'
+import { ErrorMessage } from '../components/ErrorMessage'
 import { ListItem } from '../components/ListItem'
+import { LoadingIndicator } from '../components/LoadingIndicator'
 import { useRefreshByUser } from '../hooks/useRefreshByUser'
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus'
-import { fetchMovies } from '../lib/api'
-import type { Movie } from '../lib/api'
-import type { MoviesStackNavigator } from '../navigation/types'
+import { moviesQueries } from '../services/movies/queries'
 import type { StackNavigationProp } from '@react-navigation/stack'
+import type { MoviesStackNavigator } from '../navigation/types'
+import type { Movie } from '../services/movies/types'
 
 type MoviesListScreenNavigationProp = StackNavigationProp<
   MoviesStackNavigator,
@@ -22,15 +22,11 @@ type Props = {
 }
 
 export function MoviesListScreen({ navigation }: Props) {
-  const { isPending, isError, error, data, refetch } = useQuery<
-    Array<Movie>,
-    Error
-  >({
-    queryKey: ['movies'],
-    queryFn: fetchMovies,
-  })
+  const { isPending, isError, error, data, refetch } = useQuery(
+    moviesQueries.list(),
+  )
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
-  useRefreshOnFocus(refetch)
+  useRefreshOnFocus()
 
   const onListItemPress = React.useCallback(
     (movie: Movie) => {

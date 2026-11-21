@@ -1,12 +1,11 @@
+import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { skipToken } from '../utils'
-import type { MutationFilters, QueryFilters, Updater } from '../utils'
 import type { Mutation } from '../mutation'
+import type { MutationCache } from '../mutationCache'
 import type { Query, QueryState } from '../query'
 import type { QueryCache } from '../queryCache'
-import type { MutationCache } from '../mutationCache'
 import type {
   DataTag,
   DefaultError,
@@ -27,6 +26,7 @@ import type {
   SetDataOptions,
   UnsetMarker,
 } from '../types'
+import type { MutationFilters, QueryFilters, Updater } from '../utils'
 
 type TypedData = { foo: string }
 type TypedError = DefaultError & { bar: string }
@@ -74,13 +74,11 @@ const typedFilterKey = typedQueryFilters.queryKey!
 const typedMutationKey = typedMutationOptions.mutationKey!
 
 const untypedQueryOptions: EnsureQueryDataOptions = {
-  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-  queryKey: ['key'] as any,
+  queryKey: ['key'],
 }
 
 const untypedFetchInfiniteQueryOptions: FetchInfiniteQueryOptions = {
-  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-  queryKey: ['key'] as any,
+  queryKey: ['key'],
   pages: 5,
   getNextPageParam: (lastPage) => {
     expectTypeOf(lastPage).toEqualTypeOf<unknown>()
@@ -421,7 +419,7 @@ describe('queryClient', () => {
     it('should allow passing pages', async () => {
       // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       const data = await new QueryClient().fetchInfiniteQuery({
-        queryKey: queryKey(),
+        queryKey: createKey(),
         queryFn: () => Promise.resolve('string'),
         getNextPageParam: () => 1,
         initialPageParam: 1,
@@ -442,14 +440,13 @@ describe('queryClient', () => {
       ])
     })
 
-    it('should not allow passing pages without getNextPageParam', () => {
+    it('should require getNextPageParam even without pages', () => {
       assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
         // @ts-expect-error Property 'getNextPageParam' is missing
         {
           queryKey: ['key'],
           queryFn: () => Promise.resolve('string'),
           initialPageParam: 1,
-          pages: 5,
         },
       ])
     })
@@ -548,10 +545,7 @@ describe('queryClient', () => {
         initialPageParam: 1,
         getNextPageParam: () => 2,
         select: (data) => ({
-          pages: data.pages.map(
-            // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-            (x) => `count: ${(x as { count: number }).count}`,
-          ),
+          pages: data.pages.map((x) => `count: ${x.count}`),
         }),
       })
 
@@ -572,19 +566,16 @@ describe('queryClient', () => {
       >()
     })
 
-    it('should type pages as a number', () => {
+    it('should type pages as an optional number', () => {
       expectTypeOf<
-        Extract<
-          InfiniteQueryExecuteOptions<
-            { count: number },
-            Error,
-            unknown,
-            QueryKey,
-            number
-          >,
-          { pages: unknown }
+        InfiniteQueryExecuteOptions<
+          { count: number },
+          Error,
+          unknown,
+          QueryKey,
+          number
         >['pages']
-      >().toEqualTypeOf<number>()
+      >().toEqualTypeOf<number | undefined>()
     })
 
     it('should allow passing getNextPageParam without pages', () => {
@@ -598,14 +589,13 @@ describe('queryClient', () => {
       ])
     })
 
-    it('should not allow passing pages without getNextPageParam', () => {
+    it('should require getNextPageParam even without pages', () => {
       assertType<Parameters<QueryClient['infiniteQuery']>>([
         // @ts-expect-error Property 'getNextPageParam' is missing
         {
           queryKey: ['key'],
           queryFn: () => Promise.resolve('string'),
           initialPageParam: 1,
-          pages: 5,
         },
       ])
     })
@@ -694,12 +684,14 @@ describe('queryClient', () => {
         { queryKey: '1' },
       ])
     })
+
     it('should reject an object queryKey (#8684)', () => {
       assertType<Parameters<QueryClient['invalidateQueries']>>([
         // @ts-expect-error key is not an array
         { queryKey: { foo: true } },
       ])
     })
+
     it('should type the predicate if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
@@ -850,6 +842,45 @@ describe('queryClient', () => {
   })
 
   describe('isFetching', () => {
+    it('should reject a fetchStatus filter', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
+        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'fetching' }),
+      ).toEqualTypeOf<number>()
+      expectTypeOf(
+        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
+        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'paused' }),
+      ).toEqualTypeOf<number>()
+      expectTypeOf(
+        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
+        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'idle' }),
+      ).toEqualTypeOf<number>()
+    })
+
+    it('should accept the other query filters', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        queryClient.isFetching({
+          queryKey: ['key'],
+          exact: true,
+          type: 'active',
+          stale: true,
+          predicate: (query) => query.state.data !== undefined,
+        }),
+      ).toEqualTypeOf<number>()
+    })
+
+    it('should allow fetchStatus in query cache filters', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        queryClient.getQueryCache().findAll({ fetchStatus: 'paused' }),
+      ).toBeArray()
+    })
+
     it('should return a number', () => {
       const queryClient = new QueryClient()
 
@@ -891,6 +922,7 @@ describe('queryClient', () => {
         { notAFilter: true },
       ])
     })
+
     it('should accept typed and untyped mutation filters alike', () => {
       const queryClient = new QueryClient()
 
@@ -899,6 +931,36 @@ describe('queryClient', () => {
       ).toEqualTypeOf<number>()
       expectTypeOf(
         queryClient.isMutating(untypedMutationFilters),
+      ).toEqualTypeOf<number>()
+    })
+
+    it('should accept an explicit mutation filter type', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        queryClient.isMutating<MutationFilters<TypedData, TypedError>>({
+          predicate(mutation) {
+            expectTypeOf(mutation).toEqualTypeOf<
+              Mutation<TypedData, TypedError>
+            >()
+            expectTypeOf(mutation.state.data).toEqualTypeOf<
+              TypedData | undefined
+            >()
+            expectTypeOf(
+              mutation.state.error,
+            ).toEqualTypeOf<TypedError | null>()
+            return true
+          },
+        }),
+      ).toEqualTypeOf<number>()
+    })
+
+    it('should reject a status filter', () => {
+      const queryClient = new QueryClient()
+
+      expectTypeOf(
+        // @ts-expect-error isMutating always filters by status: 'pending'
+        queryClient.isMutating({ mutationKey: ['key'], status: 'pending' }),
       ).toEqualTypeOf<number>()
     })
   })

@@ -2,14 +2,13 @@
 
 import { tanstackConfig } from '@tanstack/eslint-config'
 import pluginQuery from '@tanstack/eslint-plugin-query'
-import pluginSvelte from 'eslint-plugin-svelte'
 import tsParser from '@typescript-eslint/parser'
+import pluginSvelte from 'eslint-plugin-svelte'
 import { defineConfig } from 'eslint/config'
-import svelteConfig from './svelte.config.js'
 
 export default defineConfig([
   ...tanstackConfig,
-  ...pluginQuery.configs['flat/recommended'],
+  ...pluginQuery.configs['flat/recommended-strict'],
   ...pluginSvelte.configs.recommended,
   {
     files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
@@ -17,7 +16,6 @@ export default defineConfig([
       parserOptions: {
         parser: tsParser,
         extraFileExtensions: ['.svelte'],
-        svelteConfig,
       },
     },
   },

@@ -1,6 +1,3 @@
-import 'font-awesome/css/font-awesome.min.css'
-import React, { lazy } from 'react'
-import ReactDOM from 'react-dom/client'
 import {
   QueryClient,
   QueryClientProvider,
@@ -9,11 +6,11 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import React, { lazy } from 'react'
+import ReactDOM from 'react-dom/client'
 import { ErrorBoundary } from 'react-error-boundary'
-
-import { projectsQueryOptions } from './queries'
-
 import Button from './components/Button'
+import { projectsQueries } from './services/projects/queries'
 
 const Projects = lazy(() => import('./components/Projects'))
 const Project = lazy(() => import('./components/Project'))
@@ -44,7 +41,7 @@ function Example() {
       <Button
         onClick={() => {
           if (!showProjects) {
-            queryClient.query(projectsQueryOptions).catch(noop)
+            queryClient.query(projectsQueries.list()).catch(noop)
           }
           setShowProjects((old) => !old)
         }}

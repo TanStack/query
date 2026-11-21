@@ -8,12 +8,24 @@ import type {
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
+const resolvedThenable = Promise.resolve()
+
+type SuspensePromiseEntry = {
+  fetchPromise: Promise<unknown>
+  promise: Promise<void>
+  settled: boolean
+}
+
+const suspensePromiseCache = new WeakMap<
+  Query<any, any, any, any>,
+  SuspensePromiseEntry
+>()
+
 /**
- * The default `throwOnError` of the suspense hooks: throws the error to the nearest error boundary
- * only if the query has no data to show.
- * @param _error - The error of the query. Unused.
- * @param query - The query that errored.
- * @returns `true` if the query has no data.
+ * Uses the nearest error boundary when the query has no data to show.
+ * @param _error - The query error.
+ * @param query - The query that failed.
+ * @returns Whether the query has no data.
  */
 export const defaultThrowOnError = <
   TQueryFnData = unknown,
@@ -60,43 +72,86 @@ export const ensureSuspenseTimers = (
 }
 
 /**
- * Checks whether a query should suspend: `suspense` is enabled and the result is still `pending`.
- * @param defaultedOptions - The defaulted query options, if any.
- * @param result - The current result of the observer.
- * @returns `true` if the component should suspend.
+ * Decides whether a Suspense query needs to fetch during render.
+ * @param defaultedOptions - The options of the query.
+ * @param result - The result for this render.
+ * @param errorResetBoundary - The nearest query error reset boundary.
+ * @param query - The query to fetch.
+ * @returns `undefined` to skip the fetch, `false` to fetch in the background, or `true` to suspend.
  */
 export const shouldSuspend = (
   defaultedOptions:
     | DefaultedQueryObserverOptions<any, any, any, any, any>
     | undefined,
   result: QueryObserverResult<any, any>,
-) => defaultedOptions?.suspense && result.isPending
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: Query<any, any, any, any>,
+): boolean | undefined => {
+  if (!defaultedOptions?.suspense) {
+    return undefined
+  }
+
+  if (
+    result.isPending ||
+    (query.state.status === 'error' && errorResetBoundary.isReset())
+  ) {
+    return true
+  }
+
+  if (result.isFetching && result.isPlaceholderData) {
+    return false
+  }
+
+  return undefined
+}
 
 /**
- * Fetches the query for a suspending component, without affecting the observer's own result. If
- * the fetch fails, the reset state of the error boundary is cleared, so the error is thrown to it.
- * @param defaultedOptions - The defaulted query options to fetch with.
- * @param observer - The observer of the query.
- * @param errorResetBoundary - The value of the nearest `QueryErrorResetBoundary`.
- * @returns A promise that resolves once the fetch settles. It never rejects.
+ * Starts a fetch during render or reuses a promise for an existing fetch.
+ * @param defaultedOptions - The options of the query.
+ * @param observer - The observer that starts the fetch.
+ * @param errorResetBoundary - The nearest query error reset boundary.
+ * @param query - The query used to key the promise cache.
+ * @param shouldFetch - Whether to start a fetch when none is pending.
+ * @returns A promise that resolves when the fetch settles.
  */
-export const fetchOptimistic = <
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey extends QueryKey,
->(
-  defaultedOptions: DefaultedQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >,
-  observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+export function getSuspensePromise(
+  defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
+  observer: QueryObserver<any, any, any, any, any>,
   errorResetBoundary: QueryErrorResetBoundaryValue,
-) =>
-  observer.fetchOptimistic(defaultedOptions).catch(() => {
-    errorResetBoundary.clearReset()
-  })
+  query: Query<any, any, any, any>,
+  shouldFetch = true,
+): Promise<void> {
+  const shouldFetchNow =
+    shouldFetch ||
+    (query.state.status === 'error' && errorResetBoundary.isReset())
+
+  const cached = suspensePromiseCache.get(query)
+
+  if (cached && (!shouldFetchNow || !cached.settled)) {
+    cached.fetchPromise.catch(() => errorResetBoundary.clearReset())
+    return cached.promise
+  }
+
+  if (!shouldFetchNow) {
+    return resolvedThenable
+  }
+
+  const fetchPromise = observer.fetchOptimistic(defaultedOptions)
+  // The observer result is recalculated after React retries. We only use this
+  // promise to tell React when the fetch has settled.
+  const entry = {
+    fetchPromise,
+    promise: undefined as unknown as Promise<void>,
+    settled: false,
+  }
+  const settle = () => {
+    entry.settled = true
+  }
+  entry.promise = fetchPromise.then(settle, settle)
+
+  suspensePromiseCache.set(query, entry)
+
+  fetchPromise.catch(() => errorResetBoundary.clearReset())
+
+  return entry.promise
+}

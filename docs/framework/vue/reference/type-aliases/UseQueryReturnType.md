@@ -9,10 +9,11 @@ title: UseQueryReturnType
 type UseQueryReturnType<TData, TError> = UseBaseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:21](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L21)
+Defined in: [packages/vue-query/src/useQuery.ts:22](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L22)
 
-The result of `useQuery` when `initialData` is omitted or may be `undefined` — `data` may be `undefined`
-while the query is `pending`. See UseBaseQueryReturnType.
+The result of `useQuery` when `initialData` is omitted, may be `undefined`, or is a function that may
+return `undefined` — `data` may be `undefined` while the query is `pending`. See
+UseBaseQueryReturnType.
 
 ## Type Parameters
 

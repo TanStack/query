@@ -70,10 +70,9 @@ function _cloneDeep<T>(
   }
 
   if (typeof value === 'object' && isPlainObject(value)) {
-    const entries = Object.entries(value).map(([key, val]) => [
-      key,
-      _cloneDeep(val, customize, key, currentLevel + 1),
-    ])
+    const entries = Object.entries(value as Record<string, any>).map(
+      ([key, val]) => [key, _cloneDeep(val, customize, key, currentLevel + 1)],
+    )
     return Object.fromEntries(entries)
   }
 
@@ -128,7 +127,7 @@ export function cloneDeepUnref<T>(
     if (unrefGetters && isFunction(val)) {
       // Cast due to older TS versions not allowing calling
       // on certain intersection types.
-      return cloneDeepUnref((val as Function)(), unrefGetters)
+      return cloneDeepUnref((val as () => any)(), unrefGetters)
     }
 
     // Unref refs and continue to recurse into the value.
@@ -146,8 +145,7 @@ export function cloneDeepUnref<T>(
  * @param value - The value to check.
  * @returns `true` if `value` is a plain object.
  */
-// oxlint-disable-next-line typescript/no-wrapper-object-types
-function isPlainObject(value: unknown): value is Object {
+function isPlainObject(value: unknown): value is Record<PropertyKey, unknown> {
   if (Object.prototype.toString.call(value) !== '[object Object]') {
     return false
   }
@@ -161,7 +159,7 @@ function isPlainObject(value: unknown): value is Object {
  * @param value - The value to check.
  * @returns `true` if `value` is a function.
  */
-function isFunction(value: unknown): value is Function {
+function isFunction(value: unknown): value is (...args: Array<any>) => any {
   return typeof value === 'function'
 }
 
