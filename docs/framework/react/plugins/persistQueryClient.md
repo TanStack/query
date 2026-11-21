@@ -7,7 +7,6 @@ This is set of utilities for interacting with "persisters" which save your query
 
 ## Build Persisters
 
-- [createSyncStoragePersister](./createSyncStoragePersister.md)
 - [createAsyncStoragePersister](./createAsyncStoragePersister.md)
 - [create a custom persister](#persisters)
 
@@ -59,7 +58,7 @@ the persister `removeClient()` is called and the cache is immediately discarded.
 ### `persistQueryClientSave`
 
 - Your query/mutation are `dehydrated` and stored by the persister you provided.
-- `createSyncStoragePersister` and `createAsyncStoragePersister` throttle this action to happen at most every 1 second to save on potentially expensive writes. Review their documentation to see how to customize their throttle timing.
+- By default, `createAsyncStoragePersister` limits writes to once per second. Use `throttleTime` to change this interval.
 
 You can use this to explicitly persist the cache at the moment(s) you choose.
 

@@ -726,7 +726,6 @@ export class QueryObserver<
       isPending,
       isSuccess: status === 'success',
       isError,
-      isInitialLoading: isLoading,
       isLoading,
       data,
       dataUpdatedAt: newState.dataUpdatedAt,

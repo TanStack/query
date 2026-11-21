@@ -69,7 +69,7 @@ export default Root
 
 ## Retries
 
-Retries work the same as for a [SyncStoragePersister](./createSyncStoragePersister.md), except that they can also be asynchronous. You can also use all the predefined retry handlers.
+Retry handlers can be synchronous or asynchronous. You can also use the predefined retry handlers.
 
 ## API
 

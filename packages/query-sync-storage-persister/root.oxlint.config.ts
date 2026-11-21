@@ -1,1 +1,0 @@
-../../oxlint.config.ts

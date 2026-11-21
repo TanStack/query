@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { hasInjectionContext, inject } from 'vue-demi'
+import { hasInjectionContext, inject } from 'vue'
 import { useQueryClient } from '../useQueryClient'
 import { VUE_QUERY_CLIENT } from '../utils'
 
-vi.mock(import('vue-demi'), async (importOriginal) => {
+vi.mock(import('vue'), async (importOriginal) => {
   const actual = await importOriginal()
   return {
     ...actual,

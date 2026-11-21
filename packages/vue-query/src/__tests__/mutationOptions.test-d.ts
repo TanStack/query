@@ -9,7 +9,7 @@ import type {
   MutationState,
   WithRequired,
 } from '@tanstack/query-core'
-import type { Ref } from 'vue-demi'
+import type { Ref } from 'vue'
 import type { MutationOptions } from '../types'
 
 describe('mutationOptions', () => {

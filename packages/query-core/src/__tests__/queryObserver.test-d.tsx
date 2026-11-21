@@ -960,19 +960,6 @@ describe('queryObserver', () => {
         })
       })
 
-      describe('isInitialLoading', () => {
-        it('should be typed as a boolean', () => {
-          const observer = new QueryObserver(queryClient, {
-            queryKey: createKey(),
-            queryFn: () => Promise.resolve({ value: 'data' }),
-          })
-
-          const result = observer.getCurrentResult()
-
-          expectTypeOf(result.isInitialLoading).toEqualTypeOf<boolean>()
-        })
-      })
-
       describe('data', () => {
         it('should be typed from the observed data type', () => {
           expectTypeOf<

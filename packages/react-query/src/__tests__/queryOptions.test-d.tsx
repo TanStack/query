@@ -72,14 +72,13 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<number>()
   })
 
-  it('should work when passed to fetchQuery', async () => {
+  it('should work when passed to query', async () => {
     const options = queryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
     })
 
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-    const data = await new QueryClient().fetchQuery(options)
+    const data = await new QueryClient().query(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
 
@@ -113,18 +112,6 @@ describe('queryOptions', () => {
 
     const data = await new QueryClient().query(options)
     expectTypeOf(data).toEqualTypeOf<unknown>()
-  })
-
-  it('should ignore select when passed to fetchQuery', async () => {
-    const options = queryOptions({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve(5),
-      select: (data) => data.toString(),
-    })
-
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-    const data = await new QueryClient().fetchQuery(options)
-    expectTypeOf(data).toEqualTypeOf<number>()
   })
 
   it('should work when passed to useQueries', () => {

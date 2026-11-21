@@ -22,7 +22,7 @@ export { QueryCache } from './queryCache'
 export type { QueryCacheNotifyEvent } from './queryCache'
 export { QueryClient } from './queryClient'
 export { QueryObserver } from './queryObserver'
-export { CancelledError, isCancelledError } from './retryer'
+export { CancelledError } from './retryer'
 export {
   timeoutManager,
   type ManagedTimerId,
@@ -32,7 +32,6 @@ export {
 } from './timeoutManager'
 export {
   hashKey,
-  isServer,
   keepPreviousData,
   matchMutation,
   matchQuery,
@@ -100,11 +99,7 @@ export type {
   InfiniteQueryObserverOptions,
   DefaultedInfiniteQueryObserverOptions,
   QueryExecuteOptions,
-  FetchQueryOptions,
-  EnsureQueryDataOptions,
-  EnsureInfiniteQueryDataOptions,
   InfiniteQueryExecuteOptions,
-  FetchInfiniteQueryOptions,
   ResultOptions,
   RefetchOptions,
   InvalidateQueryFilters,

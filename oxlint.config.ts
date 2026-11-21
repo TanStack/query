@@ -59,7 +59,6 @@ export default defineConfig({
             'tsqd', // Our public interface (TanStack Query Devtools shorthand)
             'tsdown', // We use tsdown as builder
             'typecheck', // Field of vite.config.ts
-            'vue-demi', // dependency of @tanstack/vue-query
             'ɵkind', // Angular specific
             'ɵproviders', // Angular specific
           ],
@@ -67,54 +66,11 @@ export default defineConfig({
       },
     ],
 
-    /**
-     * Disallows star exports and direct calls to deprecated imperative query
-     * methods of `QueryClient`
-     * for new tests and code
-     *
-     * Existing tests that directly test the methods from before the refactoring
-     * will be grandfathered in and allowed to continue using the deprecated methods.
-     * They should not be removed, but new tests should use the new methods instead.
-     */
     'tanstack-query/no-restricted-syntax': [
       'error',
       {
         selector: 'ExportAllDeclaration',
         message: 'Use explicit named exports.',
-      },
-      {
-        selector:
-          'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="fetchQuery"], [callee.computed=true][callee.property.value="fetchQuery"])',
-        message: 'Use queryClient.query(options) instead.',
-      },
-      {
-        selector:
-          'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="prefetchQuery"], [callee.computed=true][callee.property.value="prefetchQuery"])',
-        message:
-          'Use queryClient.query(options).catch(noop) instead if errors should be swallowed.',
-      },
-      {
-        selector:
-          'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="ensureQueryData"], [callee.computed=true][callee.property.value="ensureQueryData"])',
-        message:
-          "Use queryClient.query({ ...options, staleTime: 'static' }) instead.",
-      },
-      {
-        selector:
-          'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="fetchInfiniteQuery"], [callee.computed=true][callee.property.value="fetchInfiniteQuery"])',
-        message: 'Use queryClient.infiniteQuery(options) instead.',
-      },
-      {
-        selector:
-          'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="prefetchInfiniteQuery"], [callee.computed=true][callee.property.value="prefetchInfiniteQuery"])',
-        message:
-          'Use queryClient.infiniteQuery(options).catch(noop) instead if errors should be swallowed.',
-      },
-      {
-        selector:
-          'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="ensureInfiniteQueryData"], [callee.computed=true][callee.property.value="ensureInfiniteQueryData"])',
-        message:
-          "Use queryClient.infiniteQuery({ ...options, staleTime: 'static' }) instead.",
       },
     ],
   },

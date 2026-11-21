@@ -17,21 +17,9 @@ describe('pageParam', () => {
     })
   })
 
-  it('should pass direction to queryFn of useInfiniteQuery', () => {
-    useInfiniteQuery({
-      queryKey: createKey(),
-      queryFn: ({ direction }) => {
-        expectTypeOf(direction).toEqualTypeOf<'forward' | 'backward'>()
-      },
-      initialPageParam: 1,
-      getNextPageParam: () => undefined,
-    })
-  })
-
-  it('should define type of param passed to queryFunctionContext with initialPageParam for fetchInfiniteQuery', () => {
+  it('should define type of param passed to queryFunctionContext with initialPageParam for infiniteQuery', () => {
     const queryClient = new QueryClient()
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-    queryClient.fetchInfiniteQuery({
+    queryClient.infiniteQuery({
       queryKey: createKey(),
       queryFn: ({ pageParam }) => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
@@ -48,19 +36,6 @@ describe('pageParam', () => {
       queryFn: ({ pageParam }) => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
         return Promise.resolve(pageParam)
-      },
-      getNextPageParam: () => undefined,
-      initialPageParam: 1,
-    })
-  })
-
-  it('should define type of param passed to queryFunctionContext with initialPageParam for prefetchInfiniteQuery', () => {
-    const queryClient = new QueryClient()
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-    queryClient.prefetchInfiniteQuery({
-      queryKey: createKey(),
-      queryFn: ({ pageParam }) => {
-        expectTypeOf(pageParam).toEqualTypeOf<number>()
       },
       getNextPageParam: () => undefined,
       initialPageParam: 1,

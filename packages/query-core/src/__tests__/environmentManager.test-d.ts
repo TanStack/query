@@ -25,9 +25,7 @@ describe('environmentManager', () => {
   })
 
   describe('isServer', () => {
-    it('should be a function returning a boolean, not a boolean constant', () => {
-      // `utils.isServer` is a boolean constant evaluated once at module load,
-      // while this one re-runs the (overridable) check on every call.
+    it('should be a function returning a boolean', () => {
       expectTypeOf(isServer).toEqualTypeOf<() => boolean>()
       expectTypeOf(isServer()).toEqualTypeOf<boolean>()
     })

@@ -79,7 +79,6 @@ function createPendingInfiniteQueryResult<
     isFetched: false,
     isFetchedAfterMount: false,
     isFetching: false,
-    isInitialLoading: false,
     isLoading: false,
     isLoadingError: false,
     isPaused: false,

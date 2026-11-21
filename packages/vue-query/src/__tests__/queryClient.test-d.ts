@@ -1,6 +1,5 @@
-import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { ref } from 'vue-demi'
+import { ref } from 'vue'
 import { QueryClient } from '../queryClient'
 import type { DataTag, InfiniteData, QueryState } from '@tanstack/query-core'
 
@@ -155,47 +154,6 @@ describe('setQueryData', () => {
         expectTypeOf(data).toEqualTypeOf<number | undefined>()
         return data
       })) satisfies () => unknown
-  })
-})
-
-describe('fetchInfiniteQuery', () => {
-  it('should allow passing pages', async () => {
-    const key = createKey()
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-    const data = await new QueryClient().fetchInfiniteQuery({
-      queryKey: key,
-      queryFn: () => Promise.resolve('string'),
-      getNextPageParam: () => 1,
-      initialPageParam: 1,
-      pages: 5,
-    })
-
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
-  })
-
-  it('should not allow passing getNextPageParam without pages', () => {
-    const key = createKey()
-    assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
-      {
-        queryKey: key,
-        queryFn: () => Promise.resolve('string'),
-        initialPageParam: 1,
-        getNextPageParam: () => 1,
-      },
-    ])
-  })
-
-  it('should not allow passing pages without getNextPageParam', () => {
-    const key = createKey()
-    assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
-      // @ts-expect-error Property 'getNextPageParam' is missing
-      {
-        queryKey: key,
-        queryFn: () => Promise.resolve('string'),
-        initialPageParam: 1,
-        pages: 5,
-      },
-    ])
   })
 })
 

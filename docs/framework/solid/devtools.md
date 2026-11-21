@@ -80,8 +80,6 @@ function App() {
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 - `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
   - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
-- `styleNonce?: string`
-  - Deprecated. The devtools no longer add a `<style>` element, so they need no nonce. This option does nothing.
 - `shadowDOMTarget?: ShadowRoot`
   - The shadow root to add the devtools styles to. By default, the styles are added to the shadow root the devtools render in, or to the document when they do not render in a shadow root.
 - `trustedTypesPolicy?: { createHTML: (html: string) => unknown }`
@@ -134,8 +132,6 @@ function App() {
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 - `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
   - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
-- `styleNonce?: string`
-  - Deprecated. The devtools no longer add a `<style>` element, so they need no nonce. This option does nothing.
 - `shadowDOMTarget?: ShadowRoot`
   - The shadow root to add the devtools styles to. By default, the styles are added to the shadow root the devtools render in, or to the document when they do not render in a shadow root.
 - `trustedTypesPolicy?: { createHTML: (html: string) => unknown }`

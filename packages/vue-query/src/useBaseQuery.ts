@@ -9,7 +9,7 @@ import {
   shallowReadonly,
   toRefs,
   watch,
-} from 'vue-demi'
+} from 'vue'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref, updateState } from './utils'
 import type {
@@ -18,7 +18,7 @@ import type {
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { Ref } from 'vue-demi'
+import type { Ref } from 'vue'
 import type { QueryClient } from './queryClient'
 import type { UseQueryOptions } from './queryOptions'
 import type { MaybeRefOrGetter } from './types'

@@ -23,7 +23,6 @@ const queryFields = {
   isLoading: true,
   isPending: true,
   isLoadingError: true,
-  isInitialLoading: true,
   isPaused: true,
   isPlaceholderData: true,
   isRefetchError: true,

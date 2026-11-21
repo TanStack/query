@@ -246,20 +246,6 @@ describe('infiniteQueryObserver', () => {
         })
       })
 
-      it('should type the direction of the context it is given', () => {
-        new InfiniteQueryObserver(queryClient, {
-          queryKey: createKey(),
-          initialPageParam: 1,
-          getNextPageParam: () => 1,
-          queryFn: (context) => {
-            expectTypeOf(context.direction).toEqualTypeOf<
-              'forward' | 'backward'
-            >()
-            return Promise.resolve('data')
-          },
-        })
-      })
-
       it('should type the remaining fields of the context it is given', () => {
         const key = ['a', 1] as const
 
@@ -288,17 +274,11 @@ describe('infiniteQueryObserver', () => {
         expectTypeOf<
           'pageParam' extends OptionalKeys ? true : false
         >().toEqualTypeOf<false>()
-        expectTypeOf<
-          'direction' extends OptionalKeys ? true : false
-        >().toEqualTypeOf<false>()
       })
 
       it('should leave the page param unknown on an unpaged context type', () => {
         expectTypeOf<
           QueryFunctionContext<ReadonlyArray<unknown>>['pageParam']
-        >().toEqualTypeOf<unknown>()
-        expectTypeOf<
-          QueryFunctionContext<ReadonlyArray<unknown>>['direction']
         >().toEqualTypeOf<unknown>()
       })
     })
@@ -1047,7 +1027,6 @@ describe('infiniteQueryObserver', () => {
       >[0]
 
       expectTypeOf<Context['pageParam']>().toEqualTypeOf<unknown>()
-      expectTypeOf<Context['direction']>().toEqualTypeOf<unknown>()
     })
 
     it('should expose the paged data type through the options it holds', () => {

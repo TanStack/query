@@ -65,7 +65,7 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
-  it('should work when passed to fetchInfiniteQuery', async () => {
+  it('should work when passed to infiniteQuery', async () => {
     const key = createKey()
     const options = infiniteQueryOptions({
       queryKey: key,
@@ -74,8 +74,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-    const data = await new QueryClient().fetchInfiniteQuery(options)
+    const data = await new QueryClient().infiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
@@ -226,23 +225,6 @@ describe('infiniteQueryOptions', () => {
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
       queryClient.query(options),
-    )
-
-    // deprecated methods below to be removed next major version
-    assertType(
-      // @ts-expect-error cannot pass infinite options to non-infinite query functions
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      queryClient.ensureQueryData(options),
-    )
-    assertType(
-      // @ts-expect-error cannot pass infinite options to non-infinite query functions
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      queryClient.fetchQuery(options),
-    )
-    assertType(
-      // @ts-expect-error cannot pass infinite options to non-infinite query functions
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
-      queryClient.prefetchQuery(options),
     )
   })
 
