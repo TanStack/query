@@ -80,15 +80,15 @@ type RetryDelayFunction<TError = DefaultError> = (
 ) => number
 
 /**
- * Applies exponential backoff with jitter. The limit starts at 1 second and
- * doubles for each retry, up to 30 seconds.
+ * Applies exponential backoff with jitter. The base delay starts at 1 second
+ * and doubles for each retry, up to 30 seconds.
  * @param failureCount - The number of previous failures. Starts at 0 for the first retry.
- * @returns A random integer delay from 10 ms to the backoff limit, inclusive.
+ * @returns A random delay from 80% to 100% of the base delay, in milliseconds.
  */
 function defaultRetryDelay(failureCount: number) {
-  const maxDelay = Math.min(1000 * 2 ** failureCount, 30000)
-  const minDelay = 10
-  return minDelay + Math.floor(Math.random() * (maxDelay - minDelay + 1))
+  const baseDelay = Math.min(1000 * 2 ** failureCount, 30000)
+  const maxJitter = baseDelay * 0.2
+  return baseDelay - Math.floor(Math.random() * (maxJitter + 1))
 }
 
 /**

@@ -31,26 +31,6 @@ replace:
 ```
 
 [//]: # 'Example'
-[//]: # 'Example2'
-
-```svelte
-<script lang="ts">
-  // Keep the previous retry schedule for all queries
-  import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
-
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-      },
-    },
-  })
-</script>
-
-<QueryClientProvider client={queryClient}>...</QueryClientProvider>
-```
-
-[//]: # 'Example2'
 [//]: # 'Example3'
 
 ```svelte

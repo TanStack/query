@@ -26,34 +26,6 @@ const todoQuery = injectQuery(() => ({
 ```
 
 [//]: # 'Example'
-[//]: # 'Example2'
-
-```ts
-// Keep the v5 retry schedule for all queries
-import {
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/angular-query'
-
-const createQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-      },
-    },
-  })
-
-bootstrapApplication(AppComponent, {
-  providers: [provideTanStackQuery(createQueryClient)],
-})
-```
-
-[//]: # 'Example2'
-
-You can also set `retryDelay` in the options for one query. Set it to a number to use the same delay in milliseconds for every retry.
-
 [//]: # 'Example3'
 
 ```ts

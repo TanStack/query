@@ -108,12 +108,11 @@ describe('createRetryer', () => {
     expect(fn).toHaveBeenCalledTimes(2)
   })
 
-  it('should jitter each default retry delay within the exponential backoff limit', async () => {
-    const random = vi
-      .spyOn(Math, 'random')
-      .mockReturnValue(0.99999)
-      .mockReturnValueOnce(0)
-      .mockReturnValueOnce(0.5)
+  it('should use 80% to 100% of the default backoff delay, including at the cap', async () => {
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0)
+    for (const value of [0, 0.99999, 0.5, 0.5, 0.5, 0.99999]) {
+      random.mockReturnValueOnce(value)
+    }
 
     try {
       const delays: Array<number> = []
@@ -134,7 +133,7 @@ describe('createRetryer', () => {
       await vi.advanceTimersByTimeAsync(100000)
       await expect(promise).rejects.toThrow('failed')
       expect(delays).toStrictEqual([
-        0, 10, 1005, 4000, 8000, 16000, 30000, 30000,
+        0, 1000, 1600, 3600, 7200, 14400, 24000, 30000,
       ])
     } finally {
       random.mockRestore()

@@ -382,8 +382,8 @@ export interface QueryOptions<
    *
    * A function like `attempt => attempt * 1000` applies linear backoff.
    *
-   * By default, each retry uses a random delay from 10 ms to the exponential backoff limit.
-   * The limit starts at 1 second and doubles for each retry, up to 30 seconds.
+   * By default, each retry waits a random duration from 80% to 100% of the base delay.
+   * The base delay starts at 1 second and doubles for each retry, up to 30 seconds.
    */
   retryDelay?: RetryDelayValue<TError>
   /**
@@ -1878,8 +1878,8 @@ export interface MutationOptions<
    * The delay in milliseconds before a retry. Use a number for a fixed delay or a function that receives
    * the failure count and error and returns the delay. The count starts at 0 for the first retry.
    *
-   * By default, each retry uses a random delay from 10 ms to the exponential backoff limit.
-   * The limit starts at 1 second and doubles for each retry, up to 30 seconds.
+   * By default, each retry waits a random duration from 80% to 100% of the base delay.
+   * The base delay starts at 1 second and doubles for each retry, up to 30 seconds.
    */
   retryDelay?: RetryDelayValue<TError>
   /**
