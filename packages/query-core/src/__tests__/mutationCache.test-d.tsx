@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { MutationCache, QueryClient } from '..'
+import { Mutation } from '../mutation'
 import type {
   DefaultError,
-  Mutation,
   MutationCacheConfig,
   MutationCacheNotifyEvent,
   MutationFilters,
@@ -35,7 +35,7 @@ describe('mutationCache', () => {
         | 'subscribe'
         | 'hasListeners'
         | 'config'
-        | 'build'
+        | 'register'
         | 'add'
         | 'remove'
         | 'canRun'
@@ -266,9 +266,9 @@ describe('mutationCache', () => {
     })
   })
 
-  describe('build', () => {
+  describe('Mutation.build', () => {
     it('should carry its type parameters into the mutation it returns', () => {
-      const mutation = mutationCache.build<
+      const mutation = Mutation.build<
         { value: string },
         CustomError,
         number,
@@ -290,7 +290,7 @@ describe('mutationCache', () => {
 
     it('should accept an optional initial state', () => {
       expectTypeOf(
-        mutationCache.build<{ value: string }, CustomError, number, string>,
+        Mutation.build<{ value: string }, CustomError, number, string>,
       )
         .parameter(2)
         .toEqualTypeOf<
