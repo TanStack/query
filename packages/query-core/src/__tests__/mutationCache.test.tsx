@@ -368,6 +368,49 @@ describe('mutationCache', () => {
         }),
       ).toStrictEqual(mutation)
     })
+
+    it('should use the MutationCache equality function for partial mutation key matching', () => {
+      const equalityFn = (a: unknown, b: unknown) =>
+        typeof a === 'string' && typeof b === 'string'
+          ? a.toLowerCase() === b.toLowerCase()
+          : a === b
+      const testCache = new MutationCache({ mutationKey: { equalityFn } })
+      const testClient = new QueryClient({ mutationCache: testCache })
+      const mutation = Mutation.build(testClient, {
+        mutationKey: ['todos', { status: 'done' }],
+        mutationFn: () => Promise.resolve(),
+      })
+
+      expect(
+        testCache.find({
+          mutationKey: ['TODOS', { status: 'DONE' }],
+          exact: false,
+        }),
+      ).toBe(mutation)
+      expect(
+        testCache.findAll({
+          mutationKey: ['TODOS', { status: 'DONE' }],
+        }),
+      ).toStrictEqual([mutation])
+
+      testClient.clear()
+    })
+
+    it('should use the MutationCache mutation key hash function for exact matching', () => {
+      const key = ['todos', { status: 'done' }]
+      const hashFn = vi.fn<() => string>(() => 'custom-hash')
+      const testCache = new MutationCache({ mutationKey: { hashFn } })
+      const testClient = new QueryClient({ mutationCache: testCache })
+      const mutation = Mutation.build(testClient, {
+        mutationKey: key,
+        mutationFn: () => Promise.resolve(),
+      })
+
+      expect(testCache.find({ mutationKey: [...key] })).toBe(mutation)
+      expect(hashFn).toHaveBeenCalledWith(key)
+
+      testClient.clear()
+    })
   })
 
   describe('findAll', () => {

@@ -422,37 +422,6 @@ describe('queryObserver', () => {
       })
     })
 
-    describe('queryKeyHashFn', () => {
-      it('should type the queryKey given to a queryKeyHashFn', () => {
-        const key = ['a', 1] as const
-
-        new QueryObserver(queryClient, {
-          queryKey: key,
-          queryFn: () => Promise.resolve('data'),
-          queryKeyHashFn: (queryKeyToHash) => {
-            expectTypeOf(queryKeyToHash).toEqualTypeOf<readonly ['a', 1]>()
-            return 'hash'
-          },
-        })
-      })
-
-      it('should only accept a string from a queryKeyHashFn', () => {
-        new QueryObserver(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve('data'),
-          // @ts-expect-error the callback must return a string
-          queryKeyHashFn: () => 42,
-        })
-
-        expectTypeOf<
-          Extract<
-            QueryObserverOptions['queryKeyHashFn'],
-            (...args: Array<any>) => any
-          >
-        >().returns.toEqualTypeOf<string>()
-      })
-    })
-
     describe('structuralSharing', () => {
       it('should type a structuralSharing callback as unknown', () => {
         new QueryObserver(queryClient, {

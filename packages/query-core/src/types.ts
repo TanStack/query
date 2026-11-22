@@ -278,9 +278,27 @@ export type QueriesPlaceholderDataFunction<TQueryData> = (
 ) => TQueryData | undefined
 
 /** @inline */
-export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
-  queryKey: TQueryKey,
-) => string
+export type EqualityFn = (a: unknown, b: unknown) => boolean
+
+/** @inline */
+export type CacheKeyHashFunction<
+  TCacheKey extends ReadonlyArray<unknown> = ReadonlyArray<unknown>,
+> = (cacheKey: TCacheKey) => string
+
+/** Configures the comparison and hashing of query or mutation keys for a cache. */
+export interface CacheKeyConfig<
+  TCacheKey extends ReadonlyArray<unknown> = ReadonlyArray<unknown>,
+> {
+  /**
+   * Function used to compare values while partially matching keys.
+   * Defaults to strict equality.
+   */
+  equalityFn?: EqualityFn
+  /**
+   * Function used to hash keys globally.
+   */
+  hashFn?: CacheKeyHashFunction<TCacheKey>
+}
 
 /** @inline */
 export type GetPreviousPageParamFunction<TPageParam, TQueryFnData = unknown> = (
@@ -399,8 +417,8 @@ export interface QueryOptions<
    */
   persister?: QueryPersister<TQueryFnData, NoInfer<TQueryKey>, TPageParam>
   /**
-   * The hashed form of `queryKey`, computed with `queryKeyHashFn` (or the default hashing function otherwise). Used
-   * as the actual cache key internally.
+   * The cache key. If omitted, the query cache computes it from `queryKey`
+   * using its configured `hashFn` or the default hash function.
    */
   queryHash?: string
   /**
@@ -412,10 +430,6 @@ export interface QueryOptions<
    * The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
    */
   queryKey?: TQueryKey
-  /**
-   * If specified, this function is used to hash the `queryKey` to a string.
-   */
-  queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
   /**
    * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
    * created or cached yet).

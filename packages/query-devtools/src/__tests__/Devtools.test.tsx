@@ -2,6 +2,7 @@ import { createLocalStorage } from '@solid-primitives/storage'
 import { cleanup, fireEvent, render, within } from '@solidjs/testing-library'
 import {
   Mutation,
+  QueryCache,
   QueryClient,
   QueryObserver,
   dehydrate,
@@ -921,10 +922,14 @@ describe('Devtools', () => {
     })
 
     it('should render a query row when a hydrated query uses a custom hash function', async () => {
+      queryClient = new QueryClient({
+        queryCache: new QueryCache({
+          queryKey: { hashFn: () => 'custom-posts-hash' },
+        }),
+      })
       queryClient.query({
         queryKey: ['posts'],
         queryFn: () => [{ id: 1 }],
-        queryKeyHashFn: () => 'custom-posts-hash',
       })
       await vi.advanceTimersByTimeAsync(0)
       const dehydratedState = dehydrate(queryClient)
