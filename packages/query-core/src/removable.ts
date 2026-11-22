@@ -5,11 +5,12 @@ import type { ManagedTimerId } from './timeoutManager'
 
 /**
  * The base class for cache entries that are garbage collected once nothing is using them —
- * `Query` and `Mutation` both extend it. `gcTime` controls how long an unused entry is kept.
+ * `Query` and `Mutation` both extend it. The `gcTime` option controls how long an unused entry is
+ * kept.
  */
 export abstract class Removable {
-  gcTime!: number
   #gcTimeout?: ManagedTimerId
+  #gcAt = 0
 
   /**
    * Clears the pending garbage collection timeout, so the entry is no longer scheduled for removal.
@@ -21,30 +22,40 @@ export abstract class Removable {
   }
 
   /**
-   * Schedules the entry to be removed from its cache after `gcTime`, replacing any timeout scheduled
-   * before. Nothing is scheduled if `gcTime` is `Infinity`.
+   * Records that the entry may be removed `gcTime` from now, keeping the latest removal time
+   * recorded so far. Without a value, `gcTime` defaults to 5 minutes on the client and `Infinity` on
+   * the server. A `NaN` is ignored. Removal times use the monotonic `performance.now()` clock, so
+   * changes to the system clock don't move them.
+   * @param gcTime - The `gcTime` to record, if any.
    */
-  protected scheduleGc(): void {
-    this.clearGcTimeout()
+  protected updateGcTimestamp(gcTime: number | undefined): void {
+    // Default to 5 minutes (Infinity for server-side) if no gcTime is set
+    const resolvedGcTime =
+      gcTime ?? (isServerEnvironment() ? Infinity : 5 * 60 * 1000)
 
-    if (isValidTimeout(this.gcTime)) {
-      this.#gcTimeout = timeoutManager.setTimeout(() => {
-        this.optionalRemove()
-      }, this.gcTime)
+    // A NaN would stick through every later Math.max and stop gc for good
+    if (!Number.isNaN(resolvedGcTime)) {
+      this.#gcAt = Math.max(this.#gcAt, performance.now() + resolvedGcTime)
     }
   }
 
   /**
-   * Updates `gcTime`, keeping the longest one seen so far. Without a value, it defaults to 5 minutes
-   * on the client and `Infinity` on the server.
-   * @param newGcTime - The `gcTime` from the latest options, if any.
+   * Records `gcTime` like `updateGcTimestamp`, then schedules the entry to be removed from its cache
+   * at the latest removal time recorded, replacing any timeout scheduled before. Nothing is
+   * scheduled if that time is `Infinity`.
+   * @param gcTime - The `gcTime` to record, if any.
    */
-  protected updateGcTime(newGcTime: number | undefined): void {
-    // Default to 5 minutes (Infinity for server-side) if no gcTime is set
-    this.gcTime = Math.max(
-      this.gcTime || 0,
-      newGcTime ?? (isServerEnvironment() ? Infinity : 5 * 60 * 1000),
-    )
+  protected scheduleGc(gcTime: number | undefined): void {
+    this.clearGcTimeout()
+    this.updateGcTimestamp(gcTime)
+
+    const timeout = Math.max(0, this.#gcAt - performance.now())
+
+    if (isValidTimeout(timeout)) {
+      this.#gcTimeout = timeoutManager.setTimeout(() => {
+        this.optionalRemove()
+      }, timeout)
+    }
   }
 
   /**

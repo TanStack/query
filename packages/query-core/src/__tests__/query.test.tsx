@@ -89,31 +89,124 @@ describe('query', () => {
     }
   })
 
-  it('should use the longest garbage collection time it has seen', async () => {
+  it('should be garbage collected at the latest removal time scheduled by its observers', async () => {
     const key = createKey()
-    await queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => 'data',
-        gcTime: 100,
-      })
-      .catch(noop)
-    await queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => 'data',
-        gcTime: 200,
-      })
-      .catch(noop)
-    await queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => 'data',
-        gcTime: 10,
-      })
-      .catch(noop)
+    const queryFn = () => 'data'
+    const observerA = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      gcTime: 5 * 60 * 1000,
+    })
+    const observerB = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      gcTime: 60 * 1000,
+    })
+    const unsubscribeA = observerA.subscribe(noop)
+    const unsubscribeB = observerB.subscribe(noop)
+    await vi.advanceTimersByTimeAsync(0)
     const query = queryCache.find({ queryKey: key })!
-    expect(query.gcTime).toBe(200)
+
+    // 0:30 A becomes inactive: removal at 5:30. Waiting first makes sure this is
+    // A's own removal time, not the 5:00 recorded when the query was created.
+    await vi.advanceTimersByTimeAsync(30 * 1000)
+    unsubscribeA()
+
+    // 1:30 B becomes inactive: 2:30 is earlier, so removal stays at 5:30
+    await vi.advanceTimersByTimeAsync(60 * 1000)
+    unsubscribeB()
+
+    // Not removed at 2:30, as it would be if the last gcTime won
+    await vi.advanceTimersByTimeAsync(60 * 1000)
+    expect(queryCache.find({ queryKey: key })).toBe(query)
+
+    // Not removed before 5:30
+    await vi.advanceTimersByTimeAsync(3 * 60 * 1000 - 1)
+    expect(queryCache.find({ queryKey: key })).toBe(query)
+
+    // Removed at 5:30, not at 6:30 as it would be if the largest gcTime won
+    await vi.advanceTimersByTimeAsync(1)
+    expect(queryCache.find({ queryKey: key })).toBeUndefined()
+  })
+
+  it('should record the gcTime an observer used for a query when it switches to another key', async () => {
+    const key1 = createKey()
+    const key2 = createKey()
+    const queryFn = () => 'data'
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key1,
+      queryFn,
+      gcTime: 1000,
+    })
+    const unsubscribe = observer.subscribe(noop)
+    await vi.advanceTimersByTimeAsync(0)
+    const query1 = queryCache.find({ queryKey: key1 })!
+
+    observer.setOptions({ queryKey: key2, queryFn, gcTime: Infinity })
+
+    await vi.advanceTimersByTimeAsync(999)
+    expect(queryCache.find({ queryKey: key1 })).toBe(query1)
+
+    // Removed after key1's gcTime, not kept forever with key2's
+    await vi.advanceTimersByTimeAsync(1)
+    expect(queryCache.find({ queryKey: key1 })).toBeUndefined()
+
+    unsubscribe()
+  })
+
+  it('should record the gcTime a fetch was started with, even if an observer changes it meanwhile', async () => {
+    const key = createKey()
+    // An existing query with a short gcTime, so its creation can't hide the fetch's removal time
+    const query = queryCache.build(queryClient, { queryKey: key, gcTime: 10 })
+
+    // The fetch asks for 1000ms and settles at 50ms: removal at 1050ms
+    const fetch = queryClient.query({
+      queryKey: key,
+      queryFn: () => sleep(50).then(() => 'data'),
+      gcTime: 1000,
+    })
+
+    // While it runs, an observer replaces the query's options with a gcTime of 10ms
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      enabled: false,
+      gcTime: 10,
+    })
+    const unsubscribe = observer.subscribe(noop)
+
+    await vi.advanceTimersByTimeAsync(50)
+    await fetch
+    // 60ms is earlier, so removal stays at 1050ms
+    unsubscribe()
+
+    await vi.advanceTimersByTimeAsync(999)
+    expect(queryCache.find({ queryKey: key })).toBe(query)
+
+    await vi.advanceTimersByTimeAsync(1)
+    expect(queryCache.find({ queryKey: key })).toBeUndefined()
+  })
+
+  it('should keep a later removal time recorded at the end of an earlier fetch', async () => {
+    const key = createKey()
+    const queryFn = () => sleep(10).then(() => 'data')
+
+    // The first fetch settles at 10ms: removal at 1010ms
+    const first = queryClient.query({ queryKey: key, queryFn, gcTime: 1000 })
+    await vi.advanceTimersByTimeAsync(10)
+    await first
+    const query = queryCache.find({ queryKey: key })!
+
+    // A second fetch settles at 510ms: 520ms is earlier, so removal stays at 1010ms
+    await vi.advanceTimersByTimeAsync(490)
+    const second = queryClient.query({ queryKey: key, queryFn, gcTime: 10 })
+    await vi.advanceTimersByTimeAsync(10)
+    await second
+
+    await vi.advanceTimersByTimeAsync(499)
+    expect(queryCache.find({ queryKey: key })).toBe(query)
+
+    await vi.advanceTimersByTimeAsync(1)
+    expect(queryCache.find({ queryKey: key })).toBeUndefined()
   })
 
   it('should continue retry after focus regain and resolve all promises', async () => {
@@ -886,7 +979,9 @@ describe('query', () => {
     expect(query.getObserversCount()).toBe(0)
 
     const notifySpy = vi.spyOn(queryCache, 'notify')
-    expect(() => query.removeObserver(observer)).not.toThrow()
+    expect(() =>
+      query.removeObserver(observer, observer.options.gcTime),
+    ).not.toThrow()
     expect(notifySpy).not.toHaveBeenCalled()
   })
 
@@ -1034,16 +1129,19 @@ describe('query', () => {
     resetIsServer()
   })
 
-  it('should use an infinite garbage collection time on the server', () => {
+  it('should use an infinite garbage collection time on the server', async () => {
     const resetIsServer = setIsServer(true)
 
     try {
+      const key = createKey()
       const query = queryCache.build(queryClient, {
-        queryKey: createKey(),
+        queryKey: key,
         queryFn: () => 'data',
       })
 
-      expect(query.gcTime).toBe(Infinity)
+      await vi.advanceTimersByTimeAsync(24 * 60 * 60 * 1000)
+
+      expect(queryCache.find({ queryKey: key })).toBe(query)
     } finally {
       resetIsServer()
     }
@@ -1497,7 +1595,7 @@ describe('query', () => {
     const promise1 = query.fetch()
     await vi.advanceTimersByTimeAsync(10)
 
-    query.removeObserver(observer1)
+    query.removeObserver(observer1, observer1.options.gcTime)
 
     const observer2 = new QueryObserver(queryClient, {
       queryKey: key,

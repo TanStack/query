@@ -395,7 +395,8 @@ export interface QueryOptions<
   /**
    * The time in milliseconds that unused/inactive cache data remains in memory.
    * When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
-   * When different garbage collection times are specified, the longest one will be used.
+   * When different garbage collection times are specified, the query is removed at the latest
+   * removal time any of them has scheduled.
    * Setting it to `Infinity` will disable garbage collection.
    *
    * Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR.
@@ -1891,6 +1892,8 @@ export interface MutationOptions<
   /**
    * The time in milliseconds that an unused/inactive mutation remains in memory before it is
    * garbage collected.
+   * When different garbage collection times are specified, the mutation is removed at the latest
+   * removal time any of them has scheduled.
    *
    * Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR.
    */

@@ -129,7 +129,8 @@ export class MutationObserver<
           this.#client.getMutationCache().config.mutationKey,
         )
     ) {
-      this.reset()
+      // Leave the current mutation with the gcTime used for it, not the new key's
+      this.#reset(prevOptions.gcTime)
     } else if (this.#currentMutation?.state.status === 'pending') {
       this.#currentMutation.setOptions(this.options)
     }
@@ -145,7 +146,7 @@ export class MutationObserver<
 
   protected override onUnsubscribe(): void {
     if (!this.hasListeners()) {
-      this.#currentMutation?.removeObserver(this)
+      this.#currentMutation?.removeObserver(this, this.options.gcTime)
     }
   }
 
@@ -193,9 +194,13 @@ export class MutationObserver<
    * ```
    */
   reset(): void {
+    this.#reset(this.options.gcTime)
+  }
+
+  #reset(gcTime: number | undefined): void {
     // reset needs to remove the observer from the mutation because there is no way to "get it back"
     // another mutate call will yield a new mutation!
-    this.#currentMutation?.removeObserver(this)
+    this.#currentMutation?.removeObserver(this, gcTime)
     this.#currentMutation = undefined
     this.#updateResult()
     this.#notify()
@@ -227,7 +232,7 @@ export class MutationObserver<
   ): Promise<TData> {
     this.#mutateOptions = options
 
-    this.#currentMutation?.removeObserver(this)
+    this.#currentMutation?.removeObserver(this, this.options.gcTime)
 
     this.#currentMutation = Mutation.build(this.#client, this.options)
 
