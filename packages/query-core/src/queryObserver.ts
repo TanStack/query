@@ -78,20 +78,28 @@ export interface QueryObserverResultContext<
   }
   /** The unselected placeholder or factory error. */
   placeholder?: {
-    options: QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
-    previousQuery:
-      | Query<TQueryFnData, TError, TQueryData, TQueryKey>
-      | undefined
-    previousState: QueryState<TQueryData, TError> | undefined
-    previousOptions:
-      | QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>
-      | undefined
+    key: {
+      placeholderData: QueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey
+      >['placeholderData']
+      structuralSharing: QueryOptions<
+        TQueryFnData,
+        TError,
+        TQueryData,
+        TQueryKey
+      >['structuralSharing']
+      previousQuery:
+        | Query<TQueryFnData, TError, TQueryData, TQueryKey>
+        | undefined
+      previousState: QueryState<TQueryData, TError> | undefined
+      previousOptions:
+        | QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>
+        | undefined
+    }
     sourceQuery?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
     input: TQueryData | undefined
     failure?: ProjectionFailure<TError>
@@ -659,19 +667,18 @@ export class QueryObserver<
     previousResultData: TData | undefined,
     context = this.#resultContext,
   ) {
-    const { placeholderData } = options
+    const { placeholderData, structuralSharing } = options
     const memo = context.placeholder
     const previousQuery = this.#lastQueryWithDefinedData
     const previousState = previousQuery?.state
-    const previousOptions = previousQuery?.options
-    if (
-      memo &&
-      memo.options.placeholderData === placeholderData &&
-      memo.options.structuralSharing === options.structuralSharing &&
-      memo.previousQuery === previousQuery &&
-      memo.previousState === previousState &&
-      memo.previousOptions === previousOptions
-    ) {
+    const key = {
+      placeholderData,
+      structuralSharing,
+      previousQuery,
+      previousState,
+      previousOptions: previousQuery?.options,
+    }
+    if (shallowEqualObjects(key, memo?.key)) {
       return memo
     }
 
@@ -706,15 +713,7 @@ export class QueryObserver<
       ) as TQueryData
     }
     return input !== undefined || failure
-      ? {
-          options,
-          previousQuery,
-          previousState,
-          previousOptions,
-          input,
-          sourceQuery,
-          failure,
-        }
+      ? { key, input, sourceQuery, failure }
       : undefined
   }
 
