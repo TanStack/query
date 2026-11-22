@@ -1,3 +1,5 @@
+import { setFlagsFromString } from 'node:v8'
+import { runInNewContext } from 'node:vm'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueriesObserver, QueryClient, QueryObserver } from '..'
@@ -927,5 +929,28 @@ describe('queriesObserver', () => {
       { status: 'success', data: 2 },
       { status: 'success', data: 3 },
     ])
+  })
+
+  it('should not keep queries it moved off alive after they are removed from the cache (#12656)', async () => {
+    setFlagsFromString('--expose-gc')
+    const gc = runInNewContext('gc') as () => void
+    const oldKey = createKey()
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: oldKey, queryFn: () => 1 },
+    ])
+    const unsubscribe = observer.subscribe(() => undefined)
+    await vi.advanceTimersByTimeAsync(0)
+    const oldQuery = new WeakRef(
+      queryClient.getQueryCache().find({ queryKey: oldKey })!,
+    )
+
+    observer.setQueries([{ queryKey: createKey(), queryFn: () => 2 }])
+    queryClient.removeQueries({ queryKey: oldKey })
+    // A WeakRef keeps its target alive until the current job ends.
+    await vi.advanceTimersByTimeAsync(0)
+    gc()
+
+    expect(oldQuery.deref()).toBeUndefined()
+    unsubscribe()
   })
 })
