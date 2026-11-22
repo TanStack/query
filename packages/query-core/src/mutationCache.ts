@@ -185,6 +185,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    */
   remove(mutation: Mutation<any, any, any, any>): void {
     if (this.#mutations.delete(mutation)) {
+      mutation.destroy()
       const scope = scopeFor(mutation)
       if (typeof scope === 'string') {
         const scopedMutations = this.#scopes.get(scope)
@@ -265,6 +266,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       this.#mutations.clear()
       this.#scopes.clear()
       mutations.forEach((mutation) => {
+        mutation.destroy()
         this.notify({ type: 'removed', mutation })
       })
     })

@@ -630,5 +630,37 @@ describe('mutationCache', () => {
 
       unsubscribe()
     })
+
+    it('should destroy mutation when removing it', () => {
+      const testCache = new MutationCache()
+      const testClient = new QueryClient({ mutationCache: testCache })
+
+      const mutation = testCache.build(testClient, {
+        mutationFn: () => Promise.resolve('data'),
+      })
+
+      const destroySpy = vi.spyOn(mutation, 'destroy')
+      testCache.remove(mutation)
+      expect(destroySpy).toHaveBeenCalledTimes(1)
+    })
+
+    it('should destroy all mutations when clearing cache', () => {
+      const testCache = new MutationCache()
+      const testClient = new QueryClient({ mutationCache: testCache })
+
+      const mutation1 = testCache.build(testClient, {
+        mutationFn: () => Promise.resolve('data1'),
+      })
+      const mutation2 = testCache.build(testClient, {
+        mutationFn: () => Promise.resolve('data2'),
+      })
+
+      const destroySpy1 = vi.spyOn(mutation1, 'destroy')
+      const destroySpy2 = vi.spyOn(mutation2, 'destroy')
+      testCache.clear()
+
+      expect(destroySpy1).toHaveBeenCalledTimes(1)
+      expect(destroySpy2).toHaveBeenCalledTimes(1)
+    })
   })
 })

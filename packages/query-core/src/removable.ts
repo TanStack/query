@@ -10,6 +10,7 @@ import type { ManagedTimerId } from './timeoutManager'
 export abstract class Removable {
   gcTime!: number
   #gcTimeout?: ManagedTimerId
+  #isDestroyed = false
 
   /**
    * Clears the pending garbage collection timeout, so the entry is no longer scheduled for removal.
@@ -17,6 +18,7 @@ export abstract class Removable {
    * in-flight fetch.
    */
   destroy(): void {
+    this.#isDestroyed = true
     this.clearGcTimeout()
   }
 
@@ -27,7 +29,7 @@ export abstract class Removable {
   protected scheduleGc(): void {
     this.clearGcTimeout()
 
-    if (isValidTimeout(this.gcTime)) {
+    if (!this.#isDestroyed && isValidTimeout(this.gcTime)) {
       this.#gcTimeout = timeoutManager.setTimeout(() => {
         this.optionalRemove()
       }, this.gcTime)

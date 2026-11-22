@@ -182,5 +182,15 @@ describe('Removable', () => {
 
       expect(provider.clearTimeout).toHaveBeenCalledWith(123)
     })
+
+    it('should not schedule gc after being destroyed', () => {
+      const removable = new RemovableTest()
+      removable.callUpdateGcTime(1000)
+      removable.destroy()
+
+      removable.callScheduleGc()
+
+      expect(provider.setTimeout).not.toHaveBeenCalled()
+    })
   })
 })

@@ -459,7 +459,8 @@ export class Query<
    * in-flight fetch.
    */
   reset(): void {
-    this.destroy()
+    this.clearGcTimeout()
+    this.cancel({ silent: true })
     this.setState(this.resetState)
   }
 
