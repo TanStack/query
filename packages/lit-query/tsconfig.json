@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist-ts",
     "rootDir": ".",
-    "lib": ["ES2022", "DOM"]
+    "lib": ["ES2022", "ES2024.Promise", "DOM"]
   },
   "include": [
     "src",
