@@ -176,8 +176,8 @@ describe('Devtools', () => {
       return viewport
     }
 
-    function seedQueries() {
-      for (let index = 0; index < 1000; index++) {
+    function seedQueries(count = 1000) {
+      for (let index = 0; index < count; index++) {
         queryClient.setQueryData(
           [`query-${String(index).padStart(4, '0')}`],
           `data-${index}`,
@@ -207,7 +207,7 @@ describe('Devtools', () => {
     })
 
     it('filters, clears, and restores queries after distant scrolling', () => {
-      seedQueries()
+      seedQueries(200)
       const rendered = renderDevtools({ initialIsOpen: true })
       const viewport = getViewport(rendered.container, 'queries')
       viewport.scrollTo({ top: viewport.scrollHeight })

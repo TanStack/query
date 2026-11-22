@@ -131,9 +131,9 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   /**
    * Assigns the next cache-local ID and registers the mutation.
+   * @internal
    * @param create - Constructs the mutation with the assigned ID.
    * @returns The mutation added to this cache.
-   * @internal
    */
   register<T extends Mutation<any, any, any, any>>(
     create: (id: number) => T,

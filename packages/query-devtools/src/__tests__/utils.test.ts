@@ -18,7 +18,6 @@ import {
 } from '../utils'
 import type {
   FetchStatus,
-  Mutation,
   MutationStatus,
   Query,
   QueryKey,
