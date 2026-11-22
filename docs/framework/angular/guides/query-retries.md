@@ -26,34 +26,6 @@ const todoQuery = injectQuery(() => ({
 ```
 
 [//]: # 'Example'
-[//]: # 'Example2'
-
-```ts
-// Configure for all queries
-import {
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/angular-query'
-
-const createQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-      },
-    },
-  })
-
-bootstrapApplication(AppComponent, {
-  providers: [provideTanStackQuery(createQueryClient)],
-})
-```
-
-[//]: # 'Example2'
-
-Though it is not recommended, you can obviously override the `retryDelay` function/integer in both the Provider and individual query options. If set to an integer instead of a function the delay will always be the same amount of time:
-
 [//]: # 'Example3'
 
 ```ts

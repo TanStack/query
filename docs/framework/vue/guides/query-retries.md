@@ -19,21 +19,3 @@ const result = useQuery({
 ```
 
 [//]: # 'Example'
-[//]: # 'Example2'
-
-```ts
-import { VueQueryPlugin } from '@tanstack/vue-query'
-
-const vueQueryPluginOptions = {
-  queryClientConfig: {
-    defaultOptions: {
-      queries: {
-        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-      },
-    },
-  },
-}
-app.use(VueQueryPlugin, vueQueryPluginOptions)
-```
-
-[//]: # 'Example2'
