@@ -383,7 +383,7 @@ export class QueryClient extends QC {
  * Fetches and caches an infinite query using the Vue client's defaults.
  * Accepts refs in the options. Call top-level option getters before passing their result.
  * @param client - The Vue query client.
- * @param options - The infinite query options.
+ * @param options - The query key, fetch function, and pagination settings.
  * @returns The cached pages, or the selected result when `select` is provided.
  */
 export function infiniteQuery<

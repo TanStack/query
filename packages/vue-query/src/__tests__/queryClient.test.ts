@@ -4,7 +4,7 @@ import { ref, unref } from 'vue'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { MutationCache } from '../mutationCache'
 import { QueryCache } from '../queryCache'
-import { infiniteQuery, QueryClient } from '../queryClient'
+import { QueryClient, infiniteQuery } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 
 // Get the prototype methods dynamically

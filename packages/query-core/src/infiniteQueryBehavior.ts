@@ -16,6 +16,8 @@ import type { FetchSignalContext } from './utils'
 
 /**
  * Supplies the pagination behavior to the cache entry without changing the caller's options.
+ * @param options - The caller's query configuration, including page parameters.
+ * @returns A copy with pagination behavior attached.
  */
 export function withInfiniteQueryBehavior<TOptions extends object>(
   options: TOptions,

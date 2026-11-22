@@ -3,7 +3,7 @@ import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { reactive } from 'vue'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
-import { infiniteQuery, QueryClient } from '../queryClient'
+import { QueryClient, infiniteQuery } from '../queryClient'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 

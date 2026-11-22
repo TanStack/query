@@ -1,4 +1,7 @@
-import { infiniteQuery, QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  infiniteQuery as fetchInfiniteQuery,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 import { useInfiniteQuery } from '../useInfiniteQuery'
@@ -19,7 +22,7 @@ describe('pageParam', () => {
 
   it('should define type of param passed to queryFunctionContext with initialPageParam for infiniteQuery', () => {
     const queryClient = new QueryClient()
-    infiniteQuery(queryClient, {
+    fetchInfiniteQuery(queryClient, {
       queryKey: ['key'],
       queryFn: ({ pageParam }) => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()

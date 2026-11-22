@@ -1,4 +1,4 @@
-import { infiniteQuery, QueryClient, skipToken } from '@tanstack/query-core'
+import { QueryClient, infiniteQuery, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { createInfiniteQuery, infiniteQueryOptions } from '../src/index.js'

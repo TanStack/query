@@ -3,9 +3,9 @@
 import { render } from '@lit-labs/ssr'
 import { collectResult } from '@lit-labs/ssr/lib/render-result.js'
 import {
-  infiniteQuery,
   QueryCache,
   QueryClient,
+  infiniteQuery,
   noop,
 } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'

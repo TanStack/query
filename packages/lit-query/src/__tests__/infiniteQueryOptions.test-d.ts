@@ -1,8 +1,8 @@
 import {
-  infiniteQuery,
   QueryClient,
   dataTagErrorSymbol,
   dataTagSymbol,
+  infiniteQuery,
   skipToken,
 } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
