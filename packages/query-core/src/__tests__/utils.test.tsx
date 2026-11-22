@@ -223,7 +223,9 @@ describe('core/utils', () => {
     })
 
     it('should not match an object with numeric keys against an array element', () => {
-      expect(partialMatchKey(['todos', { 0: 'a' }], ['todos', ['a']])).toBe(false)
+      expect(partialMatchKey(['todos', { 0: 'a' }], ['todos', ['a']])).toBe(
+        false,
+      )
     })
   })
 
