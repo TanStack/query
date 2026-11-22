@@ -3,7 +3,7 @@ id: prefetching
 title: Prefetching
 ---
 
-If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed. If this is the case, use `queryClient.query` or `queryClient.infiniteQuery` to warm the cache ahead of time:
+If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed. If this is the case, use `queryClient.query` or `infiniteQuery(queryClient, options)` to warm the cache ahead of time:
 
 [//]: # 'ExamplePrefetching'
 

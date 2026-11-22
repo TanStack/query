@@ -59,7 +59,7 @@ export type DefinedInitialDataInfiniteOptions<
 /**
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `createInfiniteQuery`.
  * These options can be shared across `createInfiniteQuery` calls and imperative APIs such as
- * `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+ * `infiniteQuery(queryClient, options)`. `options.queryKey` is required and is the query key to generate options for.
  *
  * This overload is selected when `initialData` is known to be defined.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to
@@ -122,7 +122,7 @@ export function infiniteQueryOptions<
 /**
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `createInfiniteQuery`.
  * These options can be shared across `createInfiniteQuery` calls and imperative APIs such as
- * `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+ * `infiniteQuery(queryClient, options)`. `options.queryKey` is required and is the query key to generate options for.
  * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to
  * `createInfiniteQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.

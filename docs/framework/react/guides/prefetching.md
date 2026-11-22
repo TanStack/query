@@ -60,18 +60,16 @@ Pass `getNextPageParam` when you prefetch an infinite query. On an empty cache, 
 [//]: # 'ExamplePrefetchInfiniteQuery'
 
 ```tsx
-import { noop } from '@tanstack/react-query'
+import { infiniteQuery, noop } from '@tanstack/react-query'
 
 const prefetchProjects = async () => {
-  await queryClient
-    .infiniteQuery({
-      queryKey: ['projects'],
-      queryFn: fetchProjects,
-      initialPageParam: 0,
-      getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-      pages: 3, // prefetch the first 3 pages
-    })
-    .catch(noop)
+  await infiniteQuery(queryClient, {
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    pages: 3, // prefetch the first 3 pages
+  }).catch(noop)
 }
 ```
 

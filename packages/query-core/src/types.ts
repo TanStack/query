@@ -30,10 +30,11 @@ export type DistributiveOmit<
 export type OmitKeyof<
   TObject,
   TKey extends (TStrictly extends 'safely'
-    ? | keyof TObject
-      | (string & Record<never, never>)
-      | (number & Record<never, never>)
-      | (symbol & Record<never, never>)
+    ?
+        | keyof TObject
+        | (string & Record<never, never>)
+        | (number & Record<never, never>)
+        | (symbol & Record<never, never>)
     : keyof TObject),
   TStrictly extends 'strictly' | 'safely' = 'strictly',
 > = Omit<TObject, TKey>
@@ -442,7 +443,7 @@ export interface QueryOptions<
   /** @internal */
   _defaulted?: boolean
   /** @internal */
-  _type?: 'infinite'
+  _infiniteBehavior?: QueryBehavior<any, any, any, any>
   /**
    * Additional payload to be stored on each query.
    * Use this property to pass information that can be used in other places.
@@ -752,7 +753,7 @@ type InfiniteQueryFetchPageOptions<TQueryFnData, TPageParam> = Pick<
 }
 
 /**
- * The options of `queryClient.infiniteQuery`. Extends {@link QueryExecuteOptions}
+ * The options of `infiniteQuery(queryClient, options)`. Extends {@link QueryExecuteOptions}
  * with `initialPageParam`, `getNextPageParam`, and the optional `pages` count.
  */
 export type InfiniteQueryExecuteOptions<

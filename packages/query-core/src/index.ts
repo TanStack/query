@@ -10,6 +10,7 @@ export {
   dehydrateQuery,
   hydrate,
 } from './hydration'
+export { infiniteQuery } from './infiniteQuery'
 export { InfiniteQueryObserver } from './infiniteQueryObserver'
 export { MutationCache } from './mutationCache'
 export type { MutationCacheNotifyEvent } from './mutationCache'

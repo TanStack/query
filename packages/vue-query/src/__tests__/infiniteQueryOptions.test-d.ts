@@ -3,7 +3,7 @@ import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { reactive } from 'vue'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
-import { QueryClient } from '../queryClient'
+import { infiniteQuery, QueryClient } from '../queryClient'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 
@@ -116,7 +116,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    const data = await new QueryClient().infiniteQuery({
+    const data = await infiniteQuery(new QueryClient(), {
       ...options,
       staleTime: 0,
       pages: 1,
@@ -134,7 +134,7 @@ describe('infiniteQueryOptions', () => {
       select: (data) => data.pages,
     })
 
-    const data = await new QueryClient().infiniteQuery({
+    const data = await infiniteQuery(new QueryClient(), {
       ...options,
       staleTime: 0,
       pages: 1,

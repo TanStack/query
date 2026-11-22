@@ -1,4 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { infiniteQuery } from '../infiniteQuery'
 import { QueryClient } from '../queryClient'
 import { skipToken } from '../utils'
 import type { Mutation } from '../mutation'
@@ -404,7 +405,7 @@ describe('queryClient', () => {
 
   describe('infiniteQuery', () => {
     it('should allow passing select option', () => {
-      const result = new QueryClient().infiniteQuery({
+      const result = infiniteQuery(new QueryClient(), {
         queryKey: ['key'],
         queryFn: () => Promise.resolve({ count: 1 }),
         initialPageParam: 1,
@@ -418,7 +419,7 @@ describe('queryClient', () => {
     })
 
     it('should allow passing pages', async () => {
-      const result = await new QueryClient().infiniteQuery({
+      const result = await infiniteQuery(new QueryClient(), {
         queryKey: ['key'],
         queryFn: () => Promise.resolve({ count: 1 }),
         getNextPageParam: () => 1,
@@ -444,7 +445,8 @@ describe('queryClient', () => {
     })
 
     it('should allow passing getNextPageParam without pages', () => {
-      assertType<Parameters<QueryClient['infiniteQuery']>>([
+      assertType<Parameters<typeof infiniteQuery>>([
+        new QueryClient(),
         {
           queryKey: ['key'],
           queryFn: () => Promise.resolve({ count: 1 }),
@@ -455,7 +457,8 @@ describe('queryClient', () => {
     })
 
     it('should require getNextPageParam even without pages', () => {
-      assertType<Parameters<QueryClient['infiniteQuery']>>([
+      assertType<Parameters<typeof infiniteQuery>>([
+        new QueryClient(),
         // @ts-expect-error Property 'getNextPageParam' is missing
         {
           queryKey: ['key'],
@@ -467,7 +470,7 @@ describe('queryClient', () => {
 
     it('should default its page param to unknown', () => {
       const queryClient = new QueryClient()
-      const result = queryClient.infiniteQuery({
+      const result = infiniteQuery(queryClient, {
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
         initialPageParam: 1,
@@ -479,21 +482,21 @@ describe('queryClient', () => {
       >()
 
       type PageParam = Parameters<
-        typeof queryClient.infiniteQuery<string, Error>
-      >[0]['initialPageParam']
+        typeof infiniteQuery<string, Error>
+      >[1]['initialPageParam']
       expectTypeOf<PageParam>().toEqualTypeOf<unknown>()
     })
 
     it('should resolve with InfiniteData of the data type', async () => {
       const queryClient = new QueryClient()
-      const data = await queryClient.infiniteQuery(typedInfiniteQueryOptions)
+      const data = await infiniteQuery(queryClient, typedInfiniteQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<InfiniteData<TypedData, unknown>>()
     })
 
     it('should resolve with InfiniteData of unknown when untyped', async () => {
       const queryClient = new QueryClient()
-      const data = await queryClient.infiniteQuery(untypedInfiniteQueryOptions)
+      const data = await infiniteQuery(queryClient, untypedInfiniteQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, unknown>>()
     })

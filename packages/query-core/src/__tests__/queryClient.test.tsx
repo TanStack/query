@@ -12,6 +12,7 @@ import {
   onlineManager,
   skipToken,
 } from '..'
+import { infiniteQuery } from '../infiniteQuery'
 import { mockOnlineManagerIsOnline } from './utils'
 import type {
   InfiniteData,
@@ -580,7 +581,7 @@ describe('queryClient', () => {
         pageParams: [0],
       })
       await expect(
-        queryClient.infiniteQuery({
+        infiniteQuery(queryClient, {
           queryKey: [key, 'id'],
           queryFn,
           staleTime: 'static',
@@ -598,7 +599,7 @@ describe('queryClient', () => {
       )
 
       await expect(
-        queryClient.infiniteQuery({
+        infiniteQuery(queryClient, {
           queryKey: [key, 'id'],
           queryFn,
           staleTime: 'static',
@@ -1093,24 +1094,21 @@ describe('queryClient', () => {
         Promise.resolve(data.pages[0])
 
       await expect(
-        queryClient.infiniteQuery<
-          StrictData,
-          any,
-          StrictData,
-          StrictQueryKey,
-          number
-        >({
-          queryKey: key,
-          queryFn: fetchFn,
-          getNextPageParam: () => undefined,
-          initialPageParam: 0,
-        }),
+        infiniteQuery<StrictData, any, StrictData, StrictQueryKey, number>(
+          queryClient,
+          {
+            queryKey: key,
+            queryFn: fetchFn,
+            getNextPageParam: () => undefined,
+            initialPageParam: 0,
+          },
+        ),
       ).resolves.toStrictEqual(data)
     })
 
     it('should return infinite query data', async () => {
       const key = createKey()
-      const result = await queryClient.infiniteQuery({
+      const result = await infiniteQuery(queryClient, {
         queryKey: key,
         getNextPageParam: () => undefined,
         initialPageParam: 10,
@@ -1134,7 +1132,7 @@ describe('queryClient', () => {
       >(({ pageParam }: { pageParam: number }) => Promise.resolve(pageParam))
 
       await expect(
-        queryClient.infiniteQuery({
+        infiniteQuery(queryClient, {
           queryKey: key,
           queryFn,
           getNextPageParam: () => undefined,
@@ -1160,7 +1158,7 @@ describe('queryClient', () => {
         pageParams: [0],
       })
 
-      const result = await queryClient.infiniteQuery({
+      const result = await infiniteQuery(queryClient, {
         queryKey: key,
         queryFn,
         getNextPageParam: () => undefined,
@@ -1181,7 +1179,7 @@ describe('queryClient', () => {
         pageParams: [0],
       })
 
-      const result = await queryClient.infiniteQuery({
+      const result = await infiniteQuery(queryClient, {
         queryKey: key,
         queryFn: skipToken,
         getNextPageParam: () => undefined,
@@ -1201,7 +1199,7 @@ describe('queryClient', () => {
       )
 
       await expect(
-        queryClient.infiniteQuery({
+        infiniteQuery(queryClient, {
           queryKey: key,
           queryFn: skipToken,
           getNextPageParam: () => undefined,
@@ -1215,7 +1213,7 @@ describe('queryClient', () => {
 
     it('should throw when skipToken is provided with no cached data', async () => {
       await expect(
-        queryClient.infiniteQuery({
+        infiniteQuery(queryClient, {
           queryKey: createKey(),
           queryFn: skipToken,
           getNextPageParam: () => undefined,
@@ -1255,7 +1253,7 @@ describe('queryClient', () => {
         return query.state.data?.pages[0]?.staleTime ?? 0
       }
 
-      const result = await queryClient.infiniteQuery({
+      const result = await infiniteQuery(queryClient, {
         queryKey: key,
         queryFn,
         getNextPageParam: () => undefined,
@@ -1278,7 +1276,7 @@ describe('queryClient', () => {
       >(({ pageParam }: { pageParam: number }) =>
         Promise.resolve({ value: `fetched-${String(pageParam)}` }),
       )
-      const first = await queryClient.infiniteQuery({
+      const first = await infiniteQuery(queryClient, {
         queryKey: key,
         queryFn,
         getNextPageParam: () => undefined,
@@ -1296,7 +1294,7 @@ describe('queryClient', () => {
         refetchType: 'none',
       })
 
-      const second = await queryClient.infiniteQuery({
+      const second = await infiniteQuery(queryClient, {
         queryKey: key,
         queryFn,
         getNextPageParam: () => undefined,
@@ -1310,7 +1308,7 @@ describe('queryClient', () => {
     it('should apply select to infinite query data', async () => {
       const key = createKey()
 
-      const result = await queryClient.infiniteQuery({
+      const result = await infiniteQuery(queryClient, {
         queryKey: key,
         getNextPageParam: () => undefined,
         initialPageParam: 10,
@@ -1330,14 +1328,15 @@ describe('queryClient', () => {
       const fetchFn: QueryFunction<StrictData, StrictQueryKey, number> = () =>
         Promise.resolve('data')
 
-      await queryClient
-        .infiniteQuery<StrictData, any, StrictData, StrictQueryKey, number>({
+      await infiniteQuery<StrictData, any, StrictData, StrictQueryKey, number>(
+        queryClient,
+        {
           queryKey: key,
           queryFn: fetchFn,
           getNextPageParam: () => undefined,
           initialPageParam: 0,
-        })
-        .catch(noop)
+        },
+      ).catch(noop)
 
       const result = queryClient.getQueryData(key)
 
@@ -1350,14 +1349,12 @@ describe('queryClient', () => {
     it('should return infinite query data', async () => {
       const key = createKey()
 
-      await queryClient
-        .infiniteQuery({
-          queryKey: key,
-          queryFn: ({ pageParam }) => Number(pageParam),
-          getNextPageParam: () => undefined,
-          initialPageParam: 10,
-        })
-        .catch(noop)
+      await infiniteQuery(queryClient, {
+        queryKey: key,
+        queryFn: ({ pageParam }) => Number(pageParam),
+        getNextPageParam: () => undefined,
+        initialPageParam: 10,
+      }).catch(noop)
 
       const result = queryClient.getQueryData(key)
 
@@ -1370,16 +1367,14 @@ describe('queryClient', () => {
     it('should prefetch multiple pages', async () => {
       const key = createKey()
 
-      await queryClient
-        .infiniteQuery({
-          queryKey: key,
-          queryFn: ({ pageParam }) => String(pageParam),
-          getNextPageParam: (_lastPage, _pages, lastPageParam) =>
-            lastPageParam + 5,
-          initialPageParam: 10,
-          pages: 3,
-        })
-        .catch(noop)
+      await infiniteQuery(queryClient, {
+        queryKey: key,
+        queryFn: ({ pageParam }) => String(pageParam),
+        getNextPageParam: (_lastPage, _pages, lastPageParam) =>
+          lastPageParam + 5,
+        initialPageParam: 10,
+        pages: 3,
+      }).catch(noop)
 
       const result = queryClient.getQueryData(key)
 
@@ -1393,18 +1388,16 @@ describe('queryClient', () => {
       const key = createKey()
       let count = 0
 
-      await queryClient
-        .infiniteQuery({
-          queryKey: key,
-          queryFn: ({ pageParam }) => String(pageParam),
-          getNextPageParam: (_lastPage, _pages, lastPageParam) => {
-            count++
-            return lastPageParam >= 20 ? undefined : lastPageParam + 5
-          },
-          initialPageParam: 10,
-          pages: 5,
-        })
-        .catch(noop)
+      await infiniteQuery(queryClient, {
+        queryKey: key,
+        queryFn: ({ pageParam }) => String(pageParam),
+        getNextPageParam: (_lastPage, _pages, lastPageParam) => {
+          count++
+          return lastPageParam >= 20 ? undefined : lastPageParam + 5
+        },
+        initialPageParam: 10,
+        pages: 5,
+      }).catch(noop)
 
       const result = queryClient.getQueryData(key)
 

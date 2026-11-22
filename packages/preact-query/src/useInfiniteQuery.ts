@@ -32,7 +32,7 @@ import type {
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
  * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
  * actions, or add conditions like `hasNextPage && !isFetching`.
- * @see {@link infiniteQueryOptions} to share these options between `useInfiniteQuery` and imperative APIs like `queryClient.infiniteQuery`.
+ * @see {@link infiniteQueryOptions} to share these options between `useInfiniteQuery` and imperative APIs like `infiniteQuery(queryClient, options)`.
  * @example
  * ```tsx
  * import { useInfiniteQuery } from '@tanstack/preact-query'
@@ -89,7 +89,7 @@ export function useInfiniteQuery<
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
  * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
  * actions, or add conditions like `hasNextPage && !isFetching`.
- * @see {@link infiniteQueryOptions} to share these options between `useInfiniteQuery` and imperative APIs like `queryClient.infiniteQuery`.
+ * @see {@link infiniteQueryOptions} to share these options between `useInfiniteQuery` and imperative APIs like `infiniteQuery(queryClient, options)`.
  * @example
  * Fetching the next page from a "Load More" button click:
  * ```tsx
@@ -212,7 +212,7 @@ export function useInfiniteQuery<
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
  * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
  * actions, or add conditions like `hasNextPage && !isFetching`.
- * @see {@link infiniteQueryOptions} to share these options between `useInfiniteQuery` and imperative APIs like `queryClient.infiniteQuery`.
+ * @see {@link infiniteQueryOptions} to share these options between `useInfiniteQuery` and imperative APIs like `infiniteQuery(queryClient, options)`.
  * @example
  * Fetching the next page from a "Load More" button click:
  * ```tsx

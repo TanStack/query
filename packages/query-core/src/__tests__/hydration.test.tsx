@@ -2,6 +2,7 @@ import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { dehydrate, hydrate } from '../hydration'
 import { dehydrateQuery } from '../index'
+import { infiniteQuery } from '../infiniteQuery'
 import { MutationCache } from '../mutationCache'
 import { QueryCache } from '../queryCache'
 import { QueryClient } from '../queryClient'
@@ -1535,21 +1536,19 @@ describe('dehydration and rehydration', () => {
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
 
-    const prefetchPromise = queryClient
-      .infiniteQuery({
-        queryKey: key,
-        queryFn: ({ pageParam }) =>
-          sleep(10).then(() => ({
-            items: [`page-${pageParam}`],
-            nextCursor: pageParam + 1,
-          })),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage: {
-          items: Array<string>
-          nextCursor: number
-        }) => lastPage.nextCursor,
-      })
-      .catch(noop)
+    const prefetchPromise = infiniteQuery(queryClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) =>
+        sleep(10).then(() => ({
+          items: [`page-${pageParam}`],
+          nextCursor: pageParam + 1,
+        })),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage: {
+        items: Array<string>
+        nextCursor: number
+      }) => lastPage.nextCursor,
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     await prefetchPromise
 
@@ -1576,19 +1575,17 @@ describe('dehydration and rehydration', () => {
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
 
-    const prefetchPromise = queryClient
-      .infiniteQuery({
-        queryKey: key,
-        queryFn: ({ pageParam }) =>
-          sleep(10).then(() => ({
-            data: `page-${pageParam}`,
-            next: pageParam + 1,
-          })),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage: { data: string; next: number }) =>
-          lastPage.next,
-      })
-      .catch(noop)
+    const prefetchPromise = infiniteQuery(queryClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) =>
+        sleep(10).then(() => ({
+          data: `page-${pageParam}`,
+          next: pageParam + 1,
+        })),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage: { data: string; next: number }) =>
+        lastPage.next,
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     await prefetchPromise
 
@@ -1598,7 +1595,7 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, dehydrated)
 
-    const resultPromise = hydrationClient.infiniteQuery({
+    const resultPromise = infiniteQuery(hydrationClient, {
       queryKey: key,
       queryFn: ({ pageParam }) =>
         sleep(10).then(() => ({
@@ -1620,19 +1617,17 @@ describe('dehydration and rehydration', () => {
     const key = createKey()
     const serverClient = new QueryClient({ queryCache: new QueryCache() })
 
-    const prefetchPromise = serverClient
-      .infiniteQuery({
-        queryKey: key,
-        queryFn: ({ pageParam }) =>
-          sleep(10).then(() => ({
-            items: [`item-${pageParam}`],
-            next: pageParam + 1,
-          })),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
-          lastPage.next,
-      })
-      .catch(noop)
+    const prefetchPromise = infiniteQuery(serverClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) =>
+        sleep(10).then(() => ({
+          items: [`item-${pageParam}`],
+          next: pageParam + 1,
+        })),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
+        lastPage.next,
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     await prefetchPromise
 
@@ -1657,19 +1652,17 @@ describe('dehydration and rehydration', () => {
     const key = createKey()
     const serverClient = new QueryClient({ queryCache: new QueryCache() })
 
-    const prefetchPromise = serverClient
-      .infiniteQuery({
-        queryKey: key,
-        queryFn: ({ pageParam }) =>
-          sleep(10).then(() => ({
-            items: [`page-${pageParam}`],
-            next: pageParam + 1,
-          })),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
-          lastPage.next,
-      })
-      .catch(noop)
+    const prefetchPromise = infiniteQuery(serverClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) =>
+        sleep(10).then(() => ({
+          items: [`page-${pageParam}`],
+          next: pageParam + 1,
+        })),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
+        lastPage.next,
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     await prefetchPromise
 
@@ -1686,7 +1679,7 @@ describe('dehydration and rehydration', () => {
     expect(beforeRefetch?.pages).toHaveLength(1)
     expect(beforeRefetch?.pageParams).toHaveLength(1)
 
-    const resultPromise = clientClient.infiniteQuery({
+    const resultPromise = infiniteQuery(clientClient, {
       queryKey: key,
       queryFn: ({ pageParam }) =>
         sleep(10).then(() => ({
@@ -1710,19 +1703,17 @@ describe('dehydration and rehydration', () => {
     const key = createKey()
     const serverClient = new QueryClient({ queryCache: new QueryCache() })
 
-    const prefetchPromise = serverClient
-      .infiniteQuery({
-        queryKey: key,
-        queryFn: ({ pageParam }) =>
-          sleep(10).then(() => ({
-            data: `p${pageParam}`,
-            next: pageParam + 1,
-          })),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage: { data: string; next: number }) =>
-          lastPage.next,
-      })
-      .catch(noop)
+    const prefetchPromise = infiniteQuery(serverClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) =>
+        sleep(10).then(() => ({
+          data: `p${pageParam}`,
+          next: pageParam + 1,
+        })),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage: { data: string; next: number }) =>
+        lastPage.next,
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     await prefetchPromise
 
@@ -1743,20 +1734,18 @@ describe('dehydration and rehydration', () => {
     const key = createKey()
     const serverClient = new QueryClient({ queryCache: new QueryCache() })
 
-    const prefetchPromise = serverClient
-      .infiniteQuery({
-        queryKey: key,
-        queryFn: ({ pageParam }) =>
-          sleep(10).then(() => ({
-            items: [`item-${pageParam}`],
-            next: pageParam + 1,
-          })),
-        initialPageParam: 0,
-        pages: 2,
-        getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
-          lastPage.next,
-      })
-      .catch(noop)
+    const prefetchPromise = infiniteQuery(serverClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) =>
+        sleep(10).then(() => ({
+          items: [`item-${pageParam}`],
+          next: pageParam + 1,
+        })),
+      initialPageParam: 0,
+      pages: 2,
+      getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
+        lastPage.next,
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(20)
     await prefetchPromise
 
@@ -1772,20 +1761,18 @@ describe('dehydration and rehydration', () => {
     }>(key)
     expect(beforeRefetch?.pages).toHaveLength(2)
 
-    const resultPromise = clientClient
-      .infiniteQuery({
-        queryKey: key,
-        queryFn: ({ pageParam }) =>
-          sleep(10).then(() => ({
-            items: [`item-${pageParam}`],
-            next: pageParam + 1,
-          })),
-        initialPageParam: 0,
-        pages: 2,
-        getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
-          lastPage.next,
-      })
-      .catch(noop)
+    const resultPromise = infiniteQuery(clientClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) =>
+        sleep(10).then(() => ({
+          items: [`item-${pageParam}`],
+          next: pageParam + 1,
+        })),
+      initialPageParam: 0,
+      pages: 2,
+      getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
+        lastPage.next,
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(20)
     const result = await resultPromise
 

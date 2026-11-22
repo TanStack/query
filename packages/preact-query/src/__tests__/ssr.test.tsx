@@ -1,3 +1,4 @@
+import { infiniteQuery } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { renderToString } from 'preact-render-to-string'
 import { useState } from 'preact/hooks'
@@ -188,14 +189,12 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    void queryClient
-      .infiniteQuery({
-        queryKey: key,
-        queryFn,
-        getNextPageParam: () => undefined,
-        initialPageParam: 0,
-      })
-      .catch(noop)
+    void infiniteQuery(queryClient, {
+      queryKey: key,
+      queryFn,
+      getNextPageParam: () => undefined,
+      initialPageParam: 0,
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(

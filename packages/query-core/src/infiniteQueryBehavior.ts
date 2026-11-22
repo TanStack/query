@@ -15,122 +15,126 @@ import type {
 import type { FetchSignalContext } from './utils'
 
 /**
- * Creates the behavior that fetches the pages of an infinite query: the next or previous page for
- * `fetchNextPage`/`fetchPreviousPage`, or all pages again from the start on a refetch.
- * @param pages - The number of pages to fetch from the start when all pages are fetched again,
- * e.g. from the `pages` option of `queryClient.infiniteQuery`. Defaults to the number of cached
- * pages.
- * @returns The query behavior to set on an infinite query.
+ * Supplies the pagination behavior to the cache entry without changing the caller's options.
  */
-export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
-  pages?: number,
-): QueryBehavior<TQueryFnData, TError, InfiniteData<TData, TPageParam>> {
-  return {
-    onFetch: (context, query) => {
-      const options = context.options as InfiniteQueryPageParamsOptions<TData>
-      const direction = context.fetchOptions?.meta?.fetchMore?.direction
-      const oldPages = context.state.data?.pages || []
-      const oldPageParams = context.state.data?.pageParams || []
-      let result: InfiniteData<unknown> = { pages: [], pageParams: [] }
-      let currentPage = 0
+export function withInfiniteQueryBehavior<TOptions extends object>(
+  options: TOptions,
+) {
+  return { ...options, _infiniteBehavior: infiniteBehavior }
+}
 
-      const fetchFn = async () => {
-        let cancelled = false
-        const signalContext: FetchSignalContext = context
-        const addSignalProperty = (object: object) => {
-          addConsumeAwareSignal(
-            object,
-            () => context.signal,
-            () => (cancelled = true),
-            signalContext[fetchSignal],
-          )
+export const infiniteBehavior: QueryBehavior<
+  any,
+  any,
+  InfiniteData<unknown>
+> = {
+  onFetch: (context, query) => {
+    const options =
+      context.options as InfiniteQueryPageParamsOptions<unknown> & {
+        pages?: number
+      }
+    const direction = context.fetchOptions?.meta?.fetchMore?.direction
+    const oldPages = context.state.data?.pages || []
+    const oldPageParams = context.state.data?.pageParams || []
+    let result: InfiniteData<unknown> = { pages: [], pageParams: [] }
+    let currentPage = 0
+
+    const fetchFn = async () => {
+      let cancelled = false
+      const signalContext: FetchSignalContext = context
+      const addSignalProperty = (object: object) => {
+        addConsumeAwareSignal(
+          object,
+          () => context.signal,
+          () => (cancelled = true),
+          signalContext[fetchSignal],
+        )
+      }
+
+      const queryFn = ensureQueryFn(context.options, context.fetchOptions)
+
+      // Create function to fetch a page
+      const fetchPage = async (
+        data: InfiniteData<unknown>,
+        param: unknown,
+        previous?: boolean,
+      ): Promise<InfiniteData<unknown>> => {
+        if (cancelled) {
+          return Promise.reject(context.signal.reason)
         }
 
-        const queryFn = ensureQueryFn(context.options, context.fetchOptions)
+        if (param == null && data.pages.length) {
+          return Promise.resolve(data)
+        }
 
-        // Create function to fetch a page
-        const fetchPage = async (
-          data: InfiniteData<unknown>,
-          param: unknown,
-          previous?: boolean,
-        ): Promise<InfiniteData<unknown>> => {
-          if (cancelled) {
-            return Promise.reject(context.signal.reason)
+        const queryFnContext = {
+          client: context.client,
+          queryKey: context.queryKey,
+          pageParam: param,
+          meta: context.options.meta,
+        } as QueryFunctionContext<QueryKey, unknown>
+        addSignalProperty(queryFnContext)
+
+        const page = await queryFn(queryFnContext)
+
+        const { maxPages } = context.options
+        const addTo = previous ? addToStart : addToEnd
+
+        return {
+          pages: addTo(data.pages, page, maxPages),
+          pageParams: addTo(data.pageParams, param, maxPages),
+        }
+      }
+
+      // fetch next / previous page?
+      if (direction && oldPages.length) {
+        const previous = direction === 'backward'
+        const pageParamFn = previous ? getPreviousPageParam : getNextPageParam
+        const oldData = {
+          pages: oldPages,
+          pageParams: oldPageParams,
+        }
+        const param = pageParamFn(options, oldData)
+
+        result = await fetchPage(oldData, param, previous)
+      } else {
+        const remainingPages = options.pages ?? oldPages.length
+
+        // Fetch all pages
+        do {
+          const param =
+            currentPage === 0
+              ? oldPageParams[0] === undefined
+                ? options.initialPageParam
+                : oldPageParams[0]
+              : getNextPageParam(options, result)
+          if (currentPage > 0 && param == null) {
+            break
           }
+          result = await fetchPage(result, param)
+          currentPage++
+        } while (currentPage < remainingPages)
+      }
 
-          if (param == null && data.pages.length) {
-            return Promise.resolve(data)
-          }
-
-          const queryFnContext = {
+      return result
+    }
+    if (context.options.persister) {
+      context.fetchFn = () => {
+        return context.options.persister?.(
+          fetchFn as any,
+          {
             client: context.client,
             queryKey: context.queryKey,
-            pageParam: param,
             meta: context.options.meta,
-          } as QueryFunctionContext<QueryKey, unknown>
-          addSignalProperty(queryFnContext)
-
-          const page = await queryFn(queryFnContext)
-
-          const { maxPages } = context.options
-          const addTo = previous ? addToStart : addToEnd
-
-          return {
-            pages: addTo(data.pages, page, maxPages),
-            pageParams: addTo(data.pageParams, param, maxPages),
-          }
-        }
-
-        // fetch next / previous page?
-        if (direction && oldPages.length) {
-          const previous = direction === 'backward'
-          const pageParamFn = previous ? getPreviousPageParam : getNextPageParam
-          const oldData = {
-            pages: oldPages,
-            pageParams: oldPageParams,
-          }
-          const param = pageParamFn(options, oldData)
-
-          result = await fetchPage(oldData, param, previous)
-        } else {
-          const remainingPages = pages ?? oldPages.length
-
-          // Fetch all pages
-          do {
-            const param =
-              currentPage === 0
-                ? oldPageParams[0] === undefined
-                  ? options.initialPageParam
-                  : oldPageParams[0]
-                : getNextPageParam(options, result)
-            if (currentPage > 0 && param == null) {
-              break
-            }
-            result = await fetchPage(result, param)
-            currentPage++
-          } while (currentPage < remainingPages)
-        }
-
-        return result
+            signal: context.signal,
+          },
+          query,
+        )
       }
-      if (context.options.persister) {
-        context.fetchFn = () => {
-          return context.options.persister?.(
-            fetchFn as any,
-            {
-              client: context.client,
-              queryKey: context.queryKey,
-              meta: context.options.meta,
-              signal: context.signal,
-            },
-            query,
-          )
-        }
-      } else {
-        context.fetchFn = fetchFn
-      }
-    },
-  }
+    } else {
+      context.fetchFn = fetchFn
+    }
+  },
 }
 
 /**

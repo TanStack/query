@@ -1,4 +1,3 @@
-import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
 import { CancelledError, canFetch, createRetryer } from './retryer'
@@ -290,7 +289,7 @@ export class Query<
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
-  #queryType?: 'infinite'
+  #infiniteBehavior?: QueryBehavior<any, any, any, any>
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
@@ -328,10 +327,10 @@ export class Query<
   /**
    * `'infinite'` for an infinite query, otherwise `undefined`.
    * @internal
-   * @returns The type of the query, set from the `_type` option (e.g. `'infinite'`).
+   * @returns The type of the query, derived from the installed fetch behavior.
    */
   get queryType() {
-    return this.#queryType
+    return this.#infiniteBehavior ? ('infinite' as const) : undefined
   }
 
   /**
@@ -354,8 +353,8 @@ export class Query<
   ): void {
     this.options = { ...this.#defaultOptions, ...options }
 
-    if (options?._type) {
-      this.#queryType = options._type
+    if (options?._infiniteBehavior) {
+      this.#infiniteBehavior = options._infiniteBehavior
     }
 
     this.updateGcTime(this.options.gcTime)
@@ -802,12 +801,7 @@ export class Query<
     } as FetchContext<TQueryFnData, TError, TData, TQueryKey>
     addSignalProperty(context)
 
-    const behavior =
-      this.#queryType === 'infinite'
-        ? (infiniteQueryBehavior(
-            (this.options as { pages?: number }).pages,
-          ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>)
-        : this.options.behavior
+    const behavior = this.#infiniteBehavior ?? this.options.behavior
     behavior?.onFetch(context, this as unknown as Query)
 
     // Store state in case the current fetch needs to be reverted

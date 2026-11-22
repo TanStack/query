@@ -4,7 +4,7 @@ import { ref, unref } from 'vue'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { MutationCache } from '../mutationCache'
 import { QueryCache } from '../queryCache'
-import { QueryClient } from '../queryClient'
+import { infiniteQuery, QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 
 // Get the prototype methods dynamically
@@ -385,12 +385,13 @@ describe('QueryCache', () => {
   })
 
   describe('infiniteQuery', () => {
-    it('should properly unwrap queryKey, initialPageParam, pages, and select', () => {
+    it('should properly unwrap queryKey, initialPageParam, pages, and select', async () => {
       const queryClient = new QueryClient()
       const getNextPageParam = () => 1
       const select = (data: { pages: Array<string> }) => data.pages.length
 
-      queryClient.infiniteQuery({
+      await infiniteQuery(queryClient, {
+        queryFn: () => Promise.resolve('item'),
         queryKey: queryKeyRef,
         initialPageParam: ref(0),
         pages: ref(2),
@@ -398,7 +399,7 @@ describe('QueryCache', () => {
         select: ref(select),
       })
 
-      expect(QueryClientOrigin.prototype.infiniteQuery).toHaveBeenCalledWith(
+      expect(QueryClientOrigin.prototype.query).toHaveBeenCalledWith(
         expect.objectContaining({
           queryKey: queryKeyUnref,
           initialPageParam: 0,
@@ -409,7 +410,7 @@ describe('QueryCache', () => {
       )
     })
 
-    it('should properly unwrap getNextPageParam when using infiniteQueryOptions', () => {
+    it('should properly unwrap getNextPageParam when using infiniteQueryOptions', async () => {
       const queryClient = new QueryClient()
       const getNextPageParam = () => 12
 
@@ -419,13 +420,14 @@ describe('QueryCache', () => {
         getNextPageParam: ref(getNextPageParam),
       })
 
-      queryClient.infiniteQuery({
+      await infiniteQuery(queryClient, {
+        queryFn: () => Promise.resolve('item'),
         ...unref(options),
         staleTime: 0,
         pages: 1,
       })
 
-      expect(QueryClientOrigin.prototype.infiniteQuery).toHaveBeenCalledWith(
+      expect(QueryClientOrigin.prototype.query).toHaveBeenCalledWith(
         expect.objectContaining({
           queryKey: queryKeyUnref,
           initialPageParam: 0,

@@ -52,7 +52,7 @@ export default defineNuxtPlugin((nuxt) => {
 
 Now you are ready to prefetch some data in your pages with `onServerPrefetch`.
 
-- Prefetch all the queries that you need with `queryClient.query`, `queryClient.infiniteQuery`, or `suspense`
+- Prefetch all the queries that you need with `queryClient.query`, `infiniteQuery(queryClient, options)`, or `suspense`
 
 ```ts
 export default defineComponent({
@@ -112,7 +112,7 @@ Now you are ready to prefetch some data in your pages with `onServerPrefetch`.
 
 - Use `useContext` to get nuxt context
 - Use `useQueryClient` to get server-side instance of `queryClient`
-- Prefetch all the queries that you need with `queryClient.query`, `queryClient.infiniteQuery`, or `suspense`
+- Prefetch all the queries that you need with `queryClient.query`, `infiniteQuery(queryClient, options)`, or `suspense`
 - Dehydrate `queryClient` to the `nuxtContext`
 
 ```vue

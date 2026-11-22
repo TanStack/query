@@ -1,4 +1,7 @@
-import { QueryClient as QC } from '@tanstack/query-core'
+import {
+  QueryClient as QC,
+  infiniteQuery as coreInfiniteQuery,
+} from '@tanstack/query-core'
 import { nextTick, ref } from 'vue'
 import { MutationCache } from './mutationCache'
 import { QueryCache } from './queryCache'
@@ -328,73 +331,6 @@ export class QueryClient extends QC {
     )
   }
 
-  // These one-shot imperative methods do not resolve top-level option getters.
-  // Resolve getters explicitly before calling, e.g. queryClient.infiniteQuery(options()).
-  override infiniteQuery<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TData = InfiniteData<TQueryFnData>,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: InfiniteQueryExecuteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-  ): Promise<
-    Array<TData> extends Array<InfiniteData<TQueryFnData>>
-      ? InfiniteData<TQueryFnData, TPageParam>
-      : TData
-  >
-  /** {@inheritDoc QueryClient.infiniteQuery:0} */
-  override infiniteQuery<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TData = InfiniteData<TQueryFnData>,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: MaybeRefDeep<
-      InfiniteQueryExecuteOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey,
-        TPageParam
-      >
-    >,
-  ): Promise<
-    Array<TData> extends Array<InfiniteData<TQueryFnData>>
-      ? InfiniteData<TQueryFnData, TPageParam>
-      : TData
-  >
-  override infiniteQuery<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TData = InfiniteData<TQueryFnData>,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: MaybeRefDeep<
-      InfiniteQueryExecuteOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey,
-        TPageParam
-      >
-    >,
-  ): Promise<
-    Array<TData> extends Array<InfiniteData<TQueryFnData>>
-      ? InfiniteData<TQueryFnData, TPageParam>
-      : TData
-  > {
-    return super.infiniteQuery(cloneDeepUnref(options))
-  }
-
   override setDefaultOptions(options: MaybeRefDeep<DefaultOptions>): void {
     super.setDefaultOptions(cloneDeepUnref(options))
   }
@@ -441,4 +377,78 @@ export class QueryClient extends QC {
   ): MutationObserverOptions<any, any, any, any> {
     return super.getMutationDefaults(cloneDeepUnref(mutationKey))
   }
+}
+
+/**
+ * Fetches and caches an infinite query using the Vue client's defaults.
+ * Accepts refs in the options. Call top-level option getters before passing their result.
+ * @param client - The Vue query client.
+ * @param options - The infinite query options.
+ * @returns The cached pages, or the selected result when `select` is provided.
+ */
+export function infiniteQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  client: QueryClient,
+  options: InfiniteQueryExecuteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+): Promise<
+  Array<TData> extends Array<InfiniteData<TQueryFnData>>
+    ? InfiniteData<TQueryFnData, TPageParam>
+    : TData
+>
+export function infiniteQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  client: QueryClient,
+  options: MaybeRefDeep<
+    InfiniteQueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >
+  >,
+): Promise<
+  Array<TData> extends Array<InfiniteData<TQueryFnData>>
+    ? InfiniteData<TQueryFnData, TPageParam>
+    : TData
+>
+export function infiniteQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  client: QueryClient,
+  options: MaybeRefDeep<
+    InfiniteQueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >
+  >,
+): Promise<
+  Array<TData> extends Array<InfiniteData<TQueryFnData>>
+    ? InfiniteData<TQueryFnData, TPageParam>
+    : TData
+> {
+  return coreInfiniteQuery(client, cloneDeepUnref(options))
 }

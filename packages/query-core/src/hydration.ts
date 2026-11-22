@@ -1,3 +1,4 @@
+import { withInfiniteQueryBehavior } from './infiniteQueryBehavior'
 import { noop } from './utils'
 import type { Mutation, MutationState } from './mutation'
 import type { Query, QueryState } from './query'
@@ -380,16 +381,18 @@ export function hydrate(
         }
       } else {
         // Restore query
+        const queryOptions = {
+          ...client.getDefaultOptions().hydrate?.queries,
+          ...options?.defaultOptions?.queries,
+          queryKey,
+          queryHash,
+          meta,
+        }
         query = queryCache.build(
           client,
-          {
-            ...client.getDefaultOptions().hydrate?.queries,
-            ...options?.defaultOptions?.queries,
-            queryKey,
-            queryHash,
-            meta,
-            _type: queryType,
-          },
+          queryType === 'infinite'
+            ? withInfiniteQueryBehavior(queryOptions)
+            : queryOptions,
           // Reset fetch status to idle to avoid
           // query being stuck in fetching state upon hydration
           {

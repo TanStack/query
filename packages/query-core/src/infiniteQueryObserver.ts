@@ -1,4 +1,8 @@
-import { hasNextPage, hasPreviousPage } from './infiniteQueryBehavior'
+import {
+  hasNextPage,
+  hasPreviousPage,
+  withInfiniteQueryBehavior,
+} from './infiniteQueryBehavior'
 import { QueryObserver } from './queryObserver'
 import type { Query } from './query'
 import type { QueryClient } from './queryClient'
@@ -119,8 +123,7 @@ export class InfiniteQueryObserver<
       TPageParam
     >,
   ): void {
-    options._type = 'infinite'
-    super.setOptions(options)
+    super.setOptions(withInfiniteQueryBehavior(options))
   }
 
   /**
@@ -137,10 +140,9 @@ export class InfiniteQueryObserver<
       TPageParam
     >,
   ): QueryObserverResultReader<InfiniteQueryObserverResult<TData, TError>> {
-    return super.createResultReader({
-      ...options,
-      _type: 'infinite',
-    }) as QueryObserverResultReader<InfiniteQueryObserverResult<TData, TError>>
+    return super.createResultReader(
+      withInfiniteQueryBehavior(options),
+    ) as QueryObserverResultReader<InfiniteQueryObserverResult<TData, TError>>
   }
 
   /**

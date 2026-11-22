@@ -193,14 +193,6 @@ describe('infiniteQueryObserver', () => {
       })
     })
 
-    describe('_type', () => {
-      it('should only accept the infinite literal', () => {
-        expectTypeOf<InfiniteQueryObserverOptions['_type']>().toEqualTypeOf<
-          'infinite' | undefined
-        >()
-      })
-    })
-
     describe('behavior', () => {
       it('should be typed from the paged data it produces', () => {
         expectTypeOf<

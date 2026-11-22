@@ -20,8 +20,6 @@ import type {
   DefaultedQueryObserverOptions,
   InferDataFromTag,
   InferErrorFromTag,
-  InfiniteData,
-  InfiniteQueryExecuteOptions,
   InvalidateOptions,
   InvalidateQueryFilters,
   MutationKey,
@@ -593,54 +591,6 @@ export class QueryClient {
     }
 
     return queryData as unknown as TData
-  }
-
-  /**
-   * Asynchronous method to fetch and cache an infinite query, resolving with an
-   * {@link InfiniteData} object or throwing with the error.
-   *
-   * Requires `initialPageParam` and `getNextPageParam`. Use `pages` to specify how many
-   * pages to fetch. If you omit `pages`, the client fetches up to the number of cached
-   * pages, or one page if the cache has no pages.
-   * @param options - The query to fetch and the options that control which pages to fetch.
-   * @returns A promise that resolves to the {@link InfiniteData}, or to the result of `select` if
-   * provided. It rejects with the error from the fetch or from `select`.
-   * @example
-   * ```ts
-   * try {
-   *   const data = await queryClient.infiniteQuery({
-   *     queryKey,
-   *     queryFn,
-   *     initialPageParam: 0,
-   *     getNextPageParam: (lastPage) => lastPage.nextCursor,
-   *   })
-   *   console.log(data.pages)
-   * } catch (error) {
-   *   console.log(error)
-   * }
-   * ```
-   */
-  infiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = InfiniteData<TQueryFnData>,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: InfiniteQueryExecuteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-  ): Promise<
-    Array<TData> extends Array<InfiniteData<TQueryFnData>>
-      ? InfiniteData<TQueryFnData, TPageParam>
-      : TData
-  > {
-    options._type = 'infinite'
-    return this.query(options as any)
   }
 
   /**

@@ -1,4 +1,5 @@
 import {
+  infiniteQuery,
   QueryClient,
   dataTagErrorSymbol,
   dataTagSymbol,
@@ -85,7 +86,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
 
@@ -98,7 +99,7 @@ describe('infiniteQueryOptions', () => {
       select: (data) => data.pages,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
     expectTypeOf(data).toEqualTypeOf<Array<string>>()
   })
 
@@ -111,7 +112,7 @@ describe('infiniteQueryOptions', () => {
       enabled: false,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
 
@@ -123,7 +124,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
     expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
   })
 

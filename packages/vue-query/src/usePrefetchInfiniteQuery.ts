@@ -1,5 +1,6 @@
 import { noop } from '@tanstack/query-core'
 import { getCurrentScope, unref, watchEffect } from 'vue'
+import { infiniteQuery } from './queryClient'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type {
@@ -14,7 +15,7 @@ import type { QueryClient } from './queryClient'
 import type { MaybeRefDeep, MaybeRefOrGetter } from './types'
 
 /**
- * The options accepted by `usePrefetchInfiniteQuery` — everything you can pass to `queryClient.infiniteQuery`,
+ * The options accepted by `usePrefetchInfiniteQuery` — everything you can pass to `infiniteQuery(queryClient, options)`,
  * except that `queryFn` can't be `skipToken`.
  */
 export type UsePrefetchInfiniteQueryOptions<
@@ -57,7 +58,7 @@ function isGetter<T>(value: MaybeRefOrGetter<T>): value is () => T {
 /**
  * `usePrefetchInfiniteQuery` does not return anything — it fires a prefetch as a reactive side effect, useful
  * for kicking off a fetch ahead of the component that will actually render the data with `useInfiniteQuery`.
- * You can pass everything to `usePrefetchInfiniteQuery` that you can pass to `queryClient.infiniteQuery`,
+ * You can pass everything to `usePrefetchInfiniteQuery` that you can pass to `infiniteQuery(queryClient, options)`,
  * though `queryKey`, `initialPageParam`, and `getNextPageParam` are always required, and `queryFn` is required
  * unless a default query function has been defined.
  *
@@ -72,7 +73,7 @@ function isGetter<T>(value: MaybeRefOrGetter<T>): value is () => T {
  * Fire this during render, before a suspense boundary that wraps a component using `useInfiniteQuery`'s
  * `suspense()` — see the {@link https://tanstack.com/query/latest/docs/framework/vue/guides/suspense | Suspense guide}.
  * @param options - A `ref`, plain value, or reactive getter resolving to the
- * {@link UsePrefetchInfiniteQueryOptions} to use — everything you can pass to `queryClient.infiniteQuery`.
+ * {@link UsePrefetchInfiniteQueryOptions} to use — everything you can pass to `infiniteQuery(queryClient, options)`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @example
@@ -139,7 +140,7 @@ export function usePrefetchInfiniteQuery<
     > = cloneDeepUnref(resolvedOptions)
 
     if (!client.getQueryState(clonedOptions.queryKey)) {
-      void client.infiniteQuery(clonedOptions).then(noop).catch(noop)
+      void infiniteQuery(client, clonedOptions).then(noop).catch(noop)
     }
   })
 }

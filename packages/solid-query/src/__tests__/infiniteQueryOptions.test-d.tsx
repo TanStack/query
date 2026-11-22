@@ -1,4 +1,9 @@
-import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
+import {
+  infiniteQuery,
+  QueryClient,
+  dataTagSymbol,
+  skipToken,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
@@ -27,7 +32,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 0,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<{ wow: boolean }, number>>()
   })
@@ -41,7 +46,7 @@ describe('infiniteQueryOptions', () => {
       select: (data) => data.pages,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
 
     expectTypeOf(data).toEqualTypeOf<Array<{ wow: boolean }>>()
   })
@@ -55,7 +60,7 @@ describe('infiniteQueryOptions', () => {
       enabled: false,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<{ wow: boolean }, number>>()
   })
@@ -68,7 +73,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 0,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
   })

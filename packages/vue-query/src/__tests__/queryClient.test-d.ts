@@ -1,6 +1,6 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { ref } from 'vue'
-import { QueryClient } from '../queryClient'
+import { infiniteQuery, QueryClient } from '../queryClient'
 import type { DataTag, InfiniteData, QueryState } from '@tanstack/query-core'
 
 describe('getQueryData', () => {
@@ -190,7 +190,7 @@ describe('query', () => {
 
 describe('infiniteQuery', () => {
   it('should return infinite data', async () => {
-    const data = await new QueryClient().infiniteQuery({
+    const data = await infiniteQuery(new QueryClient(), {
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
@@ -201,7 +201,7 @@ describe('infiniteQuery', () => {
   })
 
   it('should return the selected type', () => {
-    const result = new QueryClient().infiniteQuery({
+    const result = infiniteQuery(new QueryClient(), {
       queryKey: ['key'],
       queryFn: () => Promise.resolve({ count: 1 }),
       getNextPageParam: () => 2,
@@ -213,7 +213,8 @@ describe('infiniteQuery', () => {
   })
 
   it('should not accept top-level options getters', () => {
-    assertType<Parameters<QueryClient['infiniteQuery']>>([
+    assertType<Parameters<typeof infiniteQuery>>([
+      new QueryClient(),
       // @ts-expect-error One-shot imperative methods do not resolve top-level getters
       () => ({
         queryKey: ['key'],
@@ -225,7 +226,8 @@ describe('infiniteQuery', () => {
   })
 
   it('should allow passing pages with getNextPageParam', () => {
-    assertType<Parameters<QueryClient['infiniteQuery']>>([
+    assertType<Parameters<typeof infiniteQuery>>([
+      new QueryClient(),
       {
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
@@ -237,7 +239,8 @@ describe('infiniteQuery', () => {
   })
 
   it('should not allow passing pages without getNextPageParam', () => {
-    assertType<Parameters<QueryClient['infiniteQuery']>>([
+    assertType<Parameters<typeof infiniteQuery>>([
+      new QueryClient(),
       // @ts-expect-error Property 'getNextPageParam' is missing
       {
         queryKey: ['key'],
@@ -249,7 +252,7 @@ describe('infiniteQuery', () => {
   })
 
   it('should preserve page param inference', () => {
-    new QueryClient().infiniteQuery({
+    infiniteQuery(new QueryClient(), {
       queryKey: ['key'],
       queryFn: ({ pageParam }) => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()

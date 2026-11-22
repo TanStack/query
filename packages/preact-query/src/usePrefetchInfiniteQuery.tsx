@@ -1,4 +1,4 @@
-import { noop } from '@tanstack/query-core'
+import { infiniteQuery, noop } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 import type { UsePrefetchInfiniteQueryOptions } from './types'
@@ -6,7 +6,7 @@ import type { UsePrefetchInfiniteQueryOptions } from './types'
 /**
  * `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render,
  * before a suspense boundary that wraps a component that uses `useSuspenseInfiniteQuery`. You can pass
- * everything to `usePrefetchInfiniteQuery` that you can pass to `queryClient.infiniteQuery`, though
+ * everything to `usePrefetchInfiniteQuery` that you can pass to `infiniteQuery(queryClient, options)`, though
  * `queryKey`, `initialPageParam`, and `getNextPageParam` are always required, and `queryFn` is required unless
  * a default query function has been defined.
  *
@@ -17,7 +17,7 @@ import type { UsePrefetchInfiniteQueryOptions } from './types'
  * The prefetch is skipped if the query already has any cached state — including a `pending`/`error` state left
  * over from a previous attempt — so calling this on every render is cheap and won't refetch data that's
  * already there or already in flight.
- * @param options - The {@link UsePrefetchInfiniteQueryOptions} to use — everything you can pass to `queryClient.infiniteQuery`.
+ * @param options - The {@link UsePrefetchInfiniteQueryOptions} to use — everything you can pass to `infiniteQuery(queryClient, options)`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @example
@@ -63,6 +63,6 @@ export function usePrefetchInfiniteQuery<
   const client = useQueryClient(queryClient)
 
   if (!client.getQueryState(options.queryKey)) {
-    void client.infiniteQuery(options).catch(noop)
+    void infiniteQuery(client, options).catch(noop)
   }
 }

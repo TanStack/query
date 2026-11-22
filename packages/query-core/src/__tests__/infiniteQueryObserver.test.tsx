@@ -232,10 +232,10 @@ describe('InfiniteQueryObserver', () => {
 
     const result = observer.createResultReader(options).getSnapshot()
 
-    expect(options._type).toBeUndefined()
-    expect(
-      queryClient.getQueryCache().get(options.queryHash)?.options._type,
-    ).toBe('infinite')
+    expect(options._infiniteBehavior).toBeUndefined()
+    expect(queryClient.getQueryCache().get(options.queryHash)?.queryType).toBe(
+      'infinite',
+    )
 
     expect(result).toMatchObject({
       data: undefined,

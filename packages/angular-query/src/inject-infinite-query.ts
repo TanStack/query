@@ -46,7 +46,7 @@ import type {
  * actions, or add conditions like `hasNextPage() && !isFetching()`.
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/infinite-queries
  * @see {@link infiniteQueryOptions} to share these options between `injectInfiniteQuery` and imperative APIs
- * like `queryClient.infiniteQuery`.
+ * like `infiniteQuery(queryClient, options)`.
  * @example
  * ```angular-ts
  * @Component({
@@ -107,7 +107,7 @@ export function injectInfiniteQuery<
  * shown below.
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/infinite-queries
  * @see {@link infiniteQueryOptions} to share these options between `injectInfiniteQuery` and imperative APIs
- * like `queryClient.infiniteQuery`.
+ * like `infiniteQuery(queryClient, options)`.
  * @example
  * Fetching the next page from a button click:
  * ```angular-ts
