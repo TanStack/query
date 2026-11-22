@@ -5,7 +5,7 @@ import type { UserConfig } from 'tsdown'
 const baseConfig: UserConfig = {
   target: 'esnext',
   platform: 'browser',
-  format: ['esm', 'cjs'],
+  format: 'esm',
   outDir: 'build',
   fixedExtension: false,
 }
@@ -46,7 +46,6 @@ const jsxConfig = (
 ): UserConfig => ({
   ...baseConfig,
   entry,
-  format: 'esm',
   clean: false,
   dts: false,
   env: environment(development),

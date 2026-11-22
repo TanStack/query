@@ -57,7 +57,7 @@ const baseConfig: UserConfig = {
   alias: {
     'solid-transition-group': 'solid-transition-group/dist/index.js',
   },
-  format: ['esm', 'cjs'],
+  format: 'esm',
   outDir: 'build',
   fixedExtension: false,
   // Published source needs these dependencies declared, but the compiled

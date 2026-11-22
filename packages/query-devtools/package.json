@@ -27,13 +27,12 @@
     "test:types:ts71": "node ../../node_modules/typescript71/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts71 --tsBuildInfoFile .cache/test-types/ts71.tsbuildinfo",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict && attw --pack",
+    "test:build": "publint --strict && attw --pack --profile esm-only",
     "build": "tsdown --tsconfig tsconfig.prod.json",
     "build:dev": "tsdown --watch"
   },
   "type": "module",
-  "main": "./build/index.cjs",
-  "module": "./build/index.js",
+  "main": "./build/index.js",
   "types": "./build/index.d.ts",
   "browser": {},
   "exports": {
@@ -43,17 +42,11 @@
       "import": "./build/index.js"
     },
     "development": {
-      "import": {
-        "types": "./build/index.d.ts",
-        "default": "./build/dev.js"
-      },
-      "require": "./build/dev.cjs"
-    },
-    "import": {
       "types": "./build/index.d.ts",
-      "default": "./build/index.js"
+      "default": "./build/dev.js"
     },
-    "require": "./build/index.cjs"
+    "types": "./build/index.d.ts",
+    "default": "./build/index.js"
   },
   "files": [
     "build",
