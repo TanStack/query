@@ -479,6 +479,15 @@ export function useBaseQueryLayer<
     select: unknown
     value: Promise<{ value: TData }>
   } | null = null
+  // The raw cache data behind the last value this hook served. `computeData`
+  // only receives the previous *selected* value, so it cannot tell a fresh
+  // cache write apart from the value it already committed by comparing
+  // `state.data` to `prev` — with a `select`, those are different shapes and
+  // the comparison would almost never match, silently dropping the refetch
+  // hold for every selected query. Tracking the raw data instead keeps the
+  // hold intact: an ordinary refetch writes nothing, so the raw reference
+  // is unchanged and the node keeps waiting on the fetch promise.
+  let lastServedData: unknown = undefined
   const chainOnce = (
     base: Promise<any>,
     select: unknown,
@@ -497,9 +506,11 @@ export function useBaseQueryLayer<
     const q = query()
     const state = q.state
     const select = opts.select
-    const wrap = (d: any): { value: TData } => ({
-      value: select ? select(d as TQueryData) : (d as TData),
-    })
+    const wrap = (d: any): { value: TData } => {
+      const value = select ? select(d as TQueryData) : (d as TData)
+      lastServedData = d
+      return { value }
+    }
 
     // Placeholder: show immediately instead of suspending while the first
     // fetch runs. When the fetch lands the version bump swaps in real data.
@@ -521,6 +532,15 @@ export function useBaseQueryLayer<
     // fetchStatus; the settle lands through the next version bump.
     if (state.fetchStatus !== 'idle') {
       if (state.data === undefined || prev !== undefined) {
+        // A cache write landed while this fetch was in flight — a streamed
+        // chunk, or a setQueryData during a refetch. The cache holds newer
+        // data than the value this node committed, so serve it instead of
+        // waiting on the fetch promise, which only resolves when the whole
+        // stream ends. An ordinary refetch writes nothing, so the raw
+        // reference is unchanged and the hold below still applies.
+        if (state.data !== undefined && state.data !== lastServedData) {
+          return wrap(state.data)
+        }
         const promise = q.promise
         if (promise) return chainOnce(promise, select, wrap)
       }
