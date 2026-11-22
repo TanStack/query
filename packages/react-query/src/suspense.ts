@@ -1,9 +1,11 @@
+import { QueryObserver } from '@tanstack/query-core'
+import { use } from 'react'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
   Query,
+  QueryClient,
   QueryKey,
-  QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
@@ -154,4 +156,91 @@ export function getSuspensePromise(
   fetchPromise.catch(() => errorResetBoundary.clearReset())
 
   return entry.promise
+}
+
+type SuspenseOptions = DefaultedQueryObserverOptions<any, any, any, any, any>
+type SuspenseResult = QueryObserverResult<any, any>
+type SnapshotReader<T> = { getSnapshot: () => T }
+
+const useReadSuspenseQuery = (
+  defaultedOptions: SuspenseOptions,
+  reader: SnapshotReader<SuspenseResult>,
+  observer: QueryObserver<any, any, any, any, any>,
+  client: QueryClient,
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+) => {
+  if (!defaultedOptions.suspense) return
+
+  const snapshot = reader.getSnapshot()
+  const query = client.getQueryCache().build(client, defaultedOptions)
+  const suspend = shouldSuspend(
+    defaultedOptions,
+    snapshot,
+    errorResetBoundary,
+    query,
+  )
+  if (suspend === undefined) return
+
+  const promise = getSuspensePromise(
+    defaultedOptions,
+    observer,
+    errorResetBoundary,
+    query,
+  )
+  if (suspend) {
+    use(promise)
+  }
+}
+
+/** Supplies Suspense behavior for one query. */
+export const suspenseQueryPolicy = {
+  prepare: ensureSuspenseTimers,
+  readQuery: useReadSuspenseQuery,
+}
+
+const useReadSuspenseQueries = (
+  defaultedQueries: Array<SuspenseOptions>,
+  reader: SnapshotReader<Array<SuspenseResult>>,
+  client: QueryClient,
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+) => {
+  const snapshot = reader.getSnapshot()
+
+  const suspensePromises = snapshot.map((result, index) => {
+    const opts = defaultedQueries[index]
+
+    if (!opts?.suspense) {
+      return undefined
+    }
+
+    const query = client.getQueryCache().build(client, opts)
+    const suspend = shouldSuspend(opts, result, errorResetBoundary, query)
+
+    if (suspend === undefined) {
+      return undefined
+    }
+
+    const queryObserver = new QueryObserver(client, opts)
+    const promise = getSuspensePromise(
+      opts,
+      queryObserver,
+      errorResetBoundary,
+      query,
+    )
+
+    return suspend ? promise : undefined
+  })
+
+  // Start every fetch before calling use(), because use() suspends immediately.
+  for (const promise of suspensePromises) {
+    if (promise) {
+      use(promise)
+    }
+  }
+}
+
+/** Supplies Suspense behavior for parallel queries. */
+export const suspenseQueriesPolicy = {
+  prepare: ensureSuspenseTimers,
+  readQueries: useReadSuspenseQueries,
 }

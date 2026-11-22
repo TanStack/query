@@ -1,5 +1,5 @@
 import { QueryObserver, skipToken } from '@tanstack/query-core'
-import { defaultThrowOnError } from './suspense'
+import { defaultThrowOnError, suspenseQueryPolicy } from './suspense'
 import { useBaseQuery } from './useBaseQuery'
 import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
@@ -108,11 +108,11 @@ export function useSuspenseQuery<
     {
       ...options,
       enabled: true,
-      suspense: true,
       throwOnError: defaultThrowOnError,
       placeholderData: undefined,
     },
     QueryObserver,
     queryClient,
+    suspenseQueryPolicy,
   ) as UseSuspenseQueryResult<TData, TError>
 }

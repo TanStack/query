@@ -1,9 +1,11 @@
+import { QueryObserver } from '@tanstack/query-core'
+import { use } from 'preact/compat'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
   Query,
+  QueryClient,
   QueryKey,
-  QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
@@ -120,4 +122,66 @@ export const getSuspensePromise = <
     errorResetBoundary.clearReset()
   })
   return promise
+}
+
+type SuspenseOptions = DefaultedQueryObserverOptions<any, any, any, any, any>
+type SuspenseResult = QueryObserverResult<any, any>
+type SnapshotReader<T> = { getSnapshot: () => T }
+
+const useReadSuspenseQuery = (
+  defaultedOptions: SuspenseOptions,
+  reader: SnapshotReader<SuspenseResult>,
+  observer: QueryObserver<any, any, any, any, any>,
+  client: QueryClient,
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+) => {
+  // Suspend before registering external-store effects for this render.
+  if (shouldSuspend(defaultedOptions, reader.getSnapshot())) {
+    const suspenseQuery = client.getQueryCache().build(client, defaultedOptions)
+    use(
+      getSuspensePromise(
+        defaultedOptions,
+        observer,
+        errorResetBoundary,
+        suspenseQuery,
+      ),
+    )
+  }
+}
+
+/** Supplies Suspense behavior for one query. */
+export const suspenseQueryPolicy = {
+  prepare: ensureSuspenseTimers,
+  readQuery: useReadSuspenseQuery,
+}
+
+const useReadSuspenseQueries = (
+  defaultedQueries: Array<SuspenseOptions>,
+  reader: SnapshotReader<Array<SuspenseResult>>,
+  client: QueryClient,
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+) => {
+  const suspensePromises = reader.getSnapshot().flatMap((result, index) => {
+    const options = defaultedQueries[index]
+    if (!options || !shouldSuspend(options, result)) return []
+
+    const observer = new QueryObserver(client, options)
+    return getSuspensePromise(
+      options,
+      observer,
+      errorResetBoundary,
+      observer.getCurrentQuery(),
+    )
+  })
+
+  if (suspensePromises.length > 0) {
+    // Keep the boundary suspended until every pending query has settled.
+    use(Promise.all(suspensePromises))
+  }
+}
+
+/** Supplies Suspense behavior for parallel queries. */
+export const suspenseQueriesPolicy = {
+  prepare: ensureSuspenseTimers,
+  readQueries: useReadSuspenseQueries,
 }

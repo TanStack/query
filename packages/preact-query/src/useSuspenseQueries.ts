@@ -1,6 +1,6 @@
 import { skipToken } from '@tanstack/query-core'
-import { defaultThrowOnError } from './suspense'
-import { useQueries } from './useQueries'
+import { defaultThrowOnError, suspenseQueriesPolicy } from './suspense'
+import { useBaseQueries } from './useQueries'
 import type {
   DefaultError,
   QueryClient,
@@ -599,7 +599,7 @@ export function useSuspenseQueries<
 ): TCombinedResult
 
 export function useSuspenseQueries(options: any, queryClient?: QueryClient) {
-  return useQueries(
+  return useBaseQueries(
     {
       ...options,
       queries: options.queries.map((query: any) => {
@@ -611,7 +611,6 @@ export function useSuspenseQueries(options: any, queryClient?: QueryClient) {
 
         return {
           ...query,
-          suspense: true,
           throwOnError: defaultThrowOnError,
           enabled: true,
           placeholderData: undefined,
@@ -619,5 +618,6 @@ export function useSuspenseQueries(options: any, queryClient?: QueryClient) {
       }),
     },
     queryClient,
+    suspenseQueriesPolicy,
   )
 }
