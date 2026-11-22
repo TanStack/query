@@ -65,6 +65,8 @@ If you're not using a module bundler or package manager, you can also use this l
 
 ### Requirements
 
+TanStack Query v6 ships ESM builds only. If your application uses webpack 4, upgrade to webpack 5 or another bundler that supports the modern build.
+
 React Query is optimized for modern browsers. It is compatible with the following browsers config
 
 ```

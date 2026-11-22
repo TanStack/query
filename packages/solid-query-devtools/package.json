@@ -25,15 +25,14 @@
     "test:types:tscurrent": "tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
     "test:types:ts70": "node ../../node_modules/typescript70/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts70 --tsBuildInfoFile .cache/test-types/ts70.tsbuildinfo",
     "test:types:ts71": "node ../../node_modules/typescript71/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts71 --tsBuildInfoFile .cache/test-types/ts71.tsbuildinfo",
-    "test:build": "publint --strict && attw --pack",
+    "test:build": "publint --strict && attw --pack --profile esm-only",
     "test:lib": "vitest --retry=3",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "tsdown --tsconfig tsconfig.prod.json",
     "build:dev": "tsdown --watch"
   },
   "type": "module",
-  "main": "./build/index.cjs",
-  "module": "./build/index.js",
+  "main": "./build/index.js",
   "types": "./build/index.d.ts",
   "browser": {},
   "exports": {
@@ -44,26 +43,17 @@
         "import": "./build/index.jsx"
       },
       "development": {
-        "import": {
-          "types": "./build/index.d.ts",
-          "default": "./build/dev.js"
-        },
-        "require": "./build/dev.cjs"
-      },
-      "import": {
         "types": "./build/index.d.ts",
-        "default": "./build/index.js"
+        "default": "./build/dev.js"
       },
-      "require": "./build/index.cjs"
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
     },
     "./production": {
       "@tanstack/custom-condition": "./src/production.tsx",
+      "types": "./build/production.d.ts",
       "solid": "./build/production.jsx",
-      "import": {
-        "types": "./build/production.d.ts",
-        "default": "./build/production.js"
-      },
-      "require": "./build/production.cjs"
+      "default": "./build/production.js"
     },
     "./package.json": "./package.json"
   },

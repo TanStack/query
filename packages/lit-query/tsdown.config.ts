@@ -1,7 +1,4 @@
 import { defineConfig } from 'tsdown'
-import { legacyConfig, modernConfig } from './root.tsdown.config.js'
+import { getTsdownConfig } from './root.tsdown.config.js'
 
-export default defineConfig([
-  modernConfig({ entry: ['src/index.ts'] }),
-  legacyConfig({ entry: ['src/index.ts'] }),
-])
+export default defineConfig(getTsdownConfig({ entry: ['src/index.ts'] }))

@@ -27,24 +27,17 @@
     "test:types:ts71": "node ../../node_modules/typescript71/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts71 --tsBuildInfoFile .cache/test-types/ts71.tsbuildinfo",
     "test:lib": "vitest --retry=3",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict && attw --pack",
+    "test:build": "publint --strict && attw --pack --profile esm-only",
     "build": "tsdown --tsconfig tsconfig.prod.json"
   },
   "type": "module",
-  "types": "build/legacy/index.d.ts",
-  "main": "build/legacy/index.cjs",
-  "module": "build/legacy/index.js",
+  "types": "./build/index.d.ts",
+  "main": "./build/index.js",
   "exports": {
     ".": {
       "@tanstack/custom-condition": "./src/index.ts",
-      "import": {
-        "types": "./build/modern/index.d.ts",
-        "default": "./build/modern/index.js"
-      },
-      "require": {
-        "types": "./build/modern/index.d.cts",
-        "default": "./build/modern/index.cjs"
-      }
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
     },
     "./package.json": "./package.json"
   },

@@ -33,6 +33,8 @@ bun add -D @tanstack/eslint-plugin-query
 
 ## Flat Config (`eslint.config.js`)
 
+The plugin is ESM-only. If you use `.eslintrc`, migrate to flat config.
+
 ### Recommended setup
 
 To enable all of the recommended rules for our plugin, add the following config:
@@ -77,41 +79,6 @@ export default [
   },
   // Any other config...
 ]
-```
-
-## Legacy Config (`.eslintrc`)
-
-### Recommended setup
-
-To enable all of the recommended rules for our plugin, add `plugin:@tanstack/query/recommended` in extends:
-
-```json
-{
-  "extends": ["plugin:@tanstack/query/recommended"]
-}
-```
-
-### Recommended strict setup
-
-The `recommendedStrict` config extends `recommended` with additional opinionated rules:
-
-```json
-{
-  "extends": ["plugin:@tanstack/query/recommendedStrict"]
-}
-```
-
-### Custom setup
-
-Alternatively, add `@tanstack/query` to the plugins section, and configure the rules you want to use:
-
-```json
-{
-  "plugins": ["@tanstack/query"],
-  "rules": {
-    "@tanstack/query/exhaustive-deps": "error"
-  }
-}
 ```
 
 ## Oxlint

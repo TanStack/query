@@ -175,11 +175,9 @@ import { Example } from './Example'
 const queryClient = new QueryClient()
 
 const PreactQueryDevtoolsProduction = lazy(() =>
-  import('@tanstack/preact-query-devtools/build/modern/production.js').then(
-    (d) => ({
-      default: d.PreactQueryDevtools,
-    }),
-  ),
+  import('@tanstack/preact-query-devtools/production').then((d) => ({
+    default: d.PreactQueryDevtools,
+  })),
 )
 
 function App() {

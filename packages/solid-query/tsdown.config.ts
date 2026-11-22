@@ -5,7 +5,7 @@ import type { UserConfig } from 'tsdown'
 const baseConfig: UserConfig = {
   target: 'esnext',
   platform: 'browser',
-  format: ['esm', 'cjs'],
+  format: 'esm',
   outDir: 'build',
   fixedExtension: false,
 }
