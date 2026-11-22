@@ -24,9 +24,20 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 const { data } = useSuspenseQuery({ queryKey, queryFn })
 ```
 
-This works nicely in TypeScript, because `data` is guaranteed to be defined (as errors and loading states are handled by Suspense- and ErrorBoundaries).
+When `queryFn` cannot be `skipToken`, TypeScript gives `data` the type `TData`. Suspense and error boundaries handle loading and initial fetch errors.
 
-On the flip side, you therefore can't conditionally enable / disable the Query. This generally shouldn't be necessary for dependent Queries because with suspense, all your Queries inside one component are fetched in serial.
+To skip a single Query, pass `skipToken` as its `queryFn`. A skipped Query can still read cached data. It does not fetch automatically or suspend. If `queryFn` can be `skipToken`, check `data` before using it because the cache can be empty.
+
+```tsx
+import { skipToken, useSuspenseQuery } from '@tanstack/react-query'
+
+const { data } = useSuspenseQuery({
+  queryKey: ['post', postId],
+  queryFn: postId === undefined ? skipToken : () => fetchPost(postId),
+})
+```
+
+For dependent Queries in the same component, each Query that suspends completes before the next hook runs.
 
 `placeholderData` is supported. When it returns defined data, the Query renders that data in `success` state and fetches the full data in the background without showing the Suspense fallback. This is useful when a detail Query can show preview data from a cached list Query.
 

@@ -22,21 +22,27 @@ describe('useSuspenseQuery', () => {
     expectTypeOf(status).toEqualTypeOf<'error' | 'success'>()
   })
 
-  it('should not allow skipToken in queryFn', () => {
-    assertType(
-      useSuspenseQuery({
-        queryKey: createKey(),
-        // @ts-expect-error
-        queryFn: skipToken,
-      }),
-    )
-    assertType(
-      useSuspenseQuery({
-        queryKey: createKey(),
-        // @ts-expect-error
-        queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
-      }),
-    )
+  it('should allow undefined data when queryFn can be skipToken', () => {
+    const skipped = useSuspenseQuery<number>({
+      queryKey: createKey(),
+      queryFn: skipToken,
+    })
+    expectTypeOf(skipped.data).toEqualTypeOf<number | undefined>()
+
+    const result = useSuspenseQuery({
+      queryKey: createKey(),
+      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+      select: (data) => data.toString(),
+    })
+
+    expectTypeOf(result.data).toEqualTypeOf<string | undefined>()
+    if (result.isSuccess) {
+      expectTypeOf(result.data).toEqualTypeOf<string>()
+    }
+    if (result.isPending) {
+      expectTypeOf(result.data).toEqualTypeOf<undefined>()
+    }
+    expectTypeOf(result).not.toHaveProperty('isPlaceholderData')
   })
 
   it('should not allow placeholderData, enabled or throwOnError props', () => {

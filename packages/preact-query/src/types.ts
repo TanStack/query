@@ -177,9 +177,9 @@ export type AnyUseSuspenseQueryOptions = UseSuspenseQueryOptions<
   any
 >
 /**
- * The options accepted by `useSuspenseQuery`. Same as {@link UseQueryOptions}, minus `enabled`, `throwOnError`,
- * and `placeholderData` — Suspense hooks cannot render a "disabled" or "placeholder" state, so those options
- * don't apply.
+ * Options for a `useSuspenseQuery` call whose data is defined. The options match those of
+ * {@link UseQueryOptions} except for `throwOnError`, `enabled`, and `placeholderData`.
+ * Use the other overload for a query function that can be `skipToken`.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
@@ -196,8 +196,7 @@ export interface UseSuspenseQueryOptions<
   'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
 > {
   /**
-   * `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
-   * must always be provided, unless a default query function has been defined.
+   * A query function. Omit this option to use the client's default query function.
    */
   queryFn?: Exclude<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
