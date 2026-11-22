@@ -15,7 +15,7 @@ import type {
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { SuspensePolicy } from './suspense'
+import type { suspenseQueryPolicy } from './suspense'
 import type { UseBaseQueryOptions } from './types'
 
 /**
@@ -48,7 +48,7 @@ export function useBaseQuery<
   >,
   Observer: typeof QueryObserver,
   queryClient?: QueryClient,
-  suspense?: Pick<SuspensePolicy, 'prepare' | 'readQuery'>,
+  suspense?: typeof suspenseQueryPolicy,
 ): QueryObserverResult<TData, TError> {
   if (process.env.NODE_ENV !== 'production') {
     if (typeof options !== 'object' || Array.isArray(options)) {

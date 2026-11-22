@@ -20,7 +20,7 @@ import type {
   QueryObserverOptions,
   ThrowOnError,
 } from '@tanstack/query-core'
-import type { SuspensePolicy } from './suspense'
+import type { suspenseQueriesPolicy } from './suspense'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
@@ -390,7 +390,7 @@ export function useBaseQueries<
 >(
   { queries, ...options }: UseQueriesInput<T, TCombinedResult>,
   queryClient?: QueryClient,
-  suspense?: Pick<SuspensePolicy, 'prepare' | 'readQueries'>,
+  suspense?: typeof suspenseQueriesPolicy,
 ): TCombinedResult {
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()

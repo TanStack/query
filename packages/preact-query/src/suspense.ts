@@ -128,33 +128,12 @@ type SuspenseOptions = DefaultedQueryObserverOptions<any, any, any, any, any>
 type SuspenseResult = QueryObserverResult<any, any>
 type SnapshotReader<T> = { getSnapshot: () => T }
 
-/** Supplies render-time Suspense behavior to the shared query hooks. */
-export type SuspensePolicy = {
-  /** Applies the Suspense stale and garbage collection time limits. */
-  prepare: (options: SuspenseOptions) => void
-  /** Starts a fetch and suspends if the result needs data. */
-  readQuery: (
-    options: SuspenseOptions,
-    reader: SnapshotReader<SuspenseResult>,
-    observer: QueryObserver<any, any, any, any, any>,
-    client: QueryClient,
-    errorResetBoundary: QueryErrorResetBoundaryValue,
-  ) => void
-  /** Starts parallel fetches before suspending. */
-  readQueries: (
-    options: Array<SuspenseOptions>,
-    reader: SnapshotReader<Array<SuspenseResult>>,
-    client: QueryClient,
-    errorResetBoundary: QueryErrorResetBoundaryValue,
-  ) => void
-}
-
-const useReadSuspenseQuery: SuspensePolicy['readQuery'] = (
-  defaultedOptions,
-  reader,
-  observer,
-  client,
-  errorResetBoundary,
+const useReadSuspenseQuery = (
+  defaultedOptions: SuspenseOptions,
+  reader: SnapshotReader<SuspenseResult>,
+  observer: QueryObserver<any, any, any, any, any>,
+  client: QueryClient,
+  errorResetBoundary: QueryErrorResetBoundaryValue,
 ) => {
   // Suspend before registering external-store effects for this render.
   if (shouldSuspend(defaultedOptions, reader.getSnapshot())) {
@@ -176,34 +155,24 @@ export const suspenseQueryPolicy = {
   readQuery: useReadSuspenseQuery,
 }
 
-const useReadSuspenseQueries: SuspensePolicy['readQueries'] = (
-  defaultedQueries,
-  reader,
-  client,
-  errorResetBoundary,
+const useReadSuspenseQueries = (
+  defaultedQueries: Array<SuspenseOptions>,
+  reader: SnapshotReader<Array<SuspenseResult>>,
+  client: QueryClient,
+  errorResetBoundary: QueryErrorResetBoundaryValue,
 ) => {
-  const snapshot = reader.getSnapshot()
+  const suspensePromises = reader.getSnapshot().flatMap((result, index) => {
+    const options = defaultedQueries[index]
+    if (!options || !shouldSuspend(options, result)) return []
 
-  const shouldAtLeastOneSuspend = snapshot.some((result, index) =>
-    shouldSuspend(defaultedQueries[index], result),
-  )
-
-  const suspensePromises = shouldAtLeastOneSuspend
-    ? snapshot.flatMap((result, index) => {
-        const opts = defaultedQueries[index]
-
-        if (opts && shouldSuspend(opts, result)) {
-          const queryObserver = new QueryObserver(client, opts)
-          return getSuspensePromise(
-            opts,
-            queryObserver,
-            errorResetBoundary,
-            queryObserver.getCurrentQuery(),
-          )
-        }
-        return []
-      })
-    : []
+    const observer = new QueryObserver(client, options)
+    return getSuspensePromise(
+      options,
+      observer,
+      errorResetBoundary,
+      observer.getCurrentQuery(),
+    )
+  })
 
   if (suspensePromises.length > 0) {
     // Keep the boundary suspended until every pending query has settled.
