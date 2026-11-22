@@ -403,8 +403,6 @@ export function partialMatchKey(
   return false
 }
 
-const hasOwn = Object.prototype.hasOwnProperty
-
 /**
  * This function returns `a` if `b` is deeply equal.
  * If not, it will replace any deeply equal children of `b` with those of `a`.
@@ -468,7 +466,7 @@ function replaceEqualDeepInternal(
 
     if (equalityFn(aItem, bItem)) {
       copy[key] = aItem
-      if (array ? i < aSize : hasOwn.call(a, key)) equalItems++
+      if (array ? i < aSize : Object.hasOwn(a, key)) equalItems++
       continue
     }
 
@@ -505,7 +503,7 @@ export function shallowEqualObjects<T extends Record<string, any>>(
   }
 
   for (const key of Object.keys(a)) {
-    if (!hasOwn.call(b, key) || a[key] !== b[key]) {
+    if (!Object.hasOwn(b, key) || a[key] !== b[key]) {
       return false
     }
   }

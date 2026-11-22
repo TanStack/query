@@ -1,9 +1,10 @@
 import { defineConfig } from 'tsdown'
 import solid from 'unplugin-solid/rolldown'
+import { browserTargets } from './root.tsdown.config.js'
 import type { UserConfig } from 'tsdown'
 
 const baseConfig: UserConfig = {
-  target: 'esnext',
+  target: browserTargets,
   platform: 'browser',
   format: 'esm',
   outDir: 'build',

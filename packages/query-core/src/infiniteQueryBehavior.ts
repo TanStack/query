@@ -133,12 +133,11 @@ function getNextPageParam(
   options: InfiniteQueryPageParamsOptions<any>,
   { pages, pageParams }: InfiniteData<unknown>,
 ): unknown | undefined {
-  const lastIndex = pages.length - 1
   return pages.length > 0
     ? options.getNextPageParam(
-        pages[lastIndex],
+        pages.at(-1),
         pages,
-        pageParams[lastIndex],
+        pageParams.at(-1),
         pageParams,
       )
     : undefined

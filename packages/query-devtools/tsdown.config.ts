@@ -3,6 +3,7 @@ import { createRequire } from 'node:module'
 import { dirname, resolve } from 'node:path'
 import { defineConfig } from 'tsdown'
 import solid from 'unplugin-solid/rolldown'
+import { browserTargets } from './root.tsdown.config.js'
 import type { UserConfig } from 'tsdown'
 
 const require = createRequire(import.meta.url)
@@ -52,7 +53,7 @@ const inlineCss = () => ({
 })
 
 const baseConfig: UserConfig = {
-  target: 'esnext',
+  target: browserTargets,
   platform: 'neutral',
   alias: {
     'solid-transition-group': 'solid-transition-group/dist/index.js',

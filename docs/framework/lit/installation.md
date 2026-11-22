@@ -43,16 +43,18 @@ The snippets in these docs declare reactive properties with `static properties` 
 }
 ```
 
-TanStack Query is optimized for modern browsers:
+TanStack Query supports these browser versions and later.
 
 ```txt
-Chrome >= 91
-Firefox >= 90
-Edge >= 91
-Safari >= 15
-iOS >= 15
-Opera >= 77
+Chrome 119
+Firefox 121
+Edge 119
+Safari 17.4
+Safari on iOS 17.4
+Opera 105
 ```
+
+> Depending on your environment, you might need to add polyfills. If you want to support older browsers, you need to transpile the library from `node_modules` yourselves.
 
 ## Provider Setup
 

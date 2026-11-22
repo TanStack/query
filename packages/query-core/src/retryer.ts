@@ -146,13 +146,11 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   let failureCount = 0
   let continueFn: ((value?: unknown) => void) | undefined
   let status: RetryerStatus = 'pending'
-  let promiseResolve: (data: TData) => void
-  let promiseReject: (error: TError) => void
-
-  const promise = new Promise<TData>((resolve, reject) => {
-    promiseResolve = resolve
-    promiseReject = reject
-  })
+  const {
+    promise,
+    resolve: promiseResolve,
+    reject: promiseReject,
+  } = Promise.withResolvers<TData>()
   promise.catch(noop)
 
   const isResolved = () => status !== 'pending'

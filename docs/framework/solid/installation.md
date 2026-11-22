@@ -47,15 +47,15 @@ If you're not using a module bundler or package manager, you can also use this l
 
 ### Requirements
 
-Solid Query is optimized for modern browsers. It is compatible with the following browsers config
+TanStack Query supports these browser versions and later.
 
-```
-Chrome >= 91
-Firefox >= 90
-Edge >= 91
-Safari >= 15
-iOS >= 15
-Opera >= 77
+```txt
+Chrome 119
+Firefox 121
+Edge 119
+Safari 17.4
+Safari on iOS 17.4
+Opera 105
 ```
 
 > Depending on your environment, you might need to add polyfills. If you want to support older browsers, you need to transpile the library from `node_modules` yourselves.
