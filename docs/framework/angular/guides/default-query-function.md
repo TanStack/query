@@ -7,8 +7,10 @@ ref: docs/framework/react/guides/default-query-function.md
 [//]: # 'Example'
 
 ```ts
+import { defaultQueryFn } from '@tanstack/angular-query'
+
 // Define a default query function that will receive the query key
-const defaultQueryFn: QueryFunction = async ({ queryKey }) => {
+const fetchByQueryKey: QueryFunction = async ({ queryKey }) => {
   const { data } = await axios.get(
     `https://jsonplaceholder.typicode.com${queryKey[0]}`,
   )
@@ -20,7 +22,7 @@ const createQueryClient = () =>
   new QueryClient({
     defaultOptions: {
       queries: {
-        queryFn: defaultQueryFn,
+        queryFn: fetchByQueryKey,
       },
     },
   })
@@ -30,18 +32,18 @@ bootstrapApplication(MyAppComponent, {
 })
 
 export class PostsComponent {
-  // All you have to do now is pass a key!
   readonly postsQuery = injectQuery<Array<Post>>(() => ({
     queryKey: ['/posts'],
+    queryFn: defaultQueryFn,
   }))
   // ...
 }
 
 export class PostComponent {
-  // You can even leave out the queryFn and just go straight into options
   readonly postQuery = injectQuery<Post>(() => ({
     enabled: this.postIdSignal() > 0,
     queryKey: [`/posts/${this.postIdSignal()}`],
+    queryFn: defaultQueryFn,
   }))
   // ...
 }

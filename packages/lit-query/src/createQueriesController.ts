@@ -4,6 +4,7 @@ import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
 import type {
   DefaultError,
+  DefaultedQueryObserverOptions,
   DefinedQueryObserverResult,
   OmitKeyof,
   QueriesObserverOptions,
@@ -300,7 +301,7 @@ function resolveQueriesOptions<TCombinedResult>(
   >,
   client: QueryClient,
 ): {
-  queries: Array<QueryObserverOptions>
+  queries: Array<DefaultedQueryObserverOptions>
   combine: QueriesObserverOptions<TCombinedResult>['combine']
 } {
   const resolvedOptions = readAccessor(optionsAccessor)
@@ -331,7 +332,7 @@ class QueriesController<
   private observer: QueriesObserver<TCombinedResult> | undefined
   private unsubscribe: (() => void) | undefined
   private queryClient: QueryClient | undefined
-  private queries: Array<QueryObserverOptions> = []
+  private queries: Array<DefaultedQueryObserverOptions> = []
   private combine: QueriesObserverOptions<TCombinedResult>['combine']
   private combinedResult: TCombinedResult | undefined
   private rawResult: Array<QueryObserverResult> = []
@@ -505,7 +506,7 @@ class QueriesController<
   }
 
   private readResolvedOptions(client = this.queryClient): {
-    queries: Array<QueryObserverOptions>
+    queries: Array<DefaultedQueryObserverOptions>
     combine: QueriesObserverOptions<TCombinedResult>['combine']
   } {
     if (!client) {

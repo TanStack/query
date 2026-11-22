@@ -3,13 +3,15 @@ id: default-query-function
 title: Default Query Function
 ---
 
-If you find yourself wishing for whatever reason that you could just share the same query function for your entire app and just use query keys to identify what it should fetch, you can do that by providing a **default query function** to TanStack Query:
+Set a default query function on the client to share it across queries. Pass `queryFn: defaultQueryFn` in the query options to use that function. The function receives the query key and can use it to decide what to fetch.
 
 [//]: # 'Example'
 
 ```tsx
+import { defaultQueryFn } from '@tanstack/react-query'
+
 // Define a default query function that will receive the query key
-const defaultQueryFn = async ({ queryKey }) => {
+const fetchByQueryKey = async ({ queryKey }) => {
   const { data } = await axios.get(
     `https://jsonplaceholder.typicode.com${queryKey[0]}`,
   )
@@ -20,7 +22,7 @@ const defaultQueryFn = async ({ queryKey }) => {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: defaultQueryFn,
+      queryFn: fetchByQueryKey,
     },
   },
 })
@@ -33,17 +35,19 @@ function App() {
   )
 }
 
-// All you have to do now is pass a key!
 function Posts() {
-  const { status, data, error, isFetching } = useQuery({ queryKey: ['/posts'] })
+  const { status, data, error, isFetching } = useQuery({
+    queryKey: ['/posts'],
+    queryFn: defaultQueryFn,
+  })
 
   // ...
 }
 
-// You can even leave out the queryFn and just go straight into options
 function Post({ postId }) {
   const { status, data, error, isFetching } = useQuery({
     queryKey: [`/posts/${postId}`],
+    queryFn: defaultQueryFn,
     enabled: !!postId,
   })
 
@@ -53,4 +57,4 @@ function Post({ postId }) {
 
 [//]: # 'Example'
 
-If you ever want to override the default queryFn, you can just provide your own like you normally would.
+Pass your own function as `queryFn` to override the client defaults. To configure a default function for specific query keys, use `queryClient.setQueryDefaults`.

@@ -1,6 +1,7 @@
 import {
   QueryClient,
   QueryClientProvider,
+  defaultQueryFn,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
@@ -16,7 +17,7 @@ type Post = {
 }
 
 // Define a default query function that will receive the query key
-const defaultQueryFn = async ({ queryKey }: { queryKey: QueryKey }) => {
+const fetchByQueryKey = async ({ queryKey }: { queryKey: QueryKey }) => {
   const response = await fetch(
     `https://jsonplaceholder.typicode.com${queryKey[0]}`,
   )
@@ -28,7 +29,7 @@ const defaultQueryFn = async ({ queryKey }: { queryKey: QueryKey }) => {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: defaultQueryFn,
+      queryFn: fetchByQueryKey,
     },
   },
 })
@@ -65,9 +66,9 @@ function Posts({
 }) {
   const queryClient = useQueryClient()
 
-  // All you have to do now is pass a key!
   const { status, data, error, isFetching } = useQuery<Array<Post>>({
     queryKey: ['/posts'],
+    queryFn: defaultQueryFn,
   })
 
   return (
@@ -117,9 +118,9 @@ function Post({
   postId: number
   setPostId: React.Dispatch<React.SetStateAction<number>>
 }) {
-  // You can even leave out the queryFn and just go straight into options
   const { status, data, error, isFetching } = useQuery<Post>({
     queryKey: [`/posts/${postId}`],
+    queryFn: defaultQueryFn,
     enabled: !!postId,
   })
 

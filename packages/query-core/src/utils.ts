@@ -684,9 +684,19 @@ export const skipToken = Symbol()
 export type SkipToken = typeof skipToken
 
 /**
+ * Pass this as `queryFn` to use the query function configured on the client.
+ * The defaults for the query key take precedence over the client's global query defaults.
+ * If no query function is configured, a fetch fails with a `Missing queryFn` error.
+ */
+export const defaultQueryFn = Symbol()
+
+/** The type of the {@link defaultQueryFn} sentinel value. */
+export type DefaultQueryFn = typeof defaultQueryFn
+
+/**
  * Returns the function to call for a fetch. If there is no `queryFn` but the fetch was started from
- * an `initialPromise`, that promise is returned instead. If there is no usable `queryFn` (missing or
- * {@link skipToken}), the returned function rejects with a `Missing queryFn` error.
+ * an `initialPromise`, that promise is returned instead. If there is no usable `queryFn`, the returned
+ * function rejects with a `Missing queryFn` error.
  * @param options - The query options with the `queryFn`, and the `queryHash` used in error messages.
  * @param fetchOptions - The fetch options, which may carry an `initialPromise`.
  * @returns The function to call for the fetch.
@@ -696,7 +706,10 @@ export function ensureQueryFn<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: {
-    queryFn?: QueryFunction<TQueryFnData, TQueryKey> | SkipToken
+    queryFn?:
+      | QueryFunction<TQueryFnData, TQueryKey>
+      | SkipToken
+      | DefaultQueryFn
     queryHash?: string
   },
   fetchOptions?: FetchOptions<TQueryFnData>,
@@ -716,7 +729,11 @@ export function ensureQueryFn<
     return () => fetchOptions.initialPromise!
   }
 
-  if (!options.queryFn || options.queryFn === skipToken) {
+  if (
+    !options.queryFn ||
+    options.queryFn === skipToken ||
+    options.queryFn === defaultQueryFn
+  ) {
     return () =>
       Promise.reject(new Error(`Missing queryFn: '${options.queryHash}'`))
   }

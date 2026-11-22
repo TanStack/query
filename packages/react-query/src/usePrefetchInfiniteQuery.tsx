@@ -12,8 +12,7 @@ import type { UsePrefetchInfiniteQueryOptions } from './types'
  * `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render,
  * before a suspense boundary that wraps a component that uses `useSuspenseInfiniteQuery`. You can pass
  * everything to `usePrefetchInfiniteQuery` that you can pass to `queryClient.infiniteQuery`, though
- * `queryKey`, `initialPageParam`, and `getNextPageParam` are always required, and `queryFn` is required unless
- * a default query function has been defined.
+ * `queryKey`, `initialPageParam`, and `getNextPageParam` are always required, and `queryFn` is required. Pass `defaultQueryFn` to use the client defaults.
  *
  * `getNextPageParam` receives both the last page of the infinite list of data and the full array of all pages,
  * as well as pageParam information, and should return a single variable that will be passed to your query

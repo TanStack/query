@@ -7,6 +7,7 @@ import {
   QueryCache,
   QueryClient,
   QueryObserver,
+  defaultQueryFn,
   dehydrate,
   focusManager,
   hydrate,
@@ -41,6 +42,32 @@ describe('queryClient', () => {
   })
 
   describe('defaultOptions', () => {
+    it('should resolve defaultQueryFn using the matching query defaults first', async () => {
+      queryClient.setDefaultOptions({
+        queries: { queryFn: ({ queryKey }) => queryKey[0] },
+      })
+      queryClient.setQueryDefaults(['posts'], { queryFn: () => 'post' })
+
+      await expect(
+        queryClient.query({ queryKey: ['posts', 1], queryFn: defaultQueryFn }),
+      ).resolves.toBe('post')
+      await expect(
+        queryClient.query({ queryKey: ['todos'], queryFn: defaultQueryFn }),
+      ).resolves.toBe('todos')
+      await expect(
+        queryClient.query({
+          queryKey: ['posts', 2],
+          queryFn: () => 'override',
+        }),
+      ).resolves.toBe('override')
+    })
+
+    it('should reject defaultQueryFn when no query function is configured', async () => {
+      await expect(
+        queryClient.query({ queryKey: ['todos'], queryFn: defaultQueryFn }),
+      ).rejects.toThrow('Missing queryFn')
+    })
+
     it('should merge defaultOptions', () => {
       const key = createKey()
 
@@ -91,7 +118,10 @@ describe('queryClient', () => {
     it('should be able to override defaults', async () => {
       const key = createKey()
       queryClient.setQueryDefaults(key, { queryFn: () => 'data' })
-      const observer = new QueryObserver(queryClient, { queryKey: key })
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: defaultQueryFn,
+      })
       const { data } = await observer.refetch()
       expect(data).toBe('data')
     })
@@ -101,6 +131,7 @@ describe('queryClient', () => {
       queryClient.setQueryDefaults([key], { queryFn: () => 'data' })
       const observer = new QueryObserver(queryClient, {
         queryKey: [key, 'a'],
+        queryFn: defaultQueryFn,
       })
       const { data } = await observer.refetch()
       expect(data).toBe('data')
@@ -133,6 +164,7 @@ describe('queryClient', () => {
       })
       const observer = new QueryObserver(queryClient, {
         queryKey: [key],
+        queryFn: defaultQueryFn,
         retry: false,
         enabled: false,
       })
@@ -148,6 +180,7 @@ describe('queryClient', () => {
       })
       const observer = new QueryObserver(queryClient, {
         queryKey: [key],
+        queryFn: defaultQueryFn,
       })
 
       expect(observer.getCurrentResult().status).toBe('pending')
@@ -1950,6 +1983,7 @@ describe('queryClient', () => {
       await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
+        queryFn: defaultQueryFn,
         enabled: false,
         staleTime: Infinity,
       })

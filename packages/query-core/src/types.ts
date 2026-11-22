@@ -7,7 +7,12 @@ import type { Query, QueryBehavior } from './query'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type { RetryDelayValue, RetryValue } from './retryer'
-import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
+import type {
+  DefaultQueryFn,
+  QueryFilters,
+  QueryTypeFilter,
+  SkipToken,
+} from './utils'
 
 /**
  * Excludes `undefined` from `T`. Used where a value must be defined, such as the data type that a
@@ -406,12 +411,15 @@ export interface QueryOptions<
   gcTime?: number
   /**
    * The function that the query will use to request data.
-   * Required, unless a default query function has been set via `queryClient.setQueryDefaults` or
-   * `queryClient.setDefaultOptions`.
+   * Pass `defaultQueryFn` to use the function configured in the client's query defaults.
+   * Pass `skipToken` to disable a query without a function where supported.
    * Receives a {@link QueryFunctionContext}.
    * Must return a promise that will either resolve data or throw an error. The data cannot be `undefined`.
    */
-  queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam> | SkipToken
+  queryFn?:
+    | QueryFunction<TQueryFnData, TQueryKey, TPageParam>
+    | SkipToken
+    | DefaultQueryFn
   /**
    * This option can be used to persist the result of a query to an external storage, bypassing the need to actually
    * call the `queryFn`. Useful for persisting a query's data across e.g. server/client boundaries.
@@ -517,11 +525,10 @@ export type ThrowOnError<
     ) => boolean)
 
 /**
- * The options of a `QueryObserver`, and of the hooks built on it like `useQuery`: the
- * {@link QueryOptions} of the query, plus options that control the observer, such as `enabled`,
- * `staleTime`, `refetchInterval`, `select`, and `placeholderData`.
+ * Shared options for default resolution and resolved observer state.
+ * @internal
  */
-export interface QueryObserverOptions<
+export interface QueryObserverOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -659,6 +666,31 @@ export interface QueryObserverOptions<
 }
 
 /**
+ * The options of a `QueryObserver`, and of the hooks built on it like `useQuery`: the
+ * {@link QueryOptions} of the query, plus options that control the observer, such as `enabled`,
+ * `staleTime`, `refetchInterval`, `select`, and `placeholderData`.
+ * Pass a `queryFn` or use `defaultQueryFn` to select the client defaults.
+ */
+export interface QueryObserverOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = never,
+> extends WithRequired<
+  QueryObserverOptionsBase<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey,
+    TPageParam
+  >,
+  'queryFn'
+> {}
+
+/**
  * Makes the `TKey` properties of `TTarget` required and non-nullable.
  */
 export type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & {
@@ -675,8 +707,16 @@ export type DefaultedQueryObserverOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = never,
 > = WithRequired<
-  QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  QueryObserverOptionsBase<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey,
+    TPageParam
+  >,
   'throwOnError' | 'refetchOnReconnect' | 'queryHash'
 >
 
@@ -712,16 +752,15 @@ export type DefaultedInfiniteQueryObserverOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = WithRequired<
-  InfiniteQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
-  >,
-  'throwOnError' | 'refetchOnReconnect' | 'queryHash'
->
+> = DefaultedQueryObserverOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  InfiniteData<TQueryFnData, TPageParam>,
+  TQueryKey,
+  TPageParam
+> &
+  InfiniteQueryPageParamsOptions<TQueryFnData, TPageParam>
 
 /**
  * The options of `queryClient.query`: the {@link QueryOptions} of the query, plus a `staleTime`
@@ -2303,7 +2342,7 @@ export interface QueryClientConfig {
 export interface DefaultOptions<TError = DefaultError> {
   /** Default options applied to every query, unless overridden per-query. */
   queries?: OmitKeyof<
-    QueryObserverOptions<unknown, TError>,
+    QueryObserverOptionsBase<unknown, TError>,
     'suspense' | 'queryKey'
   >
   /** Default options applied to every mutation, unless overridden per-mutation. */

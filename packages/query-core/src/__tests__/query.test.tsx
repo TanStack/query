@@ -10,6 +10,7 @@ import {
   QueryCache,
   QueryClient,
   QueryObserver,
+  defaultQueryFn,
   dehydrate,
   focusManager,
   hydrate,
@@ -345,6 +346,7 @@ describe('query', () => {
     // Subscribe and unsubscribe to simulate cancellation because the last observer unsubscribed
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
+      queryFn: defaultQueryFn,
       enabled: false,
     })
     const unsubscribe = observer.subscribe(() => undefined)
@@ -375,6 +377,7 @@ describe('query', () => {
     // Subscribe and unsubscribe to simulate cancellation because the last observer unsubscribed
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
+      queryFn: defaultQueryFn,
       enabled: false,
     })
     const unsubscribe = observer.subscribe(() => undefined)
@@ -861,6 +864,7 @@ describe('query', () => {
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
+      queryFn: defaultQueryFn,
     })
 
     expect(query.getObserversCount()).toBe(0)
@@ -881,6 +885,7 @@ describe('query', () => {
     const query = queryCache.find({ queryKey: key })!
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
+      queryFn: defaultQueryFn,
     })
 
     expect(query.getObserversCount()).toBe(0)
@@ -892,7 +897,11 @@ describe('query', () => {
 
   it('should notify remaining observers when one unsubscribes during an update', () => {
     const key = createKey()
-    const options = { queryKey: key, enabled: false }
+    const options = {
+      queryKey: key,
+      queryFn: defaultQueryFn,
+      enabled: false,
+    } as const
     const firstObserver = new QueryObserver(queryClient, options)
     const secondObserver = new QueryObserver(queryClient, options)
     const secondListener =
@@ -967,7 +976,7 @@ describe('query', () => {
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
-      queryFn: undefined,
+      queryFn: defaultQueryFn,
       retry: false,
     })
 

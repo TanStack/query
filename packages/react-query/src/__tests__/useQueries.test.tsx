@@ -3,7 +3,13 @@ import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { IsRestoringProvider, QueryCache, QueryClient, useQueries } from '..'
+import {
+  IsRestoringProvider,
+  QueryCache,
+  QueryClient,
+  defaultQueryFn,
+  useQueries,
+} from '..'
 import { renderWithClient } from './utils'
 import type { QueryObserverResult, UseQueryResult } from '..'
 
@@ -30,7 +36,7 @@ describe('useQueries', () => {
     function Page() {
       const [count, setCount] = React.useState(0)
       const data = useQueries({
-        queries: [{ queryKey: key }],
+        queries: [{ queryKey: key, queryFn: defaultQueryFn }],
         subscribed: false,
         combine,
       })
@@ -100,7 +106,13 @@ describe('useQueries', () => {
           queryClient.setQueryData(keys[index]!, 'updated ' + index)
         }, [index])
         const data = useQueries({
-          queries: [{ queryKey: keys[index]!, staleTime: Infinity }],
+          queries: [
+            {
+              queryKey: keys[index]!,
+              queryFn: defaultQueryFn,
+              staleTime: Infinity,
+            },
+          ],
           subscribed,
           combine,
         })

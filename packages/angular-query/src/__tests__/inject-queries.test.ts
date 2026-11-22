@@ -472,7 +472,7 @@ describe('injectQueries', () => {
     queryClient.setQueryData(key, 1)
     const queries = TestBed.runInInjectionContext(() =>
       injectQueries(() => ({
-        queries: [{ queryKey: key, enabled: false }],
+        queries: [{ queryKey: key, queryFn: skipToken }],
         combine: (results) => ({ value: showData() ? results[0].data : 0 }),
       })),
     )

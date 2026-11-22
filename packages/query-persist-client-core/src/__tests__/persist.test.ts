@@ -126,7 +126,7 @@ describe('persist', () => {
       const unsubscribeObserver = observer.subscribe(vi.fn())
       observer
         .getObservers()[0]
-        ?.setOptions({ queryKey, refetchOnWindowFocus: false })
+        ?.setOptions({ queryKey, queryFn, refetchOnWindowFocus: false })
       unsubscribeObserver()
 
       queryClient.setQueryData(queryKey, 2)
