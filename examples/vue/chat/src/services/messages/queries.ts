@@ -1,7 +1,4 @@
-import {
-  queryOptions,
-  experimental_streamedQuery as streamedQuery,
-} from '@tanstack/vue-query'
+import { queryOptions, streamedQuery } from '@tanstack/vue-query'
 import { messagesAPI } from './api'
 
 export const messagesQueries = {

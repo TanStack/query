@@ -1,7 +1,6 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, QueryObserver } from '..'
-import { streamedQuery } from '../streamedQuery'
+import { QueryClient, QueryObserver, streamedQuery } from '..'
 
 describe('streamedQuery', () => {
   let queryClient: QueryClient

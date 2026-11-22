@@ -44,7 +44,7 @@ export {
 } from './utils'
 export type { MutationFilters, QueryFilters, SkipToken, Updater } from './utils'
 
-export { streamedQuery as experimental_streamedQuery } from './streamedQuery'
+export { streamedQuery } from './streamedQuery'
 
 // Types
 export type {

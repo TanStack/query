@@ -1,8 +1,8 @@
 import {
   QueryObserver,
-  experimental_streamedQuery,
   noop,
   skipToken,
+  streamedQuery,
 } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -962,7 +962,7 @@ describe('useQuery', () => {
 
       const query = useQuery({
         queryKey: key,
-        queryFn: experimental_streamedQuery({
+        queryFn: streamedQuery({
           streamFn: () => numberGenerator(),
         }),
       })

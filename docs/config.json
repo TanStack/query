@@ -1069,10 +1069,6 @@
               "to": "framework/react/reference/functions/dehydrateQuery"
             },
             {
-              "label": "Functions / experimental_streamedQuery",
-              "to": "framework/react/reference/functions/experimental_streamedQuery"
-            },
-            {
               "label": "Functions / hashKey",
               "to": "framework/react/reference/functions/hashKey"
             },
@@ -1123,6 +1119,10 @@
             {
               "label": "Functions / shouldThrowError",
               "to": "framework/react/reference/functions/shouldThrowError"
+            },
+            {
+              "label": "Functions / streamedQuery",
+              "to": "framework/react/reference/functions/streamedQuery"
             },
             {
               "label": "Functions / useInfiniteQuery",
@@ -1938,10 +1938,6 @@
               "to": "framework/vue/reference/functions/dehydrateQuery"
             },
             {
-              "label": "Functions / experimental_streamedQuery",
-              "to": "framework/vue/reference/functions/experimental_streamedQuery"
-            },
-            {
               "label": "Functions / hashKey",
               "to": "framework/vue/reference/functions/hashKey"
             },
@@ -1992,6 +1988,10 @@
             {
               "label": "Functions / shouldThrowError",
               "to": "framework/vue/reference/functions/shouldThrowError"
+            },
+            {
+              "label": "Functions / streamedQuery",
+              "to": "framework/vue/reference/functions/streamedQuery"
             },
             {
               "label": "Functions / useInfiniteQuery",
@@ -2695,10 +2695,6 @@
               "to": "framework/solid/reference/functions/dehydrateQuery"
             },
             {
-              "label": "Functions / experimental_streamedQuery",
-              "to": "framework/solid/reference/functions/experimental_streamedQuery"
-            },
-            {
               "label": "Functions / hashKey",
               "to": "framework/solid/reference/functions/hashKey"
             },
@@ -2749,6 +2745,10 @@
             {
               "label": "Functions / shouldThrowError",
               "to": "framework/solid/reference/functions/shouldThrowError"
+            },
+            {
+              "label": "Functions / streamedQuery",
+              "to": "framework/solid/reference/functions/streamedQuery"
             },
             {
               "label": "Functions / useInfiniteQuery",
@@ -3484,10 +3484,6 @@
               "to": "framework/svelte/reference/functions/dehydrateQuery"
             },
             {
-              "label": "Functions / experimental_streamedQuery",
-              "to": "framework/svelte/reference/functions/experimental_streamedQuery"
-            },
-            {
               "label": "Functions / getIsRestoringContext",
               "to": "framework/svelte/reference/functions/getIsRestoringContext"
             },
@@ -3554,6 +3550,10 @@
             {
               "label": "Functions / shouldThrowError",
               "to": "framework/svelte/reference/functions/shouldThrowError"
+            },
+            {
+              "label": "Functions / streamedQuery",
+              "to": "framework/svelte/reference/functions/streamedQuery"
             },
             {
               "label": "Functions / useHydrate",
@@ -4301,10 +4301,6 @@
               "to": "framework/lit/reference/functions/dehydrateQuery"
             },
             {
-              "label": "Functions / experimental_streamedQuery",
-              "to": "framework/lit/reference/functions/experimental_streamedQuery"
-            },
-            {
               "label": "Functions / hashKey",
               "to": "framework/lit/reference/functions/hashKey"
             },
@@ -4355,6 +4351,10 @@
             {
               "label": "Functions / shouldThrowError",
               "to": "framework/lit/reference/functions/shouldThrowError"
+            },
+            {
+              "label": "Functions / streamedQuery",
+              "to": "framework/lit/reference/functions/streamedQuery"
             },
             {
               "label": "Functions / useIsFetching",
@@ -5026,10 +5026,6 @@
               "to": "framework/angular/reference/functions/dehydrateQuery"
             },
             {
-              "label": "Functions / experimental_streamedQuery",
-              "to": "framework/angular/reference/functions/experimental_streamedQuery"
-            },
-            {
               "label": "Functions / hashKey",
               "to": "framework/angular/reference/functions/hashKey"
             },
@@ -5116,6 +5112,10 @@
             {
               "label": "Functions / shouldThrowError",
               "to": "framework/angular/reference/functions/shouldThrowError"
+            },
+            {
+              "label": "Functions / streamedQuery",
+              "to": "framework/angular/reference/functions/streamedQuery"
             },
             {
               "label": "Functions / toResource",
@@ -5835,10 +5835,6 @@
               "to": "framework/preact/reference/functions/dehydrateQuery"
             },
             {
-              "label": "Functions / experimental_streamedQuery",
-              "to": "framework/preact/reference/functions/experimental_streamedQuery"
-            },
-            {
               "label": "Functions / hashKey",
               "to": "framework/preact/reference/functions/hashKey"
             },
@@ -5889,6 +5885,10 @@
             {
               "label": "Functions / shouldThrowError",
               "to": "framework/preact/reference/functions/shouldThrowError"
+            },
+            {
+              "label": "Functions / streamedQuery",
+              "to": "framework/preact/reference/functions/streamedQuery"
             },
             {
               "label": "Functions / useInfiniteQuery",
