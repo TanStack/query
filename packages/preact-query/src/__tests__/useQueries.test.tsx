@@ -97,7 +97,7 @@ describe('useQueries', () => {
       function Page() {
         const [index, setIndex] = useState(0)
         useLayoutEffect(() => {
-          queryClient.setQueryData(keys[index]!, 'updated ' + index)
+          queryClient.setQueryData(keys[index]!, `updated ${index}`)
         }, [index])
         const data = useQueries({
           queries: [{ queryKey: keys[index]!, staleTime: Infinity }],

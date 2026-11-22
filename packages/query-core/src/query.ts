@@ -20,7 +20,6 @@ import type {
   DefaultError,
   FetchStatus,
   InitialDataFunction,
-  QueryFunctionContext,
   QueryKey,
   QueryMeta,
   QueryOptions,
@@ -751,10 +750,9 @@ export class Query<
 
     const abortController = new AbortController()
 
-    // Adds an enumerable signal property to the object that
-    // which sets abortSignalConsumed to true when the signal
-    // is read.
-    const addSignalProperty = (object: object) => {
+    const addSignalProperty: (
+      object: object,
+    ) => asserts object is { signal: AbortSignal } = (object) => {
       Object.defineProperties(object, {
         [fetchSignal]: { value: abortController.signal, enumerable: true },
         signal: {
@@ -771,12 +769,11 @@ export class Query<
     const fetchFn = () => {
       const queryFn = ensureQueryFn(this.options, fetchOptions)
 
-      // Create query function context
       const queryFnContext = {
         client: this.#client,
         queryKey: this.queryKey,
         meta: this.meta,
-      } as QueryFunctionContext<TQueryKey>
+      }
       addSignalProperty(queryFnContext)
 
       this.#abortSignalConsumed = false
@@ -799,7 +796,7 @@ export class Query<
       client: this.#client,
       state: this.state,
       fetchFn,
-    } as FetchContext<TQueryFnData, TError, TData, TQueryKey>
+    }
     addSignalProperty(context)
 
     const behavior =

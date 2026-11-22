@@ -394,7 +394,7 @@ export function useBaseQueries<
   }, [reader])
 
   const shouldSubscribe = !isRestoring && subscribed
-  const result = useSyncExternalStore(
+  const results = useSyncExternalStore(
     useCallback(
       (onStoreChange) => {
         const unsubscribe = shouldSubscribe
@@ -412,7 +412,7 @@ export function useBaseQueries<
     reader.getSnapshot,
   )
 
-  const firstSingleResultWhichShouldThrow = result.find((result, index) => {
+  const firstErrorResult = results.find((result, index) => {
     const query = defaultedQueries[index]
     return (
       query &&
@@ -426,9 +426,9 @@ export function useBaseQueries<
     )
   })
 
-  if (firstSingleResultWhichShouldThrow) {
-    throw firstSingleResultWhichShouldThrow.error
+  if (firstErrorResult) {
+    throw firstErrorResult.error
   }
 
-  return reader.combineResult(result)
+  return reader.combineResult(results)
 }

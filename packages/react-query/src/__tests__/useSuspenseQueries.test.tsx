@@ -680,7 +680,7 @@ describe('useSuspenseQueries', () => {
 
     function Page() {
       const [expanded, setExpanded] = React.useState(false)
-      const result = useSuspenseQueries({
+      const combined = useSuspenseQueries({
         queries: [
           {
             queryKey: key,
@@ -702,7 +702,7 @@ describe('useSuspenseQueries', () => {
       })
       return (
         <button onClick={() => React.startTransition(() => setExpanded(true))}>
-          {result}
+          {combined}
         </button>
       )
     }
