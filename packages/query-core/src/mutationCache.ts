@@ -4,8 +4,10 @@ import { matchMutation, noop } from './utils'
 import type { Action, Mutation } from './mutation'
 import type { MutationObserver } from './mutationObserver'
 import type {
+  CacheKeyConfig,
   DefaultError,
   MutationFunctionContext,
+  MutationKey,
   NotifyEvent,
 } from './types'
 import type { MutationFilters } from './utils'
@@ -21,6 +23,12 @@ import type { MutationFilters } from './utils'
  * If a callback returns a promise, it will be awaited before the mutation continues.
  */
 export interface MutationCacheConfig {
+  /**
+   * Configures mutation key comparison and hashing globally.
+   * `equalityFn` compares individual values during partial matching and defaults to strict equality.
+   * `hashFn` hashes mutation keys for exact matching and mutation defaults.
+   */
+  mutationKey?: CacheKeyConfig<MutationKey>
   /** Called when any mutation in the cache encounters an error. */
   onError?: (
     error: DefaultError,
@@ -298,7 +306,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     const defaultedFilters = { exact: true, ...filters }
 
     return this.getAll().find((mutation) =>
-      matchMutation(defaultedFilters, mutation),
+      matchMutation(defaultedFilters, mutation, this.config.mutationKey),
     ) as Mutation<TData, TError, TVariables, TOnMutateResult> | undefined
   }
 
@@ -319,7 +327,9 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * ```
    */
   findAll(filters: MutationFilters = {}): Array<Mutation> {
-    return this.getAll().filter((mutation) => matchMutation(filters, mutation))
+    return this.getAll().filter((mutation) =>
+      matchMutation(filters, mutation, this.config.mutationKey),
+    )
   }
 
   /**

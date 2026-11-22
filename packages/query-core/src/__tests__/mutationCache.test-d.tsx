@@ -74,9 +74,9 @@ describe('mutationCache', () => {
   })
 
   describe('MutationCacheConfig', () => {
-    it('should declare exactly its four callbacks', () => {
+    it('should declare its key configuration and four callbacks', () => {
       expectTypeOf<keyof MutationCacheConfig>().toEqualTypeOf<
-        'onError' | 'onSuccess' | 'onMutate' | 'onSettled'
+        'mutationKey' | 'onError' | 'onSuccess' | 'onMutate' | 'onSettled'
       >()
     })
 
