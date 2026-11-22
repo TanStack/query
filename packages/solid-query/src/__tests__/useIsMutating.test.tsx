@@ -1,4 +1,5 @@
 import { fireEvent, render } from '@solidjs/testing-library'
+import { Mutation } from '@tanstack/query-core'
 import * as QueryCore from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
@@ -213,7 +214,7 @@ describe('useIsMutating', () => {
 
     const rendered = render(() => <Page />)
 
-    const firstMutation = queryClient1.getMutationCache().build(queryClient1, {
+    const firstMutation = Mutation.build(queryClient1, {
       mutationFn: () => sleep(20).then(() => 'data1'),
     })
     const firstMutationPromise = firstMutation.execute(undefined)
@@ -224,7 +225,7 @@ describe('useIsMutating', () => {
     expect(unsubscribe1).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
 
-    const secondMutation = queryClient2.getMutationCache().build(queryClient2, {
+    const secondMutation = Mutation.build(queryClient2, {
       mutationFn: () => sleep(20).then(() => 'data2'),
     })
     const secondMutationPromise = secondMutation.execute(undefined)

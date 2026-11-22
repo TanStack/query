@@ -1,14 +1,11 @@
-import { Mutation } from './mutation'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
 import { matchMutation, noop } from './utils'
-import type { Action, MutationState } from './mutation'
+import type { Action, Mutation } from './mutation'
 import type { MutationObserver } from './mutationObserver'
-import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
   MutationFunctionContext,
-  MutationOptions,
   NotifyEvent,
 } from './types'
 import type { MutationFilters } from './utils'
@@ -133,29 +130,16 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   /**
-   * Creates a mutation and adds it to the cache.
+   * Assigns the next cache-local ID and registers the mutation.
+   * @param create - Constructs the mutation with the assigned ID.
+   * @returns The mutation added to this cache.
    * @internal
-   * @param client - The client the mutation belongs to, used to default its options.
-   * @param options - The mutation options. They are defaulted with {@link
-   * QueryClient#defaultMutationOptions}.
-   * @param state - The initial state of the mutation, e.g. when restoring a dehydrated mutation.
-   * @returns The new mutation, already added to the cache.
    */
-  build<TData, TError, TVariables, TOnMutateResult>(
-    client: QueryClient,
-    options: MutationOptions<TData, TError, TVariables, TOnMutateResult>,
-    state?: MutationState<TData, TError, TVariables, TOnMutateResult>,
-  ): Mutation<TData, TError, TVariables, TOnMutateResult> {
-    const mutation = new Mutation({
-      client,
-      mutationCache: this,
-      mutationId: ++this.#mutationId,
-      options: client.defaultMutationOptions(options),
-      state,
-    })
-
+  register<T extends Mutation<any, any, any, any>>(
+    create: (id: number) => T,
+  ): T {
+    const mutation = create(++this.#mutationId)
     this.add(mutation)
-
     return mutation
   }
 

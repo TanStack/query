@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/query-core'
+import { Mutation, QueryClient } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import {
@@ -88,7 +88,7 @@ describe('useMutationState', () => {
 
   it('should not request another update when mutation cache emits with unchanged selected state', async () => {
     const mutationKey = createKey()
-    const existingMutation = queryClient.getMutationCache().build(queryClient, {
+    const existingMutation = Mutation.build(queryClient, {
       mutationKey,
     })
 

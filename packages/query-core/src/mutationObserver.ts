@@ -1,8 +1,8 @@
-import { getDefaultState } from './mutation'
+import { Mutation, getDefaultState } from './mutation'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
 import { hashKey, shallowEqualObjects } from './utils'
-import type { Action, Mutation } from './mutation'
+import type { Action } from './mutation'
 import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
@@ -222,9 +222,7 @@ export class MutationObserver<
 
     this.#currentMutation?.removeObserver(this)
 
-    this.#currentMutation = this.#client
-      .getMutationCache()
-      .build(this.#client, this.options)
+    this.#currentMutation = Mutation.build(this.#client, this.options)
 
     this.#currentMutation.addObserver(this)
 

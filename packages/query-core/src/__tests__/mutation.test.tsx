@@ -1,6 +1,7 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MutationCache, QueryClient, focusManager, onlineManager } from '..'
+import { Mutation } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
 import type { MutationCacheNotifyEvent, MutationFunctionContext } from '..'
@@ -274,25 +275,23 @@ describe('mutation', () => {
       onSettled,
     })
 
-    const mutation = queryClient
-      .getMutationCache()
-      .build<string, unknown, string, string>(
-        queryClient,
-        {
-          mutationKey: key,
-        },
-        {
-          context: 'todo',
-          data: undefined,
-          error: null,
-          failureCount: 1,
-          failureReason: 'err',
-          isPaused: true,
-          status: 'pending',
-          variables: 'todo',
-          submittedAt: 1,
-        },
-      )
+    const mutation = Mutation.build<string, unknown, string, string>(
+      queryClient,
+      {
+        mutationKey: key,
+      },
+      {
+        context: 'todo',
+        data: undefined,
+        error: null,
+        failureCount: 1,
+        failureReason: 'err',
+        isPaused: true,
+        status: 'pending',
+        variables: 'todo',
+        submittedAt: 1,
+      },
+    )
 
     expect(mutation.state).toStrictEqual({
       context: 'todo',
@@ -349,7 +348,7 @@ describe('mutation', () => {
   it('should not add an existing observer with addObserver', () => {
     const mutationCache = queryClient.getMutationCache()
     const observer = new MutationObserver(queryClient, {})
-    const currentMutation = mutationCache.build(queryClient, {})
+    const currentMutation = Mutation.build(queryClient, {})
 
     const fn = vi.fn<(type: MutationCacheNotifyEvent['type']) => void>()
 
@@ -1595,7 +1594,7 @@ describe('mutation', () => {
       sleep(10).then(() => 'data'),
     )
     // a mutation restored from a dehydrated pending state has no retryer yet
-    const mutation = queryClient.getMutationCache().build(
+    const mutation = Mutation.build(
       queryClient,
       { mutationFn },
       {

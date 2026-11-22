@@ -1,4 +1,4 @@
-import { QueryClient, dehydrate } from '@tanstack/query-core'
+import { Mutation, QueryClient, dehydrate } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { removeOldestQuery } from '../retryStrategies'
 import type { PersistedClient } from '../persist'
@@ -83,7 +83,7 @@ describe('removeOldestQuery', () => {
   })
 
   it('should preserve mutations when removing the oldest query', () => {
-    queryClient.getMutationCache().build(queryClient, {
+    Mutation.build(queryClient, {
       mutationFn: () => Promise.resolve('data'),
     })
     const { mutations } = dehydrate(queryClient, {

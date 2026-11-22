@@ -1,10 +1,10 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MutationCache, MutationObserver, QueryClient } from '..'
+import { Mutation } from '../mutation'
 import { executeMutation } from './utils'
 import type {
   DefaultError,
-  Mutation,
   MutationCacheNotifyEvent,
   MutationFunctionContext,
 } from '..'
@@ -528,8 +528,8 @@ describe('mutationCache', () => {
     it('should notify subscribers after all mutations have been removed', () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
-      const mutation1 = testCache.build(testClient, {})
-      const mutation2 = testCache.build(testClient, {})
+      const mutation1 = Mutation.build(testClient, {})
+      const mutation2 = Mutation.build(testClient, {})
       const callback = vi.fn<
         () => Array<Mutation<unknown, Error, unknown, unknown>>
       >(() => testCache.getAll())
@@ -554,11 +554,11 @@ describe('mutationCache', () => {
     it('should preserve mutations added by removal subscribers', () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
-      const original = testCache.build(testClient, {})
+      const original = Mutation.build(testClient, {})
       const key = createKey()
       testCache.subscribe((event) => {
         if (event.type === 'removed' && event.mutation === original) {
-          testCache.build(testClient, { mutationKey: key })
+          Mutation.build(testClient, { mutationKey: key })
         }
       })
 
@@ -574,11 +574,11 @@ describe('mutationCache', () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
 
-      const mutation1 = testCache.build(testClient, {
+      const mutation1 = Mutation.build(testClient, {
         scope: { id: 'scope1' },
         mutationFn: () => Promise.resolve('data1'),
       })
-      const mutation2 = testCache.build(testClient, {
+      const mutation2 = Mutation.build(testClient, {
         scope: { id: 'scope1' },
         mutationFn: () => Promise.resolve('data2'),
       })
@@ -595,7 +595,7 @@ describe('mutationCache', () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
 
-      const mutation = testCache.build(testClient, {
+      const mutation = Mutation.build(testClient, {
         scope: { id: 'scope1' },
         mutationFn: () => Promise.resolve('data'),
       })
@@ -611,7 +611,7 @@ describe('mutationCache', () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
 
-      const mutation = testCache.build(testClient, {
+      const mutation = Mutation.build(testClient, {
         mutationFn: () => Promise.resolve('data'),
       })
 

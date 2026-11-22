@@ -1,5 +1,5 @@
 import { runInNewContext } from 'node:vm'
-import { QueryClient, QueryObserver } from '@tanstack/query-core'
+import { Mutation, QueryClient, QueryObserver } from '@tanstack/query-core'
 import { createRoot } from 'solid-js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
@@ -1198,9 +1198,11 @@ describe('Utils tests', () => {
     }
 
     function buildMutation(overrides: Partial<Mutation['state']>): Mutation {
-      return queryClient
-        .getMutationCache()
-        .build(queryClient, {}, { ...defaultMutationState, ...overrides })
+      return Mutation.build(
+        queryClient,
+        {},
+        { ...defaultMutationState, ...overrides },
+      )
     }
 
     beforeEach(() => {
