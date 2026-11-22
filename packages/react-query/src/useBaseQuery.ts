@@ -9,17 +9,13 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import {
-  ensureSuspenseTimers,
-  getSuspensePromise,
-  shouldSuspend,
-} from './suspense'
 import type {
   QueryClient,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import type { SuspensePolicy } from './suspense'
 import type { UseBaseQueryOptions } from './types'
 
 /**
@@ -30,6 +26,7 @@ import type { UseBaseQueryOptions } from './types'
  * `InfiniteQueryObserver`).
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest
  * context will be used.
+ * @param suspense - Render policy used by the dedicated Suspense hooks.
  * @returns The query result, tracking which properties are read unless `notifyOnChangeProps` is
  * set.
  * @throws {Error} If `options` is not an object (outside production), or the query error when it should be
@@ -51,6 +48,7 @@ export function useBaseQuery<
   >,
   Observer: typeof QueryObserver,
   queryClient?: QueryClient,
+  suspense?: Pick<SuspensePolicy, 'prepare' | 'readQuery'>,
 ): QueryObserverResult<TData, TError> {
   if (process.env.NODE_ENV !== 'production') {
     if (typeof options !== 'object' || Array.isArray(options)) {
@@ -63,7 +61,9 @@ export function useBaseQuery<
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
   const client = useQueryClient(queryClient)
-  const defaultedOptions = client.defaultQueryOptions(options)
+  const defaultedOptions = client.defaultQueryOptions(
+    suspense ? options : { ...options, suspense: false },
+  )
 
   const query = client
     .getQueryCache()
@@ -88,7 +88,7 @@ export function useBaseQuery<
       ? 'optimistic'
       : undefined
 
-  ensureSuspenseTimers(defaultedOptions)
+  suspense?.prepare(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
   useClearResetErrorBoundary(errorResetBoundary)
 
@@ -102,30 +102,13 @@ export function useBaseQuery<
 
   const reader = observer.createResultReader(defaultedOptions)
 
-  // Let the reader initialize the query before starting a Suspense fetch.
-  if (defaultedOptions.suspense) {
-    const snapshot = reader.getSnapshot()
-    const suspenseQuery = client.getQueryCache().build(client, defaultedOptions)
-    const suspend = shouldSuspend(
-      defaultedOptions,
-      snapshot,
-      errorResetBoundary,
-      suspenseQuery,
-    )
-
-    if (suspend !== undefined) {
-      const promise = getSuspensePromise(
-        defaultedOptions,
-        observer,
-        errorResetBoundary,
-        suspenseQuery,
-      )
-
-      if (suspend) {
-        React.use(promise)
-      }
-    }
-  }
+  suspense?.readQuery(
+    defaultedOptions,
+    reader,
+    observer,
+    client,
+    errorResetBoundary,
+  )
 
   React.useEffect(() => {
     reader.commit()

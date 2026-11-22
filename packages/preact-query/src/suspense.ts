@@ -1,10 +1,12 @@
+import { QueryObserver } from '@tanstack/query-core'
+import { use } from 'preact/compat'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
   Query,
   QueryKey,
-  QueryObserver,
   QueryObserverResult,
+  QueryClient,
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
@@ -120,4 +122,84 @@ export const getSuspensePromise = <
     errorResetBoundary.clearReset()
   })
   return promise
+}
+
+type SuspenseOptions = DefaultedQueryObserverOptions<any, any, any, any, any>
+type SuspenseResult = QueryObserverResult<any, any>
+type SnapshotReader<T> = { getSnapshot: () => T }
+
+export type SuspensePolicy = {
+  prepare: (options: SuspenseOptions) => void
+  readQuery: (
+    options: SuspenseOptions,
+    reader: SnapshotReader<SuspenseResult>,
+    observer: QueryObserver<any, any, any, any, any>,
+    client: QueryClient,
+    errorResetBoundary: QueryErrorResetBoundaryValue,
+  ) => void
+  readQueries: (
+    options: Array<SuspenseOptions>,
+    reader: SnapshotReader<Array<SuspenseResult>>,
+    client: QueryClient,
+    errorResetBoundary: QueryErrorResetBoundaryValue,
+  ) => void
+}
+
+export const suspenseQueryPolicy: Pick<
+  SuspensePolicy,
+  'prepare' | 'readQuery'
+> = {
+  prepare: ensureSuspenseTimers,
+  readQuery(defaultedOptions, reader, observer, client, errorResetBoundary) {
+    // Suspend before registering external-store effects for this render.
+    if (shouldSuspend(defaultedOptions, reader.getSnapshot())) {
+      const suspenseQuery = client
+        .getQueryCache()
+        .build(client, defaultedOptions)
+      use(
+        getSuspensePromise(
+          defaultedOptions,
+          observer,
+          errorResetBoundary,
+          suspenseQuery,
+        ),
+      )
+    }
+  },
+}
+
+export const suspenseQueriesPolicy: Pick<
+  SuspensePolicy,
+  'prepare' | 'readQueries'
+> = {
+  prepare: ensureSuspenseTimers,
+  readQueries(defaultedQueries, reader, client, errorResetBoundary) {
+    const snapshot = reader.getSnapshot()
+
+    const shouldAtLeastOneSuspend = snapshot.some((result, index) =>
+      shouldSuspend(defaultedQueries[index], result),
+    )
+
+    const suspensePromises = shouldAtLeastOneSuspend
+      ? snapshot.flatMap((result, index) => {
+          const opts = defaultedQueries[index]
+
+          if (opts && shouldSuspend(opts, result)) {
+            const queryObserver = new QueryObserver(client, opts)
+            return getSuspensePromise(
+              opts,
+              queryObserver,
+              errorResetBoundary,
+              queryObserver.getCurrentQuery(),
+            )
+          }
+          return []
+        })
+      : []
+
+    if (suspensePromises.length > 0) {
+      // Keep the boundary suspended until every pending query has settled.
+      use(Promise.all(suspensePromises))
+    }
+  },
 }

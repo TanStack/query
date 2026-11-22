@@ -1,10 +1,4 @@
-import {
-  QueriesObserver,
-  QueryObserver,
-  noop,
-  notifyManager,
-} from '@tanstack/query-core'
-import { use } from 'preact/compat'
+import { QueriesObserver, noop, notifyManager } from '@tanstack/query-core'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
@@ -14,11 +8,6 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import {
-  ensureSuspenseTimers,
-  getSuspensePromise,
-  shouldSuspend,
-} from './suspense'
 import { useSyncExternalStore } from './utils'
 import type {
   DefaultError,
@@ -31,6 +20,7 @@ import type {
   QueryObserverOptions,
   ThrowOnError,
 } from '@tanstack/query-core'
+import type { SuspensePolicy } from './suspense'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
@@ -224,6 +214,28 @@ export type QueriesResults<
           >
         : { [K in keyof T]: GetUseQueryResult<T[K]> }
 
+type UseQueriesInput<T extends Array<any>, TCombinedResult> = {
+  /**
+   * An array with query option objects, mostly identical to `useQuery` — except that `queryClient` and
+   * `subscribed` aren't accepted per-query (`subscribed` is a top-level option here instead), and
+   * `placeholderData` accepts a {@link QueriesPlaceholderDataFunction}, which is called with `previousData`
+   * and `previousQuery` always `undefined`, rather than `useQuery`'s placeholder function.
+   */
+  queries:
+    | readonly [...QueriesOptions<T>]
+    | readonly [...{ [K in keyof T]: GetUseQueryOptionsForUseQueries<T[K]> }]
+  /**
+   * Use this to combine the results of the queries into a single value. The result will be structurally
+   * shared to be as referentially stable as possible.
+   */
+  combine?: (result: QueriesResults<T>) => TCombinedResult
+  /**
+   * Set this to `false` to unsubscribe this observer from updates to the query cache.
+   * @defaultValue true
+   */
+  subscribed?: boolean
+}
+
 /**
  * The `useQueries` hook can be used to fetch a variable number of queries.
  *
@@ -305,31 +317,19 @@ export function useQueries<
   T extends Array<any>,
   TCombinedResult = QueriesResults<T>,
 >(
-  {
-    queries,
-    ...options
-  }: {
-    /**
-     * An array with query option objects, mostly identical to `useQuery` — except that `queryClient` and
-     * `subscribed` aren't accepted per-query (`subscribed` is a top-level option here instead), and
-     * `placeholderData` accepts a {@link QueriesPlaceholderDataFunction}, which is called with `previousData`
-     * and `previousQuery` always `undefined`, rather than `useQuery`'s placeholder function.
-     */
-    queries:
-      | readonly [...QueriesOptions<T>]
-      | readonly [...{ [K in keyof T]: GetUseQueryOptionsForUseQueries<T[K]> }]
-    /**
-     * Use this to combine the results of the queries into a single value. The result will be structurally
-     * shared to be as referentially stable as possible.
-     */
-    combine?: (result: QueriesResults<T>) => TCombinedResult
-    /**
-     * Set this to `false` to unsubscribe this observer from updates to the query cache.
-     * @defaultValue true
-     */
-    subscribed?: boolean
-  },
+  options: UseQueriesInput<T, TCombinedResult>,
   queryClient?: QueryClient,
+): TCombinedResult {
+  return useBaseQueries(options, queryClient)
+}
+
+export function useBaseQueries<
+  T extends Array<any>,
+  TCombinedResult = QueriesResults<T>,
+>(
+  { queries, ...options }: UseQueriesInput<T, TCombinedResult>,
+  queryClient?: QueryClient,
+  suspense?: Pick<SuspensePolicy, 'prepare' | 'readQueries'>,
 ): TCombinedResult {
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
@@ -340,7 +340,9 @@ export function useQueries<
     () =>
       queries.map((opts) => {
         const defaultedOptions = client.defaultQueryOptions(
-          opts as QueryObserverOptions,
+          (suspense
+            ? opts
+            : { ...opts, suspense: false }) as QueryObserverOptions,
         )
 
         // Make sure the results are already in fetching state before subscribing or updating options
@@ -352,11 +354,11 @@ export function useQueries<
 
         return defaultedOptions
       }),
-    [queries, client, isRestoring, subscribed],
+    [queries, client, isRestoring, subscribed, suspense],
   )
 
   defaultedQueries.forEach((queryOptions) => {
-    ensureSuspenseTimers(queryOptions)
+    suspense?.prepare(queryOptions)
     const query = client.getQueryCache().get(queryOptions.queryHash)
     ensurePreventErrorBoundaryRetry(queryOptions, errorResetBoundary, query)
   })
@@ -376,33 +378,8 @@ export function useQueries<
     defaultedQueries,
     options as QueriesObserverOptions<TCombinedResult>,
   )
-  const snapshot = reader.getSnapshot()
+  suspense?.readQueries(defaultedQueries, reader, client, errorResetBoundary)
 
-  const shouldAtLeastOneSuspend = snapshot.some((result, index) =>
-    shouldSuspend(defaultedQueries[index], result),
-  )
-
-  const suspensePromises = shouldAtLeastOneSuspend
-    ? snapshot.flatMap((result, index) => {
-        const opts = defaultedQueries[index]
-
-        if (opts && shouldSuspend(opts, result)) {
-          const queryObserver = new QueryObserver(client, opts)
-          return getSuspensePromise(
-            opts,
-            queryObserver,
-            errorResetBoundary,
-            queryObserver.getCurrentQuery(),
-          )
-        }
-        return []
-      })
-    : []
-
-  if (suspensePromises.length > 0) {
-    // Keep the boundary suspended until every pending query has settled.
-    use(Promise.all(suspensePromises))
-  }
   // Commit the combine cache before subscription can start a fetch.
   useEffect(() => {
     reader.commit()
