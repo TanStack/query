@@ -369,6 +369,8 @@ export default function PostsRoute({ dehydratedState }) {
 
 While there is nothing wrong with this approach, if you want to get rid of this boilerplate, here's how you can modify your setup in Next.js:
 
+`HydrationBoundary` requires a `DehydratedState`. Use an empty state for pages that do not prefetch data.
+
 ```tsx
 // _app.tsx
 import {
@@ -376,6 +378,9 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
+import type { DehydratedState } from '@tanstack/react-query'
+
+const emptyState: DehydratedState = { queries: [], mutations: [] }
 
 export default function MyApp({ Component, pageProps }) {
   const [queryClient] = React.useState(
@@ -393,7 +398,7 @@ export default function MyApp({ Component, pageProps }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <HydrationBoundary state={pageProps.dehydratedState}>
+      <HydrationBoundary state={pageProps.dehydratedState ?? emptyState}>
         <Component {...pageProps} />
       </HydrationBoundary>
     </QueryClientProvider>

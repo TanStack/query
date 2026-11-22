@@ -14,9 +14,9 @@ import type {
  */
 export interface HydrationBoundaryProps {
   /**
-   * The state to hydrate.
+   * The state to hydrate. Pass the result of `dehydrate(queryClient)`.
    */
-  state: DehydratedState | null | undefined
+  state: DehydratedState
   /**
    * Optional. Note: unlike `hydrate`, `mutations` cannot be set here.
    */
@@ -111,52 +111,37 @@ export const HydrationBoundary = ({
   // updating the UI.
   const hydrationQueue: DehydratedState['queries'] | undefined =
     React.useMemo(() => {
-      if (state) {
-        if (typeof state !== 'object') {
-          return
-        }
+      const queryCache = client.getQueryCache()
 
-        const queryCache = client.getQueryCache()
-        // State is supplied from the outside and we might as well fail
-        // gracefully if it has the wrong shape, so while we type `queries`
-        // as required, we still provide a fallback.
-        // oxlint-disable-next-line typescript/no-unnecessary-condition
-        const queries = state.queries || []
+      const newQueries: DehydratedState['queries'] = []
+      const existingQueries: DehydratedState['queries'] = []
+      for (const dehydratedQuery of state.queries) {
+        const existingQuery = queryCache.get(dehydratedQuery.queryHash)
 
-        const newQueries: DehydratedState['queries'] = []
-        const existingQueries: DehydratedState['queries'] = []
-        for (const dehydratedQuery of queries) {
-          const existingQuery = queryCache.get(dehydratedQuery.queryHash)
+        if (!existingQuery) {
+          newQueries.push(dehydratedQuery)
+        } else {
+          const hydrationIsNewer =
+            dehydratedQuery.state.dataUpdatedAt >
+              existingQuery.state.dataUpdatedAt ||
+            (dehydratedQuery.promise &&
+              existingQuery.state.status !== 'pending' &&
+              existingQuery.state.fetchStatus !== 'fetching' &&
+              dehydratedQuery.dehydratedAt > existingQuery.state.dataUpdatedAt)
 
-          if (!existingQuery) {
-            newQueries.push(dehydratedQuery)
-          } else {
-            const hydrationIsNewer =
-              dehydratedQuery.state.dataUpdatedAt >
-                existingQuery.state.dataUpdatedAt ||
-              (dehydratedQuery.promise &&
-                existingQuery.state.status !== 'pending' &&
-                existingQuery.state.fetchStatus !== 'fetching' &&
-                dehydratedQuery.dehydratedAt >
-                  existingQuery.state.dataUpdatedAt)
-
-            if (hydrationIsNewer) {
-              existingQueries.push(dehydratedQuery)
-            }
+          if (hydrationIsNewer) {
+            existingQueries.push(dehydratedQuery)
           }
         }
-
-        if (newQueries.length > 0) {
-          // It's actually fine to call this with queries/state that already exists
-          // in the cache, or is older. hydrate() is idempotent for queries.
-          // oxlint-disable-next-line react-hooks-js/refs -- new queries are hydrated during render on purpose, and 'options' is read through a ref so that a new 'options' object does not rerun this memo
-          hydrate(client, { queries: newQueries }, optionsRef.current)
-        }
-        if (existingQueries.length > 0) {
-          return existingQueries
-        }
       }
-      return undefined
+
+      if (newQueries.length > 0) {
+        // It's actually fine to call this with queries/state that already exists
+        // in the cache, or is older. hydrate() is idempotent for queries.
+        // oxlint-disable-next-line react-hooks-js/refs -- new queries are hydrated during render on purpose, and 'options' is read through a ref so that a new 'options' object does not rerun this memo
+        hydrate(client, { queries: newQueries }, optionsRef.current)
+      }
+      return existingQueries.length > 0 ? existingQueries : undefined
     }, [client, state])
 
   React.useEffect(() => {
