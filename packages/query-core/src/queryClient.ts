@@ -902,7 +902,8 @@ export class QueryClient {
     TError,
     TData,
     TQueryData,
-    TQueryKey
+    TQueryKey,
+    TPageParam
   > {
     if (options._defaulted) {
       return options as DefaultedQueryObserverOptions<
@@ -910,7 +911,8 @@ export class QueryClient {
         TError,
         TData,
         TQueryData,
-        TQueryKey
+        TQueryKey,
+        TPageParam
       >
     }
 
@@ -958,7 +960,8 @@ export class QueryClient {
       TError,
       TData,
       TQueryData,
-      TQueryKey
+      TQueryKey,
+      TPageParam
     >
   }
 

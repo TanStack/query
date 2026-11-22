@@ -1983,7 +1983,7 @@ describe('queryClient', () => {
       await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
-        queryFn: defaultQueryFn,
+        queryFn: queryFn1,
         enabled: false,
         staleTime: Infinity,
       })

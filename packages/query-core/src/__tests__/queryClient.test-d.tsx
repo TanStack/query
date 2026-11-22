@@ -19,6 +19,7 @@ import type {
   OmitKeyof,
   QueryClientConfig,
   QueryExecuteOptions,
+  QueryFunction,
   QueryKey,
   QueryObserverOptionsBase,
   SetDataOptions,
@@ -1091,6 +1092,17 @@ describe('queryClient', () => {
           QueryKey
         >
       >()
+    })
+
+    it('should preserve the query function page parameter', () => {
+      const options = new QueryClient().defaultQueryOptions({
+        queryKey: ['key'],
+        queryFn: ({ pageParam }: { pageParam: number }) => pageParam.toFixed(),
+      })
+
+      expectTypeOf(options.queryFn)
+        .extract<(...args: Array<never>) => unknown>()
+        .toEqualTypeOf<QueryFunction<string, Array<string>, number>>()
     })
 
     it('should resolve unknown and DefaultError when untyped', () => {
