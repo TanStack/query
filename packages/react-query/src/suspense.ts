@@ -75,24 +75,16 @@ export const ensureSuspenseTimers = (
 
 /**
  * Decides whether a Suspense query needs to fetch during render.
- * @param defaultedOptions - The options of the query.
  * @param result - The result for this render.
  * @param errorResetBoundary - The nearest query error reset boundary.
  * @param query - The query to fetch.
  * @returns `undefined` to skip the fetch, `false` to fetch in the background, or `true` to suspend.
  */
-export const shouldSuspend = (
-  defaultedOptions:
-    | DefaultedQueryObserverOptions<any, any, any, any, any>
-    | undefined,
+const shouldSuspend = (
   result: QueryObserverResult<any, any>,
   errorResetBoundary: QueryErrorResetBoundaryValue,
   query: Query<any, any, any, any>,
 ): boolean | undefined => {
-  if (!defaultedOptions?.suspense) {
-    return undefined
-  }
-
   if (
     result.isPending ||
     (query.state.status === 'error' && errorResetBoundary.isReset())
@@ -139,17 +131,15 @@ export function getSuspensePromise(
   }
 
   const fetchPromise = observer.fetchOptimistic(defaultedOptions)
-  // The observer result is recalculated after React retries. We only use this
-  // promise to tell React when the fetch has settled.
-  const entry = {
-    fetchPromise,
-    promise: undefined as unknown as Promise<void>,
-    settled: false,
-  }
   const settle = () => {
     entry.settled = true
   }
-  entry.promise = fetchPromise.then(settle, settle)
+  const entry: SuspensePromiseEntry = {
+    fetchPromise,
+    // Retry the render when the fetch settles, even on failure.
+    promise: fetchPromise.then(settle, settle),
+    settled: false,
+  }
 
   suspensePromiseCache.set(query, entry)
 
@@ -173,12 +163,7 @@ const useReadSuspenseQuery = (
 
   const snapshot = reader.getSnapshot()
   const query = client.getQueryCache().build(client, defaultedOptions)
-  const suspend = shouldSuspend(
-    defaultedOptions,
-    snapshot,
-    errorResetBoundary,
-    query,
-  )
+  const suspend = shouldSuspend(snapshot, errorResetBoundary, query)
   if (suspend === undefined) return
 
   const promise = getSuspensePromise(
@@ -214,7 +199,7 @@ const useReadSuspenseQueries = (
     }
 
     const query = client.getQueryCache().build(client, opts)
-    const suspend = shouldSuspend(opts, result, errorResetBoundary, query)
+    const suspend = shouldSuspend(result, errorResetBoundary, query)
 
     if (suspend === undefined) {
       return undefined

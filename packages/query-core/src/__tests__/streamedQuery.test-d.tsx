@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { streamedQuery } from '../streamedQuery'
+import { streamedQuery } from '..'
 import type { QueryClient, QueryFunction, QueryKey, QueryMeta } from '..'
 
 function numberStream(): AsyncIterable<number> {

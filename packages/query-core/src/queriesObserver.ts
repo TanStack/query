@@ -22,10 +22,10 @@ function difference<T>(array1: Array<T>, array2: Array<T>): Array<T> {
 }
 
 /**
- * Compares the fields of each result with the result at the same position.
- * @param result - The current array of observer results.
- * @param previous - The array from the previous computation, if any.
- * @returns `true` if the arrays have the same length and equal result fields.
+ * Compares two arrays of results by position and field value.
+ * @param result - The new results.
+ * @param previous - The previous results, if available.
+ * @returns Whether the results match.
  */
 function equalResults(
   result: Array<QueryObserverResult>,
@@ -98,7 +98,7 @@ export class QueriesObserver<
   TCombinedResult = Array<QueryObserverResult>,
 > extends Subscribable<QueriesObserverListener> {
   #client: QueryClient
-  #result!: Array<QueryObserverResult>
+  #result: Array<QueryObserverResult>
   #options?: QueriesObserverOptions<TCombinedResult>
   #observers: Array<QueryObserver>
   #combinedResult?: TCombinedResult
@@ -209,20 +209,13 @@ export class QueriesObserver<
         observer.getCurrentResult(),
       )
 
-      const hasLengthChange = prevObservers.length !== newObservers.length
-      const hasIndexChange = newObservers.some(
-        (observer, index) => observer !== prevObservers[index],
-      )
-      const hasStructuralChange = hasLengthChange || hasIndexChange
+      const hasStructuralChange =
+        prevObservers.length !== newObservers.length ||
+        newObservers.some(
+          (observer, index) => observer !== prevObservers[index],
+        )
 
-      const hasResultChange = hasStructuralChange
-        ? true
-        : newResult.some((result, index) => {
-            const prev = this.#result[index]
-            return !prev || !shallowEqualObjects(result, prev)
-          })
-
-      if (!hasStructuralChange && !hasResultChange) return
+      if (!hasStructuralChange && equalResults(newResult, this.#result)) return
 
       if (hasStructuralChange) {
         this.#observerMatches = newObserverMatches.map(

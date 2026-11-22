@@ -8,13 +8,13 @@ import type {
 import type { FetchSignalContext } from './utils'
 
 type BaseStreamedQueryParams<TQueryFnData, TQueryKey extends QueryKey> = {
-  /** The function that returns an `AsyncIterable` to stream data from. */
+  /** Returns an `AsyncIterable` or a promise that resolves to one. */
   streamFn: (
     context: QueryFunctionContext<TQueryKey>,
   ) => AsyncIterable<TQueryFnData> | Promise<AsyncIterable<TQueryFnData>>
   /**
    * Defines how refetches are handled.
-   * - `'reset'` (default): erases all data and puts the query back into `pending` state.
+   * - `'reset'` (default): resets the query to its initial state before reading the stream.
    * - `'append'`: appends new data to the existing data.
    * - `'replace'`: writes all data to the cache once the stream ends.
    */
@@ -35,13 +35,12 @@ type ReducibleStreamedQueryParams<
   TQueryKey extends QueryKey,
 > = BaseStreamedQueryParams<TQueryFnData, TQueryKey> & {
   /**
-   * Reduces streamed chunks into the final data shape. Required whenever `TData` is not an
-   * array, since there is no default way to accumulate non-array chunks.
+   * Combines the accumulated data with the next chunk. Provide `initialValue` with a custom reducer.
    */
   reducer: (acc: TData, chunk: TQueryFnData) => TData
   /**
-   * The value used while the first chunk is being fetched, and returned if the stream yields no
-   * values. Required together with a custom `reducer`.
+   * The starting value for the reducer when there is no cached data or when
+   * `refetchMode` is `'replace'` during a refetch.
    */
   initialValue: TData
 }
@@ -51,10 +50,12 @@ type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
   | ReducibleStreamedQueryParams<TQueryFnData, TData, TQueryKey>
 
 /**
- * This is a helper function to create a query function that streams data from an AsyncIterable.
- * Data will be an Array of all the chunks received.
- * The query will be in a 'pending' state until the first chunk of data is received, but will go to 'success' after that.
- * The query will stay in fetchStatus 'fetching' until the stream ends.
+ * Creates a query function that streams data from an `AsyncIterable`.
+ * By default, the query collects chunks into an array in the order they arrive.
+ * If there is no cached data, the first chunk moves the query from `pending` to `success`.
+ * If the stream ends without producing any chunks, the query uses the cached data or
+ * the initial value. With a `'replace'` refetch, it uses the initial value.
+ * The query's `fetchStatus` stays `fetching` while the stream is active.
  * Explicit cancellation stops further cache updates, even if `streamFn` does not read `signal`.
  * If `streamFn` does not read `signal`, the stream continues after the last observer unsubscribes.
  * @param options - The `streamFn` that returns an AsyncIterable to stream data from, and the optional

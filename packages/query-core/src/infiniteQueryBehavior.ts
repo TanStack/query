@@ -6,12 +6,7 @@ import {
   fetchSignal,
 } from './utils'
 import type { QueryBehavior } from './query'
-import type {
-  InfiniteData,
-  InfiniteQueryPageParamsOptions,
-  QueryFunctionContext,
-  QueryKey,
-} from './types'
+import type { InfiniteData, InfiniteQueryPageParamsOptions } from './types'
 import type { FetchSignalContext } from './utils'
 
 /**
@@ -37,15 +32,6 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
       const fetchFn = async () => {
         let cancelled = false
         const signalContext: FetchSignalContext = context
-        const addSignalProperty = (object: object) => {
-          addConsumeAwareSignal(
-            object,
-            () => context.signal,
-            () => (cancelled = true),
-            signalContext[fetchSignal],
-          )
-        }
-
         const queryFn = ensureQueryFn(context.options, context.fetchOptions)
 
         // Create function to fetch a page
@@ -62,13 +48,17 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             return Promise.resolve(data)
           }
 
-          const queryFnContext = {
-            client: context.client,
-            queryKey: context.queryKey,
-            pageParam: param,
-            meta: context.options.meta,
-          } as QueryFunctionContext<QueryKey, unknown>
-          addSignalProperty(queryFnContext)
+          const queryFnContext = addConsumeAwareSignal(
+            {
+              client: context.client,
+              queryKey: context.queryKey,
+              pageParam: param,
+              meta: context.options.meta,
+            },
+            () => context.signal,
+            () => (cancelled = true),
+            signalContext[fetchSignal],
+          )
 
           const page = await queryFn(queryFnContext)
 
