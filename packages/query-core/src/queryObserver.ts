@@ -61,14 +61,16 @@ export interface QueryObserverResultContext<
 > {
   /** The memo key and failure of the most recent selection. */
   selection?: {
-    input: TQueryData
-    select: (data: TQueryData) => TData
-    structuralSharing: QueryOptions<
-      TQueryFnData,
-      TError,
-      TQueryData,
-      TQueryKey
-    >['structuralSharing']
+    key: {
+      input: TQueryData
+      select: (data: TQueryData) => TData
+      structuralSharing: QueryOptions<
+        TQueryFnData,
+        TError,
+        TQueryData,
+        TQueryKey
+      >['structuralSharing']
+    }
     failure?: ProjectionFailure<TError>
   }
   /** The last successful selection, used if selection fails. */
@@ -357,6 +359,7 @@ export class QueryObserver<
     >,
   ): QueryObserverResultReader<QueryObserverResult<TData, TError>> {
     const readerOptions = { ...options }
+    const { select, structuralSharing } = readerOptions
     const context = { ...this.#resultContext }
     let result = this.#currentResult
 
@@ -365,13 +368,16 @@ export class QueryObserver<
         .getQueryCache()
         .build(this.#client, readerOptions)
       const { selection, selected } = this.#resultContext
+      const input = query.state.data
 
       // A query update may already have selected this data.
       if (
-        query.state.data !== undefined &&
-        selection?.input === query.state.data &&
-        selection.select === readerOptions.select &&
-        selection.structuralSharing === readerOptions.structuralSharing
+        input !== undefined &&
+        select &&
+        shallowEqualObjects(
+          { input, select, structuralSharing },
+          selection?.key,
+        )
       ) {
         context.selection = selection
         context.selected = selected
@@ -786,30 +792,26 @@ export class QueryObserver<
 
     const placeholder = context.placeholder
     const input = placeholder ? placeholder.input : newState.data
-    const memo = context.selection
     if (!select || input === undefined) {
       context.selection = undefined
-    } else if (
-      !memo ||
-      memo.input !== input ||
-      memo.select !== select ||
-      memo.structuralSharing !== structuralSharing
-    ) {
-      const selection = { input, select, structuralSharing }
-      try {
-        const data = replaceData(prevResult?.data, select(input), options)
-        context.selected = {
-          data,
-          query: placeholder ? placeholder.sourceQuery : query,
-        }
-        context.selection = selection
-      } catch (error) {
-        context.selection = {
-          ...selection,
-          failure: {
-            error: error as TError,
-            errorUpdatedAt: Date.now(),
-          },
+    } else {
+      const key = { input, select, structuralSharing }
+      if (!shallowEqualObjects(key, context.selection?.key)) {
+        try {
+          const data = replaceData(prevResult?.data, select(input), options)
+          context.selected = {
+            data,
+            query: placeholder ? placeholder.sourceQuery : query,
+          }
+          context.selection = { key }
+        } catch (error) {
+          context.selection = {
+            key,
+            failure: {
+              error: error as TError,
+              errorUpdatedAt: Date.now(),
+            },
+          }
         }
       }
     }
