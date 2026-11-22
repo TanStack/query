@@ -590,29 +590,25 @@ export function keepPreviousData<T>(
 }
 
 /**
- * Returns a new array with `item` added at the end. If that makes the array longer than `max`,
- * excess items are removed from the start.
+ * Adds an item to one end of a new array. If the result exceeds `max`, removes
+ * excess items from the opposite end.
  * @param items - The current items.
- * @param item - The value to append.
- * @param max - The maximum number of items to keep. `0` (the default) means no limit.
+ * @param item - The value to add.
+ * @param max - The maximum number of items to keep. Omit it or use `0` for no limit.
+ * @param prepend - Pass `true` to add at the start. The default is to add at the end.
  * @returns A new array with `item` added.
  */
-export function addToEnd<T>(items: Array<T>, item: T, max = 0): Array<T> {
-  const newItems = [...items, item]
-  return max && newItems.length > max ? newItems.slice(-max) : newItems
-}
-
-/**
- * Returns a new array with `item` added at the start. If that makes the array longer than `max`,
- * excess items are removed from the end.
- * @param items - The current items.
- * @param item - The value to prepend.
- * @param max - The maximum number of items to keep. `0` (the default) means no limit.
- * @returns A new array with `item` added.
- */
-export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
-  const newItems = [item, ...items]
-  return max && newItems.length > max ? newItems.slice(0, max) : newItems
+export function addToArray<T>(
+  items: Array<T>,
+  item: T,
+  max?: number,
+  prepend?: boolean,
+): Array<T> {
+  const newItems = prepend ? [item, ...items] : [...items, item]
+  if (max && newItems.length > max) {
+    return prepend ? newItems.slice(0, max) : newItems.slice(-max)
+  }
+  return newItems
 }
 
 /**

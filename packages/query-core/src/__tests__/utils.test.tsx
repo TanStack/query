@@ -4,8 +4,7 @@ import { QueryClient } from '..'
 import { Mutation } from '../mutation'
 import {
   addConsumeAwareSignal,
-  addToEnd,
-  addToStart,
+  addToArray,
   ensureQueryFn,
   hashKey,
   hashQueryKeyByOptions,
@@ -530,22 +529,22 @@ describe('core/utils', () => {
     })
   })
 
-  describe('addToEnd', () => {
+  describe('addToArray (append)', () => {
     it('should add item to the end of the array', () => {
       const items = [1, 2, 3]
-      const newItems = addToEnd(items, 4)
+      const newItems = addToArray(items, 4)
       expect(newItems).toStrictEqual([1, 2, 3, 4])
     })
 
     it('should not exceed max if provided', () => {
       const items = [1, 2, 3]
-      const newItems = addToEnd(items, 4, 3)
+      const newItems = addToArray(items, 4, 3)
       expect(newItems).toStrictEqual([2, 3, 4])
     })
 
     it('should not exceed max when items already exceed max', () => {
       const items = [1, 2, 3, 4, 5]
-      const newItems = addToEnd(items, 6, 3)
+      const newItems = addToArray(items, 6, 3)
       expect(newItems).toStrictEqual([4, 5, 6])
     })
 
@@ -553,22 +552,22 @@ describe('core/utils', () => {
       const items = [1, 2, 3]
       const item = 4
       const max = 0
-      expect(addToEnd(items, item, max)).toStrictEqual([1, 2, 3, 4])
+      expect(addToArray(items, item, max)).toStrictEqual([1, 2, 3, 4])
     })
 
     it('should add item to the end of the array when max is undefined', () => {
       const items = [1, 2, 3]
       const item = 4
       const max = undefined
-      expect(addToEnd(items, item, max)).toStrictEqual([1, 2, 3, 4])
+      expect(addToArray(items, item, max)).toStrictEqual([1, 2, 3, 4])
     })
   })
 
-  describe('addToStart', () => {
+  describe('addToArray (prepend)', () => {
     it('should add an item to the start of the array', () => {
       const items = [1, 2, 3]
       const item = 4
-      const newItems = addToStart(items, item)
+      const newItems = addToArray(items, item, undefined, true)
       expect(newItems).toStrictEqual([4, 1, 2, 3])
     })
 
@@ -576,13 +575,13 @@ describe('core/utils', () => {
       const items = [1, 2, 3]
       const item = 4
       const max = 2
-      const newItems = addToStart(items, item, max)
+      const newItems = addToArray(items, item, max, true)
       expect(newItems).toStrictEqual([4, 1])
     })
 
     it('should not exceed max when items already exceed max', () => {
       const items = [1, 2, 3, 4, 5]
-      const newItems = addToStart(items, 6, 3)
+      const newItems = addToArray(items, 6, 3, true)
       expect(newItems).toStrictEqual([6, 1, 2])
     })
 
@@ -590,15 +589,15 @@ describe('core/utils', () => {
       const items = [1, 2, 3]
       const item = 4
       const max = 0
-      const newItems = addToStart(items, item, max)
+      const newItems = addToArray(items, item, max, true)
       expect(newItems).toStrictEqual([4, 1, 2, 3])
     })
 
     it('should not remove any items if max is undefined', () => {
       const items = [1, 2, 3]
       const item = 4
-      const max = 0
-      const newItems = addToStart(items, item, max)
+      const max = undefined
+      const newItems = addToArray(items, item, max, true)
       expect(newItems).toStrictEqual([4, 1, 2, 3])
     })
   })
