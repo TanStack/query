@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { MutationCache } from '../mutationCache'
+import { Mutation } from '../mutation'
 import { QueryClient } from '../queryClient'
-import type { Action, Mutation, MutationState } from '../mutation'
+import type { Action, MutationState } from '../mutation'
 import type { MutationObserver } from '../mutationObserver'
 import type {
   DefaultError,
@@ -193,7 +193,7 @@ describe('mutation', () => {
 
     describe('state', () => {
       it('should be the mutation state for the same type parameters', () => {
-        const mutation = new MutationCache().build<
+        const mutation = Mutation.build<
           { value: string },
           CustomError,
           number,
@@ -224,7 +224,7 @@ describe('mutation', () => {
 
     describe('options', () => {
       it('should be the mutation options for the same type parameters', () => {
-        const mutation = new MutationCache().build<
+        const mutation = Mutation.build<
           { value: string },
           CustomError,
           number,
@@ -262,7 +262,7 @@ describe('mutation', () => {
 
     describe('setOptions', () => {
       it('should take the mutation options and return nothing', () => {
-        const mutation = new MutationCache().build<
+        const mutation = Mutation.build<
           { value: string },
           CustomError,
           number,
@@ -286,7 +286,7 @@ describe('mutation', () => {
 
     describe('meta', () => {
       it('should be the mutation meta or undefined', () => {
-        const mutation = new MutationCache().build<
+        const mutation = Mutation.build<
           { value: string },
           CustomError,
           number,
@@ -300,7 +300,7 @@ describe('mutation', () => {
       })
 
       it('should be a getter without a setter', () => {
-        const mutation = new MutationCache().build<
+        const mutation = Mutation.build<
           { value: string },
           CustomError,
           number,
@@ -321,7 +321,7 @@ describe('mutation', () => {
 
     describe('addObserver', () => {
       it('should take a single observer and return nothing', () => {
-        const mutation = new MutationCache().build<
+        const mutation = Mutation.build<
           { value: string },
           CustomError,
           number,
@@ -340,7 +340,7 @@ describe('mutation', () => {
 
     describe('removeObserver', () => {
       it('should take a single observer and return nothing', () => {
-        const mutation = new MutationCache().build<
+        const mutation = Mutation.build<
           { value: string },
           CustomError,
           number,
@@ -359,7 +359,7 @@ describe('mutation', () => {
 
     describe('continue', () => {
       it('should take no arguments and resolve with an unknown value', () => {
-        const mutation = new MutationCache().build<
+        const mutation = Mutation.build<
           { value: string },
           CustomError,
           number,
@@ -376,7 +376,7 @@ describe('mutation', () => {
 
     describe('execute', () => {
       it('should take the variables and resolve with the data', () => {
-        const mutation = new MutationCache().build<
+        const mutation = Mutation.build<
           { value: string },
           CustomError,
           number,
@@ -393,7 +393,7 @@ describe('mutation', () => {
       })
 
       it('should reject variables of another type', () => {
-        const mutation = new MutationCache().build<
+        const mutation = Mutation.build<
           { value: string },
           CustomError,
           number,
@@ -412,7 +412,7 @@ describe('mutation', () => {
 
     describe('gcTime', () => {
       it('should be a number inherited from Removable', () => {
-        const mutation = new MutationCache().build<
+        const mutation = Mutation.build<
           { value: string },
           CustomError,
           number,
@@ -428,7 +428,7 @@ describe('mutation', () => {
 
     describe('destroy', () => {
       it('should take no arguments and return nothing', () => {
-        const mutation = new MutationCache().build<
+        const mutation = Mutation.build<
           { value: string },
           CustomError,
           number,

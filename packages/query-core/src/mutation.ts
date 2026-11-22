@@ -152,6 +152,31 @@ export class Mutation<
   #mutationCache: MutationCache
   #retryer?: Retryer<TData>
 
+  /**
+   * Creates a mutation with the client's defaults and adds it to the cache.
+   * @param client - Supplies defaults and the mutation cache.
+   * @param options - The options for the new mutation.
+   * @param state - The initial state, for example when hydrating a paused mutation.
+   * @returns The registered mutation.
+   */
+  static build<TData, TError, TVariables, TOnMutateResult>(
+    client: QueryClient,
+    options: MutationOptions<TData, TError, TVariables, TOnMutateResult>,
+    state?: MutationState<TData, TError, TVariables, TOnMutateResult>,
+  ): Mutation<TData, TError, TVariables, TOnMutateResult> {
+    const cache = client.getMutationCache()
+    return cache.register(
+      (mutationId) =>
+        new Mutation({
+          client,
+          mutationCache: cache,
+          mutationId,
+          options: client.defaultMutationOptions(options),
+          state,
+        }),
+    )
+  }
+
   constructor(
     config: MutationConfig<TData, TError, TVariables, TOnMutateResult>,
   ) {

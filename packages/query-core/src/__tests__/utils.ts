@@ -1,5 +1,6 @@
 import { vi } from 'vitest'
 import { environmentManager, onlineManager } from '..'
+import { Mutation } from '../mutation'
 import type { MockInstance } from 'vitest'
 import type { MutationOptions, QueryClient } from '..'
 
@@ -14,10 +15,7 @@ export function executeMutation<TVariables>(
   options: MutationOptions<any, any, TVariables, any>,
   variables: TVariables,
 ) {
-  return queryClient
-    .getMutationCache()
-    .build(queryClient, options)
-    .execute(variables)
+  return Mutation.build(queryClient, options).execute(variables)
 }
 
 export function setIsServer(value: boolean) {

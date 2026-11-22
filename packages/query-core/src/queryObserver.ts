@@ -61,14 +61,16 @@ export interface QueryObserverResultContext<
 > {
   /** The memo key and failure of the most recent selection. */
   selection?: {
-    input: TQueryData
-    select: (data: TQueryData) => TData
-    structuralSharing: QueryOptions<
-      TQueryFnData,
-      TError,
-      TQueryData,
-      TQueryKey
-    >['structuralSharing']
+    key: {
+      input: TQueryData
+      select: (data: TQueryData) => TData
+      structuralSharing: QueryOptions<
+        TQueryFnData,
+        TError,
+        TQueryData,
+        TQueryKey
+      >['structuralSharing']
+    }
     failure?: ProjectionFailure<TError>
   }
   /** The last successful selection, used if selection fails. */
@@ -78,20 +80,29 @@ export interface QueryObserverResultContext<
   }
   /** The unselected placeholder or factory error. */
   placeholder?: {
-    options: QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
-    previousQuery:
-      | Query<TQueryFnData, TError, TQueryData, TQueryKey>
-      | undefined
-    previousState: QueryState<TQueryData, TError> | undefined
-    previousOptions:
-      | QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>
-      | undefined
+    key: {
+      placeholderData: QueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey
+      >['placeholderData']
+      structuralSharing: QueryOptions<
+        TQueryFnData,
+        TError,
+        TQueryData,
+        TQueryKey
+      >['structuralSharing']
+      previousQuery:
+        | Query<TQueryFnData, TError, TQueryData, TQueryKey>
+        | undefined
+      previousState: QueryState<TQueryData, TError> | undefined
+      previousOptions:
+        | QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>
+        | undefined
+    }
+    sourceQuery?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
     input: TQueryData | undefined
     failure?: ProjectionFailure<TError>
   }
@@ -348,6 +359,7 @@ export class QueryObserver<
     >,
   ): QueryObserverResultReader<QueryObserverResult<TData, TError>> {
     const readerOptions = { ...options }
+    const { select, structuralSharing } = readerOptions
     const context = { ...this.#resultContext }
     let result = this.#currentResult
 
@@ -356,13 +368,16 @@ export class QueryObserver<
         .getQueryCache()
         .build(this.#client, readerOptions)
       const { selection, selected } = this.#resultContext
+      const input = query.state.data
 
       // A query update may already have selected this data.
       if (
-        query.state.data !== undefined &&
-        selection?.input === query.state.data &&
-        selection.select === readerOptions.select &&
-        selection.structuralSharing === readerOptions.structuralSharing
+        input !== undefined &&
+        select &&
+        shallowEqualObjects(
+          { input, select, structuralSharing },
+          selection?.key,
+        )
       ) {
         context.selection = selection
         context.selected = selected
@@ -653,6 +668,61 @@ export class QueryObserver<
     }
   }
 
+  #resolvePlaceholder(
+    options: this['options'],
+    previousResultData: TData | undefined,
+    context = this.#resultContext,
+  ) {
+    const { placeholderData, structuralSharing } = options
+    const memo = context.placeholder
+    const previousQuery = this.#lastQueryWithDefinedData
+    const previousState = previousQuery?.state
+    const key = {
+      placeholderData,
+      structuralSharing,
+      previousQuery,
+      previousState,
+      previousOptions: previousQuery?.options,
+    }
+    if (shallowEqualObjects(key, memo?.key)) {
+      return memo
+    }
+
+    let failure: ProjectionFailure<TError> | undefined
+    let input: TQueryData | undefined
+    let sourceQuery: typeof previousQuery
+    if (typeof placeholderData === 'function') {
+      try {
+        input = (
+          placeholderData as unknown as PlaceholderDataFunction<
+            TQueryFnData,
+            TError,
+            TQueryData,
+            TQueryKey
+          >
+        )(previousState?.data, previousQuery)
+      } catch (error) {
+        failure = { error: error as TError, errorUpdatedAt: Date.now() }
+      }
+      if (previousState?.data !== undefined) {
+        sourceQuery = previousQuery
+      }
+    } else {
+      input = placeholderData
+    }
+
+    if (input !== undefined) {
+      input = replaceData(
+        previousResultData,
+        input as unknown,
+        options,
+      ) as TQueryData
+    }
+    return input !== undefined || failure
+      ? { key, input, sourceQuery, failure }
+      : undefined
+  }
+
   /**
    * Computes the result for a query and options from the query's state, applying `select`,
    * `placeholderData`, and the derived flags. Subclasses override it to add their own fields.
@@ -705,112 +775,53 @@ export class QueryObserver<
       }
     }
 
-    const usePlaceholder =
+    const { placeholderData, select, structuralSharing } = options
+    if (
       newState.data === undefined &&
       newState.status === 'pending' &&
-      options.placeholderData !== undefined
-    const previousQuery = usePlaceholder
-      ? this.#lastQueryWithDefinedData
-      : undefined
-    const previousState = previousQuery?.state
-    const previousOptions = previousQuery?.options
-    let input = newState.data
-    let placeholderFailure: ProjectionFailure<TError> | undefined
-    if (usePlaceholder) {
-      const { placeholderData } = options
-      const memo = context.placeholder
-      if (
-        memo &&
-        memo.options.placeholderData === placeholderData &&
-        memo.options.structuralSharing === options.structuralSharing &&
-        memo.previousQuery === previousQuery &&
-        memo.previousState === previousState &&
-        memo.previousOptions === previousOptions
-      ) {
-        input = memo.input
-        placeholderFailure = memo.failure
-      } else {
-        try {
-          input =
-            typeof placeholderData === 'function'
-              ? (
-                  placeholderData as unknown as PlaceholderDataFunction<
-                    TQueryFnData,
-                    TError,
-                    TQueryData,
-                    TQueryKey
-                  >
-                )(previousState?.data, previousQuery)
-              : placeholderData
-        } catch (error) {
-          placeholderFailure = {
-            error: error as TError,
-            errorUpdatedAt: Date.now(),
-          }
-        }
-        if (input !== undefined) {
-          input = replaceData(
-            prevResult?.data,
-            input as unknown,
-            options,
-          ) as TQueryData
-        }
-        context.placeholder =
-          input !== undefined || placeholderFailure
-            ? {
-                options,
-                previousQuery,
-                previousState,
-                previousOptions,
-                input,
-                failure: placeholderFailure,
-              }
-            : undefined
-      }
+      placeholderData !== undefined
+    ) {
+      context.placeholder = this.#resolvePlaceholder(
+        options,
+        prevResult?.data,
+        context,
+      )
     } else {
       context.placeholder = undefined
     }
 
-    const { select, structuralSharing } = options
-    const memo = context.selection
+    const placeholder = context.placeholder
+    const input = placeholder ? placeholder.input : newState.data
     if (!select || input === undefined) {
       context.selection = undefined
-    } else if (
-      !memo ||
-      memo.input !== input ||
-      memo.select !== select ||
-      memo.structuralSharing !== structuralSharing
-    ) {
-      const selection = { input, select, structuralSharing }
-      try {
-        const data = replaceData(prevResult?.data, select(input), options)
-        const placeholderSource =
-          usePlaceholder &&
-          typeof options.placeholderData === 'function' &&
-          previousState?.data !== undefined
-            ? previousQuery
-            : undefined
-        context.selected = {
-          data,
-          query: usePlaceholder ? placeholderSource : query,
-        }
-        context.selection = selection
-      } catch (error) {
-        context.selection = {
-          ...selection,
-          failure: {
-            error: error as TError,
-            errorUpdatedAt: Date.now(),
-          },
+    } else {
+      const key = { input, select, structuralSharing }
+      if (!shallowEqualObjects(key, context.selection?.key)) {
+        try {
+          const data = replaceData(prevResult?.data, select(input), options)
+          context.selected = {
+            data,
+            query: placeholder ? placeholder.sourceQuery : query,
+          }
+          context.selection = { key }
+        } catch (error) {
+          context.selection = {
+            key,
+            failure: {
+              error: error as TError,
+              errorUpdatedAt: Date.now(),
+            },
+          }
         }
       }
     }
 
-    const failure = placeholderFailure ?? context.selection?.failure
+    const failure = placeholder?.failure ?? context.selection?.failure
     const data = context.selection
       ? context.selected?.data
       : (input as unknown as TData | undefined)
-    const isPlaceholderData = usePlaceholder && input !== undefined && !failure
+    const isPlaceholderData =
+      placeholder !== undefined && input !== undefined && !failure
     const { error, errorUpdatedAt } = failure ?? newState
     const status = failure
       ? 'error'

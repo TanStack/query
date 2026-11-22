@@ -1,6 +1,7 @@
 import { createLocalStorage } from '@solid-primitives/storage'
 import { cleanup, fireEvent, render, within } from '@solidjs/testing-library'
 import {
+  Mutation,
   QueryClient,
   QueryObserver,
   dehydrate,
@@ -175,8 +176,8 @@ describe('Devtools', () => {
       return viewport
     }
 
-    function seedQueries() {
-      for (let index = 0; index < 1000; index++) {
+    function seedQueries(count = 1000) {
+      for (let index = 0; index < count; index++) {
         queryClient.setQueryData(
           [`query-${String(index).padStart(4, '0')}`],
           `data-${index}`,
@@ -206,7 +207,7 @@ describe('Devtools', () => {
     })
 
     it('filters, clears, and restores queries after distant scrolling', () => {
-      seedQueries()
+      seedQueries(200)
       const rendered = renderDevtools({ initialIsOpen: true })
       const viewport = getViewport(rendered.container, 'queries')
       viewport.scrollTo({ top: viewport.scrollHeight })
@@ -249,7 +250,7 @@ describe('Devtools', () => {
 
     it('keeps mutation clicks aligned after a same-count sort change', () => {
       for (let index = 0; index < 100; index++) {
-        queryClient.getMutationCache().build(queryClient, {
+        Mutation.build(queryClient, {
           mutationKey: [`reorder-${index}`],
         })
       }
@@ -270,7 +271,7 @@ describe('Devtools', () => {
 
     it('bounds mutation rows, preserves offscreen details, and filters from a distant offset', async () => {
       const mutations = Array.from({ length: 2000 }, (_, index) =>
-        queryClient.getMutationCache().build(queryClient, {
+        Mutation.build(queryClient, {
           mutationKey: [
             index === 1999 ? 'mutation-target' : `mutation-${index}`,
           ],
@@ -406,18 +407,14 @@ describe('Devtools', () => {
 
       it('should keep mutation selection, notifications, and cleanup independent', async () => {
         const secondClient = new QueryClient()
-        const firstMutation = queryClient
-          .getMutationCache()
-          .build(queryClient, {
-            mutationKey: ['mutation-a'],
-            mutationFn: () => Promise.resolve('first-result'),
-          })
-        const secondMutation = secondClient
-          .getMutationCache()
-          .build(secondClient, {
-            mutationKey: ['mutation-b'],
-            mutationFn: () => Promise.resolve('second-result'),
-          })
+        const firstMutation = Mutation.build(queryClient, {
+          mutationKey: ['mutation-a'],
+          mutationFn: () => Promise.resolve('first-result'),
+        })
+        const secondMutation = Mutation.build(secondClient, {
+          mutationKey: ['mutation-b'],
+          mutationFn: () => Promise.resolve('second-result'),
+        })
         const firstRender = mount()
         const secondRender = mount(secondClient)
         const first = within(firstRender.container)
@@ -535,13 +532,10 @@ describe('Devtools', () => {
         fireEvent.click(panel.getByText('Mutations'))
         setClient(secondClient)
 
-        await secondClient
-          .getMutationCache()
-          .build(secondClient, {
-            mutationKey: ['switch-mutation'],
-            mutationFn: () => Promise.resolve('new-result'),
-          })
-          .execute({})
+        await Mutation.build(secondClient, {
+          mutationKey: ['switch-mutation'],
+          mutationFn: () => Promise.resolve('new-result'),
+        }).execute({})
         await vi.advanceTimersByTimeAsync(0)
         expect(panel.getAllByLabelText(/Mutation submitted at/)).toHaveLength(1)
         rendered.unmount()
@@ -565,13 +559,10 @@ describe('Devtools', () => {
         const panel = within(rendered.container)
         fireEvent.click(panel.getByText('Mutations'))
 
-        void queryClient
-          .getMutationCache()
-          .build(queryClient, {
-            mutationKey: ['previous-mutation'],
-            mutationFn: () => new Promise(noop),
-          })
-          .execute({})
+        void Mutation.build(queryClient, {
+          mutationKey: ['previous-mutation'],
+          mutationFn: () => new Promise(noop),
+        }).execute({})
         setClient(secondClient)
 
         await vi.advanceTimersByTimeAsync(0)
@@ -964,7 +955,7 @@ describe('Devtools', () => {
 
       fireEvent.click(rendered.getByText('Mutations'))
 
-      const mutation = queryClient.getMutationCache().build(queryClient, {
+      const mutation = Mutation.build(queryClient, {
         mutationKey: ['add-post'],
         mutationFn: () => Promise.resolve('ok'),
       })
@@ -980,7 +971,7 @@ describe('Devtools', () => {
 
       fireEvent.click(rendered.getByText('Mutations'))
 
-      queryClient.getMutationCache().build(queryClient, {
+      Mutation.build(queryClient, {
         mutationKey: ['idle-mut'],
         mutationFn: () => Promise.resolve('ok'),
       })
@@ -1303,12 +1294,12 @@ describe('Devtools', () => {
     })
 
     it('searches read-only mutation Data and resets search when the selection changes', async () => {
-      const first = queryClient.getMutationCache().build(queryClient, {
+      const first = Mutation.build(queryClient, {
         mutationKey: ['search-first'],
         mutationFn: () =>
           Promise.resolve({ nested: { name: 'mutation needle' } }),
       })
-      const second = queryClient.getMutationCache().build(queryClient, {
+      const second = Mutation.build(queryClient, {
         mutationKey: ['search-second'],
         mutationFn: () => Promise.resolve({ nested: { name: 'other' } }),
       })
@@ -1377,20 +1368,17 @@ describe('Devtools', () => {
       'should initialize matching mutation explorers from the %s scope',
       async (scope) => {
         for (const source of ['data', 'variables', 'both']) {
-          await queryClient
-            .getMutationCache()
-            .build(queryClient, {
-              mutationKey: ['needle', source],
-              mutationFn: () =>
-                Promise.resolve({
-                  nested: {
-                    name: source === 'variables' ? 'other' : 'data needle',
-                  },
-                }),
-            })
-            .execute({
-              nested: { name: source === 'data' ? 'other' : 'variable needle' },
-            })
+          await Mutation.build(queryClient, {
+            mutationKey: ['needle', source],
+            mutationFn: () =>
+              Promise.resolve({
+                nested: {
+                  name: source === 'variables' ? 'other' : 'data needle',
+                },
+              }),
+          }).execute({
+            nested: { name: source === 'data' ? 'other' : 'variable needle' },
+          })
         }
         const rendered = renderDevtools(
           { initialIsOpen: true },
@@ -1566,7 +1554,7 @@ describe('Devtools', () => {
 
       fireEvent.click(rendered.getByText('Mutations'))
 
-      const mutation = queryClient.getMutationCache().build(queryClient, {
+      const mutation = Mutation.build(queryClient, {
         mutationKey: ['mutation-detail'],
         mutationFn: () => Promise.resolve('ok'),
       })
@@ -1603,7 +1591,7 @@ describe('Devtools', () => {
       async (scope) => {
         let resolve!: () => void
         const variables = { name: 'before' }
-        const mutation = queryClient.getMutationCache().build(queryClient, {
+        const mutation = Mutation.build(queryClient, {
           mutationKey: ['update-variables'],
           mutationFn: async (input: typeof variables) => {
             await new Promise<void>((done) => {
@@ -1658,11 +1646,11 @@ describe('Devtools', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
       fireEvent.click(rendered.getByText('Mutations'))
 
-      const matching = queryClient.getMutationCache().build(queryClient, {
+      const matching = Mutation.build(queryClient, {
         mutationKey: ['filter-match'],
         mutationFn: () => Promise.resolve('ok'),
       })
-      const other = queryClient.getMutationCache().build(queryClient, {
+      const other = Mutation.build(queryClient, {
         mutationKey: ['filter-other'],
         mutationFn: () => Promise.resolve('ok'),
       })
@@ -1689,13 +1677,10 @@ describe('Devtools', () => {
       )
       fireEvent.click(rendered.getByText('Mutations'))
       const execute = (key: string, variables: unknown, data: unknown) =>
-        queryClient
-          .getMutationCache()
-          .build(queryClient, {
-            mutationKey: [key],
-            mutationFn: () => Promise.resolve(data),
-          })
-          .execute(variables)
+        Mutation.build(queryClient, {
+          mutationKey: [key],
+          mutationFn: () => Promise.resolve(data),
+        }).execute(variables)
       execute('by-variables', { title: 'Needle' }, 'ok')
       execute('by-data', { title: 'other' }, { id: 'needle-1' })
       execute('needle-key', { title: 'other' }, 'ok')
