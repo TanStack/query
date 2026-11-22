@@ -7,9 +7,9 @@ import {
   QueryCache,
   QueryClient,
   QueryErrorResetBoundary,
-  experimental_streamedQuery,
   keepPreviousData,
   skipToken,
+  streamedQuery,
   useQueryErrorResetBoundary,
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
@@ -1272,7 +1272,7 @@ describe('useSuspenseQuery', () => {
     function Page() {
       const { data } = useSuspenseQuery({
         queryKey: key,
-        queryFn: experimental_streamedQuery({
+        queryFn: streamedQuery({
           streamFn: () => numberGenerator(),
         }),
       })

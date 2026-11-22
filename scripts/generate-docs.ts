@@ -18,8 +18,8 @@ type PackageReferenceDocsConfig = {
   exclude?: Array<string>
   simplifyLitQueriesControllerTypes?: boolean
   trimGeneratedMarkdown?: boolean
-  // Maps a generated page's path (relative to outputDir, no extension) to the flat
-  // `docs/framework/<framework>/reference/<name>.md` URLs it replaced, so old links/bookmarks redirect
+  // Maps a generated page's path (relative to outputDir, no extension) to the URLs it replaced,
+  // so old links and bookmarks redirect
   // instead of falling through to the framework docs index. See https://github.com/TanStack/query/issues/11371
   redirectFrom?: Record<string, Array<string>>
 }
@@ -918,17 +918,30 @@ const packages: Array<PackageReferenceDocsConfig> = [
     entryPoints: [resolve(__dirname, '../packages/angular-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/angular-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/angular/reference'),
+    redirectFrom: {
+      'functions/streamedQuery': [
+        'framework/angular/reference/functions/experimental_streamedQuery',
+      ],
+    },
   },
   {
     entryPoints: [resolve(__dirname, '../packages/svelte-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/svelte-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/svelte/reference'),
+    redirectFrom: {
+      'functions/streamedQuery': [
+        'framework/svelte/reference/functions/experimental_streamedQuery',
+      ],
+    },
   },
   {
     entryPoints: [resolve(__dirname, '../packages/solid-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/solid-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/solid/reference'),
     redirectFrom: {
+      'functions/streamedQuery': [
+        'framework/solid/reference/functions/experimental_streamedQuery',
+      ],
       'functions/infiniteQueryOptions': [
         'framework/solid/reference/infiniteQueryOptions',
       ],
@@ -954,6 +967,9 @@ const packages: Array<PackageReferenceDocsConfig> = [
     tsconfig: resolve(__dirname, '../packages/vue-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/vue/reference'),
     redirectFrom: {
+      'functions/streamedQuery': [
+        'framework/vue/reference/functions/experimental_streamedQuery',
+      ],
       'functions/infiniteQueryOptions': [
         'framework/vue/reference/infiniteQueryOptions',
       ],
@@ -1070,18 +1086,31 @@ const packages: Array<PackageReferenceDocsConfig> = [
         'framework/react/reference/notifyManager',
       ],
       'variables/environmentManager': ['reference/environmentManager'],
-      'functions/experimental_streamedQuery': ['reference/streamedQuery'],
+      'functions/streamedQuery': [
+        'reference/streamedQuery',
+        'framework/react/reference/functions/experimental_streamedQuery',
+      ],
     },
   },
   {
     entryPoints: [resolve(__dirname, '../packages/preact-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/preact-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/preact/reference'),
+    redirectFrom: {
+      'functions/streamedQuery': [
+        'framework/preact/reference/functions/experimental_streamedQuery',
+      ],
+    },
   },
   {
     entryPoints: [resolve(__dirname, '../packages/lit-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/lit-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/lit/reference'),
+    redirectFrom: {
+      'functions/streamedQuery': [
+        'framework/lit/reference/functions/experimental_streamedQuery',
+      ],
+    },
     simplifyLitQueriesControllerTypes: true,
     trimGeneratedMarkdown: true,
   },

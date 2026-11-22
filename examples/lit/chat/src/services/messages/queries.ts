@@ -1,7 +1,4 @@
-import {
-  queryOptions,
-  experimental_streamedQuery as streamedQuery,
-} from '@tanstack/lit-query'
+import { queryOptions, streamedQuery } from '@tanstack/lit-query'
 import { messagesAPI } from './api'
 
 export const messagesQueries = {
