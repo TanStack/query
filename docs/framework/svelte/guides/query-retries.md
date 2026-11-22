@@ -35,7 +35,7 @@ replace:
 
 ```svelte
 <script lang="ts">
-  // Configure for all queries
+  // Keep the previous retry schedule for all queries
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
 
   const queryClient = new QueryClient({

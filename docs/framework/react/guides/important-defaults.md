@@ -30,7 +30,7 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
 
   > To change this, you can alter the default `gcTime` for queries to something other than `5 * 60 * 1000` milliseconds.
 
-- Queries that fail are **silently retried 3 times, with exponential backoff delay** before capturing and displaying an error to the UI.
+- Queries that fail are **silently retried 3 times, with exponential backoff and jitter** before capturing and displaying an error to the UI.
 
   > To change this, you can alter the default `retry` and `retryDelay` options for queries to something other than `3` and the default exponential backoff function.
 

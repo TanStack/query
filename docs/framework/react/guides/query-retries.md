@@ -36,19 +36,17 @@ const result = useQuery({
 
 ## Retry Delay
 
-By default, retries in TanStack Query do not happen immediately after a request fails. As is standard, a back-off delay is gradually applied to each retry attempt.
+By default, TanStack Query chooses a random delay for each retry. This variation, called jitter, spreads out retries when many requests fail at the same time.
 
-The default `retryDelay` is set to double (starting at `1000`ms) with each attempt, but not exceed 30 seconds:
+The delay is a whole number of milliseconds from 10 ms through the exponential backoff limit. The limit starts at 1 second and doubles for each retry, up to 30 seconds.
+
+To keep the v5 schedule, set `retryDelay` to the previous backoff function.
 
 [//]: # 'Example2'
 
 ```tsx
-// Configure for all queries
-import {
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+// Keep the v5 retry schedule for all queries
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,7 +63,7 @@ function App() {
 
 [//]: # 'Example2'
 
-Though it is not recommended, you can obviously override the `retryDelay` function/integer in both the Provider and individual query options. If set to an integer instead of a function the delay will always be the same amount of time:
+You can also set `retryDelay` in the options for one query. Set it to a number to use the same delay in milliseconds for every retry.
 
 [//]: # 'Example3'
 

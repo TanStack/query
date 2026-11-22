@@ -22,6 +22,7 @@ const result = useQuery({
 [//]: # 'Example2'
 
 ```ts
+// Keep the v5 retry schedule for all queries
 import { VueQueryPlugin } from '@tanstack/vue-query'
 
 const vueQueryPluginOptions = {

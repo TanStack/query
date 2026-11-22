@@ -29,7 +29,7 @@ const todoQuery = injectQuery(() => ({
 [//]: # 'Example2'
 
 ```ts
-// Configure for all queries
+// Keep the v5 retry schedule for all queries
 import {
   QueryCache,
   QueryClient,
@@ -52,7 +52,7 @@ bootstrapApplication(AppComponent, {
 
 [//]: # 'Example2'
 
-Though it is not recommended, you can obviously override the `retryDelay` function/integer in both the Provider and individual query options. If set to an integer instead of a function the delay will always be the same amount of time:
+You can also set `retryDelay` in the options for one query. Set it to a number to use the same delay in milliseconds for every retry.
 
 [//]: # 'Example3'
 

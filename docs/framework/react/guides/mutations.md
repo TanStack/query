@@ -280,6 +280,8 @@ const mutation = useMutation({
 
 [//]: # 'Example9'
 
+When you enable mutation retries, they use the same default delay as query retries. Set `retryDelay` to use a custom delay.
+
 If mutations fail because the device is offline, they will be retried in the same order when the device reconnects.
 
 ## Persist mutations

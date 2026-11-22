@@ -108,29 +108,37 @@ describe('createRetryer', () => {
     expect(fn).toHaveBeenCalledTimes(2)
   })
 
-  it('should use the default exponential backoff capped at 30 seconds', async () => {
-    const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout')
-    let calls = 0
-    const fn = vi.fn<() => Promise<string>>().mockImplementation(() => {
-      calls++
-      return calls < 7
-        ? Promise.reject(new Error('failed'))
-        : Promise.resolve('success')
-    })
-    const retryer = createRetryer({
-      fn,
-      retry: true,
-      networkMode: 'online',
-      canRun: () => true,
-    })
+  it('should jitter each default retry delay within the exponential backoff limit', async () => {
+    const random = vi
+      .spyOn(Math, 'random')
+      .mockReturnValue(0.99999)
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(0.5)
 
-    const promise = retryer.start()
-    await vi.advanceTimersByTimeAsync(100000)
-    await expect(promise).resolves.toBe('success')
-    const delays = setTimeoutSpy.mock.calls
-      .filter((call) => typeof call[1] === 'number')
-      .map((call) => call[1])
-    expect(delays).toStrictEqual([1000, 2000, 4000, 8000, 16000, 30000])
+    try {
+      const delays: Array<number> = []
+      let lastAttemptTime = Date.now()
+      const retryer = createRetryer({
+        fn: () => {
+          const now = Date.now()
+          delays.push(now - lastAttemptTime)
+          lastAttemptTime = now
+          throw new Error('failed')
+        },
+        retry: 7,
+        networkMode: 'online',
+        canRun: () => true,
+      })
+
+      const promise = retryer.start()
+      await vi.advanceTimersByTimeAsync(100000)
+      await expect(promise).rejects.toThrow('failed')
+      expect(delays).toStrictEqual([
+        0, 10, 1005, 4000, 8000, 16000, 30000, 30000,
+      ])
+    } finally {
+      random.mockRestore()
+    }
   })
 
   it('should reject with a CancelledError carrying the cancel options and call onCancel', async () => {

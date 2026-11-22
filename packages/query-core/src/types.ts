@@ -374,15 +374,16 @@ export interface QueryOptions<
    */
   retry?: RetryValue<TError>
   /**
-   * This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the
-   * next attempt in milliseconds.
+   * The delay in milliseconds before a retry. Use a number for a fixed delay or a function that receives
+   * the failure count and error and returns the delay. The count starts at 0 for the first retry.
    *
-   * A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential
+   * A function like `attempt => Math.min(1000 * 2 ** attempt, 30000)` applies exponential
    * backoff.
    *
    * A function like `attempt => attempt * 1000` applies linear backoff.
    *
-   * Defaults to a function that applies exponential backoff, capped at 30 seconds.
+   * By default, each retry uses a random delay from 10 ms to the exponential backoff limit.
+   * The limit starts at 1 second and doubles for each retry, up to 30 seconds.
    */
   retryDelay?: RetryDelayValue<TError>
   /**
@@ -1874,10 +1875,11 @@ export interface MutationOptions<
    */
   retry?: RetryValue<TError>
   /**
-   * This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the
-   * next attempt in milliseconds.
+   * The delay in milliseconds before a retry. Use a number for a fixed delay or a function that receives
+   * the failure count and error and returns the delay. The count starts at 0 for the first retry.
    *
-   * Defaults to a function that applies exponential backoff, capped at 30 seconds.
+   * By default, each retry uses a random delay from 10 ms to the exponential backoff limit.
+   * The limit starts at 1 second and doubles for each retry, up to 30 seconds.
    */
   retryDelay?: RetryDelayValue<TError>
   /**
