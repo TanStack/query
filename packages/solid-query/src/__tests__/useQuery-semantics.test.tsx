@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent } from '@solidjs/testing-library'
 import { Errored, Loading, createSignal } from 'solid-js'
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { QueryCache, QueryClient, useQuery } from '..'
+import { QueryCache, QueryClient, experimental_streamedQuery, useQuery } from '..'
 import { renderWithClient } from './utils'
 
 describe('useQuery 2.0 read semantics', () => {
@@ -100,6 +100,106 @@ describe('useQuery 2.0 read semantics', () => {
 
     await vi.advanceTimersByTimeAsync(5)
     expect(rendered.getByText('data2')).toBeInTheDocument()
+  })
+
+  it('shows each streamed chunk as it arrives instead of holding the first one', async () => {
+    const key = createKey()
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: experimental_streamedQuery({
+          async *streamFn() {
+            for (const chunk of ['a', 'b', 'c']) {
+              await sleep(50)
+              yield chunk
+            }
+          },
+        }),
+      }))
+      return <span>{state.data.join(' ')}</span>
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
+        <Page />
+      </Loading>
+    ))
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(50)
+    expect(rendered.getByText('a')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(50)
+    expect(rendered.getByText('a b')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(50)
+    expect(rendered.getByText('a b c')).toBeInTheDocument()
+    expect(queryClient.getQueryData(key)).toStrictEqual(['a', 'b', 'c'])
+  })
+
+  it('shows setQueryData writes made during a refetch instead of holding the old value', async () => {
+    const key = createKey()
+    let count = 0
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(50).then(() => `data${++count}`),
+      }))
+      return <span>{state.data}</span>
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
+        <Page />
+      </Loading>
+    ))
+
+    await vi.advanceTimersByTimeAsync(50)
+    expect(rendered.getByText('data1')).toBeInTheDocument()
+
+    void queryClient.invalidateQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(10)
+    // Mid-refetch, before any cache write: the committed value still holds.
+    expect(rendered.getByText('data1')).toBeInTheDocument()
+
+    queryClient.setQueryData(key, 'written')
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('written')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(40)
+    expect(rendered.getByText('data2')).toBeInTheDocument()
+  })
+
+  it('still holds the committed value through a refetch when select is set', async () => {
+    const key = createKey()
+    let count = 0
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => `data${++count}`),
+        select: (d: string) => d.toUpperCase(),
+      }))
+      return <span>{state.data}</span>
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
+        <Page />
+      </Loading>
+    ))
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('DATA1')).toBeInTheDocument()
+
+    void queryClient.invalidateQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(5)
+    // Mid-refetch: previous committed value stays visible — no fallback.
+    expect(rendered.getByText('DATA1')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(5)
+    expect(rendered.getByText('DATA2')).toBeInTheDocument()
   })
 
   it('surfaces a first-load failure to <Errored>', async () => {
