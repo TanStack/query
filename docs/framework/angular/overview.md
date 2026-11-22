@@ -7,7 +7,7 @@ redirect_from:
 
 The `@tanstack/angular-query` package offers a 1st-class API for using TanStack Query via Angular.
 
-If you have any feedback, please contact us at the [TanStack Discord](https://tlinz.com/discord) server or [visit this discussion](https://github.com/TanStack/query/discussions/6293) on Github.
+If you have any feedback, please contact us at the [TanStack Discord](https://tlinz.com/discord) server or [visit this discussion](https://github.com/TanStack/query/discussions/6293) on GitHub.
 
 ## Supported Angular Versions
 
