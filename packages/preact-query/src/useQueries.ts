@@ -323,6 +323,15 @@ export function useQueries<
   return useBaseQueries(options, queryClient)
 }
 
+/**
+ * Reads and subscribes to multiple queries. The dedicated Suspense hook can
+ * supply a render-time policy.
+ * @param options - The queries, combiner, and subscription setting.
+ * @param queryClient - The client to use in place of the nearest provider.
+ * @param suspense - The policy that prepares and reads queries during render.
+ * @returns The individual query results or the combined result.
+ * @throws {Error} The first query error configured to reach the error boundary.
+ */
 export function useBaseQueries<
   T extends Array<any>,
   TCombinedResult = QueriesResults<T>,

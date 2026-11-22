@@ -4,9 +4,9 @@ import type {
   DefaultError,
   DefaultedQueryObserverOptions,
   Query,
+  QueryClient,
   QueryKey,
   QueryObserverResult,
-  QueryClient,
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
@@ -161,8 +161,11 @@ type SuspenseOptions = DefaultedQueryObserverOptions<any, any, any, any, any>
 type SuspenseResult = QueryObserverResult<any, any>
 type SnapshotReader<T> = { getSnapshot: () => T }
 
+/** Supplies render-time Suspense behavior to the shared query hooks. */
 export type SuspensePolicy = {
+  /** Applies the Suspense stale and garbage collection time limits. */
   prepare: (options: SuspenseOptions) => void
+  /** Starts a fetch and suspends if the result needs data. */
   readQuery: (
     options: SuspenseOptions,
     reader: SnapshotReader<SuspenseResult>,
@@ -170,6 +173,7 @@ export type SuspensePolicy = {
     client: QueryClient,
     errorResetBoundary: QueryErrorResetBoundaryValue,
   ) => void
+  /** Starts parallel fetches before suspending. */
   readQueries: (
     options: Array<SuspenseOptions>,
     reader: SnapshotReader<Array<SuspenseResult>>,
@@ -178,79 +182,88 @@ export type SuspensePolicy = {
   ) => void
 }
 
-export const suspenseQueryPolicy: Pick<
-  SuspensePolicy,
-  'prepare' | 'readQuery'
-> = {
-  prepare: ensureSuspenseTimers,
-  readQuery(defaultedOptions, reader, observer, client, errorResetBoundary) {
-    // Let the reader initialize the query before starting a Suspense fetch.
-    if (defaultedOptions.suspense) {
-      const snapshot = reader.getSnapshot()
-      const suspenseQuery = client
-        .getQueryCache()
-        .build(client, defaultedOptions)
-      const suspend = shouldSuspend(
+const useReadSuspenseQuery: SuspensePolicy['readQuery'] = (
+  defaultedOptions,
+  reader,
+  observer,
+  client,
+  errorResetBoundary,
+) => {
+  // Let the reader initialize the query before starting a Suspense fetch.
+  if (defaultedOptions.suspense) {
+    const snapshot = reader.getSnapshot()
+    const suspenseQuery = client.getQueryCache().build(client, defaultedOptions)
+    const suspend = shouldSuspend(
+      defaultedOptions,
+      snapshot,
+      errorResetBoundary,
+      suspenseQuery,
+    )
+
+    if (suspend !== undefined) {
+      const promise = getSuspensePromise(
         defaultedOptions,
-        snapshot,
+        observer,
         errorResetBoundary,
         suspenseQuery,
       )
 
-      if (suspend !== undefined) {
-        const promise = getSuspensePromise(
-          defaultedOptions,
-          observer,
-          errorResetBoundary,
-          suspenseQuery,
-        )
-
-        if (suspend) {
-          use(promise)
-        }
-      }
-    }
-  },
-}
-
-export const suspenseQueriesPolicy: Pick<
-  SuspensePolicy,
-  'prepare' | 'readQueries'
-> = {
-  prepare: ensureSuspenseTimers,
-  readQueries(defaultedQueries, reader, client, errorResetBoundary) {
-    const snapshot = reader.getSnapshot()
-
-    const suspensePromises = snapshot.map((result, index) => {
-      const opts = defaultedQueries[index]
-
-      if (!opts?.suspense) {
-        return undefined
-      }
-
-      const query = client.getQueryCache().build(client, opts)
-      const suspend = shouldSuspend(opts, result, errorResetBoundary, query)
-
-      if (suspend === undefined) {
-        return undefined
-      }
-
-      const queryObserver = new QueryObserver(client, opts)
-      const promise = getSuspensePromise(
-        opts,
-        queryObserver,
-        errorResetBoundary,
-        query,
-      )
-
-      return suspend ? promise : undefined
-    })
-
-    // Start every fetch before calling use(), because use() suspends immediately.
-    for (const promise of suspensePromises) {
-      if (promise) {
+      if (suspend) {
         use(promise)
       }
     }
-  },
+  }
+}
+
+/** Supplies Suspense behavior for one query. */
+export const suspenseQueryPolicy = {
+  prepare: ensureSuspenseTimers,
+  readQuery: useReadSuspenseQuery,
+}
+
+const useReadSuspenseQueries: SuspensePolicy['readQueries'] = (
+  defaultedQueries,
+  reader,
+  client,
+  errorResetBoundary,
+) => {
+  const snapshot = reader.getSnapshot()
+
+  const suspensePromises = snapshot.map((result, index) => {
+    const opts = defaultedQueries[index]
+
+    if (!opts?.suspense) {
+      return undefined
+    }
+
+    const query = client.getQueryCache().build(client, opts)
+    const suspend = shouldSuspend(opts, result, errorResetBoundary, query)
+
+    if (suspend === undefined) {
+      return undefined
+    }
+
+    const queryObserver = new QueryObserver(client, opts)
+    const promise = getSuspensePromise(
+      opts,
+      queryObserver,
+      errorResetBoundary,
+      query,
+    )
+
+    return suspend ? promise : undefined
+  })
+
+  // Start every fetch before calling use(), because use() suspends immediately.
+  for (const promise of suspensePromises) {
+    if (promise) {
+      use(promise)
+    }
+  }
+}
+
+/** Supplies Suspense behavior for parallel queries. */
+export const suspenseQueriesPolicy = {
+  prepare: ensureSuspenseTimers,
+  readQueries: useReadSuspenseQueries,
 }
