@@ -267,6 +267,8 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       this.#scopes.clear()
       mutations.forEach((mutation) => {
         mutation.destroy()
+      })
+      mutations.forEach((mutation) => {
         this.notify({ type: 'removed', mutation })
       })
     })

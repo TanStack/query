@@ -462,6 +462,9 @@ export class Query<
     this.clearGcTimeout()
     this.cancel({ silent: true })
     this.setState(this.resetState)
+    if (!this.observers.length) {
+      this.scheduleGc()
+    }
   }
 
   /**
