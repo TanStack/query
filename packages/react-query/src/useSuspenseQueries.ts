@@ -537,7 +537,6 @@ export function useSuspenseQueries(options: any, queryClient?: QueryClient) {
 
         return {
           ...query,
-          suspense: true,
           throwOnError: defaultThrowOnError,
           enabled: true,
         }

@@ -61,9 +61,10 @@ export function useBaseQuery<
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
   const client = useQueryClient(queryClient)
-  const defaultedOptions = client.defaultQueryOptions(
-    suspense ? options : { ...options, suspense: false },
-  )
+  const defaultedOptions = client.defaultQueryOptions({
+    ...options,
+    suspense: !!suspense,
+  })
 
   const query = client
     .getQueryCache()

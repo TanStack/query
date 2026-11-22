@@ -108,7 +108,6 @@ export function useSuspenseQuery<
     {
       ...options,
       enabled: true,
-      suspense: true,
       throwOnError: defaultThrowOnError,
       placeholderData: undefined,
     },

@@ -124,7 +124,6 @@ export function useSuspenseInfiniteQuery<
     {
       ...options,
       enabled: true,
-      suspense: true,
       throwOnError: defaultThrowOnError,
     },
     InfiniteQueryObserver as typeof QueryObserver,

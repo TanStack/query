@@ -400,11 +400,10 @@ export function useBaseQueries<
   const defaultedQueries = React.useMemo(
     () =>
       queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions(
-          (suspense
-            ? opts
-            : { ...opts, suspense: false }) as QueryObserverOptions,
-        )
+        const defaultedOptions = client.defaultQueryOptions({
+          ...opts,
+          suspense: !!suspense,
+        } as QueryObserverOptions)
 
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring
