@@ -391,14 +391,14 @@ describe('mutationCache', () => {
         testCache.findAll({
           mutationKey: ['TODOS', { status: 'DONE' }],
         }),
-      ).toEqual([mutation])
+      ).toStrictEqual([mutation])
 
       testClient.clear()
     })
 
     it('should use the MutationCache mutation key hash function for exact matching', () => {
       const key = ['todos', { status: 'done' }]
-      const hashFn = vi.fn(() => 'custom-hash')
+      const hashFn = vi.fn<() => string>(() => 'custom-hash')
       const testCache = new MutationCache({ mutationKey: { hashFn } })
       const testClient = new QueryClient({ mutationCache: testCache })
       const mutation = Mutation.build(testClient, {

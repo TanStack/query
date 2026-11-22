@@ -212,7 +212,7 @@ describe('queryCache', () => {
       ).toBe(query)
       expect(
         testCache.findAll({ queryKey: ['TODOS', { status: 'DONE' }] }),
-      ).toEqual([query])
+      ).toStrictEqual([query])
 
       testClient.clear()
     })
@@ -530,7 +530,7 @@ describe('queryCache', () => {
 
     it('should use the QueryCache query key hash function', () => {
       const key = createKey()
-      const hashFn = vi.fn(() => 'custom-hash')
+      const hashFn = vi.fn<() => string>(() => 'custom-hash')
       const testCache = new QueryCache({ queryKey: { hashFn } })
       const testClient = new QueryClient({ queryCache: testCache })
 
@@ -543,8 +543,8 @@ describe('queryCache', () => {
 
     it('should prefer the QueryCache query key hash function over the query option', () => {
       const key = createKey()
-      const cacheHashFn = vi.fn(() => 'cache-hash')
-      const queryHashFn = vi.fn(() => 'query-hash')
+      const cacheHashFn = vi.fn<() => string>(() => 'cache-hash')
+      const queryHashFn = vi.fn<() => string>(() => 'query-hash')
       const testCache = new QueryCache({
         queryKey: { hashFn: cacheHashFn },
       })
