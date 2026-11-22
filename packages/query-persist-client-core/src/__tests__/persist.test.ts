@@ -1,4 +1,5 @@
 import {
+  Mutation,
   MutationObserver,
   QueriesObserver,
   QueryClient,
@@ -33,7 +34,7 @@ describe('persist', () => {
         dehydrateOptions: { shouldDehydrateMutation: () => true },
       })
 
-      queryClient.getMutationCache().build(queryClient, {
+      Mutation.build(queryClient, {
         mutationFn: (text: string) => Promise.resolve(text),
       })
 

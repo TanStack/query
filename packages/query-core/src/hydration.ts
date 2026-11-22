@@ -1,6 +1,7 @@
 import { withInfiniteQueryBehavior } from './infiniteQueryBehavior'
+import { Mutation } from './mutation'
 import { noop } from './utils'
-import type { Mutation, MutationState } from './mutation'
+import type { MutationState } from './mutation'
 import type { Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
 import type {
@@ -309,14 +310,13 @@ export function hydrate(
   dehydratedState: Partial<DehydratedState>,
   options?: HydrateOptions,
 ): void {
-  const mutationCache = client.getMutationCache()
   const queryCache = client.getQueryCache()
   const deserializeData =
     options?.defaultOptions?.deserializeData ??
     client.getDefaultOptions().hydrate?.deserializeData
 
   dehydratedState.mutations?.forEach(({ state, ...mutationOptions }) => {
-    mutationCache.build(
+    Mutation.build(
       client,
       {
         ...client.getDefaultOptions().hydrate?.mutations,

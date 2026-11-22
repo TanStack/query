@@ -6,6 +6,7 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import { Mutation } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/angular'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -37,8 +38,8 @@ describe('injectMutationState', () => {
 
   it('publishes selected mutation values unchanged and compares snapshot entries by identity', () => {
     const version = signal('before')
-    queryClient.getMutationCache().build(queryClient, { mutationKey: ['a'] })
-    queryClient.getMutationCache().build(queryClient, { mutationKey: ['b'] })
+    Mutation.build(queryClient, { mutationKey: ['a'] })
+    Mutation.build(queryClient, { mutationKey: ['b'] })
     let selected: Array<{ value: string }> = []
     const states = TestBed.runInInjectionContext(() =>
       injectMutationState(() => {

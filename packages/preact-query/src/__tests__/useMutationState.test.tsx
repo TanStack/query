@@ -1,10 +1,11 @@
+import { Mutation } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/preact'
 import { useEffect } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, useIsMutating, useMutation, useMutationState } from '..'
 import { renderWithClient } from './utils'
-import type { Mutation, MutationCacheNotifyEvent } from '..'
+import type { MutationCacheNotifyEvent } from '..'
 
 describe('useIsMutating', () => {
   beforeEach(() => {
@@ -214,7 +215,7 @@ describe('useIsMutating', () => {
     const queryClient = new QueryClient()
     const key = createKey()
     const otherKey = createKey()
-    const mutation = queryClient.getMutationCache().build(queryClient, {
+    const mutation = Mutation.build(queryClient, {
       mutationKey: key,
       mutationFn: () => sleep(100),
     })
@@ -251,8 +252,8 @@ describe('useMutationState', () => {
     const key1 = createKey()
     const key2 = createKey()
     const cache = queryClient.getMutationCache()
-    cache.build(queryClient, { mutationKey: key1 })
-    cache.build(queryClient, { mutationKey: key2 })
+    Mutation.build(queryClient, { mutationKey: key1 })
+    Mutation.build(queryClient, { mutationKey: key2 })
     const onCacheChange = vi.fn<(event: MutationCacheNotifyEvent) => void>()
     const unsubscribe = cache.subscribe(onCacheChange)
 
@@ -283,7 +284,7 @@ describe('useMutationState', () => {
   it('should update when select changes without a cache update', () => {
     const queryClient = new QueryClient()
     const key = createKey()
-    queryClient.getMutationCache().build(queryClient, { mutationKey: key })
+    Mutation.build(queryClient, { mutationKey: key })
 
     function Page({ select }: { select: (mutation: Mutation) => unknown }) {
       const result = useMutationState({ select })
@@ -308,7 +309,7 @@ describe('useMutationState', () => {
       const queryClient = new QueryClient()
       const key = createKey()
       const cache = queryClient.getMutationCache()
-      const existingMutation = cache.build(queryClient, {
+      const existingMutation = Mutation.build(queryClient, {
         mutationKey: key,
         meta: { time: 0 },
       })
@@ -357,7 +358,7 @@ describe('useMutationState', () => {
   it('should render selector results that cannot be structurally shared', () => {
     const queryClient = new QueryClient()
     const key = createKey()
-    queryClient.getMutationCache().build(queryClient, { mutationKey: key })
+    Mutation.build(queryClient, { mutationKey: key })
 
     function Page({ time }: { time: number }) {
       const result = useMutationState({
@@ -456,7 +457,7 @@ describe('useMutationState', () => {
     (inputs) => {
       const queryClient = new QueryClient()
       const key = createKey()
-      queryClient.getMutationCache().build(queryClient, { mutationKey: key })
+      Mutation.build(queryClient, { mutationKey: key })
       const onResult =
         vi.fn<
           (result: Array<{ key: ReadonlyArray<unknown> | undefined }>) => void
@@ -493,8 +494,8 @@ describe('useMutationState', () => {
     const client2 = new QueryClient()
     const key1 = createKey()
     const key2 = createKey()
-    client1.getMutationCache().build(client1, { mutationKey: key1 })
-    client2.getMutationCache().build(client2, { mutationKey: key2 })
+    Mutation.build(client1, { mutationKey: key1 })
+    Mutation.build(client2, { mutationKey: key2 })
     const select = (mutation: Mutation) => mutation.options.mutationKey
 
     function Page({ client }: { client: QueryClient }) {

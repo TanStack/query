@@ -1,5 +1,6 @@
 import { Component, input, inputBinding, signal } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import { Mutation } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/angular'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -89,7 +90,7 @@ describe('injectIsMutating', () => {
   })
 
   it('should support signal reads in filter predicates', async () => {
-    const mutation = queryClient.getMutationCache().build(queryClient, {
+    const mutation = Mutation.build(queryClient, {
       mutationFn: () => sleep(100).then(() => 'data'),
     })
     void mutation.execute(undefined)
