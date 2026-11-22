@@ -54,7 +54,7 @@ Safari on iOS 17.4
 Opera 105
 ```
 
-TanStack Query uses `Promise.withResolvers()`. If your runtime lacks this API, load a polyfill before you use TanStack Query.
+> Depending on your environment, you might need to add polyfills. If you want to support older browsers, you need to transpile the library from `node_modules` yourselves.
 
 ## Provider Setup
 

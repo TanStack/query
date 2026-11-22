@@ -19,4 +19,4 @@
 '@tanstack/vue-query-devtools': major
 ---
 
-Update the minimum browser versions to Chrome 119, Edge 119, Firefox 121, Safari 17.4, Safari on iOS 17.4, and Opera 105. Query Core now uses `Promise.withResolvers()`. If your runtime lacks this API, load a polyfill before you use TanStack Query.
+Update the minimum browser versions to Chrome 119, Edge 119, Firefox 121, Safari 17.4, Safari on iOS 17.4, and Opera 105. If you support older browsers, transpile the library and add any polyfills your environment needs.

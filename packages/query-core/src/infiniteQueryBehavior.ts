@@ -137,7 +137,7 @@ function getNextPageParam(
     ? options.getNextPageParam(
         pages.at(-1),
         pages,
-        pageParams[pages.length - 1],
+        pageParams.at(-1),
         pageParams,
       )
     : undefined
