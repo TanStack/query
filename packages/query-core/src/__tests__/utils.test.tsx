@@ -219,9 +219,12 @@ describe('core/utils', () => {
       ).toBe(true)
     })
 
-    it('should return `false` if one key element is an array and the other is an object', () => {
+    it('should not match an array element against an empty object', () => {
       expect(partialMatchKey(['todos', ['a']], ['todos', {}])).toBe(false)
-      expect(partialMatchKey(['todos', {}], ['todos', ['a']])).toBe(false)
+    })
+
+    it('should not match an object with numeric keys against an array element', () => {
+      expect(partialMatchKey(['todos', { 0: 'a' }], ['todos', ['a']])).toBe(false)
     })
   })
 
