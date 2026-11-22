@@ -27,7 +27,7 @@ export interface QueryCacheConfig {
   /**
    * Configures query key comparison and hashing globally.
    * `equalityFn` compares individual values during partial matching and defaults to strict equality.
-   * `hashFn` takes precedence over a query's deprecated `queryKeyHashFn` option.
+   * `hashFn` hashes query keys and defaults to `hashKey`.
    */
   queryKey?: CacheKeyConfig<QueryKey>
   /** Called when any query in the cache encounters an error. */
@@ -188,8 +188,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   ): Query<TQueryFnData, TError, TData, TQueryKey> {
     const queryKey = options.queryKey
     const queryHash =
-      options.queryHash ??
-      hashKeyByOptions(queryKey, this.config.queryKey, options)
+      options.queryHash ?? hashKeyByOptions(queryKey, this.config.queryKey)
     let query = this.get<TQueryFnData, TError, TData, TQueryKey>(queryHash)
 
     if (!query) {

@@ -932,7 +932,6 @@ export class QueryClient {
       defaultedOptions.queryHash = hashKeyByOptions(
         defaultedOptions.queryKey,
         this.#queryCache.config.queryKey,
-        defaultedOptions,
       )
     }
 

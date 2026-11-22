@@ -4403,16 +4403,19 @@ describe('useQuery', () => {
 
     let hashes = 0
 
-    function queryKeyHashFn(x: any) {
+    function hashFn(queryKey: ReadonlyArray<unknown>) {
       hashes++
-      return JSON.stringify(x)
+      return JSON.stringify(queryKey)
     }
+
+    queryClient = new QueryClient({
+      queryCache: new QueryCache({ queryKey: { hashFn } }),
+    })
 
     function Page() {
       useQuery(() => ({
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'test'),
-        queryKeyHashFn,
       }))
 
       return null

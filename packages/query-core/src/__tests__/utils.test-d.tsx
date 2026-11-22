@@ -538,11 +538,8 @@ describe('hashKey', () => {
 })
 
 describe('hashKeyByOptions', () => {
-  it('should accept the options argument optionally', () => {
+  it('should accept a cache hash function', () => {
     expectTypeOf(hashKeyByOptions(['a'], undefined)).toEqualTypeOf<string>()
-    expectTypeOf(
-      hashKeyByOptions(['a'], undefined, { queryKeyHashFn: hashKey }),
-    ).toEqualTypeOf<string>()
     expectTypeOf(
       hashKeyByOptions(['a'], { hashFn: hashKey }),
     ).toEqualTypeOf<string>()

@@ -541,25 +541,6 @@ describe('queryCache', () => {
       expect(hashFn).toHaveBeenCalledWith(key)
     })
 
-    it('should prefer the QueryCache query key hash function over the query option', () => {
-      const key = createKey()
-      const cacheHashFn = vi.fn<() => string>(() => 'cache-hash')
-      const queryHashFn = vi.fn<() => string>(() => 'query-hash')
-      const testCache = new QueryCache({
-        queryKey: { hashFn: cacheHashFn },
-      })
-      const testClient = new QueryClient({ queryCache: testCache })
-
-      const query = testCache.build(testClient, {
-        queryKey: key,
-        queryKeyHashFn: queryHashFn,
-      })
-
-      expect(query.queryHash).toBe('cache-hash')
-      expect(cacheHashFn).toHaveBeenCalledWith(key)
-      expect(queryHashFn).not.toHaveBeenCalled()
-    })
-
     it('should use provided queryHash instead of computing it', () => {
       const key = createKey()
       const customHash = 'custom-hash'

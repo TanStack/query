@@ -237,10 +237,10 @@ describe('queryClient', () => {
       }).not.toThrow()
     })
 
-    it('should use default options', () => {
+    it('should use the configured query cache hash function', () => {
       const key = createKey()
       const testClient = new QueryClient({
-        defaultOptions: { queries: { queryKeyHashFn: () => 'someKey' } },
+        queryCache: new QueryCache({ queryKey: { hashFn: () => 'someKey' } }),
       })
       const testCache = testClient.getQueryCache()
       testClient.setQueryData(key, 'data')

@@ -86,7 +86,6 @@ export type {
   InitialDataFunction,
   PlaceholderDataFunction,
   QueriesPlaceholderDataFunction,
-  QueryKeyHashFunction,
   EqualityFn,
   CacheKeyHashFunction,
   CacheKeyConfig,

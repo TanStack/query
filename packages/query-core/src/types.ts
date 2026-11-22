@@ -278,11 +278,6 @@ export type QueriesPlaceholderDataFunction<TQueryData> = (
 ) => TQueryData | undefined
 
 /** @inline */
-export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
-  queryKey: TQueryKey,
-) => string
-
-/** @inline */
 export type EqualityFn = (a: unknown, b: unknown) => boolean
 
 /** @inline */
@@ -422,8 +417,8 @@ export interface QueryOptions<
    */
   persister?: QueryPersister<TQueryFnData, NoInfer<TQueryKey>, TPageParam>
   /**
-   * The hashed form of `queryKey`, computed with `queryKeyHashFn` (or the default hashing function otherwise). Used
-   * as the actual cache key internally.
+   * The cache key. If omitted, the query cache computes it from `queryKey`
+   * using its configured `hashFn` or the default hash function.
    */
   queryHash?: string
   /**
@@ -435,11 +430,6 @@ export interface QueryOptions<
    * The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
    */
   queryKey?: TQueryKey
-  /**
-   * If specified, this function is used to hash the `queryKey` to a string.
-   * @deprecated Use `hashFn` in the `queryKey` configuration of `QueryCache` instead.
-   */
-  queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
   /**
    * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
    * created or cached yet).

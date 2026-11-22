@@ -216,9 +216,7 @@ export function matchQuery(
 
   if (queryKey) {
     if (exact) {
-      if (
-        query.queryHash !== hashKeyByOptions(queryKey, keyConfig, query.options)
-      ) {
+      if (query.queryHash !== hashKeyByOptions(queryKey, keyConfig)) {
         return false
       }
     } else if (
@@ -310,10 +308,9 @@ export function matchMutation(
 }
 
 /**
- * Hashes a cache key with the cache's `hashFn`, then the query's `queryKeyHashFn`, falling back to {@link hashKey}.
+ * Hashes a cache key with the cache's `hashFn`, falling back to {@link hashKey}.
  * @param cacheKey - The query or mutation key to hash.
  * @param keyConfig - The cache configuration that may provide a custom `hashFn`.
- * @param options - The query options that may provide a custom `queryKeyHashFn`.
  * @returns The hash, a string that identifies the key in the cache.
  */
 export function hashKeyByOptions<
@@ -321,10 +318,9 @@ export function hashKeyByOptions<
 >(
   cacheKey: TCacheKey,
   keyConfig: CacheKeyConfig<TCacheKey> | undefined,
-  options?: Pick<QueryOptions<any, any, any, any>, 'queryKeyHashFn'>,
 ): string {
-  const queryKeyHashFn = keyConfig?.hashFn ?? options?.queryKeyHashFn ?? hashKey
-  return queryKeyHashFn(cacheKey)
+  const hashFn = keyConfig?.hashFn ?? hashKey
+  return hashFn(cacheKey)
 }
 
 /**

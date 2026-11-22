@@ -4980,17 +4980,21 @@ describe('useQuery', () => {
     let hashes = 0
     let renders = 0
 
-    function queryKeyHashFn(x: any) {
+    function hashFn(queryKey: ReadonlyArray<unknown>) {
       hashes++
-      return JSON.stringify(x)
+      return JSON.stringify(queryKey)
     }
+
+    queryClient = new QueryClient({
+      queryCache: new QueryCache({ queryKey: { hashFn } }),
+    })
 
     function Page() {
       React.useEffect(() => {
         renders++
       })
 
-      useQuery({ queryKey: key, queryFn: () => 'test', queryKeyHashFn })
+      useQuery({ queryKey: key, queryFn: () => 'test' })
       return null
     }
 
@@ -5003,15 +5007,19 @@ describe('useQuery', () => {
   it('should hash query keys that contain bigints given a supported query hash function', async () => {
     const key = [createKey(), 1n]
 
-    function queryKeyHashFn(x: any) {
-      return JSON.stringify(x, (_, value) => {
+    function hashFn(queryKey: ReadonlyArray<unknown>) {
+      return JSON.stringify(queryKey, (_, value) => {
         if (typeof value === 'bigint') return value.toString()
         return value
       })
     }
 
+    queryClient = new QueryClient({
+      queryCache: new QueryCache({ queryKey: { hashFn } }),
+    })
+
     function Page() {
-      useQuery({ queryKey: key, queryFn: () => 'test', queryKeyHashFn })
+      useQuery({ queryKey: key, queryFn: () => 'test' })
       return null
     }
 
@@ -5019,7 +5027,7 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
 
-    const query = queryClient.getQueryCache().get(queryKeyHashFn(key))
+    const query = queryClient.getQueryCache().get(hashFn(key))
     expect(query?.state.data).toBe('test')
   })
 
