@@ -560,8 +560,7 @@ export class QueryObserver<
         .fetch(defaultedOptions)
         .then(() => {
           const result = this.createResult(query, defaultedOptions)
-          // Settle the subscriber promise so both branches always settle.
-          // This value is ignored by Promise.race since the fetch branch already won.
+          // Resolve the cache wait when the fetch succeeds.
           resolveEarly?.(result)
           return result
         })

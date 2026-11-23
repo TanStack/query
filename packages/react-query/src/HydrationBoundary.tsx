@@ -94,21 +94,8 @@ export const HydrationBoundary = ({
     optionsRef.current = options
   })
 
-  // This useMemo is for performance reasons only, everything inside it must
-  // be safe to run in every render and code here should be read as "in render".
-  //
-  // This code needs to happen during the render phase, because after initial
-  // SSR, hydration needs to happen _before_ children render. Also, if hydrating
-  // during a transition, we want to hydrate as much as is safe in render so
-  // we can prerender as much as possible.
-  //
-  // For any queries that already exist in the cache, we want to hold back on
-  // hydrating until _after_ the render phase. The reason for this is that during
-  // transitions, we don't want the existing queries and observers to update to
-  // the new data on the current page, only _after_ the transition is committed.
-  // If the transition is aborted, we will have hydrated any _new_ queries, but
-  // we throw away the fresh data for any existing ones to avoid unexpectedly
-  // updating the UI.
+  // Hydrate new queries during render so children can read their data.
+  // Hydrate existing queries after commit so an aborted transition cannot update them.
   const hydrationQueue: DehydratedState['queries'] | undefined =
     React.useMemo(() => {
       const queryCache = client.getQueryCache()
@@ -120,24 +107,23 @@ export const HydrationBoundary = ({
 
         if (!existingQuery) {
           newQueries.push(dehydratedQuery)
-        } else {
-          const hydrationIsNewer =
-            dehydratedQuery.state.dataUpdatedAt >
-              existingQuery.state.dataUpdatedAt ||
-            (dehydratedQuery.promise &&
-              existingQuery.state.status !== 'pending' &&
-              existingQuery.state.fetchStatus !== 'fetching' &&
-              dehydratedQuery.dehydratedAt > existingQuery.state.dataUpdatedAt)
+          continue
+        }
 
-          if (hydrationIsNewer) {
-            existingQueries.push(dehydratedQuery)
-          }
+        const hydrationIsNewer =
+          dehydratedQuery.state.dataUpdatedAt >
+            existingQuery.state.dataUpdatedAt ||
+          (dehydratedQuery.promise &&
+            existingQuery.state.status !== 'pending' &&
+            existingQuery.state.fetchStatus !== 'fetching' &&
+            dehydratedQuery.dehydratedAt > existingQuery.state.dataUpdatedAt)
+
+        if (hydrationIsNewer) {
+          existingQueries.push(dehydratedQuery)
         }
       }
 
       if (newQueries.length > 0) {
-        // It's actually fine to call this with queries/state that already exists
-        // in the cache, or is older. hydrate() is idempotent for queries.
         // oxlint-disable-next-line react-hooks-js/refs -- new queries are hydrated during render on purpose, and 'options' is read through a ref so that a new 'options' object does not rerun this memo
         hydrate(client, { queries: newQueries }, optionsRef.current)
       }
