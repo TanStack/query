@@ -123,11 +123,7 @@ export class QueriesObserver<
 
   protected override onSubscribe(): void {
     if (this.listeners.size === 1) {
-      this.#observers.forEach((observer) => {
-        observer.subscribe((result) => {
-          this.#onUpdate(observer, result)
-        })
-      })
+      this.#observers.forEach((observer) => this.#subscribeTo(observer))
     }
   }
 
@@ -235,11 +231,9 @@ export class QueriesObserver<
         difference(prevObservers, newObservers).forEach((observer) => {
           observer.destroy()
         })
-        difference(newObservers, prevObservers).forEach((observer) => {
-          observer.subscribe((result) => {
-            this.#onUpdate(observer, result)
-          })
-        })
+        difference(newObservers, prevObservers).forEach((observer) =>
+          this.#subscribeTo(observer),
+        )
       }
 
       this.#notify()
@@ -443,6 +437,14 @@ export class QueriesObserver<
     return observers
   }
 
+  #subscribeTo(observer: QueryObserver): void {
+    // Create the listener here, not in `setQueries`: a listener created there
+    // keeps the previous observers, and their queries, alive (#12656)
+    observer.subscribe((result) => {
+      this.#onUpdate(observer, result)
+    })
+  }
+
   #onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
     if (this.#updatingQueries) return
 
@@ -463,6 +465,9 @@ export class QueriesObserver<
         : this.#combineResult(
             this.#trackResult(this.#result, this.#observerMatches),
             this.#options?.combine,
+            this.#observerMatches.map(
+              (match) => match.defaultedQueryOptions.queryHash,
+            ),
           )
 
       this.#combinedResult = newResult
