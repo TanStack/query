@@ -11,7 +11,6 @@ import { QueryClient, QueryObserver, defaultQueryFn } from '..'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
-  InfiniteQueryObserverResult,
   InitialDataFunction,
   PlaceholderDataFunction,
   Query,
@@ -713,12 +712,7 @@ describe('queryObserver', () => {
       it('should type notifyOnChangeProps as its named type', () => {
         expectTypeOf<
           QueryObserverOptions['notifyOnChangeProps']
-        >().toEqualTypeOf<
-          | Array<keyof InfiniteQueryObserverResult>
-          | 'all'
-          | undefined
-          | (() => Array<keyof InfiniteQueryObserverResult> | 'all' | undefined)
-        >()
+        >().toEqualTypeOf<'all' | 'none' | undefined>()
       })
     })
 

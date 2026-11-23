@@ -643,40 +643,6 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
-  it('should not re-render when it should only re-render only data change and the selected data did not change', async () => {
-    const key = createKey()
-    const states: Array<UseQueryResult<string>> = []
-
-    function Page() {
-      const state = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ({ name: 'test' })),
-        select: (data) => data.name,
-        notifyOnChangeProps: ['data'],
-      }))
-
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-
-      return (
-        <div>
-          data: {state.data}
-          <button onClick={() => state.refetch()}>refetch</button>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, () => <Page />)
-
-    await vi.advanceTimersByTimeAsync(10)
-    expect(rendered.getByText('data: test')).toBeInTheDocument()
-
-    expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({ data: undefined })
-    expect(states[1]).toMatchObject({ data: 'test' })
-  })
-
   it('should throw an error when a selector throws', async () => {
     const key = createKey()
     const states: Array<{ status: string; data?: unknown; error?: Error }> = []
@@ -1550,46 +1516,6 @@ describe('useQuery', () => {
     expect(states[0]).toMatchObject({ isStale: true })
     expect(states[1]).toMatchObject({ isStale: false })
     expect(states[2]).toMatchObject({ isStale: true })
-  })
-
-  it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
-    const key = createKey()
-    const states: Array<UseQueryResult<string>> = []
-
-    function Page() {
-      const state = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(5).then(() => 'test'),
-        notifyOnChangeProps: ['data'],
-      }))
-
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-
-      createEffect(() => {
-        const refetch = state.refetch
-        setActTimeout(() => {
-          refetch()
-        }, 10)
-      })
-      return null
-    }
-
-    renderWithClient(queryClient, () => <Page />)
-
-    await vi.advanceTimersByTimeAsync(15)
-    expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      status: 'pending',
-      isFetching: true,
-    })
-    expect(states[1]).toMatchObject({
-      data: 'test',
-      status: 'success',
-      isFetching: false,
-    })
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/137
