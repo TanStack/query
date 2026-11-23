@@ -924,14 +924,10 @@ export class QueryObserver<
       }
 
       const { notifyOnChangeProps } = this.options
-      const notifyOnChangePropsValue =
-        typeof notifyOnChangeProps === 'function'
-          ? notifyOnChangeProps()
-          : notifyOnChangeProps
 
       if (
-        notifyOnChangePropsValue === 'all' ||
-        (!notifyOnChangePropsValue && !this.#trackedProps.size)
+        notifyOnChangeProps === 'all' ||
+        (notifyOnChangeProps !== 'none' && !this.#trackedProps.size)
       ) {
         return true
       }
@@ -943,11 +939,12 @@ export class QueryObserver<
         return true
       }
 
-      for (const key of notifyOnChangePropsValue ?? this.#trackedProps) {
-        if (
-          this.#currentResult[key as keyof QueryObserverResult] !==
-          prevResult[key as keyof QueryObserverResult]
-        ) {
+      if (notifyOnChangeProps === 'none') {
+        return false
+      }
+
+      for (const key of this.#trackedProps) {
+        if (this.#currentResult[key] !== prevResult[key]) {
           return true
         }
       }

@@ -1006,25 +1006,21 @@ describe('queriesObserver', () => {
     expect(combined2.total).toBe(8)
   })
 
-  it('should return observer result directly when notifyOnChangeProps is set', () => {
-    const key = createKey()
-    const queryFn = vi.fn<() => number>().mockReturnValue(1)
+  it.each(['all', 'none'] as const)(
+    'returns the unwrapped result with notifyOnChangeProps set to %s',
+    (notifyOnChangeProps) => {
+      const queries = [
+        { queryKey: createKey(), queryFn: () => 1, notifyOnChangeProps },
+      ]
+      const observer = new QueriesObserver(queryClient, queries)
+      const reader = observer.createResultReader(queries)
+      const snapshot = reader.getSnapshot()
+      const results = reader.combineResult(snapshot)
 
-    const observer = new QueriesObserver(queryClient, [
-      { queryKey: key, queryFn, notifyOnChangeProps: ['data'] },
-    ])
-
-    const trackResultSpy = vi.spyOn(QueryObserver.prototype, 'trackResult')
-
-    const reader = observer.createResultReader([
-      { queryKey: key, queryFn, notifyOnChangeProps: ['data'] },
-    ])
-    const trackedResults = reader.combineResult(reader.getSnapshot())
-
-    expect(trackedResults).toHaveLength(1)
-    // trackResult should NOT be called when notifyOnChangeProps is set
-    expect(trackResultSpy).not.toHaveBeenCalled()
-  })
+      expect(results).toHaveLength(1)
+      expect(results[0]).toBe(snapshot[0])
+    },
+  )
 
   it('should return cached combined result when nothing has changed', () => {
     const combine = vi.fn<

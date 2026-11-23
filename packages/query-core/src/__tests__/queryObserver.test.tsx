@@ -994,50 +994,42 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  it('should notify listeners when notifyOnChangeProps is a function returning props that changed', async () => {
+  it('fetches and updates the result without notifying listeners with notifyOnChangeProps set to none', async () => {
     const key = createKey()
-
-    queryClient.setQueryData(key, 'data')
-
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
-      queryFn: () => sleep(10).then(() => 'new data'),
-      staleTime: Infinity,
-      notifyOnChangeProps: () => ['data'],
+      queryFn: () => sleep(10).then(() => 'data'),
+      notifyOnChangeProps: 'none',
     })
-    const listener =
-      vi.fn<(result: QueryObserverResult<string, Error>) => void>()
-
+    const listener = vi.fn<(result: QueryObserverResult) => void>()
     const unsubscribe = observer.subscribe(listener)
-    listener.mockClear()
 
-    observer.refetch()
     await vi.advanceTimersByTimeAsync(10)
-    expect(listener).toHaveBeenCalledTimes(1)
+
+    expect(queryClient.getQueryData(key)).toBe('data')
+    expect(observer.getCurrentResult().data).toBe('data')
+    expect(listener).not.toHaveBeenCalled()
 
     unsubscribe()
   })
 
-  it('should not notify listeners when notifyOnChangeProps is a function returning props that did not change', async () => {
-    const key = createKey()
-
-    queryClient.setQueryData(key, 'data')
-
+  it('notifies listeners of errors with notifyOnChangeProps set to none and throwOnError enabled', async () => {
+    const error = new Error('fetch failed')
     const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'data'),
-      staleTime: Infinity,
-      notifyOnChangeProps: () => ['data'],
+      queryKey: createKey(),
+      queryFn: () => Promise.reject(error),
+      notifyOnChangeProps: 'none',
+      throwOnError: true,
+      retry: false,
     })
-    const listener =
-      vi.fn<(result: QueryObserverResult<string, Error>) => void>()
-
+    const listener = vi.fn<(result: QueryObserverResult) => void>()
     const unsubscribe = observer.subscribe(listener)
-    listener.mockClear()
 
-    observer.refetch()
-    await vi.advanceTimersByTimeAsync(10)
-    expect(listener).not.toHaveBeenCalled()
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(listener).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ error }),
+    )
 
     unsubscribe()
   })
