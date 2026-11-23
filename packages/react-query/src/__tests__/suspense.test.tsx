@@ -82,7 +82,7 @@ describe('Suspense Timer Tests', () => {
     await firstPromise
   })
 
-  it('should keep the suspense promise stable after it settles', async () => {
+  it('should create a new suspense promise when fetching again after it settles', async () => {
     const key = createKey()
     const options = queryClient.defaultQueryOptions({
       queryKey: key,
@@ -111,10 +111,12 @@ describe('Suspense Timer Tests', () => {
       observer,
       errorResetBoundary,
       observer.getCurrentQuery(),
-      false,
     )
 
-    expect(secondPromise).toBe(firstPromise)
+    expect(secondPromise).not.toBe(firstPromise)
+
+    await vi.advanceTimersByTimeAsync(10)
+    await secondPromise
   })
 
   it('should enforce minimum staleTime of 1000ms when using suspense with number', async () => {
