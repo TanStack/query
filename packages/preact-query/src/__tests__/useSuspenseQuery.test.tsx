@@ -993,6 +993,36 @@ describe('useSuspenseQuery', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
+  it('should throw a cached error without data when queryFn is skipToken', async () => {
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
+    const queryKey = createKey()
+    const error = new Error('query failed')
+
+    await expect(
+      queryClient.query({
+        queryKey,
+        queryFn: () => Promise.reject(error),
+        retry: false,
+      }),
+    ).rejects.toBe(error)
+
+    function Page() {
+      useSuspenseQuery({ queryKey, queryFn: skipToken })
+      return <div>page</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <Suspense fallback="loading">
+          <Page />
+        </Suspense>
+      </ErrorBoundary>,
+    )
+
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+  })
+
   it('should observe cached data while queryFn is skipToken', async () => {
     const key = createKey()
     queryClient.setQueryData(key, 'cached')
