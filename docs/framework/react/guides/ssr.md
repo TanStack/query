@@ -598,7 +598,7 @@ const queryClient = new QueryClient({
 
 Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. Short finite values have the same risk: a prefetched query that finishes early can be removed once its `gcTime` passes, while a slower query is still being prefetched and before `dehydrate` runs. Keep `Infinity` on the server where you can.
 
-If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client and all of its queries have settled, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending timer. A fetch that is still in flight when you call `clear()` schedules a new timer once it settles, so wait for pending fetches to settle first.
+If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending fetch and garbage collection timer.
 
 ### Caveat for Next.js rewrites
 
