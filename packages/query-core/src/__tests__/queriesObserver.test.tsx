@@ -1007,24 +1007,18 @@ describe('queriesObserver', () => {
   })
 
   it.each(['all', 'none'] as const)(
-    'skips property tracking with notifyOnChangeProps set to %s',
+    'returns the unwrapped result with notifyOnChangeProps set to %s',
     (notifyOnChangeProps) => {
-      const key = createKey()
-      const queryFn = vi.fn<() => number>().mockReturnValue(1)
+      const queries = [
+        { queryKey: createKey(), queryFn: () => 1, notifyOnChangeProps },
+      ]
+      const observer = new QueriesObserver(queryClient, queries)
+      const reader = observer.createResultReader(queries)
+      const snapshot = reader.getSnapshot()
+      const results = reader.combineResult(snapshot)
 
-      const observer = new QueriesObserver(queryClient, [
-        { queryKey: key, queryFn, notifyOnChangeProps },
-      ])
-
-      const trackResultSpy = vi.spyOn(QueryObserver.prototype, 'trackResult')
-
-      const reader = observer.createResultReader([
-        { queryKey: key, queryFn, notifyOnChangeProps },
-      ])
-      const trackedResults = reader.combineResult(reader.getSnapshot())
-
-      expect(trackedResults).toHaveLength(1)
-      expect(trackResultSpy).not.toHaveBeenCalled()
+      expect(results).toHaveLength(1)
+      expect(results[0]).toBe(snapshot[0])
     },
   )
 

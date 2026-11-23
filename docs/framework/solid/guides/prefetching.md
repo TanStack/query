@@ -56,7 +56,6 @@ function Article(props) {
   useQuery(() => ({
     queryKey: ['article-comments', props.id],
     queryFn: getArticleCommentsById,
-    // Let the query fetch without notifying this component of result changes.
     notifyOnChangeProps: 'none',
   }))
 

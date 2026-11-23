@@ -171,7 +171,6 @@ function Article({ id }) {
   useQuery({
     queryKey: ['article-comments', id],
     queryFn: getArticleCommentsById,
-    // Let the query fetch without notifying this component of result changes.
     notifyOnChangeProps: 'none',
   })
 
