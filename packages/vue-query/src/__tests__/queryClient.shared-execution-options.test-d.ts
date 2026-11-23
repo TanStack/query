@@ -18,7 +18,9 @@ describe('shared query options', () => {
       select: (data) => data.length,
     }
 
-    expectTypeOf(queryClient.query(options)).toEqualTypeOf<Promise<number>>()
+    expectTypeOf(queryClient.query(options)).toEqualTypeOf<
+      Promise<number | undefined>
+    >()
   })
 
   it('should accept annotated options in a root ref', () => {
@@ -28,7 +30,9 @@ describe('shared query options', () => {
       queryFn: () => Promise.resolve('value'),
     })
 
-    expectTypeOf(queryClient.query(options)).toEqualTypeOf<Promise<string>>()
+    expectTypeOf(queryClient.query(options)).toEqualTypeOf<
+      Promise<string | undefined>
+    >()
   })
 
   it('should preserve explicit generic arguments', () => {
@@ -41,7 +45,7 @@ describe('shared query options', () => {
 
     expectTypeOf(
       queryClient.query<string, Error, number, string, ['key'], never>(options),
-    ).toEqualTypeOf<Promise<number>>()
+    ).toEqualTypeOf<Promise<number | undefined>>()
   })
 
   it('should retain mutable extracted skipToken options', () => {
@@ -53,7 +57,7 @@ describe('shared query options', () => {
     queryOptions(options)
 
     expectTypeOf(queryClient.query(sharedOptions)).toEqualTypeOf<
-      Promise<number>
+      Promise<number | undefined>
     >()
   })
 })

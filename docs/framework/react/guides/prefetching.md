@@ -25,6 +25,12 @@ Prefetching a query uses the `query` method. This method by default will
 - Return the result of that query
 - Throw if it hits any errors
 
+To read the cache without fetching, pass `skipToken` as `queryFn` to `query`
+or `infiniteQuery`. The call returns existing data even if it is stale.
+If the cache has no data for the key, the call returns `undefined` without
+creating a cache entry. If you supply `select`, it runs only when cached
+data exists.
+
 For prefetching you often want to modify these defaults:
 
 - Out of the box, `query` uses the default `staleTime` configured for the `queryClient` to determine whether existing data in the cache is fresh or needs to be fetched again

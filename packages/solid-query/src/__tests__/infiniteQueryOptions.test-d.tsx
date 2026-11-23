@@ -29,7 +29,9 @@ describe('infiniteQueryOptions', () => {
 
     const data = await new QueryClient().infiniteQuery(options)
 
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<{ wow: boolean }, number>>()
+    expectTypeOf(data).toEqualTypeOf<
+      InfiniteData<{ wow: boolean }, number> | undefined
+    >()
   })
 
   it('should work when passed to infiniteQuery with select', async () => {
@@ -43,7 +45,7 @@ describe('infiniteQueryOptions', () => {
 
     const data = await new QueryClient().infiniteQuery(options)
 
-    expectTypeOf(data).toEqualTypeOf<Array<{ wow: boolean }>>()
+    expectTypeOf(data).toEqualTypeOf<Array<{ wow: boolean }> | undefined>()
   })
 
   it('should work when passed to infiniteQuery with enabled: false', async () => {
@@ -57,7 +59,9 @@ describe('infiniteQueryOptions', () => {
 
     const data = await new QueryClient().infiniteQuery(options)
 
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<{ wow: boolean }, number>>()
+    expectTypeOf(data).toEqualTypeOf<
+      InfiniteData<{ wow: boolean }, number> | undefined
+    >()
   })
 
   it('should work when passed to infiniteQuery with skipToken', async () => {
@@ -70,7 +74,9 @@ describe('infiniteQueryOptions', () => {
 
     const data = await new QueryClient().infiniteQuery(options)
 
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
+    expectTypeOf(data).toEqualTypeOf<
+      InfiniteData<unknown, number> | undefined
+    >()
   })
 
   it('should infer defined types', () => {

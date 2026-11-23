@@ -39,6 +39,10 @@ import type {
 } from './types'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
 
+type WithoutSkipToken<T extends { queryFn?: unknown }> = Omit<T, 'queryFn'> & {
+  queryFn?: Exclude<T['queryFn'], typeof skipToken>
+}
+
 // TYPES
 
 interface QueryDefaults {
@@ -538,6 +542,9 @@ export class QueryClient {
    * `refetchOnWindowFocus`, `refetchOnReconnect`, `refetchOnMount`, `retryOnMount`,
    * `notifyOnChangeProps`, `throwOnError`, `suspense`, and `placeholderData` are not part of this
    * method's options.
+   * An explicit `queryFn: skipToken` reads existing cached data regardless of freshness and applies
+   * `select` if data exists. On a cache miss, it resolves to `undefined` without creating a query.
+   * It does not start or wait for a fetch.
    * @param options - The query options, including the `queryKey` and the `queryFn` used if the
    * query needs to fetch.
    * @returns A promise that resolves to the data, or to the result of `select` if provided. It
@@ -551,6 +558,42 @@ export class QueryClient {
    * }
    * ```
    */
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: WithoutSkipToken<
+      QueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<TData>
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: QueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<TData | undefined>
   async query<
     TQueryFnData,
     TError = DefaultError,
@@ -567,8 +610,21 @@ export class QueryClient {
       TQueryKey,
       TPageParam
     >,
-  ): Promise<TData> {
+  ): Promise<TData | undefined> {
     const defaultedOptions = this.defaultQueryOptions(options)
+
+    if (options.queryFn === skipToken) {
+      const data = this.#queryCache.get<
+        TQueryFnData,
+        TError,
+        TQueryData,
+        TQueryKey
+      >(defaultedOptions.queryHash)?.state.data
+      if (data === undefined) return undefined
+      return defaultedOptions.select
+        ? defaultedOptions.select(data)
+        : (data as unknown as TData)
+    }
 
     // https://github.com/tannerlinsley/react-query/issues/652
     if (defaultedOptions.retry === undefined) {
@@ -601,6 +657,8 @@ export class QueryClient {
    * Requires `initialPageParam` and `getNextPageParam`. Use `pages` to specify how many
    * pages to fetch. If you omit `pages`, the client fetches up to the number of cached
    * pages, or one page if the cache has no pages.
+   * An explicit `queryFn: skipToken` reads existing cached pages regardless of freshness. It
+   * resolves to `undefined` if the cache has no data for the query.
    * @param options - The query to fetch and the options that control which pages to fetch.
    * @returns A promise that resolves to the {@link InfiniteData}, or to the result of `select` if
    * provided. It rejects with the error from the fetch or from `select`.
@@ -626,6 +684,27 @@ export class QueryClient {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
+    options: WithoutSkipToken<
+      InfiniteQueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  >
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
     options: InfiniteQueryExecuteOptions<
       TQueryFnData,
       TError,
@@ -634,12 +713,32 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<
-    Array<TData> extends Array<InfiniteData<TQueryFnData>>
-      ? InfiniteData<TQueryFnData, TPageParam>
-      : TData
+    | undefined
+    | (Array<TData> extends Array<InfiniteData<TQueryFnData>>
+        ? InfiniteData<TQueryFnData, TPageParam>
+        : TData)
+  >
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: InfiniteQueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<
+    | undefined
+    | (Array<TData> extends Array<InfiniteData<TQueryFnData>>
+        ? InfiniteData<TQueryFnData, TPageParam>
+        : TData)
   > {
-    options._type = 'infinite'
-    return this.query(options as any)
+    return this.query({ ...options, _type: 'infinite' } as any)
   }
 
   /**

@@ -94,14 +94,15 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<number>()
   })
 
-  it('should work when passed to query with skipToken', async () => {
+  it('should allow undefined data when queryFn can be skipToken', async () => {
     const options = queryOptions({
       queryKey: ['key'],
-      queryFn: skipToken,
+      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+      select: (data) => data.toFixed(),
     })
 
     const data = await new QueryClient().query(options)
-    expectTypeOf(data).toEqualTypeOf<unknown>()
+    expectTypeOf(data).toEqualTypeOf<string | undefined>()
   })
 
   it('should work when passed to useQueries', () => {

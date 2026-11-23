@@ -122,7 +122,7 @@ describe('infiniteQueryOptions', () => {
       pages: 1,
     })
 
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number> | undefined>()
   })
 
   it('should work when passed to infiniteQuery with select', async () => {
@@ -140,7 +140,7 @@ describe('infiniteQueryOptions', () => {
       pages: 1,
     })
 
-    expectTypeOf(data).toEqualTypeOf<Array<string>>()
+    expectTypeOf(data).toEqualTypeOf<Array<string> | undefined>()
   })
 
   it('should tag the queryKey with the result type of the QueryFn', () => {

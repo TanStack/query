@@ -73,7 +73,7 @@ describe('queryOptions', () => {
     })
 
     const data = await new QueryClient().query(options)
-    expectTypeOf(data).toEqualTypeOf<number>()
+    expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
   it('should work when passed to query with select', async () => {
@@ -84,7 +84,7 @@ describe('queryOptions', () => {
     })
 
     const data = await new QueryClient().query(options)
-    expectTypeOf(data).toEqualTypeOf<string>()
+    expectTypeOf(data).toEqualTypeOf<string | undefined>()
   })
 
   it('should work when passed to query with enabled: false', async () => {
@@ -95,7 +95,7 @@ describe('queryOptions', () => {
     })
 
     const data = await new QueryClient().query(options)
-    expectTypeOf(data).toEqualTypeOf<number>()
+    expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
   it('should work when passed to query with skipToken', async () => {
@@ -279,7 +279,7 @@ describe('queryOptions', () => {
     const data2 = queryClient.query(options())
 
     expectTypeOf(data).toEqualTypeOf<Promise<void>>()
-    expectTypeOf(data2).toEqualTypeOf<Promise<number>>()
+    expectTypeOf(data2).toEqualTypeOf<Promise<number | undefined>>()
   })
 
   it('should always define TData when initialData is provided as a function which ALWAYS returns the data', () => {

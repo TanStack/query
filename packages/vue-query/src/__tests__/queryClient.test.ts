@@ -1,4 +1,7 @@
-import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
+import {
+  QueryClient as QueryClientOrigin,
+  skipToken,
+} from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref, unref } from 'vue'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
@@ -340,6 +343,17 @@ describe('QueryCache', () => {
   })
 
   describe('query', () => {
+    it('should read the cache when a ref holds skipToken', async () => {
+      const client = new QueryClient()
+      const queryKey = ['skipped', ref('key')]
+      const options = { queryKey, queryFn: ref(skipToken) }
+
+      await expect(client.query(options)).resolves.toBeUndefined()
+
+      client.setQueryData(['skipped', 'key'], 'cached')
+      await expect(client.query(options)).resolves.toBe('cached')
+    })
+
     it('should properly unwrap queryKey', () => {
       const queryClient = new QueryClient()
 
