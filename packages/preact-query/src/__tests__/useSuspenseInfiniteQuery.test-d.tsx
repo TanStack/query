@@ -1,4 +1,4 @@
-import { skipToken } from '@tanstack/query-core'
+import { keepPreviousData, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
@@ -46,19 +46,36 @@ describe('useSuspenseInfiniteQuery', () => {
     expectTypeOf(status).toEqualTypeOf<'error' | 'success'>()
   })
 
-  it('should not allow placeholderData, enabled or throwOnError props', () => {
-    assertType(
-      useSuspenseInfiniteQuery({
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve(5),
-        initialPageParam: 1,
-        getNextPageParam: () => 1,
-        // @ts-expect-error TS2345
-        placeholderData: 5,
-        enabled: true,
-      }),
-    )
+  it('should allow placeholderData', () => {
+    const query = useSuspenseInfiniteQuery({
+      queryKey: createKey(),
+      queryFn: () => Promise.resolve(5),
+      initialPageParam: 1,
+      getNextPageParam: () => 1,
+      placeholderData: keepPreviousData,
+    })
 
+    expectTypeOf(query.data).toEqualTypeOf<InfiniteData<number, unknown>>()
+    expectTypeOf(query.isPlaceholderData).toEqualTypeOf<boolean>()
+
+    const selected = useSuspenseInfiniteQuery({
+      queryKey: createKey(),
+      queryFn: () => Promise.resolve(5),
+      initialPageParam: 1,
+      getNextPageParam: () => 1,
+      placeholderData: (previousData) => {
+        expectTypeOf(previousData).toEqualTypeOf<
+          InfiniteData<number, number> | undefined
+        >()
+        return previousData ?? { pages: [0], pageParams: [1] }
+      },
+      select: (data) => data.pages.length,
+    })
+
+    expectTypeOf(selected.data).toEqualTypeOf<number>()
+  })
+
+  it('should not allow enabled or throwOnError props', () => {
     assertType(
       useSuspenseInfiniteQuery({
         queryKey: createKey(),
@@ -92,16 +109,5 @@ describe('useSuspenseInfiniteQuery', () => {
     const { data } = useSuspenseInfiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
-  })
-
-  it('should not return isPlaceholderData', () => {
-    const query = useSuspenseInfiniteQuery({
-      queryKey: createKey(),
-      queryFn: () => Promise.resolve(5),
-      initialPageParam: 1,
-      getNextPageParam: () => 1,
-    })
-
-    expectTypeOf(query).not.toHaveProperty('isPlaceholderData')
   })
 })

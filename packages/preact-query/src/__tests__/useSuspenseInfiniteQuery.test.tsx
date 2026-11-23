@@ -1,4 +1,5 @@
-import { createKey } from '@tanstack/query-test-utils'
+import { createKey, sleep } from '@tanstack/query-test-utils'
+import { act } from '@testing-library/preact'
 import { Suspense } from 'preact/compat'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
@@ -8,6 +9,7 @@ import {
   useSuspenseInfiniteQuery,
 } from '..'
 import { renderWithClient } from './utils'
+import type { InfiniteData, UseSuspenseInfiniteQueryResult } from '..'
 
 describe('useSuspenseInfiniteQuery', () => {
   let queryCache: QueryCache
@@ -20,6 +22,48 @@ describe('useSuspenseInfiniteQuery', () => {
 
   afterEach(() => {
     queryClient.clear()
+    vi.useRealTimers()
+  })
+
+  it('should use static placeholderData without suspending', async () => {
+    vi.useFakeTimers()
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<number>>(() => sleep(10).then(() => 1))
+    const states: Array<UseSuspenseInfiniteQueryResult<InfiniteData<number>>> =
+      []
+
+    function Page() {
+      const state = useSuspenseInfiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 1,
+        getNextPageParam: () => undefined,
+        placeholderData: { pages: [0], pageParams: [1] },
+      })
+
+      states.push(state)
+      return <div>data: {state.data.pages.join(',')}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>,
+    )
+
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('data: 0')).toBeInTheDocument()
+    expect(states.at(-1)?.isPlaceholderData).toBe(true)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(11)
+    })
+
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(states.at(-1)?.isPlaceholderData).toBe(false)
+    expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should log an error when skipToken is passed as queryFn', () => {

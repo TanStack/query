@@ -2,10 +2,40 @@ import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { skipToken, useSuspenseQueries } from '..'
 import { queryOptions } from '../queryOptions'
-import type { OmitKeyof } from '..'
+import type { OmitKeyof, SuspenseQueriesOptions } from '..'
 import type { UseQueryOptions, UseSuspenseQueryResult } from '../types'
 
 describe('UseSuspenseQueries config object overload', () => {
+  it('should allow placeholderData without previous query information', () => {
+    const queries: SuspenseQueriesOptions<[{ queryFnData: number }]> = [
+      {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve(5),
+        placeholderData: (previousData, previousQuery) => {
+          expectTypeOf(previousData).toEqualTypeOf<undefined>()
+          expectTypeOf(previousQuery).toEqualTypeOf<undefined>()
+          return 0
+        },
+      },
+    ]
+    const [query] = useSuspenseQueries({ queries })
+
+    expectTypeOf(query.data).toEqualTypeOf<number>()
+    expectTypeOf(query.isPlaceholderData).toEqualTypeOf<boolean>()
+
+    const selectedOptions = queryOptions({
+      queryKey: createKey(),
+      queryFn: () => Promise.resolve(5),
+      placeholderData: 0,
+      select: (data) => data.toString(),
+    })
+    const [selectedQuery] = useSuspenseQueries({
+      queries: [selectedOptions],
+    })
+
+    expectTypeOf(selectedQuery.data).toEqualTypeOf<string>()
+  })
+
   it('should always define TData', () => {
     const query1 = {
       queryKey: createKey(),
