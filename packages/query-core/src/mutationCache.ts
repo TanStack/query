@@ -127,7 +127,7 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
  */
 export class MutationCache extends Subscribable<MutationCacheListener> {
   #mutations: Set<Mutation<any, any, any, any>>
-  #scopes: Map<string, Array<Mutation<any, any, any, any>>>
+  #scopes: Map<string | undefined, Array<Mutation<any, any, any, any>>>
   #mutationId: number
 
   constructor(public config: MutationCacheConfig = {}) {
@@ -179,15 +179,12 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     if (this.#mutations.delete(mutation)) {
       mutation.destroy()
       const scope = scopeFor(mutation)
-      if (typeof scope === 'string') {
-        const scopedMutations = this.#scopes.get(scope)
-        if (scopedMutations) {
-          if (scopedMutations.length > 1) {
-            const index = scopedMutations.indexOf(mutation)
-            if (index !== -1) {
-              scopedMutations.splice(index, 1)
-            }
-          } else if (scopedMutations[0] === mutation) {
+      const scopedMutations = this.#scopes.get(scope)
+      if (scopedMutations) {
+        const index = scopedMutations.indexOf(mutation)
+        if (index !== -1) {
+          scopedMutations.splice(index, 1)
+          if (!scopedMutations.length) {
             this.#scopes.delete(scope)
           }
         }
@@ -217,20 +214,10 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * ahead of it.
    */
   canRun(mutation: Mutation<any, any, any, any>): boolean {
-    const scope = scopeFor(mutation)
-    if (typeof scope === 'string') {
-      const mutationsWithSameScope = this.#scopes.get(scope)
-      const firstPendingMutation = mutationsWithSameScope?.find(
-        (m) => m.state.status === 'pending',
-      )
-      // we can run if there is no current pending mutation (start use-case)
-      // or if WE are the first pending mutation (continue use-case)
-      return !firstPendingMutation || firstPendingMutation === mutation
-    } else {
-      // For unscoped mutations there are never any pending mutations in front of the
-      // current mutation
-      return true
-    }
+    const firstPendingMutation = this.#scopes
+      .get(scopeFor(mutation))
+      ?.find((mutation) => mutation.state.status === 'pending')
+    return !firstPendingMutation || firstPendingMutation === mutation
   }
 
   /**
@@ -241,16 +228,11 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * or immediately if there is none.
    */
   runNext(mutation: Mutation<any, any, any, any>): Promise<unknown> {
-    const scope = scopeFor(mutation)
-    if (typeof scope === 'string') {
-      const foundMutation = this.#scopes
-        .get(scope)
-        ?.find((m) => m !== mutation && m.state.isPaused)
+    const next = this.#scopes
+      .get(scopeFor(mutation))
+      ?.find((entry) => entry !== mutation && entry.state.isPaused)
 
-      return foundMutation?.continue() ?? Promise.resolve()
-    } else {
-      return Promise.resolve()
-    }
+    return next?.continue() ?? Promise.resolve()
   }
 
   /**
