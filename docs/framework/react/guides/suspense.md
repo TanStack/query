@@ -26,7 +26,7 @@ const { data } = useSuspenseQuery({ queryKey, queryFn })
 
 When `queryFn` cannot be `skipToken`, TypeScript gives `data` the type `TData`. Suspense and error boundaries handle loading and initial fetch errors.
 
-To skip a single Query, pass `skipToken` as its `queryFn`. A skipped Query can still read cached data. It does not fetch automatically or suspend. If `queryFn` can be `skipToken`, check `data` before using it because the cache can be empty.
+To skip a query in `useSuspenseQuery` or `useSuspenseInfiniteQuery`, pass `skipToken` as its `queryFn`. A skipped Query can still read cached data. It does not fetch automatically or suspend. If `queryFn` can be `skipToken`, check `data` before using it because the cache can be empty.
 
 ```tsx
 import { skipToken, useSuspenseQuery } from '@tanstack/react-query'

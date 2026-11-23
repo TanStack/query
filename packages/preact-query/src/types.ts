@@ -276,7 +276,7 @@ export interface UseSuspenseInfiniteQueryOptions<
   'queryFn' | 'enabled' | 'throwOnError'
 > {
   /**
-   * Pass a query function or `defaultQueryFn` to use the client defaults. Suspense hooks do not accept `skipToken`.
+   * The query function. Use `defaultQueryFn` to use the client defaults. Use the other overload when the function can be `skipToken`.
    */
   queryFn: Exclude<
     UseInfiniteQueryOptions<

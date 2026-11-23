@@ -17,22 +17,24 @@ describe('useSuspenseInfiniteQuery', () => {
     expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
   })
 
-  it('should not allow skipToken in queryFn', () => {
-    assertType(
-      useSuspenseInfiniteQuery({
-        queryKey: createKey(),
-        // @ts-expect-error
-        queryFn: skipToken,
-      }),
-    )
+  it('should allow undefined data when queryFn can be skipToken', () => {
+    const result = useSuspenseInfiniteQuery({
+      queryKey: createKey(),
+      queryFn:
+        Math.random() > 0.5
+          ? skipToken
+          : ({ pageParam }) => pageParam.toFixed(),
+      initialPageParam: 1,
+      getNextPageParam: () => undefined,
+      select: (data) => data.pages,
+    })
 
-    assertType(
-      useSuspenseInfiniteQuery({
-        queryKey: createKey(),
-        // @ts-expect-error
-        queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
-      }),
-    )
+    expectTypeOf(result.data).toEqualTypeOf<Array<string> | undefined>()
+    if (result.isSuccess) {
+      expectTypeOf(result.data).toEqualTypeOf<Array<string>>()
+    }
+    expectTypeOf(result.isPlaceholderData).toEqualTypeOf<boolean>()
+    expectTypeOf(result.fetchNextPage).toBeFunction()
   })
 
   it('should not have pending status', () => {
