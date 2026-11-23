@@ -1001,7 +1001,7 @@ describe('queryObserver', () => {
       queryFn: () => sleep(10).then(() => 'data'),
       notifyOnChangeProps: 'none',
     })
-    const listener = vi.fn()
+    const listener = vi.fn<(result: QueryObserverResult) => void>()
     const unsubscribe = observer.subscribe(listener)
 
     await vi.advanceTimersByTimeAsync(10)
@@ -1022,7 +1022,7 @@ describe('queryObserver', () => {
       throwOnError: true,
       retry: false,
     })
-    const listener = vi.fn()
+    const listener = vi.fn<(result: QueryObserverResult) => void>()
     const unsubscribe = observer.subscribe(listener)
 
     await vi.advanceTimersByTimeAsync(0)
