@@ -352,11 +352,7 @@ export type QueryMeta = Register extends {
 export type NetworkMode = 'online' | 'always' | 'offlineFirst'
 
 /** @inline */
-export type NotifyOnChangeProps =
-  | Array<keyof InfiniteQueryObserverResult>
-  | 'all'
-  | undefined
-  | (() => Array<keyof InfiniteQueryObserverResult> | 'all' | undefined)
+export type NotifyOnChangeProps = 'all' | 'none'
 
 /**
  * The options of a query itself — its `queryKey`, `queryFn`, retries, `gcTime`, `initialData`,
@@ -617,13 +613,13 @@ export interface QueryObserverOptionsBase<
    */
   retryOnMount?: QueryBooleanOption<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
-   * If set, the component will only re-render if any of the listed properties change.
-   * When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change.
-   * When set to `'all'`, the component will re-render whenever a query is updated.
-   * When set to a function, the function will be executed to compute the list of properties.
+   * Controls when changes to the query result notify this observer's listeners.
+   * Use `'all'` to notify on every result change.
+   * Use `'none'` to suppress notifications while the query remains subscribed and can fetch.
+   * If `throwOnError` is set, changes to `error` still notify listeners.
    *
-   * Defaults to `undefined`, in which case property access is tracked automatically, and the
-   * component only re-renders when one of the tracked properties changes.
+   * By default, adapters that track property reads notify listeners when a tracked property changes.
+   * If no properties are tracked, every result change notifies listeners.
    */
   notifyOnChangeProps?: NotifyOnChangeProps
   /**

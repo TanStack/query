@@ -38,7 +38,7 @@ When [typed linting](https://typescript-eslint.io/getting-started/typed-linting/
 
 ## When Not To Use It
 
-If you set the `notifyOnChangeProps` options manually, you can disable this rule.
+If you set `notifyOnChangeProps` to `'all'` or `'none'`, Query skips property tracking and you can disable this rule.
 Since you are not using tracked queries, you are responsible for specifying which props should trigger a re-render.
 
 ## Attributes

@@ -16,9 +16,9 @@ describe('queryOptions', () => {
     const options: CreateQueryOptions = {
       queryKey: ['key'],
       // @ts-expect-error Angular Query always subscribes to every result change.
-      notifyOnChangeProps: ['data'],
+      notifyOnChangeProps: 'none',
     }
 
-    expect(options).toHaveProperty('notifyOnChangeProps', ['data'])
+    expect(options).toHaveProperty('notifyOnChangeProps', 'none')
   })
 })
