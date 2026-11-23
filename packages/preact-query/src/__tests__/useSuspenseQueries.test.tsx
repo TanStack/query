@@ -704,20 +704,24 @@ describe('useSuspenseQueries', () => {
     expect(queryFnCount).toBe(2)
   })
 
-  it('should still suspense if queryClient has placeholderData config', async () => {
+  it('should render placeholderData from queryClient defaults', async () => {
     const key = createKey()
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
-          placeholderData: (previousData: any) => previousData,
+          placeholderData: 'preview',
         },
       },
     })
 
     function Page({ count, isPending }: { count: number; isPending: boolean }) {
-      const { data } = useSuspenseQuery({
-        queryKey: [key, count],
-        queryFn: () => sleep(10).then(() => `data${count}`),
+      const [{ data }] = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: [key, count],
+            queryFn: () => sleep(10).then(() => `data${count}`),
+          },
+        ],
       })
 
       return (
@@ -745,14 +749,16 @@ describe('useSuspenseQueries', () => {
 
     const rendered = renderWithClient(queryClientWithPlaceholder, <TestApp />)
 
-    expect(rendered.getByText('loading')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('preview')).toBeInTheDocument()
     await act(async () => {
       await vi.advanceTimersByTimeAsync(10)
     })
     expect(rendered.getByText('data0')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByText('inc'))
-    expect(rendered.getByText('loading')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('preview')).toBeInTheDocument()
     await act(async () => {
       await vi.advanceTimersByTimeAsync(10)
     })

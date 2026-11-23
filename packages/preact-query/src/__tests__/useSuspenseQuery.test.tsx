@@ -42,6 +42,59 @@ describe('useSuspenseQuery', () => {
    * so, instead of state change reacting and updating (and also losing the state)
    * we abstract out the suspense
    */
+  it('should use cache-derived placeholderData without suspending', async () => {
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<{ id: number; text: string }>>(() =>
+      sleep(10).then(() => ({ id: 1, text: 'full' })),
+    )
+    const states: Array<UseSuspenseQueryResult<{ id: number; text: string }>> =
+      []
+
+    queryClient.setQueryData([...key, 'list'], [{ id: 1, text: 'preview' }])
+
+    function Page() {
+      const state = useSuspenseQuery({
+        queryKey: [...key, 'detail', 1],
+        queryFn,
+        placeholderData: () =>
+          queryClient
+            .getQueryData<Array<{ id: number; text: string }>>([...key, 'list'])
+            ?.find((item) => item.id === 1),
+      })
+
+      states.push(state)
+      return <div>data: {state.data.text}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>,
+    )
+
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('data: preview')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(states.at(-1)).toMatchObject({
+      isPlaceholderData: true,
+      isFetching: true,
+      status: 'success',
+    })
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(11)
+    })
+
+    expect(rendered.getByText('data: full')).toBeInTheDocument()
+    expect(states.at(-1)).toMatchObject({
+      isPlaceholderData: false,
+      isFetching: false,
+      status: 'success',
+    })
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
   it('should render correctly when state is lifted above Suspense', async () => {
     const states: Array<UseSuspenseQueryResult<number>> = []
 
@@ -841,7 +894,7 @@ describe('useSuspenseQuery', () => {
     expect(rendered.getByText('rendered data error')).toBeInTheDocument()
   })
 
-  it('should still suspense if queryClient has placeholderData config', async () => {
+  it('should render placeholderData from queryClient defaults', async () => {
     const key = createKey()
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
@@ -889,7 +942,9 @@ describe('useSuspenseQuery', () => {
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
-    expect(rendered.getByText('loading')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(states.at(-1)?.isPlaceholderData).toBe(true)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
   })
