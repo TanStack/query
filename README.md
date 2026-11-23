@@ -69,15 +69,6 @@ An async state management library built to simplify fetching, caching, synchroni
 <table align="center">
   <tr>
     <td>
-      <a href="https://www.coderabbit.ai/?via=tanstack&dub_id=aCcEEdAOqqutX6OS" >
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/TanStack/tanstack.com/main/src/images/coderabbit-dark.svg" />
-          <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/TanStack/tanstack.com/main/src/images/coderabbit-light.svg" />
-          <img src="https://raw.githubusercontent.com/TanStack/tanstack.com/main/src/images/coderabbit-light.svg" height="40" alt="CodeRabbit" />
-        </picture>
-      </a>
-    </td>
-    <td>
       <a href="https://www.cloudflare.com?utm_source=tanstack">
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/TanStack/tanstack.com/main/src/images/cloudflare-white.svg" />
