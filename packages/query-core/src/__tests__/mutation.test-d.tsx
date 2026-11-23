@@ -180,7 +180,6 @@ describe('mutation', () => {
         | 'removeObserver'
         | 'continue'
         | 'execute'
-        | 'gcTime'
         | 'destroy'
       >()
     })
@@ -339,7 +338,7 @@ describe('mutation', () => {
     })
 
     describe('removeObserver', () => {
-      it('should take a single observer and return nothing', () => {
+      it('should take an observer and a gcTime and return nothing', () => {
         const mutation = Mutation.build<
           { value: string },
           CustomError,
@@ -352,7 +351,7 @@ describe('mutation', () => {
 
         expectTypeOf(mutation.removeObserver).returns.toEqualTypeOf<void>()
         expectTypeOf(mutation.removeObserver).parameters.toEqualTypeOf<
-          [MutationObserver<any, any, any, any>]
+          [MutationObserver<any, any, any, any>, number | undefined]
         >()
       })
     })
@@ -407,22 +406,6 @@ describe('mutation', () => {
         mutation.execute('1')
 
         expectTypeOf(mutation.execute).parameter(0).toEqualTypeOf<number>()
-      })
-    })
-
-    describe('gcTime', () => {
-      it('should be a number inherited from Removable', () => {
-        const mutation = Mutation.build<
-          { value: string },
-          CustomError,
-          number,
-          string
-        >(new QueryClient(), {
-          mutationFn: (variables: number) =>
-            Promise.resolve({ value: String(variables) }),
-        })
-
-        expectTypeOf(mutation.gcTime).toEqualTypeOf<number>()
       })
     })
 

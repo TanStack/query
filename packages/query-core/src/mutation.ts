@@ -189,11 +189,11 @@ export class Mutation<
     this.state = config.state || getDefaultState()
 
     this.setOptions(config.options)
-    this.scheduleGc()
+    this.scheduleGc(this.options.gcTime)
   }
 
   /**
-   * Replaces the mutation's options and applies their `gcTime`.
+   * Replaces the mutation's options.
    * @internal
    * @param options - The new mutation options.
    */
@@ -201,8 +201,6 @@ export class Mutation<
     options: MutationOptions<TData, TError, TVariables, TOnMutateResult>,
   ): void {
     this.options = options
-
-    this.updateGcTime(this.options.gcTime)
   }
 
   /**
@@ -237,12 +235,18 @@ export class Mutation<
   /**
    * Unsubscribes an observer from the mutation.
    * @internal
-   * @param observer - The observer to remove. Garbage collection is scheduled afterwards.
+   * @param observer - The observer to remove. Garbage collection is scheduled afterwards, with
+   * `gcTime`.
+   * @param gcTime - The `gcTime` to record: the observer's current one, or, when it changes its
+   * mutation key, the one it used for this mutation.
    */
-  removeObserver(observer: MutationObserver<any, any, any, any>): void {
+  removeObserver(
+    observer: MutationObserver<any, any, any, any>,
+    gcTime: number | undefined,
+  ): void {
     this.#observers = this.#observers.filter((x) => x !== observer)
 
-    this.scheduleGc()
+    this.scheduleGc(gcTime)
 
     this.#mutationCache.notify({
       type: 'observerRemoved',
@@ -254,7 +258,7 @@ export class Mutation<
   protected override optionalRemove() {
     if (!this.#observers.length) {
       if (this.state.status === 'pending') {
-        this.scheduleGc()
+        this.scheduleGc(this.options.gcTime)
       } else {
         this.#mutationCache.remove(this)
       }

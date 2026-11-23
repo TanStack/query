@@ -236,7 +236,7 @@ export class QueryObserver<
     this.listeners = new Set()
     this.#clearStaleTimeout()
     this.#clearRefetchInterval()
-    this.#currentQuery.removeObserver(this)
+    this.#currentQuery.removeObserver(this, this.options.gcTime)
   }
 
   /**
@@ -281,7 +281,7 @@ export class QueryObserver<
       )
     }
 
-    this.#updateQuery()
+    this.#updateQuery(prevOptions.gcTime)
     this.#currentQuery.setOptions(this.options)
 
     if (
@@ -573,7 +573,7 @@ export class QueryObserver<
     fetchOptions?: Omit<ObserverFetchOptions, 'initialPromise'>,
   ): Promise<TQueryData | undefined> {
     // Make sure we reference the latest query as the current one might have been removed
-    this.#updateQuery()
+    this.#updateQuery(this.options.gcTime)
 
     // Fetch
     let promise: Promise<TQueryData | undefined> = this.#currentQuery.fetch(
@@ -946,7 +946,12 @@ export class QueryObserver<
     })
   }
 
-  #updateQuery(): void {
+  /**
+   * Switches to the query for the current options, if it changed.
+   * @param prevGcTime - The `gcTime` this observer used for the previous query, recorded when it
+   * leaves it.
+   */
+  #updateQuery(prevGcTime: number | undefined): void {
     const query = this.#client.getQueryCache().build(this.#client, this.options)
 
     if (query === this.#currentQuery) {
@@ -960,7 +965,7 @@ export class QueryObserver<
     this.#currentQueryInitialState = query.state
 
     if (this.hasListeners()) {
-      prevQuery?.removeObserver(this)
+      prevQuery?.removeObserver(this, prevGcTime)
       query.addObserver(this)
     }
   }

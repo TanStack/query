@@ -68,6 +68,53 @@ describe('mutationObserver', () => {
     expect(queryClient.getMutationCache().findAll()).toHaveLength(0)
   })
 
+  it('should record the gcTime it used for a mutation when its mutation key changes', async () => {
+    const observer = new MutationObserver(queryClient, {
+      mutationKey: createKey(),
+      mutationFn: (text: string) => sleep(5).then(() => text),
+      gcTime: 1000,
+    })
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    observer.mutate('input')
+    await vi.advanceTimersByTimeAsync(5)
+    expect(queryClient.getMutationCache().findAll()).toHaveLength(1)
+
+    observer.setOptions({
+      mutationKey: createKey(),
+      mutationFn: (text: string) => sleep(5).then(() => text),
+      gcTime: Infinity,
+    })
+
+    await vi.advanceTimersByTimeAsync(999)
+    expect(queryClient.getMutationCache().findAll()).toHaveLength(1)
+
+    // Removed after the old key's gcTime, not kept forever with the new key's
+    await vi.advanceTimersByTimeAsync(1)
+    expect(queryClient.getMutationCache().findAll()).toHaveLength(0)
+
+    unsubscribe()
+  })
+
+  it('should keep a pending mutation until it settles and its gcTime has passed', async () => {
+    const observer = new MutationObserver(queryClient, {
+      mutationFn: (text: string) => sleep(45).then(() => text),
+      gcTime: 10,
+    })
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    observer.mutate('input')
+    unsubscribe()
+
+    // Still pending when its gc timer fires at 10, 20, 30 and 40ms, so it is
+    // rescheduled each time; it settles at 45ms
+    await vi.advanceTimersByTimeAsync(49)
+    expect(queryClient.getMutationCache().findAll()).toHaveLength(1)
+
+    await vi.advanceTimersByTimeAsync(1)
+    expect(queryClient.getMutationCache().findAll()).toHaveLength(0)
+  })
+
   it('should reattach the observer to the in-flight mutation when resubscribing', async () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: (text: string) => sleep(20).then(() => text),

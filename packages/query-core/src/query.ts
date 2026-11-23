@@ -314,7 +314,7 @@ export class Query<
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
     this.state = config.state ?? this.#initialState
-    this.scheduleGc()
+    this.scheduleGc(this.options.gcTime)
   }
   /**
    * The `meta` object passed in the query's options, if any.
@@ -343,7 +343,7 @@ export class Query<
   }
 
   /**
-   * Replaces the query's options and applies their `gcTime`. If the query has no data yet, it gets
+   * Replaces the query's options. If the query has no data yet, it gets
    * the `initialData` from the new options, if any.
    * @internal
    * @param options - The new query options, merged on top of the query's default options.
@@ -356,8 +356,6 @@ export class Query<
     if (options?._type) {
       this.#queryType = options._type
     }
-
-    this.updateGcTime(this.options.gcTime)
 
     // oxlint-disable-next-line typescript/no-unnecessary-condition -- the constructor calls 'setOptions' before it assigns 'state'
     if (this.state && this.state.data === undefined) {
@@ -627,11 +625,16 @@ export class Query<
   /**
    * Unsubscribes an observer from the query.
    * @internal
-   * @param observer - The observer to remove. When the last observer is removed, the in-flight
-   * fetch is cancelled if its abort signal was consumed (otherwise only its retries are stopped),
-   * and garbage collection is scheduled.
+   * @param observer - The observer to remove. The `gcTime` argument is recorded as a removal time. When the
+   * last observer is removed, the in-flight fetch is cancelled if its abort signal was consumed
+   * (otherwise only its retries are stopped), and garbage collection is scheduled.
+   * @param gcTime - The `gcTime` to record: the observer's current one, or, when it is switching to
+   * another query, the one it used for this query.
    */
-  removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
+  removeObserver(
+    observer: QueryObserver<any, any, any, any, any>,
+    gcTime: number | undefined,
+  ): void {
     const index = this.observers.indexOf(observer)
     if (index !== -1) {
       this.observers.splice(index, 1)
@@ -651,7 +654,9 @@ export class Query<
           }
         }
 
-        this.scheduleGc()
+        this.scheduleGc(gcTime)
+      } else {
+        this.updateGcTimestamp(gcTime)
       }
 
       this.#cache.notify({ type: 'observerRemoved', query: this, observer })
@@ -914,8 +919,9 @@ export class Query<
           this.#retryer = undefined
           this.#fetchPromise = undefined
         }
-        // Schedule query gc after fetching
-        this.scheduleGc()
+        // Schedule query gc after fetching, with the gcTime this fetch was started with: an
+        // observer may have replaced the query's options while it was running
+        this.scheduleGc(context.options.gcTime)
       }
     })()
     this.#fetchPromise = fetchPromise

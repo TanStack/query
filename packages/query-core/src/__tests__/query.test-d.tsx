@@ -812,7 +812,7 @@ describe('query', () => {
   })
 
   describe('removeObserver', () => {
-    it('should take a single observer and return void', () => {
+    it('should take an observer and a gcTime and return void', () => {
       const query = queryClient
         .getQueryCache()
         .build<{ value: string }, CustomError>(queryClient, {
@@ -821,7 +821,10 @@ describe('query', () => {
         })
 
       expectTypeOf(query.removeObserver).parameters.toEqualTypeOf<
-        [observer: QueryObserver<any, any, any, any, any>]
+        [
+          observer: QueryObserver<any, any, any, any, any>,
+          gcTime: number | undefined,
+        ]
       >()
       expectTypeOf(query.removeObserver).returns.toEqualTypeOf<void>()
     })
@@ -952,7 +955,6 @@ describe('query', () => {
         | 'promise'
         | 'queryType'
         | 'resetState'
-        | 'gcTime'
         | 'setOptions'
         | 'setData'
         | 'setState'
