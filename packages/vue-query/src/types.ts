@@ -1,4 +1,5 @@
 import type {
+  DefaultOptions as CoreDefaultOptions,
   DefaultError,
   DehydrateOptions,
   HydrateOptions,
@@ -6,7 +7,6 @@ import type {
   MutationObserverOptions,
   OmitKeyof,
   QueryCache,
-  QueryObserverOptions,
 } from '@tanstack/query-core'
 import type { ComputedRef, Ref, UnwrapRef } from 'vue'
 
@@ -118,8 +118,7 @@ export interface DefaultOptions<TError = DefaultError> {
    * Default options applied to every query, unless overridden per-query. Also accepts the
    * `shallow` option.
    */
-  queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'> &
-    ShallowOption
+  queries?: CoreDefaultOptions<TError>['queries'] & ShallowOption
   /**
    * Default options applied to every mutation, unless overridden per-mutation. Also accepts the
    * `shallow` option.

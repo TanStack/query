@@ -127,7 +127,7 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
  */
 export class MutationCache extends Subscribable<MutationCacheListener> {
   #mutations: Set<Mutation<any, any, any, any>>
-  #scopes: Map<string, Array<Mutation<any, any, any, any>>>
+  #scopes: Map<string | undefined, Array<Mutation<any, any, any, any>>>
   #mutationId: number
 
   constructor(public config: MutationCacheConfig = {}) {
@@ -171,22 +171,20 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   /**
-   * Removes a mutation from the cache.
+   * Removes a mutation from the cache and clears its garbage collection timer.
    * @internal
    * @param mutation - The mutation to remove, also from its scope's queue.
    */
   remove(mutation: Mutation<any, any, any, any>): void {
     if (this.#mutations.delete(mutation)) {
+      mutation.destroy()
       const scope = scopeFor(mutation)
-      if (typeof scope === 'string') {
-        const scopedMutations = this.#scopes.get(scope)
-        if (scopedMutations) {
-          if (scopedMutations.length > 1) {
-            const index = scopedMutations.indexOf(mutation)
-            if (index !== -1) {
-              scopedMutations.splice(index, 1)
-            }
-          } else if (scopedMutations[0] === mutation) {
+      const scopedMutations = this.#scopes.get(scope)
+      if (scopedMutations) {
+        const index = scopedMutations.indexOf(mutation)
+        if (index !== -1) {
+          scopedMutations.splice(index, 1)
+          if (!scopedMutations.length) {
             this.#scopes.delete(scope)
           }
         }
@@ -199,6 +197,16 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   /**
+   * Checks whether this cache still holds the given mutation.
+   * @internal
+   * @param mutation - The mutation to check.
+   * @returns Whether the mutation is in the cache.
+   */
+  has(mutation: Mutation<any, any, any, any>): boolean {
+    return this.#mutations.has(mutation)
+  }
+
+  /**
    * Checks whether a mutation can run now, given the other mutations in its `scope`.
    * @internal
    * @param mutation - The mutation to check.
@@ -206,20 +214,10 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * ahead of it.
    */
   canRun(mutation: Mutation<any, any, any, any>): boolean {
-    const scope = scopeFor(mutation)
-    if (typeof scope === 'string') {
-      const mutationsWithSameScope = this.#scopes.get(scope)
-      const firstPendingMutation = mutationsWithSameScope?.find(
-        (m) => m.state.status === 'pending',
-      )
-      // we can run if there is no current pending mutation (start use-case)
-      // or if WE are the first pending mutation (continue use-case)
-      return !firstPendingMutation || firstPendingMutation === mutation
-    } else {
-      // For unscoped mutations there are never any pending mutations in front of the
-      // current mutation
-      return true
-    }
+    const firstPendingMutation = this.#scopes
+      .get(scopeFor(mutation))
+      ?.find((mutation) => mutation.state.status === 'pending')
+    return !firstPendingMutation || firstPendingMutation === mutation
   }
 
   /**
@@ -230,20 +228,16 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * or immediately if there is none.
    */
   runNext(mutation: Mutation<any, any, any, any>): Promise<unknown> {
-    const scope = scopeFor(mutation)
-    if (typeof scope === 'string') {
-      const foundMutation = this.#scopes
-        .get(scope)
-        ?.find((m) => m !== mutation && m.state.isPaused)
+    const next = this.#scopes
+      .get(scopeFor(mutation))
+      ?.find((entry) => entry !== mutation && entry.state.isPaused)
 
-      return foundMutation?.continue() ?? Promise.resolve()
-    } else {
-      return Promise.resolve()
-    }
+    return next?.continue() ?? Promise.resolve()
   }
 
   /**
-   * Removes all mutations from the cache.
+   * Removes all mutations and clears their garbage collection timers.
+   * Mutations that are already running continue to execute.
    * @example
    * ```ts
    * const mutationCache = queryClient.getMutationCache()
@@ -256,6 +250,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       const mutations = this.getAll()
       this.#mutations.clear()
       this.#scopes.clear()
+      mutations.forEach((mutation) => mutation.destroy())
       mutations.forEach((mutation) => {
         this.notify({ type: 'removed', mutation })
       })

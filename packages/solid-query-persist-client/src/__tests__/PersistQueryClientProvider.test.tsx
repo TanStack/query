@@ -1,7 +1,13 @@
 import { render, screen } from '@solidjs/testing-library'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, noop, useQueries, useQuery } from '@tanstack/solid-query'
+import {
+  QueryClient,
+  defaultQueryFn,
+  noop,
+  useQueries,
+  useQuery,
+} from '@tanstack/solid-query'
 import { createEffect, createSignal, onMount } from 'solid-js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
@@ -563,7 +569,7 @@ describe('PersistQueryClientProvider', () => {
     }
 
     function Page() {
-      const state = useQuery(() => ({ queryKey: key }))
+      const state = useQuery(() => ({ queryKey: key, queryFn: defaultQueryFn }))
 
       createEffect(() =>
         states.push({

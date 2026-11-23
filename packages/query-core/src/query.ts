@@ -431,15 +431,15 @@ export class Query<
   }
 
   /**
-   * Clears the query's garbage collection timeout and silently cancels any
-   * in-flight fetch. Called by `QueryCache` when the query is removed from
+   * Silently cancels any in-flight fetch, then clears the query's garbage
+   * collection timeout. Called by `QueryCache` when the query is removed from
    * the cache.
    * @see {@link Query#cancel}
    */
   override destroy(): void {
-    super.destroy()
-
     this.cancel({ silent: true })
+    // An abort listener can unsubscribe and schedule GC during cancellation.
+    super.destroy()
   }
 
   /**
@@ -629,7 +629,7 @@ export class Query<
    * @internal
    * @param observer - The observer to remove. When the last observer is removed, the in-flight
    * fetch is cancelled if its abort signal was consumed (otherwise only its retries are stopped),
-   * and garbage collection is scheduled.
+   * and garbage collection is scheduled if the query is still in the cache.
    */
   removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
     const index = this.observers.indexOf(observer)
@@ -651,7 +651,7 @@ export class Query<
           }
         }
 
-        this.scheduleGc()
+        this.#scheduleGcIfCached()
       }
 
       this.#cache.notify({ type: 'observerRemoved', query: this, observer })
@@ -914,13 +914,22 @@ export class Query<
           this.#retryer = undefined
           this.#fetchPromise = undefined
         }
-        // Schedule query gc after fetching
-        this.scheduleGc()
+        this.#scheduleGcIfCached()
       }
     })()
     this.#fetchPromise = fetchPromise
     retryer.start()
     return fetchPromise
+  }
+
+  #scheduleGcIfCached(): void {
+    if (
+      this.#cache.get<TQueryFnData, TError, TData, TQueryKey>(
+        this.queryHash,
+      ) === this
+    ) {
+      this.scheduleGc()
+    }
   }
 
   #dispatch(action: Action<TData, TError>): void {

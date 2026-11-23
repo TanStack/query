@@ -1,13 +1,9 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
-import { QueriesObserver, QueryClient } from '..'
-import type {
-  Query,
-  QueryObserver,
-  QueryObserverOptions,
-  QueryObserverResult,
-} from '..'
+import { QueriesObserver, QueryClient, defaultQueryFn } from '..'
+import type { Query, QueryObserver, QueryObserverResult } from '..'
 import type { QueriesObserverOptions } from '../queriesObserver'
+import type { ObserverOptionsInput } from '../queryObserver'
 
 describe('queriesObserver', () => {
   let queryClient: QueryClient
@@ -126,7 +122,7 @@ describe('queriesObserver', () => {
       ])
 
       const observer = new QueriesObserver(queryClient, [
-        { queryKey: createKey(), staleTime: 1000 },
+        { queryFn: defaultQueryFn, queryKey: createKey(), staleTime: 1000 },
       ])
 
       expectTypeOf(observer).toEqualTypeOf<
@@ -141,7 +137,7 @@ describe('queriesObserver', () => {
 
       expectTypeOf(observer.setQueries)
         .parameter(0)
-        .toEqualTypeOf<Array<QueryObserverOptions>>()
+        .toEqualTypeOf<Array<ObserverOptionsInput>>()
     })
 
     it('should take the same options as the constructor', () => {

@@ -1,6 +1,13 @@
 import { createKey } from '@tanstack/query-test-utils'
-import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
-import { QueryClient, QueryObserver } from '..'
+import {
+  afterEach,
+  assertType,
+  beforeEach,
+  describe,
+  expectTypeOf,
+  it,
+} from 'vitest'
+import { QueryClient, QueryObserver, defaultQueryFn } from '..'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -40,6 +47,13 @@ describe('queryObserver', () => {
   })
 
   describe('QueryObserverOptions', () => {
+    it('should require a query function on observer input', () => {
+      // @ts-expect-error queryFn is required
+      assertType<QueryObserverOptions>({ queryKey: ['todos'] })
+      // @ts-expect-error queryFn is required on a new observer
+      assertType(new QueryObserver(queryClient, { queryKey: ['todos'] }))
+    })
+
     it('should keep every option writable', () => {
       type Options = QueryObserverOptions<
         { value: string },
@@ -82,7 +96,10 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf(
-          new QueryObserver(queryClient, { queryKey: createKey() }),
+          new QueryObserver(queryClient, {
+            queryKey: createKey(),
+            queryFn: defaultQueryFn,
+          }),
         ).toBeObject()
       })
     })
@@ -371,6 +388,7 @@ describe('queryObserver', () => {
       it('should type the error given to a retry callback', () => {
         new QueryObserver<boolean, CustomError>(queryClient, {
           queryKey: createKey(),
+          queryFn: defaultQueryFn,
           retry: (failureCount, error) => {
             expectTypeOf(failureCount).toEqualTypeOf<number>()
             expectTypeOf(error).toEqualTypeOf<CustomError>()
@@ -397,6 +415,7 @@ describe('queryObserver', () => {
       it('should type the error given to a retryDelay callback', () => {
         new QueryObserver<boolean, CustomError>(queryClient, {
           queryKey: createKey(),
+          queryFn: defaultQueryFn,
           retryDelay: (failureCount, error) => {
             expectTypeOf(failureCount).toEqualTypeOf<number>()
             expectTypeOf(error).toEqualTypeOf<CustomError>()
@@ -578,6 +597,7 @@ describe('queryObserver', () => {
 
         new QueryObserver(queryClient, {
           queryKey: testQueryKey,
+          queryFn: defaultQueryFn,
           placeholderData: (_, previousQuery) => {
             if (previousQuery) {
               expectTypeOf(previousQuery.queryKey).toEqualTypeOf<
@@ -591,6 +611,7 @@ describe('queryObserver', () => {
       it('should type the error of the previousQuery it is given', () => {
         new QueryObserver<boolean, CustomError>(queryClient, {
           queryKey: createKey(),
+          queryFn: defaultQueryFn,
           placeholderData: (_, previousQuery) => {
             if (previousQuery) {
               expectTypeOf(
@@ -1079,9 +1100,7 @@ describe('queryObserver', () => {
         it('should be typed from the observed error type', () => {
           const observer = new QueryObserver<boolean, CustomError>(
             queryClient,
-            {
-              queryKey: createKey(),
-            },
+            { queryFn: defaultQueryFn, queryKey: createKey() },
           )
 
           expectTypeOf(

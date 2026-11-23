@@ -97,7 +97,11 @@ export interface DefaultOptions<
    * Default options applied to every query, unless overridden per-query, including Solid's
    * `reconcile` option.
    */
-  queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'>
+  queries?: OmitKeyof<
+    NonNullable<CoreDefaultOptions<TError>['queries']>,
+    'structuralSharing'
+  > &
+    Pick<QueryObserverOptions<unknown, TError>, 'reconcile'>
 }
 
 /**

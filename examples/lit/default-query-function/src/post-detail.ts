@@ -1,4 +1,4 @@
-import { createQueryController } from '@tanstack/lit-query'
+import { createQueryController, defaultQueryFn } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import type { Post } from './types'
 
@@ -9,9 +9,9 @@ class PostDetail extends LitElement {
 
   postId = -1
 
-  // You can even leave out the queryFn and just go straight into options
   private readonly post = createQueryController<Post>(this, () => ({
     queryKey: [`/posts/${this.postId}`],
+    queryFn: defaultQueryFn,
     enabled: !!this.postId,
   }))
 

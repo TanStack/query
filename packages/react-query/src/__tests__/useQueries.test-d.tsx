@@ -4,7 +4,7 @@ import { skipToken } from '..'
 import { queryOptions } from '../queryOptions'
 import { useQueries } from '../useQueries'
 import type { QueryFunctionContext } from '@tanstack/query-core'
-import type { OmitKeyof, QueryFunction, QueryKey } from '..'
+import type { DefaultQueryFn, OmitKeyof, QueryFunction, QueryKey } from '..'
 import type { UseQueryOptions, UseQueryResult } from '../types'
 
 describe('useQueries', () => {
@@ -797,19 +797,19 @@ describe('useQueries', () => {
               const { queryFn: fn, queryKey: key } = query
               expectTypeOf(fn).toEqualTypeOf<
                 | typeof skipToken
+                | DefaultQueryFn
                 | QueryFunction<TQueryFnData, TQueryKey, never>
-                | undefined
               >()
               return {
                 queryKey: key,
                 queryFn:
-                  fn && fn !== skipToken
+                  typeof fn === 'function'
                     ? (ctx: QueryFunctionContext<TQueryKey>) => {
                         // oxlint-disable-next-line vitest-js/valid-expect -- matchers cannot compare against an unresolved type parameter, so the type argument checks that 'ctx.queryKey' is assignable to 'TQueryKey'
                         expectTypeOf<TQueryKey>(ctx.queryKey)
                         return fn.call({}, ctx)
                       }
-                    : undefined,
+                    : fn,
               }
             },
           ),

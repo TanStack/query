@@ -16,11 +16,9 @@ import type {
   MutationFilters,
   MutationKey,
   MutationObserverOptions,
-  OmitKeyof,
   QueryExecuteOptions,
   QueryFilters,
   QueryKey,
-  QueryObserverOptions,
   QueryState,
   RefetchOptions,
   RefetchQueryFilters,
@@ -407,7 +405,12 @@ export class QueryClient extends QC {
   >(
     queryKey: MaybeRefDeep<QueryKey>,
     options: MaybeRefDeep<
-      Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryData>, 'queryKey'>
+      Partial<
+        Omit<
+          UseQueryOptions<TQueryFnData, TError, TData, TQueryData>,
+          'queryKey'
+        >
+      >
     >,
   ): void {
     super.setQueryDefaults(cloneDeepUnref(queryKey), cloneDeepUnref(options))
@@ -415,7 +418,7 @@ export class QueryClient extends QC {
 
   override getQueryDefaults(
     queryKey: MaybeRefDeep<QueryKey>,
-  ): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
+  ): ReturnType<QC['getQueryDefaults']> {
     return super.getQueryDefaults(cloneDeepUnref(queryKey))
   }
 

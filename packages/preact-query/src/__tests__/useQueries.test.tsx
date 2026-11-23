@@ -2,7 +2,13 @@ import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/preact'
 import { useCallback, useEffect, useLayoutEffect, useState } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { IsRestoringProvider, QueryCache, QueryClient, useQueries } from '..'
+import {
+  IsRestoringProvider,
+  QueryCache,
+  QueryClient,
+  defaultQueryFn,
+  useQueries,
+} from '..'
 import { ErrorBoundary } from './ErrorBoundary'
 import { renderWithClient } from './utils'
 import type { QueryObserverResult, UseQueryResult } from '..'
@@ -30,7 +36,7 @@ describe('useQueries', () => {
     function Page() {
       const [count, setCount] = useState(0)
       const data = useQueries({
-        queries: [{ queryKey: key }],
+        queries: [{ queryKey: key, queryFn: defaultQueryFn }],
         subscribed: false,
         combine,
       })
@@ -100,7 +106,13 @@ describe('useQueries', () => {
           queryClient.setQueryData(keys[index]!, `updated ${index}`)
         }, [index])
         const data = useQueries({
-          queries: [{ queryKey: keys[index]!, staleTime: Infinity }],
+          queries: [
+            {
+              queryKey: keys[index]!,
+              queryFn: defaultQueryFn,
+              staleTime: Infinity,
+            },
+          ],
           subscribed,
           combine,
         })

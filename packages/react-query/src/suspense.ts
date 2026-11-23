@@ -10,8 +10,6 @@ import type {
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
-const resolvedThenable = Promise.resolve()
-
 type SuspensePromiseEntry = {
   fetchPromise: Promise<unknown>
   promise: Promise<void>
@@ -105,7 +103,6 @@ const shouldSuspend = (
  * @param observer - The observer that starts the fetch.
  * @param errorResetBoundary - The nearest query error reset boundary.
  * @param query - The query used to key the promise cache.
- * @param shouldFetch - Whether to start a fetch when none is pending.
  * @returns A promise that resolves when the fetch settles.
  */
 export function getSuspensePromise(
@@ -113,38 +110,24 @@ export function getSuspensePromise(
   observer: QueryObserver<any, any, any, any, any>,
   errorResetBoundary: QueryErrorResetBoundaryValue,
   query: Query<any, any, any, any>,
-  shouldFetch = true,
 ): Promise<void> {
-  const shouldFetchNow =
-    shouldFetch ||
-    (query.state.status === 'error' && errorResetBoundary.isReset())
-
-  const cached = suspensePromiseCache.get(query)
-
-  if (cached && (!shouldFetchNow || !cached.settled)) {
-    cached.fetchPromise.catch(() => errorResetBoundary.clearReset())
-    return cached.promise
+  let entry = suspensePromiseCache.get(query)
+  if (!entry || entry.settled) {
+    const fetchPromise = observer.fetchOptimistic(defaultedOptions)
+    const settle = () => {
+      pending.settled = true
+    }
+    const pending: SuspensePromiseEntry = {
+      fetchPromise,
+      // Retry the render when the fetch settles, even on failure.
+      promise: fetchPromise.then(settle, settle),
+      settled: false,
+    }
+    suspensePromiseCache.set(query, pending)
+    entry = pending
   }
 
-  if (!shouldFetchNow) {
-    return resolvedThenable
-  }
-
-  const fetchPromise = observer.fetchOptimistic(defaultedOptions)
-  const settle = () => {
-    entry.settled = true
-  }
-  const entry: SuspensePromiseEntry = {
-    fetchPromise,
-    // Retry the render when the fetch settles, even on failure.
-    promise: fetchPromise.then(settle, settle),
-    settled: false,
-  }
-
-  suspensePromiseCache.set(query, entry)
-
-  fetchPromise.catch(() => errorResetBoundary.clearReset())
-
+  entry.fetchPromise.catch(() => errorResetBoundary.clearReset())
   return entry.promise
 }
 

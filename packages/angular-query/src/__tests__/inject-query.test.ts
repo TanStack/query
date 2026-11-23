@@ -30,9 +30,11 @@ import {
 import {
   QueryCache,
   QueryClient,
+  defaultQueryFn,
   injectQuery,
   keepPreviousData,
   provideTanStackQuery,
+  skipToken,
   toResource,
 } from '..'
 import { provideIsRestoring } from '../internal'
@@ -107,9 +109,10 @@ describe('injectQuery', () => {
       changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class TestComponent {
-      // unspecified query function should default to unknown
+      // The default query function should infer unknown data
       noQueryFn = injectQuery(() => ({
         queryKey: key,
+        queryFn: defaultQueryFn,
       }))
 
       // it should infer the result type from the query function
@@ -1170,6 +1173,7 @@ describe('injectQuery', () => {
     const query = TestBed.runInInjectionContext(() =>
       injectQuery(() => ({
         queryKey: ['test'],
+        queryFn: skipToken,
         initialData: 'initial data',
       })),
     )

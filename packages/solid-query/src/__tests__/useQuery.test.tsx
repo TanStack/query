@@ -20,6 +20,7 @@ import {
   IsRestoringProvider,
   QueryCache,
   QueryClient,
+  defaultQueryFn,
   keepPreviousData,
   noop,
   skipToken,
@@ -420,7 +421,7 @@ describe('useQuery', () => {
     expect(fetchCount).toBe(1)
   })
 
-  it('should be able to watch a query without providing a query function', async () => {
+  it('should use the default query function for the query key', async () => {
     const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
@@ -429,7 +430,10 @@ describe('useQuery', () => {
     })
 
     function Page() {
-      const state = useQuery<string>(() => ({ queryKey: key }))
+      const state = useQuery<string>(() => ({
+        queryKey: key,
+        queryFn: defaultQueryFn,
+      }))
       createRenderEffect(() => {
         states.push({ ...state })
       })

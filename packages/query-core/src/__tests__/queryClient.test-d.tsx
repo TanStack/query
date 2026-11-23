@@ -19,8 +19,9 @@ import type {
   OmitKeyof,
   QueryClientConfig,
   QueryExecuteOptions,
+  QueryFunction,
   QueryKey,
-  QueryObserverOptions,
+  QueryObserverOptionsBase,
   SetDataOptions,
   UnsetMarker,
 } from '../types'
@@ -964,7 +965,7 @@ describe('queryClient', () => {
       const defaults = queryClient.getQueryDefaults(['key'])
 
       expectTypeOf(defaults).toEqualTypeOf<
-        OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'>
+        OmitKeyof<QueryObserverOptionsBase<any, any, any, any, any>, 'queryKey'>
       >()
       expectTypeOf(defaults).not.toHaveProperty('queryKey')
     })
@@ -973,12 +974,12 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf(queryClient.getQueryDefaults(typedFilterKey)).toEqualTypeOf<
-        OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'>
+        OmitKeyof<QueryObserverOptionsBase<any, any, any, any, any>, 'queryKey'>
       >()
       expectTypeOf(
         queryClient.getQueryDefaults(untypedFilterKey),
       ).toEqualTypeOf<
-        OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'>
+        OmitKeyof<QueryObserverOptionsBase<any, any, any, any, any>, 'queryKey'>
       >()
     })
   })
@@ -1091,6 +1092,17 @@ describe('queryClient', () => {
           QueryKey
         >
       >()
+    })
+
+    it('should preserve the query function page parameter', () => {
+      const options = new QueryClient().defaultQueryOptions({
+        queryKey: ['key'],
+        queryFn: ({ pageParam }: { pageParam: number }) => pageParam.toFixed(),
+      })
+
+      expectTypeOf(options.queryFn)
+        .extract<(...args: Array<never>) => unknown>()
+        .toEqualTypeOf<QueryFunction<string, Array<string>, number>>()
     })
 
     it('should resolve unknown and DefaultError when untyped', () => {

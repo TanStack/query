@@ -1,12 +1,16 @@
-import { createQueryController, useQueryClient } from '@tanstack/lit-query'
+import {
+  createQueryController,
+  defaultQueryFn,
+  useQueryClient,
+} from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { styleMap } from 'lit/directives/style-map.js'
 import type { Post } from './types'
 
 class PostList extends LitElement {
-  // All you have to do now is pass a key!
   private readonly posts = createQueryController<Array<Post>>(this, {
     queryKey: ['/posts'],
+    queryFn: defaultQueryFn,
   })
 
   protected override createRenderRoot(): HTMLElement | DocumentFragment {

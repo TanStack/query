@@ -1,5 +1,6 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { defaultQueryFn } from '..'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 import type { OmitKeyof, QueryFunction, UseQueryOptions } from '..'
@@ -7,10 +8,15 @@ import type { OmitKeyof, QueryFunction, UseQueryOptions } from '..'
 describe('useQuery', () => {
   const key = createKey()
 
-  it('should default to unknown when the query function is unspecified', () => {
-    const noQueryFn = useQuery({ queryKey: key })
-    expectTypeOf(noQueryFn.data).toEqualTypeOf<unknown>()
-    expectTypeOf(noQueryFn.error).toEqualTypeOf<Error | null>()
+  it('should require a query function', () => {
+    // @ts-expect-error queryFn is required
+    assertType(useQuery({ queryKey: key }))
+  })
+
+  it('should default to unknown when using the default query function', () => {
+    const withDefault = useQuery({ queryKey: key, queryFn: defaultQueryFn })
+    expectTypeOf(withDefault.data).toEqualTypeOf<unknown>()
+    expectTypeOf(withDefault.error).toEqualTypeOf<Error | null>()
   })
 
   it('should infer the result type from the query function', () => {
@@ -308,6 +314,7 @@ describe('useQuery', () => {
       it('should not have undefined in data when initialData is provided', () => {
         const { data } = useQuery({
           queryKey: createKey(),
+          queryFn: defaultQueryFn,
           initialData: 42,
         })
 

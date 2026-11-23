@@ -2,6 +2,7 @@
 import {
   QueryClient,
   QueryClientProvider,
+  defaultQueryFn,
   useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
@@ -17,7 +18,7 @@ type Post = {
 }
 
 // Define a default query function that will receive the query key
-const defaultQueryFn: QueryFunction<unknown> = async ({ queryKey }) => {
+const fetchByQueryKey: QueryFunction<unknown> = async ({ queryKey }) => {
   const response = await fetch(
     `https://jsonplaceholder.typicode.com${queryKey[0]}`,
     {
@@ -32,7 +33,7 @@ const defaultQueryFn: QueryFunction<unknown> = async ({ queryKey }) => {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: defaultQueryFn,
+      queryFn: fetchByQueryKey,
     },
   },
 })
@@ -61,8 +62,10 @@ function App() {
 }
 
 function Posts(props: { setPostId: Setter<number> }) {
-  // All you have to do now is pass a key!
-  const state = useQuery<Array<Post>>(() => ({ queryKey: ['/posts'] }))
+  const state = useQuery<Array<Post>>(() => ({
+    queryKey: ['/posts'],
+    queryFn: defaultQueryFn,
+  }))
 
   return (
     <div>
@@ -109,9 +112,9 @@ function Posts(props: { setPostId: Setter<number> }) {
 }
 
 function Post(props: { postId: number; setPostId: Setter<number> }) {
-  // You can even leave out the queryFn and just go straight into options
   const state = useQuery<Post>(() => ({
     queryKey: [`/posts/${props.postId}`],
+    queryFn: defaultQueryFn,
     enabled: !!props.postId,
   }))
 

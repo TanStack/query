@@ -5,6 +5,7 @@ import { createQueries, queryOptions } from '../../src/index.js'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
+  DefaultQueryFn,
   QueryFunction,
   QueryFunctionContext,
   QueryKey,
@@ -603,20 +604,19 @@ describe('createQueries', () => {
               const { queryFn: fn, queryKey: key } = query
               expectTypeOf(fn).toEqualTypeOf<
                 | typeof skipToken
+                | DefaultQueryFn
                 | QueryFunction<TQueryFnData, TQueryKey, never>
-                | undefined
               >()
               return {
                 queryKey: key,
-                queryFn: fn
-                  ? (ctx: QueryFunctionContext<TQueryKey>) => {
-                      // oxlint-disable-next-line vitest-js/valid-expect -- matchers cannot compare against an unresolved type parameter, so the type argument checks that 'ctx.queryKey' is assignable to 'TQueryKey'
-                      expectTypeOf<TQueryKey>(ctx.queryKey)
-                      return (
-                        fn as QueryFunction<TQueryFnData, TQueryKey>
-                      ).call({}, ctx)
-                    }
-                  : undefined,
+                queryFn:
+                  typeof fn === 'function'
+                    ? (ctx: QueryFunctionContext<TQueryKey>) => {
+                        // oxlint-disable-next-line vitest-js/valid-expect -- matchers cannot compare against an unresolved type parameter, so the type argument checks that 'ctx.queryKey' is assignable to 'TQueryKey'
+                        expectTypeOf<TQueryKey>(ctx.queryKey)
+                        return fn.call({}, ctx)
+                      }
+                    : fn,
               }
             },
           ),

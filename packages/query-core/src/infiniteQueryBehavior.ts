@@ -1,7 +1,6 @@
 import {
   addConsumeAwareSignal,
-  addToEnd,
-  addToStart,
+  addToArray,
   ensureQueryFn,
   fetchSignal,
 } from './utils'
@@ -63,11 +62,9 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           const page = await queryFn(queryFnContext)
 
           const { maxPages } = context.options
-          const addTo = previous ? addToStart : addToEnd
-
           return {
-            pages: addTo(data.pages, page, maxPages),
-            pageParams: addTo(data.pageParams, param, maxPages),
+            pages: addToArray(data.pages, page, maxPages, previous),
+            pageParams: addToArray(data.pageParams, param, maxPages, previous),
           }
         }
 

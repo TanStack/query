@@ -2,6 +2,7 @@ import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { defaultQueryFn } from '..'
 import { createQueriesController } from '../createQueriesController.js'
 import { createQueryController } from '../createQueryController.js'
 import { queryOptions } from '../queryOptions.js'
@@ -131,9 +132,10 @@ describe('queryOptions', () => {
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<number>()
   })
 
-  it('should tag the queryKey with unknown if there is no queryFn', () => {
+  it('should tag the queryKey with unknown when using defaultQueryFn', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: createKey(),
+      queryFn: defaultQueryFn,
     })
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<unknown>()
@@ -309,7 +311,7 @@ describe('queryOptions', () => {
       persister,
     })
 
-    expectTypeOf(options.queryFn!).returns.toEqualTypeOf<
+    expectTypeOf(options.queryFn).returns.toEqualTypeOf<
       string | Promise<string>
     >()
   })

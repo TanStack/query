@@ -3,10 +3,12 @@ import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
 import { replaceEqualDeep, shallowEqualObjects } from './utils'
 import type { QueryClient } from './queryClient'
-import type { QueryObserverResultReader } from './queryObserver'
+import type {
+  ObserverOptionsInput,
+  QueryObserverResultReader,
+} from './queryObserver'
 import type {
   DefaultedQueryObserverOptions,
-  QueryObserverOptions,
   QueryObserverResult,
 } from './types'
 
@@ -108,7 +110,7 @@ export class QueriesObserver<
 
   constructor(
     client: QueryClient,
-    queries: Array<QueryObserverOptions<any, any, any, any, any>>,
+    queries: Array<ObserverOptionsInput<any, any, any, any, any>>,
     options?: QueriesObserverOptions<TCombinedResult>,
   ) {
     super()
@@ -123,11 +125,7 @@ export class QueriesObserver<
 
   protected override onSubscribe(): void {
     if (this.listeners.size === 1) {
-      this.#observers.forEach((observer) => {
-        observer.subscribe((result) => {
-          this.#onUpdate(observer, result)
-        })
-      })
+      this.#observers.forEach((observer) => this.#subscribeTo(observer))
     }
   }
 
@@ -164,7 +162,7 @@ export class QueriesObserver<
    * ```
    */
   setQueries(
-    queries: Array<QueryObserverOptions>,
+    queries: Array<ObserverOptionsInput>,
     options?: QueriesObserverOptions<TCombinedResult>,
   ): void {
     this.#setQueries(this.#findMatchingObservers(queries), options)
@@ -235,11 +233,9 @@ export class QueriesObserver<
         difference(prevObservers, newObservers).forEach((observer) => {
           observer.destroy()
         })
-        difference(newObservers, prevObservers).forEach((observer) => {
-          observer.subscribe((result) => {
-            this.#onUpdate(observer, result)
-          })
-        })
+        difference(newObservers, prevObservers).forEach((observer) =>
+          this.#subscribeTo(observer),
+        )
       }
 
       this.#notify()
@@ -289,7 +285,7 @@ export class QueriesObserver<
    * @returns A reader with local snapshot and combine caches.
    */
   createResultReader(
-    queries: Array<QueryObserverOptions<any, any, any, any, any>>,
+    queries: Array<ObserverOptionsInput<any, any, any, any, any>>,
     options?: QueriesObserverOptions<TCombinedResult>,
   ): QueriesObserverResultReader<TCombinedResult> {
     const matches = this.#findMatchingObservers(queries).map((match) => ({
@@ -409,7 +405,7 @@ export class QueriesObserver<
   }
 
   #findMatchingObservers(
-    queries: Array<QueryObserverOptions>,
+    queries: Array<ObserverOptionsInput>,
   ): Array<QueryObserverMatch> {
     const prevObserversMap = new Map<string, Array<QueryObserver>>()
 
@@ -443,6 +439,14 @@ export class QueriesObserver<
     return observers
   }
 
+  #subscribeTo(observer: QueryObserver): void {
+    // Create the listener here, not in `setQueries`: a listener created there
+    // keeps the previous observers, and their queries, alive (#12656)
+    observer.subscribe((result) => {
+      this.#onUpdate(observer, result)
+    })
+  }
+
   #onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
     if (this.#updatingQueries) return
 
@@ -463,6 +467,9 @@ export class QueriesObserver<
         : this.#combineResult(
             this.#trackResult(this.#result, this.#observerMatches),
             this.#options?.combine,
+            this.#observerMatches.map(
+              (match) => match.defaultedQueryOptions.queryHash,
+            ),
           )
 
       this.#combinedResult = newResult

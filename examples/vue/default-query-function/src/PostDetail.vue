@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query'
+import { defaultQueryFn, useQuery } from '@tanstack/vue-query'
 import type { Post } from './types'
 
 const props = defineProps<{ postId: number }>()
 defineEmits<{ setPostId: [id: number] }>()
 
-// You can even leave out the queryFn and just go straight into options
 const { isPending, isError, isFetching, data, error } = useQuery<Post>(() => ({
   queryKey: [`/posts/${props.postId}`],
+  queryFn: defaultQueryFn,
   enabled: !!props.postId,
 }))
 </script>

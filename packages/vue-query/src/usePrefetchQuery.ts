@@ -33,7 +33,7 @@ export type UsePrefetchQueryOptions<
   >,
   'queryFn'
 > & {
-  queryFn?: Exclude<
+  queryFn: Exclude<
     QueryExecuteOptions<
       TQueryFnData,
       TError,
@@ -42,7 +42,7 @@ export type UsePrefetchQueryOptions<
       TQueryKey,
       never
     >['queryFn'],
-    SkipToken
+    SkipToken | undefined
   >
 }
 
@@ -59,7 +59,7 @@ function isGetter<T>(value: MaybeRefOrGetter<T>): value is () => T {
  * `usePrefetchQuery` does not return anything — it fires a prefetch as a reactive side effect, useful for
  * kicking off a fetch ahead of the component that will actually render the data with `useQuery`. You can pass
  * everything to `usePrefetchQuery` that you can pass to `queryClient.query`, though `queryKey` is always
- * required, and `queryFn` is required unless a default query function has been defined.
+ * required, and `queryFn` is required. Pass `defaultQueryFn` to use the client defaults.
  *
  * The prefetch is skipped if the query already has any cached state — including a `pending`/`error` state left
  * over from a previous attempt — so it won't refetch data that's already there or already in flight. It
