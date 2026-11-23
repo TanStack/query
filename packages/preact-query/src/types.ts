@@ -63,8 +63,8 @@ export interface UseBaseQueryOptions<
 }
 
 /**
- * The options accepted by `usePrefetchQuery` — everything you can pass to `queryClient.query`, except `queryFn`
- * is required unless a default query function has been defined.
+ * The options accepted by `usePrefetchQuery` — everything you can pass to `queryClient.query`, with a
+ * required `queryFn`. Pass `defaultQueryFn` to use the client defaults.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
@@ -84,10 +84,9 @@ export type UsePrefetchQueryOptions<
   'queryFn'
 > & {
   /**
-   * `skipToken` is not allowed as a value here — a prefetch always needs a query function to actually run,
-   * unless a default query function has been defined.
+   * Pass a query function or `defaultQueryFn` to use the client defaults. Prefetch hooks do not accept `skipToken`.
    */
-  queryFn?: Exclude<
+  queryFn: Exclude<
     QueryExecuteOptions<
       TQueryFnData,
       TError,
@@ -95,13 +94,13 @@ export type UsePrefetchQueryOptions<
       TQueryFnData,
       TQueryKey
     >['queryFn'],
-    SkipToken
+    SkipToken | undefined
   >
 }
 
 /**
  * The options accepted by `usePrefetchInfiniteQuery` — everything you can pass to `queryClient.infiniteQuery`,
- * except `queryFn` is required unless a default query function has been defined.
+ * with a required `queryFn`. Pass `defaultQueryFn` to use the client defaults.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` (a single page)
@@ -127,10 +126,9 @@ export type UsePrefetchInfiniteQueryOptions<
   'queryFn'
 > & {
   /**
-   * `skipToken` is not allowed as a value here — a prefetch always needs a query function to actually run,
-   * unless a default query function has been defined.
+   * Pass a query function or `defaultQueryFn` to use the client defaults. Prefetch hooks do not accept `skipToken`.
    */
-  queryFn?: Exclude<
+  queryFn: Exclude<
     InfiniteQueryExecuteOptions<
       TQueryFnData,
       TError,
@@ -138,7 +136,7 @@ export type UsePrefetchInfiniteQueryOptions<
       TQueryKey,
       TPageParam
     >['queryFn'],
-    SkipToken
+    SkipToken | undefined
   >
 }
 
@@ -196,10 +194,9 @@ export interface UseSuspenseQueryOptions<
   'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
 > {
   /**
-   * `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
-   * must always be provided, unless a default query function has been defined.
+   * Pass a query function or `defaultQueryFn` to use the client defaults. Suspense hooks do not accept `skipToken`.
    */
-  queryFn?: Exclude<
+  queryFn: Exclude<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
     SkipToken
   >
@@ -278,10 +275,9 @@ export interface UseSuspenseInfiniteQueryOptions<
   'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
 > {
   /**
-   * `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
-   * must always be provided, unless a default query function has been defined.
+   * Pass a query function or `defaultQueryFn` to use the client defaults. Suspense hooks do not accept `skipToken`.
    */
-  queryFn?: Exclude<
+  queryFn: Exclude<
     UseInfiniteQueryOptions<
       TQueryFnData,
       TError,

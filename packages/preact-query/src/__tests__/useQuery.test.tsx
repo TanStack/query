@@ -17,6 +17,7 @@ import {
   IsRestoringProvider,
   QueryCache,
   QueryClient,
+  defaultQueryFn,
   dehydrate,
   hydrate,
   keepPreviousData,
@@ -467,14 +468,14 @@ describe('useQuery', () => {
     expect(fetchCount).toBe(1)
   })
 
-  it('should be able to watch a query without providing a query function', async () => {
+  it('should use the default query function for the query key', async () => {
     const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     queryClient.setQueryDefaults(key, { queryFn: () => 'data' })
 
     function Page() {
-      const state = useQuery<string>({ queryKey: key })
+      const state = useQuery<string>({ queryKey: key, queryFn: defaultQueryFn })
       states.push(state)
       return null
     }
@@ -6796,18 +6797,18 @@ describe('useQuery', () => {
     )
   })
 
-  it('should console.error when there is no queryFn', () => {
+  it('should console.error when no default query function is configured', () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
     const key = createKey()
     function Example() {
-      useQuery({ queryKey: key })
+      useQuery({ queryKey: key, queryFn: defaultQueryFn })
       return <></>
     }
     renderWithClient(queryClient, <Example />)
 
     expect(consoleErrorMock).toHaveBeenCalledTimes(1)
     expect(consoleErrorMock).toHaveBeenCalledWith(
-      `[${queryClient.getQueryCache().find({ queryKey: key })?.queryHash}]: No queryFn was passed as an option, and no default queryFn was found. The queryFn parameter is only optional when using a default queryFn. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
+      `[${queryClient.getQueryCache().find({ queryKey: key })?.queryHash}]: No query function was provided or configured in the query defaults. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
     )
   })
 

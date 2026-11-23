@@ -1,6 +1,7 @@
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { defaultQueryFn } from '..'
 import { queryOptions } from '../queryOptions'
 import { useQueries } from '../useQueries'
 import { useQuery } from '../useQuery'
@@ -17,6 +18,7 @@ import type { AnyUseQueryOptions } from '../types'
 // internal data tag symbols into the consumer's .d.ts output.
 export const exportedQueryOptions = queryOptions({
   queryKey: ['invalid'],
+  queryFn: defaultQueryFn,
 })
 
 describe('queryOptions', () => {
@@ -135,9 +137,10 @@ describe('queryOptions', () => {
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<number>()
   })
 
-  it('should tag the queryKey with unknown if there is no queryFn', () => {
+  it('should tag the queryKey with unknown when using defaultQueryFn', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: createKey(),
+      queryFn: defaultQueryFn,
     })
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<unknown>()
@@ -354,7 +357,7 @@ describe('queryOptions', () => {
       persister,
     })
 
-    expectTypeOf(options.queryFn!).returns.toEqualTypeOf<
+    expectTypeOf(options.queryFn).returns.toEqualTypeOf<
       string | Promise<string>
     >()
   })

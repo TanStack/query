@@ -1,6 +1,12 @@
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, noop, useQueries, useQuery } from '@tanstack/react-query'
+import {
+  QueryClient,
+  defaultQueryFn,
+  noop,
+  useQueries,
+  useQuery,
+} from '@tanstack/react-query'
 import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -661,7 +667,7 @@ describe('PersistQueryClientProvider', () => {
     }
 
     function Page() {
-      const state = useQuery({ queryKey: key })
+      const state = useQuery({ queryKey: key, queryFn: defaultQueryFn })
 
       states.push(state)
 

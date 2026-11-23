@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   QueryObserver,
+  defaultQueryFn,
   focusManager,
   keepPreviousData,
   noop,
@@ -34,15 +35,19 @@ describe('queryObserver', () => {
     queryClient.setQueryData(queryKey, 'cached')
     const options = {
       queryKey,
+      queryFn: defaultQueryFn,
       enabled: false,
       select: () => {
         throw new Error('selection failed')
       },
-    }
+    } as const
     const observer = new QueryObserver(queryClient, options)
     expect(observer.getCurrentResult().error?.message).toBe('selection failed')
 
-    observer.setOptions({ ...options, queryKey: createKey() })
+    observer.setOptions({
+      ...options,
+      queryKey: createKey(),
+    })
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       error: null,
@@ -94,6 +99,7 @@ describe('queryObserver', () => {
     queryClient.setQueryData(key, 'data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
+      queryFn: defaultQueryFn,
       enabled: false,
     })
 
@@ -522,6 +528,7 @@ describe('queryObserver', () => {
     const error = new Error('selector error')
     const observer = new QueryObserver(queryClient, {
       queryKey: createKey(),
+      queryFn: defaultQueryFn,
       initialData: 'data',
       enabled: false,
       select: () => {
@@ -836,6 +843,7 @@ describe('queryObserver', () => {
       vi.fn<(result: QueryObserverResult<unknown, Error>) => void>()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
+      queryFn: defaultQueryFn,
       enabled: false,
     })
     const unsubscribe = observer.subscribe(callback)
@@ -853,13 +861,19 @@ describe('queryObserver', () => {
       .mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
+      queryFn: defaultQueryFn,
       enabled: false,
     })
     const results: Array<QueryObserverResult<unknown>> = []
     const unsubscribe = observer.subscribe((x) => {
       results.push(x)
     })
-    observer.setOptions({ queryKey: key, enabled: false, staleTime: 10 })
+    observer.setOptions({
+      queryKey: key,
+      queryFn: defaultQueryFn,
+      enabled: false,
+      staleTime: 10,
+    })
     await queryClient.query({ queryKey: key, queryFn })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
@@ -876,6 +890,7 @@ describe('queryObserver', () => {
       .mockReturnValue('data')
     const observer = new QueryObserver<string>(queryClient, {
       queryKey: key,
+      queryFn: defaultQueryFn,
       enabled: false,
     })
     const results1: Array<QueryObserverResult<string>> = []
@@ -1064,7 +1079,11 @@ describe('queryObserver', () => {
 
     const firstData = observer.getCurrentResult().data
 
-    observer.setOptions({ queryKey: key, placeholderData: {} })
+    observer.setOptions({
+      queryKey: key,
+      queryFn: defaultQueryFn,
+      placeholderData: {},
+    })
 
     const secondData = observer.getCurrentResult().data
 
@@ -1397,12 +1416,18 @@ describe('queryObserver', () => {
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
+      queryFn: defaultQueryFn,
       enabled: false,
     })
 
     const spy = vi.fn<(event: QueryCacheNotifyEvent) => void>()
     const unsubscribe = queryClient.getQueryCache().subscribe(spy)
-    observer.setOptions({ queryKey: key, enabled: false, refetchInterval: 10 })
+    observer.setOptions({
+      queryKey: key,
+      queryFn: defaultQueryFn,
+      enabled: false,
+      refetchInterval: 10,
+    })
 
     const query = queryClient.getQueryCache().find({ queryKey: key })
     expect(spy).toHaveBeenCalledTimes(1)
@@ -1420,6 +1445,7 @@ describe('queryObserver', () => {
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
+      queryFn: defaultQueryFn,
       enabled: false,
     })
 
@@ -1435,6 +1461,7 @@ describe('queryObserver', () => {
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
+      queryFn: defaultQueryFn,
       enabled: false,
       staleTime: 10,
       refetchInterval: 10,
@@ -1458,6 +1485,7 @@ describe('queryObserver', () => {
 
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
+        queryFn: defaultQueryFn,
         staleTime: 10,
         refetchInterval: 10,
       })

@@ -1,6 +1,6 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, QueryObserver, noop } from '..'
+import { QueryClient, QueryObserver, defaultQueryFn, noop } from '..'
 
 describe('observer data outcome after reset', () => {
   let queryClient: QueryClient
@@ -55,10 +55,11 @@ describe('observer data outcome after reset', () => {
     })
     const options = {
       queryKey: key,
+      queryFn: defaultQueryFn,
       enabled: false,
       placeholderData: { label: null },
       select,
-    }
+    } as const
     queryClient.setQueryData(key, { label: 'first' })
     const observer = new QueryObserver(queryClient, options)
     const unsubscribe = observer.subscribe(noop)
@@ -134,7 +135,12 @@ describe('observer callback errors', () => {
 
   it('should report a falsy selector error and clear it when select is removed', () => {
     const client = new QueryClient()
-    const options = { queryKey: createKey(), initialData: 1, enabled: false }
+    const options = {
+      queryKey: createKey(),
+      queryFn: defaultQueryFn,
+      initialData: 1,
+      enabled: false,
+    } as const
     const observer = new QueryObserver(client, {
       ...options,
       select: () => {

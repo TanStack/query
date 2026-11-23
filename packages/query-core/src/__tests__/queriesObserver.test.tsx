@@ -2,7 +2,7 @@ import { setFlagsFromString } from 'node:v8'
 import { runInNewContext } from 'node:vm'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueriesObserver, QueryClient, QueryObserver } from '..'
+import { QueriesObserver, QueryClient, QueryObserver, defaultQueryFn } from '..'
 import type { QueryObserverResult } from '..'
 
 describe('queriesObserver', () => {
@@ -25,8 +25,16 @@ describe('queriesObserver', () => {
       const keyB = createKey()
       queryClient.setQueryData(keyA, 1)
       queryClient.setQueryData(keyB, 10)
-      const optionsA = { queryKey: keyA, staleTime: Infinity }
-      const optionsB = { queryKey: keyB, staleTime: Infinity }
+      const optionsA = {
+        queryKey: keyA,
+        queryFn: defaultQueryFn,
+        staleTime: Infinity,
+      } as const
+      const optionsB = {
+        queryKey: keyB,
+        queryFn: defaultQueryFn,
+        staleTime: Infinity,
+      } as const
       const combineA = vi.fn<
         (results: Array<QueryObserverResult>) => { data: unknown }
       >((results: Array<QueryObserverResult>) => ({
@@ -116,13 +124,18 @@ describe('queriesObserver', () => {
       const select = vi.fn<(data: { value: number }) => Array<number>>(
         (data: { value: number }) => [data.value],
       )
-      const optionsA = { queryKey: keyA, staleTime: Infinity }
+      const optionsA = {
+        queryKey: keyA,
+        queryFn: defaultQueryFn,
+        staleTime: Infinity,
+      } as const
       const optionsB = {
         queryKey: keyB,
+        queryFn: defaultQueryFn,
         staleTime: Infinity,
         select,
         structuralSharing: false,
-      }
+      } as const
       const observer = new QueriesObserver(queryClient, [optionsA])
       const unsubscribe = observer.subscribe(vi.fn())
       const reader = observer.createResultReader([optionsB, optionsA])
@@ -142,7 +155,12 @@ describe('queriesObserver', () => {
       const select = vi.fn<(data: number) => Array<number>>((data: number) => [
         data,
       ])
-      const options = { queryKey: key, select, structuralSharing: false }
+      const options = {
+        queryKey: key,
+        queryFn: defaultQueryFn,
+        select,
+        structuralSharing: false,
+      } as const
       const observer = new QueriesObserver(queryClient, [])
       const reader = observer.createResultReader([options])
       const snapshot = reader.getSnapshot()
@@ -156,10 +174,14 @@ describe('queriesObserver', () => {
     it('combines the complete result when several selectors change on commit', () => {
       const keys = [createKey(), createKey()]
       keys.forEach((key, index) => queryClient.setQueryData(key, index + 1))
-      const queries = keys.map((key) => ({
-        queryKey: key,
-        staleTime: Infinity,
-      }))
+      const queries = keys.map(
+        (key) =>
+          ({
+            queryKey: key,
+            queryFn: defaultQueryFn,
+            staleTime: Infinity,
+          }) as const,
+      )
       const combine = vi.fn<
         (results: Array<QueryObserverResult>) => Array<unknown>
       >((results: Array<QueryObserverResult>) =>
@@ -191,7 +213,11 @@ describe('queriesObserver', () => {
     it('updates a stable combine when only selection options change', () => {
       const key = createKey()
       queryClient.setQueryData(key, 2)
-      const options = { queryKey: key, staleTime: Infinity }
+      const options = {
+        queryKey: key,
+        queryFn: defaultQueryFn,
+        staleTime: Infinity,
+      } as const
       const combine = vi.fn<
         (results: Array<QueryObserverResult>) => { data: unknown }
       >((results: Array<QueryObserverResult>) => ({
@@ -224,9 +250,24 @@ describe('queriesObserver', () => {
   })
 
   it('keeps the current snapshot during an optimistic read for a different query list', () => {
-    const first = { queryKey: createKey(), enabled: false, placeholderData: 1 }
-    const second = { queryKey: createKey(), enabled: false, placeholderData: 2 }
-    const third = { queryKey: createKey(), enabled: false, placeholderData: 3 }
+    const first = {
+      queryKey: createKey(),
+      enabled: false,
+      placeholderData: 1,
+      queryFn: defaultQueryFn,
+    } as const
+    const second = {
+      queryKey: createKey(),
+      enabled: false,
+      placeholderData: 2,
+      queryFn: defaultQueryFn,
+    } as const
+    const third = {
+      queryKey: createKey(),
+      enabled: false,
+      placeholderData: 3,
+      queryFn: defaultQueryFn,
+    } as const
     const observer = new QueriesObserver(queryClient, [first, second])
     const current = observer.getCurrentResult()
 

@@ -7,8 +7,10 @@ ref: docs/framework/react/guides/default-query-function.md
 [//]: # 'Example'
 
 ```tsx
+import { defaultQueryFn } from '@tanstack/solid-query'
+
 // Define a default query function that will receive the query key
-const defaultQueryFn = async ({ queryKey }) => {
+const fetchByQueryKey = async ({ queryKey }) => {
   const { data } = await axios.get(
     `https://jsonplaceholder.typicode.com${queryKey[0]}`,
   )
@@ -19,7 +21,7 @@ const defaultQueryFn = async ({ queryKey }) => {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: defaultQueryFn,
+      queryFn: fetchByQueryKey,
     },
   },
 })
@@ -32,17 +34,19 @@ function App() {
   )
 }
 
-// All you have to do now is pass a key!
 function Posts() {
-  const postsQuery = useQuery(() => ({ queryKey: ['/posts'] }))
+  const postsQuery = useQuery(() => ({
+    queryKey: ['/posts'],
+    queryFn: defaultQueryFn,
+  }))
 
   // ...
 }
 
-// You can even leave out the queryFn and just go straight into options
 function Post(props) {
   const postQuery = useQuery(() => ({
     queryKey: [`/posts/${props.postId}`],
+    queryFn: defaultQueryFn,
     enabled: !!props.postId,
   }))
 

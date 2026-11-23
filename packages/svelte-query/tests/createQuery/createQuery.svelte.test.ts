@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   createQuery,
+  defaultQueryFn,
   keepPreviousData,
   noop,
 } from '../../src/index.js'
@@ -361,7 +362,7 @@ describe('createQuery', () => {
     expect(fetchCount).toBe(1)
   })
 
-  it('should be able to watch a query without providing a query function', async () => {
+  it('should use the default query function for the query key', async () => {
     const key = createKey()
 
     queryClient.setQueryDefaults(key, {
@@ -371,7 +372,7 @@ describe('createQuery', () => {
     const rendered = render(Base, {
       props: {
         queryClient,
-        options: () => ({ queryKey: key }),
+        options: () => ({ queryKey: key, queryFn: defaultQueryFn }),
       },
     })
 

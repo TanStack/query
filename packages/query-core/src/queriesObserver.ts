@@ -3,10 +3,12 @@ import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
 import { replaceEqualDeep, shallowEqualObjects } from './utils'
 import type { QueryClient } from './queryClient'
-import type { QueryObserverResultReader } from './queryObserver'
+import type {
+  ObserverOptionsInput,
+  QueryObserverResultReader,
+} from './queryObserver'
 import type {
   DefaultedQueryObserverOptions,
-  QueryObserverOptions,
   QueryObserverResult,
 } from './types'
 
@@ -108,7 +110,7 @@ export class QueriesObserver<
 
   constructor(
     client: QueryClient,
-    queries: Array<QueryObserverOptions<any, any, any, any, any>>,
+    queries: Array<ObserverOptionsInput<any, any, any, any, any>>,
     options?: QueriesObserverOptions<TCombinedResult>,
   ) {
     super()
@@ -160,7 +162,7 @@ export class QueriesObserver<
    * ```
    */
   setQueries(
-    queries: Array<QueryObserverOptions>,
+    queries: Array<ObserverOptionsInput>,
     options?: QueriesObserverOptions<TCombinedResult>,
   ): void {
     this.#setQueries(this.#findMatchingObservers(queries), options)
@@ -283,7 +285,7 @@ export class QueriesObserver<
    * @returns A reader with local snapshot and combine caches.
    */
   createResultReader(
-    queries: Array<QueryObserverOptions<any, any, any, any, any>>,
+    queries: Array<ObserverOptionsInput<any, any, any, any, any>>,
     options?: QueriesObserverOptions<TCombinedResult>,
   ): QueriesObserverResultReader<TCombinedResult> {
     const matches = this.#findMatchingObservers(queries).map((match) => ({
@@ -403,7 +405,7 @@ export class QueriesObserver<
   }
 
   #findMatchingObservers(
-    queries: Array<QueryObserverOptions>,
+    queries: Array<ObserverOptionsInput>,
   ): Array<QueryObserverMatch> {
     const prevObserversMap = new Map<string, Array<QueryObserver>>()
 

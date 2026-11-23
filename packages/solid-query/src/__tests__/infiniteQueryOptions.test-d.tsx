@@ -1,6 +1,7 @@
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
+import { defaultQueryFn } from '..'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
@@ -14,6 +15,7 @@ import type {
 // internal data tag symbols into the consumer's .d.ts output.
 export const exportedInfiniteQueryOptions = infiniteQueryOptions({
   queryKey: ['invalid'],
+  queryFn: defaultQueryFn,
   getNextPageParam: () => 1,
   initialPageParam: 1,
 })

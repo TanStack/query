@@ -33,7 +33,7 @@ export type UsePrefetchInfiniteQueryOptions<
   >,
   'queryFn'
 > & {
-  queryFn?: Exclude<
+  queryFn: Exclude<
     InfiniteQueryExecuteOptions<
       TQueryFnData,
       TError,
@@ -41,7 +41,7 @@ export type UsePrefetchInfiniteQueryOptions<
       TQueryKey,
       TPageParam
     >['queryFn'],
-    SkipToken
+    SkipToken | undefined
   >
 }
 
@@ -58,8 +58,7 @@ function isGetter<T>(value: MaybeRefOrGetter<T>): value is () => T {
  * `usePrefetchInfiniteQuery` does not return anything — it fires a prefetch as a reactive side effect, useful
  * for kicking off a fetch ahead of the component that will actually render the data with `useInfiniteQuery`.
  * You can pass everything to `usePrefetchInfiniteQuery` that you can pass to `queryClient.infiniteQuery`,
- * though `queryKey`, `initialPageParam`, and `getNextPageParam` are always required, and `queryFn` is required
- * unless a default query function has been defined.
+ * though `queryKey`, `initialPageParam`, and `getNextPageParam` are always required, and `queryFn` is required. Pass `defaultQueryFn` to use the client defaults.
  *
  * `getNextPageParam` receives both the last page of the infinite list of data and the full array of all pages,
  * as well as pageParam information, and should return a single variable that will be passed to your query

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
+  import { createQuery, defaultQueryFn } from '@tanstack/svelte-query'
   import type { Post } from './types'
 
   type Props = {
@@ -9,9 +9,9 @@
 
   let { postId, setPostId }: Props = $props()
 
-  // You can even leave out the queryFn and just go straight into options
   const query = createQuery<Post>(() => ({
     queryKey: [`/posts/${postId}`],
+    queryFn: defaultQueryFn,
     enabled: !!postId,
   }))
 </script>

@@ -1,6 +1,7 @@
 import type {
   DataTag,
   DefaultError,
+  DefaultQueryFn,
   InitialDataFunction,
   NonUndefinedGuard,
   OmitKeyof,
@@ -25,7 +26,7 @@ export type DefinedInitialDataOptions<
   initialData:
     | NonUndefinedGuard<TQueryFnData>
     | (() => NonUndefinedGuard<TQueryFnData>)
-  queryFn?: QueryFunction<TQueryFnData, TQueryKey>
+  queryFn: QueryFunction<TQueryFnData, TQueryKey> | DefaultQueryFn
 }
 
 /**
@@ -40,7 +41,7 @@ export type UnusedSkipTokenOptions<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   'queryFn'
 > & {
-  queryFn?: Exclude<
+  queryFn: Exclude<
     QueryObserverOptions<
       TQueryFnData,
       TError,
@@ -48,7 +49,7 @@ export type UnusedSkipTokenOptions<
       TQueryFnData,
       TQueryKey
     >['queryFn'],
-    SkipToken | undefined
+    SkipToken
   >
 }
 

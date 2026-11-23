@@ -35,6 +35,7 @@ import type {
   QueryOptions,
 } from '../types'
 import type {
+  DefaultQueryFn,
   MutationFilters,
   QueryFilters,
   QueryTypeFilter,
@@ -746,7 +747,10 @@ describe('ensureQueryFn', () => {
     expectTypeOf<
       Parameters<typeof ensureQueryFn<number, readonly ['key']>>[0]['queryFn']
     >().toEqualTypeOf<
-      QueryFunction<number, readonly ['key']> | SkipToken | undefined
+      | QueryFunction<number, readonly ['key']>
+      | SkipToken
+      | DefaultQueryFn
+      | undefined
     >()
 
     const resolved = ensureQueryFn<number, readonly ['key']>({ queryFn })
@@ -765,7 +769,10 @@ describe('ensureQueryFn', () => {
     expectTypeOf<
       Parameters<typeof ensureQueryFn<number, readonly ['key']>>[0]
     >().toEqualTypeOf<{
-      queryFn?: QueryFunction<number, readonly ['key']> | SkipToken
+      queryFn?:
+        | QueryFunction<number, readonly ['key']>
+        | SkipToken
+        | DefaultQueryFn
       queryHash?: string
     }>()
   })
